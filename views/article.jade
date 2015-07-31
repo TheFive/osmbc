@@ -1,0 +1,59 @@
+extends layout
+
+
+
+
+block content
+  p
+    if info
+      if info.message
+        if info.status == 'error'
+          .alert.alert-dismissable.alert-danger
+            button.close( type="button", data-dismiss="alert" ) ×
+            | #{info.message}
+        if info.status == 'message'
+          .alert.alert-dismissable.alert-success
+            button.close( type="button", data-dismiss="alert" ) ×
+            | #{info.message}
+    .row
+      .col-md-1
+        div.content
+          | Collection
+      .col-md-11
+        if params.edit != 'collection'
+          .panel.panel-default
+            .panel-body #{article.de.collection}
+        else
+          form(name="input", action="/article/#{article.id}", method="post")
+            textarea.form-control(name="collection",rows=7) #{article.de.collection}
+            input(type="submit", value="Submit")
+    .row
+      .col-md-1
+        | Markdown
+      .col-md-11  
+        if params.edit != 'markdown'
+          .panel.panel-default
+            .panel-body #{article.de.text}
+        else
+          form(name="input", action="/article/#{article.id}", method="post")
+            textarea.form-control(
+              name="markdown"
+              rows=7) #{article.de.text}
+            input(type="submit", value="Submit")
+     
+    .row
+      .col-md-1
+        | Preview
+
+      .col-md-11 
+        .panel.panel-default
+          .panel-body 
+            :verbatim
+            !{article.de.textHtml}
+
+
+
+
+
+
+  
