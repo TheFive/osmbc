@@ -1,0 +1,44 @@
+extends layout
+
+
+
+
+block content
+
+  table.table.table-striped
+    thead
+      tr 
+        th
+          | Field
+        th
+          | Value
+    tbody
+      tr
+        th
+          | user
+        td= change.user
+      tr
+        th
+          | Timestamp
+        td= change.timestamp +" (" +moment(change).fromNow()+")"
+      tr
+        th
+          | table
+        td= change.table
+      tr
+        th 
+         | Property
+        td= change.property
+      tr
+        th 
+         | From
+        td= change.from
+      tr
+        th
+          | To
+        td= change.to
+
+
+
+
+  

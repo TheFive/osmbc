@@ -6,12 +6,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var passport     = require('passport');
 var session = require('express-session');
+var FileStore = require('session-file-store')(session);
  
 var  OpenStreetMapStrategy = require('passport-openstreetmap').Strategy;
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var article = require('./routes/article');
+var changes = require('./routes/changes');
 
 var OPENSTREETMAP_CONSUMER_KEY = "oxzBk3Y2B6ZQjdu3r7o7pibQSSNHlzllG6v9iZUD"
 var OPENSTREETMAP_CONSUMER_SECRET = "4nEEHKcQ9xSrMTQRJZjYjSHDVvKZHgF6ZZO31t3z";
@@ -24,12 +26,17 @@ var OPENSTREETMAP_CONSUMER_SECRET = "4nEEHKcQ9xSrMTQRJZjYjSHDVvKZHgF6ZZO31t3z";
 //   the user by ID when deserializing.  However, since this example does not
 //   have a database of user records, the complete OpenStreetMap profile is
 //   serialized and deserialized.
+// in OSMBC only the displayName is relevant (as long as there is no user database)
+// so this is enough for serialising.
+// if there will be a user database, this has to be integrated here
 passport.serializeUser(function(user, done) {
-  done(null, user);
+  done(null, user.displayName);
 });
 
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
+passport.deserializeUser(function(name, done) {
+  var user = {}
+  user.displayName = name;
+  done(null, user);
 });
 
 // taken from https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
@@ -57,13 +64,12 @@ passport.use(new OpenStreetMapStrategy({
 
 function ensureAuthenticated(req, res, next) {
 
-  if (req.isAuthenticated()) { 
-    req.locals.user = req.user.displayName;
-
-    return next(); }
+  if (req.isAuthenticated()) {  return next(); }
+  req.session.returnTo = req.originalUrl; 
   res.redirect('/auth/openstreetmap')
-}
 
+}
+ 
 
 var app = express();
 
@@ -74,14 +80,14 @@ app.set('view engine', 'jade');
 
 
 // take from https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
-app.use(session({ secret: 'osmbc_secret' ,resave:false,saveUninitialized:true}));
+app.use(session({ store: new FileStore(),secret: 'LvwnH}uHhDLxvAu3X6' ,resave:true,saveUninitialized:true}));
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
 app.use(passport.initialize());
 app.use(passport.session());
 
 
-app.get('/', function(req, res){
+app.get('/', ensureAuthenticated, function(req, res){
   res.render('index', { user: req.user });
 });
 
@@ -89,9 +95,6 @@ app.get('/account', ensureAuthenticated, function(req, res){
   res.render('account', { user: req.user });
 });
 
-app.get('/login', function(req, res){
-  res.render('login', { user: req.user });
-});
 
 
 // uncomment after placing your favicon in /public
@@ -124,7 +127,8 @@ app.get('/auth/openstreetmap',
 app.get('/auth/openstreetmap/callback', 
   passport.authenticate('openstreetmap', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('/');
+    res.redirect(req.session.returnTo || '/');
+    //res.redirect('/');
   });
 
 app.get('/logout', function(req, res){
@@ -132,11 +136,12 @@ app.get('/logout', function(req, res){
   res.redirect('/');
 });
 
-app.use(ensureAuthenticated);
+//app.use(ensureAuthenticated);
 
-app.use('/', routes);
-app.use('/users', users);
-app.use('/article', article);
+app.use('/', ensureAuthenticated,routes);
+app.use('/users',ensureAuthenticated, users);
+app.use('/article',ensureAuthenticated, article);
+app.use('/change',ensureAuthenticated, changes);
 
 
 // Simple route middleware to ensure user is authenticated.

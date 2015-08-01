@@ -1,7 +1,10 @@
 var pg = require('pg');
+var async = require('async');
 var config = require('../config.js');
+var logModule = require('../model/logModule.js');
+
 var pgMap = require('./pgMap.js')
-var debug = require('debug')('user');
+var debug = require('debug')('OSMBC:article');
 
 
 function Article (proto)
@@ -24,6 +27,35 @@ function create (proto) {
  
 Article.prototype.save = pgMap.save;
 Article.prototype.remove = pgMap.remove;
+
+Article.prototype.setAndSave = function setAndSave(user,data,callback) {
+  debug("setAndSave");
+  var self = this;
+  delete self.lock;
+  for (var k in data) {
+    debug("Set Property %s to Value %s",k,data[k]);
+  }
+
+  async.forEachOf(data,function(value,key,callback){
+    if (typeof(value)=='undefined') return callback();
+    if (value == self[key]) return callback();
+    async.series ( [
+        function(callback) {
+           logModule.log({id:self.id,user:user,table:"article",property:key,from:self[key],to:value},callback);
+        },
+        function(callback) {
+          self[key] = value;
+          callback();
+        }
+      ],function(err){
+        callback(err);
+      })
+
+  },function(err) {
+    if (err) return callback(err);
+    self.save(callback);
+  })
+} 
 
 function find(callback) {
 	debug("find");

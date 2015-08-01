@@ -28,20 +28,20 @@ html(lang='en')
         .navbar-collapse.collapse
           ul.nav.navbar-nav
             li.active
-              a(href='#') Home
+              a(href='#') Dummy
             li
-              a(href='#about') About
+              a(href='#about') Dummy
             li
-              a(href='#contact') Contact
+              a(href='#contact') Dummy
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | Dropdown 
                 span.caret
               ul.dropdown-menu(role='menu')
                 li
-                  a(href='#') Action
+                  a(href='#') Dummy
                 li
-                  a(href='#') Another action
+                  a(href='#') Another Dummy
                 li
                   a(href='#') Something else here
                 li.divider
@@ -52,8 +52,13 @@ html(lang='en')
                   a(href='#') One more separated link
           ul.nav.navbar-nav.navbar-right
             
-            li
-              a(href='./') #{user.displayName}
+            
+              if user
+                li 
+                  a(href='./') #{user.displayName}
+              else
+                li  
+                  a(href='./') Anonymous
         // /.nav-collapse
   
 

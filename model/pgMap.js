@@ -12,6 +12,7 @@ module.exports.save = function(callback) {
   console.dir(self);
 
   var table = self._meta.table;
+
 	// first check, wether ID is known or not
 	if (self.id == 0) {
 		// we have to create the beer
@@ -25,10 +26,10 @@ module.exports.save = function(callback) {
     	query.on('row',function(row) {
     		self.id = row.id;
     	})
-    	query.on('end',function (err) {
+    	query.on('end',function (result) {
     		
     		pgdone();
-    		callback(err);
+    		callback(null,result);
     	})
     })
 	} else {
@@ -44,9 +45,9 @@ module.exports.save = function(callback) {
     	/*query.on('row',function(row) {
     		results.push(row);
     	})*/
-    	query.on('end',function (err) {
+    	query.on('end',function (result) {
      		pgdone();
-    		callback(err);
+    		callback(null,result);
     	})
 		})
 	}
@@ -71,41 +72,69 @@ module.exports.remove = function(callback) {
   	/*query.on('row',function(row) {
   		results.push(row);
   	})*/
-  	query.on('end',function (err) {
+  	query.on('end',function (result) {
   		debug("end called");
-  		
-  		pgdone();
-  		callback(err);
-  	})
-	})
-}
-
-module.exports.find = function find(module,callback) {
-	debug("find");
-	var table = module.table;
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-  	if (err) {
-
-  		pgdone();
-  		return (callback(err));
-  	}
-  	var result = [];
-
-  	var query = client.query("select id,data from "+table);
-  	query.on('row',function(row) {
-  		object = module.create();
-      for (var k in row.data) {
-      	object[k]=row.data[k];
-      }
-      object.id=row.id;
-      result.push(object);
-  	})
-  	query.on('end',function (err) {
   		
   		pgdone();
   		callback(null,result);
   	})
-  })}
+	})
+}
+
+module.exports.find = function find(module,obj,order,callback) {
+	debug("find");
+  if (typeof(obj)=='function') {
+    callback = obj;
+    obj = null;
+  }
+  if (typeof(order) == 'function') {
+    callback = order;
+    order = null;
+  }
+  pg.connect(config.pgstring, function(err, client, pgdone) {
+    if (err) {
+      console.log("Connection Error")
+
+      pgdone();
+      return (callback(err));
+    }
+  	var table = module.table;
+
+    var whereClause = "";
+    var objects = [];
+    var i =1;
+    for (var k in obj) {
+      var n = "data->>'"+k+"'= $"+i; 
+      i++;
+      objects.push(obj[k]);
+      if (whereClause =="") whereClause = " where "+n;
+      else whereClaues += " and "+n;
+    }
+    var orderby = "";
+    if (order) {
+      orderby = " order by data->>'"+order.column+"'";
+      if (order.desc) {
+        orderby += " desc";
+      }
+    }
+    var result = [];
+
+    var query = client.query("select id,data from "+table+whereClause+orderby, objects);
+    query.on('row',function(row) {
+      var r = module.create();
+      for (var k in row.data) {
+        r[k]=row.data[k];
+      }
+      r.id = row.id;
+      result.push(r);
+    })
+    query.on('end',function (pgresult) {		
+    	pgdone();
+    	callback(null,result);
+    })
+  })
+}
+
 
 
 module.exports.findById = function findById(id,module,callback) {
@@ -120,8 +149,13 @@ module.exports.findById = function findById(id,module,callback) {
   		return (callback(err));
   	}
   	var result = {};
+    var idToSearch = 0;
 
-  	var query = client.query("select id,data from "+table+" where id = $1", [id]);
+    if (id % 1 === 0) idToSearch = id;
+
+
+
+  	var query = client.query("select id,data from "+table+" where id = $1", [idToSearch]);
   	query.on('row',function(row) {
   		result = module.create();
       for (var k in row.data) {
@@ -129,7 +163,7 @@ module.exports.findById = function findById(id,module,callback) {
       }
       result.id = row.id;
   	})
-  	query.on('end',function (err) {
+  	query.on('end',function (pgresult) {
   		
   		pgdone();
   		callback(null,result);
@@ -170,7 +204,7 @@ module.exports.findOne = function findOne(obj,module,callback) {
       }
       result.id = row.id;
   	})
-  	query.on('end',function (err) {
+  	query.on('end',function (result) {
   		
   		pgdone();
   		console.log("Found");
