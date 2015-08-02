@@ -2,7 +2,30 @@ var pg = require('pg');
 var config = require('../config.js');
 var debug = require('debug')('OSMBC:pgMap')
 
+function generateQuery(table,obj,order) {
+  debug(generateQuery);
+  var whereClause = "";
 
+  if (obj) {
+    for (var k in obj) {
+      var n = "data->>'"+k+"'= '"+obj[k]+"'"; 
+      if (whereClause =="") whereClause = " where "+n;
+      else whereClause += " and "+n;
+    }    
+  }
+  var orderby = "";
+  if (order) {
+    if (order) {
+      orderby = " order by data->>'"+order.column+"'";
+      if (order.desc) {
+        orderby += " desc";
+      }
+    }    
+  }
+  var query = "select id,data from "+table+whereClause+orderby;
+  debug(query);
+  return query;
+}
 
  
 module.exports.save = function(callback) {
@@ -16,23 +39,27 @@ module.exports.save = function(callback) {
 	// first check, wether ID is known or not
 	if (self.id == 0) {
 		// we have to create the beer
-		console.log(config.pgstring);
+		debug("Object has to be created");
     pg.connect(config.pgstring, function(err, client, pgdone) {
     	if (err) {
     		pgdone();
     		return (callback(err));
     	}
-    	var query = client.query("insert into "+table+"(data) values ($1) returning id", [self]);
+      var sqlquery = "insert into "+table+"(data) values ($1) returning id";
+      debug("Query %s",sqlquery);
+    	var query = client.query(sqlquery, [self]);
     	query.on('row',function(row) {
+        debug("Created Row ID %s",row.id);
     		self.id = row.id;
     	})
     	query.on('end',function (result) {
     		
     		pgdone();
-    		callback(null,result);
+    		callback(null,self);
     	})
     })
 	} else {
+    debug("Object will be updated");
 		// we have to change the beer
     pg.connect(config.pgstring, function(err, client, pgdone) {
     	if (err) {
@@ -83,6 +110,7 @@ module.exports.remove = function(callback) {
 
 module.exports.find = function find(module,obj,order,callback) {
 	debug("find");
+  debug(JSON.stringify(obj));
   if (typeof(obj)=='function') {
     callback = obj;
     obj = null;
@@ -91,6 +119,7 @@ module.exports.find = function find(module,obj,order,callback) {
     callback = order;
     order = null;
   }
+  debug(JSON.stringify(obj));
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) {
       console.log("Connection Error")
@@ -98,28 +127,12 @@ module.exports.find = function find(module,obj,order,callback) {
       pgdone();
       return (callback(err));
     }
-  	var table = module.table;
+    var table = module.table;
+    var sqlQuery = generateQuery(table,obj,order);
 
-    var whereClause = "";
-    var objects = [];
-    var i =1;
-    for (var k in obj) {
-      var n = "data->>'"+k+"'= $"+i; 
-      i++;
-      objects.push(obj[k]);
-      if (whereClause =="") whereClause = " where "+n;
-      else whereClaues += " and "+n;
-    }
-    var orderby = "";
-    if (order) {
-      orderby = " order by data->>'"+order.column+"'";
-      if (order.desc) {
-        orderby += " desc";
-      }
-    }
     var result = [];
 
-    var query = client.query("select id,data from "+table+whereClause+orderby, objects);
+    var query = client.query(sqlQuery);
     query.on('row',function(row) {
       var r = module.create();
       for (var k in row.data) {
@@ -171,9 +184,17 @@ module.exports.findById = function findById(id,module,callback) {
   })
 }
 
-module.exports.findOne = function findOne(obj,module,callback) {
+module.exports.findOne = function findOne(module,obj,order,callback) {
 	debug("findOne");
 	var table = module.table;
+  if (typeof(obj)=='function') {
+    callback = obj;
+    obj = null;
+  }
+  if (typeof(order)=='function') {
+    callback = order;
+    order = null;
+  }
 
   pg.connect(config.pgstring, function(err, client, pgdone) {
   	if (err) {
@@ -182,21 +203,10 @@ module.exports.findOne = function findOne(obj,module,callback) {
   		return (callback(err));
   	}
   	var result = null;
+    var sqlQuery = generateQuery(module.table,obj,order);
 
-  	var whereClause = "";
-  	var objects = [];
-    var i =1;
-  	for (var k in obj) {
-      var n = "data->>'"+k+"'= $"+i; 
-      i++;
-      objects.push(obj[k]);
-      if (whereClause =="") whereClause = " where "+n;
-      else whereClaues += " and "+n;
-  	}
-  	console.log("select id,data from "+table+whereClause);
-  	console.dir(objects);
 
-  	var query = client.query("select id,data from "+table+whereClause, objects);
+  	var query = client.query(sqlQuery+ " limit 1");
   	query.on('row',function(row) {
   		result = module.create();
       for (var k in row.data) {
@@ -204,12 +214,13 @@ module.exports.findOne = function findOne(obj,module,callback) {
       }
       result.id = row.id;
   	})
-  	query.on('end',function (result) {
+  	query.on('end',function (pgresult) {
+
+      pgdone();
+      console.log("Found");
+      console.dir(result);
+      callback(null,result);      
   		
-  		pgdone();
-  		console.log("Found");
-  		console.dir(result);
-  		callback(null,result);
   	})
   })
 }

@@ -1,0 +1,61 @@
+extends layout
+
+
+
+
+block content
+
+  row
+    .col-md-8
+      h1= blog.name
+      div.btn-group
+        button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
+          | #{blog.status}
+          span.caret   
+        ul.dropdown-menu(name="category",role="menu")
+          | #{blog.status}
+          li
+            a(href="/blog/#{blog.id}?setStatus=open") open 
+          li
+            a(href="/blog/#{blog.id}?setStatus=review") review 
+          li
+            a(href="/blog/#{blog.id}?setStatus=published") published 
+          li
+            a(href="/blog/#{blog.id}?setStatus=trash") trash 
+
+
+    .col-md-4
+      | Blogs: 
+      a(href="/blog/list?status=open") open
+      | 
+      a(href="/blog/list?status=review") review
+      | 
+      a(href="/blog/list?status=trash") trash
+      | 
+      a(href="/blog/list?status=published") published
+      if changes
+        div
+          table.table.table-striped
+            thead
+              tr 
+                th
+                 | user
+                th
+                 |  what
+                th
+                 |  to
+                th
+                 | when
+             tbody
+              each change, i in changes
+                tr
+                  td
+                    a(href='/change/' + change.id) #{change.id} 
+                  td= change.user
+                  td= change.property
+                  td= change.to
+                  td= moment(change.timestamp).fromNow() 
+
+
+
+  

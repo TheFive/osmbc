@@ -10,13 +10,13 @@ var debug = require('debug')('OSMBC:article');
 function Article (proto)
 {
 	debug("Article");
+  debug("Prototype %s",JSON.stringify(proto));
 	this.id = 0;
   this._meta={};
   this._meta.table = "article";
-	if (proto) {
-		if (typeof(proto.id) != 'undefined') this.id = proto.id;
-	}
-
+	for (k in proto) {
+    this[k] = proto[k];
+  }
 }
 
 function create (proto) {
@@ -24,6 +24,12 @@ function create (proto) {
 	return new Article(proto);
 }
 
+
+function createNewArticle (proto,callback) {
+  debug("createNewArticle");
+  var article = create(proto);
+  article.save(callback);
+}
  
 Article.prototype.save = pgMap.save;
 Article.prototype.remove = pgMap.remove;
@@ -32,14 +38,14 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   debug("setAndSave");
   var self = this;
   delete self.lock;
-  for (var k in data) {
-    debug("Set Property %s to Value %s",k,data[k]);
-  }
 
   async.forEachOf(data,function(value,key,callback){
     if (typeof(value)=='undefined') return callback();
     if (value == self[key]) return callback();
-    async.series ( [
+    
+    debug("Set Key %s to value >>%s<<",key,value);
+    debug("Old Value Was >>%s<<",self[key]);
+   async.series ( [
         function(callback) {
            logModule.log({id:self.id,user:user,table:"article",property:key,from:self[key],to:value},callback);
         },
@@ -66,13 +72,14 @@ function findById(id,callback) {
   pgMap.findById(id,this,callback);
 }
 
-function findOne(obj,callback) {
+function findOne(obj1,obj2callback) {
   debug("findOne");
-  pgMap.findOne(obj,this,callback);
+  pgMap.findOne(this,obj1,obj2,callback);
 }
 
 
 module.exports.create= create;
+module.exports.createNewArticle = createNewArticle;
 module.exports.find = find;
 module.exports.findById = findById;
 module.exports.findOne = findOne;

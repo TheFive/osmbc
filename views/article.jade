@@ -8,7 +8,7 @@ block content
     if article.lock
       .alert.alert-dismissable.alert-info
         button.close( type="button", data-dismiss="alert" ) ×
-        | #{article.lock.user} edits since #{article.lock.timestamp}
+        | #{article.lock.user} edits since #{moment(article.lock.timestamp).fromNow()}
     if info
       if info.message
         if info.status == 'error'
@@ -21,139 +21,175 @@ block content
             | #{info.message}
     .row
       .col-md-1
-        | Collection <br>
-        a(href="/article/#{article.id}?edit=collection") Edit
+        | Blog <br>
       .col-md-11
-        if params.edit != 'collection'
-          .panel.panel-default
-            .panel-body #{article.collection}
-        else
-          form(name="input", action="/article/#{article.id}", method="post")
-            textarea.form-control(name="collection",rows=7) #{article.collection}
-            input(type="submit", value="Submit")
+        div.btn-group
+          button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
+            | #{article.blog}
+            span.caret   
+          ul.dropdown-menu(name="category",role="menu")
+            | #{article.category}    
+            li
+              a(href="/article/#{article.id}?setBlog=WN255") WN255
+            li
+              a(href="/article/#{article.id}?setBlog=WN256") WN256
+          
     .row
       .col-md-1
         | Category <br>
       .col-md-11
-              div.btn-group
-                button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-                  | #{article.category}
-                  span.caret   
-                ul.dropdown-menu(name="category",role="menu")
-                  | #{article.category}
-                  li
-                    a(href="/article/#{article.id}?setCategory=[Aktuelle Kategorie]") [Aktuelle Kategorie] 
-                  li
-                    a(href="/article/#{article.id}?setCategory=In eigener Sache") In eigener Sache
-                  li
-                    a(href="/article/#{article.id}?setCategory=Wochenaufruf") Wochenaufruf
-                  li
-                    a(href="/article/#{article.id}?setCategory=Mapping") Mapping
-                  li
-                    a(href="/article/#{article.id}?setCategory=Community") Community
-                  li
-                    a(href="/article/#{article.id}?setCategory=Importe") Importe
-                  li
-                    a(href="/article/#{article.id}?setCategory=OpenStreetMap Foundation") OpenStreetMap Foundation
-                  li
-                    a(href="/article/#{article.id}?setCategory=Veranstaltungen") Veranstaltungen
-                  li
-                    a(href="/article/#{article.id}?setCategory=Humanitarian OSM") Humanitarian OSM
-                  li
-                    a(href="/article/#{article.id}?setCategory=Karten") Karten
-                  li
-                    a(href="/article/#{article.id}?setCategory=switch2OSM") switch2OSM
-                  li
-                    a(href="/article/#{article.id}?setCategory=Open-Data") Open-Data
-                  li
-                    a(href="/article/#{article.id}?setCategory=Lizenzen") Lizenzen
-                  li
-                    a(href="/article/#{article.id}?setCategory=Programme") Programme
-                  li
-                    a(href="/article/#{article.id}?setCategory=Programmierung") Programmierung
-                  li
-                    a(href="/article/#{article.id}?setCategory=Kennst Du schon...") Kennst Du schon...
-                  li
-                    a(href="/article/#{article.id}?setCategory=Weitere Themen mit Geo-Bezug") Weitere Themen mit Geo-Bezug
-                  li
-                    a(href="/article/#{article.id}?setCategory=Wochenvorschau") Wochenvorschau
+        div.btn-group
+          button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
+            | #{article.category}
+            span.caret   
+          ul.dropdown-menu(name="category",role="menu")
+            | #{article.category}
+            li
+              a(href="/article/#{article.id}?setCategory=[Aktuelle Kategorie]") [Aktuelle Kategorie] 
+            li
+              a(href="/article/#{article.id}?setCategory=In eigener Sache") In eigener Sache
+            li
+              a(href="/article/#{article.id}?setCategory=Wochenaufruf") Wochenaufruf
+            li
+              a(href="/article/#{article.id}?setCategory=Mapping") Mapping
+            li
+              a(href="/article/#{article.id}?setCategory=Community") Community
+            li
+              a(href="/article/#{article.id}?setCategory=Importe") Importe
+            li
+              a(href="/article/#{article.id}?setCategory=OpenStreetMap Foundation") OpenStreetMap Foundation
+            li
+              a(href="/article/#{article.id}?setCategory=Veranstaltungen") Veranstaltungen
+            li
+              a(href="/article/#{article.id}?setCategory=Humanitarian OSM") Humanitarian OSM
+            li
+              a(href="/article/#{article.id}?setCategory=Karten") Karten
+            li
+              a(href="/article/#{article.id}?setCategory=switch2OSM") switch2OSM
+            li
+              a(href="/article/#{article.id}?setCategory=Open-Data") Open-Data
+            li
+              a(href="/article/#{article.id}?setCategory=Lizenzen") Lizenzen
+            li
+              a(href="/article/#{article.id}?setCategory=Programme") Programme
+            li
+              a(href="/article/#{article.id}?setCategory=Programmierung") Programmierung
+            li
+              a(href="/article/#{article.id}?setCategory=Kennst Du schon...") Kennst Du schon...
+            li
+              a(href="/article/#{article.id}?setCategory=Weitere Themen mit Geo-Bezug") Weitere Themen mit Geo-Bezug
+            li
+              a(href="/article/#{article.id}?setCategory=Wochenvorschau") Wochenvorschau
 
           
-
-   .row
-      .col-md-1
-        | Markdown <br>
-        a(href="/article/#{article.id}?edit=markdown") Edit
-      .col-md-11  
-        if params.edit != 'markdown'
-          .panel.panel-default
-            .panel-body #{article.markdown}
-        else
-          form(name="input", action="/article/#{article.id}", method="post")
+    if (params.edit) 
+      form(name="input", action="/article/#{article.id}", method="post")
+        input(type="submit", value="Submit")
+        .row
+          .col-md-1
+            | Title <br>
+          .col-md-11
+            textarea.form-control(name="title",rows=1) #{article.title}
+               
+        .row
+          .col-md-1
+            | Collection <br>
+          .col-md-11
+            textarea.form-control(name="collection",rows=7) #{article.collection}
+        .row
+          .col-md-1
+            | Markdown <br>
+          .col-md-11  
             textarea.form-control(
               name="markdown"
               rows=7) #{article.markdown}
-            input(type="submit", value="Submit")
-     
-    .row
-      .col-md-1
-        | Preview 
-
-      .col-md-11 
-        .panel.panel-default
-          .panel-body 
-            :verbatim
-            !{article.textHtml}
-
-
-    .row
-      .col-md-1
-        | Comment <br>
-        a(href="/article/#{article.id}?edit=comment") Edit
-      .col-md-11  
-        if params.edit != 'comment'
-          .panel.panel-default
-            .panel-body 
-              :verbatim
-              !{article.commentHtml}
-        else
-          form(name="input", action="/article/#{article.id}", method="post")
+        .row
+          .col-md-1
+            | Preview 
+          .col-md-11 
+            .panel.panel-default
+              .panel-body 
+                :verbatim
+                !{article.textHtml}
+        .row
+          .col-md-1
+            | Comment <br>
+          .col-md-11  
             textarea.form-control(
               name="comment"
               rows=7) #{article.comment}
-            input(type="submit", value="Submit")
-    .row
-      if changes
-        div
-          table.table.table-striped
-            thead
-              tr 
-                th
-                 | id
-                th
-                 | user
-                th
-                 | what
-                th
-                 | from
-                th
-                 |  to
-                th
-                 | when
-             tbody
-              each change, i in changes
-                tr
-                  td
-                    a(href='/change/' + change.id) #{change.id} 
-                  td= change.user
-                  td= change.property
-                  td= (change.from.substring(0,30))+((change.from.length>30) ? " ...":"")
-                  td= (change.to.substring(0,30))+((change.to.length>30) ? " ...":"")
-                  td= moment(change.timestamp).fromNow() 
-                  
+    else
+      .row
+        .col-md-1
+          | Title <br>
+          a(href="/article/#{article.id}?edit=title") Edit
+        .col-md-11
+          .panel.panel-default
+              .panel-body #{article.title}
+      .row
+        .col-md-1
+          | Collection <br>
+          a(href="/article/#{article.id}?edit=collection") Edit
+        .col-md-11
+            .panel.panel-default
+              .panel-body #{article.collection}
+      .row
+          .col-md-1
+            | Markdown <br>
+            a(href="/article/#{article.id}?edit=markdown") Edit
+          .col-md-11  
+              .panel.panel-default
+                .panel-body #{article.markdown}
+         
+      .row
+        .col-md-1
+          | Preview 
+
+        .col-md-11 
+          .panel.panel-default
+            .panel-body 
+              :verbatim
+              !{article.textHtml}
+      .row
+        .col-md-1
+          | Comment <br>
+          a(href="/article/#{article.id}?edit=comment") Edit
+        .col-md-11  
+            .panel.panel-default
+              .panel-body 
+                :verbatim
+                !{article.commentHtml}
+  .row
+    if changes
+      div
+        table.table.table-striped
+          thead
+            tr 
+              th
+               | id
+              th
+               | user
+              th
+               | what
+              th
+               | from
+              th
+               |  to
+              th
+               | when
+           tbody
+            each change, i in changes
+              tr
+                td
+                  a(href='/change/' + change.id) #{change.id} 
+                td= change.user
+                td= change.property
+                td= (change.from) ? (change.from.substring(0,30))+((change.from.length>30) ? " ...":"") :""
+                td= (change.to) ? (change.to.substring(0,30))+((change.to.length>30) ? " ...":"") :""
+                td= moment(change.timestamp).fromNow() 
+                
 
 
 
 
 
-  

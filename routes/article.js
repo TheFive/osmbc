@@ -40,6 +40,23 @@ router.get('/:article_id', function(req, res, next) {
         } else return callback();
       },
       function (callback) {
+        if (typeof(req.query.setBlog)!='undefined')
+        {
+          var changes = {blog:req.query.setBlog};
+          article.setAndSave(req.user.displayName,changes,function(err) {
+            var info = {};
+            info.message = "Blog Changed";
+            info.status = "message";
+            if (err) {
+              console.dir(err);
+              info.message = JSON.stringify(err);
+              info.status = 'error';
+            }
+            return callback();
+          })
+        } else return callback();
+      },
+      function (callback) {
         logModule.find({id:id},{column:"timestamp",desc :true},function(err,result) {
           if (err) return callback(err);
           changes = result;
@@ -82,29 +99,29 @@ router.post('/:article_id', function(req, res, next) {
   	var changes = {markdown:req.body.markdown,
                    collection:req.body.collection,
                    comment:req.body.comment,
-                   category:req.body.category};
+                   category:req.body.category,
+                   title:req.body.title};
 
     article.setAndSave(req.user.displayName,changes,function(err) {
-      var info = {};
-      info.message = "Everything saved";
-      info.status = "message";
-      if (err) {
-        console.dir(err);
-        info.message = JSON.stringify(err);
-        info.status = 'error';
-      }
-      if (typeof(article.markdown)!='undefined') {
-        article.textHtml = markdown.toHTML(article.markdown)
-      } 
-      if (typeof(article.comment)!='undefined') {
-        article.commentHtml = markdown.toHTML(article.comment)
-      } 
-
-
-      var params = {};
-      params.edit = req.query.edit;
-      res.render('article',{article:article,params:params,info:info,user:req.user});      
+      res.redirect("/article/"+id);    
     })
+  });
+});
+
+router.get('/create', function(req, res, next) {
+  debug('router.get /create');
+  var proto = {};
+  if (typeof(req.query.blog) != 'undefined' ) {
+    proto.blog = req.query.blog;
+  }
+  if (typeof(req.query.category) != 'undefined' ) {
+    proto.category = req.query.category;
+  }
+
+  articleModule.createNewArticle(proto,function(err,article) {
+
+    res.redirect('/article/'+article.id);
+    //res.render('bloglist',{blogs:blogs,user:req.user});
   });
 });
 

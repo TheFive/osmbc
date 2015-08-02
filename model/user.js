@@ -1,7 +1,7 @@
 var pg = require('pg');
 var config = require('../config.js');
 var pgMap = require('./pgMap.js')
-var debug = require('debug')('user');
+var debug = require('debug')('OSMBC:user');
 var bcrypt = require('bcrypt-nodejs');
 
 
@@ -55,9 +55,9 @@ function findById(id,callback) {
   pgMap.findById(id,this,callback);
 }
 
-function findOne(obj,callback) {
+function findOne(obj1,obj2,callback) {
   debug("findOne");
-  pgMap.findOne(obj,this,callback);
+  pgMap.findOne(this,obj1,obj2,callback);
 }
 
 User.prototype.verifyPassword = function(password, cb) {

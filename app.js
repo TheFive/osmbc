@@ -14,6 +14,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var article = require('./routes/article');
 var changes = require('./routes/changes');
+var blog = require('./routes/blog');
 
 var OPENSTREETMAP_CONSUMER_KEY = "oxzBk3Y2B6ZQjdu3r7o7pibQSSNHlzllG6v9iZUD"
 var OPENSTREETMAP_CONSUMER_SECRET = "4nEEHKcQ9xSrMTQRJZjYjSHDVvKZHgF6ZZO31t3z";
@@ -142,6 +143,7 @@ app.use('/', ensureAuthenticated,routes);
 app.use('/users',ensureAuthenticated, users);
 app.use('/article',ensureAuthenticated, article);
 app.use('/change',ensureAuthenticated, changes);
+app.use('/blog',ensureAuthenticated, blog);
 
 
 // Simple route middleware to ensure user is authenticated.
