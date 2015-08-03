@@ -3,8 +3,34 @@ var async = require('async');
 var config = require('../config.js');
 var logModule = require('../model/logModule.js');
 
-var pgMap = require('./pgMap.js')
+var pgMap = require('./pgMap.js');
 var debug = require('debug')('OSMBC:article');
+
+
+var listOfOpenBlog = null;
+
+function getListOfOpenBlog(callback) {
+  debug('getListOfOpenBlog');
+  if (listOfOpenBlog) return callback(null,listOfOpenBlog);
+
+  pg.connect(config.pgstring, function(err, client, pgdone) {
+    if (err) {
+      console.log("Connection Error")
+
+      pgdone();
+      return (callback(err));
+    }
+    var query = client.query("select name from OpenBlogWithArticle");
+    listOfOpenBlog = [];
+    query.on('row',function(row) {
+          listOfOpenBlog.push(row.name);
+    })
+    query.on('end',function (pgresult) {    
+      pgdone();
+      callback(null,listOfOpenBlog);
+    })
+  })  
+}
 
 
 function Article (proto)
@@ -36,6 +62,7 @@ Article.prototype.remove = pgMap.remove;
 
 Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   debug("setAndSave");
+  listOfOpenBlog = null;
   var self = this;
   delete self.lock;
 
@@ -63,9 +90,9 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   })
 } 
 
-function find(callback) {
+function find(obj,order,callback) {
 	debug("find");
-  pgMap.find(this,callback);
+  pgMap.find(this,obj,order,callback);
 }
 function findById(id,callback) {
 	debug("findById %s",id);
@@ -84,3 +111,4 @@ module.exports.find = find;
 module.exports.findById = findById;
 module.exports.findOne = findOne;
 module.exports.table = "article";
+module.exports.getListOfOpenBlog = getListOfOpenBlog;

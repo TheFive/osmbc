@@ -1,0 +1,35 @@
+extends layout
+
+
+
+
+block content
+
+  row
+    div
+      table.table.table-striped
+        thead
+          tr 
+            th
+             | title
+            th
+             | blog
+            th
+             | category
+            th
+             | collection
+            th
+             | markdown
+         tbody
+          each article in articles
+            tr
+              td
+                a(href='/article/' + article.id) #{(article.title) ? (article.title): "undefined"} 
+              td= article.blog
+              td= article.category
+              td= (article.collection) ? (article.collection.substring(0,30))+((article.collection.length>30) ? " ...":"") :""
+              td= (article.markdown) ? (article.markdown.substring(0,30))+((article.markdown.length>30) ? " ...":"") :""
+               
+
+
+  

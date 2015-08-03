@@ -6,6 +6,7 @@ var markdown = require('markdown').markdown;
 var debug = require('debug')('OSMBC:routes:article');
 
 var articleModule = require('../model/article.js');
+var blogModule = require('../model/blog.js');
 var logModule = require('../model/logModule.js');
 
 /* GET users listing. */
@@ -15,7 +16,7 @@ router.get('/:article_id', function(req, res, next) {
   articleModule.findById(id,function(err,article) {
     if (typeof(article.id) == 'undefined') return next();
 
-
+   var listOfOpenBlog;
    var params = {};
     params.edit = req.query.edit;
     var changes = [];
@@ -64,6 +65,12 @@ router.get('/:article_id', function(req, res, next) {
           callback();
         })
       },
+      function (callback) {
+        articleModule.getListOfOpenBlog(function(err,result) {
+          listOfOpenBlog = result;
+          callback();
+        })
+      },
       function (callback){
         if (typeof(params.edit)!='undefined') {
           article.lock={};
@@ -85,7 +92,13 @@ router.get('/:article_id', function(req, res, next) {
           } 
 
  
-          res.render('article',{article:article,params:params,user:req.user,changes:changes,moment:moment});
+          res.render('article',{article:article,
+                                params:params,
+                                user:req.user,
+                                changes:changes,
+                                listOfOpenblog:listOfOpenBlog,
+                                moment:moment,
+                                categories:blogModule.categories});
         }
     );
   });
@@ -118,10 +131,37 @@ router.get('/create', function(req, res, next) {
     proto.category = req.query.category;
   }
 
-  articleModule.createNewArticle(proto,function(err,article) {
+  async.series([
+    function calculateWN(callback) {
+      blogModule.findOne({status:'open'},{column:"name",desc:false},
+                         function calculateWNResult(err,blog){
+        if (blog) {
+          if (typeof(proto.blog) == 'undefined') {
+            proto.blog=blog.name;
+          }
+        }
+        callback();
+      })
+    }
+    ],
+    function(err) {
+      articleModule.createNewArticle(proto,function(err,article) {
+        res.redirect('/article/'+article.id+"?edit=collection");
+      });
+    }
+  );
+});
 
-    res.redirect('/article/'+article.id);
-    //res.render('bloglist',{blogs:blogs,user:req.user});
+
+router.get('/list', function(req, res, next) {
+  debug('router.get /list');
+  var blog = req.query.blog;
+  var query = {};
+  if (typeof(blog)!='undefined') {
+    query.blog = blog;
+  }
+  articleModule.find(query,{},function(err,articles) {
+    res.render('articlelist',{articles:articles,user:req.user});
   });
 });
 

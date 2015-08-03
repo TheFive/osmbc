@@ -27,29 +27,25 @@ html(lang='en')
           a.navbar-brand(href='#') OSMBC
         .navbar-collapse.collapse
           ul.nav.navbar-nav
-            li.active
-              a(href='#') Dummy
             li
-              a(href='#about') Dummy
+              a(href='/blog/list?status=open') WN
+            li
+              a(href='/article/create') Collect
             li
               a(href='#contact') Dummy
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
-                | Dropdown 
+                | Article 
                 span.caret
               ul.dropdown-menu(role='menu')
-                li
-                  a(href='#') Dummy
-                li
-                  a(href='#') Another Dummy
-                li
-                  a(href='#') Something else here
+                if (listOfOpenBlog) 
+                  for blog in listOfOpenBlog
+                    li
+                      a(href="/article/list?blog#{blog}") blog
                 li.divider
                 li.dropdown-header Nav header
                 li
-                  a(href='#') Separated link
-                li
-                  a(href='#') One more separated link
+                  a(href='/article/list') All
           ul.nav.navbar-nav.navbar-right
             
             

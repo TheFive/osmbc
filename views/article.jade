@@ -44,42 +44,10 @@ block content
             span.caret   
           ul.dropdown-menu(name="category",role="menu")
             | #{article.category}
-            li
-              a(href="/article/#{article.id}?setCategory=[Aktuelle Kategorie]") [Aktuelle Kategorie] 
-            li
-              a(href="/article/#{article.id}?setCategory=In eigener Sache") In eigener Sache
-            li
-              a(href="/article/#{article.id}?setCategory=Wochenaufruf") Wochenaufruf
-            li
-              a(href="/article/#{article.id}?setCategory=Mapping") Mapping
-            li
-              a(href="/article/#{article.id}?setCategory=Community") Community
-            li
-              a(href="/article/#{article.id}?setCategory=Importe") Importe
-            li
-              a(href="/article/#{article.id}?setCategory=OpenStreetMap Foundation") OpenStreetMap Foundation
-            li
-              a(href="/article/#{article.id}?setCategory=Veranstaltungen") Veranstaltungen
-            li
-              a(href="/article/#{article.id}?setCategory=Humanitarian OSM") Humanitarian OSM
-            li
-              a(href="/article/#{article.id}?setCategory=Karten") Karten
-            li
-              a(href="/article/#{article.id}?setCategory=switch2OSM") switch2OSM
-            li
-              a(href="/article/#{article.id}?setCategory=Open-Data") Open-Data
-            li
-              a(href="/article/#{article.id}?setCategory=Lizenzen") Lizenzen
-            li
-              a(href="/article/#{article.id}?setCategory=Programme") Programme
-            li
-              a(href="/article/#{article.id}?setCategory=Programmierung") Programmierung
-            li
-              a(href="/article/#{article.id}?setCategory=Kennst Du schon...") Kennst Du schon...
-            li
-              a(href="/article/#{article.id}?setCategory=Weitere Themen mit Geo-Bezug") Weitere Themen mit Geo-Bezug
-            li
-              a(href="/article/#{article.id}?setCategory=Wochenvorschau") Wochenvorschau
+            for category in categories
+              li
+                a(href="/article/#{article.id}?setCategory=#{category}") #{category}
+
 
           
     if (params.edit) 

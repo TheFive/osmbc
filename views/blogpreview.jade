@@ -1,0 +1,20 @@
+extends layout
+
+
+
+
+block content
+
+  h1= "Preview "+blog.name
+  row
+    if (preview)
+      :verbatim
+      !{preview}
+  h1= "Markdown "+blog.name
+  row
+    pre= fullMarkdown
+
+
+
+
+  

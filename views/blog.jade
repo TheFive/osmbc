@@ -22,6 +22,30 @@ block content
             a(href="/blog/#{blog.id}?setStatus=published") published 
           li
             a(href="/blog/#{blog.id}?setStatus=trash") trash 
+      ul
+        for category in categories
+          if (articles[category])
+            li= category
+              ul
+                for article in articles[category]
+                  if (article.markdown)
+                    li= article.markdown.substring(0,50)   
+                      a(href="/article/#{article.id}")    Edit
+                  else if (article.title)
+                    li
+                       a(href="/article/#{article.id}") #{article.title} 
+                  else if (article.collection)
+                    li
+                       a(href="/article/#{article.id}") #{article.collection.substring(0,50)}
+                  else 
+                    li
+                       a(href="/article/#{article.id}") #{article.id}
+          else
+            li
+              a(style={color:'LightGray'}) #{category}        
+                 
+
+
 
 
     .col-md-4
