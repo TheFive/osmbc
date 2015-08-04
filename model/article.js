@@ -20,10 +20,12 @@ function getListOfOpenBlog(callback) {
       pgdone();
       return (callback(err));
     }
-    var query = client.query("select name from OpenBlogWithArticle");
+    var query = client.query('select name from "OpenBlogWithArticle"');
+    debug("reading list of open blog");
     listOfOpenBlog = [];
     query.on('row',function(row) {
-          listOfOpenBlog.push(row.name);
+      debug(row.name);
+      listOfOpenBlog.push(row.name);
     })
     query.on('end',function (pgresult) {    
       pgdone();

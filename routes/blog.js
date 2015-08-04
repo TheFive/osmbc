@@ -19,6 +19,9 @@ router.get('/:blog_id', function(req, res, next) {
     var changes = [];
     var articles = {};
 
+    var listOfOpenBlog;
+
+
     async.series([
      function (callback) {
         if (typeof(req.query.setStatus)!='undefined')
@@ -47,7 +50,12 @@ router.get('/:blog_id', function(req, res, next) {
           callback();
         })
       },
- 
+      function (callback) {
+        articleModule.getListOfOpenBlog(function(err,result) {
+          listOfOpenBlog = result;
+          callback();
+        })
+      },
       function (callback) {
         logModule.find({id:id,table:"blog"},{column:"timestamp",desc :true},function(err,result) {
           if (err) return callback(err);
@@ -60,6 +68,7 @@ router.get('/:blog_id', function(req, res, next) {
         res.render('blog',{blog:blog,
                            user:req.user,
                            changes:changes,
+                           listOfOpenBlog:listOfOpenBlog,
                            moment:moment,
                            articles:articles,
                            categories:blogModule.categories});
@@ -73,12 +82,27 @@ router.get('/:blog_id', function(req, res, next) {
   debug('router.get /list');
   var status = req.query.status;
   var query = {};
+
+  var listOfOpenBlog;
   if (typeof(status)!='undefined') {
     query.status = status;
   }
-  blogModule.find(query,{column:"name",desc:true},function(err,blogs) {
-    res.render('bloglist',{blogs:blogs,user:req.user});
-  });
+
+  async.series([
+    function (callback) {
+        articleModule.getListOfOpenBlog(function(err,result) {
+          listOfOpenBlog = result;
+          callback();
+        })
+      }  
+      ],function(err) {
+        blogModule.find(query,{column:"name",desc:true},function(err,blogs) {
+          res.render('bloglist',{blogs:blogs,
+                                listOfOpenBlog:listOfOpenBlog,
+                                  user:req.user});
+        });
+
+  })
 });
 
 router.get('/:blog_id/preview', function(req, res, next) {
@@ -93,9 +117,17 @@ router.get('/:blog_id/preview', function(req, res, next) {
     var articles = {};
     var fullMarkdown ="";
     var preview = "";
+    var listOfOpenBlog;
+
 
     async.series([ 
-     function (callback) {
+      function (callback) {
+        articleModule.getListOfOpenBlog(function(err,result) {
+          listOfOpenBlog = result;
+          callback();
+        })
+      },
+      function (callback) {
         articleModule.find({blog:blog.name},function(err,result){
           for (var i=0;i<result.length;i++ ) {
             var r = result[i];
@@ -143,6 +175,7 @@ router.get('/:blog_id/preview', function(req, res, next) {
         res.render('blogpreview',{blog:blog,
                            user:req.user,
                            articles:articles,
+                           listOfOpenBlog:listOfOpenBlog,
                            preview:preview,
                            fullMarkdown:fullMarkdown,
                            categories:blogModule.categories});

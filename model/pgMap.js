@@ -9,6 +9,10 @@ function generateQuery(table,obj,order) {
   if (obj) {
     for (var k in obj) {
       var n = "data->>'"+k+"'= '"+obj[k]+"'"; 
+
+      if (obj[k]=="") {
+        n = "("+n+" or (data->'"+k+"') is null)";
+      }
       if (whereClause =="") whereClause = " where "+n;
       else whereClause += " and "+n;
     }    

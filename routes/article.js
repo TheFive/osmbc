@@ -96,7 +96,7 @@ router.get('/:article_id', function(req, res, next) {
                                 params:params,
                                 user:req.user,
                                 changes:changes,
-                                listOfOpenblog:listOfOpenBlog,
+                                listOfOpenBlog:listOfOpenBlog,
                                 moment:moment,
                                 categories:blogModule.categories});
         }
@@ -156,12 +156,32 @@ router.get('/create', function(req, res, next) {
 router.get('/list', function(req, res, next) {
   debug('router.get /list');
   var blog = req.query.blog;
+  var markdown = req.query.markdown;
   var query = {};
   if (typeof(blog)!='undefined') {
     query.blog = blog;
   }
-  articleModule.find(query,{},function(err,articles) {
-    res.render('articlelist',{articles:articles,user:req.user});
+  if (typeof(markdown)!='undefined') {
+    query.markdown = markdown;
+  }
+  var listOfOpenBlog;
+
+  async.series([
+     function (callback) {
+        articleModule.getListOfOpenBlog(function(err,result) {
+          listOfOpenBlog = result;
+          callback();
+        })
+      }
+
+    ],function(error) {
+        articleModule.find(query,{},function(err,articles) {
+        res.render('articlelist',{articles:articles,
+                                  listOfOpenBlog:listOfOpenBlog,
+                                  user:req.user});      
+    })
+ 
+ 
   });
 });
 

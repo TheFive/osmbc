@@ -28,30 +28,48 @@ html(lang='en')
         .navbar-collapse.collapse
           ul.nav.navbar-nav
             li
-              a(href='/blog/list?status=open') WN
-            li
               a(href='/article/create') Collect
-            li
-              a(href='#contact') Dummy
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | Article 
                 span.caret
               ul.dropdown-menu(role='menu')
+                li.dropdown-header Open Blogs
                 if (listOfOpenBlog) 
                   for blog in listOfOpenBlog
                     li
-                      a(href="/article/list?blog#{blog}") blog
+                      a(href="/article/list?blog=#{blog}") #{blog}
                 li.divider
-                li.dropdown-header Nav header
+                li.dropdown-header Special Search
+                li
+                  a(href='/article/list?markdown=') No Text
+                li
+                  a(href='/article/list?blog=') Empty
                 li
                   a(href='/article/list') All
-          ul.nav.navbar-nav.navbar-right
-            
-            
-              if user
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown')
+                | WN 
+                span.caret
+              ul.dropdown-menu(role='menu')
+                li.dropdown-header List
+                li
+                  a(href="/blog/list?status=open") open
+                li
+                  a(href="/blog/list?status=review") review
                 li 
-                  a(href='./') #{user.displayName}
+                  a(href="/blog/list?status=trash") trash
+                li 
+                  a(href="/blog/list?status=published") published
+                li.divider
+                li.dropdown-header Action
+                li
+                  a(href="/blog/create") Create Blog
+
+          ul.nav.navbar-nav.navbar-right            
+             if user
+                li 
+                  a(href='http://www.openstreetmap.org/user/#{user.displayName}') #{user.displayName}
               else
                 li  
                   a(href='./') Anonymous
