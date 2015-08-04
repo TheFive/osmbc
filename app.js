@@ -15,6 +15,9 @@ var users = require('./routes/users');
 var article = require('./routes/article');
 var changes = require('./routes/changes');
 var blog = require('./routes/blog');
+var config = require('./config.js');
+
+config.initialise();
 
 var OPENSTREETMAP_CONSUMER_KEY = "oxzBk3Y2B6ZQjdu3r7o7pibQSSNHlzllG6v9iZUD"
 var OPENSTREETMAP_CONSUMER_SECRET = "4nEEHKcQ9xSrMTQRJZjYjSHDVvKZHgF6ZZO31t3z";
@@ -48,7 +51,7 @@ passport.deserializeUser(function(name, done) {
 passport.use(new OpenStreetMapStrategy({
     consumerKey: OPENSTREETMAP_CONSUMER_KEY,
     consumerSecret: OPENSTREETMAP_CONSUMER_SECRET,
-    callbackURL: "http://127.0.0.1:3000/auth/openstreetmap/callback"
+    callbackURL: config.getCallbackUrl()
   },
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...
