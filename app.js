@@ -7,6 +7,7 @@ var bodyParser   = require('body-parser');
 var passport     = require('passport');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
+var debug = require('debug')('OSMBC:app');
  
 var  OpenStreetMapStrategy = require('passport-openstreetmap').Strategy;
 
@@ -34,10 +35,12 @@ var OPENSTREETMAP_CONSUMER_SECRET = "4nEEHKcQ9xSrMTQRJZjYjSHDVvKZHgF6ZZO31t3z";
 // so this is enough for serialising.
 // if there will be a user database, this has to be integrated here
 passport.serializeUser(function(user, done) {
+  debug("passport.serializeUser CB");
   done(null, user.displayName);
 });
 
 passport.deserializeUser(function(name, done) {
+  debug("passport.deserializeUser CB");
   var user = {}
   user.displayName = name;
   done(null, user);
@@ -49,8 +52,8 @@ passport.deserializeUser(function(name, done) {
 //   credentials (in this case, a token, tokenSecret, and OpenStreetMap profile), and
 //   invoke a callback with a user object.
 passport.use(new OpenStreetMapStrategy({
-    consumerKey: OPENSTREETMAP_CONSUMER_KEY,
-    consumerSecret: OPENSTREETMAP_CONSUMER_SECRET,
+    consumerKey: config.getConfiguration().OPENSTREETMAP_CONSUMER_KEY,
+    consumerSecret: config.getConfiguration().OPENSTREETMAP_CONSUMER_SECRET,
     callbackURL: config.getCallbackUrl()
   },
   function(token, tokenSecret, profile, done) {
@@ -67,6 +70,7 @@ passport.use(new OpenStreetMapStrategy({
 ));
 
 function ensureAuthenticated(req, res, next) {
+  debug("ensureAuthenticated");
 
   if (req.isAuthenticated()) {  return next(); }
   req.session.returnTo = req.originalUrl; 
