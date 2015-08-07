@@ -1,6 +1,10 @@
 var pg = require('pg');
 var async = require('async');
 var config = require('../config.js');
+var markdown = require('markdown').markdown;
+
+
+var articleModule = require('../model/article.js');
 var logModule = require('../model/logModule.js');
 
 var pgMap = require('./pgMap.js')
@@ -112,6 +116,61 @@ function createNewBlog(callback) {
   });
 }
 
+function preview(edit,callback) {
+  debug('preview');
+  var articles = {};
+  var fullMarkdown ="";
+  var preview = "";
+
+  articleModule.find({blog:this.name},function(err,result){
+    for (var i=0;i<result.length;i++ ) {
+      var r = result[i];
+      if (typeof(r.markdown)!='undefined') {
+        var text = r.markdown;
+        r.textHtml = markdown.toHTML(text)
+      } 
+      if (typeof(articles[r.category]) == 'undefined') {
+        articles[r.category] = [];
+      }
+      articles[r.category].push(r);
+    }
+    for (var i=0;i<exports.categories.length;i++) {
+      var category = exports.categories[i];
+      if (typeof(articles[category])!='undefined') {
+        fullMarkdown += "## "+category+"\n";
+        for (var j=0;j<articles[category].length;j++) {
+          var r = articles[category][j];
+          var editMark = "";
+          if (edit) editMark = " [edit](/article/"+r.id+")";
+          debug("Title %s",r.title);
+          if (typeof(r.markdown)!='undefined' && r.markdown != "") {
+            debug("Markdown exist");
+            fullMarkdown += r.markdown+editMark+"\n";
+          } else if (typeof(r.collection)!='undefined') {
+            debug("Try Collection");
+            var s = r.collection;
+            debug(s);
+            s.replace("\n","    ");
+            debug(s);
+            fullMarkdown += "    "+s+"\n"+editMark;
+          }
+          else {
+            debug("Use Title");
+            fullMarkdown += "    "+r.title+"\n"+editMark;
+          }
+        }
+      }
+    }
+    preview = markdown.toHTML(fullMarkdown);
+    var result = {};
+    result.preview = preview;
+    result.markdown = markdown;
+    result.articles = articles;
+    callback(null, result);
+  })
+}
+
+Blog.prototype.preview = preview;
 
 module.exports.create= create;
 module.exports.find = find;
