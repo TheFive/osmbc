@@ -129,6 +129,8 @@ block content
                 !{article.commentHtml}
   .row
     if articleReferences.count > 1
+      h2
+        | Links used in other Post
       div
         table.table.table-striped
           thead
@@ -156,6 +158,8 @@ block content
 
   .row
     if changes
+      h2
+        | History
       div
         table.table.table-striped
           thead
