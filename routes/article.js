@@ -21,8 +21,38 @@ router.get('/:article_id', function(req, res, next) {
     params.edit = req.query.edit;
     var changes = [];
 
+    var usedLinks = article.calculateLinks();
+    var articleReferences = {};
+    articleReferences.count = 0;
+
+    console.dir(usedLinks);
+    console.dir(articleReferences);
+
+
+
 
     async.series([
+      function (callback) {
+        async.each(usedLinks,function(item,cb) {
+          var reference = item;
+          if (reference.substring(0,5) == "https") reference = reference.substring(5,999);
+          if (reference.substring(0,4) == "http") reference = reference.substring(4,999);
+         
+          articleModule.find(" where (data->>'collection' like '%"+reference+"%') \
+                                  or (data->>'markdown' like '%"+reference+"%')",function(err,result) {
+            if (result) {
+              articleReferences[usedLinks] = result;
+              articleReferences.count += result.length;
+            }
+            else articleReferences[usedLinks] = [];
+            cb();
+          });
+        },function(err) {
+          console.dir(articleReferences);
+
+          callback();
+        });
+      },
       function (callback) {
         if (typeof(req.query.setCategory)!='undefined')
         {
@@ -98,6 +128,8 @@ router.get('/:article_id', function(req, res, next) {
                                 changes:changes,
                                 listOfOpenBlog:listOfOpenBlog,
                                 moment:moment,
+                                articleReferences:articleReferences,
+                                usedLinks:usedLinks,
                                 categories:blogModule.categories});
         }
     );

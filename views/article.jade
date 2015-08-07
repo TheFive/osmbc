@@ -128,6 +128,33 @@ block content
                 :verbatim
                 !{article.commentHtml}
   .row
+    if articleReferences.count > 1
+      div
+        table.table.table-striped
+          thead
+            tr
+              th
+                | link
+              th
+                | article
+              th
+                | Blog
+          tbody
+            each link in usedLinks
+              if (articleReferences[link])
+                each articleItem in articleReferences[link]
+                  if articleItem.id != article.id
+                    tr
+                      td
+                        a(href='#{link}') #{link}
+                      td
+                        a(href='/article/'+articleItem.id) #{"Artikel: "+articleItem.title}
+                      td= articleItem.blog
+
+
+
+
+  .row
     if changes
       div
         table.table.table-striped
