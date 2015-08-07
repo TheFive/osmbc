@@ -24,11 +24,11 @@ block content
           each article in articles
             tr
               td
-                a(href='/article/' + article.id) #{(article.title) ? (article.title): "undefined"} 
+                a(href='/article/' + article.id) #{(article.displayTitle())}
               td= article.blog
               td= article.category
-              td= (article.collection) ? (article.collection.substring(0,30))+((article.collection.length>30) ? " ...":"") :""
-              td= (article.markdown) ? (article.markdown.substring(0,30))+((article.markdown.length>30) ? " ...":"") :""
+              td= util.shorten(article.collection) 
+              td= util.shorten(article.markdown) 
                
 
 

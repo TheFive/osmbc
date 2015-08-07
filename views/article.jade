@@ -150,7 +150,7 @@ block content
                       td
                         a(href='#{link}') #{link}
                       td
-                        a(href='/article/'+articleItem.id) #{"Artikel: "+articleItem.title}
+                        a(href='/article/'+articleItem.id) #{article.displayTitle()}
                       td= articleItem.blog
 
 
@@ -183,8 +183,8 @@ block content
                   a(href='/change/' + change.id) #{change.id} 
                 td= change.user
                 td= change.property
-                td= (change.from) ? (change.from.substring(0,30))+((change.from.length>30) ? " ...":"") :""
-                td= (change.to) ? (change.to.substring(0,30))+((change.to.length>30) ? " ...":"") :""
+                td= util.shorten(change.from)
+                td= util.shorten(change.to)
                 td= moment(change.timestamp).fromNow() 
                 
 

@@ -1,6 +1,7 @@
 var pg = require('pg');
 var async = require('async');
 var config = require('../config.js');
+var util = require('../util.js');
 var logModule = require('../model/logModule.js');
 
 var pgMap = require('./pgMap.js');
@@ -125,6 +126,22 @@ function calculateLinks() {
 
 
 Article.prototype.calculateLinks = calculateLinks;
+
+
+
+Article.prototype.displayTitle = function displayTitle(maxlength) {
+  if (typeof(maxlength) == 'undefined') maxlength = 30;
+  if (typeof(this.title)!='undefined' && this.title != "") {
+    return util.shorten(this.title,maxlength)
+  }
+  if (typeof(this.markdown)!='undefined' && this.markdown !="") {
+    return util.shorten(this.markdown,maxlength)
+  }
+  if (typeof(this.collection)!='undefined' && this.collection !="") {
+    return util.shorten(this.collection,maxlength)
+  }
+  return "Empty Article";
+}
 
 
 

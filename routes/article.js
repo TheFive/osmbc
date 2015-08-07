@@ -1,13 +1,15 @@
-var express = require('express');
-var async   = require('async');
-var moment = require('moment');
-var router = express.Router();
+var express  = require('express');
+var async    = require('async');
+var moment   = require('moment');
+var router   = express.Router();
 var markdown = require('markdown').markdown;
-var debug = require('debug')('OSMBC:routes:article');
+var debug    = require('debug')('OSMBC:routes:article');
+
+var util          = require('../util.js');
 
 var articleModule = require('../model/article.js');
-var blogModule = require('../model/blog.js');
-var logModule = require('../model/logModule.js');
+var blogModule    = require('../model/blog.js');
+var logModule     = require('../model/logModule.js');
 
 /* GET users listing. */
 router.get('/:article_id', function(req, res, next) {
@@ -130,6 +132,7 @@ router.get('/:article_id', function(req, res, next) {
                                 moment:moment,
                                 articleReferences:articleReferences,
                                 usedLinks:usedLinks,
+                                util:util,
                                 categories:blogModule.categories});
         }
     );
@@ -210,6 +213,7 @@ router.get('/list', function(req, res, next) {
         articleModule.find(query,{},function(err,articles) {
         res.render('articlelist',{articles:articles,
                                   listOfOpenBlog:listOfOpenBlog,
+                                  util:util,
                                   user:req.user});      
     })
  
