@@ -6,16 +6,20 @@ function generateQuery(table,obj,order) {
   debug(generateQuery);
   var whereClause = "";
 
-  if (obj) {
-    for (var k in obj) {
-      var n = "data->>'"+k+"'= '"+obj[k]+"'"; 
+  if (typeof(obj)=='string') {
+    whereClause = obj;
+  } else {
+    if (obj) {
+      for (var k in obj) {
+        var n = "data->>'"+k+"'= '"+obj[k]+"'"; 
 
-      if (obj[k]=="") {
-        n = "("+n+" or (data->'"+k+"') is null)";
-      }
-      if (whereClause =="") whereClause = " where "+n;
-      else whereClause += " and "+n;
-    }    
+        if (obj[k]=="") {
+          n = "("+n+" or (data->'"+k+"') is null)";
+        }
+        if (whereClause =="") whereClause = " where "+n;
+        else whereClause += " and "+n;
+      }    
+    }
   }
   var orderby = "";
   if (order) {
@@ -114,7 +118,6 @@ module.exports.remove = function(callback) {
 
 module.exports.find = function find(module,obj,order,callback) {
 	debug("find");
-  debug(JSON.stringify(obj));
   if (typeof(obj)=='function') {
     callback = obj;
     obj = null;
@@ -123,7 +126,6 @@ module.exports.find = function find(module,obj,order,callback) {
     callback = order;
     order = null;
   }
-  debug(JSON.stringify(obj));
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) {
       console.log("Connection Error")
@@ -132,7 +134,7 @@ module.exports.find = function find(module,obj,order,callback) {
       return (callback(err));
     }
     var table = module.table;
-    var sqlQuery = generateQuery(table,obj,order);
+    sqlQuery = generateQuery(table,obj,order);
 
     var result = [];
 

@@ -107,6 +107,28 @@ function findOne(obj1,obj2callback) {
 }
 
 
+function calculateLinks() {
+  debug("calculateLinks");
+  var links = [];
+
+  if (typeof(this.collection)!='undefined') {
+    var res = this.collection.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
+    if (res) links = links.concat(res);
+  }
+  if (typeof(this.markdown)!='undefined') {
+    var res = this.markdown.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
+    if (res) links = links.concat(res);
+  }
+  return links;
+}
+
+
+
+Article.prototype.calculateLinks = calculateLinks;
+
+
+
+
 module.exports.create= create;
 module.exports.createNewArticle = createNewArticle;
 module.exports.find = find;
