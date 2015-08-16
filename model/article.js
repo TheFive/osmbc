@@ -61,7 +61,11 @@ function create (proto) {
 
 function createNewArticle (proto,callback) {
   debug("createNewArticle");
-  should(proto.id).not.exist;
+  if (typeof(proto)=='function') {
+    callback = proto;
+    delete proto;
+  }
+  should.not.exist(proto.id);
   var article = create(proto);
   article.save(callback);
 }
@@ -76,14 +80,20 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   delete self.lock;
 
   async.forEachOf(data,function(value,key,callback){
+    // There is no Value for the key, so do nothing
     if (typeof(value)=='undefined') return callback();
+
+    // The Value to be set, is the same then in the object itself
+    // so do nothing
     if (value == self[key]) return callback();
     
     debug("Set Key %s to value >>%s<<",key,value);
     debug("Old Value Was >>%s<<",self[key]);
-   async.series ( [
+
+
+    async.series ( [
         function(callback) {
-           logModule.log({id:self.id,user:user,table:"article",property:key,from:self[key],to:value},callback);
+           logModule.log({oid:self.id,user:user,table:"article",property:key,from:self[key],to:value},callback);
         },
         function(callback) {
           self[key] = value;
@@ -98,6 +108,8 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
     self.save(callback);
   })
 } 
+
+
 
 function find(obj,order,callback) {
 	debug("find");

@@ -270,7 +270,7 @@ exports.dropTable = function dropTable(table,cb) {
       pgdone();
       return;
     }
-    var dropString = "DROP TABLE IF EXISTS "+table;
+    var dropString = "DROP TABLE IF EXISTS "+table+ " CASCADE";
   
     var query = client.query(dropString);
     query.on('error',function(err){

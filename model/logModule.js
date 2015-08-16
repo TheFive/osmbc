@@ -34,4 +34,19 @@ module.exports.create = function() {
   return {};
 }
 
+function createTable(cb) {
+  debug('createTable');
+  createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data json,  \
+                  CONSTRAINT changes_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
+  createView = '';
+  pgMap.createTable('changes',createString,createView,cb)
+}
+
+function dropTable(cb) {
+  debug('dropTable');
+  pgMap.dropTable('changes',cb);
+}
+
 module.exports.table = "changes";
+module.exports.createTable = createTable;
+module.exports.dropTable = dropTable;
