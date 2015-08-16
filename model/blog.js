@@ -34,19 +34,19 @@ module.exports.categories = [
 
 function Blog(proto)
 {
-	debug("Blog");
-	this.id = 0;
+  debug("Blog");
+  this.id = 0;
   this._meta={};
   this._meta.table = "blog";
-	if (proto) {
-		if (typeof(proto.id) != 'undefined') this.id = proto.id;
-	}
+  if (proto) {
+    if (typeof(proto.id) != 'undefined') this.id = proto.id;
+  }
 
 }
 
 function create (proto) {
-	debug("create");
-	return new Blog(proto);
+  debug("create");
+  return new Blog(proto);
 }
 
  
@@ -83,12 +83,11 @@ Blog.prototype.setAndSave = function setAndSave(user,data,callback) {
 } 
 
 function find(obj1,obj2,callback) {
-	debug("find");
-  console.log(this.table);
+  debug("find");
   pgMap.find(this,obj1,obj2,callback);
 }
 function findById(id,callback) {
-	debug("findById %s",id);
+  debug("findById %s",id);
   pgMap.findById(id,this,callback);
 }
 
