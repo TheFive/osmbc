@@ -70,14 +70,13 @@ function createNewArticle (proto,callback) {
   var article = create(proto);
   article.save(callback);
 }
- 
-Article.prototype.save = pgMap.save;
-Article.prototype.remove = pgMap.remove;
 
 
-// Set a Value (List of Values) and store it in the database
-// Store the changes in the change (history table) too.
-Article.prototype.setAndSave = function setAndSave(user,data,callback) {
+
+
+
+
+function setAndSave(user,data,callback) {
   debug("setAndSave");
   listOfOpenBlog = null;
   var self = this;
@@ -189,6 +188,21 @@ function dropTable(cb) {
   debug('dropTable');
   pgMap.dropTable('article',cb);
 }
+
+
+// Set a Value (List of Values) and store it in the database
+// Store the changes in the change (history table) too.
+// There are 3 parameter
+// user: the user stored in the change object
+// data: the JSON with the changed values
+// callback
+Article.prototype.setAndSave = setAndSave;
+
+// save stores the current object to database
+Article.prototype.save = pgMap.save;
+
+// remove deletes the current object from the database
+Article.prototype.remove = pgMap.remove;
 
 
 // Create an Article object in memory, do not save

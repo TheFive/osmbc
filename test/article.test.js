@@ -300,4 +300,41 @@ describe('Article', function() {
       })
     })
   })
+  describe('remove',function() {
+    var idToFindLater;
+    before(function (bddone) {
+      // Initialise some Test Data for the find functions
+      async.series([
+        clearDB,
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"},cb)},
+        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test2",collection:"col2",category:"catB"},cb)},
+        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test3",collection:"col3",category:"catA"},
+                         function(err,result){
+                          should.not.exist(err);
+                          idToFindLater = result.id;
+                          cb(err);
+                         })}
+
+        ],function(err) {
+          should.not.exist(err);
+          bddone();
+        });
+    })
+    it('should remove one article',function(bddone){
+      articleModule.findById(idToFindLater,function(err,article){
+        should.not.exist(err);
+        should.exist(article);
+        article.remove(function(err) {
+          should.not.exist(err);
+          articleModule.find({},"",function(err,result){
+            should.not.exist(err);
+            should.exist(result);
+            should(result.length).equal(2);
+            bddone();
+          })
+        })
+      })
+    })
+  
+  })
 })
