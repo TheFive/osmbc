@@ -1,12 +1,6 @@
 #!/bin/bash
 
 
-if [ -n "TRAVIS" ]; then
-istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js && rm -rf ./coverage 
+echo "Start Travis Test Without Coverage Upload"
+istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec 
 
-
-elif true; then
-
-istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info 
-
-fi
