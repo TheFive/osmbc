@@ -12,60 +12,21 @@ var debug  = require('debug')('OSMBC:test:article.test');
 
 var config = require('../config.js');
 
+var testutil = require('./testutil.js');
+
 var articleModule = require('../model/article.js');
 var logModule     = require('../model/logModule.js');
 var blogModule    = require('../model/blog.js');
 
 
-// getJsonWithID can be used to select a id,data structure from postgres
-// without using the model source, and is intended to used in 
-// mocha tests.
-// in table there has to be a row with id, otherwise the function
-// will throw an error
-function getJsonWithId(table,id,cb) {
-  debug('getJsonWithId');
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-    should.not.exist(err);
-    var query = client.query('select data from '+table+' where id = $1',[id]);
-    var result;
-    query.on('row',function(row) {
-      result = row.data;
-    })
-    query.on('end',function(err,r) {
-      pgdone();
-      cb(null,result);
-      return;
-    })
-  })
-}
 
 
-// This function is used to clean up the tables in the test module
-// and create them new
-// the order of the creatTable is important (as views are created)
-// with the tables, and assuming some tables to exist
-// the function requires the test environment
 
-function clearDB(done) {
-  should(config.env).equal("test");
-  async.series([
-    function(done) {config.initialise(done)},
-    function(done) {blogModule.dropTable(done)},
-    function(done) {blogModule.createTable(done)},
-    function(done) {articleModule.dropTable(done)},
-    function(done) {articleModule.createTable(done)},
-    function(done) {logModule.dropTable(done)},
-    function(done) {logModule.createTable(done)}
-  ],function(err) {
-    if (err) console.dir(err);
-    should.not.exist(err);
-    done();
-  });  
-}
+
 
 describe('Article', function() {
   before(function (bddone) {
-    clearDB(bddone);
+    testutil.clearDB(bddone);
   }) 
 
   describe('createNewArticle',function() {
@@ -73,7 +34,7 @@ describe('Article', function() {
       var newArticle = articleModule.createNewArticle({blog:"test",markdown:"**"},function (err,result){
         should.not.exist(err);
         var id = result.id;
-        getJsonWithId("article",id,function(err,result){
+        testutil.getJsonWithId("article",id,function(err,result){
           should.not.exist(err);
           should(result.blog).equal('test');
           should(result.markdown).equal('**');
@@ -85,7 +46,7 @@ describe('Article', function() {
       var newArticle = articleModule.createNewArticle(function (err,result){
         should.not.exist(err);
         var id = result.id;
-        getJsonWithId("article",id,function(err,result){
+        testutil.getJsonWithId("article",id,function(err,result){
           should.not.exist(err);
           bddone();
         })
@@ -109,7 +70,7 @@ describe('Article', function() {
         newArticle.markdown = "This Value will not be logged";
         newArticle.setAndSave("user",{blog:"Reference",collection:"text"},function(err,result) {
           should.not.exist(err);
-          getJsonWithId("article",id,function(err,result){
+          testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
             delete result._meta;
             should(result).eql({id:id,markdown:"This Value will not be logged",blog:"Reference",collection:"text"});
@@ -143,7 +104,7 @@ describe('Article', function() {
     before(function (bddone) {
       // Initialise some Test Data for the find functions
       async.series([
-        clearDB,
+        testutil.clearDB,
         function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"},cb)},
         function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test2",collection:"col2",category:"catB"},cb)},
         function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test3",collection:"col3",category:"catA"},
@@ -268,7 +229,7 @@ describe('Article', function() {
     beforeEach(function (bddone) {
       // Initialise some Test Data for the find functions
       async.series([
-        clearDB,
+        testutil.clearDB,
         function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"},cb)},
         function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test2",collection:"col2",category:"catB"},cb)},
         function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test3",collection:"col3",category:"catA"},cb)},
@@ -305,7 +266,7 @@ describe('Article', function() {
     before(function (bddone) {
       // Initialise some Test Data for the find functions
       async.series([
-        clearDB,
+        testutil.clearDB,
         function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"},cb)},
         function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test2",collection:"col2",category:"catB"},cb)},
         function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test3",collection:"col3",category:"catA"},

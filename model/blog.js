@@ -1,8 +1,8 @@
-var pg = require('pg');
-var async = require('async');
-var config = require('../config.js');
+var pg       = require('pg');
+var async    = require('async');
+var config   = require('../config.js');
 var markdown = require('markdown').markdown;
-
+var should   = require('should');
 
 var articleModule = require('../model/article.js');
 var logModule = require('../model/logModule.js');
@@ -66,7 +66,7 @@ Blog.prototype.setAndSave = function setAndSave(user,data,callback) {
     articleModule.removeOpenBlogCache();
     async.series ( [
         function(callback) {
-           logModule.log({id:self.id,user:user,table:"blog",property:key,from:self[key],to:value},callback);
+           logModule.log({oid:self.id,user:user,table:"blog",property:key,from:self[key],to:value},callback);
         },
         function(callback) {
           self[key] = value;
@@ -103,11 +103,14 @@ function createNewBlog(proto,callback) {
     callback = proto;
     delete proto;
   }
+  should.not.exist(proto.id);
 
   this.findOne(null,{column:"name",desc:true},function(err,result) {
     var name = "WN250";
     if (result) {
-      name = result.name;
+      if (result.name.substring(0,2)=="WN") {
+        name = result.name;
+      }
     }
     debug("Maximaler Name %s",name);
     var wnId = name.substring(2,99);

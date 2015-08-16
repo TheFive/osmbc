@@ -219,12 +219,8 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
       result.id = row.id;
   	})
   	query.on('end',function (pgresult) {
-
       pgdone();
-      console.log("Found");
-      console.dir(result);
       callback(null,result);      
-  		
   	})
   })
 }
