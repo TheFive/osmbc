@@ -1,19 +1,20 @@
-var pg = require('pg');
-var async = require('async');
+var pg     = require('pg');
+var async  = require('async');
 var should = require('should');
-var config = require('../config.js');
-var util = require('../util.js');
-var logModule = require('../model/logModule.js');
+var debug  = require('debug')('OSMBC:article');
 
-var pgMap = require('./pgMap.js');
-var debug = require('debug')('OSMBC:article');
+
+var config    = require('../config.js');
+var util      = require('../util.js');
+
+var logModule = require('../model/logModule.js');
+var pgMap     = require('../model/pgMap.js');
+
+
 
 
 var listOfOpenBlog = null;
 
-module.exports.dropTable = function dropTable(callback) {
-  
-}
 
 function getListOfOpenBlog(callback) {
   debug('getListOfOpenBlog');
@@ -73,6 +74,9 @@ function createNewArticle (proto,callback) {
 Article.prototype.save = pgMap.save;
 Article.prototype.remove = pgMap.remove;
 
+
+// Set a Value (List of Values) and store it in the database
+// Store the changes in the change (history table) too.
 Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   debug("setAndSave");
   listOfOpenBlog = null;
@@ -142,11 +146,17 @@ function calculateLinks() {
 }
 
 
-
+// Calculate all links in markdown (final Text) and collection
+// there is no double check for the result
 Article.prototype.calculateLinks = calculateLinks;
 
 
-
+// Calculate a Title with a maximal length for Article
+// The properties are tried in this order
+// a) Title
+// b) Markdown (final Text)
+// c) Collection 
+// the maximal length is optional (default is 30)
 Article.prototype.displayTitle = function displayTitle(maxlength) {
   if (typeof(maxlength) == 'undefined') maxlength = 30;
   if (typeof(this.title)!='undefined' && this.title != "") {
@@ -166,7 +176,12 @@ function createTable(cb) {
   debug('createTable');
   createString = 'CREATE TABLE article (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT article_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
-  createView = '';
+  createView = "CREATE OR REPLACE VIEW \"OpenBlogWithArticle\" AS \
+             SELECT DISTINCT article.data ->> 'blog'::text AS name \
+               FROM article \
+                 LEFT JOIN blog ON (article.data ->> 'blog'::text) = (blog.data ->> 'name'::text) \
+              WHERE (blog.data ->> 'status'::text) <> 'published'::text OR blog.data IS NULL \
+              ORDER BY article.data ->> 'blog'::text;";
   pgMap.createTable('article',createString,createView,cb)
 }
 
@@ -175,12 +190,41 @@ function dropTable(cb) {
   pgMap.dropTable('article',cb);
 }
 
+
+// Create an Article object in memory, do not save
+// Can use a prototype, to initialise data
+// Parameter: prototype (optional)
 module.exports.create= create;
+
+// Creates an Article object and stores it to database
+// can use a prototype to initialise data
+// Parameter: Prototype (optional)
+//            callback
+// Prototype is not allowed to have an id
 module.exports.createNewArticle = createNewArticle;
+
+// Find an Article in database
+// Parameter: object JSON Object with key value pairs to seach for
+//            order  string to order the result
 module.exports.find = find;
+
+// Find an Article in database by ID
 module.exports.findById = findById;
+
+// Find one Object (similar to find, but returns first result)
 module.exports.findOne = findOne;
 module.exports.table = "article";
+
+// Return an String Array, with all blog references in Article
+// that does not have a "finished" Blog in database
 module.exports.getListOfOpenBlog = getListOfOpenBlog;
+
+// Create Tables and Views
 module.exports.createTable = createTable;
+
+// Drop Table (and views)
 module.exports.dropTable = dropTable;
+
+// Internal function to reset OpenBlogCash
+// has to be called, when a blog is changed
+module.exports.removeOpenBlogCache = function() {debug('removeOpenBlogCache');listOfOpenBlog = null}

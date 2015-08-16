@@ -63,7 +63,7 @@ Blog.prototype.setAndSave = function setAndSave(user,data,callback) {
     if (value == self[key]) return callback();
     debug("Set Key %s to value %s",key,value);
     debug("Old Value Was %s",self[key]);
- 
+    articleModule.removeOpenBlogCache();
     async.series ( [
         function(callback) {
            logModule.log({id:self.id,user:user,table:"blog",property:key,from:self[key],to:value},callback);
@@ -97,8 +97,12 @@ function findOne(obj1,obj2,callback) {
   pgMap.findOne(this,obj1,obj2,callback);
 }
 
-function createNewBlog(callback) {
+function createNewBlog(proto,callback) {
   debug("createNewBlog");
+  if (typeof(proto)=='function') {
+    callback = proto;
+    delete proto;
+  }
 
   this.findOne(null,{column:"name",desc:true},function(err,result) {
     var name = "WN250";
@@ -112,6 +116,10 @@ function createNewBlog(callback) {
     var blog = create();
     blog.name = newName;
     blog.status = "open";
+    //copy flat prototype to object.
+    for (var k in proto) {
+      blog[k]=proto[k];
+    }
     blog.save(callback);
   });
 }
@@ -170,6 +178,20 @@ function preview(edit,callback) {
   })
 }
 
+
+function createTable(cb) {
+  debug('createTable');
+  createString = 'CREATE TABLE blog (  id bigserial NOT NULL,  data json,  \
+                  CONSTRAINT blog_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
+  createView = '';
+  pgMap.createTable('blog',createString,createView,cb)
+}
+
+function dropTable(cb) {
+  debug('dropTable');
+  pgMap.dropTable('blog',cb);
+}
+
 Blog.prototype.preview = preview;
 
 module.exports.create= create;
@@ -177,3 +199,5 @@ module.exports.find = find;
 module.exports.findById = findById;
 module.exports.findOne = findOne;
 module.exports.createNewBlog = createNewBlog;
+module.exports.createTable = createTable;
+module.exports.dropTable = dropTable;
