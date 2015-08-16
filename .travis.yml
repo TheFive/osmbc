@@ -25,6 +25,5 @@ before_script:
 
 
 script:
-  - DEBUG=OSMBC*
   - npm test
 
