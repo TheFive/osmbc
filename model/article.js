@@ -120,7 +120,7 @@ function findById(id,callback) {
   pgMap.findById(id,this,callback);
 }
 
-function findOne(obj1,obj2callback) {
+function findOne(obj1,obj2,callback) {
   debug("findOne");
   pgMap.findOne(this,obj1,obj2,callback);
 }
