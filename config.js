@@ -107,4 +107,5 @@ exports.getCallbackUrl = function() {
   return configuration.callbackUrl;
 }
 
+exports.env = env;
 
