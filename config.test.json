@@ -7,5 +7,6 @@
     "username" : "TheFive",
     "password" : "thefive",
     "connectstr" : "psql://test:test@localhost:5432/testdb"
-  }
+  },
+  "callbackUrl":"TestValue"
 }
