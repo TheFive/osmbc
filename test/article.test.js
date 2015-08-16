@@ -210,4 +210,35 @@ describe('Article', function() {
 
     })
   })
+  describe('calculateLinks',function(){
+    var article;
+    var link;
+    it('should collect one link from collection', function(){
+      article = articleModule.create({collection:"https://www.google.de"});
+      link = article.calculateLinks();
+      should(link).eql(["https://www.google.de"]);
+
+      article = articleModule.create({collection:"Forum Article is good: http://forum.openstreetmap.org/thisIsALink?id=200"});
+      link = article.calculateLinks();
+      should(link).eql(["http://forum.openstreetmap.org/thisIsALink?id=200"]);
+
+    })
+    it('should collect Multiple Links from markdown and collection without doubling', function(){
+      article = articleModule.create(
+          {collection:"Forum Article is good: http://forum.openstreetmap.org/thisIsALink?id=200 \
+              but be aware of http://bing.de/subpage/relation and of ftp://test.de",
+           markdown:"The [Forum Article](https://forum.openstreetmap.org/thisIsALink?id=200) \
+                     reads nice, but have a look to [this](https://bing.de/subpage/relation) \
+                     and [that](ftp://test.de)"});
+      link = article.calculateLinks();
+      should(link).eql(["http://forum.openstreetmap.org/thisIsALink?id=200",
+                         "http://bing.de/subpage/relation",
+                         "ftp://test.de",
+                         "https://forum.openstreetmap.org/thisIsALink?id=200",
+                         "https://bing.de/subpage/relation",
+                         "ftp://test.de"
+                         ]);
+
+    })
+  })
 })
