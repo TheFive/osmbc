@@ -8,6 +8,7 @@ var pg     = require('pg');
 var async  = require('async');
 var should = require('should');
 var path   = require('path');
+var debug  = require('debug')('OSMBC:test:article.test');
 
 var config = require('../config.js');
 
