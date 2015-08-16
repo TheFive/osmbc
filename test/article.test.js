@@ -56,7 +56,7 @@ describe('Article', function() {
         })
       })
     });
-    it('should createNewArticle without prototype',function(bddone) {
+    it.skip('should createNewArticle without prototype',function(bddone) {
       var newArticle = articleModule.createNewArticle(function (err,result){
         should.not.exist(err);
         var id = result.id;
@@ -66,7 +66,7 @@ describe('Article', function() {
         })
       });
     })
-    it('should createNewArticle with ID',function(bddon){
+    it.skip('should createNewArticle with ID',function(bddon){
       (function() {
         var newArticle = articleModule.createNewArticle({id:2,blog:"test",markdown:"**"},function (err,result){
         })
