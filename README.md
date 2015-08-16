@@ -1,5 +1,12 @@
 # osmbc
 Open Street Map Blog Collector
+
+Master:   | develop:
+----------|----------------------
+[![Build Status](https://travis-ci.org/TheFive/osmbc.svg?branch=master)](https://travis-ci.org/TheFive/osmbc) | [![Build Status](https://travis-ci.org/TheFive/osmbc.svg?branch=develop)](https://travis-ci.org/TheFive/osmbc)
+[![codecov.io](https://codecov.io/github/TheFive/osmbc/coverage.svg?branch=master)](https://codecov.io/github/TheFive/osmbc?branch=master) | [![codecov.io](https://codecov.io/github/TheFive/osmbc/coverage.svg?branch=develop)](https://codecov.io/github/TheFive/osmbc?branch=develop)
+
+
 ## Summary
 OSMBC is a small tool to support the editorial process of the [OpenStreetMap](www.openstreetmap.org). [Wochennotiz](blog.openstreetmap.de).
 it enables editor to collect references to news easily and supports editing them in markdown later.
