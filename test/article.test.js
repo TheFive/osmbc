@@ -175,6 +175,39 @@ describe('Article', function() {
         })
       })
     })
+  })
+  describe('displayTitle',function() {
+    var article;
+    it('should return title first',function(bddone){
+      article = articleModule.create({title:"Titel",markdown:"markdown"});
+      should(article.displayTitle()).equal("Titel");
 
+      article = articleModule.create({title:"Very Long Title",markdown:"markdown"});
+      should(article.displayTitle(10)).equal("Very Long ...");
+      bddone();
+    })
+    it('should return markdown second',function(bddone){
+      article = articleModule.create({markdown:"markdown",collection:"col",category:"CAT"});
+      should(article.displayTitle()).equal("markdown");
+
+      article = articleModule.create({title:"",markdown:"markdown",collection:"col",category:"CAT"});
+      should(article.displayTitle()).equal("markdown");
+
+      article = articleModule.create({title:"",markdown:"* This is more markdown text to test the default limit of charachter",collection:"col",category:"CAT"});
+      should(article.displayTitle()).equal("* This is more markdown text t...");
+      bddone();
+    })
+    it('should return collection third',function(bddone){
+      article = articleModule.create({markdown:"",collection:"col",category:"CAT"});
+      should(article.displayTitle()).equal("col");
+
+      article = articleModule.create({title:"",collection:"col",category:"CAT"});
+      should(article.displayTitle()).equal("col");
+
+      article = articleModule.create({collection:"Extrem shortening",category:"CAT"});
+      should(article.displayTitle(2)).equal("Ex...");
+      bddone();
+
+    })
   })
 })
