@@ -5,7 +5,6 @@
   "scripts": {
     "start": "NODE_ENV=development node ./bin/www",
     "test": "NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js && rm -rf ./coverage"
-
   },
   "dependencies": {
     "async": "^1.4.0",
@@ -23,6 +22,7 @@
     "passport-openstreetmap": "^0.1.2",
     "pg": "^4.4.0",
     "serve-favicon": "~2.2.0",
-    "session-file-store": "0.0.16"
+    "session-file-store": "0.0.16",
+    "should": "^7.0.4"
   }
 }

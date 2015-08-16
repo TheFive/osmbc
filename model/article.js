@@ -1,5 +1,6 @@
 var pg = require('pg');
 var async = require('async');
+var should = require('should');
 var config = require('../config.js');
 var util = require('../util.js');
 var logModule = require('../model/logModule.js');
@@ -9,6 +10,10 @@ var debug = require('debug')('OSMBC:article');
 
 
 var listOfOpenBlog = null;
+
+module.exports.dropTable = function dropTable(callback) {
+  
+}
 
 function getListOfOpenBlog(callback) {
   debug('getListOfOpenBlog');
@@ -56,6 +61,7 @@ function create (proto) {
 
 function createNewArticle (proto,callback) {
   debug("createNewArticle");
+  should(proto.id).not.exist;
   var article = create(proto);
   article.save(callback);
 }
@@ -144,7 +150,18 @@ Article.prototype.displayTitle = function displayTitle(maxlength) {
 }
 
 
+function createTable(cb) {
+  debug('createTable');
+  createString = 'CREATE TABLE article (  id bigserial NOT NULL,  data json,  \
+                  CONSTRAINT article_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
+  createView = '';
+  pgMap.createTable('article',createString,createView,cb)
+}
 
+function dropTable(cb) {
+  debug('dropTable');
+  pgMap.dropTable('article',cb);
+}
 
 module.exports.create= create;
 module.exports.createNewArticle = createNewArticle;
@@ -153,3 +170,5 @@ module.exports.findById = findById;
 module.exports.findOne = findOne;
 module.exports.table = "article";
 module.exports.getListOfOpenBlog = getListOfOpenBlog;
+module.exports.createTable = createTable;
+module.exports.dropTable = dropTable;

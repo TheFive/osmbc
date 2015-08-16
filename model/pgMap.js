@@ -40,8 +40,6 @@ module.exports.save = function(callback) {
 	debug("save");
   var self = this;
 
-  console.dir(self);
-
   var table = self._meta.table;
 
 	// first check, wether ID is known or not
@@ -231,5 +229,57 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
   })
 }
 
+
+exports.createTable = function(table,createString,createView,cb) {
+  debug('createTable');
+  pg.connect(config.pgstring,function(err,client,pgdone) {
+    if (err) {
+      cb(err);
+      pgdone();
+      return;
+    }
+    client.query(createString,function(err) {
+      if (err) {
+        pgdone();
+        cb(err);
+        return;
+      }
+      debug('%s Table Created',table);
+      if (typeof(createView)!='') {
+        client.query(createView,function(err){
+          debug('%s Index Created',table);
+          cb(err);
+          pgdone();
+        })
+      } else {
+        // No Index to be defined, close Function correct
+        cb(err);
+        pgdone();
+      }
+    })
+  })
+} 
+
+exports.dropTable = function dropTable(table,cb) {
+  debug('dropTable');
+
+  pg.connect(config.pgstring,function(err,client,pgdone) {
+    debug('exports.dropTable->connected');
+    if (err) {
+      cb(err);
+      pgdone();
+      return;
+    }
+    var dropString = "DROP TABLE IF EXISTS "+table;
+  
+    var query = client.query(dropString);
+    query.on('error',function(err){
+      debug("%s Table Dropped",table);
+      cb(err);
+      pgdone();
+    });
+    query.on('end',function(){cb(null);pgdone();})
+  })
+}
 
 
