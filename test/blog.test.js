@@ -4,6 +4,7 @@ var pg     = require('pg');
 var async  = require('async');
 var should = require('should');
 var path   = require('path');
+var fs     = require('fs');
 var debug  = require('debug')('OSMBC:test:blog.test');
 
 var config = require('../config.js');
@@ -156,4 +157,77 @@ describe('blog', function() {
       })
     })
   })
+  describe.only('preview',function() {
+    beforeEach(function (bddone) {
+      testutil.clearDB(bddone);
+    })
+
+    var testdir = path.resolve(__dirname, "data")
+    var listOfJson=fs.readdirSync(testdir);
+    var list=[];
+    for (var i =0;i<listOfJson.length;i++){
+      var filenameLong=path.resolve(testdir,listOfJson[i]);
+      if (!fs.statSync(filenameLong).isDirectory()) {
+        list.push(listOfJson[i]);
+      }
+    }
+    function doATest(filename) {
+     
+      it('should handle testfile '+filename,function (bddone) {
+        var file =  path.resolve(__dirname,'data', filename);
+        var data =  JSON.parse(fs.readFileSync(file));
+       
+        var blog;
+        var md;
+        var html;
+        var articles;
+
+        async.series([
+          function(done) {
+            testutil.importData(data,done);
+          },
+          function(done) {
+            blogModule.findOne({name:data.testBlogName},function(err,result) {
+              should.not.exist(err);
+              blog = result;
+              should.exist(blog);
+              done();
+            })         
+          } ,
+          function(done) {
+            blog.preview(false,function(err,result){
+              should.not.exist(err);
+              md = result.markdown;
+              html = result.preview;
+              articles = result.articles;
+              done();
+            })
+          }
+
+          ],
+          function (err) {
+            should.not.exist(err);
+            should(md).equal(data.testBlogResultMarkdown);
+
+            var htmlResult = data.testBlogResultHtml;
+            if (list.indexOf(htmlResult)>= 0) {
+              var file =  path.resolve(__dirname,'data', htmlResult);
+              htmlResult =  fs.readFileSync(file,"utf-8");
+            }
+            
+            // May be the comparison can be generalised by
+            // http://stackoverflow.com/questions/17063518/compare-html-responses-using-node-js
+            //
+            should(html).eql(htmlResult);
+
+            bddone();
+          }
+        )   
+      })
+    }
+    for (testfile in list) {
+      if ((list[testfile]).search("html") >= 0) continue;
+      doATest(list[testfile]);
+    }
+  }) 
 })

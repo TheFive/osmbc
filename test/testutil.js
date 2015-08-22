@@ -1,6 +1,8 @@
-var pg = require('pg');
+var pg     = require('pg');
 var should = require('should');
 var async  = require('async');
+var path   = require('path');
+var fs     = require('fs');
 var debug  = require('debug')('OSMBC:test:testutil');
 
 var config = require('../config.js');
@@ -54,4 +56,39 @@ exports.clearDB = function clearDB(done) {
     should.not.exist(err);
     done();
   });  
+}
+
+// Import Test Data from File
+// Expected Fileformat
+// {table1:[{jsom objects},...],table2:[{jsom objects},...]}
+// in Callback Postgres Error and the JSON Data Object
+// e.g. to store Test Results, is returned
+
+exports.importData = function importData(data,callback) {
+  debug('importData');
+
+  async.series([
+    function importAllUsers(cb) {
+      debug('importAllUsers');
+      // to be implmeneted
+      cb();
+    },
+    function importAllBlogs(cb) {
+      debug('importAllBlogs');
+      if (typeof(data.blog)!='undefined') {  
+        async.each(data.blog,function importOneBlog(d,cb){
+          blogModule.createNewBlog(d,cb);
+        },cb)
+      } 
+    },
+    function importAllArticles(cb) {
+      debug('importAllArticles');
+      if (typeof(data.article)!='undefined') {  
+        async.each(data.article,function importOneArticle(d,cb){
+          articleModule.createNewArticle(d,cb);
+        },cb)
+      } 
+    }
+
+    ],function(err) {callback(err,data)})
 }

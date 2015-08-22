@@ -44,7 +44,7 @@ module.exports.save = function(callback) {
 
 	// first check, wether ID is known or not
 	if (self.id == 0) {
-		// we have to create the beer
+		// we have to create the object
 		debug("Object has to be created");
     pg.connect(config.pgstring, function(err, client, pgdone) {
     	if (err) {

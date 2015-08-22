@@ -1,0 +1,7 @@
+{
+  "blog":[{"name":"BLOG"}],
+  "article":[{"blog":"BLOG","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"}],
+  "testBlogName":"BLOG",
+  "testBlogResultMarkdown":"## Mapping\n* Dies ist ein kleiner Testartikel.\n",
+  "testBlogResultHtml":"<h2>Mapping</h2>\n\n<ul><li>Dies ist ein kleiner Testartikel.</li></ul>"
+}

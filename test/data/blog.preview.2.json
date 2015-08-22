@@ -1,0 +1,11 @@
+{
+  "blog":[{"name":"BLOG"}],
+  "article":[{"blog":"BLOG","markdown":"* Sebastian (User [Srittau](https://www.openstreetmap.org/user/Srittau) von Commons [erklärt](http://forum.openstreetmap.org/viewtopic.php?pid=522909#p522909) die gesammelten Wanderwegweiserfotos für erwünscht in Wikicommons.</li><li>In Spanien hat man auch das längerfristig angelegte [Themenmapping](http://www.openstreetmap.es/2015/07/03/anade-una-fuente-2015/)) entdeckt. Auch [Fernsehsender](https://www.youtube.com/watch?v=tgOUtf4-_Ag) berichten über diese hervorragende Idee anlässlich der Hitzewelle dieses Sommers öffentliche Wasserquellen und deren Qualität zu mappen. ","category":"Mapping"}],
+  "testBlogName":"BLOG",
+  "testBlogResultMarkdown":"## Mapping\n* Dies ist ein kleiner Testartikel.\n",
+  "testBlogResultHtml":"blog.preview.2.html"
+}
+
+
+
+
