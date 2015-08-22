@@ -157,7 +157,7 @@ describe('blog', function() {
       })
     })
   })
-  describe.only('preview',function() {
+  describe.skip('preview',function() {
     beforeEach(function (bddone) {
       testutil.clearDB(bddone);
     })

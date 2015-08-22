@@ -296,6 +296,49 @@ describe('Article', function() {
         })
       })
     })
-  
+  })
+  describe('preview',function() {
+    it('should generate a preview when no markdown is specified (no Edit Link)',function (bddone) {
+      var article = articleModule.create({title:"Test Title"});
+      var result = article.preview();
+      should(result).equal('<li>\nTest Title\n</li>');
+      bddone();
+    })
+    it('should generate a preview when no markdown is specified (Edit Link)',function (bddone) {
+      var article = articleModule.create({title:"Test Title"});
+      var result = article.preview(true);
+      should(result).equal('<li>\nTest Title <a href="/article/0">Edit</a>\n</li>');
+      bddone();
+    })
+    it('should generate a preview when no markdown2 is specified (no Edit Link)',function (bddone) {
+      var article = articleModule.create({collection:"Test Collection"});
+      var result = article.preview();
+      should(result).equal('<li>\nTest Collection\n</li>');
+      bddone();
+    })
+    it('should generate a preview when no markdown2 is specified (Edit Link)',function (bddone) {
+      var article = articleModule.create({collection:"Test Collection"});
+      var result = article.preview(true);
+      should(result).equal('<li>\nTest Collection <a href="/article/0">Edit</a>\n</li>');
+      bddone();
+    })
+    it('should generate a preview when markdown is specified (Edit Link)',function (bddone) {
+      var article = articleModule.create({markdown:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
+      var result = article.preview(true);
+      should(result).equal('<li>\n<p><a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.</p> <a href="/article/0">Edit</a>\n</li>');
+      bddone();
+    })
+    it('should generate a preview when markdown is specified (No Edit Link)',function (bddone) {
+      var article = articleModule.create({markdown:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
+      var result = article.preview(false);
+      should(result).equal('<li>\n<p><a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.</p>\n</li>');
+      bddone();
+    })
+    it('should generate a preview when markdown is specified (with Star)',function (bddone) {
+      var article = articleModule.create({markdown:"* [Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
+      var result = article.preview(false);
+      should(result).equal('<li>\n<p><a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.</p>\n</li>');
+      bddone();
+    })
   })
 })

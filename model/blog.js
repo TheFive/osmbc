@@ -1,4 +1,4 @@
-// Exported Functions are defined at end of file
+// Exported Functions and prototypes are defined at end of file
 
 var pg       = require('pg');
 var async    = require('async');

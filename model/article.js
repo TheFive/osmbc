@@ -1,6 +1,10 @@
+// Exported Functions and prototypes are defined at end of file
+
+
 var pg     = require('pg');
 var async  = require('async');
 var should = require('should');
+var markdown = require('markdown').markdown;
 var debug  = require('debug')('OSMBC:article');
 
 
@@ -71,7 +75,23 @@ function createNewArticle (proto,callback) {
   article.save(callback);
 }
 
+function preview(edit) {
+  debug(preview);
+  var editLink = '';
+  if (edit) editLink = ' <a href="/article/'+this.id+'">Edit</a>'; 
+  if (typeof(this.markdown)!='undefined' && this.markdown!='') {
+    var md = this.markdown;
 
+    // Does the markdown text starts with '* ', so ignore it
+    if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
+    // Return an list Element for the blog article
+    var html = markdown.toHTML(md);
+
+    return '<li>\n'+html+editLink+'\n</li>';
+  } 
+  // Markdown is not defined. Return a placholder for the article
+  return '<li>\n'+this.displayTitle()+editLink+'\n</li>';
+}
 
 
 
@@ -145,18 +165,8 @@ function calculateLinks() {
 }
 
 
-// Calculate all links in markdown (final Text) and collection
-// there is no double check for the result
-Article.prototype.calculateLinks = calculateLinks;
 
-
-// Calculate a Title with a maximal length for Article
-// The properties are tried in this order
-// a) Title
-// b) Markdown (final Text)
-// c) Collection 
-// the maximal length is optional (default is 30)
-Article.prototype.displayTitle = function displayTitle(maxlength) {
+function displayTitle(maxlength) {
   if (typeof(maxlength) == 'undefined') maxlength = 30;
   if (typeof(this.title)!='undefined' && this.title != "") {
     return util.shorten(this.title,maxlength)
@@ -190,12 +200,28 @@ function dropTable(cb) {
 }
 
 
+// Calculate a Title with a maximal length for Article
+// The properties are tried in this order
+// a) Title
+// b) Markdown (final Text)
+// c) Collection 
+// the maximal length is optional (default is 30)
+Article.prototype.displayTitle = displayTitle;
+
+// Calculate all links in markdown (final Text) and collection
+// there is no double check for the result
+Article.prototype.calculateLinks = calculateLinks;
+
 // Set a Value (List of Values) and store it in the database
 // Store the changes in the change (history table) too.
 // There are 3 parameter
 // user: the user stored in the change object
 // data: the JSON with the changed values
 // callback
+// Logging is written based on an in memory compare
+// the object is written in total
+// There is no version checking on the database, so it is
+// an very optimistic "locking"
 Article.prototype.setAndSave = setAndSave;
 
 // save stores the current object to database
@@ -203,6 +229,11 @@ Article.prototype.save = pgMap.save;
 
 // remove deletes the current object from the database
 Article.prototype.remove = pgMap.remove;
+
+// preview(edit)
+// edit: Boolean, that specifies, wether edit links has to be created or not
+// This function returns an HTML String of the Aricle as an list element.
+Article.prototype.preview = preview;
 
 
 // Create an Article object in memory, do not save
