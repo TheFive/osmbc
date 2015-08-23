@@ -20,7 +20,7 @@ var blogModule    = require('../model/blog.js');
 
 
 
-describe('blog', function() {
+describe('model/blog', function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
   }) 

@@ -27,5 +27,8 @@
     "serve-favicon": "~2.3.0",
     "session-file-store": "0.0.18",
     "should": "^7.0.4"
+  },
+  "devDependencies": {
+    "sinon": "^1.16.1"
   }
 }

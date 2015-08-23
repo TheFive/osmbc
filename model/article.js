@@ -199,6 +199,44 @@ function dropTable(cb) {
   pgMap.dropTable('article',cb);
 }
 
+function calculateUsedLinks(callback) {
+  debug('calculateusedLinks');
+
+  // Get all Links in this article
+  var usedLinks = this.calculateLinks();
+
+  var articleReferences = {};
+  articleReferences.count = 0;
+
+  // For each link, search in DB on usage
+  async.each(usedLinks,
+    function forEachUsedLink(item,cb) {
+      debug('forEachUsedLink');
+      var reference = item;
+
+      // shorten HTTP / HTTPS links by the leading HTTP(s)
+      if (reference.substring(0,5) == "https") reference = reference.substring(5,999);
+      if (reference.substring(0,4) == "http") reference = reference.substring(4,999);
+       
+      // search in the full Module for the link
+      pgMap.find(module.exports," where (data->>'collection' like '%"+reference+"%') \
+                              or (data->>'markdown' like '%"+reference+"%')",function(err,result) {
+        if (result) {
+          articleReferences[reference] = result;
+          articleReferences.count += result.length;
+        }
+        else articleReferences[reference] = [];
+        cb();
+      });
+    },function(err) {
+        callback(err,articleReferences);
+      }
+  );
+}
+
+
+
+
 
 // Calculate a Title with a maximal length for Article
 // The properties are tried in this order
@@ -235,6 +273,11 @@ Article.prototype.remove = pgMap.remove;
 // This function returns an HTML String of the Aricle as an list element.
 Article.prototype.preview = preview;
 
+// calculateUsedLinks(callback)
+// Async function to search for each Link in the article in the database
+// callback forwards every error, and as result offers an
+// object map, with and array of Articles for each shortened link
+Article.prototype.calculateUsedLinks = calculateUsedLinks;
 
 // Create an Article object in memory, do not save
 // Can use a prototype, to initialise data

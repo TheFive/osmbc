@@ -24,7 +24,7 @@ var blogModule    = require('../model/blog.js');
 
 
 
-describe('Article', function() {
+describe('model/article', function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
   }) 
@@ -339,6 +339,43 @@ describe('Article', function() {
       var result = article.preview(false);
       should(result).equal('<li>\n<p><a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.</p>\n</li>');
       bddone();
+    })
+  })
+  describe.only('calculateUsedLinks',function() {
+    var idToFindLater;
+    before(function (bddone) {
+      // Initialise some Test Data for the find functions
+      async.series([
+        testutil.clearDB,
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1 some [ping](https://link.to/hallo)",collection:"col1 http://link.to/hallo",category:"catA"},cb)},
+        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1 some [ping](https://link.to/hallo) http://www.osm.de/12345",collection:"http://www.osm.de/12345",category:"catB"},cb)},
+        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test1 some [ping](https://link.to/hallo)",collection:"col3 http://www.google.de",category:"catA"},
+                         function(err,result){
+                          should.not.exist(err);
+                          idToFindLater = result.id;
+                          cb(err);
+                         })}
+
+        ],function(err) {
+          should.not.exist(err);
+          bddone();
+        }
+      );
+    })
+    it('should display the other Articles Links',function(bddone){
+      articleModule.findById(idToFindLater,function(err,article){
+        should.not.exist(err);
+        article.calculateUsedLinks(function(err,result){
+          should.not.exist(err);
+          should.exist(result);
+          should(result.count).equal(4);
+          should(result["://link.to/hallo"].length).equal(3);
+          should(result["://www.google.de"].length).equal(1);
+
+          bddone();
+
+        })
+      })
     })
   })
 })

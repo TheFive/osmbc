@@ -11,136 +11,137 @@ var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
 
-/* GET users listing. */
-router.get('/:article_id', function(req, res, next) {
-  debug('router.get');
+
+function renderArticleId(req,res,next) {
+  debug('renderArticleId');
+
+  // Get the ID to display
   var id = req.params.article_id;
   articleModule.findById(id,function(err,article) {
-    if (typeof(article.id) == 'undefined') return next();
 
-   var listOfOpenBlog;
-   var params = {};
-    params.edit = req.query.edit;
-    var changes = [];
+  // if the ID does not exist, go ahead in routing process
+  if (typeof(article.id) == 'undefined') return next();
 
-    var usedLinks = article.calculateLinks();
-    var articleReferences = {};
-    articleReferences.count = 0;
+  // Variables for rendering purposes
 
-    console.dir(usedLinks);
-    console.dir(articleReferences);
+  // ListOfOpenBlog is used to show all openBlogs to assign an article to
+  var listOfOpenBlog;
 
+  // Used for display changes
+  var changes = [];
 
+  // Params is used for WHAT ??????
+  var params = {};
 
+  params.edit = req.query.edit;
 
-    async.series([
-      function (callback) {
-        async.each(usedLinks,function(item,cb) {
-          var reference = item;
-          if (reference.substring(0,5) == "https") reference = reference.substring(5,999);
-          if (reference.substring(0,4) == "http") reference = reference.substring(4,999);
-         
-          articleModule.find(" where (data->>'collection' like '%"+reference+"%') \
-                                  or (data->>'markdown' like '%"+reference+"%')",function(err,result) {
-            if (result) {
-              articleReferences[usedLinks] = result;
-              articleReferences.count += result.length;
-            }
-            else articleReferences[usedLinks] = [];
-            cb();
-          });
-        },function(err) {
-          console.dir(articleReferences);
-
-          callback();
-        });
-      },
-      function (callback) {
-        if (typeof(req.query.setCategory)!='undefined')
-        {
-          var changes = {category:req.query.setCategory};
-          article.setAndSave(req.user.displayName,changes,function(err) {
-            var info = {};
-            info.message = "Category Changed";
-            info.status = "message";
-            if (err) {
-              console.dir(err);
-              info.message = JSON.stringify(err);
-              info.status = 'error';
-            }
-            return callback();
-          })
-        } else return callback();
-      },
-      function (callback) {
-        if (typeof(req.query.setBlog)!='undefined')
-        {
-          var changes = {blog:req.query.setBlog};
-          article.setAndSave(req.user.displayName,changes,function(err) {
-            var info = {};
-            info.message = "Blog Changed";
-            info.status = "message";
-            if (err) {
-              console.dir(err);
-              info.message = JSON.stringify(err);
-              info.status = 'error';
-            }
-            return callback();
-          })
-        } else return callback();
-      },
-      function (callback) {
-        logModule.find({id:id},{column:"timestamp",desc :true},function(err,result) {
-          if (err) return callback(err);
-          changes = result;
-
-          callback();
-        })
-      },
-      function (callback) {
-        articleModule.getListOfOpenBlog(function(err,result) {
-          listOfOpenBlog = result;
-          callback();
-        })
-      },
-      function (callback){
-        if (typeof(params.edit)!='undefined') {
-          article.lock={};
-          article.lock.user = req.user.displayName;
-          article.lock.timestamp = new Date();
-          article.save(callback);
-        } else { 
-          return callback()
-        }
-      }],
-        function (err) {
-          if (typeof(article.markdown)!='undefined') {
-            var text = article.markdown;
-            text = "###"+article.category+"\n* ...\n"+text+"\n* ...";
-            article.textHtml = markdown.toHTML(text)
-          } 
-          if (typeof(article.comment)!='undefined') {
-            article.commentHtml = markdown.toHTML(article.comment)
-          } 
+  // calculate all used Links for the article
+  var usedLinks = article.calculateLinks();
 
  
-          res.render('article',{article:article,
-                                params:params,
-                                user:req.user,
-                                changes:changes,
-                                listOfOpenBlog:listOfOpenBlog,
-                                moment:moment,
-                                articleReferences:articleReferences,
-                                usedLinks:usedLinks,
-                                util:util,
-                                categories:blogModule.categories});
+
+
+
+  async.series([
+    function calculateUsedLinks(callback) {
+      article.calculateUsedLinks(function(err,result) {
+        if (!err) {
+          articleReferences=result;
         }
+      });
+    }, // CalculateUsedLinks
+    function (callback) {
+      if (typeof(req.query.setCategory)!='undefined')
+      {
+        var changes = {category:req.query.setCategory};
+        article.setAndSave(req.user.displayName,changes,function(err) {
+          var info = {};
+          info.message = "Category Changed";
+          info.status = "message";
+          if (err) {
+            console.dir(err);
+            info.message = JSON.stringify(err);
+            info.status = 'error';
+          }
+          return callback();
+        })
+      } else return callback();
+    },
+    function (callback) {
+      if (typeof(req.query.setBlog)!='undefined')
+      {
+        var changes = {blog:req.query.setBlog};
+        article.setAndSave(req.user.displayName,changes,function(err) {
+          var info = {};
+          info.message = "Blog Changed";
+          info.status = "message";
+          if (err) {
+            console.dir(err);
+            info.message = JSON.stringify(err);
+            info.status = 'error';
+          }
+          return callback();
+        })
+      } else return callback();
+    },
+    function (callback) {
+      logModule.find({id:id},{column:"timestamp",desc :true},function(err,result) {
+        if (err) return callback(err);
+        changes = result;
+
+        callback();
+      })
+    },
+    function (callback) {
+      articleModule.getListOfOpenBlog(function(err,result) {
+        listOfOpenBlog = result;
+        callback();
+      })
+    },
+    function (callback){
+      if (typeof(params.edit)!='undefined') {
+        article.lock={};
+        article.lock.user = req.user.displayName;
+        article.lock.timestamp = new Date();
+        article.save(callback);
+      } else { 
+        return callback()
+      }
+    }],
+      function (err) {
+        if (typeof(article.markdown)!='undefined') {
+          var text = article.markdown;
+          text = "###"+article.category+"\n* ...\n"+text+"\n* ...";
+          article.textHtml = markdown.toHTML(text)
+        } 
+        if (typeof(article.comment)!='undefined') {
+          article.commentHtml = markdown.toHTML(article.comment)
+        } 
+
+
+        res.render('article',{article:article,
+                              params:params,
+                              user:req.user,
+                              changes:changes,
+                              listOfOpenBlog:listOfOpenBlog,
+                              moment:moment,
+                              articleReferences:articleReferences,
+                              usedLinks:usedLinks,
+                              util:util,
+                              categories:blogModule.categories});
+      }
     );
   });
-});
+}
+
+module.exports.renderArticleId = renderArticleId;
+
+router.get('/:article_id', exports.renderArticleId );
+
+// For test purposes
  
 router.post('/:article_id', function(req, res, next) {
-  debug('router.put');
+  debug('router.post /:article_id');
   var id = req.params.article_id;
   articleModule.findById(id,function(err,article) {
     if (typeof(article.id) == 'undefined') return next();
@@ -221,6 +222,6 @@ router.get('/list', function(req, res, next) {
   });
 });
 
-module.exports = router;
+module.exports.router = router;
 
 
