@@ -2,7 +2,6 @@ var pg = require('pg');
 var config = require('../config.js');
 var pgMap = require('./pgMap.js')
 var debug = require('debug')('OSMBC:user');
-var bcrypt = require('bcrypt-nodejs');
 
 
 function User (proto)
@@ -31,17 +30,7 @@ User.prototype.save = function(callback) {
   console.log("usert");
   console.dir(user);
 
-  // Password changed so we need to hash it
-  bcrypt.genSalt(5, function(err, salt) {
-    if (err) return callback(err);
 
-    bcrypt.hash(user.password, salt, null, function(err, hash) {
-      if (err) return callback(err);
-      user.password = hash;
-      var func = pgMap.save.bind(user);
-      func(callback);
-    });
-  });
 }
 
 User.prototype.remove = pgMap.remove;
@@ -60,9 +49,7 @@ function findOne(obj1,obj2,callback) {
   pgMap.findOne(this,obj1,obj2,callback);
 }
 
-User.prototype.verifyPassword = function(password, cb) {
-  bcrypt.compare(password, this.password, cb);
-};
+
 
 module.exports.create= create;
 module.exports.find = find;

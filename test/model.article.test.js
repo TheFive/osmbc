@@ -341,7 +341,7 @@ describe('model/article', function() {
       bddone();
     })
   })
-  describe.only('calculateUsedLinks',function() {
+  describe('calculateUsedLinks',function() {
     var idToFindLater;
     before(function (bddone) {
       // Initialise some Test Data for the find functions

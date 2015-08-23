@@ -1,0 +1,1 @@
+var userModule = require('../model/user.js');
