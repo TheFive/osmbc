@@ -3,6 +3,10 @@ var should = require('should');
 var async  = require('async');
 var path   = require('path');
 var fs     = require('fs');
+var compare = require('dom-compare').compare;
+var groupingreporter = require('dom-compare').GroupingReporter;
+var jsdom = require('node-jsdom');
+
 var debug  = require('debug')('OSMBC:test:testutil');
 
 var config = require('../config.js');
@@ -68,27 +72,51 @@ exports.importData = function importData(data,callback) {
   debug('importData');
 
   async.series([
-    function importAllUsers(cb) {
+    function importAllUsers(cb1) {
       debug('importAllUsers');
       // to be implmeneted
-      cb();
+      cb1();
     },
-    function importAllBlogs(cb) {
+    function importAllBlogs(cb2) {
       debug('importAllBlogs');
       if (typeof(data.blog)!='undefined') {  
         async.each(data.blog,function importOneBlog(d,cb){
           blogModule.createNewBlog(d,cb);
-        },cb)
+        },cb2)
       } 
     },
-    function importAllArticles(cb) {
+    function importAllArticles(cb3) {
       debug('importAllArticles');
       if (typeof(data.article)!='undefined') {  
         async.each(data.article,function importOneArticle(d,cb){
           articleModule.createNewArticle(d,cb);
-        },cb)
+        },cb3)
       } 
     }
 
     ],function(err) {callback(err,data)})
+}
+
+// Comparing 2 HTML Trees with JSDOM and DomCompare
+// the result gives getResult()=true, if the trees are equal
+// result.getDifferences() is an array with the differences
+// dom-compare offers an GroupingReporter to display the differences
+// in more detail.
+exports.domcompare = function domcompare(actualHTML,expectedHTML) {
+
+  var expectedDOM = jsdom.jsdom(expectedHTML);
+  var actualDOM = jsdom.jsdom(actualHTML);
+  var result = compare(expectedDOM, actualDOM);
+
+  if (result.getDifferences().length>0) {
+    console.log("Actual HTML-----");
+    console.log(actualHTML);
+    console.log("Expected HTML------");
+    console.log(expectedHTML);
+    console.log("Error Message-----");
+    console.log(groupingreporter.report(result));
+  }
+
+  return result;
+
 }

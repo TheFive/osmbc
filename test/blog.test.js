@@ -157,7 +157,7 @@ describe('blog', function() {
       })
     })
   })
-  describe.skip('preview',function() {
+  describe('preview',function() {
     beforeEach(function (bddone) {
       testutil.clearDB(bddone);
     })
@@ -197,7 +197,6 @@ describe('blog', function() {
           function(done) {
             blog.preview(false,function(err,result){
               should.not.exist(err);
-              md = result.markdown;
               html = result.preview;
               articles = result.articles;
               done();
@@ -207,19 +206,17 @@ describe('blog', function() {
           ],
           function (err) {
             should.not.exist(err);
-            should(md).equal(data.testBlogResultMarkdown);
 
             var htmlResult = data.testBlogResultHtml;
             if (list.indexOf(htmlResult)>= 0) {
               var file =  path.resolve(__dirname,'data', htmlResult);
               htmlResult =  fs.readFileSync(file,"utf-8");
             }
-            
-            // May be the comparison can be generalised by
-            // http://stackoverflow.com/questions/17063518/compare-html-responses-using-node-js
-            //
-            should(html).eql(htmlResult);
+            var result = testutil.domcompare(html,htmlResult);
 
+            if (result.getDifferences().length>0) {
+              should.not.exist(result.getDifferences());
+            }
             bddone();
           }
         )   
