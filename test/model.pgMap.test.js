@@ -1,1 +1,1 @@
-var pgMap = require('../model/pgmap.js');
+var pgMap = require('../model/pgMap.js');
