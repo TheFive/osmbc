@@ -87,8 +87,8 @@ describe('model/blog', function() {
               // for the test machine.
               should(t0diff).be.below(10);
               should(t1diff).be.below(10);
-              should(result[0]).eql({id:r0id,timestamp:t0,oid:id,user:"user",table:"blog",property:"status",from:"TEST",to:"published"});
-              should(result[1]).eql({id:r1id,timestamp:t1,oid:id,user:"user",table:"blog",property:"field",to:"test"});
+              should(result).containEql({id:r0id,timestamp:t0,oid:id,user:"user",table:"blog",property:"status",from:"TEST",to:"published"});
+              should(result).containEql({id:r1id,timestamp:t1,oid:id,user:"user",table:"blog",property:"field",to:"test"});
               bddone();
             })
           })
@@ -161,16 +161,6 @@ describe('model/blog', function() {
     beforeEach(function (bddone) {
       testutil.clearDB(bddone);
     })
-
-    var testdir = path.resolve(__dirname, "data")
-    var listOfJson=fs.readdirSync(testdir);
-    var list=[];
-    for (var i =0;i<listOfJson.length;i++){
-      var filenameLong=path.resolve(testdir,listOfJson[i]);
-      if (!fs.statSync(filenameLong).isDirectory()) {
-        list.push(listOfJson[i]);
-      }
-    }
     function doATest(filename) {
      
       it('should handle testfile '+filename,function (bddone) {
@@ -208,10 +198,14 @@ describe('model/blog', function() {
             should.not.exist(err);
 
             var htmlResult = data.testBlogResultHtml;
-            if (list.indexOf(htmlResult)>= 0) {
+
+            try {
+              // try to read file content,
+              // if it fails, use the allready defined value
               var file =  path.resolve(__dirname,'data', htmlResult);
               htmlResult =  fs.readFileSync(file,"utf-8");
             }
+            catch (err) {/* ignore the error */}
             var result = testutil.domcompare(html,htmlResult);
 
             if (result.getDifferences().length>0) {
@@ -222,9 +216,6 @@ describe('model/blog', function() {
         )   
       })
     }
-    for (testfile in list) {
-      if ((list[testfile]).search("html") >= 0) continue;
-      doATest(list[testfile]);
-    }
+    testutil.generateTests("data",/^model.blog.preview.+json/,doATest);
   }) 
 })

@@ -134,7 +134,7 @@ function preview(edit,callback) {
   var articles = {};
   var preview = "";
 
-  articleModule.find({blog:this.name},function(err,result){
+  articleModule.find({blog:this.name},{column:"title"},function(err,result){
 
     // Put every article in an array for the category
     for (var i=0;i<result.length;i++ ) {

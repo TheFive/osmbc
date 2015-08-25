@@ -21,13 +21,14 @@ function generateQuery(table,obj,order) {
       }    
     }
   }
-  var orderby = "";
+  var orderby = " order by id";
   if (order) {
     if (order) {
       orderby = " order by data->>'"+order.column+"'";
       if (order.desc) {
         orderby += " desc";
       }
+      orderby += " , id ";
     }    
   }
   var query = "select id,data from "+table+whereClause+orderby;

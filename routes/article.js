@@ -32,7 +32,7 @@ function renderArticleId(req,res,next) {
 
   // Params is used for WHAT ??????
   var params = {};
-
+  
   params.edit = req.query.edit;
 
   // calculate all used Links for the article
@@ -42,14 +42,10 @@ function renderArticleId(req,res,next) {
 
 
 
-  async.series([
-    function calculateUsedLinks(callback) {
-      article.calculateUsedLinks(function(err,result) {
-        if (!err) {
-          articleReferences=result;
-        }
-      });
-    }, // CalculateUsedLinks
+  async.auto({
+    
+    articleReferences:article.calculateUsedLinks.bind(article),
+    setCategory:
     function (callback) {
       if (typeof(req.query.setCategory)!='undefined')
       {
@@ -67,6 +63,7 @@ function renderArticleId(req,res,next) {
         })
       } else return callback();
     },
+    setBlog:
     function (callback) {
       if (typeof(req.query.setBlog)!='undefined')
       {
@@ -84,20 +81,19 @@ function renderArticleId(req,res,next) {
         })
       } else return callback();
     },
+    changes:
     function (callback) {
       logModule.find({id:id},{column:"timestamp",desc :true},function(err,result) {
-        if (err) return callback(err);
-        changes = result;
-
-        callback();
+        callback(err,result);
       })
     },
+    listOfOpenBlog:
     function (callback) {
       articleModule.getListOfOpenBlog(function(err,result) {
-        listOfOpenBlog = result;
-        callback();
+        callback(err,result);
       })
     },
+    edit:
     function (callback){
       if (typeof(params.edit)!='undefined') {
         article.lock={};
@@ -107,8 +103,8 @@ function renderArticleId(req,res,next) {
       } else { 
         return callback()
       }
-    }],
-      function (err) {
+    }},
+      function (err,result) {
         if (typeof(article.markdown)!='undefined') {
           var text = article.markdown;
           text = "###"+article.category+"\n* ...\n"+text+"\n* ...";
@@ -122,11 +118,11 @@ function renderArticleId(req,res,next) {
         res.render('article',{article:article,
                               params:params,
                               user:req.user,
-                              changes:changes,
-                              listOfOpenBlog:listOfOpenBlog,
+                              changes:result.changes,
+                              listOfOpenBlog:result.listOfOpenBlog,
                               moment:moment,
-                              articleReferences:articleReferences,
-                              usedLinks:usedLinks,
+                              articleReferences:result.articleReferences,
+                              usedLinks:result.usedLinks,
                               util:util,
                               categories:blogModule.categories});
       }

@@ -31,7 +31,7 @@ function getListOfOpenBlog(callback) {
       pgdone();
       return (callback(err));
     }
-    var query = client.query('select name from "OpenBlogWithArticle"');
+    var query = client.query('select name from "OpenBlogWithArticle" order by name');
     debug("reading list of open blog");
     listOfOpenBlog = [];
     query.on('row',function(row) {

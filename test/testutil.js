@@ -120,3 +120,19 @@ exports.domcompare = function domcompare(actualHTML,expectedHTML) {
   return result;
 
 }
+
+
+// This function reads the data directory (as a subdirectory of test directory)
+// and for every file, that fits the fileregex calls the createTestFunction
+// callback with the filename to create one or several it() tests for it.
+exports.generateTests = function generateTests(datadir,fileregex,createTestFunction) {
+  debug('generateTests');
+  var testdir = path.resolve(__dirname, datadir)
+  var fileList=fs.readdirSync(testdir);
+  for (var i =0;i<fileList.length;i++){
+    var filenameLong=path.resolve(testdir,fileList[i]);
+    if (fs.statSync(filenameLong).isDirectory()) continue;
+    if (!((fileList[i]).match(fileregex) )) continue;
+    createTestFunction(fileList[i]);
+  }
+ }
