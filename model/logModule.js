@@ -1,23 +1,55 @@
 var pg = require('pg');
+var async = require('async');
 var config = require('../config.js');
 var pgMap = require('../model/pgMap.js');
 var debug = require('debug')('OSMBC:logModule');
+var should = require('should');
+
+var articleModule = require('../model/article.js');
+var blogModule = require('../model/blog.js');
+var userModule = require('../model/user.js');
 
 
 module.exports.log = function log(object,callback) {
 	debug("log");
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-  	if (err) {
-  		pgdone();
-  		return (callback(err));
-  	}
-    object.timestamp = new Date();
-  	var query = client.query("insert into changes (data) values ($1) ", [object]);
-  	query.on('end',function (result) {  		
-  		pgdone();
-  		callback();
-  	})
-  })
+  async.series([
+    function checkOid(callback) {
+      
+      if (typeof(object.oid)!="object") return callback();
+
+      var table = oid.table;
+      var reference = oid.r;
+      var module;
+
+      switch (table) {
+        case "article": module = articleModule;break;
+        case "blog": module = blogModule;break;
+        case "user": module = userModule;break;
+        default: module = null;
+      }
+      pgMap.find(module,reference,function(err,result) {
+        if (err) return callback(err);
+        if (result ==null) return callback(new Error("Object Id Not Found in Log Module"));
+        object.oid = result.id;
+        callback(); 
+      })
+    },
+    function saveData(callback) {
+      pg.connect(config.pgstring, function(err, client, pgdone) {
+      	if (err) {
+      		pgdone();
+      		return (callback(err));
+      	}
+        object.timestamp = new Date();
+      	var query = client.query("insert into changes (data) values ($1) ", [object]);
+      	query.on('end',function (result) {  		
+      		pgdone();
+      		callback();
+      	})
+      })
+    }],
+    function(err) {callback(err)}
+  )
 }
 
 
