@@ -45,7 +45,7 @@ describe('router/article',function() {
         )
       })
     })
-    describe('Do file base tests',function() {
+    describe.only('Do file base tests',function() {
       beforeEach(function (bddone) {
         testutil.clearDB(bddone);
       })
@@ -72,7 +72,7 @@ describe('router/article',function() {
             },
             function(done) {
               // search for the test Article
-              articleModule.findOne({title:data.testArticleName},function(err,result) {
+              articleModule.findOne({title:data.testArticleTitle},function(err,result) {
                 should.not.exist(err);
                 article = result;
                 req.params.article_id = result.id;
@@ -96,6 +96,9 @@ describe('router/article',function() {
               should(call.calledWith("article")).be.true();
               var renderData = call.args[1];
 
+              // clean up test data for comparison, Database IDs are random
+              for (var i =0;i<renderData.changes.length; i++) delete renderData.changes[i].id;
+              for (i=0;i<data.result.changes.length;i++) data.result.changes[i].oid = req.params.article_id;
               article.textHtml = data.result.articleText;
               should(renderData.article).eql(article);
               if(typeof(renderData.params.edit)=='undefined') renderData.params.edit = null;

@@ -75,8 +75,8 @@ describe('model/blog', function() {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(2);
-              var r0id = result[0].id;
-              var r1id = result[1].id;
+              delete result[0].id;
+              delete result[1].id;
               var t0 = result[0].timestamp;
               var t1 = result[1].timestamp;
               var now = new Date();
@@ -87,8 +87,8 @@ describe('model/blog', function() {
               // for the test machine.
               should(t0diff).be.below(10);
               should(t1diff).be.below(10);
-              should(result).containEql({id:r0id,timestamp:t0,oid:id,user:"user",table:"blog",property:"status",from:"TEST",to:"published"});
-              should(result).containEql({id:r1id,timestamp:t1,oid:id,user:"user",table:"blog",property:"field",to:"test"});
+              should(result).containEql({timestamp:t0,oid:id,user:"user",table:"blog",property:"status",from:"TEST",to:"published"});
+              should(result).containEql({timestamp:t1,oid:id,user:"user",table:"blog",property:"field",to:"test"});
               bddone();
             })
           })

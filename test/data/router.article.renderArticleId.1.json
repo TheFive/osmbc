@@ -2,7 +2,7 @@
   "blog":[{"name":"BLOG"}],
   "article":[{"blog":"BLOG","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
              {"blog":"BLOG","title":"BLOG","markdown":"* Dies ist ein grosser Testartikel.","category":"Keine"}],
-  "testArticleName":"BLOG",
+  "testArticleTitle":"BLOG",
 
   "result":{"articleText":"<h3>Keine</h3>\n\n<ul><li>...</li><li>Dies ist ein grosser Testartikel.</li><li>...</li></ul>",
             "params":{"edit":null},

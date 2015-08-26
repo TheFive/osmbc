@@ -2,11 +2,25 @@
   "blog":[{"name":"BLOG"}],
   "article":[{"blog":"BLOG","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
              {"blog":"BLOG","title":"BLOG","markdown":"* Dies ist ein grosser Testartikel.","category":"Keine"}],
-  "testArticleName":"BLOG",
+  
+  "change":[{"oid":{"table":"article","title":"BLOG"},"table":"article","timestamp": "2015-08-26T17:11:50.654Z","from":"notitle","to":"test","field":"title"},
+            {"oid":{"table":"article","title":"BLOG"},"table":"article","timestamp": "2015-08-26T17:11:51.654Z","from":"test","to":"blog","field":"title"},
+            {"oid":{"table":"article","category":"Mapping"},"table":"article","timestamp": "2015-08-26T17:11:45.654Z","from":"test","to":"test","field":"title"}],
+
+
+  "testArticleTitle":"BLOG",
+
 
   "result":{"articleText":"<h3>Keine</h3>\n\n<ul><li>...</li><li>Dies ist ein grosser Testartikel.</li><li>...</li></ul>",
             "params":{"edit":null},
-            "changes": [],
+            "changes": [ {"field": "title","from": "test", "oid": "1","table": "article",
+          "timestamp": "2015-08-26T17:11:51.654Z",
+          "to": "blog"
+       },{"field": "title","from": "notitle", "oid": "1","table": "article",
+          "timestamp": "2015-08-26T17:11:50.654Z",
+          "to": "test"
+       }
+       ],
             "articleReferences":{"count":0},
             "categories":["[Aktuelle Kategorie]",
                           "In eigener Sache",

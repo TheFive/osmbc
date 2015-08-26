@@ -83,7 +83,7 @@ exports.importData = function importData(data,callback) {
         async.each(data.blog,function importOneBlog(d,cb){
           blogModule.createNewBlog(d,cb);
         },cb2)
-      } 
+      } else cb2();
     },
     function importAllArticles(cb3) {
       debug('importAllArticles');
@@ -91,7 +91,15 @@ exports.importData = function importData(data,callback) {
         async.each(data.article,function importOneArticle(d,cb){
           articleModule.createNewArticle(d,cb);
         },cb3)
-      } 
+      } else cb3();
+    },
+    function importAllChanges(cb4) {
+      debug('importAllChanges');
+      if (typeof(data.change)!='undefined') {  
+        async.each(data.change,function importOneChange(d,cb){
+          logModule.log(d,cb);
+        },cb4)
+      } else cb4();
     }
 
     ],function(err) {callback(err,data)})

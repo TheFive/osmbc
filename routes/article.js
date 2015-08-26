@@ -83,7 +83,7 @@ function renderArticleId(req,res,next) {
     },
     changes:
     function (callback) {
-      logModule.find({id:id},{column:"timestamp",desc :true},function(err,result) {
+      logModule.find({oid:id,table:"article"},{column:"timestamp",desc :true},function(err,result) {
         callback(err,result);
       })
     },
