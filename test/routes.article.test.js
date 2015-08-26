@@ -45,7 +45,7 @@ describe('router/article',function() {
         )
       })
     })
-    describe.only('Do file base tests',function() {
+    describe('Do file base tests',function() {
       beforeEach(function (bddone) {
         testutil.clearDB(bddone);
       })
