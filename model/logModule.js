@@ -17,9 +17,11 @@ module.exports.log = function log(object,callback) {
       
       if (typeof(object.oid)!="object") return callback();
 
-      var table = oid.table;
-      var reference = oid.r;
+      var table = object.oid.table;
+      var reference = object.oid;
+      delete reference.table;
       var module;
+
 
       switch (table) {
         case "article": module = articleModule;break;
@@ -30,7 +32,8 @@ module.exports.log = function log(object,callback) {
       pgMap.find(module,reference,function(err,result) {
         if (err) return callback(err);
         if (result ==null) return callback(new Error("Object Id Not Found in Log Module"));
-        object.oid = result.id;
+        if (result.length != 1) return callback(new Error("Object Reference nicht eindeutig"));
+        object.oid = result[0].id;
         callback(); 
       })
     },
@@ -40,7 +43,7 @@ module.exports.log = function log(object,callback) {
       		pgdone();
       		return (callback(err));
       	}
-        object.timestamp = new Date();
+        if (typeof(object.timestamp)=='undefined') object.timestamp = new Date();
       	var query = client.query("insert into changes (data) values ($1) ", [object]);
       	query.on('end',function (result) {  		
       		pgdone();
