@@ -2,7 +2,6 @@ var express = require('express');
 var async   = require('async');
 var moment   = require('moment');
 var router = express.Router();
-var markdown = require('markdown').markdown;
 
 var debug = require('debug')('OSMBC:routes:blog');
 var blogModule = require('../model/blog.js');
@@ -88,21 +87,20 @@ router.get('/:blog_id', function(req, res, next) {
     query.status = status;
   }
 
-  async.series([
-    function (callback) {
-        articleModule.getListOfOpenBlog(function(err,result) {
-          listOfOpenBlog = result;
-          callback();
-        })
-      }  
-      ],function(err) {
-        blogModule.find(query,{column:"name",desc:true},function(err,blogs) {
-          res.render('bloglist',{blogs:blogs,
-                                listOfOpenBlog:listOfOpenBlog,
-                                  user:req.user});
+  async.auto({
+        listOfOpenBlog: articleModule.getListOfOpenBlog,
+        blogs:function(callback) {
+                 blogModule.find(query,{column:"name",desc:true},function(err,blogs) {
+                 callback(err,blogs);
+              })
+        }
+      },function(err,result) {
+          res.render('bloglist',{
+                                listOfOpenBlog:result.listOfOpenBlog,
+                                blogs:result.blogs,
+                                user:req.user});
         });
 
-  })
 });
 
 router.get('/:blog_id/preview', function(req, res, next) {
@@ -114,70 +112,25 @@ router.get('/:blog_id/preview', function(req, res, next) {
     var edit = req.query.edit;
 
     var changes = [];
-    var articles = {};
-    var fullMarkdown ="";
-    var preview = "";
+   
     var listOfOpenBlog;
 
 
-    async.series([ 
-      function (callback) {
-        articleModule.getListOfOpenBlog(function(err,result) {
-          listOfOpenBlog = result;
-          callback();
-        })
+    async.auto({ 
+        getListOfOpenBlog:articleModule.getListOfOpenBlog,
+        converter:function(callback) {
+                    blog.preview(edit,function(err,result) {
+                      callback(err,result);
+                    })
+                  }
       },
-      function (callback) {
-        articleModule.find({blog:blog.name},function(err,result){
-          for (var i=0;i<result.length;i++ ) {
-            var r = result[i];
-            if (typeof(r.markdown)!='undefined') {
-              var text = r.markdown;
-              r.textHtml = markdown.toHTML(text)
-            } 
-            if (typeof(articles[r.category]) == 'undefined') {
-              articles[r.category] = [];
-            }
-            articles[r.category].push(r);
-          }
-          for (var i=0;i<blogModule.categories.length;i++) {
-            var category = blogModule.categories[i];
-            if (typeof(articles[category])!='undefined') {
-              fullMarkdown += "## "+category+"\n";
-              for (var j=0;j<articles[category].length;j++) {
-                var r = articles[category][j];
-                var editMark = "";
-                if (edit) editMark = " [edit](/article/"+r.id+")";
-                debug("Title %s",r.title);
-                if (typeof(r.markdown)!='undefined' && r.markdown != "") {
-                  debug("Markdown exist");
-                  fullMarkdown += r.markdown+editMark+"\n";
-                } else if (typeof(r.collection)!='undefined') {
-                  debug("Try Collection");
-                  var s = r.collection;
-                  debug(s);
-                  s.replace("\n","    ");
-                  debug(s);
-                  fullMarkdown += "    "+s+"\n"+editMark;
-                }
-                else {
-                  debug("Use Title");
-                  fullMarkdown += "    "+r.title+"\n"+editMark;
-                }
-              }
-            }
-          }
-          preview = markdown.toHTML(fullMarkdown);
-          callback();
-        })
-      }],
-      function (err) {
+      function(err,result) {
         res.render('blogpreview',{blog:blog,
                            user:req.user,
-                           articles:articles,
-                           listOfOpenBlog:listOfOpenBlog,
-                           preview:preview,
-                           fullMarkdown:fullMarkdown,
+                           articles:result.converter.articles,
+                           listOfOpenBlog:result.listOfOpenBlog,
+                           preview:result.converter.preview,
+                           fullMarkdown:result.converter.fullMarkdown,
                            categories:blogModule.categories});
       }
     )

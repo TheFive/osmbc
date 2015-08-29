@@ -1,0 +1,1 @@
+var logModule = require('../model/logModule.js');

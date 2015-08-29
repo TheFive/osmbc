@@ -1,0 +1,12 @@
+{
+  "serverport": 3000,
+  
+  "postgres": {
+    "initialise": true,
+    "database" : "localhost:5432/osmbc",
+    "username" : "TheFive",
+    "password" : "thefive",
+    "connectstr" : "psql://test:test@localhost:5432/testdb"
+  },
+  "callbackUrl":"TestValue"
+}

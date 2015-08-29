@@ -1,0 +1,1 @@
+var blogRoutes = require('../routes/index.js');

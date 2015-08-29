@@ -2,21 +2,18 @@ var pg = require('pg');
 var config = require('../config.js');
 var pgMap = require('./pgMap.js')
 var debug = require('debug')('OSMBC:user');
-var bcrypt = require('bcrypt-nodejs');
-
+var should = require('should');
 
 function User (proto)
 {
 	debug("User");
-	this.id = 0;
+  debug("Prototype %s",JSON.stringify(proto));
+  this.id = 0;
   this._meta={};
   this._meta.table = "usert";
-	if (proto) {
-		if (typeof(proto.id) != 'undefined') this.id = proto.id;
-		this.username = proto.username;
-		this.password = proto.password;
-	}
-
+  for (k in proto) {
+    this[k] = proto[k];
+  }
 }
 
 function create (proto) {
@@ -24,25 +21,18 @@ function create (proto) {
 	return new User(proto);
 }
 
- 
-User.prototype.save = function(callback) {
-  var user = this;
-
-  console.log("usert");
-  console.dir(user);
-
-  // Password changed so we need to hash it
-  bcrypt.genSalt(5, function(err, salt) {
-    if (err) return callback(err);
-
-    bcrypt.hash(user.password, salt, null, function(err, hash) {
-      if (err) return callback(err);
-      user.password = hash;
-      var func = pgMap.save.bind(user);
-      func(callback);
-    });
-  });
+function createNewUser (proto,callback) {
+  debug("createNewUser");
+  if (typeof(proto)=='function') {
+    callback = proto;
+    delete proto;
+  }
+  should.not.exist(proto.id);
+  var user = create(proto);
+  user.save(callback);
 }
+
+
 
 User.prototype.remove = pgMap.remove;
 
@@ -60,9 +50,35 @@ function findOne(obj1,obj2,callback) {
   pgMap.findOne(this,obj1,obj2,callback);
 }
 
-User.prototype.verifyPassword = function(password, cb) {
-  bcrypt.compare(password, this.password, cb);
-};
+function createTable(cb) {
+  debug('createTable');
+  createString = 'CREATE TABLE usert (  id bigserial NOT NULL,  data json,  \
+                  CONSTRAINT user_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
+
+  pgMap.createTable('usert',createString,createView,cb)
+}
+
+function dropTable(cb) {
+  debug('dropTable');
+  pgMap.dropTable('usert',cb);
+}
+
+// Creates an User object and stores it to database
+// can use a prototype to initialise data
+// Parameter: Prototype (optional)
+//            callback
+// Prototype is not allowed to have an id
+module.exports.createNewUser = createNewUser;
+
+
+// save stores the current object to database
+User.prototype.save = pgMap.save;
+
+// Create Tables and Views
+module.exports.createTable = createTable;
+
+// Drop Table (and views)
+module.exports.dropTable = dropTable;
 
 module.exports.create= create;
 module.exports.find = find;

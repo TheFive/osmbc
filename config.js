@@ -93,10 +93,19 @@ exports.getValue = function(key,defValue) {
 
 
 exports.getServerPort = function() {
+  if (typeof(configuration)=='undefined')
+  {
+    exports.initialise();
+  }
 	return configuration.serverport;
 }
 exports.getCallbackUrl = function() {
+  if (typeof(configuration)=='undefined')
+  {
+    exports.initialise();
+  }
   return configuration.callbackUrl;
 }
 
+exports.env = env;
 

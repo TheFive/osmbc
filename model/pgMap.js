@@ -21,13 +21,14 @@ function generateQuery(table,obj,order) {
       }    
     }
   }
-  var orderby = "";
+  var orderby = " order by id";
   if (order) {
     if (order) {
       orderby = " order by data->>'"+order.column+"'";
       if (order.desc) {
         orderby += " desc";
       }
+      orderby += " , id ";
     }    
   }
   var query = "select id,data from "+table+whereClause+orderby;
@@ -40,13 +41,11 @@ module.exports.save = function(callback) {
 	debug("save");
   var self = this;
 
-  console.dir(self);
-
   var table = self._meta.table;
 
 	// first check, wether ID is known or not
 	if (self.id == 0) {
-		// we have to create the beer
+		// we have to create the object
 		debug("Object has to be created");
     pg.connect(config.pgstring, function(err, client, pgdone) {
     	if (err) {
@@ -221,15 +220,63 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
       result.id = row.id;
   	})
   	query.on('end',function (pgresult) {
-
       pgdone();
-      console.log("Found");
-      console.dir(result);
       callback(null,result);      
-  		
   	})
   })
 }
 
+
+exports.createTable = function(table,createString,createView,cb) {
+  debug('createTable');
+  pg.connect(config.pgstring,function(err,client,pgdone) {
+    if (err) {
+      cb(err);
+      pgdone();
+      return;
+    }
+    client.query(createString,function(err) {
+      if (err) {
+        pgdone();
+        cb(err);
+        return;
+      }
+      debug('%s Table Created',table);
+      if (typeof(createView)!='') {
+        client.query(createView,function(err){
+          debug('%s Index Created',table);
+          cb(err);
+          pgdone();
+        })
+      } else {
+        // No Index to be defined, close Function correct
+        cb(err);
+        pgdone();
+      }
+    })
+  })
+} 
+
+exports.dropTable = function dropTable(table,cb) {
+  debug('dropTable');
+
+  pg.connect(config.pgstring,function(err,client,pgdone) {
+    debug('exports.dropTable->connected');
+    if (err) {
+      cb(err);
+      pgdone();
+      return;
+    }
+    var dropString = "DROP TABLE IF EXISTS "+table+ " CASCADE";
+  
+    var query = client.query(dropString);
+    query.on('error',function(err){
+      debug("%s Table Dropped",table);
+      cb(err);
+      pgdone();
+    });
+    query.on('end',function(){cb(null);pgdone();})
+  })
+}
 
 

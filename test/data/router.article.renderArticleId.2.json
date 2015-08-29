@@ -1,0 +1,47 @@
+
+
+{
+  "blog":[{"name":"BLOG"}],
+  "article":[{"blog":"BLOG","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
+             {"blog":"BLOG","title":"BLOG","markdown":"* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","category":"Keine"},
+             {"blog":"Alternativ Blog","markdown":"* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","category":"Keine"}],
+  
+  "change":[{"oid":{"table":"article","title":"BLOG"},"table":"article","timestamp": "2015-08-26T17:11:50.654Z","from":"notitle","to":"test","field":"title"},
+            {"oid":{"table":"article","title":"BLOG"},"table":"article","timestamp": "2015-08-26T17:11:51.654Z","from":"test","to":"blog","field":"title"},
+            {"oid":{"table":"article","category":"Mapping"},"table":"article","timestamp": "2015-08-26T17:11:45.654Z","from":"test","to":"test","field":"title"}],
+
+
+  "testArticleTitle":"BLOG",
+
+
+  "result":{"articleText":"<li>\n<p>Dies ist ein grosser Testartikel, mit Verweis auf <a href=\"https://link.de\">link</a></p>\n</li>",
+            "params":{"edit":null},
+            "changes": [ {"field": "title","from": "test", "oid": "1","table": "article",
+          "timestamp": "2015-08-26T17:11:51.654Z",
+          "to": "blog"
+       },{"field": "title","from": "notitle", "oid": "1","table": "article",
+          "timestamp": "2015-08-26T17:11:50.654Z",
+          "to": "test"
+       }
+       ],
+            "articleReferences":{ "://link.de": [ {  "title": "BLOG","blog": "BLOG", "category": "Keine","markdown": "* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)"},
+                                                  { "blog": "Alternativ Blog", "category": "Keine","markdown": "* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)"}],"count":2},
+            "categories":["[Aktuelle Kategorie]",
+                          "In eigener Sache",
+                          "Wochenaufruf",
+                          "Mapping",
+                          "Community",
+                          "Importe",
+                          "OpenStreetMap Foundation",
+                          "Veranstaltungen",
+                          "Humanitarian OSM",
+                          "Karten",
+                          "switch2OSM",
+                          "Open-Data",
+                          "Lizenzen",
+                          "Programme",
+                          "Programmierung",
+                          "Kennst Du schon...",
+                          "Weitere Themen mit Geo-Bezug",
+                          "Wochenvorschau" ]}
+}
