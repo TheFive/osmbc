@@ -45,24 +45,6 @@ function renderArticleId(req,res,next) {
   async.auto({
     
     articleReferences:article.calculateUsedLinks.bind(article),
-    setCategory:
-    function (callback) {
-      if (typeof(req.query.setCategory)!='undefined')
-      {
-        var changes = {category:req.query.setCategory};
-        article.setAndSave(req.user.displayName,changes,function(err) {
-          var info = {};
-          info.message = "Category Changed";
-          info.status = "message";
-          if (err) {
-            console.dir(err);
-            info.message = JSON.stringify(err);
-            info.status = 'error';
-          }
-          return callback();
-        })
-      } else return callback();
-    },
     changes:
     function (callback) {
       logModule.find({oid:id,table:"article"},{column:"timestamp",desc :true},function(err,result) {
