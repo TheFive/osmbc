@@ -76,11 +76,28 @@ function createNewArticle (proto,callback) {
 }
 
 function preview(edit) {
-  debug(preview);
+  debug("preview");
   var editLink = '';
   if (edit) editLink = ' <a href="/article/'+this.id+'">Edit</a>'; 
   if (typeof(this.markdown)!='undefined' && this.markdown!='') {
     var md = this.markdown;
+
+    // Does the markdown text starts with '* ', so ignore it
+    if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
+    // Return an list Element for the blog article
+    var html = markdown.toHTML(md);
+
+    return '<li>\n'+html+editLink+'\n</li>';
+  } 
+  // Markdown is not defined. Return a placholder for the article
+  return '<li>\n'+this.displayTitle()+editLink+'\n</li>';
+}
+function previewEN(edit) {
+  debug("previewEN");
+  var editLink = '';
+  if (edit) editLink = ' <a href="/article/'+this.id+'">Edit</a>'; 
+  if (typeof(this.markdownEN)!='undefined' && this.markdownEN!='') {
+    var md = this.markdownEN;
 
     // Does the markdown text starts with '* ', so ignore it
     if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
@@ -272,6 +289,7 @@ Article.prototype.remove = pgMap.remove;
 // edit: Boolean, that specifies, wether edit links has to be created or not
 // This function returns an HTML String of the Aricle as an list element.
 Article.prototype.preview = preview;
+Article.prototype.previewEN = previewEN;
 
 // calculateUsedLinks(callback)
 // Async function to search for each Link in the article in the database

@@ -25,34 +25,37 @@ block content
           
     if (params.edit) 
       form(name="input", action="/article/#{article.id}", method="post")
-        input(type="submit", value="Submit")
         .row
           .col-md-1
             | Blog <br>
-          .col-md-11
-            div.btn-group
-              button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-                | #{article.blog}
-                span.caret   
-              ul.dropdown-menu(name="blog",role="menu")
-                | #{article.blog}    
-                li
-                  | WN255
-                li
-                  | WN256
+          .col-md-4
+            select(id="blog",name="blog").form-control
+              option(value="WN255") WN255
+              option(value="WN256") WN256
+              option(value="WN257" selected) WN257
+          .col-md-4
+            select(id="blogEN",name="blogEN").form-control
+              option(value="Weekly255") Weekly255
+              option(value="Weekly256") Weekly256
+              option(value="Weekly257" selected) Weekly257
+          .col-md-3
+            input(type="submit", class="btn btn-primary",value="OK")
+            a(href="/article/#{article.id}" class="btn btn-default" role="button") Cancel
+
+
         .row
           .col-md-1
             | Category <br>
-          .col-md-11
-            div.btn-group
-              button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-                | #{article.category}
-                span.caret   
-              ul.dropdown-menu(name="category",role="menu")
-                | #{article.category}
-                for category in categories
-                  li
-                    | #{category}
+          .col-md-4
+            select(id="category",name="category").form-control
+              option(value="" selected="#{(typeof(article.category)=='undefined')||(article.category=='')}") #{"--"} 
+              for category in categories
+                option(value="#{category}" selected="#{(category==article.category)}") #{category}
+          .col-md-4
+            select(id="categoryEN",name="categoryEN").form-control
+              option(value="" selected="#{(typeof(article.categoryEN)=='undefined')||(article.categoryEN=='')}") #{"--"} 
+              for category in categories
+                option(value="#{category}" selected="#{(category==article.categoryEN)}") #{category}
         .row
           .col-md-1
             | Title <br>
@@ -66,19 +69,34 @@ block content
             textarea.form-control(name="collection",rows=7) #{article.collection}
         .row
           .col-md-1
-            | Markdown <br>
+            | Markdown DE <br>
           .col-md-11  
             textarea.form-control(
               name="markdown"
               rows=7) #{article.markdown}
         .row
           .col-md-1
-            | Preview 
+            | Preview DE
           .col-md-11 
             .panel.panel-default
               .panel-body 
                 :verbatim
                 !{article.textHtml}
+        .row
+          .col-md-1
+            | Markdown EN <br>
+          .col-md-11  
+            textarea.form-control(
+              name="markdownEN"
+              rows=7) #{article.markdownEN}
+        .row
+          .col-md-1
+            | Preview EN
+          .col-md-11 
+            .panel.panel-default
+              .panel-body 
+                :verbatim
+                !{article.textHtmlEN}
         .row
           .col-md-1
             | Comment <br>
@@ -90,40 +108,45 @@ block content
      .row
         .col-md-1
           | Blog <br>
-        .col-md-11
+        .col-md-4
           h2
             | #{article.blog}
-       .row
+        .col-md-4
+          h2
+            | #{article.blogEN}
+        .col-md-3
+          a(href="/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
+      .row
         .col-md-1
           | Category <br>
-        .col-md-11
+        .col-md-4
           h2
             | #{article.category}
+        .col-md-4
+          h2
+            | #{article.categoryEN}
       .row
         .col-md-1
           | Title <br>
-          a(href="/article/#{article.id}?edit=title") Edit
         .col-md-11
           .panel.panel-default
               .panel-body #{article.title}
       .row
         .col-md-1
           | Collection <br>
-          a(href="/article/#{article.id}?edit=collection") Edit
         .col-md-11
             .panel.panel-default
               .panel-body #{article.collection}
       .row
           .col-md-1
-            | Markdown <br>
-            a(href="/article/#{article.id}?edit=markdown") Edit
+            | Markdown DE<br>
           .col-md-11  
               .panel.panel-default
                 .panel-body #{article.markdown}
          
       .row
         .col-md-1
-          | Preview 
+          | Preview DE
 
         .col-md-11 
           .panel.panel-default
@@ -131,9 +154,24 @@ block content
               :verbatim
               !{article.textHtml}
       .row
+          .col-md-1
+            | Markdown EN<br>
+          .col-md-11  
+              .panel.panel-default
+                .panel-body #{article.markdownEN}
+         
+      .row
+        .col-md-1
+          | Preview EN
+
+        .col-md-11 
+          .panel.panel-default
+            .panel-body 
+              :verbatim
+              !{article.textHtmlEN}
+      .row
         .col-md-1
           | Comment <br>
-          a(href="/article/#{article.id}?edit=comment") Edit
         .col-md-11  
             .panel.panel-default
               .panel-body 
@@ -154,8 +192,8 @@ block content
               th
                 | Blog
           tbody
-            each link in usedLinks
-              if (articleReferences[link])
+            each link in articleReferences
+              if (link != "count" && articleReferences[link])
                 each articleItem in articleReferences[link]
                   if articleItem.id != article.id
                     tr

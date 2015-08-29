@@ -63,24 +63,6 @@ function renderArticleId(req,res,next) {
         })
       } else return callback();
     },
-    setBlog:
-    function (callback) {
-      if (typeof(req.query.setBlog)!='undefined')
-      {
-        var changes = {blog:req.query.setBlog};
-        article.setAndSave(req.user.displayName,changes,function(err) {
-          var info = {};
-          info.message = "Blog Changed";
-          info.status = "message";
-          if (err) {
-            console.dir(err);
-            info.message = JSON.stringify(err);
-            info.status = 'error';
-          }
-          return callback();
-        })
-      } else return callback();
-    },
     changes:
     function (callback) {
       logModule.find({oid:id,table:"article"},{column:"timestamp",desc :true},function(err,result) {
@@ -106,9 +88,10 @@ function renderArticleId(req,res,next) {
     }},
       function (err,result) {
         if (typeof(article.markdown)!='undefined') {
-          var text = article.markdown;
-          text = "###"+article.category+"\n* ...\n"+text+"\n* ...";
-          article.textHtml = markdown.toHTML(text)
+          article.textHtml = article.preview();
+        } 
+        if (typeof(article.markdownEN)!='undefined') {
+          article.textHtmlEN = article.previewEN();
         } 
         if (typeof(article.comment)!='undefined') {
           article.commentHtml = markdown.toHTML(article.comment)
@@ -142,9 +125,13 @@ router.post('/:article_id', function(req, res, next) {
   articleModule.findById(id,function(err,article) {
     if (typeof(article.id) == 'undefined') return next();
   	var changes = {markdown:req.body.markdown,
+                   markdownEN:req.body.markdownEN,
+                   blog:req.body.blog,
+                   blogEN:req.body.blogEN,
                    collection:req.body.collection,
                    comment:req.body.comment,
                    category:req.body.category,
+                   categoryEN:req.body.categoryEN,
                    title:req.body.title};
 
     article.setAndSave(req.user.displayName,changes,function(err) {
