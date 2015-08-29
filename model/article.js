@@ -14,7 +14,7 @@ var util      = require('../util.js');
 var logModule = require('../model/logModule.js');
 var pgMap     = require('../model/pgMap.js');
 
-
+var blogModule = require('../model/blog.js');
 
 
 var listOfOpenBlog = null;
@@ -110,7 +110,40 @@ function previewEN(edit) {
   return '<li>\n'+this.displayTitle()+editLink+'\n</li>';
 }
 
-
+function doLock(user,callback) {
+  debug('lock');
+  var self = this;
+  self.lock={};
+  self.lock.user = user;
+  self.lock.timestamp = new Date();
+  self.isClosed = false;
+  self.isClosedEN = false;
+  async.parallel([
+    function updateClosed(cb) {
+      blogModule.findOne({title:self.blog},function(err,result) {
+        if (err) return callback(err);
+        var status = "not found";
+        if (result) status = result.status;
+        self.isClosed = (status == "published");
+        cb()
+      })
+    },
+    function updateClosedEN(cb) {
+      blogModule.findOne({title:self.blogEN},function(err,result) {
+        if (err) return callback(err);
+        status = "not found";
+        if (result) status = result.status;
+        self.isClosedEN = (status == "published");
+        cb()
+      })
+    },
+    ],function(err){
+      // ignore Error and unlock if article is closed
+      if (self.isClosed && self.isClosedEN) {delete self.lock;}
+      self.save(callback);
+    }
+  )
+}
 
 
 function setAndSave(user,data,callback) {
@@ -297,6 +330,12 @@ Article.prototype.previewEN = previewEN;
 // object map, with and array of Articles for each shortened link
 Article.prototype.calculateUsedLinks = calculateUsedLinks;
 
+// lock an Article for editing
+// adds a timestamp for the lock
+// and updates isClosed and isClosedEN for already published blogs
+Article.prototype.doLock = doLock;
+
+
 // Create an Article object in memory, do not save
 // Can use a prototype, to initialise data
 // Parameter: prototype (optional)
@@ -316,6 +355,8 @@ module.exports.find = find;
 
 // Find an Article in database by ID
 module.exports.findById = findById;
+
+
 
 // Find one Object (similar to find, but returns first result)
 module.exports.findOne = findOne;

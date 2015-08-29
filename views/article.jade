@@ -23,13 +23,14 @@ block content
 
 
           
-    if (params.edit) 
+    if (params.edit && !article.isClosed) 
       form(name="input", action="/article/#{article.id}", method="post")
         .row
           .col-md-1
             | Blog <br>
           .col-md-4
             select(id="blog",name="blog").form-control
+
               option(value="WN255") WN255
               option(value="WN256") WN256
               option(value="WN257" selected) WN257

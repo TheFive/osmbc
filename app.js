@@ -20,8 +20,6 @@ var config = require('./config.js');
 
 config.initialise();
 
-var OPENSTREETMAP_CONSUMER_KEY = "oxzBk3Y2B6ZQjdu3r7o7pibQSSNHlzllG6v9iZUD"
-var OPENSTREETMAP_CONSUMER_SECRET = "4nEEHKcQ9xSrMTQRJZjYjSHDVvKZHgF6ZZO31t3z";
 
 // taken from: https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
 // Passport session setup.

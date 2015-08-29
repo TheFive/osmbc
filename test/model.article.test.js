@@ -297,6 +297,53 @@ describe('model/article', function() {
       })
     })
   })
+  describe('lock', function() {
+    before(function(bddone){
+      async.series([
+        testutil.clearDB,
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1",title:"1",markdown:"test1 some [ping](https://link.to/hallo)",collection:"col1 http://link.to/hallo",category:"catA"},cb)},
+        function c2(cb) {articleModule.createNewArticle({blog:"WN1",blogEN:"EN1",title:"2",markdown:"test1 some [ping](https://link.to/hallo) http://www.osm.de/12345",collection:"http://www.osm.de/12345",category:"catB"},cb)},
+        function c3(cb) {articleModule.createNewArticle({blog:"WN2",blogEN:"EN1",title:"3",markdown:"test1 some [ping](https://link.to/hallo)",collection:"col3 http://www.google.de",category:"catA"},cb)},
+        function a1(cb) {blogModule.createNewBlog({title:"WN1",status:"published"},cb)},
+        function a2(cb) {blogModule.createNewBlog({title:"WN2",status:"open"},cb);},
+        function a2(cb) {blogModule.createNewBlog({title:"EN1",status:"published"},cb);}
+                      
+        ],function(err) {
+          should.not.exist(err);
+          bddone();
+        }
+      )
+    })
+    it('should lock articles in open blogs',function(bddone){
+      articleModule.findOne({title:"3"},function(err,article){
+        should.not.exist(err);
+        should.exist(article);
+        article.doLock("TEST",function(err){
+          should.not.exist(err);
+          should(article.isClosed).is.false();
+          should(article.isClosedEN).is.true();
+          should(article.lock.user).equal("TEST");
+          // Hope that 30ms are enough to come from locking to this code on
+          // the test machine.
+          should(new Date() - new Date(article.lock.timestamp)).lessThan(30);
+          bddone();
+        })
+      })
+    })
+    it('should not lock articles in published blogs',function(bddone){
+      articleModule.findOne({title:"2"},function(err,article){
+        should.not.exist(err);
+        should.exist(article);
+        article.doLock("TEST",function(err){
+          should.not.exist(err);
+          should(article.isClosed).is.true();
+          should(article.isClosedEN).is.true();
+          should.not.exist(article.lock);
+          bddone();
+        })
+      })
+    })  
+  })
   describe('preview',function() {
     it('should generate a preview when no markdown is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});

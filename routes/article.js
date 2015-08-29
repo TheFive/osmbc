@@ -60,10 +60,7 @@ function renderArticleId(req,res,next) {
     edit:
     function (callback){
       if (typeof(params.edit)!='undefined') {
-        article.lock={};
-        article.lock.user = req.user.displayName;
-        article.lock.timestamp = new Date();
-        article.save(callback);
+        article.doLock(req.user.name,callback);
       } else { 
         return callback()
       }
