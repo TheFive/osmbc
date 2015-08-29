@@ -14,6 +14,7 @@ var config = require('../config.js');
 var blogModule    = require('../model/blog.js');
 var articleModule = require('../model/article.js');
 var logModule     = require('../model/logModule.js');
+var userModule     = require('../model/user.js');
 
 
 
@@ -54,7 +55,9 @@ exports.clearDB = function clearDB(done) {
     function(done) {articleModule.dropTable(done)},
     function(done) {articleModule.createTable(done)},
     function(done) {logModule.dropTable(done)},
-    function(done) {logModule.createTable(done)}
+    function(done) {logModule.createTable(done)},
+    function(done) {userModule.dropTable(done)},
+    function(done) {userModule.createTable(done)}
   ],function(err) {
     if (err) console.dir(err);
     should.not.exist(err);

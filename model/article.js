@@ -220,7 +220,7 @@ function calculateUsedLinks(callback) {
        
       // search in the full Module for the link
       pgMap.find(module.exports," where (data->>'collection' like '%"+reference+"%') \
-                              or (data->>'markdown' like '%"+reference+"%')",function(err,result) {
+                              or (data->>'markdown' like '%"+reference+"%')",{column:"blog",desc:true},function(err,result) {
         if (result) {
           articleReferences[reference] = result;
           articleReferences.count += result.length;
