@@ -19,40 +19,40 @@ block content
           .alert.alert-dismissable.alert-success
             button.close( type="button", data-dismiss="alert" ) ×
             | #{info.message}
-    .row
-      .col-md-1
-        | Blog <br>
-      .col-md-11
-        div.btn-group
-          button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-            | #{article.blog}
-            span.caret   
-          ul.dropdown-menu(name="category",role="menu")
-            | #{article.category}    
-            li
-              a(href="/article/#{article.id}?setBlog=WN255") WN255
-            li
-              a(href="/article/#{article.id}?setBlog=WN256") WN256
-          
-    .row
-      .col-md-1
-        | Category <br>
-      .col-md-11
-        div.btn-group
-          button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-            | #{article.category}
-            span.caret   
-          ul.dropdown-menu(name="category",role="menu")
-            | #{article.category}
-            for category in categories
-              li
-                a(href="/article/#{article.id}?setCategory=#{category}") #{category}
+  
 
 
           
     if (params.edit) 
       form(name="input", action="/article/#{article.id}", method="post")
         input(type="submit", value="Submit")
+        .row
+          .col-md-1
+            | Blog <br>
+          .col-md-11
+            div.btn-group
+              button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
+                | #{article.blog}
+                span.caret   
+              ul.dropdown-menu(name="blog",role="menu")
+                | #{article.blog}    
+                li
+                  | WN255
+                li
+                  | WN256
+        .row
+          .col-md-1
+            | Category <br>
+          .col-md-11
+            div.btn-group
+              button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
+                | #{article.category}
+                span.caret   
+              ul.dropdown-menu(name="category",role="menu")
+                | #{article.category}
+                for category in categories
+                  li
+                    | #{category}
         .row
           .col-md-1
             | Title <br>
@@ -87,6 +87,18 @@ block content
               name="comment"
               rows=7) #{article.comment}
     else
+     .row
+        .col-md-1
+          | Blog <br>
+        .col-md-11
+          h2
+            | #{article.blog}
+       .row
+        .col-md-1
+          | Category <br>
+        .col-md-11
+          h2
+            | #{article.category}
       .row
         .col-md-1
           | Title <br>

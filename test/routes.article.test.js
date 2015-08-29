@@ -4,7 +4,6 @@ var async  = require('async');
 var path   = require('path');
 var fs     = require('fs');
 
-
 var articleModule = require('../model/article.js');
 var articleRouter = require('../routes/article.js');
 
@@ -53,6 +52,7 @@ describe('router/article',function() {
        
         it('should test: '+filename,function (bddone) {
           var file =  path.resolve(__dirname,'data', filename);
+
           var data =  JSON.parse(fs.readFileSync(file));
          
           var md;
@@ -105,7 +105,16 @@ describe('router/article',function() {
               should(renderData.params).eql(data.result.params);
               should(renderData.user).eql(req.user);
               should(renderData.changes).eql(data.result.changes);
-              should(renderData.listofOpenBlogs).eql(data.result.listOfOpenBlogs)
+              should(renderData.listofOpenBlogs).eql(data.result.listOfOpenBlogs);
+              // Reduce article Refererences for comparison
+              for (var k in renderData.articleReferences) {
+                if (k=="count") continue;
+                var a= renderData.articleReferences[k];
+                for (var i=0;i<a.length;i++) {
+                  delete a[i]._meta;
+                  delete a[i].id;
+                }
+              }
               should(renderData.articleReferences).eql(data.result.articleReferences);
               should(renderData.usedLinks).eql(data.result.usedLinks);
               should(renderData.categories).eql(data.result.categories);
