@@ -151,8 +151,8 @@ router.get('/create', function(req, res, next) {
 });
 
 
-router.get('/list', function(req, res, next) {
-  debug('router.get /list');
+function renderList(req,res,next) {
+  debug('renderList');
   var blog = req.query.blog;
   var markdown = req.query.markdown;
   var query = {};
@@ -163,26 +163,34 @@ router.get('/list', function(req, res, next) {
     query.markdown = markdown;
   }
   var listOfOpenBlog;
+  var articles;
 
-  async.series([
+  async.parallel([
      function (callback) {
         articleModule.getListOfOpenBlog(function(err,result) {
           listOfOpenBlog = result;
           callback();
         })
+      },
+      function(callback) {
+        articleModule.find(query,{column:"title"},function(err,result) {
+          articles = result;
+          callback();
+        })
       }
 
     ],function(error) {
-        articleModule.find(query,{},function(err,articles) {
         res.render('articlelist',{articles:articles,
                                   listOfOpenBlog:listOfOpenBlog,
                                   util:util,
                                   user:req.user});      
-    })
- 
- 
-  });
-});
+    }
+  )
+}
+
+exports.renderList = renderList;
+
+router.get('/list', exports.renderList);
 
 module.exports.router = router;
 

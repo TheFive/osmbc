@@ -6,6 +6,7 @@ var fs     = require('fs');
 
 var articleModule = require('../model/article.js');
 var articleRouter = require('../routes/article.js');
+var util = require('../util.js');
 
 var testutil = require('./testutil.js');
 
@@ -128,4 +129,77 @@ describe('router/article',function() {
       testutil.generateTests("data",/^router.article.renderArticleId.+json/,doATest);
     })     
   })
+  describe('list',function() {
+    describe('Do file base tests',function() {
+      beforeEach(function (bddone) {
+        testutil.clearDB(bddone);
+      })
+      function doATest(filename) {
+       
+        it('should test: '+filename,function (bddone) {
+          var file =  path.resolve(__dirname,'data', filename);
+
+          var data =  JSON.parse(fs.readFileSync(file));
+         
+          var articles;
+          var res = {};
+          var req = {};
+          req.params ={};
+          req.query = {};
+          req.user = "TestUser";
+          var next;
+          res.render = null;
+
+          var query = {};
+          if (data.listBlog) {
+            query.blog = data.listBlog;
+            req.query.blog=data.listBlog;
+          }
+
+          async.series([
+            function(done) {
+              testutil.importData(data,done);
+            },
+
+            function(done) {
+              // do the test
+              res.render = sinon.spy(function(){done()});
+              next = sinon.spy(function(){done()});
+
+              articleRouter.renderList(req,res,next);
+            }
+
+            ],
+            function (err) {
+              should.not.exist(err);
+              should(next.called).be.false();
+
+
+
+              var call = res.render.firstCall;
+              should(call.calledWith("articlelist")).be.true();
+              var renderData = call.args[1];
+
+
+              should(renderData.articles.length).equal(data.result.articles.length);
+              for (var i=0;i<renderData.articles.length;i++) {
+                delete renderData.articles[i]._meta;
+                delete renderData.articles[i].id;
+              }
+              should(renderData.articles).eql(data.result.articles);
+
+              should(renderData.listofOpenBlogs).eql(data.result.listOfOpenBlogs);
+              should(renderData.util).equal(util);
+              should(renderData.user).eql(req.user);
+
+ 
+              bddone();
+            }
+          )   
+        })
+      }
+      testutil.generateTests("data",/^router.article.list.+json/,doATest);
+    })     
+  })
+
 })

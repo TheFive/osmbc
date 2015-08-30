@@ -1,0 +1,16 @@
+
+
+{
+  "blog":[{"name":"BLOG","status":"open"}],
+  "article":[{"blog":"BLOG","title":"Blog1","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
+             {"blog":"BLOG","title":"Blog2","markdown":"* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","category":"Keine"},
+             {"blog":"Alternativ Blog","markdown":"* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","category":"Keine"}],
+  
+
+  "listBlog":"BLOG",
+
+
+  "result":{"listOfOpenBlog":["BLOG"],
+            "articles":[{"blog":"BLOG", "title":"Blog1",  "markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
+             {"blog":"BLOG","title":"Blog2","markdown":"* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","category":"Keine"}]}
+}
