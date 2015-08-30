@@ -17,24 +17,24 @@ var debug = require('debug')('OSMBC:model:blog');
 module.exports.table = "blog";
 
 module.exports.categories = [
-  "[Aktuelle Kategorie]",
-  "In eigener Sache",
-  "Wochenaufruf",
-  "Mapping",
-  "Community",
-  "Importe",
-  "OpenStreetMap Foundation",
-  "Veranstaltungen",
-  "Humanitarian OSM",
-  "Karten",
-  "switch2OSM",
-  "Open-Data",
-  "Lizenzen",
-  "Programme",
-  "Programmierung",
-  "Kennst Du schon...",
-  "Weitere Themen mit Geo-Bezug",
-  "Wochenvorschau" ];
+  {DE:"[Aktuelle Kategorie]",EN:"[Actual Category]"},
+  {DE:"In eigener Sache",EN:"About us"},
+  {DE:"Wochenaufruf",EN:"Weekly exerciseEN:"},
+  {DE:"Mapping",EN:"Mapping"},
+  {DE:"Community",EN:"Community"},
+  {DE:"Importe",EN:"Imports"},
+  {DE:"OpenStreetMap Foundation",EN:"OpenStreetMap Foundation"},
+  {DE:"Veranstaltungen",EN:"Events"},
+  {DE:"Humanitarian OSM",EN:"Events"},
+  {DE:"Karten",EN:"Maps"},
+  {DE:"switch2OSM",EN:"#switch2OSM"},
+  {DE:"Open-Data",EN:"Open Data"},
+  {DE:"Lizenzen",EN:"Licences"},
+  {DE:"Programme",EN:"Software"},
+  {DE:"Programmierung",EN:"Programming"},
+  {DE:"Kennst Du schon …",EN:"Did you know …"},
+  {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
+  {DE:"Wochenvorschau" ,EN:"Not Translated"}];
 
 function Blog(proto)
 {
@@ -147,7 +147,7 @@ function preview(edit,callback) {
 
     // Generate the blog result along the categories
     for (var i=0;i<exports.categories.length;i++) {
-      var category = exports.categories[i];
+      var category = exports.categories[i].DE;
 
       // If the category exists, generate HTML for it
       if (typeof(articles[category])!='undefined') {
