@@ -109,8 +109,8 @@ function postArticleId(req, res, next) {
   });
 }
 
-router.get('/create', function(req, res, next) {
-  debug('router.get /create');
+function createArticle(req, res, next) {
+  debug('createArticle');
   var proto = {};
   if (typeof(req.query.blog) != 'undefined' ) {
     proto.blog = req.query.blog;
@@ -121,6 +121,8 @@ router.get('/create', function(req, res, next) {
 
   async.series([
     function calculateWN(callback) {
+      // Blog Name is defined, so nothing to calculate
+      if (proto.blog) return callback();
       blogModule.findOne({status:'open'},{column:"name",desc:false},
                          function calculateWNResult(err,blog){
         if (blog) {
@@ -134,11 +136,11 @@ router.get('/create', function(req, res, next) {
     ],
     function(err) {
       articleModule.createNewArticle(proto,function(err,article) {
-        res.redirect('/article/'+article.id+"?edit=collection");
+        res.redirect('/article/'+article.id+"?edit=true");
       });
     }
   );
-});
+};
 
 
 function renderList(req,res,next) {
@@ -183,11 +185,13 @@ function renderList(req,res,next) {
 exports.renderArticleId = renderArticleId;
 exports.renderList = renderList;
 exports.postArticleId = postArticleId;
+exports.createArticle = createArticle;
 
 // And configure router to use render Functions
 router.get('/:article_id', exports.renderArticleId );
 router.get('/list', exports.renderList);
 router.post('/:article_id', exports.postArticleId);
+router.get('/create',exports.createArticle);
 
 
 module.exports.router = router;

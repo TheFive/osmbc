@@ -4,7 +4,9 @@ var async  = require('async');
 var path   = require('path');
 var fs     = require('fs');
 
+var blogModule    = require('../model/blog.js');
 var articleModule = require('../model/article.js');
+
 var articleRouter = require('../routes/article.js');
 var util = require('../util.js');
 
@@ -280,6 +282,86 @@ describe('router/article',function() {
           }
         )
       })
+    })
+  })
+  describe('createArticle ',function() {
+    it('should call create an article whith given blog and category',function(bddone) {
+      var req = {};
+      req.query = {blog:"WN234",category:"TEST"};
+
+      var res = {};
+      var next;
+      var article_id;
+
+      async.series([
+        function(callback) {
+          res.redirect = sinon.spy(function (value) {callback();})
+          next = sinon.spy(callback);
+          articleRouter.createArticle(req,res,next);
+        },
+        function searchArticle(callback) {
+          articleModule.findOne({},{},function(err,result){
+            should.not.exist(err);
+            should.exist(result);
+            article_id = result.id;
+            should(result.blog).equal("WN234");
+            should(result.category).equal("TEST");
+            callback();
+          })
+        }
+
+        ],
+        function(err) {
+          should.not.exist(err);
+          should(next.called).be.false();
+          should(res.redirect.called).be.true();
+          should(res.redirect.firstCall.calledWith("/article/"+article_id+"?edit=true")).be.true();
+          bddone();            
+        }
+      )
+    })
+    it('should call create an article with an category',function(bddone) {
+      var req = {};
+      req.query = {category:"TEST"};
+
+      var res = {};
+      var next;
+      var article_id;
+      var blogName = "";
+
+      async.series([
+        function createOneBlog(callback) {
+          blogModule.createNewBlog({name:"WN555",status:"open"},function(err,result){
+            should.not.exist(err);
+            blogName = result.name;
+            callback();
+          })
+        },
+        function(callback) {
+          res.redirect = sinon.spy(function (value) {callback();})
+          next = sinon.spy(callback);
+          articleRouter.createArticle(req,res,next);
+        },
+        function searchArticle(callback) {
+          articleModule.findOne({},{},function(err,result){
+            should.not.exist(err);
+            should.exist(result);
+            article_id = result.id;
+            should(result.blog).equal(blogName);
+            should(result.category).equal("TEST");
+            callback();
+          })
+        }
+
+        ],
+        function(err) {
+          should.not.exist(err);
+          should(next.called).be.false();
+          should(res.redirect.called).be.true();
+          should(res.redirect.firstCall.calledWith("/article/"+article_id+"?edit=true")).be.true();
+          bddone();            
+        }
+      )
     })
   })
 })
