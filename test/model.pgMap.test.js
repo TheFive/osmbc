@@ -118,7 +118,7 @@ describe('model/pgMap',function(){
           bddone();
         })      
       })
-      it('should create a valid SQL for emty string queries',function(bddone){
+      it.only('should create a valid SQL for emty string queries',function(bddone){
         pgMap.find(testModule,{name:""},function(err,result){
           should.not.exist(err);
           should(result.length).equal(2);
