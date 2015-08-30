@@ -277,7 +277,7 @@ describe('router/article',function() {
                    comment:"COMMENT",
                    category:"CATEGORY",
                    categoryEN:"CATEGORYEN",
-                   title:"TITLE"})
+                   title:"TITLE",version:2})
             bddone();            
           }
         )

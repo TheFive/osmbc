@@ -161,6 +161,7 @@ function setAndSave(user,data,callback) {
     }
   }
 
+
   async.forEachOf(data,function(value,key,callback){
     // There is no Value for the key, so do nothing
     if (typeof(value)=='undefined') return callback();

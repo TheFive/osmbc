@@ -1,5 +1,6 @@
 var pg = require('pg');
 var should = require('should');
+var async  = require('async');
 var debug = require('debug')('OSMBC:pgMap')
 
 var config = require('../config.js');
@@ -49,6 +50,9 @@ module.exports.save = function(callback) {
   if (self.id == 0) {
     // we have to create the object
     debug("Object has to be created");
+
+    // store first version in database
+    self.version = 1;
     pg.connect(config.pgstring, function(err, client, pgdone) {
       if (err) {
         pgdone();
@@ -75,16 +79,38 @@ module.exports.save = function(callback) {
         pgdone();
         return (callback(err));
       }
-
-
-      var query = client.query("update "+table+" set data = $2 where id = $1", [self.id,self]);
-      /*query.on('row',function(row) {
-        results.push(row);
-      })*/
-      query.on('end',function (result) {
-        pgdone();
-        callback(null,result);
-      })
+      async.series([
+        function(callback) {
+          var versionsEqual = false;
+          var query = client.query("select (data->>'version')::int as version from "+table+" where id = $1",[self.id]);
+          query.on('row',function(row) {
+            if (row.version == self.version) {
+              versionsEqual = true;
+            }
+          })
+          query.on('end',function(result){
+            var err = null;
+            if (!versionsEqual) err = new Error("Version Nummber differs");
+            callback(err);
+          })
+        }
+        ],
+        function(err) {
+          if (err) {
+            pgdone();
+            callback(err);
+          }
+          self.version += 1;
+          var query = client.query("update "+table+" set data = $2 where id = $1", [self.id,self]);
+          /*query.on('row',function(row) {
+            results.push(row);
+          })*/
+          query.on('end',function (result) {
+            pgdone();
+            callback(null,result);
+          })
+        }
+      )
     })
   }
 }

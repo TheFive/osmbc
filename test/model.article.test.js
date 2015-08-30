@@ -73,7 +73,7 @@ describe('model/article', function() {
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
             delete result._meta;
-            should(result).eql({id:id,markdown:"This Value will not be logged",blog:"Reference",collection:"text",category:"Importe",categoryEN:"Imports"});
+            should(result).eql({id:id,markdown:"This Value will not be logged",blog:"Reference",collection:"text",category:"Importe",categoryEN:"Imports",version:2});
             logModule.find({},"property",function (err,result){
               should.not.exist(err);
               should.exist(result);
@@ -139,8 +139,8 @@ describe('model/article', function() {
           delete result[0].id;
           delete result[1]._meta;
           delete result[1].id;
-          should(result[0]).eql({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"});
-          should(result[1]).eql({blog:"WN1",markdown:"test2",collection:"col2",category:"catB"});
+          should(result[0]).eql({blog:"WN1",markdown:"test1",collection:"col1",category:"catA",version:1});
+          should(result[1]).eql({blog:"WN1",markdown:"test2",collection:"col2",category:"catB",version:1});
           bddone();
         })
       })
@@ -152,7 +152,7 @@ describe('model/article', function() {
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"});
+          should(result).eql({blog:"WN1",markdown:"test1",collection:"col1",category:"catA",version:1});
           bddone();
         })
       })
@@ -164,7 +164,7 @@ describe('model/article', function() {
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({blog:"WN2",markdown:"test3",collection:"col3",category:"catA"});
+          should(result).eql({blog:"WN2",markdown:"test3",collection:"col3",category:"catA",version:1});
           bddone();
         })
       })
