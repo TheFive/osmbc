@@ -85,17 +85,7 @@ describe('model/pgMap',function(){
       })
     })
     describe('find',function(){
-      it('should return an error, if problems with the database',function(bddone){
-        var connectString = config.pgstring;
-        config.pgstring = "This wont work";
-        pgMap.find(testModule,1,function(err,result){
-          should.not.exist(result);
-          should.exist(err);
-          config.pgstring = connectString;
-          bddone();
-        })      
-      })
-      it('should create a valid SQL for emty string queries',function(bddone){
+      beforeEach(function(bddone){
         async.series([
           function(cb){pgMap.dropTable("testtable",cb);},
           function(cb){pgMap.createTable("testtable",testTableCreateString,"",cb);},
@@ -114,17 +104,33 @@ describe('model/pgMap',function(){
             to.save = pgMap.save;
             to.save(cb);
           }
-
-          ],
-          function(err){
-            should.not.exist(err);
-            pgMap.find(testModule,{name:""},function(err,result){
-              should.not.exist(err);
-              should(result.length).equal(2);
-              bddone();
-            })
-          }
-        )
+        ], 
+        bddone
+        )      
+      });
+      it('should return an error, if problems with the database',function(bddone){
+        var connectString = config.pgstring;
+        config.pgstring = "This wont work";
+        pgMap.find(testModule,1,function(err,result){
+          should.not.exist(result);
+          should.exist(err);
+          config.pgstring = connectString;
+          bddone();
+        })      
+      })
+      it('should create a valid SQL for emty string queries',function(bddone){
+        pgMap.find(testModule,{name:""},function(err,result){
+          should.not.exist(err);
+          should(result.length).equal(2);
+          bddone();
+        })
+      })
+      it.only('should find all elements',function(bddone){
+        pgMap.find(testModule,function(err,result){
+          should.not.exist(err);
+          should(result.length).equal(3);
+          bddone();
+        })
       })
     })
   })
