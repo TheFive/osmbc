@@ -15,7 +15,8 @@ var logModule     = require('../model/logModule.js');
 function renderArticleId(req,res,next) {
   debug('renderArticleId');
 
-  // Get the ID to display
+
+  // Get the ID and the article to display
   var id = req.params.article_id;
   articleModule.findById(id,function(err,article) {
 
@@ -26,21 +27,15 @@ function renderArticleId(req,res,next) {
 
   // ListOfOpenBlog is used to show all openBlogs to assign an article to
   var listOfOpenBlog;
-
   // Used for display changes
   var changes = [];
 
-  // Params is used for WHAT ??????
+  // Params is used for indicating Edit
   var params = {};
-  
   params.edit = req.query.edit;
 
   // calculate all used Links for the article
   var usedLinks = article.calculateLinks();
-
- 
-
-
 
   async.auto({
     
@@ -92,14 +87,9 @@ function renderArticleId(req,res,next) {
   });
 }
 
-module.exports.renderArticleId = renderArticleId;
-
-router.get('/:article_id', exports.renderArticleId );
-
-// For test purposes
  
-router.post('/:article_id', function(req, res, next) {
-  debug('router.post /:article_id');
+function postArticleId(req, res, next) {
+  debug('postArticleId');
   var id = req.params.article_id;
   articleModule.findById(id,function(err,article) {
     if (typeof(article.id) == 'undefined') return next();
@@ -117,7 +107,7 @@ router.post('/:article_id', function(req, res, next) {
       res.redirect("/article/"+id);    
     })
   });
-});
+}
 
 router.get('/create', function(req, res, next) {
   debug('router.get /create');
@@ -188,9 +178,17 @@ function renderList(req,res,next) {
   )
 }
 
-exports.renderList = renderList;
 
+// Export Render Functions for testing purposes
+exports.renderArticleId = renderArticleId;
+exports.renderList = renderList;
+exports.postArticleId = postArticleId;
+
+// And configure router to use render Functions
+router.get('/:article_id', exports.renderArticleId );
 router.get('/list', exports.renderList);
+router.post('/:article_id', exports.postArticleId);
+
 
 module.exports.router = router;
 

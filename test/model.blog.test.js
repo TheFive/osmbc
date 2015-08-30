@@ -87,8 +87,11 @@ describe('model/blog', function() {
               // for the test machine.
               should(t0diff).be.below(10);
               should(t1diff).be.below(10);
-              should(result).containEql({timestamp:t0,oid:id,user:"user",table:"blog",property:"status",from:"TEST",to:"published"});
-              should(result).containEql({timestamp:t1,oid:id,user:"user",table:"blog",property:"field",to:"test"});
+              delete result[0].timestamp;
+              delete result[1].timestamp;
+
+              should(result).containEql({oid:id,user:"user",table:"blog",property:"status",from:"TEST",to:"published"});
+              should(result).containEql({oid:id,user:"user",table:"blog",property:"field",to:"test"});
               bddone();
             })
           })

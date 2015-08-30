@@ -36,8 +36,6 @@ describe('router/article',function() {
           }],
           function(err) {
             should.not.exist(err);
-            console.log(next.called);
-            console.log(res.render.called);
             should(next.called).be.true();
             should(res.render.called).be.false();
             bddone();            
@@ -201,5 +199,87 @@ describe('router/article',function() {
       testutil.generateTests("data",/^router.article.list.+json/,doATest);
     })     
   })
+  describe('post Article ID',function() {
+    it('should call next if article not exist',function(bddone) {
+      articleModule.createNewArticle({titel:"Hallo"},function(err,article) {
+        should.not.exist(err);
+        should(article.id).not.equal(0);
+        var newId = article.id +1;
+        var req = {};
+        req.params = {};
+        req.params.id = newId;
+        var res = {};
 
+        async.series([
+          function(callback) {
+            res.render = sinon.spy(callback)
+            next = sinon.spy(callback);
+            articleRouter.postArticleId(req,res,next);
+          }],
+          function(err) {
+            should.not.exist(err);
+            should(next.called).be.true();
+            should(res.render.called).be.false();
+            bddone();            
+          }
+        )
+      })
+    })
+    it('should post All Values',function(bddone) {
+      articleModule.createNewArticle({title:"Hallo"},function(err,article) {
+        should.not.exist(err);
+        should(article.id).not.equal(0);
+        var req = {};
+        req.params = {};
+        req.params.article_id = article.id;
+        req.body = {markdown:"MARKDOWN",
+                   markdownEN:"MARKDOWNEN",
+                   blog:"BLOG",
+                   blogEN:"BLOGEN",
+                   collection:"COLLECTION",
+                   comment:"COMMENT",
+                   category:"CATEGORY",
+                   categoryEN:"CATEGORYEN",
+                   title:"TITLE"}
+        req.user = {displayName:"TESTUSER"};
+        var res = {};
+        var next;
+
+
+        async.series([
+          function(callback) {
+            res.redirect = sinon.spy(function (value) {callback();})
+            next = sinon.spy(callback);
+            articleRouter.postArticleId(req,res,next);
+          },
+          function(callback) {
+            articleModule.findById(article.id,function(err,result){
+              should.not.exist(err);
+              article = result;
+              callback();
+            })
+          }
+          ],
+          function(err) {
+            should.not.exist(err);
+            should(res.redirect.calledOnce).be.true();
+            should(next.called).be.false();
+            should(res.redirect.firstCall.calledWith("/article/"+article.id)).be.true();
+            delete article._meta;
+            delete article.id;
+            should(article).eql({markdown:"MARKDOWN",
+                   markdownEN:"MARKDOWNEN",
+                   blog:"BLOG",
+                   blogEN:"BLOGEN",
+                   collection:"COLLECTION",
+                   comment:"COMMENT",
+                   category:"CATEGORY",
+                   categoryEN:"CATEGORYEN",
+                   title:"TITLE"})
+            bddone();            
+          }
+        )
+      })
+    })
+  })
 })
