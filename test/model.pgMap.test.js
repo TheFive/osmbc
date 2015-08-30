@@ -14,7 +14,7 @@ testModule.create = function create(){
 var testTableCreateString =  'CREATE TABLE testtable (  id bigserial NOT NULL , data json,  \
                   CONSTRAINT testtable_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
 
-describe.only('model/pgMap',function(){
+describe('model/pgMap',function(){
   before(function(bddone){
     config.initialise(bddone);
   })
