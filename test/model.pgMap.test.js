@@ -60,7 +60,7 @@ describe('model/pgMap',function(){
     })
     it('should return an error, if problems with deletion String',function(bddone){
       // local store connect String
-      pgMap.dropTable("Test,me",function(err,result){
+      pgMap.dropTable("Test & me",function(err,result){
         should.not.exist(result);
         should.exist(err);
         bddone();
