@@ -30,14 +30,13 @@ block content
             | Blog <br>
           .col-md-4
             select(id="blog",name="blog").form-control
-              option(value="WN255") WN255
-              option(value="WN256") WN256
-              option(value="WN257" selected) WN257
+              option(value="#{article.blog}" selected) #{article.blog+'(*)'}
+              if (listOfOpenBlog)  
+                for blogName in listOfOpenBlog         
+                  option(value="#{blogName}" ) #{blogName}
           .col-md-4
-            select(id="blogEN",name="blogEN").form-control
-              option(value="Weekly255") Weekly255
-              option(value="Weekly256") Weekly256
-              option(value="Weekly257" selected) Weekly257
+            h2 Datum
+
           .col-md-3
             input(type="submit", class="btn btn-primary",value="OK")
             a(href="/article/#{article.id}" class="btn btn-default" role="button") Cancel
@@ -48,14 +47,13 @@ block content
             | Category <br>
           .col-md-4
             select(id="category",name="category").form-control
-              option(value="" selected="#{(typeof(article.category)=='undefined')||(article.category=='')}") #{"--"} 
+              option(value="#{article.category}" selected) #{article.category+'(*)'}
               for category in categories
-                option(value="#{category}" selected="#{(category==article.category)}") #{category}
+                option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
           .col-md-4
-            select(id="categoryEN",name="categoryEN").form-control
-              option(value="" selected="#{(typeof(article.categoryEN)=='undefined')||(article.categoryEN=='')}") #{"--"} 
-              for category in categories
-                option(value="#{category}" selected="#{(category==article.categoryEN)}") #{category}
+            h2
+              | #{article.categoryEN}
+
         .row
           .col-md-1
             | Title <br>

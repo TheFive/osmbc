@@ -12,6 +12,7 @@ var config    = require('../config.js');
 var util      = require('../util.js');
 
 var logModule = require('../model/logModule.js');
+var blogModule = require('../model/blog.js');
 var pgMap     = require('../model/pgMap.js');
 
 
@@ -118,6 +119,14 @@ function setAndSave(user,data,callback) {
   listOfOpenBlog = null;
   var self = this;
   delete self.lock;
+
+  // Set Category for the EN Field
+  for (var i=0;i<blogModule.categories.length;i++) {
+    if (data.category == blogModule.categories[i].DE) {
+      data.categoryEN = blogModule.categories[i].EN;
+      break;
+    }
+  }
 
   async.forEachOf(data,function(value,key,callback){
     // There is no Value for the key, so do nothing
