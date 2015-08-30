@@ -242,9 +242,9 @@ function displayTitle(maxlength) {
 
 function createTable(cb) {
   debug('createTable');
-  createString = 'CREATE TABLE article (  id bigserial NOT NULL,  data json,  \
+  var createString = 'CREATE TABLE article (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT article_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
-  createView = "CREATE OR REPLACE VIEW \"OpenBlogWithArticle\" AS \
+  var createView = "CREATE OR REPLACE VIEW \"OpenBlogWithArticle\" AS \
              SELECT DISTINCT article.data ->> 'blog'::text AS name \
                FROM article \
                  LEFT JOIN blog ON (article.data ->> 'blog'::text) = (blog.data ->> 'name'::text) \
