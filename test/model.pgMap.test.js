@@ -125,7 +125,7 @@ describe('model/pgMap',function(){
           bddone();
         })
       })
-      it.only('should find all elements',function(bddone){
+      it('should find all elements',function(bddone){
         pgMap.find(testModule,function(err,result){
           should.not.exist(err);
           should(result.length).equal(3);
