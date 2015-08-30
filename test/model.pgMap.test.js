@@ -58,6 +58,14 @@ describe('model/pgMap',function(){
         bddone();
       })
     })
+    it('should return an error, if problems with deletion String',function(bddone){
+      // local store connect String
+      pgMap.dropTable("Test,me",function(err,result){
+        should.not.exist(result);
+        should.exist(err);
+        bddone();
+      })
+    })
   })
   describe('find functions',function() {
     describe('findOne',function(){
