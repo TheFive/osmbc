@@ -149,6 +149,9 @@ function doLock(user,callback) {
 
 function setAndSave(user,data,callback) {
   debug("setAndSave");
+  should(typeof(user)).equal('string');
+  should(typeof(data)).equal('object');
+  should(typeof(callback)).equal('function');
   listOfOpenBlog = null;
   var self = this;
   delete self.lock;
@@ -162,7 +165,7 @@ function setAndSave(user,data,callback) {
   }
 
 
-  async.forEachOf(data,function(value,key,callback){
+  async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
     // There is no Value for the key, so do nothing
     if (typeof(value)=='undefined') return callback();
 
@@ -175,20 +178,22 @@ function setAndSave(user,data,callback) {
 
 
     async.series ( [
-        function(callback) {
-           logModule.log({oid:self.id,user:user,table:"article",property:key,from:self[key],to:value},callback);
+        function(cb) {
+           logModule.log({oid:self.id,user:user,table:"article",property:key,from:self[key],to:value},cb);
         },
-        function(callback) {
+        function(cb) {
           self[key] = value;
-          callback();
+          cb();
         }
       ],function(err){
-        callback(err);
+        cb_eachOf(err);
       })
 
-  },function(err) {
+  },function setAndSaveFinalCB(err) {
     if (err) return callback(err);
-    self.save(callback);
+    self.save(function (err) {
+      callback(err);
+    });
   })
 } 
 

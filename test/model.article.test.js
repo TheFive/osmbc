@@ -60,7 +60,40 @@ describe('model/article', function() {
       bddone();
     })
   })
+  describe('save',function(){
+    it('should report a conflict, if version number differs', function (bddone){
+      // Generate an article for test
+      var newArticle;
+      articleModule.createNewArticle({markdown:"markdown",blog:"TEST"},function(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        var id =result.id;
+
+        // get a second copy of the article (use Database for Copy)
+        articleModule.findById(id,function(err,result){
+          var alternativeArticle = result;
+          newArticle.blog="TESTNEW";
+
+
+          newArticle.save(function(err){
+            should.not.exist(err);
+            alternativeArticle.blog = "TESTALTERNATIVE";
+
+            alternativeArticle.save(function(err){
+              //debug(err);
+              should.exist(err);
+              should(err).eql(Error("Version Nummber differs"));
+              bddone();
+            })
+          })
+        })
+      })
+    })    
+  })
   describe('setAndSave',function() {
+    beforeEach(function (bddone) {
+      testutil.clearDB(bddone);
+    }) 
     it('should set only the one Value in the database', function (bddone){
       var newArticle;
       articleModule.createNewArticle({markdown:"markdown",blog:"TEST"},function(err,result){
@@ -103,6 +136,43 @@ describe('model/article', function() {
               should(result[2]).eql({id:r2id,timestamp:t2,oid:id,user:"user",table:"article",property:"category",to:"Importe"});
               should(result[3]).eql({id:r3id,timestamp:t3,oid:id,user:"user",table:"article",property:"categoryEN",to:"Imports"});
               bddone();
+            })
+          })
+        })
+      })
+    })    
+    it('should report a conflict, if version number differs', function (bddone){
+      // Generate an article for test
+      var newArticle;
+      debug('Create a new Article');
+      articleModule.createNewArticle({markdown:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        var id =result.id;
+
+        // get a second copy of the article (use Database for Copy)
+        debug('Search for article to have two versions of it');
+        articleModule.findById(id,function testSetAndSaveFindByIDCB(err,result){
+          var alternativeArticle = result;
+
+          debug('save New Article with blogname TESTNEW');
+          newArticle.setAndSave("TEST",{blog:"TESTNEW"},function(err){
+            should.not.exist(err);
+            debug('save alternative Article with blogname TESTNEW');
+            alternativeArticle.setAndSave("TEST",{blog:"TESTALTERNATIVE"},function(err){
+              //debug(err);
+              //should.exist(err);
+              should(err).eql(Error("Version Nummber differs"));
+              debug('Count log Entries');
+              logModule.find({},function(err,result) {
+                should.not.exist(err);
+                should(result.length).equal(2);
+                articleModule.findById(id,function(err,result){
+                  should.not.exist(err);
+                  should(result.blog).equal("TESTNEW");
+                  bddone();
+                })
+              })
             })
           })
         })

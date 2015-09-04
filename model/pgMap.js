@@ -68,11 +68,11 @@ module.exports.save = function(callback) {
       query.on('end',function (result) {
         
         pgdone();
-        callback(null,self);
+        return callback(null,self);
       })
     })
   } else {
-    debug("Object will be updated");
+    debug("Object will be updated, current version is %s",self.version);
     // we have to change the beer
     pg.connect(config.pgstring, function(err, client, pgdone) {
       if (err) {
@@ -80,25 +80,31 @@ module.exports.save = function(callback) {
         return (callback(err));
       }
       async.series([
-        function(callback) {
+        function(cb) {
           var versionsEqual = false;
           var query = client.query("select (data->>'version')::int as version from "+table+" where id = $1",[self.id]);
           query.on('row',function(row) {
+            debug('Version in Database %s',row.version)
             if (row.version == self.version) {
+              debug('No Error');
               versionsEqual = true;
             }
           })
           query.on('end',function(result){
             var err = null;
-            if (!versionsEqual) err = new Error("Version Nummber differs");
-            callback(err);
+            if (!versionsEqual) {
+              debug('send error')
+              err = new Error("Version Nummber differs");
+            }
+            return cb(err);
           })
         }
         ],
         function(err) {
           if (err) {
+            debug('Foreward Error');
             pgdone();
-            callback(err);
+            return callback(err);
           }
           self.version += 1;
           var query = client.query("update "+table+" set data = $2 where id = $1", [self.id,self]);
@@ -107,7 +113,7 @@ module.exports.save = function(callback) {
           })*/
           query.on('end',function (result) {
             pgdone();
-            callback(null,result);
+            return callback(null,result);
           })
         }
       )
