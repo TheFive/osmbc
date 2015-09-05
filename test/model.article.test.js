@@ -485,13 +485,13 @@ describe('model/article', function() {
     it('should generate a preview when markdown is specified (No Edit Link)',function (bddone) {
       var article = articleModule.create({markdown:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = article.preview(false);
-      should(result).equal('<li>\n<p><a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.</p>\n</li>');
+      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
       bddone();
     })
     it('should generate a preview when markdown is specified (with Star)',function (bddone) {
       var article = articleModule.create({markdown:"* [Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = article.preview(false);
-      should(result).equal('<li>\n<p><a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.</p>\n</li>');
+      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
       bddone();
     })
   })

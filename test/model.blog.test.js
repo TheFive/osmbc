@@ -211,6 +211,8 @@ describe('model/blog', function() {
             catch (err) {/* ignore the error */}
             var result = testutil.domcompare(html,htmlResult);
 
+
+
             if (result.getDifferences().length>0) {
               should.not.exist(result.getDifferences());
             }
