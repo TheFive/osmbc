@@ -25,7 +25,8 @@ function renderArticleId(req,res,next) {
 
   // Variables for rendering purposes
 
-  // ListOfOpenBlog is used to show all openBlogs to assign an article to
+  // ListOfOrphanBlog is used to show all orphanedBlog to assign an article to
+  var listOfOrphanBlog;
   var listOfOpenBlog;
   // Used for display changes
   var changes = [];
@@ -46,21 +47,40 @@ function renderArticleId(req,res,next) {
         callback(err,result);
       })
     },
+    listOfOrphanBlog:
+    function (callback) {
+      articleModule.getListOfOrphanBlog(function(err,result) {
+        callback(err,result);
+      })
+    },
     listOfOpenBlog:
     function (callback) {
-      articleModule.getListOfOpenBlog(function(err,result) {
-        callback(err,result);
+      blogModule.find({status:"open"},function(err,result) {
+        if (err) return callback(err);
+        var list = [];
+        for (var i=0;i<result.length;i++) {
+          list.push(result[i].name);
+        }
+        callback(err,list);
       })
     },
     edit:
     function (callback){
       if (typeof(params.edit)!='undefined') {
-        article.doLock(req.user.name,callback);
+        if (params.edit=="false") {
+          console.log("Unlocking");
+          delete params.edit;
+          article.doUnlock(callback);
+          return;
+        }
+        article.doLock(req.user.displayName,callback);
+        return;
       } else { 
         return callback()
       }
     }},
       function (err,result) {
+
         if (typeof(article.markdown)!='undefined') {
           article.textHtml = article.preview();
         } 
@@ -70,18 +90,21 @@ function renderArticleId(req,res,next) {
         if (typeof(article.comment)!='undefined') {
           article.commentHtml = markdown.toHTML(article.comment)
         } 
-
-
-        res.render('article',{article:article,
-                              params:params,
-                              user:req.user,
-                              changes:result.changes,
-                              listOfOpenBlog:result.listOfOpenBlog,
-                              moment:moment,
-                              articleReferences:result.articleReferences,
-                              usedLinks:result.usedLinks,
-                              util:util,
-                              categories:blogModule.categories});
+        if (req.query.edit && ! params.edit) {
+          res.redirect("/article/"+id);    
+        } else {
+          res.render('article',{article:article,
+                                params:params,
+                                user:req.user,
+                                changes:result.changes,
+                                listOfOrphanBlog:result.listOfOrphanBlog,
+                                listOfOpenBlog:result.listOfOpenBlog,
+                                moment:moment,
+                                articleReferences:result.articleReferences,
+                                usedLinks:result.usedLinks,
+                                util:util,
+                                categories:blogModule.categories});
+       }
       }
     );
   });
@@ -101,9 +124,15 @@ function postArticleId(req, res, next) {
                    comment:req.body.comment,
                    category:req.body.category,
                    categoryEN:req.body.categoryEN,
+                   version:req.body.version,
                    title:req.body.title};
 
     article.setAndSave(req.user.displayName,changes,function(err) {
+      if (err ) 
+        {
+          res.redirect("/VersionConflict");
+          return;
+        }
       res.redirect("/article/"+id);    
     })
   });
@@ -154,13 +183,13 @@ function renderList(req,res,next) {
   if (typeof(markdown)!='undefined') {
     query.markdown = markdown;
   }
-  var listOfOpenBlog;
+  var listOfOrphanBlog;
   var articles;
 
   async.parallel([
      function (callback) {
-        articleModule.getListOfOpenBlog(function(err,result) {
-          listOfOpenBlog = result;
+        articleModule.getListOfOrphanBlog(function(err,result) {
+          listOfOrphanBlog = result;
           callback();
         })
       },
@@ -173,7 +202,7 @@ function renderList(req,res,next) {
 
     ],function(error) {
         res.render('articlelist',{articles:articles,
-                                  listOfOpenBlog:listOfOpenBlog,
+                                  listOfOrphanBlog:listOfOrphanBlog,
                                   util:util,
                                   user:req.user});      
     }

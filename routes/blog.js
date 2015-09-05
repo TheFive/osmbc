@@ -18,7 +18,7 @@ router.get('/:blog_id', function(req, res, next) {
     var changes = [];
     var articles = {};
 
-    var listOfOpenBlog;
+    var listOfOrphanBlog;
 
 
     async.series([
@@ -50,8 +50,8 @@ router.get('/:blog_id', function(req, res, next) {
         })
       },
       function (callback) {
-        articleModule.getListOfOpenBlog(function(err,result) {
-          listOfOpenBlog = result;
+        articleModule.getListOfOrphanBlog(function(err,result) {
+          listOfOrphanBlog = result;
           callback();
         })
       },
@@ -67,7 +67,7 @@ router.get('/:blog_id', function(req, res, next) {
         res.render('blog',{blog:blog,
                            user:req.user,
                            changes:changes,
-                           listOfOpenBlog:listOfOpenBlog,
+                           listOfOrphanBlog:listOfOrphanBlog,
                            moment:moment,
                            articles:articles,
                            categories:blogModule.categories});
@@ -82,13 +82,13 @@ router.get('/:blog_id', function(req, res, next) {
   var status = req.query.status;
   var query = {};
 
-  var listOfOpenBlog;
+  var listOfOrphanBlog;
   if (typeof(status)!='undefined') {
     query.status = status;
   }
 
   async.auto({
-        listOfOpenBlog: articleModule.getListOfOpenBlog,
+        listOfOrphanBlog: articleModule.getListOfOrphanBlog,
         blogs:function(callback) {
                  blogModule.find(query,{column:"name",desc:true},function(err,blogs) {
                  callback(err,blogs);
@@ -96,7 +96,7 @@ router.get('/:blog_id', function(req, res, next) {
         }
       },function(err,result) {
           res.render('bloglist',{
-                                listOfOpenBlog:result.listOfOpenBlog,
+                                listOfOrphanBlog:result.listOfOrphanBlog,
                                 blogs:result.blogs,
                                 user:req.user});
         });
@@ -113,11 +113,11 @@ router.get('/:blog_id/preview', function(req, res, next) {
 
     var changes = [];
    
-    var listOfOpenBlog;
+    var listOfOrphanBlog;
 
 
     async.auto({ 
-        getListOfOpenBlog:articleModule.getListOfOpenBlog,
+        getListOfOrphanBlog:articleModule.getListOfOrphanBlog,
         converter:function(callback) {
                     blog.preview(edit,function(err,result) {
                       callback(err,result);
@@ -128,7 +128,7 @@ router.get('/:blog_id/preview', function(req, res, next) {
         res.render('blogpreview',{blog:blog,
                            user:req.user,
                            articles:result.converter.articles,
-                           listOfOpenBlog:result.listOfOpenBlog,
+                           listOfOrphanBlog:result.listOfOrphanBlog,
                            preview:result.converter.preview,
                            fullMarkdown:result.converter.fullMarkdown,
                            categories:blogModule.categories});

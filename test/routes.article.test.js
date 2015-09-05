@@ -47,6 +47,7 @@ describe('router/article',function() {
     })
     describe('Do file base tests',function() {
       beforeEach(function (bddone) {
+        articleModule.removeOpenBlogCache();
         testutil.clearDB(bddone);
       })
       function doATest(filename) {
@@ -97,6 +98,7 @@ describe('router/article',function() {
               should(call.calledWith("article")).be.true();
               var renderData = call.args[1];
 
+
               // clean up test data for comparison, Database IDs are random
               for (var i =0;i<renderData.changes.length; i++) delete renderData.changes[i].id;
               for (i=0;i<data.result.changes.length;i++) data.result.changes[i].oid = req.params.article_id;
@@ -106,7 +108,10 @@ describe('router/article',function() {
               should(renderData.params).eql(data.result.params);
               should(renderData.user).eql(req.user);
               should(renderData.changes).eql(data.result.changes);
-              should(renderData.listofOpenBlogs).eql(data.result.listOfOpenBlogs);
+              should.exist(renderData.listOfOrphanBlog);
+              should(renderData.listOfOrphanBlog).eql(data.result.listOfOrphanBlog);
+              should.exist(renderData.listOfOpenBlog);
+              should(renderData.listOfOpenBlog).eql(data.result.listOfOpenBlog);
               // Reduce article Refererences for comparison
               for (var k in renderData.articleReferences) {
                 if (k=="count") continue;
@@ -188,7 +193,7 @@ describe('router/article',function() {
               }
               should(renderData.articles).eql(data.result.articles);
 
-              should(renderData.listofOpenBlogs).eql(data.result.listOfOpenBlogs);
+              should(renderData.listofOrphanBlogs).eql(data.result.listOfOrphanBlogs);
               should(renderData.util).equal(util);
               should(renderData.user).eql(req.user);
 
@@ -242,6 +247,7 @@ describe('router/article',function() {
                    comment:"COMMENT",
                    category:"CATEGORY",
                    categoryEN:"CATEGORYEN",
+                   version:"1",
                    title:"TITLE"}
         req.user = {displayName:"TESTUSER"};
         var res = {};

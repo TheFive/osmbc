@@ -101,7 +101,7 @@ describe('model/article', function() {
         newArticle = result;
         var id =result.id;
         newArticle.markdown = "This Value will not be logged";
-        newArticle.setAndSave("user",{blog:"Reference",collection:"text",category:"Importe"},function(err,result) {
+        newArticle.setAndSave("user",{version:"1",blog:"Reference",collection:"text",category:"Importe"},function(err,result) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
@@ -151,6 +151,7 @@ describe('model/article', function() {
         var changeValues = {}
         changeValues.markdown = newArticle.markdown;
         changeValues.blog = empty;
+        changeValues.version = "1";
         newArticle.setAndSave("user",changeValues,function(err,result) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
@@ -182,10 +183,10 @@ describe('model/article', function() {
           var alternativeArticle = result;
 
           debug('save New Article with blogname TESTNEW');
-          newArticle.setAndSave("TEST",{blog:"TESTNEW"},function(err){
+          newArticle.setAndSave("TEST",{version:"1",blog:"TESTNEW"},function(err){
             should.not.exist(err);
             debug('save alternative Article with blogname TESTNEW');
-            alternativeArticle.setAndSave("TEST",{blog:"TESTALTERNATIVE"},function(err){
+            alternativeArticle.setAndSave("TEST",{version:"1",blog:"TESTALTERNATIVE"},function(err){
               //debug(err);
               //should.exist(err);
               should(err).eql(Error("Version Nummber differs"));
@@ -331,7 +332,7 @@ describe('model/article', function() {
 
     })
   })
-  describe('getListOfOpenBlog',function() {
+  describe('getListOfOrphanBlog',function() {
     beforeEach(function (bddone) {
       // Initialise some Test Data for the find functions
       async.series([
@@ -346,16 +347,16 @@ describe('model/article', function() {
           bddone();
         });
     })
-    it('should return openBlogs',function(bddone) {
-      articleModule.getListOfOpenBlog(function(err,result){
+    it('should return orphanBlogs',function(bddone) {
+      articleModule.getListOfOrphanBlog(function(err,result){
         should.not.exist(err);
         should.exist(result);
-        should(result).eql(["WN1","WN2"]);
+        should(result).eql(["WN1"]);
         blogModule.findOne({name:"WN2"},"name",function(err,blog){
           should.not.exist(err);
           should.exist(blog);
           blog.setAndSave("user",{status:"published"},function (err,result){
-            articleModule.getListOfOpenBlog(function(err,result){
+            articleModule.getListOfOrphanBlog(function(err,result){
               should.not.exist(err);
               should.exist(result);
               should(result).eql(["WN1"]);

@@ -34,9 +34,9 @@ html(lang='en')
                 | Article 
                 span.caret
               ul.dropdown-menu(role='menu')
-                li.dropdown-header Open Blogs
-                if (listOfOpenBlog) 
-                  for blog in listOfOpenBlog
+                li.dropdown-header Orphaned Article
+                if (listOfOrphanBlog) 
+                  for blog in listOfOrphanBlog
                     li
                       a(href="/article/list?blog=#{blog}") #{blog}
                 li.divider
@@ -44,7 +44,7 @@ html(lang='en')
                 li
                   a(href='/article/list?markdown=') No Text
                 li
-                  a(href='/article/list?blog=') Empty
+                  a(href='/article/list?blog=') No Reference Blog
                 li
                   a(href='/article/list') All
             li.dropdown

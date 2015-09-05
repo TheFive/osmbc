@@ -8,7 +8,7 @@ block content
     if article.lock
       .alert.alert-dismissable.alert-info
         button.close( type="button", data-dismiss="alert" ) ×
-        | #{article.lock.user} edits since #{moment(article.lock.timestamp).fromNow()}
+        | #{article.lock.user} edits since #{moment(article.lock.timestamp).fromNow()} Version #{article.version}
     if info
       if info.message
         if info.status == 'error'
@@ -35,11 +35,12 @@ block content
                 for blogName in listOfOpenBlog         
                   option(value="#{blogName}" ) #{blogName}
           .col-md-4
-            h2 Datum
+            .hidden
+              textarea.form-control(name="version",rows=1,hide=true) #{article.version}
 
           .col-md-3
             input(type="submit", class="btn btn-primary",value="OK")
-            a(href="/article/#{article.id}" class="btn btn-default" role="button") Cancel
+            a(href="/article/#{article.id}?edit=false" class="btn btn-default" role="button") Cancel
 
 
         .row
@@ -111,7 +112,6 @@ block content
             | #{article.blog}
         .col-md-4
           h2
-            | #{article.blogEN}
         .col-md-3
           a(href="/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
       .row

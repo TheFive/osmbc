@@ -18,12 +18,12 @@ var pgMap     = require('../model/pgMap.js');
 var blogModule = require('../model/blog.js');
 
 
-var listOfOpenBlog = null;
+var listOfOrphanBlog = null;
 
 
-function getListOfOpenBlog(callback) {
-  debug('getListOfOpenBlog');
-  if (listOfOpenBlog) return callback(null,listOfOpenBlog);
+function getListOfOrphanBlog(callback) {
+  debug('getListOfOrphanBlog');
+  if (listOfOrphanBlog) return callback(null,listOfOrphanBlog);
 
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) {
@@ -34,14 +34,14 @@ function getListOfOpenBlog(callback) {
     }
     var query = client.query('select name from "OpenBlogWithArticle" order by name');
     debug("reading list of open blog");
-    listOfOpenBlog = [];
+    listOfOrphanBlog = [];
     query.on('row',function(row) {
       debug(row.name);
-      listOfOpenBlog.push(row.name);
+      listOfOrphanBlog.push(row.name);
     })
     query.on('end',function (pgresult) {    
       pgdone();
-      callback(null,listOfOpenBlog);
+      callback(null,listOfOrphanBlog);
     })
   })  
 }
@@ -112,8 +112,9 @@ function previewEN(edit) {
 }
 
 function doLock(user,callback) {
-  debug('lock');
+  debug('doLock');
   var self = this;
+  if (self.lock) return callback();
   self.lock={};
   self.lock.user = user;
   self.lock.timestamp = new Date();
@@ -145,17 +146,30 @@ function doLock(user,callback) {
     }
   )
 }
-
+function doUnlock(callback) {
+  debug('doUnlock');
+  var self = this;
+  if (typeof(self.lock)=='undefined') return callback();
+  delete self.lock;
+  self.save(callback);
+}
 
 function setAndSave(user,data,callback) {
   debug("setAndSave");
   should(typeof(user)).equal('string');
   should(typeof(data)).equal('object');
   should(typeof(callback)).equal('function');
-  listOfOpenBlog = null;
+  listOfOrphanBlog = null;
   var self = this;
   delete self.lock;
 
+  debug("Version of Article %s",self.version);
+  debug("Version of dataset %s",data.version);
+
+  if (self.version != parseInt(data.version)) {
+    error = new Error("Version Number Differs");
+    return callback(error);
+  }
   // Set Category for the EN Field
   for (var i=0;i<blogModule.categories.length;i++) {
     if (data.category == blogModule.categories[i].DE) {
@@ -254,7 +268,7 @@ function createTable(cb) {
              SELECT DISTINCT article.data ->> 'blog'::text AS name \
                FROM article \
                  LEFT JOIN blog ON (article.data ->> 'blog'::text) = (blog.data ->> 'name'::text) \
-              WHERE (blog.data ->> 'status'::text) <> 'published'::text OR blog.data IS NULL \
+              WHERE blog.data IS NULL \
               ORDER BY article.data ->> 'blog'::text;";
   pgMap.createTable('article',createString,createView,cb)
 }
@@ -349,6 +363,7 @@ Article.prototype.calculateUsedLinks = calculateUsedLinks;
 // adds a timestamp for the lock
 // and updates isClosed and isClosedEN for already published blogs
 Article.prototype.doLock = doLock;
+Article.prototype.doUnlock = doUnlock;
 
 
 // Create an Article object in memory, do not save
@@ -379,7 +394,7 @@ module.exports.table = "article";
 
 // Return an String Array, with all blog references in Article
 // that does not have a "finished" Blog in database
-module.exports.getListOfOpenBlog = getListOfOpenBlog;
+module.exports.getListOfOrphanBlog = getListOfOrphanBlog;
 
 // Create Tables and Views
 module.exports.createTable = createTable;
@@ -389,4 +404,7 @@ module.exports.dropTable = dropTable;
 
 // Internal function to reset OpenBlogCash
 // has to be called, when a blog is changed
-module.exports.removeOpenBlogCache = function() {debug('removeOpenBlogCache');listOfOpenBlog = null}
+module.exports.removeOpenBlogCache = function() {
+  debug('removeOpenBlogCache');
+  listOfOrphanBlog = null;
+}
