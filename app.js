@@ -10,6 +10,7 @@ var FileStore = require('session-file-store')(session);
 var debug = require('debug')('OSMBC:app');
  
 var  OpenStreetMapStrategy = require('passport-openstreetmap').Strategy;
+//var Strategy = require('passport-http').BasicStrategy;
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -49,6 +50,8 @@ passport.deserializeUser(function(name, done) {
 //   Strategies in passport require a `verify` function, which accept
 //   credentials (in this case, a token, tokenSecret, and OpenStreetMap profile), and
 //   invoke a callback with a user object.
+
+
 passport.use(new OpenStreetMapStrategy({
     consumerKey: config.getConfiguration().OPENSTREETMAP_CONSUMER_KEY,
     consumerSecret: config.getConfiguration().OPENSTREETMAP_CONSUMER_SECRET,
@@ -66,6 +69,25 @@ passport.use(new OpenStreetMapStrategy({
     });
   }
 ));
+
+
+/*passport.use(new Strategy(
+  function(username, password, cb) {
+    debug('Strategy')
+    var user = {};
+     user.displayName = "TheFive"
+      console.log(username," ",password);
+      if (username =="TheFive") {
+        console.log("User OK");
+        return cb(null,user);
+      }
+
+    
+      return cb(null, false);
+    })
+  );*/
+
+
 
 function ensureAuthenticated(req, res, next) {
   debug("ensureAuthenticated");
@@ -96,6 +118,9 @@ app.use(passport.session());
 app.get('/', ensureAuthenticated, function(req, res){
   res.render('index', { user: req.user });
 });
+app.get('/osmbc', ensureAuthenticated, function(req, res){
+  res.render('index', { user: req.user });
+});
 
 app.get('/account', ensureAuthenticated, function(req, res){
   res.render('account', { user: req.user });
@@ -119,6 +144,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //   the user to openstreetmap.org.  After authorization, OpenStreetMap will redirect the user
 //   back to this application at /auth/openstreetmap/callback
 app.get('/auth/openstreetmap',
+  //passport.authenticate('openstreetmap'),
   passport.authenticate('openstreetmap'),
   function(req, res){
     // The request will be redirected to OpenStreetMap for authentication, so this
@@ -131,7 +157,7 @@ app.get('/auth/openstreetmap',
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 app.get('/auth/openstreetmap/callback', 
-  passport.authenticate('openstreetmap', { failureRedirect: '/login' }),
+  passport.authenticate('openstreetmap', { failureRedirect: '/login'  }),
   function(req, res) {
     res.redirect(req.session.returnTo || '/');
     //res.redirect('/');
@@ -143,7 +169,7 @@ app.get('/logout', function(req, res){
 });
 
 //app.use(ensureAuthenticated);
-
+app.use('/favicon.ico', express.static('images/favicon.ico'));
 app.use('/', ensureAuthenticated,routes);
 app.use('/users',ensureAuthenticated, users);
 app.use('/article',ensureAuthenticated, article);
