@@ -167,11 +167,11 @@ function setAndSave(user,data,callback) {
 
   async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
     // There is no Value for the key, so do nothing
-    if (typeof(value)=='undefined') return callback();
+    if (typeof(value)=='undefined') return cb_eachOf();
 
     // The Value to be set, is the same then in the object itself
     // so do nothing
-    if (value == self[key]) return callback();
+    if (value == self[key]) return cb_eachOf();
     
     debug("Set Key %s to value >>%s<<",key,value);
     debug("Old Value Was >>%s<<",self[key]);

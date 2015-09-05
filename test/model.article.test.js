@@ -141,6 +141,32 @@ describe('model/article', function() {
         })
       })
     })    
+    it('should ignore unchanged Values', function (bddone){
+      var newArticle;
+      articleModule.createNewArticle({markdown:"markdown",blog:"TEST"},function(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        var id =result.id;
+        var empty;
+        var changeValues = {}
+        changeValues.markdown = newArticle.markdown;
+        changeValues.blog = empty;
+        newArticle.setAndSave("user",changeValues,function(err,result) {
+          should.not.exist(err);
+          testutil.getJsonWithId("article",id,function(err,result){
+            should.not.exist(err);
+            delete result._meta;
+            should(result).eql({id:id,markdown:"markdown",blog:"TEST",version:2});
+            logModule.find({},"property",function (err,result){
+              should.not.exist(err);
+              should.exist(result);
+              should(result.length).equal(0);
+              bddone();
+            })
+          })
+        })
+      })
+    })    
     it('should report a conflict, if version number differs', function (bddone){
       // Generate an article for test
       var newArticle;
