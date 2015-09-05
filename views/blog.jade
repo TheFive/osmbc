@@ -27,10 +27,10 @@ block content
           a(href="/blog/#{blog.id}/preview") Preview
       ul
         for category in categories
-          if (articles[category])
-            li= category
+          if (articles[category.DE])
+            li= category.DE
               ul
-                for article in articles[category]
+                for article in articles[category.DE]
                   if (article.markdown)
                     li= article.markdown.substring(0,50)   
                       a(href="/article/#{article.id}")    Edit
@@ -45,7 +45,7 @@ block content
                        a(href="/article/#{article.id}") #{article.id}
           else
             li
-              a(style={color:'LightGray'}) #{category}        
+              a(style={color:'LightGray'}) #{category.DE}        
                  
 
 
