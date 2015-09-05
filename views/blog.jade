@@ -23,8 +23,10 @@ block content
               a(href="/blog/#{blog.id}?setStatus=published") published 
             li
               a(href="/blog/#{blog.id}?setStatus=trash") trash 
-        button.btn.bnt-default 
-          a(href="/blog/#{blog.id}/preview") Preview
+        button.btn.btn-default 
+          a(href="/blog/#{blog.id}/preview") Preview 
+        button.btn.btn-default 
+          a(href="/blog/#{blog.id}/preview?edit=true") Preview With EditMark 
       ul
         for category in categories
           if (articles[category.DE])
@@ -33,7 +35,12 @@ block content
                 for article in articles[category.DE]
                   if (article.markdown)
                     li= article.markdown.substring(0,50)   
-                      a(href="/article/#{article.id}")    Edit
+                      if(article.markdownEN)
+                        a(href="/article/#{article.id}")   Edit
+                      else
+                        a(href="/article/#{article.id}")   
+                          | Edit&Translate
+                        
                   else if (article.title)
                     li
                        a(href="/article/#{article.id}") #{article.title} 
@@ -52,36 +59,30 @@ block content
 
 
     .col-md-4
-      | Blogs: 
-      a(href="/blog/list?status=open") open
-      | 
-      a(href="/blog/list?status=review") review
-      | 
-      a(href="/blog/list?status=trash") trash
-      | 
-      a(href="/blog/list?status=published") published
-      if changes
-        div
-          table.table.table-striped
-            thead
-              tr 
-                th
-                 | user
-                th
-                 |  what
-                th
-                 |  to
-                th
-                 | when
-             tbody
-              each change, i in changes
-                tr
-                  td
-                    a(href='/change/' + change.id) #{change.id} 
-                  td= change.user
-                  td= change.property
-                  td= change.to
-                  td= moment(change.timestamp).fromNow() 
+      .row
+      .row
+        if changes
+          div
+            table.table.table-striped
+              thead
+                tr 
+                  th
+                   | user
+                  th
+                   |  what
+                  th
+                   |  to
+                  th
+                   | when
+               tbody
+                each change, i in changes
+                  tr
+                    td
+                      a(href='/change/' + change.id) #{change.id} 
+                    td= change.user
+                    td= change.property
+                    td= change.to
+                    td= moment(change.timestamp).fromNow() 
 
 
 

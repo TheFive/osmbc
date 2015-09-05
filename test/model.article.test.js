@@ -285,7 +285,7 @@ describe('model/article', function() {
       should(article.displayTitle()).equal("markdown");
 
       article = articleModule.create({title:"",markdown:"* This is more markdown text to test the default limit of charachter",collection:"col",category:"CAT"});
-      should(article.displayTitle()).equal("* This is more markdown text t...");
+      should(article.displayTitle()).equal("This is more markdown text to ...");
       bddone();
     })
     it('should return collection third',function(bddone){
@@ -455,31 +455,31 @@ describe('model/article', function() {
     it('should generate a preview when no markdown is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});
       var result = article.preview();
-      should(result).equal('<li>\nTest Title\n</li>');
+      should(result).equal('<li>\n<mark>Test Title\n</mark></li>');
       bddone();
     })
     it('should generate a preview when no markdown is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});
       var result = article.preview(true);
-      should(result).equal('<li>\nTest Title <a href="/article/0">Edit</a>\n</li>');
+      should(result).equal('<p>\n<mark> <a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> Test Title\n</mark></p>');
       bddone();
     })
     it('should generate a preview when no markdown2 is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({collection:"Test Collection"});
       var result = article.preview();
-      should(result).equal('<li>\nTest Collection\n</li>');
+      should(result).equal('<li>\n<mark>Test Collection\n</mark></li>');
       bddone();
     })
     it('should generate a preview when no markdown2 is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({collection:"Test Collection"});
       var result = article.preview(true);
-      should(result).equal('<li>\nTest Collection <a href="/article/0">Edit</a>\n</li>');
+      should(result).equal('<p>\n<mark> <a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> Test Collection\n</mark></p>');
       bddone();
     })
     it('should generate a preview when markdown is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({markdown:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = article.preview(true);
-      should(result).equal('<li>\n<p><a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.</p> <a href="/article/0">Edit</a>\n</li>');
+      should(result).equal('<p>\n <a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a\n</p>');
       bddone();
     })
     it('should generate a preview when markdown is specified (No Edit Link)',function (bddone) {

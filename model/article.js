@@ -76,10 +76,11 @@ function createNewArticle (proto,callback) {
   article.save(callback);
 }
 
+
 function preview(edit) {
   debug("preview");
-  var editLink = '';
-  if (edit) editLink = ' <a href="/article/'+this.id+'">Edit</a>'; 
+  var editLink;
+  if (edit) editLink = ' <a href="/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   if (typeof(this.markdown)!='undefined' && this.markdown!='') {
     var md = this.markdown;
 
@@ -88,15 +89,17 @@ function preview(edit) {
     // Return an list Element for the blog article
     var html = markdown.toHTML(md);
 
-    return '<li>\n'+html+editLink+'\n</li>';
+    if (edit) return '<p>\n'+editLink+' '+html.substring(3,html.length-6)+'\n</p>';
+         else return '<li>\n'+html+'\n</li>';
   } 
   // Markdown is not defined. Return a placholder for the article
-  return '<li>\n'+this.displayTitle()+editLink+'\n</li>';
+  if (edit) return '<p>\n<mark>'+editLink+' '+this.displayTitle()+'\n</mark></p>';
+       else return '<li>\n<mark>'+this.displayTitle()+'\n</mark></li>';
 }
 function previewEN(edit) {
   debug("previewEN");
   var editLink = '';
-  if (edit) editLink = ' <a href="/article/'+this.id+'">Edit</a>'; 
+  if (edit) editLink = ' <a href="/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   if (typeof(this.markdownEN)!='undefined' && this.markdownEN!='') {
     var md = this.markdownEN;
 
@@ -251,7 +254,25 @@ function displayTitle(maxlength) {
     return util.shorten(this.title,maxlength)
   }
   if (typeof(this.markdown)!='undefined' && this.markdown !="") {
-    return util.shorten(this.markdown,maxlength)
+    var md = this.markdown;
+    if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
+    return util.shorten(md,maxlength)
+  }
+  if (typeof(this.collection)!='undefined' && this.collection !="") {
+    return util.shorten(this.collection,maxlength)
+  }
+  return "Empty Article";
+}
+
+function displayTitleEN(maxlength) {
+  if (typeof(maxlength) == 'undefined') maxlength = 30;
+  if (typeof(this.title)!='undefined' && this.title != "") {
+    return util.shorten(this.title,maxlength)
+  }
+  if (typeof(this.markdownEN)!='undefined' && this.markdownEN !="") {
+    var md = this.markdownEN;
+    if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
+    return util.shorten(md,maxlength)
   }
   if (typeof(this.collection)!='undefined' && this.collection !="") {
     return util.shorten(this.collection,maxlength)
@@ -324,6 +345,7 @@ function calculateUsedLinks(callback) {
 // c) Collection 
 // the maximal length is optional (default is 30)
 Article.prototype.displayTitle = displayTitle;
+Article.prototype.displayTitleEN = displayTitleEN;
 
 // Calculate all links in markdown (final Text) and collection
 // there is no double check for the result
