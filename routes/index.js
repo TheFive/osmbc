@@ -8,5 +8,10 @@ router.get('/', function(req, res, next) {
 router.get('/osmbc.html', function(req, res, next) {
   res.render('index', { title: 'Express' ,           user:req.user,});
 });
+router.get('/VersionConflict', function(req, res, next) {
+  res.render('VersionConflict', { title: 'Express' ,           user:req.user,});
+});
+
+
 
 module.exports = router;

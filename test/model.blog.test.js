@@ -70,7 +70,7 @@ describe('model/blog', function() {
           testutil.getJsonWithId("blog",id,function(err,result){
             should.not.exist(err);
             delete result._meta;
-            should(result).eql({id:id,name:"New Title",status:"published",field:"test"});
+            should(result).eql({id:id,name:"New Title",status:"published",field:"test",version:2});
             logModule.find({},"property",function (err,result){
               should.not.exist(err);
               should.exist(result);
@@ -87,8 +87,11 @@ describe('model/blog', function() {
               // for the test machine.
               should(t0diff).be.below(10);
               should(t1diff).be.below(10);
-              should(result).containEql({timestamp:t0,oid:id,user:"user",table:"blog",property:"status",from:"TEST",to:"published"});
-              should(result).containEql({timestamp:t1,oid:id,user:"user",table:"blog",property:"field",to:"test"});
+              delete result[0].timestamp;
+              delete result[1].timestamp;
+
+              should(result).containEql({oid:id,user:"user",table:"blog",property:"status",from:"TEST",to:"published"});
+              should(result).containEql({oid:id,user:"user",table:"blog",property:"field",to:"test"});
               bddone();
             })
           })
@@ -126,8 +129,8 @@ describe('model/blog', function() {
           delete result[0].id;
           delete result[1]._meta;
           delete result[1].id;
-          should(result[0]).eql({name:"WN1",status:"open"});
-          should(result[1]).eql({name:"WN2",status:"open"});
+          should(result[0]).eql({name:"WN1",status:"open",version:1});
+          should(result[1]).eql({name:"WN2",status:"open",version:1});
           bddone();
         })
       })
@@ -139,7 +142,7 @@ describe('model/blog', function() {
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({name:"WN1",status:"open"});
+          should(result).eql({name:"WN1",status:"open",version:1});
           bddone();
         })
       })
@@ -151,7 +154,7 @@ describe('model/blog', function() {
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({name:"WN3",status:"finished"});
+          should(result).eql({name:"WN3",status:"finished",version:1});
           bddone();
         })
       })

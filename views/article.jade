@@ -8,7 +8,7 @@ block content
     if article.lock
       .alert.alert-dismissable.alert-info
         button.close( type="button", data-dismiss="alert" ) ×
-        | #{article.lock.user} edits since #{moment(article.lock.timestamp).fromNow()}
+        | #{article.lock.user} edits since #{moment(article.lock.timestamp).fromNow()} Version #{article.version}
     if info
       if info.message
         if info.status == 'error'
@@ -23,74 +23,69 @@ block content
 
 
           
-    if (params.edit) 
+    if (params.edit && !article.isClosed) 
       form(name="input", action="/article/#{article.id}", method="post")
         .row
           .col-md-1
             | Blog <br>
-          .col-md-4
+          .col-md-5
             select(id="blog",name="blog").form-control
               option(value="#{article.blog}" selected) #{article.blog+'(*)'}
               if (listOfOpenBlog)  
                 for blogName in listOfOpenBlog         
                   option(value="#{blogName}" ) #{blogName}
-          .col-md-4
-            h2 Datum
+          .col-md-5
+            .hidden
+              textarea.form-control(name="version",rows=1,hide=true) #{article.version}
 
-          .col-md-3
+          .col-md-1
             input(type="submit", class="btn btn-primary",value="OK")
-            a(href="/article/#{article.id}" class="btn btn-default" role="button") Cancel
+            a(href="/article/#{article.id}?edit=false" class="btn btn-default" role="button") Cancel
 
 
         .row
           .col-md-1
             | Category <br>
-          .col-md-4
+          .col-md-5
             select(id="category",name="category").form-control
               option(value="#{article.category}" selected) #{article.category+'(*)'}
               for category in categories
                 option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
-          .col-md-4
+          .col-md-5
             h2
               | #{article.categoryEN}
 
         .row
           .col-md-1
             | Title <br>
-          .col-md-11
+          .col-md-10
             textarea.form-control(name="title",rows=1) #{article.title}
                
         .row
           .col-md-1
             | Collection <br>
-          .col-md-11
+          .col-md-10
             textarea.form-control(name="collection",rows=7) #{article.collection}
         .row
           .col-md-1
-            | Markdown DE <br>
-          .col-md-11  
+            | Markdown 
+          .col-md-5  
             textarea.form-control(
               name="markdown"
               rows=7) #{article.markdown}
-        .row
-          .col-md-1
-            | Preview DE
-          .col-md-11 
-            .panel.panel-default
-              .panel-body 
-                :verbatim
-                !{article.textHtml}
-        .row
-          .col-md-1
-            | Markdown EN <br>
-          .col-md-11  
+          .col-md-5  
             textarea.form-control(
               name="markdownEN"
               rows=7) #{article.markdownEN}
         .row
           .col-md-1
-            | Preview EN
-          .col-md-11 
+            | Preview
+          .col-md-5
+            .panel.panel-default
+              .panel-body 
+                :verbatim
+                !{article.textHtml}
+          .col-md-5
             .panel.panel-default
               .panel-body 
                 :verbatim
@@ -106,71 +101,63 @@ block content
      .row
         .col-md-1
           | Blog <br>
-        .col-md-4
+        .col-md-5
           h2
             | #{article.blog}
-        .col-md-4
+        .col-md-5
           h2
-            | #{article.blogEN}
-        .col-md-3
+        .col-md-1
           a(href="/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
       .row
         .col-md-1
           | Category <br>
-        .col-md-4
+        .col-md-5
           h2
             | #{article.category}
-        .col-md-4
+        .col-md-5
           h2
             | #{article.categoryEN}
       .row
         .col-md-1
           | Title <br>
-        .col-md-11
+        .col-md-10
           .panel.panel-default
               .panel-body #{article.title}
       .row
         .col-md-1
           | Collection <br>
-        .col-md-11
+        .col-md-10
             .panel.panel-default
               .panel-body #{article.collection}
       .row
-          .col-md-1
-            | Markdown DE<br>
-          .col-md-11  
+        .col-md-1
+            | Markdown<br>
+        .col-md-5  
               .panel.panel-default
                 .panel-body #{article.markdown}
-         
+        .col-md-5 
+              .panel.panel-default
+                .panel-body #{article.markdownEN}    
       .row
         .col-md-1
-          | Preview DE
+          | Preview
 
-        .col-md-11 
+        .col-md-5 
           .panel.panel-default
             .panel-body 
               :verbatim
               !{article.textHtml}
-      .row
-          .col-md-1
-            | Markdown EN<br>
-          .col-md-11  
-              .panel.panel-default
-                .panel-body #{article.markdownEN}
-         
-      .row
-        .col-md-1
-          | Preview EN
-
-        .col-md-11 
+        .col-md-5 
           .panel.panel-default
             .panel-body 
               :verbatim
               !{article.textHtmlEN}
+        
+
       .row
         .col-md-1
           | Comment <br>
-        .col-md-11  
+        .col-md-10 
             .panel.panel-default
               .panel-body 
                 :verbatim

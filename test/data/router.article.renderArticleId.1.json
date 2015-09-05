@@ -1,11 +1,13 @@
 {
-  "blog":[{"name":"BLOG"}],
+  "blog":[{"name":"BLOG","status":"open"}],
   "article":[{"blog":"BLOG","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
              {"blog":"BLOG","title":"BLOG","markdown":"* Dies ist ein grosser Testartikel.","category":"Keine"}],
   "testArticleTitle":"BLOG",
 
   "result":{"articleText":"<li>\n<p>Dies ist ein grosser Testartikel.</p>\n</li>",
             "params":{"edit":null},
+            "listOfOpenBlog": ["BLOG"],
+            "listOfOrphanBlog": [],
             "changes": [],
             "articleReferences":{"count":0},
             "categories":[{"DE":"[Aktuelle Kategorie]","EN":"[Actual Category]"},

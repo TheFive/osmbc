@@ -15,7 +15,8 @@ var logModule     = require('../model/logModule.js');
 function renderArticleId(req,res,next) {
   debug('renderArticleId');
 
-  // Get the ID to display
+
+  // Get the ID and the article to display
   var id = req.params.article_id;
   articleModule.findById(id,function(err,article) {
 
@@ -24,23 +25,18 @@ function renderArticleId(req,res,next) {
 
   // Variables for rendering purposes
 
-  // ListOfOpenBlog is used to show all openBlogs to assign an article to
+  // ListOfOrphanBlog is used to show all orphanedBlog to assign an article to
+  var listOfOrphanBlog;
   var listOfOpenBlog;
-
   // Used for display changes
   var changes = [];
 
-  // Params is used for WHAT ??????
+  // Params is used for indicating Edit
   var params = {};
-  
   params.edit = req.query.edit;
 
   // calculate all used Links for the article
   var usedLinks = article.calculateLinks();
-
- 
-
-
 
   async.auto({
     
@@ -51,24 +47,40 @@ function renderArticleId(req,res,next) {
         callback(err,result);
       })
     },
+    listOfOrphanBlog:
+    function (callback) {
+      articleModule.getListOfOrphanBlog(function(err,result) {
+        callback(err,result);
+      })
+    },
     listOfOpenBlog:
     function (callback) {
-      articleModule.getListOfOpenBlog(function(err,result) {
-        callback(err,result);
+      blogModule.find({status:"open"},function(err,result) {
+        if (err) return callback(err);
+        var list = [];
+        for (var i=0;i<result.length;i++) {
+          list.push(result[i].name);
+        }
+        callback(err,list);
       })
     },
     edit:
     function (callback){
       if (typeof(params.edit)!='undefined') {
-        article.lock={};
-        article.lock.user = req.user.displayName;
-        article.lock.timestamp = new Date();
-        article.save(callback);
+        if (params.edit=="false") {
+          console.log("Unlocking");
+          delete params.edit;
+          article.doUnlock(callback);
+          return;
+        }
+        article.doLock(req.user.displayName,callback);
+        return;
       } else { 
         return callback()
       }
     }},
       function (err,result) {
+
         if (typeof(article.markdown)!='undefined') {
           article.textHtml = article.preview();
         } 
@@ -78,31 +90,29 @@ function renderArticleId(req,res,next) {
         if (typeof(article.comment)!='undefined') {
           article.commentHtml = markdown.toHTML(article.comment)
         } 
-
-
-        res.render('article',{article:article,
-                              params:params,
-                              user:req.user,
-                              changes:result.changes,
-                              listOfOpenBlog:result.listOfOpenBlog,
-                              moment:moment,
-                              articleReferences:result.articleReferences,
-                              usedLinks:result.usedLinks,
-                              util:util,
-                              categories:blogModule.categories});
+        if (req.query.edit && ! params.edit) {
+          res.redirect("/article/"+id);    
+        } else {
+          res.render('article',{article:article,
+                                params:params,
+                                user:req.user,
+                                changes:result.changes,
+                                listOfOrphanBlog:result.listOfOrphanBlog,
+                                listOfOpenBlog:result.listOfOpenBlog,
+                                moment:moment,
+                                articleReferences:result.articleReferences,
+                                usedLinks:result.usedLinks,
+                                util:util,
+                                categories:blogModule.categories});
+       }
       }
     );
   });
 }
 
-module.exports.renderArticleId = renderArticleId;
-
-router.get('/:article_id', exports.renderArticleId );
-
-// For test purposes
  
-router.post('/:article_id', function(req, res, next) {
-  debug('router.post /:article_id');
+function postArticleId(req, res, next) {
+  debug('postArticleId');
   var id = req.params.article_id;
   articleModule.findById(id,function(err,article) {
     if (typeof(article.id) == 'undefined') return next();
@@ -114,16 +124,22 @@ router.post('/:article_id', function(req, res, next) {
                    comment:req.body.comment,
                    category:req.body.category,
                    categoryEN:req.body.categoryEN,
+                   version:req.body.version,
                    title:req.body.title};
 
     article.setAndSave(req.user.displayName,changes,function(err) {
+      if (err ) 
+        {
+          res.redirect("/VersionConflict");
+          return;
+        }
       res.redirect("/article/"+id);    
     })
   });
-});
+}
 
-router.get('/create', function(req, res, next) {
-  debug('router.get /create');
+function createArticle(req, res, next) {
+  debug('createArticle');
   var proto = {};
   if (typeof(req.query.blog) != 'undefined' ) {
     proto.blog = req.query.blog;
@@ -134,6 +150,8 @@ router.get('/create', function(req, res, next) {
 
   async.series([
     function calculateWN(callback) {
+      // Blog Name is defined, so nothing to calculate
+      if (proto.blog) return callback();
       blogModule.findOne({status:'open'},{column:"name",desc:false},
                          function calculateWNResult(err,blog){
         if (blog) {
@@ -147,15 +165,15 @@ router.get('/create', function(req, res, next) {
     ],
     function(err) {
       articleModule.createNewArticle(proto,function(err,article) {
-        res.redirect('/article/'+article.id+"?edit=collection");
+        res.redirect('/article/'+article.id+"?edit=true");
       });
     }
   );
-});
+};
 
 
-router.get('/list', function(req, res, next) {
-  debug('router.get /list');
+function renderList(req,res,next) {
+  debug('renderList');
   var blog = req.query.blog;
   var markdown = req.query.markdown;
   var query = {};
@@ -165,27 +183,45 @@ router.get('/list', function(req, res, next) {
   if (typeof(markdown)!='undefined') {
     query.markdown = markdown;
   }
-  var listOfOpenBlog;
+  var listOfOrphanBlog;
+  var articles;
 
-  async.series([
+  async.parallel([
      function (callback) {
-        articleModule.getListOfOpenBlog(function(err,result) {
-          listOfOpenBlog = result;
+        articleModule.getListOfOrphanBlog(function(err,result) {
+          listOfOrphanBlog = result;
+          callback();
+        })
+      },
+      function(callback) {
+        articleModule.find(query,{column:"title"},function(err,result) {
+          articles = result;
           callback();
         })
       }
 
     ],function(error) {
-        articleModule.find(query,{},function(err,articles) {
         res.render('articlelist',{articles:articles,
-                                  listOfOpenBlog:listOfOpenBlog,
+                                  listOfOrphanBlog:listOfOrphanBlog,
                                   util:util,
                                   user:req.user});      
-    })
- 
- 
-  });
-});
+    }
+  )
+}
+
+
+// Export Render Functions for testing purposes
+exports.renderArticleId = renderArticleId;
+exports.renderList = renderList;
+exports.postArticleId = postArticleId;
+exports.createArticle = createArticle;
+
+// And configure router to use render Functions
+router.get('/:article_id', exports.renderArticleId );
+router.get('/list', exports.renderList);
+router.post('/:article_id', exports.postArticleId);
+router.get('/create',exports.createArticle);
+
 
 module.exports.router = router;
 

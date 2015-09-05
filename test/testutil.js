@@ -99,8 +99,8 @@ exports.importData = function importData(data,callback) {
     function importAllChanges(cb4) {
       debug('importAllChanges');
       if (typeof(data.change)!='undefined') {  
-        async.each(data.change,function importOneChange(d,cb){
-          logModule.log(d,cb);
+        async.eachSeries(data.change,function importOneChange(d,cb){
+          logModule.log(d,function waitShort() {setTimeout(cb,10);});
         },cb4)
       } else cb4();
     }
