@@ -99,6 +99,8 @@ function preview(edit) {
   if (edit) return '<p>\n<mark>'+editLink+' '+this.displayTitle()+'\n</mark></p>';
        else return '<li>\n<mark>'+this.displayTitle()+'\n</mark></li>';
 }
+
+
 function previewEN(edit) {
   debug("previewEN");
   var editLink = '';
@@ -106,15 +108,29 @@ function previewEN(edit) {
   if (typeof(this.markdownEN)!='undefined' && this.markdownEN!='') {
     var md = this.markdownEN;
 
-    // Does the markdown text starts with '* ', so ignore it
-    if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
-    // Return an list Element for the blog article
-    var html = markdown.toHTML(md);
+    if (md == "german only") {
+      // Text is only for german users, so
+      // ignore it, if not in edit mode.
+      if (!edit) return ""
+        else return '<p>\n'+editLink+' german link\n</p>'; 
 
-    return '<li>\n'+html+editLink+'\n</li>';
+    } else {
+     // Does the markdown text starts with '* ', so ignore it
+      if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
+      // Return an list Element for the blog article
+      var html = markdown.toHTML(md);
+
+      // clean up <p> and </p> of markdown generation.
+      html = html.substring(3,html.length-4)
+
+      if (edit) return '<p>\n'+editLink+' '+html+'\n</p>';
+           else return '<li>\n'+html+'\n</li>';
+    }
+
   } 
   // Markdown is not defined. Return a placholder for the article
-  return '<li>\n'+this.displayTitle()+editLink+'\n</li>';
+  if (edit) return '<p>\n<mark>'+editLink+' '+this.displayTitle()+'\n</mark></p>';
+       else return '<li>\n<mark>'+this.displayTitle()+'\n</mark></li>';
 }
 
 function doLock(user,callback) {

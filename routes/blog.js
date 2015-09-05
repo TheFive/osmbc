@@ -110,6 +110,8 @@ router.get('/:blog_id/preview', function(req, res, next) {
     if (typeof(blog.id) == 'undefined') return next();
 
     var edit = req.query.edit;
+    var lang = req.query.lang;
+    if (typeof(lang)=='undefined') lang = "DE";
 
     var changes = [];
    
@@ -121,7 +123,7 @@ router.get('/:blog_id/preview', function(req, res, next) {
     async.auto({ 
         getListOfOrphanBlog:articleModule.getListOfOrphanBlog,
         converter:function(callback) {
-                    blog.preview(edit,function(err,result) {
+                    blog.preview(edit,lang,function(err,result) {
                       callback(err,result);
                     })
                   }
@@ -137,6 +139,7 @@ router.get('/:blog_id/preview', function(req, res, next) {
                              listOfOrphanBlog:result.listOfOrphanBlog,
                              preview:result.converter.preview,
                              edit:edit,
+                             lang:lang,
                              categories:blogModule.categories});
         }
       }
