@@ -14,7 +14,7 @@
   "testArticleTitle":"BLOG",
 
 
-  "result":{"articleText":"<li>\n<p>Dies ist ein grosser Testartikel, mit Verweis auf <a href=\"https://link.de\">link</a></p>\n</li>",
+  "result":{"articleText":"<li>\nDies ist ein grosser Testartikel, mit Verweis auf <a href=\"https://link.de\">link</a>\n</li>",
             "params":{"edit":null},
             "changes": [ {"field": "title","from": "test", "oid": "1","table": "article",
           "timestamp": "2015-08-26T17:11:51.654Z",
