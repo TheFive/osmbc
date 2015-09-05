@@ -85,7 +85,11 @@ module.exports.save = function(callback) {
           var query = client.query("select (data->>'version')::int as version from "+table+" where id = $1",[self.id]);
           query.on('row',function(row) {
             debug('Version in Database %s',row.version)
-            if (row.version == self.version) {
+            if (row.version==null) {
+              // No Data in Database, so no conflict.
+              versionsEqual = true;
+            }
+            else if (row.version == self.version) {
               debug('No Error');
               versionsEqual = true;
             }
