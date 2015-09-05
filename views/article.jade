@@ -31,9 +31,11 @@ block content
           .col-md-5
             select(id="blog",name="blog").form-control
               option(value="#{article.blog}" selected) #{article.blog+'(*)'}
+              option(value="Future") Future
               if (listOfOpenBlog)  
                 for blogName in listOfOpenBlog         
                   option(value="#{blogName}" ) #{blogName}
+              option(value="Trash") Trash
           .col-md-5
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}

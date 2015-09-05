@@ -128,7 +128,7 @@ router.get('/:blog_id/preview', function(req, res, next) {
       },
       function(err,result) {
         if (req.query.download=="true") {
-          res.end(result.converter.preview);
+          res.end(result.converter.preview,"UTF8");
           return;
         } else {
           res.render('blogpreview',{blog:blog,
@@ -136,7 +136,7 @@ router.get('/:blog_id/preview', function(req, res, next) {
                              articles:result.converter.articles,
                              listOfOrphanBlog:result.listOfOrphanBlog,
                              preview:result.converter.preview,
-                             fullMarkdown:result.converter.fullMarkdown,
+                             edit:edit,
                              categories:blogModule.categories});
         }
       }
