@@ -176,12 +176,16 @@ function renderList(req,res,next) {
   debug('renderList');
   var blog = req.query.blog;
   var markdown = req.query.markdown;
+  var markdownEN = req.query.markdownEN;
   var query = {};
   if (typeof(blog)!='undefined') {
     query.blog = blog;
   }
   if (typeof(markdown)!='undefined') {
     query.markdown = markdown;
+  }
+  if (typeof(markdownEN)!='undefined') {
+    query.markdownEN = markdownEN;
   }
   var listOfOrphanBlog;
   var articles;

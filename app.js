@@ -108,7 +108,7 @@ app.set('view engine', 'jade');
 
 
 // take from https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
-app.use(session({ store: new FileStore(),secret: 'LvwnH}uHhDLxvAu3X6' ,resave:true,saveUninitialized:true}));
+app.use(session({ store: new FileStore(),secret: 'LvwnH}uHhDLxvAu3X6' ,resave:true,saveUninitialized:true,cookie:{_expires : 1000*60*60*24*20}}));
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
 app.use(passport.initialize());

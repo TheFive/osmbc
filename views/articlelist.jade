@@ -20,6 +20,8 @@ block content
              | collection
             th
              | markdown
+            th
+             | markdownEN
          tbody
           each article in articles
             tr
@@ -29,6 +31,7 @@ block content
               td= article.category
               td= util.shorten(article.collection) 
               td= util.shorten(article.markdown) 
+              td= util.shorten(article.markdownEN) 
                
 
 
