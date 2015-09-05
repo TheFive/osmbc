@@ -25,7 +25,7 @@ module.exports.categories = [
   {DE:"Importe",EN:"Imports"},
   {DE:"OpenStreetMap Foundation",EN:"OpenStreetMap Foundation"},
   {DE:"Veranstaltungen",EN:"Events"},
-  {DE:"Humanitarian OSM",EN:"Events"},
+  {DE:"Humanitarian OSM",EN:"Humanitarian OSM"},
   {DE:"Karten",EN:"Maps"},
   {DE:"switch2OSM",EN:"#switch2OSM"},
   {DE:"Open-Data",EN:"Open Data"},
@@ -129,8 +129,13 @@ function createNewBlog(proto,callback) {
   });
 }
 
-function preview(edit,callback) {
+function preview(edit,lang,callback) {
   debug('preview');
+
+  if (typeof(lang)=='function') {
+    callback = lang;
+    lang = "DE";
+  }
   var articles = {};
   var preview = "";
 
@@ -149,6 +154,10 @@ function preview(edit,callback) {
     for (var i=0;i<exports.categories.length;i++) {
       var category = exports.categories[i].DE;
 
+      var categoryLANG;
+      if (lang=="DE") categoryLANG = category;
+      if (lang=="EN") categoryLANG = exports.categories[i].EN;
+
       // If the category exists, generate HTML for it
       if (typeof(articles[category])!='undefined') {
         debug('Generating HTML for category %s',category);
@@ -156,9 +165,14 @@ function preview(edit,callback) {
 
         for (var j=0;j<articles[category].length;j++) {
           var r = articles[category][j];
-          htmlForCategory += r.preview(edit)+'\n';
+          if (lang == "DE") {
+            htmlForCategory += r.preview(edit)+'\n';
+          }
+          if (lang == "EN") {
+            htmlForCategory += r.previewEN(edit)+'\n';
+          }
         }
-        var header = '<h2 id="'+category.toLowerCase()+'">'+category+'</h2>\n';
+        var header = '<h2 id="'+categoryLANG.toLowerCase()+'">'+categoryLANG+'</h2>\n';
         htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
         preview += htmlForCategory;
       }

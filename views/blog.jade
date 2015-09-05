@@ -27,6 +27,10 @@ block content
           a(href="/blog/#{blog.id}/preview") Preview 
         button.btn.btn-default 
           a(href="/blog/#{blog.id}/preview?edit=true") Preview With EditMark 
+        button.btn.btn-default 
+          a(href="/blog/#{blog.id}/preview?lang=EN") Preview EN 
+        button.btn.btn-default 
+          a(href="/blog/#{blog.id}/preview?edit=true&lang=DE") Preview EN With EditMark 
       ul
         for category in categories
           if (articles[category.DE])
