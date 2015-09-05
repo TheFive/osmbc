@@ -89,7 +89,7 @@ function preview(edit) {
     // Return an list Element for the blog article
     var html = markdown.toHTML(md);
 
-    if (edit) return '<p>\n'+editLink+' '+html.substring(3,html.length-6)+'\n</p>';
+    if (edit) return '<p>\n'+editLink+' '+html.substring(3,html.length-4)+'\n</p>';
          else return '<li>\n'+html+'\n</li>';
   } 
   // Markdown is not defined. Return a placholder for the article
