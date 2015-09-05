@@ -34,19 +34,21 @@ html(lang='en')
                 | Article 
                 span.caret
               ul.dropdown-menu(role='menu')
+                li.dropdown-header Special Search
+                li
+                  a(href='/article/list?markdown=') No Text
+                li
+                  a(href='/article/list?markdownEN=') No Translation
+                li
+                  a(href='/article/list') All
+                li.divider
                 li.dropdown-header Orphaned Article
                 if (listOfOrphanBlog) 
                   for blog in listOfOrphanBlog
                     li
                       a(href="/article/list?blog=#{blog}") #{blog}
-                li.divider
-                li.dropdown-header Special Search
                 li
-                  a(href='/article/list?markdown=') No Text
-                li
-                  a(href='/article/list?blog=') No Reference Blog
-                li
-                  a(href='/article/list') All
+                  a(href='/article/list?blog=') No Blog
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | WN 

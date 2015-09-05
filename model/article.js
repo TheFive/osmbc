@@ -169,7 +169,7 @@ function setAndSave(user,data,callback) {
   debug("Version of Article %s",self.version);
   debug("Version of dataset %s",data.version);
 
-  if (self.version != parseInt(data.version)) {
+  if (self.version && data.version && self.version != parseInt(data.version)) {
     error = new Error("Version Number Differs");
     return callback(error);
   }
