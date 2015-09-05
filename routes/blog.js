@@ -116,6 +116,8 @@ router.get('/:blog_id/preview', function(req, res, next) {
     var listOfOrphanBlog;
 
 
+
+
     async.auto({ 
         getListOfOrphanBlog:articleModule.getListOfOrphanBlog,
         converter:function(callback) {
@@ -125,13 +127,18 @@ router.get('/:blog_id/preview', function(req, res, next) {
                   }
       },
       function(err,result) {
-        res.render('blogpreview',{blog:blog,
-                           user:req.user,
-                           articles:result.converter.articles,
-                           listOfOrphanBlog:result.listOfOrphanBlog,
-                           preview:result.converter.preview,
-                           fullMarkdown:result.converter.fullMarkdown,
-                           categories:blogModule.categories});
+        if (req.query.download=="true") {
+          res.end(result.converter.preview);
+          return;
+        } else {
+          res.render('blogpreview',{blog:blog,
+                             user:req.user,
+                             articles:result.converter.articles,
+                             listOfOrphanBlog:result.listOfOrphanBlog,
+                             preview:result.converter.preview,
+                             fullMarkdown:result.converter.fullMarkdown,
+                             categories:blogModule.categories});
+        }
       }
     )
   });});
