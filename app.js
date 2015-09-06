@@ -13,7 +13,7 @@ var  OpenStreetMapStrategy = require('passport-openstreetmap').Strategy;
 //var Strategy = require('passport-http').BasicStrategy;
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var users = require('./routes/users').router;
 var article = require('./routes/article').router;
 var changes = require('./routes/changes').router;
 var blog = require('./routes/blog');

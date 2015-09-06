@@ -96,7 +96,7 @@ function createUser(req, res, next) {
   debug('createUser');
   var proto = {};
   userModule.createNewUser(proto,function(err,user) {
-      res.redirect('/users/'+user.id+"?edit=true");
+    res.redirect('/users/'+user.id+"?edit=true");
   });
 };
 
@@ -104,6 +104,8 @@ router.get('/list',renderList);
 router.post('/:user_id', postUserId);
 router.get('/create',createUser);
 
+module.exports.createUser = createUser;
 
 
-module.exports = router;
+
+module.exports.router = router;
