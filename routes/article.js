@@ -130,7 +130,7 @@ function postArticleId(req, res, next) {
     article.setAndSave(req.user.displayName,changes,function(err) {
       if (err ) 
         {
-          res.redirect("/VersionConflict");
+          next(err);
           return;
         }
       res.redirect("/article/"+id);    

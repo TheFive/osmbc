@@ -11,11 +11,23 @@ block content
         thead
           tr 
             th
-             | Name
+              | Name
+            th
+              | access
+            th
+              | lastAccess
+
         tbody
           each user in users
             tr
-              td= user.displayName
+              td
+                a(href='/users/#{user.id}') #{user.OSMUser}
+              td= user.access
+              if (user.lastAccess)
+                td= moment(user.lastAccess).fromNow()
+              else 
+                td
+                  | Never
 
 
 

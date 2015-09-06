@@ -19,6 +19,8 @@ var changes = require('./routes/changes');
 var blog = require('./routes/blog');
 var config = require('./config.js');
 
+var userModule = require('./model/user.js');
+
 config.initialise();
 
 
@@ -92,7 +94,28 @@ passport.use(new OpenStreetMapStrategy({
 function ensureAuthenticated(req, res, next) {
   debug("ensureAuthenticated");
 
-  if (req.isAuthenticated()) {  return next(); }
+  if (req.isAuthenticated()) {  
+    // check User
+    userModule.find({OSMUser:req.user.displayName},{},function(err,result){
+      if (err) return next(err);
+      if (result.length==1) {
+        if (result[0].access == "full") {
+          // save last access, ignore save callback
+          var date = new Date();
+          var lastStore = new Date(result[0].lastAccess);
+          if ((date.getTime()-lastStore.getTime()) > 1000*60*2) {
+            console.log("log access");
+            result[0].lastAccess = new Date();
+            result[0].save(function(err) {});            
+          }
+          return next();
+        }
+      }
+      var err = new Error('Access Forbidden')
+      return next(err);
+    })
+    return;
+  }
   req.session.returnTo = req.originalUrl; 
   res.redirect('/auth/openstreetmap')
 

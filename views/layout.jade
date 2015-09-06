@@ -69,7 +69,18 @@ html(lang='en')
                 li.dropdown-header Action
                 li
                   a(href="/blog/create") Create Blog
-                
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown')
+                | User 
+                span.caret
+              ul.dropdown-menu(role='menu')
+                li.dropdown-header List
+                li
+                  a(href="/users/create") Create
+                li
+                  a(href="/users/list?access=full") List Active      
+                li
+                  a(href="/users/list?access=denied") List Denied      
 
           ul.nav.navbar-nav.navbar-right            
              if user
