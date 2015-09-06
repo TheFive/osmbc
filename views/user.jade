@@ -1,0 +1,103 @@
+extends layout
+
+
+
+
+block content
+
+
+  p
+    if usershown.lock
+      .alert.alert-dismissable.alert-info
+        button.close( type="button", data-dismiss="alert" ) ×
+        | #{usershown.lock.user} edits since #{moment(usershown.lock.timestamp).fromNow()} Version #{user.version}
+    if info
+      if info.message
+        if info.status == 'error'
+          .alert.alert-dismissable.alert-danger
+            button.close( type="button", data-dismiss="alert" ) ×
+            | #{info.message}
+        if info.status == 'message'
+          .alert.alert-dismissable.alert-success
+            button.close( type="button", data-dismiss="alert" ) ×
+            | #{info.message}
+  
+
+          
+    if (params && params.edit) 
+      form(name="input", action="/users/#{usershown.id}", method="post")
+        .row
+          .col-md-1
+            | OSM Name 
+          .col-md-3
+            textarea.form-control(name="OSMUser",rows=1) #{usershown.OSMUser}
+
+          .col-md-1
+            input(type="submit", class="btn btn-primary",value="OK")
+            a(href="/users/#{usershown.id}?edit=false" class="btn btn-default" role="button") Cancel
+
+
+        .row
+          .col-md-1
+            | Access
+          .col-md-5
+            select(id="access",name="access").form-control
+              option(value="#{usershown.access}" selected) #{usershown.access+'(*)'}
+                option(value="full" ) full
+                option(value="read" ) only collected Article (not implemented)
+                option(value="denied" ) denied
+
+    else
+     .row
+        .col-md-1
+          | OSM Name <br>
+        .col-md-3
+          h2
+            | #{usershown.OSMUser}
+        .col-md-7
+        .col-md-1
+          a(href="/users/#{usershown.id}?edit=true" class="btn btn-primary" role="button") Edit
+      .row
+        .col-md-1
+          | Access <br>
+        .col-md-5
+          h2
+            | #{usershown.access}
+
+
+  .row
+    if changes
+      h2
+        | History
+      div
+        table.table.table-striped
+          thead
+            tr 
+              th
+               | id
+              th
+               | user
+              th
+               | what
+              th
+               | from
+              th
+               |  to
+              th
+               | when
+           tbody
+            each change, i in changes
+              tr
+                td
+                  a(href='/change/' + change.id) #{change.id} 
+                td= change.user
+                td= change.property
+                td= util.shorten(change.from)
+                td= util.shorten(change.to)
+                td= moment(change.timestamp).fromNow() 
+                
+
+
+
+
+

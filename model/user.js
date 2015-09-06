@@ -1,8 +1,10 @@
 var pg = require('pg');
 var config = require('../config.js');
-var pgMap = require('./pgMap.js')
-var debug = require('debug')('OSMBC:user');
+var pgMap = require('./pgMap.js');
+var debug = require('debug')('OSMBC:model:user');
 var should = require('should');
+var async = require('async');
+var logModule = require('../model/logModule.js');
 
 function User (proto)
 {
@@ -36,9 +38,9 @@ function createNewUser (proto,callback) {
 
 User.prototype.remove = pgMap.remove;
 
-function find(callback) {
+function find(obj,ord,callback) {
 	debug("find");
-  pgMap.find(this,callback);
+  pgMap.find(this,obj,ord,callback);
 }
 function findById(id,callback) {
 	debug("findById %s",id);
@@ -63,6 +65,48 @@ function dropTable(cb) {
   pgMap.dropTable('usert',cb);
 }
 
+
+function setAndSave(user,data,callback) {
+  debug("setAndSave");
+  should(typeof(user)).equal('string');
+  should(typeof(data)).equal('object');
+  should(typeof(callback)).equal('function');
+  var self = this;
+  delete self.lock;
+
+
+  async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
+    // There is no Value for the key, so do nothing
+    if (typeof(value)=='undefined') return cb_eachOf();
+
+    // The Value to be set, is the same then in the object itself
+    // so do nothing
+    if (value == self[key]) return cb_eachOf();
+    
+    debug("Set Key %s to value >>%s<<",key,value);
+    debug("Old Value Was >>%s<<",self[key]);
+
+
+    async.series ( [
+        function(cb) {
+           logModule.log({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:value},cb);
+        },
+        function(cb) {
+          self[key] = value;
+          cb();
+        }
+      ],function(err){
+        cb_eachOf(err);
+      })
+
+  },function setAndSaveFinalCB(err) {
+    if (err) return callback(err);
+    self.save(function (err) {
+      callback(err);
+    });
+  })
+} 
+
 // Creates an User object and stores it to database
 // can use a prototype to initialise data
 // Parameter: Prototype (optional)
@@ -73,6 +117,7 @@ module.exports.createNewUser = createNewUser;
 
 // save stores the current object to database
 User.prototype.save = pgMap.save;
+User.prototype.setAndSave = setAndSave;
 
 // Create Tables and Views
 module.exports.createTable = createTable;

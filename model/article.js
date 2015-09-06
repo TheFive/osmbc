@@ -5,7 +5,7 @@ var pg     = require('pg');
 var async  = require('async');
 var should = require('should');
 var markdown = require('markdown').markdown;
-var debug  = require('debug')('OSMBC:article');
+var debug  = require('debug')('OSMBC:model:article');
 
 
 var config    = require('../config.js');
@@ -36,7 +36,6 @@ function getListOfOrphanBlog(callback) {
     debug("reading list of open blog");
     listOfOrphanBlog = [];
     query.on('row',function(row) {
-      debug(row.name);
       listOfOrphanBlog.push(row.name);
     })
     query.on('end',function (pgresult) {    
