@@ -1,7 +1,7 @@
 var pg = require('pg');
 var should = require('should');
 var async  = require('async');
-var debug = require('debug')('OSMBC:pgMap')
+var debug = require('debug')('OSMBC:model:pgMap')
 
 var config = require('../config.js');
 

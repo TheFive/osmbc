@@ -1,7 +1,7 @@
 var pg = require('pg');
 var config = require('../config.js');
-var pgMap = require('./pgMap.js')
-var debug = require('debug')('OSMBC:user');
+var pgMap = require('./pgMap.js');
+var debug = require('debug')('OSMBC:model:user');
 var should = require('should');
 
 function User (proto)
@@ -36,9 +36,9 @@ function createNewUser (proto,callback) {
 
 User.prototype.remove = pgMap.remove;
 
-function find(callback) {
+function find(obj,ord,callback) {
 	debug("find");
-  pgMap.find(this,callback);
+  pgMap.find(this,obj,ord,callback);
 }
 function findById(id,callback) {
 	debug("findById %s",id);
