@@ -11,6 +11,7 @@ var config = require('../config.js');
 var testutil = require('./testutil.js');
 
 var userModule = require('../model/user.js');
+var logModule = require('../model/logModule.js');
 
 
 
@@ -113,5 +114,69 @@ describe('model/user', function() {
         })
       })
     })
+  })
+  describe('setAndSave',function() {
+    beforeEach(function (bddone) {
+      testutil.clearDB(bddone);
+    }) 
+    it('should set only the one Value in the database', function (bddone){
+      var newUser;
+      userModule.createNewUser({OSMUser:"Test",access:"full"},function(err,result){
+        should.not.exist(err);
+        newUser = result;
+        var id =result.id;
+        newUser.access = "not logged";
+        newUser.setAndSave("user",{version:"1",OSMUser:"Test2",access:"not logged"},function(err,result) {
+          should.not.exist(err);
+          testutil.getJsonWithId("usert",id,function(err,result){
+            should.not.exist(err);
+            delete result._meta;
+            should(result).eql({id:id,access:"not logged",OSMUser:"Test2",version:2});
+            logModule.find({},"property",function (err,result){
+              should.not.exist(err);
+              should.exist(result);
+              should(result.length).equal(1);
+              var r0id = result[0].id;
+              var t0 = result[0].timestamp;
+              var now = new Date();
+              var t0diff = ((new Date(t0)).getTime()-now.getTime());
+         
+              // The Value for comparison should be small, but not to small
+              // for the test machine.
+              should(t0diff).be.below(10);
+              should(result[0]).eql({id:r0id,timestamp:t0,oid:id,user:"user",table:"usert",property:"OSMUser",from:"Test",to:"Test2"});
+              bddone();
+            })
+          })
+        })
+      })
+    })    
+    it('should ignore unchanged Values', function (bddone){
+      var newUser;
+      userModule.createNewUser({OSMUser:"Test",access:"full"},function(err,result){
+        should.not.exist(err);
+        newUser = result;
+        var id =result.id;
+        var empty;
+        var changeValues = {}
+        changeValues.OSMUser = newUser.OSMUser;
+        changeValues.access = newUser.access;
+        changeValues.version = "1";
+        newUser.setAndSave("user",changeValues,function(err,result) {
+          should.not.exist(err);
+          testutil.getJsonWithId("usert",id,function(err,result){
+            should.not.exist(err);
+            delete result._meta;
+            should(result).eql({id:id,OSMUser:"Test",access:"full",version:2});
+            logModule.find({},"property",function (err,result){
+              should.not.exist(err);
+              should.exist(result);
+              should(result.length).equal(0);
+              bddone();
+            })
+          })
+        })
+      })
+    })    
   })
 })
