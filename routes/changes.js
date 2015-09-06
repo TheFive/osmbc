@@ -6,15 +6,20 @@ var debug = require('debug')('OSMBC:routes:article');
 var logModule = require('../model/logModule.js');
 
 /* GET users listing. */
-router.get('/:change_id', function(req, res, next) {
-  debug('router.get');
+function renderChangeId(req, res, next) {
+  debug('renderChangeId');
   var id = req.params.change_id;
   logModule.findById(id,function(err,change) {
+    console.dir(change);
     if (typeof(change.id) == 'undefined') return next();
     res.render('change',{change:change,user:req.user,moment:moment});
   });
-});
+}
  
-module.exports = router;
+
+router.get('/:change_id',renderChangeId);
+
+module.exports.renderChangeId = renderChangeId;
+module.exports.router = router;
 
 
