@@ -45,4 +45,49 @@ describe('router/user',function() {
       )
     })
   })
+  describe('postUserId',function() {
+    it('should call save changed Values',function(bddone) {
+      var req = {body:{OSMUser:"testNew",access:"full"},params:{},user:{displayName:"test"}};
+
+      var res = {};
+      var next;
+      var user_id;
+      var newUser;
+
+      async.series([
+        function createUser(callback) {
+          userModule.createNewUser({},function(err,user){
+            if (err) return callback(err);
+            user_id = user.id;
+            req.params.user_id = user_id;
+            callback();
+          })
+        },
+        function(callback) {
+          res.redirect = sinon.spy(function (value) {callback();})
+          next = sinon.spy(callback);
+          userRouter.postUserId(req,res,next);
+        },
+        function searchArticle(callback) {
+          userModule.findById(user_id,function(err,result){
+            should.not.exist(err);
+            should.exist(result);
+            newUser = result;
+            callback();
+          })
+        }
+
+        ],
+        function(err) {
+          should.not.exist(err);
+          should(newUser.OSMUser).equal("testNew");
+          should(newUser.access).equal("full");
+          should(next.called).be.false();
+          should(res.redirect.called).be.true();
+          should(res.redirect.firstCall.calledWith("/users/"+user_id)).be.true();
+          bddone();            
+        }
+      )
+    })
+  })
 })

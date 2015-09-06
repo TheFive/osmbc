@@ -82,11 +82,9 @@ function postUserId(req, res, next) {
                    access:req.body.access};
 
     user.setAndSave(req.user.displayName,changes,function(err) {
-      if (err ) 
-        {
-          res.redirect("/VersionConflict");
-          return;
-        }
+      if (err) {
+        return next(err);
+      }
       res.redirect("/users/"+id);    
     })
   });
@@ -105,6 +103,7 @@ router.post('/:user_id', postUserId);
 router.get('/create',createUser);
 
 module.exports.createUser = createUser;
+module.exports.postUserId = postUserId;
 
 
 
