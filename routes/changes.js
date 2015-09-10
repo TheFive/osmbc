@@ -11,11 +11,11 @@ function renderChangeId(req, res, next) {
   var id = req.params.change_id;
   logModule.findById(id,function(err,change) {
     console.dir(change);
-    if (typeof(change.id) == 'undefined') return next();
+    if (!change || typeof(change.id) == 'undefined') return next();
     res.render('change',{change:change,user:req.user,moment:moment});
   });
 }
- 
+  
 
 router.get('/:change_id',renderChangeId);
 

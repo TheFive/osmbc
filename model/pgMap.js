@@ -192,6 +192,40 @@ module.exports.find = function find(module,obj,order,callback) {
 }
 
 
+module.exports.fullTextSearch = function fullTextSearch(module,search,callback) {
+  debug("fullTextSearch");
+  pg.connect(config.pgstring, function(err, client, pgdone) {
+    if (err) {
+      console.log("Connection Error")
+
+      pgdone();
+      return (callback(err));
+    }
+    var table = module.table;
+
+    var result = [];
+
+   
+    var sqlQuery =  "select id, data from article \
+                          where id in \
+                          (select distinct id from article,json_each_text(article.data) as json_data where json_data.value ilike '%"+search+"%')";
+
+    var query = client.query(sqlQuery);
+    query.on('row',function(row) {
+      var r = module.create();
+      for (var k in row.data) {
+        r[k]=row.data[k];
+      }
+      r.id = row.id;
+      result.push(r);
+    })
+    query.on('end',function (pgresult) {    
+      pgdone();
+      callback(null,result);
+    })
+  })
+}
+
 
 module.exports.findById = function findById(id,module,callback) {
   debug("findById %s",id);
@@ -204,7 +238,7 @@ module.exports.findById = function findById(id,module,callback) {
       pgdone();
       return (callback(err));
     }
-    var result = {};
+    var result = null;
     var idToSearch = 0;
 
     if (id % 1 === 0) idToSearch = id;

@@ -67,7 +67,7 @@ router.get('/:user_id', function(req, res, next) {
     ],
     function finalRenderCB(err) {
       if (err) return next(err);
-      if (typeof(user.id) == 'undefined') return next();
+      if (! user || typeof(user.id) == 'undefined') return next();
       res.render('user',{usershown:user,changes:changes,params:params,user:req.user,moment:moment,util:util});
     }
   )
