@@ -90,7 +90,7 @@ function renderArticleId(req,res,next) {
 
 function searchAndCreate(req,res,next) {
   debug('searchAndCreate');
-  var search = req.body.search;
+  var search = req.query.search;
   articleModule.fullTextSearch(search,function(err,result){
     if (err) return next(err);
     should.exist(res.rendervar);
@@ -102,11 +102,6 @@ function searchAndCreate(req,res,next) {
  
 function postArticle(req, res, next) {
   debug('postArticle');
-
-  if ((typeof(req.body) != 'undefined') && (typeof(req.body.search)!='undefined')) {
-    searchAndCreate(req,res,next);
-    return;
-  }
   var id = req.params.article_id;
 
   var article = null;
@@ -250,6 +245,7 @@ exports.searchAndCreate = searchAndCreate;
 // And configure router to use render Functions
 router.get('/list', exports.renderList);
 router.get('/create',exports.createArticle);
+router.get('/searchandcreate',exports.searchAndCreate);
 router.post('/create', exports.postArticle);
 
 router.get('/:article_id', exports.renderArticleId );
