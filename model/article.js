@@ -199,37 +199,47 @@ function setAndSave(user,data,callback) {
     }
   }
 
+  async.series([
+    function checkID(cb) {
+      if (self.id == 0) {
+        self.save(cb);
+      } else cb();
+    }
+  ],function(err){
+    should(self.id).exist;
+    should(self.id).not.equal(0);
+    async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
+      // There is no Value for the key, so do nothing
+      if (typeof(value)=='undefined') return cb_eachOf();
 
-  async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
-    // There is no Value for the key, so do nothing
-    if (typeof(value)=='undefined') return cb_eachOf();
-
-    // The Value to be set, is the same then in the object itself
-    // so do nothing
-    if (value == self[key]) return cb_eachOf();
-    
-    debug("Set Key %s to value >>%s<<",key,value);
-    debug("Old Value Was >>%s<<",self[key]);
+      // The Value to be set, is the same then in the object itself
+      // so do nothing
+      if (value == self[key]) return cb_eachOf();
+      if (typeof(self[key])=='undefined' && value == '') return cb_eachOf();
+      
+      debug("Set Key %s to value >>%s<<",key,value);
+      debug("Old Value Was >>%s<<",self[key]);
 
 
-    async.series ( [
-        function(cb) {
-           logModule.log({oid:self.id,user:user,table:"article",property:key,from:self[key],to:value},cb);
-        },
-        function(cb) {
-          self[key] = value;
-          cb();
-        }
-      ],function(err){
-        cb_eachOf(err);
-      })
+      async.series ( [
+          function(cb) {
+             logModule.log({oid:self.id,user:user,table:"article",property:key,from:self[key],to:value},cb);
+          },
+          function(cb) {
+            self[key] = value;
+            cb();
+          }
+        ],function(err){
+          cb_eachOf(err);
+        })
 
-  },function setAndSaveFinalCB(err) {
-    if (err) return callback(err);
-    self.save(function (err) {
-      callback(err);
-    });
-  })
+    },function setAndSaveFinalCB(err) {
+      if (err) return callback(err);
+      self.save(function (err) {
+        callback(err);
+      });
+    })
+  });
 } 
 
 

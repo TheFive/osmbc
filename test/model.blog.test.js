@@ -70,6 +70,7 @@ describe('model/blog', function() {
           testutil.getJsonWithId("blog",id,function(err,result){
             should.not.exist(err);
             delete result._meta;
+            delete result.categories;
             should(result).eql({id:id,name:"New Title",status:"published",field:"test",version:2});
             logModule.find({},"property",function (err,result){
               should.not.exist(err);
@@ -126,8 +127,10 @@ describe('model/blog', function() {
           should.exist(result);
           should(result.length).equal(2);
           delete result[0]._meta;
+          delete result[0].categories;
           delete result[0].id;
           delete result[1]._meta;
+          delete result[1].categories;
           delete result[1].id;
           should(result[0]).eql({name:"WN1",status:"open",version:1});
           should(result[1]).eql({name:"WN2",status:"open",version:1});
@@ -141,6 +144,7 @@ describe('model/blog', function() {
           should.not.exist(err);
           should.exist(result);
           delete result._meta;
+          delete result.categories;
           delete result.id;
           should(result).eql({name:"WN1",status:"open",version:1});
           bddone();
@@ -153,6 +157,7 @@ describe('model/blog', function() {
           should.not.exist(err);
           should.exist(result);
           delete result._meta;
+          delete result.categories;
           delete result.id;
           should(result).eql({name:"WN3",status:"finished",version:1});
           bddone();

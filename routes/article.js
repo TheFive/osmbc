@@ -38,6 +38,12 @@ function renderArticleId(req,res,next) {
     async.auto({
       
       articleReferences:article.calculateUsedLinks.bind(article),
+      blog:
+      function findBlog(callback) {
+        blogModule.findOne({name:article.blog},function(err,result){
+          callback(err,result);
+        })
+      },
       changes:
       function (callback) {
         logModule.find({oid:id,table:"article"},{column:"timestamp",desc :true},function(err,result) {
@@ -77,6 +83,7 @@ function renderArticleId(req,res,next) {
             res.render('article',{layout:res.rendervar.layout,
                                   article:article,
                                   params:params,
+                                  blog:result.blog,
                                   changes:result.changes,
                                   articleReferences:result.articleReferences,
                                   usedLinks:result.usedLinks,
