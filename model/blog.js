@@ -36,12 +36,14 @@ module.exports.categories = [
   {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
   {DE:"Wochenvorschau" ,EN:"Not Translated"}];
 
+
 function Blog(proto)
 {
   debug("Blog");
   this.id = 0;
   this._meta={};
   this._meta.table = "blog";
+  this.categories = module.exports.categories;
   if (proto) {
     for (var k in proto) {
       this[k] = proto[k];
@@ -60,29 +62,40 @@ function setAndSave(user,data,callback) {
   debug("setAndSave");
   var self = this;
   delete self.lock;
+  async.series([
+    function checkID(cb) {
+      if (self.id == 0) {
+        self.save(cb);
+      } else cb();
+    }
+  ],function(err){
+    should.exist(self.id);
+    should(self.id).not.equal(0);
+    async.forEachOf(data,function(value,key,callback){
+      if (typeof(value)=='undefined') return callback();
+      if (value == self[key]) return callback();
+      debug("Set Key %s to value %s",key,value);
+      debug("Old Value Was %s",self[key]);
+      articleModule.removeOpenBlogCache();
+      async.series ( [
+          function(callback) {
+             logModule.log({oid:self.id,user:user,table:"blog",property:key,from:self[key],to:value},callback);
+          },
+          function(callback) {
+            self[key] = value;
+            callback();
+          }
+        ],function(err){
+          callback(err);
+        })
 
-  async.forEachOf(data,function(value,key,callback){
-    if (typeof(value)=='undefined') return callback();
-    if (value == self[key]) return callback();
-    debug("Set Key %s to value %s",key,value);
-    debug("Old Value Was %s",self[key]);
-    articleModule.removeOpenBlogCache();
-    async.series ( [
-        function(callback) {
-           logModule.log({oid:self.id,user:user,table:"blog",property:key,from:self[key],to:value},callback);
-        },
-        function(callback) {
-          self[key] = value;
-          callback();
-        }
-      ],function(err){
-        callback(err);
-      })
-
-  },function(err) {
-    if (err) return callback(err);
-    self.save(callback);
+    },function(err) {
+      if (err) return callback(err);
+      self.save(callback);
+    })
   })
+
+
 } 
 
 function find(obj1,obj2,callback) {
@@ -132,6 +145,8 @@ function createNewBlog(proto,callback) {
 function preview(edit,lang,callback) {
   debug('preview');
 
+  var self = this;
+
   if (typeof(lang)=='function') {
     callback = lang;
     lang = "DE";
@@ -140,6 +155,8 @@ function preview(edit,lang,callback) {
   var preview = "";
 
   articleModule.find({blog:this.name},{column:"title"},function(err,result){
+    
+    
 
     // Put every article in an array for the category
     for (var i=0;i<result.length;i++ ) {
@@ -150,14 +167,20 @@ function preview(edit,lang,callback) {
       articles[r.category].push(r);
     }
 
+    var clist = self.categories;
+    
+    
+
     // Generate the blog result along the categories
-    for (var i=0;i<exports.categories.length;i++) {
-      var category = exports.categories[i].DE;
+    for (var i=0;i<clist.length;i++) {
+      var category = clist[i].DE;
 
       var categoryLANG;
-      if (lang=="DE") categoryLANG = category;
-      if (lang=="EN") categoryLANG = exports.categories[i].EN;
+      if (lang=="DE") categoryLANG = clist[i].DE;
+      if (lang=="EN") categoryLANG = clist[i].EN;
 
+
+   
       // If the category exists, generate HTML for it
       if (typeof(articles[category])!='undefined') {
         debug('Generating HTML for category %s',category);

@@ -184,7 +184,7 @@ module.exports.find = function find(module,obj,order,callback) {
       r.id = row.id;
       result.push(r);
     })
-    query.on('end',function (pgresult) {    
+    query.on('end',function findEndFunction(pgresult) {    
       pgdone();
       callback(null,result);
     })

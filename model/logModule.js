@@ -13,9 +13,10 @@ var userModule = require('../model/user.js');
 module.exports.log = function log(object,callback) {
 	debug("log");
   async.series([
-    function checkOid(callback) {
+    function checkOid(oidcb) {
+      debug("checkOid");
       
-      if (typeof(object.oid)!="object") return callback();
+      if (typeof(object.oid)!="object") return oidcb();
 
       var table = object.oid.table;
       var reference = object.oid;
@@ -29,25 +30,28 @@ module.exports.log = function log(object,callback) {
         case "user": module = userModule;break;
         default: module = null;
       }
-      pgMap.find(module,reference,function(err,result) {
+      pgMap.find(module,reference,function findObject(err,result) {
+        debug("findObject");
         if (err) return callback(err);
         if (result ==null) return callback(new Error("Object Id Not Found in Log Module"));
         if (result.length != 1) return callback(new Error("Object Reference nicht eindeutig"));
         object.oid = result[0].id;
-        callback(); 
+        oidcb(); 
       })
     },
-    function saveData(callback) {
+    function saveData(savecb) {
+      debug("saveData");
       pg.connect(config.pgstring, function(err, client, pgdone) {
       	if (err) {
       		pgdone();
-      		return (callback(err));
+      		return (savecb(err));
       	}
         if (typeof(object.timestamp)=='undefined') object.timestamp = new Date();
+        debug(object);
       	var query = client.query("insert into changes (data) values ($1) ", [object]);
       	query.on('end',function (result) {  		
       		pgdone();
-      		callback();
+      		savecb();
       	})
       })
     }],

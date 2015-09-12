@@ -8,7 +8,7 @@ block content
     if article.lock
       .alert.alert-dismissable.alert-info
         button.close( type="button", data-dismiss="alert" ) ×
-        | #{article.lock.user} edits since #{moment(article.lock.timestamp).fromNow()} Version #{article.version}
+        | #{article.lock.user} edits since #{layout.moment(article.lock.timestamp).fromNow()} Version #{article.version}
     if info
       if info.message
         if info.status == 'error'
@@ -51,8 +51,12 @@ block content
           .col-md-5
             select(id="category",name="category").form-control
               option(value="#{article.category}" selected) #{article.category+'(*)'}
-              for category in categories
-                option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
+              if (blog)
+                for category in blog.categories
+                 option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
+              else
+                for category in categories
+                  option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
           .col-md-5
             h2
               | #{article.categoryEN}

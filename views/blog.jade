@@ -31,7 +31,7 @@ block content
         button.btn.btn-default 
           a(href="/blog/#{blog.id}/preview?edit=true&lang=DE") Preview EN With EditMark 
       ul
-        for category in categories
+        for category in blog.categories
           if (articles[category.DE])
             li= category.DE
               ul
