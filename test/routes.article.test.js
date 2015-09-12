@@ -67,6 +67,7 @@ describe('router/article',function() {
           req.user = "TestUser";
           var next;
           res.render = null;
+          res.rendervar = {layout:"TEMP"};
 
           async.series([
             function(done) {
@@ -106,12 +107,13 @@ describe('router/article',function() {
               should(renderData.article).eql(article);
               if(typeof(renderData.params.edit)=='undefined') renderData.params.edit = null;
               should(renderData.params).eql(data.result.params);
-              should(renderData.user).eql(req.user);
+              should(renderData.layout).eql("TEMP");
+              //should(renderData.user).eql(req.user);
               should(renderData.changes).eql(data.result.changes);
-              should.exist(renderData.listOfOrphanBlog);
-              should(renderData.listOfOrphanBlog).eql(data.result.listOfOrphanBlog);
-              should.exist(renderData.listOfOpenBlog);
-              should(renderData.listOfOpenBlog).eql(data.result.listOfOpenBlog);
+              //should.exist(renderData.listOfOrphanBlog);
+              //should(renderData.listOfOrphanBlog).eql(data.result.listOfOrphanBlog);
+              //should.exist(renderData.listOfOpenBlog);
+              //should(renderData.listOfOpenBlog).eql(data.result.listOfOpenBlog);
               // Reduce article Refererences for comparison
               for (var k in renderData.articleReferences) {
                 if (k=="count") continue;
@@ -154,6 +156,7 @@ describe('router/article',function() {
           req.user = "TestUser";
           var next;
           res.render = null;
+          res.rendervar = {layout:"TEMP"};
 
           var query = {};
           if (data.listBlog) {
@@ -194,8 +197,9 @@ describe('router/article',function() {
               should(renderData.articles).eql(data.result.articles);
 
               should(renderData.listofOrphanBlogs).eql(data.result.listOfOrphanBlogs);
-              should(renderData.util).equal(util);
-              should(renderData.user).eql(req.user);
+              //should(renderData.util).equal(util);
+              //should(renderData.user).eql(req.user);
+              should(renderData.layout).eql("TEMP");
 
  
               bddone();
@@ -302,6 +306,7 @@ describe('router/article',function() {
       var res = {};
       var next;
       var article_id;
+      res.rendervar = {layout:"TEMP"};
 
 
 

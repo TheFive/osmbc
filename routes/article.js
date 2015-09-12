@@ -1,6 +1,5 @@
 var express  = require('express');
 var async    = require('async');
-var moment   = require('moment');
 var router   = express.Router();
 var should  = require('should');
 var markdown = require('markdown').markdown;
@@ -26,9 +25,6 @@ function renderArticleId(req,res,next) {
 
     // Variables for rendering purposes
 
-    // ListOfOrphanBlog is used to show all orphanedBlog to assign an article to
-    var listOfOrphanBlog;
-    var listOfOpenBlog;
     // Used for display changes
     var changes = [];
 
@@ -46,23 +42,6 @@ function renderArticleId(req,res,next) {
       function (callback) {
         logModule.find({oid:id,table:"article"},{column:"timestamp",desc :true},function(err,result) {
           callback(err,result);
-        })
-      },
-      listOfOrphanBlog:
-      function (callback) {
-        articleModule.getListOfOrphanBlog(function(err,result) {
-          callback(err,result);
-        })
-      },
-      listOfOpenBlog:
-      function (callback) {
-        blogModule.find({status:"open"},function(err,result) {
-          if (err) return callback(err);
-          var list = [];
-          for (var i=0;i<result.length;i++) {
-            list.push(result[i].name);
-          }
-          callback(err,list);
         })
       },
       edit:
@@ -94,16 +73,13 @@ function renderArticleId(req,res,next) {
           if (req.query.edit && ! params.edit) {
             res.redirect("/article/"+id);    
           } else {
-            res.render('article',{article:article,
+      
+            res.render('article',{layout:res.rendervar.layout,
+                                  article:article,
                                   params:params,
-                                  user:req.user,
                                   changes:result.changes,
-                                  listOfOrphanBlog:result.listOfOrphanBlog,
-                                  listOfOpenBlog:result.listOfOpenBlog,
-                                  moment:moment,
                                   articleReferences:result.articleReferences,
                                   usedLinks:result.usedLinks,
-                                  util:util,
                                   categories:blogModule.categories});
          }
         }
@@ -117,7 +93,10 @@ function searchAndCreate(req,res,next) {
   var search = req.body.search;
   articleModule.fullTextSearch(search,function(err,result){
     if (err) return next(err);
-    res.render("collect",{search:search,foundArticles:result});
+    should.exist(res.rendervar);
+    res.render("collect",{layout:res.rendervar.layout,
+                           search:search,
+                           foundArticles:result});
   })
 }
  
@@ -212,7 +191,8 @@ function createArticle(req, res, next) {
     ],
     function finalFunction(err) {
       debug('createArticle->finalFunction');
-        res.render("collect",{});
+        should.exist(res.rendervar);
+        res.render("collect",{layout:res.rendervar.layout});
     }
   );
 }
@@ -235,17 +215,9 @@ function renderList(req,res,next) {
   if (typeof(markdownEN)!='undefined') {
     query.markdownEN = markdownEN;
   }
-  var listOfOrphanBlog;
   var articles;
 
   async.parallel([
-     function listOfOrphanBlog(callback) {
-        debug('renderList->createArticle');
-        articleModule.getListOfOrphanBlog(function(err,result) {
-          listOfOrphanBlog = result;
-          callback();
-        })
-      },
       function findArticleFunction(callback) {
         debug('renderList->findArticleFunction');
         articleModule.find(query,{column:"title"},function(err,result) {
@@ -256,10 +228,9 @@ function renderList(req,res,next) {
 
     ],function finalFunction(error) {
       debug('renderList->finalFunction');
-        res.render('articlelist',{articles:articles,
-                                  listOfOrphanBlog:listOfOrphanBlog,
-                                  util:util,
-                                  user:req.user});      
+        should.exist(res.rendervar);
+        res.render('articlelist',{layout:res.rendervar.layout,
+                                  articles:articles});      
     }
   )
 }

@@ -24,7 +24,7 @@ block content
                 a(href='/users/#{user.id}') #{user.OSMUser}
               td= user.access
               if (user.lastAccess)
-                td= moment(user.lastAccess).fromNow()
+                td= layout.moment(user.lastAccess).fromNow()
               else 
                 td
                   | Never

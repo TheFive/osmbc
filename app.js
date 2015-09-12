@@ -12,12 +12,14 @@ var debug = require('debug')('OSMBC:app');
 var  OpenStreetMapStrategy = require('passport-openstreetmap').Strategy;
 //var Strategy = require('passport-http').BasicStrategy;
 
-var routes = require('./routes/index');
-var users = require('./routes/users').router;
-var article = require('./routes/article').router;
-var changes = require('./routes/changes').router;
-var blog = require('./routes/blog');
-var config = require('./config.js');
+var config   = require('./config.js');
+
+var index    = require('./routes/index');
+var users    = require('./routes/users').router;
+var article  = require('./routes/article').router;
+var changes  = require('./routes/changes').router;
+var blog     = require('./routes/blog');
+var layout   = require('./routes/layout').router;
 
 var userModule = require('./model/user.js');
 
@@ -60,6 +62,7 @@ passport.use(new OpenStreetMapStrategy({
     callbackURL: config.getCallbackUrl()
   },
   function(token, tokenSecret, profile, done) {
+    debug('passport.use Token Function');
     // asynchronous verification, for effect...
     process.nextTick(function () {
       
@@ -137,16 +140,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-app.get('/', ensureAuthenticated, function(req, res){
-  res.render('index', { user: req.user });
-});
-app.get('/osmbc', ensureAuthenticated, function(req, res){
-  res.render('index', { user: req.user });
-});
-
-app.get('/account', ensureAuthenticated, function(req, res){
-  res.render('account', { user: req.user });
-});
 
 
 
@@ -181,17 +174,22 @@ app.get('/auth/openstreetmap',
 app.get('/auth/openstreetmap/callback', 
   passport.authenticate('openstreetmap', { failureRedirect: '/login'  }),
   function(req, res) {
+    debug('passport.authenticate Function');
     res.redirect(req.session.returnTo || '/');
     //res.redirect('/');
   });
 
 app.get('/logout', function(req, res){
+  debug('logoutFunction')
   req.logout();
   res.redirect('/');
 });
 
-//app.use(ensureAuthenticated);
-app.use('/', ensureAuthenticated,routes);
+
+// layout does not render, but prepares the res.rendervar variable fro
+// dynamic contend in layout.jade
+app.use('/',layout);
+app.use('/', ensureAuthenticated,index);
 app.use('/users',ensureAuthenticated, users);
 app.use('/article',ensureAuthenticated, article);
 app.use('/change',ensureAuthenticated, changes);
@@ -209,6 +207,7 @@ app.use('/blog',ensureAuthenticated, blog);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+  debug('app.use Error Handler');
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
@@ -219,6 +218,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
+    debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
@@ -230,6 +230,7 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
+  debug('app.use status function');
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,

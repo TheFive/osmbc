@@ -88,12 +88,12 @@ block content
             .panel.panel-default
               .panel-body 
                 :verbatim
-                !{article.textHtml}
+                  !{article.textHtml}
           .col-md-5
             .panel.panel-default
               .panel-body 
                 :verbatim
-                !{article.textHtmlEN}
+                  !{article.textHtmlEN}
         .row
           .col-md-1
             | Comment <br>
@@ -150,12 +150,12 @@ block content
           .panel.panel-default
             .panel-body 
               :verbatim
-              !{article.textHtml}
+                !{article.textHtml}
         .col-md-5 
           .panel.panel-default
             .panel-body 
               :verbatim
-              !{article.textHtmlEN}
+                !{article.textHtmlEN}
         
 
       .row
@@ -165,66 +165,67 @@ block content
             .panel.panel-default
               .panel-body 
                 :verbatim
-                !{article.commentHtml}
-  .row
-    if articleReferences.count > 1
-      h2
-        | Links used in other Post
-      div
-        table.table.table-striped
-          thead
-            tr
-              th
-                | link
-              th
-                | article
-              th
-                | Blog
-          tbody
-            each link in articleReferences
-              if (link != "count" && articleReferences[link])
-                each articleItem in articleReferences[link]
-                  if articleItem.id != article.id
-                    tr
-                      td
-                        a(href='#{link}') #{link}
-                      td
-                        a(href='/article/'+articleItem.id) #{article.displayTitle()}
-                      td= articleItem.blog
-
-
-
-
-  .row
-    if changes
-      h2
-        | History
-      div
-        table.table.table-striped
-          thead
-            tr 
-              th
-               | id
-              th
-               | user
-              th
-               | what
-              th
-               | from
-              th
-               |  to
-              th
-               | when
-           tbody
-            each change, i in changes
+                  !{article.commentHtml}
+    .row
+      if articleReferences.count > 1
+        h2
+          | Links used in other Post
+        div
+          table.table.table-striped
+            thead
               tr
-                td
-                  a(href='/change/' + change.id) #{change.id} 
-                td= change.user
-                td= change.property
-                td= util.shorten(change.from)
-                td= util.shorten(change.to)
-                td= moment(change.timestamp).fromNow() 
+                th
+                  | link
+                th
+                  | article
+                th
+                  | Blog
+            tbody
+              each link in articleReferences
+                if (link != "count" && articleReferences[link])
+                  each articleItem in articleReferences[link]
+                    if articleItem.id != article.id
+                      tr
+                        td
+                          a(href='#{link}') #{link}
+                        td
+                          a(href='/article/'+articleItem.id) #{article.displayTitle()}
+                        td= articleItem.blog
+
+
+
+
+    .row
+      if changes
+        h2
+          | History
+        div
+          table.table.table-striped
+            thead
+              tr 
+                th
+                 | id
+                th
+                 | user
+                th
+                 | what
+                th
+                 | from
+                th
+                 |  to
+                th
+                 | when
+             tbody
+              each change, i in changes
+                tr
+                  td
+                    a(href='/change/' + change.id) #{change.id} 
+                  td= change.user
+                  td= change.property
+                  td= layout.util.shorten(change.from)
+                  td= layout.util.shorten(change.to)
+                  td= layout.moment(change.timestamp).fromNow() 
+ 
                 
 
 
