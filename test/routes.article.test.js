@@ -37,7 +37,7 @@ describe('router/article',function() {
             articleRouter.renderArticleId(req,res,next);
           }],
           function(err) {
-            should.not.exist(err);
+            should.exist(err);
             should(next.called).be.true();
             should(res.render.called).be.false();
             bddone();            
@@ -67,6 +67,7 @@ describe('router/article',function() {
           req.user = "TestUser";
           var next;
           res.render = null;
+          res.rendervar = {layout:"TEMP"};
 
           async.series([
             function(done) {
@@ -106,12 +107,13 @@ describe('router/article',function() {
               should(renderData.article).eql(article);
               if(typeof(renderData.params.edit)=='undefined') renderData.params.edit = null;
               should(renderData.params).eql(data.result.params);
-              should(renderData.user).eql(req.user);
+              should(renderData.layout).eql("TEMP");
+              //should(renderData.user).eql(req.user);
               should(renderData.changes).eql(data.result.changes);
-              should.exist(renderData.listOfOrphanBlog);
-              should(renderData.listOfOrphanBlog).eql(data.result.listOfOrphanBlog);
-              should.exist(renderData.listOfOpenBlog);
-              should(renderData.listOfOpenBlog).eql(data.result.listOfOpenBlog);
+              //should.exist(renderData.listOfOrphanBlog);
+              //should(renderData.listOfOrphanBlog).eql(data.result.listOfOrphanBlog);
+              //should.exist(renderData.listOfOpenBlog);
+              //should(renderData.listOfOpenBlog).eql(data.result.listOfOpenBlog);
               // Reduce article Refererences for comparison
               for (var k in renderData.articleReferences) {
                 if (k=="count") continue;
@@ -154,6 +156,7 @@ describe('router/article',function() {
           req.user = "TestUser";
           var next;
           res.render = null;
+          res.rendervar = {layout:"TEMP"};
 
           var query = {};
           if (data.listBlog) {
@@ -194,8 +197,9 @@ describe('router/article',function() {
               should(renderData.articles).eql(data.result.articles);
 
               should(renderData.listofOrphanBlogs).eql(data.result.listOfOrphanBlogs);
-              should(renderData.util).equal(util);
-              should(renderData.user).eql(req.user);
+              //should(renderData.util).equal(util);
+              //should(renderData.user).eql(req.user);
+              should(renderData.layout).eql("TEMP");
 
  
               bddone();
@@ -206,7 +210,7 @@ describe('router/article',function() {
       testutil.generateTests("data",/^router.article.list.+json/,doATest);
     })     
   })
-  describe('post Article ID',function() {
+  describe('postArticleID',function() {
     it('should call next if article not exist',function(bddone) {
       articleModule.createNewArticle({titel:"Hallo"},function(err,article) {
         should.not.exist(err);
@@ -214,19 +218,23 @@ describe('router/article',function() {
         var newId = article.id +1;
         var req = {};
         req.params = {};
-        req.params.id = newId;
+        req.params.article_id = newId;
+        req.user = {displayName:"test"};
+        req.body = {};
         var res = {};
 
         async.series([
           function(callback) {
-            res.render = sinon.spy(callback)
+            res.render = sinon.spy(callback);
             next = sinon.spy(callback);
-            articleRouter.postArticleId(req,res,next);
+            res.redirect = sinon.spy(callback);
+            articleRouter.postArticle(req,res,next);
           }],
           function(err) {
-            should.not.exist(err);
-            should(next.called).be.true();
+            should.exist(err);
             should(res.render.called).be.false();
+            should(res.redirect.called).be.false();
+            should(next.called).be.true();
             bddone();            
           }
         )
@@ -258,7 +266,7 @@ describe('router/article',function() {
           function(callback) {
             res.redirect = sinon.spy(function (value) {callback();})
             next = sinon.spy(callback);
-            articleRouter.postArticleId(req,res,next);
+            articleRouter.postArticle(req,res,next);
           },
           function(callback) {
             articleModule.findById(article.id,function(err,result){
@@ -298,73 +306,25 @@ describe('router/article',function() {
       var res = {};
       var next;
       var article_id;
+      res.rendervar = {layout:"TEMP"};
+
+
+
 
       async.series([
         function(callback) {
           res.redirect = sinon.spy(function (value) {callback();})
+          res.render = sinon.spy(function (value) {callback();})
           next = sinon.spy(callback);
           articleRouter.createArticle(req,res,next);
-        },
-        function searchArticle(callback) {
-          articleModule.findOne({},{},function(err,result){
-            should.not.exist(err);
-            should.exist(result);
-            article_id = result.id;
-            should(result.blog).equal("WN234");
-            should(result.category).equal("TEST");
-            callback();
-          })
         }
-
         ],
         function(err) {
           should.not.exist(err);
+          should(res.render.calledOnce).be.true();
+          should(res.render.firstCall.calledWith("collect"));
           should(next.called).be.false();
-          should(res.redirect.called).be.true();
-          should(res.redirect.firstCall.calledWith("/article/"+article_id+"?edit=true")).be.true();
-          bddone();            
-        }
-      )
-    })
-    it('should call create an article with an category',function(bddone) {
-      var req = {};
-      req.query = {category:"TEST"};
-
-      var res = {};
-      var next;
-      var article_id;
-      var blogName = "";
-
-      async.series([
-        function createOneBlog(callback) {
-          blogModule.createNewBlog({name:"WN555",status:"open"},function(err,result){
-            should.not.exist(err);
-            blogName = result.name;
-            callback();
-          })
-        },
-        function(callback) {
-          res.redirect = sinon.spy(function (value) {callback();})
-          next = sinon.spy(callback);
-          articleRouter.createArticle(req,res,next);
-        },
-        function searchArticle(callback) {
-          articleModule.findOne({},{},function(err,result){
-            should.not.exist(err);
-            should.exist(result);
-            article_id = result.id;
-            should(result.blog).equal(blogName);
-            should(result.category).equal("TEST");
-            callback();
-          })
-        }
-
-        ],
-        function(err) {
-          should.not.exist(err);
-          should(next.called).be.false();
-          should(res.redirect.called).be.true();
-          should(res.redirect.firstCall.calledWith("/article/"+article_id+"?edit=true")).be.true();
+          should(res.redirect.called).be.false();
           bddone();            
         }
       )

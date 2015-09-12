@@ -248,6 +248,11 @@ function findOne(obj1,obj2,callback) {
   pgMap.findOne(this,obj1,obj2,callback);
 }
 
+function fullTextSearch(search,callback) {
+  debug('fullTextSearch');
+  pgMap.fullTextSearch(this,search,callback);
+}
+
 
 function calculateLinks() {
   debug("calculateLinks");
@@ -425,6 +430,7 @@ module.exports.find = find;
 
 // Find an Article in database by ID
 module.exports.findById = findById;
+module.exports.fullTextSearch = fullTextSearch;
 
 
 

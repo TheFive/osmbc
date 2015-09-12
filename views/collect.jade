@@ -1,0 +1,92 @@
+extends layout
+
+
+
+
+block content
+  
+  div
+    form(name="search", action="/article/searchandcreate", method="get")
+      .row
+        .col-md-2
+          
+        .col-md-6
+          textarea.form-control(name="search",rows=1) #{searchText}
+
+        .col-md-2
+          input(type="submit", class="btn btn-primary",value="Search")
+
+  .row
+    if (foundArticles) 
+      if (foundArticles.length>0)
+        h2 
+          | Found Articles for search '#{search}'
+        table.table.table-striped
+          each  article in foundArticles
+            tr
+              td
+                | #{article.blog}
+              td
+                :verbatim
+                !{article.preview(true)}
+      else
+        h2
+          | No Articles found for search '#{search}'
+    else
+      .col-md-2
+      .col-md-6  
+        h2
+          | No Search started
+  div 
+    form(name="input", action="/article/create", method="post")
+      .row
+        .col-md-1
+          | Blog <br>
+        .col-md-5
+          select(id="blog",name="blog").form-control
+            option(value="WN???" selected) WN???
+            option(value="Future") Future
+            if (listOfOpenBlog)  
+              for blogName in listOfOpenBlog         
+                option(value="#{blogName}" ) #{blogName}
+            option(value="Trash") Trash
+        .col-md-5
+          
+
+        .col-md-1
+          input(type="submit", class="btn btn-primary",value="OK")
+          
+
+
+      .row
+        .col-md-1
+          | Category <br>
+        .col-md-5
+          select(id="category",name="category").form-control
+            option(value="cat ??" selected) cat ??
+            if (categories)
+              for category in categories
+                option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
+        .col-md-5
+          h2
+            | 
+
+      .row
+        .col-md-1
+          | Title <br>
+        .col-md-10
+          textarea.form-control(name="title",rows=1)
+             
+      .row
+        .col-md-1
+          | Collection <br>
+        .col-md-10
+          textarea.form-control(name="collection",rows=7) 
+
+       
+                
+
+
+
+
+

@@ -1,6 +1,6 @@
 var express = require('express');
 var async   = require('async');
-var moment   = require('moment');
+var should = require('should');
 var router = express.Router();
 
 var debug = require('debug')('OSMBC:routes:blog');
@@ -13,12 +13,11 @@ router.get('/:blog_id', function(req, res, next) {
   debug('router.get /:blog_id');
   var id = req.params.blog_id;
   blogModule.findById(id,function(err,blog) {
-    if (typeof(blog.id) == 'undefined') return next();
+    if (! blog || typeof(blog.id) == 'undefined') return next();
 
     var changes = [];
     var articles = {};
 
-    var listOfOrphanBlog;
 
 
     async.series([
@@ -50,12 +49,6 @@ router.get('/:blog_id', function(req, res, next) {
         })
       },
       function (callback) {
-        articleModule.getListOfOrphanBlog(function(err,result) {
-          listOfOrphanBlog = result;
-          callback();
-        })
-      },
-      function (callback) {
         logModule.find({id:id,table:"blog"},{column:"timestamp",desc :true},function(err,result) {
           if (err) return callback(err);
           changes = result;
@@ -64,11 +57,10 @@ router.get('/:blog_id', function(req, res, next) {
         })
       }],
       function (err) {
-        res.render('blog',{blog:blog,
-                           user:req.user,
+        should.exist(res.rendervar);
+        res.render('blog',{layout:res.rendervar.layout,
+                           blog:blog,
                            changes:changes,
-                           listOfOrphanBlog:listOfOrphanBlog,
-                           moment:moment,
                            articles:articles,
                            categories:blogModule.categories});
       }
@@ -82,23 +74,20 @@ router.get('/:blog_id', function(req, res, next) {
   var status = req.query.status;
   var query = {};
 
-  var listOfOrphanBlog;
   if (typeof(status)!='undefined') {
     query.status = status;
   }
 
   async.auto({
-        listOfOrphanBlog: articleModule.getListOfOrphanBlog,
         blogs:function(callback) {
                  blogModule.find(query,{column:"name",desc:true},function(err,blogs) {
                  callback(err,blogs);
               })
         }
       },function(err,result) {
-          res.render('bloglist',{
-                                listOfOrphanBlog:result.listOfOrphanBlog,
-                                blogs:result.blogs,
-                                user:req.user});
+          should.exist(res.rendervar);
+          res.render('bloglist',{layout:res.rendervar.layout,
+                                blogs:result.blogs});
         });
 
 });
@@ -115,13 +104,11 @@ router.get('/:blog_id/preview', function(req, res, next) {
 
     var changes = [];
    
-    var listOfOrphanBlog;
 
 
 
 
     async.auto({ 
-        getListOfOrphanBlog:articleModule.getListOfOrphanBlog,
         converter:function(callback) {
                     blog.preview(edit,lang,function(err,result) {
                       callback(err,result);
@@ -133,10 +120,10 @@ router.get('/:blog_id/preview', function(req, res, next) {
           res.end(result.converter.preview,"UTF8");
           return;
         } else {
-          res.render('blogpreview',{blog:blog,
-                             user:req.user,
+          should.exist(res.rendervar);
+          res.render('blogpreview',{layout:res.rendervar.layout,
+                             blog:blog,
                              articles:result.converter.articles,
-                             listOfOrphanBlog:result.listOfOrphanBlog,
                              preview:result.converter.preview,
                              edit:edit,
                              lang:lang,

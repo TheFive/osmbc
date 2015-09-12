@@ -1,13 +1,18 @@
+var should = require('should');
+var debug = require('debug')('OSMBC:router:index');
 var express = require('express');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' ,           user:req.user,});
-});
-router.get('/osmbc.html', function(req, res, next) {
-  res.render('index', { title: 'Express' ,           user:req.user,});
-});
+
+function renderHome(req,res,next) {
+  debug('renderHome');
+  should.exist(res.rendervar.layout);
+  res.render('index', { title: 'Express' , layout:res.rendervar.layout});  
+}
+
+router.get('/', renderHome);
+router.get('/osmbc.html', renderHome);
 
 
 

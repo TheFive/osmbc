@@ -1,4 +1,5 @@
 var express = require('express');
+var should = require('should');
 var async = require('async');
 var userModule = require('../model/user.js');
 var debug = require('debug')('OSMBC:router:users');
@@ -11,17 +12,10 @@ var logModule = require('../model/logModule.js');
 
 function renderList(req,res,next) {
   debug('renderList');
-  var listOfOrphanBlog;
   var users;
   var query = {};
   if (req.query.access) query.access = req.query.access;
   async.parallel([
-     function (callback) {
-        articleModule.getListOfOrphanBlog(function(err,result) {
-          listOfOrphanBlog = result;
-          callback();
-        })
-      },
       function(callback) {
         userModule.find(query,{column:"displayName"},function(err,result) {
           users = result;
@@ -30,11 +24,9 @@ function renderList(req,res,next) {
       }
 
     ],function(error) {
-        res.render('userList',{users:users,
-                                  listOfOrphanBlog:listOfOrphanBlog,
-                                  util:util,
-                                  moment:moment,
-                                  user:req.user});      
+        should.exist(res.rendervar);
+        res.render('userList',{layout:res.rendervar.layout,
+                                users:users});      
     }
   )
 
@@ -67,10 +59,14 @@ router.get('/:user_id', function(req, res, next) {
     ],
     function finalRenderCB(err) {
       if (err) return next(err);
-      if (typeof(user.id) == 'undefined') return next();
-      res.render('user',{usershown:user,changes:changes,params:params,user:req.user,moment:moment,util:util});
+      if (! user || typeof(user.id) == 'undefined') return next();
+      should.exist(res.rendervar)
+      res.render('user',{usershown:user,
+                        changes:changes,
+                        params:params,
+                        layout:res.rendervar.layout});
     }
-  )
+  ) 
 });
 
 function postUserId(req, res, next) {
@@ -82,11 +78,9 @@ function postUserId(req, res, next) {
                    access:req.body.access};
 
     user.setAndSave(req.user.displayName,changes,function(err) {
-      if (err ) 
-        {
-          res.redirect("/VersionConflict");
-          return;
-        }
+      if (err) {
+        return next(err);
+      }
       res.redirect("/users/"+id);    
     })
   });
@@ -96,7 +90,7 @@ function createUser(req, res, next) {
   debug('createUser');
   var proto = {};
   userModule.createNewUser(proto,function(err,user) {
-      res.redirect('/users/'+user.id+"?edit=true");
+    res.redirect('/users/'+user.id+"?edit=true");
   });
 };
 
@@ -104,6 +98,9 @@ router.get('/list',renderList);
 router.post('/:user_id', postUserId);
 router.get('/create',createUser);
 
+module.exports.createUser = createUser;
+module.exports.postUserId = postUserId;
 
 
-module.exports = router;
+
+module.exports.router = router;

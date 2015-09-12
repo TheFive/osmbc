@@ -45,8 +45,8 @@ html(lang='en')
                   a(href='/article/list') All
                 li.divider
                 li.dropdown-header Orphaned Article
-                if (listOfOrphanBlog) 
-                  for blog in listOfOrphanBlog
+                if (layout.listOfOrphanBlog) 
+                  for blog in layout.listOfOrphanBlog
                     li
                       a(href="/article/list?blog=#{blog}") #{blog}
                 li
@@ -83,9 +83,9 @@ html(lang='en')
                   a(href="/users/list?access=denied") List Denied      
 
           ul.nav.navbar-nav.navbar-right            
-             if user
+             if layout.user
                 li 
-                  a(href='http://www.openstreetmap.org/user/#{user.displayName}') #{user.displayName}
+                  a(href='http://www.openstreetmap.org/user/#{layout.user.displayName}') #{layout.user.displayName}
               else
                 li  
                   a(href='./') Anonymous

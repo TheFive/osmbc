@@ -10,7 +10,7 @@ block content
     if usershown.lock
       .alert.alert-dismissable.alert-info
         button.close( type="button", data-dismiss="alert" ) ×
-        | #{usershown.lock.user} edits since #{moment(usershown.lock.timestamp).fromNow()} Version #{user.version}
+        | #{usershown.lock.user} edits since #{layout.moment(usershown.lock.timestamp).fromNow()} Version #{user.version}
     if info
       if info.message
         if info.status == 'error'
@@ -92,9 +92,9 @@ block content
                   a(href='/change/' + change.id) #{change.id} 
                 td= change.user
                 td= change.property
-                td= util.shorten(change.from)
-                td= util.shorten(change.to)
-                td= moment(change.timestamp).fromNow() 
+                td= layout.util.shorten(change.from)
+                td= layout.util.shorten(change.to)
+                td= layout.moment(change.timestamp).fromNow() 
                 
 
 

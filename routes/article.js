@@ -1,7 +1,7 @@
 var express  = require('express');
 var async    = require('async');
-var moment   = require('moment');
 var router   = express.Router();
+var should  = require('should');
 var markdown = require('markdown').markdown;
 var debug    = require('debug')('OSMBC:routes:article');
 
@@ -21,121 +21,140 @@ function renderArticleId(req,res,next) {
   articleModule.findById(id,function(err,article) {
 
   // if the ID does not exist, go ahead in routing process
-  if (typeof(article.id) == 'undefined') return next();
+    if (!article || typeof(article.id) == 'undefined') return next(new Error("Article does not exist"));
 
-  // Variables for rendering purposes
+    // Variables for rendering purposes
 
-  // ListOfOrphanBlog is used to show all orphanedBlog to assign an article to
-  var listOfOrphanBlog;
-  var listOfOpenBlog;
-  // Used for display changes
-  var changes = [];
+    // Used for display changes
+    var changes = [];
 
-  // Params is used for indicating Edit
-  var params = {};
-  params.edit = req.query.edit;
+    // Params is used for indicating Edit
+    var params = {};
+    params.edit = req.query.edit;
 
-  // calculate all used Links for the article
-  var usedLinks = article.calculateLinks();
+    // calculate all used Links for the article
+    var usedLinks = article.calculateLinks();
 
-  async.auto({
-    
-    articleReferences:article.calculateUsedLinks.bind(article),
-    changes:
-    function (callback) {
-      logModule.find({oid:id,table:"article"},{column:"timestamp",desc :true},function(err,result) {
-        callback(err,result);
-      })
-    },
-    listOfOrphanBlog:
-    function (callback) {
-      articleModule.getListOfOrphanBlog(function(err,result) {
-        callback(err,result);
-      })
-    },
-    listOfOpenBlog:
-    function (callback) {
-      blogModule.find({status:"open"},function(err,result) {
-        if (err) return callback(err);
-        var list = [];
-        for (var i=0;i<result.length;i++) {
-          list.push(result[i].name);
-        }
-        callback(err,list);
-      })
-    },
-    edit:
-    function (callback){
-      if (typeof(params.edit)!='undefined') {
-        if (params.edit=="false") {
-          console.log("Unlocking");
-          delete params.edit;
-          article.doUnlock(callback);
+    async.auto({
+      
+      articleReferences:article.calculateUsedLinks.bind(article),
+      changes:
+      function (callback) {
+        logModule.find({oid:id,table:"article"},{column:"timestamp",desc :true},function(err,result) {
+          callback(err,result);
+        })
+      },
+      edit:
+      function (callback){
+        if (typeof(params.edit)!='undefined') {
+          if (params.edit=="false") {
+            console.log("Unlocking");
+            delete params.edit;
+            article.doUnlock(callback);
+            return;
+          }
+          article.doLock(req.user.displayName,callback);
           return;
+        } else { 
+          return callback()
         }
-        article.doLock(req.user.displayName,callback);
-        return;
-      } else { 
-        return callback()
-      }
-    }},
-      function (err,result) {
+      }},
+        function (err,result) {
 
-        if (typeof(article.markdown)!='undefined') {
-          article.textHtml = article.preview();
-        } 
-        if (typeof(article.markdownEN)!='undefined') {
-          article.textHtmlEN = article.previewEN();
-        } 
-        if (typeof(article.comment)!='undefined') {
-          article.commentHtml = markdown.toHTML(article.comment)
-        } 
-        if (req.query.edit && ! params.edit) {
-          res.redirect("/article/"+id);    
-        } else {
-          res.render('article',{article:article,
-                                params:params,
-                                user:req.user,
-                                changes:result.changes,
-                                listOfOrphanBlog:result.listOfOrphanBlog,
-                                listOfOpenBlog:result.listOfOpenBlog,
-                                moment:moment,
-                                articleReferences:result.articleReferences,
-                                usedLinks:result.usedLinks,
-                                util:util,
-                                categories:blogModule.categories});
-       }
-      }
-    );
-  });
+          if (typeof(article.markdown)!='undefined') {
+            article.textHtml = article.preview();
+          } 
+          if (typeof(article.markdownEN)!='undefined') {
+            article.textHtmlEN = article.previewEN();
+          } 
+          if (typeof(article.comment)!='undefined') {
+            article.commentHtml = markdown.toHTML(article.comment)
+          } 
+          if (req.query.edit && ! params.edit) {
+            res.redirect("/article/"+id);    
+          } else {
+      
+            res.render('article',{layout:res.rendervar.layout,
+                                  article:article,
+                                  params:params,
+                                  changes:result.changes,
+                                  articleReferences:result.articleReferences,
+                                  usedLinks:result.usedLinks,
+                                  categories:blogModule.categories});
+         }
+        }
+      );
+    }
+  );
 }
 
+function searchAndCreate(req,res,next) {
+  debug('searchAndCreate');
+  var search = req.query.search;
+  articleModule.fullTextSearch(search,function(err,result){
+    if (err) return next(err);
+    should.exist(res.rendervar);
+    res.render("collect",{layout:res.rendervar.layout,
+                           search:search,
+                           foundArticles:result});
+  })
+}
  
-function postArticleId(req, res, next) {
-  debug('postArticleId');
+function postArticle(req, res, next) {
+  debug('postArticle');
   var id = req.params.article_id;
-  articleModule.findById(id,function(err,article) {
-    if (typeof(article.id) == 'undefined') return next();
-  	var changes = {markdown:req.body.markdown,
-                   markdownEN:req.body.markdownEN,
-                   blog:req.body.blog,
-                   blogEN:req.body.blogEN,
-                   collection:req.body.collection,
-                   comment:req.body.comment,
-                   category:req.body.category,
-                   categoryEN:req.body.categoryEN,
-                   version:req.body.version,
-                   title:req.body.title};
 
-    article.setAndSave(req.user.displayName,changes,function(err) {
-      if (err ) 
-        {
-          next(err);
-          return;
-        }
-      res.redirect("/article/"+id);    
-    })
-  });
+  var article = null;
+  var changes = {markdown:req.body.markdown,
+                 markdownEN:req.body.markdownEN,
+                 blog:req.body.blog,
+                 blogEN:req.body.blogEN,
+                 collection:req.body.collection,
+                 comment:req.body.comment,
+                 category:req.body.category,
+                 categoryEN:req.body.categoryEN,
+                 version:req.body.version,
+                 title:req.body.title};
+
+  async.parallel([
+      function searchArticle(cb) {
+        debug('postArticle->searchArticle')
+        if (typeof(id)=='undefined') return cb(); 
+        articleModule.findById(id,function(err,result) {
+          console.dir(result);
+          if (err) return cb(err);
+          if (!result) return cb(new Error("Article ID does not exist"));
+          article = result;
+          cb();
+        })
+      },
+      function createArticle(cb) {
+        debug('postArticle->createArticle');
+        if (typeof(id)!='undefined') return cb(); 
+        articleModule.createNewArticle(function(err,result){
+          if (err) return next(err);
+          console.dir(result);
+          if (typeof(result.id) == 'undefined') return cb(new Error("Could not create Article"));
+          article = result;
+          cb();          
+        })
+      }
+    ],
+    function setValues(err) {
+      debug('postArticle->setValues');
+      if (err) {return next(err);}
+      should.exist(article);
+      article.setAndSave(req.user.displayName,changes,function(err) {
+        if (err ) 
+          {
+            next(err);
+            return;
+          }
+        res.redirect("/article/"+article.id);    
+      })
+    }
+
+  )
 }
 
 function createArticle(req, res, next) {
@@ -150,10 +169,12 @@ function createArticle(req, res, next) {
 
   async.series([
     function calculateWN(callback) {
+      debug('createArticle->calculatenWN');
       // Blog Name is defined, so nothing to calculate
       if (proto.blog) return callback();
       blogModule.findOne({status:'open'},{column:"name",desc:false},
                          function calculateWNResult(err,blog){
+        debug('createArticle->calculateWNResult');
         if (blog) {
           if (typeof(proto.blog) == 'undefined') {
             proto.blog=blog.name;
@@ -163,13 +184,15 @@ function createArticle(req, res, next) {
       })
     }
     ],
-    function(err) {
-      articleModule.createNewArticle(proto,function(err,article) {
-        res.redirect('/article/'+article.id+"?edit=true");
-      });
+    function finalFunction(err) {
+      debug('createArticle->finalFunction');
+        should.exist(res.rendervar);
+        res.render("collect",{layout:res.rendervar.layout});
     }
   );
-};
+}
+  
+
 
 
 function renderList(req,res,next) {
@@ -187,28 +210,22 @@ function renderList(req,res,next) {
   if (typeof(markdownEN)!='undefined') {
     query.markdownEN = markdownEN;
   }
-  var listOfOrphanBlog;
   var articles;
 
   async.parallel([
-     function (callback) {
-        articleModule.getListOfOrphanBlog(function(err,result) {
-          listOfOrphanBlog = result;
-          callback();
-        })
-      },
-      function(callback) {
+      function findArticleFunction(callback) {
+        debug('renderList->findArticleFunction');
         articleModule.find(query,{column:"title"},function(err,result) {
           articles = result;
           callback();
         })
       }
 
-    ],function(error) {
-        res.render('articlelist',{articles:articles,
-                                  listOfOrphanBlog:listOfOrphanBlog,
-                                  util:util,
-                                  user:req.user});      
+    ],function finalFunction(error) {
+      debug('renderList->finalFunction');
+        should.exist(res.rendervar);
+        res.render('articlelist',{layout:res.rendervar.layout,
+                                  articles:articles});      
     }
   )
 }
@@ -217,14 +234,23 @@ function renderList(req,res,next) {
 // Export Render Functions for testing purposes
 exports.renderArticleId = renderArticleId;
 exports.renderList = renderList;
-exports.postArticleId = postArticleId;
+
+// postArticle is called, by a post from the createArticle
+// view or the /:article_id view, and decides
+// wether to create a new object, or update an existing
+exports.postArticle = postArticle;
 exports.createArticle = createArticle;
+exports.searchAndCreate = searchAndCreate;
 
 // And configure router to use render Functions
-router.get('/:article_id', exports.renderArticleId );
 router.get('/list', exports.renderList);
-router.post('/:article_id', exports.postArticleId);
 router.get('/create',exports.createArticle);
+router.get('/searchandcreate',exports.searchAndCreate);
+router.post('/create', exports.postArticle);
+
+router.get('/:article_id', exports.renderArticleId );
+router.post('/:article_id', exports.postArticle);
+
 
 
 module.exports.router = router;

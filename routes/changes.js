@@ -1,20 +1,27 @@
 var express = require('express');
 var async   = require('async');
-var moment = require('moment');
+var should = require('should');
 var router = express.Router();
-var debug = require('debug')('OSMBC:routes:article');
+var debug = require('debug')('OSMBC:routes:changes');
 var logModule = require('../model/logModule.js');
 
 /* GET users listing. */
-router.get('/:change_id', function(req, res, next) {
-  debug('router.get');
+function renderChangeId(req, res, next) {
+  debug('renderChangeId');
   var id = req.params.change_id;
   logModule.findById(id,function(err,change) {
-    if (typeof(change.id) == 'undefined') return next();
-    res.render('change',{change:change,user:req.user,moment:moment});
+    console.dir(change);
+    if (!change || typeof(change.id) == 'undefined') return next();
+    should.exist(res.rendervar);
+    res.render('change',{change:change,
+                         layout:res.rendervar.layout});
   });
-});
- 
-module.exports = router;
+}
+  
+
+router.get('/:change_id',renderChangeId);
+
+module.exports.renderChangeId = renderChangeId;
+module.exports.router = router;
 
 
