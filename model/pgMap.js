@@ -26,6 +26,7 @@ function generateQuery(table,obj,order) {
   }
   var orderby = " order by id";
   if (order) {
+    should.exist(order.column);
     if (order) {
       orderby = " order by data->>'"+order.column+"'";
       if (order.desc) {

@@ -106,7 +106,8 @@ function searchAndCreate(req,res,next) {
                            foundArticles:result});
   })
 }
- 
+
+
 function postArticle(req, res, next) {
   debug('postArticle');
   var id = req.params.article_id;
@@ -248,6 +249,7 @@ exports.renderList = renderList;
 exports.postArticle = postArticle;
 exports.createArticle = createArticle;
 exports.searchAndCreate = searchAndCreate;
+
 
 // And configure router to use render Functions
 router.get('/list', exports.renderList);

@@ -132,7 +132,7 @@ describe('model/user', function() {
             should.not.exist(err);
             delete result._meta;
             should(result).eql({id:id,access:"not logged",OSMUser:"Test2",version:2});
-            logModule.find({},"property",function (err,result){
+            logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(1);
@@ -168,7 +168,7 @@ describe('model/user', function() {
             should.not.exist(err);
             delete result._meta;
             should(result).eql({id:id,OSMUser:"Test",access:"full",version:2});
-            logModule.find({},"property",function (err,result){
+            logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(0);

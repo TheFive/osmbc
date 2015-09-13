@@ -107,7 +107,7 @@ describe('model/article', function() {
             should.not.exist(err);
             delete result._meta;
             should(result).eql({id:id,markdown:"This Value will not be logged",blog:"Reference",collection:"text",category:"Importe",categoryEN:"Imports",version:2});
-            logModule.find({},"property",function (err,result){
+            logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(4);
@@ -132,9 +132,9 @@ describe('model/article', function() {
               should(t2diff).be.below(10);
               should(t3diff).be.below(10);
               should(result[0]).eql({id:r0id,timestamp:t0,oid:id,user:"user",table:"article",property:"blog",from:"TEST",to:"Reference"});
-              should(result[1]).eql({id:r1id,timestamp:t1,oid:id,user:"user",table:"article",property:"collection",to:"text"});
-              should(result[2]).eql({id:r2id,timestamp:t2,oid:id,user:"user",table:"article",property:"category",to:"Importe"});
-              should(result[3]).eql({id:r3id,timestamp:t3,oid:id,user:"user",table:"article",property:"categoryEN",to:"Imports"});
+              should(result[1]).eql({id:r1id,timestamp:t1,oid:id,user:"user",table:"article",property:"category",to:"Importe"});
+              should(result[2]).eql({id:r2id,timestamp:t2,oid:id,user:"user",table:"article",property:"categoryEN",to:"Imports"});
+              should(result[3]).eql({id:r3id,timestamp:t3,oid:id,user:"user",table:"article",property:"collection",to:"text"});
               bddone();
             })
           })
@@ -158,7 +158,7 @@ describe('model/article', function() {
             should.not.exist(err);
             delete result._meta;
             should(result).eql({id:id,markdown:"markdown",blog:"TEST",version:2});
-            logModule.find({},"property",function (err,result){
+            logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(0);
@@ -228,7 +228,7 @@ describe('model/article', function() {
     })
     describe('find',function() {
       it('should find multiple objects with sort',function(bddone){
-        articleModule.find({blog:"WN1"},"collection",function(err,result){
+        articleModule.find({blog:"WN1"},{column:"collection"},function(err,result){
           should.not.exist(err);
           should.exist(result);
           should(result.length).equal(2);
@@ -244,7 +244,7 @@ describe('model/article', function() {
     })
     describe('findOne',function() {
       it('should findOne object with sort',function(bddone){
-        articleModule.findOne({blog:"WN1"},"collection",function(err,result){
+        articleModule.findOne({blog:"WN1"},{column:"collection"},function(err,result){
           should.not.exist(err);
           should.exist(result);
           delete result._meta;
@@ -352,7 +352,7 @@ describe('model/article', function() {
         should.not.exist(err);
         should.exist(result);
         should(result).eql(["WN1"]);
-        blogModule.findOne({name:"WN2"},"name",function(err,blog){
+        blogModule.findOne({name:"WN2"},{column:"name"},function(err,blog){
           should.not.exist(err);
           should.exist(blog);
           blog.setAndSave("user",{status:"published"},function (err,result){

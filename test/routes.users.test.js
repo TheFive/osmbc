@@ -25,7 +25,7 @@ describe('router/user',function() {
           userRouter.createUser(req,res,next);
         },
         function searchArticle(callback) {
-          userModule.findOne({},{},function(err,result){
+          userModule.findOne({},function(err,result){
             should.not.exist(err);
             should.exist(result);
             user_id = result.id;
