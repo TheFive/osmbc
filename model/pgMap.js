@@ -193,8 +193,13 @@ module.exports.find = function find(module,obj,order,callback) {
 }
 
 
-module.exports.fullTextSearch = function fullTextSearch(module,search,callback) {
+module.exports.fullTextSearch = function fullTextSearch(module,search,order,callback) {
   debug("fullTextSearch");
+  if (typeof(order)=='function') {
+    callback = order;
+    order = null;
+  }
+
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) {
       console.log("Connection Error")
@@ -206,10 +211,21 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,callback) 
 
     var result = [];
 
+    var orderBy = "";
+
+    if (order) {
+      should.exist(order.column);
+      orderBy = " order by data->>'"+order.column+"'";
+      if (order.desc) {
+        orderBy +=" desc";
+      }
+    }
+
    
     var sqlQuery =  "select id, data from article \
                           where id in \
-                          (select distinct id from article,json_each_text(article.data) as json_data where json_data.value ilike '%"+search+"%')";
+                          (select distinct id from article,json_each_text(article.data) as json_data where json_data.value ilike '%"+search+"%')"
+                        +orderBy;
 
     var query = client.query(sqlQuery);
     query.on('row',function(row) {
@@ -223,6 +239,10 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,callback) 
     query.on('end',function (pgresult) {    
       pgdone();
       callback(null,result);
+    })
+    query.on('err',function (err) {    
+      pgdone();
+      callback(err);
     })
   })
 }

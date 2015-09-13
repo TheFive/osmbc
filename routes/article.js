@@ -98,7 +98,7 @@ function renderArticleId(req,res,next) {
 function searchAndCreate(req,res,next) {
   debug('searchAndCreate');
   var search = req.query.search;
-  articleModule.fullTextSearch(search,function(err,result){
+  articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
     if (err) return next(err);
     should.exist(res.rendervar);
     res.render("collect",{layout:res.rendervar.layout,

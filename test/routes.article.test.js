@@ -330,4 +330,66 @@ describe('router/article',function() {
       )
     })
   })
+  describe('searchAndCreate',function() {
+    describe('Do file base tests',function() {
+      beforeEach(function (bddone) {
+        articleModule.removeOpenBlogCache();
+        testutil.clearDB(bddone);
+      })
+      function doATest(filename) {
+       
+        it('should test: '+filename,function (bddone) {
+          var file =  path.resolve(__dirname,'data', filename);
+
+          var data =  JSON.parse(fs.readFileSync(file));
+         
+          var res = {};
+          var req = {};
+          req.params ={};
+          req.query = {search:data.search};
+          req.user = "TestUser";
+          var next;
+          res.render = null;
+          res.rendervar = {layout:"TEMP"};
+
+          async.series([
+            function(done) {
+              testutil.importData(data,done);
+            },
+            function(done) {
+              // do the test
+              res.render = sinon.spy(function(){done()});
+              next = sinon.spy(function(){done()});
+
+              articleRouter.searchAndCreate(req,res,next);
+            }
+
+            ],
+            function (err) {
+              should.not.exist(err);
+              should(next.called).be.false();
+
+              var call = res.render.firstCall;
+              should(call.calledWith("collect")).be.true();
+              var renderData = call.args[1];
+
+
+              // clean up test data for comparison, Database IDs are random
+              for (var i =0;i<renderData.foundArticles.length; i++) {
+                delete renderData.foundArticles[i].id;
+                delete renderData.foundArticles[i]._meta;
+              }
+              should(renderData.foundArticles).eql(data.result.foundArticles);
+              should(renderData.layout).eql("TEMP");
+              should(renderData.search).eql(data.search);
+     
+ 
+              bddone();
+            }
+          )   
+        })
+      }
+      testutil.generateTests("data",/^router.article.searchAndCreate.+json/,doATest);
+    })     
+  })
 })
