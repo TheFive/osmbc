@@ -4,22 +4,20 @@
 
 Before you install OSMBC the following Software has to be installed.
 
-a) Postgres 9.3 or higher
+* Postgres 9.3 or higher
 
 The System is tested and developed under 9.3, as far as i know all features
 used should work with 9.4.
 
-b) Node.JS
+* Node.JS
 
 You should install node 10.* or higher
 OSMBC runs with 0.12.4 on the development machine and with 0.10.36 on the 
 production server.
 
-c) Installation of Database
 
-to be described and implemented...
 
-d) Configuration
+# Configuration
 
 There has to exist two config files.
 
@@ -45,6 +43,12 @@ Please copy config.test.json to config.development.json and put the needed value
 
 c) To use a config.prod.json please change the package.json.  
 
+The config module uses development as default configuration (if it is not set
+via NODE_ENV variable).
+
+npm start sets NODE_ENV=development
+npm test  sets NODE_ENV=test
+
 
 # Global Node Modules needed
 
@@ -60,9 +64,28 @@ npm install
 in the OSMBC directory, to install all necessary modules. 
 Depending on machine configuration you may be have to do that as administrator
 
+# Installation of Database
 
-# Importing data
+The database can be installed with the two javascript files in the folder import.
 
-There is a script to import all weekly news down from blog.openstreetmap.de
+## Creating the Table and Views
+
+->> See chapter configuration for database access
+
+    NODE_ENV=???? node download.js
+
+Where ??? is the configuration you want to use (e.g. development) 
+
+## Import Files from 
+
+
+There is a script to import all weekly news down from blog.openstreetmap.de.
+You can find it in import.
+
+call 
+
+    node createdb.js
+
+to import the first 268 Blog.
 
 .. to be described ..
