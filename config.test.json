@@ -8,5 +8,8 @@
     "password" : "thefive",
     "connectstr" : "psql://test:test@localhost:5432/testdb"
   },
-  "callbackUrl":"TestValue"
+  "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
+  "OPENSTREETMAP_CONSUMER_KEY" : "######",
+  "OPENSTREETMAP_CONSUMER_SECRET" : "#####"
+
 }
