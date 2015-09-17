@@ -26,20 +26,20 @@ therefore can be found in the git repository
 
 b) config.development.json 
 Please copy config.test.json to config.development.json and put the needed values to.
-  "serverport": 3000 (Port, where the node server is listening to)
-  "database" : "localhost:5432/osmbc", (access String for Postgres DB)
-  "username" : "TheFive", (User Name for Postgres DB)
-  "password" : "thefive", (Password for Postgres DB)
-  "connectstr" : "psql://test:test@localhost:5432/testdb"
-                    (Access String for Postgres, overwrites database,user and pwd)
-  "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
+
+    "serverport": 3000 (Port, where the node server is listening to)
+    "database" : "localhost:5432/osmbc", (access String for Postgres DB)
+    "username" : "TheFive", (User Name for Postgres DB)
+    "password" : "thefive", (Password for Postgres DB)
+    "connectstr" : "psql://test:test@localhost:5432/testdb"
+                  (Access String for Postgres, overwrites database,user and pwd)
+    "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
           (callbackUrl for the OAUTH mechanism, change the serverpart of the URL)
-  "OPENSTREETMAP_CONSUMER_KEY" : "######",
+    "OPENSTREETMAP_CONSUMER_KEY" : "######",
           (OAUTH Key, generate it from your user properties in OSM)
-  "OPENSTREETMAP_CONSUMER_SECRET" : "#####"
+    "OPENSTREETMAP_CONSUMER_SECRET" : "#####"
            (OAUTH Secret, generate it from your user properties in OSM)
 
-}
 
 c) To use a config.prod.json please change the package.json.  
 
