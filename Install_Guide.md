@@ -4,12 +4,12 @@
 
 Before you install OSMBC the following Software has to be installed.
 
-* Postgres 9.3 or higher
+a) Postgres 9.3 or higher
 
 The System is tested and developed under 9.3, as far as i know all features
 used should work with 9.4.
 
-* Node.JS
+b) Node.JS
 
 You should install node 10.* or higher
 OSMBC runs with 0.12.4 on the development machine and with 0.10.36 on the 
@@ -17,7 +17,7 @@ production server.
 
 
 
-# Configuration
+d) Configuration
 
 There has to exist two config files.
 
@@ -48,6 +48,7 @@ via NODE_ENV variable).
 
 npm start sets NODE_ENV=development
 npm test  sets NODE_ENV=test
+=======
 
 
 # Global Node Modules needed
@@ -88,4 +89,4 @@ call
 
 to import the first 268 Blog.
 
-.. to be described ..
+
