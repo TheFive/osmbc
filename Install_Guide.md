@@ -27,6 +27,7 @@ Two config files are needed:
 therefore can be found in the git repository, if your postgres test environment differs, please copy the file to config.mytest.json and change the command in package.json for npm test.
 
 * config.development.json 
+
 Please copy config.test.json to config.development.json and put the needed values to.
   "serverport": 3000 (Port, where the node server is listening to)
   "database" : "localhost:5432/osmbc", (access String for Postgres DB)
@@ -40,8 +41,6 @@ Please copy config.test.json to config.development.json and put the needed value
           (OAUTH Key, generate it from your user properties in OSM)
   "OPENSTREETMAP_CONSUMER_SECRET" : "#####"
            (OAUTH Secret, generate it from your user properties in OSM)
-
-}
 
 * To use a config.prod.json please change the package.json for npm start.  
 
