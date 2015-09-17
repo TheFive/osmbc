@@ -128,7 +128,6 @@ function postArticle(req, res, next) {
         debug('postArticle->searchArticle')
         if (typeof(id)=='undefined') return cb(); 
         articleModule.findById(id,function(err,result) {
-          console.dir(result);
           if (err) return cb(err);
           if (!result) return cb(new Error("Article ID does not exist"));
           article = result;
@@ -140,7 +139,6 @@ function postArticle(req, res, next) {
         if (typeof(id)!='undefined') return cb(); 
         articleModule.createNewArticle(function(err,result){
           if (err) return next(err);
-          console.dir(result);
           if (typeof(result.id) == 'undefined') return cb(new Error("Could not create Article"));
           article = result;
           cb();          
