@@ -4,29 +4,30 @@
 
 Before you install OSMBC the following Software has to be installed.
 
-a) Postgres 9.3 or higher
+* Postgres 9.3 or higher
 
 The System is tested and developed under 9.3, as far as i know all features
 used should work with 9.4.
 
-b) Node.JS
+* Node.JS
 
 You should install node 10.* or higher
 OSMBC runs with 0.12.4 on the development machine and with 0.10.36 on the 
 production server.
 
-c) Installation of Database
+# Installation of Database
 
 to be described and implemented...
 
-d) Configuration
+# Configuration
 
-There has to exist two config files.
+Two config files are needed:
 
-a) config.test.json, this is used for automated testing on travis-ci and 
-therefore can be found in the git repository
+* config.test.json, this is used for automated testing on travis-ci and 
+therefore can be found in the git repository, if your postgres test environment differs, please copy the file to config.mytest.json and change the command in package.json for npm test.
 
-b) config.development.json 
+* config.development.json 
+
 Please copy config.test.json to config.development.json and put the needed values to.
   "serverport": 3000 (Port, where the node server is listening to)
   "database" : "localhost:5432/osmbc", (access String for Postgres DB)
@@ -41,9 +42,7 @@ Please copy config.test.json to config.development.json and put the needed value
   "OPENSTREETMAP_CONSUMER_SECRET" : "#####"
            (OAUTH Secret, generate it from your user properties in OSM)
 
-}
-
-c) To use a config.prod.json please change the package.json.  
+* To use a config.prod.json please change the package.json for npm start.  
 
 
 # Global Node Modules needed
