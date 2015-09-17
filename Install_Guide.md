@@ -84,7 +84,7 @@ You can find it in import.
 
 call 
 
-    node createdb.js
+    NODE_ENV=???? node createdb.js
 
 to import the first 268 Blog.
 
