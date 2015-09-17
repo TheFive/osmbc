@@ -1,8 +1,8 @@
 ## Installation Guide OSMBC
 
-#Requirenments
+# Requirenments
 
-Befor you install OSMBC the following Software has to be installed.
+Before you install OSMBC the following Software has to be installed.
 
 a) Postgres 9.3 or higher
 
