@@ -258,9 +258,9 @@ function findOne(obj1,obj2,callback) {
   pgMap.findOne(this,obj1,obj2,callback);
 }
 
-function fullTextSearch(search,callback) {
+function fullTextSearch(search,order,callback) {
   debug('fullTextSearch');
-  pgMap.fullTextSearch(this,search,callback);
+  pgMap.fullTextSearch(this,search,order,callback);
 }
 
 

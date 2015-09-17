@@ -98,7 +98,7 @@ function renderArticleId(req,res,next) {
 function searchAndCreate(req,res,next) {
   debug('searchAndCreate');
   var search = req.query.search;
-  articleModule.fullTextSearch(search,function(err,result){
+  articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
     if (err) return next(err);
     should.exist(res.rendervar);
     res.render("collect",{layout:res.rendervar.layout,
@@ -106,7 +106,8 @@ function searchAndCreate(req,res,next) {
                            foundArticles:result});
   })
 }
- 
+
+
 function postArticle(req, res, next) {
   debug('postArticle');
   var id = req.params.article_id;
@@ -246,6 +247,7 @@ exports.renderList = renderList;
 exports.postArticle = postArticle;
 exports.createArticle = createArticle;
 exports.searchAndCreate = searchAndCreate;
+
 
 // And configure router to use render Functions
 router.get('/list', exports.renderList);

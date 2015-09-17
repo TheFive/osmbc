@@ -72,7 +72,7 @@ describe('model/blog', function() {
             delete result._meta;
             delete result.categories;
             should(result).eql({id:id,name:"New Title",status:"published",field:"test",version:2});
-            logModule.find({},"property",function (err,result){
+            logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(2);
@@ -122,7 +122,7 @@ describe('model/blog', function() {
     })
     describe('find',function() {
       it('should find multiple objects with sort',function(bddone){
-        blogModule.find({status:"open"},"name",function(err,result){
+        blogModule.find({status:"open"},{column:"name"},function(err,result){
           should.not.exist(err);
           should.exist(result);
           should(result.length).equal(2);
@@ -140,7 +140,7 @@ describe('model/blog', function() {
     })
     describe('findOne',function() {
       it('should findOne object with sort',function(bddone){
-        blogModule.findOne({status:"open"},"name",function(err,result){
+        blogModule.findOne({status:"open"},{column:"name"},function(err,result){
           should.not.exist(err);
           should.exist(result);
           delete result._meta;

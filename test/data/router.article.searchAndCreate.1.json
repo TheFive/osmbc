@@ -1,0 +1,14 @@
+
+
+{
+  "blog":[{"name":"BLOG","status":"open"}],
+  "article":[{"blog":"BLOGB","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
+             {"blog":"BLOGA","title":"BLOG","markdown":"* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","category":"Keine"},
+             {"blog":"Alternativ Blog","markdown":"* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","category":"Keine"},
+              {"blog":"Alternativ2 Blog","markdown":"* Dies ist ein grosser Test-artikel. mit Verweis auf [link](https://link.de)","category":"Keine"}],
+  
+  "search":"Testartikel",
+  "result":{"foundArticles":[{"version":1,"blog":"BLOGB","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
+             {"version":1,"blog":"BLOGA","title":"BLOG","markdown":"* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","category":"Keine"},
+             {"version":1,"blog":"Alternativ Blog","markdown":"* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","category":"Keine"}]}
+}
