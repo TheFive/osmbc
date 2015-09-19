@@ -394,7 +394,7 @@ describe('model/article', function() {
         should.exist(article);
         article.remove(function(err) {
           should.not.exist(err);
-          articleModule.find({},"",function(err,result){
+          articleModule.find({},function(err,result){
             should.not.exist(err);
             should.exist(result);
             should(result.length).equal(2);

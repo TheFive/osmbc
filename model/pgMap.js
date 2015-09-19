@@ -6,7 +6,7 @@ var debug = require('debug')('OSMBC:model:pgMap')
 var config = require('../config.js');
 
 function generateQuery(table,obj,order) {
-  debug(generateQuery);
+  debug('generateQuery');
   var whereClause = "";
 
   if (typeof(obj)=='string') {
@@ -159,36 +159,47 @@ module.exports.find = function find(module,obj,order,callback) {
   if (typeof(obj)=='function') {
     callback = obj;
     obj = null;
-  }
-  if (typeof(order) == 'function') {
+    order = null;
+  } else if (typeof(order) == 'function') {
     callback = order;
     order = null;
+  } else {
+    should(typeof(order)).equal('object');
   }
-  pg.connect(config.pgstring, function(err, client, pgdone) {
+  should(typeof(callback)).equal('function');
+
+  pg.connect(config.pgstring, function find_pgConnect(err, client, pgdone) {
+    debug('find_pgConnect');
     if (err) {
       console.log("Connection Error")
-
       pgdone();
       return (callback(err));
     }
     var table = module.table;
-    sqlQuery = generateQuery(table,obj,order);
+    var sqlQuery = generateQuery(table,obj,order);
 
     var result = [];
 
     var query = client.query(sqlQuery);
-    query.on('row',function(row) {
+    query.on('row',function findRowFunction(row) {
+      debug('findRowFunction');
       var r = module.create();
       for (var k in row.data) {
         r[k]=row.data[k];
       }
       r.id = row.id;
       result.push(r);
-    })
-    query.on('end',function findEndFunction(pgresult) {    
+    });
+    query.on('error',function findErrorFunction(error) {   
+      debug('findErrorFunction');
+      pgdone();
+      callback(error);
+    });
+    query.on('end',function findEndFunction(pgresult) {   
+      debug('findEndFunction');
       pgdone();
       callback(null,result);
-    })
+    });
   })
 }
 
@@ -240,7 +251,7 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
       pgdone();
       callback(null,result);
     })
-    query.on('err',function (err) {    
+    query.on('error',function (err) {    
       pgdone();
       callback(err);
     })

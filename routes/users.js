@@ -34,32 +34,38 @@ function renderList(req,res,next) {
 
 
 
-router.get('/:user_id', function(req, res, next) {
+function renderUserId(req, res, next) {
   debug('router.get');
   var id = req.params.user_id;
+  should.exist(id);
   var params = {};
   if (req.query.edit) params.edit = req.query.edit;
   var user;
   var changes;
-  async.parallel([
-    function findAndLoaduser(cb){
-      userModule.findById(id,function(err,result) {
+  async.series([
+    function findAndLoadChanges(cb) {
+      debug('findAndLoadChanges');
+      logModule.find({table:"usert",oid:id},{column:"timestamp",desc:true},function findAndLoadChanges_CB(err,result){
+        debug('findAndLoadChanges_CB');
         if (err) return cb(err);
-        user = result;
+        changes = result;
         cb();
       })
     },
-    function findAndLoadChanges(cb) {
-      logModule.find({table:"usert",oid:id},{column:"timestamp",desc:true},function(err,result){
+    function findAndLoaduser(cb){
+      debug('findAndLoaduser');
+      userModule.findById(id,function findAndLoaduser_CB(err,result) {
+        debug('findAndLoaduser_CB');
         if (err) return cb(err);
-        changes = result;
+        user = result;
         cb();
       })
     }
     ],
     function finalRenderCB(err) {
+      debug('finalRenderCB');
       if (err) return next(err);
-      if (! user || typeof(user.id) == 'undefined') return next();
+      if (! user || typeof(user.id) == 'undefined') return next(new Error("User ID not Found"));
       should.exist(res.rendervar)
       res.render('user',{usershown:user,
                         changes:changes,
@@ -67,7 +73,7 @@ router.get('/:user_id', function(req, res, next) {
                         layout:res.rendervar.layout});
     }
   ) 
-});
+}
 
 function postUserId(req, res, next) {
   debug('postUserId');
@@ -95,12 +101,13 @@ function createUser(req, res, next) {
 };
 
 router.get('/list',renderList);
+router.get('/:user_id',renderUserId);
 router.post('/:user_id', postUserId);
 router.get('/create',createUser);
 
 module.exports.createUser = createUser;
 module.exports.postUserId = postUserId;
-
+module.exports.renderUserId = renderUserId;
 
 
 module.exports.router = router;

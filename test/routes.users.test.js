@@ -4,9 +4,12 @@ var should = require('should');
 var userRouter = require('../routes/users.js');
 var userModule = require('../model/user.js');
 var testutil = require('./testutil.js');
+var pg = require('pg');
+var debug = require('debug')('OSMBC:test');
 
 
 describe('router/user',function() {
+
   describe('createUser ',function() {
     beforeEach(function(bddone){
       testutil.clearDB(bddone);
@@ -88,6 +91,39 @@ describe('router/user',function() {
           bddone();            
         }
       )
+    })
+  })
+  describe('renderUserId',function() {
+    after(function (bddone){
+     // console.dir(GLOBAL);
+      bddone();
+    })
+    it('should call next if user not exist',function(bddone) {
+      this.timeout(5000);
+      userModule.createNewUser({displayName:"TeST"},function(err,user) {
+        should.not.exist(err);
+        should(user.id).not.equal(0);
+        var newId = user.id +1;
+        var req = {query:{},params:{}};
+        req.params.user_id = newId;
+        var res = {};
+        var next;
+
+        async.series([
+          function(callback) {
+            res.render = sinon.spy(callback)
+            next = sinon.spy(callback);
+            userRouter.renderUserId(req,res,next);
+          }],
+          function(err) {
+            should.exist(err);
+            should(err.message).eql("User ID not Found");
+            should(next.called).be.true();
+            should(res.render.called).be.false();
+            bddone();            
+          }
+        )
+      })
     })
   })
 })

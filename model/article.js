@@ -53,7 +53,7 @@ function Article (proto)
 	this.id = 0;
   this._meta={};
   this._meta.table = "article";
-	for (k in proto) {
+	for (var k in proto) {
     this[k] = proto[k];
   }
 }

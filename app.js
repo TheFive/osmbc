@@ -99,7 +99,7 @@ function ensureAuthenticated(req, res, next) {
 
   if (req.isAuthenticated()) {  
     // check User
-    userModule.find({OSMUser:req.user.displayName},{},function(err,result){
+    userModule.find({OSMUser:req.user.displayName},function(err,result){
       if (err) return next(err);
       if (result.length==1) {
         if (result[0].access == "full") {
