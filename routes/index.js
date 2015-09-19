@@ -17,4 +17,5 @@ router.get('/osmbc.html', renderHome);
 
 
 
-module.exports = router;
+module.exports.router = router;
+module.exports.renderHome = renderHome;
