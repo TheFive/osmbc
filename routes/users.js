@@ -108,6 +108,6 @@ router.get('/create',createUser);
 module.exports.createUser = createUser;
 module.exports.postUserId = postUserId;
 module.exports.renderUserId = renderUserId;
-
+module.exports.renderList = renderList;
 
 module.exports.router = router;

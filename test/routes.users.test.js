@@ -41,7 +41,6 @@ describe('router/user',function() {
           should.not.exist(err);
           should(next.called).be.false();
           should(res.redirect.called).be.true();
-          console.dir(res.redirect.firstCall.args[0]);
           should(res.redirect.firstCall.calledWith("/users/"+user_id+"?edit=true")).be.true();
           bddone();            
         }
@@ -126,4 +125,51 @@ describe('router/user',function() {
       })
     })
   })
+  describe('renderList',function(){
+    before(testutil.clearDB);
+    it('should render 2 of 3 users',function(bddone){
+      // Create Users First
+      async.series([
+        function prepareUser1(cb) {
+          userModule.createNewUser({displayName:"Test1",access:"full"},cb);
+        },
+        function prepareUser2(cb) {
+          userModule.createNewUser({displayName:"Test2",access:"full"},cb);
+        },
+        function prepareUser3(cb) {
+          userModule.createNewUser({displayName:"Test3",access:"denied"},cb);
+        },
+        function startTheTest(cb) {
+          var req = {query:{},params:{}};
+          req.query.access = "full";
+          var res = {rendervar:"TEST"};
+          var next;
+
+          async.series([
+            function(callback) {
+              res.render = sinon.spy(callback)
+              next = sinon.spy(callback);
+              userRouter.renderList(req,res,next);
+            }],
+            function(err) {
+              should(next.called).be.false();
+              should(res.render.called).be.true();
+              should(res.render.firstCall.calledWith("user"));
+              var param = res.render.firstCall.args[1];
+              should(param.users.length).equal(2);
+              should(param.users[0].displayName).equal("Test1");
+              should(param.users[1].displayName).equal("Test2");
+
+              bddone();            
+            }
+          )
+        }
+
+
+      ],function(err){
+        should.not.exist(err);
+        bddone();
+      })
+    })
+  });
 })
