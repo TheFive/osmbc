@@ -206,6 +206,9 @@ module.exports.find = function find(module,obj,order,callback) {
 
 module.exports.fullTextSearch = function fullTextSearch(module,search,order,callback) {
   debug("fullTextSearch");
+  should.exist(module);
+  console.log(module);
+  should.exist(module.create);
   if (typeof(order)=='function') {
     callback = order;
     order = null;

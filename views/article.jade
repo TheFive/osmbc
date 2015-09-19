@@ -171,7 +171,7 @@ block content
                 :verbatim
                   !{article.commentHtml}
     .row
-      if articleReferences.count > 1
+      if articleReferences.count >= 1
         h2
           | Links used in other Post
         div
@@ -185,17 +185,23 @@ block content
                 th
                   | Blog
             tbody
-              each link in articleReferences
-                if (link != "count" && articleReferences[link])
-                  each articleItem in articleReferences[link]
-                    if articleItem.id != article.id
+              each array,link in articleReferences
+                if (link != "count" )
+                  each articleItem,index in array
+                    if (articleItem.id != article.id) && (index <5)
                       tr
                         td
                           a(href='#{link}') #{link}
                         td
-                          a(href='/article/'+articleItem.id) #{article.displayTitle()}
+                          a(href='/article/'+articleItem.id) #{articleItem.displayTitle()}
                         td= articleItem.blog
-
+                    if (index == 8) 
+                      tr
+                        td
+                          a(href='#{link}') #{link}
+                        td
+                          | Und #{array.length-5} weitere Artikel.
+                
 
 
 
