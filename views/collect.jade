@@ -48,8 +48,8 @@ block content
           select(id="blog",name="blog").form-control
             option(value="WN???" selected) WN???
             option(value="Future") Future
-            if (listOfOpenBlog)  
-              for blogName in listOfOpenBlog         
+            if (layout.listOfOpenBlog)  
+              for blogName in layout.listOfOpenBlog         
                 option(value="#{blogName}" ) #{blogName}
             option(value="Trash") Trash
         .col-md-5
