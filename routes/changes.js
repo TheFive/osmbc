@@ -10,7 +10,6 @@ function renderChangeId(req, res, next) {
   debug('renderChangeId');
   var id = req.params.change_id;
   logModule.findById(id,function(err,change) {
-    console.dir(change);
     if (!change || typeof(change.id) == 'undefined') return next();
     should.exist(res.rendervar);
     res.render('change',{change:change,
