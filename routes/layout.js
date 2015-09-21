@@ -53,6 +53,7 @@ function prepareRenderLayout(req,res,next) {
       res.rendervar.layout = {user:req.user,
                       listOfOrphanBlog:result.listOfOrphanBlog,
                       listOfOpenBlog:result.listOfOpenBlog,
+                      categories:blogModule.categories,
                       moment:moment,
                       util:util,
                     }

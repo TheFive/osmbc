@@ -46,11 +46,10 @@ block content
           | Blog <br>
         .col-md-5
           select(id="blog",name="blog").form-control
-            option(value="WN???" selected) WN???
-            option(value="Future") Future
             if (layout.listOfOpenBlog)  
               for blogName in layout.listOfOpenBlog         
                 option(value="#{blogName}" ) #{blogName}
+            option(value="Future") Future
             option(value="Trash") Trash
         .col-md-5
           
@@ -65,9 +64,8 @@ block content
           | Category <br>
         .col-md-5
           select(id="category",name="category").form-control
-            option(value="cat ??" selected) cat ??
-            if (categories)
-              for category in categories
+            if (layout.categories)
+              for category in layout.categories
                 option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
         .col-md-5
           h2
