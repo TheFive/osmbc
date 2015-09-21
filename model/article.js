@@ -100,6 +100,23 @@ function preview(edit) {
        else return '<li>\n<mark>'+this.displayTitle()+'\n</mark></li>';
 }
 
+function overview() {
+  debug("overview");
+  var editMark = ' <a href="/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+  
+  var editLink = '';
+  if (typeof(this.markdown)=='undefined' || this.markdown == '') {
+    editLink = "Edit";
+  }
+  if (typeof(this.markdownEN)=='undefined' || this.markdownEN == '') {
+    if (editLink != '') editLink +='&'
+    editLink += "Translate";
+  }
+  if (editLink != '') editLink = '<a href="/article/'+this.id+'">'+editLink+'</a>'; 
+
+  var text = this.displayTitle(90);
+  return '<p>\n'+editMark+' '+text+' '+editLink+'\n</p>';      
+}
 
 function previewEN(edit) {
   debug("previewEN");
@@ -412,6 +429,7 @@ Article.prototype.remove = pgMap.remove;
 // edit: Boolean, that specifies, wether edit links has to be created or not
 // This function returns an HTML String of the Aricle as an list element.
 Article.prototype.preview = preview;
+Article.prototype.overview = overview;
 Article.prototype.previewEN = previewEN;
 
 // calculateUsedLinks(callback)

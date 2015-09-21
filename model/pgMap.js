@@ -181,6 +181,8 @@ module.exports.find = function find(module,obj,order,callback) {
 
     var result = [];
 
+    var startTime = new Date().getTime();
+
     var query = client.query(sqlQuery);
     query.on('row',function findRowFunction(row) {
       debug('findRowFunction');
@@ -198,6 +200,8 @@ module.exports.find = function find(module,obj,order,callback) {
     });
     query.on('end',function findEndFunction(pgresult) {   
       debug('findEndFunction');
+      var endTime = new Date().getTime();
+      console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
       pgdone();
       callback(null,result);
     });

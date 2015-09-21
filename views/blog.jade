@@ -4,88 +4,68 @@ extends layout
 
 
 block content
-
-  row
-    .col-md-8
-      h1= blog.name
-      div.input-group
-        div.btn-group
-          button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-            | #{blog.status}
-            span.caret   
-          ul.dropdown-menu(name="category",role="menu")
-            li
-              a(href="/blog/#{blog.id}?setStatus=open") open 
-            li
-              a(href="/blog/#{blog.id}?setStatus=review") review 
-            li
-              a(href="/blog/#{blog.id}?setStatus=published") published 
-            li
-              a(href="/blog/#{blog.id}?setStatus=trash") trash 
-        button.btn.btn-default 
-          a(href="/blog/#{blog.id}/preview") Preview 
-        button.btn.btn-default 
-          a(href="/blog/#{blog.id}/preview?edit=true") Preview With EditMark 
-        button.btn.btn-default 
-          a(href="/blog/#{blog.id}/preview?lang=EN") Preview EN 
-        button.btn.btn-default 
-          a(href="/blog/#{blog.id}/preview?edit=true&lang=DE") Preview EN With EditMark 
-      ul
-        for category in blog.categories
-          if (articles[category.DE])
-            li= category.DE
-              ul
-                for article in articles[category.DE]
-                  if (article.markdown)
-                    li= article.markdown.substring(0,50)   
-                      if(article.markdownEN)
-                        a(href="/article/#{article.id}")   Edit
-                      else
-                        a(href="/article/#{article.id}")   
-                          | Edit&Translate
-                        
-                  else if (article.title)
-                    li
-                       a(href="/article/#{article.id}") #{article.title} 
-                  else if (article.collection)
-                    li
-                       a(href="/article/#{article.id}") #{article.collection.substring(0,50)}
-                  else 
-                    li
-                       a(href="/article/#{article.id}") #{article.id}
-          else
-            li
-              a(style={color:'LightGray'}) #{category.DE}        
-                 
-
-
-
-
+  .row
     .col-md-4
-      .row
-      .row
-        if changes
-          div
-            table.table.table-striped
-              thead
-                tr 
-                  th
-                   | user
-                  th
-                   |  what
-                  th
-                   |  to
-                  th
-                   | when
-               tbody
-                each change, i in changes
-                  tr
-                    td
-                      a(href='/change/' + change.id) #{change.id} 
-                    td= change.user
-                    td= change.property
-                    td= change.to
-                    td= util.moment(change.timestamp).fromNow() 
+       h1= blog.name
+    .col-md-8
+      div.btn-group
+        button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
+          | #{blog.status}
+          span.caret   
+        ul.dropdown-menu(name="category",role="menu")
+          li
+            a(href="/blog/#{blog.id}?setStatus=open") open 
+          li
+            a(href="/blog/#{blog.id}?setStatus=review") review 
+          li
+            a(href="/blog/#{blog.id}?setStatus=published") published 
+          li
+            a(href="/blog/#{blog.id}?setStatus=trash") trash  
+
+  .row     
+    .col-md-12 
+      div.input-group
+        button.btn.btn-default 
+          a(href="/blog/#{blog.id}?style=overview") Overview
+        button.btn.btn-default 
+          a(href="/blog/#{blog.id}?style=preview") Full
+        button.btn.btn-default 
+          a(href="/blog/#{blog.id}?style=previewEN") Full EN
+        button.btn.btn-warning 
+          a(href="/blog/#{blog.id}/preview") View Preview 
+        button.btn.btn-warning 
+          a(href="/blog/#{blog.id}/preview?lang=EN") View Preview EN 
+  
+  .row
+    p
+      :verbatim
+        !{main_text}
+
+
+
+
+  .row
+    if changes
+      div
+        table.table.table-striped
+          thead
+            tr 
+              th
+               | user
+              th
+               |  what
+              th
+               |  to
+              th
+               | when
+           tbody
+            each change, i in changes
+              tr
+                td
+                  a(href='/change/' + change.id) #{change.user} 
+                td= change.property
+                td= change.to
+                td= layout.moment(change.timestamp).fromNow() 
 
 
 
