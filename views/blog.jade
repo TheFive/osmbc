@@ -64,7 +64,7 @@ block content
                 td
                   a(href='/change/' + change.id) #{change.user} 
                 td= change.property
-                td= change.to
+                td= layout.util.shorten(change.to)
                 td= layout.moment(change.timestamp).fromNow() 
 
 

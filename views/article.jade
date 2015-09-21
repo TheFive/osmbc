@@ -30,11 +30,13 @@ block content
             | Blog <br>
           .col-md-5
             select(id="blog",name="blog").form-control
-              option(value="#{article.blog}" selected) #{article.blog+'(*)'}
               option(value="Future") Future
               if (layout.listOfOpenBlog)  
-                for blogName in layout.listOfOpenBlog         
-                  option(value="#{blogName}" ) #{blogName}
+                for blogName in layout.listOfOpenBlog 
+                  if blogName == article.blog         
+                    option(value="#{blogName}" selected) #{blogName}
+                  else
+                     option(value="#{blogName}" ) #{blogName}
               option(value="Trash") Trash
           .col-md-5
             .hidden
@@ -50,13 +52,18 @@ block content
             | Category <br>
           .col-md-5
             select(id="category",name="category").form-control
-              option(value="#{article.category}" selected) #{article.category+'(*)'}
-              if (blog)
+              if (blog.categories)
                 for category in blog.categories
-                 option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
+                  if (category.DE == article.category)
+                    option(value="#{category.DE}" selected ) #{category.DE} / #{category.EN}
+                  else
+                    option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
               else
-                for category in categories
-                  option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
+                for category in layout.categories
+                  if (cateogry.DE == article.category)
+                    option(value="#{category.DE}" selected) #{category.DE} / #{category.EN}
+                  else
+                    option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
           .col-md-5
             h2
               | #{article.categoryEN}
