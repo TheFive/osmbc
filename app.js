@@ -14,7 +14,7 @@ var  OpenStreetMapStrategy = require('passport-openstreetmap').Strategy;
 
 var config   = require('./config.js');
 
-var index    = require('./routes/index');
+var index    = require('./routes/index').router;
 var users    = require('./routes/users').router;
 var article  = require('./routes/article').router;
 var changes  = require('./routes/changes').router;

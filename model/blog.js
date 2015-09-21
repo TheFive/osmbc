@@ -144,7 +144,6 @@ function createNewBlog(proto,callback) {
 
 function preview(edit,lang,callback) {
   debug('preview');
-
   var self = this;
 
   if (typeof(lang)=='function') {
@@ -175,7 +174,7 @@ function preview(edit,lang,callback) {
     for (var i=0;i<clist.length;i++) {
       var category = clist[i].DE;
 
-      var categoryLANG;
+      var categoryLANG = clist[i].DE;
       if (lang=="DE") categoryLANG = clist[i].DE;
       if (lang=="EN") categoryLANG = clist[i].EN;
 
@@ -188,10 +187,11 @@ function preview(edit,lang,callback) {
 
         for (var j=0;j<articles[category].length;j++) {
           var r = articles[category][j];
-          if (lang == "DE") {
+          if (edit == 'overview') {
+            htmlForCategory += r.overview()+'\n';
+          } else if  (lang == "DE") {
             htmlForCategory += r.preview(edit)+'\n';
-          }
-          if (lang == "EN") {
+          } else if (lang == "EN") {
             htmlForCategory += r.previewEN(edit)+'\n';
           }
         }

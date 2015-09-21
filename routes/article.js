@@ -54,7 +54,6 @@ function renderArticleId(req,res,next) {
       function (callback){
         if (typeof(params.edit)!='undefined') {
           if (params.edit=="false") {
-            console.log("Unlocking");
             delete params.edit;
             article.doUnlock(callback);
             return;

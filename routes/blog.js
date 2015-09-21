@@ -12,16 +12,42 @@ var articleModule = require('../model/article.js');
 router.get('/:blog_id', function(req, res, next) {
   debug('router.get /:blog_id');
   var id = req.params.blog_id;
+ 
+  var edit = 'overpass';
+  var lang = "DE";
+
+  if (req.query.style == 'preview') {
+    lang = "DE";
+    edit = true;
+  }
+  if (req.query.style == 'previewEN') {
+    lang = "EN";
+    edit = true;
+  }
+  if (req.query.style == 'overview') {
+    lang = "DE";
+    edit = 'overview';
+  }
+
   blogModule.findById(id,function(err,blog) {
     if (! blog || typeof(blog.id) == 'undefined') return next();
 
     var changes = [];
     var articles = {};
+    var main_text;
 
 
 
     async.series([
-     function (callback) {
+      function (callback) {
+        blog.preview(edit,lang,function(err,result) {
+          if (err) return callback(err);
+          main_text = result.preview;
+          articles = result.articles;
+          callback();
+        })
+      },
+      function (callback) {
         if (typeof(req.query.setStatus)!='undefined')
         {
           var changes = {status:req.query.setStatus};
@@ -36,7 +62,7 @@ router.get('/:blog_id', function(req, res, next) {
         } else return callback();
       },
  
-     function (callback) {
+ /*    function (callback) {
         articleModule.find({blog:blog.name},function(err,result){
           for (var i=0;i<result.length;i++ ) {
             var r = result[i];
@@ -47,9 +73,9 @@ router.get('/:blog_id', function(req, res, next) {
           }
           callback();
         })
-      },
+      },*/
       function (callback) {
-        logModule.find({id:id,table:"blog"},{column:"timestamp",desc :true},function(err,result) {
+        logModule.find({oid:id,table:"blog"},{column:"timestamp",desc :true},function(err,result) {
           if (err) return callback(err);
           changes = result;
 
@@ -59,6 +85,7 @@ router.get('/:blog_id', function(req, res, next) {
       function (err) {
         should.exist(res.rendervar);
         res.render('blog',{layout:res.rendervar.layout,
+                           main_text:main_text,
                            blog:blog,
                            changes:changes,
                            articles:articles,

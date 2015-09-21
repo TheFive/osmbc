@@ -28,6 +28,7 @@ function getListOfOrphanBlog(callback) {
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) {
       console.log("Connection Error")
+      console.dir(err);
 
       pgdone();
       return (callback(err));
@@ -53,7 +54,7 @@ function Article (proto)
 	this.id = 0;
   this._meta={};
   this._meta.table = "article";
-	for (k in proto) {
+	for (var k in proto) {
     this[k] = proto[k];
   }
 }
@@ -99,6 +100,23 @@ function preview(edit) {
        else return '<li>\n<mark>'+this.displayTitle()+'\n</mark></li>';
 }
 
+function overview() {
+  debug("overview");
+  var editMark = ' <a href="/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+  
+  var editLink = '';
+  if (typeof(this.markdown)=='undefined' || this.markdown == '') {
+    editLink = "Edit";
+  }
+  if (typeof(this.markdownEN)=='undefined' || this.markdownEN == '') {
+    if (editLink != '') editLink +='&'
+    editLink += "Translate";
+  }
+  if (editLink != '') editLink = '<a href="/article/'+this.id+'">'+editLink+'</a>'; 
+
+  var text = this.displayTitle(90);
+  return '<p>\n'+editMark+' '+text+' '+editLink+'\n</p>';      
+}
 
 function previewEN(edit) {
   debug("previewEN");
@@ -260,7 +278,7 @@ function findOne(obj1,obj2,callback) {
 
 function fullTextSearch(search,order,callback) {
   debug('fullTextSearch');
-  pgMap.fullTextSearch(this,search,order,callback);
+  pgMap.fullTextSearch(module.exports,search,order,callback);
 }
 
 
@@ -334,8 +352,8 @@ function dropTable(cb) {
 }
 
 function calculateUsedLinks(callback) {
-  debug('calculateusedLinks');
-
+  debug('calculateUsedLinks');
+  var self = this;
   // Get all Links in this article
   var usedLinks = this.calculateLinks();
 
@@ -353,9 +371,13 @@ function calculateUsedLinks(callback) {
       if (reference.substring(0,4) == "http") reference = reference.substring(4,999);
        
       // search in the full Module for the link
-      pgMap.find(module.exports," where (data->>'collection' like '%"+reference+"%') \
-                              or (data->>'markdown' like '%"+reference+"%')",{column:"blog",desc:true},function(err,result) {
+      fullTextSearch(reference,{column:"blog",desc:true},function(err,result) {
         if (result) {
+          for (var i=result.length-1;i>=0;i--){
+            if (result[i].id == this.id) {
+              result.splice(i,1);
+            }
+          }
           articleReferences[reference] = result;
           articleReferences.count += result.length;
         }
@@ -407,6 +429,7 @@ Article.prototype.remove = pgMap.remove;
 // edit: Boolean, that specifies, wether edit links has to be created or not
 // This function returns an HTML String of the Aricle as an list element.
 Article.prototype.preview = preview;
+Article.prototype.overview = overview;
 Article.prototype.previewEN = previewEN;
 
 // calculateUsedLinks(callback)

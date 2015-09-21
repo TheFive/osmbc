@@ -77,7 +77,7 @@ function createTable(cb) {
   debug('createTable');
   createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT changes_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
-  createView = '';
+  createView = "create index on changes((data->>'table'),(data->>'oid'));";
   pgMap.createTable('changes',createString,createView,cb)
 }
 
