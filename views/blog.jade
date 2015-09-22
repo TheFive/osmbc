@@ -24,17 +24,19 @@ block content
 
   .row     
     .col-md-12 
-      div.input-group
-        button.btn.btn-default 
-          a(href="/blog/#{blog.id}?style=overview") Overview
-        button.btn.btn-default 
-          a(href="/blog/#{blog.id}?style=preview") Full
-        button.btn.btn-default 
-          a(href="/blog/#{blog.id}?style=previewEN") Full EN
-        button.btn.btn-warning 
-          a(href="/blog/#{blog.id}/preview") View Preview 
-        button.btn.btn-warning 
-          a(href="/blog/#{blog.id}/preview?lang=EN") View Preview EN 
+      div.btn-toolbar
+        div.btn-group
+          button.btn.btn-default(onClick='javascript:window.open("/blog/#{blog.id}?style=overview","_self")')
+            | Overview
+          button.btn.btn-default(onClick='javascript:window.open("/blog/#{blog.id}?style=preview","_self")') 
+            | Full
+          button.btn.btn-default(onClick='javascript:window.open("/blog/#{blog.id}?style=previewEN","_self")')
+            | Full EN
+        div.btn-group
+          button.btn.btn-default(onClick='javascript:window.open("/blog/#{blog.id}/preview","_self")')
+            | View Preview
+          button.btn.btn-default(onClick='javascript:window.open("/blog/#{blog.id}/preview?lang=EN","_self")')
+            | View Preview EN 
   
   .row
     p
