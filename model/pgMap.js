@@ -250,9 +250,11 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
 
    
     var sqlQuery =  "select id, data from article \
-                          where id in \
-                          (select distinct id from article,json_each_text(article.data) as json_data where json_data.value ilike '%"+search+"%')"
-                        +orderBy;
+                          where (data->>'title') ilike '%"+search+"%' or " +
+                              " (data->>'collection') ilike '%"+search+"%' or " +
+                              " (data->>'markdown') ilike '%"+search+"%' or " +
+                              " (data->>'markdownEN') ilike '%"+search+"%' " +
+                        orderBy;
     var startTime = new Date().getTime();
 
     var query = client.query(sqlQuery);
