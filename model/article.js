@@ -342,7 +342,8 @@ function createTable(cb) {
                  LEFT JOIN blog ON (article.data ->> 'blog'::text) = (blog.data ->> 'name'::text) \
               WHERE blog.data IS NULL \
               ORDER BY article.data ->> 'blog'::text; \
-              create index on article((data->>'blog'));";
+              create index on article((data->>'blog')); \
+              create index on article((data->>'version'));";
   pgMap.createTable('article',createString,createView,cb)
 }
 

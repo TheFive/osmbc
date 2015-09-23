@@ -61,12 +61,16 @@ module.exports.save = function(callback) {
       }
       var sqlquery = "insert into "+table+"(data) values ($1) returning id";
       debug("Query %s",sqlquery);
+      var startTime = new Date().getTime();
       var query = client.query(sqlquery, [self]);
       query.on('row',function(row) {
         debug("Created Row ID %s",row.id);
         self.id = row.id;
       })
       query.on('end',function (result) {
+
+        var endTime = new Date().getTime();
+        console.log("SQL: ["+ (endTime - startTime)/1000 +"] insert to "+ table);
         
         pgdone();
         return callback(null,self);
@@ -83,8 +87,10 @@ module.exports.save = function(callback) {
       async.series([
         function(cb) {
           var versionsEqual = false;
+
           var query = client.query("select (data->>'version')::int as version from "+table+" where id = $1",[self.id]);
-          query.on('row',function(row) {
+            var startTime = new Date().getTime();
+            query.on('row',function(row) {
             debug('Version in Database %s',row.version)
             if (row.version==null) {
               // No Data in Database, so no conflict.
@@ -97,6 +103,8 @@ module.exports.save = function(callback) {
           })
           query.on('end',function(result){
             var err = null;
+            var endTime = new Date().getTime();
+            console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
             if (!versionsEqual) {
               debug('send error')
               err = new Error("Version Nummber differs");
@@ -245,6 +253,7 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
                           where id in \
                           (select distinct id from article,json_each_text(article.data) as json_data where json_data.value ilike '%"+search+"%')"
                         +orderBy;
+    var startTime = new Date().getTime();
 
     var query = client.query(sqlQuery);
     query.on('row',function(row) {
@@ -261,6 +270,8 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
     })
     query.on('error',function (err) {    
       pgdone();
+      var endTime = new Date().getTime();
+      console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
       callback(err);
     })
   })
@@ -285,6 +296,7 @@ module.exports.findById = function findById(id,module,callback) {
     if (id % 1 === 0) idToSearch = id;
 
 
+    var startTime = new Date().getTime();
 
     var query = client.query("select id,data from "+table+" where id = $1", [idToSearch]);
     query.on('row',function(row) {
@@ -294,9 +306,10 @@ module.exports.findById = function findById(id,module,callback) {
       }
       result.id = row.id;
     })
-    query.on('end',function (pgresult) {
-      
+    query.on('end',function (pgresult) {    
       pgdone();
+      var endTime = new Date().getTime();
+      console.log("SQL: ["+ (endTime - startTime)/1000 +"] Select by id from "+ table);
       callback(null,result);
     })
   })
@@ -323,6 +336,7 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
     var result = null;
     var sqlQuery = generateQuery(module.table,obj,order);
 
+    var startTime = new Date().getTime();
 
     var query = client.query(sqlQuery+ " limit 1");
     query.on('row',function(row) {
@@ -334,6 +348,8 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
     })
     query.on('end',function (pgresult) {
       pgdone();
+      var endTime = new Date().getTime();
+      console.log("SQL: ["+ (endTime - startTime)/1000 +"]"+ sqlQuery);
       callback(null,result);      
     })
   })
