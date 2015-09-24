@@ -250,12 +250,16 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
 
    
     var sqlQuery =  "select id, data from article \
-                          where id in \
-                          (select distinct id from article,json_each_text(article.data) as json_data where json_data.value ilike '%"+search+"%')"
-                        +orderBy;
+                          where to_tsvector('german', coalesce(data->>'title','')::text || \
+                                                      coalesce(data->>'collection','')  || \
+                                                      coalesce(data->>'markdown','')   ) @@ plainto_tsquery('german', '"+search+"') \
+                            or to_tsvector('english',  coalesce(data->>'collection','')  || \
+                                                      coalesce(data->>'markdownEN','')   ) @@ plainto_tsquery('english', '"+search+"') "+ 
+                        orderBy;
     var startTime = new Date().getTime();
 
     var query = client.query(sqlQuery);
+
     query.on('row',function(row) {
       var r = module.create();
       for (var k in row.data) {
@@ -266,12 +270,12 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
     })
     query.on('end',function (pgresult) {    
       pgdone();
+      var endTime = new Date().getTime();
+      console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
       callback(null,result);
     })
     query.on('error',function (err) {    
       pgdone();
-      var endTime = new Date().getTime();
-      console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
       callback(err);
     })
   })
