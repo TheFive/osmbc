@@ -212,7 +212,7 @@ function createTable(cb) {
   debug('createTable');
   createString = 'CREATE TABLE blog (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT blog_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
-  createView = "create index on blog((data->>'version'))";
+  createView = "CREATE INDEX blog_id_idx ON blog USING btree (id);";
   pgMap.createTable('blog',createString,createView,cb)
 }
 
