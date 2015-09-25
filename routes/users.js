@@ -102,8 +102,8 @@ function createUser(req, res, next) {
 
 router.get('/list',renderList);
 router.get('/:user_id',renderUserId);
-router.post('/:user_id', postUserId);
 router.get('/create',createUser);
+router.post('/:user_id', postUserId);
 
 module.exports.createUser = createUser;
 module.exports.postUserId = postUserId;
