@@ -121,7 +121,7 @@ function ensureAuthenticated(req, res, next) {
     return;
   }
   req.session.returnTo = req.originalUrl; 
-  res.redirect('/auth/openstreetmap')
+  res.redirect(htmlRoot+'/auth/openstreetmap')
 
 }
  
