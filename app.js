@@ -23,8 +23,10 @@ var layout   = require('./routes/layout').router;
 
 var userModule = require('./model/user.js');
 
-config.initialise();
 
+config.initialise();
+var htmlRoot = config.getValue("htmlroot");
+console.log("HTMLROOT: "+htmlRoot);
 
 // taken from: https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
 // Passport session setup.
@@ -149,7 +151,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(htmlRoot,express.static(path.join(__dirname, 'public')));
 
 
 
@@ -158,7 +160,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //   request.  The first step in OpenStreetMap authentication will involve redirecting
 //   the user to openstreetmap.org.  After authorization, OpenStreetMap will redirect the user
 //   back to this application at /auth/openstreetmap/callback
-app.get('/auth/openstreetmap',
+app.get(htmlRoot + '/auth/openstreetmap',
   //passport.authenticate('openstreetmap'),
   passport.authenticate('openstreetmap'),
   function(req, res){
@@ -171,7 +173,7 @@ app.get('/auth/openstreetmap',
 //   request.  If authentication fails, the user will be redirected back to the
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
-app.get('/auth/openstreetmap/callback', 
+app.get(htmlRoot + '/auth/openstreetmap/callback', 
   passport.authenticate('openstreetmap', { failureRedirect: '/login'  }),
   function(req, res) {
     debug('passport.authenticate Function');
@@ -179,7 +181,7 @@ app.get('/auth/openstreetmap/callback',
     //res.redirect('/');
   });
 
-app.get('/logout', function(req, res){
+app.get(htmlRoot + '/logout', function(req, res){
   debug('logoutFunction')
   req.logout();
   res.redirect('/');
@@ -188,12 +190,12 @@ app.get('/logout', function(req, res){
 
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
-app.use('/',layout);
-app.use('/', ensureAuthenticated,index);
-app.use('/users',ensureAuthenticated, users);
-app.use('/article',ensureAuthenticated, article);
-app.use('/change',ensureAuthenticated, changes);
-app.use('/blog',ensureAuthenticated, blog);
+app.use(htmlRoot + '/',layout);
+app.use(htmlRoot + '/', ensureAuthenticated,index);
+app.use(htmlRoot + '/users',ensureAuthenticated, users);
+app.use(htmlRoot + '/article',ensureAuthenticated, article);
+app.use(htmlRoot + '/change',ensureAuthenticated, changes);
+app.use(htmlRoot + '/blog',ensureAuthenticated, blog);
 
 
 // Simple route middleware to ensure user is authenticated.
@@ -222,7 +224,8 @@ if (app.get('env') === 'development') {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
-      error: err
+      error: err,
+      layout:{htmlroot:htmlRoot}
     });
   });
 }

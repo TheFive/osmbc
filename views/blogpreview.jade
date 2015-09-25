@@ -11,12 +11,12 @@ block content
       div.btn-group(role="group" class="pull-right")
         if (edit) 
           button.btn.btn-default.btn-lg
-            a(href="/blog/#{blog.id}/preview?lang=#{lang}") Edit Off
+            a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{lang}") Edit Off
         else
           button.btn.btn-default.btn-lg
-            a(href="/blog/#{blog.id}/preview?edit=true&lang=#{lang}") Edit 
+            a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?edit=true&lang=#{lang}") Edit 
         button.btn.btn-default.btn-lg
-          a(href="/blog/#{blog.id}/preview?download=true") Download
+          a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?download=true") Download
 
   row
     .col-md-12

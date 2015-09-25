@@ -14,28 +14,28 @@ block content
           span.caret   
         ul.dropdown-menu(name="category",role="menu")
           li
-            a(href="/blog/#{blog.id}?setStatus=open") open 
+            a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=open") open 
           li
-            a(href="/blog/#{blog.id}?setStatus=review") review 
+            a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=review") review 
           li
-            a(href="/blog/#{blog.id}?setStatus=published") published 
+            a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=published") published 
           li
-            a(href="/blog/#{blog.id}?setStatus=trash") trash  
+            a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=trash") trash  
 
   .row     
     .col-md-12 
       div.btn-toolbar
         div.btn-group
-          button.btn.btn-default(onClick='javascript:window.open("/blog/#{blog.id}?style=overview","_self")')
+          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")')
             | Overview
-          button.btn.btn-default(onClick='javascript:window.open("/blog/#{blog.id}?style=preview","_self")') 
+          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")') 
             | Full
-          button.btn.btn-default(onClick='javascript:window.open("/blog/#{blog.id}?style=previewEN","_self")')
+          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")')
             | Full EN
         div.btn-group
-          button.btn.btn-default(onClick='javascript:window.open("/blog/#{blog.id}/preview","_self")')
+          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview","_self")')
             | View Preview
-          button.btn.btn-default(onClick='javascript:window.open("/blog/#{blog.id}/preview?lang=EN","_self")')
+          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview?lang=EN","_self")')
             | View Preview EN 
   
   .row
@@ -64,7 +64,7 @@ block content
             each change, i in changes
               tr
                 td
-                  a(href='/change/' + change.id) #{change.user} 
+                  a(href='#{layout.htmlroot}/change/' + change.id) #{change.user} 
                 td= change.property
                 td= layout.util.shorten(change.to)
                 td= layout.moment(change.timestamp).fromNow() 
