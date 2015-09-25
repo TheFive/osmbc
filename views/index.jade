@@ -2,13 +2,24 @@ extends layout
 
 block content
   div.top
-    | Welcome to OSM BC
+    h2
+      | Welcome to OSM BC
   div.container
-  button.btn.btn-default.btn-lg
-    a(href="/article/Create") Collect
-  button.btn.btn-default.btn-lg
-    a(href="/blog/list?status=open") Open Blog
-  button.btn.btn-default.btn-lg
-    a(href="/blog/list?status=review") Review Blog
+    .row 
+      button.btn.btn-default(onClick='javascript:window.open("/article/Create","_self")')
+        | Collect
+      button.btn.btn-default(onClick='javascript:window.open("/article/list?status=open","_self")')
+        | Open Blog
+      button.btn.btn-default(onClick='javascript:window.open("/article/list?status=review","_self")')
+        | Review Blog
+    .row
+      h2
+        | Actual Open Blog
+      if (layout.listOfOpenBlog)
+        for openBlog in layout.listOfOpenBlog
+          button.btn.btn-default(onClick='javascript:window.open("/blog/#{openBlog.id}","_self")')
+            | #{openBlog.name}
+
+
 
   div.footer

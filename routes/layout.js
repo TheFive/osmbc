@@ -41,7 +41,7 @@ function prepareRenderLayout(req,res,next) {
         if (err) return callback(err);
         var list = [];
         for (var i=0;i<result.length;i++) {
-          list.push(result[i].name);
+          list.push(result[i]);
         }
         callback(err,list);
       })

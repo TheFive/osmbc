@@ -32,8 +32,8 @@ block content
             select(id="blog",name="blog").form-control
               option(value="Future") Future
               if (layout.listOfOpenBlog)  
-                for blogName in layout.listOfOpenBlog 
-                  if blogName == article.blog         
+                for blog in layout.listOfOpenBlog 
+                  if blog.name == article.blog         
                     option(value="#{blogName}" selected) #{blogName}
                   else
                      option(value="#{blogName}" ) #{blogName}

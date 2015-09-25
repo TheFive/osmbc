@@ -47,8 +47,8 @@ block content
         .col-md-5
           select(id="blog",name="blog").form-control
             if (layout.listOfOpenBlog)  
-              for blogName in layout.listOfOpenBlog         
-                option(value="#{blogName}" ) #{blogName}
+              for blog in layout.listOfOpenBlog         
+                option(value="#{blog.name}" ) #{blog.name}
             option(value="Future") Future
             option(value="Trash") Trash
         .col-md-5
