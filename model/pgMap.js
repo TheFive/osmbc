@@ -1,7 +1,7 @@
-var pg = require('pg');
+var pg     = require('pg');
 var should = require('should');
 var async  = require('async');
-var debug = require('debug')('OSMBC:model:pgMap')
+var debug  = require('debug')('OSMBC:model:pgMap')
 
 var config = require('../config.js');
 
@@ -176,6 +176,8 @@ module.exports.find = function find(module,obj,order,callback) {
     should(typeof(order)).equal('object');
   }
   should(typeof(callback)).equal('function');
+
+  debug("Connecting to DB" +config.pgstring);
 
   pg.connect(config.pgstring, function find_pgConnect(err, client, pgdone) {
     debug('find_pgConnect');
