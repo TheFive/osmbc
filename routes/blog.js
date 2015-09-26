@@ -7,6 +7,7 @@ var debug = require('debug')('OSMBC:routes:blog');
 var blogModule = require('../model/blog.js');
 var logModule = require('../model/logModule.js');
 var articleModule = require('../model/article.js');
+var config = require('../config.js');
 
 /* GET users listing. */
 router.get('/:blog_id', function(req, res, next) {
@@ -164,7 +165,7 @@ router.get('/create', function(req, res, next) {
   debug('router.get /create');
 
   blogModule.createNewBlog(function(err,blogs) {
-    res.redirect('/blog/list');
+    res.redirect(config.getValue('htmlroot')+'/blog/list?status=open');
     //res.render('bloglist',{blogs:blogs,user:req.user});
   });
 });

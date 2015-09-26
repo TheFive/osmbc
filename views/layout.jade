@@ -9,7 +9,7 @@ html(lang='en')
     link(rel='icon', href='#{pathToAssets}/docs/favicon.ico')
     title OSMBC
     // Bootstrap core CSS
-    link(href='/bootstrap/css/bootstrap.min.css', rel='stylesheet')
+    link(href='#{layout.htmlroot}/bootstrap/css/bootstrap.min.css', rel='stylesheet')
     // HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries
     //if lt IE 9
       script(src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js')
@@ -19,11 +19,11 @@ html(lang='en')
     .navbar.navbar-default.navbar-fixed-top(role='navigation')
       .container
         .navbar-header.pull-left
-          a.navbar-brand(href='/osmbc') OSMBC 
+          a.navbar-brand(href='#{layout.htmlroot}/osmbc.html') OSMBC 
         .navbar-header
           ul.nav.navbar-nav.pull-left
             li
-              a(href='/article/create') Collect
+              a(href='#{layout.htmlroot}/article/create') Collect
           button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')
             span.sr-only Toggle navigation
             span.icon-bar
@@ -37,22 +37,22 @@ html(lang='en')
                 span.caret
               ul.dropdown-menu(role='menu')
                 li
-                  a(href='/article/search') Search
+                  a(href='#{layout.htmlroot}/article/searchandcreate?search=') Search
                 li.dropdown-header Special Search
                 li
-                  a(href='/article/list?markdown=') No Text
+                  a(href='#{layout.htmlroot}/article/list?markdown=') No Text
                 li
-                  a(href='/article/list?markdownEN=') No Translation
+                  a(href='#{layout.htmlroot}/article/list?markdownEN=') No Translation
                 li
-                  a(href='/article/list') All
+                  a(href='#{layout.htmlroot}/article/list') All
                 li.divider
                 li.dropdown-header Orphaned Article
                 if (layout.listOfOrphanBlog) 
                   for blog in layout.listOfOrphanBlog
                     li
-                      a(href="/article/list?blog=#{blog}") #{blog}
+                      a(href="#{layout.htmlroot}/article/list?blog=#{blog}") #{blog}
                 li
-                  a(href='/article/list?blog=') No Blog
+                  a(href='#{layout.htmlroot}/article/list?blog=') No Blog
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | WN 
@@ -60,17 +60,17 @@ html(lang='en')
               ul.dropdown-menu(role='menu')
                 li.dropdown-header List
                 li
-                  a(href="/blog/list?status=open") open
+                  a(href="#{layout.htmlroot}/blog/list?status=open") open
                 li
-                  a(href="/blog/list?status=review") review
+                  a(href="#{layout.htmlroot}/blog/list?status=review") review
                 li 
-                  a(href="/blog/list?status=trash") trash
+                  a(href="#{layout.htmlroot}/blog/list?status=trash") trash
                 li 
-                  a(href="/blog/list?status=published") published
+                  a(href="#{layout.htmlroot}/blog/list?status=published") published
                 li.divider
                 li.dropdown-header Action
                 li
-                  a(href="/blog/create") Create Blog
+                  a(href="#{layout.htmlroot}/blog/create") Create Blog
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | User 
@@ -78,11 +78,11 @@ html(lang='en')
               ul.dropdown-menu(role='menu')
                 li.dropdown-header List
                 li
-                  a(href="/users/create") Create
+                  a(href="#{layout.htmlroot}/usert/create") Create
                 li
-                  a(href="/users/list?access=full") List Active      
+                  a(href="#{layout.htmlroot}/usert/list?access=full") List Active      
                 li
-                  a(href="/users/list?access=denied") List Denied      
+                  a(href="#{layout.htmlroot}/usert/list?access=denied") List Denied      
 
           ul.nav.navbar-nav.navbar-right            
              if layout.user
@@ -105,15 +105,15 @@ html(lang='en')
     // Bootstrap core JavaScript
     // ==================================================
     // Placed at the end of the document so the pages load faster
-    link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet', href='#{layout.htmlroot}/bootstrap/css/bootstrap.min.css')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
-    script(src='/bootstrap/js/bootstrap.min.js')
+    script(src='#{layout.htmlroot}/bootstrap/js/bootstrap.min.js')
 
 doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='#{layout.htmlroot}/stylesheets/style.css')
   body
     
 

@@ -1,7 +1,7 @@
 var express  = require('express');
 var async    = require('async');
 var router   = express.Router();
-var should  = require('should');
+var should   = require('should');
 var markdown = require('markdown').markdown;
 var debug    = require('debug')('OSMBC:routes:article');
 
@@ -15,20 +15,19 @@ var logModule     = require('../model/logModule.js');
 function renderArticleId(req,res,next) {
   debug('renderArticleId');
 
-
   // Get the ID and the article to display
   var id = req.params.article_id;
   articleModule.findById(id,function(err,article) {
 
-  // if the ID does not exist, go ahead in routing process
+    // if the ID does not exist, send an error
     if (!article || typeof(article.id) == 'undefined') return next(new Error("Article does not exist"));
 
     // Variables for rendering purposes
 
-    // Used for display changes
+    // Used for display changes (logModule)
     var changes = [];
 
-    // Params is used for indicating Edit
+    // Params is used for indicating EditMode
     var params = {};
     params.edit = req.query.edit;
 
@@ -36,20 +35,23 @@ function renderArticleId(req,res,next) {
     var usedLinks = article.calculateLinks();
 
     async.auto({
-      
+      // Find usage of Links in other articles
       articleReferences:article.calculateUsedLinks.bind(article),
+      // Find the assoziated blog for this article
       blog:
       function findBlog(callback) {
         blogModule.findOne({name:article.blog},function(err,result){
           callback(err,result);
         })
       },
+      // Find all log messages for the article
       changes:
       function (callback) {
         logModule.find({oid:id,table:"article"},{column:"timestamp",desc :true},function(err,result) {
           callback(err,result);
         })
       },
+      // (informal) locking information for the article
       edit:
       function (callback){
         if (typeof(params.edit)!='undefined') {
@@ -66,6 +68,7 @@ function renderArticleId(req,res,next) {
       }},
         function (err,result) {
 
+          // calculate all previews for markdown code
           if (typeof(article.markdown)!='undefined') {
             article.textHtml = article.preview();
           } 
@@ -75,10 +78,13 @@ function renderArticleId(req,res,next) {
           if (typeof(article.comment)!='undefined') {
             article.commentHtml = markdown.toHTML(article.comment)
           } 
+          // 
           if (req.query.edit && ! params.edit) {
             res.redirect("/article/"+id);    
           } else {
-      
+            // Render the article with all calculated vars
+            // (res.rendervar.layout is set by the express routing
+            // mechanism before this router)
             res.render('article',{layout:res.rendervar.layout,
                                   article:article,
                                   params:params,

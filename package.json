@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start_old": "NODE_ENV=development node ./bin/www",
-    "start": "./start.sh",
+    "start": "NODE_ENV=development node ./bin/www",
     "test": "NODE_ENV=test ./test$TRAVIS.sh"
   },
   "dependencies": {

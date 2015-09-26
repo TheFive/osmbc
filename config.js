@@ -1,6 +1,6 @@
 
 
-module.exports.pgstring = "psql://TheFive:thefive@localhost:5432/osmbc";
+module.exports.pgstring = "UNDEFINED";
 
 
 
@@ -8,6 +8,7 @@ var path    = require('path');
 var fs      = require('fs');
 var debug   = require('debug')('configuration');
 var env = process.env.NODE_ENV || 'development';
+
 var pg = require('pg');
 
 
@@ -17,8 +18,6 @@ var pg = require('pg');
 // the configurationfile should be in the "running" directory
 var configurationFile = path.resolve(__dirname, 'config.'+env+'.json');
 var configuration;
-
-
 var configurationInitialised = false;
 
 
@@ -63,7 +62,6 @@ exports.initialise = function(callback) {
   exports.pgstring = getPostgresDBString();
 	if (callback) callback();
 }
-
 
 
 

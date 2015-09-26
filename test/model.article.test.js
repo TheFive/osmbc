@@ -521,10 +521,12 @@ describe('model/article', function() {
         should.not.exist(err);
         article.calculateUsedLinks(function(err,result){
           should.not.exist(err);
+          console.dir(result);
+          console.dir(article);
           should.exist(result);
-          should(result.count).equal(4);
-          should(result["://link.to/hallo"].length).equal(3);
-          should(result["://www.google.de"].length).equal(1);
+          should(result.count).equal(2);
+          should(result["https://link.to/hallo"].length).equal(1);
+          should(result["http://www.google.de"].length).equal(1);
 
           bddone();
 

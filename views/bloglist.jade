@@ -25,7 +25,7 @@ block content
           each blog, i in blogs
             tr
               td
-                a(href='/blog/' + blog.id) #{blog.name} 
+                a(href='#{layout.htmlroot}/blog/' + blog.id) #{blog.name} 
               td= blog.status
           
 

@@ -10,6 +10,7 @@
   },
   "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
   "OPENSTREETMAP_CONSUMER_KEY" : "######",
-  "OPENSTREETMAP_CONSUMER_SECRET" : "#####"
+  "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
+  "htmlroot":""
 
 }

@@ -1,7 +1,7 @@
-var pg = require('pg');
+var pg     = require('pg');
 var should = require('should');
 var async  = require('async');
-var debug = require('debug')('OSMBC:model:pgMap')
+var debug  = require('debug')('OSMBC:model:pgMap')
 
 var config = require('../config.js');
 
@@ -27,13 +27,14 @@ function generateQuery(table,obj,order) {
   var orderby = " order by id";
   if (order) {
     should.exist(order.column);
-    if (order) {
-      orderby = " order by data->>'"+order.column+"'";
-      if (order.desc) {
-        orderby += " desc";
-      }
-      orderby += " , id ";
-    }    
+    if (order.column != "id") orderby = " order by data->>'"+order.column+"'";
+    if (order.desc) {
+      orderby += " desc";
+    }
+    orderby += " , id ";
+    if (order.limit) {
+      orderby += " LIMIT "+order.limit;
+    }
   }
   var query = "select id,data from "+table+whereClause+orderby;
   debug(query);
@@ -175,6 +176,8 @@ module.exports.find = function find(module,obj,order,callback) {
     should(typeof(order)).equal('object');
   }
   should(typeof(callback)).equal('function');
+
+  debug("Connecting to DB" +config.pgstring);
 
   pg.connect(config.pgstring, function find_pgConnect(err, client, pgdone) {
     debug('find_pgConnect');

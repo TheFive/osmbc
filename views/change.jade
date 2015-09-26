@@ -27,6 +27,11 @@ block content
         td= change.table
       tr
         th 
+         | oid
+        td
+          a(href='#{layout.htmlroot}/#{change.table}/' + change.oid) #{change.oid} 
+      tr
+        th 
          | Property
         td= change.property
       tr
