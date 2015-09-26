@@ -15,18 +15,18 @@ block content
           button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/article/list?status=review","_self")')
             | Review Blog
         .row
-          h2
+          h3
             | Blogs to work on
         .row
           .col-md-1
-            h3
+            h4
               | Open
             if (layout.listOfOpenBlog)
               for openBlog in layout.listOfOpenBlog
                 button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.id}","_self")')
                   | #{openBlog.name}
           .col-md-1
-            h3
+            h4
               | Review
             if (layout.listOfReviewBlog)
               for openBlog in layout.listOfReviewBlog
@@ -34,14 +34,14 @@ block content
                   | #{openBlog.name}
     .col-md-8
       if changes
-        h2
+        h4
           | Last Changes
         div
-          table.table.table-striped.condensed
+          table.table.table-striped.table-condensed
             thead
               tr 
                 th
-                 | id
+                 | 
                 th
                  | user
                 th
@@ -56,7 +56,8 @@ block content
               each change, i in changes
                 tr
                   td
-                    a(href='#{layout.htmlroot}/changes/' + change.id) #{change.id} 
+                    a(href='#{layout.htmlroot}/changes/' + change.id) 
+                      span.glyphicon.glyphicon-info-sign
                   td= change.user
                   td= change.table
                   td= change.property
