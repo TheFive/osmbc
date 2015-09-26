@@ -377,8 +377,8 @@ function calculateUsedLinks(callback) {
       var reference = item;
 
       // shorten HTTP / HTTPS links by the leading HTTP(s)
-      if (reference.substring(0,5) == "https") reference = reference.substring(5,999);
-      if (reference.substring(0,4) == "http") reference = reference.substring(4,999);
+      //if (reference.substring(0,5) == "https") reference = reference.substring(5,999);
+      //if (reference.substring(0,4) == "http") reference = reference.substring(4,999);
        
       // search in the full Module for the link
       fullTextSearch(reference,{column:"blog",desc:true},function(err,result) {

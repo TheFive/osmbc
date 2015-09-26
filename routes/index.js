@@ -14,7 +14,6 @@ function renderHome(req,res,next) {
   logModule.find({},{column:"id",desc :true,limit:20},function(err,result) {
     if (err) return next(err);
   
-
     res.render('index', { title: 'OSMBC' , 
                           layout:res.rendervar.layout,
                           changes:result});  
