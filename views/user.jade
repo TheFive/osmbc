@@ -25,7 +25,7 @@ block content
 
           
     if (params && params.edit) 
-      form(name="input", action="/users/#{usershown.id}", method="post")
+      form(name="input", action="#{layout.htmlroot}/users/#{usershown.id}", method="post")
         .row
           .col-md-1
             | OSM Name 

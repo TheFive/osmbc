@@ -26,7 +26,7 @@ block content
           each article in articles
             tr
               td
-                a(href='/article/' + article.id) #{(article.displayTitle())}
+                a(href='#{layout.htmlroot}/article/' + article.id) #{(article.displayTitle())}
               td= article.blog
               td= article.category
               td= layout.util.shorten(article.collection) 

@@ -7,10 +7,10 @@ block content
   
   div
     p
-      form(name="search", action="/article/searchandcreate", method="get")
+      form(name="search", action="#{layout.htmlroot}/article/searchandcreate", method="get")
         .row
           .col-md-2
-            
+            | 
           .col-md-6
             textarea.form-control(name="search",rows=1) #{search}
 
@@ -40,7 +40,7 @@ block content
   div 
     h2 
       | Create Article 
-    form(name="input", action="/article/create", method="post")
+    form(name="input", action="#{layout.htmlroot}/article/create", method="post")
       .row
         .col-md-1
           | Blog <br>

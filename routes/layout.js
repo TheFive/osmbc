@@ -6,11 +6,13 @@ var should  = require('should');
 var debug    = require('debug')('OSMBC:routes:layout');
 
 var util          = require('../util.js');
+var config        = require('../config.js');
 
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
 
+var htmlRoot = config.getValue("htmlroot");
 
 function prepareRenderLayout(req,res,next) {
   debug('prepareRenderLayout');
@@ -52,6 +54,7 @@ function prepareRenderLayout(req,res,next) {
       if (!(res.rendervar) || typeof(res.rendervar)=='undefined') res.rendervar = {};
       res.rendervar.layout = {user:req.user,
                       listOfOrphanBlog:result.listOfOrphanBlog,
+                      htmlroot: htmlRoot,
                       listOfOpenBlog:result.listOfOpenBlog,
                       categories:blogModule.categories,
                       moment:moment,

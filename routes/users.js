@@ -8,6 +8,7 @@ var util = require('../util.js');
 var moment = require('moment');
 var articleModule = require('../model/article.js');
 var logModule = require('../model/logModule.js');
+var config = require('../config.js');
 
 
 function renderList(req,res,next) {
@@ -87,7 +88,7 @@ function postUserId(req, res, next) {
       if (err) {
         return next(err);
       }
-      res.redirect("/users/"+id);    
+      res.redirect(config.getValue('htmlroot')+"/users/"+id);    
     })
   });
 }
@@ -96,7 +97,7 @@ function createUser(req, res, next) {
   debug('createUser');
   var proto = {};
   userModule.createNewUser(proto,function(err,user) {
-    res.redirect('/users/'+user.id+"?edit=true");
+    res.redirect(config.getValue('htmlroot')+'/users/'+user.id+"?edit=true");
   });
 };
 
