@@ -197,9 +197,9 @@ app.get(htmlRoot + '/logout', function(req, res){
 // dynamic contend in layout.jade
 app.use(htmlRoot + '/',layout);
 app.use(htmlRoot + '/', ensureAuthenticated,index);
-app.use(htmlRoot + '/users',ensureAuthenticated, users);
+app.use(htmlRoot + '/usert',ensureAuthenticated, users);
 app.use(htmlRoot + '/article',ensureAuthenticated, article);
-app.use(htmlRoot + '/change',ensureAuthenticated, changes);
+app.use(htmlRoot + '/changes',ensureAuthenticated, changes);
 app.use(htmlRoot + '/blog',ensureAuthenticated, blog);
 
 

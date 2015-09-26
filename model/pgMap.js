@@ -27,13 +27,14 @@ function generateQuery(table,obj,order) {
   var orderby = " order by id";
   if (order) {
     should.exist(order.column);
-    if (order) {
-      orderby = " order by data->>'"+order.column+"'";
-      if (order.desc) {
-        orderby += " desc";
-      }
-      orderby += " , id ";
-    }    
+    if (order.column != "id") orderby = " order by data->>'"+order.column+"'";
+    if (order.desc) {
+      orderby += " desc";
+    }
+    orderby += " , id ";
+    if (order.limit) {
+      orderby += " LIMIT "+order.limit;
+    }
   }
   var query = "select id,data from "+table+whereClause+orderby;
   debug(query);

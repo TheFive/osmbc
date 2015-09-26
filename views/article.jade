@@ -200,7 +200,7 @@ block content
                         td
                           a(href='#{link}') #{link}
                         td
-                          a(href='/article/'+articleItem.id) #{articleItem.displayTitle()}
+                          a(href='#{layout.htmrroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
                         td= articleItem.blog
                     if (index == 8) 
                       tr
@@ -236,7 +236,7 @@ block content
               each change, i in changes
                 tr
                   td
-                    a(href='/change/' + change.id) #{change.id} 
+                    a(href='#{layout.htmlroot}/changes/' + change.id) #{change.id} 
                   td= change.user
                   td= change.property
                   td= layout.util.shorten(change.from)

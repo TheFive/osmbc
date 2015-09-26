@@ -21,7 +21,7 @@ block content
           each user in users
             tr
               td
-                a(href='/users/#{user.id}') #{user.OSMUser}
+                a(href='#{layout.htmlroot}/usert/#{user.id}') #{user.OSMUser}
               td= user.access
               if (user.lastAccess)
                 td= layout.moment(user.lastAccess).fromNow()

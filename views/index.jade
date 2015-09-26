@@ -1,24 +1,72 @@
 extends layout
 
 block content
-  div.top
-    h2
-      | Welcome to OSM BC
-  div.container
-    .row 
-      button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/article/Create","_self")')
-        | Collect
-      button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/article/list?status=open","_self")')
-        | Open Blog
-      button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/article/list?status=review","_self")')
-        | Review Blog
-    .row
-      h2
-        | Actual Open Blog
-      if (layout.listOfOpenBlog)
-        for openBlog in layout.listOfOpenBlog
-          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.id}","_self")')
-            | #{openBlog.name}
+  .row
+    .col-md-4
+      div.top
+        h2
+          | Welcome to OSM BC
+      div.container
+        .row 
+          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/article/Create","_self")')
+            | Collect
+          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/article/list?status=open","_self")')
+            | Open Blog
+          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/article/list?status=review","_self")')
+            | Review Blog
+        .row
+          h2
+            | Blogs to work on
+        .row
+          .col-md-1
+            h3
+              | Open
+            if (layout.listOfOpenBlog)
+              for openBlog in layout.listOfOpenBlog
+                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.id}","_self")')
+                  | #{openBlog.name}
+          .col-md-1
+            h3
+              | Review
+            if (layout.listOfReviewBlog)
+              for openBlog in layout.listOfReviewBlog
+                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.id}","_self")')
+                  | #{openBlog.name}
+    .col-md-8
+      if changes
+        h2
+          | Last Changes
+        div
+          table.table.table-striped.condensed
+            thead
+              tr 
+                th
+                 | id
+                th
+                 | user
+                th
+                 | table
+                th
+                 | what
+                th
+                 |  to
+                th
+                 | when
+             tbody
+              each change, i in changes
+                tr
+                  td
+                    a(href='#{layout.htmlroot}/changes/' + change.id) #{change.id} 
+                  td= change.user
+                  td= change.table
+                  td= change.property
+                  td= layout.util.shorten(change.to)
+                  td= layout.moment(change.timestamp).fromNow() 
+ 
+                
+
+
+
 
 
 

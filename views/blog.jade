@@ -64,7 +64,7 @@ block content
             each change, i in changes
               tr
                 td
-                  a(href='#{layout.htmlroot}/change/' + change.id) #{change.user} 
+                  a(href='#{layout.htmlroot}/changes/' + change.id) #{change.user} 
                 td= change.property
                 td= layout.util.shorten(change.to)
                 td= layout.moment(change.timestamp).fromNow() 

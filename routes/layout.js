@@ -25,6 +25,7 @@ function prepareRenderLayout(req,res,next) {
   // ListOfOrphanBlog is used to show all orphanedBlog to assign an article to
   var listOfOrphanBlog;
   var listOfOpenBlog;
+  var listOfReviewBlog;
   // Used for display changes
 
   // Params is used for indicating Edit
@@ -47,6 +48,17 @@ function prepareRenderLayout(req,res,next) {
         }
         callback(err,list);
       })
+    },
+    listOfReviewBlog:
+    function (callback) {
+      blogModule.find({status:"review"},function(err,result) {
+        if (err) return callback(err);
+        var list = [];
+        for (var i=0;i<result.length;i++) {
+          list.push(result[i]);
+        }
+        callback(err,list);
+      })
     }},
   
     function (err,result) {
@@ -56,6 +68,7 @@ function prepareRenderLayout(req,res,next) {
                       listOfOrphanBlog:result.listOfOrphanBlog,
                       htmlroot: htmlRoot,
                       listOfOpenBlog:result.listOfOpenBlog,
+                      listOfReviewBlog:result.listOfReviewBlog,
                       categories:blogModule.categories,
                       moment:moment,
                       util:util,
