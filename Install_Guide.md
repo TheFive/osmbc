@@ -39,6 +39,7 @@ Please copy config.test.json to config.development.json and put the needed value
           (OAUTH Key, generate it from your user properties in OSM)
     "OPENSTREETMAP_CONSUMER_SECRET" : "#####"
            (OAUTH Secret, generate it from your user properties in OSM)
+    "htmlroot":"" (Root for HTML Path to use handle multiple instances on one server, e.g. MYSERVER/htmlroot/osmbc.html)
 
 
 c) To use a config.prod.json please change the package.json.  

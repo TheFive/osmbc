@@ -1,32 +1,37 @@
-var express      = require('express');
 var path         = require('path');
+
+var express      = require('express');
 var favicon      = require('serve-favicon');
 var logger       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
+
 var passport     = require('passport');
-var session = require('express-session');
-var FileStore = require('session-file-store')(session);
-var debug = require('debug')('OSMBC:app');
- 
-var  OpenStreetMapStrategy = require('passport-openstreetmap').Strategy;
-//var Strategy = require('passport-http').BasicStrategy;
+var OpenStreetMapStrategy 
+                 = require('passport-openstreetmap').Strategy;
 
-var config   = require('./config.js');
+var session      = require('express-session');
+var FileStore    = require('session-file-store')(session);
 
-var index    = require('./routes/index').router;
-var users    = require('./routes/users').router;
-var article  = require('./routes/article').router;
-var changes  = require('./routes/changes').router;
-var blog     = require('./routes/blog');
-var layout   = require('./routes/layout').router;
+
+var debug        = require('debug')('OSMBC:app');
+
+var config     = require('./config.js');
+
+var index      = require('./routes/index').router;
+var users      = require('./routes/users').router;
+var article    = require('./routes/article').router;
+var changes    = require('./routes/changes').router;
+var blog       = require('./routes/blog');
+var layout     = require('./routes/layout').router;
 
 var userModule = require('./model/user.js');
 
 
+// Initialise config Module
 config.initialise();
 var htmlRoot = config.getValue("htmlroot");
-console.log("HTMLROOT: "+htmlRoot);
+console.log("Express Routes set to: SERVER"+htmlRoot);
 
 // taken from: https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
 // Passport session setup.
