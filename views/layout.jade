@@ -58,6 +58,19 @@ html(lang='en')
                 | WN 
                 span.caret
               ul.dropdown-menu(role='menu')
+                if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
+                  li.dropdown-header open
+                  for o  in layout.listOfOpenBlog
+                    li
+                      a(href="#{layout.htmlroot}/blog/#{o.id}") #{o.name}
+                if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
+                  li.dropdown-header review
+                  for review in layout.listOfReviewBlog
+                    li
+                      a(href="#{layout.htmlroot}/blog/#{review.id}") #{review.name}
+
+
+
                 li.dropdown-header List
                 li
                   a(href="#{layout.htmlroot}/blog/list?status=open") open

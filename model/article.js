@@ -80,7 +80,7 @@ function createNewArticle (proto,callback) {
 function preview(edit) {
   debug("preview");
   var editLink;
-  if (edit) editLink = ' <a href="/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+  if (edit) editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   if (typeof(this.markdown)!='undefined' && this.markdown!='') {
     var md = this.markdown;
 
@@ -91,9 +91,15 @@ function preview(edit) {
 
     // clean up <p> and </p> of markdown generation.
     html = html.substring(3,html.length-4)
-
-    if (edit) return '<p>\n'+editLink+' '+html+'\n</p>';
-         else return '<li>\n'+html+'\n</li>';
+     console.log(this.category + edit);
+    if (edit) {
+        return '<p>\n'+editLink+' '+html+'\n</p>'
+      } else {
+        console.log(this.category);
+        // if not edit mode and article has not to be published, return nothing.
+        if (this.category == "--unpublished--") return '';
+        return '<li>\n'+html+'\n</li>'
+      }
   } 
   // Markdown is not defined. Return a placholder for the article
   if (edit) return '<p>\n<mark>'+editLink+' '+this.displayTitle()+'\n</mark></p>';
@@ -102,7 +108,7 @@ function preview(edit) {
 
 function overview() {
   debug("overview");
-  var editMark = ' <a href="/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+  var editMark = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   
   var editLink = '';
   if (typeof(this.markdown)=='undefined' || this.markdown == '') {
@@ -112,7 +118,7 @@ function overview() {
     if (editLink != '') editLink +='&'
     editLink += "Translate";
   }
-  if (editLink != '') editLink = '<a href="/article/'+this.id+'">'+editLink+'</a>'; 
+  if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'">'+editLink+'</a>'; 
 
   var text = this.displayTitle(90);
   return '<p>\n'+editMark+' '+text+' '+editLink+'\n</p>';      
@@ -120,8 +126,9 @@ function overview() {
 
 function previewEN(edit) {
   debug("previewEN");
+
   var editLink = '';
-  if (edit) editLink = ' <a href="/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+  if (edit) editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   if (typeof(this.markdownEN)!='undefined' && this.markdownEN!='') {
     var md = this.markdownEN;
 
@@ -140,8 +147,13 @@ function previewEN(edit) {
       // clean up <p> and </p> of markdown generation.
       html = html.substring(3,html.length-4)
 
-      if (edit) return '<p>\n'+editLink+' '+html+'\n</p>';
-           else return '<li>\n'+html+'\n</li>';
+      if (edit) {
+        return '<p>\n'+editLink+' '+html+'\n</p>'
+      } else {
+        // if not edit mode and article has not to be published, return nothing.
+        if (this.category == "--unpublished--") return '';
+        return '<li>\n'+html+'\n</li>'
+      }
     }
 
   } 
