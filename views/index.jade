@@ -3,29 +3,24 @@ extends layout
 block content
   .row
     .col-md-4
-      div.top
         h2
           | Welcome to OSM BC
-      div.container
         .row 
-          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/article/Create","_self")')
-            | Collect
-          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/article/list?status=open","_self")')
-            | Open Blog
-          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/article/list?status=review","_self")')
-            | Review Blog
+          p
+            | See actual blogs to work on below. If you just want to collect an article or an idea, use the collect menu on in the navbar.
+            | Please to not forget to search for your Idea entering.
         .row
           h3
             | Blogs to work on
         .row
-          .col-md-1
+          .col-md-4
             h4
               | Open
             if (layout.listOfOpenBlog)
               for openBlog in layout.listOfOpenBlog
                 button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.id}","_self")')
                   | #{openBlog.name}
-          .col-md-1
+          .col-md-4
             h4
               | Review
             if (layout.listOfReviewBlog)
