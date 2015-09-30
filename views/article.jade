@@ -34,9 +34,9 @@ block content
               if (layout.listOfOpenBlog)  
                 for blog in layout.listOfOpenBlog 
                   if blog.name == article.blog         
-                    option(value="#{blogName}" selected) #{blogName}
+                    option(value="#{blog.name}" selected) #{blog.name}
                   else
-                     option(value="#{blogName}" ) #{blogName}
+                     option(value="#{blog.name}" ) #{blog.name}
               option(value="Trash") Trash
           .col-md-5
             .hidden
