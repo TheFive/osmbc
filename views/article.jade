@@ -52,7 +52,7 @@ block content
             | Category <br>
           .col-md-5
             select(id="category",name="category").form-control
-              if (blog.categories)
+              if (blog && blog.categories)
                 for category in blog.categories
                   if (category.DE == article.category)
                     option(value="#{category.DE}" selected ) #{category.DE} / #{category.EN}
