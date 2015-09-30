@@ -6,6 +6,7 @@ var markdown = require('markdown').markdown;
 var debug    = require('debug')('OSMBC:routes:article');
 
 var util          = require('../util.js');
+var config        = require('../config.js');
 
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
@@ -80,7 +81,7 @@ function renderArticleId(req,res,next) {
           } 
           // 
           if (req.query.edit && ! params.edit) {
-            res.redirect("/article/"+id);    
+            res.redirect(config.getValue('htmlroot')+"/article/"+id);    
           } else {
             // Render the article with all calculated vars
             // (res.rendervar.layout is set by the express routing
@@ -161,7 +162,7 @@ function postArticle(req, res, next) {
             next(err);
             return;
           }
-        res.redirect("/article/"+article.id);    
+        res.redirect(config.getValue('htmlroot')+"/article/"+article.id);    
       })
     }
 

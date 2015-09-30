@@ -34,7 +34,8 @@ module.exports.categories = [
   {DE:"Programmierung",EN:"Programming"},
   {DE:"Kennst Du schon …",EN:"Did you know …"},
   {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
-  {DE:"Wochenvorschau" ,EN:"Not Translated"}];
+  {DE:"Wochenvorschau" ,EN:"Not Translated"},
+  {DE:"--unpublished--" ,EN:"--unpublished--"}];
 
 
 function Blog(proto)
@@ -174,10 +175,12 @@ function preview(edit,lang,callback) {
     for (var i=0;i<clist.length;i++) {
       var category = clist[i].DE;
 
+
       var categoryLANG = clist[i].DE;
       if (lang=="DE") categoryLANG = clist[i].DE;
       if (lang=="EN") categoryLANG = clist[i].EN;
 
+      if (!edit && category =="--unpublished--") continue;
 
    
       // If the category exists, generate HTML for it
