@@ -215,10 +215,10 @@ function postBlogId(req, res, next) {
 
 router.get ('/edit/:blog_id',editBlogId);
 router.post('/edit/:blog_id',postBlogId);
-router.get('/:blog_id', renderBlogId);
-router.get('/list', renderBlogList);
-router.get('/:blog_id/preview', renderBlogPreview);
 router.get('/create', createBlog);
+router.get('/list', renderBlogList);
+router.get('/:blog_id', renderBlogId);
+router.get('/:blog_id/preview', renderBlogPreview);
 //router.post('/edit/:blog_id',postBlogId);
 
 module.exports = router;
