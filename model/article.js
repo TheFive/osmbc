@@ -222,19 +222,28 @@ function setAndSave(user,data,callback) {
     return callback(error);
   }
   // Set Category for the EN Field
-  for (var i=0;i<blogModule.categories.length;i++) {
-    if (data.category == blogModule.categories[i].DE) {
-      data.categoryEN = blogModule.categories[i].EN;
-      break;
-    }
-  }
+
 
   async.series([
     function checkID(cb) {
       if (self.id == 0) {
         self.save(cb);
       } else cb();
+    },
+    function setCategoryEn(cb) {
+      blogModule.findOne({name:self.blog},function(err,blog){
+        var categories= blogModule.categories;
+        if (blog && blog.categories) categories = blog.categories;
+        for (var i=0;i<categories.length;i++) {
+          if (data.category == categories[i].DE) {
+            data.categoryEN = categories[i].EN;
+            break;
+          }
+        } 
+        cb();           
+      })
     }
+
   ],function(err){
     should(self.id).exist;
     should(self.id).not.equal(0);
