@@ -167,7 +167,7 @@ function preview(edit,lang,callback) {
       articles[r.category].push(r);
     }
 
-    var clist = self.categories;
+    var clist = self.getCategories();
     
     
 
@@ -210,6 +210,13 @@ function preview(edit,lang,callback) {
   })
 }
 
+function getCategories() {
+  debug('getCategories');
+
+  // Funktion is used for prototype @ Blog and for Blog Module
+  if (this.categories) return this.categories;
+  return module.exports.categories;
+}
 
 function createTable(cb) {
   debug('createTable');
@@ -247,6 +254,14 @@ Blog.prototype.save = pgMap.save;
 
 // delete the object from the database
 Blog.prototype.remove = pgMap.remove;
+
+// Get Categories of the blog
+// This can be the global defined, or the one from the blog itself
+// Additional there can be some Categories for Edit Reasons
+Blog.prototype.getCategories = getCategories;
+
+// Define it on BlogModule level to (for no Blog Specified)
+module.exports.getCategories = getCategories;
 
 // Creation Functions
 

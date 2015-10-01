@@ -27,6 +27,7 @@ function renderArticleId(req,res,next) {
 
     // Used for display changes (logModule)
     var changes = [];
+    var categories = blogModule.getCategories();
 
     // Params is used for indicating EditMode
     var params = {};
@@ -41,8 +42,9 @@ function renderArticleId(req,res,next) {
       // Find the assoziated blog for this article
       blog:
       function findBlog(callback) {
-        blogModule.findOne({name:article.blog},function(err,result){
-          callback(err,result);
+        blogModule.findOne({name:article.blog},function(err,blog){
+          if (blog) categories = blog.getCategories();
+          callback(err,blog);
         })
       },
       // Find all log messages for the article
@@ -93,7 +95,7 @@ function renderArticleId(req,res,next) {
                                   changes:result.changes,
                                   articleReferences:result.articleReferences,
                                   usedLinks:result.usedLinks,
-                                  categories:blogModule.categories});
+                                  categories:categories});
          }
         }
       );

@@ -64,9 +64,8 @@ block content
           | Category <br>
         .col-md-5
           select(id="category",name="category").form-control
-            if (layout.categories)
-              for category in layout.categories
-                option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
+            for category in categories
+              option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
         .col-md-5
           h2
             | 

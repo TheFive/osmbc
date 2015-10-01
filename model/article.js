@@ -232,8 +232,9 @@ function setAndSave(user,data,callback) {
     },
     function setCategoryEn(cb) {
       blogModule.findOne({name:self.blog},function(err,blog){
-        var categories= blogModule.categories;
-        if (blog && blog.categories) categories = blog.categories;
+
+        var categories= blogModule.getCategories();
+        if (blog) categories = blog.getCategories();
         for (var i=0;i<categories.length;i++) {
           if (data.category == categories[i].DE) {
             data.categoryEN = categories[i].EN;

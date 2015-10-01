@@ -69,7 +69,6 @@ function prepareRenderLayout(req,res,next) {
                       htmlroot: htmlRoot,
                       listOfOpenBlog:result.listOfOpenBlog,
                       listOfReviewBlog:result.listOfReviewBlog,
-                      categories:blogModule.categories,
                       moment:moment,
                       util:util,
                     }

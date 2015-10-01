@@ -52,18 +52,11 @@ block content
             | Category <br>
           .col-md-5
             select(id="category",name="category").form-control
-              if (blog && blog.categories)
-                for category in blog.categories
-                  if (category.DE == article.category)
-                    option(value="#{category.DE}" selected ) #{category.DE} / #{category.EN}
-                  else
-                    option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
-              else
-                for category in layout.categories
-                  if (category.DE == article.category)
-                    option(value="#{category.DE}" selected ) #{category.DE} / #{category.EN}
-                  else
-                    option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
+              for category in categories
+                if (category.DE == article.category)
+                  option(value="#{category.DE}" selected ) #{category.DE} / #{category.EN}
+                else
+                  option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
           .col-md-5
             h2
               | #{article.categoryEN}

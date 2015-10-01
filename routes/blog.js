@@ -91,7 +91,7 @@ function renderBlogId(req, res, next) {
                            blog:blog,
                            changes:changes,
                            articles:articles,
-                           categories:blogModule.categories});
+                           categories:blog.getCategories()});
       }
     )
   });
@@ -155,7 +155,7 @@ function renderBlogPreview(req, res, next) {
                              preview:result.converter.preview,
                              edit:edit,
                              lang:lang,
-                             categories:blogModule.categories});
+                             categories:blog.getCategories()});
         }
       }
     )
@@ -184,7 +184,7 @@ function editBlogId(req,res,next) {
     res.render('editblog',{layout:res.rendervar.layout,
                        blog:blog,
                        params:params,
-                       categories:blogModule.categories});
+                       categories:blog.getCategories()});
      
   }); 
 }
