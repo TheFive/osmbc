@@ -1,16 +1,17 @@
-var express = require('express');
-var async   = require('async');
-var should = require('should');
-var router = express.Router();
+var express  = require('express');
+var async    = require('async');
+var should   = require('should');
+var router   = express.Router();
+var debug    = require('debug')('OSMBC:routes:blog');
+var config   = require('../config.js');
 
-var debug = require('debug')('OSMBC:routes:blog');
-var blogModule = require('../model/blog.js');
-var logModule = require('../model/logModule.js');
+
+var blogModule    = require('../model/blog.js');
+var logModule     = require('../model/logModule.js');
 var articleModule = require('../model/article.js');
-var config = require('../config.js');
 
 /* GET users listing. */
-router.get('/:blog_id', function(req, res, next) {
+function renderBlogId(req, res, next) {
   debug('router.get /:blog_id');
   var id = req.params.blog_id;
  
@@ -31,7 +32,7 @@ router.get('/:blog_id', function(req, res, next) {
   }
 
   blogModule.findById(id,function(err,blog) {
-    if (! blog || typeof(blog.id) == 'undefined') return next();
+    if (! blog || typeof(blog.id) == 'undefined') return next(new Error("Blog not Found"));
 
     var changes = [];
     var articles = {};
@@ -90,14 +91,14 @@ router.get('/:blog_id', function(req, res, next) {
                            blog:blog,
                            changes:changes,
                            articles:articles,
-                           categories:blogModule.categories});
+                           categories:blog.getCategories()});
       }
     )
   });
-});
+}
  
 
- router.get('/list', function(req, res, next) {
+function renderBlogList(req, res, next) {
   debug('router.get /list');
   var status = req.query.status;
   var query = {};
@@ -117,14 +118,13 @@ router.get('/:blog_id', function(req, res, next) {
           res.render('bloglist',{layout:res.rendervar.layout,
                                 blogs:result.blogs});
         });
+};
 
-});
-
-router.get('/:blog_id/preview', function(req, res, next) {
+function renderBlogPreview(req, res, next) {
   debug('router.get //:blog_id/preview');
   var id = req.params.blog_id;
   blogModule.findById(id,function(err,blog) {
-    if (typeof(blog.id) == 'undefined') return next();
+    if (typeof(blog.id) == 'undefined') return next(new Error("Blog Not Found"));
 
     var edit = req.query.edit;
     var lang = req.query.lang;
@@ -155,20 +155,71 @@ router.get('/:blog_id/preview', function(req, res, next) {
                              preview:result.converter.preview,
                              edit:edit,
                              lang:lang,
-                             categories:blogModule.categories});
+                             categories:blog.getCategories()});
         }
       }
     )
-  });});
+  });
+}
 
-router.get('/create', function(req, res, next) {
+function createBlog(req, res, next) {
   debug('router.get /create');
 
   blogModule.createNewBlog(function(err,blogs) {
     res.redirect(config.getValue('htmlroot')+'/blog/list?status=open');
     //res.render('bloglist',{blogs:blogs,user:req.user});
   });
-});
+};
+
+function editBlogId(req,res,next) {
+  debug('editBlogId');
+  var id = req.params.blog_id;
+  var params = {};
+  if (req.query.edit) params.edit = req.query.edit;
+
+ 
+  blogModule.findById(id,function(err,blog) {
+    if (! blog || typeof(blog.id) == 'undefined') return next(new Error("Blog Not Found"));
+    should.exist(res.rendervar);
+    res.render('editblog',{layout:res.rendervar.layout,
+                       blog:blog,
+                       params:params,
+                       categories:blog.getCategories()});
+     
+  }); 
+}
+
+function postBlogId(req, res, next) {
+  debug('postBlogId');
+  var id = req.params.blog_id;
+  blogModule.findById(id,function(err,blog) {
+    if (typeof(blog.id) == 'undefined') return next(new Error('Blog Not Found'));
+    var categories;
+    try {
+      categories = JSON.parse(req.body.categories);      
+    } catch (err) {
+      return next(err);
+    }
+    var changes = {name:req.body.name,
+                   categories:categories};
+
+    blog.setAndSave(req.user.displayName,changes,function(err) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect(config.getValue('htmlroot')+"/blog/edit/"+id);    
+    })
+  });
+}
+
+
+router.get ('/edit/:blog_id',editBlogId);
+router.post('/edit/:blog_id',postBlogId);
+router.get('/:blog_id', renderBlogId);
+router.get('/list', renderBlogList);
+router.get('/:blog_id/preview', renderBlogPreview);
+router.get('/create', createBlog);
+//router.post('/edit/:blog_id',postBlogId);
 
 module.exports = router;
 

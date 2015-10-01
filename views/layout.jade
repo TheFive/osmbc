@@ -31,6 +31,12 @@ html(lang='en')
             span.icon-bar
         .navbar-collapse.collapse
           ul.nav.navbar-nav.navbar-left
+            if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
+              li
+                a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].id}') #{layout.listOfOpenBlog[0].name}
+            if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
+              li
+                a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].id}') #{layout.listOfReviewBlog[0].name}
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | Article 

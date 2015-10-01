@@ -1,0 +1,72 @@
+extends layout
+
+
+
+
+block content
+
+
+  p
+    if blog.lock
+      .alert.alert-dismissable.alert-info
+        button.close( type="button", data-dismiss="alert" ) ×
+        | #{blog.lock.user} edits since #{layout.moment(blog.lock.timestamp).fromNow()} Version #{blog.version}
+    if info
+      if info.message
+        if info.status == 'error'
+          .alert.alert-dismissable.alert-danger
+            button.close( type="button", data-dismiss="alert" ) ×
+            | #{info.message}
+        if info.status == 'message'
+          .alert.alert-dismissable.alert-success
+            button.close( type="button", data-dismiss="alert" ) ×
+            | #{info.message}
+  
+
+          
+    if (params && params.edit) 
+      form(name="input", action="#{layout.htmlroot}/blog/edit/#{blog.id}", method="post")
+        .row
+          .col-md-1
+            | Name 
+          .col-md-6
+            textarea.form-control(name="name",rows=1) #{blog.name}
+
+        .row
+          .col-md-1
+            | Categories 
+          .col-md-6
+            textarea.form-control(name="categories",rows=30) #{JSON.stringify(blog.categories,null,5)}
+
+          .col-md-1
+            input(type="submit", class="btn btn-primary",value="OK")
+            a(href="#{layout.htmlroot}/blog/edit/#{blog.id}?edit=false" class="btn btn-default" role="button") Cancel
+
+
+    else
+     .row
+        .col-md-1
+          | Name
+        .col-md-3
+          h2
+            | #{blog.name}
+        .col-md-7
+        .col-md-1
+          a(href="#{layout.htmlroot}/blog/edit/#{blog.id}?edit=true" class="btn btn-primary" role="button") Edit
+      .row
+        .col-md-1
+
+          | Categories
+        .col-md-5
+          :verbatim
+            <pre>
+            !{JSON.stringify(blog.categories,null,5)}
+            </pre>
+
+
+ 
+
+
+
+
+
