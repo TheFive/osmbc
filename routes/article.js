@@ -201,7 +201,8 @@ function createArticle(req, res, next) {
     function finalFunction(err) {
       debug('createArticle->finalFunction');
         should.exist(res.rendervar);
-        res.render("collect",{layout:res.rendervar.layout});
+        res.render("collect",{layout:res.rendervar.layout,
+                              categories:blogModule.getCategories()});
     }
   );
 }
