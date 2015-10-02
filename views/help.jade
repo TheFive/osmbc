@@ -1,21 +1,80 @@
-:markdown
-  # OSMBC Instructions
+extends layout
 
-  ## Principles
+block content
+  :markdown
+    # OSMBC Instructions
 
-  OSMBC is article based. Every single article in a blog is one object.
+    ## Principles
 
-  The article has the following properties:
-  * title 
-    Used internally for display purposes only
-  * collection
-    Free text (english / german) to describe the idea, or the collect the html link
-  * markdown
-    german markdown text
-  * markdownEN
-    english markdown text (no process for weekly defined yet)
-  * blog
-    Reference to the blog number
-  * category 
-    Reference to the category in the blog
-    (categories can be redefined per blog)
+    OSMBC is article based. Every single article in a blog is one object.
+
+    The article has the following properties:
+
+    * **title** 
+      Used internally for display purposes only
+
+    * **collection**
+      Free text (english / german) to describe the idea, or the collect the html link
+
+    * **markdown**
+      german markdown text
+
+    * **markdownEN**
+      english markdown text (no process for weekly defined yet)
+
+    * **blog**
+      Reference to the blog number
+
+    * **category** 
+      Reference to the category in the blog
+      (categories can be redefined per blog)
+
+    ## Typical Use Cases
+    ### Login
+
+    OSMBC uses your OAUTH to login with your OpenStreetMap account. The OAUTH token is one year valid.
+
+    ### Collecting Information
+
+    Use the Collect Item from the Navbar to enter basic information for an arcticle. 
+    Here you can edit the title, the collection, blog reference and category of an article.
+    To save, press OK, than the edit view of the article is started.
+    Please use the find function before entering a link or information, to see wether
+    it is allready collected.
+
+    ### Writing articles
+
+    If you just want to write the articles, you have 2 possibilities. Under the Item **Article -> empty Text** you find all articles, that has no markdown text yet.
+    Similar the **no translation** can be used, to find any article without translation. Only open and review articles are shown.
+
+    Alternativ you can open the blog (via main page, navbar or blog menu in navbar).
+    This view offers 3 versions.
+    
+    * **Overview** Display a short text for each article (abrebaved markdown, title or collection)
+
+    * **Full** Display the full text in german
+
+    * **Full EN ** Display the full text in english
+
+    ### Exporting WN / blog
+
+    Go to the Blog to export (via the blog navbar item, or the home page). The **view preview** and the **view previewEN** lead to the export page.
+
+    ### Blog Status
+
+    A blog can be open, review, published and trash. Only open and review blogs are available for edit.
+
+    Additional on the blog page there is an editor for the blog name, and the categories of the blog.
+    This editor will be improved in future. If you rename a blog, the article become orphan and can be found with the article nav bar item.
+
+    ### User Management
+
+    Every OSMBC User can add users and change properties of every user. To allow an OSM User access to OSM,
+    he need full access and the OSM Username must be exactly used in OSMBC.
+
+    
+
+
+
+
+
