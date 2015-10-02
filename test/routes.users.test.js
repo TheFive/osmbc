@@ -41,7 +41,7 @@ describe('router/user',function() {
           should.not.exist(err);
           should(next.called).be.false();
           should(res.redirect.called).be.true();
-          should(res.redirect.firstCall.calledWith("/users/"+user_id+"?edit=true")).be.true();
+          should(res.redirect.firstCall.calledWith("/usert/"+user_id+"?edit=true")).be.true();
           bddone();            
         }
       )
@@ -86,7 +86,7 @@ describe('router/user',function() {
           should(newUser.access).equal("full");
           should(next.called).be.false();
           should(res.redirect.called).be.true();
-          should(res.redirect.firstCall.calledWith("/users/"+user_id)).be.true();
+          should(res.redirect.firstCall.calledWith("/usert/"+user_id)).be.true();
           bddone();            
         }
       )
