@@ -104,7 +104,8 @@ passport.use(new OpenStreetMapStrategy({
 function ensureAuthenticated(req, res, next) {
   debug("ensureAuthenticated");
 
-  if (req.isAuthenticated()) {  
+  if (req.isAuthenticated()) { 
+    console.dir(req.user); 
     // check User
     userModule.find({OSMUser:req.user.displayName},function(err,result){
       if (err) return next(err);
@@ -120,7 +121,8 @@ function ensureAuthenticated(req, res, next) {
           return next();
         }
       }
-      var err = new Error('Access Forbidden')
+
+      var err = new Error('OSM User >'+req.user.displayName+'< has no access rights');
       return next(err);
     })
     return;
@@ -140,7 +142,11 @@ app.set('view engine', 'jade');
 
 
 // take from https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
-app.use(session({ store: new FileStore(),secret: 'LvwnH}uHhDLxvAu3X6' ,resave:true,saveUninitialized:true,cookie:{_expires : 1000*60*60*24*20}}));
+app.use(session({ store: new FileStore(),
+                  secret: 'LvwnH}uHhDLxvAu3X6' ,
+                  resave:true,
+                  saveUninitialized:true,
+                  cookie:{_expires : 1000*60*60*24*365}}));
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
 app.use(passport.initialize());
