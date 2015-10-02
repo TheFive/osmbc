@@ -75,14 +75,12 @@ block content
         .row
           .col-md-1
             | Markdown 
+          .col-md-5 
+            | DE  
+            textarea.form-control(id="markdown" name = "markdown" rows=7) #{article.markdown}
           .col-md-5  
-            textarea.form-control(
-              name="markdown"
-              rows=7) #{article.markdown}
-          .col-md-5  
-            textarea.form-control(
-              name="markdownEN"
-              rows=7) #{article.markdownEN}
+            | EN
+            textarea.form-control(id="markdownEN" name = "markdownEN" rows=7) #{article.markdownEN}
             | 'german only' to specify no translation wanted.
           
         .row
@@ -90,12 +88,12 @@ block content
             | Preview
           .col-md-5
             .panel.panel-default
-              .panel-body 
+              .panel-body(id="preview")
                 :verbatim
                   !{article.textHtml}
           .col-md-5
             .panel.panel-default
-              .panel-body 
+              .panel-body(id="previewEN")
                 :verbatim
                   !{article.textHtmlEN}
         .row
@@ -141,23 +139,25 @@ block content
         .col-md-1
             | Markdown<br>
         .col-md-5  
-              .panel.panel-default
-                .panel-body #{article.markdown}
-        .col-md-5 
-              .panel.panel-default
-                .panel-body #{article.markdownEN}    
+            | DE
+            .panel.panel-default
+              .panel-body #{article.markdown}
+        .col-md-5
+            | EN 
+            .panel.panel-default
+              .panel-body #{article.markdownEN}    
       .row
         .col-md-1
           | Preview
 
         .col-md-5 
           .panel.panel-default
-            .panel-body 
+            .panel-body(id="preview")
               :verbatim
                 !{article.textHtml}
         .col-md-5 
           .panel.panel-default
-            .panel-body 
+            .panel-body(id="previewEN")
               :verbatim
                 !{article.textHtmlEN}
         
@@ -236,7 +236,43 @@ block content
                   td= layout.util.shorten(change.to)
                   td= layout.moment(change.timestamp).fromNow() 
  
-                
+block scripts                
+  script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
+
+  script.
+    markdown = document.getElementById("markdown");
+    markdown.onchange = onchange;
+    markdown.onkeyup = onchange;
+    markdownEN = document.getElementById("markdownEN");
+    markdownEN.onchange = onchangeEN;
+    markdownEN.onkeyup = onchangeEN;
+   
+    function convert(text) {
+      converter = new showdown.Converter();
+      if (text.substring(0,2)!="* ") text = "* "+text;
+      
+      return converter.makeHtml(text);
+
+    }
+
+    
+    function onchange() {
+      var md = document.getElementById("markdown").value;
+      preview = document.getElementById("preview");
+      
+      preview.innerHTML = convert(md);
+      b.doLayout();
+      b.refresh();
+      }
+    function onchangeEN() {
+      var mdEN = document.getElementById("markdownEN").value;
+      previewEN = document.getElementById("previewEN");
+      
+      previewEN.innerHTML = convert(mdEN);
+      b.doLayout();
+      b.refresh();
+      }
+
 
 
 
