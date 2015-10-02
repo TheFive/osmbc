@@ -20,8 +20,16 @@ function renderHome(req,res,next) {
   })
 }
 
+function renderReleaseNotes(req,res,next) {
+  debug('renderReleaseNotes');
+  var level = req.query.level;
+  should.exist(res.rendervar.layout);
+  res.render('release_notes',{level:level});  
+}
+
 router.get('/', renderHome);
 router.get('/osmbc.html', renderHome);
+router.get('/release_notes.html', renderReleaseNotes);
 
 
 
