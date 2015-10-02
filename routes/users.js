@@ -88,7 +88,7 @@ function postUserId(req, res, next) {
       if (err) {
         return next(err);
       }
-      res.redirect(config.getValue('htmlroot')+"/users/"+id);    
+      res.redirect(config.getValue('htmlroot')+"/usert/"+id);    
     })
   });
 }
@@ -97,7 +97,7 @@ function createUser(req, res, next) {
   debug('createUser');
   var proto = {};
   userModule.createNewUser(proto,function(err,user) {
-    res.redirect(config.getValue('htmlroot')+'/users/'+user.id+"?edit=true");
+    res.redirect(config.getValue('htmlroot')+'/usert/'+user.id+"?edit=true");
   });
 };
 
