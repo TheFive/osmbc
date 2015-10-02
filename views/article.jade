@@ -75,10 +75,12 @@ block content
         .row
           .col-md-1
             | Markdown 
+          .col-md-5 
+            | DE  
+            textarea.form-control(id="markdown" name = "markdown" rows=7) #{article.markdown}
           .col-md-5  
-            textarea.form-control(id="markdown" rows=7) #{article.markdown}
-          .col-md-5  
-            textarea.form-control(id="markdownEN" rows=7) #{article.markdownEN}
+            | EN
+            textarea.form-control(id="markdownEN" name = "markdownEN" rows=7) #{article.markdownEN}
             | 'german only' to specify no translation wanted.
           
         .row
@@ -137,11 +139,13 @@ block content
         .col-md-1
             | Markdown<br>
         .col-md-5  
-              .panel.panel-default
-                .panel-body #{article.markdown}
-        .col-md-5 
-              .panel.panel-default
-                .panel-body #{article.markdownEN}    
+            | DE
+            .panel.panel-default
+              .panel-body #{article.markdown}
+        .col-md-5
+            | EN 
+            .panel.panel-default
+              .panel-body #{article.markdownEN}    
       .row
         .col-md-1
           | Preview
