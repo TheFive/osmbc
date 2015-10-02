@@ -111,6 +111,7 @@ function searchAndCreate(req,res,next) {
     should.exist(res.rendervar);
     res.render("collect",{layout:res.rendervar.layout,
                            search:search,
+                           categories:blogModule.getCategories(),
                            foundArticles:result});
   })
 }
