@@ -26,10 +26,16 @@ function renderReleaseNotes(req,res,next) {
   should.exist(res.rendervar.layout);
   res.render('release_notes',{level:level});  
 }
+function renderHelp(req,res,next) {
+  debug('help');
+  should.exist(res.rendervar.layout);
+  res.render('help',{});  
+}
 
 router.get('/', renderHome);
 router.get('/osmbc.html', renderHome);
 router.get('/release_notes.html', renderReleaseNotes);
+router.get('/help.html', renderHelp);
 
 
 

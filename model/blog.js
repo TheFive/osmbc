@@ -198,7 +198,7 @@ function preview(edit,lang,callback) {
             htmlForCategory += r.previewEN(edit)+'\n';
           }
         }
-        var header = '<h2 id="'+categoryLANG.toLowerCase()+'">'+categoryLANG+'</h2>\n';
+        var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLANG.toLowerCase()+'">'+categoryLANG+'</h2>\n';
         htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
         preview += htmlForCategory;
       }
