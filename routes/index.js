@@ -24,12 +24,13 @@ function renderReleaseNotes(req,res,next) {
   debug('renderReleaseNotes');
   var level = req.query.level;
   should.exist(res.rendervar.layout);
-  res.render('release_notes',{level:level});  
+  res.render('release_notes',{level:level,
+                              layout:res.rendervar.layout});  
 }
 function renderHelp(req,res,next) {
   debug('help');
   should.exist(res.rendervar.layout);
-  res.render('help',{});  
+  res.render('help',{layout:res.rendervar.layout});  
 }
 
 router.get('/', renderHome);

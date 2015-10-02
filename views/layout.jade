@@ -103,7 +103,9 @@ html(lang='en')
                 li
                   a(href="#{layout.htmlroot}/usert/list?access=denied") List Denied      
 
-          ul.nav.navbar-nav.navbar-right            
+          ul.nav.navbar-nav.navbar-right   
+             li
+               a(href="#{layout.htmlroot}/help.html") Help      
              if layout.user
                 li 
                   a(href='http://www.openstreetmap.org/user/#{layout.user.displayName}') #{layout.user.displayName}
