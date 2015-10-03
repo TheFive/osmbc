@@ -167,7 +167,7 @@ block content
           | Comment <br>
         .col-md-10 
             .panel.panel-default
-              .panel-body 
+              .panel-body
                 :verbatim
                   !{article.commentHtml}
     .row
@@ -261,16 +261,26 @@ block scripts
       preview = document.getElementById("preview");
       
       preview.innerHTML = convert(md);
-      b.doLayout();
-      b.refresh();
+      var longLink = md.search(/\[[^\]]{30,}\]/g);
+      if (longLink>=0) {
+        preview.style.backgroundColor="#FDC6CD";
+        }
+      else {
+         preview.style.backgroundColor="";
+        }
       }
     function onchangeEN() {
       var mdEN = document.getElementById("markdownEN").value;
       previewEN = document.getElementById("previewEN");
       
       previewEN.innerHTML = convert(mdEN);
-      b.doLayout();
-      b.refresh();
+      var longLink = mdEN.search(/\[[^\]]{30,}\]/g);
+      if (longLink>=0) {
+        previewEN.style.backgroundColor="#FDC6CD";
+        }
+      else {
+         previewEN.style.backgroundColor="";
+        }
       }
 
 
