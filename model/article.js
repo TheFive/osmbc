@@ -91,11 +91,9 @@ function preview(edit) {
 
     // clean up <p> and </p> of markdown generation.
     html = html.substring(3,html.length-4)
-     console.log(this.category + edit);
     if (edit) {
         return '<p>\n'+editLink+' '+html+'\n</p>'
       } else {
-        console.log(this.category);
         // if not edit mode and article has not to be published, return nothing.
         if (this.category == "--unpublished--") return '';
         return '<li>\n'+html+'\n</li>'
