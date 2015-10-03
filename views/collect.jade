@@ -7,15 +7,15 @@ block content
   
   div
     p
-      form(name="search", action="#{layout.htmlroot}/article/searchandcreate", method="get")
-        .row
-          .col-md-2
+      form.form-horizontal(name="search", action="#{layout.htmlroot}/article/searchandcreate", method="get")
+        .form-group
+          .col-sm-2
             | 
-          .col-md-6
-            textarea.form-control(name="search",rows=1) #{search}
+          .col-sm-6
+            input(type="text",class="form-control",name ="search",value="#{search}") 
 
-          .col-md-2
-            input(type="submit", class="btn btn-primary",value="Search")
+          .col-sm-2
+            button.btn.btn-large.btn-primary(type="submit") Search
 
   .row
     if (foundArticles) 
