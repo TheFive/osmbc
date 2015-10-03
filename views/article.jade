@@ -82,7 +82,20 @@ block content
             | EN
             textarea.form-control(id="markdownEN" name = "markdownEN" rows=7) #{article.markdownEN}
             | 'german only' to specify no translation wanted.
-          
+          .col-md-1
+
+            
+
+            img(id="Japanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/02/jp.svg", class="img-responsive" ,width = 40, onclick="javascript:myclick(this.id)")
+            img(id="Französisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
+            img(id="Spanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
+            img(id="Brasilianisches Portugiesisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg", class="img-responsive", width = 40 ,onclick="javascript:myclick(this.id)")
+            img(id="Tschechisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
+            img(id="Russisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
+            img(id="Niederländisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
+
+
+
         .row
           .col-md-1
             | Preview
@@ -238,7 +251,7 @@ block content
  
 block scripts                
   script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
-
+  script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
   script.
     markdown = document.getElementById("markdown");
     markdown.onchange = onchange;
@@ -261,7 +274,6 @@ block scripts
       return text;
 
     }
-
     
     function onchange() {
       var md = document.getElementById("markdown").value;
@@ -289,6 +301,16 @@ block scripts
          previewEN.style.backgroundColor="";
         }
       }
+
+      var myclick = function (id) {
+        image = document.getElementById(id);
+        src = image.src;
+        src = "![("+id+")]("+src+")";
+        clip(src);
+        alert(id+ " flag is copied to clipboard");
+        
+
+               }
 
 
 
