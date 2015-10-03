@@ -95,9 +95,43 @@ function setAndSave(user,data,callback) {
       self.save(callback);
     })
   })
-
-
 } 
+function setReviewComment(user,data,callback) {
+  debug("reviewComment");
+  var self = this;
+  async.series([
+    function checkID(cb) {
+      if (self.id == 0) {
+        self.save(cb);
+      } else cb();
+    }
+  ],function(err){
+    should.exist(self.id);
+    should(self.id).not.equal(0);
+    if (typeof(data)=='undefined') return callback();
+    if (typeof(self.reviewComment) == "undefined" || self.reviewComment == null) {
+      self.reviewComment = [];
+    }
+    for (var i=0;i<self.reviewComment.length;i++) {
+      if (self.reviewComment[i].user == user && self.reviewComment[i].text == data) return callback();
+    }
+    async.series ( [
+        function(callback) {
+           logModule.log({oid:self.id,user:user,table:"blog",property:"comment",from:"Add",to:data},callback);
+        },
+        function(callback) {
+          var date = new Date();
+          console.log(self.reviewComment);
+          self.reviewComment.push({user:user,text:data,timestamp:date});
+          callback();
+        }
+      ],function(err){
+        if (err) return callback(err);
+        self.save(callback);
+      })
+  })
+} 
+
 
 function find(obj1,obj2,callback) {
   debug("find");
@@ -247,6 +281,8 @@ Blog.prototype.preview = preview;
 // This is may be relevant for concurrent save 
 // as there is no locking with version numbers yet.
 Blog.prototype.setAndSave = setAndSave;
+
+Blog.prototype.setReviewComment = setReviewComment;
 
 // save
 // just store the object in the database
