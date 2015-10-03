@@ -35,6 +35,7 @@ function renderHelp(req,res,next) {
 
 router.get('/', renderHome);
 router.get('/osmbc.html', renderHome);
+router.get('/osmbc', renderHome);
 router.get('/release_notes.html', renderReleaseNotes);
 router.get('/help.html', renderHelp);
 
