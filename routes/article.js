@@ -21,7 +21,7 @@ function renderArticleId(req,res,next) {
   articleModule.findById(id,function(err,article) {
 
     // if the ID does not exist, send an error
-    if (!article || typeof(article.id) == 'undefined') return next(new Error("Article does not exist"));
+    if (!article || typeof(article.id) == 'undefined') return next(new Error("Article "+id+" does not exist"));
 
     // Variables for rendering purposes
 
