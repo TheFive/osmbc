@@ -5,6 +5,7 @@ var htmlparser = require("htmlparser2");
 
 var articleModule = require('../model/article.js');
 var blogModule = require('../model/blog.js');
+var config=require('../config.js')
 
 var async = require('async');
 
@@ -228,7 +229,15 @@ var parser = new htmlparser.Parser({
   }
 
 
-async.timesLimit(268,1,function (n,next){
+config.initialise();
+
+importBlog(268,function(){console.log("Ready.")});
+importBlog(269,function(){console.log("Ready.")});
+importBlog(270,function(){console.log("Ready.")});
+importBlog(271,function(){console.log("Ready.")});
+/*
+async.timesLimit(1,1,function (n,next){
+  console.log("Start Import for "+n);
   importBlog(n,next);
 
-})
+})*/
