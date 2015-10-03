@@ -5,38 +5,63 @@ extends layout
 
 block content
   .row
-    .col-md-4
-       h1= blog.name
-    .col-md-8
-      div.btn-group
-        button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-          | #{blog.status}
-          span.caret   
-        ul.dropdown-menu(name="category",role="menu")
-          li
-            a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=open") open 
-          li
-            a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=review") review 
-          li
-            a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=published") published 
-          li
-            a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=trash") trash  
+    .col-md-6
+      .row
+        .col-md-9
+           h1= blog.name
+        .col-md-3
+          div.btn-group
+            button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
+              | #{blog.status}
+              span.caret   
+            ul.dropdown-menu(name="category",role="menu")
+              li
+                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=open") open 
+              li
+                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=review") review 
+              li
+                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=published") published 
+              li
+                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=trash") trash  
+       .row     
+        .col-md-12 
+          div.btn-toolbar
+            div.btn-group
+              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")')
+                | Overview
+              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")') 
+                | Full
+              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")')
+                | Full EN
+            div.btn-group
+              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview","_self")')
+                | View Preview
+              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview?lang=EN","_self")')
+                | View Preview EN 
+    .col-md-6
+      if (blog.status == "review")
+        .row
+         .col-md-12
+               form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.id}", method="get")
+                .form-group
+                  .col-sm-10
+                    input(type="text",class="form-control",name ="reviewComment") 
 
-  .row     
-    .col-md-12 
-      div.btn-toolbar
-        div.btn-group
-          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")')
-            | Overview
-          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")') 
-            | Full
-          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")')
-            | Full EN
-        div.btn-group
-          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview","_self")')
-            | View Preview
-          button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview?lang=EN","_self")')
-            | View Preview EN 
+                  .col-sm-2
+                    button.btn.btn-large.btn-primary(type="submit") Review
+
+      if (blog.status == "review" || blog.status == "published")
+        .row
+          if (blog.reviewComment && blog.reviewComment.length>0)
+            h3
+              | Freigabe
+            table.table.table-condensed
+              tbody
+              each comment in blog.reviewComment
+                tr
+                  td=comment.user
+                  td=comment.text
+                  td=layout.moment(comment.timestamp).fromNow()
   
   .row
     p

@@ -63,6 +63,19 @@ function renderBlogId(req, res, next) {
           })
         } else return callback();
       },
+      function (callback) {
+        if (typeof(req.query.reviewComment)!='undefined')
+        {
+          blog.setReviewComment(req.user.displayName,req.query.reviewComment,function(err) {
+            if (err) {
+              console.dir(err);
+              info.message = JSON.stringify(err);
+              info.status = 'error';
+            }
+            return callback();
+          })
+        } else return callback();
+      },
  
  /*    function (callback) {
         articleModule.find({blog:blog.name},function(err,result){
@@ -97,6 +110,7 @@ function renderBlogId(req, res, next) {
   });
 }
  
+
 
 function renderBlogList(req, res, next) {
   debug('router.get /list');
