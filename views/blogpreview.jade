@@ -9,12 +9,8 @@ block content
       h1= "Preview "+blog.name
     .col-md-4
       div.btn-group(role="group" class="pull-right")
-        if (edit) 
-          button.btn.btn-default.btn-lg
-            a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{lang}") Edit Off
-        else
-          button.btn.btn-default.btn-lg
-            a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?edit=true&lang=#{lang}") Edit 
+        button.btn.btn-default.btn-lg
+          a(href="#{layout.htmlroot}/blog/#{blog.id}/?edit=true&lang=#{lang}") Edit 
         button.btn.btn-default.btn-lg
           a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?download=true&lang=#{lang}") Download
 
