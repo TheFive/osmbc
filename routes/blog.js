@@ -4,6 +4,7 @@ var should   = require('should');
 var router   = express.Router();
 var debug    = require('debug')('OSMBC:routes:blog');
 var config   = require('../config.js');
+var moment   = require('moment');
 
 
 var blogModule    = require('../model/blog.js');
@@ -159,6 +160,11 @@ function renderBlogPreview(req, res, next) {
       },
       function(err,result) {
         if (req.query.download=="true") {
+          var content = result.converter.preview;
+          
+          res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".html");
+          res.setHeader('Content-type', "text/html");
+
           res.end(result.converter.preview,"UTF8");
           return;
         } else {
@@ -215,6 +221,8 @@ function postBlogId(req, res, next) {
       return next(err);
     }
     var changes = {name:req.body.name,
+                   startDate:req.body.startDate,
+                   endDate:req.body.endDate,
                    categories:categories};
 
     blog.setAndSave(req.user.displayName,changes,function(err) {
@@ -233,6 +241,7 @@ router.get('/create', createBlog);
 router.get('/list', renderBlogList);
 router.get('/:blog_id', renderBlogId);
 router.get('/:blog_id/preview', renderBlogPreview);
+router.get('/:blog_id/preview_:blogname_:downloadtime', renderBlogPreview);
 //router.post('/edit/:blog_id',postBlogId);
 
 module.exports = router;
