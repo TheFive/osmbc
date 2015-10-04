@@ -5,6 +5,7 @@ var async    = require('async');
 var config   = require('../config.js');
 var markdown = require('markdown').markdown;
 var should   = require('should');
+var moment   = require('moment');
 
 var articleModule = require('../model/article.js');
 var logModule = require('../model/logModule.js');
@@ -157,18 +158,28 @@ function createNewBlog(proto,callback) {
 
   this.findOne(null,{column:"name",desc:true},function(err,result) {
     var name = "WN250";
+    var endDate = new Date();
     if (result) {
       if (result.name.substring(0,2)=="WN") {
         name = result.name;
+        if (result.endDate && typeof(result.endDate)!='undefined') {
+          endDate = new Date(result.endDate);
+        }
       }
     }
     debug("Maximaler Name %s",name);
     var wnId = name.substring(2,99);
     var newWnId = parseInt(wnId) +1;
     var newName = "WN"+newWnId;
+    var startDate = new Date(endDate);
+    
+    startDate.setDate(startDate.getDate()+1);
+    endDate.setDate(endDate.getDate()+7);
     var blog = create();
     blog.name = newName;
     blog.status = "open";
+    blog.startDate = startDate;
+    blog.endDate = endDate;
     //copy flat prototype to object.
     for (var k in proto) {
       blog[k]=proto[k];
@@ -191,7 +202,16 @@ function preview(edit,lang,callback) {
   articleModule.find({blog:this.name},{column:"title"},function(err,result){
     
     
-
+    // first put the Header
+    if (lang=='DE')
+      preview = '<h2>Wochennotiz '+self.name+'</h2>\n'
+    if (lang=='EN')
+      preview = '<h2> Weekly'+self.name+'</h2>\n'
+    if (self.startDate && self.endDate) {
+      preview += "<p>"+moment(self.startDate).locale(lang).format('l') +" - "+moment(self.endDate).locale(lang).format('l') +'</p>\n';
+    }
+    preview += "<!--         place picture here              -->\n"
+  
     // Put every article in an array for the category
     for (var i=0;i<result.length;i++ ) {
       var r = result[i];

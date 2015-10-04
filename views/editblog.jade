@@ -30,7 +30,14 @@ block content
           .col-md-1
             | Name 
           .col-md-6
-            textarea.form-control(name="name",rows=1) #{blog.name}
+            input(type="text",class="form-control",name ="name",value="#{blog.name}") 
+        .row
+          .col-md-1
+            | Period 
+          .col-md-3
+            input(type="text",class="form-control",name ="startDate",value="#{blog.startDate}") 
+          .col-md-3
+            input(type="text",class="form-control",name ="endDate",value="#{blog.endDate}") 
 
         .row
           .col-md-1
@@ -44,15 +51,23 @@ block content
 
 
     else
-     .row
+      .row
         .col-md-1
-          | Name
+          p
+            | Name
         .col-md-3
           h2
             | #{blog.name}
         .col-md-7
         .col-md-1
           a(href="#{layout.htmlroot}/blog/edit/#{blog.id}?edit=true" class="btn btn-primary" role="button") Edit
+      .row
+        .col-md-1
+          | Period 
+        .col-md-3
+          | #{blog.startDate}
+        .col-md-3
+          | #{blog.endDate}
       .row
         .col-md-1
 

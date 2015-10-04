@@ -26,6 +26,9 @@ describe('model/blog', function() {
   }) 
 
   describe('createNewBlog',function() {
+    beforeEach(function (bddone) {
+      testutil.clearDB(bddone);
+    }) 
     it('should createNewArticle with prototype',function(bddone) {
       var newBlog = blogModule.createNewBlog({name:"test",status:"open"},function (err,result){
         should.not.exist(err);
@@ -34,6 +37,14 @@ describe('model/blog', function() {
           should.not.exist(err);
           should(result.name).equal('test');
           should(result.status).equal('open');
+          var start = new Date();
+          var end = new Date();
+          start.setDate(start.getDate()+1);
+          end.setDate(end.getDate()+7);
+
+
+          should(new Date(result.startDate).toLocaleDateString()).equal(start.toLocaleDateString());
+          should(new Date(result.endDate).toLocaleDateString()).equal(end.toLocaleDateString());
           bddone();
         })
       })
@@ -49,6 +60,29 @@ describe('model/blog', function() {
           bddone();
         })
       });
+    })
+    it('should createNewArticle with existing WN',function(bddone) {
+      var previousBlog = blogModule.createNewBlog({name:"WN100",endDate:new Date("1.1.2000")},function(err,result){
+
+        should.not.exist(err);
+        should.exist(result);
+        result.save(function(err) {
+          should.not.exist(err);
+          var newBlog = blogModule.createNewBlog(function (err,result){
+            should.not.exist(err);
+            var id = result.id;
+            testutil.getJsonWithId("blog",id,function(err,result){
+              should.not.exist(err);
+              should.exist(result);
+              should(result.name).equal('WN101');
+              should(new Date(result.startDate).toLocaleDateString()).eql(new Date("2000-01-02").toLocaleDateString());
+              should(new Date(result.endDate).toLocaleDateString()).eql(new Date("2000-01-08").toLocaleDateString());
+              bddone();
+            })
+          });       
+
+        })
+      })
     })
     it('should create no New Article with ID',function(bddone){
       (function() {
@@ -71,6 +105,8 @@ describe('model/blog', function() {
             should.not.exist(err);
             delete result._meta;
             delete result.categories;
+            delete result.startDate;
+            delete result.endDate;
             should(result).eql({id:id,name:"New Title",status:"published",field:"test",version:2});
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
@@ -106,9 +142,9 @@ describe('model/blog', function() {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) {blogModule.createNewBlog({name:"WN1",status:"open"},cb)},
-        function c2(cb) {blogModule.createNewBlog({name:"WN2",status:"open"},cb)},
-        function c3(cb) {blogModule.createNewBlog({name:"WN3",status:"finished"},
+        function c1(cb) {blogModule.createNewBlog({name:"WN1",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},cb)},
+        function c2(cb) {blogModule.createNewBlog({name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},cb)},
+        function c3(cb) {blogModule.createNewBlog({name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"},
                          function(err,result){
                           should.not.exist(err);
                           idToFindLater = result.id;
@@ -129,9 +165,13 @@ describe('model/blog', function() {
           delete result[0]._meta;
           delete result[0].categories;
           delete result[0].id;
+          delete result[0].startDate;
+          delete result[0].endDate;
           delete result[1]._meta;
           delete result[1].categories;
           delete result[1].id;
+          delete result[1].startDate;
+          delete result[1].endDate;
           should(result[0]).eql({name:"WN1",status:"open",version:1});
           should(result[1]).eql({name:"WN2",status:"open",version:1});
           bddone();
@@ -146,7 +186,12 @@ describe('model/blog', function() {
           delete result._meta;
           delete result.categories;
           delete result.id;
-          should(result).eql({name:"WN1",status:"open",version:1});
+          should(result.name).eql("WN1");
+          should(result.status).eql("open");
+          should(result.version).eql(1);
+          should(new Date(result.startDate).toLocaleDateString()).equal(new Date("2015-01-01").toLocaleDateString());
+          should(new Date(result.endDate).toLocaleDateString()).equal(new Date("2016-01-01").toLocaleDateString());
+
           bddone();
         })
       })
@@ -159,7 +204,7 @@ describe('model/blog', function() {
           delete result._meta;
           delete result.categories;
           delete result.id;
-          should(result).eql({name:"WN3",status:"finished",version:1});
+          should(result).eql({name:"WN3",status:"finished",version:1,startDate:"2015-01-01",endDate:"2016-01-01"});
           bddone();
         })
       })

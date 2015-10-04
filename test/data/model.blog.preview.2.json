@@ -1,5 +1,5 @@
 {
-  "blog":[{"name":"BLOG"}],
+  "blog":[{"name":"BLOG","startDate":"2015-02-02","endDate":"2015-02-05"}],
   "article":[{"blog":"BLOG",
               "markdown":"* [Frederik](https://www.openstreetmap.org/user/woodpeck) [ruft](https://lists.openstreetmap.org/pipermail/osmf-talk/2015-August/003366.html) dazu auf, sich über ein grösseres Engagement in der [Foundation](https://wiki.osmfoundation.org/wiki/Main_Page) (Board Membership) Gedanken zu machen.",
               "category":"OpenStreetMap Foundation",
