@@ -7,8 +7,21 @@ block content
   .row
     .col-md-6
       .row
-        .col-md-9
-           h1= blog.name
+        .col-md-9 
+          
+            div.btn-group
+              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")')
+                | Overview
+              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")') 
+                | Full
+              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")')
+                | Full EN
+            div.btn-group
+              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview","_self")')
+                | View Preview
+              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview?lang=EN","_self")')
+                | View Preview EN 
+         
         .col-md-3
           div.btn-group
             button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
@@ -22,22 +35,7 @@ block content
               li
                 a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=published") published 
               li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=trash") trash  
-       .row     
-        .col-md-12 
-          div.btn-toolbar
-            div.btn-group
-              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")')
-                | Overview
-              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")') 
-                | Full
-              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")')
-                | Full EN
-            div.btn-group
-              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview","_self")')
-                | View Preview
-              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview?lang=EN","_self")')
-                | View Preview EN 
+                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=trash") trash      
     .col-md-6
       if (blog.status == "review")
         .row
