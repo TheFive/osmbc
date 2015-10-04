@@ -100,8 +100,8 @@ function preview(edit) {
       }
   } 
   // Markdown is not defined. Return a placholder for the article
-  if (edit) return '<p>\n<mark>'+editLink+' '+this.displayTitle()+'\n</mark></p>';
-       else return '<li>\n<mark>'+this.displayTitle()+'\n</mark></li>';
+  if (edit) return '<p>\n<mark>'+editLink+' '+this.displayTitle(9999)+'\n</mark></p>';
+       else return '<li>\n<mark>'+this.displayTitle(9999)+'\n</mark></li>';
 }
 
 function overview() {
@@ -156,8 +156,8 @@ function previewEN(edit) {
 
   } 
   // Markdown is not defined. Return a placholder for the article
-  if (edit) return '<p>\n<mark>'+editLink+' '+this.displayTitle()+'\n</mark></p>';
-       else return '<li>\n<mark>'+this.displayTitle()+'\n</mark></li>';
+  if (edit) return '<p>\n<mark>'+editLink+' '+this.displayTitle(99999)+'\n</mark></p>';
+       else return '<li>\n<mark>'+this.displayTitle(99999)+'\n</mark></li>';
 }
 
 function doLock(user,callback) {
