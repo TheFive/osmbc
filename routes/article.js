@@ -83,7 +83,9 @@ function renderArticleId(req,res,next) {
           } 
           // 
           if (req.query.edit && ! params.edit) {
-            res.redirect(config.getValue('htmlroot')+"/article/"+id);    
+            var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
+            if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
+            res.redirect(returnToUrl);    
           } else {
             // Render the article with all calculated vars
             // (res.rendervar.layout is set by the express routing
