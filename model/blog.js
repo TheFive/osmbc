@@ -35,12 +35,8 @@ module.exports.categories = [
   {DE:"Programmierung",EN:"Programming"},
   {DE:"Kennst Du schon …",EN:"Did you know …"},
   {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
-  {DE:"Wochenvorschau" ,EN:"Not Translated"}];
-
-module.exports.internalCateogries = [
-{DE:"--unpublished--" ,EN:"--unpublished--"},
-{DE:"--uncategorized--" ,EN:"--uncategorized--"}
-]
+  {DE:"Wochenvorschau" ,EN:"Not Translated"},
+  {DE:"--unpublished--" ,EN:"--unpublished--"}];
 
 
 function Blog(proto)
@@ -271,11 +267,9 @@ function preview(edit,lang,callback) {
 function getCategories() {
   debug('getCategories');
 
-  var c = this.categories;
-  if (!c) c = module.exports.categories;
-
-  c.push(exports.internalCateogries);
-  return c;
+  // Funktion is used for prototype @ Blog and for Blog Module
+  if (this.categories) return this.categories;
+  return module.exports.categories;
 }
 
 function createTable(cb) {
