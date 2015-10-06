@@ -12,6 +12,8 @@ block content
           tr 
             th
               | Name
+            th 
+              | OSM
             th
               | access
             th
@@ -25,6 +27,8 @@ block content
                   a(href='#{layout.htmlroot}/usert/#{user.id}') #{user.OSMUser}
                 else 
                   a(href='#{layout.htmlroot}/usert/#{user.id}') Missing Name
+              td
+                 a(href='http://www.openstreetmap.org/user/#{layout.user.displayName}') [OSM]
 
               td= user.access
               if (user.lastAccess)
