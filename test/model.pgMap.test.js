@@ -108,7 +108,12 @@ describe('model/pgMap',function(){
             to.save(cb);
           },
           function(cb){
-            var to = {_meta:{table:testModule.table},id:0,name:'Hallo'};
+            var to = {_meta:{table:testModule.table},id:0,name:'Hallo',value:3};
+            to.save = pgMap.save;
+            to.save(cb);
+          },
+          function(cb){
+            var to = {_meta:{table:testModule.table},id:0,name:'Hallo',value:4};
             to.save = pgMap.save;
             to.save(cb);
           }
@@ -125,14 +130,31 @@ describe('model/pgMap',function(){
           config.pgstring = connectString;
           bddone();
         })      
-      })
+      });
       it('should create a valid SQL for emty string queries',function(bddone){
         pgMap.find(testModule,{name:""},function(err,result){
           should.not.exist(err);
           should(result.length).equal(2);
           bddone();
-        })
+        });
       })
+      it('should find on element with !=',function(bddone) {
+        pgMap.find(testModule,{name:"Hallo",value:"!=3"},function(err,result){
+          should.not.exist(err);
+          should(result.length).equal(1);
+          should(result[0].value).equal(4);
+          bddone();
+        })
+      });
+      it('should find on element with != ""',function(bddone) {
+        pgMap.find(testModule,{name:"!=",},function(err,result){
+          should.not.exist(err);
+          should(result.length).equal(2);
+          should(result[0].name).equal("Hallo");
+          should(result[1].name).equal("Hallo");
+          bddone();
+        })
+      });
       it('should find all elements',function(bddone){
         pgMap.find(testModule,function(err,result){
           should.not.exist(err);

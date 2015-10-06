@@ -14,10 +14,21 @@ function generateQuery(table,obj,order) {
   } else {
     if (obj) {
       for (var k in obj) {
-        var n = "data->>'"+k+"'= '"+obj[k]+"'"; 
+        var value = obj[k];
+        var op = "=";
+        if (value.substring(0,2)=="!=") {
+          op = "!=";
+          value = value.substring(2,9999);
+        } 
+        var n = "data->>'"+k+"'"+op+"'"+value+"'"; 
 
-        if (obj[k]=="") {
-          n = "("+n+" or (data->'"+k+"') is null)";
+        if (value=="") {
+          if (op == "=") {
+            n = "("+n+" or (data->'"+k+"') is null)";
+          }
+          if (op == "!=") {
+            n = "("+n+" and (data->'"+k+"') is not null)";
+          }
         }
         if (whereClause =="") whereClause = " where "+n;
         else whereClause += " and "+n;
