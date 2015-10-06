@@ -83,7 +83,9 @@ function renderArticleId(req,res,next) {
           } 
           // 
           if (req.query.edit && ! params.edit) {
-            res.redirect(config.getValue('htmlroot')+"/article/"+id);    
+            var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
+            if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
+            res.redirect(returnToUrl);    
           } else {
             // Render the article with all calculated vars
             // (res.rendervar.layout is set by the express routing
@@ -161,12 +163,13 @@ function postArticle(req, res, next) {
       if (err) {return next(err);}
       should.exist(article);
       article.setAndSave(req.user.displayName,changes,function(err) {
-        if (err ) 
-          {
-            next(err);
-            return;
-          }
-        res.redirect(config.getValue('htmlroot')+"/article/"+article.id);    
+        if (err ) {
+          next(err);
+          return;
+        }
+        var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
+        if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
+        res.redirect(returnToUrl);    
       })
     }
 
@@ -215,6 +218,7 @@ function createArticle(req, res, next) {
 
 function renderList(req,res,next) {
   debug('renderList');
+  req.session.articleReturnTo = req.originalUrl;
   var blog = req.query.blog;
   var markdown = req.query.markdown;
   var markdownEN = req.query.markdownEN;
