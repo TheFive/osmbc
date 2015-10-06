@@ -63,7 +63,12 @@ block content
         .col-md-5
           h2
             | #{usershown.access}
-
+      .row
+        .col-md-1
+          | OSM <br>
+        .col-md-5
+          p
+            a(href='http://www.openstreetmap.org/user/#{layout.user.displayName}') #{layout.user.displayName}
 
   .row
     if changes
