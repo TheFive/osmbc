@@ -218,6 +218,8 @@ function renderList(req,res,next) {
   var blog = req.query.blog;
   var markdown = req.query.markdown;
   var markdownEN = req.query.markdownEN;
+  var category = req.query.category;
+  var categoryEN = req.query.categoryEN;
   var query = {};
   if (typeof(blog)!='undefined') {
     query.blog = blog;
@@ -228,6 +230,14 @@ function renderList(req,res,next) {
   if (typeof(markdownEN)!='undefined') {
     query.markdownEN = markdownEN;
   }
+  if (typeof(category)!='undefined') {
+    query.category = category;
+  }
+  if (typeof(categoryEN)!='undefined') {
+    query.categoryEN = categoryEN;
+  }
+
+  
   var articles;
 
   async.parallel([

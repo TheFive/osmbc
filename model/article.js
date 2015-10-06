@@ -321,18 +321,20 @@ function calculateLinks() {
 
 function displayTitle(maxlength) {
   if (typeof(maxlength) == 'undefined') maxlength = 30;
+  var result = "";
   if (typeof(this.title)!='undefined' && this.title != "") {
-    return util.shorten(this.title,maxlength)
-  }
+    result = util.shorten(this.title,maxlength)
+  } else 
   if (typeof(this.markdown)!='undefined' && this.markdown !="") {
     var md = this.markdown;
     if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
-    return util.shorten(md,maxlength)
-  }
+    result = util.shorten(md,maxlength)
+  } else
   if (typeof(this.collection)!='undefined' && this.collection !="") {
-    return util.shorten(this.collection,maxlength)
+    result = util.shorten(this.collection,maxlength)
   }
-  return "Empty Article";
+  if (result.trim()=="") result = "Empty Article";
+  return result;
 }
 
 function displayTitleEN(maxlength) {
