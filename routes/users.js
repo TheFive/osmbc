@@ -15,10 +15,14 @@ function renderList(req,res,next) {
   debug('renderList');
   var users;
   var query = {};
+  var sort = {column:"OSMUser"};
   if (req.query.access) query.access = req.query.access;
+  if (req.query.sort) sort.column = req.query.sort;
+  if (req.query.desc) sort.desc = true; 
+  if (req.query.lastAccess) query.lastAccess = req.query.lastAccess;
   async.parallel([
       function(callback) {
-        userModule.find(query,{column:"displayName"},function(err,result) {
+        userModule.find(query,sort,function(err,result) {
           users = result;
           callback();
         })
