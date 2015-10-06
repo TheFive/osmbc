@@ -45,10 +45,22 @@ html(lang='en')
                 li
                   a(href='#{layout.htmlroot}/article/searchandcreate?search=') Search
                 li.dropdown-header Special Search
+                if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
+                  li
+                     a(href='#{layout.htmlroot}/article/list?markdown=&category=!=--unpublished--&blog=#{layout.listOfOpenBlog[0].name}') No Text (#{layout.listOfOpenBlog[0].name},open)
+                if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
+                  li
+                     a(href='#{layout.htmlroot}/article/list?markdown=&category=!=--unpublished--&blog=#{layout.listOfReviewBlog[0].name}') No Text (#{layout.listOfReviewBlog[0].name},review)
+                if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
+                  li
+                     a(href='#{layout.htmlroot}/article/list?markdownEN=&category=!=--unpublished--&blog=#{layout.listOfOpenBlog[0].name}') No Translation (#{layout.listOfOpenBlog[0].name},open)
+                if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
+                  li
+                     a(href='#{layout.htmlroot}/article/list?markdownEN=&category=!=--unpublished--&blog=#{layout.listOfReviewBlog[0].name}') No Translation (#{layout.listOfReviewBlog[0].name},review)
                 li
-                  a(href='#{layout.htmlroot}/article/list?markdown=&category=!=--unpublished--&blog=open') No Text
+                  a(href='#{layout.htmlroot}/article/list?markdown=&category=!=--unpublished--') No Text (All)
                 li
-                  a(href='#{layout.htmlroot}/article/list?markdownEN=&category="!=--unpublished--&blog=open"') No Translation
+                  a(href='#{layout.htmlroot}/article/list?markdownEN=&category=!=--unpublished--') No Translation (All)
                 li
                   a(href='#{layout.htmlroot}/article/list') All
                 li.divider
