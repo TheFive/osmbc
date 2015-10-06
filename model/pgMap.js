@@ -16,10 +16,13 @@ function generateQuery(table,obj,order) {
       for (var k in obj) {
         var value = obj[k];
         var op = "=";
-        if (value.substring(0,2)=="!=") {
-          op = "!=";
-          value = value.substring(2,9999);
-        } 
+        console.log(value);
+        if (typeof(value)=='string') {
+          if (value.substring(0,2)=="!=") {
+            op = "!=";
+            value = value.substring(2,9999);
+          }           
+        }
         var n = "data->>'"+k+"'"+op+"'"+value+"'"; 
 
         if (value=="") {
@@ -352,6 +355,8 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
       return (callback(err));
     }
     var result = null;
+
+
     var sqlQuery = generateQuery(module.table,obj,order);
 
     var startTime = new Date().getTime();

@@ -158,7 +158,7 @@ describe('model/pgMap',function(){
       it('should find all elements',function(bddone){
         pgMap.find(testModule,function(err,result){
           should.not.exist(err);
-          should(result.length).equal(3);
+          should(result.length).equal(4);
           bddone();
         })
       })
