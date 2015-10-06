@@ -31,7 +31,8 @@
             "articleReferences":{ "https://link.de": [ {  "title": "BLOG","blog": "BLOG", "category": "Keine","markdown": "* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","version":1},
                                                   { "blog": "Alternativ Blog", "category": "Keine","markdown": "* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","version":1}],"count":2},
 
-            "categories":[{"DE":"[Aktuelle Kategorie]","EN":"[Actual Category]"},
+            "categories":[{ "DE": "-- noch keine Kategorie --","EN": "-- no category yet --"},
+                          {"DE":"[Aktuelle Kategorie]","EN":"[Actual Category]"},
                           {"DE":"In eigener Sache","EN":"About us"},
                           {"DE":"Wochenaufruf","EN":"Weekly exerciseEN:"},
                           {"DE":"Mapping","EN":"Mapping"},

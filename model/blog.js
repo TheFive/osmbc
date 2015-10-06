@@ -18,6 +18,7 @@ var debug = require('debug')('OSMBC:model:blog');
 module.exports.table = "blog";
 
 module.exports.categories = [
+  {DE:"-- noch keine Kategorie --", EN:"-- no category yet --"},
   {DE:"[Aktuelle Kategorie]",EN:"[Actual Category]"},
   {DE:"In eigener Sache",EN:"About us"},
   {DE:"Wochenaufruf",EN:"Weekly exerciseEN:"},

@@ -259,6 +259,14 @@ block scripts
     markdownEN = document.getElementById("markdownEN");
     markdownEN.onchange = onchangeEN;
     markdownEN.onkeyup = onchangeEN;
+    markdownEN.onfocusout = onleaveEN;
+
+    function onleaveEN() {
+      var mdEN = document.getElementById("markdownEN").value;
+      if (mdEN == "-") {
+        document.getElementById("markdownEN").value = "german only";
+        }
+    }
    
     function convert(text) {
       converter = new showdown.Converter();
