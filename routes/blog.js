@@ -143,7 +143,8 @@ function renderBlogPreview(req, res, next) {
 
   var id = req.params.blog_id;
   blogModule.findById(id,function(err,blog) {
-    if (typeof(blog.id) == 'undefined') return next(new Error("Blog Not Found"));
+    if (!blog) next(new Error("Blog "+id+" Not Found"));
+    if (typeof(blog.id) == 'undefined') return next(new Error("Blog "+id+" Not Found"));
 
     var edit = req.query.edit;
     var lang = req.query.lang;

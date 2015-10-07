@@ -26,6 +26,8 @@ function prepareRenderLayout(req,res,next) {
   var listOfOrphanBlog;
   var listOfOpenBlog;
   var listOfReviewBlog;
+  var listOfHelpBlog;
+
   // Used for display changes
 
   // Params is used for indicating Edit
@@ -59,6 +61,17 @@ function prepareRenderLayout(req,res,next) {
         }
         callback(err,list);
       })
+    },
+    listOfHelpBlog:
+    function (callback) {
+      blogModule.find({status:"help"},function(err,result) {
+        if (err) return callback(err);
+        var list = [];
+        for (var i=0;i<result.length;i++) {
+          list.push(result[i]);
+        }
+        callback(err,list);
+      })
     }},
   
     function (err,result) {
@@ -69,6 +82,7 @@ function prepareRenderLayout(req,res,next) {
                       htmlroot: htmlRoot,
                       listOfOpenBlog:result.listOfOpenBlog,
                       listOfReviewBlog:result.listOfReviewBlog,
+                      listOfHelpBlog:result.listOfHelpBlog,
                       moment:moment,
                       util:util,
                     }
