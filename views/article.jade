@@ -32,12 +32,17 @@ block content
             select(id="blog",name="blog").form-control
               option(value="Future") Future
               if (layout.listOfOpenBlog)  
+                if (layout.listOfOpenBlog.indexOf(article.blog) == -1)
+                  option(value="#{article.blog}" selected) #{article.blog}
                 for blog in layout.listOfOpenBlog 
                   if blog.name == article.blog         
                     option(value="#{blog.name}" selected) #{blog.name}
                   else
                      option(value="#{blog.name}" ) #{blog.name}
-              option(value="Trash") Trash
+              if (article.blog == "Trash")
+                option(value="Trash" selected) Trash
+              else
+                option(value="Trash" ) Trash
           .col-md-5
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
