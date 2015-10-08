@@ -202,16 +202,19 @@ function preview(edit,lang,callback) {
 
   articleModule.find({blog:this.name},{column:"title"},function(err,result){
     
-    
-    // first put the Header
-    if (lang=='DE')
-      preview = '<h2>Wochennotiz '+self.name+'</h2>\n'
-    if (lang=='EN')
-      preview = '<h2> Weekly'+self.name+'</h2>\n'
-    if (self.startDate && self.endDate) {
-      preview += "<p>"+moment(self.startDate).locale(lang).format('l') +" - "+moment(self.endDate).locale(lang).format('l') +'</p>\n';
+    if (self.status != "help") {
+      // first put the Header
+      if (lang=='DE')
+        preview = '<h2>Wochennotiz '+self.name+'</h2>\n'
+      if (lang=='EN')
+        preview = '<h2> Weekly'+self.name+'</h2>\n'
+      if (self.startDate && self.endDate) {
+        preview += "<p>"+moment(self.startDate).locale(lang).format('l') +" - "+moment(self.endDate).locale(lang).format('l') +'</p>\n';
+      }
+      preview += "<!--         place picture here              -->\n"      
     }
-    preview += "<!--         place picture here              -->\n"
+    else preview = '<h2>'+self.name+'</h2>\n'
+
   
     // Put every article in an array for the category
     for (var i=0;i<result.length;i++ ) {
