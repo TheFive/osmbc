@@ -65,6 +65,7 @@ describe('router/article',function() {
           req.params ={};
           req.query = {};
           req.user = "TestUser";
+          req.session = {};
           var next;
           res.render = null;
           res.rendervar = {layout:"TEMP"};
@@ -153,6 +154,7 @@ describe('router/article',function() {
           var req = {};
           req.params ={};
           req.query = {};
+          req.session = {};
           req.user = "TestUser";
           var next;
           res.render = null;
@@ -258,6 +260,7 @@ describe('router/article',function() {
                    version:"1",
                    title:"TITLE"}
         req.user = {displayName:"TESTUSER"};
+        req.session = {};
         var res = {};
         var next;
 

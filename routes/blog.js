@@ -14,6 +14,8 @@ var articleModule = require('../model/article.js');
 /* GET users listing. */
 function renderBlogId(req, res, next) {
   debug('router.get /:blog_id');
+  req.session.articleReturnTo = req.originalUrl;
+
   var id = req.params.blog_id;
  
   var edit = 'overpass';
@@ -137,9 +139,12 @@ function renderBlogList(req, res, next) {
 
 function renderBlogPreview(req, res, next) {
   debug('router.get //:blog_id/preview');
+  req.session.articleReturnTo = req.originalUrl;
+
   var id = req.params.blog_id;
   blogModule.findById(id,function(err,blog) {
-    if (typeof(blog.id) == 'undefined') return next(new Error("Blog Not Found"));
+    if (!blog) next(new Error("Blog "+id+" Not Found"));
+    if (typeof(blog.id) == 'undefined') return next(new Error("Blog "+id+" Not Found"));
 
     var edit = req.query.edit;
     var lang = req.query.lang;

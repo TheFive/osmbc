@@ -212,6 +212,7 @@ function setAndSave(user,data,callback) {
   var self = this;
   delete self.lock;
 
+
   debug("Version of Article %s",self.version);
   debug("Version of dataset %s",data.version);
 
@@ -219,7 +220,6 @@ function setAndSave(user,data,callback) {
     error = new Error("Version Number Differs");
     return callback(error);
   }
-  // Set Category for the EN Field
 
 
   async.series([
@@ -229,8 +229,10 @@ function setAndSave(user,data,callback) {
       } else cb();
     },
     function setCategoryEn(cb) {
-      blogModule.findOne({name:self.blog},function(err,blog){
+      // Set Category for the EN Field
 
+      // First calcualte Blog
+      blogModule.findOne({name:self.blog},function(err,blog){
         var categories= blogModule.getCategories();
         if (blog) categories = blog.getCategories();
         for (var i=0;i<categories.length;i++) {
