@@ -118,11 +118,16 @@ function searchAndCreate(req,res,next) {
                            foundArticles:result});
   })
 }
+ // Generate Compile Error
 
+ //Funktino kaputt Collect geht nicht.
 
 function postArticle(req, res, next) {
   debug('postArticle');
+
   var id = req.params.article_id;
+
+ 
 
   var article = null;
   var changes = {markdown:req.body.markdown,
@@ -149,6 +154,7 @@ function postArticle(req, res, next) {
       },
       function createArticle(cb) {
         debug('postArticle->createArticle');
+
         if (typeof(id)!='undefined') return cb(); 
         articleModule.createNewArticle(function(err,result){
           if (err) return next(err);

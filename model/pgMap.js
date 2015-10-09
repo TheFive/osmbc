@@ -16,7 +16,6 @@ function generateQuery(table,obj,order) {
       for (var k in obj) {
         var value = obj[k];
         var op = "=";
-        console.log(value);
         if (typeof(value)=='string') {
           if (value.substring(0,2)=="!=") {
             op = "!=";
@@ -85,7 +84,7 @@ module.exports.save = function(callback) {
       query.on('end',function (result) {
 
         var endTime = new Date().getTime();
-        console.log("SQL: ["+ (endTime - startTime)/1000 +"] insert to "+ table);
+       // console.log("SQL: ["+ (endTime - startTime)/1000 +"] insert to "+ table);
         
         pgdone();
         return callback(null,self);
@@ -119,7 +118,7 @@ module.exports.save = function(callback) {
           query.on('end',function(result){
             var err = null;
             var endTime = new Date().getTime();
-            console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
+         //   console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
             if (!versionsEqual) {
               debug('send error')
               err = new Error("Version Nummber differs");
@@ -226,7 +225,7 @@ module.exports.find = function find(module,obj,order,callback) {
     query.on('end',function findEndFunction(pgresult) {   
       debug('findEndFunction');
       var endTime = new Date().getTime();
-      console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
+     // console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
       pgdone();
       callback(null,result);
     });
@@ -288,7 +287,7 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
     query.on('end',function (pgresult) {    
       pgdone();
       var endTime = new Date().getTime();
-      console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
+     // console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
       callback(null,result);
     })
     query.on('error',function (err) {    
@@ -330,7 +329,7 @@ module.exports.findById = function findById(id,module,callback) {
     query.on('end',function (pgresult) {    
       pgdone();
       var endTime = new Date().getTime();
-      console.log("SQL: ["+ (endTime - startTime)/1000 +"] Select by id from "+ table);
+     // console.log("SQL: ["+ (endTime - startTime)/1000 +"] Select by id from "+ table);
       callback(null,result);
     })
   })
@@ -372,7 +371,7 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
     query.on('end',function (pgresult) {
       pgdone();
       var endTime = new Date().getTime();
-      console.log("SQL: ["+ (endTime - startTime)/1000 +"]"+ sqlQuery);
+     // console.log("SQL: ["+ (endTime - startTime)/1000 +"]"+ sqlQuery);
       callback(null,result);      
     })
   })

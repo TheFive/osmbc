@@ -259,7 +259,12 @@ function preview(edit,lang,callback) {
         var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLANG.toLowerCase()+'">'+categoryLANG+'</h2>\n';
         htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
         preview += htmlForCategory;
+        delete articles[category];
       }
+    }
+    for (k in articles) {
+      preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
+      preview += "<p> Please use [edit blog detail] to sort enter category</p>\n";
     }
     var result = {};
     result.preview = preview;
