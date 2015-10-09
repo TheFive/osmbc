@@ -43,6 +43,13 @@ block content
                 option(value="Trash" selected) Trash
               else
                 option(value="Trash" ) Trash
+              if (layout.listOfHelpBlog)
+                each helpblog in layout.listOfHelpBlog
+                  if helpblog.name == article.blog         
+                    option(value="#{helpblog.name}" selected) #{helpblog.name}
+                  else
+                     option(value="#{helpblog.name}" ) #{helpblog.name}
+              
           .col-md-5
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}

@@ -51,6 +51,9 @@ block content
                 option(value="#{blog.name}" ) #{blog.name}
             option(value="Future") Future
             option(value="Trash") Trash
+            if (layout.listOfHelpBlog)
+              each helpblog in layout.listOfHelpBlog
+                 option(value="#{helpblog.name}" ) #{helpblog.name}
         .col-md-5
           
 
