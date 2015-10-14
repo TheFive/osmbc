@@ -264,7 +264,7 @@ function preview(edit,lang,callback) {
     }
     for (k in articles) {
       preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
-      preview += "<p> Please use [edit blog detail] to sort enter category</p>\n";
+      preview += "<p> Please use [edit blog detail] to enter category</p>\n";
     }
     var result = {};
     result.preview = preview;
