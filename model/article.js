@@ -80,7 +80,7 @@ function createNewArticle (proto,callback) {
 function preview(edit) {
   debug("preview");
   var editLink;
-  if (edit) editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+  if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   if (typeof(this.markdown)!='undefined' && this.markdown!='') {
     var md = this.markdown;
 
@@ -106,7 +106,7 @@ function preview(edit) {
 
 function overview() {
   debug("overview");
-  var editMark = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+  var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   
   var editLink = '';
   if (typeof(this.markdown)=='undefined' || this.markdown == '') {
@@ -126,7 +126,7 @@ function previewEN(edit) {
   debug("previewEN");
 
   var editLink = '';
-  if (edit) editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+  if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   if (typeof(this.markdownEN)!='undefined' && this.markdownEN!='') {
     var md = this.markdownEN;
 
