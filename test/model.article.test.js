@@ -461,7 +461,7 @@ describe('model/article', function() {
     it('should generate a preview when no markdown is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});
       var result = article.preview(true);
-      should(result).equal('<p>\n<mark> <a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> Test Title\n</mark></p>');
+      should(result).equal('<p>\n<mark><a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> Test Title\n</mark></p>');
       bddone();
     })
     it('should generate a preview when no markdown2 is specified (no Edit Link)',function (bddone) {
@@ -473,13 +473,13 @@ describe('model/article', function() {
     it('should generate a preview when no markdown2 is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({collection:"Test Collection"});
       var result = article.preview(true);
-      should(result).equal('<p>\n<mark> <a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> Test Collection\n</mark></p>');
+      should(result).equal('<p>\n<mark><a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> Test Collection\n</mark></p>');
       bddone();
     })
     it('should generate a preview when markdown is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({markdown:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = article.preview(true);
-      should(result).equal('<p>\n <a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</p>');
+      should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</p>');
       bddone();
     })
     it('should generate a preview when markdown is specified (No Edit Link)',function (bddone) {
