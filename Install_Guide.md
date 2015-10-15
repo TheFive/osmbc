@@ -20,20 +20,33 @@ There has to exist two config files: `config.test.json` and `config.development.
 The first is used for automated testing on travis-ci and therefore can be found in the git repository. Please **copy** the `config.test.json` to `config.development.json` and put the needed values to:
 
 ```json
-"serverport": 3000 (Port, where the node server is listening to)
-"database" : "localhost:5432/osmbc", (access String for Postgres DB)
-"username" : "TheFive", (User Name for Postgres DB)
-"password" : "thefive", (Password for Postgres DB)
-"connectstr" : "psql://test:test@localhost:5432/testdb"
-              (Access String for Postgres, overwrites database,user and pwd)
-"callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
-      (callbackUrl for the OAUTH mechanism, change the serverpart of the URL)
-"OPENSTREETMAP_CONSUMER_KEY" : "######",
-      (OAUTH Key, generate it from your user properties in OSM)
-"OPENSTREETMAP_CONSUMER_SECRET" : "#####"
-       (OAUTH Secret, generate it from your user properties in OSM)
-"htmlroot":"" (Root for HTML Path to use handle multiple instances on one server, e.g. MYSERVER/htmlroot/osmbc.html)
+"serverport": 3000,
+"database" : "localhost:5432/osmbc",
+"username" : "TheFive",
+"password" : "thefive",
+"connectstr" : "psql://test:test@localhost:5432/testdb",
+"callbackUrl": "http://localhost:3000/auth/openstreetmap/callback",
+"OPENSTREETMAP_CONSUMER_KEY" : "****",
+"OPENSTREETMAP_CONSUMER_SECRET" : "****",
+"htmlroot": ""
 ```
+
+Where:
+
+- `serverport` is the port in that the node server is listening <br/>
+- `database` is the string of accesse to Postgres
+- `username` is the username on Postgres
+- `password` is the password on Postgres
+- `connectstr` is the string of access to Postgres
+	- **Overwrites `database`, `username` and `password`**
+- `callbackUrl` is the URL of callback for the OAuth mechanism
+	- **You must change the serverpart**
+- `OPENSTREETMAP_CONSUMER_KEY` is the OAuth Key
+	- Generate it from your user properties in OSM
+- `OPENSTREETMAP_CONSUMER_SECRET`is the OAuth Secret
+	-  Generate it from your user properties in OSM
+- `htmlroot`is the root for the HTML path to be used to handle multiple instances in a same server
+	- e.g. `MYSERVER/<htmlroot>/osmbc.html`
 
 To use a `config.prod.json` please change the `package.json`
 
