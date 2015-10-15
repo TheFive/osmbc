@@ -313,7 +313,7 @@ block scripts
       previewEN = document.getElementById("previewEN");
       
       previewEN.innerHTML = convert(mdEN);
-      var longLink = mdEN.search(/\[[^\]]{30,}\]/g);
+      var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
         previewEN.style.backgroundColor="#FDC6CD";
         }
