@@ -33,7 +33,7 @@ The first is used for automated testing on travis-ci and therefore can be found 
 
 Where:
 
-- `serverport` is the port in that the node server is listening <br/>
+- `serverport` is the port in that the node server is listening
 - `database` is the string of accesse to Postgres
 - `username` is the username on Postgres
 - `password` is the password on Postgres
