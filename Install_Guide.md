@@ -83,7 +83,7 @@ Depending on machine configuration, you may need doing this as root.
 
 ## 5 - Database
 
-The database can be installed with the two javascript files in the folder import.
+The database can be installed using the two javascript files that are in the folder `import`.
 
 ### Creating tables and views
 
