@@ -67,8 +67,8 @@ $ npm test  # sets NODE_ENV=test
 Please install the following node modules global:
 
 ```console
-$ npm "istanbul" -g  # used for Codecoverage during npm test
-$ npm "mocha" -g  # used for tests during npm test
+$ sudo npm install istanbul -g  # used for Codecoverage during npm test
+$ sudo npm install mocha -g  # used for tests during npm test
 ```
 
 ## 4 - Node's local modules
