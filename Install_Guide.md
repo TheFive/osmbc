@@ -85,7 +85,7 @@ Depending on machine configuration, you may need doing this as root.
 
 The database can be installed with the two javascript files in the folder import.
 
-#### Creating tables and views
+### Creating tables and views
 
 _→ See also: section about [Configuration files](#configuration-files), for database access_
 
@@ -95,7 +95,7 @@ NODE_ENV=???? node download.js
 
 Where `???` is the configuration that you want to use (e.g. development).
 
-#### Import files from
+### Import files from
 
 There is a script to import all the weekly news down from [blog.openstreetmap.de](http://blog.openstreetmap.de).
 
@@ -104,6 +104,4 @@ To import the first blog (the of number 268), call:
 ```sh
 NODE_ENV=???? node createdb.js
 ```
-.
-
 
