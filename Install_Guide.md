@@ -99,7 +99,7 @@ Where `???` is the configuration that you want to use (e.g. development).
 
 There is a script to import all the weekly news down from [blog.openstreetmap.de](http://blog.openstreetmap.de).
 
-To import the first blog (the of number 168), call:
+To import the first blog (the of number 268), call:
 
 ```sh
 NODE_ENV=???? node createdb.js
