@@ -50,10 +50,17 @@ Where:
 
 To use a `config.prod.json` please change the `package.json`
 
+### Examples of use (for after)
+
 The config module uses development as default configuration (if it is not set via `NODE_ENV` variable).
 
-- `npm start` sets `NODE_ENV=development`
-- `npm test`  sets `NODE_ENV=test`
+```console
+$ npm start  # sets NODE_ENV=development
+```
+
+```console
+$ npm test  # sets NODE_ENV=test
+```
 
 ## 3 - Node's global modules
 
@@ -66,9 +73,13 @@ $ npm "mocha" -g  # used for tests during npm test
 
 ## 4 - Node's local modules
 
-After checkout of OSMBC please call `npm install` in the OSMBC directory, to install all necessary modules.
+After checkout of OSMBC please install all necessary modules in its directory doing there:
 
-Depending on machine configuration you may be have to do that as administrator (root user).
+```console
+$ npm install
+```
+
+Depending on machine configuration, you may need doing this as root.
 
 ## 5 - Database
 
