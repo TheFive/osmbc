@@ -1,93 +1,85 @@
-## Installation Guide OSMBC
+# Installation Guide for OSMBC
 
-# Requirenments
+## 1 - Dependencies
 
 Before you install OSMBC the following Software has to be installed.
 
-a) Postgres 9.3 or higher
+**a)** Postgres 9.3 or higher
 
-The System is tested and developed under 9.3, as far as i know all features
-used should work with 9.4.
+The system is tested and developed under `9.3`, as far as i know all features
+used should work with `9.4`.
 
-b) Node.JS
+**b)** Node.JS 10.* or higher
 
-You should install node 10.* or higher
-OSMBC runs with 0.12.4 on the development machine and with 0.10.36 on the 
-production server.
+OSMBC runs with `0.12.4` on the development machine and with `0.10.36` on the production server.
 
+## 2 - Configuration files
 
+There has to exist two config files: `config.test.json` and `config.development.json`
 
-d) Configuration
+The first is used for automated testing on travis-ci and therefore can be found in the git repository. Please **copy** the `config.test.json` to `config.development.json` and put the needed values to:
 
-There has to exist two config files.
+```json
+"serverport": 3000 (Port, where the node server is listening to)
+"database" : "localhost:5432/osmbc", (access String for Postgres DB)
+"username" : "TheFive", (User Name for Postgres DB)
+"password" : "thefive", (Password for Postgres DB)
+"connectstr" : "psql://test:test@localhost:5432/testdb"
+              (Access String for Postgres, overwrites database,user and pwd)
+"callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
+      (callbackUrl for the OAUTH mechanism, change the serverpart of the URL)
+"OPENSTREETMAP_CONSUMER_KEY" : "######",
+      (OAUTH Key, generate it from your user properties in OSM)
+"OPENSTREETMAP_CONSUMER_SECRET" : "#####"
+       (OAUTH Secret, generate it from your user properties in OSM)
+"htmlroot":"" (Root for HTML Path to use handle multiple instances on one server, e.g. MYSERVER/htmlroot/osmbc.html)
+```
 
-a) config.test.json, this is used for automated testing on travis-ci and 
-therefore can be found in the git repository
+To use a `config.prod.json` please change the `package.json`
 
-b) config.development.json 
-Please copy config.test.json to config.development.json and put the needed values to.
+The config module uses development as default configuration (if it is not set via `NODE_ENV` variable).
 
-    "serverport": 3000 (Port, where the node server is listening to)
-    "database" : "localhost:5432/osmbc", (access String for Postgres DB)
-    "username" : "TheFive", (User Name for Postgres DB)
-    "password" : "thefive", (Password for Postgres DB)
-    "connectstr" : "psql://test:test@localhost:5432/testdb"
-                  (Access String for Postgres, overwrites database,user and pwd)
-    "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
-          (callbackUrl for the OAUTH mechanism, change the serverpart of the URL)
-    "OPENSTREETMAP_CONSUMER_KEY" : "######",
-          (OAUTH Key, generate it from your user properties in OSM)
-    "OPENSTREETMAP_CONSUMER_SECRET" : "#####"
-           (OAUTH Secret, generate it from your user properties in OSM)
-    "htmlroot":"" (Root for HTML Path to use handle multiple instances on one server, e.g. MYSERVER/htmlroot/osmbc.html)
+- `npm start` sets `NODE_ENV=development`
+- `npm test`  sets `NODE_ENV=test`
 
+## 3 - Node's global modules
 
-c) To use a config.prod.json please change the package.json.  
+Please install the following node modules global:
 
-The config module uses development as default configuration (if it is not set
-via NODE_ENV variable).
+```console
+$ npm "istanbul" -g  # used for Codecoverage during npm test
+$ npm "mocha" -g  # used for tests during npm test
+```
 
-npm start sets NODE_ENV=development
-npm test  sets NODE_ENV=test
-=======
+## 4 - Node's local modules
 
+After checkout of OSMBC please call `npm install` in the OSMBC directory, to install all necessary modules.
 
-# Global Node Modules needed
+Depending on machine configuration you may be have to do that as administrator (root user).
 
-Please install the following node modules global, 
-
-npm "istanbul" -g  (used for Codecoverage during npm test)
-npm "mocha"    -g  (used for tests during npm test)
-
-# Install local Modules
-
-After checkout of OSMBC please call 
-npm install 
-in the OSMBC directory, to install all necessary modules. 
-Depending on machine configuration you may be have to do that as administrator
-
-# Installation of Database
+## 5 - Database
 
 The database can be installed with the two javascript files in the folder import.
 
-## Creating the Table and Views
+#### Creating tables and views
 
-->> See chapter configuration for database access
+_→ See also: section about [Configuration files](#configuration-files), for database access_
 
-    NODE_ENV=???? node download.js
+```sh
+NODE_ENV=???? node download.js
+```
 
-Where ??? is the configuration you want to use (e.g. development) 
+Where `???` is the configuration that you want to use (e.g. development).
 
-## Import Files from 
+#### Import files from
 
+There is a script to import all the weekly news down from [blog.openstreetmap.de](http://blog.openstreetmap.de).
 
-There is a script to import all weekly news down from blog.openstreetmap.de.
-You can find it in import.
+To import the first blog (the of number 168), call:
 
-call 
-
-    NODE_ENV=???? node createdb.js
-
-to import the first 268 Blog.
+```sh
+NODE_ENV=???? node createdb.js
+```
+.
 
 
