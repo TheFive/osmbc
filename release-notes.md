@@ -64,3 +64,5 @@
 
 ### Changes for Editors
 * It is now possible to put Articles to Help Blogs
+* Skipped the generation of the Blog title in preview 
+  (https://github.com/TheFive/osmbc/issues/54)

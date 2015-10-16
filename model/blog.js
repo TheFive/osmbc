@@ -204,10 +204,10 @@ function preview(edit,lang,callback) {
     
     if (self.status != "help") {
       // first put the Header
-      if (lang=='DE')
+      /*if (lang=='DE')
         preview = '<h2>Wochennotiz '+self.name+'</h2>\n'
       if (lang=='EN')
-        preview = '<h2> Weekly'+self.name+'</h2>\n'
+        preview = '<h2> Weekly'+self.name+'</h2>\n'*/
       if (self.startDate && self.endDate) {
         preview += "<p>"+moment(self.startDate).locale(lang).format('l') +" - "+moment(self.endDate).locale(lang).format('l') +'</p>\n';
       }
