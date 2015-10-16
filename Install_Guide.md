@@ -87,7 +87,7 @@ The database can be installed using the two javascript files that are in the fol
 
 ### Creating tables and views
 
-_→ See also: section about [Configuration files](#configuration-files), for database access_
+_→ See also: section about [Configuration files](#2---configuration-files), for database access_
 
 ```sh
 NODE_ENV=???? node download.js
