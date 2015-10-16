@@ -81,19 +81,51 @@ $ npm install
 
 Depending on machine configuration, you may need doing this as root.
 
+### Locking versions
+
+Probably you use a NodeJS newer than the supported by OSMBC. Especially if you use a rolling release distribution such as the Arch Linux that today have NodeJS v4.2.1.
+
+The solution for this is using `nvm` — _Node Version Manager_:
+
+1. Install the [nvm]
+    - On Arch Linux:
+    ```console
+    $ yaourt -S nvm
+    $ echo 'source /usr/share/nvm/init-nvm.sh' >> ~/.bashrc  # if yaourt was ok
+    ```
+    - If Ubuntu, see (in portuguese): [Como Instalar o Node.js em um Servidor Ubuntu 14.04][ubuntu-nvm-ref]
+    - If other distro, see the official instrutions at GitHub [creationix/nvm][nvm]
+    - If Windows, use [nvmw] or [nvm-windows]
+2. Choose the NodeJS version
+    - Our develepment machine uses the **`0.12.4`**
+    ```console
+    $ nvm install 0.12.4
+    ```
+3. Choose the Python version
+    - Switch to **2** at `npm install` if necessary:
+    ```console
+    $ rm -rf node_modules  # take care with the rm -rf
+    $ npm install --python=python2.7  # because I use Python 3 by default
+    ```
+
+[ubuntu-nvm-ref]: https://www.digitalocean.com/community/tutorials/como-instalar-o-node-js-em-um-servidor-ubuntu-14-04-pt
+[nvm]: https://github.com/creationix/nvm
+[nvmw]:  https://github.com/hakobera/nvmw
+[nvm-windows]: https://github.com/coreybutler/nvm-windows
+
 ## 5 - Database
 
-The database can be installed using the two javascript files that are in the folder `import`.
+The database can be installed using the two javascript files that are **in the folder `import`**.
 
 ### Creating tables and views
 
-_→ See also: section about [Configuration files](#configuration-files), for database access_
+_→ See also: section about [Configuration files](#2---configuration-files), for database access_
 
 ```sh
 NODE_ENV=???? node download.js
 ```
 
-Where `???` is the configuration that you want to use (e.g. development).
+Where `???` is the configuration that you want to use (e.g. `development` or `test`).
 
 ### Import files from
 
