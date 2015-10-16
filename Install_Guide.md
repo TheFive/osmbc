@@ -1,5 +1,15 @@
 # Installation Guide for OSMBC
 
+  1. [Dependencies](#1---dependencies)
+  2. [Configuration files](#2---configuration-files)
+    - [Examples of use (for after)](#examples-of-use-for-after)
+  3. [Node's global modules](#3---nodes-global-modules)
+  4. [Node's local modules](#4---nodes-local-modules)
+    - [Locking versions](#locking-versions)
+  5. [Database](#5---database)
+    - [Creating tables and views](#creating-tables-and-views)
+    - [Import files from](#import-files-from)
+
 ## 1 - Dependencies
 
 Before you install OSMBC the following Software has to be installed.
