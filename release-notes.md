@@ -4,7 +4,7 @@
 * Bug Fix in routing in user module.
 
 ### Version 0.2.16
-* id for <h2> tag in blog export is extended by blogname
+* id for '<h2>' tag in blog export is extended by blogname
 ## Version 0.2.19
 ### Changes for Editors
 * type a '-' in the english markdown replaces it by "english only"
