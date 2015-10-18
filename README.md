@@ -5,7 +5,8 @@ Open Street Map Blog Collector, a tool for editing the weekly news in OpenStreet
 
 ## Summary
 
-OSMBC is a small tool to support the editorial process of the [OpenStreetMap]&nbsp;[Wochennotiz]. It enables editores collects references for news easily, and supports editing them in Markdown later. From edited Markdown code, the final blog entry will be (or is) created. As all articles can be edited "bilinual" so in german and in english, the production of the weeklyosm (the international variant of the Wochennotiz) is supported by OSMBC too.
+OSMBC is a small tool to support the editorial process of the [OpenStreetMap]&nbsp;[Wochennotiz]. It enables editores collects references for news easily, and supports editing them in Markdown later. From edited markdown code, the final blog entry is created. As all articles can be edited "bilinual" so in german and in english, the production of the [WeeklyOSM], the international variant of the Wochennotiz, is supported by OSMBC too.
+
 
 [OpenStreetMap]: http://www.openstreetmap.org
 [Wochennotiz]: http://blog.openstreetmap.de
