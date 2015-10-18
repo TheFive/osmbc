@@ -1,8 +1,7 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.22...HEAD)
+## [0.2.23](https://github.com/TheFive/osmbc/tree/0.2.23) (2015-10-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.22...0.2.23)
 
 **Fixed bugs:**
 
@@ -10,9 +9,12 @@
 
 **Closed issues:**
 
+- Display Version Number under Help with Link to Release Notes [\#64](https://github.com/TheFive/osmbc/issues/64)
+- How to configure an admin user \(the first user\)? [\#63](https://github.com/TheFive/osmbc/issues/63)
 - Which is strategy with the development branch? [\#60](https://github.com/TheFive/osmbc/issues/60)
 - Help to configure a DEV environment [\#56](https://github.com/TheFive/osmbc/issues/56)
 - Wrong Title exported [\#54](https://github.com/TheFive/osmbc/issues/54)
+- put a small frame around the flags [\#52](https://github.com/TheFive/osmbc/issues/52)
 
 **Merged pull requests:**
 
@@ -48,10 +50,7 @@
 - No Translation [\#37](https://github.com/TheFive/osmbc/issues/37)
 
 ## [0.2.20](https://github.com/TheFive/osmbc/tree/0.2.20) (2015-10-06)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/CURRENTRUNNING...0.2.20)
-
-## [CURRENTRUNNING](https://github.com/TheFive/osmbc/tree/CURRENTRUNNING) (2015-10-06)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.19...CURRENTRUNNING)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.19...0.2.20)
 
 **Closed issues:**
 
