@@ -23,6 +23,7 @@ var blogModule    = require('../model/blog.js');
 describe('model/blog', function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
+    process.env.TZ = 'Europe/Amsterdam';
   }) 
 
   describe('createNewBlog',function() {
