@@ -127,12 +127,12 @@ The solution for this is using `nvm` — _Node Version Manager_:
 
 The database can be installed using the two javascript files that are **in the folder `import`**.
 
-### Creating tables and views
+### Creating tables and views and the first uster
 
 _→ See also: section about [Configuration files](#2---configuration-files), for database access_
 
 ```sh
-NODE_ENV=???? node download.js
+NODE_ENV=???? node createdb.js
 ```
 
 Where `???` is the configuration that you want to use (e.g. `development` or `test`).
@@ -144,6 +144,14 @@ There is a script to import all the weekly news down from [blog.openstreetmap.de
 To import the first blog (the of number 268), call:
 
 ```sh
-NODE_ENV=???? node createdb.js
+NODE_ENV=???? node download.js
 ```
+
+For now the first (admin) user has to be created with psql. OSMBC offers only OAUTH authentification via OpenStreetMap, so you have to have a OSM Account and give that
+user access to your OSMBC instance.
+
+```psql
+insert into usert (data) values ('{"OSMUser":"?? your osm user name ??","access":"full"}');
+```
+
 
