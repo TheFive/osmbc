@@ -92,7 +92,13 @@ function preview(edit) {
     // clean up <p> and </p> of markdown generation.
     html = html.substring(3,html.length-4)
     if (edit) {
-        return '<p>\n'+editLink+' '+html+'\n</p>'
+        var commentMarkup = "";
+        if (this.comment) {
+          if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
+            commentMarkup = ' style=" border-left-style: solid; border-color: blue;"'
+          }
+        }
+        return '<p'+commentMarkup+'>\n'+editLink+' '+html+'\n</p>'
       } else {
         // if not edit mode and article has not to be published, return nothing.
         if (this.category == "--unpublished--") return '';
@@ -119,7 +125,13 @@ function overview() {
   if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'">'+editLink+'</a>'; 
 
   var text = this.displayTitle(90);
-  return '<p>\n'+editMark+' '+text+' '+editLink+'\n</p>';      
+  var commentMarkup = "";
+  if (this.comment) {
+    if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
+      commentMarkup = ' style=" border-left-style: solid; border-color: blue;"'
+    }
+  }
+  return '<p'+commentMarkup+'>\n'+editMark+' '+text+' '+editLink+'\n</p>';      
 }
 
 function previewEN(edit) {
@@ -146,7 +158,13 @@ function previewEN(edit) {
       html = html.substring(3,html.length-4)
 
       if (edit) {
-        return '<p>\n'+editLink+' '+html+'\n</p>'
+        var commentMarkup = "";
+        if (this.comment) {
+          if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
+            commentMarkup = ' style=" border-left-style: solid; border-color: blue;"'
+          }
+        }
+        return '<p'+commentMarkup+'>\n'+editLink+' '+html+'\n</p>'
       } else {
         // if not edit mode and article has not to be published, return nothing.
         if (this.category == "--unpublished--") return '';

@@ -84,14 +84,18 @@ block content
             | Collection <br>
           .col-md-10
             textarea.form-control(name="collection",rows=7) #{article.collection}
+        .row 
+          .col-md-1
+          .col-md-5
+            | DE
+          .col-md-5
+            | EN
         .row
           .col-md-1
             | Markdown 
           .col-md-5 
-            | DE  
             textarea.form-control(id="markdown" name = "markdown" rows=7) #{article.markdown}
           .col-md-5  
-            | EN
             textarea.form-control(id="markdownEN" name = "markdownEN" rows=7) #{article.markdownEN}
             | 'german only' to specify no translation wanted.
           .col-md-1
@@ -128,6 +132,20 @@ block content
             textarea.form-control(
               name="comment"
               rows=7) #{article.comment}
+        .row
+          .col-md-1
+          .col-md-5
+            select(id="commentStatus",name="commentStatus").form-control
+              each status in ["open","solved"]
+                if article.commentStatus
+                  if status == article.commentStatus
+                    option(value="#{status}" selected ) #{status}
+                  else
+                    option(value="#{status}"  ) #{status}
+                else
+                    option(value="#{status}"  ) #{status}
+
+          
     else
      .row
         .col-md-1
@@ -143,34 +161,42 @@ block content
         .col-md-1
           | Category <br>
         .col-md-5
-          h2
+          h4
             | #{article.category}
         .col-md-5
-          h2
+          h4
             | #{article.categoryEN}
       .row
         .col-md-1
           | Title <br>
         .col-md-10
-          .panel.panel-default
-              .panel-body #{article.title}
+          h3
+            | #{article.title}
       .row
         .col-md-1
           | Collection <br>
         .col-md-10
             .panel.panel-default
-              .panel-body #{article.collection}
-      .row
+              .panel-body
+                :verbatim
+                !{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i, '<a href="$1">$1</a>')}
+      .row 
         .col-md-1
-            | Markdown<br>
-        .col-md-5  
-            | DE
-            .panel.panel-default
-              .panel-body #{article.markdown}
         .col-md-5
-            | EN 
-            .panel.panel-default
-              .panel-body #{article.markdownEN}    
+          | DE
+        .col-md-5
+          | EN
+
+      if (false)
+        .row
+          .col-md-1
+              | Markdown<br>
+          .col-md-5  
+              .panel.panel-default
+                .panel-body #{article.markdown}
+          .col-md-5
+              .panel.panel-default
+                .panel-body #{article.markdownEN}    
       .row
         .col-md-1
           | Preview
@@ -189,8 +215,9 @@ block content
 
       .row
         .col-md-1
-          | Comment <br>
+          | Comment 
         .col-md-10 
+            | #{(article.commentSolved)?"(Comment Is Solved)":"(Comment Is Open)"}
             .panel.panel-default
               .panel-body
                 :verbatim
@@ -218,7 +245,7 @@ block content
                         td
                           a(href='#{link}') #{link}
                         td
-                          a(href='#{layout.htmrroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
+                          a(href='#{layout.htmlroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
                         td= articleItem.blog
                     if (index == 8) 
                       tr

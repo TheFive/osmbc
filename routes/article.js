@@ -139,7 +139,9 @@ function postArticle(req, res, next) {
                  category:req.body.category,
                  categoryEN:req.body.categoryEN,
                  version:req.body.version,
-                 title:req.body.title};
+                 title:req.body.title,
+                 commentStatus:req.body.commentStatus};
+  console.log(changes);
 
   async.parallel([
       function searchArticle(cb) {
