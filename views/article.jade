@@ -132,6 +132,20 @@ block content
             textarea.form-control(
               name="comment"
               rows=7) #{article.comment}
+        .row
+          .col-md-1
+          .col-md-5
+            select(id="commentStatus",name="commentStatus").form-control
+              each status in ["open","solved"]
+                if article.commentStatus
+                  if status == article.commentStatus
+                    option(value="#{status}" selected ) #{status}
+                  else
+                    option(value="#{status}"  ) #{status}
+                else
+                    option(value="#{status}"  ) #{status}
+
+          
     else
      .row
         .col-md-1
@@ -201,8 +215,9 @@ block content
 
       .row
         .col-md-1
-          | Comment <br>
+          | Comment 
         .col-md-10 
+            | #{(article.commentSolved)?"(Comment Is Solved)":"(Comment Is Open)"}
             .panel.panel-default
               .panel-body
                 :verbatim
