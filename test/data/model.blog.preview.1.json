@@ -3,5 +3,5 @@
   "article":[{"blog":"BLOG","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"}],
   "testBlogName":"BLOG",
   "testBlogResultMarkdown":"## Mapping\n* Dies ist ein kleiner Testartikel.\n",
-  "testBlogResultHtml":"<h2>Wochennotiz BLOG</h2><p>2.2.2015 - 3.3.2015<h2 id=\"blog_mapping\">Mapping</h2>\n<ul><li>\nDies ist ein kleiner Testartikel.\n</li></ul>"
+  "testBlogResultHtml":"<p>2.2.2015 - 3.3.2015<h2 id=\"blog_mapping\">Mapping</h2>\n<ul><li>\nDies ist ein kleiner Testartikel.\n</li></ul>"
 }

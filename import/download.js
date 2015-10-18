@@ -2,6 +2,7 @@ var request = require("request");
 var fs = require("fs");
 var toMarkdown = require('to-markdown');
 var htmlparser = require("htmlparser2");
+var debug = require('debug')('OSMBC:import:download')
 
 var articleModule = require('../model/article.js');
 var blogModule = require('../model/blog.js');
@@ -121,112 +122,123 @@ var parser = new htmlparser.Parser({
 }, {decodeEntities: false});
  
 
- function Category() {
+function Category() {
     this.title = null;
     this.element = [];
   }
 
- function importBlog(nr,callback) {
-   var number = "000"+nr;
+function importBlog(nr,callback) {
+  debug('importBlog %s',nr);
 
-   var blogName = "WN"+number.substring(number.length-3,99);
-   console.log("Import WN "+blogName);
+  var number = "000"+nr;
+
+  var blogName = "WN"+number.substring(number.length-3,99);
+  console.log("Import WN "+blogName);
   
-   blogModule.findOne({name:blogName},function (err,b) { 
-    if (b) {
-      console.log(blogName+" allready exists");
-      return callback();
+  blogModule.findOne({name:blogName},function (err,b) { 
+  if (b) {
+    console.log(blogName+" allready exists");
+    return callback();
+  }
+
+  var body = null;  
+  var url = null;
+  async.parallel([
+    function tryOneName(cb) {
+      debug('tryOneName');
+      var u = "http://blog.openstreetmap.de/blog/wochennotiz-nr-"+nr;
+      request(u, function (error, response, b) {
+        if (!error) {
+          debug('Found URL %s',u);
+          body = b;
+          url = u;
+        } else {
+          debug('Not found URL %s',u);
+        }
+        cb();
+      })
+    },
+    function tryOtherName(cb) {
+      debug('tryOtherName');
+      var u = "http://blog.openstreetmap.de/blog/osm-wochennotiz-nr-"+nr;
+      request(u, function (error, response, b) {
+        if (!error) {
+          debug('Found URL %s',u);
+          body = b;
+          url = u;
+        } else {
+          debug('Not found URL %s',u);
+        }
+        cb();
+      })
     }
 
-    var body = null;  
-    var url = null;
-    async.parallel([
-      function tryOneName(cb) {
-        var u = "http://blog.openstreetmap.de/blog/wochennotiz-nr-"+nr;
-        request(u, function (error, response, b) {
-          if (!error) {
-            body = b;
-            url = u;
+    ],
+    function loadedWN(err){ 
+      debug('loadedWN');
+      website = body;
+      if (body) {
+        status = null;
+        result = [];
+        categoryList = [];
+        parser.write(body);
+        console.log("Loaded Url:",url);
+        //console.log("Articles: ",result);
+        var blog = blogModule.create();
+
+        //fs.writeFileSync(blogName,body,"utf8");
+
+        var cat =[];
+        for (var i=0;i<categoryList.length;i++) {
+          var c = {DE:categoryList[i]};
+          if (c.DE in categoryTranslation) {
+            c.EN = categoryTranslation[c.DE];
           }
-          cb();
-        })
-      },
-      function tryOneName(cb) {
-        var u = "http://blog.openstreetmap.de/blog/osm-wochennotiz-nr-"+nr;
-        request(u, function (error, response, b) {
-          if (!error) {
-            body = b;
-            url = u;
+          else 
+          {
+            c.EN = c.DE+"Not Translated";
+            console.log(c.EN);
           }
-          cb();
+          cat.push(c);
+        }
+        
+
+
+        blog.setAndSave("IMPORT",{name:blogName,status:"published",categories:cat},function(err,erg){
+          console.log("Blog Saved Error("+err+")");
+          async.each(result,function iterator(item,cb) {
+            var category = item.title;
+            //console.dir("ITEM"+item);
+            if (category == null) return cb();
+            //console.dir("Import Category: "+category);
+            //console.dir(item.element.length+" Elements in Category");
+            async.each(item.element,function eachArticle(articleProto,cba) {
+              //console.log(articleProto);
+              var markdown = toMarkdown(articleProto);
+              var article = articleModule.create();
+              article.setAndSave("IMPORT",{blog:blogName,category:category,markdown:markdown},function(err){
+                //console.log("Article Saved");
+                cba(err);
+              });
+
+
+            }, function done() {cb();}
+            )
+
+
+
+          }, function(done) {
+            console.log("Blog "+blogName+ " imported");
+            callback();
+          }
+          ) 
         })
       }
+    })
 
-      ],
-      function loadedWN(err){ 
-        website = body;
-        if (body) {
-          status = null;
-          result = [];
-          categoryList = [];
-          parser.write(body);
-          console.log("Loaded Url:",url);
-          //console.log("Articles: ",result);
-          var blog = blogModule.create();
-
-          //fs.writeFileSync(blogName,body,"utf8");
-
-          var cat =[];
-          for (var i=0;i<categoryList.length;i++) {
-            var c = {DE:categoryList[i]};
-            if (c.DE in categoryTranslation) {
-              c.EN = categoryTranslation[c.DE];
-            }
-            else 
-            {
-              c.EN = c.DE+"Not Translated";
-              console.log(c.EN);
-            }
-            cat.push(c);
-          }
-          
-
-
-          blog.setAndSave("IMPORT",{name:blogName,status:"published",categories:cat},function(err,erg){
-            console.log("Blog Saved Error("+err+")");
-            async.each(result,function iterator(item,cb) {
-              var category = item.title;
-              //console.dir("ITEM"+item);
-              if (category == null) return cb();
-              //console.dir("Import Category: "+category);
-              //console.dir(item.element.length+" Elements in Category");
-              async.each(item.element,function eachArticle(articleProto,cba) {
-                //console.log(articleProto);
-                var markdown = toMarkdown(articleProto);
-                var article = articleModule.create();
-                article.setAndSave("IMPORT",{blog:blogName,category:category,markdown:markdown},function(err){
-                  //console.log("Article Saved");
-                  cba(err);
-                });
-
-
-              }, function done() {cb();}
-              )
-
-
-
-            }, function(done) {
-              console.log("Blog "+blogName+ " imported");
-              callback();
-            }
-            ) 
-          })
-        }
-      })
- 
-      
-    });
-  }
+    
+  });
+}
 
 
 config.initialise();
