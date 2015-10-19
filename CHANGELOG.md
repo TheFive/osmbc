@@ -1,5 +1,24 @@
 # Change Log
 
+## [0.2.24](https://github.com/TheFive/osmbc/tree/0.2.24) (2015-10-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.23...0.2.24)
+
+**Implemented enhancements:**
+
+- rebuild the article view mode [\#53](https://github.com/TheFive/osmbc/issues/53)
+
+**Fixed bugs:**
+
+- Reference link in table with double used links is broken, link to article does not work. [\#70](https://github.com/TheFive/osmbc/issues/70)
+
+**Closed issues:**
+
+- Show a special icon if an entry has comments [\#69](https://github.com/TheFive/osmbc/issues/69)
+- mocha tests seems to fail in other timeszones [\#67](https://github.com/TheFive/osmbc/issues/67)
+- Error with download.js [\#57](https://github.com/TheFive/osmbc/issues/57)
+- Hint: link at GitHub's header or README.md [\#51](https://github.com/TheFive/osmbc/issues/51)
+- Add a possibility to find easy commented articles in a blog. [\#49](https://github.com/TheFive/osmbc/issues/49)
+
 ## [0.2.23](https://github.com/TheFive/osmbc/tree/0.2.23) (2015-10-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.22...0.2.23)
 

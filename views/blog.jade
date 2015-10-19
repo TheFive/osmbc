@@ -10,12 +10,24 @@ block content
         .col-md-9 
           
             div.btn-group
-              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")')
-                | Overview
-              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")') 
-                | Full
-              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")')
-                | Full EN
+              if style == 'overview'
+                button.btn.btn-primary(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")')
+                  | Overview
+              else
+                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")')
+                  | Overview
+              if style == 'preview'
+                button.btn.btn-primary(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")') 
+                  | Full
+              else
+                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")') 
+                  | Full
+              if style == 'previewEN'
+                button.btn.btn-primary(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")')
+                  | Full EN
+              else
+                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")')
+                  | Full EN
             div.btn-group
               button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview","_self")')
                 | View Preview
@@ -63,6 +75,8 @@ block content
   
   .row
     p
+      h2
+        | Wochennotiz #{blog.name}
       :verbatim
         !{main_text}
   .row
