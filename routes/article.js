@@ -142,6 +142,7 @@ function postArticle(req, res, next) {
                  title:req.body.title,
                  commentStatus:req.body.commentStatus};
   console.log(changes);
+  var returnToUrl ;
 
   async.parallel([
       function searchArticle(cb) {
@@ -151,6 +152,8 @@ function postArticle(req, res, next) {
           if (err) return cb(err);
           if (!result) return cb(new Error("Article ID does not exist"));
           article = result;
+          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
+          if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
           cb();
         })
       },
@@ -162,6 +165,7 @@ function postArticle(req, res, next) {
           if (err) return next(err);
           if (typeof(result.id) == 'undefined') return cb(new Error("Could not create Article"));
           article = result;
+          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
           cb();          
         })
       }
@@ -175,12 +179,9 @@ function postArticle(req, res, next) {
           next(err);
           return;
         }
-        var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
-        if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
         res.redirect(returnToUrl);    
       })
     }
-
   )
 }
 

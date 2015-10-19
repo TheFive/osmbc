@@ -209,7 +209,7 @@ function preview(edit,lang,callback) {
       if (lang=='EN')
         preview = '<h2> Weekly'+self.name+'</h2>\n'*/
       if (self.startDate && self.endDate) {
-        preview += "<p>"+moment(self.startDate).locale(lang).format('l') +" - "+moment(self.endDate).locale(lang).format('l') +'</p>\n';
+        preview += "<p>"+moment(self.startDate).locale(lang).format('l') +"-"+moment(self.endDate).locale(lang).format('l') +'</p>\n';
       }
       preview += "<!--         place picture here              -->\n"      
     }

@@ -179,7 +179,7 @@ block content
             .panel.panel-default
               .panel-body
                 :verbatim
-                !{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i, '<a href="$1">$1</a>')}
+                !{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1">$1</a>')}
       .row 
         .col-md-1
         .col-md-5
