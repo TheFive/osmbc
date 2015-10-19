@@ -1,11 +1,20 @@
 # Change Log
 
+## [0.2.25](https://github.com/TheFive/osmbc/tree/0.2.25) (2015-10-19)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.24a...0.2.25)
+
+**Fixed bugs:**
+
+- Correct redirect after Collecting an article. [\#77](https://github.com/TheFive/osmbc/issues/77)
+- Articleview create Links to all Links [\#73](https://github.com/TheFive/osmbc/issues/73)
+
 ## [0.2.24a](https://github.com/TheFive/osmbc/tree/0.2.24a) (2015-10-19)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.24...0.2.24a)
 
 **Fixed bugs:**
 
 - Missing Blog Name in Overview, Full or FullEN mode. [\#75](https://github.com/TheFive/osmbc/issues/75)
+- Use Correct Hyphen for Displaying the Date [\#68](https://github.com/TheFive/osmbc/issues/68)
 
 **Closed issues:**
 
