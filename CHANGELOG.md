@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.2.24a](https://github.com/TheFive/osmbc/tree/0.2.24a) (2015-10-19)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.24...0.2.24a)
+
+**Fixed bugs:**
+
+- Missing Blog Name in Overview, Full or FullEN mode. [\#75](https://github.com/TheFive/osmbc/issues/75)
+
+**Closed issues:**
+
+- Control Category Change in Blog [\#34](https://github.com/TheFive/osmbc/issues/34)
+- Create a blog category help to let the team implement process help [\#32](https://github.com/TheFive/osmbc/issues/32)
+
 ## [0.2.24](https://github.com/TheFive/osmbc/tree/0.2.24) (2015-10-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.23...0.2.24)
 
