@@ -18,20 +18,24 @@ function renderBlogId(req, res, next) {
 
   var id = req.params.blog_id;
  
-  var edit = 'overpass';
+  var edit = 'overview';
   var lang = "DE";
+  var style = "overview";
 
   if (req.query.style == 'preview') {
     lang = "DE";
     edit = true;
+    style = 'preview';
   }
   if (req.query.style == 'previewEN') {
     lang = "EN";
     edit = true;
+    style = 'previewEN';
   }
   if (req.query.style == 'overview') {
     lang = "DE";
     edit = 'overview';
+    style = 'overview';
   }
 
   blogModule.findById(id,function(err,blog) {
@@ -107,6 +111,7 @@ function renderBlogId(req, res, next) {
                            blog:blog,
                            changes:changes,
                            articles:articles,
+                           style:style,
                            categories:blog.getCategories()});
       }
     )
