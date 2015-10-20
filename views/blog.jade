@@ -11,22 +11,35 @@ block content
           
             div.btn-group
               if style == 'overview'
-                button.btn.btn-primary(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")')
+                button.btn.btn-primary(
+                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")'
+                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_blank")')
                   | Overview
               else
-                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")')
+                button.btn.btn-default(
+                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")'
+                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_blank")')
                   | Overview
               if style == 'preview'
-                button.btn.btn-primary(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")') 
+                button.btn.btn-primary(
+                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")'
+                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_blank")')
+
                   | Full
               else
-                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")') 
+                button.btn.btn-default(
+                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")'
+                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_blank")')
                   | Full
               if style == 'previewEN'
-                button.btn.btn-primary(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")')
+                button.btn.btn-primary(
+                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")'
+                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_blank")')
                   | Full EN
               else
-                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")')
+                button.btn.btn-default(
+                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")'
+                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_blank")')
                   | Full EN
             div.btn-group
               button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview","_self")')
