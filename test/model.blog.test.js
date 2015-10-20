@@ -239,7 +239,7 @@ describe('model/blog', function() {
             })         
           } ,
           function(done) {
-            blog.preview(false,function(err,result){
+            blog.preview(false,"DE","user",function(err,result){
               should.not.exist(err);
               html = result.preview;
               articles = result.articles;
