@@ -135,15 +135,16 @@ block content
         .row
           .col-md-1
           .col-md-5
-            select(id="commentStatus",name="commentStatus").form-control
-              each status in ["open","solved"]
-                if article.commentStatus
-                  if status == article.commentStatus
-                    option(value="#{status}" selected ) #{status}
+            if (article.comment && article.comment!="")
+              select(id="commentStatus",name="commentStatus").form-control
+                each status in ["open","solved"]
+                  if article.commentStatus
+                    if status == article.commentStatus
+                      option(value="#{status}" selected ) #{status}
+                    else
+                      option(value="#{status}"  ) #{status}
                   else
-                    option(value="#{status}"  ) #{status}
-                else
-                    option(value="#{status}"  ) #{status}
+                      option(value="#{status}"  ) #{status}
 
           
     else
@@ -220,14 +221,15 @@ block content
         
 
       .row
-        .col-md-1
-          | Comment 
-        .col-md-10 
-            | (Comment is #{article.commentStatus})
-            .panel.panel-default
-              .panel-body
-                :verbatim
-                  !{article.commentHtml}
+         if (article.comment && article.comment!="")
+          .col-md-1
+            | Comment 
+          .col-md-10 
+              | (Comment is #{article.commentStatus})
+              .panel.panel-default
+                .panel-body
+                  :verbatim
+                    !{article.commentHtml}
     .row
       if articleReferences.count >= 1
         h2
