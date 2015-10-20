@@ -194,8 +194,10 @@ function preview(edit,lang,user,callback) {
   var self = this;
 //  should(typeof(edit)).equal.True();
   should(typeof(lang)).equal("string");
-  should(typeof(user)).equal("string");
-  should(typeof(callback)).equal("function");
+  if (typeof(user)=="function") {
+    callback = user;
+    user = "";
+  }
 
   var articles = {};
   var preview = "";
