@@ -217,7 +217,7 @@ block content
         .col-md-1
           | Comment 
         .col-md-10 
-            | #{(article.commentSolved)?"(Comment Is Solved)":"(Comment Is Open)"}
+            | (Comment is #{article.commentStatus})
             .panel.panel-default
               .panel-body
                 :verbatim
