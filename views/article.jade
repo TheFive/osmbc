@@ -204,13 +204,19 @@ block content
         .col-md-5 
           .panel.panel-default
             .panel-body(id="preview")
-              :verbatim
-                !{article.textHtml}
+              if (article.textHtml != "")
+                :verbatim
+                  !{article.textHtml}
+              else
+                | #{article.markdown}
         .col-md-5 
           .panel.panel-default
             .panel-body(id="previewEN")
-              :verbatim
-                !{article.textHtmlEN}
+              if (article.textHtmlEN != "")
+                :verbatim
+                  !{article.textHtmlEN}
+              else
+                | #{article.markdownEN}
         
 
       .row
