@@ -77,9 +77,19 @@ function createNewArticle (proto,callback) {
 }
 
 
-function preview(edit) {
+function preview(edit,user) {
   debug("preview");
+  if (typeof(user)=='undefined') user = "";
   var editLink;
+  var commentMarkup = "";
+  if (this.comment) {
+    if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
+      var commentColour = "blue";
+      if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
+      if (this.comment.indexOf("@all")>=0) commentColour = "red";
+      commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
+    }
+  }
   if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   if (typeof(this.markdown)!='undefined' && this.markdown!='') {
     var md = this.markdown;
@@ -91,13 +101,9 @@ function preview(edit) {
 
     // clean up <p> and </p> of markdown generation.
     html = html.substring(3,html.length-4)
+
+
     if (edit) {
-        var commentMarkup = "";
-        if (this.comment) {
-          if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
-            commentMarkup = ' style=" border-left-style: solid; border-color: blue;"'
-          }
-        }
         return '<p'+commentMarkup+'>\n'+editLink+' '+html+'\n</p>'
       } else {
         // if not edit mode and article has not to be published, return nothing.
@@ -106,12 +112,13 @@ function preview(edit) {
       }
   } 
   // Markdown is not defined. Return a placholder for the article
-  if (edit) return '<p>\n<mark>'+editLink+' '+this.displayTitle(9999)+'\n</mark></p>';
+  if (edit) return '<p'+commentMarkup+'>\n<mark>'+editLink+' '+this.displayTitle(9999)+'\n</mark></p>';
        else return '<li>\n<mark>'+this.displayTitle(9999)+'\n</mark></li>';
 }
 
-function overview() {
+function overview(user) {
   debug("overview");
+  if (typeof(user)=='undefined') user = "";
   var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   
   var editLink = '';
@@ -128,17 +135,30 @@ function overview() {
   var commentMarkup = "";
   if (this.comment) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
-      commentMarkup = ' style=" border-left-style: solid; border-color: blue;"'
+      var commentColour = "blue";
+      if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
+      if (this.comment.indexOf("@all")>=0) commentColour = "red";
+      commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
     }
   }
   return '<p'+commentMarkup+'>\n'+editMark+' '+text+' '+editLink+'\n</p>';      
 }
 
-function previewEN(edit) {
+function previewEN(edit,user) {
   debug("previewEN");
+  if (typeof(user)=='undefined') user = "";
 
   var editLink = '';
   if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+  var commentMarkup = "";
+  if (this.comment) {
+    if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
+      var commentColour = "blue";
+      if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
+      if (this.comment.indexOf("@all")>=0) commentColour = "red";
+      commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
+    }
+  }
   if (typeof(this.markdownEN)!='undefined' && this.markdownEN!='') {
     var md = this.markdownEN;
 
@@ -158,12 +178,6 @@ function previewEN(edit) {
       html = html.substring(3,html.length-4)
 
       if (edit) {
-        var commentMarkup = "";
-        if (this.comment) {
-          if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
-            commentMarkup = ' style=" border-left-style: solid; border-color: blue;"'
-          }
-        }
         return '<p'+commentMarkup+'>\n'+editLink+' '+html+'\n</p>'
       } else {
         // if not edit mode and article has not to be published, return nothing.
@@ -174,7 +188,7 @@ function previewEN(edit) {
 
   } 
   // Markdown is not defined. Return a placholder for the article
-  if (edit) return '<p>\n<mark>'+editLink+' '+this.displayTitle(99999)+'\n</mark></p>';
+  if (edit) return '<p'+commentMarkup+'>\n'+editLink+' <mark>'+this.displayTitle(99999)+'\n</mark></p>';
        else return '<li>\n<mark>'+this.displayTitle(99999)+'\n</mark></li>';
 }
 

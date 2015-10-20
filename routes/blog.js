@@ -49,7 +49,7 @@ function renderBlogId(req, res, next) {
 
     async.series([
       function (callback) {
-        blog.preview(edit,lang,function(err,result) {
+        blog.preview(edit,lang,req.user.displayName,function(err,result) {
           if (err) return callback(err);
           main_text = result.preview;
           articles = result.articles;
@@ -163,7 +163,7 @@ function renderBlogPreview(req, res, next) {
 
     async.auto({ 
         converter:function(callback) {
-                    blog.preview(edit,lang,function(err,result) {
+                    blog.preview(edit,lang,req.user,function(err,result) {
                       callback(err,result);
                     })
                   }

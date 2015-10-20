@@ -494,6 +494,42 @@ describe('model/article', function() {
       should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
       bddone();
     })
+    it('should generate a preview with a comment and no status',function (bddone) {
+      var article = articleModule.create({markdown:"small markdown",comment:"Hallo"});
+      var result = article.preview(true);
+      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      bddone();
+    })
+    it('should generate a preview with a comment and open status',function (bddone) {
+      var article = articleModule.create({markdown:"small markdown",comment:"Hallo",commentStatus:"open"});
+      var result = article.preview(true);
+      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      bddone();
+    })
+    it('should generate a preview (no markdown) with a comment and open status',function (bddone) {
+      var article = articleModule.create({collection:"small collection",comment:"Hallo",commentStatus:"open"});
+      var result = article.preview(true);
+      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<mark><a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small collection\n</mark></p>');
+      bddone();
+    })
+    it('should generate a preview with a comment and open status and reference for all user',function (bddone) {
+      var article = articleModule.create({markdown:"small markdown",comment:"Hallo @all",commentStatus:"open"});
+      var result = article.preview(true,"test");
+      should(result).equal('<p style=" border-left-style: solid; border-color: red;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      bddone();
+    })
+    it('should generate a preview with a comment and open status and reference for a specific user',function (bddone) {
+      var article = articleModule.create({markdown:"small markdown",comment:"Hallo @user",commentStatus:"open"});
+      var result = article.preview(true,"user");
+      should(result).equal('<p style=" border-left-style: solid; border-color: red;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      bddone();
+    })
+    it('should generate a preview with a comment and solved status',function (bddone) {
+      var article = articleModule.create({markdown:"small markdown",comment:"Hallo",commentStatus:"solved"});
+      var result = article.preview(true);
+      should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      bddone();
+    })
   })
   describe('calculateUsedLinks',function() {
     var idToFindLater;
