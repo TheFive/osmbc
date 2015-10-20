@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.2.26](https://github.com/TheFive/osmbc/tree/0.2.26) (2015-10-20)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.25...0.2.26)
+
+**Implemented enhancements:**
+
+- open a second view in a second tab  [\#86](https://github.com/TheFive/osmbc/issues/86)
+
+**Fixed bugs:**
+
+- English only - should be visible in the preview [\#88](https://github.com/TheFive/osmbc/issues/88)
+- Comment indication not allways visible [\#84](https://github.com/TheFive/osmbc/issues/84)
+
 ## [0.2.25](https://github.com/TheFive/osmbc/tree/0.2.25) (2015-10-19)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.24a...0.2.25)
 
@@ -116,17 +128,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
@@ -212,13 +224,13 @@
 ## [0.2.11a](https://github.com/TheFive/osmbc/tree/0.2.11a) (2015-09-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.11...0.2.11a)
 
-## [0.2.11](https://github.com/TheFive/osmbc/tree/0.2.11) (2015-09-24)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.10...0.2.11)
-
 **Closed issues:**
 
 - Create Full Text Search with Postgres Features for Search [\#14](https://github.com/TheFive/osmbc/issues/14)
 - Create index on ids [\#13](https://github.com/TheFive/osmbc/issues/13)
+
+## [0.2.11](https://github.com/TheFive/osmbc/tree/0.2.11) (2015-09-24)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.10...0.2.11)
 
 ## [0.2.10](https://github.com/TheFive/osmbc/tree/0.2.10) (2015-09-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.9...0.2.10)
@@ -238,8 +250,15 @@
 ## [0.2.5](https://github.com/TheFive/osmbc/tree/0.2.5) (2015-09-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.4...0.2.5)
 
+**Closed issues:**
+
+- Allow only a small group of OSM Users to use OSMBC [\#10](https://github.com/TheFive/osmbc/issues/10)
+
 ## [0.2.4](https://github.com/TheFive/osmbc/tree/0.2.4) (2015-09-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.3...0.2.4)
+
+## [0.2.3](https://github.com/TheFive/osmbc/tree/0.2.3) (2015-09-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.2...0.2.3)
 
 **Implemented enhancements:**
 
@@ -248,13 +267,6 @@
 **Fixed bugs:**
 
 - Mobilvariant has to mich space on the left [\#8](https://github.com/TheFive/osmbc/issues/8)
-
-**Closed issues:**
-
-- Allow only a small group of OSM Users to use OSMBC [\#10](https://github.com/TheFive/osmbc/issues/10)
-
-## [0.2.3](https://github.com/TheFive/osmbc/tree/0.2.3) (2015-09-06)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.2...0.2.3)
 
 **Closed issues:**
 
@@ -282,13 +294,13 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/P1.3...P1.4)
 
 ## [P1.3](https://github.com/TheFive/osmbc/tree/P1.3) (2015-08-05)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/P1.2...P1.3)
-
-## [P1.2](https://github.com/TheFive/osmbc/tree/P1.2) (2015-08-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/P.1.1...P1.2)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/P.1.1...P1.3)
 
 ## [P.1.1](https://github.com/TheFive/osmbc/tree/P.1.1) (2015-08-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/P.1...P.1.1)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/P1.2...P.1.1)
+
+## [P1.2](https://github.com/TheFive/osmbc/tree/P1.2) (2015-08-04)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/P.1...P1.2)
 
 ## [P.1](https://github.com/TheFive/osmbc/tree/P.1) (2015-08-04)
 
