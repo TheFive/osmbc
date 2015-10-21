@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.2.26b](https://github.com/TheFive/osmbc/tree/0.2.26b) (2015-10-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26a...0.2.26b)
+
+**Fixed bugs:**
+
+- Displaying Imported Articles Crashes [\#92](https://github.com/TheFive/osmbc/issues/92)
+
+## [0.2.26a](https://github.com/TheFive/osmbc/tree/0.2.26a) (2015-10-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26...0.2.26a)
+
+**Implemented enhancements:**
+
+- Add Romanian Flag to Flag List [\#91](https://github.com/TheFive/osmbc/issues/91)
+- Allow mentioning users [\#82](https://github.com/TheFive/osmbc/issues/82)
+
 ## [0.2.26](https://github.com/TheFive/osmbc/tree/0.2.26) (2015-10-20)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.25...0.2.26)
 
