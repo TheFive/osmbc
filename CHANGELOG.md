@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.2.27](https://github.com/TheFive/osmbc/tree/0.2.27) (2015-10-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26b...0.2.27)
+
+**Fixed bugs:**
+
+- Error searching for a special HTTP String [\#93](https://github.com/TheFive/osmbc/issues/93)
+- Get favicon working and replace it by a new one. [\#90](https://github.com/TheFive/osmbc/issues/90)
+
 ## [0.2.26b](https://github.com/TheFive/osmbc/tree/0.2.26b) (2015-10-21)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26a...0.2.26b)
 
