@@ -402,12 +402,12 @@ function createTable(cb) {
               CREATE INDEX article_id_idx ON article USING btree (id); \
               CREATE INDEX article_text_idx ON article USING gin  \
                       (to_tsvector('german'::regconfig,   \
-                          (COALESCE(data ->> 'title'::text, ''::text) ||  \
-                            COALESCE(data ->> 'collection'::text, ''::text)) ||  \
+                          (COALESCE(data ->> 'title'::text, ''::text) || ' '||  \
+                            COALESCE(data ->> 'collection'::text, ''::text)) || ' ' || \
                             COALESCE(data ->> 'markdown'::text, ''::text))); \
               CREATE INDEX article_texten_idx ON article USING gin \
                 (to_tsvector('english'::regconfig, \
-                  COALESCE(data ->> 'collection'::text, ''::text) || \
+                  COALESCE(data ->> 'collection'::text, ''::text) ||' ' || \
                   COALESCE(data ->> 'markdownEN'::text, ''::text)));";
   pgMap.createTable('article',createString,createView,cb)
 }
