@@ -101,7 +101,7 @@ block content
           .col-md-1
             | Markdown 
           .col-md-5 
-            textarea.form-control(id="markdown" name = "markdown" rows=7) #{article.markdown}
+            textarea.form-control(id="markdownDE" name = "markdownDE" rows=7) #{article.markdownDE}
           .col-md-5  
             textarea.form-control(id="markdownEN" name = "markdownEN" rows=7) #{article.markdownEN}
             | 'german only' to specify no translation wanted.
@@ -202,7 +202,7 @@ block content
               | Markdown<br>
           .col-md-5  
               .panel.panel-default
-                .panel-body #{article.markdown}
+                .panel-body #{article.markdownDE}
           .col-md-5
               .panel.panel-default
                 .panel-body #{article.markdownEN}    
@@ -217,7 +217,7 @@ block content
                 :verbatim
                   !{article.textHtml}
               else
-                | #{article.markdown}
+                | #{article.markdownDE}
         .col-md-5 
           .panel.panel-default
             .panel-body(id="previewEN")
@@ -308,9 +308,9 @@ block scripts
   script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
   script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
   script.
-    markdown = document.getElementById("markdown");
-    markdown.onchange = onchange;
-    markdown.onkeyup = onchange;
+    markdownDE = document.getElementById("markdownDE");
+    markdownDE.onchange = onchange;
+    markdownDE.onkeyup = onchange;
     markdownEN = document.getElementById("markdownEN");
     markdownEN.onchange = onchangeEN;
     markdownEN.onkeyup = onchangeEN;
@@ -343,7 +343,7 @@ block scripts
     }
     
     function onchange() {
-      var md = document.getElementById("markdown").value;
+      var md = document.getElementById("markdownDE").value;
       preview = document.getElementById("preview");
       
       preview.innerHTML = convert(md);
