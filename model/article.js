@@ -91,8 +91,8 @@ function preview(edit,user) {
     }
   }
   if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-  if (typeof(this.markdown)!='undefined' && this.markdown!='') {
-    var md = this.markdown;
+  if (typeof(this.markdownDE)!='undefined' && this.markdownDE!='') {
+    var md = this.markdownDE;
 
     // Does the markdown text starts with '* ', so ignore it
     if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
@@ -122,7 +122,7 @@ function overview(user) {
   var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   
   var editLink = '';
-  if (typeof(this.markdown)=='undefined' || this.markdown == '') {
+  if (typeof(this.markdownDE)=='undefined' || this.markdownDE == '') {
     editLink = "Edit";
   }
   if (typeof(this.markdownEN)=='undefined' || this.markdownEN == '') {
@@ -172,7 +172,7 @@ function previewEN(edit,user) {
      // Does the markdown text starts with '* ', so ignore it
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
-      var html = markdown.toHTML(md);
+      var html = markdownDE.toHTML(md);
 
       // clean up <p> and </p> of markdown generation.
       html = html.substring(3,html.length-4)
@@ -344,8 +344,8 @@ function calculateLinks() {
     var res = this.collection.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
     if (res) links = links.concat(res);
   }
-  if (typeof(this.markdown)!='undefined') {
-    var res = this.markdown.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
+  if (typeof(this.markdownDE)!='undefined') {
+    var res = this.markdownDE.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
     if (res) links = links.concat(res);
   }
   return links;
@@ -359,8 +359,8 @@ function displayTitle(maxlength) {
   if (typeof(this.title)!='undefined' && this.title != "") {
     result = util.shorten(this.title,maxlength)
   } else 
-  if (typeof(this.markdown)!='undefined' && this.markdown !="") {
-    var md = this.markdown;
+  if (typeof(this.markdownDE)!='undefined' && this.markdownDE !="") {
+    var md = this.markdownDE;
     if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
     result = util.shorten(md,maxlength)
   } else
@@ -404,7 +404,7 @@ function createTable(cb) {
                       (to_tsvector('german'::regconfig,   \
                           (COALESCE(data ->> 'title'::text, ''::text) || ' '||  \
                             COALESCE(data ->> 'collection'::text, ''::text)) || ' ' || \
-                            COALESCE(data ->> 'markdown'::text, ''::text))); \
+                            COALESCE(data ->> 'markdownDE'::text, ''::text))); \
               CREATE INDEX article_texten_idx ON article USING gin \
                 (to_tsvector('english'::regconfig, \
                   COALESCE(data ->> 'collection'::text, ''::text) ||' ' || \

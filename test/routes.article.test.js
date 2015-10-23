@@ -249,7 +249,7 @@ describe('router/article',function() {
         var req = {};
         req.params = {};
         req.params.article_id = article.id;
-        req.body = {markdown:"MARKDOWN",
+        req.body = {markdownDE:"MARKDOWNDE",
                    markdownEN:"MARKDOWNEN",
                    blog:"BLOG",
                    blogEN:"BLOGEN",
@@ -286,7 +286,7 @@ describe('router/article',function() {
             should(res.redirect.firstCall.calledWith("/article/"+article.id)).be.true();
             delete article._meta;
             delete article.id;
-            should(article).eql({markdown:"MARKDOWN",
+            should(article).eql({markdownDE:"MARKDOWNDE",
                    markdownEN:"MARKDOWNEN",
                    blog:"BLOG",
                    blogEN:"BLOGEN",

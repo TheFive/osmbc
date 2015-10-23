@@ -31,13 +31,13 @@ describe('model/article', function() {
 
   describe('createNewArticle',function() {
     it('should createNewArticle with prototype',function(bddone) {
-      var newArticle = articleModule.createNewArticle({blog:"test",markdown:"**"},function (err,result){
+      var newArticle = articleModule.createNewArticle({blog:"test",markdownDE:"**"},function (err,result){
         should.not.exist(err);
         var id = result.id;
         testutil.getJsonWithId("article",id,function(err,result){
           should.not.exist(err);
           should(result.blog).equal('test');
-          should(result.markdown).equal('**');
+          should(result.markdownDE).equal('**');
           bddone();
         })
       })
@@ -54,7 +54,7 @@ describe('model/article', function() {
     })
     it('should create no New Article with ID',function(bddone){
       (function() {
-        var newArticle = articleModule.createNewArticle({id:2,blog:"test",markdown:"**"},function (err,result){
+        var newArticle = articleModule.createNewArticle({id:2,blog:"test",markdownDE:"**"},function (err,result){
         })
       }).should.throw();
       bddone();
@@ -64,7 +64,7 @@ describe('model/article', function() {
     it('should report a conflict, if version number differs', function (bddone){
       // Generate an article for test
       var newArticle;
-      articleModule.createNewArticle({markdown:"markdown",blog:"TEST"},function(err,result){
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function(err,result){
         should.not.exist(err);
         newArticle = result;
         var id =result.id;
@@ -96,17 +96,17 @@ describe('model/article', function() {
     }) 
     it('should set only the one Value in the database', function (bddone){
       var newArticle;
-      articleModule.createNewArticle({markdown:"markdown",blog:"TEST"},function(err,result){
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function(err,result){
         should.not.exist(err);
         newArticle = result;
         var id =result.id;
-        newArticle.markdown = "This Value will not be logged";
+        newArticle.markdownDE = "This Value will not be logged";
         newArticle.setAndSave("user",{version:"1",blog:"Reference",collection:"text",category:"Importe"},function(err,result) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
             delete result._meta;
-            should(result).eql({id:id,markdown:"This Value will not be logged",blog:"Reference",collection:"text",category:"Importe",categoryEN:"Imports",version:2});
+            should(result).eql({id:id,markdownDE:"This Value will not be logged",blog:"Reference",collection:"text",category:"Importe",categoryEN:"Imports",version:2});
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
@@ -143,13 +143,13 @@ describe('model/article', function() {
     })    
     it('should ignore unchanged Values', function (bddone){
       var newArticle;
-      articleModule.createNewArticle({markdown:"markdown",blog:"TEST"},function(err,result){
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function(err,result){
         should.not.exist(err);
         newArticle = result;
         var id =result.id;
         var empty;
         var changeValues = {}
-        changeValues.markdown = newArticle.markdown;
+        changeValues.markdownDE = newArticle.markdownDE;
         changeValues.blog = empty;
         changeValues.version = "1";
         newArticle.setAndSave("user",changeValues,function(err,result) {
@@ -157,7 +157,7 @@ describe('model/article', function() {
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
             delete result._meta;
-            should(result).eql({id:id,markdown:"markdown",blog:"TEST",version:2});
+            should(result).eql({id:id,markdownDE:"markdown",blog:"TEST",version:2});
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
@@ -172,7 +172,7 @@ describe('model/article', function() {
       // Generate an article for test
       var newArticle;
       debug('Create a new Article');
-      articleModule.createNewArticle({markdown:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
         should.not.exist(err);
         newArticle = result;
         var id =result.id;
@@ -212,9 +212,9 @@ describe('model/article', function() {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"},cb)},
-        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test2",collection:"col2",category:"catB"},cb)},
-        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test3",collection:"col3",category:"catA"},
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test1",collection:"col1",category:"catA"},cb)},
+        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test2",collection:"col2",category:"catB"},cb)},
+        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdownDE:"test3",collection:"col3",category:"catA"},
                          function(err,result){
                           should.not.exist(err);
                           idToFindLater = result.id;
@@ -236,8 +236,8 @@ describe('model/article', function() {
           delete result[0].id;
           delete result[1]._meta;
           delete result[1].id;
-          should(result[0]).eql({blog:"WN1",markdown:"test1",collection:"col1",category:"catA",version:1});
-          should(result[1]).eql({blog:"WN1",markdown:"test2",collection:"col2",category:"catB",version:1});
+          should(result[0]).eql({blog:"WN1",markdownDE:"test1",collection:"col1",category:"catA",version:1});
+          should(result[1]).eql({blog:"WN1",markdownDE:"test2",collection:"col2",category:"catB",version:1});
           bddone();
         })
       })
@@ -249,7 +249,7 @@ describe('model/article', function() {
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({blog:"WN1",markdown:"test1",collection:"col1",category:"catA",version:1});
+          should(result).eql({blog:"WN1",markdownDE:"test1",collection:"col1",category:"catA",version:1});
           bddone();
         })
       })
@@ -261,7 +261,7 @@ describe('model/article', function() {
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({blog:"WN2",markdown:"test3",collection:"col3",category:"catA",version:1});
+          should(result).eql({blog:"WN2",markdownDE:"test3",collection:"col3",category:"catA",version:1});
           bddone();
         })
       })
@@ -270,26 +270,26 @@ describe('model/article', function() {
   describe('displayTitle',function() {
     var article;
     it('should return title first',function(bddone){
-      article = articleModule.create({title:"Titel",markdown:"markdown"});
+      article = articleModule.create({title:"Titel",markdownDE:"markdown"});
       should(article.displayTitle()).equal("Titel");
 
-      article = articleModule.create({title:"Very Long Title",markdown:"markdown"});
+      article = articleModule.create({title:"Very Long Title",markdownDE:"markdown"});
       should(article.displayTitle(10)).equal("Very Long ...");
       bddone();
     })
     it('should return markdown second',function(bddone){
-      article = articleModule.create({markdown:"markdown",collection:"col",category:"CAT"});
+      article = articleModule.create({markdownDE:"markdown",collection:"col",category:"CAT"});
       should(article.displayTitle()).equal("markdown");
 
-      article = articleModule.create({title:"",markdown:"markdown",collection:"col",category:"CAT"});
+      article = articleModule.create({title:"",markdownDE:"markdown",collection:"col",category:"CAT"});
       should(article.displayTitle()).equal("markdown");
 
-      article = articleModule.create({title:"",markdown:"* This is more markdown text to test the default limit of charachter",collection:"col",category:"CAT"});
+      article = articleModule.create({title:"",markdownDE:"* This is more markdown text to test the default limit of charachter",collection:"col",category:"CAT"});
       should(article.displayTitle()).equal("This is more markdown text to ...");
       bddone();
     })
     it('should return collection third',function(bddone){
-      article = articleModule.create({markdown:"",collection:"col",category:"CAT"});
+      article = articleModule.create({markdownDE:"",collection:"col",category:"CAT"});
       should(article.displayTitle()).equal("col");
 
       article = articleModule.create({title:"",collection:"col",category:"CAT"});
@@ -318,7 +318,7 @@ describe('model/article', function() {
       article = articleModule.create(
           {collection:"Forum Article is good: http://forum.openstreetmap.org/thisIsALink?id=200 \
               but be aware of http://bing.de/subpage/relation and of ftp://test.de",
-           markdown:"The [Forum Article](https://forum.openstreetmap.org/thisIsALink?id=200) \
+           markdownDE:"The [Forum Article](https://forum.openstreetmap.org/thisIsALink?id=200) \
                      reads nice, but have a look to [this](https://bing.de/subpage/relation) \
                      and [that](ftp://test.de)"});
       link = article.calculateLinks();
@@ -337,9 +337,9 @@ describe('model/article', function() {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"},cb)},
-        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test2",collection:"col2",category:"catB"},cb)},
-        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test3",collection:"col3",category:"catA"},cb)},
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test1",collection:"col1",category:"catA"},cb)},
+        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test2",collection:"col2",category:"catB"},cb)},
+        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdownDE:"test3",collection:"col3",category:"catA"},cb)},
         function b1(cb) {blogModule.createNewBlog({name:"WN2",status:"open"},cb)}
 
         ],function(err) {
@@ -374,9 +374,9 @@ describe('model/article', function() {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"},cb)},
-        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test2",collection:"col2",category:"catB"},cb)},
-        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test3",collection:"col3",category:"catA"},
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test1",collection:"col1",category:"catA"},cb)},
+        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test2",collection:"col2",category:"catB"},cb)},
+        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdownDE:"test3",collection:"col3",category:"catA"},
                          function(err,result){
                           should.not.exist(err);
                           idToFindLater = result.id;
@@ -408,9 +408,9 @@ describe('model/article', function() {
     before(function(bddone){
       async.series([
         testutil.clearDB,
-        function c1(cb) {articleModule.createNewArticle({blog:"WN1",title:"1",markdown:"test1 some [ping](https://link.to/hallo)",collection:"col1 http://link.to/hallo",category:"catA"},cb)},
-        function c2(cb) {articleModule.createNewArticle({blog:"WN1",blogEN:"EN1",title:"2",markdown:"test1 some [ping](https://link.to/hallo) http://www.osm.de/12345",collection:"http://www.osm.de/12345",category:"catB"},cb)},
-        function c3(cb) {articleModule.createNewArticle({blog:"WN2",blogEN:"EN1",title:"3",markdown:"test1 some [ping](https://link.to/hallo)",collection:"col3 http://www.google.de",category:"catA"},cb)},
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1",title:"1",markdownDE:"test1 some [ping](https://link.to/hallo)",collection:"col1 http://link.to/hallo",category:"catA"},cb)},
+        function c2(cb) {articleModule.createNewArticle({blog:"WN1",blogEN:"EN1",title:"2",markdownDE:"test1 some [ping](https://link.to/hallo) http://www.osm.de/12345",collection:"http://www.osm.de/12345",category:"catB"},cb)},
+        function c3(cb) {articleModule.createNewArticle({blog:"WN2",blogEN:"EN1",title:"3",markdownDE:"test1 some [ping](https://link.to/hallo)",collection:"col3 http://www.google.de",category:"catA"},cb)},
         function a1(cb) {blogModule.createNewBlog({title:"WN1",status:"published"},cb)},
         function a2(cb) {blogModule.createNewBlog({title:"WN2",status:"open"},cb);},
         function a2(cb) {blogModule.createNewBlog({title:"EN1",status:"published"},cb);}
@@ -477,31 +477,31 @@ describe('model/article', function() {
       bddone();
     })
     it('should generate a preview when markdown is specified (Edit Link)',function (bddone) {
-      var article = articleModule.create({markdown:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
+      var article = articleModule.create({markdownDE:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = article.preview(true);
       should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</p>');
       bddone();
     })
     it('should generate a preview when markdown is specified (No Edit Link)',function (bddone) {
-      var article = articleModule.create({markdown:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
+      var article = articleModule.create({markdownDE:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = article.preview(false);
       should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
       bddone();
     })
     it('should generate a preview when markdown is specified (with Star)',function (bddone) {
-      var article = articleModule.create({markdown:"* [Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
+      var article = articleModule.create({markdownDE:"* [Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = article.preview(false);
       should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
       bddone();
     })
     it('should generate a preview with a comment and no status',function (bddone) {
-      var article = articleModule.create({markdown:"small markdown",comment:"Hallo"});
+      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo"});
       var result = article.preview(true);
       should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview with a comment and open status',function (bddone) {
-      var article = articleModule.create({markdown:"small markdown",comment:"Hallo",commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"open"});
       var result = article.preview(true);
       should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
@@ -513,19 +513,19 @@ describe('model/article', function() {
       bddone();
     })
     it('should generate a preview with a comment and open status and reference for all user',function (bddone) {
-      var article = articleModule.create({markdown:"small markdown",comment:"Hallo @all",commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo @all",commentStatus:"open"});
       var result = article.preview(true,"test");
       should(result).equal('<p style=" border-left-style: solid; border-color: red;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview with a comment and open status and reference for a specific user',function (bddone) {
-      var article = articleModule.create({markdown:"small markdown",comment:"Hallo @user",commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo @user",commentStatus:"open"});
       var result = article.preview(true,"user");
       should(result).equal('<p style=" border-left-style: solid; border-color: red;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview with a comment and solved status',function (bddone) {
-      var article = articleModule.create({markdown:"small markdown",comment:"Hallo",commentStatus:"solved"});
+      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"solved"});
       var result = article.preview(true);
       should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
@@ -537,9 +537,9 @@ describe('model/article', function() {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1 some [ping](https://link.to/hallo)",collection:"col1 http://link.to/hallo",category:"catA"},cb)},
-        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1 some [ping](https://link.to/hallo) http://www.osm.de/12345",collection:"http://www.osm.de/12345",category:"catB"},cb)},
-        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test1 some [ping](https://link.to/hallo)",collection:"col3 http://www.google.de",category:"catA"},
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test1 some [ping](https://link.to/hallo)",collection:"col1 http://link.to/hallo",category:"catA"},cb)},
+        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test1 some [ping](https://link.to/hallo) http://www.osm.de/12345",collection:"http://www.osm.de/12345",category:"catB"},cb)},
+        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdownDE:"test1 some [ping](https://link.to/hallo)",collection:"col3 http://www.google.de",category:"catA"},
                          function(err,result){
                           should.not.exist(err);
                           idToFindLater = result.id;

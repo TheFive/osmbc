@@ -72,7 +72,7 @@ function renderArticleId(req,res,next) {
         function (err,result) {
 
           // calculate all previews for markdown code
-          if (typeof(article.markdown)!='undefined') {
+          if (typeof(article.markdownDE)!='undefined') {
             article.textHtml = article.preview();
           } 
           if (typeof(article.markdownEN)!='undefined') {
@@ -130,7 +130,7 @@ function postArticle(req, res, next) {
  
 
   var article = null;
-  var changes = {markdown:req.body.markdown,
+  var changes = {markdownDE:req.body.markdownDE,
                  markdownEN:req.body.markdownEN,
                  blog:req.body.blog,
                  blogEN:req.body.blogEN,
@@ -229,7 +229,7 @@ function renderList(req,res,next) {
   debug('renderList');
   req.session.articleReturnTo = req.originalUrl;
   var blog = req.query.blog;
-  var markdown = req.query.markdown;
+  var markdownDE = req.query.markdownDE;
   var markdownEN = req.query.markdownEN;
   var category = req.query.category;
   var categoryEN = req.query.categoryEN;
@@ -237,8 +237,8 @@ function renderList(req,res,next) {
   if (typeof(blog)!='undefined') {
     query.blog = blog;
   }
-  if (typeof(markdown)!='undefined') {
-    query.markdown = markdown;
+  if (typeof(markdownDE)!='undefined') {
+    query.markdownDE = markdownDE;
   }
   if (typeof(markdownEN)!='undefined') {
     query.markdownEN = markdownEN;
