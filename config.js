@@ -41,6 +41,12 @@ function getPostgresDBString() {
   return connectStr;
 }
 
+exports.getLanguages = function() {
+  debug('getLanguages');
+  configuration=exports.getConfiguration();
+  return configuration.languages;
+}
+
 
 
 
@@ -106,4 +112,5 @@ exports.getCallbackUrl = function() {
 }
 
 exports.env = env;
+
 

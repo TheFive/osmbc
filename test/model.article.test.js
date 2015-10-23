@@ -454,79 +454,79 @@ describe('model/article', function() {
   describe('preview',function() {
     it('should generate a preview when no markdown is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});
-      var result = article.preview();
+      var result = article.preview("DE");
       should(result).equal('<li>\n<mark>Test Title\n</mark></li>');
       bddone();
     })
     it('should generate a preview when no markdown is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});
-      var result = article.preview(true);
+      var result = article.preview("DE",true);
       should(result).equal('<p>\n<mark><a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> Test Title\n</mark></p>');
       bddone();
     })
     it('should generate a preview when no markdown2 is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({collection:"Test Collection"});
-      var result = article.preview();
+      var result = article.preview("DE");
       should(result).equal('<li>\n<mark>Test Collection\n</mark></li>');
       bddone();
     })
     it('should generate a preview when no markdown2 is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({collection:"Test Collection"});
-      var result = article.preview(true);
+      var result = article.preview("DE",true);
       should(result).equal('<p>\n<mark><a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> Test Collection\n</mark></p>');
       bddone();
     })
     it('should generate a preview when markdown is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({markdownDE:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
-      var result = article.preview(true);
+      var result = article.preview("DE",true);
       should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</p>');
       bddone();
     })
     it('should generate a preview when markdown is specified (No Edit Link)',function (bddone) {
       var article = articleModule.create({markdownDE:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
-      var result = article.preview(false);
+      var result = article.preview("DE",false);
       should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
       bddone();
     })
     it('should generate a preview when markdown is specified (with Star)',function (bddone) {
       var article = articleModule.create({markdownDE:"* [Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
-      var result = article.preview(false);
+      var result = article.preview("DE",false);
       should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
       bddone();
     })
     it('should generate a preview with a comment and no status',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo"});
-      var result = article.preview(true);
+      var result = article.preview("DE",true);
       should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview with a comment and open status',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"open"});
-      var result = article.preview(true);
+      var result = article.preview("DE",true);
       should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview (no markdown) with a comment and open status',function (bddone) {
       var article = articleModule.create({collection:"small collection",comment:"Hallo",commentStatus:"open"});
-      var result = article.preview(true);
+      var result = article.preview("DE",true);
       should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<mark><a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small collection\n</mark></p>');
       bddone();
     })
     it('should generate a preview with a comment and open status and reference for all user',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo @all",commentStatus:"open"});
-      var result = article.preview(true,"test");
+      var result = article.preview("DE",true,"test");
       should(result).equal('<p style=" border-left-style: solid; border-color: red;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview with a comment and open status and reference for a specific user',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo @user",commentStatus:"open"});
-      var result = article.preview(true,"user");
+      var result = article.preview("DE",true,"user");
       should(result).equal('<p style=" border-left-style: solid; border-color: red;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview with a comment and solved status',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"solved"});
-      var result = article.preview(true);
+      var result = article.preview("DE",true);
       should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })

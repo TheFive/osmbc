@@ -104,7 +104,7 @@ describe('router/article',function() {
               // clean up test data for comparison, Database IDs are random
               for (var i =0;i<renderData.changes.length; i++) delete renderData.changes[i].id;
               for (i=0;i<data.result.changes.length;i++) data.result.changes[i].oid = req.params.article_id;
-              article.textHtml = data.result.articleText;
+              article.textHtmlDE = data.result.articleText;
               should(renderData.article).eql(article);
               if(typeof(renderData.params.edit)=='undefined') renderData.params.edit = null;
               should(renderData.params).eql(data.result.params);

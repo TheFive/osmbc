@@ -70,17 +70,17 @@ function renderArticleId(req,res,next) {
         }
       }},
         function (err,result) {
-
-          // calculate all previews for markdown code
-          if (typeof(article.markdownDE)!='undefined') {
-            article.textHtml = article.preview();
-          } 
-          if (typeof(article.markdownEN)!='undefined') {
-            article.textHtmlEN = article.previewEN();
-          } 
+          var languages = config.getLanguages();
+          for (i=0;i<languages.length;i++) {
+            var lang = languages[i];
+            if (typeof(article["markdown"+lang])!='undefined') {
+              article["textHtml"+lang]=article.preview(lang);
+            }
+          }
           if (typeof(article.comment)!='undefined') {
             article.commentHtml = markdown.toHTML(article.comment)
           } 
+          console.dir(article);
           // 
           if (req.query.edit && ! params.edit) {
             var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
@@ -130,9 +130,7 @@ function postArticle(req, res, next) {
  
 
   var article = null;
-  var changes = {markdownDE:req.body.markdownDE,
-                 markdownEN:req.body.markdownEN,
-                 blog:req.body.blog,
+  var changes = {blog:req.body.blog,
                  blogEN:req.body.blogEN,
                  collection:req.body.collection,
                  comment:req.body.comment,
@@ -141,6 +139,11 @@ function postArticle(req, res, next) {
                  version:req.body.version,
                  title:req.body.title,
                  commentStatus:req.body.commentStatus};
+  var languages = config.getLanguages();
+  for (var i=0;i<languages.length;i++){
+    var lang = languages[i];
+    changes["markdown"+lang] = req.body["markdown"+lang];
+  }
   console.log(changes);
   var returnToUrl ;
 

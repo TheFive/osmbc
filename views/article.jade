@@ -94,16 +94,16 @@ block content
         .row 
           .col-md-1
           .col-md-5
-            | DE
+            | #{layout.user.lang_basic}
           .col-md-5
-            | EN
+            | #{layout.user.lang_trans}
         .row
           .col-md-1
             | Markdown 
           .col-md-5 
-            textarea.form-control(id="markdownDE" name = "markdownDE" rows=7) #{article.markdownDE}
+            textarea.form-control(id="markdownLEFT" name = "markdown#{layout.user.lang_basic}" rows=7) #{article["markdown"+layout.user.lang_basic]}
           .col-md-5  
-            textarea.form-control(id="markdownEN" name = "markdownEN" rows=7) #{article.markdownEN}
+            textarea.form-control(id="markdownRIGHT" name = "markdown#{layout.user.lang_trans}" rows=7) #{article["markdown"+layout.user.lang_trans]}
             | 'german only' to specify no translation wanted.
           .col-md-1
 
@@ -124,14 +124,14 @@ block content
             | Preview
           .col-md-5
             .panel.panel-default
-              .panel-body(id="preview")
+              .panel-body(id="previewLEFT")
                 :verbatim
-                  !{article.textHtml}
+                  !{article["textHtml"+layout.user.lang_basic]}
           .col-md-5
             .panel.panel-default
-              .panel-body(id="previewEN")
+              .panel-body(id="previewRIGHT")
                 :verbatim
-                  !{article.textHtmlEN}
+                  !{article["textHtml"+layout.user.lang_trans]}
         .row
           .col-md-1
             | Comment <br>
@@ -192,9 +192,9 @@ block content
       .row 
         .col-md-1
         .col-md-5
-          | DE
+          | #{layout.user.lang_basic}
         .col-md-5
-          | EN
+          | #{layout.user.lang_trans}
 
       if (false)
         .row
@@ -202,32 +202,25 @@ block content
               | Markdown<br>
           .col-md-5  
               .panel.panel-default
-                .panel-body #{article.markdownDE}
+                .panel-body #{article["markdown"+layout.user.lang_basic]}
           .col-md-5
               .panel.panel-default
-                .panel-body #{article.markdownEN}    
+                .panel-body #{article["markdown"+layout.user.lang_trans]}
       .row
         .col-md-1
           | Preview
 
         .col-md-5 
           .panel.panel-default
-            .panel-body(id="preview")
-              if (article.textHtml != "")
+            .panel-body(id="previewLEFT")
                 :verbatim
-                  !{article.textHtml}
-              else
-                | #{article.markdownDE}
+                  !{article["textHtml"+layout.user.lang_basic]}
         .col-md-5 
           .panel.panel-default
-            .panel-body(id="previewEN")
-              if (article.textHtmlEN != "")
+            .panel-body(id="previewRIGHT")
                 :verbatim
-                  !{article.textHtmlEN}
-              else
-                | #{article.markdownEN}
+                  !{article["textHtml"+layout.user.lang_trans]}
         
-
       .row
          if (article.comment && article.comment!="")
           .col-md-1
@@ -308,22 +301,22 @@ block scripts
   script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
   script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
   script.
-    markdownDE = document.getElementById("markdownDE");
-    markdownDE.onchange = onchange;
-    markdownDE.onkeyup = onchange;
-    markdownEN = document.getElementById("markdownEN");
-    markdownEN.onchange = onchangeEN;
-    markdownEN.onkeyup = onchangeEN;
-    markdownEN.onfocusout = onleaveEN;
+    markdownLEFT = document.getElementById("markdownLEFT");
+    markdownLEFT.onchange = onchangeLEFT;
+    markdownLEFT.onkeyup = onchangeLEFT;
+    markdownRIGHT = document.getElementById("markdownRIGHT");
+    markdownRIGHT.onchange = onchangeRIGHT;
+    markdownRIGHT.onkeyup = onchangeRIGHT;
+   
     coll = document.getElementById("collection");
     coll.onchange = onchangeCollection;
     coll.onkeyup = onchangeCollection;
     onchangeCollection();
 
     function onleaveEN() {
-      var mdEN = document.getElementById("markdownEN").value;
+      var mdEN = document.getElementById("markdownLEFT").value;
       if (mdEN == "-") {
-        document.getElementById("markdownEN").value = "german only";
+        document.getElementById("markdownLEFT").value = "blank";
         }
     }
    
@@ -342,30 +335,30 @@ block scripts
 
     }
     
-    function onchange() {
-      var md = document.getElementById("markdownDE").value;
-      preview = document.getElementById("preview");
+    function onchangeLEFT() {
+      var md = document.getElementById("markdownLEFT").value;
+      previewLEFT = document.getElementById("previewLEFT");
       
-      preview.innerHTML = convert(md);
+      previewLEFT.innerHTML = convert(md);
       var longLink = md.search(/\[[^\]]{30,}\]/g);
       if (longLink>=0) {
-        preview.style.backgroundColor="#FDC6CD";
+        previewLEFT.style.backgroundColor="#FDC6CD";
         }
       else {
-         preview.style.backgroundColor="";
+         previewLEFT.style.backgroundColor="";
         }
       }
-    function onchangeEN() {
-      var mdEN = document.getElementById("markdownEN").value;
-      previewEN = document.getElementById("previewEN");
+    function onchangeRIGHT() {
+      var mdEN = document.getElementById("markdownRIGHT").value;
+      previewRIGHT = document.getElementById("previewRIGHT");
       
-      previewEN.innerHTML = convert(mdEN);
+      previewRIGHT.innerHTML = convert(mdEN);
       var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
-        previewEN.style.backgroundColor="#FDC6CD";
+        previewRIGHT.style.backgroundColor="#FDC6CD";
         }
       else {
-         previewEN.style.backgroundColor="";
+         previewRIGHT.style.backgroundColor="";
         }
       }
       function onchangeCollection() {

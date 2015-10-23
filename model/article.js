@@ -77,8 +77,9 @@ function createNewArticle (proto,callback) {
 }
 
 
-function preview(edit,user) {
+function preview(lang,edit,user) {
   debug("preview");
+  should.exist(lang);
   if (typeof(user)=='undefined') user = "";
   var editLink;
   var commentMarkup = "";
@@ -91,8 +92,8 @@ function preview(edit,user) {
     }
   }
   if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-  if (typeof(this.markdownDE)!='undefined' && this.markdownDE!='') {
-    var md = this.markdownDE;
+  if (typeof(this["markdown"+lang])!='undefined' && this["markdown"+lang]!='') {
+    var md = this["markdown"+lang];
 
     // Does the markdown text starts with '* ', so ignore it
     if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
@@ -144,53 +145,7 @@ function overview(user) {
   return '<p'+commentMarkup+'>\n'+editMark+' '+text+' '+editLink+'\n</p>';      
 }
 
-function previewEN(edit,user) {
-  debug("previewEN");
-  if (typeof(user)=='undefined') user = "";
 
-  var editLink = '';
-  if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-  var commentMarkup = "";
-  if (this.comment) {
-    if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
-      var commentColour = "blue";
-      if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
-      if (this.comment.indexOf("@all")>=0) commentColour = "red";
-      commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
-    }
-  }
-  if (typeof(this.markdownEN)!='undefined' && this.markdownEN!='') {
-    var md = this.markdownEN;
-
-    if (md == "german only") {
-      // Text is only for german users, so
-      // ignore it, if not in edit mode.
-      if (!edit) return ""
-        else return '<p>\n'+editLink+' german link\n</p>'; 
-
-    } else {
-     // Does the markdown text starts with '* ', so ignore it
-      if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
-      // Return an list Element for the blog article
-      var html = markdownDE.toHTML(md);
-
-      // clean up <p> and </p> of markdown generation.
-      html = html.substring(3,html.length-4)
-
-      if (edit) {
-        return '<p'+commentMarkup+'>\n'+editLink+' '+html+'\n</p>'
-      } else {
-        // if not edit mode and article has not to be published, return nothing.
-        if (this.category == "--unpublished--") return '';
-        return '<li>\n'+html+'\n</li>'
-      }
-    }
-
-  } 
-  // Markdown is not defined. Return a placholder for the article
-  if (edit) return '<p'+commentMarkup+'>\n'+editLink+' <mark>'+this.displayTitle(99999)+'\n</mark></p>';
-       else return '<li>\n<mark>'+this.displayTitle(99999)+'\n</mark></li>';
-}
 
 function doLock(user,callback) {
   debug('doLock');
@@ -496,7 +451,7 @@ Article.prototype.remove = pgMap.remove;
 // This function returns an HTML String of the Aricle as an list element.
 Article.prototype.preview = preview;
 Article.prototype.overview = overview;
-Article.prototype.previewEN = previewEN;
+
 
 // calculateUsedLinks(callback)
 // Async function to search for each Link in the article in the database

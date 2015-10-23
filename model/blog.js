@@ -252,11 +252,9 @@ function preview(edit,lang,user,callback) {
           var r = articles[category][j];
           if (edit == 'overview') {
             htmlForCategory += r.overview(user)+'\n';
-          } else if  (lang == "DE") {
-            htmlForCategory += r.preview(edit,user)+'\n';
-          } else if (lang == "EN") {
-            htmlForCategory += r.previewEN(edit,user)+'\n';
-          }
+          } else {
+            htmlForCategory += r.preview(lang,edit,user)+'\n';
+          } 
         }
         var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLANG.toLowerCase()+'">'+categoryLANG+'</h2>\n';
         htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
