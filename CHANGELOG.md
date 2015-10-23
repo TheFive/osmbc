@@ -1,5 +1,40 @@
 # Change Log
 
+## [0.2.28](https://github.com/TheFive/osmbc/tree/0.2.28) (2015-10-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.27...0.2.28)
+
+**Fixed bugs:**
+
+- Clickable links in edit mode [\#81](https://github.com/TheFive/osmbc/issues/81)
+
+**Closed issues:**
+
+- OSM User is allways TheFive instead of OSM User \(userlist and user\). [\#95](https://github.com/TheFive/osmbc/issues/95)
+
+## [0.2.27](https://github.com/TheFive/osmbc/tree/0.2.27) (2015-10-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26b...0.2.27)
+
+**Fixed bugs:**
+
+- Error searching for a special HTTP String [\#93](https://github.com/TheFive/osmbc/issues/93)
+- Get favicon working and replace it by a new one. [\#90](https://github.com/TheFive/osmbc/issues/90)
+
+## [0.2.26b](https://github.com/TheFive/osmbc/tree/0.2.26b) (2015-10-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26a...0.2.26b)
+
+**Fixed bugs:**
+
+- Displaying Imported Articles Crashes [\#92](https://github.com/TheFive/osmbc/issues/92)
+
+## [0.2.26a](https://github.com/TheFive/osmbc/tree/0.2.26a) (2015-10-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26...0.2.26a)
+
+**Implemented enhancements:**
+
+- Add Romanian Flag to Flag List [\#91](https://github.com/TheFive/osmbc/issues/91)
+- Allow mentioning users [\#82](https://github.com/TheFive/osmbc/issues/82)
+- Hide commentStatus in article edit when no comment is given. [\#72](https://github.com/TheFive/osmbc/issues/72)
+
 ## [0.2.26](https://github.com/TheFive/osmbc/tree/0.2.26) (2015-10-20)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.25...0.2.26)
 
