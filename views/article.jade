@@ -83,7 +83,14 @@ block content
           .col-md-1
             | Collection <br>
           .col-md-10
-            textarea.form-control(name="collection",rows=7) #{article.collection}
+            textarea.form-control(id="collection" name="collection" rows=7) #{article.collection}
+        .row
+          .col-md-1
+            
+          .col-md-10
+            
+              .div(id="linkArea")
+                
         .row 
           .col-md-1
           .col-md-5
@@ -135,15 +142,16 @@ block content
         .row
           .col-md-1
           .col-md-5
-            select(id="commentStatus",name="commentStatus").form-control
-              each status in ["open","solved"]
-                if article.commentStatus
-                  if status == article.commentStatus
-                    option(value="#{status}" selected ) #{status}
+            if (article.comment && article.comment!="")
+              select(id="commentStatus",name="commentStatus").form-control
+                each status in ["open","solved"]
+                  if article.commentStatus
+                    if status == article.commentStatus
+                      option(value="#{status}" selected ) #{status}
+                    else
+                      option(value="#{status}"  ) #{status}
                   else
-                    option(value="#{status}"  ) #{status}
-                else
-                    option(value="#{status}"  ) #{status}
+                      option(value="#{status}"  ) #{status}
 
           
     else
@@ -221,14 +229,15 @@ block content
         
 
       .row
-        .col-md-1
-          | Comment 
-        .col-md-10 
-            | (Comment is #{article.commentStatus})
-            .panel.panel-default
-              .panel-body
-                :verbatim
-                  !{article.commentHtml}
+         if (article.comment && article.comment!="")
+          .col-md-1
+            | Comment 
+          .col-md-10 
+              | (Comment is #{article.commentStatus})
+              .panel.panel-default
+                .panel-body
+                  :verbatim
+                    !{article.commentHtml}
     .row
       if articleReferences.count >= 1
         h2
@@ -306,6 +315,10 @@ block scripts
     markdownEN.onchange = onchangeEN;
     markdownEN.onkeyup = onchangeEN;
     markdownEN.onfocusout = onleaveEN;
+    coll = document.getElementById("collection");
+    coll.onchange = onchangeCollection;
+    coll.onkeyup = onchangeCollection;
+    onchangeCollection();
 
     function onleaveEN() {
       var mdEN = document.getElementById("markdownEN").value;
@@ -355,6 +368,25 @@ block scripts
          previewEN.style.backgroundColor="";
         }
       }
+      function onchangeCollection() {
+        var cl = document.getElementById("collection").value;
+        var linkArea = document.getElementById("linkArea");
+
+        regexToken = /(((ftp|https?):\/\/)[\-\w@:%_\+.~#?,&\/\/=]+)|((mailto:)?[_.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
+        var linkList;
+       
+        var result = "";
+        while( (linkList = regexToken.exec(cl)) != null ) {
+            console.log("linkList"+JSON.stringify(linkList));
+         
+            result += '<a href="'+linkList[0]+'"">'+linkList[0]+'</a><br>\n';
+            console.log(result);
+        }
+        result = '<p>'+result+'</p>';
+        console.log(result);
+        linkArea.innerHTML = result;
+      }
+
 
       var myclick = function (id) {
         image = document.getElementById(id);

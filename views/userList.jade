@@ -28,7 +28,7 @@ block content
                 else 
                   a(href='#{layout.htmlroot}/usert/#{user.id}') Missing Name
               td
-                 a(href='http://www.openstreetmap.org/user/#{layout.user.displayName}') [OSM]
+                 a(href='http://www.openstreetmap.org/user/#{user.OSMUser}') [OSM]
 
               td= user.access
               if (user.lastAccess)
