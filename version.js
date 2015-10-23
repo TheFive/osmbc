@@ -1,1 +1,1 @@
-exports.osmbc_version = "0.2.27";
+exports.osmbc_version = "0.2.28";
