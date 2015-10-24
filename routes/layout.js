@@ -28,6 +28,10 @@ function prepareRenderLayout(req,res,next) {
   var listOfOpenBlog;
   var listOfReviewBlog;
   var listOfHelpBlog;
+  var style = "style.css";
+  if (config.getValue("style")) style = config.getValue("style");
+
+ 
 
   // Used for display changes
 
@@ -86,7 +90,8 @@ function prepareRenderLayout(req,res,next) {
                       listOfHelpBlog:result.listOfHelpBlog,
                       moment:moment,
                       util:util,
-                      osmbc_version:version.osmbc_version
+                      osmbc_version:version.osmbc_version,
+                      style:style
                     }
       next();
     }

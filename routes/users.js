@@ -75,7 +75,7 @@ function renderUserId(req, res, next) {
       res.render('user',{usershown:user,
                         changes:changes,
                         params:params,
-                        languages:config.getValue("langlist"),
+                        languages:config.getValue("languages"),
                         layout:res.rendervar.layout});
     }
   ) 

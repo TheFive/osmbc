@@ -60,8 +60,11 @@ block content
           .col-md-5
             select(id="lang_trans",name="lang_trans").form-control
               option(value="#{usershown.lang_trans}" selected) #{usershown.lang_trans+'(*)'}
+              option(value="--") --
               each lang in languages
                 option(value="#{lang}" ) #{lang}
+     
+
                 
       
 

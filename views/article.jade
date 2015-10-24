@@ -1,6 +1,35 @@
 extends layout
 
 
+mixin leftcolumn
+  if (params.right_lang =="--")
+    .col-md-10
+      if block
+        block
+      else
+        p No Content provided
+  else
+    .col-md-5
+      if block
+        block
+      else
+        p No Content provided
+
+mixin rightcolumn
+  if (params.right_lang !="--")
+    .col-md-5
+      if block
+        block
+      else
+        p No Content provided
+  else
+    .col-md-5.hidden
+      if block
+        block
+      else
+        p No Content provided
+
+
 
 
 block content
@@ -62,14 +91,14 @@ block content
         .row
           .col-md-1
             | Category <br>
-          .col-md-5
+          +leftcolumn
             select(id="category",name="category").form-control
               for category in categories
                 if (category.DE == article.category)
                   option(value="#{category.DE}" selected ) #{category.DE} / #{category.EN}
                 else
                   option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
-          .col-md-5
+          +rightcolumn
             h2
               | #{article.categoryEN}
 
@@ -93,45 +122,43 @@ block content
                 
         .row 
           .col-md-1
-          .col-md-5
-            | #{layout.user.lang_basic}
-          .col-md-5
-            | #{layout.user.lang_trans}
+          +leftcolumn
+            | #{params.left_lang}
+          +rightcolumn
+            | #{params.right_lang}
         .row
           .col-md-1
             | Markdown 
-          .col-md-5 
-            textarea.form-control(id="markdownLEFT" name = "markdown#{layout.user.lang_basic}" rows=7) #{article["markdown"+layout.user.lang_basic]}
-          .col-md-5  
-            textarea.form-control(id="markdownRIGHT" name = "markdown#{layout.user.lang_trans}" rows=7) #{article["markdown"+layout.user.lang_trans]}
+          +leftcolumn
+            textarea.form-control(id="markdownLEFT" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
+          +rightcolumn
+            textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
             | 'german only' to specify no translation wanted.
           .col-md-1
-
-            
-
-            img(id="Japanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg", class="img-responsive" ,width = 40, onclick="javascript:myclick(this.id)")
-            img(id="Französisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
-            img(id="Spanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
-            img(id="Brasilianisches Portugiesisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg", class="img-responsive", width = 40 ,onclick="javascript:myclick(this.id)")
-            img(id="Tschechisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
-            img(id="Russisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
-            img(id="Niederländisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
-            img(id="Rumänisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
+            if ((params.left_lang=="DE") || (params.right_lang=="DE"))
+              img(id="Japanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg", class="img-responsive" ,width = 40, onclick="javascript:myclick(this.id)")
+              img(id="Französisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
+              img(id="Spanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
+              img(id="Brasilianisches Portugiesisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg", class="img-responsive", width = 40 ,onclick="javascript:myclick(this.id)")
+              img(id="Tschechisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
+              img(id="Russisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
+              img(id="Niederländisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
+              img(id="Rumänisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
 
 
         .row
           .col-md-1
             | Preview
-          .col-md-5
+          +leftcolumn
             .panel.panel-default
               .panel-body(id="previewLEFT")
                 :verbatim
-                  !{article["textHtml"+layout.user.lang_basic]}
-          .col-md-5
+                  !{article["textHtml"+params.left_lang]}
+          +rightcolumn
             .panel.panel-default
               .panel-body(id="previewRIGHT")
                 :verbatim
-                  !{article["textHtml"+layout.user.lang_trans]}
+                  !{article["textHtml"+params.right_lang]}
         .row
           .col-md-1
             | Comment <br>
@@ -158,20 +185,20 @@ block content
      .row
         .col-md-1
           | Blog <br>
-        .col-md-5
+        +leftcolumn
           h2
             | #{article.blog}
-        .col-md-5
+        +rightcolumn
           h2
         .col-md-1
           a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
       .row
         .col-md-1
           | Category <br>
-        .col-md-5
+        +leftcolumn
           h4
             | #{article.category}
-        .col-md-5
+        +rightcolumn
           h4
             | #{article.categoryEN}
       .row
@@ -191,35 +218,35 @@ block content
                 !{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1">$1</a>')}
       .row 
         .col-md-1
-        .col-md-5
-          | #{layout.user.lang_basic}
-        .col-md-5
-          | #{layout.user.lang_trans}
+        +leftcolumn
+          | #{params.left_lang}
+        +rightcolumn
+          | #{params.right_lang}
 
       if (false)
         .row
           .col-md-1
               | Markdown<br>
-          .col-md-5  
+          +leftcolumn 
               .panel.panel-default
-                .panel-body #{article["markdown"+layout.user.lang_basic]}
-          .col-md-5
+                .panel-body #{article["markdown"+params.left_lang]}
+          +rightcolumn
               .panel.panel-default
-                .panel-body #{article["markdown"+layout.user.lang_trans]}
+                .panel-body #{article["markdown"+params.right_lang]}
       .row
         .col-md-1
           | Preview
 
-        .col-md-5 
+        +leftcolumn 
           .panel.panel-default
             .panel-body(id="previewLEFT")
                 :verbatim
-                  !{article["textHtml"+layout.user.lang_basic]}
-        .col-md-5 
+                  !{article["textHtml"+params.left_lang]}
+        +rightcolumn 
           .panel.panel-default
             .panel-body(id="previewRIGHT")
                 :verbatim
-                  !{article["textHtml"+layout.user.lang_trans]}
+                  !{article["textHtml"+params.right_lang]}
         
       .row
          if (article.comment && article.comment!="")

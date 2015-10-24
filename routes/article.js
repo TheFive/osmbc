@@ -32,6 +32,11 @@ function renderArticleId(req,res,next) {
     // Params is used for indicating EditMode
     var params = {};
     params.edit = req.query.edit;
+    params.left_lang = req.user.lang_basic;
+    params.right_lang = req.user.lang_trans;
+
+    if (req.query.ll) params.left_lang = req.query.ll;
+    if (req.query.rl) params.right_lang = req.query.rl;
 
     // calculate all used Links for the article
     var usedLinks = article.calculateLinks();
@@ -80,7 +85,7 @@ function renderArticleId(req,res,next) {
           if (typeof(article.comment)!='undefined') {
             article.commentHtml = markdown.toHTML(article.comment)
           } 
-          console.dir(article);
+
           // 
           if (req.query.edit && ! params.edit) {
             var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
@@ -144,7 +149,6 @@ function postArticle(req, res, next) {
     var lang = languages[i];
     changes["markdown"+lang] = req.body["markdown"+lang];
   }
-  console.log(changes);
   var returnToUrl ;
 
   async.parallel([
