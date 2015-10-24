@@ -1,7 +1,7 @@
 {
   "blog":[{"name":"BLOG","status":"open"}],
-  "article":[{"blog":"BLOG","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
-             {"blog":"BLOG","title":"BLOG","markdown":"* Dies ist ein grosser Testartikel.","category":"Keine"}],
+  "article":[{"blog":"BLOG","markdownDE":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
+             {"blog":"BLOG","title":"BLOG","markdownDE":"* Dies ist ein grosser Testartikel.","category":"Keine"}],
   "testArticleTitle":"BLOG",
 
   "result":{"articleText":"<li>\nDies ist ein grosser Testartikel.\n</li>",

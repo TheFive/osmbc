@@ -75,6 +75,7 @@ function renderUserId(req, res, next) {
       res.render('user',{usershown:user,
                         changes:changes,
                         params:params,
+                        languages:config.getValue("languages"),
                         layout:res.rendervar.layout});
     }
   ) 
@@ -86,7 +87,9 @@ function postUserId(req, res, next) {
   userModule.findById(id,function(err,user) {
     if (typeof(user.id) == 'undefined') return next();
     var changes = {OSMUser:req.body.OSMUser,
-                   access:req.body.access};
+                   access:req.body.access,
+                   lang_basic: req.body.lang_basic,
+                   lang_trans: req.body.lang_trans};
 
     user.setAndSave(req.user.displayName,changes,function(err) {
       if (err) {

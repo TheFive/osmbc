@@ -1,6 +1,35 @@
 extends layout
 
 
+mixin leftcolumn
+  if (params.right_lang =="--")
+    .col-md-10
+      if block
+        block
+      else
+        p No Content provided
+  else
+    .col-md-5
+      if block
+        block
+      else
+        p No Content provided
+
+mixin rightcolumn
+  if (params.right_lang !="--")
+    .col-md-5
+      if block
+        block
+      else
+        p No Content provided
+  else
+    .col-md-5.hidden
+      if block
+        block
+      else
+        p No Content provided
+
+
 
 
 block content
@@ -62,14 +91,14 @@ block content
         .row
           .col-md-1
             | Category <br>
-          .col-md-5
+          +leftcolumn
             select(id="category",name="category").form-control
               for category in categories
                 if (category.DE == article.category)
                   option(value="#{category.DE}" selected ) #{category.DE} / #{category.EN}
                 else
                   option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
-          .col-md-5
+          +rightcolumn
             h2
               | #{article.categoryEN}
 
@@ -93,45 +122,43 @@ block content
                 
         .row 
           .col-md-1
-          .col-md-5
-            | DE
-          .col-md-5
-            | EN
+          +leftcolumn
+            | #{params.left_lang}
+          +rightcolumn
+            | #{params.right_lang}
         .row
           .col-md-1
             | Markdown 
-          .col-md-5 
-            textarea.form-control(id="markdown" name = "markdown" rows=7) #{article.markdown}
-          .col-md-5  
-            textarea.form-control(id="markdownEN" name = "markdownEN" rows=7) #{article.markdownEN}
+          +leftcolumn
+            textarea.form-control(id="markdownLEFT" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
+          +rightcolumn
+            textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
             | 'german only' to specify no translation wanted.
           .col-md-1
-
-            
-
-            img(id="Japanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg", class="img-responsive" ,width = 40, onclick="javascript:myclick(this.id)")
-            img(id="Französisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
-            img(id="Spanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
-            img(id="Brasilianisches Portugiesisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg", class="img-responsive", width = 40 ,onclick="javascript:myclick(this.id)")
-            img(id="Tschechisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
-            img(id="Russisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
-            img(id="Niederländisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
-            img(id="Rumänisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
+            if ((params.left_lang=="DE") || (params.right_lang=="DE"))
+              img(id="Japanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg", class="img-responsive" ,width = 40, onclick="javascript:myclick(this.id)")
+              img(id="Französisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
+              img(id="Spanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
+              img(id="Brasilianisches Portugiesisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg", class="img-responsive", width = 40 ,onclick="javascript:myclick(this.id)")
+              img(id="Tschechisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
+              img(id="Russisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
+              img(id="Niederländisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
+              img(id="Rumänisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
 
 
         .row
           .col-md-1
             | Preview
-          .col-md-5
+          +leftcolumn
             .panel.panel-default
-              .panel-body(id="preview")
+              .panel-body(id="previewLEFT")
                 :verbatim
-                  !{article.textHtml}
-          .col-md-5
+                  !{article["textHtml"+params.left_lang]}
+          +rightcolumn
             .panel.panel-default
-              .panel-body(id="previewEN")
+              .panel-body(id="previewRIGHT")
                 :verbatim
-                  !{article.textHtmlEN}
+                  !{article["textHtml"+params.right_lang]}
         .row
           .col-md-1
             | Comment <br>
@@ -158,20 +185,20 @@ block content
      .row
         .col-md-1
           | Blog <br>
-        .col-md-5
+        +leftcolumn
           h2
             | #{article.blog}
-        .col-md-5
+        +rightcolumn
           h2
         .col-md-1
           a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
       .row
         .col-md-1
           | Category <br>
-        .col-md-5
+        +leftcolumn
           h4
             | #{article.category}
-        .col-md-5
+        +rightcolumn
           h4
             | #{article.categoryEN}
       .row
@@ -191,43 +218,36 @@ block content
                 !{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1">$1</a>')}
       .row 
         .col-md-1
-        .col-md-5
-          | DE
-        .col-md-5
-          | EN
+        +leftcolumn
+          | #{params.left_lang}
+        +rightcolumn
+          | #{params.right_lang}
 
       if (false)
         .row
           .col-md-1
               | Markdown<br>
-          .col-md-5  
+          +leftcolumn 
               .panel.panel-default
-                .panel-body #{article.markdown}
-          .col-md-5
+                .panel-body #{article["markdown"+params.left_lang]}
+          +rightcolumn
               .panel.panel-default
-                .panel-body #{article.markdownEN}    
+                .panel-body #{article["markdown"+params.right_lang]}
       .row
         .col-md-1
           | Preview
 
-        .col-md-5 
+        +leftcolumn 
           .panel.panel-default
-            .panel-body(id="preview")
-              if (article.textHtml != "")
+            .panel-body(id="previewLEFT")
                 :verbatim
-                  !{article.textHtml}
-              else
-                | #{article.markdown}
-        .col-md-5 
+                  !{article["textHtml"+params.left_lang]}
+        +rightcolumn 
           .panel.panel-default
-            .panel-body(id="previewEN")
-              if (article.textHtmlEN != "")
+            .panel-body(id="previewRIGHT")
                 :verbatim
-                  !{article.textHtmlEN}
-              else
-                | #{article.markdownEN}
+                  !{article["textHtml"+params.right_lang]}
         
-
       .row
          if (article.comment && article.comment!="")
           .col-md-1
@@ -308,22 +328,22 @@ block scripts
   script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
   script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
   script.
-    markdown = document.getElementById("markdown");
-    markdown.onchange = onchange;
-    markdown.onkeyup = onchange;
-    markdownEN = document.getElementById("markdownEN");
-    markdownEN.onchange = onchangeEN;
-    markdownEN.onkeyup = onchangeEN;
-    markdownEN.onfocusout = onleaveEN;
+    markdownLEFT = document.getElementById("markdownLEFT");
+    markdownLEFT.onchange = onchangeLEFT;
+    markdownLEFT.onkeyup = onchangeLEFT;
+    markdownRIGHT = document.getElementById("markdownRIGHT");
+    markdownRIGHT.onchange = onchangeRIGHT;
+    markdownRIGHT.onkeyup = onchangeRIGHT;
+   
     coll = document.getElementById("collection");
     coll.onchange = onchangeCollection;
     coll.onkeyup = onchangeCollection;
     onchangeCollection();
 
     function onleaveEN() {
-      var mdEN = document.getElementById("markdownEN").value;
+      var mdEN = document.getElementById("markdownLEFT").value;
       if (mdEN == "-") {
-        document.getElementById("markdownEN").value = "german only";
+        document.getElementById("markdownLEFT").value = "blank";
         }
     }
    
@@ -346,30 +366,30 @@ block scripts
 
     }
     
-    function onchange() {
-      var md = document.getElementById("markdown").value;
-      preview = document.getElementById("preview");
+    function onchangeLEFT() {
+      var md = document.getElementById("markdownLEFT").value;
+      previewLEFT = document.getElementById("previewLEFT");
       
-      preview.innerHTML = convert(md);
+      previewLEFT.innerHTML = convert(md);
       var longLink = md.search(/\[[^\]]{30,}\]/g);
       if (longLink>=0) {
-        preview.style.backgroundColor="#FDC6CD";
+        previewLEFT.style.backgroundColor="#FDC6CD";
         }
       else {
-         preview.style.backgroundColor="";
+         previewLEFT.style.backgroundColor="";
         }
       }
-    function onchangeEN() {
-      var mdEN = document.getElementById("markdownEN").value;
-      previewEN = document.getElementById("previewEN");
+    function onchangeRIGHT() {
+      var mdEN = document.getElementById("markdownRIGHT").value;
+      previewRIGHT = document.getElementById("previewRIGHT");
       
-      previewEN.innerHTML = convert(mdEN);
+      previewRIGHT.innerHTML = convert(mdEN);
       var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
-        previewEN.style.backgroundColor="#FDC6CD";
+        previewRIGHT.style.backgroundColor="#FDC6CD";
         }
       else {
-         previewEN.style.backgroundColor="";
+         previewRIGHT.style.backgroundColor="";
         }
       }
       function onchangeCollection() {

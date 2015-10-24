@@ -46,6 +46,27 @@ block content
                 option(value="full" ) full
                 option(value="read" ) only collected Article (not implemented)
                 option(value="denied" ) denied
+        .row
+          .col-md-1
+            | Basic Language
+          .col-md-5
+            select(id="lang_basic",name="lang_basic").form-control
+              option(value="#{usershown.lang_basic}" selected) #{usershown.lang_basic+'(*)'}
+              each lang in languages
+                option(value="#{lang}" ) #{lang}
+        .row
+          .col-md-1
+            | Translation Language
+          .col-md-5
+            select(id="lang_trans",name="lang_trans").form-control
+              option(value="#{usershown.lang_trans}" selected) #{usershown.lang_trans+'(*)'}
+              option(value="--") --
+              each lang in languages
+                option(value="#{lang}" ) #{lang}
+     
+
+                
+      
 
     else
      .row
@@ -69,7 +90,18 @@ block content
         .col-md-5
           p
             a(href='http://www.openstreetmap.org/user/#{usershown.OSMUser}') #{usershown.OSMUser}
-
+      .row
+        .col-md-1
+          | Basic Language <br>
+        .col-md-5
+          p
+            | #{usershown.lang_basic}
+      .row
+        .col-md-1
+          | Translation Language <br>
+        .col-md-5
+          p
+            | #{usershown.lang_trans}
   .row
     if changes
       h2

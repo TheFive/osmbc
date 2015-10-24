@@ -110,6 +110,9 @@ function ensureAuthenticated(req, res, next) {
     userModule.find({OSMUser:req.user.displayName},function(err,result){
       if (err) return next(err);
       if (result.length==1) {
+        for (var k in result[0]) {
+          req.user[k] = result[0][k];
+        }
         if (result[0].access == "full") {
           // save last access, ignore save callback
           var date = new Date();

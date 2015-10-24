@@ -75,13 +75,14 @@ function renderArticleId(req,res,next) {
         }
       }},
         function (err,result) {
-          /*var languages = config.getLanguages();
+
+          var languages = config.getLanguages();
           for (i=0;i<languages.length;i++) {
             var lang = languages[i];
             if (typeof(article["markdown"+lang])!='undefined') {
               article["textHtml"+lang]=article.preview(lang);
             }
-          }*/
+          }
           if (typeof(article.comment)!='undefined') {
             article.commentHtml = markdown.toHTML(article.comment)
           } 
@@ -144,11 +145,12 @@ function postArticle(req, res, next) {
                  version:req.body.version,
                  title:req.body.title,
                  commentStatus:req.body.commentStatus};
- /* var languages = config.getLanguages();
+
+  var languages = config.getLanguages();
   for (var i=0;i<languages.length;i++){
     var lang = languages[i];
     changes["markdown"+lang] = req.body["markdown"+lang];
-  }*/
+  }
   var returnToUrl ;
 
   async.parallel([

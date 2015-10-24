@@ -268,7 +268,7 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
     var sqlQuery =  "select id, data from article \
                           where to_tsvector('german', coalesce(data->>'title','')::text || \
                                                       coalesce(data->>'collection','')  || \
-                                                      coalesce(data->>'markdown','')   ) @@ plainto_tsquery('german', '"+search+"') \
+                                                      coalesce(data->>'markdownDE','')   ) @@ plainto_tsquery('german', '"+search+"') \
                             or to_tsvector('english',  coalesce(data->>'collection','')  || \
                                                       coalesce(data->>'markdownEN','')   ) @@ plainto_tsquery('english', '"+search+"') "+ 
                         orderBy;

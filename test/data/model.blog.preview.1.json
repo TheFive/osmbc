@@ -1,7 +1,7 @@
 {
   "blog":[{"name":"BLOG","startDate":"2015-02-02","endDate":"2015-03-03"}],
-  "article":[{"blog":"BLOG","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"}],
+  "article":[{"blog":"BLOG","markdownDE":"* Dies ist ein kleiner Testartikel.","category":"Mapping"}],
   "testBlogName":"BLOG",
-  "testBlogResultMarkdown":"## Mapping\n* Dies ist ein kleiner Testartikel.\n",
+  "testBlogResultMarkdownDE":"## Mapping\n* Dies ist ein kleiner Testartikel.\n",
   "testBlogResultHtml":"<p>2.2.2015-3.3.2015<h2 id=\"blog_mapping\">Mapping</h2>\n<ul><li>\nDies ist ein kleiner Testartikel.\n</li></ul>"
 }
