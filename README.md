@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/TheFive/osmbc.png?label=ready&title=Ready)](https://waffle.io/TheFive/osmbc)
 # OSMBC
 
 Open Street Map Blog Collector, a tool for editing the weekly news in OpenStreetMap.
