@@ -99,8 +99,11 @@ function preview(edit,user) {
     // Return an list Element for the blog article
     var html = markdown.toHTML(md);
 
+
     // clean up <p> and </p> of markdown generation.
-    html = html.substring(3,html.length-4)
+    if (html.substring(0,3)=="<p>" && html.substring(html.length-4,html.length)=='</p>'){
+      html = html.substring(3,html.length-4)
+    }
 
 
     if (edit) {

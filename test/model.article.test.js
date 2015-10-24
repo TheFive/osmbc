@@ -530,6 +530,12 @@ describe('model/article', function() {
       should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
+    it.only('should generate a preview Github Error #102',function (bddone) {
+      var article = articleModule.create({markdown:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
+      var result = article.preview(true);
+      should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <p>Howto place an issue in OSMBC? </p>\n\n<ol><li>open OSMBC, </li><li>click Collect,</li><li>choose a category from the pop up window</li><li>write a Titel: example: Lidar,</li><li>write at text or put a link</li><li>click OK\n--- reday --- </li></ol>\n\n<p>If you like to write the news directly, do as follows:</p>\n\n<ol><li>click Edit</li><li>write your news in English (you can see it in </li><li>click OK and ...\n... that&#39;s it.</li></ol>\n</p>');
+      bddone();
+    })
   })
   describe('calculateUsedLinks',function() {
     var idToFindLater;

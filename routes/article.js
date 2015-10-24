@@ -32,6 +32,11 @@ function renderArticleId(req,res,next) {
     // Params is used for indicating EditMode
     var params = {};
     params.edit = req.query.edit;
+    params.left_lang = req.user.lang_basic;
+    params.right_lang = req.user.lang_trans;
+
+    if (req.query.ll) params.left_lang = req.query.ll;
+    if (req.query.rl) params.right_lang = req.query.rl;
 
     // calculate all used Links for the article
     var usedLinks = article.calculateLinks();
@@ -70,17 +75,17 @@ function renderArticleId(req,res,next) {
         }
       }},
         function (err,result) {
-
-          // calculate all previews for markdown code
-          if (typeof(article.markdown)!='undefined') {
-            article.textHtml = article.preview();
-          } 
-          if (typeof(article.markdownEN)!='undefined') {
-            article.textHtmlEN = article.previewEN();
-          } 
+          /*var languages = config.getLanguages();
+          for (i=0;i<languages.length;i++) {
+            var lang = languages[i];
+            if (typeof(article["markdown"+lang])!='undefined') {
+              article["textHtml"+lang]=article.preview(lang);
+            }
+          }*/
           if (typeof(article.comment)!='undefined') {
             article.commentHtml = markdown.toHTML(article.comment)
           } 
+
           // 
           if (req.query.edit && ! params.edit) {
             var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
@@ -130,9 +135,7 @@ function postArticle(req, res, next) {
  
 
   var article = null;
-  var changes = {markdown:req.body.markdown,
-                 markdownEN:req.body.markdownEN,
-                 blog:req.body.blog,
+  var changes = {blog:req.body.blog,
                  blogEN:req.body.blogEN,
                  collection:req.body.collection,
                  comment:req.body.comment,
@@ -141,7 +144,11 @@ function postArticle(req, res, next) {
                  version:req.body.version,
                  title:req.body.title,
                  commentStatus:req.body.commentStatus};
-  console.log(changes);
+ /* var languages = config.getLanguages();
+  for (var i=0;i<languages.length;i++){
+    var lang = languages[i];
+    changes["markdown"+lang] = req.body["markdown"+lang];
+  }*/
   var returnToUrl ;
 
   async.parallel([
@@ -229,7 +236,7 @@ function renderList(req,res,next) {
   debug('renderList');
   req.session.articleReturnTo = req.originalUrl;
   var blog = req.query.blog;
-  var markdown = req.query.markdown;
+  var markdownDE = req.query.markdownDE;
   var markdownEN = req.query.markdownEN;
   var category = req.query.category;
   var categoryEN = req.query.categoryEN;
@@ -237,8 +244,8 @@ function renderList(req,res,next) {
   if (typeof(blog)!='undefined') {
     query.blog = blog;
   }
-  if (typeof(markdown)!='undefined') {
-    query.markdown = markdown;
+  if (typeof(markdownDE)!='undefined') {
+    query.markdownDE = markdownDE;
   }
   if (typeof(markdownEN)!='undefined') {
     query.markdownEN = markdownEN;
