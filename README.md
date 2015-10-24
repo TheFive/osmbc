@@ -18,9 +18,11 @@ OSMBC is a small tool to support the editorial process of the [OpenStreetMap]&nb
 The system is active used since Wochennotiz 272 in September 2015. 
 The running instance for the editors is: https://thefive.sabic.uberspace.de/osmbc.html.
 
-## Next Steps
+## Next Steps & Progress
 
 [![Stories in Ready](https://badge.waffle.io/TheFive/osmbc.png?label=ready&title=Ready)](https://waffle.io/TheFive/osmbc)
+
+[![Throughput Graph](https://graphs.waffle.io/TheFive/osmbc/throughput.svg)](https://waffle.io/TheFive/osmbc/metrics)
 
 ## Software Build Status
 
