@@ -206,7 +206,7 @@ describe('model/article', function() {
       })
     })
   })
-  describe.only('findFunctions',function() {
+  describe('findFunctions',function() {
     var idToFindLater;
     before(function (bddone) {
       // Initialise some Test Data for the find functions
