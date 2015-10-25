@@ -331,12 +331,16 @@ block scripts
       converter = new showdown.Converter();
 
       // generate the OSMBlog Style List
-      if (text.substring(0,2)!="* ") text = "* "+text;
+      if (text.substring(0,2)=="* ") text = text.substring(2,999999);
       // convert md to html
       text = converter.makeHtml(text);
       // skip <ul> and </ul> at start and end
-      text = text.substring(4,text.length-5)
+      
 
+      if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>') {
+        text = text.substring(3,text.length-4)
+      }
+      text = '<li>'+text+'</li>';
       
       return text;
 
