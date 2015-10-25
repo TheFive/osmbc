@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.2.28a](https://github.com/TheFive/osmbc/tree/0.2.28a) (2015-10-25)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28...0.2.28a)
+
+**Implemented enhancements:**
+
+- Convert markdown to markdownDE [\#94](https://github.com/TheFive/osmbc/issues/94)
+
+**Fixed bugs:**
+
+- Problem with ' in a blog name. [\#103](https://github.com/TheFive/osmbc/issues/103)
+- Markdown not correct converted [\#102](https://github.com/TheFive/osmbc/issues/102)
+
+**Merged pull requests:**
+
+- waffle.io Badge [\#98](https://github.com/TheFive/osmbc/pull/98) ([waffle-iron](https://github.com/waffle-iron))
 
 ## [0.2.28](https://github.com/TheFive/osmbc/tree/0.2.28) (2015-10-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.27...0.2.28)
@@ -34,14 +49,7 @@
 
 - Add Romanian Flag to Flag List [\#91](https://github.com/TheFive/osmbc/issues/91)
 - Allow mentioning users [\#82](https://github.com/TheFive/osmbc/issues/82)
-<<<<<<< HEAD
 - Hide commentStatus in article edit when no comment is given. [\#72](https://github.com/TheFive/osmbc/issues/72)
-=======
-<<<<<<< HEAD
-=======
-- Hide commentStatus in article edit when no comment is given. [\#72](https://github.com/TheFive/osmbc/issues/72)
->>>>>>> d3810cf... Changelog Update.
->>>>>>> hotfix/0.2.28a
 
 ## [0.2.26](https://github.com/TheFive/osmbc/tree/0.2.26) (2015-10-20)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.25...0.2.26)

@@ -27,12 +27,12 @@ block content
     if (params && params.edit) 
       form(name="input", action="#{layout.htmlroot}/blog/edit/#{blog.id}", method="post")
         .row
-          .col-md-1
+          .col-md-2
             | Name 
           .col-md-6
             input(type="text",class="form-control",name ="name",value="#{blog.name}") 
         .row
-          .col-md-1
+          .col-md-2
             | Period 
           .col-md-3
             input(type="text",class="form-control",name ="startDate",value="#{blog.startDate}") 
@@ -40,7 +40,7 @@ block content
             input(type="text",class="form-control",name ="endDate",value="#{blog.endDate}") 
 
         .row
-          .col-md-1
+          .col-md-2
             | Categories 
           .col-md-6
             textarea.form-control(name="categories",rows=30) #{JSON.stringify(blog.categories,null,5)}
@@ -52,36 +52,43 @@ block content
 
     else
       .row
-        .col-md-1
+        .col-md-2
           p
             | Name
         .col-md-3
           h2
             | #{blog.name}
-        .col-md-7
+        .col-md-6
         .col-md-1
           a(href="#{layout.htmlroot}/blog/edit/#{blog.id}?edit=true" class="btn btn-primary" role="button") Edit
       .row
-        .col-md-1
+        .col-md-2
           | Period 
         .col-md-3
           | #{blog.startDate}
         .col-md-3
           | #{blog.endDate}
       .row
-        .col-md-1
+        .col-md-2
+          | Show Articles
+        .col-md-10
+          a(href="#{layout.htmlroot}/article/list?blog=#{blog.name}") List of all articles 
+          | Use this link to go to "unlinked" articles.
+      .row
+        .col-md-2
 
           | Categories
-        .col-md-5
+        .col-md-8
           :verbatim
             <pre>
             !{JSON.stringify(blog.categories,null,5)}
             </pre>
       .row
-        .col-md-1
+        .col-md-2
           | Help
-        .col-md-5
+        .col-md-10
           a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=help") This is a Help Blog 
+          | Use this link, to create a "Help" Blog from this blog.
 
 
  
