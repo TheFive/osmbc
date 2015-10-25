@@ -206,12 +206,13 @@ describe('model/article', function() {
       })
     })
   })
-  describe('findFunctions',function() {
+  describe.only('findFunctions',function() {
     var idToFindLater;
     before(function (bddone) {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1's",markdown:"test1",collection:"col1",category:"catA"},cb)},
         function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"},cb)},
         function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test2",collection:"col2",category:"catB"},cb)},
         function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test3",collection:"col3",category:"catA"},
@@ -250,6 +251,16 @@ describe('model/article', function() {
           delete result._meta;
           delete result.id;
           should(result).eql({blog:"WN1",markdown:"test1",collection:"col1",category:"catA",version:1});
+          bddone();
+        })
+      })
+      it('should findOne object with an apostrophe',function(bddone){
+        articleModule.findOne({blog:"WN1's"},{column:"collection"},function(err,result){
+          should.not.exist(err);
+          should.exist(result);
+          delete result._meta;
+          delete result.id;
+          should(result).eql({blog:"WN1's",markdown:"test1",collection:"col1",category:"catA",version:1});
           bddone();
         })
       })
