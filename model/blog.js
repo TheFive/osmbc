@@ -273,6 +273,91 @@ function preview(edit,lang,user,callback) {
   })
 }
 
+function getPreview(lang,options,callback) {
+  debug('preview');
+  var self = this;
+
+  // first check the parameter
+  should(typeof(lang)).equal("string");
+  if (typeof(options)=="function") {
+    callback = options;
+    options = {};
+  }
+
+  var articles = {};
+  var preview = "";
+
+  articleModule.find({blog:this.name},{column:"title"},function(err,result){
+    
+
+    // in case of a normal blog, generate the start and end time
+    // for a help blog, use the Name of the Blog
+    // not in edit mode.
+    if (self.status != "help") {
+      if (self.startDate && self.endDate) {
+        preview += "<p>"+moment(self.startDate).locale(lang).format('l') +"-"+moment(self.endDate).locale(lang).format('l') +'</p>\n';
+      }
+      preview += "<!--         place picture here              -->\n"      
+    }
+    else if (!(options.edit)) preview = '<h2>'+self.name+'</h2>\n'
+
+  
+    
+    // Put every article in an array for the category
+    if (result) {
+      for (var i=0;i<result.length;i++ ) {
+        var r = result[i];
+        if (typeof(articles[r.category]) == 'undefined') {
+          articles[r.category] = [];
+        }
+        articles[r.category].push(r);
+      }
+    }
+    var clist = self.getCategories();
+    
+    
+    // Generate the blog result along the categories
+    for (var i=0;i<clist.length;i++) {
+      var category = clist[i].DE;
+
+
+      var categoryLANG = clist[i].DE;
+
+      // OPEN: This has to be modelled for more languages
+      // Define english as "master" for the categories 
+      if (lang=="DE") categoryLANG = clist[i].DE;
+      if (lang!="DE") categoryLANG = clist[i].EN;
+
+      // ignore any "unpublished" category not in edit mode
+      if (!(options.edit) && category =="--unpublished--") continue;
+
+   
+      // If the category exists, generate HTML for it
+      if (typeof(articles[category])!='undefined') {
+        debug('Generating HTML for category %s',category);
+        var htmlForCategory = ''
+
+        for (var j=0;j<articles[category].length;j++) {
+          var r = articles[category][j];
+          htmlForCategory += r.getPreview(lang,options);
+        }
+        var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLANG.toLowerCase()+'">'+categoryLANG+'</h2>\n';
+        htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        preview += htmlForCategory;
+        delete articles[category];
+      }
+    }
+    for (k in articles) {
+      preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
+      preview += "<p> Please use [edit blog detail] to enter category</p>\n";
+    }
+    var result = {};
+    result.preview = preview;
+    result.articles = articles;
+    callback(null, result);
+  })
+}
+
 function getCategories() {
   debug('getCategories');
 

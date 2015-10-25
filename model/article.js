@@ -149,6 +149,88 @@ function overview(user) {
 }
 
 
+function getPreview(lang,options) {
+  debug("preview");
+  should.exist(lang);
+  should.exist(options);
+
+  var markdownEDIT = "markdown"+options.left_lang;
+  var markdownTRANS = "markdown"+options.right_lang;
+  var markdownLANG = "markdown"+lang;
+
+
+  // Calculate markup for comment
+  var commentMarkup = "";
+  if (options.edit && options.comment && this.comment) {
+    if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
+      var commentColour = "blue";
+      if (this.comment.indexOf("@"+options.user)>=0) commentColour = "red";
+      if (this.comment.indexOf("@all")>=0) commentColour = "red";
+      commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
+    }
+  }
+
+  // generate Glyphicon for Editing
+  var liON = '<li'+commentMarkup+'>\n';
+  var liOFF = '</li>';
+  if (options.glyphicon && options.edit) {
+    var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+    liON = '<p'+commentMarkup +'>\n'+editMark+' ';
+    liOFF = '</p>';
+  }
+  // Generate Translation & Edit Links
+  var editLink = '';
+  if (options.editLink) {
+    if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
+      editLink = "Edit";
+    }
+    if (typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '') {
+      if (editLink != '') editLink +='&'
+      editLink += "Translate";
+    }
+    if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'">'+editLink+'</a>';    
+  }
+
+  // Generate Text for display
+  var text ='';
+  if (options.overview) { // just generate the overview text
+    text=this.displayTitle(90);
+  } else { // generate the full text
+    if (typeof(this[markdownLANG])!='undefined' && this[markdownLANG]!='') {
+      var md = this[markdownLANG];
+
+      // Does the markdown text starts with '* ', so ignore it
+      if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
+      // Return an list Element for the blog article
+      text = markdown.toHTML(md);
+
+
+      // clean up <p> and </p> of markdown generation.
+      if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>'){
+        text = text.substring(3,text.length-4)
+      }
+    } else {
+      text = this.displayTitle();
+    }
+  }
+
+  // calculate Markup Display for Missing Edits
+  var markON = '';
+  var markOFF = '';
+  if (options.marktext && (typeof(this["markdown"+lang])=='undefined' || this["markdown"+lang]!='')) {
+    markON = '<mark>';
+    markOFF = '</mark>'
+  }
+ 
+  return liON + 
+    markON +
+    text + '\n' +
+    markOFF +
+    editLink+     
+    liOFF;
+
+}
+
 
 function doLock(user,callback) {
   debug('doLock');
@@ -453,6 +535,7 @@ Article.prototype.remove = pgMap.remove;
 // edit: Boolean, that specifies, wether edit links has to be created or not
 // This function returns an HTML String of the Aricle as an list element.
 Article.prototype.preview = preview;
+Article.prototype.getPreview = getPreview;
 Article.prototype.overview = overview;
 
 
