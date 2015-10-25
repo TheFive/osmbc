@@ -17,11 +17,15 @@ function generateQuery(table,obj,order) {
         var value = obj[k];
         var op = "=";
         if (typeof(value)=='string') {
+          // escape the Apostroph
+          value = value.replace("'","''");
+          // check first operator in string
           if (value.substring(0,2)=="!=") {
             op = "!=";
             value = value.substring(2,9999);
           }           
         }
+
         var n = "data->>'"+k+"'"+op+"'"+value+"'"; 
 
         if (value=="") {
