@@ -204,6 +204,10 @@ function getPreview(lang,options) {
       // Return an list Element for the blog article
       text = markdown.toHTML(md);
 
+      // clean up <p> and </p> of markdown generation.
+      if (html.substring(0,3)=="<p>" && html.substring(html.length-4,html.length)=='</p>'){
+        html = html.substring(3,html.length-4)
+      }
 
       // clean up <p> and </p> of markdown generation.
       if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>'){
