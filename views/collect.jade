@@ -49,6 +49,9 @@ block content
             if (layout.listOfOpenBlog)  
               for blog in layout.listOfOpenBlog         
                 option(value="#{blog.name}" ) #{blog.name}
+            if (layout.listOfReviewBlog)  
+              for blog in layout.listOfReviewBlog        
+                option(value="#{blog.name}") #{blog.name} (Review)
             option(value="Future") Future
             option(value="Trash") Trash
             if (layout.listOfHelpBlog)
