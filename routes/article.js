@@ -1,9 +1,3 @@
-    it('should generate a preview Github Error #102',function (bddone) {
-      var article = articleModule.create({markdown:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
-      var result = article.preview(true);
-      should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <p>Howto place an issue in OSMBC? </p>\n\n<ol><li>open OSMBC, </li><li>click Collect,</li><li>choose a category from the pop up window</li><li>write a Titel: example: Lidar,</li><li>write at text or put a link</li><li>click OK\n--- reday --- </li></ol>\n\n<p>If you like to write the news directly, do as follows:</p>\n\n<ol><li>click Edit</li><li>write your news in English (you can see it in </li><li>click OK and ...\n... that&#39;s it.</li></ol>\n</p>');
-      bddone();
-    })
 var express  = require('express');
 var async    = require('async');
 var router   = express.Router();
@@ -14,6 +8,7 @@ var debug    = require('debug')('OSMBC:routes:article');
 var util          = require('../util.js');
 var config        = require('../config.js');
 
+var settingsModule = require('../model/settings.js');
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
@@ -24,6 +19,11 @@ function renderArticleId(req,res,next) {
 
   // Get the ID and the article to display
   var id = req.params.article_id;
+
+
+
+
+
   articleModule.findById(id,function(err,article) {
 
     // if the ID does not exist, send an error
@@ -37,12 +37,12 @@ function renderArticleId(req,res,next) {
 
     // Params is used for indicating EditMode
     var params = {};
+    var s = settingsModule.getSettings(req.query.style);
+    params.style = req.query.style;
     params.edit = req.query.edit;
-    params.left_lang = req.user.lang_basic;
-    params.right_lang = req.user.lang_trans;
+    params.left_lang = s.left_lang;
+    params.right_lang = s.right_lang;
 
-    if (req.query.ll) params.left_lang = req.query.ll;
-    if (req.query.rl) params.right_lang = req.query.rl;
 
     // calculate all used Links for the article
     var usedLinks = article.calculateLinks();

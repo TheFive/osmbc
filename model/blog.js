@@ -273,7 +273,7 @@ function preview(edit,lang,user,callback) {
   })
 }
 
-function getPreview(lang,options,callback) {
+function getPreview(style,user,callback) {
   debug('preview');
   var self = this;
 
@@ -385,6 +385,7 @@ function dropTable(cb) {
 // edit: boolean, specifying wether generated HTML should contain edit links for articles or not
 // result of preview is html code to display the blog.
 Blog.prototype.preview = preview;
+Blog.prototype.getPreview = getPreview;
 
 // setAndSave(user,data,callback)
 // user: actual username for logging purposes

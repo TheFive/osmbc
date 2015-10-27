@@ -85,7 +85,7 @@ block content
 
           .col-md-1
             input(type="submit", class="btn btn-primary",value="OK")
-            a(href="#{layout.htmlroot}/article/#{article.id}?edit=false" class="btn btn-default" role="button") Cancel
+            a(href="#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}" class="btn btn-default" role="button") Cancel
 
 
         .row
@@ -191,7 +191,7 @@ block content
         +rightcolumn
           h2
         .col-md-1
-          a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
+          a(href="#{layout.htmlroot}/article/#{article.id}?edit=true&style=#{params.style}" class="btn btn-primary" role="button") Edit
       .row
         .col-md-1
           | Category <br>

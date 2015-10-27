@@ -10,7 +10,7 @@ var moment   = require('moment');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
 var articleModule = require('../model/article.js');
-
+var settingsModule = require('../model/settings.js');
 /* GET users listing. */
 function renderBlogId(req, res, next) {
   debug('router.get /:blog_id');
@@ -18,25 +18,13 @@ function renderBlogId(req, res, next) {
 
   var id = req.params.blog_id;
  
-  var edit = 'overview';
-  var lang = "DE";
-  var style = "overview";
+  var style = "";
 
-  if (req.query.style == 'preview') {
-    lang = "DE";
-    edit = true;
-    style = 'preview';
-  }
-  if (req.query.style == 'previewEN') {
-    lang = "EN";
-    edit = true;
-    style = 'previewEN';
-  }
-  if (req.query.style == 'overview') {
-    lang = "DE";
-    edit = 'overview';
-    style = 'overview';
-  }
+  style = req.query.style;
+
+ 
+  var user = req.user.diplayName;
+
 
   blogModule.findById(id,function(err,blog) {
     if (! blog || typeof(blog.id) == 'undefined') return next(new Error("Blog not Found"));
@@ -49,7 +37,7 @@ function renderBlogId(req, res, next) {
 
     async.series([
       function (callback) {
-        blog.preview(edit,lang,req.user.displayName,function(err,result) {
+        blog.getPreview(style,user,function(err,result) {
           if (err) return callback(err);
           main_text = result.preview;
           articles = result.articles;

@@ -180,7 +180,7 @@ function getPreview(lang,options) {
   }
   // Generate Translation & Edit Links
   var editLink = '';
-  if (options.editLink) {
+  if (options.edit && options.editLink) {
     if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
       editLink = "Edit";
     }
@@ -205,11 +205,6 @@ function getPreview(lang,options) {
       text = markdown.toHTML(md);
 
       // clean up <p> and </p> of markdown generation.
-      if (html.substring(0,3)=="<p>" && html.substring(html.length-4,html.length)=='</p>'){
-        html = html.substring(3,html.length-4)
-      }
-
-      // clean up <p> and </p> of markdown generation.
       if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>'){
         text = text.substring(3,text.length-4)
       }
@@ -221,9 +216,10 @@ function getPreview(lang,options) {
   // calculate Markup Display for Missing Edits
   var markON = '';
   var markOFF = '';
-  if (options.marktext && (typeof(this["markdown"+lang])=='undefined' || this["markdown"+lang]!='')) {
+  if (options.marktext && (typeof(this[markdownLANG])=='undefined' || this[markdownLANG]=='')) {
     markON = '<mark>';
     markOFF = '</mark>'
+    console.log("Markdown <mark>")
   }
  
   return liON + 
@@ -538,9 +534,21 @@ Article.prototype.remove = pgMap.remove;
 // preview(edit)
 // edit: Boolean, that specifies, wether edit links has to be created or not
 // This function returns an HTML String of the Aricle as an list element.
+// preview and overview will be skipped in the Multilanguage Support.
 Article.prototype.preview = preview;
-Article.prototype.getPreview = getPreview;
 Article.prototype.overview = overview;
+
+// getPreview deliveres the HTML for an article.
+// Parameter1: lang
+//             language for the preview
+// parameter2: Options
+//      edit:      true if any additional edit links should be generated
+//      comment:   true if blue or red border should be placed based on comment
+//      glyphicon: true if the bullet should be an edit glyphicon
+//      editLink:  true if an "Edit&Translate" should be placed at the end of an article
+//      overview:  true if title or a small text is shown, instead of an article
+//      marktext:  true if missing language markdown should be <mark>ed.
+Article.prototype.getPreview = getPreview;
 
 
 // calculateUsedLinks(callback)

@@ -212,10 +212,10 @@ describe('model/article', function() {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) {articleModule.createNewArticle({blog:"WN1's",markdown:"test1",collection:"col1",category:"catA"},cb)},
-        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test1",collection:"col1",category:"catA"},cb)},
-        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdown:"test2",collection:"col2",category:"catB"},cb)},
-        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdown:"test3",collection:"col3",category:"catA"},
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1's",markdownDE:"test1",collection:"col1",category:"catA"},cb)},
+        function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test1",collection:"col1",category:"catA"},cb)},
+        function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test2",collection:"col2",category:"catB"},cb)},
+        function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdownDE:"test3",collection:"col3",category:"catA"},
                          function(err,result){
                           should.not.exist(err);
                           idToFindLater = result.id;
@@ -260,7 +260,7 @@ describe('model/article', function() {
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({blog:"WN1's",markdown:"test1",collection:"col1",category:"catA",version:1});
+          should(result).eql({blog:"WN1's",markdownDE:"test1",collection:"col1",category:"catA",version:1});
           bddone();
         })
       })
@@ -541,15 +541,15 @@ describe('model/article', function() {
       should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
-    it.only('should generate a preview Github Error #102',function (bddone) {
-      var article = articleModule.create({markdown:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
-      var result = article.preview(true);
+    it('should generate a preview Github Error #102',function (bddone) {
+      var article = articleModule.create({markdownDE:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
+      var result = article.preview("DE",true);
       should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <p>Howto place an issue in OSMBC? </p>\n\n<ol><li>open OSMBC, </li><li>click Collect,</li><li>choose a category from the pop up window</li><li>write a Titel: example: Lidar,</li><li>write at text or put a link</li><li>click OK\n--- reday --- </li></ol>\n\n<p>If you like to write the news directly, do as follows:</p>\n\n<ol><li>click Edit</li><li>write your news in English (you can see it in </li><li>click OK and ...\n... that&#39;s it.</li></ol>\n</p>');
       bddone();
     })
   })
 
-  describe.only('getPreview',function() {
+  describe('getPreview',function() {
     it('should generate a preview when no markdown is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});
       var result = article.getPreview("DE",{marktext:true});
@@ -604,6 +604,12 @@ describe('model/article', function() {
       should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
+    it('should generate a preview with a comment and open status checking Marktext',function (bddone) {
+      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"open"});
+      var result = article.getPreview("DE",{edit:true,glyphicon:true,comment:true,marktext:true});
+      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      bddone();
+    })
     it('should generate a preview (no markdown) with a comment and open status',function (bddone) {
       var article = articleModule.create({collection:"small collection",comment:"Hallo",commentStatus:"open"});
       var result = article.getPreview("DE",{edit:true,glyphicon:true,comment:true,marktext:true});
@@ -629,14 +635,14 @@ describe('model/article', function() {
       bddone();
     })
     it('should generate a preview Github Error #102 in german',function (bddone) {
-      var article = articleModule.create({markdown:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
-      var result = article.preview(true);
+      var article = articleModule.create({markdownDE:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
+      var result = article.getPreview("DE",{edit:true,glyphicon:true,comment:true});
       should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <p>Howto place an issue in OSMBC? </p>\n\n<ol><li>open OSMBC, </li><li>click Collect,</li><li>choose a category from the pop up window</li><li>write a Titel: example: Lidar,</li><li>write at text or put a link</li><li>click OK\n--- reday --- </li></ol>\n\n<p>If you like to write the news directly, do as follows:</p>\n\n<ol><li>click Edit</li><li>write your news in English (you can see it in </li><li>click OK and ...\n... that&#39;s it.</li></ol>\n</p>');
       bddone();
     })
     it('should generate a preview Github Error #102 in english',function (bddone) {
       var article = articleModule.create({markdownEN:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
-      var result = article.previewEN(true);
+      var result = article.getPreview("EN",{edit:true,glyphicon:true,comment:true});
       should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <p>Howto place an issue in OSMBC? </p>\n\n<ol><li>open OSMBC, </li><li>click Collect,</li><li>choose a category from the pop up window</li><li>write a Titel: example: Lidar,</li><li>write at text or put a link</li><li>click OK\n--- reday --- </li></ol>\n\n<p>If you like to write the news directly, do as follows:</p>\n\n<ol><li>click Edit</li><li>write your news in English (you can see it in </li><li>click OK and ...\n... that&#39;s it.</li></ol>\n</p>');
       bddone();
     })
