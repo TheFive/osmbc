@@ -221,6 +221,7 @@ function postBlogId(req, res, next) {
     var changes = {name:req.body.name,
                    startDate:req.body.startDate,
                    endDate:req.body.endDate,
+                   markdownImage:req.body.markdownImage,
                    categories:categories};
 
     blog.setAndSave(req.user.displayName,changes,function(err) {

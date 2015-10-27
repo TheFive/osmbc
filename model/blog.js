@@ -202,6 +202,11 @@ function preview(edit,lang,user,callback) {
   var articles = {};
   var preview = "";
 
+  var picture = "";
+  if (!edit && this.markdownImage) {
+    picture = markdown.toHTML(this.markdownImage);
+  }
+
   articleModule.find({blog:this.name},{column:"title"},function(err,result){
     
     if (self.status != "help") {
@@ -213,7 +218,13 @@ function preview(edit,lang,user,callback) {
       if (self.startDate && self.endDate) {
         preview += "<p>"+moment(self.startDate).locale(lang).format('l') +"-"+moment(self.endDate).locale(lang).format('l') +'</p>\n';
       }
-      preview += "<!--         place picture here              -->\n"      
+      if (picture == "") {
+        preview += "<!--         place picture here              -->\n"              
+      } else {
+        preview += picture + "\n";              
+
+      }
+
     }
     else preview = '<h2>'+self.name+'</h2>\n'
 

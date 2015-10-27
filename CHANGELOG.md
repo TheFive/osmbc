@@ -1,5 +1,16 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28c...HEAD)
+
+**Fixed bugs:**
+
+- Markdown not correct converted [\#102](https://github.com/TheFive/osmbc/issues/102)
+
+## [0.2.28c](https://github.com/TheFive/osmbc/tree/0.2.28c) (2015-10-25)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28b...0.2.28c)
+
 ## [0.2.28b](https://github.com/TheFive/osmbc/tree/0.2.28b) (2015-10-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28a...0.2.28b)
 
@@ -17,7 +28,6 @@
 **Fixed bugs:**
 
 - Problem with ' in a blog name. [\#103](https://github.com/TheFive/osmbc/issues/103)
-- Markdown not correct converted [\#102](https://github.com/TheFive/osmbc/issues/102)
 
 **Merged pull requests:**
 
