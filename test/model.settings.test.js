@@ -2,7 +2,7 @@ var should = require('should');
 var settingsModule = require('../model/settings.js');
 
 
-describe.only('model/settings', function() {
+describe('model/settings', function() {
   it('should deliver some configurations',function(){
      var c =settingsModule.getSettings("overviewDE(EN)");
      should(c).eql({overview:true,glyphicon:true,edit:true,comment:true,editLink:true,left_lang:"DE",right_lang:"EN"});
