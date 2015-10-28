@@ -68,10 +68,10 @@ block content
                form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.id}", method="get")
                 .form-group
                   .col-sm-10
-                    input(type="text",class="form-control",name ="reviewComment") 
+                    input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
 
                   .col-sm-2
-                    button.btn.btn-large.btn-primary(type="submit") Review
+                    button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review
 
       if (blog.status == "review" || blog.status == "published")
         .row
@@ -126,4 +126,24 @@ block content
 
 
 
+block scripts                
+  script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
+  script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
+  script.
+    reviewButton = document.getElementById("reviewButton");
+    reviewComment = document.getElementById("reviewComment");
+    reviewComment.onchange = onchange;
+    reviewComment.onkeyup = onchange;
+
+    reviewButton.disabled = true;
+    
+    function onchange() {
+      
+      reviewButton.disabled = (review.comment == "");
+    }
   
+
+
+
+
+
