@@ -105,7 +105,6 @@ function ensureAuthenticated(req, res, next) {
   debug("ensureAuthenticated");
 
   if (req.isAuthenticated()) { 
-    console.dir(req.user); 
     // check User
     userModule.find({OSMUser:req.user.displayName},function(err,result){
       if (err) return next(err);

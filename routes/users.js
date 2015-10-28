@@ -8,6 +8,7 @@ var util = require('../util.js');
 var moment = require('moment');
 var articleModule = require('../model/article.js');
 var logModule = require('../model/logModule.js');
+var settingsModule = require('../model/settings.js');
 var config = require('../config.js');
 
 
@@ -20,6 +21,7 @@ function renderList(req,res,next) {
   if (req.query.sort) sort.column = req.query.sort;
   if (req.query.desc) sort.desc = true; 
   if (req.query.lastAccess) query.lastAccess = req.query.lastAccess;
+
   async.parallel([
       function(callback) {
         userModule.find(query,sort,function(err,result) {
@@ -47,6 +49,8 @@ function renderUserId(req, res, next) {
   if (req.query.edit) params.edit = req.query.edit;
   var user;
   var changes;
+  var settings = settingsModule.listSettings;
+  var languages = settingsModule.listLanguages;
   async.series([
     function findAndLoadChanges(cb) {
       debug('findAndLoadChanges');
@@ -75,7 +79,8 @@ function renderUserId(req, res, next) {
       res.render('user',{usershown:user,
                         changes:changes,
                         params:params,
-                        languages:config.getValue("languages"),
+                        settings:settingsModule.listSettings,
+                        languages:settingsModule.listLanguages,
                         layout:res.rendervar.layout});
     }
   ) 
@@ -86,11 +91,22 @@ function postUserId(req, res, next) {
   var id = req.params.user_id;
   userModule.findById(id,function(err,user) {
     if (typeof(user.id) == 'undefined') return next();
+   
+   
     var changes = {OSMUser:req.body.OSMUser,
                    access:req.body.access,
-                   lang_basic: req.body.lang_basic,
-                   lang_trans: req.body.lang_trans};
-
+                   blogSetting0:req.body.blogSetting0,
+                   blogSetting1:req.body.blogSetting1,
+                   blogSetting2:req.body.blogSetting2,
+                   blogSetting3:req.body.blogSetting3,
+                   blogSetting4:req.body.blogSetting4,
+                   blogLanguages0:req.body.blogLanguages0,
+                   blogLanguages1:req.body.blogLanguages1,
+                   blogLanguages2:req.body.blogLanguages2,
+                   blogLanguages3:req.body.blogLanguages3,
+                   blogLanguages4:req.body.blogLanguages4};
+    console.dir(changes); //debuglog
+   console.dir(req.body); //debuglog
     user.setAndSave(req.user.displayName,changes,function(err) {
       if (err) {
         return next(err);

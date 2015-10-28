@@ -90,6 +90,17 @@ function getSettings(string) {
   return result;
 }
 
-exports.getSettings = getSettings;
+var listSettings = [];
+var listLanguages = [];
 
+for (var k in settings) {
+    listSettings.push(k);
+}
+for (var k in languages) {
+  listLanguages.push(k);
+}
+
+exports.getSettings = getSettings;
+exports.listSettings = listSettings;
+exports.listLanguages = listLanguages;
 

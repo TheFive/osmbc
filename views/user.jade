@@ -27,7 +27,7 @@ block content
     if (params && params.edit) 
       form(name="input", action="#{layout.htmlroot}/usert/#{usershown.id}", method="post")
         .row
-          .col-md-1
+          .col-md-2
             | OSM Name 
           .col-md-3
             textarea.form-control(name="OSMUser",rows=1) #{usershown.OSMUser}
@@ -38,7 +38,7 @@ block content
 
 
         .row
-          .col-md-1
+          .col-md-2
             | Access
           .col-md-5
             select(id="access",name="access").form-control
@@ -47,20 +47,68 @@ block content
                 option(value="read" ) only collected Article (not implemented)
                 option(value="denied" ) denied
         .row
-          .col-md-1
-            | Basic Language
-          .col-md-5
-            select(id="lang_basic",name="lang_basic").form-control
-              option(value="#{usershown.lang_basic}" selected) #{usershown.lang_basic+'(*)'}
+          .col-md-2
+            | Blog Config 0
+          .col-md-3
+            select(id="blogSetting0",name="blogSetting0").form-control
+              option(value="#{usershown.blogSetting0}" selected) #{usershown.blogSetting0} (*)
+              each setting in settings
+                option(value="#{setting}" ) #{setting}
+          .col-md-3
+            select(id="blogLanguages0",name="blogLanguages0").form-control
+              option(value="#{usershown.blogLanguages0}" selected) #{usershown.blogLanguages0} (*)
               each lang in languages
                 option(value="#{lang}" ) #{lang}
         .row
-          .col-md-1
-            | Translation Language
-          .col-md-5
-            select(id="lang_trans",name="lang_trans").form-control
-              option(value="#{usershown.lang_trans}" selected) #{usershown.lang_trans+'(*)'}
-              option(value="--") --
+          .col-md-2
+            | Blog Config 1
+          .col-md-3
+            select(id="blogSetting1",name="blogSetting1").form-control
+              option(value="#{usershown.blogSetting1}" selected) #{usershown.blogSetting1} (*)
+              each setting in settings
+                option(value="#{setting}" ) #{setting}
+          .col-md-3
+            select(id="blogLanguages1",name="blogLanguages1").form-control
+              option(value="#{usershown.blogLanguages1}" selected) #{usershown.blogLanguages1} (*)
+              each lang in languages
+                option(value="#{lang}" ) #{lang}
+        .row
+          .col-md-2
+            | Blog Config 2
+          .col-md-3
+            select(id="blogSetting2",name="blogSetting2").form-control
+              option(value="#{usershown.blogSetting2}" selected) #{usershown.blogSetting2} (*)
+              each setting in settings
+                option(value="#{setting}" ) #{setting}
+          .col-md-3
+            select(id="blogLanguages2",name="blogLanguages2").form-control
+              option(value="#{usershown.blogLanguages2}" selected) #{usershown.blogLanguages2} (*)
+              each lang in languages
+                option(value="#{lang}" ) #{lang}
+        .row
+          .col-md-2
+            | Blog Config 3
+          .col-md-3
+            select(id="blogSetting3",name="blogSetting3").form-control
+              option(value="#{usershown.blogSetting3}" selected) #{usershown.blogSetting3} (*)
+              each setting in settings
+                option(value="#{setting}" ) #{setting}
+          .col-md-3
+            select(id="blogLanguages3",name="blogLanguages3").form-control
+              option(value="#{usershown.blogLanguages3}" selected) #{usershown.blogLanguages3} (*)
+              each lang in languages
+                option(value="#{lang}" ) #{lang}     
+        .row
+          .col-md-2
+            | Blog Config 4
+          .col-md-3
+            select(id="blogSetting4",name="blogSetting4").form-control
+              option(value="#{usershown.blogSetting4}" selected) #{usershown.blogSetting4} (*)
+              each setting in settings
+                option(value="#{setting}" ) #{setting}
+          .col-md-3
+            select(id="blogLanguages4",name="blogLanguages4").form-control
+              option(value="#{usershown.blogLanguages4}" selected) #{usershown.blogLanguages4} (*)
               each lang in languages
                 option(value="#{lang}" ) #{lang}
      
@@ -70,38 +118,52 @@ block content
 
     else
      .row
-        .col-md-1
+        .col-md-2
           | OSM Name <br>
-        .col-md-3
+        .col-md-4
           h2
             | #{usershown.OSMUser}
-        .col-md-7
+        .col-md-5
         .col-md-1
           a(href="#{layout.htmlroot}/usert/#{usershown.id}?edit=true" class="btn btn-primary" role="button") Edit
       .row
-        .col-md-1
+        .col-md-2
           | Access <br>
         .col-md-5
           h2
             | #{usershown.access}
       .row
-        .col-md-1
+        .col-md-2
           | OSM <br>
         .col-md-5
           p
             a(href='http://www.openstreetmap.org/user/#{usershown.OSMUser}') #{usershown.OSMUser}
       .row
-        .col-md-1
-          | Basic Language <br>
+        .col-md-2
+          | blog Config 0
         .col-md-5
-          p
-            | #{usershown.lang_basic}
+          | #{usershown.blogSetting0 + usershown.blogLanguages0}
       .row
-        .col-md-1
-          | Translation Language <br>
+        .col-md-2
+          | blog Config 1
         .col-md-5
-          p
-            | #{usershown.lang_trans}
+          | #{usershown.blogSetting1 + usershown.blogLanguages1}
+      .row
+        .col-md-2
+          | blog Config 2
+        .col-md-5
+          | #{usershown.blogSetting2 + usershown.blogLanguages2}
+      .row
+        .col-md-2
+          | blog Config 3
+        .col-md-5
+          | #{usershown.blogSetting3 + usershown.blogLanguages3}
+      .row
+        .col-md-2
+          | blog Config 4
+        .col-md-5
+          | #{usershown.blogSetting4 + usershown.blogLanguages4}
+   
   .row
     if changes
       h2

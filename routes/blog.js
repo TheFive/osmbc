@@ -18,12 +18,12 @@ function renderBlogId(req, res, next) {
 
   var id = req.params.blog_id;
  
-  var style = "";
+  var style = req.user.blogSetting0 + req.user.blogLanguages0;
 
-  style = req.query.style;
+  if (req.query.style ) style = req.query.style;
 
- 
-  var user = req.user.diplayName;
+  var user = req.user.displayName;
+
 
 
   blogModule.findById(id,function(err,blog) {
@@ -35,8 +35,10 @@ function renderBlogId(req, res, next) {
 
 
 
+
     async.series([
       function (callback) {
+
         blog.getPreview(style,user,function(err,result) {
           if (err) return callback(err);
           main_text = result.preview;
@@ -48,7 +50,7 @@ function renderBlogId(req, res, next) {
         if (typeof(req.query.setStatus)!='undefined')
         {
           var changes = {status:req.query.setStatus};
-          blog.setAndSave(req.user.displayName,changes,function(err) {
+          blog.setAndSave(user,changes,function(err) {
             if (err) {
               console.dir(err);
               info.message = JSON.stringify(err);
@@ -61,7 +63,7 @@ function renderBlogId(req, res, next) {
       function (callback) {
         if (typeof(req.query.reviewComment)!='undefined')
         {
-          blog.setReviewComment(req.user.displayName,req.query.reviewComment,function(err) {
+          blog.setReviewComment(user,req.query.reviewComment,function(err) {
             if (err) {
               console.dir(err);
               info.message = JSON.stringify(err);

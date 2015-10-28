@@ -8,6 +8,7 @@ var should   = require('should');
 var moment   = require('moment');
 
 var articleModule = require('../model/article.js');
+var settingsModule = require('../model/settings.js');
 var logModule = require('../model/logModule.js');
 
 var pgMap = require('./pgMap.js')
@@ -123,7 +124,6 @@ function setReviewComment(user,data,callback) {
         },
         function(callback) {
           var date = new Date();
-          console.log(self.reviewComment);
           self.reviewComment.push({user:user,text:data,timestamp:date});
           callback();
         }
@@ -289,11 +289,14 @@ function getPreview(style,user,callback) {
   var self = this;
 
   // first check the parameter
-  should(typeof(lang)).equal("string");
-  if (typeof(options)=="function") {
-    callback = options;
-    options = {};
+  should(typeof(style)).equal("string");
+  if (typeof(user)=="function") {
+    callback = user;
+    user = "--";
   }
+  should.exist(user);
+  
+  var options = settingsModule.getSettings(style);
 
   var articles = {};
   var preview = "";
@@ -350,7 +353,9 @@ function getPreview(style,user,callback) {
 
         for (var j=0;j<articles[category].length;j++) {
           var r = articles[category][j];
-          htmlForCategory += r.getPreview(lang,options);
+
+          console.log(style+" "+user); //debuglog
+          htmlForCategory += r.getPreview(style,user);
         }
         var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLANG.toLowerCase()+'">'+categoryLANG+'</h2>\n';
         htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'

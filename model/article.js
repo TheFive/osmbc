@@ -12,6 +12,7 @@ var config    = require('../config.js');
 var util      = require('../util.js');
 
 var logModule = require('../model/logModule.js');
+var settingsModule = require('../model/settings.js');
 var blogModule = require('../model/blog.js');
 var pgMap     = require('../model/pgMap.js');
 
@@ -149,14 +150,16 @@ function overview(user) {
 }
 
 
-function getPreview(lang,options) {
+function getPreview(style,user) {
   debug("preview");
-  should.exist(lang);
-  should.exist(options);
+  should.exist(style);
+  should.exist(user);
+
+  var options = settingsModule.getSettings(style);
 
   var markdownEDIT = "markdown"+options.left_lang;
   var markdownTRANS = "markdown"+options.right_lang;
-  var markdownLANG = "markdown"+lang;
+  var markdownLANG = markdownEDIT;  
 
 
   // Calculate markup for comment
@@ -174,7 +177,7 @@ function getPreview(lang,options) {
   var liON = '<li'+commentMarkup+'>\n';
   var liOFF = '</li>';
   if (options.glyphicon && options.edit) {
-    var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+    var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
     liON = '<p'+commentMarkup +'>\n'+editMark+' ';
     liOFF = '</p>';
   }
