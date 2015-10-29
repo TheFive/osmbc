@@ -150,12 +150,25 @@ function overview(user) {
 }
 
 
-function getPreview(style,user) {
+function getPreview(par1,par2,par3) {
   debug("preview");
-  should.exist(style);
-  should.exist(user);
+  should.exist(par1);
+  var options;
+  var user;
+  var lang;
 
-  var options = settingsModule.getSettings(style);
+  if (typeof(par2)=='object') {
+    options = par2;
+    user = par3;
+    lang = par1
+  } else
+  {
+    style = par1;
+    user = par2;
+    options = settingsModule.getSettings(style);
+
+  }
+
 
   var markdownEDIT = "markdown"+options.left_lang;
   var markdownTRANS = "markdown"+options.right_lang;
@@ -167,7 +180,7 @@ function getPreview(style,user) {
   if (options.edit && options.comment && this.comment) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
       var commentColour = "blue";
-      if (this.comment.indexOf("@"+options.user)>=0) commentColour = "red";
+      if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
       if (this.comment.indexOf("@all")>=0) commentColour = "red";
       commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
     }
@@ -222,7 +235,6 @@ function getPreview(style,user) {
   if (options.marktext && (typeof(this[markdownLANG])=='undefined' || this[markdownLANG]=='')) {
     markON = '<mark>';
     markOFF = '</mark>'
-    console.log("Markdown <mark>")
   }
  
   return liON + 

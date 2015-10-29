@@ -552,98 +552,98 @@ describe('model/article', function() {
   describe('getPreview',function() {
     it('should generate a preview when no markdown is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});
-      var result = article.getPreview("DE",{marktext:true});
-      should(result).equal('<li>\n<mark>Test Title\n</mark></li>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p>\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> <mark>Test Title\n</mark></p>');
       bddone();
     })
     it('should generate a preview when no markdown is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});
-      var result = article.getPreview("DE",{marktext:true,edit:true,glyphicon:true});
-      should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <mark>Test Title\n</mark></p>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p>\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> <mark>Test Title\n</mark></p>');
       bddone();
     })
     it('should generate a preview when no markdown2 is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({collection:"Test Collection"});
-      var result = article.getPreview("DE",{marktext:true});
-      should(result).equal('<li>\n<mark>Test Collection\n</mark></li>');
+      var result = article.getPreview("fullfinalDE","TheFive");
+      should(result).equal('<li>\nTest Collection\n<a href="/article/0">Edit&Translate</a></li>');
       bddone();
     })
     it('should generate a preview when no markdown2 is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({collection:"Test Collection"});
-      var result = article.getPreview("DE",{marktext:true,edit:true,glyphicon:true});
-      should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <mark>Test Collection\n</mark></p>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p>\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> <mark>Test Collection\n</mark></p>');
       bddone();
     })
     it('should generate a preview when markdown is specified (Edit Link)',function (bddone) {
       var article = articleModule.create({markdownDE:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
-      var result = article.getPreview("DE",{edit:true,glyphicon:true});
-      should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</p>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p>\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> <a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</p>');
       bddone();
     })
     it('should generate a preview when markdown is specified (No Edit Link)',function (bddone) {
       var article = articleModule.create({markdownDE:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
-      var result = article.getPreview("DE",{});
-      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
+      var result = article.getPreview("fullfinalDE","TheFive");
+      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n<a href="/article/0">Translate</a></li>');
       bddone();
     })
     it('should generate a preview when markdown is specified (with Star)',function (bddone) {
       var article = articleModule.create({markdownDE:"* [Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
-      var result = article.getPreview("DE",{});
-      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
+      var result = article.getPreview("fullfinalDE","TheFive");
+      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n<a href="/article/0">Translate</a></li>');
       bddone();
     })
     it('should generate a preview with a comment and no status',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo"});
-      var result = article.getPreview("DE",{edit:true,glyphicon:true,comment:true});
-      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview with a comment and open status',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"open"});
-      var result = article.getPreview("DE",{edit:true,glyphicon:true,comment:true});
-      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview with a comment and open status checking Marktext',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"open"});
-      var result = article.getPreview("DE",{edit:true,glyphicon:true,comment:true,marktext:true});
-      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview (no markdown) with a comment and open status',function (bddone) {
       var article = articleModule.create({collection:"small collection",comment:"Hallo",commentStatus:"open"});
-      var result = article.getPreview("DE",{edit:true,glyphicon:true,comment:true,marktext:true});
-      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <mark>small collection\n</mark></p>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p style=" border-left-style: solid; border-color: blue;">\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> <mark>small collection\n</mark></p>');
       bddone();
     })
     it('should generate a preview with a comment and open status and reference for all user',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo @all",commentStatus:"open"});
-      var result = article.getPreview("DE",{edit:true,user:"test",glyphicon:true,comment:true});
-      should(result).equal('<p style=" border-left-style: solid; border-color: red;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p style=" border-left-style: solid; border-color: red;">\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview with a comment and open status and reference for a specific user',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo @user",commentStatus:"open"});
-      var result = article.getPreview("DE",{edit:true,user:"user",glyphicon:true,comment:true});
-      should(result).equal('<p style=" border-left-style: solid; border-color: red;">\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      var result = article.getPreview("fullDE","user");
+      should(result).equal('<p style=" border-left-style: solid; border-color: red;">\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview with a comment and solved status',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"solved"});
-      var result = article.getPreview("DE",{edit:true,glyphicon:true,comment:true});
-      should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p>\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> small markdown\n</p>');
       bddone();
     })
     it('should generate a preview Github Error #102 in german',function (bddone) {
       var article = articleModule.create({markdownDE:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
-      var result = article.getPreview("DE",{edit:true,glyphicon:true,comment:true});
-      should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <p>Howto place an issue in OSMBC? </p>\n\n<ol><li>open OSMBC, </li><li>click Collect,</li><li>choose a category from the pop up window</li><li>write a Titel: example: Lidar,</li><li>write at text or put a link</li><li>click OK\n--- reday --- </li></ol>\n\n<p>If you like to write the news directly, do as follows:</p>\n\n<ol><li>click Edit</li><li>write your news in English (you can see it in </li><li>click OK and ...\n... that&#39;s it.</li></ol>\n</p>');
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<p>\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> <p>Howto place an issue in OSMBC? </p>\n\n<ol><li>open OSMBC, </li><li>click Collect,</li><li>choose a category from the pop up window</li><li>write a Titel: example: Lidar,</li><li>write at text or put a link</li><li>click OK\n--- reday --- </li></ol>\n\n<p>If you like to write the news directly, do as follows:</p>\n\n<ol><li>click Edit</li><li>write your news in English (you can see it in </li><li>click OK and ...\n... that&#39;s it.</li></ol>\n</p>');
       bddone();
     })
     it('should generate a preview Github Error #102 in english',function (bddone) {
       var article = articleModule.create({markdownEN:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
-      var result = article.getPreview("EN",{edit:true,glyphicon:true,comment:true});
-      should(result).equal('<p>\n<a href="/article/0"><span class="glyphicon glyphicon-edit"></span></a> <p>Howto place an issue in OSMBC? </p>\n\n<ol><li>open OSMBC, </li><li>click Collect,</li><li>choose a category from the pop up window</li><li>write a Titel: example: Lidar,</li><li>write at text or put a link</li><li>click OK\n--- reday --- </li></ol>\n\n<p>If you like to write the news directly, do as follows:</p>\n\n<ol><li>click Edit</li><li>write your news in English (you can see it in </li><li>click OK and ...\n... that&#39;s it.</li></ol>\n</p>');
+      var result = article.getPreview("fullEN","TheFive");
+      should(result).equal('<p>\n<a href="/article/0?style=fullEN"><span class="glyphicon glyphicon-edit"></span></a> <p>Howto place an issue in OSMBC? </p>\n\n<ol><li>open OSMBC, </li><li>click Collect,</li><li>choose a category from the pop up window</li><li>write a Titel: example: Lidar,</li><li>write at text or put a link</li><li>click OK\n--- reday --- </li></ol>\n\n<p>If you like to write the news directly, do as follows:</p>\n\n<ol><li>click Edit</li><li>write your news in English (you can see it in </li><li>click OK and ...\n... that&#39;s it.</li></ol>\n</p>');
       bddone();
     })
   })

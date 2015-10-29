@@ -295,11 +295,13 @@ function getPreview(style,user,callback) {
     user = "--";
   }
   should.exist(user);
-  
+
   var options = settingsModule.getSettings(style);
 
   var articles = {};
   var preview = "";
+
+  var bilingual = options.bilingual;
 
   articleModule.find({blog:this.name},{column:"title"},function(err,result){
     
