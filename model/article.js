@@ -204,7 +204,7 @@ function getPreview(par1,par2,par3) {
       if (editLink != '') editLink +='&'
       editLink += "Translate";
     }
-    if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'">'+editLink+'</a>';    
+    if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+editLink+'</a>';    
   }
 
   // Generate Text for display

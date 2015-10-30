@@ -105,8 +105,7 @@ function postUserId(req, res, next) {
                    blogLanguages2:req.body.blogLanguages2,
                    blogLanguages3:req.body.blogLanguages3,
                    blogLanguages4:req.body.blogLanguages4};
-    console.dir(changes); //debuglog
-   console.dir(req.body); //debuglog
+
     user.setAndSave(req.user.displayName,changes,function(err) {
       if (err) {
         return next(err);

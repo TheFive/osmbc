@@ -20,9 +20,25 @@ function renderBlogId(req, res, next) {
  
   var style = req.user.blogSetting0 + req.user.blogLanguages0;
 
-  if (req.query.style ) style = req.query.style;
+  if (req.session.lastStyle) style = req.session.lastStyle;
+
+  if (req.query.style ) {
+    style = req.query.style;
+    req.session.lastStyle = style;
+  }
 
   var user = req.user.displayName;
+  for (var i=0;i<5;i++) {
+    if (!user["blogSetting"+i]) {
+      user["blogSetting"+i] = "";
+      user["blogLanguages"+i] = "";
+    }
+    if (user.blogSetting0 == "") {
+      user.blogSetting0 = "overview";
+      user.blogLanguages0 = "DE.EN";
+    }
+  }
+
 
 
 

@@ -41,6 +41,7 @@ for (var i = 0;i<config.getLanguages().length;i++) {
   lang = config.getLanguages()[i];
   languages[lang] = {};
   languages[lang].left_lang = lang;
+  languages[lang].right_lang = "--";
   
   if (lang != "EN") {
     languages["EN."+lang] = {};
