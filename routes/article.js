@@ -38,7 +38,7 @@ function renderArticleId(req,res,next) {
     // Params is used for indicating EditMode
     var params = {};
     var s = settingsModule.getSettings(req.query.style);
-    params.style = req.query.style;
+    if (req.query.style) params.style = req.query.style;
     params.edit = req.query.edit;
     params.left_lang = s.left_lang;
     params.right_lang = s.right_lang;

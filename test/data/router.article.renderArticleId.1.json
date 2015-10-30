@@ -5,7 +5,7 @@
   "testArticleTitle":"BLOG",
 
   "result":{"articleText":"<li>\nDies ist ein grosser Testartikel.\n</li>",
-            "params":{"edit":null},
+            "params":{"edit":null,"left_lang":"DE","right_lang":"EN"},
             "listOfOpenBlog": ["BLOG"],
             "listOfOrphanBlog": [],
             "changes": [],
