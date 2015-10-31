@@ -34,6 +34,9 @@ Master:   | develop:
 Timeline for code coverage on development branch:
 ![codecov.io](http://codecov.io/github/TheFive/osmbc/branch.svg?branch=develop)
 
+Timeline for code coverage on master branch:
+![codecov.io](http://codecov.io/github/TheFive/osmbc/branch.svg?branch=master)
+
 
 ## Tooling
 

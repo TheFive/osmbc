@@ -146,6 +146,7 @@ block content
             textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
             | 'german only' to specify no translation wanted.
           .col-md-1
+
             if ((params.left_lang=="DE") || (params.right_lang=="DE"))
               img(id="Japanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg", class="img-responsive" ,width = 40, onclick="javascript:myclick(this.id)")
               img(id="Französisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
@@ -155,6 +156,7 @@ block content
               img(id="Russisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
               img(id="Niederländisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
               img(id="Rumänisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
+              img(id="Polish",src="http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
 
 
         .row
