@@ -144,6 +144,8 @@ block content
             | Markdown 
           +leftcolumn
             textarea.form-control(id="markdownLEFT" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
+            | 'no translation' to specify no translation wanted.
+ 
           +rightcolumn
             textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
             | 'no translation' to specify no translation wanted.

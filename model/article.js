@@ -199,7 +199,7 @@ function getPreview(par1,par2,par3) {
   }
   // Generate Translation & Edit Links
   var editLink = '';
-  if (options.edit && options.editLink) {
+  if (options.edit && options.editLink ) {
     if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
       editLink = "Edit";
     }
@@ -207,6 +207,7 @@ function getPreview(par1,par2,par3) {
       if (editLink != '') editLink +='&'
       editLink += "Translate";
     }
+    if (editLink =='' && options.shortEditLink) editLink ='…';
     if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+editLink+'</a>';    
   }
 

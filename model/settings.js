@@ -29,8 +29,8 @@ settings.full = {
           }
 settings.fullfinal = {
             edit : true,
-            comment : true,
-            editLink : true
+            editLink: true,
+            shortEditLink : true
           }
 
 
