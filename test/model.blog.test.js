@@ -302,7 +302,7 @@ describe('model/blog', function() {
             })         
           } ,
           function(done) {
-            blog.getPreview("DE","user",function(err,result){
+            blog.getPreview(data.style,"user",function(err,result){
               should.not.exist(err);
               html = result.preview;
               articles = result.articles;
