@@ -386,12 +386,17 @@ function getPreview(style,user,callback) {
 }
 
 function translateCategories(cat) {
+  debug('translateCategories');
   var languages = config.getLanguages();
   for (var i = 0 ;i< cat.length;i++) {
     for (var l =0 ;l <languages.length;l++) {
       var lang = languages[l];
       if (cat[i][lang]) continue;
-      cat[i][lang] = categoryTranslation[cat[i].EN][lang];
+      if (categoryTranslation[cat[i].EN]) {
+         cat[i][lang] = categoryTranslation[cat[i].EN][lang];
+       }  
+ 
+     
       if (!cat[i][lang]) cat[i][lang] = cat[i].EN;
     }
   }  
