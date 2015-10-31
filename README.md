@@ -16,7 +16,9 @@ OSMBC is a small tool to support the editorial process of the [OpenStreetMap]&nb
 ## Status 
 
 The system is active used since Wochennotiz 272 in September 2015. 
-The running instance for the editors is: https://thefive.sabic.uberspace.de/osmbc.html.
+
+The running instance for the editors is: https://thefive.sabic.uberspace.de/osmbc.html 
+For tests, use the development instance: http://thefive.sabic.uberspace.de/devosmbc/osmbc.html
 
 ## Next Steps & Progress
 
