@@ -290,13 +290,13 @@ describe('model/article', function() {
     })
     it('should return markdown second',function(bddone){
       article = articleModule.create({markdownDE:"markdown",collection:"col",category:"CAT"});
-      should(article.displayTitle()).equal("markdown");
+      should(article.displayTitle()).equal("col");
 
       article = articleModule.create({title:"",markdownDE:"markdown",collection:"col",category:"CAT"});
-      should(article.displayTitle()).equal("markdown");
+      should(article.displayTitle()).equal("col");
 
       article = articleModule.create({title:"",markdownDE:"* This is more markdown text to test the default limit of charachter",collection:"col",category:"CAT"});
-      should(article.displayTitle()).equal("This is more markdown text to ...");
+      should(article.displayTitle()).equal("col");
       bddone();
     })
     it('should return collection third',function(bddone){

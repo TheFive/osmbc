@@ -10,6 +10,7 @@ var moment   = require('moment');
 var articleModule = require('../model/article.js');
 var settingsModule = require('../model/settings.js');
 var logModule = require('../model/logModule.js');
+var categoryTranslation = require('../model/categoryTranslation.js');
 
 var pgMap = require('./pgMap.js')
 var debug = require('debug')('OSMBC:model:blog');
@@ -39,6 +40,8 @@ module.exports.categories = [
   {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
   {DE:"Wochenvorschau" ,EN:"Not Translated"},
   {DE:"--unpublished--" ,EN:"--unpublished--"}];
+
+
 
 
 function Blog(proto)
@@ -323,10 +326,10 @@ function getPreview(style,user,callback) {
     if (result) {
       for (var i=0;i<result.length;i++ ) {
         var r = result[i];
-        if (typeof(articles[r.category]) == 'undefined') {
-          articles[r.category] = [];
+        if (typeof(articles[r.categoryEN]) == 'undefined') {
+          articles[r.categoryEN] = [];
         }
-        articles[r.category].push(r);
+        articles[r.categoryEN].push(r);
       }
     }
     var clist = self.getCategories();
@@ -334,16 +337,15 @@ function getPreview(style,user,callback) {
     
     // Generate the blog result along the categories
     for (var i=0;i<clist.length;i++) {
-      var category = clist[i].DE;
+      var category = clist[i].EN;
 
+      var categoryRIGHT = "";
+      var categoryLEFT = clist[i][options.left_lang];
+      if (bilingual) {
+        categoryRIGHT = clist[i][options.right_lang]
+      }
 
-      var categoryLANG = clist[i].DE;
-
-      // OPEN: This has to be modelled for more languages
-      // Define english as "master" for the categories 
-      if (lang=="DE") categoryLANG = clist[i].DE;
-      if (lang!="DE") categoryLANG = clist[i].EN;
-
+     
       // ignore any "unpublished" category not in edit mode
       if (!(options.edit) && category =="--unpublished--") continue;
 
@@ -359,7 +361,14 @@ function getPreview(style,user,callback) {
           console.log(style+" "+user); //debuglog
           htmlForCategory += r.getPreview(style,user);
         }
-        var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLANG.toLowerCase()+'">'+categoryLANG+'</h2>\n';
+        var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n';
+        if (bilingual) {
+          header = '<div class="row"><div class = "col-md-6">' +
+                   '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n' +
+                   '</div><div class = "col-md-6">' +
+                   '<h2 id="'+self.name.toLowerCase()+'_'+categoryRIGHT.toLowerCase()+'">'+categoryRIGHT+'</h2>\n' +
+                   '</div></div>';
+        }
         htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
         preview += htmlForCategory;
         delete articles[category];
@@ -376,13 +385,30 @@ function getPreview(style,user,callback) {
   })
 }
 
+function translateCategories(cat) {
+  var languages = config.getLanguages();
+  for (var i = 0 ;i< cat.length;i++) {
+    for (var l =0 ;l <languages.length;l++) {
+      var lang = languages[l];
+      if (cat[i][lang]) continue;
+      cat[i][lang] = categoryTranslation[cat[i].EN][lang];
+      if (!cat[i][lang]) cat[i][lang] = cat[i].EN;
+    }
+  }  
+}
+
+translateCategories(exports.categories);
+
 function getCategories() {
   debug('getCategories');
 
   var result = module.exports.categories;
-  if (this.categories) result = this.categories;
+  if (this.categories) {
+    translateCategories(this.categories);
+    result = this.categories;
+  }
 
-  
+ 
 
   return result;
 }
