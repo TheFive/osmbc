@@ -238,8 +238,8 @@ function getPreview(par1,par2,par3) {
       textright = markdown.toHTML(md);
 
       // clean up <p> and </p> of markdown generation.
-      if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>'){
-        textright = textright.substring(3,text.length-4)
+      if (textright.substring(0,3)=="<p>" && textright.substring(textright.length-4,textright.length)=='</p>'){
+        textright = textright.substring(3,textright.length-4)
       }
     } else {
       textright = this.displayTitle();
@@ -460,11 +460,12 @@ function displayTitle(maxlength) {
   if (typeof(this.title)!='undefined' && this.title != "") {
     result = util.shorten(this.title,maxlength)
   } else 
+  /* it is a very bad idea to shorten HTML this way.
   if (typeof(this.markdownDE)!='undefined' && this.markdownDE !="") {
     var md = this.markdownDE;
     if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
     result = util.shorten(md,maxlength)
-  } else
+  } else*/
   if (typeof(this.collection)!='undefined' && this.collection !="") {
     result = util.shorten(this.collection,maxlength)
   }

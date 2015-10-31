@@ -379,9 +379,12 @@ function getPreview(style,user,callback) {
 function getCategories() {
   debug('getCategories');
 
-  // Funktion is used for prototype @ Blog and for Blog Module
-  if (this.categories) return this.categories;
-  return module.exports.categories;
+  var result = module.exports.categories;
+  if (this.categories) result = this.categories;
+
+  
+
+  return result;
 }
 
 function createTable(cb) {
