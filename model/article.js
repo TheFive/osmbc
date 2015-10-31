@@ -209,8 +209,10 @@ function getPreview(par1,par2,par3) {
 
   // Generate Text for display
   var text ='';
+  var textright = '';
   if (options.overview) { // just generate the overview text
     text=this.displayTitle(90);
+    textright = this.displayTitle(90);
   } else { // generate the full text
     if (typeof(this[markdownLANG])!='undefined' && this[markdownLANG]!='') {
       var md = this[markdownLANG];
@@ -226,8 +228,24 @@ function getPreview(par1,par2,par3) {
       }
     } else {
       text = this.displayTitle();
+    }    
+    if (typeof(this[markdownTRANS])!='undefined' && this[markdownTRANS]!='') {
+      var md = this[markdownTRANS];
+
+      // Does the markdown text starts with '* ', so ignore it
+      if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
+      // Return an list Element for the blog article
+      textright = markdown.toHTML(md);
+
+      // clean up <p> and </p> of markdown generation.
+      if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>'){
+        textright = textright.substring(3,text.length-4)
+      }
+    } else {
+      textright = this.displayTitle();
     }
   }
+
 
   // calculate Markup Display for Missing Edits
   var markON = '';
@@ -236,13 +254,41 @@ function getPreview(par1,par2,par3) {
     markON = '<mark>';
     markOFF = '</mark>'
   }
- 
-  return liON + 
+  var markrightON = '';
+  var markrightOFF = '';
+  if (options.marktext && (typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS]=='')) {
+    markrightON = '<mark>';
+    markrightOFF = '</mark>'
+  }
+  if (!options.bilingual) {
+      return liON + 
     markON +
     text + '\n' +
     markOFF +
     editLink+     
     liOFF;
+  }
+  else {
+    return '<div class="row">'+
+             '<div class="col-md-6">'+
+              liON + 
+              markON +
+              text + '\n' +
+              markOFF +
+              editLink+     
+              liOFF +
+             '</div>'+
+             '<div class="col-md-6">'+
+              liON + 
+              markrightON +
+              textright + '\n' +
+              markrightOFF +
+              editLink+     
+              liOFF +
+             '</div>'+
+           '</div>'
+  }
+
 
 }
 
