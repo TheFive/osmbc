@@ -565,7 +565,7 @@ describe('model/article', function() {
     it('should generate a preview when no markdown2 is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({collection:"Test Collection"});
       var result = article.getPreview("fullfinalDE","TheFive");
-      should(result).equal('<li>\nTest Collection\n<a href="/article/0">Edit&Translate</a></li>');
+      should(result).equal('<li>\nTest Collection\n<a href="/article/0?style=fullfinalDE">Edit</a></li>');
       bddone();
     })
     it('should generate a preview when no markdown2 is specified (Edit Link)',function (bddone) {
@@ -580,16 +580,16 @@ describe('model/article', function() {
       should(result).equal('<p>\n<a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a> <a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</p>');
       bddone();
     })
-    it('should generate a preview when markdown is specified (No Edit Link)',function (bddone) {
+    it('should generate a preview when markdown is specified (Translate Link Required)',function (bddone) {
       var article = articleModule.create({markdownDE:"[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
-      var result = article.getPreview("fullfinalDE","TheFive");
-      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n<a href="/article/0">Translate</a></li>');
+      var result = article.getPreview("fullfinalDE(EN)","TheFive");
+      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n<a href="/article/0?style=fullfinalDE(EN)">Translate</a></li>');
       bddone();
     })
     it('should generate a preview when markdown is specified (with Star)',function (bddone) {
       var article = articleModule.create({markdownDE:"* [Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = article.getPreview("fullfinalDE","TheFive");
-      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n<a href="/article/0">Translate</a></li>');
+      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
       bddone();
     })
     it('should generate a preview with a comment and no status',function (bddone) {

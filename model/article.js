@@ -200,7 +200,7 @@ function getPreview(par1,par2,par3) {
     if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
       editLink = "Edit";
     }
-    if (typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '') {
+    if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
       if (editLink != '') editLink +='&'
       editLink += "Translate";
     }
