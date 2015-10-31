@@ -144,7 +144,7 @@ block content
             textarea.form-control(id="markdownLEFT" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
           +rightcolumn
             textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
-            | 'german only' to specify no translation wanted.
+            | 'no translation' to specify no translation wanted.
           .col-md-1
 
             if ((params.left_lang=="DE") || (params.right_lang=="DE"))
@@ -356,7 +356,7 @@ block scripts
     function onleaveEN() {
       var mdEN = document.getElementById("markdownLEFT").value;
       if (mdEN == "-") {
-        document.getElementById("markdownLEFT").value = "blank";
+        document.getElementById("markdownLEFT").value = "no translation";
         }
     }
    

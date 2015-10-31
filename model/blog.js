@@ -279,6 +279,11 @@ function preview(edit,lang,user,callback) {
     for (k in articles) {
       preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
       preview += "<p> Please use [edit blog detail] to enter category</p>\n";
+      preview += "<p> Or edit The Articles ";
+      for (var i=0;i<articles[k].length;i++) {
+        preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</span></a> ';
+      }
+      preview += "</p>\n";
     }
     var result = {};
     result.preview = preview;
@@ -377,6 +382,11 @@ function getPreview(style,user,callback) {
     for (k in articles) {
       preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
       preview += "<p> Please use [edit blog detail] to enter category</p>\n";
+      preview += "<p> Or edit The Articles ";
+      for (var i=0;i<articles[k].length;i++) {
+        preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</span></a> ';
+      }
+      preview += "</p>\n";
     }
     var result = {};
     result.preview = preview;
