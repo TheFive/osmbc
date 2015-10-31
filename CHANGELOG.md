@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.2.28g](https://github.com/TheFive/osmbc/tree/0.2.28g) (2015-10-31)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28f...0.2.28g)
+
+**Closed issues:**
+
+- Add Polish Flag [\#107](https://github.com/TheFive/osmbc/issues/107)
+
 ## [0.2.28f](https://github.com/TheFive/osmbc/tree/0.2.28f) (2015-10-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28e...0.2.28f)
 
