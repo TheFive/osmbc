@@ -143,10 +143,8 @@ function postArticle(req, res, next) {
 
   var article = null;
   var changes = {blog:req.body.blog,
-                 blogEN:req.body.blogEN,
                  collection:req.body.collection,
                  comment:req.body.comment,
-                 category:req.body.category,
                  categoryEN:req.body.categoryEN,
                  version:req.body.version,
                  title:req.body.title,
@@ -206,8 +204,8 @@ function createArticle(req, res, next) {
   if (typeof(req.query.blog) != 'undefined' ) {
     proto.blog = req.query.blog;
   }
-  if (typeof(req.query.category) != 'undefined' ) {
-    proto.category = req.query.category;
+  if (typeof(req.query.categoryEN) != 'undefined' ) {
+    proto.categoryEN = req.query.categoryEN;
   }
 
   async.series([
@@ -246,7 +244,6 @@ function renderList(req,res,next) {
   var blog = req.query.blog;
   var markdownDE = req.query.markdownDE;
   var markdownEN = req.query.markdownEN;
-  var category = req.query.category;
   var categoryEN = req.query.categoryEN;
   var query = {};
   if (typeof(blog)!='undefined') {
@@ -257,9 +254,6 @@ function renderList(req,res,next) {
   }
   if (typeof(markdownEN)!='undefined') {
     query.markdownEN = markdownEN;
-  }
-  if (typeof(category)!='undefined') {
-    query.category = category;
   }
   if (typeof(categoryEN)!='undefined') {
     query.categoryEN = categoryEN;

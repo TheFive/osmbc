@@ -28,10 +28,6 @@ block content
                 a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=published") published 
               li
                 a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=trash") trash  
-            button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview","_self")')
-              | View Preview
-            button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview?lang=EN","_self")')
-              | View Preview EN 
     
     .col-md-4    
      if (blog.status == "review")
@@ -74,6 +70,17 @@ block content
         +navbutton(style3,style)
         - style4 = layout.user.blogSetting4+layout.user.blogLanguages4
         +navbutton(style4,style)
+        li
+          a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{left_lang}") 
+            span.glyphicon.glyphicon-export
+            | #{left_lang}
+        if (right_lang != "--")
+          li
+            a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{right_lang}") 
+              span.glyphicon.glyphicon-export
+              | #{right_lang}
+    
+        
              
   .row
       :verbatim

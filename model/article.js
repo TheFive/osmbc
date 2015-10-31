@@ -16,6 +16,8 @@ var settingsModule = require('../model/settings.js');
 var blogModule = require('../model/blog.js');
 var pgMap     = require('../model/pgMap.js');
 
+var categoryTranslation = require('../model/categoryTranslation.js')
+
 var blogModule = require('../model/blog.js');
 
 
@@ -112,7 +114,7 @@ function preview(lang,edit,user) {
         return '<p'+commentMarkup+'>\n'+editLink+' '+html+'\n</p>'
       } else {
         // if not edit mode and article has not to be published, return nothing.
-        if (this.category == "--unpublished--") return '';
+        if (this.categoryEN == "--unpublished--") return '';
         return '<li>\n'+html+'\n</li>'
       }
   } 
@@ -151,7 +153,7 @@ function overview(user) {
 
 
 function getPreview(par1,par2,par3) {
-  debug("preview");
+  debug("getPreview");
   should.exist(par1);
   var options;
   var user;
@@ -168,15 +170,16 @@ function getPreview(par1,par2,par3) {
     options = settingsModule.getSettings(style);
 
   }
-
+  //console.log("getPreview Options");//debuglog
+  //console.dir(options);
 
   var markdownEDIT = "markdown"+options.left_lang;
   var markdownTRANS = "markdown"+options.right_lang;
   var markdownLANG = markdownEDIT;  
 
-
   // Calculate markup for comment
   var commentMarkup = "";
+
   if (options.edit && options.comment && this.comment) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
       var commentColour = "blue";
@@ -211,16 +214,20 @@ function getPreview(par1,par2,par3) {
   var text ='';
   var textright = '';
   if (options.overview) { // just generate the overview text
+    debug("options overview is set");
     text=this.displayTitle(90);
     textright = this.displayTitle(90);
   } else { // generate the full text
     if (typeof(this[markdownLANG])!='undefined' && this[markdownLANG]!='') {
       var md = this[markdownLANG];
 
+
       // Does the markdown text starts with '* ', so ignore it
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
       text = markdown.toHTML(md);
+
+      if (!options.edit && md == "no translation") text = "";
 
       // clean up <p> and </p> of markdown generation.
       if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>'){
@@ -236,6 +243,7 @@ function getPreview(par1,par2,par3) {
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
       textright = markdown.toHTML(md);
+      if (!options.edit && md == "no translation") textright = "";
 
       // clean up <p> and </p> of markdown generation.
       if (textright.substring(0,3)=="<p>" && textright.substring(textright.length-4,textright.length)=='</p>'){
@@ -369,7 +377,7 @@ function setAndSave(user,data,callback) {
         var categories= blogModule.getCategories();
         if (blog) categories = blog.getCategories();
         for (var i=0;i<categories.length;i++) {
-          if (data.category == categories[i].DE) {
+          if (data.categoryDE == categories[i].DE) {
             data.categoryEN = categories[i].EN;
             break;
           }
@@ -558,8 +566,14 @@ function calculateUsedLinks(callback) {
   );
 }
 
-
-
+function getCategory(lang) {
+  debug("getCategory");
+  var result = this.categoryEN;
+  if (categoryTranslation[result] && categoryTranslation[result][lang]) {
+    result = categoryTranslation[result][lang];
+  }
+  return result;
+}
 
 
 // Calculate a Title with a maximal length for Article
@@ -611,6 +625,7 @@ Article.prototype.overview = overview;
 //      overview:  true if title or a small text is shown, instead of an article
 //      marktext:  true if missing language markdown should be <mark>ed.
 Article.prototype.getPreview = getPreview;
+Article.prototype.getCategory = getCategory;
 
 
 // calculateUsedLinks(callback)

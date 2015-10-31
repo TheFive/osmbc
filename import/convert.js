@@ -22,8 +22,8 @@ articleModule.find({},function(err,result){
         save = true; 
       } 
       if (item.categoryEN) {
-        if (item.categoryEN == "-- no category yet --") {
-          item.categoryEN = "-- not categorised --";
+        if (item.categoryEN == "-- not categorised --") {
+          item.categoryEN = "-- no category yet --";
           save = true;
         }
       }
@@ -41,7 +41,7 @@ articleModule.find({},function(err,result){
         save = true;
       }
 
-      console.log(count+" out of "+length);
+      console.log("Article: "+count+" out of "+length);
       if (save) item.save(cb); else cb();
     })
   }

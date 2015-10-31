@@ -103,15 +103,17 @@ block content
           .col-md-1
             | Category <br>
           +leftcolumn
-            select(id="category",name="category").form-control
+            select(id="categoryEN",name="categoryEN").form-control
               for category in categories
-                if (category.DE == article.category)
-                  option(value="#{category.DE}" selected ) #{category.DE} / #{category.EN}
+                - option = category[params.left_lang]
+                - if (params.right_lang != "--") option += " / "+category[params.right_lang]
+                if (category.EN == article.categoryEN)
+                  option(value="#{category.EN}" selected ) #{option} 
                 else
-                  option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
+                  option(value="#{category.EN}" ) #{option} 
           +rightcolumn
             h2
-              | #{article.categoryEN}
+              | #{article.getCategory(params.right_lang)}
 
         .row
           .col-md-1
@@ -210,10 +212,10 @@ block content
           | Category <br>
         +leftcolumn
           h4
-            | #{article.category}
+            | #{article.getCategory(params.left_lang)}
         +rightcolumn
           h4
-            | #{article.categoryEN}
+            | #{article.getCategory(params.right_lang)}
       .row
         .col-md-1
           | Title <br>

@@ -33,6 +33,7 @@ settings.fullfinal = {
             editLink : true
           }
 
+
 var languages = {};
 
 
@@ -74,7 +75,11 @@ function getSettings(string) {
   var s = settings.full;
   var l = languages["DE(EN)"];
 
-
+  for (var i=0;i<config.getLanguages().length;i++) {
+    if (string==config.getLanguages()[i]) {
+      return {edit:false,left_lang:string,right_lang:"--"};
+    }
+  }
 
   for (var k in settings) {
     var temp = string.replace(k,'');
@@ -82,6 +87,7 @@ function getSettings(string) {
       s = settings[k];
       if (typeof(languages[temp])!='undefined') {
         l = languages[temp];
+         break;
       }
     }
   }

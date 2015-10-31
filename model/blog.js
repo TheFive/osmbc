@@ -293,7 +293,7 @@ function preview(edit,lang,user,callback) {
 }
 
 function getPreview(style,user,callback) {
-  debug('preview');
+  debug('getPreview');
   var self = this;
 
   // first check the parameter
@@ -319,7 +319,7 @@ function getPreview(style,user,callback) {
     // not in edit mode.
     if (self.status != "help") {
       if (self.startDate && self.endDate) {
-        preview += "<p>"+moment(self.startDate).locale(lang).format('l') +"-"+moment(self.endDate).locale(lang).format('l') +'</p>\n';
+        preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
       }
       preview += "<!--         place picture here              -->\n"      
     }
@@ -338,6 +338,7 @@ function getPreview(style,user,callback) {
       }
     }
     var clist = self.getCategories();
+
     
     
     // Generate the blog result along the categories
@@ -363,7 +364,6 @@ function getPreview(style,user,callback) {
         for (var j=0;j<articles[category].length;j++) {
           var r = articles[category][j];
 
-          console.log(style+" "+user); //debuglog
           htmlForCategory += r.getPreview(style,user);
         }
         var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n';

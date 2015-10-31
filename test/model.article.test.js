@@ -101,40 +101,40 @@ describe('model/article', function() {
         newArticle = result;
         var id =result.id;
         newArticle.markdownDE = "This Value will not be logged";
-        newArticle.setAndSave("user",{version:"1",blog:"Reference",collection:"text",category:"Importe"},function(err,result) {
+        newArticle.setAndSave("user",{version:"1",blog:"Reference",collection:"text",categoryEN:"Imports"},function(err,result) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
             delete result._meta;
-            should(result).eql({id:id,markdownDE:"This Value will not be logged",blog:"Reference",collection:"text",category:"Importe",categoryEN:"Imports",version:2});
+            should(result).eql({id:id,markdownDE:"This Value will not be logged",blog:"Reference",collection:"text",categoryEN:"Imports",version:2});
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
-              should(result.length).equal(4);
+              should(result.length).equal(3);
               var r0id = result[0].id;
               var r1id = result[1].id;
               var r2id = result[2].id;
-              var r3id = result[3].id;
+             // var r3id = result[3].id;
               var t0 = result[0].timestamp;
               var t1 = result[1].timestamp;
               var t2 = result[2].timestamp;
-              var t3 = result[3].timestamp;
+             // var t3 = result[3].timestamp;
               var now = new Date();
               var t0diff = ((new Date(t0)).getTime()-now.getTime());
               var t1diff = ((new Date(t1)).getTime()-now.getTime());
               var t2diff = ((new Date(t2)).getTime()-now.getTime());
-              var t3diff = ((new Date(t3)).getTime()-now.getTime());
+           //   var t3diff = ((new Date(t3)).getTime()-now.getTime());
 
               // The Value for comparison should be small, but not to small
               // for the test machine.
               should(t0diff).be.below(10);
               should(t1diff).be.below(10);
               should(t2diff).be.below(10);
-              should(t3diff).be.below(10);
+            //  should(t3diff).be.below(10);
               should(result[0]).eql({id:r0id,timestamp:t0,oid:id,user:"user",table:"article",property:"blog",from:"TEST",to:"Reference"});
-              should(result[1]).eql({id:r1id,timestamp:t1,oid:id,user:"user",table:"article",property:"category",to:"Importe"});
-              should(result[2]).eql({id:r2id,timestamp:t2,oid:id,user:"user",table:"article",property:"categoryEN",to:"Imports"});
-              should(result[3]).eql({id:r3id,timestamp:t3,oid:id,user:"user",table:"article",property:"collection",to:"text"});
+              should(result[1]).eql({id:r1id,timestamp:t1,oid:id,user:"user",table:"article",property:"categoryEN",to:"Imports"});
+              should(result[2]).eql({id:r2id,timestamp:t2,oid:id,user:"user",table:"article",property:"collection",to:"text"});
+           //   should(result[3]).eql({id:r3id,timestamp:t3,oid:id,user:"user",table:"article",property:"collection",to:"text"});
               bddone();
             })
           })
