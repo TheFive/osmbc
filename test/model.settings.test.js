@@ -9,7 +9,7 @@ describe('model/settings', function() {
      var c =settingsModule.getSettings("fullES");
      should(c).eql({glyphicon:true,edit:true,comment:true,marktext:true,left_lang:"ES",right_lang:"--"});
      var c =settingsModule.getSettings("fullfinalEN.ES");
-     should(c).eql({editLink:true,edit:true,comment:true,left_lang:"EN",right_lang:"ES",bilingual:true});
+     should(c).eql({editLink:true,shortEditLink:true,edit:true,left_lang:"EN",right_lang:"ES",bilingual:true});
   })
   it('should give a standard result',function(){
      var undef;

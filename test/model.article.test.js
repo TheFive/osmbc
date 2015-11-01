@@ -589,7 +589,7 @@ describe('model/article', function() {
     it('should generate a preview when markdown is specified (with Star)',function (bddone) {
       var article = articleModule.create({markdownDE:"* [Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = article.getPreview("fullfinalDE","TheFive");
-      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>');
+      should(result).equal('<li>\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n<a href="/article/0?style=fullfinalDE">…</a></li>');
       bddone();
     })
     it('should generate a preview with a comment and no status',function (bddone) {
