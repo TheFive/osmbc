@@ -331,6 +331,7 @@ function getPreview(style,user,callback) {
     if (result) {
       for (var i=0;i<result.length;i++ ) {
         var r = result[i];
+        if (!options.edit && r["markdown"+options.left_lang]=="no translation") continue;
         if (typeof(articles[r.categoryEN]) == 'undefined') {
           articles[r.categoryEN] = [];
         }

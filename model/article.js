@@ -228,7 +228,7 @@ function getPreview(par1,par2,par3) {
       // Return an list Element for the blog article
       text = markdown.toHTML(md);
 
-      if (!options.edit && md == "no translation") text = "";
+   
 
       // clean up <p> and </p> of markdown generation.
       if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>'){
@@ -244,8 +244,7 @@ function getPreview(par1,par2,par3) {
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
       textright = markdown.toHTML(md);
-      if (!options.edit && md == "no translation") textright = "";
-
+ 
       // clean up <p> and </p> of markdown generation.
       if (textright.substring(0,3)=="<p>" && textright.substring(textright.length-4,textright.length)=='</p>'){
         textright = textright.substring(3,textright.length-4)
