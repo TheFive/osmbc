@@ -5,7 +5,7 @@ module.exports = {
           "ES": "-- no category yet --",
           "FR": "-- no category yet --",
           "CZ": "-- no category yet --",
-          "PT": "-- no category yet --",
+          "PT": "-- ainda sem categoria --",
           "JP": "-- no category yet --",
           "ID": "-- no category yet --"
      },
@@ -15,7 +15,7 @@ module.exports = {
           "ES": "[Corriente]",
           "FR": "[Actualité]",
           "CZ": "[Actual Category]",
-          "PT": "[Corriente]",
+          "PT": "[Categoria atual]",
           "JP": "[Actual Category]",
           "ID": "[Actual Category]"
      },
@@ -35,7 +35,7 @@ module.exports = {
           "ES": "Not Translated",
           "FR": "Not Translated",
           "CZ": "Not Translated",
-          "PT": "Not Translated",
+          "PT": "Não traduzido",
           "JP": "Not Translated",
           "ID": "Not Translated"
      },
@@ -45,7 +45,7 @@ module.exports = {
           "ES": "Mapeando",
           "FR": "Cartographie",
           "CZ": "Mapping",
-          "PT": "Mappeamento",
+          "PT": "Mapeamento",
           "JP": "マッピング",
           "ID": "Pemetaan"
      },
@@ -55,7 +55,7 @@ module.exports = {
           "ES": "Comunidad",
           "FR": "Communauté",
           "CZ": "Community",
-          "PT": "Communidade",
+          "PT": "Comunidade",
           "JP": "コミュニティ",
           "ID": "Komunitas"
      },
@@ -155,7 +155,7 @@ module.exports = {
           "ES": "Software",
           "FR": "Applications",
           "CZ": "Programming",
-          "PT": "Software",
+          "PT": "Desenvolvimento",
           "JP": "ソフトウェア",
           "ID": "Software"
      },
@@ -185,7 +185,7 @@ module.exports = {
           "ES": "Not Translated",
           "FR": "Not Translated",
           "CZ": "Not Translated",
-          "PT": "Not Translated",
+          "PT": "Não traduzido",
           "JP": "Not Translated",
           "ID": "Not Translated"
      },
@@ -195,7 +195,7 @@ module.exports = {
           "ES": "--unpublished--",
           "FR": "--unpublished--",
           "CZ": "--unpublished--",
-          "PT": "--unpublished--",
+          "PT": "--não publicado--",
           "JP": "--unpublished--",
           "ID": "--unpublished--"
      }
