@@ -1,6 +1,7 @@
 
 var articleModule = require('../model/article.js');
 var userModule = require('../model/user.js');
+var blogModule = require('../model/blog.js');
 var config= require('../config.js');
 var async = require('async');
 var ProgressBar = require('progress');
@@ -46,6 +47,7 @@ async.series([
             item.markdownDE = "no translation";
             save = true;
           }
+   
 
           progress.tick();
           if (save) item.save(cb); else cb();
@@ -90,6 +92,31 @@ async.series([
             item.blogLanguages4 = "DE"
             save = true;
           }// set settins
+
+          progress.tick();
+          if (save) item.save(cb); else cb();
+        },function (){done();})
+      }
+    })},
+ function blog(done) {
+    blogModule.find({},function(err,result){
+      if (err) {
+        console.log(err);
+        return;
+      }
+      if (result) {
+        var length = result.length;
+        var progress = new ProgressBar("Converting Blog :bar :percent",{total:length});
+        var count = 0;
+        async.eachSeries(result,function iterator (item,cb){
+          count ++;
+          var save=false;
+          if (item.reviewComment) {
+            item.reviewCommentDE = item.reviewComment;
+            delete item.reviewComment;
+            save = true;
+          }  
+
 
           progress.tick();
           if (save) item.save(cb); else cb();

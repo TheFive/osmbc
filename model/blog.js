@@ -102,9 +102,10 @@ function setAndSave(user,data,callback) {
     })
   })
 } 
-function setReviewComment(user,data,callback) {
+function setReviewComment(lang,user,data,callback) {
   debug("reviewComment");
   var self = this;
+  var rc = "reviewComment"+lang;
   async.series([
     function checkID(cb) {
       if (self.id == 0) {
@@ -115,19 +116,19 @@ function setReviewComment(user,data,callback) {
     should.exist(self.id);
     should(self.id).not.equal(0);
     if (typeof(data)=='undefined') return callback();
-    if (typeof(self.reviewComment) == "undefined" || self.reviewComment == null) {
-      self.reviewComment = [];
+    if (typeof(self[rc]) == "undefined" || self[rc] == null) {
+      self[rc] = [];
     }
-    for (var i=0;i<self.reviewComment.length;i++) {
-      if (self.reviewComment[i].user == user && self.reviewComment[i].text == data) return callback();
+    for (var i=0;i<self[rc].length;i++) {
+      if (self[rc][i].user == user && self[rc][i].text == data) return callback();
     }
     async.series ( [
         function(callback) {
-           logModule.log({oid:self.id,user:user,table:"blog",property:"comment",from:"Add",to:data},callback);
+           logModule.log({oid:self.id,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
         },
         function(callback) {
           var date = new Date();
-          self.reviewComment.push({user:user,text:data,timestamp:date});
+          self[rc].push({user:user,text:data,timestamp:date});
           callback();
         }
       ],function(err){

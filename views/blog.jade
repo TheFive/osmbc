@@ -39,19 +39,30 @@ block content
                     input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
 
                   .col-sm-2
-                    button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review
+                    button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang}
   .row
-    .col-md-7
-    .col-md-5
- 
+    .col-md-6
+      - reviewCommentsLeft = blog["reviewComment"+left_lang];
       if (blog.status == "review" || blog.status == "published")
-        .row
-          if (blog.reviewComment && blog.reviewComment.length>0)
+          if (reviewCommentsLeft && reviewCommentsLeft.length>0)
             h3
-              | Freigabe
+              | Review #{left_lang}
             table.table.table-condensed.table-responsive
               tbody
-              each comment in blog.reviewComment
+              each comment in reviewCommentsLeft
+                tr
+                  td=comment.user
+                  td=comment.text
+                  td=layout.moment(comment.timestamp).fromNow()
+    .col-md-6
+      - reviewCommentsRight = blog["reviewComment"+right_lang];
+      if (blog.status == "review" || blog.status == "published")
+          if (reviewCommentsRight && reviewCommentsRight.length>0)
+            h3
+              | Review #{right_lang}
+            table.table.table-condensed.table-responsive
+              tbody
+              each comment in reviewCommentsRight
                 tr
                   td=comment.user
                   td=comment.text

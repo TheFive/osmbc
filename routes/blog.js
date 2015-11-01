@@ -52,8 +52,6 @@ function renderBlogId(req, res, next) {
     var main_text;
 
 
-
-
     async.series([
       function (callback) {
         blog.getPreview(style,user,function(err,result) {
@@ -80,7 +78,7 @@ function renderBlogId(req, res, next) {
       function (callback) {
         if (typeof(req.query.reviewComment)!='undefined')
         {
-          blog.setReviewComment(user,req.query.reviewComment,function(err) {
+          blog.setReviewComment(options.left_lang,user,req.query.reviewComment,function(err) {
             if (err) {
               console.dir(err);
               info.message = JSON.stringify(err);
