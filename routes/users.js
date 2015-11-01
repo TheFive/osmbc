@@ -75,10 +75,11 @@ function renderUserId(req, res, next) {
       debug('finalRenderCB');
       if (err) return next(err);
       if (! user || typeof(user.id) == 'undefined') return next(new Error("User ID not Found"));
-      should.exist(res.rendervar)
+      should.exist(res.rendervar);
       res.render('user',{usershown:user,
                         changes:changes,
                         params:params,
+                        langlist: config.getLanguages(),
                         settings:settingsModule.listSettings,
                         languages:settingsModule.listLanguages,
                         layout:res.rendervar.layout});
@@ -94,6 +95,7 @@ function postUserId(req, res, next) {
    
    
     var changes = {OSMUser:req.body.OSMUser,
+                   language:req.body.language,
                    access:req.body.access,
                    blogSetting0:req.body.blogSetting0,
                    blogSetting1:req.body.blogSetting1,

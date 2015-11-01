@@ -116,6 +116,20 @@ async.series([
             delete item.reviewComment;
             save = true;
           }  
+          if (item.status) {
+            if (item.status=='published') {
+              item.status = "closed";
+              save = true;
+            }
+            if (item.status=='close') {
+              item.status = "closed";
+              save = true;
+            }
+            if (item.status=='review') {
+              item.status = "edit";
+              save = true;
+            }
+          }  
 
 
           progress.tick();

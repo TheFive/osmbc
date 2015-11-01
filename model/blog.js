@@ -128,7 +128,9 @@ function setReviewComment(lang,user,data,callback) {
         },
         function(callback) {
           var date = new Date();
-          self[rc].push({user:user,text:data,timestamp:date});
+          if (data != "startreview") {
+            self[rc].push({user:user,text:data,timestamp:date});
+          }
           callback();
         }
       ],function(err){

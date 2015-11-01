@@ -23,51 +23,53 @@ block content
               li
                 a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=open") open 
               li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=review") review 
+                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=edit") edit 
               li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=published") published 
+                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=closed") closed 
               li
                 a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=trash") trash  
     
     .col-md-4    
-     if (blog.status == "review")
+      - reviewCommentsLeft = blog["reviewComment"+left_lang];
+      if (reviewCommentsLeft)
         .row
-         .col-md-12
-               form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.id}", method="get")
-                .form-group
-                  .col-sm-10
-                    input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
+          .col-md-12
+             form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.id}", method="get")
+              .form-group
+                .col-sm-10
+                  input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
 
-                  .col-sm-2
-                    button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang}
+                .col-sm-2
+                  button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang}
+      else
+        .row
+          button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?reviewComment=startreview';") Set #{left_lang} ready for review
   .row
     .col-md-6
       - reviewCommentsLeft = blog["reviewComment"+left_lang];
-      if (blog.status == "review" || blog.status == "published")
-          if (reviewCommentsLeft && reviewCommentsLeft.length>0)
-            h3
-              | Review #{left_lang}
-            table.table.table-condensed.table-responsive
-              tbody
-              each comment in reviewCommentsLeft
-                tr
-                  td=comment.user
-                  td=comment.text
-                  td=layout.moment(comment.timestamp).fromNow()
+        if (reviewCommentsLeft && reviewCommentsLeft.length>0)
+          h3
+            | Review #{left_lang}
+          table.table.table-condensed.table-responsive
+            tbody
+            each comment in reviewCommentsLeft
+              tr
+                td=comment.user
+                td=comment.text
+                td=layout.moment(comment.timestamp).fromNow()
     .col-md-6
       - reviewCommentsRight = blog["reviewComment"+right_lang];
-      if (blog.status == "review" || blog.status == "published")
-          if (reviewCommentsRight && reviewCommentsRight.length>0)
-            h3
-              | Review #{right_lang}
-            table.table.table-condensed.table-responsive
-              tbody
-              each comment in reviewCommentsRight
-                tr
-                  td=comment.user
-                  td=comment.text
-                  td=layout.moment(comment.timestamp).fromNow()
-    
+        if (reviewCommentsRight && reviewCommentsRight.length>0)
+          h3
+            | Review #{right_lang}
+          table.table.table-condensed.table-responsive
+            tbody
+            each comment in reviewCommentsRight
+              tr
+                td=comment.user
+                td=comment.text
+                td=layout.moment(comment.timestamp).fromNow()
+  
   .row
     .col-md-12
       ul.nav.nav-tabs

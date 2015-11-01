@@ -39,13 +39,21 @@ block content
 
         .row
           .col-md-2
+            | Language
+          .col-md-5
+            select(id="language",name="language").form-control
+              option(value="#{usershown.language}" selected) #{usershown.language+'(*)'}
+              each l in langlist
+                option(value="#{l}") #{l}
+        .row
+          .col-md-2
             | Access
           .col-md-5
             select(id="access",name="access").form-control
               option(value="#{usershown.access}" selected) #{usershown.access+'(*)'}
-                option(value="full" ) full
-                option(value="read" ) only collected Article (not implemented)
-                option(value="denied" ) denied
+              option(value="full" ) full
+              option(value="read" ) only collected Article (not implemented)
+              option(value="denied" ) denied
         .row
           .col-md-2
             | Blog Config 0
@@ -126,6 +134,12 @@ block content
         .col-md-5
         .col-md-1
           a(href="#{layout.htmlroot}/usert/#{usershown.id}?edit=true" class="btn btn-primary" role="button") Edit
+      .row
+        .col-md-2
+          | Language
+        .col-md-5
+          h2
+            | #{usershown.language}
       .row
         .col-md-2
           | Access <br>

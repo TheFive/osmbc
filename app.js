@@ -203,8 +203,8 @@ app.get(htmlRoot + '/logout', function(req, res){
 
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
-app.use(htmlRoot + '/',layout);
-app.use(htmlRoot + '/', ensureAuthenticated,index);
+app.use(htmlRoot + '/',ensureAuthenticated,layout);
+app.use(htmlRoot + '/',ensureAuthenticated,index);
 app.use(htmlRoot + '/usert',ensureAuthenticated, users);
 app.use(htmlRoot + '/article',ensureAuthenticated, article);
 app.use(htmlRoot + '/changes',ensureAuthenticated, changes);
