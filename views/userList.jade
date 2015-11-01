@@ -17,10 +17,6 @@ block content
             th
               | access
             th
-              | Basic Language
-            th
-              | Translation Language
-            th
               | lastAccess
 
         tbody
@@ -35,8 +31,6 @@ block content
                  a(href='http://www.openstreetmap.org/user/#{user.OSMUser}') [OSM]
 
               td= user.access
-              td= user.lang_basic
-              td= user.lang_trans
               if (user.lastAccess)
                 td= layout.moment(user.lastAccess).fromNow()
               else 
