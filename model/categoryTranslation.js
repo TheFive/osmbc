@@ -1,3 +1,4 @@
+
 module.exports = {
      "-- no category yet --": {
           "EN": "-- no category yet --",
@@ -7,7 +8,8 @@ module.exports = {
           "CZ": "-- no category yet --",
           "PT": "-- ainda sem categoria --",
           "JP": "-- no category yet --",
-          "ID": "-- no category yet --"
+          "ID": "-- no category yet --",
+          "TR": "-- no category yet --"
      },
      "[Actual Category]": {
           "EN": "[Actual Category]",
@@ -17,7 +19,8 @@ module.exports = {
           "CZ": "[Actual Category]",
           "PT": "[Categoria atual]",
           "JP": "[Actual Category]",
-          "ID": "[Actual Category]"
+          "ID": "[Actual Category]",
+          "TR": "[Actual Category]"
      },
      "About us": {
           "EN": "About us",
@@ -27,7 +30,8 @@ module.exports = {
           "CZ": "About us",
           "PT": "Sobre nós",
           "JP": "私たちについて",
-          "ID": "Tentang kami"
+          "ID": "Tentang kami",
+          "TR": "Hakkımızda"
      },
      "Weekly exerciseEN:": {
           "EN": "Weekly exerciseEN:",
@@ -37,7 +41,8 @@ module.exports = {
           "CZ": "Not Translated",
           "PT": "Não traduzido",
           "JP": "Not Translated",
-          "ID": "Not Translated"
+          "ID": "Not Translated",
+          "TR": "Not Translated"
      },
      "Mapping": {
           "EN": "Mapping",
@@ -47,7 +52,8 @@ module.exports = {
           "CZ": "Mapping",
           "PT": "Mapeamento",
           "JP": "マッピング",
-          "ID": "Pemetaan"
+          "ID": "Pemetaan",
+          "TR": "Haritalama"  
      },
      "Community": {
           "EN": "Community",
@@ -57,7 +63,8 @@ module.exports = {
           "CZ": "Community",
           "PT": "Comunidade",
           "JP": "コミュニティ",
-          "ID": "Komunitas"
+          "ID": "Komunitas",
+          "TR": "Topluluk"
      },
      "Imports": {
           "EN": "Imports",
@@ -67,7 +74,8 @@ module.exports = {
           "CZ": "Imports",
           "PT": "Importações",
           "JP": "インポート",
-          "ID": "Imports"
+          "ID": "Imports",
+          "TR": "İthalatlar"
      },
      "OpenStreetMap Foundation": {
           "EN": "OpenStreetMap Foundation",
@@ -77,7 +85,8 @@ module.exports = {
           "CZ": "OpenStreetMap Foundation",
           "PT": "Fundação OpenStreetMap",
           "JP": "OpenStreetMap Foundation",
-          "ID": "Yayasan OpenStreetMap"
+          "ID": "Yayasan OpenStreetMap",
+          "TR": "Açık Cadde Haritasının Kurulumu"
      },
      "Events": {
           "EN": "Events",
@@ -87,7 +96,8 @@ module.exports = {
           "CZ": "Events",
           "PT": "Eventos",
           "JP": "イベント",
-          "ID": "Kegiatan"
+          "ID": "Kegiatan",
+          "TR": "Gelişen Olaylar"
      },
      "Humanitarian OSM": {
           "EN": "Humanitarian OSM",
@@ -97,7 +107,8 @@ module.exports = {
           "CZ": "Humanitarian OSM",
           "PT": "OSM Humanitário",
           "JP": "OSM人道支援",
-          "ID": "OSM untuk Kemanusiaann"
+          "ID": "OSM untuk Kemanusiaann",
+          "TR": "İnsancıl OSM"
      },
      "Maps": {
           "EN": "Maps",
@@ -107,7 +118,8 @@ module.exports = {
           "CZ": "Maps",
           "PT": "Mapas",
           "JP": "地図",
-          "ID": "Peta"
+          "ID": "Peta",
+          "TR": "Haritalar"
      },
      "#switch2OSM": {
           "EN": "#switch2OSM",
@@ -117,7 +129,8 @@ module.exports = {
           "CZ": "#switch2OSM",
           "PT": "#switch2OSM",
           "JP": "#switch2OSM",
-          "ID": "#switch2OSM"
+          "ID": "#switch2OSM",
+          "TR": "#switch2OSM"
      },
      "Open Data": {
           "EN": "Open Data",
@@ -127,7 +140,8 @@ module.exports = {
           "CZ": "Open Data",
           "PT": "Dados abertos",
           "JP": "オープンデータ",
-          "ID": "Open Data"
+          "ID": "Open Data",
+          "TR": "Açık veri"
      },
      "Licences": {
           "EN": "Licences",
@@ -137,7 +151,8 @@ module.exports = {
           "CZ": "Licences",
           "PT": "Licenças",
           "JP": "ライセンス",
-          "ID": "Lisensi"
+          "ID": "Lisensi",
+          "TR": "Lisans"
      },
      "Software": {
           "EN": "Software",
@@ -147,7 +162,8 @@ module.exports = {
           "CZ": "Software",
           "PT": "Software",
           "JP": "ソフトウェア",
-          "ID": "Software"
+          "ID": "Software",
+          "TR": "Yazılım"
      },
      "Programming": {
           "EN": "Programming",
@@ -157,7 +173,8 @@ module.exports = {
           "CZ": "Programming",
           "PT": "Desenvolvimento",
           "JP": "ソフトウェア",
-          "ID": "Software"
+          "ID": "Software",
+          "TR": "Yazılım"
      },
      "Did you know …": {
           "EN": "Did you know …",
@@ -167,7 +184,8 @@ module.exports = {
           "CZ": "Did you know …",
           "PT": "Você sabia...",
           "JP": "…ご存知でしたか？",
-          "ID": "Apakah anda tahu …"
+          "ID": "Apakah anda tahu …",
+          "TR": "Biliyor muydunuz …"
      },
      "Other “geo” things": {
           "EN": "Other “geo” things",
@@ -177,7 +195,8 @@ module.exports = {
           "CZ": "Other “geo” things",
           "PT": "Outras coisas “geo”",
           "JP": "その他の “ジオ” な事柄",
-          "ID": "Berita “geo” lainnya"
+          "ID": "Berita “geo” lainnya",
+          "TR": "Başka bir "yer" nesneleri"
      },
      "Not Translated": {
           "EN": "Not Translated",
@@ -187,7 +206,8 @@ module.exports = {
           "CZ": "Not Translated",
           "PT": "Não traduzido",
           "JP": "Not Translated",
-          "ID": "Not Translated"
+          "ID": "Not Translated",
+          "TR": "Not Translated"
      },
      "--unpublished--": {
           "EN": "--unpublished--",
@@ -197,6 +217,7 @@ module.exports = {
           "CZ": "--unpublished--",
           "PT": "--não publicado--",
           "JP": "--unpublished--",
-          "ID": "--unpublished--"
+          "ID": "--unpublished--",
+          "TR": "--unpublished--"
      }
-};
+}
