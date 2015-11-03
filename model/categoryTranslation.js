@@ -196,7 +196,7 @@ module.exports = {
           "PT": "Outras coisas “geo”",
           "JP": "その他の “ジオ” な事柄",
           "ID": "Berita “geo” lainnya",
-          "TR": "Başka bir "yer" nesneleri"
+          "TR": "Başka bir “yer“ nesneleri"
      },
      "Not Translated": {
           "EN": "Not Translated",
