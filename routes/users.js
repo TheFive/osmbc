@@ -70,6 +70,7 @@ function renderUserId(req, res, next) {
         user = result;
 
         if (!params.numberconfig) {
+          params.numberconfig = 3; 
           for (var i =0;i<99;i++) {
             if (typeof(user["blogSetting"+i])== 'undefined') break;
             if ((user["blogSetting"+i])!= '-') {
