@@ -47,6 +47,7 @@ function renderUserId(req, res, next) {
   should.exist(id);
   var params = {};
   if (req.query.edit) params.edit = req.query.edit;
+  if (req.query.numberconfig) params.numberconfig = req.query.numberconfig;
   var user;
   var changes;
   var settings = settingsModule.listSettings;
@@ -67,6 +68,19 @@ function renderUserId(req, res, next) {
         debug('findAndLoaduser_CB');
         if (err) return cb(err);
         user = result;
+
+        if (!params.numberconfig) {
+          for (var i =0;i<99;i++) {
+            if (typeof(user["blogSetting"+i])== 'undefined') break;
+            if ((user["blogSetting"+i])!= '-') {
+              params.numberconfig=i;
+            };
+          }
+        } else {
+          for (var i =0;i<=params.numberconfig;i++) {
+             if (typeof(user["blogSetting"+i])== 'undefined') user["blogSetting"+i]="-";
+          }
+        }
         cb();
       })
     }
@@ -96,17 +110,13 @@ function postUserId(req, res, next) {
    
     var changes = {OSMUser:req.body.OSMUser,
                    language:req.body.language,
-                   access:req.body.access,
-                   blogSetting0:req.body.blogSetting0,
-                   blogSetting1:req.body.blogSetting1,
-                   blogSetting2:req.body.blogSetting2,
-                   blogSetting3:req.body.blogSetting3,
-                   blogSetting4:req.body.blogSetting4,
-                   blogLanguages0:req.body.blogLanguages0,
-                   blogLanguages1:req.body.blogLanguages1,
-                   blogLanguages2:req.body.blogLanguages2,
-                   blogLanguages3:req.body.blogLanguages3,
-                   blogLanguages4:req.body.blogLanguages4};
+                   access:req.body.access};
+    for (var i =0;i<15;i++) {
+      if (req.body["blogSetting"+i]) {
+        changes["blogSetting"+i] = req.body["blogSetting"+i];
+        changes["blogLanguages"+i] = req.body["blogLanguages"+i];
+      }
+    }
 
     user.setAndSave(req.user.displayName,changes,function(err) {
       if (err) {

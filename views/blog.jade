@@ -36,10 +36,10 @@ block content
           .col-md-12
              form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.id}", method="get")
               .form-group
-                .col-sm-10
+                .col-sm-8
                   input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
 
-                .col-sm-2
+                .col-sm-4
                   button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang}
       else
         .row
@@ -73,21 +73,13 @@ block content
   .row
     .col-md-12
       ul.nav.nav-tabs
-        if (layout.user.blogSetting0)
-          - style0 = layout.user.blogSetting0+layout.user.blogLanguages0
-          +navbutton(style0,style)
-        if (layout.user.blogSetting1)
-          - style1 = layout.user.blogSetting1+layout.user.blogLanguages1
-          +navbutton(style1,style)
-        if (layout.user.blogSetting2)
-          - style2 = layout.user.blogSetting2+layout.user.blogLanguages2
-          +navbutton(style2,style)
-        if (layout.user.blogSetting3)
-          - style3 = layout.user.blogSetting3+layout.user.blogLanguages3
-          +navbutton(style3,style)
-        if (layout.user.blogSetting4)
-          - style4 = layout.user.blogSetting4+layout.user.blogLanguages4
-          +navbutton(style4,style)
+        - v = 0
+        while layout.user["blogSetting"+v]
+          if layout.user["blogSetting"+v]!="-"
+            - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
+            +navbutton(style0,style)
+          - v++
+      
         li
           a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{left_lang}") 
             span.glyphicon.glyphicon-export
