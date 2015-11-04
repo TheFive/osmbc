@@ -214,9 +214,9 @@ function importBlog(nr,callback) {
             //console.dir(item.element.length+" Elements in Category");
             async.each(item.element,function eachArticle(articleProto,cba) {
               //console.log(articleProto);
-              var markdown = toMarkdown(articleProto);
+              var markdownDE = toMarkdown(articleProto);
               var article = articleModule.create();
-              article.setAndSave("IMPORT",{blog:blogName,category:category,markdown:markdown},function(err){
+              article.setAndSave("IMPORT",{blog:blogName,category:category,markdownDE:markdownDE},function(err){
                 //console.log("Article Saved");
                 cba(err);
               });

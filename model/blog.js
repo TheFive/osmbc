@@ -8,7 +8,9 @@ var should   = require('should');
 var moment   = require('moment');
 
 var articleModule = require('../model/article.js');
+var settingsModule = require('../model/settings.js');
 var logModule = require('../model/logModule.js');
+var categoryTranslation = require('../model/categoryTranslation.js');
 
 var pgMap = require('./pgMap.js')
 var debug = require('debug')('OSMBC:model:blog');
@@ -38,6 +40,8 @@ module.exports.categories = [
   {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
   {DE:"Wochenvorschau" ,EN:"Not Translated"},
   {DE:"--unpublished--" ,EN:"--unpublished--"}];
+
+
 
 
 function Blog(proto)
@@ -98,9 +102,10 @@ function setAndSave(user,data,callback) {
     })
   })
 } 
-function setReviewComment(user,data,callback) {
+function setReviewComment(lang,user,data,callback) {
   debug("reviewComment");
   var self = this;
+  var rc = "reviewComment"+lang;
   async.series([
     function checkID(cb) {
       if (self.id == 0) {
@@ -111,20 +116,21 @@ function setReviewComment(user,data,callback) {
     should.exist(self.id);
     should(self.id).not.equal(0);
     if (typeof(data)=='undefined') return callback();
-    if (typeof(self.reviewComment) == "undefined" || self.reviewComment == null) {
-      self.reviewComment = [];
+    if (typeof(self[rc]) == "undefined" || self[rc] == null) {
+      self[rc] = [];
     }
-    for (var i=0;i<self.reviewComment.length;i++) {
-      if (self.reviewComment[i].user == user && self.reviewComment[i].text == data) return callback();
+    for (var i=0;i<self[rc].length;i++) {
+      if (self[rc][i].user == user && self[rc][i].text == data) return callback();
     }
     async.series ( [
         function(callback) {
-           logModule.log({oid:self.id,user:user,table:"blog",property:"comment",from:"Add",to:data},callback);
+           logModule.log({oid:self.id,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
         },
         function(callback) {
           var date = new Date();
-          console.log(self.reviewComment);
-          self.reviewComment.push({user:user,text:data,timestamp:date});
+          if (data != "startreview") {
+            self[rc].push({user:user,text:data,timestamp:date});
+          }
           callback();
         }
       ],function(err){
@@ -263,11 +269,9 @@ function preview(edit,lang,user,callback) {
           var r = articles[category][j];
           if (edit == 'overview') {
             htmlForCategory += r.overview(user)+'\n';
-          } else if  (lang == "DE") {
-            htmlForCategory += r.preview(edit,user)+'\n';
-          } else if (lang == "EN") {
-            htmlForCategory += r.previewEN(edit,user)+'\n';
-          }
+          } else {
+            htmlForCategory += r.preview(lang,edit,user)+'\n';
+          } 
         }
         var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLANG.toLowerCase()+'">'+categoryLANG+'</h2>\n';
         htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
@@ -278,6 +282,11 @@ function preview(edit,lang,user,callback) {
     for (k in articles) {
       preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
       preview += "<p> Please use [edit blog detail] to enter category</p>\n";
+      preview += "<p> Or edit The Articles ";
+      for (var i=0;i<articles[k].length;i++) {
+        preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</span></a> ';
+      }
+      preview += "</p>\n";
     }
     var result = {};
     result.preview = preview;
@@ -286,12 +295,141 @@ function preview(edit,lang,user,callback) {
   })
 }
 
+function getPreview(style,user,callback) {
+  debug('getPreview');
+  var self = this;
+
+  // first check the parameter
+  should(typeof(style)).equal("string");
+  if (typeof(user)=="function") {
+    callback = user;
+    user = "--";
+  }
+  should.exist(user);
+
+  var options = settingsModule.getSettings(style);
+
+  var articles = {};
+  var preview = "";
+
+  var bilingual = options.bilingual;
+
+  articleModule.find({blog:this.name},{column:"title"},function(err,result){
+    
+
+    // in case of a normal blog, generate the start and end time
+    // for a help blog, use the Name of the Blog
+    // not in edit mode.
+    if (self.status != "help") {
+      if (self.startDate && self.endDate) {
+        preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
+      }
+      preview += "<!--         place picture here              -->\n"      
+    }
+    else if (!(options.edit)) preview = '<h2>'+self.name+'</h2>\n'
+
+  
+    
+    // Put every article in an array for the category
+    if (result) {
+      for (var i=0;i<result.length;i++ ) {
+        var r = result[i];
+        if (!options.edit && r["markdown"+options.left_lang]=="no translation") continue;
+        if (typeof(articles[r.categoryEN]) == 'undefined') {
+          articles[r.categoryEN] = [];
+        }
+        articles[r.categoryEN].push(r);
+      }
+    }
+    var clist = self.getCategories();
+
+    
+    
+    // Generate the blog result along the categories
+    for (var i=0;i<clist.length;i++) {
+      var category = clist[i].EN;
+
+      var categoryRIGHT = "";
+      var categoryLEFT = clist[i][options.left_lang];
+      if (bilingual) {
+        categoryRIGHT = clist[i][options.right_lang]
+      }
+
+     
+      // ignore any "unpublished" category not in edit mode
+      if (!(options.edit) && category =="--unpublished--") continue;
+
+   
+      // If the category exists, generate HTML for it
+      if (typeof(articles[category])!='undefined') {
+        debug('Generating HTML for category %s',category);
+        var htmlForCategory = ''
+
+        for (var j=0;j<articles[category].length;j++) {
+          var r = articles[category][j];
+
+          htmlForCategory += r.getPreview(style,user);
+        }
+        var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n';
+        if (bilingual) {
+          header = '<div class="row"><div class = "col-md-6">' +
+                   '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n' +
+                   '</div><div class = "col-md-6">' +
+                   '<h2 id="'+self.name.toLowerCase()+'_'+categoryRIGHT.toLowerCase()+'">'+categoryRIGHT+'</h2>\n' +
+                   '</div></div>';
+        }
+        htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        preview += htmlForCategory;
+        delete articles[category];
+      }
+    }
+    for (k in articles) {
+      preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
+      preview += "<p> Please use [edit blog detail] to enter category</p>\n";
+      preview += "<p> Or edit The Articles ";
+      for (var i=0;i<articles[k].length;i++) {
+        preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</span></a> ';
+      }
+      preview += "</p>\n";
+    }
+    var result = {};
+    result.preview = preview;
+    result.articles = articles;
+    callback(null, result);
+  })
+}
+
+function translateCategories(cat) {
+  debug('translateCategories');
+  var languages = config.getLanguages();
+  for (var i = 0 ;i< cat.length;i++) {
+    for (var l =0 ;l <languages.length;l++) {
+      var lang = languages[l];
+      if (cat[i][lang]) continue;
+      if (categoryTranslation[cat[i].EN]) {
+         cat[i][lang] = categoryTranslation[cat[i].EN][lang];
+       }  
+ 
+     
+      if (!cat[i][lang]) cat[i][lang] = cat[i].EN;
+    }
+  }  
+}
+
+translateCategories(exports.categories);
+
 function getCategories() {
   debug('getCategories');
 
-  // Funktion is used for prototype @ Blog and for Blog Module
-  if (this.categories) return this.categories;
-  return module.exports.categories;
+  var result = module.exports.categories;
+  if (this.categories) {
+    translateCategories(this.categories);
+    result = this.categories;
+  }
+
+ 
+
+  return result;
 }
 
 function createTable(cb) {
@@ -313,6 +451,7 @@ function dropTable(cb) {
 // edit: boolean, specifying wether generated HTML should contain edit links for articles or not
 // result of preview is html code to display the blog.
 Blog.prototype.preview = preview;
+Blog.prototype.getPreview = getPreview;
 
 // setAndSave(user,data,callback)
 // user: actual username for logging purposes

@@ -1,6 +1,28 @@
 extends layout
 
 
+mixin blogConfig(number)
+ .row
+    .col-md-2
+      | Blog Config #{number}
+    .col-md-3
+      select(id="blogSetting#{number}",name="blogSetting#{number}").form-control
+        option(value="#{usershown['blogSetting'+number]}" selected) #{usershown['blogSetting'+number]} (*)
+        option(value="-" ) - 
+        each setting in settings
+          option(value="#{setting}" ) #{setting}
+    .col-md-3
+      select(id="blogLanguages#{number}",name="blogLanguages#{number}").form-control
+        option(value="#{usershown['blogLanguages'+number]}" selected) #{usershown['blogLanguages'+number]} (*)
+        each lang in languages
+          option(value="#{lang}" ) #{lang}
+
+mixin blogConfigDisplay(number)
+  .row
+    .col-md-2
+      | blog Config #{number}
+    .col-md-5
+      | #{usershown['blogSetting'+number]} + #{usershown['blogLanguages'+number]}
 
 
 block content
@@ -27,7 +49,7 @@ block content
     if (params && params.edit) 
       form(name="input", action="#{layout.htmlroot}/usert/#{usershown.id}", method="post")
         .row
-          .col-md-1
+          .col-md-2
             | OSM Name 
           .col-md-3
             textarea.form-control(name="OSMUser",rows=1) #{usershown.OSMUser}
@@ -38,44 +60,78 @@ block content
 
 
         .row
-          .col-md-1
+          .col-md-2
+            | Language
+          .col-md-5
+            select(id="language",name="language").form-control
+              option(value="#{usershown.language}" selected) #{usershown.language+'(*)'}
+              each l in langlist
+                option(value="#{l}") #{l}
+        .row
+          .col-md-2
             | Access
           .col-md-5
             select(id="access",name="access").form-control
               option(value="#{usershown.access}" selected) #{usershown.access+'(*)'}
-                option(value="full" ) full
-                option(value="read" ) only collected Article (not implemented)
-                option(value="denied" ) denied
+              option(value="full" ) full
+              option(value="read" ) only collected Article (not implemented)
+              option(value="denied" ) denied
+        - val = 0
+        while (val<=params.numberconfig)
+           +blogConfig(val)
+           - val++
+        .row
+          .col-md-2
+          .col-md-5
+           a(href="#{layout.htmlroot}/usert/#{usershown.id}?edit=true&numberconfig=#{params.numberconfig+1}") Add Row
+      
+    
+     
+
+                
+      
 
     else
      .row
-        .col-md-1
+        .col-md-2
           | OSM Name <br>
-        .col-md-3
+        .col-md-4
           h2
             | #{usershown.OSMUser}
-        .col-md-7
+        .col-md-5
         .col-md-1
           a(href="#{layout.htmlroot}/usert/#{usershown.id}?edit=true" class="btn btn-primary" role="button") Edit
       .row
-        .col-md-1
+        .col-md-2
+          | Language
+        .col-md-5
+          h2
+            | #{usershown.language}
+      .row
+        .col-md-2
           | Access <br>
         .col-md-5
           h2
             | #{usershown.access}
       .row
-        .col-md-1
+        .col-md-2
           | OSM <br>
         .col-md-5
           p
             a(href='http://www.openstreetmap.org/user/#{usershown.OSMUser}') #{usershown.OSMUser}
+      - val = 0
+      while (val<=params.numberconfig)
+        
+        +blogConfigDisplay(val)
+        - val++
 
+   
   .row
     if changes
       h2
         | History
       div
-        table.table.table-striped
+        table.table.table-striped.table-responsive
           thead
             tr 
               th

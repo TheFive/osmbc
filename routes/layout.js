@@ -28,6 +28,10 @@ function prepareRenderLayout(req,res,next) {
   var listOfOpenBlog;
   var listOfReviewBlog;
   var listOfHelpBlog;
+  var style = "style.css";
+  if (config.getValue("style")) style = config.getValue("style");
+
+ 
 
   // Used for display changes
 
@@ -52,13 +56,32 @@ function prepareRenderLayout(req,res,next) {
         callback(err,list);
       })
     },
-    listOfReviewBlog:
+    listOfEditBlog:
     function (callback) {
-      blogModule.find({status:"review"},function(err,result) {
+      blogModule.find({status:"edit"},function(err,result) {
         if (err) return callback(err);
         var list = [];
         for (var i=0;i<result.length;i++) {
-          list.push(result[i]);
+          console.log("Result-----");
+          console.dir(req.user);
+          console.log("review Comment");
+          console.log("reviewComment"+req.user.language);
+          if (!(result[i]["reviewComment"+req.user.language])) {
+            list.push(result[i]);
+          }
+        }
+        callback(err,list);
+      })
+    },
+    listOfReviewBlog:
+    function (callback) {
+      blogModule.find({status:"edit"},function(err,result) {
+        if (err) return callback(err);
+        var list = [];
+        for (var i=0;i<result.length;i++) {
+          if ((result[i]["reviewComment"+req.user.language])) {
+            list.push(result[i]);
+          }
         }
         callback(err,list);
       })
@@ -82,11 +105,13 @@ function prepareRenderLayout(req,res,next) {
                       listOfOrphanBlog:result.listOfOrphanBlog,
                       htmlroot: htmlRoot,
                       listOfOpenBlog:result.listOfOpenBlog,
+                      listOfEditBlog:result.listOfEditBlog,
                       listOfReviewBlog:result.listOfReviewBlog,
                       listOfHelpBlog:result.listOfHelpBlog,
                       moment:moment,
                       util:util,
-                      osmbc_version:version.osmbc_version
+                      osmbc_version:version.osmbc_version,
+                      style:style
                     }
       next();
     }

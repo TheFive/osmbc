@@ -105,11 +105,13 @@ function ensureAuthenticated(req, res, next) {
   debug("ensureAuthenticated");
 
   if (req.isAuthenticated()) { 
-    console.dir(req.user); 
     // check User
     userModule.find({OSMUser:req.user.displayName},function(err,result){
       if (err) return next(err);
       if (result.length==1) {
+        for (var k in result[0]) {
+          req.user[k] = result[0][k];
+        }
         if (result[0].access == "full") {
           // save last access, ignore save callback
           var date = new Date();
@@ -201,8 +203,8 @@ app.get(htmlRoot + '/logout', function(req, res){
 
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
-app.use(htmlRoot + '/',layout);
-app.use(htmlRoot + '/', ensureAuthenticated,index);
+app.use(htmlRoot + '/',ensureAuthenticated,layout);
+app.use(htmlRoot + '/',ensureAuthenticated,index);
 app.use(htmlRoot + '/usert',ensureAuthenticated, users);
 app.use(htmlRoot + '/article',ensureAuthenticated, article);
 app.use(htmlRoot + '/changes',ensureAuthenticated, changes);

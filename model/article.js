@@ -12,8 +12,11 @@ var config    = require('../config.js');
 var util      = require('../util.js');
 
 var logModule = require('../model/logModule.js');
+var settingsModule = require('../model/settings.js');
 var blogModule = require('../model/blog.js');
 var pgMap     = require('../model/pgMap.js');
+
+var categoryTranslation = require('../model/categoryTranslation.js')
 
 var blogModule = require('../model/blog.js');
 
@@ -77,8 +80,9 @@ function createNewArticle (proto,callback) {
 }
 
 
-function preview(edit,user) {
+function preview(lang,edit,user) {
   debug("preview");
+  should.exist(lang);
   if (typeof(user)=='undefined') user = "";
   var editLink;
   var commentMarkup = "";
@@ -91,13 +95,14 @@ function preview(edit,user) {
     }
   }
   if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-  if (typeof(this.markdown)!='undefined' && this.markdown!='') {
-    var md = this.markdown;
+  if (typeof(this["markdown"+lang])!='undefined' && this["markdown"+lang]!='') {
+    var md = this["markdown"+lang];
 
     // Does the markdown text starts with '* ', so ignore it
     if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
     // Return an list Element for the blog article
     var html = markdown.toHTML(md);
+
 
     // clean up <p> and </p> of markdown generation.
     if (html.substring(0,3)=="<p>" && html.substring(html.length-4,html.length)=='</p>'){
@@ -109,7 +114,7 @@ function preview(edit,user) {
         return '<p'+commentMarkup+'>\n'+editLink+' '+html+'\n</p>'
       } else {
         // if not edit mode and article has not to be published, return nothing.
-        if (this.category == "--unpublished--") return '';
+        if (this.categoryEN == "--unpublished--") return '';
         return '<li>\n'+html+'\n</li>'
       }
   } 
@@ -124,7 +129,7 @@ function overview(user) {
   var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   
   var editLink = '';
-  if (typeof(this.markdown)=='undefined' || this.markdown == '') {
+  if (typeof(this.markdownDE)=='undefined' || this.markdownDE == '') {
     editLink = "Edit";
   }
   if (typeof(this.markdownEN)=='undefined' || this.markdownEN == '') {
@@ -146,14 +151,36 @@ function overview(user) {
   return '<p'+commentMarkup+'>\n'+editMark+' '+text+' '+editLink+'\n</p>';      
 }
 
-function previewEN(edit,user) {
-  debug("previewEN");
-  if (typeof(user)=='undefined') user = "";
 
-  var editLink = '';
-  if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+function getPreview(par1,par2,par3) {
+  debug("getPreview");
+  should.exist(par1);
+  var options;
+  var user;
+  var lang;
+
+  if (typeof(par2)=='object') {
+    options = par2;
+    user = par3;
+    lang = par1
+  } else
+  {
+    style = par1;
+    user = par2;
+    options = settingsModule.getSettings(style);
+
+  }
+  //console.log("getPreview Options");//debuglog
+  //console.dir(options);
+
+  var markdownEDIT = "markdown"+options.left_lang;
+  var markdownTRANS = "markdown"+options.right_lang;
+  var markdownLANG = markdownEDIT;  
+
+  // Calculate markup for comment
   var commentMarkup = "";
-  if (this.comment) {
+
+  if (options.edit && options.comment && this.comment) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
       var commentColour = "blue";
       if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
@@ -161,40 +188,118 @@ function previewEN(edit,user) {
       commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
     }
   }
-  if (typeof(this.markdownEN)!='undefined' && this.markdownEN!='') {
-    var md = this.markdownEN;
 
-    if (md == "german only") {
-      // Text is only for german users, so
-      // ignore it, if not in edit mode.
-      if (!edit) return ""
-        else return '<p>\n'+editLink+' german link\n</p>'; 
+  // generate Glyphicon for Editing
+  var liON = '<li'+commentMarkup+'>\n';
+  var liOFF = '</li>';
+  if (options.glyphicon && options.edit) {
+    var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+    liON = '<p'+commentMarkup +'>\n'+editMark+' ';
+    liOFF = '</p>';
+  }
+  // Generate Translation & Edit Links
+  var editLink = '';
+  if (options.edit && options.editLink ) {
+    if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
+      editLink = "Edit";
+    }
+    if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
+      if (editLink != '') editLink +='&'
+      editLink += "Translate";
+    }
+    if (editLink =='' && options.shortEditLink) editLink ='…';
+    if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+editLink+'</a>';    
+  }
 
-    } else {
-     // Does the markdown text starts with '* ', so ignore it
+  // Generate Text for display
+  var text ='';
+  var textright = '';
+  if (options.overview) { // just generate the overview text
+    debug("options overview is set");
+    text=this.displayTitle(90);
+    textright = this.displayTitle(90);
+  } else { // generate the full text
+    if (typeof(this[markdownLANG])!='undefined' && this[markdownLANG]!='') {
+      var md = this[markdownLANG];
+
+
+      // Does the markdown text starts with '* ', so ignore it
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
-      var html = markdown.toHTML(md);
+      text = markdown.toHTML(md);
+
+   
 
       // clean up <p> and </p> of markdown generation.
-      if (html.substring(0,3)=="<p>" && html.substring(html.length-4,html.length)=='</p>'){
-        html = html.substring(3,html.length-4)
+      if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>'){
+        text = text.substring(3,text.length-4)
       }
+    } else {
+      text = this.displayTitle();
+    }    
+    if (typeof(this[markdownTRANS])!='undefined' && this[markdownTRANS]!='') {
+      var md = this[markdownTRANS];
 
-      if (edit) {
-        return '<p'+commentMarkup+'>\n'+editLink+' '+html+'\n</p>'
-      } else {
-        // if not edit mode and article has not to be published, return nothing.
-        if (this.category == "--unpublished--") return '';
-        return '<li>\n'+html+'\n</li>'
+      // Does the markdown text starts with '* ', so ignore it
+      if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
+      // Return an list Element for the blog article
+      textright = markdown.toHTML(md);
+ 
+      // clean up <p> and </p> of markdown generation.
+      if (textright.substring(0,3)=="<p>" && textright.substring(textright.length-4,textright.length)=='</p>'){
+        textright = textright.substring(3,textright.length-4)
       }
+    } else {
+      textright = this.displayTitle();
     }
+  }
 
-  } 
-  // Markdown is not defined. Return a placholder for the article
-  if (edit) return '<p'+commentMarkup+'>\n'+editLink+' <mark>'+this.displayTitle(99999)+'\n</mark></p>';
-       else return '<li>\n<mark>'+this.displayTitle(99999)+'\n</mark></li>';
+
+  // calculate Markup Display for Missing Edits
+  var markON = '';
+  var markOFF = '';
+  if (options.marktext && (typeof(this[markdownLANG])=='undefined' || this[markdownLANG]=='')) {
+    markON = '<mark>';
+    markOFF = '</mark>'
+  }
+  var markrightON = '';
+  var markrightOFF = '';
+  if (options.marktext && (typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS]=='')) {
+    markrightON = '<mark>';
+    markrightOFF = '</mark>'
+  }
+  if (!options.bilingual) {
+      return liON + 
+    markON +
+    text + '\n' +
+    markOFF +
+    editLink+     
+    liOFF;
+  }
+  else {
+    return '<div class="row">'+
+             '<div class="col-md-6">'+
+              liON + 
+              markON +
+              text + '\n' +
+              markOFF +
+              editLink+     
+              liOFF +
+             '</div>'+
+             '<div class="col-md-6">'+
+              liON + 
+              markrightON +
+              textright + '\n' +
+              markrightOFF +
+              editLink+     
+              liOFF +
+             '</div>'+
+           '</div>'
+  }
+
+
 }
+
 
 function doLock(user,callback) {
   debug('doLock');
@@ -272,7 +377,7 @@ function setAndSave(user,data,callback) {
         var categories= blogModule.getCategories();
         if (blog) categories = blog.getCategories();
         for (var i=0;i<categories.length;i++) {
-          if (data.category == categories[i].DE) {
+          if (data.categoryDE == categories[i].DE) {
             data.categoryEN = categories[i].EN;
             break;
           }
@@ -348,8 +453,8 @@ function calculateLinks() {
     var res = this.collection.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
     if (res) links = links.concat(res);
   }
-  if (typeof(this.markdown)!='undefined') {
-    var res = this.markdown.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
+  if (typeof(this.markdownDE)!='undefined') {
+    var res = this.markdownDE.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
     if (res) links = links.concat(res);
   }
   return links;
@@ -363,11 +468,12 @@ function displayTitle(maxlength) {
   if (typeof(this.title)!='undefined' && this.title != "") {
     result = util.shorten(this.title,maxlength)
   } else 
-  if (typeof(this.markdown)!='undefined' && this.markdown !="") {
-    var md = this.markdown;
+  /* it is a very bad idea to shorten HTML this way.
+  if (typeof(this.markdownDE)!='undefined' && this.markdownDE !="") {
+    var md = this.markdownDE;
     if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
     result = util.shorten(md,maxlength)
-  } else
+  } else*/
   if (typeof(this.collection)!='undefined' && this.collection !="") {
     result = util.shorten(this.collection,maxlength)
   }
@@ -408,7 +514,7 @@ function createTable(cb) {
                       (to_tsvector('german'::regconfig,   \
                           (COALESCE(data ->> 'title'::text, ''::text) || ' '||  \
                             COALESCE(data ->> 'collection'::text, ''::text)) || ' ' || \
-                            COALESCE(data ->> 'markdown'::text, ''::text))); \
+                            COALESCE(data ->> 'markdownDE'::text, ''::text))); \
               CREATE INDEX article_texten_idx ON article USING gin \
                 (to_tsvector('english'::regconfig, \
                   COALESCE(data ->> 'collection'::text, ''::text) ||' ' || \
@@ -460,8 +566,14 @@ function calculateUsedLinks(callback) {
   );
 }
 
-
-
+function getCategory(lang) {
+  debug("getCategory");
+  var result = this.categoryEN;
+  if (categoryTranslation[result] && categoryTranslation[result][lang]) {
+    result = categoryTranslation[result][lang];
+  }
+  return result;
+}
 
 
 // Calculate a Title with a maximal length for Article
@@ -498,9 +610,23 @@ Article.prototype.remove = pgMap.remove;
 // preview(edit)
 // edit: Boolean, that specifies, wether edit links has to be created or not
 // This function returns an HTML String of the Aricle as an list element.
+// preview and overview will be skipped in the Multilanguage Support.
 Article.prototype.preview = preview;
 Article.prototype.overview = overview;
-Article.prototype.previewEN = previewEN;
+
+// getPreview deliveres the HTML for an article.
+// Parameter1: lang
+//             language for the preview
+// parameter2: Options
+//      edit:      true if any additional edit links should be generated
+//      comment:   true if blue or red border should be placed based on comment
+//      glyphicon: true if the bullet should be an edit glyphicon
+//      editLink:  true if an "Edit&Translate" should be placed at the end of an article
+//      overview:  true if title or a small text is shown, instead of an article
+//      marktext:  true if missing language markdown should be <mark>ed.
+Article.prototype.getPreview = getPreview;
+Article.prototype.getCategory = getCategory;
+
 
 // calculateUsedLinks(callback)
 // Async function to search for each Link in the article in the database

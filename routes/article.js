@@ -8,6 +8,7 @@ var debug    = require('debug')('OSMBC:routes:article');
 var util          = require('../util.js');
 var config        = require('../config.js');
 
+var settingsModule = require('../model/settings.js');
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
@@ -18,6 +19,11 @@ function renderArticleId(req,res,next) {
 
   // Get the ID and the article to display
   var id = req.params.article_id;
+
+
+
+
+
   articleModule.findById(id,function(err,article) {
 
     // if the ID does not exist, send an error
@@ -31,7 +37,12 @@ function renderArticleId(req,res,next) {
 
     // Params is used for indicating EditMode
     var params = {};
+    var s = settingsModule.getSettings(req.query.style);
+    if (req.query.style) params.style = req.query.style;
     params.edit = req.query.edit;
+    params.left_lang = s.left_lang;
+    params.right_lang = s.right_lang;
+
 
     // calculate all used Links for the article
     var usedLinks = article.calculateLinks();
@@ -71,16 +82,17 @@ function renderArticleId(req,res,next) {
       }},
         function (err,result) {
 
-          // calculate all previews for markdown code
-          if (typeof(article.markdown)!='undefined') {
-            article.textHtml = article.preview();
-          } 
-          if (typeof(article.markdownEN)!='undefined') {
-            article.textHtmlEN = article.previewEN();
-          } 
+          var languages = config.getLanguages();
+          for (i=0;i<languages.length;i++) {
+            var lang = languages[i];
+            if (typeof(article["markdown"+lang])!='undefined') {
+              article["textHtml"+lang]=article.preview(lang);
+            }
+          }
           if (typeof(article.comment)!='undefined') {
             article.commentHtml = markdown.toHTML(article.comment)
           } 
+
           // 
           if (req.query.edit && ! params.edit) {
             var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
@@ -130,18 +142,19 @@ function postArticle(req, res, next) {
  
 
   var article = null;
-  var changes = {markdown:req.body.markdown,
-                 markdownEN:req.body.markdownEN,
-                 blog:req.body.blog,
-                 blogEN:req.body.blogEN,
+  var changes = {blog:req.body.blog,
                  collection:req.body.collection,
                  comment:req.body.comment,
-                 category:req.body.category,
                  categoryEN:req.body.categoryEN,
                  version:req.body.version,
                  title:req.body.title,
                  commentStatus:req.body.commentStatus};
-  console.log(changes);
+
+  var languages = config.getLanguages();
+  for (var i=0;i<languages.length;i++){
+    var lang = languages[i];
+    changes["markdown"+lang] = req.body["markdown"+lang];
+  }
   var returnToUrl ;
 
   async.parallel([
@@ -191,8 +204,8 @@ function createArticle(req, res, next) {
   if (typeof(req.query.blog) != 'undefined' ) {
     proto.blog = req.query.blog;
   }
-  if (typeof(req.query.category) != 'undefined' ) {
-    proto.category = req.query.category;
+  if (typeof(req.query.categoryEN) != 'undefined' ) {
+    proto.categoryEN = req.query.categoryEN;
   }
 
   async.series([
@@ -229,22 +242,18 @@ function renderList(req,res,next) {
   debug('renderList');
   req.session.articleReturnTo = req.originalUrl;
   var blog = req.query.blog;
-  var markdown = req.query.markdown;
+  var markdownDE = req.query.markdownDE;
   var markdownEN = req.query.markdownEN;
-  var category = req.query.category;
   var categoryEN = req.query.categoryEN;
   var query = {};
   if (typeof(blog)!='undefined') {
     query.blog = blog;
   }
-  if (typeof(markdown)!='undefined') {
-    query.markdown = markdown;
+  if (typeof(markdownDE)!='undefined') {
+    query.markdownDE = markdownDE;
   }
   if (typeof(markdownEN)!='undefined') {
     query.markdownEN = markdownEN;
-  }
-  if (typeof(category)!='undefined') {
-    query.category = category;
   }
   if (typeof(categoryEN)!='undefined') {
     query.categoryEN = categoryEN;

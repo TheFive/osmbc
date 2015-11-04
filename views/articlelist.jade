@@ -7,7 +7,7 @@ block content
 
   row
     div
-      table.table.table-striped
+      table.table.table-striped.table-responsive
         thead
           tr 
             th
@@ -19,7 +19,7 @@ block content
             th
              | collection
             th
-             | markdown
+             | markdownDE
             th
              | markdownEN
          tbody
@@ -28,10 +28,10 @@ block content
               td
                 a(href='#{layout.htmlroot}/article/' + article.id) #{(article.displayTitle())}
               td= article.blog
-              td= article.category
+              td= article.categoryEN
               td= layout.util.shorten(article.collection) 
-              td= layout.util.shorten(article.markdown) 
               td= layout.util.shorten(article.markdownEN) 
+              td= layout.util.shorten(article.markdownDE) 
                
 
 

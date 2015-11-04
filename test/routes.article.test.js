@@ -104,7 +104,7 @@ describe('router/article',function() {
               // clean up test data for comparison, Database IDs are random
               for (var i =0;i<renderData.changes.length; i++) delete renderData.changes[i].id;
               for (i=0;i<data.result.changes.length;i++) data.result.changes[i].oid = req.params.article_id;
-              article.textHtml = data.result.articleText;
+              article.textHtmlDE = data.result.articleText;
               should(renderData.article).eql(article);
               if(typeof(renderData.params.edit)=='undefined') renderData.params.edit = null;
               should(renderData.params).eql(data.result.params);
@@ -249,7 +249,7 @@ describe('router/article',function() {
         var req = {};
         req.params = {};
         req.params.article_id = article.id;
-        req.body = {markdown:"MARKDOWN",
+        req.body = {markdownDE:"MARKDOWNDE",
                    markdownEN:"MARKDOWNEN",
                    blog:"BLOG",
                    blogEN:"BLOGEN",
@@ -286,13 +286,11 @@ describe('router/article',function() {
             should(res.redirect.firstCall.calledWith("/article/"+article.id)).be.true();
             delete article._meta;
             delete article.id;
-            should(article).eql({markdown:"MARKDOWN",
+            should(article).eql({markdownDE:"MARKDOWNDE",
                    markdownEN:"MARKDOWNEN",
                    blog:"BLOG",
-                   blogEN:"BLOGEN",
                    collection:"COLLECTION",
                    comment:"COMMENT",
-                   category:"CATEGORY",
                    categoryEN:"CATEGORYEN",
                    title:"TITLE",version:2})
             bddone();            

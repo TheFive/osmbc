@@ -24,12 +24,12 @@ block content
           a(style={color:'Gray'}) 
             | #{foundArticles.length} articles found.
         p
-          table.table.table-striped
+          table.table.table-striped.table-responsive
             each  article in foundArticles
               tr
                 td
                   | #{article.blog} <br>
-                  | #{article.category}
+                  | #{article.categoryEN}
                 td
                   :verbatim
                     !{article.preview(true)}
@@ -69,9 +69,9 @@ block content
         .col-md-1
           | Category <br>
         .col-md-5
-          select(id="category",name="category").form-control
+          select(id="categoryEN",name="categoryEN").form-control
             for category in categories
-              option(value="#{category.DE}" ) #{category.DE} / #{category.EN}
+              option(value="#{category.EN}" ) #{category.DE} / #{category.EN}
         .col-md-5
           h2
             | 

@@ -7,13 +7,15 @@ block content
 
   row
     div
-      table.table.table-striped
+      table.table.table-striped.table-responsive
         thead
           tr 
             th
               | Name
             th 
               | OSM
+            th
+              | Language
             th
               | access
             th
@@ -30,6 +32,7 @@ block content
               td
                  a(href='http://www.openstreetmap.org/user/#{user.OSMUser}') [OSM]
 
+              td= user.language
               td= user.access
               if (user.lastAccess)
                 td= layout.moment(user.lastAccess).fromNow()

@@ -2,15 +2,15 @@
 
 {
   "blog":[{"name":"BLOG","status":"open"}],
-  "article":[{"blog":"BLOG","title":"Blog1","markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
-             {"blog":"BLOG","title":"Blog2","markdown":"* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","category":"Keine"},
-             {"blog":"Alternativ Blog","markdown":"* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","category":"Keine"}],
+  "article":[{"blog":"BLOG","title":"Blog1","markdownDE":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
+             {"blog":"BLOG","title":"Blog2","markdownDE":"* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","category":"Keine"},
+             {"blog":"Alternativ Blog","markdownDE":"* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","category":"Keine"}],
   
 
   "listBlog":"BLOG",
 
 
   "result":{"listOfOpenBlog":["BLOG"],
-            "articles":[{"version":1,"blog":"BLOG", "title":"Blog1",  "markdown":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
-             { "version":1, "blog":"BLOG","title":"Blog2","markdown":"* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","category":"Keine"}]}
+            "articles":[{"version":1,"blog":"BLOG", "title":"Blog1",  "markdownDE":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
+             { "version":1, "blog":"BLOG","title":"Blog2","markdownDE":"* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","category":"Keine"}]}
 }

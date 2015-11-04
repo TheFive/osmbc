@@ -25,6 +25,7 @@
     "passport": "<0.3.0",
     "passport-openstreetmap": "^0.1.2",
     "pg": "^4.4.2",
+    "progress": "^1.1.8",
     "request": "^2.65.0",
     "serve-favicon": "~2.3.0",
     "session-file-store": "0.0.20",

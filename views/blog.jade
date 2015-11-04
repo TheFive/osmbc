@@ -1,53 +1,20 @@
 extends layout
 
-
-
+mixin navbutton(userstyle,style)
+  if (userstyle==style) 
+    li.active:  a(href="#{layout.htmlroot}/blog/#{blog.id}?style=#{userstyle}") #{userstyle}
+  else
+    li:  a(href="#{layout.htmlroot}/blog/#{blog.id}?style=#{userstyle}") #{userstyle}
+  
+ 
+"#{layout.htmlroot}/blog/#{blog.id}?style=#{userstyle}"
 
 block content
   .row
-    .col-md-6
-      .row
-        .col-md-9 
-          
-            div.btn-group
-              if style == 'overview'
-                button.btn.btn-primary(
-                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")'
-                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_blank")')
-                  | Overview
-              else
-                button.btn.btn-default(
-                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_self")'
-                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=overview","_blank")')
-                  | Overview
-              if style == 'preview'
-                button.btn.btn-primary(
-                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")'
-                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_blank")')
-
-                  | Full
-              else
-                button.btn.btn-default(
-                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_self")'
-                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=preview","_blank")')
-                  | Full
-              if style == 'previewEN'
-                button.btn.btn-primary(
-                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")'
-                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_blank")')
-                  | Full EN
-              else
-                button.btn.btn-default(
-                  onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_self")'
-                  onDblClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}?style=previewEN","_blank")')
-                  | Full EN
-            div.btn-group
-              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview","_self")')
-                | View Preview
-              button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{blog.id}/preview?lang=EN","_self")')
-                | View Preview EN 
-         
-        .col-md-3
+    .col-md-4
+      h2
+        | Wochennotiz #{blog.name}
+    .col-md-4
           div.btn-group
             button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
               | #{blog.status}
@@ -56,41 +23,83 @@ block content
               li
                 a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=open") open 
               li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=review") review 
+                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=edit") edit 
               li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=published") published 
+                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=closed") closed 
               li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=trash") trash      
+                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=trash") trash  
+    
+    .col-md-4    
+      - reviewCommentsLeft = blog["reviewComment"+left_lang];
+      if (reviewCommentsLeft)
+        .row
+          .col-md-12
+             form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.id}", method="get")
+              .form-group
+                .col-sm-8
+                  input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
+
+                .col-sm-4
+                  button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang}
+      else
+        .row
+          button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?reviewComment=startreview';") Set #{left_lang} ready for review
+  .row
     .col-md-6
-      if (blog.status == "review")
-        .row
-         .col-md-12
-               form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.id}", method="get")
-                .form-group
-                  .col-sm-10
-                    input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
-
-                  .col-sm-2
-                    button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review
-
-      if (blog.status == "review" || blog.status == "published")
-        .row
-          if (blog.reviewComment && blog.reviewComment.length>0)
-            h3
-              | Freigabe
-            table.table.table-condensed
-              tbody
-              each comment in blog.reviewComment
-                tr
-                  td=comment.user
-                  td=comment.text
-                  td=layout.moment(comment.timestamp).fromNow()
+      - reviewCommentsLeft = blog["reviewComment"+left_lang];
+        if (reviewCommentsLeft && reviewCommentsLeft.length>0)
+          h3
+            | Review #{left_lang}
+          table.table.table-condensed.table-responsive
+            tbody
+            each comment in reviewCommentsLeft
+              tr
+                td=comment.user
+                td=comment.text
+                td=layout.moment(comment.timestamp).fromNow()
+    .col-md-6
+      - reviewCommentsRight = blog["reviewComment"+right_lang];
+        if (reviewCommentsRight && reviewCommentsRight.length>0)
+          h3
+            | Review #{right_lang}
+          table.table.table-condensed.table-responsive
+            tbody
+            each comment in reviewCommentsRight
+              tr
+                td=comment.user
+                td=comment.text
+                td=layout.moment(comment.timestamp).fromNow()
   
   .row
-    p
-      h2
-        | Wochennotiz #{blog.name}
+    .col-md-12
+      ul.nav.nav-tabs
+        - v = 0
+        while layout.user["blogSetting"+v]
+          if layout.user["blogSetting"+v]!="-"
+            - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
+            +navbutton(style0,style)
+          - v++
+      
+        li
+          a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{left_lang}") 
+            span.glyphicon.glyphicon-export
+            | #{left_lang}
+        if (right_lang != "--")
+          li
+            a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{right_lang}") 
+              span.glyphicon.glyphicon-export
+              | #{right_lang}
+        li
+          a(href="#{layout.htmlroot}/usert/#{layout.user.id}") 
+            span.glyphicon.glyphicon-cog
+           
+
+    
+        
+             
+  .row
       :verbatim
+        <br><br> 
         !{main_text}
   .row
     .col-md-10
