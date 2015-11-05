@@ -211,6 +211,9 @@ function editBlogId(req,res,next) {
   var id = req.params.blog_id;
   var params = {};
   if (req.query.edit) params.edit = req.query.edit;
+  if (params.edit && params.edit=="false") {
+     res.redirect(config.getValue('htmlroot')+"/blog/edit/"+id);  
+  }
 
  
   blogModule.findById(id,function(err,blog) {
