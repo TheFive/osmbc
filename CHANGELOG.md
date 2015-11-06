@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.3.2](https://github.com/TheFive/osmbc/tree/0.3.2) (2015-11-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.1...0.3.2)
+
+**Implemented enhancements:**
+
+- Show a better hint, when a long link is detected. [\#129](https://github.com/TheFive/osmbc/issues/129)
+
 ## [0.3.1](https://github.com/TheFive/osmbc/tree/0.3.1) (2015-11-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.0...0.3.1)
 
@@ -10,9 +17,6 @@
 
 **Closed issues:**
 
-- Beginner's Howto [\#126](https://github.com/TheFive/osmbc/issues/126)
-- Way of marking "LANGUAGE\_X only" [\#120](https://github.com/TheFive/osmbc/issues/120)
-- Maybe an user can change other, and this should not be so [\#119](https://github.com/TheFive/osmbc/issues/119)
 - Differentiate style of translations not made [\#116](https://github.com/TheFive/osmbc/issues/116)
 - Cancel at "Edit Blog Details" Does Not Work [\#115](https://github.com/TheFive/osmbc/issues/115)
 
@@ -189,7 +193,6 @@
 
 - Display Version Number under Help with Link to Release Notes [\#64](https://github.com/TheFive/osmbc/issues/64)
 - How to configure an admin user \(the first user\)? [\#63](https://github.com/TheFive/osmbc/issues/63)
-- Which is strategy with the development branch? [\#60](https://github.com/TheFive/osmbc/issues/60)
 - Help to configure a DEV environment [\#56](https://github.com/TheFive/osmbc/issues/56)
 - Wrong Title exported [\#54](https://github.com/TheFive/osmbc/issues/54)
 - put a small frame around the flags [\#52](https://github.com/TheFive/osmbc/issues/52)
@@ -254,22 +257,22 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Mark long HTML Links in Text in Warning or Danger. [\#19](https://github.com/TheFive/osmbc/issues/19)
 
@@ -294,7 +297,7 @@
 ## [0.2.16a](https://github.com/TheFive/osmbc/tree/0.2.16a) (2015-10-02)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16...0.2.16a)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Use WN issue number for id of HTML \<h2\> tags [\#22](https://github.com/TheFive/osmbc/issues/22)
 
