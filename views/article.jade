@@ -144,11 +144,13 @@ block content
             | Markdown 
           +leftcolumn
             textarea.form-control(id="markdownLEFT" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
-            | 'no translation' to specify no translation wanted.
+            div(id="text_left")
+              | 'no translation' to specify no translation wanted.
  
           +rightcolumn
             textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
-            | 'no translation' to specify no translation wanted.
+            div(id="text_right")
+              | 'no translation' to specify no translation wanted.
           .col-md-1
 
             if ((params.left_lang=="DE") || (params.right_lang=="DE"))
@@ -351,6 +353,7 @@ block scripts
     markdownRIGHT = document.getElementById("markdownRIGHT");
     markdownRIGHT.onchange = onchangeRIGHT;
     markdownRIGHT.onkeyup = onchangeRIGHT;
+    noTranslationText = document.getElementById("text_right").innerHTML;
    
     coll = document.getElementById("collection");
     coll.onchange = onchangeCollection;
@@ -386,28 +389,43 @@ block scripts
     function onchangeLEFT() {
       var md = document.getElementById("markdownLEFT").value;
       previewLEFT = document.getElementById("previewLEFT");
+      textLeft = document.getElementById("text_left");
       
       previewLEFT.innerHTML = convert(md);
-      var longLink = md.search(/\[[^\]]{30,}\]/g);
+      var longLink = md.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
-        previewLEFT.style.backgroundColor="#FDC6CD";
+        //previewLEFT.style.backgroundColor="#FDC6CD";
+        textLeft.innerHTML = "Please shorten "+md.substring(longLink+1,longLink+40)
+        textLeft.style.backgroundColor ="#FDC6CD";
+
+
         }
       else {
-         previewLEFT.style.backgroundColor="";
+         //previewLEFT.style.backgroundColor="";
+         textLeft.style.backgroundColor ="";
+         textLeft.innerHTML = noTranslationText;
         }
       }
     function onchangeRIGHT() {
       var mdEN = document.getElementById("markdownRIGHT").value;
       previewRIGHT = document.getElementById("previewRIGHT");
+      textRight = document.getElementById("text_right");
+      textLeft = document.getElementById("text_left");
       
       previewRIGHT.innerHTML = convert(mdEN);
       var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
-        previewRIGHT.style.backgroundColor="#FDC6CD";
-        }
+        textRight.innerHTML = "Please shorten "+mdEN.substring(longLink+1,longLink+40)
+        textRight.style.backgroundColor ="#FDC6CD";
+        //previewRIGHT.style.backgroundColor="#FDC6CD";
+        
+      }
       else {
-         previewRIGHT.style.backgroundColor="";
-        }
+         textRight.style.backgroundColor ="";
+         textRight.innerHTML = noTranslationText;
+         //previewRIGHT.style.backgroundColor="";
+         
+         }
       }
       function onchangeCollection() {
         var cl = document.getElementById("collection").value;
