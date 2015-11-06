@@ -395,7 +395,7 @@ block scripts
       var longLink = md.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
         //previewLEFT.style.backgroundColor="#FDC6CD";
-        textLeft.innerHTML = "Please shorten "+md.substring(longLink+1,longLink+40)
+        textLeft.innerHTML = "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]"
         textLeft.style.backgroundColor ="#FDC6CD";
 
 
@@ -415,7 +415,7 @@ block scripts
       previewRIGHT.innerHTML = convert(mdEN);
       var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
-        textRight.innerHTML = "Please shorten "+mdEN.substring(longLink+1,longLink+40)
+        textRight.innerHTML = "Please shorten ["+mdEN.substring(longLink+1,longLink+40)+"...]"
         textRight.style.backgroundColor ="#FDC6CD";
         //previewRIGHT.style.backgroundColor="#FDC6CD";
         
