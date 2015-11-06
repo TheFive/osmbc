@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.3.1](https://github.com/TheFive/osmbc/tree/0.3.1) (2015-11-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.0...0.3.1)
+
+**Fixed bugs:**
+
+- Edit Help leads to the last weekly and not the help blog [\#128](https://github.com/TheFive/osmbc/issues/128)
+- All links are beginning with spaces [\#122](https://github.com/TheFive/osmbc/issues/122)
+
+**Closed issues:**
+
+- Beginner's Howto [\#126](https://github.com/TheFive/osmbc/issues/126)
+- Way of marking "LANGUAGE\_X only" [\#120](https://github.com/TheFive/osmbc/issues/120)
+- Maybe an user can change other, and this should not be so [\#119](https://github.com/TheFive/osmbc/issues/119)
+- Differentiate style of translations not made [\#116](https://github.com/TheFive/osmbc/issues/116)
+- Cancel at "Edit Blog Details" Does Not Work [\#115](https://github.com/TheFive/osmbc/issues/115)
+
 ## [0.3.0](https://github.com/TheFive/osmbc/tree/0.3.0) (2015-11-04)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28g...0.3.0)
 
@@ -238,17 +254,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
