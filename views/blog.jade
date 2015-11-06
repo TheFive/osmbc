@@ -12,8 +12,15 @@ mixin navbutton(userstyle,style)
 block content
   .row
     .col-md-4
-      h2
-        | Wochennotiz #{blog.name}
+      if blog.status == "help"
+        h2
+          | #{blog.name}
+      else if left_lang == "DE"
+        h2
+          | Wochennotiz #{blog.name}
+      else
+        h2
+          | Weekly #{blog.name}
     .col-md-4
           div.btn-group
             button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")

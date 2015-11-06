@@ -23,6 +23,7 @@ For tests, use the development instance: http://thefive.sabic.uberspace.de/devos
 ## Next Steps & Progress
 
 [![Stories in Ready](https://badge.waffle.io/TheFive/osmbc.png?label=ready&title=Ready)](https://waffle.io/TheFive/osmbc)
+[![Stories in Progress](https://badge.waffle.io/TheFive/osmbc.png?label=in progress&title=In Progress)](https://waffle.io/TheFive/osmbc)
 
 [![Throughput Graph](https://graphs.waffle.io/TheFive/osmbc/throughput.svg)](https://waffle.io/TheFive/osmbc/metrics)
 

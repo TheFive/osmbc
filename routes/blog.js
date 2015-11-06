@@ -161,6 +161,11 @@ function renderBlogPreview(req, res, next) {
     if (typeof(lang)=='undefined') lang = "DE";
 
     var changes = [];
+    var returnToUrl = req.session.articleReturnTo;
+
+    if (blog.status == "help") {
+      returnToUrl = res.rendervar.layout.htmlroot + "/blog/"+blog.id;
+    }
    
 
 
@@ -189,7 +194,7 @@ function renderBlogPreview(req, res, next) {
                              articles:result.converter.articles,
                              preview:result.converter.preview,
                              lang:lang,
-                             returnToUrl:req.session.articleReturnTo,
+                             returnToUrl:returnToUrl,
                              categories:blog.getCategories()});
         }
       }

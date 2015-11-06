@@ -1,5 +1,38 @@
 # Change Log
 
+## [0.3.0](https://github.com/TheFive/osmbc/tree/0.3.0) (2015-11-04)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28g...0.3.0)
+
+**Implemented enhancements:**
+
+- Make 3 Edit views for a blog configurable. [\#97](https://github.com/TheFive/osmbc/issues/97)
+- Create an OverviewEN as a blog display. [\#79](https://github.com/TheFive/osmbc/issues/79)
+- Add an Edit&Translate button to Full View for a blog. [\#78](https://github.com/TheFive/osmbc/issues/78)
+- Shorten history string of changes in category [\#65](https://github.com/TheFive/osmbc/issues/65)
+- open OSMBC for Spanish, Portuguese, maybe Japanese  [\#45](https://github.com/TheFive/osmbc/issues/45)
+- Set up a development version in uberspace [\#44](https://github.com/TheFive/osmbc/issues/44)
+
+**Fixed bugs:**
+
+- History tables destroys views on mobile phones. [\#106](https://github.com/TheFive/osmbc/issues/106)
+- Show CR \(linebreak\) in Collection [\#99](https://github.com/TheFive/osmbc/issues/99)
+
+**Closed issues:**
+
+- Categories in Spanish [\#108](https://github.com/TheFive/osmbc/issues/108)
+
+**Merged pull requests:**
+
+- README.md: "for tests, use the development instance" [\#111](https://github.com/TheFive/osmbc/pull/111) ([alexandre-mbm](https://github.com/alexandre-mbm))
+- Fixes PT in categoryTranslation.js [\#110](https://github.com/TheFive/osmbc/pull/110) ([alexandre-mbm](https://github.com/alexandre-mbm))
+
+## [0.2.28g](https://github.com/TheFive/osmbc/tree/0.2.28g) (2015-10-31)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28f...0.2.28g)
+
+**Closed issues:**
+
+- Add Polish Flag [\#107](https://github.com/TheFive/osmbc/issues/107)
+
 ## [0.2.28f](https://github.com/TheFive/osmbc/tree/0.2.28f) (2015-10-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28e...0.2.28f)
 
@@ -205,17 +238,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
