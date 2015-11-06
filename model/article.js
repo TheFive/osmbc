@@ -4,7 +4,7 @@
 var pg     = require('pg');
 var async  = require('async');
 var should = require('should');
-var markdown = require('markdown').markdown;
+var markdown = require('markdown-it')();
 var debug  = require('debug')('OSMBC:model:article');
 
 
@@ -80,76 +80,6 @@ function createNewArticle (proto,callback) {
 }
 
 
-function preview(lang,edit,user) {
-  debug("preview");
-  should.exist(lang);
-  if (typeof(user)=='undefined') user = "";
-  var editLink;
-  var commentMarkup = "";
-  if (this.comment) {
-    if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
-      var commentColour = "blue";
-      if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
-      if (this.comment.indexOf("@all")>=0) commentColour = "red";
-      commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
-    }
-  }
-  if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-  if (typeof(this["markdown"+lang])!='undefined' && this["markdown"+lang]!='') {
-    var md = this["markdown"+lang];
-
-    // Does the markdown text starts with '* ', so ignore it
-    if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
-    // Return an list Element for the blog article
-    var html = markdown.toHTML(md);
-
-
-    // clean up <p> and </p> of markdown generation.
-    if (html.substring(0,3)=="<p>" && html.substring(html.length-4,html.length)=='</p>'){
-      html = html.substring(3,html.length-4)
-    }
-
-
-    if (edit) {
-        return '<p'+commentMarkup+'>\n'+editLink+' '+html+'\n</p>'
-      } else {
-        // if not edit mode and article has not to be published, return nothing.
-        if (this.categoryEN == "--unpublished--") return '';
-        return '<li>\n'+html+'\n</li>'
-      }
-  } 
-  // Markdown is not defined. Return a placholder for the article
-  if (edit) return '<p'+commentMarkup+'>\n<mark>'+editLink+' '+this.displayTitle(9999)+'\n</mark></p>';
-       else return '<li>\n<mark>'+this.displayTitle(9999)+'\n</mark></li>';
-}
-
-function overview(user) {
-  debug("overview");
-  if (typeof(user)=='undefined') user = "";
-  var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-  
-  var editLink = '';
-  if (typeof(this.markdownDE)=='undefined' || this.markdownDE == '') {
-    editLink = "Edit";
-  }
-  if (typeof(this.markdownEN)=='undefined' || this.markdownEN == '') {
-    if (editLink != '') editLink +='&'
-    editLink += "Translate";
-  }
-  if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'">'+editLink+'</a>'; 
-
-  var text = this.displayTitle(90);
-  var commentMarkup = "";
-  if (this.comment) {
-    if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
-      var commentColour = "blue";
-      if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
-      if (this.comment.indexOf("@all")>=0) commentColour = "red";
-      commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
-    }
-  }
-  return '<p'+commentMarkup+'>\n'+editMark+' '+text+' '+editLink+'\n</p>';      
-}
 
 
 function getPreview(par1,par2,par3) {
@@ -226,14 +156,8 @@ function getPreview(par1,par2,par3) {
       // Does the markdown text starts with '* ', so ignore it
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
-      text = markdown.toHTML(md);
+      text = markdown.render(md);
 
-   
-
-      // clean up <p> and </p> of markdown generation.
-      if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>'){
-        text = text.substring(3,text.length-4)
-      }
     } else {
       text = this.displayTitle();
     }    
@@ -243,7 +167,7 @@ function getPreview(par1,par2,par3) {
       // Does the markdown text starts with '* ', so ignore it
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
-      textright = markdown.toHTML(md);
+      textright = markdown.render(md);
  
       // clean up <p> and </p> of markdown generation.
       if (textright.substring(0,3)=="<p>" && textright.substring(textright.length-4,textright.length)=='</p>'){
@@ -607,12 +531,6 @@ Article.prototype.save = pgMap.save;
 // remove deletes the current object from the database
 Article.prototype.remove = pgMap.remove;
 
-// preview(edit)
-// edit: Boolean, that specifies, wether edit links has to be created or not
-// This function returns an HTML String of the Aricle as an list element.
-// preview and overview will be skipped in the Multilanguage Support.
-Article.prototype.preview = preview;
-Article.prototype.overview = overview;
 
 // getPreview deliveres the HTML for an article.
 // Parameter1: lang

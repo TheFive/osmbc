@@ -72,8 +72,8 @@ function renderUserId(req, res, next) {
         if (!params.numberconfig) {
           params.numberconfig = 3; 
           for (var i =0;i<99;i++) {
-            if (typeof(user["blogSetting"+i])== 'undefined') break;
-            if ((user["blogSetting"+i])!= '-') {
+            if (user && typeof(user["blogSetting"+i])== 'undefined') break;
+            if (user &&(user["blogSetting"+i])!= '-') {
               params.numberconfig=i;
             };
           }

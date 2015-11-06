@@ -3,7 +3,7 @@
 var pg       = require('pg');
 var async    = require('async');
 var config   = require('../config.js');
-var markdown = require('markdown').markdown;
+var markdown = require('markdown-it')();
 var should   = require('should');
 var moment   = require('moment');
 
@@ -195,105 +195,6 @@ function createNewBlog(proto,callback) {
   });
 }
 
-function preview(edit,lang,user,callback) {
-  debug('preview');
-  var self = this;
-//  should(typeof(edit)).equal.True();
-  should(typeof(lang)).equal("string");
-  if (typeof(user)=="function") {
-    callback = user;
-    user = "";
-  }
-
-  var articles = {};
-  var preview = "";
-
-  var picture = "";
-  if (!edit && this.markdownImage) {
-    picture = markdown.toHTML(this.markdownImage);
-  }
-
-  articleModule.find({blog:this.name},{column:"title"},function(err,result){
-    
-    if (self.status != "help") {
-      // first put the Header
-      /*if (lang=='DE')
-        preview = '<h2>Wochennotiz '+self.name+'</h2>\n'
-      if (lang=='EN')
-        preview = '<h2> Weekly'+self.name+'</h2>\n'*/
-      if (self.startDate && self.endDate) {
-        preview += "<p>"+moment(self.startDate).locale(lang).format('l') +"-"+moment(self.endDate).locale(lang).format('l') +'</p>\n';
-      }
-      if (picture == "") {
-        preview += "<!--         place picture here              -->\n"              
-      } else {
-        preview += picture + "\n";              
-
-      }
-
-    }
-    else preview = '<h2>'+self.name+'</h2>\n'
-
-  
-    // Put every article in an array for the category
-    for (var i=0;i<result.length;i++ ) {
-      var r = result[i];
-      if (typeof(articles[r.category]) == 'undefined') {
-        articles[r.category] = [];
-      }
-      articles[r.category].push(r);
-    }
-
-    var clist = self.getCategories();
-    
-    
-
-    // Generate the blog result along the categories
-    for (var i=0;i<clist.length;i++) {
-      var category = clist[i].DE;
-
-
-      var categoryLANG = clist[i].DE;
-      if (lang=="DE") categoryLANG = clist[i].DE;
-      if (lang=="EN") categoryLANG = clist[i].EN;
-
-      if (!edit && category =="--unpublished--") continue;
-
-   
-      // If the category exists, generate HTML for it
-      if (typeof(articles[category])!='undefined') {
-        debug('Generating HTML for category %s',category);
-        var htmlForCategory = ''
-
-        for (var j=0;j<articles[category].length;j++) {
-          var r = articles[category][j];
-          if (edit == 'overview') {
-            htmlForCategory += r.overview(user)+'\n';
-          } else {
-            htmlForCategory += r.preview(lang,edit,user)+'\n';
-          } 
-        }
-        var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLANG.toLowerCase()+'">'+categoryLANG+'</h2>\n';
-        htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
-        preview += htmlForCategory;
-        delete articles[category];
-      }
-    }
-    for (k in articles) {
-      preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
-      preview += "<p> Please use [edit blog detail] to enter category</p>\n";
-      preview += "<p> Or edit The Articles ";
-      for (var i=0;i<articles[k].length;i++) {
-        preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</span></a> ';
-      }
-      preview += "</p>\n";
-    }
-    var result = {};
-    result.preview = preview;
-    result.articles = articles;
-    callback(null, result);
-  })
-}
 
 function getPreview(style,user,callback) {
   debug('getPreview');
@@ -447,10 +348,7 @@ function dropTable(cb) {
 
 // Prototype Functions
 
-// preview(edit,callback)
-// edit: boolean, specifying wether generated HTML should contain edit links for articles or not
 // result of preview is html code to display the blog.
-Blog.prototype.preview = preview;
 Blog.prototype.getPreview = getPreview;
 
 // setAndSave(user,data,callback)
