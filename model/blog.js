@@ -140,6 +140,34 @@ function setReviewComment(lang,user,data,callback) {
   })
 } 
 
+function closeBlog(lang,user,status,callback) {
+  debug("closeBlog");
+  var self=this;
+  var closeField = "close"+lang;
+  if (self[closeField] == status) return callback();
+  async.series([
+    function checkID(cb) {
+      if (self.id == 0) {
+        self.save(cb);
+      } else cb();
+    }
+  ],function(err){
+    should.exist(self.id);
+    should(self.id).not.equal(0);
+    async.series ( [
+        function(callback) {
+           logModule.log({oid:self.id,user:user,table:"blog",property:rc,from:self[closeField],to:status},callback);
+        },
+        function(callback) {
+          self[closeField] = status;
+          callback();
+        }
+      ],function(err){
+        if (err) return callback(err);
+        self.save(callback);
+      })
+  })  
+}
 
 function find(obj1,obj2,callback) {
   debug("find");
