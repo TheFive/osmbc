@@ -109,6 +109,7 @@ function getPreview(par1,par2,par3) {
 
   // Calculate markup for comment
   var commentMarkup = "";
+  var editLink = '';
 
   if (options.edit && options.comment && this.comment) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
@@ -123,22 +124,27 @@ function getPreview(par1,par2,par3) {
   var liON = '<li'+commentMarkup+'>\n';
   var liOFF = '</li>';
   if (options.glyphicon && options.edit) {
-    var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-    liON = '<p'+commentMarkup +'>\n'+editMark+' ';
-    liOFF = '</p>';
+    editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
+    console.log("EditLink1"+editLink);
   }
   // Generate Translation & Edit Links
-  var editLink = '';
   if (options.edit && options.editLink ) {
+    var el = ''; //editLink overwrites Gylphicon
+
+    console.log("Try Edit Link"+this[markdownEDIT]);
     if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
-      editLink = "Edit";
+      el = "Edit";
+      console.log("Test to be defined")
     }
     if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
-      if (editLink != '') editLink +='&'
-      editLink += "Translate";
+      if (el != '') el +='&'
+      el += "Translate";
     }
-    if (editLink =='' && options.shortEditLink) editLink ='…';
-    if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+editLink+'</a>';    
+    if (el =='' && options.shortEditLink) el ='…';
+    if (el != '') el = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
+    if (el != '') editLink = el;
+    console.log("el"+el);
+    console.log("EditLink2"+editLink);
   }
 
   // Generate Text for display
@@ -170,12 +176,26 @@ function getPreview(par1,par2,par3) {
       textright = markdown.render(md);
  
       // clean up <p> and </p> of markdown generation.
-      if (textright.substring(0,3)=="<p>" && textright.substring(textright.length-4,textright.length)=='</p>'){
-        textright = textright.substring(3,textright.length-4)
-      }
     } else {
       textright = this.displayTitle();
     }
+  }
+  console.log("EditLink3"+editLink);
+  if (text) {
+
+    console.log(text);
+    console.log("Edit Link"+editLink);
+    
+    // try to put Edit Link at before the last '</p>';
+    if (text.substring(text.length-4,text.length)=='</p>') {
+      text = text.substring(0,text.length-4)+editLink+'</p>\n';
+    } else if (text.substring(text.length-5,text.length-1)=='</p>') {
+      text = text.substring(0,text.length-5)+editLink+'</p>\n';
+    }
+    else text += editLink;
+
+    console.log(text);
+
   }
 
 
@@ -194,11 +214,11 @@ function getPreview(par1,par2,par3) {
   }
   if (!options.bilingual) {
       return liON + 
-    markON +
-    text + '\n' +
-    markOFF +
-    editLink+     
-    liOFF;
+              markON +
+              text + '\n' +
+              markOFF +
+             // editLink+     
+              liOFF;
   }
   else {
     return '<div class="row">'+
@@ -207,7 +227,7 @@ function getPreview(par1,par2,par3) {
               markON +
               text + '\n' +
               markOFF +
-              editLink+     
+             // editLink+     
               liOFF +
              '</div>'+
              '<div class="col-md-6">'+
@@ -215,7 +235,7 @@ function getPreview(par1,par2,par3) {
               markrightON +
               textright + '\n' +
               markrightOFF +
-              editLink+     
+            //  editLink+     
               liOFF +
              '</div>'+
            '</div>'
@@ -401,7 +421,7 @@ function displayTitle(maxlength) {
   if (typeof(this.collection)!='undefined' && this.collection !="") {
     result = util.shorten(this.collection,maxlength)
   }
-  if (result.trim()=="") result = "Empty Article";
+  if (result.trim()=="") result = "No Title";
   return result;
 }
 
