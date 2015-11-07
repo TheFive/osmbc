@@ -67,6 +67,7 @@ function create (proto) {
 
 function setAndSave(user,data,callback) {
   debug("setAndSave");
+  debug('user %s',user);
   var self = this;
   delete self.lock;
   async.series([
