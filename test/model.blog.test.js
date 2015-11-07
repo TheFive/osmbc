@@ -266,6 +266,11 @@ describe('model/blog', function() {
 
 
             if (result.getDifferences().length>0) {
+              console.log("---------Result:----------");
+              console.log(html);
+              console.log("---------expected Result:----------");
+              console.log(htmlResult);
+
               should.not.exist(result.getDifferences());
             }
             bddone();

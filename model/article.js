@@ -100,8 +100,7 @@ function getPreview(par1,par2,par3) {
     options = settingsModule.getSettings(style);
 
   }
-  //console.log("getPreview Options");//debuglog
-  //console.dir(options);
+  
 
   var markdownEDIT = "markdown"+options.left_lang;
   var markdownTRANS = "markdown"+options.right_lang;
@@ -125,16 +124,13 @@ function getPreview(par1,par2,par3) {
   var liOFF = '</li>';
   if (options.glyphicon && options.edit) {
     editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-    console.log("EditLink1"+editLink);
   }
   // Generate Translation & Edit Links
   if (options.edit && options.editLink ) {
     var el = ''; //editLink overwrites Gylphicon
 
-    console.log("Try Edit Link"+this[markdownEDIT]);
     if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
       el = "Edit";
-      console.log("Test to be defined")
     }
     if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
       if (el != '') el +='&'
@@ -143,8 +139,6 @@ function getPreview(par1,par2,par3) {
     if (el =='' && options.shortEditLink) el ='…';
     if (el != '') el = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
     if (el != '') editLink = el;
-    console.log("el"+el);
-    console.log("EditLink2"+editLink);
   }
 
   // Generate Text for display
@@ -180,11 +174,7 @@ function getPreview(par1,par2,par3) {
       textright = this.displayTitle();
     }
   }
-  console.log("EditLink3"+editLink);
   if (text) {
-
-    console.log(text);
-    console.log("Edit Link"+editLink);
     
     // try to put Edit Link at before the last '</p>';
     if (text.substring(text.length-4,text.length)=='</p>') {
@@ -193,8 +183,6 @@ function getPreview(par1,par2,par3) {
       text = text.substring(0,text.length-5)+editLink+'</p>\n';
     }
     else text += editLink;
-
-    console.log(text);
 
   }
 
