@@ -53,7 +53,7 @@ block content
               option(value="close") close
         .row
           .col-md-2
-            | Status <br> Image 
+            | Image 
           .col-md-6
             textarea.form-control(name ="markdownImage" ,rows = 7) #{blog.markdownImage} 
  
@@ -80,39 +80,68 @@ block content
         .col-md-2
           | Period 
         .col-md-3
-          | #{blog.startDate}
+          .panel.panel-default
+            .panel-body #{blog.startDate}
         .col-md-3
-          | #{blog.endDate}
+          .panel.panel-default
+            .panel-body #{blog.endDate}
       .row
         .col-md-2
           | Status 
         .col-md-6
-          | #{blog.status}
+          .panel.panel-default
+            .panel-body #{blog.status}
+      .row
+        .col-md-2
+        .col-md-6
+          table.table-condensed
+            tr
+              th lang
+              th review
+              th close
+            each lang in layout.languages
+              tr
+                td
+                 | #{lang}
+                td
+                 | #{(blog["reviewComment"+lang])?"review":"-"}
+                td
+                  if blog["close"+lang]
+                    | close
+                    a(href="#{layout.htmlroot}/blog/#{blog.id}?closeLang&status=false") Reopen
+                  else 
+                    | -
+                
+
       .row
         .col-md-2
           | Show Articles
         .col-md-10
-          a(href="#{layout.htmlroot}/article/list?blog=#{blog.name}") List of all articles 
-          | Use this link to go to "unlinked" articles.
+          p 
+            a(href="#{layout.htmlroot}/article/list?blog=#{blog.name}") List of all articles 
+          p 
+            Use this link to go to "unlinked" articles.
       .row
         .col-md-2
           | Markdown <br> Image 
         .col-md-6
-          | #{blog.markdownImage}
+          .panel.panel-default
+            .panel-body #{blog.markdownImage}
       
       .row
         .col-md-2
 
           | Categories
         .col-md-8
-          :verbatim
-            <pre>
-            !{JSON.stringify(blog.categories,null,5)}
-            </pre>
+              :verbatim
+                <pre>
+                !{JSON.stringify(blog.categories,null,5)}
+                </pre>
       .row
         .col-md-2
           | Help
         .col-md-10
+
           a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=help") This is a Help Blog 
           | Use this link, to create a "Help" Blog from this blog.
 

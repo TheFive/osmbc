@@ -156,7 +156,7 @@ function closeBlog(lang,user,status,callback) {
     should(self.id).not.equal(0);
     async.series ( [
         function(callback) {
-           logModule.log({oid:self.id,user:user,table:"blog",property:rc,from:self[closeField],to:status},callback);
+           logModule.log({oid:self.id,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
         },
         function(callback) {
           self[closeField] = status;
@@ -390,7 +390,7 @@ Blog.prototype.getPreview = getPreview;
 Blog.prototype.setAndSave = setAndSave;
 
 Blog.prototype.setReviewComment = setReviewComment;
-
+Blog.prototype.closeBlog = closeBlog;
 // save
 // just store the object in the database
 Blog.prototype.save = pgMap.save;

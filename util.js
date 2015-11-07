@@ -9,6 +9,7 @@ function shorten(string,maxlength) {
   if (!string) return ""; 
   var newstring = string;
   if (typeof(string)=='object') newstring = JSON.stringify(string);
+  if (typeof(string)=='boolean') newstring = string.toString();
 
   if (newstring.length < maxlength) return newstring;
   return newstring.substring(0,maxlength)+"...";

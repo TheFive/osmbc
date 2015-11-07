@@ -30,6 +30,8 @@ function prepareRenderLayout(req,res,next) {
   var listOfHelpBlog;
   var style = "style.css";
   if (config.getValue("style")) style = config.getValue("style");
+  var languages = [];
+  if (config.getLanguages()) languages = config.getLanguages();
 
  
 
@@ -62,10 +64,6 @@ function prepareRenderLayout(req,res,next) {
         if (err) return callback(err);
         var list = [];
         for (var i=0;i<result.length;i++) {
-          console.log("Result-----");
-          console.dir(req.user);
-          console.log("review Comment");
-          console.log("reviewComment"+req.user.language);
           if (!(result[i]["reviewComment"+req.user.language])) {
             list.push(result[i]);
           }
@@ -104,6 +102,7 @@ function prepareRenderLayout(req,res,next) {
       res.rendervar.layout = {user:req.user,
                       listOfOrphanBlog:result.listOfOrphanBlog,
                       htmlroot: htmlRoot,
+                      languages:languages,
                       listOfOpenBlog:result.listOfOpenBlog,
                       listOfEditBlog:result.listOfEditBlog,
                       listOfReviewBlog:result.listOfReviewBlog,

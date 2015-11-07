@@ -93,7 +93,7 @@ function renderBlogId(req, res, next) {
         {
           var status = true;
           if (req.query.status && req.query.status == "false") status = false;
-          blog.closeLang(options.left_lang,user,status,function(err) {
+          blog.closeBlog(options.left_lang,user,status,function(err) {
             if (err) {
               console.dir(err);
               info.message = JSON.stringify(err);
