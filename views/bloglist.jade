@@ -13,20 +13,37 @@ block content
       table.table.table-striped.table-responsive
         thead
           tr 
-            th
-             | name
-            th
-             |  status
-            th
-             |  ??
-            th
-             | ??
+            th name
+            th status
+            for lang in layout.languages
+              th= lang
+            th service
          tbody
           each blog, i in blogs
             tr
               td
                 a(href='#{layout.htmlroot}/blog/' + blog.id) #{blog.name} 
               td= blog.status
+              - var allclosed=true
+              for lang in layout.languages
+                td
+                  if blog["close"+lang]
+                    | closed
+                  else 
+                    - allclosed = false
+                    if blog["reviewComment"+lang]
+                      | review
+                    else 
+                      | -
+
+              td
+                if allclosed
+                  a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=close") Close Blog
+                else
+                  | -
+
+
+
           
 
 
