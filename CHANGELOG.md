@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.3.4](https://github.com/TheFive/osmbc/tree/0.3.4) (2015-11-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.3...0.3.4)
+
+**Implemented enhancements:**
+
+- Better UX for status change of a blog. [\#130](https://github.com/TheFive/osmbc/issues/130)
+
 ## [0.3.3](https://github.com/TheFive/osmbc/tree/0.3.3) (2015-11-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.2...0.3.3)
 
