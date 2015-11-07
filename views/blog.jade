@@ -12,34 +12,39 @@ mixin navbutton(userstyle,style)
 block content
   .row
     .col-md-6
+      - status = blog.status
+      - if (blog["reviewComment"+left_lang]) status = "Review "+left_lang;
+      - if (blog["close"+left_lang]) status = "Close "+left_lang;
       if blog.status == "help"
         h2
           | #{blog.name}
       else if left_lang == "DE"
         h2
-          | Wochennotiz #{blog.name} (#{blog.status})
+          | Wochennotiz #{blog.name} (#{status})
       else
         h2
-          | Weekly #{blog.name} (#{blog.status})
-    .col-md-2
+          | Weekly #{blog.name} (#{status})
       
-    .col-md-4    
-      - reviewCommentsLeft = blog["reviewComment"+left_lang];
-      if (reviewCommentsLeft)
-        .row
-          .col-md-12
-             form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.id}", method="get")
-              .form-group
-                .col-sm-8
-                  input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
+    .col-md-6
+      if !(blog["close"+left_lang])    
+        - reviewCommentsLeft = blog["reviewComment"+left_lang];
+        if (reviewCommentsLeft)
+          .row
+            .col-md-12
+               form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.id}", method="get")
+                .form-group
+                  .col-sm-6
+                    input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
 
-                .col-sm-4
-                  button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang}     
-      else
-        if blog.status=="open"
-          button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?setStatus=edit';") Close #{blog.name} for new articles
+                  .col-sm-6
+                    button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang} 
+                    button.btn.btn-large.btn-primary(type = "button" onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?closeLang';") Close #{blog.name}(#{left_lang})
+      
         else
-          button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?reviewComment=startreview';") Set #{blog.name}(#{left_lang} ) ready for review
+          if blog.status=="open"
+            button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?setStatus=edit';") Close #{blog.name} for new articles
+          else
+            button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?reviewComment=startreview';") Set #{blog.name}(#{left_lang}) ready for review
 
   .row
     .col-md-6
