@@ -77,7 +77,8 @@ function prepareRenderLayout(req,res,next) {
         if (err) return callback(err);
         var list = [];
         for (var i=0;i<result.length;i++) {
-          if ((result[i]["reviewComment"+req.user.language])) {
+          if ((result[i]["reviewComment"+req.user.language]) &&
+              !(result[i]["close"+req.user.language])) {
             list.push(result[i]);
           }
         }
