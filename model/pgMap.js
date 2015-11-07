@@ -125,7 +125,7 @@ module.exports.save = function(callback) {
          //   console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
             if (!versionsEqual) {
               debug('send error')
-              err = new Error("Version Nummber differs");
+              err = new Error("Version Number differs");
             }
             return cb(err);
           })
