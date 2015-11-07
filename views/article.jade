@@ -68,13 +68,20 @@ block content
                     - displayed = true;
                   else
                      option(value="#{blog.name}" ) #{blog.name}
+              if (layout.listOfEditBlog)  
+                for blog in layout.listOfEditBlog 
+                  if blog.name == article.blog         
+                    option(value="#{blog.name}" selected) #{blog.name} (Edit)
+                    - displayed = true;
+                  else
+                     option(value="#{blog.name}" ) #{blog.name} (Edit)
               if (layout.listOfReviewBlog)  
                 for blog in layout.listOfReviewBlog 
                   if blog.name == article.blog         
-                    option(value="#{blog.name}" selected) #{blog.name} (Review)
+                    option(value="#{blog.name}" selected) #{blog.name} (Review #{layout.user.language})
                     - displayed = true;
                   else
-                     option(value="#{blog.name}" ) #{blog.name} (Review)
+                     option(value="#{blog.name}" ) #{blog.name} (Review #{layout.user.language})
               if (article.blog == "Trash")
                 option(value="Trash" selected) Trash
                 - displayed = true;

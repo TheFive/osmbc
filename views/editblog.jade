@@ -31,6 +31,9 @@ block content
             | Name 
           .col-md-6
             input(type="text",class="form-control",name ="name",value="#{blog.name}") 
+          .col-md-4
+            input(type="submit", class="btn btn-primary",value="OK")
+            a(href="#{layout.htmlroot}/blog/edit/#{blog.id}?edit=false" class="btn btn-default" role="button") Cancel
         .row
           .col-md-2
             | Period 
@@ -41,7 +44,16 @@ block content
  
         .row
           .col-md-2
-            | Markdown <br> Image 
+            | Status
+          .col-md-6
+            select(id="status",name="status").form-control
+              option(value="#{blog.status}" selected) #{blog.status}
+              option(value="open") open
+              option(value="edit") edit
+              option(value="close") close
+        .row
+          .col-md-2
+            | Status <br> Image 
           .col-md-6
             textarea.form-control(name ="markdownImage" ,rows = 7) #{blog.markdownImage} 
  
@@ -51,10 +63,7 @@ block content
           .col-md-6
             textarea.form-control(name="categories",rows=30) #{JSON.stringify(blog.categories,null,5)}
 
-          .col-md-1
-            input(type="submit", class="btn btn-primary",value="OK")
-            a(href="#{layout.htmlroot}/blog/edit/#{blog.id}?edit=false" class="btn btn-default" role="button") Cancel
-
+ 
 
     else
       .row
@@ -74,6 +83,11 @@ block content
           | #{blog.startDate}
         .col-md-3
           | #{blog.endDate}
+      .row
+        .col-md-2
+          | Status 
+        .col-md-6
+          | #{blog.status}
       .row
         .col-md-2
           | Show Articles

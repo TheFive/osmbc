@@ -246,6 +246,7 @@ function postBlogId(req, res, next) {
     var changes = {name:req.body.name,
                    startDate:req.body.startDate,
                    endDate:req.body.endDate,
+                   status:req.body.status,
                    markdownImage:req.body.markdownImage,
                    categories:categories};
 
