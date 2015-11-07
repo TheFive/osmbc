@@ -11,31 +11,18 @@ mixin navbutton(userstyle,style)
 
 block content
   .row
-    .col-md-4
+    .col-md-6
       if blog.status == "help"
         h2
           | #{blog.name}
       else if left_lang == "DE"
         h2
-          | Wochennotiz #{blog.name}
+          | Wochennotiz #{blog.name} (#{blog.status})
       else
         h2
-          | Weekly #{blog.name}
-    .col-md-4
-          div.btn-group
-            button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-              | #{blog.status}
-              span.caret   
-            ul.dropdown-menu(name="category",role="menu")
-              li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=open") open 
-              li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=edit") edit 
-              li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=closed") closed 
-              li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=trash") trash  
-    
+          | Weekly #{blog.name} (#{blog.status})
+    .col-md-2
+      
     .col-md-4    
       - reviewCommentsLeft = blog["reviewComment"+left_lang];
       if (reviewCommentsLeft)
@@ -47,10 +34,13 @@ block content
                   input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
 
                 .col-sm-4
-                  button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang}
+                  button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang}     
       else
-        .row
-          button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?reviewComment=startreview';") Set #{left_lang} ready for review
+        if blog.status=="open"
+          button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?setStatus=edit';") Close #{blog.name} for new articles
+        else
+          button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?reviewComment=startreview';") Set #{blog.name}(#{left_lang} ) ready for review
+
   .row
     .col-md-6
       - reviewCommentsLeft = blog["reviewComment"+left_lang];
