@@ -236,6 +236,15 @@ module.exports.find = function find(module,obj,order,callback) {
   })
 }
 
+function isURL(str) {
+  var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  return pattern.test(str);
+}
 
 module.exports.fullTextSearch = function fullTextSearch(module,search,order,callback) {
   debug("fullTextSearch");
@@ -267,15 +276,34 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
         orderBy +=" desc";
       }
     }
+    var germanVector = "@@ plainto_tsquery('german', '"+search+"')";
+    var englishVector = "@@ plainto_tsquery('english', '"+search+"')";
 
+    if (isURL(search)) {
+      var http1Url = search;
+      var http2Url;
+      if (search.substring(0,5)=="http:") {
+        http2Url = "https:"+search.substring(5,9999);
+      }
+      if (search.substring(0,6)=="https:") {
+        http2Url = "http:"+search.substring(6,9999);
+      }
+      console.log(http1Url);
+      console.log(http2Url);
+      search = "''"+http1Url+"'' | ''("+http1Url+")'' ";
+      if (http2Url) search += "| ''"+http2Url+"'' | ''("+http1Url+")'' ";
+      germanVector = "@@ to_tsquery('german', '"+search+"')";
+      englishVector = "@@ to_tsquery('english', '"+search+"')";
+    }
    
     var sqlQuery =  "select id, data from article \
-                          where to_tsvector('german', coalesce(data->>'title','')::text || \
-                                                      coalesce(data->>'collection','')  || \
-                                                      coalesce(data->>'markdownDE','')   ) @@ plainto_tsquery('german', '"+search+"') \
-                            or to_tsvector('english',  coalesce(data->>'collection','')  || \
-                                                      coalesce(data->>'markdownEN','')   ) @@ plainto_tsquery('english', '"+search+"') "+ 
+                          where to_tsvector('german', coalesce(data->>'title','')::text || ' '|| \
+                                                      coalesce(data->>'collection','')  || ' '|| \
+                                                      coalesce(data->>'markdownDE','')   ) "+germanVector+" \
+                            or to_tsvector('english',  coalesce(data->>'collection','')  || ' '|| \
+                                                      coalesce(data->>'markdownEN','')   ) "+englishVector+ 
                         orderBy;
+    console.log(sqlQuery);
     var startTime = new Date().getTime();
 
     var query = client.query(sqlQuery);
