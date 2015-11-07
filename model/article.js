@@ -137,8 +137,7 @@ function getPreview(par1,par2,par3) {
       el += "Translate";
     }
     if (el =='' && options.shortEditLink) el ='…';
-    if (el != '') el = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
-    if (el != '') editLink = el;
+    if (el != '') editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
   }
 
   // Generate Text for display
