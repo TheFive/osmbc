@@ -86,7 +86,7 @@ function renderArticleId(req,res,next) {
           for (i=0;i<languages.length;i++) {
             var lang = languages[i];
             if (typeof(article["markdown"+lang])!='undefined') {
-              article["textHtml"+lang]=article.preview(lang);
+              article["textHtml"+lang]="<ul>"+article.getPreview(lang)+"</ul>";
             }
           }
           if (typeof(article.comment)!='undefined') {

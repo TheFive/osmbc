@@ -4,7 +4,7 @@
 var pg     = require('pg');
 var async  = require('async');
 var should = require('should');
-var markdown = require('markdown').markdown;
+var markdown = require('markdown-it')();
 var debug  = require('debug')('OSMBC:model:article');
 
 
@@ -80,76 +80,6 @@ function createNewArticle (proto,callback) {
 }
 
 
-function preview(lang,edit,user) {
-  debug("preview");
-  should.exist(lang);
-  if (typeof(user)=='undefined') user = "";
-  var editLink;
-  var commentMarkup = "";
-  if (this.comment) {
-    if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
-      var commentColour = "blue";
-      if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
-      if (this.comment.indexOf("@all")>=0) commentColour = "red";
-      commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
-    }
-  }
-  if (edit) editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-  if (typeof(this["markdown"+lang])!='undefined' && this["markdown"+lang]!='') {
-    var md = this["markdown"+lang];
-
-    // Does the markdown text starts with '* ', so ignore it
-    if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
-    // Return an list Element for the blog article
-    var html = markdown.toHTML(md);
-
-
-    // clean up <p> and </p> of markdown generation.
-    if (html.substring(0,3)=="<p>" && html.substring(html.length-4,html.length)=='</p>'){
-      html = html.substring(3,html.length-4)
-    }
-
-
-    if (edit) {
-        return '<p'+commentMarkup+'>\n'+editLink+' '+html+'\n</p>'
-      } else {
-        // if not edit mode and article has not to be published, return nothing.
-        if (this.categoryEN == "--unpublished--") return '';
-        return '<li>\n'+html+'\n</li>'
-      }
-  } 
-  // Markdown is not defined. Return a placholder for the article
-  if (edit) return '<p'+commentMarkup+'>\n<mark>'+editLink+' '+this.displayTitle(9999)+'\n</mark></p>';
-       else return '<li>\n<mark>'+this.displayTitle(9999)+'\n</mark></li>';
-}
-
-function overview(user) {
-  debug("overview");
-  if (typeof(user)=='undefined') user = "";
-  var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-  
-  var editLink = '';
-  if (typeof(this.markdownDE)=='undefined' || this.markdownDE == '') {
-    editLink = "Edit";
-  }
-  if (typeof(this.markdownEN)=='undefined' || this.markdownEN == '') {
-    if (editLink != '') editLink +='&'
-    editLink += "Translate";
-  }
-  if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'">'+editLink+'</a>'; 
-
-  var text = this.displayTitle(90);
-  var commentMarkup = "";
-  if (this.comment) {
-    if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
-      var commentColour = "blue";
-      if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
-      if (this.comment.indexOf("@all")>=0) commentColour = "red";
-      commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
-    }
-  }
-  return '<p'+commentMarkup+'>\n'+editMark+' '+text+' '+editLink+'\n</p>';      
-}
 
 
 function getPreview(par1,par2,par3) {
@@ -170,8 +100,7 @@ function getPreview(par1,par2,par3) {
     options = settingsModule.getSettings(style);
 
   }
-  //console.log("getPreview Options");//debuglog
-  //console.dir(options);
+  
 
   var markdownEDIT = "markdown"+options.left_lang;
   var markdownTRANS = "markdown"+options.right_lang;
@@ -179,6 +108,7 @@ function getPreview(par1,par2,par3) {
 
   // Calculate markup for comment
   var commentMarkup = "";
+  var editLink = '';
 
   if (options.edit && options.comment && this.comment) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
@@ -193,22 +123,21 @@ function getPreview(par1,par2,par3) {
   var liON = '<li'+commentMarkup+'>\n';
   var liOFF = '</li>';
   if (options.glyphicon && options.edit) {
-    var editMark = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-    liON = '<p'+commentMarkup +'>\n'+editMark+' ';
-    liOFF = '</p>';
+    editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   }
   // Generate Translation & Edit Links
-  var editLink = '';
   if (options.edit && options.editLink ) {
+    var el = ''; //editLink overwrites Gylphicon
+
     if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
-      editLink = "Edit";
+      el = "Edit";
     }
     if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
-      if (editLink != '') editLink +='&'
-      editLink += "Translate";
+      if (el != '') el +='&'
+      el += "Translate";
     }
-    if (editLink =='' && options.shortEditLink) editLink ='…';
-    if (editLink != '') editLink = '<a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+editLink+'</a>';    
+    if (el =='' && options.shortEditLink) el ='…';
+    if (el != '') editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
   }
 
   // Generate Text for display
@@ -226,14 +155,8 @@ function getPreview(par1,par2,par3) {
       // Does the markdown text starts with '* ', so ignore it
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
-      text = markdown.toHTML(md);
+      text = markdown.render(md);
 
-   
-
-      // clean up <p> and </p> of markdown generation.
-      if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>'){
-        text = text.substring(3,text.length-4)
-      }
     } else {
       text = this.displayTitle();
     }    
@@ -243,15 +166,23 @@ function getPreview(par1,par2,par3) {
       // Does the markdown text starts with '* ', so ignore it
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
-      textright = markdown.toHTML(md);
+      textright = markdown.render(md);
  
       // clean up <p> and </p> of markdown generation.
-      if (textright.substring(0,3)=="<p>" && textright.substring(textright.length-4,textright.length)=='</p>'){
-        textright = textright.substring(3,textright.length-4)
-      }
     } else {
       textright = this.displayTitle();
     }
+  }
+  if (text) {
+    
+    // try to put Edit Link at before the last '</p>';
+    if (text.substring(text.length-4,text.length)=='</p>') {
+      text = text.substring(0,text.length-4)+editLink+'</p>\n';
+    } else if (text.substring(text.length-5,text.length-1)=='</p>') {
+      text = text.substring(0,text.length-5)+editLink+'</p>\n';
+    }
+    else text += editLink;
+
   }
 
 
@@ -270,11 +201,11 @@ function getPreview(par1,par2,par3) {
   }
   if (!options.bilingual) {
       return liON + 
-    markON +
-    text + '\n' +
-    markOFF +
-    editLink+     
-    liOFF;
+              markON +
+              text + '\n' +
+              markOFF +
+             // editLink+     
+              liOFF;
   }
   else {
     return '<div class="row">'+
@@ -283,7 +214,7 @@ function getPreview(par1,par2,par3) {
               markON +
               text + '\n' +
               markOFF +
-              editLink+     
+             // editLink+     
               liOFF +
              '</div>'+
              '<div class="col-md-6">'+
@@ -291,7 +222,7 @@ function getPreview(par1,par2,par3) {
               markrightON +
               textright + '\n' +
               markrightOFF +
-              editLink+     
+            //  editLink+     
               liOFF +
              '</div>'+
            '</div>'
@@ -477,7 +408,7 @@ function displayTitle(maxlength) {
   if (typeof(this.collection)!='undefined' && this.collection !="") {
     result = util.shorten(this.collection,maxlength)
   }
-  if (result.trim()=="") result = "Empty Article";
+  if (result.trim()=="") result = "No Title";
   return result;
 }
 
@@ -607,12 +538,6 @@ Article.prototype.save = pgMap.save;
 // remove deletes the current object from the database
 Article.prototype.remove = pgMap.remove;
 
-// preview(edit)
-// edit: Boolean, that specifies, wether edit links has to be created or not
-// This function returns an HTML String of the Aricle as an list element.
-// preview and overview will be skipped in the Multilanguage Support.
-Article.prototype.preview = preview;
-Article.prototype.overview = overview;
 
 // getPreview deliveres the HTML for an article.
 // Parameter1: lang
