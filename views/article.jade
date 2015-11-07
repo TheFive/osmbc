@@ -169,8 +169,7 @@ block content
           .col-md-1
             | Preview
           +leftcolumn
-            .panel.panel-default
-              .panel-body(id="previewLEFT")
+            .panel.panel-default.panel-body(id="previewLEFT")
                 :verbatim
                   !{article["textHtml"+params.left_lang]}
           +rightcolumn
@@ -344,8 +343,9 @@ block content
                   td= layout.moment(change.timestamp).fromNow() 
  
 block scripts                
-  script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
+  script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
   script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
+
   script.
     markdownLEFT = document.getElementById("markdownLEFT");
     markdownLEFT.onchange = onchangeLEFT;
@@ -368,19 +368,16 @@ block scripts
     }
    
     function convert(text) {
-      converter = new showdown.Converter();
+      converter = new window.markdownit();
 
       // generate the OSMBlog Style List
       if (text.substring(0,2)=="* ") text = text.substring(2,999999);
       // convert md to html
-      text = converter.makeHtml(text);
+      text = converter.render(text);
       // skip <ul> and </ul> at start and end
       
 
-      if (text.substring(0,3)=="<p>" && text.substring(text.length-4,text.length)=='</p>') {
-        text = text.substring(3,text.length-4)
-      }
-      text = '<li>'+text+'</li>';
+      text = '<ul><li>'+text+'</li></ul>';
       
       return text;
 
@@ -395,7 +392,7 @@ block scripts
       var longLink = md.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
         //previewLEFT.style.backgroundColor="#FDC6CD";
-        textLeft.innerHTML = "Please shorten "+md.substring(longLink+1,longLink+40)
+        textLeft.innerHTML = "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]"
         textLeft.style.backgroundColor ="#FDC6CD";
 
 
@@ -415,7 +412,7 @@ block scripts
       previewRIGHT.innerHTML = convert(mdEN);
       var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
-        textRight.innerHTML = "Please shorten "+mdEN.substring(longLink+1,longLink+40)
+        textRight.innerHTML = "Please shorten ["+mdEN.substring(longLink+1,longLink+40)+"...]"
         textRight.style.backgroundColor ="#FDC6CD";
         //previewRIGHT.style.backgroundColor="#FDC6CD";
         
