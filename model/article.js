@@ -109,6 +109,9 @@ function getPreview(par1,par2,par3) {
   // Calculate markup for comment
   var commentMarkup = "";
   var editLink = '';
+  
+  var commentON = '';
+  var commentOFF = '';
 
   if (options.edit && options.comment && this.comment) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
@@ -116,12 +119,14 @@ function getPreview(par1,par2,par3) {
       if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
       if (this.comment.indexOf("@all")>=0) commentColour = "red";
       commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
+      commentON = '<div '+commentMarkup+'>';
+      commentOFF = '</div>';
     }
   }
 
   // generate Glyphicon for Editing
-  var liON = '<li'+commentMarkup+'>\n';
-  var liOFF = '</li>';
+  var liON = '<li'+commentMarkup+'>\n'+commentON;
+  var liOFF = commentOFF+'</li>';
   if (options.glyphicon && options.edit) {
     editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   }
