@@ -88,6 +88,21 @@ function renderBlogId(req, res, next) {
           })
         } else return callback();
       },
+      function (callback) {
+        if (typeof(req.query.closeLang)!='undefined')
+        {
+          var status = true;
+          if (req.query.status && req.query.status == "false") status = false;
+          blog.closeBlog(options.left_lang,user,status,function(err) {
+            if (err) {
+              console.dir(err);
+              info.message = JSON.stringify(err);
+              info.status = 'error';
+            }
+            return callback();
+          })
+        } else return callback();
+      },
  
  /*    function (callback) {
         articleModule.find({blog:blog.name},function(err,result){
