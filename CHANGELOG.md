@@ -1,10 +1,56 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5...HEAD)
+
+**Implemented enhancements:**
+
+- Allow closing of blogs per language. [\#131](https://github.com/TheFive/osmbc/issues/131)
+
+## [0.3.5](https://github.com/TheFive/osmbc/tree/0.3.5) (2015-11-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.4...0.3.5)
+
+**Implemented enhancements:**
+
+- Show status of the blog in every language. [\#132](https://github.com/TheFive/osmbc/issues/132)
+
+## [0.3.4](https://github.com/TheFive/osmbc/tree/0.3.4) (2015-11-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.3...0.3.4)
+
+**Implemented enhancements:**
+
+- Better UX for status change of a blog. [\#130](https://github.com/TheFive/osmbc/issues/130)
+
+## [0.3.3](https://github.com/TheFive/osmbc/tree/0.3.3) (2015-11-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.2...0.3.3)
+
+**Fixed bugs:**
+
+- Multimarkdown for Preview [\#47](https://github.com/TheFive/osmbc/issues/47)
+
+## [0.3.2](https://github.com/TheFive/osmbc/tree/0.3.2) (2015-11-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.1...0.3.2)
+
+**Implemented enhancements:**
+
+- Show a better hint, when a long link is detected. [\#129](https://github.com/TheFive/osmbc/issues/129)
+
+## [0.3.1](https://github.com/TheFive/osmbc/tree/0.3.1) (2015-11-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.0...0.3.1)
+
+**Fixed bugs:**
+
+- Edit Help leads to the last weekly and not the help blog [\#128](https://github.com/TheFive/osmbc/issues/128)
+- All links are beginning with spaces [\#122](https://github.com/TheFive/osmbc/issues/122)
+- Cancel at "Edit Blog Details" Does Not Work [\#115](https://github.com/TheFive/osmbc/issues/115)
+
 ## [0.3.0](https://github.com/TheFive/osmbc/tree/0.3.0) (2015-11-04)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28g...0.3.0)
 
 **Implemented enhancements:**
 
+- Categories in Spanish [\#108](https://github.com/TheFive/osmbc/issues/108)
 - Make 3 Edit views for a blog configurable. [\#97](https://github.com/TheFive/osmbc/issues/97)
 - Create an OverviewEN as a blog display. [\#79](https://github.com/TheFive/osmbc/issues/79)
 - Add an Edit&Translate button to Full View for a blog. [\#78](https://github.com/TheFive/osmbc/issues/78)
@@ -17,10 +63,6 @@
 - History tables destroys views on mobile phones. [\#106](https://github.com/TheFive/osmbc/issues/106)
 - Show CR \(linebreak\) in Collection [\#99](https://github.com/TheFive/osmbc/issues/99)
 
-**Closed issues:**
-
-- Categories in Spanish [\#108](https://github.com/TheFive/osmbc/issues/108)
-
 **Merged pull requests:**
 
 - README.md: "for tests, use the development instance" [\#111](https://github.com/TheFive/osmbc/pull/111) ([alexandre-mbm](https://github.com/alexandre-mbm))
@@ -29,14 +71,14 @@
 ## [0.2.28g](https://github.com/TheFive/osmbc/tree/0.2.28g) (2015-10-31)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28f...0.2.28g)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Add Polish Flag [\#107](https://github.com/TheFive/osmbc/issues/107)
 
 ## [0.2.28f](https://github.com/TheFive/osmbc/tree/0.2.28f) (2015-10-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28e...0.2.28f)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Allow Review Button only to be used, if Review text is given. [\#105](https://github.com/TheFive/osmbc/issues/105)
 
@@ -56,7 +98,7 @@
 ## [0.2.28b](https://github.com/TheFive/osmbc/tree/0.2.28b) (2015-10-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28a...0.2.28b)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - If there are wrong categories in a blog, they are not shown. [\#104](https://github.com/TheFive/osmbc/issues/104)
 
@@ -80,11 +122,8 @@
 
 **Fixed bugs:**
 
-- Clickable links in edit mode [\#81](https://github.com/TheFive/osmbc/issues/81)
-
-**Closed issues:**
-
 - OSM User is allways TheFive instead of OSM User \(userlist and user\). [\#95](https://github.com/TheFive/osmbc/issues/95)
+- Clickable links in edit mode [\#81](https://github.com/TheFive/osmbc/issues/81)
 
 ## [0.2.27](https://github.com/TheFive/osmbc/tree/0.2.27) (2015-10-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26b...0.2.27)
@@ -148,35 +187,36 @@
 
 **Implemented enhancements:**
 
+- Show a special icon if an entry has comments [\#69](https://github.com/TheFive/osmbc/issues/69)
 - rebuild the article view mode [\#53](https://github.com/TheFive/osmbc/issues/53)
+- Add a possibility to find easy commented articles in a blog. [\#49](https://github.com/TheFive/osmbc/issues/49)
 
 **Fixed bugs:**
 
 - Reference link in table with double used links is broken, link to article does not work. [\#70](https://github.com/TheFive/osmbc/issues/70)
+- mocha tests seems to fail in other timeszones [\#67](https://github.com/TheFive/osmbc/issues/67)
+- Error with download.js [\#57](https://github.com/TheFive/osmbc/issues/57)
 
 **Closed issues:**
 
-- Show a special icon if an entry has comments [\#69](https://github.com/TheFive/osmbc/issues/69)
-- mocha tests seems to fail in other timeszones [\#67](https://github.com/TheFive/osmbc/issues/67)
-- Error with download.js [\#57](https://github.com/TheFive/osmbc/issues/57)
 - Hint: link at GitHub's header or README.md [\#51](https://github.com/TheFive/osmbc/issues/51)
-- Add a possibility to find easy commented articles in a blog. [\#49](https://github.com/TheFive/osmbc/issues/49)
 
 ## [0.2.23](https://github.com/TheFive/osmbc/tree/0.2.23) (2015-10-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.22...0.2.23)
 
+**Implemented enhancements:**
+
+- Display Version Number under Help with Link to Release Notes [\#64](https://github.com/TheFive/osmbc/issues/64)
+- put a small frame around the flags [\#52](https://github.com/TheFive/osmbc/issues/52)
+
 **Fixed bugs:**
 
 - npm install request [\#59](https://github.com/TheFive/osmbc/issues/59)
+- Wrong Title exported [\#54](https://github.com/TheFive/osmbc/issues/54)
 
 **Closed issues:**
 
-- Display Version Number under Help with Link to Release Notes [\#64](https://github.com/TheFive/osmbc/issues/64)
 - How to configure an admin user \(the first user\)? [\#63](https://github.com/TheFive/osmbc/issues/63)
-- Which is strategy with the development branch? [\#60](https://github.com/TheFive/osmbc/issues/60)
-- Help to configure a DEV environment [\#56](https://github.com/TheFive/osmbc/issues/56)
-- Wrong Title exported [\#54](https://github.com/TheFive/osmbc/issues/54)
-- put a small frame around the flags [\#52](https://github.com/TheFive/osmbc/issues/52)
 
 **Merged pull requests:**
 
@@ -238,22 +278,22 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Mark long HTML Links in Text in Warning or Danger. [\#19](https://github.com/TheFive/osmbc/issues/19)
 
@@ -278,7 +318,7 @@
 ## [0.2.16a](https://github.com/TheFive/osmbc/tree/0.2.16a) (2015-10-02)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16...0.2.16a)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Use WN issue number for id of HTML \<h2\> tags [\#22](https://github.com/TheFive/osmbc/issues/22)
 
@@ -304,7 +344,7 @@
 ## [0.2.13](https://github.com/TheFive/osmbc/tree/0.2.13) (2015-10-01)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.12...0.2.13)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Alle letzen Änderungen auf der "Startseite" zeigen [\#6](https://github.com/TheFive/osmbc/issues/6)
 
@@ -334,10 +374,13 @@
 ## [0.2.11a](https://github.com/TheFive/osmbc/tree/0.2.11a) (2015-09-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.11...0.2.11a)
 
+**Fixed bugs:**
+
+- Create index on ids [\#13](https://github.com/TheFive/osmbc/issues/13)
+
 **Closed issues:**
 
 - Create Full Text Search with Postgres Features for Search [\#14](https://github.com/TheFive/osmbc/issues/14)
-- Create index on ids [\#13](https://github.com/TheFive/osmbc/issues/13)
 
 ## [0.2.11](https://github.com/TheFive/osmbc/tree/0.2.11) (2015-09-24)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.10...0.2.11)
@@ -360,7 +403,7 @@
 ## [0.2.5](https://github.com/TheFive/osmbc/tree/0.2.5) (2015-09-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.4...0.2.5)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Allow only a small group of OSM Users to use OSMBC [\#10](https://github.com/TheFive/osmbc/issues/10)
 
@@ -373,14 +416,11 @@
 **Implemented enhancements:**
 
 - The Collect button should be direct visible in mobil variant. [\#9](https://github.com/TheFive/osmbc/issues/9)
+- Locking Mechanism with version number per document [\#7](https://github.com/TheFive/osmbc/issues/7)
 
 **Fixed bugs:**
 
 - Mobilvariant has to mich space on the left [\#8](https://github.com/TheFive/osmbc/issues/8)
-
-**Closed issues:**
-
-- Locking Mechanism with version number per document [\#7](https://github.com/TheFive/osmbc/issues/7)
 
 ## [0.2.2](https://github.com/TheFive/osmbc/tree/0.2.2) (2015-09-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.1...0.2.2)
