@@ -616,7 +616,7 @@ describe('model/article', function() {
           bddone();
         });
     })
-    it.only('should find the simple link',function(bddone){
+    it('should find the simple link',function(bddone){
       articleModule.fullTextSearch("https://simple.link/where",{column:"blog"},function(err,result) {
         should.not.exist(err);
         should.exist(result);
@@ -625,7 +625,7 @@ describe('model/article', function() {
         bddone();
       })
     })
-    it.only('should find the other link 3 times',function(bddone){
+    it('should find the other link 3 times',function(bddone){
       articleModule.fullTextSearch("https://www.test.at/link",{column:"blog"},function(err,result) {
         should.not.exist(err);
         should.exist(result);
