@@ -136,9 +136,10 @@ block content
         .row
           .col-md-1
             
-          .col-md-10
-            
+          .col-md-6
               .div(id="linkArea")
+          .col-md-4
+            p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
                 
         .row 
           .col-md-1
@@ -357,9 +358,13 @@ block scripts
     markdownLEFT = document.getElementById("markdownLEFT");
     markdownLEFT.onchange = onchangeLEFT;
     markdownLEFT.onkeyup = onchangeLEFT;
+    markdownLEFT.onpaste = pasteLEFT;
+    markdownLEFT.ondrop = pasteLEFT;
     markdownRIGHT = document.getElementById("markdownRIGHT");
     markdownRIGHT.onchange = onchangeRIGHT;
     markdownRIGHT.onkeyup = onchangeRIGHT;
+    markdownRIGHT.onpaste = pasteRIGHT;
+    markdownRIGHT.ondrop = pasteRIGHT;
     noTranslationText = document.getElementById("text_right").innerHTML;
    
     coll = document.getElementById("collection");
@@ -389,6 +394,89 @@ block scripts
       return text;
 
     }
+    function isURL(t) {
+    
+      var isUrlRegex = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+
+
+      if (t) return isUrlRegex.test(t);
+      return isUrlRegex;
+    }
+    function generateMarkdownLink(before,after) {
+        var begin=0;
+        while (begin<before.length && before.charAt(begin)==after.charAt(begin)) {
+          begin++
+        }
+  
+        var endBefore = before.length-1;
+        var endAfter = after.length-1;
+  
+        while ( (endBefore>0) && (endAfter > 0) && (before.charAt(endBefore)==after.charAt(endAfter))) {
+          endBefore --;
+          endAfter --;
+        }
+  
+        var beforeSnip = before.substring(begin,endBefore+2);
+        var afterSnip = after.substring(begin,endAfter+2);
+        var tb = before.substring(0,begin);
+        var ta = before.substring(endBefore+2,999999);
+        
+      
+        if (isURL(after)) {
+       
+          var allreadyMarkdowned = false;
+          if (tb!="" && tb.charAt(tb.length-1)=="(") allreadyMarkdowned= true;
+          if (ta!="" && tb.charAt(0)==")") allreadyMarkdowned= true;
+          if (!allreadyMarkdowned) {
+            var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
+            var c ;
+            if (beforeSnip == "") {
+              c = (tb+"[").length;
+            } else {
+              c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
+            }
+            return {text:r,pos:c};
+            }
+        }
+        return null;
+    }
+    
+    function pasteLEFT() {
+     
+     
+      var mf = document.getElementById("markdownLEFT");
+      var textBefore = mf.value;
+      
+      setTimeout(function(){
+        var textAfter = mf.value;
+        var r = generateMarkdownLink(textBefore,textAfter);
+        if (r) {
+          mf.value =r.text;
+          mf.selectionStart = mf.selectionEnd = r.pos;
+
+          onchangeLEFT();
+        }
+      },1);
+
+    }
+    function pasteRIGHT() {
+     
+     
+      var mf = document.getElementById("markdownRIGHT");
+      var textBefore = mf.value;
+      
+      setTimeout(function(){
+        var textAfter = mf.value;
+        var r = generateMarkdownLink(textBefore,textAfter);
+        if (r) {
+          mf.value =r.text;
+          mf.selectionStart = mf.selectionEnd = r.pos;
+         onchangeRIGHT();
+        }
+      },1);
+
+    }
+
     
     function onchangeLEFT() {
       var md = document.getElementById("markdownLEFT").value;
