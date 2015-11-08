@@ -27,7 +27,8 @@ block content
           each  article in foundArticles
             .row
               .col-md-1
-                h4= article.blog
+                p 
+                  a(href="#{layout.htmlroot}/blog/#{article.blog}") #{article.blog}
               .col-md-3
                 p
                   a(href="#{layout.htmlroot}/article/#{article.id}") #{(article.title)?article.title:"No Title"}

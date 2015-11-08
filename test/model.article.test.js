@@ -583,8 +583,6 @@ describe('model/article', function() {
         should.not.exist(err);
         article.calculateUsedLinks(function(err,result){
           should.not.exist(err);
-          console.dir(result);
-          console.dir(article);
           should.exist(result);
           should(result.count).equal(4);
           should(result["https://link.to/hallo"].length).equal(3);
@@ -629,7 +627,6 @@ describe('model/article', function() {
       articleModule.fullTextSearch("https://www.test.at/link",{column:"blog"},function(err,result) {
         should.not.exist(err);
         should.exist(result);
-        console.dir(result);
         should(result.length).equal(3);
         should(result[0].blog).equal("1");
         should(result[1].blog).equal("2");

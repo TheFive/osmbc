@@ -281,8 +281,6 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
       if (search.substring(0,6)=="https:") {
         http2Url = "http:"+search.substring(6,9999);
       }
-      console.log(http1Url);
-      console.log(http2Url);
       search = "''"+http1Url+"'' | ''("+http1Url+")'' ";
       if (http2Url) search += "| ''"+http2Url+"'' | ''("+http1Url+")'' ";
       germanVector = "@@ to_tsquery('german', '"+search+"')";
@@ -296,7 +294,6 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
                             or to_tsvector('english',  coalesce(data->>'collection','')  || ' '|| \
                                                       coalesce(data->>'markdownEN','')   ) "+englishVector+ 
                         orderBy;
-    console.log(sqlQuery);
     var startTime = new Date().getTime();
 
     var query = client.query(sqlQuery);
