@@ -1,11 +1,11 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5...HEAD)
+## [0.3.5a](https://github.com/TheFive/osmbc/tree/0.3.5a) (2015-11-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5...0.3.5a)
 
 **Implemented enhancements:**
 
+- ES.PT [\#136](https://github.com/TheFive/osmbc/issues/136)
 - Allow closing of blogs per language. [\#131](https://github.com/TheFive/osmbc/issues/131)
 
 ## [0.3.5](https://github.com/TheFive/osmbc/tree/0.3.5) (2015-11-07)
