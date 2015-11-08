@@ -64,6 +64,15 @@ languages["DE(EN)"] = {};
 languages["DE(EN)"].left_lang = "DE";
 languages["DE(EN)"].right_lang = "EN";
 
+languages["ES.PT"] = {};
+languages["ES.PT"].left_lang = "ES";
+languages["ES.PT"].right_lang = "PT";
+languages["ES.PT"].bilingual = true;
+
+languages["ES(PT)"] = {};
+languages["ES(PT)"].left_lang = "ES";
+languages["ES(PT)"].right_lang = "PT";
+
 exports.settings = settings;
 exports.languages=languages;
 
