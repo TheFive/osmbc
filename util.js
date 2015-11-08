@@ -15,7 +15,15 @@ function shorten(string,maxlength) {
   return newstring.substring(0,maxlength)+"...";
 }
 
+var isUrlRegex = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+
+
+function isURL(t) {
+  if (t) return isUrlRegex.test(t);
+  return isUrlRegex;
+}
 
 // shorten shorten a string up to maxlength
 // default is 30. If a string is shortenend, "..." is appendet
 exports.shorten = shorten;
+exports.isURL = isURL;

@@ -4,6 +4,7 @@ var async  = require('async');
 var debug  = require('debug')('OSMBC:model:pgMap')
 
 var config = require('../config.js');
+var util = require('../util.js');
 
 function generateQuery(table,obj,order) {
   debug('generateQuery');
@@ -125,7 +126,7 @@ module.exports.save = function(callback) {
          //   console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
             if (!versionsEqual) {
               debug('send error')
-              err = new Error("Version Nummber differs");
+              err = new Error("Version Number differs");
             }
             return cb(err);
           })
@@ -237,6 +238,7 @@ module.exports.find = function find(module,obj,order,callback) {
 }
 
 
+
 module.exports.fullTextSearch = function fullTextSearch(module,search,order,callback) {
   debug("fullTextSearch");
   should.exist(module);
@@ -267,14 +269,30 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
         orderBy +=" desc";
       }
     }
+    var germanVector = "@@ plainto_tsquery('german', '"+search+"')";
+    var englishVector = "@@ plainto_tsquery('english', '"+search+"')";
 
+    if (util.isURL(search)) {
+      var http1Url = search;
+      var http2Url;
+      if (search.substring(0,5)=="http:") {
+        http2Url = "https:"+search.substring(5,9999);
+      }
+      if (search.substring(0,6)=="https:") {
+        http2Url = "http:"+search.substring(6,9999);
+      }
+      search = "''"+http1Url+"'' | ''("+http1Url+")'' ";
+      if (http2Url) search += "| ''"+http2Url+"'' | ''("+http1Url+")'' ";
+      germanVector = "@@ to_tsquery('german', '"+search+"')";
+      englishVector = "@@ to_tsquery('english', '"+search+"')";
+    }
    
     var sqlQuery =  "select id, data from article \
-                          where to_tsvector('german', coalesce(data->>'title','')::text || \
-                                                      coalesce(data->>'collection','')  || \
-                                                      coalesce(data->>'markdownDE','')   ) @@ plainto_tsquery('german', '"+search+"') \
-                            or to_tsvector('english',  coalesce(data->>'collection','')  || \
-                                                      coalesce(data->>'markdownEN','')   ) @@ plainto_tsquery('english', '"+search+"') "+ 
+                          where to_tsvector('german', coalesce(data->>'title','')::text || ' '|| \
+                                                      coalesce(data->>'collection','')  || ' '|| \
+                                                      coalesce(data->>'markdownDE','')   ) "+germanVector+" \
+                            or to_tsvector('english',  coalesce(data->>'collection','')  || ' '|| \
+                                                      coalesce(data->>'markdownEN','')   ) "+englishVector+ 
                         orderBy;
     var startTime = new Date().getTime();
 

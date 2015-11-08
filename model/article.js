@@ -109,19 +109,21 @@ function getPreview(par1,par2,par3) {
   // Calculate markup for comment
   var commentMarkup = "";
   var editLink = '';
+  
+
+  var liON = '<li>\n';
+  var liOFF = '</li>';
 
   if (options.edit && options.comment && this.comment) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
       var commentColour = "blue";
       if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
       if (this.comment.indexOf("@all")>=0) commentColour = "red";
-      commentMarkup = ' style=" border-left-style: solid; border-color: '+commentColour+';"'
+      liON = '<li style=" border-left-style: solid; border-color: '+commentColour+';">\n';
     }
   }
 
   // generate Glyphicon for Editing
-  var liON = '<li'+commentMarkup+'>\n';
-  var liOFF = '</li>';
   if (options.glyphicon && options.edit) {
     editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   }

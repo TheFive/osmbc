@@ -82,7 +82,7 @@ describe('model/article', function() {
             alternativeArticle.save(function(err){
               //debug(err);
               should.exist(err);
-              should(err).eql(Error("Version Nummber differs"));
+              should(err).eql(Error("Version Number differs"));
               bddone();
             })
           })
@@ -189,7 +189,7 @@ describe('model/article', function() {
             alternativeArticle.setAndSave("TEST",{version:"1",blog:"TESTALTERNATIVE"},function(err){
               //debug(err);
               //should.exist(err);
-              should(err).eql(Error("Version Nummber differs"));
+              should(err).eql(Error("Version Number differs"));
               debug('Count log Entries');
               logModule.find({},function(err,result) {
                 should.not.exist(err);
@@ -583,16 +583,55 @@ describe('model/article', function() {
         should.not.exist(err);
         article.calculateUsedLinks(function(err,result){
           should.not.exist(err);
-          console.dir(result);
-          console.dir(article);
           should.exist(result);
-          should(result.count).equal(2);
-          should(result["https://link.to/hallo"].length).equal(1);
+          should(result.count).equal(4);
+          should(result["https://link.to/hallo"].length).equal(3);
           should(result["http://www.google.de"].length).equal(1);
 
           bddone();
 
         })
+      })
+    })
+  })
+  describe('fullTextSearch',function() {
+    before(function (bddone) {
+      // Initialise some Test Data for the find functions
+      async.series([
+        testutil.clearDB,
+        function c1(cb) {articleModule.createNewArticle({blog:"1",markdownDE:"test1",collection:"Try this link https://www.test.at/link ?",category:"catA"},cb)},
+        function c1(cb) {articleModule.createNewArticle({blog:"2",markdownEN:"See more special [here](https://www.test.at/link)",collection:"col1",category:"catA"},cb)},
+        function c2(cb) {articleModule.createNewArticle({blog:"3",markdownDE:"test2",collection:"http://www.test.at/link",category:"catB"},cb)},
+        function c3(cb) {articleModule.createNewArticle({blog:"4",markdownDE:"test3",collection:"https://simple.link/where",category:"catA"},
+                         function(err,result){
+                          should.not.exist(err);
+                          idToFindLater = result.id;
+                          cb(err);
+                         })}
+
+        ],function(err) {
+          should.not.exist(err);
+          bddone();
+        });
+    })
+    it('should find the simple link',function(bddone){
+      articleModule.fullTextSearch("https://simple.link/where",{column:"blog"},function(err,result) {
+        should.not.exist(err);
+        should.exist(result);
+        should(result.length).equal(1);
+        should(result[0].blog).equal("4");
+        bddone();
+      })
+    })
+    it('should find the other link 3 times',function(bddone){
+      articleModule.fullTextSearch("https://www.test.at/link",{column:"blog"},function(err,result) {
+        should.not.exist(err);
+        should.exist(result);
+        should(result.length).equal(3);
+        should(result[0].blog).equal("1");
+        should(result[1].blog).equal("2");
+        should(result[2].blog).equal("3");
+        bddone();
       })
     })
   })
