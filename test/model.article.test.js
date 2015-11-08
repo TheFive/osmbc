@@ -82,7 +82,7 @@ describe('model/article', function() {
             alternativeArticle.save(function(err){
               //debug(err);
               should.exist(err);
-              should(err).eql(Error("Version Nummber differs"));
+              should(err).eql(Error("Version Number differs"));
               bddone();
             })
           })
@@ -189,7 +189,7 @@ describe('model/article', function() {
             alternativeArticle.setAndSave("TEST",{version:"1",blog:"TESTALTERNATIVE"},function(err){
               //debug(err);
               //should.exist(err);
-              should(err).eql(Error("Version Nummber differs"));
+              should(err).eql(Error("Version Number differs"));
               debug('Count log Entries');
               logModule.find({},function(err,result) {
                 should.not.exist(err);
@@ -586,8 +586,8 @@ describe('model/article', function() {
           console.dir(result);
           console.dir(article);
           should.exist(result);
-          should(result.count).equal(2);
-          should(result["https://link.to/hallo"].length).equal(1);
+          should(result.count).equal(4);
+          should(result["https://link.to/hallo"].length).equal(3);
           should(result["http://www.google.de"].length).equal(1);
 
           bddone();
