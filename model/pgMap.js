@@ -4,6 +4,7 @@ var async  = require('async');
 var debug  = require('debug')('OSMBC:model:pgMap')
 
 var config = require('../config.js');
+var util = require('../util.js');
 
 function generateQuery(table,obj,order) {
   debug('generateQuery');
@@ -236,15 +237,7 @@ module.exports.find = function find(module,obj,order,callback) {
   })
 }
 
-function isURL(str) {
-  var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
-  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-  return pattern.test(str);
-}
+
 
 module.exports.fullTextSearch = function fullTextSearch(module,search,order,callback) {
   debug("fullTextSearch");
@@ -279,7 +272,7 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
     var germanVector = "@@ plainto_tsquery('german', '"+search+"')";
     var englishVector = "@@ plainto_tsquery('english', '"+search+"')";
 
-    if (isURL(search)) {
+    if (util.isURL(search)) {
       var http1Url = search;
       var http2Url;
       if (search.substring(0,5)=="http:") {

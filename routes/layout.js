@@ -110,6 +110,7 @@ function prepareRenderLayout(req,res,next) {
                       listOfHelpBlog:result.listOfHelpBlog,
                       moment:moment,
                       util:util,
+                      isURLRegex : util.isURL(),
                       osmbc_version:version.osmbc_version,
                       style:style
                     }
