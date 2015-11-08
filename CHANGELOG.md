@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.3.6a](https://github.com/TheFive/osmbc/tree/0.3.6a) (2015-11-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6...0.3.6a)
+
+**Implemented enhancements:**
+
+- Automatic Recognition of Dublets in Collection [\#76](https://github.com/TheFive/osmbc/issues/76)
+- Make hyperlink Button for markdown. [\#29](https://github.com/TheFive/osmbc/issues/29)
+
+**Fixed bugs:**
+
+- fullTextSearch for https does not find http Links [\#17](https://github.com/TheFive/osmbc/issues/17)
+
 ## [0.3.6](https://github.com/TheFive/osmbc/tree/0.3.6) (2015-11-08)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5a...0.3.6)
 
