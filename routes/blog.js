@@ -265,7 +265,7 @@ function postBlogId(req, res, next) {
                    markdownImage:req.body.markdownImage,
                    categories:categories};
 
-    blog.setAndSave(req.user.OSMName,changes,function(err) {
+    blog.setAndSave(req.user.displayName,changes,function(err) {
       if (err) {
         return next(err);
       }

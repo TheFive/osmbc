@@ -67,6 +67,7 @@ function create (proto) {
 
 function setAndSave(user,data,callback) {
   debug("setAndSave");
+  debug('user %s',user);
   var self = this;
   delete self.lock;
   async.series([
@@ -80,7 +81,11 @@ function setAndSave(user,data,callback) {
     should(self.id).not.equal(0);
     async.forEachOf(data,function(value,key,callback){
       if (typeof(value)=='undefined') return callback();
-      if (value == self[key]) return callback();
+      if (value === self[key]) return callback();
+      if (value == '' && typeof(self[key])=='undefined') return callback();
+      if (typeof(value)=='object') {
+        if (JSON.stringify(value)==JSON.stringify(self[key])) return callback();
+      }
       debug("Set Key %s to value %s",key,value);
       debug("Old Value Was %s",self[key]);
       articleModule.removeOpenBlogCache();
