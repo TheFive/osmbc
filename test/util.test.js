@@ -21,7 +21,7 @@ describe('util',function() {
       bddone();
     })
   })
-  describe.only('isURL', function() {
+  describe('isURL', function() {
     it('should recognise some urls',function() {
       should(util.isURL("https://www.google.de")).is.True();
       should(util.isURL("http://www.google.de/test")).is.True();
