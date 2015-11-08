@@ -11,6 +11,33 @@ var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
 var articleModule = require('../model/article.js');
 var settingsModule = require('../model/settings.js');
+
+function findBlogByRouteId(id,callback) {
+  var blog;
+  async.series([
+  function findID(cb) {
+    blogModule.findById(id,function(err,r) {
+      if (err) return cb(err);
+      if (r) blog= r;
+      return cb();
+    })
+  },
+  function findByName(cb) {
+    if (blog) return cb();
+    blogModule.find({name:id},function(err,r) {
+      if (err) return cb(err);
+      if (r.length==0) return cb();
+      if (r.length>1) return cb(new Error("Blog >"+id+"< exists twice"));
+      if (r) blog= r[0];
+      return cb();
+    })
+  }], function(err) {
+    if (err) return callback(err);
+    if (!blog) return callback(new Error("Blog >"+id+"< not found"));
+    callback(null,blog);
+  })
+}
+
 /* GET users listing. */
 function renderBlogId(req, res, next) {
   debug('router.get /:blog_id');
@@ -44,8 +71,9 @@ function renderBlogId(req, res, next) {
 
 
 
-  blogModule.findById(id,function(err,blog) {
-    if (! blog || typeof(blog.id) == 'undefined') return next(new Error("Blog not Found"));
+  findBlogByRouteId(id,function(err,blog) {
+    if (err) return next(err);
+    should.exist(blog);
 
     var changes = [];
     var articles = {};
@@ -168,9 +196,9 @@ function renderBlogPreview(req, res, next) {
   debug('renderBlogPreview');
  
   var id = req.params.blog_id;
-  blogModule.findById(id,function(err,blog) {
-    if (!blog) next(new Error("Blog "+id+" Not Found"));
-    if (typeof(blog.id) == 'undefined') return next(new Error("Blog "+id+" Not Found"));
+  findBlogByRouteId(id,function(err,blog) {
+    if (err) return next(err);
+    should.exist(blog);
 
     var lang = req.query.lang;
     if (typeof(lang)=='undefined') lang = "DE";
@@ -234,24 +262,23 @@ function editBlogId(req,res,next) {
   if (params.edit && params.edit=="false") {
      res.redirect(config.getValue('htmlroot')+"/blog/edit/"+id);  
   }
-
- 
-  blogModule.findById(id,function(err,blog) {
-    if (! blog || typeof(blog.id) == 'undefined') return next(new Error("Blog Not Found"));
+  findBlogByRouteId(id,function(err,blog) {
+    if (err) return next(err);
+    should.exist(blog);
     should.exist(res.rendervar);
     res.render('editblog',{layout:res.rendervar.layout,
                        blog:blog,
                        params:params,
                        categories:blog.getCategories()});
-     
-  }); 
+  })
 }
 
 function postBlogId(req, res, next) {
   debug('postBlogId');
   var id = req.params.blog_id;
-  blogModule.findById(id,function(err,blog) {
-    if (typeof(blog.id) == 'undefined') return next(new Error('Blog Not Found'));
+  findBlogByRouteId(id,function(err,blog) {
+    if (err) return next(err);
+    should.exist(blog);
     var categories;
     try {
       categories = JSON.parse(req.body.categories);      
