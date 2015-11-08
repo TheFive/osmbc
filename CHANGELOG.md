@@ -1,5 +1,8 @@
 # Change Log
 
+## [0.3.6](https://github.com/TheFive/osmbc/tree/0.3.6) (2015-11-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5a...0.3.6)
+
 ## [0.3.5a](https://github.com/TheFive/osmbc/tree/0.3.5a) (2015-11-08)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5...0.3.5a)
 
