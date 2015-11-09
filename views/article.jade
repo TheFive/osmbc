@@ -416,10 +416,10 @@ block scripts
           endAfter --;
         }
   
-        var beforeSnip = before.substring(begin,endBefore+2);
-        var afterSnip = after.substring(begin,endAfter+2);
+        var beforeSnip = before.substring(begin,endBefore+1);
+        var afterSnip = after.substring(begin,endAfter+1);
         var tb = before.substring(0,begin);
-        var ta = before.substring(endBefore+2,999999);
+        var ta = before.substring(endBefore+1,999999);
         
       
         if (isURL(after)) {
