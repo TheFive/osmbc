@@ -396,7 +396,7 @@ block scripts
     }
     function isURL(t) {
     
-      var isUrlRegex = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+      var isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/
 
 
       if (t) return isUrlRegex.test(t);
@@ -421,8 +421,9 @@ block scripts
         var tb = before.substring(0,begin);
         var ta = before.substring(endBefore+1,999999);
         
-      
+        alert(after);
         if (isURL(after)) {
+          alert("isurl");
        
           var allreadyMarkdowned = false;
           if (tb!="" && tb.charAt(tb.length-1)=="(") allreadyMarkdowned= true;
