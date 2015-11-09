@@ -90,8 +90,15 @@ block content
             a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{right_lang}") 
               span.glyphicon.glyphicon-export
               | #{right_lang}
+        li.dropdown
+          a.dropdown-toggle(href='#', data-toggle='dropdown')
+            span.glyphicon.glyphicon-export
+          ul.dropdown-menu(role='menu')
+            for lang in layout.languages
+              li
+                a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{lang}") Export #{lang}
         li
-          a(href="#{layout.htmlroot}/usert/#{layout.user.id}") 
+          a(href="#{layout.htmlroot}/usert/#{layout.user.id}")
             span.glyphicon.glyphicon-cog
            
 
