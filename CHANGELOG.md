@@ -1,5 +1,14 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6a...HEAD)
+
+**Fixed bugs:**
+
+- allow a user to configure activly the language for the Export-button [\#148](https://github.com/TheFive/osmbc/issues/148)
+- "please check your link first to avoid duplicates" [\#147](https://github.com/TheFive/osmbc/issues/147)
+
 ## [0.3.6a](https://github.com/TheFive/osmbc/tree/0.3.6a) (2015-11-08)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6...0.3.6a)
 
@@ -58,6 +67,7 @@
 
 - Edit Help leads to the last weekly and not the help blog [\#128](https://github.com/TheFive/osmbc/issues/128)
 - All links are beginning with spaces [\#122](https://github.com/TheFive/osmbc/issues/122)
+- Buttons "Edit" and "Download" have not action at Preview [\#117](https://github.com/TheFive/osmbc/issues/117)
 - Cancel at "Edit Blog Details" Does Not Work [\#115](https://github.com/TheFive/osmbc/issues/115)
 
 ## [0.3.0](https://github.com/TheFive/osmbc/tree/0.3.0) (2015-11-04)
