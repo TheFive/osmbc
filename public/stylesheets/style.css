@@ -7,3 +7,7 @@ body {
 a {
   color: #00B7FF;
 }
+
+mark {
+  background-color: #FFF8C6;  /* Salmon Chiffon */
+}
