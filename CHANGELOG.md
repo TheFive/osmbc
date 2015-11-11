@@ -10,6 +10,14 @@
 - "please check your link first to avoid duplicates" [\#147](https://github.com/TheFive/osmbc/issues/147)
 - Fix the button "Download" for Firefox users [\#146](https://github.com/TheFive/osmbc/issues/146)
 
+**Closed issues:**
+
+- Spelling mistake at http://thefive.sabic.uberspace.de/article/create [\#150](https://github.com/TheFive/osmbc/issues/150)
+
+**Merged pull requests:**
+
+- More vivid color for "mark" tag [\#149](https://github.com/TheFive/osmbc/pull/149) ([alexandre-mbm](https://github.com/alexandre-mbm))
+
 ## [0.3.6a](https://github.com/TheFive/osmbc/tree/0.3.6a) (2015-11-08)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6...0.3.6a)
 
