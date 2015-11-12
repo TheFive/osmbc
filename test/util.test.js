@@ -1,5 +1,7 @@
 var util = require('../util.js');
 var should = require('should');
+var path = require('path');
+var fs     = require('fs');
 
 describe('util',function() {
   describe('shorten', function () {
@@ -22,14 +24,17 @@ describe('util',function() {
     })
   })
   describe('isURL', function() {
+    var file =  path.resolve(__dirname,'data', "util.data.json");
+    var data = JSON.parse(fs.readFileSync(file));
     it('should recognise some urls',function() {
-      should(util.isURL("https://www.google.de")).is.True();
-      should(util.isURL("http://www.google.de/test")).is.True();
-      should(util.isURL("http://www.google.de/test?param=ADSFASF&d=asdfa")).is.True();
+      for (var i=0;i<data.isURLArray.length;i++) {
+        should(util.isURL(data.isURLArray[i])).is.True();
+      }
     })
     it('should sort Not Urls out',function() {
-      should(util.isURL("Wort")).is.False();
-      should(util.isURL("Mehr Text mal am stück")).is.False();
+      for (var i=0;i<data.isNoURLArray.length;i++) {
+        should(util.isURL(data.isNoURLArray[i])).is.False();
+      }
     })
     it('should return a regex',function() {
       should((util.isURL() instanceof RegExp)).is.True();

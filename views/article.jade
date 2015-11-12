@@ -355,22 +355,27 @@ block scripts
   script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
 
   script.
-    markdownLEFT = document.getElementById("markdownLEFT");
-    markdownLEFT.onchange = onchangeLEFT;
-    markdownLEFT.onkeyup = onchangeLEFT;
-    markdownLEFT.onpaste = pasteLEFT;
-    markdownLEFT.ondrop = pasteLEFT;
-    markdownRIGHT = document.getElementById("markdownRIGHT");
-    markdownRIGHT.onchange = onchangeRIGHT;
-    markdownRIGHT.onkeyup = onchangeRIGHT;
-    markdownRIGHT.onpaste = pasteRIGHT;
-    markdownRIGHT.ondrop = pasteRIGHT;
-    noTranslationText = document.getElementById("text_right").innerHTML;
-   
-    coll = document.getElementById("collection");
-    coll.onchange = onchangeCollection;
-    coll.onkeyup = onchangeCollection;
-    onchangeCollection();
+    window.onload = init;
+
+    function init() {
+
+      markdownLEFT = document.getElementById("markdownLEFT");
+      markdownLEFT.onchange = onchangeLEFT;
+      markdownLEFT.onkeyup = onchangeLEFT;
+      markdownLEFT.onpaste = pasteLEFT;
+      markdownLEFT.ondrop = pasteLEFT;
+      markdownRIGHT = document.getElementById("markdownRIGHT");
+      markdownRIGHT.onchange = onchangeRIGHT;
+      markdownRIGHT.onkeyup = onchangeRIGHT;
+      markdownRIGHT.onpaste = pasteRIGHT;
+      markdownRIGHT.ondrop = pasteRIGHT;
+      noTranslationText = document.getElementById("text_right").innerHTML;
+     
+      coll = document.getElementById("collection");
+      coll.onchange = onchangeCollection;
+      coll.onkeyup = onchangeCollection;
+      onchangeCollection();
+    }
 
     function onleaveEN() {
       var mdEN = document.getElementById("markdownLEFT").value;
@@ -402,26 +407,31 @@ block scripts
       if (t) return isUrlRegex.test(t);
       return isUrlRegex;
     }
-    function generateMarkdownLink(before,after) {
-        var begin=0;
-        while (begin<before.length && before.charAt(begin)==after.charAt(begin)) {
-          begin++
+    
+    function generateMarkdownLink(par1,par2) {
+        var before = par1;
+        var after = par2;
+        var tb = '';
+    
+        while (before.length>0 && before.charAt(0)==after.charAt(0)) {
+          tb += before.charAt(0);
+          before = before.substring(1,99999);
+          after = after.substring(1.99999);
         }
   
-        var endBefore = before.length-1;
-        var endAfter = after.length-1;
+        ta = '';
+    
+        while ( (before.length>0) && 
+                (before.charAt(before.length-1)==after.charAt(after.length-1))) {
+          ta =  before.charAt(before.length-1) + ta;
+          before = before.substring(0,before.length-1);
+          after = after.substring(0,after.length-1); 
+    }
   
-        while ( (endBefore>0) && (endAfter > 0) && (before.charAt(endBefore)==after.charAt(endAfter))) {
-          endBefore --;
-          endAfter --;
-        }
-  
-        var beforeSnip = before.substring(begin,endBefore+1);
-        var afterSnip = after.substring(begin,endAfter+1);
-        var tb = before.substring(0,begin);
-        var ta = before.substring(endBefore+1,999999);
-        
-        if (isURL(after)) {
+        var beforeSnip = before;
+        var afterSnip = after;    
+
+        if (isURL(afterSnip)) {
        
           var allreadyMarkdowned = false;
           if (tb!="" && tb.charAt(tb.length-1)=="(") allreadyMarkdowned= true;
@@ -435,7 +445,7 @@ block scripts
               c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
             }
             return {text:r,pos:c};
-            }
+          }
         }
         return null;
     }
