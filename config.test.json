@@ -1,5 +1,5 @@
 {
-  "serverport": 3000,
+  "serverport": 35043,
   
   "postgres": {
     "initialise": true,
