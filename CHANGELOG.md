@@ -1,5 +1,18 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6e...HEAD)
+
+**Fixed bugs:**
+
+- Not every pasting should be a hyperlink [\#143](https://github.com/TheFive/osmbc/issues/143)
+
+**Closed issues:**
+
+- Prevent or give warning when a user wants to edit a blog with Status "Review" [\#156](https://github.com/TheFive/osmbc/issues/156)
+- Need a better display of blogs that are in EDIT status [\#155](https://github.com/TheFive/osmbc/issues/155)
+
 ## [0.3.6e](https://github.com/TheFive/osmbc/tree/0.3.6e) (2015-11-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6d...0.3.6e)
 
