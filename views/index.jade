@@ -11,7 +11,8 @@ block content
             | Please to not forget to search for your Idea entering.
         .row
           h3
-            | Blogs to work on
+            | Blogs to work on 
+            a(href="#{layout.htmlroot}/blog/list?status=!=closed") (more)
         .row
           .col-md-4
             h4
@@ -22,7 +23,14 @@ block content
                   | #{openBlog.name}
           .col-md-4
             h4
-              | Review
+              | Edit
+            if (layout.listOfEditBlog)
+              for openBlog in layout.listOfEditBlog
+                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.id}","_self")')
+                  | #{openBlog.name}
+          .col-md-4
+            h4
+              | Review #{layout.user.language}
             if (layout.listOfReviewBlog)
               for openBlog in layout.listOfReviewBlog
                 button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.id}","_self")')
