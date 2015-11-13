@@ -1,10 +1,8 @@
-var app = require('../app.js');
 var async = require('async');
 var path = require('path'); 
 var fs = require('fs');
 var should = require('should');
 var testutil = require('./testutil.js');
-var passportStub = require("./passport-stub.js");
 
 var userModule = require("../model/user.js");
 var articleModule = require("../model/article.js");
@@ -13,9 +11,7 @@ var articleModule = require("../model/article.js");
 
 
 
-// use zombie.js as headless browser
-var Browser = require('zombie');
-var http = require('http');
+
 
 describe('views/article', function() {
   var browser;
@@ -28,19 +24,13 @@ describe('views/article', function() {
       function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
-      }); }
+      }); },
+      function createBrowser(cb) {testutil.startBrowser(function(err,result){browser=result;cb()})}
     ], function(err) {
-      server = http.createServer(app).listen(3000);
-      // initialize the browser using the same port as the test application
-      browser = new Browser({ site: 'http://localhost:3000' });
-      passportStub.install(app);
-      passportStub.login({displayName:"TheFive"});
-      bddone(); 
+      bddone();
+      
     })
   });
-  after(function(bddone){
-    server.close(bddone);
-  })
 
 
   describe("Scripting Functions",function() {
