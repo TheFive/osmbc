@@ -151,14 +151,22 @@ block content
           .col-md-1
             | Markdown 
           +leftcolumn
-            textarea.form-control(id="markdownLEFT" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
-            div(id="text_left")
-              | 'no translation' to specify no translation wanted.
+            if  !blog.isEditable(params.left_lang)
+              .panel.panel-default
+                .panel-body #{article["markdown"+params.left_lang]}         
+            else
+              textarea.form-control(id="markdownLEFT" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
+              div(id="text_left")
+                | 'no translation' to specify no translation wanted.
  
           +rightcolumn
-            textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
-            div(id="text_right")
-              | 'no translation' to specify no translation wanted.
+            if !blog.isEditable(params.right_lang)
+              .panel.panel-default
+                .panel-body #{article["markdown"+params.right_lang]}         
+            else
+              textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
+              div(id="text_right")
+                | 'no translation' to specify no translation wanted.
           .col-md-1
 
             if ((params.left_lang=="DE") || (params.right_lang=="DE"))
@@ -432,11 +440,7 @@ block scripts
         afterSnip = after;    
      
       
-        console.log("tb    :"+tb);
-        console.log("BEFORE:"+"                        ".substring(0,tb.length)+"*"+beforeSnip+"*"+ta);
-        console.log("AFTER :"+"                        ".substring(0,tb.length)+"*"+afterSnip+"*"+ta);
-  
-       
+        
 
         if (isURL(afterSnip)) {
        
