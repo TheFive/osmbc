@@ -1,0 +1,8 @@
+
+
+{
+  "isURLArray":["https://www.google.de",
+                "http://www.google.de/test",
+                "http://www.google.de/test?param=ADSFASF&d=asdfa"],
+  "isNoURLArray":["Wort", "Mehr Text mal am stück","Fertiges (markdown)[www.wikipedia.de]"]
+}

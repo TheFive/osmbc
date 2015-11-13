@@ -6,6 +6,7 @@ var logger       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 
+var debug = require('debug')('OSMBC:app');
 var passport     = require('passport');
 var OpenStreetMapStrategy 
                  = require('passport-openstreetmap').Strategy;
@@ -112,6 +113,7 @@ function ensureAuthenticated(req, res, next) {
         for (var k in result[0]) {
           req.user[k] = result[0][k];
         }
+        debug("User found");
         if (result[0].access == "full") {
           // save last access, ignore save callback
           var date = new Date();
@@ -120,10 +122,11 @@ function ensureAuthenticated(req, res, next) {
             result[0].lastAccess = new Date();
             result[0].save(function(err) {});            
           }
+          debug("User accepted");
           return next();
         }
       }
-
+      debug("User Not Found %s(found)",result.length);
       var err = new Error('OSM User >'+req.user.displayName+'< has no access rights');
       return next(err);
     })

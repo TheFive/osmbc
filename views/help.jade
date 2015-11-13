@@ -16,32 +16,36 @@ block content
     * **collection**
       Free text (english / german) to describe the idea, or the collect the html link
 
-    * **markdown**
+    * **markdownDE**
       german markdown text
 
     * **markdownEN**
       english markdown text (no process for weekly defined yet)
 
+    * **markdownLANG**
+      markdown text for other languages
+
     * **blog**
       Reference to the blog number
 
-    * **category** 
-      Reference to the category in the blog
+    * **categoryEN** 
+      Reference to the category in the blog in english
       (categories can be redefined per blog)
 
     ## Typical Use Cases
     ### Login
 
-    OSMBC uses your OAUTH to login with your OpenStreetMap account. The OAUTH token is one year valid.
+    OSMBC uses your OAUTH to login with your OpenStreetMap account. The OAUTH token is valid for one year.
 
     ### Collecting Information
 
-    Use the Collect Item from the Navbar to enter basic information for an arcticle. 
-    Here you can edit the title, the collection, blog reference and category of an article.
+    Use 'collect' from the navbar to collect information.
+    Before you can collect an information in the appearing screen, you have to search, wether the article is already a part of a blog or not. Typically you collect a hyperlink, please post the hyperlink in the search box and press search.
+    A list of blogs containing the link will appear, or a zero result information will be shown.
+    Now you can decide to add the article to a blog. Please use a short title, as a very short summary of the content. The minimum information is a hyperlink in the collect field, some additional information would be helpfull for the other editors.
+    As the tool is international, please use english language for title and collection.
     To save, press OK, than the edit view of the article is started.
-    Please use the find function before entering a link or information, to see wether
-    it is allready collected.
-
+   
     ### Writing articles
 
     If you just want to write the articles, you have 2 possibilities. Under the Item **Article -> empty Text** you find all articles, that has no markdown text yet.
@@ -85,7 +89,12 @@ block content
 
     ### Blog Status
 
-    A blog can be open, review, published and trash. Only open and review blogs are available for edit.
+    A blog can be open, edit, review for Lang, closed and trash. Only open and review blogs are available for edit.
+    * **open** The blog is fully editable, collected articles are put by default to the smallest number of open blogs. This status is synchron for all languages.
+    * **edit** The blog is fully editable, collected articles can be put manually to this blog. This Status is synchron for all languages and is extended by:
+    * **review LANG** The review status can be set by language. It should be set, when the blog is exported (e.g. to WordPress) and allowes the review do add a review text to the blog. The Review text can't be changed or deleted.
+    * **close LANG** The review status signals, that the review is closed, and the LANG team has switched to the next WN:
+    * **closed** This is a synchron status, that can be set, when all blogs are closed. You can use [this](#{layout.htmlroot}/blog/list?status=edit) to see the not synchron status and close the blog.
 
     Additional on the blog page there is an editor for the blog name, and the categories of the blog.
     This editor will be improved in future. If you rename a blog, the article become orphan and can be found with the article nav bar item.

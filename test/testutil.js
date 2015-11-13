@@ -8,8 +8,14 @@ var groupingreporter = require('dom-compare').GroupingReporter;
 var jsdom = require('node-jsdom');
 
 var debug  = require('debug')('OSMBC:test:testutil');
+var passportStub = require("./passport-stub.js");
+// use zombie.js as headless browser
+var Browser = require('zombie');
+var http = require('http');
 
 var config = require('../config.js');
+
+var app = require('../app.js');
 
 var blogModule    = require('../model/blog.js');
 var articleModule = require('../model/article.js');
@@ -146,4 +152,17 @@ exports.generateTests = function generateTests(datadir,fileregex,createTestFunct
     if (!((fileList[i]).match(fileregex) )) continue;
     createTestFunction(fileList[i]);
   }
+ }
+
+var browser = null;
+var server;
+exports.startBrowser = function startBrowser(callback) {
+  debug('startBrowser');
+  if (browser) return callback(null,browser);
+  server = http.createServer(app).listen(config.getServerPort());
+    // initialize the browser using the same port as the test application
+  browser = new Browser({ site: 'http://localhost:'+config.getServerPort() });
+  passportStub.install(app);
+  passportStub.login({displayName:"TheFive"});
+  callback(null,browser); 
  }

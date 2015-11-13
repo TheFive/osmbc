@@ -8,7 +8,10 @@
 
 - allow a user to configure activly the language for the Export-button [\#148](https://github.com/TheFive/osmbc/issues/148)
 - "please check your link first to avoid duplicates" [\#147](https://github.com/TheFive/osmbc/issues/147)
+<<<<<<< HEAD
+=======
 - Fix the button "Download" for Firefox users [\#146](https://github.com/TheFive/osmbc/issues/146)
+>>>>>>> hotfix/0.3.6d
 
 **Closed issues:**
 
