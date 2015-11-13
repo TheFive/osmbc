@@ -12,6 +12,8 @@
   "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
   "OPENSTREETMAP_CONSUMER_KEY" : "######",
   "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
-  "htmlroot":""
+  "htmlroot":"",
+  "bootstrap":"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5"
+
 
 }

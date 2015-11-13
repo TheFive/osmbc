@@ -14,6 +14,7 @@ var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
 
 var htmlRoot = config.getValue("htmlroot");
+var bootstrap = config.getValue("bootstrap");
 
 function prepareRenderLayout(req,res,next) {
   debug('prepareRenderLayout');
@@ -110,6 +111,7 @@ function prepareRenderLayout(req,res,next) {
                       listOfHelpBlog:result.listOfHelpBlog,
                       moment:moment,
                       util:util,
+                      bootstrap:bootstrap,
                       isURLRegex : util.isURL(),
                       osmbc_version:version.osmbc_version,
                       style:style
