@@ -50,20 +50,25 @@ describe('views/article', function() {
     });
     context('generateMarkdownLink',function() {
       it('should return NULL if no link is pasted',function(){
-        console.log("generateMarkdownLink('the origin text.','extend the origin text.')");
         should(browser.evaluate("generateMarkdownLink('the origin text.','extend the origin text.')")).equal(null);
-        console.log("generateMarkdownLink('the origin text.','the origin text. At the end')");
         should(browser.evaluate("generateMarkdownLink('the origin text.','the origin text. At the end')")).equal(null);
-        console.log("generateMarkdownLink('the origin text','the origin in the middle text')");
         should(browser.evaluate("generateMarkdownLink('the origin text','the origin in the middle text')")).equal(null);
       })
+      it('should return NULL if no link is pasted with selection',function(){
+        should(browser.evaluate("generateMarkdownLink('ex the origin text.','extend the origin text.')")).equal(null);
+        should(browser.evaluate("generateMarkdownLink('the origin text. TheEnd','the origin text. At the end')")).equal(null);
+        should(browser.evaluate("generateMarkdownLink('the origin --change here -- text','the origin in the middle text')")).equal(null);
+      })
       it('should return new value if link is inserted',function(){
-        console.log("generateMarkdownLink('the origin text.','https://www.google.dethe origin text.')");
         should(browser.evaluate("generateMarkdownLink('the origin text.','https://www.google.dethe origin text.')")).eql({text:'[](https://www.google.de)the origin text.',pos:1});
-        console.log("generateMarkdownLink('the origin text.','the origin text.http://www.openstreetmap.de/sublink.html')");
         should(browser.evaluate("generateMarkdownLink('the origin text.','the origin text.http://www.openstreetmap.de/sublink.html')")).eql({pos: 17,text:'the origin text.[](http://www.openstreetmap.de/sublink.html)'});
-        console.log("generateMarkdownLink('the origin text.','the http://www.google.deorigin text.')");
         should(browser.evaluate("generateMarkdownLink('the origin text.','the http://www.google.deorigin text.')")).eql({pos:5,text:'the [](http://www.google.de)origin text.'});
+      })
+      it('should return new value if link is inserted with selection',function(){
+        should(browser.evaluate("generateMarkdownLink('Google the origin text.','https://www.google.de/search the origin text.')")).eql({text:'[Google](https://www.google.de/search) the origin text.',pos:38});
+        should(browser.evaluate("generateMarkdownLink('Google the origin text.','https://www.google.de the origin text.')")).eql({text:'[Googl](https://www.google.d)e the origin text.',pos:29});
+        should(browser.evaluate("generateMarkdownLink('the origin text.LINK','the origin text.http://www.openstreetmap.de/sublink.html')")).eql({pos: 64,text:'the origin text.[LINK](http://www.openstreetmap.de/sublink.html)'});
+        should(browser.evaluate("generateMarkdownLink('the ---LINK---origin text.','the http://www.google.deorigin text.')")).eql({pos:38,text:'the [---LINK---](http://www.google.de)origin text.'});
       })
     })
   })

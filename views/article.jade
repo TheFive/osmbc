@@ -418,18 +418,35 @@ block scripts
           before = before.substring(1,99999);
           after = after.substring(1.99999);
         }
-  
+        console.log("STEP1")
+        console.log("PAR1  :"+par1);
+        console.log("PAR2  :"+par2);
+
+        console.log("tb    :"+tb);
+        console.log("BEFORE:"+"                    ".substring(0,tb.length)+before);
+        console.log("AFTER :"+"                    ".substring(0,tb.length)+after);
+
         ta = '';
-    
+        var beforeSnip='';
+        var afterSnip='';
         while ( (before.length>0) && 
                 (before.charAt(before.length-1)==after.charAt(after.length-1))) {
           ta =  before.charAt(before.length-1) + ta;
           before = before.substring(0,before.length-1);
           after = after.substring(0,after.length-1); 
-    }
+        }
+        beforeSnip = before;
+        afterSnip = after;    
+     
+        console.log("STEP2---")
+        console.log("PAR1  :"+par1);
+        console.log("PAR2  :"+par2);
+
+        console.log("tb    :"+tb);
+        console.log("BEFORE:"+"                        ".substring(0,tb.length)+"*"+beforeSnip+"*"+ta);
+        console.log("AFTER :"+"                        ".substring(0,tb.length)+"*"+afterSnip+"*"+ta);
   
-        var beforeSnip = before;
-        var afterSnip = after;    
+       
 
         if (isURL(afterSnip)) {
        
