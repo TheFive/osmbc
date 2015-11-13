@@ -379,10 +379,27 @@ function dropTable(cb) {
   pgMap.dropTable('blog',cb);
 }
 
+function isEditable(lang) {
+  debug("isEditabe");
+  console.log(lang);
+  var result = true;
+  if (this["reviewComment"+lang]) {
+    result = false;
+    console.log("ReviewComment is set")
+  }
+  var closeLANG = this["close"+lang]
+  if (typeof(closeLANG)!='undefined') {
+    if (closeLANG) result = false;
+    else result = true;
+
+  }
+  return result;
+}
 // Prototype Functions
 
 // result of preview is html code to display the blog.
 Blog.prototype.getPreview = getPreview;
+Blog.prototype.isEditable = isEditable;
 
 // setAndSave(user,data,callback)
 // user: actual username for logging purposes
