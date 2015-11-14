@@ -10,7 +10,7 @@ var moment   = require('moment');
 var articleModule = require('../model/article.js');
 var settingsModule = require('../model/settings.js');
 var logModule = require('../model/logModule.js');
-var categoryTranslation = require('../model/categoryTranslation.js');
+var categoryTranslation = require('../data/categoryTranslation.js');
 
 var pgMap = require('./pgMap.js')
 var debug = require('debug')('OSMBC:model:blog');

@@ -4,6 +4,8 @@ var router   = express.Router();
 var should   = require('should');
 var markdown = require('markdown').markdown;
 var debug    = require('debug')('OSMBC:routes:article');
+var path     = require('path');
+var fs       = require('fs');
 
 var util          = require('../util.js');
 var config        = require('../config.js');
@@ -14,11 +16,21 @@ var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
 
 
+var placeholder = {
+  
+}
+
+
+
 function renderArticleId(req,res,next) {
   debug('renderArticleId');
 
   // Get the ID and the article to display
   var id = req.params.article_id;
+
+  var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
+  var placeholder =  JSON.parse(fs.readFileSync(file));
+    
 
 
 
@@ -109,6 +121,7 @@ function renderArticleId(req,res,next) {
             res.render('article',{layout:res.rendervar.layout,
                                   article:article,
                                   params:params,
+                                  placeholder:placeholder,
                                   blog:result.blog,
                                   changes:result.changes,
                                   articleReferences:result.articleReferences,
@@ -124,12 +137,16 @@ function renderArticleId(req,res,next) {
 function searchAndCreate(req,res,next) {
   debug('searchAndCreate');
   var search = req.query.search;
+  var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
+  var placeholder =  JSON.parse(fs.readFileSync(file));
+ 
   if (!search || typeof(search)=='undefined') search = "";
   articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
     if (err) return next(err);
     should.exist(res.rendervar);
     res.render("collect",{layout:res.rendervar.layout,
                            search:search,
+                           placeholder:placeholder,
                            showCollect:true,
                            categories:blogModule.getCategories(),
                            foundArticles:result});
