@@ -30,7 +30,13 @@ function prepareRenderLayout(req,res,next) {
   var listOfReviewBlog;
   var listOfHelpBlog;
   var style = "style.css";
-  if (config.getValue("style")) style = config.getValue("style");
+  if (req.query.tempstyleOff == 'true') req.session.tempstyle=true;
+  if (req.query.tempstyleOff == 'false') delete req.session.tempstyle;
+  console.log(req.query)
+  console.log(req.session);
+  if (!req.session.tempstyle && config.getValue("style")) style = config.getValue("style");
+
+
   var languages = [];
   if (config.getLanguages()) languages = config.getLanguages();
 
