@@ -228,6 +228,9 @@ function postArticle(req, res, next) {
 
 function createArticle(req, res, next) {
   debug('createArticle');
+  var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
+  var placeholder =  JSON.parse(fs.readFileSync(file));
+
   var proto = {};
   if (typeof(req.query.blog) != 'undefined' ) {
     proto.blog = req.query.blog;
@@ -258,6 +261,7 @@ function createArticle(req, res, next) {
         should.exist(res.rendervar);
         res.render("collect",{layout:res.rendervar.layout,
                               search:"",
+                              placeholder:placeholder,
                               showCollect:true,
                               categories:blogModule.getCategories()});
     }
