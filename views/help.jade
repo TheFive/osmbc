@@ -61,7 +61,7 @@ block content
 
     * Configure the Navbar (The gear on the right)
 
-    The Views have the following functinoalities
+    The Views have the following functionalities
 
     * **overview**
     Comments are show with a blue/red bar, depending on you are named in a comment or not. The bullet is a glyphicon for editing an article. If a text is editied, it is shown truncated, alterativ the title is shown.
@@ -92,12 +92,13 @@ block content
     A blog can be open, edit, review for Lang, closed and trash. Only open and review blogs are available for edit.
     * **open** The blog is fully editable, collected articles are put by default to the smallest number of open blogs. This status is synchron for all languages.
     * **edit** The blog is fully editable, collected articles can be put manually to this blog. This Status is synchron for all languages and is extended by:
-    * **review LANG** The review status can be set by language. It should be set, when the blog is exported (e.g. to WordPress) and allowes the review do add a review text to the blog. The Review text can't be changed or deleted.
-    * **close LANG** The review status signals, that the review is closed, and the LANG team has switched to the next WN:
+    * **review LANG** The review status can be set by language. It should be set, when the blog is exported (e.g. to WordPress) and allowes the review do add a review text to the blog. The Review text can't be changed or deleted. Blogs in Review mode can't be changed in the language, they are in review mode.
+    * **close LANG** The review status signals, that the review is closed, and the LANG team has switched to the next WN. Blogs in close mode for a language can't be changed in that language.
     * **closed** This is a synchron status, that can be set, when all blogs are closed. You can use [this](#{layout.htmlroot}/blog/list?status=edit) to see the not synchron status and close the blog.
 
     Additional on the blog page there is an editor for the blog name, and the categories of the blog.
     This editor will be improved in future. If you rename a blog, the article become orphan and can be found with the article nav bar item.
+
 
     ### User Management
 
