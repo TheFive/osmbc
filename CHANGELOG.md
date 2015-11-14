@@ -4,6 +4,11 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6e...HEAD)
 
+**Implemented enhancements:**
+
+- Link to Google Translate [\#140](https://github.com/TheFive/osmbc/issues/140)
+- Create an untranslated & unedited Blog View [\#137](https://github.com/TheFive/osmbc/issues/137)
+
 **Fixed bugs:**
 
 - Not every pasting should be a hyperlink [\#143](https://github.com/TheFive/osmbc/issues/143)
