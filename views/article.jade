@@ -391,7 +391,12 @@ block scripts
         markdownRIGHT.onpaste = pasteRIGHT;
         markdownRIGHT.ondrop = pasteRIGHT;
       }
-      noTranslationText = document.getElementById("text_right").innerHTML;
+      if (document.getElementById("text_right")) {
+         noTranslationText = document.getElementById("text_right").innerHTML;  
+        } else if (document.getElementById("text_left")) {
+         noTranslationText = document.getElementById("text_left").innerHTML;  
+        }
+      
      
       coll = document.getElementById("collection");
       coll.onchange = onchangeCollection;
