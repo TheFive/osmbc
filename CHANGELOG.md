@@ -1,20 +1,48 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [0.3.8](https://github.com/TheFive/osmbc/tree/0.3.8) (2015-11-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.7...0.3.8)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6a...HEAD)
+**Implemented enhancements:**
+
+- Link to Google Translate [\#140](https://github.com/TheFive/osmbc/issues/140)
+- Create an untranslated & unedited Blog View [\#137](https://github.com/TheFive/osmbc/issues/137)
+
+## [0.3.7](https://github.com/TheFive/osmbc/tree/0.3.7) (2015-11-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6e...0.3.7)
 
 **Fixed bugs:**
 
-- allow a user to configure activly the language for the Export-button [\#148](https://github.com/TheFive/osmbc/issues/148)
-- "please check your link first to avoid duplicates" [\#147](https://github.com/TheFive/osmbc/issues/147)
-<<<<<<< HEAD
-=======
-- Fix the button "Download" for Firefox users [\#146](https://github.com/TheFive/osmbc/issues/146)
->>>>>>> hotfix/0.3.6d
+- Not every pasting should be a hyperlink [\#143](https://github.com/TheFive/osmbc/issues/143)
 
-## [0.3.6a](https://github.com/TheFive/osmbc/tree/0.3.6a) (2015-11-08)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6...0.3.6a)
+**Closed issues:**
+
+- Prevent or give warning when a user wants to edit a blog with Status "Review" [\#156](https://github.com/TheFive/osmbc/issues/156)
+- Need a better display of blogs that are in EDIT status [\#155](https://github.com/TheFive/osmbc/issues/155)
+
+## [0.3.6e](https://github.com/TheFive/osmbc/tree/0.3.6e) (2015-11-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6d...0.3.6e)
+
+**Closed issues:**
+
+- Spelling mistake at http://thefive.sabic.uberspace.de/article/create [\#150](https://github.com/TheFive/osmbc/issues/150)
+
+**Merged pull requests:**
+
+- More vivid color for "mark" tag [\#149](https://github.com/TheFive/osmbc/pull/149) ([alexandre-mbm](https://github.com/alexandre-mbm))
+
+## [0.3.6d](https://github.com/TheFive/osmbc/tree/0.3.6d) (2015-11-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6c...0.3.6d)
+
+## [0.3.6c](https://github.com/TheFive/osmbc/tree/0.3.6c) (2015-11-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6b...0.3.6c)
+
+**Fixed bugs:**
+
+- Fix the button "Download" for Firefox users [\#146](https://github.com/TheFive/osmbc/issues/146)
+
+## [0.3.6b](https://github.com/TheFive/osmbc/tree/0.3.6b) (2015-11-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5a...0.3.6b)
 
 **Implemented enhancements:**
 
@@ -23,10 +51,9 @@
 
 **Fixed bugs:**
 
+- allow a user to configure activly the language for the Export-button [\#148](https://github.com/TheFive/osmbc/issues/148)
+- "please check your link first to avoid duplicates" [\#147](https://github.com/TheFive/osmbc/issues/147)
 - fullTextSearch for https does not find http Links [\#17](https://github.com/TheFive/osmbc/issues/17)
-
-## [0.3.6](https://github.com/TheFive/osmbc/tree/0.3.6) (2015-11-08)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5a...0.3.6)
 
 ## [0.3.5a](https://github.com/TheFive/osmbc/tree/0.3.5a) (2015-11-08)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5...0.3.5a)
