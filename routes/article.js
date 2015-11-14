@@ -40,6 +40,7 @@ function renderArticleId(req,res,next) {
     var style = req.query.style;
     if (!style) if (req.session.lastStyle) style = req.session.lastStyle;
     if (!style) style = req.user.blogSetting0 + req.user.blogLanguages0;
+    if (!style) style = "overviewEN";
     var s = settingsModule.getSettings(style);
     if (style) params.style = style;
     params.edit = req.query.edit;
@@ -129,6 +130,7 @@ function searchAndCreate(req,res,next) {
     should.exist(res.rendervar);
     res.render("collect",{layout:res.rendervar.layout,
                            search:search,
+                           showCollect:true,
                            categories:blogModule.getCategories(),
                            foundArticles:result});
   })
@@ -233,11 +235,41 @@ function createArticle(req, res, next) {
         should.exist(res.rendervar);
         res.render("collect",{layout:res.rendervar.layout,
                               search:"",
+                              showCollect:true,
                               categories:blogModule.getCategories()});
     }
   );
 }
-  
+ 
+
+function search(req, res, next) {
+  debug('search');
+  var search = req.query.search;
+  if (!search || typeof(search)=='undefined') search = "";
+  var result = null;
+ 
+  async.series([
+    function doSearch(cb) {
+       articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,r){
+          if (err) return cb(err);
+          result = r;
+          cb();
+       })    
+
+    }
+    ],
+    function finalFunction(err) {
+      debug('search->finalFunction');
+      if (err) return next(err);
+      should.exist(res.rendervar);
+      res.render("collect",{layout:res.rendervar.layout,
+                            search:search,
+                            foundArticles:result,
+                            showCollect:false,
+                            categories:blogModule.getCategories()});
+    }
+  );
+} 
 
 
 
@@ -294,12 +326,14 @@ exports.renderList = renderList;
 exports.postArticle = postArticle;
 exports.createArticle = createArticle;
 exports.searchAndCreate = searchAndCreate;
+exports.search = search;
 
 
 // And configure router to use render Functions
 router.get('/list', exports.renderList);
 router.get('/create',exports.createArticle);
 router.get('/searchandcreate',exports.searchAndCreate);
+router.get('/search',exports.search);
 router.post('/create', exports.postArticle);
 
 router.get('/:article_id', exports.renderArticleId );

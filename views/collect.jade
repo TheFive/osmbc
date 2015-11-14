@@ -6,14 +6,17 @@ extends layout
 block content
   
   div
+    - var action = layout.htmlroot+"/article/searchandcreate";
+    - if (!showCollect) action = layout.htmlroot+"/article/search";
     p
-      form.form-horizontal(name="search", action="#{layout.htmlroot}/article/searchandcreate", method="get")
+      form.form-horizontal(name="search", action="#{action}", method="get")
         .form-group
           .col-sm-2
             | 
           .col-sm-6
-            input(type="text",class="form-control",name ="search",value="#{search}") 
-            p.text-muted(align="center") Please check your link for duplicates before collecting.
+            input(type="text",class="form-control",name ="search",value="#{search}")
+            if showCollect 
+              p.text-muted(align="center") Please check your link for duplicates before   collecting.
 
           .col-sm-2
             button.btn.btn-large.btn-primary(type="submit") Search
@@ -45,59 +48,60 @@ block content
         p
           a(style={color:'Gray'}) 
             | No Articles found for search '#{search}'
-      div 
-        h2 
-          | Create Article 
-        form(name="input", action="#{layout.htmlroot}/article/create", method="post")
-          .row
-            .col-md-1
-              | Blog <br>
-            .col-md-5
-              select(id="blog",name="blog").form-control
-                if (layout.listOfOpenBlog)  
-                  for blog in layout.listOfOpenBlog         
-                    option(value="#{blog.name}" ) #{blog.name}
-                if (layout.listOfEditBlog)  
-                  for blog in layout.listOfEditBlog        
-                    option(value="#{blog.name}") #{blog.name} (Edit)
-                if (layout.listOfReviewBlog)  
-                  for blog in layout.listOfReviewBlog        
-                    option(value="#{blog.name}") #{blog.name} (Review #{layout.user.language})
-                option(value="Future") Future
-                option(value="Trash") Trash
-                if (layout.listOfHelpBlog)
-                  each helpblog in layout.listOfHelpBlog
-                     option(value="#{helpblog.name}" ) #{helpblog.name}
-            .col-md-5
-              
+      if (showCollect)
+        div 
+          h2 
+            | Create Article 
+          form(name="input", action="#{layout.htmlroot}/article/create", method="post")
+            .row
+              .col-md-1
+                | Blog <br>
+              .col-md-5
+                select(id="blog",name="blog").form-control
+                  if (layout.listOfOpenBlog)  
+                    for blog in layout.listOfOpenBlog         
+                      option(value="#{blog.name}" ) #{blog.name}
+                  if (layout.listOfEditBlog)  
+                    for blog in layout.listOfEditBlog        
+                      option(value="#{blog.name}") #{blog.name} (Edit)
+                  if (layout.listOfReviewBlog)  
+                    for blog in layout.listOfReviewBlog        
+                      option(value="#{blog.name}") #{blog.name} (Review #{layout.user.language})
+                  option(value="Future") Future
+                  option(value="Trash") Trash
+                  if (layout.listOfHelpBlog)
+                    each helpblog in layout.listOfHelpBlog
+                       option(value="#{helpblog.name}" ) #{helpblog.name}
+              .col-md-5
+                
 
-            .col-md-1
-              input(type="submit", class="btn btn-primary",value="OK")
-              
+              .col-md-1
+                input(type="submit", class="btn btn-primary",value="OK")
+                
 
 
-          .row
-            .col-md-1
-              | Category <br>
-            .col-md-5
-              select(id="categoryEN",name="categoryEN").form-control
-                for category in categories
-                  option(value="#{category.EN}" ) #{category.DE} / #{category.EN}
-            .col-md-5
-              h2
-                | 
+            .row
+              .col-md-1
+                | Category <br>
+              .col-md-5
+                select(id="categoryEN",name="categoryEN").form-control
+                  for category in categories
+                    option(value="#{category.EN}" ) #{category.DE} / #{category.EN}
+              .col-md-5
+                h2
+                  | 
 
-          .row
-            .col-md-1
-              | Title <br>
-            .col-md-10
-              textarea.form-control(name="title",rows=1)
-                 
-          .row
-            .col-md-1
-              | Collection <br>
-            .col-md-10
-              textarea.form-control(name="collection",rows=7) #{search}
+            .row
+              .col-md-1
+                | Title <br>
+              .col-md-10
+                textarea.form-control(name="title",rows=1)
+                   
+            .row
+              .col-md-1
+                | Collection <br>
+              .col-md-10
+                textarea.form-control(name="collection",rows=7) #{search}
 
        
                 

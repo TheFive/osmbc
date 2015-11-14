@@ -1,4 +1,4 @@
-
+var debug= require("debug")("model/settings");
 var config = require('../config.js');
 
 // information from article:
@@ -77,6 +77,7 @@ exports.settings = settings;
 exports.languages=languages;
 
 function getSettings(string) {
+  debug("getSettings(%s)",string);
 
   if (typeof(string)=='undefined') {
     string = '';
