@@ -1,13 +1,15 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6e...HEAD)
+## [0.3.8](https://github.com/TheFive/osmbc/tree/0.3.8) (2015-11-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.7...0.3.8)
 
 **Implemented enhancements:**
 
 - Link to Google Translate [\#140](https://github.com/TheFive/osmbc/issues/140)
 - Create an untranslated & unedited Blog View [\#137](https://github.com/TheFive/osmbc/issues/137)
+
+## [0.3.7](https://github.com/TheFive/osmbc/tree/0.3.7) (2015-11-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6e...0.3.7)
 
 **Fixed bugs:**
 
