@@ -370,15 +370,19 @@ block scripts
     function init() {
 
       markdownLEFT = document.getElementById("markdownLEFT");
-      markdownLEFT.onchange = onchangeLEFT;
-      markdownLEFT.onkeyup = onchangeLEFT;
-      markdownLEFT.onpaste = pasteLEFT;
-      markdownLEFT.ondrop = pasteLEFT;
+      if (markdownLEFT) {
+        markdownLEFT.onchange = onchangeLEFT;
+        markdownLEFT.onkeyup = onchangeLEFT;
+        markdownLEFT.onpaste = pasteLEFT;
+        markdownLEFT.ondrop = pasteLEFT;
+      }
       markdownRIGHT = document.getElementById("markdownRIGHT");
-      markdownRIGHT.onchange = onchangeRIGHT;
-      markdownRIGHT.onkeyup = onchangeRIGHT;
-      markdownRIGHT.onpaste = pasteRIGHT;
-      markdownRIGHT.ondrop = pasteRIGHT;
+      if (markdownRIGHT) {
+        markdownRIGHT.onchange = onchangeRIGHT;
+        markdownRIGHT.onkeyup = onchangeRIGHT;
+        markdownRIGHT.onpaste = pasteRIGHT;
+        markdownRIGHT.ondrop = pasteRIGHT;
+      }
       noTranslationText = document.getElementById("text_right").innerHTML;
      
       coll = document.getElementById("collection");
