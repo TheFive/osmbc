@@ -30,6 +30,12 @@ function renderArticleId(req,res,next) {
 
   var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
   var placeholder =  JSON.parse(fs.readFileSync(file));
+  for (var i=0;i<config.getLanguages();i++) {
+    var lang = config.getLanguages()[i];
+    if (!(placeholder.markdown[lang])) {
+      placeholder.markdown[lang]=placeholder.markdown["EN"];
+    }
+  }
     
 
 
