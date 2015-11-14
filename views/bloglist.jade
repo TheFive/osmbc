@@ -40,7 +40,7 @@ block content
                       if blog["reviewComment"+lang]
                         | review
                       else 
-                        a(href="#{layout.htmlroot}/article/list?markdown#{lang}=&category=!=--unpublished--&blog=#{blog.name}")
+                        a(href="#{layout.htmlroot}/article/list?markdown#{lang}=&category=!=--unpublished--&blog=#{blog.name}&style=overview#{lang}")
                           span.glyphicon.glyphicon-pencil
 
                 td
