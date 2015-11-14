@@ -19,29 +19,35 @@ block content
               th= lang
             th service
          tbody
+          - var onlyhelp = true
+          each blog in blogs
+            if blog.status != help
+              -onlyhelp = false
+
           each blog, i in blogs
             tr
-              td
-                a(href='#{layout.htmlroot}/blog/' + blog.id) #{blog.name} 
-              td= blog.status
-              - var allclosed=true
-              for lang in layout.languages
+              if (onlyhelp || blog.status != "help")
                 td
-                  if blog["close"+lang]
-                    | closed
-                  else 
-                    - allclosed = false
-                    if blog["reviewComment"+lang]
-                      | review
+                  a(href='#{layout.htmlroot}/blog/' + blog.id) #{blog.name} 
+                td= blog.status
+                - var allclosed=true
+                for lang in layout.languages
+                  td
+                    if blog["close"+lang]
+                      | closed
                     else 
-                      a(href="#{layout.htmlroot}/article/list?markdown#{lang}=&category=!=--unpublished--&blog=#{blog.name}")
-                        span.glyphicon.glyphicon-pencil
+                      - allclosed = false
+                      if blog["reviewComment"+lang]
+                        | review
+                      else 
+                        a(href="#{layout.htmlroot}/article/list?markdown#{lang}=&category=!=--unpublished--&blog=#{blog.name}")
+                          span.glyphicon.glyphicon-pencil
 
-              td
-                if allclosed
-                  a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=closed") Close Blog
-                else
-                  | -
+                td
+                  if allclosed
+                    a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=closed") Close Blog
+                  else
+                    | -
 
 
 
