@@ -144,9 +144,11 @@ block content
         .row 
           .col-md-1
           +leftcolumn
-            | #{params.left_lang}
+            div(id="left_lang") 
+              |#{params.left_lang}
           +rightcolumn
-            | #{params.right_lang}
+            div(id="right_lang")
+              |#{params.right_lang}
         .row
           .col-md-1
             | Markdown 
@@ -539,6 +541,9 @@ block scripts
          
          }
       }
+      function generateGoogleTranslateLink(link,lang) {
+        return '<a href="https://translate.google.de/translate?sl=auto&tl='+lang+'&u='+link+'">'+lang+'</a>';
+      }
       function onchangeCollection() {
         var cl = document.getElementById("collection").value;
         var linkArea = document.getElementById("linkArea");
@@ -547,14 +552,23 @@ block scripts
         var linkList;
        
         var result = "";
+
         while( (linkList = regexToken.exec(cl)) != null ) {
-            console.log("linkList"+JSON.stringify(linkList));
+            //console.log("linkList"+JSON.stringify(linkList));
          
-            result += '<a href="'+linkList[0]+'"">'+linkList[0]+'</a><br>\n';
-            console.log(result);
+            result += '<a href="'+linkList[0]+'"">'+linkList[0]+'</a>\n';
+            leftLang=document.getElementById("left_lang").innerHTML;
+            rightLang=document.getElementById("right_lang").innerHTML;
+            result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
+            if (rightLang != "--") {
+              result += " "+generateGoogleTranslateLink(linkList[0],rightLang);
+            }
+            result +="<br>\n";
+       
+            //console.log(result);
         }
         result = '<p>'+result+'</p>';
-        console.log(result);
+        //console.log(result);
         linkArea.innerHTML = result;
       }
 
