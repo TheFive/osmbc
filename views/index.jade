@@ -65,13 +65,11 @@ block content
                   td= change.table
                   td= change.property
                   td= layout.util.shorten(change.to)
-                  td= layout.moment(change.timestamp).fromNow() 
- 
-                
-
-
-
-
-
+                  td= layout.moment(change.timestamp).fromNow()
+  .row
+    .col-md-8
+    .col-md-4
+      if layout.style!="style.css"
+        a(href="#{layout.htmlroot}/osmbc.html?tempstyleOff=true") Switch Development Color off for this session.
 
   div.footer
