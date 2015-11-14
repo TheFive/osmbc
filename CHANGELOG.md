@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.8...HEAD)
+
+**Implemented enhancements:**
+
+- Search for a http link before a collection saved [\#11](https://github.com/TheFive/osmbc/issues/11)
+
 ## [0.3.8](https://github.com/TheFive/osmbc/tree/0.3.8) (2015-11-14)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.7...0.3.8)
 
