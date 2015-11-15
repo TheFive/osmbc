@@ -48,7 +48,11 @@ block content
                     a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=closed") Close Blog
                   else
                     | -
-
+  row
+    div(id="additionalText")
+      if additionalText
+        :verbatim
+          !{additionalText}
 
 
           

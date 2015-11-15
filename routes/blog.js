@@ -1,10 +1,12 @@
 var express  = require('express');
+var router   = express.Router();
 var async    = require('async');
 var should   = require('should');
-var router   = express.Router();
 var debug    = require('debug')('OSMBC:routes:blog');
 var config   = require('../config.js');
 var moment   = require('moment');
+var markdown = require('markdown-it')();
+var help     = require('../routes/help.js');
 
 
 var blogModule    = require('../model/blog.js');
@@ -174,10 +176,15 @@ function renderBlogList(req, res, next) {
   debug('router.get /list');
   var status = req.query.status;
   var query = {};
+  var additionalText;
 
   if (typeof(status)!='undefined') {
     query.status = status;
+    if (status == '!=closed') {
+      additionalText = help.getText( "blog.list.notClosed.md");
+    }
   }
+
 
   async.auto({
         blogs:function(callback) {
@@ -188,6 +195,7 @@ function renderBlogList(req, res, next) {
       },function(err,result) {
           should.exist(res.rendervar);
           res.render('bloglist',{layout:res.rendervar.layout,
+                                additionalText:additionalText,
                                 blogs:result.blogs});
         });
 };
