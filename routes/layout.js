@@ -116,7 +116,6 @@ function prepareRenderLayout(req,res,next) {
                       moment:moment,
                       util:util,
                       bootstrap:bootstrap,
-                      isURLRegex : util.isURL(),
                       osmbc_version:version.osmbc_version,
                       style:style
                     }

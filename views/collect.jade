@@ -21,6 +21,7 @@ block content
           .col-sm-2
             button.btn.btn-large.btn-primary(type="submit") Search
 
+
   .row
     if (foundArticles) 
       if (foundArticles.length>0)
@@ -88,7 +89,9 @@ block content
                 .col-md-10
                   p(id="categoryDisplay" style={color:'Gray'})
                 .col-md-2
-                      input(type="submit", class="btn btn-primary",value="OK")
+                    input(type="submit", class="btn btn-primary",value="OK")
+                    a(href="#{layout.htmlroot}/article/searchandcreate?edit=false" class="btn btn-default" role="button") Cancel
+
             
           .row
             .col-md-1

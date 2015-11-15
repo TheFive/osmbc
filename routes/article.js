@@ -145,7 +145,12 @@ function searchAndCreate(req,res,next) {
   var search = req.query.search;
   var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
   var placeholder =  JSON.parse(fs.readFileSync(file));
- 
+  if (req.query.edit && req.query.edit=="false") {
+    var returnToUrl = config.getValue('htmlroot')+"/osmbc.html";
+    if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
+    res.redirect(returnToUrl);    
+    return;
+  }
   if (!search || typeof(search)=='undefined') search = "";
   articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
     if (err) return next(err);
