@@ -158,7 +158,7 @@ block content
                 .panel-body #{article["markdown"+params.left_lang]}         
             else
               if placeholder.markdown[params.left_lang]
-                textarea.form-control(id="markdownLEFT" placeholder = "#{placeholder.markdown[params.left_lang]}" name = "markdown#{params.left_lang}" rows=7)
+                textarea.form-control(id="markdownLEFT" placeholder = "#{placeholder.markdown[params.left_lang]}" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
               else
                 textarea.form-control(id="markdownLEFT"  name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
                div(id="text_left")
@@ -171,7 +171,7 @@ block content
             else
               if (placeholder.markdown[params.right_lang])
                 
-                textarea.form-control(id="markdownRIGHT" placeholder = "#{placeholder.markdown[params.right_lang]}" name = "markdown#{params.right_lang}" rows=7)
+                textarea.form-control(id="markdownRIGHT" placeholder = "#{placeholder.markdown[params.right_lang]}" name = "markdown#{params.right_lang}" rows=7)  #{article["markdown"+params.right_lang]}
               else
                 
                 textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
