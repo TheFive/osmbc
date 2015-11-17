@@ -2,6 +2,7 @@ var should = require('should');
 var debug = require('debug')('OSMBC:router:index');
 var express = require('express');
 var router = express.Router();
+var help = require('../routes/help.js');
 
 var logModule = require('../model/logModule.js');
 
@@ -30,14 +31,16 @@ function renderReleaseNotes(req,res,next) {
 function renderHelp(req,res,next) {
   debug('help');
   should.exist(res.rendervar.layout);
-  res.render('help',{layout:res.rendervar.layout});  
+  var title = req.params.title;
+  var text = help.getText("menu."+title+".md");
+  res.render('help',{layout:res.rendervar.layout,text:text});  
 }
 
 router.get('/', renderHome);
 router.get('/osmbc.html', renderHome);
 router.get('/osmbc', renderHome);
 router.get('/release_notes.html', renderReleaseNotes);
-router.get('/help.html', renderHelp);
+router.get('/help/:title', renderHelp);
 
 
 

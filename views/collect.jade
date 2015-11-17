@@ -6,17 +6,21 @@ extends layout
 block content
   
   div
+    - var action = layout.htmlroot+"/article/searchandcreate";
+    - if (!showCollect) action = layout.htmlroot+"/article/search";
     p
-      form.form-horizontal(name="search", action="#{layout.htmlroot}/article/searchandcreate", method="get")
+      form.form-horizontal(name="search", action="#{action}", method="get")
         .form-group
           .col-sm-2
             | 
           .col-sm-6
-            input(type="text",class="form-control",name ="search",value="#{search}") 
-            p.text-muted(align="center") Please check your link for duplicates before collecting.
+            input(type="text",class="form-control",name ="search",value="#{search}")
+            if showCollect 
+              p.text-muted(align="center") Please check your link for duplicates before   collecting.
 
           .col-sm-2
             button.btn.btn-large.btn-primary(type="submit") Search
+
 
   .row
     if (foundArticles) 
@@ -45,61 +49,89 @@ block content
         p
           a(style={color:'Gray'}) 
             | No Articles found for search '#{search}'
-      div 
-        h2 
-          | Create Article 
-        form(name="input", action="#{layout.htmlroot}/article/create", method="post")
+      if (showCollect)
+        form(name="input", action="#{layout.htmlroot}/article/create", method="post")  
+          h2 
+            | Create Article 
           .row
-            .col-md-1
-              | Blog <br>
-            .col-md-5
-              select(id="blog",name="blog").form-control
-                if (layout.listOfOpenBlog)  
-                  for blog in layout.listOfOpenBlog         
-                    option(value="#{blog.name}" ) #{blog.name}
-                if (layout.listOfEditBlog)  
-                  for blog in layout.listOfEditBlog        
-                    option(value="#{blog.name}") #{blog.name} (Edit)
-                if (layout.listOfReviewBlog)  
-                  for blog in layout.listOfReviewBlog        
-                    option(value="#{blog.name}") #{blog.name} (Review #{layout.user.language})
-                option(value="Future") Future
-                option(value="Trash") Trash
-                if (layout.listOfHelpBlog)
-                  each helpblog in layout.listOfHelpBlog
-                     option(value="#{helpblog.name}" ) #{helpblog.name}
-            .col-md-5
-              
+            .col-md-6
+              div 
 
-            .col-md-1
-              input(type="submit", class="btn btn-primary",value="OK")
-              
+                .row
+                  .col-md-2
+                    | Blog <br>
+                  .col-md-10
+                    select(id="blog",name="blog").form-control
+                      if (layout.listOfOpenBlog)  
+                        for blog in layout.listOfOpenBlog         
+                          option(value="#{blog.name}" ) #{blog.name}
+                      if (layout.listOfEditBlog)  
+                        for blog in layout.listOfEditBlog        
+                          option(value="#{blog.name}") #{blog.name} (Edit)
+                      if (layout.listOfReviewBlog)  
+                        for blog in layout.listOfReviewBlog        
+                          option(value="#{blog.name}") #{blog.name} (Review #{layout.user.language})
+                      option(value="Future") Future
+                      option(value="Trash") Trash
+                      if (layout.listOfHelpBlog)
+                        each helpblog in layout.listOfHelpBlog
+                           option(value="#{helpblog.name}" ) #{helpblog.name}
+                .row
+                  .col-md-2
+                    | Category <br>
+                  .col-md-10
+                    select(id="categoryEN",name="categoryEN").form-control
+                      for category in categories
+                        option(value="#{category.EN}" ) #{category.DE} / #{category.EN}
 
+            .col-md-6
+              .row
+                .col-md-10
+                  p(id="categoryDisplay" style={color:'Gray'})
+                .col-md-2
+                    input(type="submit", class="btn btn-primary",value="OK")
+                    a(href="#{layout.htmlroot}/article/searchandcreate?edit=false" class="btn btn-default" role="button") Cancel
 
-          .row
-            .col-md-1
-              | Category <br>
-            .col-md-5
-              select(id="categoryEN",name="categoryEN").form-control
-                for category in categories
-                  option(value="#{category.EN}" ) #{category.DE} / #{category.EN}
-            .col-md-5
-              h2
-                | 
-
+            
           .row
             .col-md-1
               | Title <br>
-            .col-md-10
+            .col-md-11
               textarea.form-control(name="title",rows=1)
                  
           .row
             .col-md-1
               | Collection <br>
-            .col-md-10
+            .col-md-11
               textarea.form-control(name="collection",rows=7) #{search}
 
-       
+block scripts                
+  script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
+  script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
+
+  script.
+    window.onload = init;
+    var placeholder = !{JSON.stringify(placeholder.categories)}
+
+
+    function init() {
+
+
+      categoryDisplay = document.getElementById("categoryDisplay");
+      categoryEN = document.getElementById("categoryEN");
+      categoryEN.onchange = onchangeCategory;
+      onchangeCategory();
+    }
+
+    function onchangeCategory() {
+      var c = categoryEN.value;
+      if (placeholder[c]) {
+         categoryDisplay.innerHTML = placeholder[c];    
+        }
+    }
+   
+ 
+           
                 
 
 

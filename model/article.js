@@ -16,7 +16,7 @@ var settingsModule = require('../model/settings.js');
 var blogModule = require('../model/blog.js');
 var pgMap     = require('../model/pgMap.js');
 
-var categoryTranslation = require('../model/categoryTranslation.js')
+var categoryTranslation = require('../data/categoryTranslation.js')
 
 var blogModule = require('../model/blog.js');
 

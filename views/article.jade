@@ -157,18 +157,26 @@ block content
               .panel.panel-default
                 .panel-body #{article["markdown"+params.left_lang]}         
             else
-              textarea.form-control(id="markdownLEFT" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
-              div(id="text_left")
-                | 'no translation' to specify no translation wanted.
+              if placeholder.markdown[params.left_lang]
+                textarea.form-control(id="markdownLEFT" placeholder = "#{placeholder.markdown[params.left_lang]}" name = "markdown#{params.left_lang}" rows=7)
+              else
+                textarea.form-control(id="markdownLEFT"  name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
+               div(id="text_left")
+                | 'no translation' or '-' to specify no translation wanted.
  
           +rightcolumn
             if !blog.isEditable(params.right_lang)
               .panel.panel-default
                 .panel-body #{article["markdown"+params.right_lang]}         
             else
-              textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
+              if (placeholder.markdown[params.right_lang])
+                
+                textarea.form-control(id="markdownRIGHT" placeholder = "#{placeholder.markdown[params.right_lang]}" name = "markdown#{params.right_lang}" rows=7)
+              else
+                
+                textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
               div(id="text_right")
-                | 'no translation' to specify no translation wanted.
+                | 'no translation' or '-' to specify no translation wanted.
           .col-md-1
 
             if ((params.left_lang=="DE") || (params.right_lang=="DE"))
@@ -371,17 +379,19 @@ block scripts
 
       markdownLEFT = document.getElementById("markdownLEFT");
       if (markdownLEFT) {
-        markdownLEFT.onchange = onchangeLEFT;
+        markdownLEFT.onchange = onleaveLEFT;
         markdownLEFT.onkeyup = onchangeLEFT;
         markdownLEFT.onpaste = pasteLEFT;
         markdownLEFT.ondrop = pasteLEFT;
+        markdownLEFT.onleave = onleaveLEFT;
       }
       markdownRIGHT = document.getElementById("markdownRIGHT");
       if (markdownRIGHT) {
-        markdownRIGHT.onchange = onchangeRIGHT;
+        markdownRIGHT.onchange = onleaveRIGHT;
         markdownRIGHT.onkeyup = onchangeRIGHT;
         markdownRIGHT.onpaste = pasteRIGHT;
         markdownRIGHT.ondrop = pasteRIGHT;
+        markdonwRIGHT.onleave = onleaveRIGHT;
       }
       if (document.getElementById("text_right")) {
          noTranslationText = document.getElementById("text_right").innerHTML;  
@@ -396,10 +406,18 @@ block scripts
       onchangeCollection();
     }
 
-    function onleaveEN() {
+    function onleaveLEFT() {
       var mdEN = document.getElementById("markdownLEFT").value;
       if (mdEN == "-") {
         document.getElementById("markdownLEFT").value = "no translation";
+        onchangeLEFT();
+      }
+    }
+    function onleaveRIGHT() {
+      var mdEN = document.getElementById("markdownRIGHT").value;
+      if (mdEN == "-") {
+        document.getElementById("markdownRIGHT").value = "no translation";
+        onchangeRIGHT();
         }
     }
    

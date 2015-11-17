@@ -1,0 +1,29 @@
+{
+   "markdown" : {
+"DE":"1. Nicht Passiv, sondern Aktiv formulieren \nBeispiel: OpenCage Data veröffentlicht ein Interview mit David Overton, dem Macher hinter der Stoffkarten produzierenden Firma Splashmaps. (via Twitter) \n2. Personen/Unternehmen sind Nachrichten! Deshalb ... möglichst immer mit einer Person/Unternehmen beginnen! \n3. Eine komplexe Meldung lieber in zwei Sätze aufteilen, statt mit Nebensätzen zu arbeiten.\n4. Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008)",
+"EN":"1. Formulate not passive, but active. Sample: OpenCage data published an interview with David Overton, the doer behind the tissue map producing company Splashmaps. (via Twitter)  \n2. People & companies are information! So start an article with e person or a company! \n3. Decomplify your sentences.\n4. (Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008))"
+}
+,
+  "categories" : {
+    "-- no category yet --":"If you do not have any idea, which category to use.",
+    "[Actual Category]": "This category does not have to exist in every blog. Use this category for actual events like SOTM",
+    "About us": "Use seldom, then on the top", 
+    "Weekly exerciseEN:": "Category for the German weekly exercise",
+    "Mapping": "Quality assurance, editors, maps for mapper, tools for mapping, tagging",
+    "Community": "articles from the community, that does not fit in any other category",
+    "Imports": "discussions, announcements about imports",
+    "OpenStreetMap Foundation": "articles about the OSMF or local OpenStreetMap chapter",
+    "Events": "Announcements, reports about an event",
+    "Humanitarian OSM": "Information about HOT & Missing maps",
+    "Maps": "Changes on osm.org and osm.de maps, osm based special maps, no 08/15 map!",
+    "#switch2OSM": "Information about well known websites or traffic rich websites, a good new rendering style, (commercial sites) companies having own (big geo) data, more features for displaying maps are offered",
+    "Open Data": "Information about open data",
+    "Licences": "Information about juridicial topics",
+    "Software": "Programs for non programmers (without OSM editors)",
+    "Programming": "Information about software development",
+    "Did you know …": "Any thng which is interesting in OSM and worth sharing",
+    "Other “geo” things": "Information, that mostly have nothing to do with OSM...",
+    "Not Translated": "...",
+    "--unpublished--": "Articles, that should not be published, but keep their relation to the blog (otherwise use the trash)"
+  }
+}

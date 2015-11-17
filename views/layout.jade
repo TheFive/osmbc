@@ -46,7 +46,7 @@ html(lang='en')
                 span.caret
               ul.dropdown-menu(role='menu')
                 li
-                  a(href='#{layout.htmlroot}/article/searchandcreate?search=') Search
+                  a(href='#{layout.htmlroot}/article/search') Search
                 li.dropdown-header Special Search
                 if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
                   li.dropdown-header Special Search Current #{layout.listOfOpenBlog[0].name}
@@ -137,11 +137,9 @@ html(lang='en')
                 li
                   a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md") Version #{layout.osmbc_version} 
                 li
-                  a(href="#{layout.htmlroot}/help.html") OSMBC   
-                if (layout.listOfHelpBlog)
-                  each helpblog in layout.listOfHelpBlog
-                    li
-                      a(href='#{layout.htmlroot}/blog/#{helpblog.id}/preview?lang=EN') #{helpblog.name}                    
+                  a(href="#{layout.htmlroot}/help/OSMBC") OSMBC   
+                li
+                  a(href="#{layout.htmlroot}/help/Beginner's How To") Beginner's How To                    
             if layout.user
                 li 
                   a(href='http://www.openstreetmap.org/user/#{layout.user.displayName}') #{layout.user.displayName}
