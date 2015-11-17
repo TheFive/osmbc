@@ -112,7 +112,7 @@ function renderArticleId(req,res,next) {
             }
           }
           if (typeof(article.comment)!='undefined') {
-            article.commentHtml = markdown.toHTML(article.comment)
+            article.commentHtml = markdown.render(article.comment)
           } 
 
           // 
