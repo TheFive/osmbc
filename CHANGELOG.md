@@ -1,12 +1,29 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [0.3.9](https://github.com/TheFive/osmbc/tree/0.3.9) (2015-11-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.8b...0.3.9)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.8...HEAD)
+**Fixed bugs:**
+
+- Not renders the markdown, and there is not collection's links [\#158](https://github.com/TheFive/osmbc/issues/158)
+- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
+
+**Closed issues:**
+
+- revive the "-" in the markdown please [\#166](https://github.com/TheFive/osmbc/issues/166)
+- DE.PT [\#162](https://github.com/TheFive/osmbc/issues/162)
+
+## [0.3.8b](https://github.com/TheFive/osmbc/tree/0.3.8b) (2015-11-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.8a...0.3.8b)
 
 **Implemented enhancements:**
 
+- When choosing a category, show an advice about the category usage. [\#160](https://github.com/TheFive/osmbc/issues/160)
+- Display a hint, how to formulate an article. [\#159](https://github.com/TheFive/osmbc/issues/159)
 - Search for a http link before a collection saved [\#11](https://github.com/TheFive/osmbc/issues/11)
+
+## [0.3.8a](https://github.com/TheFive/osmbc/tree/0.3.8a) (2015-11-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.8...0.3.8a)
 
 ## [0.3.8](https://github.com/TheFive/osmbc/tree/0.3.8) (2015-11-14)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.7...0.3.8)
@@ -342,17 +359,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
