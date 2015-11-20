@@ -106,10 +106,18 @@ describe('views/article', function() {
           {text:'the http://www.google.deorigin text.',startselection:24,endselection:24})")).eql({pos:5,text:'the [](http://www.google.de)origin text.'});
       })
       it('should return new value if link is inserted with selection',function(){
-        //should(browser.evaluate("generateMarkdownLink('Google the origin text.','https://www.google.de/search the origin text.')")).eql({text:'[Google](https://www.google.de/search) the origin text.',pos:38});
-        //should(browser.evaluate("generateMarkdownLink('Google the origin text.','https://www.google.de the origin text.')")).eql({text:'[Googl](https://www.google.d)e the origin text.',pos:29});
-        //should(browser.evaluate("generateMarkdownLink('the origin text.LINK','the origin text.http://www.openstreetmap.de/sublink.html')")).eql({pos: 64,text:'the origin text.[LINK](http://www.openstreetmap.de/sublink.html)'});
-        //should(browser.evaluate("generateMarkdownLink('the ---LINK---origin text.','the http://www.google.deorigin text.')")).eql({pos:38,text:'the [---LINK---](http://www.google.de)origin text.'});
+        should(browser.evaluate("generateMarkdownLink2(\
+          {text:'Google the origin text.',startselection:0,endselection:6},\
+          {text:'https://www.google.de/search the origin text.',startselection:28,endselection:28})")).eql({text:'[Google](https://www.google.de/search) the origin text.',pos:38});
+        should(browser.evaluate("generateMarkdownLink2(\
+          {text:'Google the origin text.',startselection:0,endselection:6},\
+          {text:'https://www.google.de the origin text.',startselection:21,endselection:21})")).eql({text:'[Google](https://www.google.de) the origin text.',pos:31});
+        should(browser.evaluate("generateMarkdownLink2(\
+          {text:'the origin text.LINK',startselection:16,endselection:20},\
+          {text:'the origin text.http://www.openstreetmap.de/sublink.html',startselection:56,endselection:56})")).eql({pos: 64,text:'the origin text.[LINK](http://www.openstreetmap.de/sublink.html)'});
+        should(browser.evaluate("generateMarkdownLink2(\
+          {text:'the ---LINK---origin text.',startselection:4,endselection:14},\
+          {text:'the http://www.google.deorigin text.',startselection:24,endselection:24})")).eql({pos:38,text:'the [---LINK---](http://www.google.de)origin text.'});
       })
     })
   })
