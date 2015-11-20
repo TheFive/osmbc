@@ -445,50 +445,7 @@ block scripts
       return isUrlRegex;
     }
     
-    function generateMarkdownLink(par1,par2) {
-        var before = par1;
-        var after = par2;
-        var tb = '';
-    
-        while (before.length>0 && before.charAt(0)==after.charAt(0)) {
-          tb += before.charAt(0);
-          before = before.substring(1,99999);
-          after = after.substring(1.99999);
-        }
-    
-        ta = '';
-        var beforeSnip='';
-        var afterSnip='';
-        while ( (before.length>0) && 
-                (before.charAt(before.length-1)==after.charAt(after.length-1))) {
-          ta =  before.charAt(before.length-1) + ta;
-          before = before.substring(0,before.length-1);
-          after = after.substring(0,after.length-1); 
-        }
-        beforeSnip = before;
-        afterSnip = after;    
-     
-      
-        
-
-        if (isURL(afterSnip)) {
-       
-          var allreadyMarkdowned = false;
-          if (tb!="" && tb.charAt(tb.length-1)=="(") allreadyMarkdowned= true;
-          if (ta!="" && tb.charAt(0)==")") allreadyMarkdowned= true;
-          if (!allreadyMarkdowned) {
-            var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
-            var c ;
-            if (beforeSnip == "") {
-              c = (tb+"[").length;
-            } else {
-              c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
-            }
-            return {text:r,pos:c};
-          }
-        }
-        return null;
-    }
+  
 
        function generateMarkdownLink2(par1,par2) {
         var before = par1.text;
@@ -502,7 +459,7 @@ block scripts
     
      
       
-   
+ 
         if (isURL(afterSnip.trim())) {
           afterSnip = afterSnip.trim();
        
