@@ -4,6 +4,9 @@ var pg       = require('pg');
 var async    = require('async');
 var config   = require('../config.js');
 var markdown = require('markdown-it')();
+var mdFigCaption = require('mdfigcaption');
+markdown.use(mdFigCaption);
+
 var should   = require('should');
 var moment   = require('moment');
 
@@ -247,6 +250,10 @@ function getPreview(style,user,callback) {
   var preview = "";
 
   var bilingual = options.bilingual;
+  var imageHTML;
+  if (self.markdownImage) {
+     imageHTML = markdown.render(self.markdownImage)+'\n';
+  }
 
   articleModule.find({blog:this.name},{column:"title"},function(err,result){
     
@@ -258,7 +265,10 @@ function getPreview(style,user,callback) {
       if (self.startDate && self.endDate) {
         preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
       }
-      preview += "<!--         place picture here              -->\n"      
+      if (!options.edit) {
+        if (!imageHTML) preview += "<!--         place picture here              -->\n"   
+        else preview += '<div style="text-align:center">'+imageHTML+'</div>';        
+      }
     }
     else if (!(options.edit)) preview = '<h2>'+self.name+'</h2>\n'
 
