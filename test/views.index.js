@@ -13,7 +13,7 @@ var articleModule = require("../model/article.js");
 var Browser = require('zombie');
 var http = require('http');
 
-describe('Browser Tests', function() {
+describe('views/index', function() {
   var browser;
   var articleId;
   var server;
@@ -32,7 +32,7 @@ describe('Browser Tests', function() {
   });
   
 
-  describe("Test Homepage",function() {
+  describe("Homepage",function() {
     // load the contact page
     before(function(done) {
       browser.visit('/osmbc', done);
@@ -43,15 +43,4 @@ describe('Browser Tests', function() {
       browser.assert.text('h2', 'Welcome to OSM BC');
     });
   })
-  describe("Collect Article addiitional functions",function() {
-    before(function(done) {
-      browser.visit('/article/'+articleId, done);
-    });
-    it('should isURL work on page' ,function() {
-      browser.evaluate("isURL('https://www.google.de')",true);
-    });
-
-  })
-
-
 });
