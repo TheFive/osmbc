@@ -391,7 +391,7 @@ block scripts
         markdownRIGHT.onkeyup = onchangeRIGHT;
         markdownRIGHT.onpaste = pasteRIGHT;
         markdownRIGHT.ondrop = pasteRIGHT;
-        markdonwRIGHT.onleave = onleaveRIGHT;
+        markdownRIGHT.onleave = onleaveRIGHT;
       }
       if (document.getElementById("text_right")) {
          noTranslationText = document.getElementById("text_right").innerHTML;  
@@ -445,33 +445,23 @@ block scripts
       return isUrlRegex;
     }
     
-    function generateMarkdownLink(par1,par2) {
-        var before = par1;
-        var after = par2;
+  
+
+       function generateMarkdownLink2(par1,par2) {
+        var before = par1.text;
+        var after = par2.text;
         var tb = '';
+
+        tb = par1.text.substring(0,par1.startselection);
+        ta = par1.text.substring(par1.endselection,99999);
+        beforeSnip = par1.text.substring(par1.startselection,par1.endselection);
+        afterSnip = par2.text.substring(par1.startselection,par2.endselection);
     
-        while (before.length>0 && before.charAt(0)==after.charAt(0)) {
-          tb += before.charAt(0);
-          before = before.substring(1,99999);
-          after = after.substring(1.99999);
-        }
-    
-        ta = '';
-        var beforeSnip='';
-        var afterSnip='';
-        while ( (before.length>0) && 
-                (before.charAt(before.length-1)==after.charAt(after.length-1))) {
-          ta =  before.charAt(before.length-1) + ta;
-          before = before.substring(0,before.length-1);
-          after = after.substring(0,after.length-1); 
-        }
-        beforeSnip = before;
-        afterSnip = after;    
      
       
-        
-
-        if (isURL(afterSnip)) {
+ 
+        if (isURL(afterSnip.trim())) {
+          afterSnip = afterSnip.trim();
        
           var allreadyMarkdowned = false;
           if (tb!="" && tb.charAt(tb.length-1)=="(") allreadyMarkdowned= true;
@@ -484,6 +474,7 @@ block scripts
             } else {
               c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
             }
+
             return {text:r,pos:c};
           }
         }
@@ -492,13 +483,16 @@ block scripts
     
     function pasteLEFT() {
      
-     
-      var mf = document.getElementById("markdownLEFT");
-      var textBefore = mf.value;
       
+      var mf = document.getElementById("markdownLEFT");
+       //var textBefore = mf.value;
+      var before = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
+     
       setTimeout(function(){
-        var textAfter = mf.value;
-        var r = generateMarkdownLink(textBefore,textAfter);
+        //var textAfter = mf.value;
+        var after = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
+        //var r = generateMarkdownLink(textBefore,textAfter);
+        var r = generateMarkdownLink2(before,after);
         if (r) {
           mf.value =r.text;
           mf.selectionStart = mf.selectionEnd = r.pos;
@@ -512,11 +506,15 @@ block scripts
      
      
       var mf = document.getElementById("markdownRIGHT");
-      var textBefore = mf.value;
+      //var textBefore = mf.value;
+      var before = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
+
       
       setTimeout(function(){
-        var textAfter = mf.value;
-        var r = generateMarkdownLink(textBefore,textAfter);
+        //var textAfter = mf.value;
+        var after = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
+        //var r = generateMarkdownLink(textBefore,textAfter);
+        var r = generateMarkdownLink2(before,after);
         if (r) {
           mf.value =r.text;
           mf.selectionStart = mf.selectionEnd = r.pos;
