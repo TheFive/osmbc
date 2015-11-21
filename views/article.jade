@@ -158,9 +158,9 @@ block content
                 .panel-body #{article["markdown"+params.left_lang]}         
             else
               if placeholder.markdown[params.left_lang]
-                textarea.form-control(id="markdownLEFT" placeholder = "#{placeholder.markdown[params.left_lang]}" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
+                textarea.form-control(id="markdownLEFT" placeholder = "#{placeholder.markdown[params.left_lang]}" spellcheck = "true" lang="#{params.left_lang}" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
               else
-                textarea.form-control(id="markdownLEFT"  name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
+                textarea.form-control(id="markdownLEFT"  spellcheck = "true"  lang="#{params.left_lang}" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
                div(id="text_left")
                 | 'no translation' or '-' to specify no translation wanted.
  
@@ -171,10 +171,10 @@ block content
             else
               if (placeholder.markdown[params.right_lang])
                 
-                textarea.form-control(id="markdownRIGHT" placeholder = "#{placeholder.markdown[params.right_lang]}" name = "markdown#{params.right_lang}" rows=7)  #{article["markdown"+params.right_lang]}
+                textarea.form-control(id="markdownRIGHT" placeholder = "#{placeholder.markdown[params.right_lang]}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=7)  #{article["markdown"+params.right_lang]}
               else
                 
-                textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
+                textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" lang="#{params.right_lang}" spellcheck = "true" rows=7) #{article["markdown"+params.right_lang]}
               div(id="text_right")
                 | 'no translation' or '-' to specify no translation wanted.
           .col-md-1
@@ -401,8 +401,11 @@ block scripts
       
      
       coll = document.getElementById("collection");
-      coll.onchange = onchangeCollection;
-      coll.onkeyup = onchangeCollection;
+      if (coll) {
+        coll.onchange = onchangeCollection;
+        coll.onkeyup = onchangeCollection;
+
+        }
       onchangeCollection();
     }
 
@@ -570,7 +573,9 @@ block scripts
         return '<a href="https://translate.google.de/translate?sl=auto&tl='+lang+'&u='+link+'">'+lang+'</a>';
       }
       function onchangeCollection() {
-        var cl = document.getElementById("collection").value;
+        var clfield = document.getElementById("collection");
+        var cl;
+        if (clfield) cl = clfield.value;
         var linkArea = document.getElementById("linkArea");
 
         regexToken = /(((ftp|https?):\/\/)[\-\w@:%_\+.~#?,&\/\/=]+)|((mailto:)?[_.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
@@ -594,7 +599,7 @@ block scripts
         }
         result = '<p>'+result+'</p>';
         //console.log(result);
-        linkArea.innerHTML = result;
+        if (linkArea) linkArea.innerHTML = result;
       }
 
 
