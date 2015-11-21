@@ -267,12 +267,23 @@ function getPreview(style,user,callback) {
       }
       if (!options.edit) {
         if (!imageHTML) preview += "<!--         place picture here              -->\n"   
-        else preview += '<div style="text-align:center">'+imageHTML+'</div>';        
+        else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
       }
     }
     else if (!(options.edit)) preview = '<h2>'+self.name+'</h2>\n'
 
-  
+  /* The Following is used to display a picture in WP now.
+  <p>
+    <div id="attachment_12617" style="width: 591px" class="wp-caption aligncenter"> (/)
+    <a href="http://blog.openstreetmap.de/wp-uploads//2015/10/cassini.png"> (/entfällt/)
+    <img class=" wp-image-12617" src="http://blog.openstreetmap.de/wp-uploads//2015/10/cassini.png" alt="Französiche Forscher haben die Cassini Karte (Daten aus dem 18. Jahrhundert) digitalisiert." width="581" height="637" /> (/durch markdown/)
+    </a><p class="wp-caption-text">Französische Forscher haben die Cassini Karte (Daten aus dem 18. Jahrhundert) digitalisiert. (/ durch markdown /)
+    <a href="#wn274_weitere themen mit geo-bezug">[1]</a> (/still open/)
+    </p>
+    </div>
+    <!-- place picture here -->
+  </p>
+  */
     
     // Put every article in an array for the category
     if (result) {
