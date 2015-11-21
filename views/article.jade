@@ -401,8 +401,11 @@ block scripts
       
      
       coll = document.getElementById("collection");
-      coll.onchange = onchangeCollection;
-      coll.onkeyup = onchangeCollection;
+      if (coll) {
+        coll.onchange = onchangeCollection;
+        coll.onkeyup = onchangeCollection;
+
+        }
       onchangeCollection();
     }
 
@@ -570,7 +573,9 @@ block scripts
         return '<a href="https://translate.google.de/translate?sl=auto&tl='+lang+'&u='+link+'">'+lang+'</a>';
       }
       function onchangeCollection() {
-        var cl = document.getElementById("collection").value;
+        var clfield = document.getElementById("collection");
+        var cl;
+        if (clfield) cl = clfield.value;
         var linkArea = document.getElementById("linkArea");
 
         regexToken = /(((ftp|https?):\/\/)[\-\w@:%_\+.~#?,&\/\/=]+)|((mailto:)?[_.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
@@ -594,7 +599,7 @@ block scripts
         }
         result = '<p>'+result+'</p>';
         //console.log(result);
-        linkArea.innerHTML = result;
+        if (linkArea) linkArea.innerHTML = result;
       }
 
 
