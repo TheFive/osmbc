@@ -35,6 +35,7 @@ describe('views/index', function() {
   describe("Homepage",function() {
     // load the contact page
     before(function(done) {
+      this.timeout(6000);
       browser.visit('/osmbc', done);
     });
 

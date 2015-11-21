@@ -285,7 +285,7 @@ function setAndSave(user,data,callback) {
   listOfOrphanBlog = null;
   // trim all markdown Values
   for (k in data) {
-    if (k.substring(0,8)== "markdown") {
+    if (k.substring(0,8)== "markdown" && data[k]) {
       data[k]=data[k].trim();
     }
   }
