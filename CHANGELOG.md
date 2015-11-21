@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.3.10](https://github.com/TheFive/osmbc/tree/0.3.10) (2015-11-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9a...0.3.10)
+
+**Fixed bugs:**
+
+- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
+
 ## [0.3.9a](https://github.com/TheFive/osmbc/tree/0.3.9a) (2015-11-20)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9...0.3.9a)
 
@@ -18,7 +25,6 @@
 **Fixed bugs:**
 
 - Markdown is not rendered, nor the links are generated out of a collection, if one of the languages is closed. [\#158](https://github.com/TheFive/osmbc/issues/158)
-- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
 
 **Closed issues:**
 
