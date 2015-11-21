@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.3.10a](https://github.com/TheFive/osmbc/tree/0.3.10a) (2015-11-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10...0.3.10a)
+
+**Fixed bugs:**
+
+- Unknown behavior with an closed article [\#171](https://github.com/TheFive/osmbc/issues/171)
+
 ## [0.3.10](https://github.com/TheFive/osmbc/tree/0.3.10) (2015-11-21)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9a...0.3.10)
 
@@ -376,17 +383,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
