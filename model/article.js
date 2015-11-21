@@ -283,6 +283,12 @@ function setAndSave(user,data,callback) {
   should(typeof(data)).equal('object');
   should(typeof(callback)).equal('function');
   listOfOrphanBlog = null;
+  // trim all markdown Values
+  for (k in data) {
+    if (k.substring(0,8)== "markdown") {
+      data[k]=data[k].trim();
+    }
+  }
   var self = this;
   delete self.lock;
 

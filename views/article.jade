@@ -408,14 +408,14 @@ block scripts
 
     function onleaveLEFT() {
       var mdEN = document.getElementById("markdownLEFT").value;
-      if (mdEN == "-") {
+      if (mdEN.trim() == "-") {
         document.getElementById("markdownLEFT").value = "no translation";
         onchangeLEFT();
       }
     }
     function onleaveRIGHT() {
       var mdEN = document.getElementById("markdownRIGHT").value;
-      if (mdEN == "-") {
+      if (mdEN.trim() == "-") {
         document.getElementById("markdownRIGHT").value = "no translation";
         onchangeRIGHT();
         }
