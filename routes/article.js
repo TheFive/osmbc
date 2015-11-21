@@ -282,12 +282,14 @@ function search(req, res, next) {
  
   async.series([
     function doSearch(cb) {
-       articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,r){
+      if (search != "") {
+        articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,r){
           if (err) return cb(err);
           result = r;
           cb();
-       })    
-
+        })            
+      }
+      else return cb();
     }
     ],
     function finalFunction(err) {
@@ -297,6 +299,7 @@ function search(req, res, next) {
       res.render("collect",{layout:res.rendervar.layout,
                             search:search,
                             foundArticles:result,
+                            placeholder:placeholder,
                             showCollect:false,
                             categories:blogModule.getCategories()});
     }

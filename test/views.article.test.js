@@ -27,7 +27,7 @@ describe('views/article', function() {
       }); },
       function createBrowser(cb) {testutil.startBrowser(function(err,result){browser=result;cb()})}
     ], function(err) {
-      bddone();
+      bddone(err);
       
     })
   });
@@ -35,7 +35,7 @@ describe('views/article', function() {
 
   describe("Scripting Functions",function() {
     before(function(done) {
-      this.timeout(4000);
+      this.timeout(6000);
       browser.visit('/article/'+articleId, done);
     });
     it('should isURL work on page' ,function() {
