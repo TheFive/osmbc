@@ -422,7 +422,7 @@ block scripts
     }
    
     function convert(text) {
-      converter = new window.markdownit();
+      converter = new window.markdownit({breaks:true});
 
       // generate the OSMBlog Style List
       if (text.substring(0,2)=="* ") text = text.substring(2,999999);

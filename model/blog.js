@@ -3,7 +3,7 @@
 var pg       = require('pg');
 var async    = require('async');
 var config   = require('../config.js');
-var markdown = require('markdown-it')();
+var markdown = require('markdown-it')({breaks:true}).use(require('markdown-it-sup'));
 var mdFigCaption = require('mdfigcaption');
 markdown.use(mdFigCaption);
 
@@ -24,6 +24,7 @@ module.exports.table = "blog";
 
 module.exports.categories = [
   {DE:"-- noch keine Kategorie --", EN:"-- no category yet --"},
+  {DE:"Bild",EN:"Picture"},
   {DE:"[Aktuelle Kategorie]",EN:"[Actual Category]"},
   {DE:"In eigener Sache",EN:"About us"},
   {DE:"Wochenaufruf",EN:"Weekly exerciseEN:"},
@@ -272,18 +273,7 @@ function getPreview(style,user,callback) {
     }
     else if (!(options.edit)) preview = '<h2>'+self.name+'</h2>\n'
 
-  /* The Following is used to display a picture in WP now.
-  <p>
-    <div id="attachment_12617" style="width: 591px" class="wp-caption aligncenter"> (/)
-    <a href="http://blog.openstreetmap.de/wp-uploads//2015/10/cassini.png"> (/entfällt/)
-    <img class=" wp-image-12617" src="http://blog.openstreetmap.de/wp-uploads//2015/10/cassini.png" alt="Französiche Forscher haben die Cassini Karte (Daten aus dem 18. Jahrhundert) digitalisiert." width="581" height="637" /> (/durch markdown/)
-    </a><p class="wp-caption-text">Französische Forscher haben die Cassini Karte (Daten aus dem 18. Jahrhundert) digitalisiert. (/ durch markdown /)
-    <a href="#wn274_weitere themen mit geo-bezug">[1]</a> (/still open/)
-    </p>
-    </div>
-    <!-- place picture here -->
-  </p>
-  */
+
     
     // Put every article in an array for the category
     if (result) {
@@ -325,15 +315,26 @@ function getPreview(style,user,callback) {
 
           htmlForCategory += r.getPreview(style,user);
         }
-        var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n';
-        if (bilingual) {
+        var header ='';
+        if (category!="Picture") {
+          header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n';
+          if (bilingual) {
           header = '<div class="row"><div class = "col-md-6">' +
                    '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n' +
                    '</div><div class = "col-md-6">' +
                    '<h2 id="'+self.name.toLowerCase()+'_'+categoryRIGHT.toLowerCase()+'">'+categoryRIGHT+'</h2>\n' +
                    '</div></div>';
+          }
+          htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        } else {
+          header = "<!--         place picture here              -->\n" 
+          if (bilingual) {
+            header = '<div class="row"><div class = "col-md-6">' +
+                     '</div><div class = "col-md-6">' +
+                     '</div></div>';
+            htmlForCategory = header + '\n'+htmlForCategory+'\n'                 
+          }
         }
-        htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
         preview += htmlForCategory;
         delete articles[category];
       }

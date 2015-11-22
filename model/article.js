@@ -4,7 +4,7 @@
 var pg     = require('pg');
 var async  = require('async');
 var should = require('should');
-var markdown = require('markdown-it')();
+var markdown = require('markdown-it')({breaks:true}).use(require('markdown-it-sup'));
 var debug  = require('debug')('OSMBC:model:article');
 
 
@@ -109,9 +109,15 @@ function getPreview(par1,par2,par3) {
   // Calculate markup for comment
   var commentMarkup = "";
   var editLink = '';
+  var blogRef = this.blog;
+  if (!blogRef) blogRef = "undefined";
+  var titleRef = this.title;
+  if (!titleRef) titleRef = this.id;
+  var pageLink = blogRef+'_'+titleRef;
+ 
   
 
-  var liON = '<li>\n';
+  var liON = '<li id="'+pageLink+'">\n';
   var liOFF = '</li>';
 
   if (options.edit && options.comment && this.comment) {
@@ -119,8 +125,12 @@ function getPreview(par1,par2,par3) {
       var commentColour = "blue";
       if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
       if (this.comment.indexOf("@all")>=0) commentColour = "red";
-      liON = '<li style=" border-left-style: solid; border-color: '+commentColour+';">\n';
+      liON = '<li id="'+pageLink+'" style=" border-left-style: solid; border-color: '+commentColour+';">\n';
     }
+  }
+  if (this.categoryEN == "Picture") {
+    liON = '<div class="wp-caption aligncenter"> \n'
+    liOFF = '</div>\n';
   }
 
   // generate Glyphicon for Editing
@@ -158,6 +168,9 @@ function getPreview(par1,par2,par3) {
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
       text = markdown.render(md);
+      if (options.smallPicture) {
+        text = text.replace("<img",'<img width="20%"');
+      }
 
     } else {
       text = this.displayTitle();
@@ -169,6 +182,11 @@ function getPreview(par1,par2,par3) {
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
       textright = markdown.render(md);
+     
+      textright = textright.replace('<img','<img width="20%"');
+      text = text.replace("<img",'<img width="20%"');
+
+      
  
       // clean up <p> and </p> of markdown generation.
     } else {

@@ -22,6 +22,17 @@ module.exports = {
           "ID": "[Actual Category]",
           "TR": "[Actual Category]"
      },
+     "Picture": {
+          "EN": "Picture",
+          "DE": "Bild",
+          "ES": "Picture",
+          "FR": "Picture",
+          "CZ": "Picture",
+          "PT": "Picture",
+          "JP": "Picture",
+          "ID": "Picture",
+          "TR": "Picture"
+     },
      "About us": {
           "EN": "About us",
           "DE": "In eigener Sache",
