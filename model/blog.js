@@ -31,7 +31,7 @@ module.exports.categories = [
   {DE:"Veranstaltungen",EN:"Events"},
   {DE:"Humanitarian OSM",EN:"Humanitarian OSM"},
   {DE:"Karten",EN:"Maps"},
-  {DE:"switch2OSM",EN:"#switch2OSM"},
+  {DE:"switch2OSM",EN:"switch2OSM"},
   {DE:"Open-Data",EN:"Open Data"},
   {DE:"Lizenzen",EN:"Licences"},
   {DE:"Programme",EN:"Software"},
