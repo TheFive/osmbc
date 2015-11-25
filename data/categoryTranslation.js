@@ -133,16 +133,16 @@ module.exports = {
           "TR": "Haritalar"
      },
      "#switch2OSM": {
-          "EN": "#switch2OSM",
-          "DE": "#switch2OSM",
-          "ES": "#switch2OSM",
-          "FR": "#switch2OSM",
-          "CZ": "#switch2OSM",
-          "PT": "#switch2OSM",
-          "RU": "#switch2OSM",                 
-          "JP": "#switch2OSM",
-          "ID": "#switch2OSM",
-          "TR": "#switch2OSM"
+          "EN": "switch2OSM",
+          "DE": "switch2OSM",
+          "ES": "switch2OSM",
+          "FR": "switch2OSM",
+          "CZ": "switch2OSM",
+          "PT": "switch2OSM",
+          "RU": "switch2OSM",                 
+          "JP": "switch2OSM",
+          "ID": "switch2OSM",
+          "TR": "switch2OSM"
      },
      "Open Data": {
           "EN": "Open Data",
@@ -234,8 +234,8 @@ module.exports = {
           "ES": "--unpublished--",
           "FR": "--unpublished--",
           "CZ": "--unpublished--",
-          "PT": "--não publicado--"
-          "RU": "--не опубликовано",
+          "PT": "--não publicado--",
+          "RU": "--не опубликовано--",
           "JP": "--unpublished--",
           "ID": "--unpublished--",
           "TR": "--unpublished--"
