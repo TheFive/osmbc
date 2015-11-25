@@ -42,7 +42,7 @@
                           {"DE":"Veranstaltungen","EN":"Events","ES": "Eventos"},
                           {"DE":"Humanitarian OSM","EN":"Humanitarian OSM","ES": "OSM Humanitario"},
                           {"DE":"Karten","EN":"Maps","ES": "Mapas"},
-                          {"DE":"switch2OSM","EN":"#switch2OSM","ES": "#switch2OSM"},
+                          {"DE":"switch2OSM","EN":"switch2OSM","ES": "switch2OSM"},
                           {"DE":"Open-Data","EN":"Open Data","ES": "Datos Abiertos"},
                           {"DE":"Lizenzen","EN":"Licences","ES": "Licencias"},
                           {"DE":"Programme","EN":"Software", "ES": "Software"},
