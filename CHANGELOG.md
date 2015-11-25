@@ -1,12 +1,37 @@
 # Change Log
 
+## [0.3.10a](https://github.com/TheFive/osmbc/tree/0.3.10a) (2015-11-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10...0.3.10a)
+
+**Fixed bugs:**
+
+- Unknown behavior with an closed article [\#171](https://github.com/TheFive/osmbc/issues/171)
+
+## [0.3.10](https://github.com/TheFive/osmbc/tree/0.3.10) (2015-11-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9a...0.3.10)
+
+**Fixed bugs:**
+
+- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
+
+## [0.3.9a](https://github.com/TheFive/osmbc/tree/0.3.9a) (2015-11-20)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9...0.3.9a)
+
+**Fixed bugs:**
+
+- A common tail in URL title and URL leads to a wrong \[\]\(\) separation. [\#164](https://github.com/TheFive/osmbc/issues/164)
+- A Cancel button near the OK button would be helpful [\#161](https://github.com/TheFive/osmbc/issues/161)
+
+**Merged pull requests:**
+
+- Update menu.Beginner's How To.md [\#169](https://github.com/TheFive/osmbc/pull/169) ([fredao](https://github.com/fredao))
+
 ## [0.3.9](https://github.com/TheFive/osmbc/tree/0.3.9) (2015-11-17)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.8b...0.3.9)
 
 **Fixed bugs:**
 
 - Markdown is not rendered, nor the links are generated out of a collection, if one of the languages is closed. [\#158](https://github.com/TheFive/osmbc/issues/158)
-- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
 
 **Closed issues:**
 
