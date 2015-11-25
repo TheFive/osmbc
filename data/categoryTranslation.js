@@ -6,7 +6,8 @@ module.exports = {
           "ES": "-- no category yet --",
           "FR": "-- no category yet --",
           "CZ": "-- no category yet --",
-          "PT": "-- ainda sem categoria --",
+          "PT": "-- no category yet --",
+          "RU": "-- no category yet --",
           "JP": "-- no category yet --",
           "ID": "-- no category yet --",
           "TR": "-- no category yet --"
@@ -18,6 +19,7 @@ module.exports = {
           "FR": "[Actualité]",
           "CZ": "[Actual Category]",
           "PT": "[Categoria atual]",
+          "RU": "[Текущая категория]",
           "JP": "[Actual Category]",
           "ID": "[Actual Category]",
           "TR": "[Actual Category]"
@@ -29,17 +31,19 @@ module.exports = {
           "FR": "À notre propos",
           "CZ": "About us",
           "PT": "Sobre nós",
+          "RU": "О нас",         
           "JP": "私たちについて",
           "ID": "Tentang kami",
           "TR": "Hakkımızda"
      },
      "Weekly exerciseEN:": {
-          "EN": "Weekly exerciseEN:",
+          "EN": "Weekly exercise:",
           "DE": "Wochenaufruf",
           "ES": "Not Translated",
           "FR": "Not Translated",
           "CZ": "Not Translated",
           "PT": "Não traduzido",
+          "RU": "Еженедельные заданияАнгл",                 
           "JP": "Not Translated",
           "ID": "Not Translated",
           "TR": "Not Translated"
@@ -51,6 +55,7 @@ module.exports = {
           "FR": "Cartographie",
           "CZ": "Mapping",
           "PT": "Mapeamento",
+          "RU": "Картографирование",                
           "JP": "マッピング",
           "ID": "Pemetaan",
           "TR": "Haritalama"  
@@ -62,6 +67,7 @@ module.exports = {
           "FR": "Communauté",
           "CZ": "Community",
           "PT": "Comunidade",
+          "RU": "Сообщество",                 
           "JP": "コミュニティ",
           "ID": "Komunitas",
           "TR": "Topluluk"
@@ -73,6 +79,7 @@ module.exports = {
           "FR": "Importation",
           "CZ": "Imports",
           "PT": "Importações",
+          "RU": "Импорты",                 
           "JP": "インポート",
           "ID": "Imports",
           "TR": "İthalatlar"
@@ -84,6 +91,7 @@ module.exports = {
           "FR": "Fondation OpenStreetMap",
           "CZ": "OpenStreetMap Foundation",
           "PT": "Fundação OpenStreetMap",
+          "RU": "Фонд OpenStreetMap",                
           "JP": "OpenStreetMap Foundation",
           "ID": "Yayasan OpenStreetMap",
           "TR": "Açık Cadde Haritasının Kurulumu"
@@ -95,6 +103,7 @@ module.exports = {
           "FR": "Événements",
           "CZ": "Events",
           "PT": "Eventos",
+          "RU": "События",               
           "JP": "イベント",
           "ID": "Kegiatan",
           "TR": "Gelişen Olaylar"
@@ -105,7 +114,8 @@ module.exports = {
           "ES": "OSM Humanitario",
           "FR": "OSM et l'humanitaire",
           "CZ": "Humanitarian OSM",
-          "PT": "OSM Humanitário",
+          "PT": "OSM Humanitário", 
+          "RU": "Гуманитарный OSM",          
           "JP": "OSM人道支援",
           "ID": "OSM untuk Kemanusiaann",
           "TR": "İnsancıl OSM"
@@ -117,17 +127,19 @@ module.exports = {
           "FR": "Cartes",
           "CZ": "Maps",
           "PT": "Mapas",
+          "RU": "Карты",                 
           "JP": "地図",
           "ID": "Peta",
           "TR": "Haritalar"
      },
      "#switch2OSM": {
           "EN": "#switch2OSM",
-          "DE": "switch2OSM",
+          "DE": "#switch2OSM",
           "ES": "#switch2OSM",
           "FR": "#switch2OSM",
           "CZ": "#switch2OSM",
           "PT": "#switch2OSM",
+          "RU": "#switch2OSM",                 
           "JP": "#switch2OSM",
           "ID": "#switch2OSM",
           "TR": "#switch2OSM"
@@ -139,6 +151,7 @@ module.exports = {
           "FR": "Ouverture des données",
           "CZ": "Open Data",
           "PT": "Dados abertos",
+          "RU": "Открытые данные",                 
           "JP": "オープンデータ",
           "ID": "Open Data",
           "TR": "Açık veri"
@@ -150,6 +163,7 @@ module.exports = {
           "FR": "Licences",
           "CZ": "Licences",
           "PT": "Licenças",
+          "RU": "Лицензии",                 
           "JP": "ライセンス",
           "ID": "Lisensi",
           "TR": "Lisans"
@@ -161,6 +175,7 @@ module.exports = {
           "FR": "Applications",
           "CZ": "Software",
           "PT": "Software",
+          "RU": "Программы",                 
           "JP": "ソフトウェア",
           "ID": "Software",
           "TR": "Yazılım"
@@ -172,6 +187,7 @@ module.exports = {
           "FR": "Applications",
           "CZ": "Programming",
           "PT": "Desenvolvimento",
+          "RU": "Программирование",                 
           "JP": "ソフトウェア",
           "ID": "Software",
           "TR": "Yazılım"
@@ -181,8 +197,9 @@ module.exports = {
           "DE": "Kennst Du schon …",
           "ES": "Sabías que …",
           "FR": "Connaissez-vous …",
-          "CZ": "Did you know …",
+          "CZ": " Did you know … ",
           "PT": "Você sabia...",
+          "RU": "А вы знаете … ",       
           "JP": "…ご存知でしたか？",
           "ID": "Apakah anda tahu …",
           "TR": "Biliyor muydunuz …"
@@ -194,6 +211,7 @@ module.exports = {
           "FR": "Autres sujets géographiques",
           "CZ": "Other “geo” things",
           "PT": "Outras coisas “geo”",
+          "RU": "Другие “гео” события",
           "JP": "その他の “ジオ” な事柄",
           "ID": "Berita “geo” lainnya",
           "TR": "Başka bir “yer“ nesneleri"
@@ -205,6 +223,7 @@ module.exports = {
           "FR": "Not Translated",
           "CZ": "Not Translated",
           "PT": "Não traduzido",
+          "RU": "Не переведено",
           "JP": "Not Translated",
           "ID": "Not Translated",
           "TR": "Not Translated"
@@ -215,7 +234,8 @@ module.exports = {
           "ES": "--unpublished--",
           "FR": "--unpublished--",
           "CZ": "--unpublished--",
-          "PT": "--não publicado--",
+          "PT": "--não publicado--"
+          "RU": "--не опубликовано",
           "JP": "--unpublished--",
           "ID": "--unpublished--",
           "TR": "--unpublished--"
