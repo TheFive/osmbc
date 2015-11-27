@@ -1,5 +1,17 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10a...HEAD)
+
+**Implemented enhancements:**
+
+- Generate Wochenvorschau out of wiki markdown [\#174](https://github.com/TheFive/osmbc/issues/174)
+
+**Merged pull requests:**
+
+- Update categoryTranslation.js [\#179](https://github.com/TheFive/osmbc/pull/179) ([fredao](https://github.com/fredao))
+
 ## [0.3.10a](https://github.com/TheFive/osmbc/tree/0.3.10a) (2015-11-21)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10...0.3.10a)
 
