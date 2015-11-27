@@ -3,7 +3,7 @@ var testutil = require('./testutil.js');
 var parseEvent = require('../model/parseEvent.js');
 
 
-describe.only('model/parseEvent',function() {
+describe('model/parseEvent',function() {
   context('parseLineEvent',function(){
     it('should return null for wrong lines',function() {
       should(parseEvent.parseLine('|-  ')).equal(null);
