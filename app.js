@@ -24,6 +24,7 @@ var users      = require('./routes/users').router;
 var article    = require('./routes/article').router;
 var changes    = require('./routes/changes').router;
 var blog       = require('./routes/blog');
+var tool       = require('./routes/tool').router;
 var layout     = require('./routes/layout').router;
 
 var userModule = require('./model/user.js');
@@ -212,6 +213,7 @@ app.use(htmlRoot + '/usert',ensureAuthenticated, users);
 app.use(htmlRoot + '/article',ensureAuthenticated, article);
 app.use(htmlRoot + '/changes',ensureAuthenticated, changes);
 app.use(htmlRoot + '/blog',ensureAuthenticated, blog);
+app.use(htmlRoot + '/tool',ensureAuthenticated, tool);
 
 
 // Simple route middleware to ensure user is authenticated.
