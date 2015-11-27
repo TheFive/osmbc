@@ -127,7 +127,14 @@ html(lang='en')
                   a(href="#{layout.htmlroot}/usert/list?access=denied") List Denied      
                 li
                   a(href="#{layout.htmlroot}/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
-
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown')
+                | Tool 
+                span.caret
+              ul.dropdown-menu(role='menu')
+                li
+                  a(href="#{layout.htmlroot}/tool/calender2markdown") OSM Calender2Markdown
+       
           ul.nav.navbar-nav.navbar-right  
             li.dropdown 
               a.dropdown-toggle(href='#', data-toggle='dropdown')
