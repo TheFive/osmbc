@@ -157,6 +157,11 @@ describe('model/blog', function() {
     })
   })
   describe('closeBlog',function() {
+    before(function (bddone) {
+      testutil.clearDB(bddone);
+      process.env.TZ = 'Europe/Amsterdam';
+    }) 
+
     it('should close the Blog and write a log Message', function (bddone){
       blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
         should.not.exist(err);
@@ -194,6 +199,10 @@ describe('model/blog', function() {
     })
   })
   describe('reviewComment',function() {
+    before(function (bddone) {
+      testutil.clearDB(bddone);
+      process.env.TZ = 'Europe/Amsterdam';
+    }) 
     it('should review the Blog and write a log Message', function (bddone){
       blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
         should.not.exist(err);
