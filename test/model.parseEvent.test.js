@@ -1,6 +1,9 @@
 var should = require('should');
 var testutil = require('./testutil.js');
 var parseEvent = require('../model/parseEvent.js');
+var nock = require('nock');
+var path = require('path');
+var fs = require('fs');
 
 
 describe('model/parseEvent',function() {
@@ -54,6 +57,10 @@ describe('model/parseEvent',function() {
     it('should parse a [ ] reference',function(){
       should(parseEvent.parseWikiInfo('[https://test.test/test Text for Link]'))
         .equal('[Text for Link](https://test.test/test)');
+    });
+    it('should parse a [] reference',function(){
+      should(parseEvent.parseWikiInfo('[https://test.test/test]'))
+        .equal('[https://test.test/test](https://test.test/test)');
     });
     it('should parse a complex reference [] first',function(){
       should(parseEvent.parseWikiInfo('The Event [https://test.test/test Text for Link] will be on [[irc]]'))
@@ -163,5 +170,22 @@ describe('model/parseEvent',function() {
                                 desc:"[[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]]"
                               })
     })
+  })
+  context('calenderToMarkdown',function(){
+    before(function(){
+      var fileName = path.join(__dirname,'/data/calenderData.wiki');
+ 
+      var scope = nock('https://wiki.openstreetmap.org')
+                .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
+              
+                .replyWithFile(200,fileName);
+    });
+    it('should load date form wiki and generate a Markdown String',function(bddone){
+      var result = parseEvent.calenderToMarkdown(new Date("11/28/2015"),function(err,result){
+        var excpeted = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
+        should(result).equal(excpeted);
+         bddone();
+      });
+    });
   })
 })

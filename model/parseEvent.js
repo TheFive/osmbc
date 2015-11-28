@@ -172,8 +172,14 @@ function ll(length) {
   return lineString.substring(0,length);
 }
 
-function calenderToMarkdown(cb) {
-  debug('calenderToMarkdown')
+
+function calenderToMarkdown(date,cb) {
+  debug('calenderToMarkdown');
+  if (typeof(date)=='function') {
+    cb = date;
+    date = new Date();
+  } 
+  debug("Date: %s",date);
   request(wikiEventPage, function(error, response, body) {
     var json = JSON.parse(body);
     //body = (json.query.pages[2567].revisions[0]["*"]);
@@ -186,8 +192,8 @@ function calenderToMarkdown(cb) {
 
     var point = body.indexOf("\n");
 
-    var from = new Date();
-    var to = new Date();
+    var from = new Date(date);
+    var to = new Date(date);
 
     // get all Events from today
     from.setDate(from.getDate());
@@ -201,7 +207,7 @@ function calenderToMarkdown(cb) {
       var line = body.substring(0,point);
       body = body.substring(point+1,999999999);
       point = body.indexOf("\n");
-      result = parseEventLine2(line);
+      result = parseLine(line);
     
 
 
