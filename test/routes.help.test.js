@@ -7,7 +7,7 @@ var helpRoutes = require('../routes/help.js');
 
 var testutil = require('./testutil.js');
 
-describe.only('routes/help',function(){
+describe('routes/help',function(){
   describe('generateHelpText',function(){
     it('should render the text with token',function(){
       var result = helpRoutes.getText('../test/data/helptext.test.md');
