@@ -1,21 +1,11 @@
-
-// This page is delivering the calendar events
-var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json"
-//
-
-
-var moment = require("moment");
+var debug   = require("debug")("OSMBC:model:parseEvent");
+var moment  = require("moment");
 var request = require("request");
 
 
+// This page is delivering the calendar events
+var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json"
 
-// regex to parse the string interim:   \|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 1-9|]*)\}\} *\|\|(.*), *\[\[(.*)\]\].*
-
-// Regex 2 to parste the string: \|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*), *\[\[(.*)\]\].*\[\[(.*)\]\].*
-
-function parseWiki(string) {
-  
-}
 
 regexList = [ {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(......*), *\[\[(.*)\]\].*\[\[(.*)\]\].*/gi,
                keys:[               "type",                "date",              "desc",         "town",       "country"]},
@@ -29,8 +19,11 @@ regexList = [ {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|
                keys:[               "type",               "date",                "desc"]} ];
 
 
+/* next Date is interpreting a date of the form 27 Feb as a date, that
+  is in the current year. The window, to put the date in starts 50 days before now*/
 
 function nextDate(string) {
+  debug('nextDate');
   if (!string) return null;
   var now = new Date();
   now.setDate(now.getDate()-50);
@@ -41,10 +34,15 @@ function nextDate(string) {
   }
   return result;
 }
+// for Test purposes exported
+exports.nextDate = nextDate;
 
+
+/* This function returns the start date of an event, based on a string like
+   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calender event */
 
 function parseStartDate(string) {
-
+  debug('parseStartDate')
   var datestart=string;
   var dateend;
  
@@ -56,8 +54,12 @@ function parseStartDate(string) {
   //dateend = nextDate(dateend);
   return datestart;
 }
-function parseEndDate(string) {
 
+/* This function returns the end date of an event, based on a string like
+   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calender event,
+   in the case of no enddate, the start date is returned */
+function parseEndDate(string) {
+  debug('parseEndDate')
   var datestart = string;
   var dateend;
  
@@ -71,7 +73,12 @@ function parseEndDate(string) {
   return dateend;
 }
 
-function parseEventLine2(string) {
+/* parseLine is parsing a calender line, by applying the regex one by one
+   and putting the results into a json with the given keys.
+   If no regex is matching, null is returned*/
+
+function parseLine(string) {
+  debug('parseLine');
   for (var i=0;i<regexList.length;i++){
     var results = regexList[i].regex.exec(string);
 
@@ -94,18 +101,21 @@ function parseEventLine2(string) {
   return null;
 }
 
-exports.parseLine = parseEventLine2;
+// exported for test reasons
+exports.parseLine = parseLine;
 
 
 
 function parseWikiInfo(description) {
-  console.log("Parse "+description);
+  debug('parseWikiInfo %s',description);
   var result = ""
   while (description && description.trim()!="") {
-    console.log(description);
+    debug("parse %s",description);
     var next = description.indexOf("[[");
     var end = description.indexOf("]]");
+    if (description.indexOf("[")< next) next = -1;
     if (next >= 0 && end >= 0) {
+      debug("found [[]] %s %s",next,end);
       result += description.substring(0,next);
       var desc = description.substring(next+2,end);
       description = description.substring(end+2);
@@ -123,6 +133,7 @@ function parseWikiInfo(description) {
       next = description.indexOf("[");
       var end = description.indexOf("]");
       if (next >= 0 && end >= 0) {
+        debug("found [] %s %s",next,end);
         result += description.substring(0,next);
         var desc = description.substring(next+1,end);
         description = description.substring(end+1);
@@ -145,7 +156,7 @@ function parseWikiInfo(description) {
       } else result += title;
     } 
   }
-  return result;
+  return result.trim();
 }
 
 var empty = "                                                                                  ";
@@ -162,6 +173,7 @@ function ll(length) {
 }
 
 function calenderToMarkdown(cb) {
+  debug('calenderToMarkdown')
   request(wikiEventPage, function(error, response, body) {
     var json = JSON.parse(body);
     //body = (json.query.pages[2567].revisions[0]["*"]);
@@ -238,7 +250,15 @@ function calenderToMarkdown(cb) {
   });
 }
 
+/* this function reads the content of the calender wiki, and convertes it to a markdonw
+   in the form |town|description|date|country|*/
 exports.calenderToMarkdown = calenderToMarkdown;
+
+/* parseWikiInfo convertes a string in wikimarkup to markup.
+   only links like [[]] [] are converted to [](),
+   the result is "trimmed"*/
+exports.parseWikiInfo = parseWikiInfo;
+
 
 
 

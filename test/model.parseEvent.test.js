@@ -4,6 +4,68 @@ var parseEvent = require('../model/parseEvent.js');
 
 
 describe('model/parseEvent',function() {
+  context('nextDate',function() {
+    it('should generate a date in the timeframe [now-50:now+316]',function(){
+      var d = new Date();
+      var timeMin = d.getTime()-1000*60*60*24*50;
+      var timeMax = timeMin + 1000*60*60*24*366;
+      function isInRange(date) {
+        var result = ((date.getTime()>=timeMin)&& (date.getTime()<=timeMax));
+        return result;
+      }
+
+      var date = parseEvent.nextDate(new Date('Jan 27'));
+      should(isInRange(date)).be.True();
+      should(date.getDate()).equal(27);
+      should(date.getMonth()).equal(0);
+      date = parseEvent.nextDate(new Date('Feb 01'));
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Mar 31'));
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('May 10'));
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('May 10'));
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Jun 15'));
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Jul 20'));
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Aug 11'));
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Sep 30'));
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Oct 2'));
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Nov 28'));
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Dec 24'));
+      should(isInRange(date)).be.True();
+    })
+  })
+  context.only('parseWikiInfo',function(){
+    it('should parse a [[]] reference',function(){
+      should(parseEvent.parseWikiInfo('  Text [[link]] another Text'))
+        .equal('Text [link](https://wiki.openstreetmap.org/wiki/link) another Text');
+    });
+    it('should parse a [[|]] reference',function(){
+      should(parseEvent.parseWikiInfo('[[link|Text for Link]]'))
+        .equal('[Text for Link](https://wiki.openstreetmap.org/wiki/link)');
+    });
+    it('should parse a [ ] reference',function(){
+      should(parseEvent.parseWikiInfo('[https://test.test/test Text for Link]'))
+        .equal('[Text for Link](https://test.test/test)');
+    });
+    it('should parse a complex reference [] first',function(){
+      should(parseEvent.parseWikiInfo('The Event [https://test.test/test Text for Link] will be on [[irc]]'))
+        .equal('The Event [Text for Link](https://test.test/test) will be on [irc](https://wiki.openstreetmap.org/wiki/irc)');
+    });
+    it('should parse a complex reference [[]] first',function(){
+      should(parseEvent.parseWikiInfo('You find on [[irc]] the Event [https://test.test/test Text for Link]'))
+        .equal('You find on [irc](https://wiki.openstreetmap.org/wiki/irc) the Event [Text for Link](https://test.test/test)');
+    });
+
+
+  })
   context('parseLineEvent',function(){
     it('should return null for wrong lines',function() {
       should(parseEvent.parseLine('|-  ')).equal(null);
