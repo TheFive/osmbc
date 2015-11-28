@@ -93,6 +93,25 @@ describe('model/blog', function() {
       bddone();
     })
   })
+  describe('isEditable',function(){
+    it('should be editable if no review or closed state',function(){
+        var newBlog = blogModule.create({id:2,name:"test",status:"**"});
+        should(newBlog.isEditable("DE")).be.True();
+    })
+    it('should be editable if  review state',function(){
+        var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"]});
+        should(newBlog.isEditable("DE")).be.False();
+    })
+    it('should be editable if no review and closed state',function(){
+        var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentEN:["comment"],closeEN:true});
+        should(newBlog.isEditable("EN")).be.False();
+    })
+    it('should be editable if reopened',function(){
+        var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"],closeDE:false});
+        should(newBlog.isEditable("DE")).be.True();
+    })
+
+  })
   describe('setAndSave',function() {
     it('should set only the one Value in the database', function (bddone){
       blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
