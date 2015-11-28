@@ -194,7 +194,7 @@ describe('model/blog', function() {
     })
   })
   describe('reviewComment',function() {
-    it.only('should review the Blog and write a log Message', function (bddone){
+    it('should review the Blog and write a log Message', function (bddone){
       blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
         should.not.exist(err);
         should.exist(newBlog);
