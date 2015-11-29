@@ -79,6 +79,7 @@ exports.languages=languages;
 function getSettings(string) {
   debug("getSettings(%s)",string);
 
+
   if (typeof(string)=='undefined') {
     string = '';
   }
