@@ -319,6 +319,10 @@ router.get('/:blog_id/preview', renderBlogPreview);
 router.get('/:blog_id/preview_:blogname_:downloadtime', renderBlogPreview);
 //router.post('/edit/:blog_id',postBlogId);
 
-module.exports = router;
+module.exports.router = router;
+
+
+// the following modules are exported for test reasons
+module.exports.renderBlogPreview = renderBlogPreview;
 
 
