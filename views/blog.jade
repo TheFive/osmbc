@@ -38,6 +38,9 @@ block content
                   .col-sm-6
                     button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang} 
                     button.btn.btn-large.btn-primary(type = "button" onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?closeLang';") Close #{blog.name}(#{left_lang})
+          .row
+            .alert.bg-danger.text-center.bold
+              | <strong>Review is done in wordpress, please document your review here.</strong>
       
         else
           if blog.status=="open"
