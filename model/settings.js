@@ -21,6 +21,14 @@ settings.overview = {
             editLink : true,
             overview : true
           }
+settings.translation = {
+            edit : true,
+            comment : true,
+            glyphicon : true,
+            editLink : true,
+            overview : true,
+            languageLinks:true
+          }
 settings.full = {
             edit : true,
             comment : true,
@@ -87,8 +95,15 @@ function getSettings(string) {
   var l = languages["DE(EN)"];
 
   for (var i=0;i<config.getLanguages().length;i++) {
-    if (string==config.getLanguages()[i]) {
+    var ll = config.getLanguages()[i];
+    if (string==ll) {
       return {edit:false,left_lang:string,right_lang:"--"};
+    }
+    for (var z=0;z<config.getLanguages().length;z++) {
+      var rl = config.getLanguages()[z];
+      if (string == ll+"."+rl) {
+        return {edit:false,left_lang:ll,right_lang:rl};
+      }
     }
   }
 
