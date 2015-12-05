@@ -420,6 +420,7 @@ function displayTitle(maxlength) {
   return result;
 }
 
+/*
 function displayTitleEN(maxlength) {
   if (typeof(maxlength) == 'undefined') maxlength = 30;
   if (typeof(this.title)!='undefined' && this.title != "") {
@@ -434,7 +435,7 @@ function displayTitleEN(maxlength) {
     return util.shorten(this.collection,maxlength)
   }
   return "Empty Article";
-}
+}*/
 
 
 function createTable(cb) {
@@ -522,7 +523,7 @@ function getCategory(lang) {
 // c) Collection 
 // the maximal length is optional (default is 30)
 Article.prototype.displayTitle = displayTitle;
-Article.prototype.displayTitleEN = displayTitleEN;
+//Article.prototype.displayTitleEN = displayTitleEN;
 
 // Calculate all links in markdown (final Text) and collection
 // there is no double check for the result

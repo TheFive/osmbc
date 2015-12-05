@@ -93,6 +93,25 @@ describe('model/blog', function() {
       bddone();
     })
   })
+  describe('isEditable',function(){
+    it('should be editable if no review or closed state',function(){
+        var newBlog = blogModule.create({id:2,name:"test",status:"**"});
+        should(newBlog.isEditable("DE")).be.True();
+    })
+    it('should be editable if  review state',function(){
+        var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"]});
+        should(newBlog.isEditable("DE")).be.False();
+    })
+    it('should be editable if no review and closed state',function(){
+        var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentEN:["comment"],closeEN:true});
+        should(newBlog.isEditable("EN")).be.False();
+    })
+    it('should be editable if reopened',function(){
+        var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"],closeDE:false});
+        should(newBlog.isEditable("DE")).be.True();
+    })
+
+  })
   describe('setAndSave',function() {
     it('should set only the one Value in the database', function (bddone){
       blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
@@ -130,6 +149,96 @@ describe('model/blog', function() {
 
               should(result).containEql({oid:id,user:"user",table:"blog",property:"status",from:"TEST",to:"published"});
               should(result).containEql({oid:id,user:"user",table:"blog",property:"field",to:"test"});
+              bddone();
+            })
+          })
+        })
+      })
+    })
+  })
+  describe('closeBlog',function() {
+    before(function (bddone) {
+      testutil.clearDB(bddone);
+      process.env.TZ = 'Europe/Amsterdam';
+    }) 
+
+    it('should close the Blog and write a log Message', function (bddone){
+      blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
+        should.not.exist(err);
+        should.exist(newBlog);
+        var id =newBlog.id;
+        newBlog.closeBlog("DE","user",true,function(err,result) {
+          should.not.exist(err);
+          testutil.getJsonWithId("blog",id,function(err,result){
+            should.not.exist(err);
+            delete result._meta;
+            delete result.categories;
+            delete result.startDate;
+            delete result.endDate;
+            should(result).eql({id:id,name:"Title",status:"TEST",closeDE:true,version:2});
+            logModule.find({},{column:"property"},function (err,result){
+              should.not.exist(err);
+              should.exist(result);
+              should(result.length).equal(1);
+              delete result[0].id;
+              var t0 = result[0].timestamp;
+              var now = new Date();
+              var t0diff = ((new Date(t0)).getTime()-now.getTime());
+        
+              // The Value for comparison should be small, but not to small
+              // for the test machine.
+              should(t0diff).be.below(10);
+              delete result[0].timestamp;
+        
+              should(result).containEql({oid:id,user:"user",table:"blog",property:"closeDE",to:true});
+              bddone();
+            })
+          })
+        })
+      })
+    })
+  })
+  describe('reviewComment',function() {
+    before(function (bddone) {
+      testutil.clearDB(bddone);
+      process.env.TZ = 'Europe/Amsterdam';
+    }) 
+    it('should review the Blog and write a log Message', function (bddone){
+      blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
+        should.not.exist(err);
+        should.exist(newBlog);
+        var id =newBlog.id;
+        newBlog.setReviewComment("DE","user","it is approved.",function(err,result) {
+          should.not.exist(err);
+          testutil.getJsonWithId("blog",id,function(err,result){
+            should.not.exist(err);
+            delete result._meta;
+            delete result.categories;
+            delete result.startDate;
+            delete result.endDate;
+            var now = new Date();
+            var t0 = result.reviewCommentDE[0].timestamp;
+            var t0diff = ((new Date(t0)).getTime()-now.getTime());
+            should(t0diff).be.below(10);
+
+            should(result.reviewCommentDE[0].text).equal("it is approved.");
+            should(result.reviewCommentDE[0].user).equal("user");
+            delete result.reviewCommentDE;
+            should(result).eql({id:id,name:"Title",status:"TEST",version:2});
+            logModule.find({},{column:"property"},function (err,result){
+              should.not.exist(err);
+              should.exist(result);
+              should(result.length).equal(1);
+              delete result[0].id;
+              var t0 = result[0].timestamp;
+              var t0diff = ((new Date(t0)).getTime()-now.getTime());
+        
+              // The Value for comparison should be small, but not to small
+              // for the test machine.
+              should(t0diff).be.below(10);
+              delete result[0].timestamp;
+        
+              should(result).containEql({oid:id,user:"user",table:"blog",property:"reviewCommentDE",to:"it is approved.",from:"Add"});
               bddone();
             })
           })

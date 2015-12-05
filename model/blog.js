@@ -381,11 +381,9 @@ function dropTable(cb) {
 
 function isEditable(lang) {
   debug("isEditabe");
-  console.log(lang);
   var result = true;
   if (this["reviewComment"+lang]) {
     result = false;
-    console.log("ReviewComment is set")
   }
   var closeLANG = this["close"+lang]
   if (typeof(closeLANG)!='undefined') {

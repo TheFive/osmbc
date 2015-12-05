@@ -47,7 +47,10 @@ function renderBlogId(req, res, next) {
 
   var id = req.params.blog_id;
  
-  var style = req.user.blogSetting0 + req.user.blogLanguages0;
+  var style = '';
+  if (typeof(req.user.blogSetting0) == "string") {
+    style = req.user.blogSetting0 + req.user.blogLanguages0;
+  }
 
   if (req.session.lastStyle) style = req.session.lastStyle;
 
@@ -58,7 +61,7 @@ function renderBlogId(req, res, next) {
   var options = settingsModule.getSettings(style);
 
 
-  var user = req.user.displayName;
+  var user = req.user;
   for (var i=0;i<5;i++) {
     if (!user["blogSetting"+i]) {
       user["blogSetting"+i] = "";
@@ -319,6 +322,11 @@ router.get('/:blog_id/preview', renderBlogPreview);
 router.get('/:blog_id/preview_:blogname_:downloadtime', renderBlogPreview);
 //router.post('/edit/:blog_id',postBlogId);
 
-module.exports = router;
+module.exports.router = router;
+
+
+// the following modules are exported for test reasons
+module.exports.renderBlogPreview = renderBlogPreview;
+module.exports.renderBlogId = renderBlogId;
 
 

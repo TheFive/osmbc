@@ -171,7 +171,7 @@ block content
             else
               if (placeholder.markdown[params.right_lang])
                 
-                textarea.form-control(id="markdownRIGHT" placeholder = "#{placeholder.markdown[params.right_lang]}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=7)  #{article["markdown"+params.right_lang]}
+                textarea.form-control(id="markdownRIGHT" placeholder = "#{placeholder.markdown[params.right_lang]}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
               else
                 
                 textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" lang="#{params.right_lang}" spellcheck = "true" rows=7) #{article["markdown"+params.right_lang]}
@@ -257,9 +257,7 @@ block content
         .col-md-10
           if (article.collection)
                 :verbatim
-                | <pre>
-                !{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1">$1</a>')}
-                | </pre>
+                | <pre> !{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1">$1</a>')} </pre>
       .row 
         .col-md-1
         +leftcolumn
@@ -299,9 +297,7 @@ block content
           .col-md-10 
               | (Comment is #{article.commentStatus})
               :verbatim
-              |<pre>
-              !{article.comment}
-              |</pre>
+              |<pre> !{article.comment} </pre>
     .row
       if articleReferences.count >= 1
         h2

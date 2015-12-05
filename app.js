@@ -23,7 +23,7 @@ var index      = require('./routes/index').router;
 var users      = require('./routes/users').router;
 var article    = require('./routes/article').router;
 var changes    = require('./routes/changes').router;
-var blog       = require('./routes/blog');
+var blog       = require('./routes/blog').router;
 var tool       = require('./routes/tool').router;
 var layout     = require('./routes/layout').router;
 
