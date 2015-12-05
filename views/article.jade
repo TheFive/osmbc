@@ -171,7 +171,7 @@ block content
             else
               if (placeholder.markdown[params.right_lang])
                 
-                textarea.form-control(id="markdownRIGHT" placeholder = "#{placeholder.markdown[params.right_lang]}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=7)  #{article["markdown"+params.right_lang]}
+                textarea.form-control(id="markdownRIGHT" placeholder = "#{placeholder.markdown[params.right_lang]}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
               else
                 
                 textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" lang="#{params.right_lang}" spellcheck = "true" rows=7) #{article["markdown"+params.right_lang]}
