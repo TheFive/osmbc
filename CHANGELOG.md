@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.3.12a](https://github.com/TheFive/osmbc/tree/0.3.12a) (2015-12-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12...0.3.12a)
+
+**Implemented enhancements:**
+
+- Dynamic Height for Textfields in Article View [\#185](https://github.com/TheFive/osmbc/issues/185)
+
 ## [0.3.12](https://github.com/TheFive/osmbc/tree/0.3.12) (2015-12-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.11a...0.3.12)
 
