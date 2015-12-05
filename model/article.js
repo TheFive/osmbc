@@ -295,6 +295,11 @@ function setAndSave(user,data,callback) {
     return callback(error);
   }
 
+  // check to set the commentStatus to open
+  if (data.comment && !self.commentStatus) {
+    data.commentStatus = "open";
+  }
+
 
   async.series([
     function checkID(cb) {
