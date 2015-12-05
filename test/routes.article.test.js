@@ -289,6 +289,7 @@ describe('router/article',function() {
             should(article).eql({markdownDE:"MARKDOWNDE",
                    markdownEN:"MARKDOWNEN",
                    blog:"BLOG",
+                   commentStatus:"open",
                    collection:"COLLECTION",
                    comment:"COMMENT",
                    categoryEN:"CATEGORYEN",
