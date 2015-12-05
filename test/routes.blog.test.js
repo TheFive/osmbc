@@ -310,6 +310,7 @@ describe('routes/blog',function() {
             req.params = {};
             req.params.blog_id = data.testBlogName;
             req.query = {};
+            if (data.style) req.query.style = data.style;
             req.user = {};
             req.session = {articleReturnTo:"returnToUrlXX"};
 
@@ -325,14 +326,16 @@ describe('routes/blog',function() {
             var call = res.render.firstCall;
             var v = call.args[1];
 
+
             should(v.blog.name).equal(data.testBlogName);
             should(v.layout).equal("calculated layout");
             should(v.main_text).equal(data.result.main_text);
-            for (var i = 0;i<v.changes.length;i++) {
-              should(v.changes[i].user)=data.result.changes[i].user;
-              should(v.changes[i].from)=data.result.changes[i].from;
-              should(v.changes[i].to)=data.result.changes[i].to;
+            for (var i = 0;i<data.result.changes.length;i++) {
+              should(v.change[i].user)=data.result.changes[i].user;
+              should(v.change[i].from)=data.result.changes[i].from;
+              should(v.change[i].to)=data.result.changes[i].to;
             }
+           
             should(v.style).equal(data.result.style);
             should(v.left_lang).equal(data.result.left_lang);
             should(v.right_lang).equal(data.result.right_lang);

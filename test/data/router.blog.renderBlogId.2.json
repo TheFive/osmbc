@@ -1,0 +1,10 @@
+{
+  "blog":[{"name":"BLOG","startDate":"2015-02-01","endDate":"2015-03-04"}],
+  "article":[{"blog":"BLOG","markdownDE":"* Dies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.","categoryEN":"Mapping"}],
+  "testBlogName":"BLOG",
+  "change":[{"table":"blog","oid":1,"from":"xfromx","to":"xtox","user":"xuserx","property":"xpropertyx"}],
+  "style":"overviewEN.ES",
+  "result":{"main_text":"<p>2/1/2015-3/4/2015</p>\n<!--         place picture here              -->\n<div class=\"row\"><div class = \"col-md-6\"><h2 id=\"blog_mapping\">Mapping</h2>\n</div><div class = \"col-md-6\"><h2 id=\"blog_mapeando\">Mapeando</h2>\n</div></div><ul>\n<li>\nNo Title\n</li></ul>\n",
+            "style":"overviewEN.ES","left_lang":"EN","right_lang":"ES",
+            "changes":[{"table":"blog","oid":1,"from":"xfromx","to":"xtox","user":"xuserx","property":"xproperty"}]}
+}

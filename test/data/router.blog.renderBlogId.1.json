@@ -1,8 +1,8 @@
 {
   "blog":[{"name":"BLOG","startDate":"2015-02-02","endDate":"2015-03-03"}],
   "article":[{"blog":"BLOG","markdownDE":"* Dies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.","categoryEN":"Mapping"}],
+  
   "testBlogName":"BLOG",
-  "style":"DE",
   "result":{"main_text":"<p>2.2.2015-3.3.2015</p>\n<!--         place picture here              -->\n<h2 id=\"blog_mapping\">Mapping</h2>\n<ul>\n<li>\nNo Title\n</li></ul>\n",
             "style":"","left_lang":"DE","right_lang":"EN"}
 }
