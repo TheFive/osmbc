@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.3.12b](https://github.com/TheFive/osmbc/tree/0.3.12b) (2015-12-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12a...0.3.12b)
+
+**Implemented enhancements:**
+
+- Links in article should open a new tab. [\#173](https://github.com/TheFive/osmbc/issues/173)
+
+**Fixed bugs:**
+
+- Comment is not opened the first time you write a comment. [\#177](https://github.com/TheFive/osmbc/issues/177)
+
 ## [0.3.12a](https://github.com/TheFive/osmbc/tree/0.3.12a) (2015-12-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12...0.3.12a)
 
