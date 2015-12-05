@@ -1,5 +1,26 @@
 # Change Log
 
+## [0.3.11a](https://github.com/TheFive/osmbc/tree/0.3.11a) (2015-12-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.11...0.3.11a)
+
+**Closed issues:**
+
+- Remove Whitespace from Input Field [\#181](https://github.com/TheFive/osmbc/issues/181)
+
+## [0.3.11](https://github.com/TheFive/osmbc/tree/0.3.11) (2015-11-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9b...0.3.11)
+
+**Implemented enhancements:**
+
+- Generate Wochenvorschau out of wiki markdown [\#174](https://github.com/TheFive/osmbc/issues/174)
+
+**Merged pull requests:**
+
+- Update categoryTranslation.js [\#179](https://github.com/TheFive/osmbc/pull/179) ([fredao](https://github.com/fredao))
+
+## [0.3.9b](https://github.com/TheFive/osmbc/tree/0.3.9b) (2015-11-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10a...0.3.9b)
+
 ## [0.3.10a](https://github.com/TheFive/osmbc/tree/0.3.10a) (2015-11-21)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10...0.3.10a)
 
