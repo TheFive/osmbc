@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.3.12c](https://github.com/TheFive/osmbc/tree/0.3.12c) (2015-12-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12b...0.3.12c)
+
+**Implemented enhancements:**
+
+- Possibility to see the existing markdowns for an article. [\#172](https://github.com/TheFive/osmbc/issues/172)
+- Hint, that Review takes place in WordPress [\#170](https://github.com/TheFive/osmbc/issues/170)
+
 ## [0.3.12b](https://github.com/TheFive/osmbc/tree/0.3.12b) (2015-12-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12a...0.3.12b)
 
@@ -432,17 +440,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
