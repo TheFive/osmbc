@@ -11,3 +11,16 @@ a {
 mark {
   background-color: #FFF8C6;  /* Salmon Chiffon */
 }
+
+pre-code {
+    word-wrap: normal;
+    white-space: pre;
+}
+
+
+table {
+  border: 1px solid #e7e7e7;
+  margin: 0 -1px 24px 0;
+  text-align: left;
+  width: 100%;
+}

@@ -1,6 +1,8 @@
 var debug   = require("debug")("OSMBC:model:parseEvent");
 var moment  = require("moment");
 var request = require("request");
+var markdown = require('markdown-it')();
+
 
 
 // This page is delivering the calendar events
@@ -23,7 +25,7 @@ regexList = [ {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|
   is in the current year. The window, to put the date in starts 50 days before now*/
 
 function nextDate(string) {
-  debug('nextDate');
+  //debug('nextDate');
   if (!string) return null;
   var now = new Date();
   now.setDate(now.getDate()-50);
@@ -42,7 +44,7 @@ exports.nextDate = nextDate;
    Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calender event */
 
 function parseStartDate(string) {
-  debug('parseStartDate')
+ // debug('parseStartDate')
   var datestart=string;
   var dateend;
  
@@ -59,7 +61,7 @@ function parseStartDate(string) {
    Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calender event,
    in the case of no enddate, the start date is returned */
 function parseEndDate(string) {
-  debug('parseEndDate')
+ // debug('parseEndDate')
   var datestart = string;
   var dateend;
  
@@ -78,7 +80,7 @@ function parseEndDate(string) {
    If no regex is matching, null is returned*/
 
 function parseLine(string) {
-  debug('parseLine');
+ // debug('parseLine');
   for (var i=0;i<regexList.length;i++){
     var results = regexList[i].regex.exec(string);
 
@@ -161,7 +163,10 @@ function parseWikiInfo(description) {
 
 var empty = "                                                                                  ";
 empty = empty+empty;
+empty = empty+empty;
+empty = empty+empty;
 var lineString = "---------------------------------------------------";
+lineString = lineString + lineString;
 lineString = lineString + lineString;
 lineString = lineString + lineString;
 
@@ -179,6 +184,7 @@ function calenderToMarkdown(date,cb) {
     cb = date;
     date = new Date();
   } 
+  var result;
   debug("Date: %s",date);
   request(wikiEventPage, function(error, response, body) {
     var json = JSON.parse(body);
@@ -256,9 +262,25 @@ function calenderToMarkdown(date,cb) {
   });
 }
 
+function calenderToHtml(date,callback) {
+  debug('calenderToHtml');
+  if (typeof(date)=='function') {
+    callback = date;
+    date = new Date();
+  } 
+  calenderToMarkdown(date,function(err,t){
+    debug('calenderToHtml:subfunction');
+
+    if (err) return callback(err);
+    debug('convert markdown to html');
+    var result = markdown.render(t);
+    return callback(null,result);
+  })
+}
 /* this function reads the content of the calender wiki, and convertes it to a markdonw
    in the form |town|description|date|country|*/
 exports.calenderToMarkdown = calenderToMarkdown;
+exports.calenderToHtml = calenderToHtml;
 
 /* parseWikiInfo convertes a string in wikimarkup to markup.
    only links like [[]] [] are converted to [](),
