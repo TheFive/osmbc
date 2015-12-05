@@ -7,9 +7,66 @@ block content
   p
     | This is an <b>experimental (!)</b> view on the calender in OpenStreetMap.
     | It displays the events from today until 2 weeks.<br>
-    | Looking foreward to find a scrollable code view in Bootstrap :-(
-    | Use <a href="https://markdown-it.github.io/">markdown online</a> to convert to HTML.
+    | Markdown is converted and previewed on this page.
 
-  pre(overflow-x="auto" overflow-wrap="normal" white-space="pre") 
+  h3
+    | Markdown, please edit
+  textarea(id="markdown" rows=25 cols=500 style="font-family:monospace")
     |#{calenderAsMarkdown}
+  h3 
+   | Preview
+  p(id="preview")
+  h3
+    | HTML to copy
+  textarea(id="html" rows=20 cols=500 style="font-family:monospace")
+  
+
+block scripts                
+  script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
+  script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
+
+  script.
+    window.onload = init;
+
+    function init() {
+
+      markdown = document.getElementById("markdown");
+      if (markdown) {
+        markdown.onchange = onchange;
+        markdown.onkeyup = onchange;
+      }
+      onchange();
+    }
+
+  
+   
+    function convert(text) {
+      converter = new window.markdownit();
+      // convert md to html
+      text = converter.render(text);
+      // skip <ul> and </ul> at start and end
+      
+      
+      return text;
+
+    }
+  
+    
+  
+
+    
+
+    
+    function onchange() {
+      var md = document.getElementById("markdown").value;
+      preview = document.getElementById("preview");
+      html = document.getElementById("html");
+      var t = convert(md);
+      preview.innerHTML = t;
+      html.value = t;
+    
+      }
+   
+   
+
 

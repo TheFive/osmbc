@@ -82,24 +82,16 @@ function createNewArticle (proto,callback) {
 
 
 
-function getPreview(par1,par2,par3) {
+function getPreview(style,user) {
   debug("getPreview");
-  should.exist(par1);
+  should.exist(style);
   var options;
-  var user;
-  var lang;
+  if (typeof(user)=='object') {
+    user = user.displayName;
+  }
 
-  if (typeof(par2)=='object') {
-    options = par2;
-    user = par3;
-    lang = par1
-  } else
-  {
-    style = par1;
-    user = par2;
     options = settingsModule.getSettings(style);
 
-  }
   
 
   var markdownEDIT = "markdown"+options.left_lang;
@@ -118,7 +110,9 @@ function getPreview(par1,par2,par3) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
       var commentColour = "blue";
       if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
-      if (this.comment.indexOf("@all")>=0) commentColour = "red";
+      if (this.comment.indexOf("@"+options.left_lang)>=0) commentColour = "orange";
+      if (this.comment.indexOf("@"+options.right_lang)>=0) commentColour = "orange";
+      if (this.comment.indexOf("@all")>=0) commentColour = "orange";
       liON = '<li style=" border-left-style: solid; border-color: '+commentColour+';">\n';
     }
   }
