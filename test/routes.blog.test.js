@@ -347,6 +347,6 @@ describe('routes/blog',function() {
         )   
       })
     }
-    testutil.generateTests("data",/^router.blog.renderBlogId.+json/,doATest);
+    //testutil.generateTests("data",/^router.blog.renderBlogId.+json/,doATest);
   })  
 })
