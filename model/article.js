@@ -135,6 +135,19 @@ function getPreview(style,user) {
     if (el =='' && options.shortEditLink) el ='…';
     if (el != '') editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
   }
+  if (options.edit && options.languageLinks && options.right_lang=="--") {
+    var addEdit;
+    for (var z=0;z<config.getLanguages().length;z++) {
+      var lll = config.getLanguages()[z]
+      if (lll==options.left_lang) continue;
+      if (this["markdown"+lll] && this["markdown"+lll].length>=4 && this["markdown"+lll]!="no translation") {
+        if (!addEdit) addEdit = " translate from:";
+        addEdit += ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'.'+lll+'">'+lll+'</a>'; 
+      }
+    }
+    if (addEdit) editLink += addEdit;
+  }
+
 
   // Generate Text for display
   var text ='';

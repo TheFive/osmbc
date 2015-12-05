@@ -21,4 +21,12 @@ describe('model/settings', function() {
      var c =settingsModule.getSettings("overviewEK.EL");
      should(c).eql({overview:true,glyphicon:true,edit:true,comment:true,editLink:true,left_lang:"DE",right_lang:"EN"});
   })
+  it('should return a small object for one language',function() {
+     var c =settingsModule.getSettings("EN");
+     should(c).eql({edit:false,left_lang:"EN",right_lang:"--"});    
+  })
+  it('should return a small object for two languages',function() {
+     var c =settingsModule.getSettings("EN.ES");
+     should(c).eql({edit:false,left_lang:"EN",right_lang:"ES"});    
+  })
 })
