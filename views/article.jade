@@ -257,7 +257,7 @@ block content
         .col-md-10
           if (article.collection)
                 :verbatim
-                | <pre> !{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1">$1</a>')} </pre>
+                | <pre> !{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
       .row 
         .col-md-1
         +leftcolumn
@@ -581,7 +581,7 @@ block scripts
          }
       }
       function generateGoogleTranslateLink(link,lang) {
-        return '<a href="https://translate.google.de/translate?sl=auto&tl='+lang+'&u='+link+'">'+lang+'</a>';
+        return '<a href="https://translate.google.de/translate?sl=auto&tl='+lang+'&u='+link+'" target="_blank">'+lang+'</a>';
       }
       function onchangeCollection() {
         var clfield = document.getElementById("collection");
@@ -597,7 +597,7 @@ block scripts
         while( (linkList = regexToken.exec(cl)) != null ) {
             //console.log("linkList"+JSON.stringify(linkList));
          
-            result += '<a href="'+linkList[0]+'"">'+linkList[0]+'</a>\n';
+            result += '<a href="'+linkList[0]+'" target="_blank">'+linkList[0]+'</a>\n';
             leftLang=document.getElementById("left_lang").innerHTML;
             rightLang=document.getElementById("right_lang").innerHTML;
             result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
