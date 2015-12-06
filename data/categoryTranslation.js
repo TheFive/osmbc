@@ -82,7 +82,7 @@ module.exports = {
           "RU": "Импорты",                 
           "JP": "インポート",
           "ID": "Imports",
-          "TR": "İthalatlar"
+          "TR": " İçe Aktarımlar"
      },
      "OpenStreetMap Foundation": {
           "EN": "OpenStreetMap Foundation",
@@ -94,7 +94,7 @@ module.exports = {
           "RU": "Фонд OpenStreetMap",                
           "JP": "OpenStreetMap Foundation",
           "ID": "Yayasan OpenStreetMap",
-          "TR": "Açık Cadde Haritasının Kurulumu"
+          "TR": "OpenStreetMap Foundation"
      },
      "Events": {
           "EN": "Events",
@@ -106,7 +106,7 @@ module.exports = {
           "RU": "События",               
           "JP": "イベント",
           "ID": "Kegiatan",
-          "TR": "Gelişen Olaylar"
+          "TR": "Etkinlikler"
      },
      "Humanitarian OSM": {
           "EN": "Humanitarian OSM",
@@ -118,7 +118,7 @@ module.exports = {
           "RU": "Гуманитарный OSM",          
           "JP": "OSM人道支援",
           "ID": "OSM untuk Kemanusiaann",
-          "TR": "İnsancıl OSM"
+          "TR": "İnsani OSM"
      },
      "Maps": {
           "EN": "Maps",
@@ -154,7 +154,7 @@ module.exports = {
           "RU": "Открытые данные",                 
           "JP": "オープンデータ",
           "ID": "Open Data",
-          "TR": "Açık veri"
+          "TR": "Özgür Veri"
      },
      "Licences": {
           "EN": "Licences",
@@ -166,7 +166,7 @@ module.exports = {
           "RU": "Лицензии",                 
           "JP": "ライセンス",
           "ID": "Lisensi",
-          "TR": "Lisans"
+          "TR": "Lisanslar"
      },
      "Software": {
           "EN": "Software",
@@ -190,7 +190,7 @@ module.exports = {
           "RU": "Программирование",                 
           "JP": "ソフトウェア",
           "ID": "Software",
-          "TR": "Yazılım"
+          "TR": "Programlama"
      },
      "Did you know …": {
           "EN": "Did you know …",
@@ -202,7 +202,7 @@ module.exports = {
           "RU": "А вы знаете … ",       
           "JP": "…ご存知でしたか？",
           "ID": "Apakah anda tahu …",
-          "TR": "Biliyor muydunuz …"
+          "TR": "Biliyor muydunuz?…"
      },
      "Other “geo” things": {
           "EN": "Other “geo” things",
@@ -214,7 +214,7 @@ module.exports = {
           "RU": "Другие “гео” события",
           "JP": "その他の “ジオ” な事柄",
           "ID": "Berita “geo” lainnya",
-          "TR": "Başka bir “yer“ nesneleri"
+          "TR": "Diğer “yersel” şeyler"
      },
      "Not Translated": {
           "EN": "Not Translated",
