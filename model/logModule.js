@@ -73,6 +73,47 @@ module.exports.create = function() {
   return {};
 }
 
+function findUserForColumnAndBlog(blog,column,callback) {
+  debug("findUserForColumnAndBlog");
+ 
+  pg.connect(config.pgstring, function(err, client, pgdone) {
+    if (err) {
+      console.log("Connection Error");
+      console.dir(err);
+
+      pgdone();
+      return (callback(err));
+    }
+   ######## here to work ###############
+   
+    var sqlQuery =  "select data->>'user' as user from changes \
+                          where data->>'blog' = $1 && data->>'column'==$2");
+    var startTime = new Date().getTime();
+
+    var query = client.query(sqlQuery);
+
+    query.on('row',function(row) {
+      var r = module.create();
+      for (var k in row.data) {
+        r[k]=row.data[k];
+      }
+      r.id = row.id;
+      result.push(r);
+    })
+    query.on('end',function (pgresult) {    
+      pgdone();
+      var endTime = new Date().getTime();
+     // console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
+      callback(null,result);
+    })
+    query.on('error',function (err) {    
+      pgdone();
+      callback(err);
+    })
+  })
+}
+}
+
 function createTable(cb) {
   debug('createTable');
   createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data json,  \
