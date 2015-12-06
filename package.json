@@ -18,6 +18,7 @@
     "istanbul": "^0.3.20",
     "jade": "~1.11.0",
     "markdown-it": "^5.0.1",
+    "markdown-it-imsize": "^2.0.1",
     "markdown-it-sup": "^1.0.0",
     "mdfigcaption": "^0.1.1",
     "mocha": "^2.3.3",

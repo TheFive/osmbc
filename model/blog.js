@@ -3,7 +3,10 @@
 var pg       = require('pg');
 var async    = require('async');
 var config   = require('../config.js');
-var markdown = require('markdown-it')({breaks:true}).use(require('markdown-it-sup'));
+var markdown = require('markdown-it')({breaks:false})
+          .use(require('markdown-it-sup'))
+          .use(require('markdown-it-imsize'), { autofill: true });
+
 var mdFigCaption = require('mdfigcaption');
 markdown.use(mdFigCaption);
 
@@ -267,8 +270,8 @@ function getPreview(style,user,callback) {
         preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
       }
       if (!options.edit) {
-        if (!imageHTML) preview += "<!--         place picture here              -->\n"   
-        else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
+       // if (!imageHTML) preview += "<!--         place picture here              -->\n"   
+       // else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
       }
     }
     else if (!(options.edit)) preview = '<h2>'+self.name+'</h2>\n'

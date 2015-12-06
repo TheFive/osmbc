@@ -4,7 +4,9 @@
 var pg     = require('pg');
 var async  = require('async');
 var should = require('should');
-var markdown = require('markdown-it')({breaks:true}).use(require('markdown-it-sup'));
+var markdown = require('markdown-it')({breaks:false})
+          .use(require('markdown-it-sup'))
+          .use(require('markdown-it-imsize'), { autofill: true });;
 var debug  = require('debug')('OSMBC:model:article');
 
 
@@ -129,7 +131,7 @@ function getPreview(par1,par2,par3) {
     }
   }
   if (this.categoryEN == "Picture") {
-    liON = '<div class="wp-caption aligncenter"> \n'
+    liON = '<div style="width: 650px" class="wp-caption alignnone"> \n'
     liOFF = '</div>\n';
   }
 
