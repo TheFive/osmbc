@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.3.12e](https://github.com/TheFive/osmbc/tree/0.3.12e) (2015-12-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12d...0.3.12e)
+
+**Closed issues:**
+
+- Integrate turkish categories. [\#187](https://github.com/TheFive/osmbc/issues/187)
+
+## [0.3.12d](https://github.com/TheFive/osmbc/tree/0.3.12d) (2015-12-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12c...0.3.12d)
+
+**Fixed bugs:**
+
+- translationPT [\#186](https://github.com/TheFive/osmbc/issues/186)
+
 ## [0.3.12c](https://github.com/TheFive/osmbc/tree/0.3.12c) (2015-12-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12b...0.3.12c)
 
