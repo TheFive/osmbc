@@ -1,5 +1,5 @@
 var should = require('should');
-var debug = require('debug')('OSMBC:router:tool');
+var debug = require('debug')('OSMBC:routes:tool');
 var express = require('express');
 var router = express.Router();
 var help = require('../routes/help.js');
