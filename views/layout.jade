@@ -33,13 +33,13 @@ html(lang='en')
           ul.nav.navbar-nav.navbar-left
             if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
               li
-                a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].id}') #{layout.listOfOpenBlog[0].name}
+                a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}') #{layout.listOfOpenBlog[0].name}
             if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
               li
-                a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].id}') #{layout.listOfEditBlog[0].name}
+                a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].name}') #{layout.listOfEditBlog[0].name}
             if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
               li
-                a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].id}') #{layout.listOfReviewBlog[0].name}
+                a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].name}') #{layout.listOfReviewBlog[0].name}
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | Article 
@@ -84,17 +84,17 @@ html(lang='en')
                   li.dropdown-header open
                   for o  in layout.listOfOpenBlog
                     li
-                      a(href="#{layout.htmlroot}/blog/#{o.id}") #{o.name}
+                      a(href="#{layout.htmlroot}/blog/#{o.name}") #{o.name}
                 if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
                   li.dropdown-header edit
                   for edit in layout.listOfEditBlog
                     li
-                      a(href="#{layout.htmlroot}/blog/#{edit.id}") #{edit.name}
+                      a(href="#{layout.htmlroot}/blog/#{edit.name}") #{edit.name}
                 if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
                   li.dropdown-header review #{layout.user.language}
                   for review in layout.listOfReviewBlog
                     li
-                      a(href="#{layout.htmlroot}/blog/#{review.id}") #{review.name}
+                      a(href="#{layout.htmlroot}/blog/#{review.name}") #{review.name}
 
 
 

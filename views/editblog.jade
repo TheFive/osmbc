@@ -25,7 +25,7 @@ block content
 
           
     if (params && params.edit) 
-      form(name="input", action="#{layout.htmlroot}/blog/edit/#{blog.id}", method="post")
+      form(name="input", action="#{layout.htmlroot}/blog/edit/#{blog.name}", method="post")
         .row
           .col-md-2
             | Name 
@@ -33,7 +33,7 @@ block content
             input(type="text",class="form-control",name ="name",value="#{blog.name}") 
           .col-md-4
             input(type="submit", class="btn btn-primary",value="OK")
-            a(href="#{layout.htmlroot}/blog/edit/#{blog.id}?edit=false" class="btn btn-default" role="button") Cancel
+            a(href="#{layout.htmlroot}/blog/edit/#{blog.name}?edit=false" class="btn btn-default" role="button") Cancel
         .row
           .col-md-2
             | Period 
@@ -75,7 +75,7 @@ block content
             | #{blog.name}
         .col-md-6
         .col-md-1
-          a(href="#{layout.htmlroot}/blog/edit/#{blog.id}?edit=true" class="btn btn-primary" role="button") Edit
+          a(href="#{layout.htmlroot}/blog/edit/#{blog.name}?edit=true" class="btn btn-primary" role="button") Edit
       .row
         .col-md-2
           | Period 
@@ -108,7 +108,7 @@ block content
                 td
                   if blog["close"+lang]
                     | close
-                    a(href="#{layout.htmlroot}/blog/#{blog.id}?closeLang&status=false") Reopen
+                    a(href="#{layout.htmlroot}/blog/#{blog.name}?closeLang&status=false") Reopen
                   else 
                     | -
                 
@@ -142,7 +142,7 @@ block content
           | Help
         .col-md-10
 
-          a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=help") This is a Help Blog 
+          a(href="#{layout.htmlroot}/blog/#{blog.name}?setStatus=help") This is a Help Blog 
           | Use this link, to create a "Help" Blog from this blog.
 
 

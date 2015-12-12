@@ -254,14 +254,18 @@ function getPreview(style,user,callback) {
     // in case of a normal blog, generate the start and end time
     // for a help blog, use the Name of the Blog
     // not in edit mode.
-    if (self.status != "help") {
+    if (!options.markdown) {
       if (self.startDate && self.endDate) {
         preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
       }
       preview += "<!--         place picture here              -->\n"      
     }
-    else if (!(options.edit)) preview = '<h2>'+self.name+'</h2>\n'
-
+    else {
+      preview = "";
+      if (self.startDate && self.endDate) {
+        preview += moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'\n\n';
+      }
+    }
   
     
     // Put every article in an array for the category
