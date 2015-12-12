@@ -6,6 +6,7 @@ var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
 var path     = require('path');
 var fs       = require('fs');
+var jade     = require('jade');
 
 var util          = require('../util.js');
 var config        = require('../config.js');
@@ -43,6 +44,8 @@ function renderArticleId(req,res,next) {
 
 
   articleModule.findById(id,function(err,article) {
+    debug('renderArticleId->findById');
+
 
     // if the ID does not exist, send an error
     if (!article || typeof(article.id) == 'undefined') return next(new Error("Article "+id+" does not exist"));
@@ -75,21 +78,36 @@ function renderArticleId(req,res,next) {
       // Find the assoziated blog for this article
       blog:
       function findBlog(callback) {
+        debug('renderArticleId->blog');
+
         blogModule.findOne({name:article.blog},function(err,blog){
-          if (blog) categories = blog.getCategories();
+          debug('renderArticleId->findeOne');
+
+          if (blog) {
+            categories = blog.getCategories();
+          } else {
+            debug('no blog found !!')
+          }
+
           callback(err,blog);
         })
       },
       // Find all log messages for the article
       changes:
       function (callback) {
+        debug('renderArticleId->changes');
+
         logModule.find({oid:id,table:"article"},{column:"timestamp",desc :true},function(err,result) {
+          debug('renderArticleId->findLog');
+
           callback(err,result);
         })
       },
       // (informal) locking information for the article
       edit:
       function (callback){
+        debug('renderArticleId->edit');
+
         if (typeof(params.edit)!='undefined') {
           if (params.edit=="false") {
             delete params.edit;
@@ -103,6 +121,8 @@ function renderArticleId(req,res,next) {
         }
       }},
         function (err,result) {
+          debug('renderArticleId->finalFunction');
+
 
           var languages = config.getLanguages();
           for (i=0;i<languages.length;i++) {
@@ -117,13 +137,28 @@ function renderArticleId(req,res,next) {
 
           // 
           if (req.query.edit && ! params.edit) {
+            debug("return to was called, redirecting");
             var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
             if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
             res.redirect(returnToUrl);    
           } else {
+            debug("rendering page");
             // Render the article with all calculated vars
             // (res.rendervar.layout is set by the express routing
             // mechanism before this router)
+          /*  var file = path.resolve(__dirname,'..','views', "article.jade");
+
+            var result = jade.renderFile(file,{layout:res.rendervar.layout,
+                                  article:article,
+                                  params:params,
+                                  placeholder:placeholder,
+                                  blog:result.blog,
+                                  changes:result.changes,
+                                  articleReferences:result.articleReferences,
+                                  usedLinks:result.usedLinks,
+                                  categories:categories});
+
+            res.end(result);return;*/
             res.render('article',{layout:res.rendervar.layout,
                                   article:article,
                                   params:params,
@@ -153,6 +188,7 @@ function searchAndCreate(req,res,next) {
   }
   if (!search || typeof(search)=='undefined') search = "";
   articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
+    debug('searchAndCreate->fullTextSearch');
     if (err) return next(err);
     should.exist(res.rendervar);
     res.render("collect",{layout:res.rendervar.layout,
@@ -195,6 +231,7 @@ function postArticle(req, res, next) {
         debug('postArticle->searchArticle')
         if (typeof(id)=='undefined') return cb(); 
         articleModule.findById(id,function(err,result) {
+          debug('postArticle->searchArticle->findById');
           if (err) return cb(err);
           if (!result) return cb(new Error("Article ID does not exist"));
           article = result;
@@ -208,6 +245,7 @@ function postArticle(req, res, next) {
 
         if (typeof(id)!='undefined') return cb(); 
         articleModule.createNewArticle(function(err,result){
+          debug('postArticle->createArticle->createNewArticle');
           if (err) return next(err);
           if (typeof(result.id) == 'undefined') return cb(new Error("Could not create Article"));
           article = result;
@@ -221,6 +259,7 @@ function postArticle(req, res, next) {
       if (err) {return next(err);}
       should.exist(article);
       article.setAndSave(req.user.displayName,changes,function(err) {
+       debug('postArticle->setValues->setAndSave');
         if (err ) {
           next(err);
           return;
@@ -282,8 +321,10 @@ function search(req, res, next) {
  
   async.series([
     function doSearch(cb) {
+      debug('search->doSearch');
       if (search != "") {
         articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,r){
+          debug('search->doSearch->fullTextSearch');
           if (err) return cb(err);
           result = r;
           cb();
@@ -336,6 +377,7 @@ function renderList(req,res,next) {
       function findArticleFunction(callback) {
         debug('renderList->findArticleFunction');
         articleModule.find(query,{column:"title"},function(err,result) {
+          debug('renderList->findArticleFunction->find');
           articles = result;
           callback();
         })
