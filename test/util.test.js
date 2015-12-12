@@ -42,5 +42,6 @@ describe('util',function() {
     it('should return false for markdown', function() {
       should((util.isURL('On October 8th, 2015 [Locus](http://www.locusmap.eu/) version [3.13.1](http://www.locusmap.eu/news-version-3-13.0/) was released.'))).is.False();
     })
+    
   })
 })

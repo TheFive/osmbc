@@ -557,14 +557,14 @@ block scripts
         }
       }
     function onchangeRIGHT() {
-      console.log("onchangeRight");
+      //console.log("onchangeRight");
       var mdEN = document.getElementById("markdownRIGHT").value;
       previewRIGHT = document.getElementById("previewRIGHT");
       textRight = document.getElementById("text_right");
       textLeft = document.getElementById("text_left");
-      console.log("beforeFit");
+      //console.log("beforeFit");
       FitToContent("markdownRIGHT");
-      console.log("AfterFit");
+      //console.log("AfterFit");
       previewRIGHT.innerHTML = convert(mdEN);
       var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
@@ -589,7 +589,7 @@ block scripts
         if (clfield) cl = clfield.value;
         var linkArea = document.getElementById("linkArea");
 
-        regexToken = /(((ftp|https?):\/\/)[\-\w@:%_\+.~#?,&\/\/=]+)|((mailto:)?[_.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
+        regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
         var linkList;
        
         var result = "";

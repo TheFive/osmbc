@@ -74,6 +74,7 @@ passport.use(new OpenStreetMapStrategy({
     debug('passport.use Token Function');
     // asynchronous verification, for effect...
     process.nextTick(function () {
+      debug('passport.use Token Function->prozess.nextTick');
       
       // To keep the example simple, the user's OpenStreetMap profile is returned to
       // represent the logged-in user.  In a typical application, you would want
@@ -109,6 +110,7 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { 
     // check User
     userModule.find({OSMUser:req.user.displayName},function(err,result){
+      debug('ensureAuthenticated->userFind')
       if (err) return next(err);
       if (result.length==1) {
         for (var k in result[0]) {
@@ -181,6 +183,7 @@ app.get(htmlRoot + '/auth/openstreetmap',
   //passport.authenticate('openstreetmap'),
   passport.authenticate('openstreetmap'),
   function(req, res){
+    debug('never come here function!!!');
     // The request will be redirected to OpenStreetMap for authentication, so this
     // function will not be called.
   });
@@ -252,6 +255,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   debug('app.use status function');
+  debug(JSON.stringify(err));
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
