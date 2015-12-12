@@ -19,21 +19,21 @@ block content
               | Open
             if (layout.listOfOpenBlog)
               for openBlog in layout.listOfOpenBlog
-                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.id}","_self")')
+                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.name}","_self")')
                   | #{openBlog.name}
           .col-md-4
             h4
               | Edit
             if (layout.listOfEditBlog)
               for openBlog in layout.listOfEditBlog
-                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.id}","_self")')
+                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.name}","_self")')
                   | #{openBlog.name}
           .col-md-4
             h4
               | Review #{layout.user.language}
             if (layout.listOfReviewBlog)
               for openBlog in layout.listOfReviewBlog
-                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.id}","_self")')
+                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.name}","_self")')
                   | #{openBlog.name}
     .col-md-8
       if changes
