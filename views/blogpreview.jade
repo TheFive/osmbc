@@ -7,18 +7,30 @@ block content
   row
     .col-md-8
       if (blog.status != "help")
-        h1= "Preview "+blog.name
+        if (markdown)
+          h1= "Markdown "+blog.name
+        else
+          h1= "Preview " + blog.name
     .col-md-4
       div.btn-group(role="group" class="pull-right")
         button.btn.btn-default.btn-lg(onclick ="location.href='#{returnToUrl}';") Edit
-        button.btn.btn-default.btn-lg(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}/preview?download=true&lang=#{lang}';") Download
+        button.btn.btn-default.btn-lg(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}/preview?download=true&lang=#{lang}';") Download
 
   row
     .col-md-12
-      if (preview)
+      if (markdown)
+        pre
+          | #{preview}
+      else
         :verbatim
           !{preview}
- 
+  row
+    .col-md-9
+    .col-md-3
+      if (!markdown)
+        p
+          a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?&lang=markdown#{lang}") #{blog.name} as markdown
+      
 
 
 

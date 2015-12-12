@@ -28,7 +28,7 @@ block content
             tr
               if (onlyhelp || blog.status != "help")
                 td
-                  a(href='#{layout.htmlroot}/blog/' + blog.id) #{blog.name} 
+                  a(href='#{layout.htmlroot}/blog/' + blog.name) #{blog.name} 
                 td= blog.status
                 - var allclosed=true
                 for lang in layout.languages
@@ -45,7 +45,7 @@ block content
 
                 td
                   if allclosed
-                    a(href="#{layout.htmlroot}/blog/#{blog.id}?setStatus=closed") Close Blog
+                    a(href="#{layout.htmlroot}/blog/#{blog.name}?setStatus=closed") Close Blog
                   else
                     | -
   row

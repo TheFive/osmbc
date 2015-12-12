@@ -40,6 +40,10 @@ settings.fullfinal = {
             editLink: true,
             shortEditLink : true
           }
+settings.markdown = {
+            
+            markdown : true
+          }
 
 
 var languages = {};
@@ -117,6 +121,7 @@ function getSettings(string) {
       }
     }
   }
+
   var result = {};
   for (k in s) {result[k]=s[k]};
   for (k in l) {result[k]=l[k]};
@@ -127,7 +132,9 @@ var listSettings = [];
 var listLanguages = [];
 
 for (var k in settings) {
-    listSettings.push(k);
+  if (k!="markdown") {
+    listSettings.push(k);    
+  }
 }
 for (var k in languages) {
   listLanguages.push(k);
