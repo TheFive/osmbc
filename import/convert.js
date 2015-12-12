@@ -81,7 +81,7 @@ async.series([
                   console.log("Found defect User in blog");
                   console.dir(item[rcl][j]);
                   item[rcl][j].user = item[rcl][j].user.displayName;
-                  console.dir(item[rcl])[j];
+                  console.dir(item[rcl][j]);
                   save = true;
                 }
               }
