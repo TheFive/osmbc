@@ -6,7 +6,8 @@ module.exports = {
           "ES": "-- no category yet --",
           "FR": "-- no category yet --",
           "CZ": "-- no category yet --",
-          "PT": "-- ainda sem categoria --",
+          "PT": "-- no category yet --",
+          "RU": "-- no category yet --",
           "JP": "-- no category yet --",
           "ID": "-- no category yet --",
           "TR": "-- no category yet --"
@@ -18,6 +19,7 @@ module.exports = {
           "FR": "[Actualité]",
           "CZ": "[Actual Category]",
           "PT": "[Categoria atual]",
+          "RU": "[Текущая категория]",
           "JP": "[Actual Category]",
           "ID": "[Actual Category]",
           "TR": "[Actual Category]"
@@ -40,17 +42,19 @@ module.exports = {
           "FR": "À notre propos",
           "CZ": "About us",
           "PT": "Sobre nós",
+          "RU": "О нас",         
           "JP": "私たちについて",
           "ID": "Tentang kami",
           "TR": "Hakkımızda"
      },
      "Weekly exerciseEN:": {
-          "EN": "Weekly exerciseEN:",
+          "EN": "Weekly exercise:",
           "DE": "Wochenaufruf",
           "ES": "Not Translated",
           "FR": "Not Translated",
           "CZ": "Not Translated",
           "PT": "Não traduzido",
+          "RU": "Еженедельные заданияАнгл",                 
           "JP": "Not Translated",
           "ID": "Not Translated",
           "TR": "Not Translated"
@@ -60,8 +64,9 @@ module.exports = {
           "DE": "Mapping",
           "ES": "Mapeando",
           "FR": "Cartographie",
-          "CZ": "Mapping",
+          "CZ": "Mapování",
           "PT": "Mapeamento",
+          "RU": "Картографирование",                
           "JP": "マッピング",
           "ID": "Pemetaan",
           "TR": "Haritalama"  
@@ -71,8 +76,9 @@ module.exports = {
           "DE": "Community",
           "ES": "Comunidad",
           "FR": "Communauté",
-          "CZ": "Community",
+          "CZ": "Komunita",
           "PT": "Comunidade",
+          "RU": "Сообщество",                 
           "JP": "コミュニティ",
           "ID": "Komunitas",
           "TR": "Topluluk"
@@ -84,9 +90,10 @@ module.exports = {
           "FR": "Importation",
           "CZ": "Imports",
           "PT": "Importações",
+          "RU": "Импорты",                 
           "JP": "インポート",
           "ID": "Imports",
-          "TR": "İthalatlar"
+          "TR": " İçe Aktarımlar"
      },
      "OpenStreetMap Foundation": {
           "EN": "OpenStreetMap Foundation",
@@ -95,64 +102,70 @@ module.exports = {
           "FR": "Fondation OpenStreetMap",
           "CZ": "OpenStreetMap Foundation",
           "PT": "Fundação OpenStreetMap",
+          "RU": "Фонд OpenStreetMap",                
           "JP": "OpenStreetMap Foundation",
           "ID": "Yayasan OpenStreetMap",
-          "TR": "Açık Cadde Haritasının Kurulumu"
+          "TR": "OpenStreetMap Foundation"
      },
      "Events": {
           "EN": "Events",
           "DE": "Veranstaltungen",
           "ES": "Eventos",
           "FR": "Événements",
-          "CZ": "Events",
+          "CZ": "Události",
           "PT": "Eventos",
+          "RU": "События",               
           "JP": "イベント",
           "ID": "Kegiatan",
-          "TR": "Gelişen Olaylar"
+          "TR": "Etkinlikler"
      },
      "Humanitarian OSM": {
           "EN": "Humanitarian OSM",
           "DE": "Humanitarian OSM",
           "ES": "OSM Humanitario",
           "FR": "OSM et l'humanitaire",
-          "CZ": "Humanitarian OSM",
-          "PT": "OSM Humanitário",
+          "CZ": "Humanitární OSM",
+          "PT": "OSM Humanitário", 
+          "RU": "Гуманитарный OSM",          
           "JP": "OSM人道支援",
           "ID": "OSM untuk Kemanusiaann",
-          "TR": "İnsancıl OSM"
+          "TR": "İnsani OSM"
      },
      "Maps": {
           "EN": "Maps",
           "DE": "Karten",
           "ES": "Mapas",
           "FR": "Cartes",
-          "CZ": "Maps",
+          "CZ": "Mapy",
           "PT": "Mapas",
+          "RU": "Карты",                 
           "JP": "地図",
           "ID": "Peta",
           "TR": "Haritalar"
      },
      "#switch2OSM": {
-          "EN": "#switch2OSM",
+          "EN": "switch2OSM",
           "DE": "switch2OSM",
-          "ES": "#switch2OSM",
-          "FR": "#switch2OSM",
-          "CZ": "#switch2OSM",
-          "PT": "#switch2OSM",
-          "JP": "#switch2OSM",
-          "ID": "#switch2OSM",
-          "TR": "#switch2OSM"
+          "ES": "switch2OSM",
+          "FR": "switch2OSM",
+          "CZ": "switch2OSM",
+          "PT": "switch2OSM",
+          "RU": "switch2OSM",                 
+          "JP": "switch2OSM",
+          "ID": "switch2OSM",
+          "TR": "switch2OSM"
      },
      "Open Data": {
           "EN": "Open Data",
           "DE": "Open-Data",
           "ES": "Datos Abiertos",
           "FR": "Ouverture des données",
-          "CZ": "Open Data",
+          "CZ": "Otevřená Data",
           "PT": "Dados abertos",
+          "RU": "Открытые данные",                 
           "JP": "オープンデータ",
           "ID": "Open Data",
-          "TR": "Açık veri"
+          "TR": "Özgür Veri"
      },
      "Licences": {
           "EN": "Licences",
@@ -161,9 +174,10 @@ module.exports = {
           "FR": "Licences",
           "CZ": "Licences",
           "PT": "Licenças",
+          "RU": "Лицензии",                 
           "JP": "ライセンス",
           "ID": "Lisensi",
-          "TR": "Lisans"
+          "TR": "Lisanslar"
      },
      "Software": {
           "EN": "Software",
@@ -172,6 +186,7 @@ module.exports = {
           "FR": "Applications",
           "CZ": "Software",
           "PT": "Software",
+          "RU": "Программы",                 
           "JP": "ソフトウェア",
           "ID": "Software",
           "TR": "Yazılım"
@@ -183,31 +198,34 @@ module.exports = {
           "FR": "Applications",
           "CZ": "Programming",
           "PT": "Desenvolvimento",
+          "RU": "Программирование",                 
           "JP": "ソフトウェア",
           "ID": "Software",
-          "TR": "Yazılım"
+          "TR": "Programlama"
      },
      "Did you know …": {
           "EN": "Did you know …",
           "DE": "Kennst Du schon …",
           "ES": "Sabías que …",
           "FR": "Connaissez-vous …",
-          "CZ": "Did you know …",
+          "CZ": "Věděli jste …",
           "PT": "Você sabia...",
+          "RU": "А вы знаете … ",       
           "JP": "…ご存知でしたか？",
           "ID": "Apakah anda tahu …",
-          "TR": "Biliyor muydunuz …"
+          "TR": "Biliyor muydunuz?…"
      },
      "Other “geo” things": {
           "EN": "Other “geo” things",
           "DE": "Weitere Themen mit Geo-Bezug",
           "ES": "Otras cosas “geo”",
           "FR": "Autres sujets géographiques",
-          "CZ": "Other “geo” things",
+          "CZ": "Ostatní “geo” záležitosti",
           "PT": "Outras coisas “geo”",
+          "RU": "Другие “гео” события",
           "JP": "その他の “ジオ” な事柄",
           "ID": "Berita “geo” lainnya",
-          "TR": "Başka bir “yer“ nesneleri"
+          "TR": "Diğer “yersel” şeyler"
      },
      "Not Translated": {
           "EN": "Not Translated",
@@ -216,6 +234,7 @@ module.exports = {
           "FR": "Not Translated",
           "CZ": "Not Translated",
           "PT": "Não traduzido",
+          "RU": "Не переведено",
           "JP": "Not Translated",
           "ID": "Not Translated",
           "TR": "Not Translated"
@@ -227,6 +246,7 @@ module.exports = {
           "FR": "--unpublished--",
           "CZ": "--unpublished--",
           "PT": "--não publicado--",
+          "RU": "--не опубликовано--",
           "JP": "--unpublished--",
           "ID": "--unpublished--",
           "TR": "--unpublished--"

@@ -38,7 +38,7 @@ module.exports.categories = [
   {DE:"Veranstaltungen",EN:"Events"},
   {DE:"Humanitarian OSM",EN:"Humanitarian OSM"},
   {DE:"Karten",EN:"Maps"},
-  {DE:"switch2OSM",EN:"#switch2OSM"},
+  {DE:"switch2OSM",EN:"switch2OSM"},
   {DE:"Open-Data",EN:"Open Data"},
   {DE:"Lizenzen",EN:"Licences"},
   {DE:"Programme",EN:"Software"},
@@ -265,7 +265,7 @@ function getPreview(style,user,callback) {
     // in case of a normal blog, generate the start and end time
     // for a help blog, use the Name of the Blog
     // not in edit mode.
-    if (self.status != "help") {
+    if (!options.markdown) {
       if (self.startDate && self.endDate) {
         preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
       }
@@ -274,10 +274,13 @@ function getPreview(style,user,callback) {
        // else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
       }
     }
-    else if (!(options.edit)) preview = '<h2>'+self.name+'</h2>\n'
-
-
-    
+    else {
+      preview = "";
+      if (self.startDate && self.endDate) {
+        preview += moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'\n\n';
+      }
+    }
+      
     // Put every article in an array for the category
     if (result) {
       for (var i=0;i<result.length;i++ ) {
@@ -316,7 +319,10 @@ function getPreview(style,user,callback) {
         for (var j=0;j<articles[category].length;j++) {
           var r = articles[category][j];
 
-          htmlForCategory += r.getPreview(style,user);
+          var articleMarkdown = r.getPreview(style,user);
+          if (options.markdown) articleMarkdown = "* " + r["markdown"+options.left_lang]+"\n\n";
+
+          htmlForCategory += articleMarkdown;
         }
         var header ='';
         if (category!="Picture") {
@@ -338,6 +344,18 @@ function getPreview(style,user,callback) {
             htmlForCategory = header + '\n'+htmlForCategory+'\n'                 
           }
         }
+<<<<<<< HEAD
+=======
+        if (options.markdown) header = "## "+categoryLEFT;
+
+        
+        if (options.markdown) {
+          htmlForCategory = header + "\n\n"+htmlForCategory;
+        } else {
+          htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        }
+
+>>>>>>> develop
         preview += htmlForCategory;
         delete articles[category];
       }
@@ -357,6 +375,9 @@ function getPreview(style,user,callback) {
     callback(null, result);
   })
 }
+
+
+
 
 function translateCategories(cat) {
   debug('translateCategories');
@@ -406,11 +427,9 @@ function dropTable(cb) {
 
 function isEditable(lang) {
   debug("isEditabe");
-  console.log(lang);
   var result = true;
   if (this["reviewComment"+lang]) {
     result = false;
-    console.log("ReviewComment is set")
   }
   var closeLANG = this["close"+lang]
   if (typeof(closeLANG)!='undefined') {
@@ -424,6 +443,7 @@ function isEditable(lang) {
 
 // result of preview is html code to display the blog.
 Blog.prototype.getPreview = getPreview;
+
 Blog.prototype.isEditable = isEditable;
 
 // setAndSave(user,data,callback)

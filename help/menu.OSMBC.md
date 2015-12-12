@@ -63,6 +63,9 @@ The Views have the following functionalities
 Comments are show with a blue/red bar, depending on you are named in a comment or not. The bullet is a glyphicon for editing an article. If a text is editied, it is shown truncated, alterativ the title is shown.
 There is an edit&translate Link at the end.
 
+* **translate**
+Same as overview, in addition it shows in one column view an edit link for every language an article is translated to.
+
 * **final**
 Comments are show with a blue/red bar, depending on you are named in a comment or not. The bullet is a glyphicon for editing an article. Text is shown complete, missing text is displayed by the collection in marked text. There is an edit&translate link at the end.
 

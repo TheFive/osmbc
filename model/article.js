@@ -84,24 +84,16 @@ function createNewArticle (proto,callback) {
 
 
 
-function getPreview(par1,par2,par3) {
+function getPreview(style,user) {
   debug("getPreview");
-  should.exist(par1);
+  should.exist(style);
   var options;
-  var user;
-  var lang;
+  if (typeof(user)=='object') {
+    user = user.displayName;
+  }
 
-  if (typeof(par2)=='object') {
-    options = par2;
-    user = par3;
-    lang = par1
-  } else
-  {
-    style = par1;
-    user = par2;
     options = settingsModule.getSettings(style);
 
-  }
   
 
   var markdownEDIT = "markdown"+options.left_lang;
@@ -126,8 +118,10 @@ function getPreview(par1,par2,par3) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
       var commentColour = "blue";
       if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
-      if (this.comment.indexOf("@all")>=0) commentColour = "red";
-      liON = '<li id="'+pageLink+'" style=" border-left-style: solid; border-color: '+commentColour+';">\n';
+      if (this.comment.indexOf("@"+options.left_lang)>=0) commentColour = "orange";
+      if (this.comment.indexOf("@"+options.right_lang)>=0) commentColour = "orange";
+      if (this.comment.indexOf("@all")>=0) commentColour = "orange";
+      liON = '<li style=" border-left-style: solid; border-color: '+commentColour+';">\n';
     }
   }
   if (this.categoryEN == "Picture") {
@@ -153,6 +147,19 @@ function getPreview(par1,par2,par3) {
     if (el =='' && options.shortEditLink) el ='…';
     if (el != '') editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
   }
+  if (options.edit && options.languageLinks && options.right_lang=="--") {
+    var addEdit;
+    for (var z=0;z<config.getLanguages().length;z++) {
+      var lll = config.getLanguages()[z]
+      if (lll==options.left_lang) continue;
+      if (this["markdown"+lll] && this["markdown"+lll].length>=4 && this["markdown"+lll]!="no translation") {
+        if (!addEdit) addEdit = " translate from:";
+        addEdit += ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+options.left_lang+'.'+lll+'">'+lll+'</a>'; 
+      }
+    }
+    if (addEdit) editLink += addEdit;
+  }
+
 
   // Generate Text for display
   var text ='';
@@ -303,6 +310,12 @@ function setAndSave(user,data,callback) {
   should(typeof(data)).equal('object');
   should(typeof(callback)).equal('function');
   listOfOrphanBlog = null;
+  // trim all markdown Values
+  for (k in data) {
+    if (k.substring(0,8)== "markdown" && data[k]) {
+      data[k]=data[k].trim();
+    }
+  }
   var self = this;
   delete self.lock;
 
@@ -313,6 +326,11 @@ function setAndSave(user,data,callback) {
   if (self.version && data.version && self.version != parseInt(data.version)) {
     error = new Error("Version Number Differs");
     return callback(error);
+  }
+
+  // check to set the commentStatus to open
+  if (data.comment && !self.commentStatus) {
+    data.commentStatus = "open";
   }
 
 
@@ -434,6 +452,7 @@ function displayTitle(maxlength) {
   return result;
 }
 
+/*
 function displayTitleEN(maxlength) {
   if (typeof(maxlength) == 'undefined') maxlength = 30;
   if (typeof(this.title)!='undefined' && this.title != "") {
@@ -448,7 +467,7 @@ function displayTitleEN(maxlength) {
     return util.shorten(this.collection,maxlength)
   }
   return "Empty Article";
-}
+}*/
 
 
 function createTable(cb) {
@@ -536,7 +555,7 @@ function getCategory(lang) {
 // c) Collection 
 // the maximal length is optional (default is 30)
 Article.prototype.displayTitle = displayTitle;
-Article.prototype.displayTitleEN = displayTitleEN;
+//Article.prototype.displayTitleEN = displayTitleEN;
 
 // Calculate all links in markdown (final Text) and collection
 // there is no double check for the result

@@ -37,17 +37,17 @@ block content
     if article.lock
       .alert.alert-dismissable.alert-info
         button.close( type="button", data-dismiss="alert" ) ×
-        | #{article.lock.user} edits since #{layout.moment(article.lock.timestamp).fromNow()} Version #{article.version}
+        |#{article.lock.user} edits since #{layout.moment(article.lock.timestamp).fromNow()} Version #{article.version}
     if info
       if info.message
         if info.status == 'error'
           .alert.alert-dismissable.alert-danger
             button.close( type="button", data-dismiss="alert" ) ×
-            | #{info.message}
+            |#{info.message}
         if info.status == 'message'
           .alert.alert-dismissable.alert-success
             button.close( type="button", data-dismiss="alert" ) ×
-            | #{info.message}
+            |#{info.message}
   
 
 
@@ -56,7 +56,7 @@ block content
       form(name="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
         .row
           .col-md-1
-            | Blog <br>
+            |Blog <br>
           .col-md-5
             select(id="blog",name="blog").form-control
               option(value="Future") Future
@@ -108,7 +108,7 @@ block content
 
         .row
           .col-md-1
-            | Category <br>
+            |Category <br>
           +leftcolumn
             select(id="categoryEN",name="categoryEN").form-control
               for category in categories
@@ -120,19 +120,19 @@ block content
                   option(value="#{category.EN}" ) #{option} 
           +rightcolumn
             h2
-              | #{article.getCategory(params.right_lang)}
+              |#{article.getCategory(params.right_lang)}
 
         .row
           .col-md-1
-            | Title <br>
+            |Title <br>
           .col-md-10
             textarea.form-control(name="title",rows=1) #{article.title}
                
         .row
           .col-md-1
-            | Collection <br>
+            |Collection <br>
           .col-md-10
-            textarea.form-control(id="collection" name="collection" rows=7) #{article.collection}
+            textarea.form-control(id="collection" name="collection" rows=2) #{article.collection}
         .row
           .col-md-1
             
@@ -151,18 +151,19 @@ block content
               |#{params.right_lang}
         .row
           .col-md-1
-            | Markdown 
+            |Markdown 
           +leftcolumn
             if  !blog.isEditable(params.left_lang)
               .panel.panel-default
                 .panel-body #{article["markdown"+params.left_lang]}         
             else
               if placeholder.markdown[params.left_lang]
-                textarea.form-control(id="markdownLEFT" placeholder = "#{placeholder.markdown[params.left_lang]}" name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
-              else
-                textarea.form-control(id="markdownLEFT"  name = "markdown#{params.left_lang}" rows=7) #{article["markdown"+params.left_lang]}
-               div(id="text_left")
-                | 'no translation' or '-' to specify no translation wanted.
+                - p = placeholder.markdown[params.left_lang];
+              else 
+                - p = "";
+              textarea.form-control(id="markdownLEFT" placeholder = "#{p}" spellcheck = "true" lang="#{params.left_lang}" name = "markdown#{params.left_lang}" rows = 6) #{article["markdown"+params.left_lang]}
+              div(id="text_left")
+                |'no translation' or '-' to specify no translation wanted.
  
           +rightcolumn
             if !blog.isEditable(params.right_lang)
@@ -170,30 +171,29 @@ block content
                 .panel-body #{article["markdown"+params.right_lang]}         
             else
               if (placeholder.markdown[params.right_lang])
-                
-                textarea.form-control(id="markdownRIGHT" placeholder = "#{placeholder.markdown[params.right_lang]}" name = "markdown#{params.right_lang}" rows=7)  #{article["markdown"+params.right_lang]}
-              else
-                
-                textarea.form-control(id="markdownRIGHT" name = "markdown#{params.right_lang}" rows=7) #{article["markdown"+params.right_lang]}
+                - p = placeholder.markdown[params.right_lang];
+              else 
+                - p = "";
+              textarea.form-control(id="markdownRIGHT" placeholder = "#{p}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=6) #{article["markdown"+params.right_lang]}
               div(id="text_right")
-                | 'no translation' or '-' to specify no translation wanted.
+                |'no translation' or '-' to specify no translation wanted.
           .col-md-1
 
             if ((params.left_lang=="DE") || (params.right_lang=="DE"))
               img(id="Japanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg", class="img-responsive" ,width = 40, onclick="javascript:myclick(this.id)")
               img(id="Französisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
               img(id="Spanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
-              img(id="Brasilianisches Portugiesisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg", class="img-responsive", width = 40 ,onclick="javascript:myclick(this.id)")
               img(id="Tschechisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
               img(id="Russisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
-              img(id="Niederländisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
               img(id="Rumänisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
+              img(id="Niederländisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
+              img(id="Brasilianisches Portugiesisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg", class="img-responsive", width = 40 ,onclick="javascript:myclick(this.id)")
               img(id="Polish",src="http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
 
 
         .row
           .col-md-1
-            | Preview
+            |Preview
           +leftcolumn
             .panel.panel-default.panel-body(id="previewLEFT")
                 :verbatim
@@ -205,10 +205,10 @@ block content
                   !{article["textHtml"+params.right_lang]}
         .row
           .col-md-1
-            | Comment <br>
+            |Comment <br>
           .col-md-11  
             textarea.form-control(
-              name="comment"
+              name="comment" id="comment"
               rows=7) #{article.comment}
         .row
           .col-md-1
@@ -228,49 +228,47 @@ block content
     else
      .row
         .col-md-1
-          | Blog <br>
+          |Blog <br>
         +leftcolumn
           h2
-            | #{article.blog}
+            |#{article.blog}
         +rightcolumn
           h2
         .col-md-1
           a(href="#{layout.htmlroot}/article/#{article.id}?edit=true&style=#{params.style}" class="btn btn-primary" role="button") Edit
       .row
         .col-md-1
-          | Category <br>
+          |Category <br>
         +leftcolumn
           h4
-            | #{article.getCategory(params.left_lang)}
+            |#{article.getCategory(params.left_lang)}
         +rightcolumn
           h4
-            | #{article.getCategory(params.right_lang)}
+            |#{article.getCategory(params.right_lang)}
       .row
         .col-md-1
-          | Title <br>
+          |Title <br>
         .col-md-10
           h3
-            | #{article.title}
+            |#{article.title}
       .row
         .col-md-1
-          | Collection <br>
+          |Collection <br>
         .col-md-10
           if (article.collection)
                 :verbatim
-                | <pre>
-                !{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1">$1</a>')}
-                | </pre>
+                |<pre>!{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
       .row 
         .col-md-1
         +leftcolumn
-          | #{params.left_lang}
+          |#{params.left_lang}
         +rightcolumn
-          | #{params.right_lang}
+          |#{params.right_lang}
 
       if (false)
         .row
           .col-md-1
-              | Markdown<br>
+              |Markdown<br>
           +leftcolumn 
               .panel.panel-default
                 .panel-body #{article["markdown"+params.left_lang]}
@@ -279,7 +277,7 @@ block content
                 .panel-body #{article["markdown"+params.right_lang]}
       .row
         .col-md-1
-          | Preview
+          |Preview
 
         +leftcolumn 
           .panel.panel-default
@@ -295,27 +293,25 @@ block content
       .row
          if (article.comment && article.comment!="")
           .col-md-1
-            | Comment 
+            |Comment 
           .col-md-10 
-              | (Comment is #{article.commentStatus})
+              |(Comment is #{article.commentStatus})
               :verbatim
-              |<pre>
-              !{article.comment}
-              |</pre>
+              |<pre>!{article.comment} </pre>
     .row
       if articleReferences.count >= 1
         h2
-          | Links used in other Post
+          |Links used in other Post
         div
           table.table.table-striped.table-responsive
             thead
               tr
                 th
-                  | link
+                  |link
                 th
-                  | article
+                  |article
                 th
-                  | Blog
+                  |Blog
             tbody
               each array,link in articleReferences
                 if (link != "count" )
@@ -332,7 +328,7 @@ block content
                         td
                           a(href='#{link}') #{link}
                         td
-                          | Und #{array.length-5} weitere Artikel.
+                          |Und #{array.length-5} weitere Artikel.
                 
 
 
@@ -340,23 +336,23 @@ block content
     .row
       if changes
         h2
-          | History
+          |History
         div
           table.table.table-striped.table-responsive
             thead
               tr 
                 th
-                 | id
+                 |id
                 th
-                 | user
+                 |user
                 th
-                 | what
+                 |what
                 th
-                 | from
+                 |from
                 th
-                 |  to
+                 |to
                 th
-                 | when
+                 |when
              tbody
               each change, i in changes
                 tr
@@ -393,29 +389,42 @@ block scripts
         markdownRIGHT.ondrop = pasteRIGHT;
         markdownRIGHT.onleave = onleaveRIGHT;
       }
-      if (document.getElementById("text_right")) {
-         noTranslationText = document.getElementById("text_right").innerHTML;  
-        } else if (document.getElementById("text_left")) {
+      if (document.getElementById("text_left")) {
          noTranslationText = document.getElementById("text_left").innerHTML;  
+        } else if (document.getElementById("text_right")) {
+         noTranslationText = document.getElementById("text_right").innerHTML;  
         }
       
      
       coll = document.getElementById("collection");
-      coll.onchange = onchangeCollection;
-      coll.onkeyup = onchangeCollection;
+      if (coll) {
+        coll.onchange = onchangeCollection;
+        coll.onkeyup = onchangeCollection;
+
+        }
       onchangeCollection();
+
+      comm = document.getElementById("comment");
+      if (comm) {
+        comm.onchange = onchangeComment;
+        comm.onkeyup = onchangeComment;
+        }
+      onchangeComment();
+      onchangeLEFT();
+      onchangeRIGHT();
+
     }
 
     function onleaveLEFT() {
       var mdEN = document.getElementById("markdownLEFT").value;
-      if (mdEN == "-") {
+      if (mdEN.trim() == "-") {
         document.getElementById("markdownLEFT").value = "no translation";
         onchangeLEFT();
       }
     }
     function onleaveRIGHT() {
       var mdEN = document.getElementById("markdownRIGHT").value;
-      if (mdEN == "-") {
+      if (mdEN.trim() == "-") {
         document.getElementById("markdownRIGHT").value = "no translation";
         onchangeRIGHT();
         }
@@ -529,6 +538,8 @@ block scripts
       var md = document.getElementById("markdownLEFT").value;
       previewLEFT = document.getElementById("previewLEFT");
       textLeft = document.getElementById("text_left");
+
+      FitToContent("markdownLEFT");
       
       previewLEFT.innerHTML = convert(md);
       var longLink = md.search(/\[[^\]]{40,}\]/g);
@@ -546,11 +557,14 @@ block scripts
         }
       }
     function onchangeRIGHT() {
+      //console.log("onchangeRight");
       var mdEN = document.getElementById("markdownRIGHT").value;
       previewRIGHT = document.getElementById("previewRIGHT");
       textRight = document.getElementById("text_right");
       textLeft = document.getElementById("text_left");
-      
+      //console.log("beforeFit");
+      FitToContent("markdownRIGHT");
+      //console.log("AfterFit");
       previewRIGHT.innerHTML = convert(mdEN);
       var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
@@ -567,13 +581,15 @@ block scripts
          }
       }
       function generateGoogleTranslateLink(link,lang) {
-        return '<a href="https://translate.google.de/translate?sl=auto&tl='+lang+'&u='+link+'">'+lang+'</a>';
+        return '<a href="https://translate.google.de/translate?sl=auto&tl='+lang+'&u='+link+'" target="_blank">'+lang+'</a>';
       }
       function onchangeCollection() {
-        var cl = document.getElementById("collection").value;
+        var clfield = document.getElementById("collection");
+        var cl;
+        if (clfield) cl = clfield.value;
         var linkArea = document.getElementById("linkArea");
 
-        regexToken = /(((ftp|https?):\/\/)[\-\w@:%_\+.~#?,&\/\/=]+)|((mailto:)?[_.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
+        regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
         var linkList;
        
         var result = "";
@@ -581,7 +597,7 @@ block scripts
         while( (linkList = regexToken.exec(cl)) != null ) {
             //console.log("linkList"+JSON.stringify(linkList));
          
-            result += '<a href="'+linkList[0]+'"">'+linkList[0]+'</a>\n';
+            result += '<a href="'+linkList[0]+'" target="_blank">'+linkList[0]+'</a>\n';
             leftLang=document.getElementById("left_lang").innerHTML;
             rightLang=document.getElementById("right_lang").innerHTML;
             result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
@@ -593,8 +609,10 @@ block scripts
             //console.log(result);
         }
         result = '<p>'+result+'</p>';
+        FitToContent("collection");
+ 
         //console.log(result);
-        linkArea.innerHTML = result;
+        if (linkArea) linkArea.innerHTML = result;
       }
 
 
@@ -607,7 +625,35 @@ block scripts
         
 
                }
+      function onchangeComment() {
+        FitToContent("comment");
+      }
 
+      function FitToContent(id, maxHeight)
+      {
+         textfield = document.getElementById(id);
+         if ( !textfield )
+            return;
+
+
+         textfield.style.height = textfield.style.minHeight;
+         var adjustedHeight = textfield.clientHeight;
+         
+
+         if ( !maxHeight || maxHeight > adjustedHeight )
+         {
+            adjustedHeight = Math.max(textfield.scrollHeight, adjustedHeight);
+            if ( maxHeight )
+               adjustedHeight = Math.min(maxHeight, adjustedHeight);
+          
+            if ( adjustedHeight > textfield.clientHeight ) {
+              
+               textfield.style.height = adjustedHeight + "px";
+               
+
+              }
+         }
+      }
 
 
 

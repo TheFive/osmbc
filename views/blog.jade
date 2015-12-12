@@ -2,9 +2,9 @@ extends layout
 
 mixin navbutton(userstyle,style)
   if (userstyle==style) 
-    li.active:  a(href="#{layout.htmlroot}/blog/#{blog.id}?style=#{userstyle}") #{userstyle}
+    li.active:  a(href="#{layout.htmlroot}/blog/#{blog.name}?style=#{userstyle}") #{userstyle}
   else
-    li:  a(href="#{layout.htmlroot}/blog/#{blog.id}?style=#{userstyle}") #{userstyle}
+    li:  a(href="#{layout.htmlroot}/blog/#{blog.name}?style=#{userstyle}") #{userstyle}
   
 
 
@@ -30,20 +30,23 @@ block content
         if (reviewCommentsLeft)
           .row
             .col-md-12
-               form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.id}", method="get")
+               form.form-horizontal(name="review", action="#{layout.htmlroot}/blog/#{blog.name}", method="get")
                 .form-group
                   .col-sm-6
                     input(type="text",class="form-control",name ="reviewComment",id="reviewComment") 
 
                   .col-sm-6
                     button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang} 
-                    button.btn.btn-large.btn-primary(type = "button" onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?closeLang';") Close #{blog.name}(#{left_lang})
+                    button.btn.btn-large.btn-primary(type = "button" onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?closeLang';") Close #{blog.name}(#{left_lang})
+          .row
+            .alert.bg-danger.text-center.bold
+              | <strong>Review is done in wordpress, please document your review here.</strong>
       
         else
           if blog.status=="open"
-            button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?setStatus=edit';") Close #{blog.name} for new articles
+            button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?setStatus=edit';") Close #{blog.name} for new articles
           else
-            button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.id}?reviewComment=startreview';") Set #{blog.name}(#{left_lang}) ready for review
+            button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=startreview';") Set #{blog.name}(#{left_lang}) ready for review
 
   .row
     .col-md-6
@@ -82,12 +85,12 @@ block content
           - v++
       
         li
-          a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{left_lang}") 
+          a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{left_lang}") 
             span.glyphicon.glyphicon-export
             | #{left_lang}
         if (right_lang != "--")
           li
-            a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{right_lang}") 
+            a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{right_lang}") 
               span.glyphicon.glyphicon-export
               | #{right_lang}
         li.dropdown
@@ -96,7 +99,7 @@ block content
           ul.dropdown-menu(role='menu')
             for lang in layout.languages
               li
-                a(href="#{layout.htmlroot}/blog/#{blog.id}/preview?lang=#{lang}") Export #{lang}
+                a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{lang}") Export #{lang}
         li
           a(href="#{layout.htmlroot}/usert/#{layout.user.id}")
             span.glyphicon.glyphicon-cog
@@ -113,7 +116,7 @@ block content
     .col-md-10
     .col-md-2
       p
-        a(href="#{layout.htmlroot}/blog/edit/#{blog.id}") [Edit Blog Detail]
+        a(href="#{layout.htmlroot}/blog/edit/#{blog.name}") [Edit Blog Detail]
 
 
 

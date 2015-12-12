@@ -35,6 +35,7 @@
     "should": "^7.1.0"
   },
   "devDependencies": {
+    "nock": "^3.3.2",
     "sinon": "^1.17.0",
     "zombie": "2.0"
   }

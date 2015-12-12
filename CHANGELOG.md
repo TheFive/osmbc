@@ -1,12 +1,108 @@
 # Change Log
 
+## [0.3.12e](https://github.com/TheFive/osmbc/tree/0.3.12e) (2015-12-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12d...0.3.12e)
+
+**Closed issues:**
+
+- Integrate turkish categories. [\#187](https://github.com/TheFive/osmbc/issues/187)
+
+## [0.3.12d](https://github.com/TheFive/osmbc/tree/0.3.12d) (2015-12-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12c...0.3.12d)
+
+**Fixed bugs:**
+
+- translationPT [\#186](https://github.com/TheFive/osmbc/issues/186)
+
+## [0.3.12c](https://github.com/TheFive/osmbc/tree/0.3.12c) (2015-12-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12b...0.3.12c)
+
+**Implemented enhancements:**
+
+- Possibility to see the existing markdowns for an article. [\#172](https://github.com/TheFive/osmbc/issues/172)
+- Hint, that Review takes place in WordPress [\#170](https://github.com/TheFive/osmbc/issues/170)
+
+## [0.3.12b](https://github.com/TheFive/osmbc/tree/0.3.12b) (2015-12-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12a...0.3.12b)
+
+**Implemented enhancements:**
+
+- Links in article should open a new tab. [\#173](https://github.com/TheFive/osmbc/issues/173)
+
+**Fixed bugs:**
+
+- Comment is not opened the first time you write a comment. [\#177](https://github.com/TheFive/osmbc/issues/177)
+
+## [0.3.12a](https://github.com/TheFive/osmbc/tree/0.3.12a) (2015-12-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12...0.3.12a)
+
+**Implemented enhancements:**
+
+- Dynamic Height for Textfields in Article View [\#185](https://github.com/TheFive/osmbc/issues/185)
+
+## [0.3.12](https://github.com/TheFive/osmbc/tree/0.3.12) (2015-12-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.11a...0.3.12)
+
+**Implemented enhancements:**
+
+- Editable markdown for OSM calender with preview. [\#184](https://github.com/TheFive/osmbc/issues/184)
+- Change the @ALL @DE ... color to orange. [\#183](https://github.com/TheFive/osmbc/issues/183)
+- Allow @LANG in comments to address specific translation [\#182](https://github.com/TheFive/osmbc/issues/182)
+- resort the flags for a better visibility \(netherlands and russia\) [\#178](https://github.com/TheFive/osmbc/issues/178)
+
+## [0.3.11a](https://github.com/TheFive/osmbc/tree/0.3.11a) (2015-12-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.11...0.3.11a)
+
+**Fixed bugs:**
+
+- Remove Whitespace from Input Field [\#181](https://github.com/TheFive/osmbc/issues/181)
+
+## [0.3.11](https://github.com/TheFive/osmbc/tree/0.3.11) (2015-11-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9b...0.3.11)
+
+**Implemented enhancements:**
+
+- Generate Wochenvorschau out of wiki markdown [\#174](https://github.com/TheFive/osmbc/issues/174)
+
+**Merged pull requests:**
+
+- Update categoryTranslation.js [\#179](https://github.com/TheFive/osmbc/pull/179) ([fredao](https://github.com/fredao))
+
+## [0.3.9b](https://github.com/TheFive/osmbc/tree/0.3.9b) (2015-11-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10a...0.3.9b)
+
+## [0.3.10a](https://github.com/TheFive/osmbc/tree/0.3.10a) (2015-11-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10...0.3.10a)
+
+**Fixed bugs:**
+
+- Unknown behavior with an closed article [\#171](https://github.com/TheFive/osmbc/issues/171)
+
+## [0.3.10](https://github.com/TheFive/osmbc/tree/0.3.10) (2015-11-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9a...0.3.10)
+
+**Fixed bugs:**
+
+- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
+
+## [0.3.9a](https://github.com/TheFive/osmbc/tree/0.3.9a) (2015-11-20)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9...0.3.9a)
+
+**Fixed bugs:**
+
+- A common tail in URL title and URL leads to a wrong \[\]\(\) separation. [\#164](https://github.com/TheFive/osmbc/issues/164)
+- A Cancel button near the OK button would be helpful [\#161](https://github.com/TheFive/osmbc/issues/161)
+
+**Merged pull requests:**
+
+- Update menu.Beginner's How To.md [\#169](https://github.com/TheFive/osmbc/pull/169) ([fredao](https://github.com/fredao))
+
 ## [0.3.9](https://github.com/TheFive/osmbc/tree/0.3.9) (2015-11-17)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.8b...0.3.9)
 
 **Fixed bugs:**
 
 - Markdown is not rendered, nor the links are generated out of a collection, if one of the languages is closed. [\#158](https://github.com/TheFive/osmbc/issues/158)
-- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
 
 **Closed issues:**
 

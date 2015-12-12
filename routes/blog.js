@@ -47,7 +47,10 @@ function renderBlogId(req, res, next) {
 
   var id = req.params.blog_id;
  
-  var style = req.user.blogSetting0 + req.user.blogLanguages0;
+  var style = '';
+  if (typeof(req.user.blogSetting0) == "string") {
+    style = req.user.blogSetting0 + req.user.blogLanguages0;
+  }
 
   if (req.session.lastStyle) style = req.session.lastStyle;
 
@@ -58,7 +61,7 @@ function renderBlogId(req, res, next) {
   var options = settingsModule.getSettings(style);
 
 
-  var user = req.user.displayName;
+  var user = req.user;
   for (var i=0;i<5;i++) {
     if (!user["blogSetting"+i]) {
       user["blogSetting"+i] = "";
@@ -108,7 +111,7 @@ function renderBlogId(req, res, next) {
       function (callback) {
         if (typeof(req.query.reviewComment)!='undefined')
         {
-          blog.setReviewComment(options.left_lang,user,req.query.reviewComment,function(err) {
+          blog.setReviewComment(options.left_lang,user.displayName,req.query.reviewComment,function(err) {
             if (err) {
               console.dir(err);
               info.message = JSON.stringify(err);
@@ -204,12 +207,15 @@ function renderBlogPreview(req, res, next) {
   debug('renderBlogPreview');
  
   var id = req.params.blog_id;
+
   findBlogByRouteId(id,function(err,blog) {
     if (err) return next(err);
     should.exist(blog);
 
     var lang = req.query.lang;
     if (typeof(lang)=='undefined') lang = "DE";
+    var options = settingsModule.getSettings(lang);
+    var markdown = options.markdown;
 
     var changes = [];
     var returnToUrl = req.session.articleReturnTo;
@@ -224,26 +230,37 @@ function renderBlogPreview(req, res, next) {
 
     async.auto({ 
         converter:function(callback) {
-                    blog.getPreview(lang,function(err,result) {
-                      callback(err,result);
-                    })
+                      debug("converter function");
+                      blog.getPreview(lang,function(err,result) {
+                        console.log(result);
+                        return callback(err,result);
+                      })
                   }
       },
       function(err,result) {
+        debug("final function");
+        console.dir(req.query);
         if (req.query.download=="true") {
           var content = result.converter.preview;
           
-          res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".html");
-          res.setHeader('Content-type', "text/html");
-
-          res.end(result.converter.preview,"UTF8");
+          if (markdown) {
+            res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
+            res.setHeader('Content-type', "text");
+            res.end(result.converter.preview,"UTF8");
+          } else {
+            res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".html");
+            res.setHeader('Content-type', "text/html");
+            res.end(result.converter.preview,"UTF8");            
+          }
           return;
         } else {
           should.exist(res.rendervar);
+         
           res.render('blogpreview',{layout:res.rendervar.layout,
                              blog:blog,
                              articles:result.converter.articles,
                              preview:result.converter.preview,
+                             markdown: markdown,
                              lang:lang,
                              returnToUrl:returnToUrl,
                              categories:blog.getCategories()});
@@ -315,10 +332,15 @@ router.post('/edit/:blog_id',postBlogId);
 router.get('/create', createBlog);
 router.get('/list', renderBlogList);
 router.get('/:blog_id', renderBlogId);
-router.get('/:blog_id/preview', renderBlogPreview);
+router.get('/:blog_id/:format', renderBlogPreview);
 router.get('/:blog_id/preview_:blogname_:downloadtime', renderBlogPreview);
 //router.post('/edit/:blog_id',postBlogId);
 
-module.exports = router;
+module.exports.router = router;
+
+
+// the following modules are exported for test reasons
+module.exports.renderBlogPreview = renderBlogPreview;
+module.exports.renderBlogId = renderBlogId;
 
 
