@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.3.12f](https://github.com/TheFive/osmbc/tree/0.3.12f) (2015-12-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12e...0.3.12f)
+
+**Fixed bugs:**
+
+- Sometimes the Userobject instead of name is logged [\#191](https://github.com/TheFive/osmbc/issues/191)
+- IsURL Regex fails for URL with \# [\#189](https://github.com/TheFive/osmbc/issues/189)
+- But there are not differences... [\#163](https://github.com/TheFive/osmbc/issues/163)
+
+**Closed issues:**
+
+- It is rendering spaces that not exists [\#190](https://github.com/TheFive/osmbc/issues/190)
+
 ## [0.3.12e](https://github.com/TheFive/osmbc/tree/0.3.12e) (2015-12-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12d...0.3.12e)
 
