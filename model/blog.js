@@ -254,14 +254,18 @@ function getPreview(style,user,callback) {
     // in case of a normal blog, generate the start and end time
     // for a help blog, use the Name of the Blog
     // not in edit mode.
-    if (self.status != "help") {
+    if (!options.markdown) {
       if (self.startDate && self.endDate) {
         preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
       }
       preview += "<!--         place picture here              -->\n"      
     }
-    else if (!(options.edit)) preview = '<h2>'+self.name+'</h2>\n'
-
+    else {
+      preview = "";
+      if (self.startDate && self.endDate) {
+        preview += moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'\n\n';
+      }
+    }
   
     
     // Put every article in an array for the category
@@ -302,7 +306,10 @@ function getPreview(style,user,callback) {
         for (var j=0;j<articles[category].length;j++) {
           var r = articles[category][j];
 
-          htmlForCategory += r.getPreview(style,user);
+          var articleMarkdown = r.getPreview(style,user);
+          if (options.markdown) articleMarkdown = "* " + r["markdown"+options.left_lang]+"\n\n";
+
+          htmlForCategory += articleMarkdown;
         }
         var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n';
         if (bilingual) {
@@ -312,7 +319,15 @@ function getPreview(style,user,callback) {
                    '<h2 id="'+self.name.toLowerCase()+'_'+categoryRIGHT.toLowerCase()+'">'+categoryRIGHT+'</h2>\n' +
                    '</div></div>';
         }
-        htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        if (options.markdown) header = "## "+categoryLEFT;
+
+        
+        if (options.markdown) {
+          htmlForCategory = header + "\n\n"+htmlForCategory;
+        } else {
+          htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        }
+
         preview += htmlForCategory;
         delete articles[category];
       }
@@ -332,6 +347,9 @@ function getPreview(style,user,callback) {
     callback(null, result);
   })
 }
+
+
+
 
 function translateCategories(cat) {
   debug('translateCategories');
@@ -397,6 +415,7 @@ function isEditable(lang) {
 
 // result of preview is html code to display the blog.
 Blog.prototype.getPreview = getPreview;
+
 Blog.prototype.isEditable = isEditable;
 
 // setAndSave(user,data,callback)

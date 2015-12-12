@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var debug = require('debug')('OSMBC:router:help');
+var debug = require('debug')('OSMBC:routes:help');
 var config = require('../config.js');
 
 var markdown = require('markdown-it')();
