@@ -155,7 +155,7 @@ function getPreview(style,user) {
       if (lll==options.left_lang) continue;
       if (this["markdown"+lll] && this["markdown"+lll].length>=4 && this["markdown"+lll]!="no translation") {
         if (!addEdit) addEdit = " translate from:";
-        addEdit += ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+options.left_lang+'.'+lll+'">'+lll+'</a>'; 
+        addEdit += ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+lll+'.'+options.left_lang+'.'+'">'+lll+'</a>'; 
       }
     }
     if (addEdit) editLink += addEdit;
