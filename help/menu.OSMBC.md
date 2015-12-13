@@ -98,6 +98,20 @@ A blog can be open, edit, review for Lang, closed and trash. Only open and revie
 Additional on the blog page there is an editor for the blog name, and the categories of the blog.
 This editor will be improved in future. If you rename a blog, the article become orphan and can be found with the article nav bar item.
 
+### Pictures with OSMBC
+
+OSMBC is supporting pictures. There are two steps of "Picture Management".
+
+* First collect any picture link in OSMBC with the category Pictures. Use no translation, if the picture is not of interest in your language. A picture markdown looks like:
+
+* Second create the markdown in the language you need 
+```
+![ALT TEXT](http://Link to picture)
+Some Comment to the picture (e.g. CC-By...) and a reference to the article [^[1]^](#WN???_Article Title).
+```
+
+So if you would like to have a in page link to an article, you can do that by a #BlogName_ArticleTitle reference. the ^[1]^ just shows a superscript [1]. Do not forget to place the [1] in the referenced article.
+
 
 ### User Management
 

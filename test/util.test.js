@@ -44,4 +44,9 @@ describe('util',function() {
     })
     
   })
+  describe("linkify",function() {
+    it('should convert the links correct',function() {
+      should(util.linkify("#WN271_Titel Des Artikels")).equal("#wn271_titel_des_artikels");
+    })
+  })
 })

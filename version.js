@@ -1,5 +1,3 @@
-exports.osmbc_version = "0.3.12f";
-
-
+exports.osmbc_version = "CaptionForPictures Branch (>0.3.9)";
 
 
