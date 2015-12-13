@@ -10,10 +10,26 @@ block content
     | Markdown is converted and previewed on this page.
     | OSMBC tries to have a nice looking markdown table, if this disturbs your edit experience
     | please disable prettifying.
-  .checkbox
-    label
-    input(type='checkbox', id='disable', value='test')
-    | Disable Prettify Table    
+  form(name="input", action="#{layout.htmlroot}/tool/calender2markdown", method="post")
+    .row
+      .col-md-3
+        .checkbox 
+         label
+          if (!disablePrettify)
+            input(type='checkbox', id='disable',name="disablePrettify" value='true')
+          else
+            input(type='checkbox', id='disable',name="disablePrettify" value='true' checked)
+
+          | Disable Prettify Table  
+      .col-md-1
+        select(id="calenderLanguage",name="calenderLanguage").form-control
+          option(value="#{calenderLanguage}" selected) #{calenderLanguage}
+          each l in layout.languages
+            option(value="#{l}") #{l}
+      .col-md-1
+       input(type="submit", class="btn btn-primary",value="OK")
+  
+       
 
   h3
     | Markdown, please edit
