@@ -14,16 +14,16 @@ module.exports = {
           "TR": "Town"
      },
      "title": {
-          "EN": "Title",
-          "DE": "Titel",
-          "ES": "Title",
-          "FR": "Title",
-          "CZ": "Title",
-          "PT": "Title",
-          "RU": "Title",
-          "JP": "Title",
-          "ID": "Title",
-          "TR": "Title"
+          "EN": "What",
+          "DE": "Was",
+          "ES": "What",
+          "FR": "What",
+          "CZ": "What",
+          "PT": "What",
+          "RU": "What",
+          "JP": "What",
+          "ID": "What",
+          "TR": "What"
      },
      "date": {
           "EN": "Date",
