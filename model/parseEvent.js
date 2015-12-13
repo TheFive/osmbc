@@ -204,7 +204,7 @@ function calenderToMarkdown(date,cb) {
     // get all Events from today
     from.setDate(from.getDate());
     // until in two weeks
-    to.setDate(to.getDate()+14);
+    to.setDate(to.getDate()+21);
 
     var events = [];
 
