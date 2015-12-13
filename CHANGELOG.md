@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12g...HEAD)
+
+**Implemented enhancements:**
+
+- Integration of Blog Picture [\#1](https://github.com/TheFive/osmbc/issues/1)
+
 ## [0.3.12g](https://github.com/TheFive/osmbc/tree/0.3.12g) (2015-12-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12f...0.3.12g)
 
