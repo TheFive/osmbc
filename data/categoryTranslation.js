@@ -227,17 +227,17 @@ module.exports = {
           "ID": "Berita “geo” lainnya",
           "TR": "Diğer “yersel” şeyler"
      },
-     "Not Translated": {
-          "EN": "Not Translated",
+     "Upcoming Events": {
+          "EN": "Upcoming Events",
           "DE": "Wochenvorschau",
-          "ES": "Not Translated",
-          "FR": "Not Translated",
-          "CZ": "Not Translated",
-          "PT": "Não traduzido",
-          "RU": "Не переведено",
-          "JP": "Not Translated",
-          "ID": "Not Translated",
-          "TR": "Not Translated"
+          "ES": "Upcoming Events",
+          "FR": "Upcoming Events",
+          "CZ": "Upcoming Events",
+          "PT": "Upcoming Events",
+          "RU": "Upcoming Events",
+          "JP": "Upcoming Events",
+          "ID": "Upcoming Events",
+          "TR": "Upcoming Events"
      },
      "--unpublished--": {
           "EN": "--unpublished--",

@@ -46,7 +46,7 @@ module.exports.categories = [
   {DE:"Programmierung",EN:"Programming"},
   {DE:"Kennst Du schon …",EN:"Did you know …"},
   {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
-  {DE:"Wochenvorschau" ,EN:"Not Translated"},
+  {DE:"Wochenvorschau" ,EN:"Upcoming Events"},
   {DE:"--unpublished--" ,EN:"--unpublished--"}];
 
 

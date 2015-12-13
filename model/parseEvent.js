@@ -2,6 +2,7 @@ var debug   = require("debug")("OSMBC:model:parseEvent");
 var moment  = require("moment");
 var request = require("request");
 var markdown = require('markdown-it')();
+var ct = require('../data/calenderTranslation.js');
 
 
 
@@ -178,11 +179,12 @@ function ll(length) {
 }
 
 
-function calenderToMarkdown(date,cb) {
+function calenderToMarkdown(lang,date,duration,cb) {
   debug('calenderToMarkdown');
   if (typeof(date)=='function') {
     cb = date;
     date = new Date();
+    duration = 21;
   } 
   var result;
   debug("Date: %s",date);
@@ -204,7 +206,7 @@ function calenderToMarkdown(date,cb) {
     // get all Events from today
     from.setDate(from.getDate());
     // until in two weeks
-    to.setDate(to.getDate()+14);
+    to.setDate(to.getDate()+duration);
 
     var events = [];
 
@@ -225,7 +227,7 @@ function calenderToMarkdown(date,cb) {
         }
       }
     }
-      moment.locale("de");
+      moment.locale(lang);
 
     var townLength = 0;
     var descLength = 0;
@@ -249,7 +251,7 @@ function calenderToMarkdown(date,cb) {
       dateLength = Math.max(dateLength,dateString.length)
     }
     var result = "";
-    result += "|"+wl("Ort",townLength)+"|"+wl("Name",descLength)+"|"+wl("Datum",dateLength)+"|"+wl("Land",countryLength)+"|\n";
+    result += "|"+wl(ct.town[lang],townLength)+"|"+wl(ct.title[lang],descLength)+"|"+wl(ct.date[lang],dateLength)+"|"+wl(ct.country[lang],countryLength)+"|\n";
     result += "|"+ll(townLength)+"|"+ll(descLength)+"|"+ll(dateLength)+"|"+ll(countryLength)+"|\n";  
     for (var i=0;i<events.length;i++) {
       var t = events[i].town;
