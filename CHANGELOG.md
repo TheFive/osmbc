@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.4.2](https://github.com/TheFive/osmbc/tree/0.4.2) (2015-12-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.1...0.4.2)
+
+**Implemented enhancements:**
+
+- Localize Calender Tool [\#194](https://github.com/TheFive/osmbc/issues/194)
+- Translate feature - switch the languages i.e. left: source language right: target language [\#188](https://github.com/TheFive/osmbc/issues/188)
+
 ## [0.4.1](https://github.com/TheFive/osmbc/tree/0.4.1) (2015-12-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.0...0.4.1)
 
