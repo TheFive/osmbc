@@ -28,12 +28,13 @@ margin: 0;
 padding: 0;
 border: 0 none;
 }
-.wp-caption p.wp-caption-text {
-font-size: 11px;
-line-height: 17px;
-padding: 0 4px 5px;
-margin: 0;
 
+
+.wp-caption p.wp-caption-text {
+  color: #888;
+  font-size: 12px;
+  margin: 5px;
+}
 pre-code {
     word-wrap: normal;
     white-space: pre;

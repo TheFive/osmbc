@@ -485,7 +485,7 @@ describe('model/article', function() {
     it('should generate a preview when no markdown is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});
       var result = article.getPreview("fullDE","TheFive");
-      should(result).equal('<li id="undefined_Test Title">\n<mark>Test Title <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
+      should(result).equal('<li id="undefined_test_title">\n<mark>Test Title <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
       bddone();
     })
     it('should generate a preview when no markdown2 is specified (no Edit Link)',function (bddone) {

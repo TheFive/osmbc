@@ -107,7 +107,8 @@ function getPreview(style,user) {
   if (!blogRef) blogRef = "undefined";
   var titleRef = this.title;
   if (!titleRef) titleRef = this.id;
-  var pageLink = blogRef+'_'+titleRef;
+  var pageLink = util.linkify(blogRef+'_'+titleRef);
+  
  
   
 
@@ -186,6 +187,10 @@ function getPreview(style,user) {
         var width = parseInt(text.substring(text.indexOf('width="')+7))+10;
         
         liON = liON.replace("##width##",width);
+      }
+      if (this.categoryEN == "Picture" && !options.bilingual) {
+        text = text.replace("<p>",'<p class="wp-caption-text">');
+        text = text.replace("<p>",'<p class="wp-caption-text">');
       }
   
     } else {

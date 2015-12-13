@@ -3,6 +3,7 @@
 var pg       = require('pg');
 var async    = require('async');
 var config   = require('../config.js');
+var util     = require('../util.js');
 var markdown = require('markdown-it')()
           .use(require('markdown-it-sup'))
           .use(require('markdown-it-imsize'), { autofill: true });
@@ -323,12 +324,12 @@ function getPreview(style,user,callback) {
         }
         var header ='';
         if (category!="Picture") {
-          header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n';
+          header = '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n';
           if (bilingual) {
           header = '<div class="row"><div class = "col-md-6">' +
-                   '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n' +
+                   '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n' +
                    '</div><div class = "col-md-6">' +
-                   '<h2 id="'+self.name.toLowerCase()+'_'+categoryRIGHT.toLowerCase()+'">'+categoryRIGHT+'</h2>\n' +
+                   '<h2 id="'+util.linkify(self.name+'_'+categoryRIGHT)+'">'+categoryRIGHT+'</h2>\n' +
                    '</div></div>';
           }
           //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'

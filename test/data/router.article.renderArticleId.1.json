@@ -4,7 +4,7 @@
              {"blog":"BLOG","title":"BLOG","markdownDE":"* Dies ist ein grosser Testartikel.","category":"Keine"}],
   "testArticleTitle":"BLOG",
 
-  "result":{"articleText":"<ul><li id=\"BLOG_BLOG\">\n<p>Dies ist ein grosser Testartikel.</p>\n\n</li></ul>",
+  "result":{"articleText":"<ul><li id=\"blog_blog\">\n<p>Dies ist ein grosser Testartikel.</p>\n\n</li></ul>",
             "params":{"edit":null,"left_lang":"EN","right_lang":"--","style":"overviewEN"},
             "listOfOpenBlog": ["BLOG"],
             "listOfOrphanBlog": [],
