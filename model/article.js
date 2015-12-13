@@ -4,7 +4,9 @@
 var pg     = require('pg');
 var async  = require('async');
 var should = require('should');
-var markdown = require('markdown-it')();
+var markdown = require('markdown-it')()
+          .use(require('markdown-it-sup'))
+          .use(require('markdown-it-imsize'), { autofill: true });;
 var debug  = require('debug')('OSMBC:model:article');
 
 
@@ -101,9 +103,16 @@ function getPreview(style,user) {
   // Calculate markup for comment
   var commentMarkup = "";
   var editLink = '';
+  var blogRef = this.blog;
+  if (!blogRef) blogRef = "undefined";
+  var titleRef = this.title;
+  if (!titleRef) titleRef = this.id;
+  var pageLink = util.linkify(blogRef+'_'+titleRef);
+  
+ 
   
 
-  var liON = '<li>\n';
+  var liON = '<li id="'+pageLink+'">\n';
   var liOFF = '</li>';
 
   if (options.edit && options.comment && this.comment) {
@@ -113,8 +122,12 @@ function getPreview(style,user) {
       if (this.comment.indexOf("@"+options.left_lang)>=0) commentColour = "orange";
       if (this.comment.indexOf("@"+options.right_lang)>=0) commentColour = "orange";
       if (this.comment.indexOf("@all")>=0) commentColour = "orange";
-      liON = '<li style=" border-left-style: solid; border-color: '+commentColour+';">\n';
+      liON = '<li id="'+pageLink+'" style=" border-left-style: solid; border-color: '+commentColour+';">\n';
     }
+  }
+  if (this.categoryEN == "Picture") {
+    liON = '<div style="width: ##width##px" class="wp-caption alignnone"> \n'
+    liOFF = '</div>\n';
   }
 
   // generate Glyphicon for Editing
@@ -166,6 +179,20 @@ function getPreview(style,user) {
       // Return an list Element for the blog article
       text = markdown.render(md);
 
+      if (this.categoryEN == "Picture" && options.bilingual) {
+        text = "<p> For Picture Preview use only one column </p>";
+      }
+      if (liON.indexOf("##width##")>=0) {
+        // it is a picture, try to calculate the size.
+        var width = parseInt(text.substring(text.indexOf('width="')+7))+10;
+        
+        liON = liON.replace("##width##",width);
+      }
+      if (this.categoryEN == "Picture" && !options.bilingual) {
+        text = text.replace("<p>",'<p class="wp-caption-text">');
+        text = text.replace("<p>",'<p class="wp-caption-text">');
+      }
+  
     } else {
       text = this.displayTitle();
     }    
@@ -176,6 +203,8 @@ function getPreview(style,user) {
       if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
       // Return an list Element for the blog article
       textright = markdown.render(md);
+      if (this.categoryEN == "Picture") textright = "<p> For Picture Preview use only one column </p>";
+      
  
       // clean up <p> and </p> of markdown generation.
     } else {

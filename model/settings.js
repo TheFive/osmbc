@@ -19,7 +19,8 @@ settings.overview = {
             comment : true,
             glyphicon : true,
             editLink : true,
-            overview : true
+            overview : true,
+            smallPicture : true
           }
 settings.translation = {
             edit : true,
@@ -33,12 +34,14 @@ settings.full = {
             edit : true,
             comment : true,
             glyphicon : true,
-            marktext : true
+            marktext : true,
+            smallPicture : true
           }
 settings.fullfinal = {
             edit : true,
             editLink: true,
-            shortEditLink : true
+            shortEditLink : true,
+            smallPicture : false
           }
 settings.markdown = {
             

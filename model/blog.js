@@ -3,7 +3,14 @@
 var pg       = require('pg');
 var async    = require('async');
 var config   = require('../config.js');
-var markdown = require('markdown-it')();
+var util     = require('../util.js');
+var markdown = require('markdown-it')()
+          .use(require('markdown-it-sup'))
+          .use(require('markdown-it-imsize'), { autofill: true });
+
+var mdFigCaption = require('mdfigcaption');
+markdown.use(mdFigCaption);
+
 var should   = require('should');
 var moment   = require('moment');
 
@@ -21,6 +28,7 @@ module.exports.table = "blog";
 
 module.exports.categories = [
   {DE:"-- noch keine Kategorie --", EN:"-- no category yet --"},
+  {DE:"Bild",EN:"Picture"},
   {DE:"[Aktuelle Kategorie]",EN:"[Actual Category]"},
   {DE:"In eigener Sache",EN:"About us"},
   {DE:"Wochenaufruf",EN:"Weekly exerciseEN:"},
@@ -247,6 +255,7 @@ function getPreview(style,user,callback) {
   var preview = "";
 
   var bilingual = options.bilingual;
+  var imageHTML;
 
   articleModule.find({blog:this.name},{column:"title"},function(err,result){
     
@@ -258,7 +267,10 @@ function getPreview(style,user,callback) {
       if (self.startDate && self.endDate) {
         preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
       }
-      preview += "<!--         place picture here              -->\n"      
+      if (!options.edit) {
+       // if (!imageHTML) preview += "<!--         place picture here              -->\n"   
+       // else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
+      }
     }
     else {
       preview = "";
@@ -266,8 +278,7 @@ function getPreview(style,user,callback) {
         preview += moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'\n\n';
       }
     }
-  
-    
+      
     // Put every article in an array for the category
     if (result) {
       for (var i=0;i<result.length;i++ ) {
@@ -311,13 +322,25 @@ function getPreview(style,user,callback) {
 
           htmlForCategory += articleMarkdown;
         }
-        var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n';
-        if (bilingual) {
+        var header ='';
+        if (category!="Picture") {
+          header = '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n';
+          if (bilingual) {
           header = '<div class="row"><div class = "col-md-6">' +
-                   '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n' +
+                   '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n' +
                    '</div><div class = "col-md-6">' +
-                   '<h2 id="'+self.name.toLowerCase()+'_'+categoryRIGHT.toLowerCase()+'">'+categoryRIGHT+'</h2>\n' +
+                   '<h2 id="'+util.linkify(self.name+'_'+categoryRIGHT)+'">'+categoryRIGHT+'</h2>\n' +
                    '</div></div>';
+          }
+          //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        } else {
+          header = "<!--         place picture here              -->\n" 
+          if (bilingual) {
+            header = '<div class="row"><div class = "col-md-6">' +
+                     '</div><div class = "col-md-6">' +
+                     '</div></div>';
+            htmlForCategory = header + '\n'+htmlForCategory+'\n'                 
+          }
         }
         if (options.markdown) header = "## "+categoryLEFT;
 
