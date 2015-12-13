@@ -179,11 +179,12 @@ function ll(length) {
 }
 
 
-function calenderToMarkdown(lang,date,cb) {
+function calenderToMarkdown(lang,date,duration,cb) {
   debug('calenderToMarkdown');
   if (typeof(date)=='function') {
     cb = date;
     date = new Date();
+    duration = 21;
   } 
   var result;
   debug("Date: %s",date);
@@ -205,7 +206,7 @@ function calenderToMarkdown(lang,date,cb) {
     // get all Events from today
     from.setDate(from.getDate());
     // until in two weeks
-    to.setDate(to.getDate()+21);
+    to.setDate(to.getDate()+duration);
 
     var events = [];
 

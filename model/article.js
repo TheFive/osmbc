@@ -19,6 +19,7 @@ var blogModule = require('../model/blog.js');
 var pgMap     = require('../model/pgMap.js');
 
 var categoryTranslation = require('../data/categoryTranslation.js')
+var calenderTranslation = require('../data/calenderTranslation.js')
 
 var blogModule = require('../model/blog.js');
 
@@ -128,6 +129,10 @@ function getPreview(style,user) {
   if (this.categoryEN == "Picture") {
     liON = '<div style="width: ##width##px" class="wp-caption alignnone"> \n'
     liOFF = '</div>\n';
+  }
+  if (this.categoryEN == "Upcoming Events") {
+    liON = '<p>';
+    liOFF = '</p>\n'+calenderTranslation.footer[options.left_lang];
   }
 
   // generate Glyphicon for Editing

@@ -50,6 +50,6 @@
                           {"DE":"Programmierung","EN":"Programming","ES": "Software"},
                           {"DE":"Kennst Du schon …","EN":"Did you know …","ES": "Sabías que …"},
                           {"DE":"Weitere Themen mit Geo-Bezug","EN":"Other “geo” things","ES": "Otras cosas “geo”"},
-                          {"DE":"Wochenvorschau" ,"EN":"Not Translated","ES": "Not Translated"},
+                          {"DE":"Wochenvorschau" ,"EN":"Upcoming Events","ES": "Upcoming Events"},
                           {"DE":"--unpublished--" ,"EN":"--unpublished--", "ES": "--unpublished--"}  ]}
 }
