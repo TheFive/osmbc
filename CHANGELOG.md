@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.4.2a](https://github.com/TheFive/osmbc/tree/0.4.2a) (2015-12-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.2...0.4.2a)
+
+**Closed issues:**
+
+- Error with "translate from" for the image [\#196](https://github.com/TheFive/osmbc/issues/196)
+
 ## [0.4.2](https://github.com/TheFive/osmbc/tree/0.4.2) (2015-12-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.1...0.4.2)
 
