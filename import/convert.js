@@ -79,9 +79,9 @@ async.series([
                 
                 if (typeof(item[rcl][j].user)=='object'){
                   console.log("Found defect User in blog");
-                  console.dir(item[rcl]);
-                  item[rcl][i].user = item[rcl][i].user.displayName;
-                  console.dir(item[rcl]);
+                  console.dir(item[rcl][j]);
+                  item[rcl][j].user = item[rcl][j].user.displayName;
+                  console.dir(item[rcl][j]);
                   save = true;
                 }
               }

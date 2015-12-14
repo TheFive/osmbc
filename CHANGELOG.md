@@ -1,5 +1,48 @@
 # Change Log
 
+## [0.4.2](https://github.com/TheFive/osmbc/tree/0.4.2) (2015-12-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.1...0.4.2)
+
+**Implemented enhancements:**
+
+- Localize Calender Tool [\#194](https://github.com/TheFive/osmbc/issues/194)
+- Translate feature - switch the languages i.e. left: source language right: target language [\#188](https://github.com/TheFive/osmbc/issues/188)
+
+## [0.4.1](https://github.com/TheFive/osmbc/tree/0.4.1) (2015-12-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.0...0.4.1)
+
+**Implemented enhancements:**
+
+- Integration of Calender [\#2](https://github.com/TheFive/osmbc/issues/2)
+
+## [0.4.0](https://github.com/TheFive/osmbc/tree/0.4.0) (2015-12-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12g...0.4.0)
+
+**Implemented enhancements:**
+
+- Integration of Blog Picture [\#1](https://github.com/TheFive/osmbc/issues/1)
+
+## [0.3.12g](https://github.com/TheFive/osmbc/tree/0.3.12g) (2015-12-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12f...0.3.12g)
+
+**Implemented enhancements:**
+
+- Display all blog links not with ID but with blog name [\#193](https://github.com/TheFive/osmbc/issues/193)
+- Show preview as markdown  [\#192](https://github.com/TheFive/osmbc/issues/192)
+
+## [0.3.12f](https://github.com/TheFive/osmbc/tree/0.3.12f) (2015-12-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12e...0.3.12f)
+
+**Fixed bugs:**
+
+- Sometimes the Userobject instead of name is logged [\#191](https://github.com/TheFive/osmbc/issues/191)
+- IsURL Regex fails for URL with \# [\#189](https://github.com/TheFive/osmbc/issues/189)
+- But there are not differences... [\#163](https://github.com/TheFive/osmbc/issues/163)
+
+**Closed issues:**
+
+- It is rendering spaces that not exists [\#190](https://github.com/TheFive/osmbc/issues/190)
+
 ## [0.3.12e](https://github.com/TheFive/osmbc/tree/0.3.12e) (2015-12-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12d...0.3.12e)
 
@@ -454,17 +497,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
