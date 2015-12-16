@@ -79,6 +79,7 @@ function renderBlogId(req, res, next) {
   findBlogByRouteId(id,function(err,blog) {
     if (err) return next(err);
     should.exist(blog);
+    id = blog.id;
 
     var changes = [];
     var articles = {};
