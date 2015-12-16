@@ -95,22 +95,47 @@ describe('model/blog', function() {
   })
   describe('isEditable',function(){
     it('should be editable if no review or closed state',function(){
-        var newBlog = blogModule.create({id:2,name:"test",status:"**"});
-        should(newBlog.isEditable("DE")).be.True();
+      var newBlog = blogModule.create({id:2,name:"test",status:"**"});
+      should(newBlog.isEditable("DE")).be.True();
     })
     it('should be editable if  review state',function(){
-        var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"]});
-        should(newBlog.isEditable("DE")).be.False();
+      var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"]});
+      should(newBlog.isEditable("DE")).be.False();
     })
     it('should be editable if no review and closed state',function(){
-        var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentEN:["comment"],closeEN:true});
-        should(newBlog.isEditable("EN")).be.False();
+      var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentEN:["comment"],closeEN:true});
+      should(newBlog.isEditable("EN")).be.False();
     })
     it('should be editable if reopened',function(){
-        var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"],closeDE:false});
-        should(newBlog.isEditable("DE")).be.True();
+      var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"],closeDE:false});
+      should(newBlog.isEditable("DE")).be.True();
     })
-
+    it('should handle an review by error with reopening',function(cb){
+      var newBlog = blogModule.create({name:"test",status:"**"});
+      async.series([
+          function (cb1) {newBlog.save(cb1);},
+          function (cb1) {blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);})},
+          function (cb1) {
+            should(newBlog.isEditable("DE")).be.True();
+            newBlog.setReviewComment("DE","Test","startreview",cb1);},
+          function (cb1) {blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);})},
+          function (cb2) {
+            should(newBlog.isEditable("DE")).be.False();
+            newBlog.closeBlog("DE","Test",true,cb2);},
+          function (cb1) {
+            should(newBlog.isEditable("DE")).be.False();
+            blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);})},
+          function (cb3) {newBlog.closeBlog("DE","Test",false,cb3);},
+          function (cb1) {
+            blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);})}
+        ],function final(err){
+          should.not.exist(err);
+          should(newBlog.isEditable("DE")).be.True();
+          should.not.exist(newBlog.reviewCommentDE);
+          cb();
+        }
+      )
+    })
   })
   describe('setAndSave',function() {
     it('should set only the one Value in the database', function (bddone){
