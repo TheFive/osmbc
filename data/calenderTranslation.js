@@ -2,16 +2,16 @@
 
 module.exports = {
      "town": {
-          "EN": "Town",
-          "DE": "Ort",
-          "ES": "Town",
-          "FR": "Town",
-          "CZ": "Town",
-          "PT": "Town",
-          "RU": "Town",
-          "JP": "Town",
-          "ID": "Town",
-          "TR": "Town"
+          "EN": "Where",
+          "DE": "Wo",
+          "ES": "Where",
+          "FR": "Where",
+          "CZ": "Where",
+          "PT": "Where",
+          "RU": "Where",
+          "JP": "Where",
+          "ID": "Where",
+          "TR": "Where"
      },
      "title": {
           "EN": "What",
@@ -26,15 +26,15 @@ module.exports = {
           "TR": "What"
      },
      "date": {
-          "EN": "Date",
-          "DE": "Datum",
-          "ES": "Date",
-          "FR": "Date",
-          "CZ": "Date",
-          "PT": "Date",
-          "JP": "Date",
-          "ID": "Date",
-          "TR": "Date"
+          "EN": "When",
+          "DE": "Wann",
+          "ES": "When",
+          "FR": "When",
+          "CZ": "When",
+          "PT": "When",
+          "JP": "When",
+          "ID": "When",
+          "TR": "When"
      },
      "country": {
           "EN": "Country",

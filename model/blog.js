@@ -168,14 +168,22 @@ function closeBlog(lang,user,status,callback) {
     should.exist(self.id);
     should(self.id).not.equal(0);
     async.series ( [
-        function(callback) {
+        function logEntry(callback) {
            logModule.log({oid:self.id,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
         },
-        function(callback) {
+        function setCloseField(callback) {
           self[closeField] = status;
           callback();
+        },
+        function removeReview(callback) {
+          if (status == false) {
+            if (self["reviewComment"+lang] && self["reviewComment"+lang].length==0){
+              delete self["reviewComment"+lang];
+            }
+          }
+          callback();
         }
-      ],function(err){
+      ],function finalFunction(err){
         if (err) return callback(err);
         self.save(callback);
       })
