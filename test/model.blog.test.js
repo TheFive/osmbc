@@ -138,6 +138,9 @@ describe('model/blog', function() {
     })
   })
   describe('setAndSave',function() {
+    before(function (bddone) {
+      testutil.clearDB(bddone);
+    }) 
     it('should set only the one Value in the database', function (bddone){
       blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
         should.not.exist(err);
