@@ -73,6 +73,7 @@ module.exports.create = function() {
   return {};
 }
 
+
 function createTable(cb) {
   debug('createTable');
   createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data json,  \

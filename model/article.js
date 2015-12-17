@@ -389,7 +389,7 @@ function setAndSave(user,data,callback) {
 
       async.series ( [
           function(cb) {
-             logModule.log({oid:self.id,user:user,table:"article",property:key,from:self[key],to:value},cb);
+             logModule.log({oid:self.id,blog:self.blog,user:user,table:"article",property:key,from:self[key],to:value},cb);
           },
           function(cb) {
             self[key] = value;
