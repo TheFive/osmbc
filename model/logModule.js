@@ -84,10 +84,10 @@ function findUserForColumnAndBlog(blog,column,callback) {
       pgdone();
       return (callback(err));
     }
-   ######## here to work ###############
+   //######## here to work ###############
    
     var sqlQuery =  "select data->>'user' as user from changes \
-                          where data->>'blog' = $1 && data->>'column'==$2");
+                          where data->>'blog' = $1 && data->>'column'==$2";
     var startTime = new Date().getTime();
 
     var query = client.query(sqlQuery);
@@ -112,7 +112,7 @@ function findUserForColumnAndBlog(blog,column,callback) {
     })
   })
 }
-}
+
 
 function createTable(cb) {
   debug('createTable');

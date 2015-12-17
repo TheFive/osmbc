@@ -4,6 +4,8 @@ extends layout
 
 
 block content
+  h1
+   |Dataset Log
 
   table.table.table-striped.table-responsive
     thead
@@ -12,36 +14,57 @@ block content
           | Field
         th
           | Value
+        th
+          | Description
     tbody
+      tr
+        th
+          | blog
+        td= change.blog
+        td
+          | Which blog was changed
       tr
         th
           | user
         td= change.user
+        td
+          | User who did the change
       tr
         th
           | Timestamp
         td= change.timestamp +" (" +layout.moment(change.timestamp).fromNow()+")"
+        td
+          | When was the change done
       tr
         th
           | table
         td= change.table
+        td
+          | Single Article or Blog Change
       tr
         th 
          | oid
         td
           a(href='#{layout.htmlroot}/#{change.table}/' + change.oid) #{change.oid} 
+        td
+          | Click here to go to changed object
       tr
         th 
          | Property
         td= change.property
+          | Which Property was changed
       tr
         th 
          | From
         td= change.from
+        td 
+          | From Value
       tr
         th
           | To
         td= change.to
+        td
+          | To Value
 
 
 

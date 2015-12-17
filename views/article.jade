@@ -342,7 +342,7 @@ block content
             thead
               tr 
                 th
-                 |id
+                 | 
                 th
                  |user
                 th
@@ -357,7 +357,8 @@ block content
               each change, i in changes
                 tr
                   td
-                    a(href='#{layout.htmlroot}/changes/' + change.id) #{change.id} 
+                   a(href='#{layout.htmlroot}/changes/' + change.id) 
+                      span.glyphicon.glyphicon-info-sign 
                   td= change.user
                   td= change.property
                   td= layout.util.shorten(change.from)

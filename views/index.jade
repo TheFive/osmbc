@@ -46,6 +46,8 @@ block content
                 th
                  | 
                 th
+                 | blog
+                th
                  | user
                 th
                  | table
@@ -61,6 +63,7 @@ block content
                   td
                     a(href='#{layout.htmlroot}/changes/' + change.id) 
                       span.glyphicon.glyphicon-info-sign
+                  td= change.blog
                   td= change.user
                   td= change.table
                   td= change.property
