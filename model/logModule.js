@@ -130,6 +130,8 @@ function dropTable(cb) {
   pgMap.dropTable('changes',cb);
 }
 
+
+
 module.exports.table = "changes";
 module.exports.createTable = createTable;
 module.exports.dropTable = dropTable;

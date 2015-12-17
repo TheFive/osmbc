@@ -14,7 +14,7 @@
   "testArticleTitle":"BLOG",
 
 
-  "result":{"articleText":"<ul><li>\n<p>Dies ist ein grosser Testartikel, mit Verweis auf <a href=\"https://link.de\">link</a></p>\n\n</li></ul>",
+  "result":{"articleText":"<ul><li id=\"blog_blog\">\n<p>Dies ist ein grosser Testartikel, mit Verweis auf <a href=\"https://link.de\">link</a></p>\n\n</li></ul>",
           "params":{"edit":null,"left_lang":"EN","right_lang":"--","style":"overviewEN"},
          "changes": [ {"field": "title","from": "test", "oid": "1","table": "article",
           "timestamp": "2015-08-26T17:11:51.654Z",
@@ -32,6 +32,7 @@
                                                   { "blog": "Alternativ Blog", "category": "Keine","markdownDE": "* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","version":1}],"count":2},
 
             "categories":[ { "DE": "-- noch keine Kategorie --","EN": "-- no category yet --","ES": "-- no category yet --"},
+                          {  "DE": "Bild","EN": "Picture","ES": "Picture"},
                           {"DE":"[Aktuelle Kategorie]","EN":"[Actual Category]","ES": "[Corriente]"},
                           {"DE":"In eigener Sache","EN":"About us","ES": "Acerca de nosotros"},
                           {"DE":"Wochenaufruf","EN":"Weekly exerciseEN:","ES": "Not Translated"},
@@ -49,6 +50,6 @@
                           {"DE":"Programmierung","EN":"Programming","ES": "Software"},
                           {"DE":"Kennst Du schon …","EN":"Did you know …","ES": "Sabías que …"},
                           {"DE":"Weitere Themen mit Geo-Bezug","EN":"Other “geo” things","ES": "Otras cosas “geo”"},
-                          {"DE":"Wochenvorschau" ,"EN":"Not Translated","ES": "Not Translated"},
+                          {"DE":"Wochenvorschau" ,"EN":"Upcoming Events","ES": "Upcoming Events"},
                           {"DE":"--unpublished--" ,"EN":"--unpublished--", "ES": "--unpublished--"}  ]}
 }

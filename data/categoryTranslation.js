@@ -24,6 +24,17 @@ module.exports = {
           "ID": "[Actual Category]",
           "TR": "[Actual Category]"
      },
+     "Picture": {
+          "EN": "Picture",
+          "DE": "Bild",
+          "ES": "Picture",
+          "FR": "Picture",
+          "CZ": "Picture",
+          "PT": "Picture",
+          "JP": "Picture",
+          "ID": "Picture",
+          "TR": "Picture"
+     },
      "About us": {
           "EN": "About us",
           "DE": "In eigener Sache",
@@ -82,7 +93,7 @@ module.exports = {
           "RU": "Импорты",                 
           "JP": "インポート",
           "ID": "Imports",
-          "TR": "İthalatlar"
+          "TR": " İçe Aktarımlar"
      },
      "OpenStreetMap Foundation": {
           "EN": "OpenStreetMap Foundation",
@@ -94,7 +105,7 @@ module.exports = {
           "RU": "Фонд OpenStreetMap",                
           "JP": "OpenStreetMap Foundation",
           "ID": "Yayasan OpenStreetMap",
-          "TR": "Açık Cadde Haritasının Kurulumu"
+          "TR": "OpenStreetMap Foundation"
      },
      "Events": {
           "EN": "Events",
@@ -106,7 +117,7 @@ module.exports = {
           "RU": "События",               
           "JP": "イベント",
           "ID": "Kegiatan",
-          "TR": "Gelişen Olaylar"
+          "TR": "Etkinlikler"
      },
      "Humanitarian OSM": {
           "EN": "Humanitarian OSM",
@@ -118,7 +129,7 @@ module.exports = {
           "RU": "Гуманитарный OSM",          
           "JP": "OSM人道支援",
           "ID": "OSM untuk Kemanusiaann",
-          "TR": "İnsancıl OSM"
+          "TR": "İnsani OSM"
      },
      "Maps": {
           "EN": "Maps",
@@ -154,7 +165,7 @@ module.exports = {
           "RU": "Открытые данные",                 
           "JP": "オープンデータ",
           "ID": "Open Data",
-          "TR": "Açık veri"
+          "TR": "Özgür Veri"
      },
      "Licences": {
           "EN": "Licences",
@@ -166,7 +177,7 @@ module.exports = {
           "RU": "Лицензии",                 
           "JP": "ライセンス",
           "ID": "Lisensi",
-          "TR": "Lisans"
+          "TR": "Lisanslar"
      },
      "Software": {
           "EN": "Software",
@@ -190,7 +201,7 @@ module.exports = {
           "RU": "Программирование",                 
           "JP": "ソフトウェア",
           "ID": "Software",
-          "TR": "Yazılım"
+          "TR": "Programlama"
      },
      "Did you know …": {
           "EN": "Did you know …",
@@ -202,7 +213,7 @@ module.exports = {
           "RU": "А вы знаете … ",       
           "JP": "…ご存知でしたか？",
           "ID": "Apakah anda tahu …",
-          "TR": "Biliyor muydunuz …"
+          "TR": "Biliyor muydunuz?…"
      },
      "Other “geo” things": {
           "EN": "Other “geo” things",
@@ -214,19 +225,19 @@ module.exports = {
           "RU": "Другие “гео” события",
           "JP": "その他の “ジオ” な事柄",
           "ID": "Berita “geo” lainnya",
-          "TR": "Başka bir “yer“ nesneleri"
+          "TR": "Diğer “yersel” şeyler"
      },
-     "Not Translated": {
-          "EN": "Not Translated",
+     "Upcoming Events": {
+          "EN": "Upcoming Events",
           "DE": "Wochenvorschau",
-          "ES": "Not Translated",
-          "FR": "Not Translated",
-          "CZ": "Not Translated",
-          "PT": "Não traduzido",
-          "RU": "Не переведено",
-          "JP": "Not Translated",
-          "ID": "Not Translated",
-          "TR": "Not Translated"
+          "ES": "Upcoming Events",
+          "FR": "Upcoming Events",
+          "CZ": "Upcoming Events",
+          "PT": "Upcoming Events",
+          "RU": "Upcoming Events",
+          "JP": "Upcoming Events",
+          "ID": "Upcoming Events",
+          "TR": "Upcoming Events"
      },
      "--unpublished--": {
           "EN": "--unpublished--",

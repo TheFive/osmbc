@@ -19,7 +19,8 @@ settings.overview = {
             comment : true,
             glyphicon : true,
             editLink : true,
-            overview : true
+            overview : true,
+            smallPicture : true
           }
 settings.translation = {
             edit : true,
@@ -33,12 +34,18 @@ settings.full = {
             edit : true,
             comment : true,
             glyphicon : true,
-            marktext : true
+            marktext : true,
+            smallPicture : true
           }
 settings.fullfinal = {
             edit : true,
             editLink: true,
-            shortEditLink : true
+            shortEditLink : true,
+            smallPicture : false
+          }
+settings.markdown = {
+            
+            markdown : true
           }
 
 
@@ -117,6 +124,7 @@ function getSettings(string) {
       }
     }
   }
+
   var result = {};
   for (k in s) {result[k]=s[k]};
   for (k in l) {result[k]=l[k]};
@@ -127,7 +135,9 @@ var listSettings = [];
 var listLanguages = [];
 
 for (var k in settings) {
-    listSettings.push(k);
+  if (k!="markdown") {
+    listSettings.push(k);    
+  }
 }
 for (var k in languages) {
   listLanguages.push(k);

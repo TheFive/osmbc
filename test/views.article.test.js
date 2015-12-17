@@ -6,6 +6,7 @@ var testutil = require('./testutil.js');
 
 var userModule = require("../model/user.js");
 var articleModule = require("../model/article.js");
+var blogModule = require("../model/blog.js");
 
 
 
@@ -21,6 +22,7 @@ describe('views/article', function() {
     async.series([
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
+      function createBlog(cb) {blogModule.createNewBlog({name:'blog'},cb);},
       function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
@@ -96,6 +98,24 @@ describe('views/article', function() {
         should(browser.evaluate("generateMarkdownLink2(\
           {text:'the ---LINK---origin text.',startselection:4,endselection:14},\
           {text:'the http://www.google.deorigin text.',startselection:24,endselection:24})")).eql({pos:38,text:'the [---LINK---](http://www.google.de)origin text.'});
+      })
+    })
+  })
+  describe('Scripting Functions in Edit Mode',function() {
+    before(function(done) {
+      this.timeout(12000);
+      browser.visit('/article/'+articleId+'?edit=true&style=overviewDE', function(err){
+ //     browser.visit('/article/'+articleId, function(err){
+        if (err) console.dir(err);
+        done();
+      });
+    });
+
+    context('onchangeCollection',function(){
+      it('should show the links from collection field under the field', function(){
+        browser.document.getElementById('collection').value="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE";
+        browser.evaluate('onchangeCollection()');
+        should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank"> \nDE</a><br>\n</p>');
       })
     })
   })

@@ -3,6 +3,8 @@
 {
   "isURLArray":["https://www.google.de",
                 "http://www.google.de/test",
+                "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE",
                 "http://www.google.de/test?param=ADSFASF&d=asdfa"],
-  "isNoURLArray":["Wort", "Mehr Text mal am stück","Fertiges (markdown)[www.wikipedia.de]"]
+  "isNoURLArray":["Wort", 
+                  "Mehr Text mal am stück","Fertiges (markdown)[www.wikipedia.de]"]
 }

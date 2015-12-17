@@ -8,6 +8,28 @@ block content
     | This is an <b>experimental (!)</b> view on the calender in OpenStreetMap.
     | It displays the events from today until 2 weeks.<br>
     | Markdown is converted and previewed on this page.
+    | OSMBC tries to have a nice looking markdown table, if this disturbs your edit experience
+    | please disable prettifying.
+  form(name="input", action="#{layout.htmlroot}/tool/calender2markdown", method="post")
+    .row
+      .col-md-3
+        .checkbox 
+         label
+          if (!disablePrettify)
+            input(type='checkbox', id='disable',name="disablePrettify" value='true')
+          else
+            input(type='checkbox', id='disable',name="disablePrettify" value='true' checked)
+
+          | Disable Prettify Table  
+      .col-md-1
+        select(id="calenderLanguage",name="calenderLanguage").form-control
+          option(value="#{calenderLanguage}" selected) #{calenderLanguage}
+          each l in layout.languages
+            option(value="#{l}") #{l}
+      .col-md-1
+       input(type="submit", class="btn btn-primary",value="OK")
+  
+       
 
   h3
     | Markdown, please edit
@@ -50,6 +72,53 @@ block scripts
       return text;
 
     }
+
+    var empty = "                                                                                  ";
+    empty = empty+empty;
+    empty = empty+empty;
+    empty = empty+empty;
+    var lineString = "---------------------------------------------------";
+    lineString = lineString + lineString;
+    lineString = lineString + lineString;
+    lineString = lineString + lineString;
+
+    function wl(string,length) {
+        return (string + empty).substring(0,length);
+    }
+    function ll(length) {
+      return lineString.substring(0,length);
+    }
+
+    function prettifyTable(text) {
+
+      var lines=[];
+      var content = text.match(/\|([^\|]*)/g);
+    
+      lengthOrt = 0;
+      lengthInhalt = 0;
+      lengthDatum = 0;
+      lengthCountry = 0;
+      for (var i=0;i<content.length-1;i=i+5) {
+        if (i==5) continue;
+        lengthOrt = Math.max(lengthOrt,content[i].trim().length);
+        lengthInhalt = Math.max(lengthInhalt,content[i+1].trim().length);
+        lengthDatum = Math.max(lengthDatum,content[i+2].trim().length);
+        lengthCountry = Math.max(lengthCountry,content[i+3].trim().length);
+      }
+      var result = "";
+      for (var i=0;i<content.length-1;i=i+5) {
+        if (i==5) {
+           result += "|"+ll(lengthOrt-1)+"|"+ll(lengthInhalt-1)+"|"+ll(lengthDatum-1)+"|"+ll(lengthCountry-1)+"|"+"\n";
+          } else
+          {
+           result += wl(content[i],lengthOrt)+wl(content[i+1],lengthInhalt)+wl(content[i+2],lengthDatum)+wl(content[i+3],lengthCountry)+"|"+"\n";
+          
+          }
+      }
+      return result;
+     
+
+    }
   
     
   
@@ -64,6 +133,17 @@ block scripts
       var t = convert(md);
       preview.innerHTML = t;
       html.value = t;
+      if (!document.getElementById("disable").checked) {
+          setTimeout(function() {
+            var st = document.getElementById("markdown").selectionStart;
+            var se = document.getElementById("markdown").selectionEnd;
+            document.getElementById("markdown").value = prettifyTable(md);
+            document.getElementById("markdown").selectionStart = st;
+            document.getElementById("markdown").selectionEnd = se;
+
+          },1);
+            
+        }
     
       }
    

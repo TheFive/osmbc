@@ -3,7 +3,14 @@
 var pg       = require('pg');
 var async    = require('async');
 var config   = require('../config.js');
-var markdown = require('markdown-it')();
+var util     = require('../util.js');
+var markdown = require('markdown-it')()
+          .use(require('markdown-it-sup'))
+          .use(require('markdown-it-imsize'), { autofill: true });
+
+var mdFigCaption = require('mdfigcaption');
+markdown.use(mdFigCaption);
+
 var should   = require('should');
 var moment   = require('moment');
 
@@ -21,6 +28,7 @@ module.exports.table = "blog";
 
 module.exports.categories = [
   {DE:"-- noch keine Kategorie --", EN:"-- no category yet --"},
+  {DE:"Bild",EN:"Picture"},
   {DE:"[Aktuelle Kategorie]",EN:"[Actual Category]"},
   {DE:"In eigener Sache",EN:"About us"},
   {DE:"Wochenaufruf",EN:"Weekly exerciseEN:"},
@@ -38,7 +46,7 @@ module.exports.categories = [
   {DE:"Programmierung",EN:"Programming"},
   {DE:"Kennst Du schon …",EN:"Did you know …"},
   {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
-  {DE:"Wochenvorschau" ,EN:"Not Translated"},
+  {DE:"Wochenvorschau" ,EN:"Upcoming Events"},
   {DE:"--unpublished--" ,EN:"--unpublished--"}];
 
 
@@ -91,7 +99,7 @@ function setAndSave(user,data,callback) {
       articleModule.removeOpenBlogCache();
       async.series ( [
           function(callback) {
-             logModule.log({oid:self.id,user:user,table:"blog",property:key,from:self[key],to:value},callback);
+             logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:key,from:self[key],to:value},callback);
           },
           function(callback) {
             self[key] = value;
@@ -129,7 +137,7 @@ function setReviewComment(lang,user,data,callback) {
     }
     async.series ( [
         function(callback) {
-           logModule.log({oid:self.id,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
+           logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
         },
         function(callback) {
           var date = new Date();
@@ -160,14 +168,22 @@ function closeBlog(lang,user,status,callback) {
     should.exist(self.id);
     should(self.id).not.equal(0);
     async.series ( [
-        function(callback) {
-           logModule.log({oid:self.id,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
+        function logEntry(callback) {
+           logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
         },
-        function(callback) {
+        function setCloseField(callback) {
           self[closeField] = status;
           callback();
+        },
+        function removeReview(callback) {
+          if (status == false) {
+            if (self["reviewComment"+lang] && self["reviewComment"+lang].length==0){
+              delete self["reviewComment"+lang];
+            }
+          }
+          callback();
         }
-      ],function(err){
+      ],function finalFunction(err){
         if (err) return callback(err);
         self.save(callback);
       })
@@ -247,6 +263,7 @@ function getPreview(style,user,callback) {
   var preview = "";
 
   var bilingual = options.bilingual;
+  var imageHTML;
 
   articleModule.find({blog:this.name},{column:"title"},function(err,result){
     
@@ -254,16 +271,22 @@ function getPreview(style,user,callback) {
     // in case of a normal blog, generate the start and end time
     // for a help blog, use the Name of the Blog
     // not in edit mode.
-    if (self.status != "help") {
+    if (!options.markdown) {
       if (self.startDate && self.endDate) {
         preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
       }
-      preview += "<!--         place picture here              -->\n"      
+      if (!options.edit) {
+       // if (!imageHTML) preview += "<!--         place picture here              -->\n"   
+       // else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
+      }
     }
-    else if (!(options.edit)) preview = '<h2>'+self.name+'</h2>\n'
-
-  
-    
+    else {
+      preview = "";
+      if (self.startDate && self.endDate) {
+        preview += moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'\n\n';
+      }
+    }
+      
     // Put every article in an array for the category
     if (result) {
       for (var i=0;i<result.length;i++ ) {
@@ -302,17 +325,40 @@ function getPreview(style,user,callback) {
         for (var j=0;j<articles[category].length;j++) {
           var r = articles[category][j];
 
-          htmlForCategory += r.getPreview(style,user);
+          var articleMarkdown = r.getPreview(style,user);
+          if (options.markdown) articleMarkdown = "* " + r["markdown"+options.left_lang]+"\n\n";
+
+          htmlForCategory += articleMarkdown;
         }
-        var header = '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n';
-        if (bilingual) {
+        var header ='';
+        if (category!="Picture") {
+          header = '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n';
+          if (bilingual) {
           header = '<div class="row"><div class = "col-md-6">' +
-                   '<h2 id="'+self.name.toLowerCase()+'_'+categoryLEFT.toLowerCase()+'">'+categoryLEFT+'</h2>\n' +
+                   '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n' +
                    '</div><div class = "col-md-6">' +
-                   '<h2 id="'+self.name.toLowerCase()+'_'+categoryRIGHT.toLowerCase()+'">'+categoryRIGHT+'</h2>\n' +
+                   '<h2 id="'+util.linkify(self.name+'_'+categoryRIGHT)+'">'+categoryRIGHT+'</h2>\n' +
                    '</div></div>';
+          }
+          //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        } else {
+          header = "<!--         place picture here              -->\n" 
+          if (bilingual) {
+            header = '<div class="row"><div class = "col-md-6">' +
+                     '</div><div class = "col-md-6">' +
+                     '</div></div>';
+            htmlForCategory = header + '\n'+htmlForCategory+'\n'                 
+          }
         }
-        htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        if (options.markdown) header = "## "+categoryLEFT;
+
+        
+        if (options.markdown) {
+          htmlForCategory = header + "\n\n"+htmlForCategory;
+        } else {
+          htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        }
+
         preview += htmlForCategory;
         delete articles[category];
       }
@@ -332,6 +378,9 @@ function getPreview(style,user,callback) {
     callback(null, result);
   })
 }
+
+
+
 
 function translateCategories(cat) {
   debug('translateCategories');
@@ -404,6 +453,7 @@ function getUserForColumn(column,cb) {
 
 // result of preview is html code to display the blog.
 Blog.prototype.getPreview = getPreview;
+
 Blog.prototype.isEditable = isEditable;
 
 // setAndSave(user,data,callback)
