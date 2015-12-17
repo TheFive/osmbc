@@ -99,7 +99,7 @@ function setAndSave(user,data,callback) {
       articleModule.removeOpenBlogCache();
       async.series ( [
           function(callback) {
-             logModule.log({oid:self.id,blog.self.blog,user:user,table:"blog",property:key,from:self[key],to:value},callback);
+             logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:key,from:self[key],to:value},callback);
           },
           function(callback) {
             self[key] = value;
@@ -137,7 +137,7 @@ function setReviewComment(lang,user,data,callback) {
     }
     async.series ( [
         function(callback) {
-           logModule.log({oid:self.id,blog:self.blog,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
+           logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
         },
         function(callback) {
           var date = new Date();
@@ -169,7 +169,7 @@ function closeBlog(lang,user,status,callback) {
     should(self.id).not.equal(0);
     async.series ( [
         function logEntry(callback) {
-           logModule.log({oid:self.id,blog:self.blog,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
+           logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
         },
         function setCloseField(callback) {
           self[closeField] = status;
