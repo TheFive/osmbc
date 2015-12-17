@@ -131,9 +131,9 @@ describe('model/article', function() {
               should(t1diff).be.below(10);
               should(t2diff).be.below(10);
             //  should(t3diff).be.below(10);
-              should(result[0]).eql({id:r0id,timestamp:t0,oid:id,user:"user",table:"article",property:"blog",from:"TEST",to:"Reference"});
-              should(result[1]).eql({id:r1id,timestamp:t1,oid:id,user:"user",table:"article",property:"categoryEN",to:"Imports"});
-              should(result[2]).eql({id:r2id,timestamp:t2,oid:id,user:"user",table:"article",property:"collection",to:"text"});
+              should(result[0]).eql({id:r0id,timestamp:t0,blog:"TEST",oid:id,user:"user",table:"article",property:"blog",from:"TEST",to:"Reference"});
+              should(result[1]).eql({id:r1id,timestamp:t1,blog:"TEST",oid:id,user:"user",table:"article",property:"categoryEN",to:"Imports"});
+              should(result[2]).eql({id:r2id,timestamp:t2,blog:"TEST",oid:id,user:"user",table:"article",property:"collection",to:"text"});
            //   should(result[3]).eql({id:r3id,timestamp:t3,oid:id,user:"user",table:"article",property:"collection",to:"text"});
               bddone();
             })

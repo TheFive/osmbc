@@ -73,6 +73,8 @@ module.exports.create = function() {
   return {};
 }
 
+
+
 function findUserForColumnAndBlog(blog,column,callback) {
   debug("findUserForColumnAndBlog");
  
@@ -112,6 +114,7 @@ function findUserForColumnAndBlog(blog,column,callback) {
     })
   })
 }
+
 
 
 function createTable(cb) {
