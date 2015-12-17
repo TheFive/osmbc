@@ -90,9 +90,10 @@ function findUserForColumnAndBlog(blog,column,callback) {
    
     var sqlQuery =  "select data->>'user' as user from changes \
                           where data->>'blog' = $1 && data->>'column'==$2";
+    var sqlArray = [blog,column];
     var startTime = new Date().getTime();
 
-    var query = client.query(sqlQuery);
+    var query = client.query(sqlQuery,sqlArray);
 
     query.on('row',function(row) {
       var r = module.create();
