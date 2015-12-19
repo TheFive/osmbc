@@ -34,8 +34,8 @@ mixin rightcolumn
 
 block content
   p
-    if article.lock
-      .alert.alert-dismissable.alert-info
+    if article.lock && (article.lock.user != layout.user.displayName)
+      .alert.alert-dismissable.alert-danger
         button.close( type="button", data-dismiss="alert" ) ×
         |#{article.lock.user} edits since #{layout.moment(article.lock.timestamp).fromNow()} Version #{article.version}
     if info
