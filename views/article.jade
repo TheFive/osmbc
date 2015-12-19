@@ -102,7 +102,7 @@ block content
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
 
           .col-md-1
-            button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK2
+            button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
             button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}';") Cancel
 
 
