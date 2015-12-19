@@ -238,7 +238,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
 
 
     events.sort(function cmpEvent(a,b){return a.startDate - b.startDate});
-    
+
     for (var i=0;i<events.length;i++) {
       var e = events[i];
       if (e.town) townLength = Math.max(e.town.length,townLength);
@@ -246,7 +246,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
       if (e.country) countryLength = Math.max(e.country.length,countryLength);
       var dateString
       if (e.startDate) {
-       dateString = moment(e.startDate).format("l");
+       dateString = moment(e.startDate).format("L");
       }
       if (e.endDate) {
         if (!(e.startDate.getTime() === e.endDate.getTime())) {
