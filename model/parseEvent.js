@@ -233,6 +233,12 @@ function calenderToMarkdown(lang,date,duration,cb) {
     var descLength = 0;
     var dateLength = 0;
     var countryLength = 0;
+
+    // First sort Events by Date
+
+
+    events.sort(function cmpEvent(a,b){return a.startDate - b.startDate});
+    
     for (var i=0;i<events.length;i++) {
       var e = events[i];
       if (e.town) townLength = Math.max(e.town.length,townLength);
