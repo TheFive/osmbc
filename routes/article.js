@@ -11,7 +11,9 @@ var jade     = require('jade');
 var util          = require('../util.js');
 var config        = require('../config.js');
 
-var settingsModule = require('../model/settings.js');
+var languageFlags = require('../data/languageFlags.js');
+
+var settingsModule= require('../model/settings.js');
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
@@ -167,7 +169,8 @@ function renderArticleId(req,res,next) {
                                   changes:result.changes,
                                   articleReferences:result.articleReferences,
                                   usedLinks:result.usedLinks,
-                                  categories:categories});
+                                  categories:categories,
+                                  languageFlags:languageFlags});
          }
         }
       );

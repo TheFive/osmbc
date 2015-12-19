@@ -20,6 +20,7 @@ var pgMap     = require('../model/pgMap.js');
 
 var categoryTranslation = require('../data/categoryTranslation.js')
 var calenderTranslation = require('../data/calenderTranslation.js')
+var languageFlags       = require('../data/languageFlags.js')
 
 var blogModule = require('../model/blog.js');
 
@@ -92,6 +93,7 @@ function getPreview(style,user) {
   if (typeof(user)=='object') {
     user = user.displayName;
   }
+  var self = this;
 
     options = settingsModule.getSettings(style);
 
@@ -135,35 +137,50 @@ function getPreview(style,user) {
     liOFF = '</p>\n'+calenderTranslation.footer[options.left_lang];
   }
 
-  // generate Glyphicon for Editing
-  if (options.glyphicon && options.edit) {
-    editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-  }
-  // Generate Translation & Edit Links
-  if (options.edit && options.editLink ) {
-    var el = ''; //editLink overwrites Gylphicon
+  if (options.edit) {
+    function editHREF(text) { return ' <a href="'+config.getValue('htmlroot')+'/article/'+self.id+'?style='+style+'&edit=true">'+text+'</a>';}
+    function viewHREF(text) { return ' <a href="'+ config.getValue('htmlroot')+'/article/'+self.id+'?style='+style+ '">'+text+'</a>';}
 
-    if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
-      el = "Edit";
+    // generate Glyphicon for Editing
+    if (options.glyphicon_view) {
+      editLink += viewHREF('<span class="glyphicon glyphicon-eye-open"></span>'); 
     }
-    if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
-      if (el != '') el +='&'
-      el += "Translate";
+    if (options.glyphicon_edit) {
+      editLink += editHREF('<span class="glyphicon glyphicon-edit"></span>'); 
     }
-    if (el =='' && options.shortEditLink) el ='…';
-    if (el != '') editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
-  }
-  if (options.edit && options.languageLinks && options.right_lang=="--") {
-    var addEdit;
-    for (var z=0;z<config.getLanguages().length;z++) {
-      var lll = config.getLanguages()[z]
-      if (lll==options.left_lang) continue;
-      if (this["markdown"+lll] && this["markdown"+lll].length>=4 && this["markdown"+lll]!="no translation") {
-        if (!addEdit) addEdit = " translate from:";
-        addEdit += ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+lll+'.'+options.left_lang+'">'+lll+'</a>'; 
+    // Generate Translation & Edit Links
+    if (options.viewLink ) {
+      editLink += viewHREF('View')   
+    }
+    if (options.shortViewLink ) {
+      editLink += viewHREF('…');    
+    }
+    if (options.shortEditLink ) {
+      editLink += editHREF('…');    
+    }
+    if (options.editLink ) {
+      var el = 'Edit'; //editLink overwrites Gylphicon
+
+      if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
+        el = "Create";
       }
+      if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
+        el += "&Translate";
+      }
+      editLink += editHREF(el);   
     }
-    if (addEdit) editLink += addEdit;
+    if (options.languageLinks && options.right_lang=="--") {
+      var addEdit;
+      for (var z=0;z<config.getLanguages().length;z++) {
+        var lll = config.getLanguages()[z]
+        if (lll==options.left_lang) continue;
+        if (this["markdown"+lll] && this["markdown"+lll].length>=4 && this["markdown"+lll]!="no translation") {
+          if (!addEdit) addEdit = " translate from:";
+          addEdit += ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+lll+'.'+options.left_lang+'">'+lll+'</a>'; 
+        }
+      }
+      if (addEdit) editLink += addEdit;
+    }
   }
 
 
@@ -282,30 +299,19 @@ function doLock(user,callback) {
   self.lock={};
   self.lock.user = user;
   self.lock.timestamp = new Date();
-  self.isClosed = false;
-  self.isClosedEN = false;
   async.parallel([
     function updateClosed(cb) {
       blogModule.findOne({title:self.blog},function(err,result) {
         if (err) return callback(err);
         var status = "not found";
         if (result) status = result.status;
-        self.isClosed = (status == "published");
-        cb()
-      })
-    },
-    function updateClosedEN(cb) {
-      blogModule.findOne({title:self.blogEN},function(err,result) {
-        if (err) return callback(err);
-        status = "not found";
-        if (result) status = result.status;
-        self.isClosedEN = (status == "published");
+        if (status == "closed") delete self.lock;
         cb()
       })
     },
     ],function(err){
       // ignore Error and unlock if article is closed
-      if (self.isClosed && self.isClosedEN) {delete self.lock;}
+
       self.save(callback);
     }
   )
@@ -374,6 +380,8 @@ function setAndSave(user,data,callback) {
   ],function(err){
     should(self.id).exist;
     should(self.id).not.equal(0);
+    var logblog = self.blog;
+    if (data.blog) logblog = data.blog;
     async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
       // There is no Value for the key, so do nothing
       if (typeof(value)=='undefined') return cb_eachOf();
@@ -385,11 +393,10 @@ function setAndSave(user,data,callback) {
       
       debug("Set Key %s to value >>%s<<",key,value);
       debug("Old Value Was >>%s<<",self[key]);
-
-
+     
       async.series ( [
           function(cb) {
-             logModule.log({oid:self.id,blog:self.blog,user:user,table:"article",property:key,from:self[key],to:value},cb);
+             logModule.log({oid:self.id,blog:logblog,user:user,table:"article",property:key,from:self[key],to:value},cb);
           },
           function(cb) {
             self[key] = value;
@@ -434,13 +441,22 @@ function calculateLinks() {
   debug("calculateLinks");
   var links = [];
 
-  if (typeof(this.collection)!='undefined') {
-    var res = this.collection.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
-    if (res) links = links.concat(res);
+  var listOfField = ["collection"];
+  for (var i= 0;i<config.getLanguages().length;i++) {
+    listOfField.push("markdown"+config.getLanguages()[i]);
   }
-  if (typeof(this.markdownDE)!='undefined') {
-    var res = this.markdownDE.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
-    if (res) links = links.concat(res);
+  for (var i=0;i<listOfField.length;i++) {
+    if (typeof(this[listOfField[i]])!='undefined') {
+      var res = this[listOfField[i]].match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
+      var add = true;
+      for (var k in languageFlags) {
+        if (res == languageFlags[k]) {
+          add = false;
+          break;
+        }
+      }
+      if (add && res) links = links.concat(res);
+    }    
   }
   return links;
 }
@@ -616,7 +632,6 @@ Article.prototype.calculateUsedLinks = calculateUsedLinks;
 
 // lock an Article for editing
 // adds a timestamp for the lock
-// and updates isClosed and isClosedEN for already published blogs
 Article.prototype.doLock = doLock;
 Article.prototype.doUnlock = doUnlock;
 
