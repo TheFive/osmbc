@@ -233,14 +233,13 @@ function renderBlogPreview(req, res, next) {
         converter:function(callback) {
                       debug("converter function");
                       blog.getPreview(lang,function(err,result) {
-                        console.log(result);
+                        
                         return callback(err,result);
                       })
                   }
       },
       function(err,result) {
         debug("final function");
-        console.dir(req.query);
         if (req.query.download=="true") {
           var content = result.converter.preview;
           

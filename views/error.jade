@@ -7,3 +7,13 @@ block content
   pre #{error.stack}
 
   a(href="#{layout.htmlroot}/osmbc.html") Go Back to Start
+
+if (error.message == "Version Number Differs")
+  h2
+    | Important Hint for Version Conflicts
+  p
+    | In case you edited an article, this error is not a problem.
+    | Use the back function of your browser, copy the text of your change to 
+    | the clipboard, and change the article again.
+  p
+    | You can even use your browser history to go back to that change.

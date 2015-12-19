@@ -34,8 +34,8 @@ mixin rightcolumn
 
 block content
   p
-    if article.lock
-      .alert.alert-dismissable.alert-info
+    if article.lock && (article.lock.user != layout.user.displayName)
+      .alert.alert-dismissable.alert-danger
         button.close( type="button", data-dismiss="alert" ) ×
         |#{article.lock.user} edits since #{layout.moment(article.lock.timestamp).fromNow()} Version #{article.version}
     if info
@@ -52,8 +52,8 @@ block content
 
 
           
-    if (params.edit && !article.isClosed) 
-      form(name="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
+    if (params.edit && !(blog.status=="closed") )
+      form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
         .row
           .col-md-1
             |Blog <br>
@@ -102,8 +102,8 @@ block content
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
 
           .col-md-1
-            input(type="submit", class="btn btn-primary",value="OK")
-            a(href="#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}" class="btn btn-default" role="button") Cancel
+            button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
+            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}';") Cancel
 
 
         .row
@@ -180,16 +180,9 @@ block content
           .col-md-1
 
             if ((params.left_lang=="DE") || (params.right_lang=="DE"))
-              img(id="Japanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg", class="img-responsive" ,width = 40, onclick="javascript:myclick(this.id)")
-              img(id="Französisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
-              img(id="Spanisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg", class="img-responsive" , width = 40 , onclick="javascript:myclick(this.id)")
-              img(id="Tschechisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
-              img(id="Russisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg", class="img-responsive", width = 40, onclick="javascript:myclick(this.id)")
-              img(id="Rumänisch",src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
-              img(id="Niederländisch",src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
-              img(id="Brasilianisches Portugiesisch",src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg", class="img-responsive", width = 40 ,onclick="javascript:myclick(this.id)")
-              img(id="Polish",src="http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg", class="img-responsive" ,width = 40 ,onclick="javascript:myclick(this.id)")
-
+              - for (lang in languageFlags)
+                img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)")
+          
 
         .row
           .col-md-1
@@ -371,6 +364,14 @@ block scripts
 
   script.
     window.onload = init;
+
+    if ('#{params.edit}'=='true'  && !("#{blog.status}"=="closed")) {
+        window.onbeforeunload = function(event) {
+          event.returnValue = "Please use Cancel or OK to remove lock information.";
+      };
+
+    }
+    
 
     function init() {
 
