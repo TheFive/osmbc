@@ -93,6 +93,7 @@ function getPreview(style,user) {
   if (typeof(user)=='object') {
     user = user.displayName;
   }
+  var self = this;
 
     options = settingsModule.getSettings(style);
 
@@ -136,48 +137,50 @@ function getPreview(style,user) {
     liOFF = '</p>\n'+calenderTranslation.footer[options.left_lang];
   }
 
-  // generate Glyphicon for Editing
-  if (options.glyphicon && options.edit) {
-    editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
-  }
-  // Generate Translation & Edit Links
-  if (options.edit && options.viewLink ) {
-    var el = ''; //editLink overwrites Gylphicon
+  if (options.edit) {
+    function editHREF(text) { return ' <a href="'+config.getValue('htmlroot')+'/article/'+self.id+'?style='+style+'&edit=true">'+text+'</a>';}
+    function viewHREF(text) { return ' <a href="'+ config.getValue('htmlroot')+'/article/'+self.id+'?style='+style+ '">'+text+'</a>';}
 
-    if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
-      el = "View";
+    // generate Glyphicon for Editing
+    if (options.glyphicon_view) {
+      editLink += viewHREF('<span class="glyphicon glyphicon-eye-open"></span>'); 
     }
-    if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
-      if (el != '') el +='&'
-      el += "Translate";
+    if (options.glyphicon_edit) {
+      editLink += editHREF('<span class="glyphicon glyphicon-edit"></span>'); 
     }
-    if (el =='' && options.shortViewLink) el ='…';
-    if (el != '') editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
-  }
-  if (options.edit && options.editLink ) {
-    var el = ''; //editLink overwrites Gylphicon
+    // Generate Translation & Edit Links
+    if (options.viewLink ) {
+      editLink += viewHREF('View')   
+    }
+    if (options.shortViewLink ) {
+      editLink += viewHREF('…');    
+    }
+    if (options.shortEditLink ) {
+      editLink += editHREF('…');    
+    }
+    if (options.editLink ) {
+      var el = 'Edit'; //editLink overwrites Gylphicon
 
-    if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
-      el = "Edit";
-    }
-    if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
-      if (el != '') el +='&'
-      el += "Translate";
-    }
-    if (el =='' && options.shortEditLink) el ='…';
-    if (el != '') editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'&edit=true">'+el+'</a>';    
-  }
-  if (options.edit && options.languageLinks && options.right_lang=="--") {
-    var addEdit;
-    for (var z=0;z<config.getLanguages().length;z++) {
-      var lll = config.getLanguages()[z]
-      if (lll==options.left_lang) continue;
-      if (this["markdown"+lll] && this["markdown"+lll].length>=4 && this["markdown"+lll]!="no translation") {
-        if (!addEdit) addEdit = " translate from:";
-        addEdit += ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+lll+'.'+options.left_lang+'">'+lll+'</a>'; 
+      if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
+        el = "Create";
       }
+      if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
+        el += "&Translate";
+      }
+      editLink += editHREF(el);   
     }
-    if (addEdit) editLink += addEdit;
+    if (options.languageLinks && options.right_lang=="--") {
+      var addEdit;
+      for (var z=0;z<config.getLanguages().length;z++) {
+        var lll = config.getLanguages()[z]
+        if (lll==options.left_lang) continue;
+        if (this["markdown"+lll] && this["markdown"+lll].length>=4 && this["markdown"+lll]!="no translation") {
+          if (!addEdit) addEdit = " translate from:";
+          addEdit += ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+lll+'.'+options.left_lang+'">'+lll+'</a>'; 
+        }
+      }
+      if (addEdit) editLink += addEdit;
+    }
   }
 
 
@@ -296,30 +299,19 @@ function doLock(user,callback) {
   self.lock={};
   self.lock.user = user;
   self.lock.timestamp = new Date();
-  self.isClosed = false;
-  self.isClosedEN = false;
   async.parallel([
     function updateClosed(cb) {
       blogModule.findOne({title:self.blog},function(err,result) {
         if (err) return callback(err);
         var status = "not found";
         if (result) status = result.status;
-        self.isClosed = (status == "published");
-        cb()
-      })
-    },
-    function updateClosedEN(cb) {
-      blogModule.findOne({title:self.blogEN},function(err,result) {
-        if (err) return callback(err);
-        status = "not found";
-        if (result) status = result.status;
-        self.isClosedEN = (status == "published");
+        if (status == "closed") delete self.lock;
         cb()
       })
     },
     ],function(err){
       // ignore Error and unlock if article is closed
-      if (self.isClosed && self.isClosedEN) {delete self.lock;}
+
       self.save(callback);
     }
   )
@@ -640,7 +632,6 @@ Article.prototype.calculateUsedLinks = calculateUsedLinks;
 
 // lock an Article for editing
 // adds a timestamp for the lock
-// and updates isClosed and isClosedEN for already published blogs
 Article.prototype.doLock = doLock;
 Article.prototype.doUnlock = doUnlock;
 

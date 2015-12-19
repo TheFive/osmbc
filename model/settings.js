@@ -17,30 +17,31 @@ var settings = {};
 settings.overview = {
             edit : true,
             comment : true,
-            glyphicon : true,
             viewLink : true,
+            editLink: true,
             overview : true,
+            marktext : true,
             smallPicture : true
           }
 settings.translation = {
             edit : true,
             comment : true,
-            glyphicon : true,
-            viewLink : true,
+            glyphicon_view : true,
+            editLink : true,
             overview : true,
             languageLinks:true
           }
 settings.full = {
             edit : true,
             comment : true,
-            glyphicon : true,
+            glyphicon_edit : true,
+            glyphicon_view : true,
             marktext : true,
             smallPicture : true
           }
 settings.fullfinal = {
             edit : true,
-            viewLink: true,
-            shortViewLink : true,
+            shortEditLink : true,
             smallPicture : false
           }
 settings.markdown = {
