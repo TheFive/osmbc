@@ -375,6 +375,8 @@ function setAndSave(user,data,callback) {
   ],function(err){
     should(self.id).exist;
     should(self.id).not.equal(0);
+    var logblog = self.blog;
+    if (data.blog) logblog = data.blog;
     async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
       // There is no Value for the key, so do nothing
       if (typeof(value)=='undefined') return cb_eachOf();
@@ -386,11 +388,10 @@ function setAndSave(user,data,callback) {
       
       debug("Set Key %s to value >>%s<<",key,value);
       debug("Old Value Was >>%s<<",self[key]);
-
-
+     
       async.series ( [
           function(cb) {
-             logModule.log({oid:self.id,blog:self.blog,user:user,table:"article",property:key,from:self[key],to:value},cb);
+             logModule.log({oid:self.id,blog:logblog,user:user,table:"article",property:key,from:self[key],to:value},cb);
           },
           function(cb) {
             self[key] = value;
