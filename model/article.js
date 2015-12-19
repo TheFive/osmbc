@@ -20,6 +20,7 @@ var pgMap     = require('../model/pgMap.js');
 
 var categoryTranslation = require('../data/categoryTranslation.js')
 var calenderTranslation = require('../data/calenderTranslation.js')
+var languageFlags       = require('../data/languageFlags.js')
 
 var blogModule = require('../model/blog.js');
 
@@ -434,13 +435,23 @@ function calculateLinks() {
   debug("calculateLinks");
   var links = [];
 
-  if (typeof(this.collection)!='undefined') {
-    var res = this.collection.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
-    if (res) links = links.concat(res);
+  var listOfField = ["collection"];
+  for (var i= 0;i<config.getLanguages().length;i++) {
+    listOfField.push("markdown"+config.getLanguages()[i]);
   }
-  if (typeof(this.markdownDE)!='undefined') {
-    var res = this.markdownDE.match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
-    if (res) links = links.concat(res);
+  console.dir(listOfField);
+  for (var i=0;i<listOfField.length;i++) {
+    if (typeof(this[listOfField[i]])!='undefined') {
+      var res = this[listOfField[i]].match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
+      var add = true;
+      for (var k in languageFlags) {
+        if (res == languageFlags[k]) {
+          add = false;
+          break;
+        }
+      }
+      if (add && res) links = links.concat(res);
+    }    
   }
   return links;
 }
