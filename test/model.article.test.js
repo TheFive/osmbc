@@ -82,7 +82,7 @@ describe('model/article', function() {
             alternativeArticle.save(function(err){
               //debug(err);
               should.exist(err);
-              should(err).eql(Error("Version Number differs"));
+              should(err).eql(Error("Version Number Differs"));
               bddone();
             })
           })
@@ -131,9 +131,9 @@ describe('model/article', function() {
               should(t1diff).be.below(10);
               should(t2diff).be.below(10);
             //  should(t3diff).be.below(10);
-              should(result[0]).eql({id:r0id,timestamp:t0,blog:"TEST",oid:id,user:"user",table:"article",property:"blog",from:"TEST",to:"Reference"});
-              should(result[1]).eql({id:r1id,timestamp:t1,blog:"TEST",oid:id,user:"user",table:"article",property:"categoryEN",to:"Imports"});
-              should(result[2]).eql({id:r2id,timestamp:t2,blog:"TEST",oid:id,user:"user",table:"article",property:"collection",to:"text"});
+              should(result[0]).eql({id:r0id,timestamp:t0,blog:"Reference",oid:id,user:"user",table:"article",property:"blog",from:"TEST",to:"Reference"});
+              should(result[1]).eql({id:r1id,timestamp:t1,blog:"Reference",oid:id,user:"user",table:"article",property:"categoryEN",to:"Imports"});
+              should(result[2]).eql({id:r2id,timestamp:t2,blog:"Reference",oid:id,user:"user",table:"article",property:"collection",to:"text"});
            //   should(result[3]).eql({id:r3id,timestamp:t3,oid:id,user:"user",table:"article",property:"collection",to:"text"});
               bddone();
             })
@@ -206,7 +206,7 @@ describe('model/article', function() {
             alternativeArticle.setAndSave("TEST",{version:"1",blog:"TESTALTERNATIVE"},function(err){
               //debug(err);
               //should.exist(err);
-              should(err).eql(Error("Version Number differs"));
+              should(err).eql(Error("Version Number Differs"));
               debug('Count log Entries');
               logModule.find({},function(err,result) {
                 should.not.exist(err);
@@ -491,7 +491,7 @@ describe('model/article', function() {
     it('should generate a preview when no markdown2 is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({collection:"Test Collection"});
       var result = article.getPreview("fullfinalDE","TheFive");
-      should(result).equal('<li id="undefined_0">\nTest Collection <a href="/article/0?style=fullfinalDE">Edit</a>\n</li>');
+      should(result).equal('<li id="undefined_0">\nTest Collection <a href="/article/0?style=fullfinalDE">View</a>\n</li>');
       bddone();
     })
     it('should generate a preview when no markdown2 is specified (Edit Link)',function (bddone) {

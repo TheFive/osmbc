@@ -18,7 +18,7 @@ settings.overview = {
             edit : true,
             comment : true,
             glyphicon : true,
-            editLink : true,
+            viewLink : true,
             overview : true,
             smallPicture : true
           }
@@ -26,7 +26,7 @@ settings.translation = {
             edit : true,
             comment : true,
             glyphicon : true,
-            editLink : true,
+            viewLink : true,
             overview : true,
             languageLinks:true
           }
@@ -39,8 +39,8 @@ settings.full = {
           }
 settings.fullfinal = {
             edit : true,
-            editLink: true,
-            shortEditLink : true,
+            viewLink: true,
+            shortViewLink : true,
             smallPicture : false
           }
 settings.markdown = {

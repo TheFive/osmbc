@@ -141,6 +141,19 @@ function getPreview(style,user) {
     editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'"><span class="glyphicon glyphicon-edit"></span></a>'; 
   }
   // Generate Translation & Edit Links
+  if (options.edit && options.viewLink ) {
+    var el = ''; //editLink overwrites Gylphicon
+
+    if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
+      el = "View";
+    }
+    if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
+      if (el != '') el +='&'
+      el += "Translate";
+    }
+    if (el =='' && options.shortViewLink) el ='…';
+    if (el != '') editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
+  }
   if (options.edit && options.editLink ) {
     var el = ''; //editLink overwrites Gylphicon
 
@@ -152,7 +165,7 @@ function getPreview(style,user) {
       el += "Translate";
     }
     if (el =='' && options.shortEditLink) el ='…';
-    if (el != '') editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'">'+el+'</a>';    
+    if (el != '') editLink = ' <a href="'+config.getValue('htmlroot')+'/article/'+this.id+'?style='+style+'&edit=true">'+el+'</a>';    
   }
   if (options.edit && options.languageLinks && options.right_lang=="--") {
     var addEdit;
@@ -440,7 +453,6 @@ function calculateLinks() {
   for (var i= 0;i<config.getLanguages().length;i++) {
     listOfField.push("markdown"+config.getLanguages()[i]);
   }
-  console.dir(listOfField);
   for (var i=0;i<listOfField.length;i++) {
     if (typeof(this[listOfField[i]])!='undefined') {
       var res = this[listOfField[i]].match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
