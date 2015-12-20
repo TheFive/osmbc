@@ -75,8 +75,8 @@ module.exports.create = function() {
 
 
 
-function findUserForColumnAndBlog(blog,column,callback) {
-  debug("findUserForColumnAndBlog");
+function countLogsForBlog(blog,callback) {
+  debug("countLogsForBlog");
  
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) {
@@ -88,19 +88,19 @@ function findUserForColumnAndBlog(blog,column,callback) {
     }
    //######## here to work ###############
    
-    var sqlQuery =  "select data->>'user' as user from changes \
-                          where data->>'blog' = $1 && data->>'column'==$2";
-    var sqlArray = [blog,column];
+    var sqlQuery =  "select data->>'user' as user,data->>'property' as property,count(*) as change_nr from changes where data->>'blog' = $1 group by data->>'blog',data->>'user',data->>'property'";
+    var sqlArray = [blog];
     var startTime = new Date().getTime();
+    var result = [];
 
     var query = client.query(sqlQuery,sqlArray);
+    debug(sqlQuery);
 
     query.on('row',function(row) {
-      var r = module.create();
-      for (var k in row.data) {
-        r[k]=row.data[k];
+      var r ={};
+      for (var k in row) {
+        r[k]=row[k];
       }
-      r.id = row.id;
       result.push(r);
     })
     query.on('end',function (pgresult) {    
@@ -137,5 +137,6 @@ function dropTable(cb) {
 
 
 module.exports.table = "changes";
+module.exports.countLogsForBlog = countLogsForBlog;
 module.exports.createTable = createTable;
 module.exports.dropTable = dropTable;

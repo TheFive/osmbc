@@ -175,6 +175,46 @@ function renderBlogId(req, res, next) {
 }
  
 
+ function renderBlogStat(req, res, next) {
+  debug('renderBlogStat');
+
+  var id = req.params.blog_id;
+ 
+  findBlogByRouteId(id,function(err,blog) {
+    if (err) return next(err);
+    should.exist(blog);
+    id = blog.id;
+    var name = blog.name;
+    var logs ={};
+
+ 
+    async.series([
+      function readLogs(callback) {
+        debug("readLogs")
+        logModule.countLogsForBlog(name,function(err,result) {
+          debug('countLogsForBlog Function');
+          debug(JSON.stringify(result));
+          if (err) return callback(err);
+          for (var i =0;i<result.length;i++) {
+            var o = result[i];
+            if (!logs[o.property]) logs[o.property]={};
+            logs[o.property][o.user] = o.change_nr;
+          }
+          callback();
+        })
+      }
+      ],
+      function (err) {
+        should.exist(res.rendervar);
+        res.render('blogstat',{layout:res.rendervar.layout,
+                           logs:logs,
+                           blog:blog,
+                           languages:config.getLanguages()});
+      }
+    )
+  });
+}
+
 
 function renderBlogList(req, res, next) {
   debug('router.get /list');
@@ -332,6 +372,7 @@ router.post('/edit/:blog_id',postBlogId);
 router.get('/create', createBlog);
 router.get('/list', renderBlogList);
 router.get('/:blog_id', renderBlogId);
+router.get('/:blog_id/stat', renderBlogStat);
 router.get('/:blog_id/:format', renderBlogPreview);
 router.get('/:blog_id/preview_:blogname_:downloadtime', renderBlogPreview);
 //router.post('/edit/:blog_id',postBlogId);

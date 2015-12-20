@@ -1,0 +1,36 @@
+extends layout
+
+
+
+
+block content
+  row
+    p
+      | here the logs for any property for the blog are counted.
+      | This is used to do the definition of "participation" for a blog.
+  row
+    h1
+      | Blog Statistics for #{blog.name}
+  row
+    h4
+      | Collections done by
+    - for (k in logs.collection)
+      p
+        |#{k}(#{logs.collection[k]})
+    if logs.comment
+      h4
+        | Comment done by
+      - for (k in logs.comment)
+        p
+          |#{k}(#{logs.comment[k]})
+    for lang in languages
+      if logs["markdown"+lang]
+        h4
+          | markdown#{lang} done by
+        - for (k in logs["markdown"+lang])
+          p
+            |#{k}(#{logs["markdown"+lang][k]})
+
+
+
+  
