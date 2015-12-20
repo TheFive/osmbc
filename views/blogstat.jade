@@ -11,26 +11,37 @@ block content
   row
     h1
       | Blog Statistics for #{blog.name}
+ 
   row
-    h4
-      | Collections done by
-    - for (k in logs.collection)
-      p
-        |#{k}(#{logs.collection[k]})
-    if logs.comment
-      h4
-        | Comment done by
-      - for (k in logs.comment)
-        p
-          |#{k}(#{logs.comment[k]})
+    - var field = ["collection","comment"]
     for lang in languages
-      if logs["markdown"+lang]
-        h4
-          | markdown#{lang} done by
-        - for (k in logs["markdown"+lang])
-          p
-            |#{k}(#{logs["markdown"+lang][k]})
+      - field.push("markdown"+lang)
+      - field.push("review"+lang)
+      - userlist = {};
+    for v in field
+      - for (u in logs[v])
+        -   userlist[u]=true;
+
+    table.table.table-striped
+      thead
+        tr
+          th
+            
+          - for (u in userlist)
+            th=u
+      tbody
+        
+        for v in field
+          tr
+            th=v
+            -for (u in userlist)
+              if logs[v]
+                td=logs[v][u]
+              else
+                td
+                  | 
 
 
+  
 
   
