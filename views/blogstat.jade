@@ -13,6 +13,20 @@ block content
       | Blog Statistics for #{blog.name}
  
   row
+    h1
+      | List of all language credits (in progress)
+    for lang in languages
+      h4
+        | Credits #{lang}
+      p
+        | The Weekly #{blog.name} in #{lang} was produces by:
+        for user in editors[lang]
+          |#{user} 
+
+
+  row
+    h1
+      | Table of Collections, Edits & Review Counts
     - var field = ["collection","comment"]
     for lang in languages
       - field.push("markdown"+lang)

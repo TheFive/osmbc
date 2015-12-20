@@ -186,6 +186,7 @@ function renderBlogId(req, res, next) {
     id = blog.id;
     var name = blog.name;
     var logs ={};
+    var editors = {};
 
  
     async.series([
@@ -212,6 +213,25 @@ function renderBlogId(req, res, next) {
           }
           callback();
         })
+      }, function calculateEditors(callback) {
+        for (var i=0;i<config.getLanguages().length;i++) {
+          var lang = config.getLanguages()[i];
+          editors[lang]=[];
+          function addEditors(property,min) {
+            for (user in logs[property]) {
+              if (logs[property][user]>=min) {
+                if (editors[lang].indexOf(user)<0) {
+                  editors[lang].push(user);
+                }
+              }
+            }
+          }
+          addEditors("collection",3);
+          addEditors("markdown"+lang,2);
+          addEditors("review"+lang,1);
+          editors[lang].sort();
+        }
+        callback();
       }
       ],
       function (err) {
@@ -219,6 +239,7 @@ function renderBlogId(req, res, next) {
         res.render('blogstat',{layout:res.rendervar.layout,
                            logs:logs,
                            blog:blog,
+                           editors:editors,
                            languages:config.getLanguages()});
       }
     )
