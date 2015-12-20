@@ -39,6 +39,7 @@ that direct opens the article editor, so that you can quickly fix any error.
 
 It is not recommended to use this view in bilingual mode.
 
+
 ## The languages
 
 Every blog view can be extended by the languages. There are three types
@@ -54,5 +55,6 @@ This is a one column blogview, but it opens a bilingual article editor. The Blog
 ### LL.RR
 
 This is a bilingual blog view, that opens the same bilingual article editor.
+
 
 

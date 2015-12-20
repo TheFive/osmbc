@@ -442,6 +442,13 @@ function isEditable(lang) {
   }
   return result;
 }
+
+function getUserForColumn(column,cb) {
+  debug('getUserForColumn');
+  
+}
+
+
 // Prototype Functions
 
 // result of preview is html code to display the blog.

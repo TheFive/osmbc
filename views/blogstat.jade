@@ -1,0 +1,47 @@
+extends layout
+
+
+
+
+block content
+  row
+    p
+      | here the logs for any property for the blog are counted.
+      | This is used to do the definition of "participation" for a blog.
+  row
+    h1
+      | Blog Statistics for #{blog.name}
+ 
+  row
+    - var field = ["collection","comment"]
+    for lang in languages
+      - field.push("markdown"+lang)
+      - field.push("review"+lang)
+      - userlist = {};
+    for v in field
+      - for (u in logs[v])
+        -   userlist[u]=true;
+
+    table.table.table-striped
+      thead
+        tr
+          th
+            
+          - for (u in userlist)
+            th=u
+      tbody
+        
+        for v in field
+          tr
+            th=v
+            -for (u in userlist)
+              if logs[v]
+                td=logs[v][u]
+              else
+                td
+                  | 
+
+
+  
+
+  

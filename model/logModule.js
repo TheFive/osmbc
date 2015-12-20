@@ -74,6 +74,50 @@ module.exports.create = function() {
 }
 
 
+
+function countLogsForBlog(blog,callback) {
+  debug("countLogsForBlog");
+ 
+  pg.connect(config.pgstring, function(err, client, pgdone) {
+    if (err) {
+      console.log("Connection Error");
+      console.dir(err);
+
+      pgdone();
+      return (callback(err));
+    }
+   //######## here to work ###############
+   
+    var sqlQuery =  "select data->>'user' as user,data->>'property' as property,count(*) as change_nr from changes where data->>'blog' = $1 group by data->>'blog',data->>'user',data->>'property'";
+    var sqlArray = [blog];
+    var startTime = new Date().getTime();
+    var result = [];
+
+    var query = client.query(sqlQuery,sqlArray);
+    debug(sqlQuery);
+
+    query.on('row',function(row) {
+      var r ={};
+      for (var k in row) {
+        r[k]=row[k];
+      }
+      result.push(r);
+    })
+    query.on('end',function (pgresult) {    
+      pgdone();
+      var endTime = new Date().getTime();
+     // console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
+      callback(null,result);
+    })
+    query.on('error',function (err) {    
+      pgdone();
+      callback(err);
+    })
+  })
+}
+
+
+
 function createTable(cb) {
   debug('createTable');
   createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data json,  \
@@ -93,5 +137,6 @@ function dropTable(cb) {
 
 
 module.exports.table = "changes";
+module.exports.countLogsForBlog = countLogsForBlog;
 module.exports.createTable = createTable;
 module.exports.dropTable = dropTable;

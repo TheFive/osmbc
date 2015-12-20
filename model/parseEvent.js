@@ -227,9 +227,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
         }
       }
     }
-      moment.locale(lang);
-
-    var townLength = 0;
+     var townLength = 0;
     var descLength = 0;
     var dateLength = 0;
     var countryLength = 0;
@@ -244,13 +242,18 @@ function calenderToMarkdown(lang,date,duration,cb) {
       if (e.town) townLength = Math.max(e.town.length,townLength);
       if (e.markdown) descLength = Math.max(e.markdown.length,descLength);
       if (e.country) countryLength = Math.max(e.country.length,countryLength);
-      var dateString
+      var dateString;
+      var sd = moment(e.startDate);
+      var ed = moment(e.endDate);
+      sd.locale(lang);
+      ed.locale(lang);
+  
       if (e.startDate) {
-       dateString = moment(e.startDate).format("L");
+       dateString = sd.format("L");
       }
       if (e.endDate) {
         if (!(e.startDate.getTime() === e.endDate.getTime())) {
-          dateString = moment(e.startDate).format("l")+"-"+moment(e.endDate).format("l");
+          dateString = sd.format("L")+"-"+ed.format("L");
         }
       }
       e.dateString = dateString;
