@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.4.6](https://github.com/TheFive/osmbc/tree/0.4.6) (2015-12-20)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.5...0.4.6)
+
+**Implemented enhancements:**
+
+- Document the different blog views in help. [\#209](https://github.com/TheFive/osmbc/issues/209)
+
 ## [0.4.5](https://github.com/TheFive/osmbc/tree/0.4.5) (2015-12-19)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.4...0.4.5)
 
