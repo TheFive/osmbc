@@ -86,7 +86,6 @@ function countLogsForBlog(blog,callback) {
       pgdone();
       return (callback(err));
     }
-   //######## here to work ###############
    
     var sqlQuery =  "select data->>'user' as user,data->>'property' as property,count(*) as change_nr from changes where data->>'blog' = $1 group by data->>'blog',data->>'user',data->>'property'";
     var sqlArray = [blog];
