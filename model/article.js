@@ -165,7 +165,11 @@ function getPreview(style,user) {
         el = "Create";
       }
       if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
-        el += "&Translate";
+        if (el == "Create") {
+          el = "Create&Translate";
+        } else {
+          el = "Translate";
+        }
       }
       editLink += editHREF(el);   
     }
