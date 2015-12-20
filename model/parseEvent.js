@@ -227,7 +227,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
         }
       }
     }
-      moment.locale(lang);
+      moment().locale(lang);
 
     var townLength = 0;
     var descLength = 0;
