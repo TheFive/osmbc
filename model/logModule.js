@@ -106,7 +106,24 @@ function countLogsForBlog(blog,callback) {
       pgdone();
       var endTime = new Date().getTime();
      // console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
-      callback(null,result);
+     // convert result table into 
+     // logs Object
+     var logs={};
+     for (var i =0;i<result.length;i++) {
+        var o = result[i];
+        if (!logs[o.property]) logs[o.property]={};
+        logs[o.property][o.user] = parseInt(o.change_nr);
+      }
+      for (var i=0;i<config.getLanguages().length;i++){
+        var l = config.getLanguages()[i];
+        if (blog["reviewComment"+l]) {
+          for (var j=0;j<blog["reviewComment"+l].length;j++) {
+            if (!logs["review"+l]) logs["review"+l]={};
+            logs["review"+l][blog["reviewComment"+l][j].user] = 1;
+          }
+        }
+      }
+      callback(null,logs);
     })
     query.on('error',function (err) {    
       pgdone();

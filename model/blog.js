@@ -119,6 +119,7 @@ function setReviewComment(lang,user,data,callback) {
   debug("reviewComment");
   var self = this;
   var rc = "reviewComment"+lang;
+  var exported = "exported"+lang;
   async.series([
     function checkID(cb) {
       if (self.id == 0) {
@@ -136,17 +137,33 @@ function setReviewComment(lang,user,data,callback) {
       if (self[rc][i].user == user && self[rc][i].text == data) return callback();
     }
     async.series ( [
-        function(callback) {
+        function logInformation(callback) {
+           debug("setReviewComment->logInformation")
            logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
         },
-        function(callback) {
+        function checkSpecialCommands(cb) {
+          debug("setReviewComment->checkSpecialCommands")
           var date = new Date();
-          if (data != "startreview") {
-            self[rc].push({user:user,text:data,timestamp:date});
+          if (data == "startreview") {
+            // Start Review, check wether review is done in WP or not
+            if (config.getValue("ReviewInWP").indexOf(lang)>=0) {
+              self[exported]=true;
+              logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
+              return;
+            }
+            // nothing has to be written to the review comments
+            return cb();
           }
-          callback();
+          if (data == "markexported") {
+            self[exported]=true;
+            // nothing has to be written to review Comment
+            return cb();
+          }
+          self[rc].push({user:user,text:data,timestamp:date});
+          cb();
         }
       ],function(err){
+        debug("setReviewComment->FinalFunction")
         if (err) return callback(err);
         self.save(callback);
       })
@@ -180,6 +197,7 @@ function closeBlog(lang,user,status,callback) {
             if (self["reviewComment"+lang] && self["reviewComment"+lang].length==0){
               delete self["reviewComment"+lang];
             }
+            self["exported"+lang] = false;
           }
           callback();
         }
@@ -431,14 +449,12 @@ function dropTable(cb) {
 function isEditable(lang) {
   debug("isEditabe");
   var result = true;
-  if (this["reviewComment"+lang]) {
+  if (this["exported"+lang]) {
     result = false;
   }
   var closeLANG = this["close"+lang]
   if (typeof(closeLANG)!='undefined') {
     if (closeLANG) result = false;
-    else result = true;
-
   }
   return result;
 }

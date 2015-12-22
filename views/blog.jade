@@ -37,16 +37,21 @@ block content
 
                   .col-sm-6
                     button.btn.btn-large.btn-primary(type="submit",id="reviewButton") Review#{left_lang} 
-                    button.btn.btn-large.btn-primary(type = "button" onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?closeLang';") Close #{blog.name}(#{left_lang})
-          .row
-            .alert.bg-danger.text-center.bold
-              | <strong>Review is done in wordpress, please document your review here.</strong>
+                    if (blog["exported"+left_lang])
+                      button.btn.btn-large.btn-primary(type = "button" onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?closeLang&style=#{style}';") Close #{blog.name}(#{left_lang})
+                    else
+                      button.btn.btn-large.btn-primary(type = "button" onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=markexported&style=#{style}';") Did Export (#{left_lang})
+
+          if (blog["exported"+left_lang])
+            .row
+              .alert.bg-danger.text-center.bold
+                | <strong>Blog is exported, please do the last Review in WordPress</strong>
       
         else
           if blog.status=="open"
             button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?setStatus=edit';") Close #{blog.name} for new articles
-          else
-            button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=startreview';") Set #{blog.name}(#{left_lang}) ready for review
+          else 
+            button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=startreview&&style=#{style}';") Set #{blog.name}(#{left_lang}) ready for review
 
   .row
     .col-md-6
