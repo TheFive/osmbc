@@ -194,23 +194,10 @@ function renderBlogId(req, res, next) {
         debug("readLogs")
         logModule.countLogsForBlog(name,function(err,result) {
           debug('countLogsForBlog Function');
-          debug(JSON.stringify(result));
+          logs = result;
+          debug(JSON.stringify(logs));
           if (err) return callback(err);
-          for (var i =0;i<result.length;i++) {
-            var o = result[i];
-            if (!logs[o.property]) logs[o.property]={};
-            logs[o.property][o.user] = o.change_nr;
-          }
-          for (var i=0;i<config.getLanguages().length;i++){
-            var l = config.getLanguages()[i];
-            if (blog["reviewComment"+l]) {
-              for (var j=0;j<blog["reviewComment"+l].length;j++) {
-                if (!logs["review"+l]) logs["review"+l]={};
-                logs["review"+l][blog["reviewComment"+l][j].user] = 1;
-              }
-            }
-
-          }
+      
           callback();
         })
       }, function calculateEditors(callback) {

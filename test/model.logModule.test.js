@@ -34,8 +34,6 @@ describe('model/changes',function() {
         should.not.exist(err);
         logModule.countLogsForBlog("Test",function(err,result){
           should.not.exist(err);
-          should(result.length).equal(4);
-          should(result.indexOf({ change_nr: '1', property: 'field3', user: 'Test2' })).equal(1);
           should(result).eql({"field1":{"Test1":2},"field2":{"Test2":1},"field3":{"Test2":1},"field4":{"Test2":1}});
           bddone();
         })
