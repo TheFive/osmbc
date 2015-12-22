@@ -7,6 +7,7 @@ module.exports.pgstring = "UNDEFINED";
 var path    = require('path');
 var fs      = require('fs');
 var debug   = require('debug')('configuration');
+var should  = require('should');
 var env = process.env.NODE_ENV || 'development';
 
 var pg = require('pg');
@@ -65,6 +66,12 @@ exports.initialise = function(callback) {
 	configuration = JSON.parse(fs.readFileSync(configurationFile));
   //pg.defaults.poolSize = 40;
   //console.log("Postgres Poolsize = 40");
+
+  // Do some tests with the types
+
+  should(typeof(configuration["ReviewInWP"])).equal("object");
+  should(typeof(configuration.languages)).equal("object");
+
   exports.pgstring = getPostgresDBString();
 	if (callback) callback();
 }

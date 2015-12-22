@@ -98,6 +98,7 @@ block content
             tr
               th lang
               th review
+              th exported
               th close
             each lang in layout.languages
               tr
@@ -106,9 +107,12 @@ block content
                 td
                  | #{(blog["reviewComment"+lang])?"review":"-"}
                 td
+                 | #{(blog["exported"+lang])?"exported":"-"}
+                td
                   if blog["close"+lang]
-                    | close
-                    a(href="#{layout.htmlroot}/blog/#{blog.name}?closeLang&status=false") Reopen
+                    | close  
+                    td
+                      a(href="#{layout.htmlroot}/blog/#{blog.name}?closeLang&status=false&style=#{lang}") Reopen
                   else 
                     | -
                 

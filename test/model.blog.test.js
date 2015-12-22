@@ -98,8 +98,8 @@ describe('model/blog', function() {
       var newBlog = blogModule.create({id:2,name:"test",status:"**"});
       should(newBlog.isEditable("DE")).be.True();
     })
-    it('should be editable if  review state',function(){
-      var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"]});
+    it('should be editable if review state (exported Set)',function(){
+      var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"],exportedDE:true});
       should(newBlog.isEditable("DE")).be.False();
     })
     it('should be editable if no review and closed state',function(){
@@ -110,7 +110,8 @@ describe('model/blog', function() {
       var newBlog = blogModule.create({id:2,name:"test",status:"**",reviewCommentDE:["comment"],closeDE:false});
       should(newBlog.isEditable("DE")).be.True();
     })
-    it('should handle an review by error with reopening',function(cb){
+    it('should handle an review by error with reopening (with review in WP)',function(cb){
+      // Please ensure, that "DE" is in ReviewInWP in config
       var newBlog = blogModule.create({name:"test",status:"**"});
       async.series([
           function (cb1) {newBlog.save(cb1);},
@@ -131,6 +132,36 @@ describe('model/blog', function() {
         ],function final(err){
           should.not.exist(err);
           should(newBlog.isEditable("DE")).be.True();
+          should.not.exist(newBlog.reviewCommentDE);
+          cb();
+        }
+      )
+    })
+    it('should handle an review by error with reopening (without review in WP)',function(cb){
+      // Please ensure, that "EN" is not in ReviewInWP in config
+      var newBlog = blogModule.create({name:"test",status:"**"});
+      async.series([
+          function (cb1) {newBlog.save(cb1);},
+          function (cb1) {blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);})},
+          function (cb1) {
+            should(newBlog.isEditable("EN")).be.True();
+            newBlog.setReviewComment("EN","Test","startreview",cb1);},
+          function (cb1) {blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);})},
+          function (cb2) {
+            should(newBlog.isEditable("EN")).be.True();
+            newBlog.setReviewComment("EN","Test","markexported",cb2);},
+          function (cb1) {
+            should(newBlog.isEditable("EN")).be.False();
+            blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);})},
+          function (cb1) {
+            should(newBlog.isEditable("EN")).be.False();
+            blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);})},
+          function (cb3) {newBlog.closeBlog("EN","Test",false,cb3);},
+          function (cb1) {
+            blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);})}
+        ],function final(err){
+          should.not.exist(err);
+          should(newBlog.isEditable("EN")).be.True();
           should.not.exist(newBlog.reviewCommentDE);
           cb();
         }

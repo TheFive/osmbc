@@ -13,7 +13,8 @@
   "OPENSTREETMAP_CONSUMER_KEY" : "######",
   "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
   "htmlroot":"",
-  "bootstrap":"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5"
+  "bootstrap":"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5",
+  "ReviewInWP":["DE"]
 
 
 }
