@@ -1,5 +1,27 @@
 # Change Log
 
+## [0.4.7](https://github.com/TheFive/osmbc/tree/0.4.7) (2015-12-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6b...0.4.7)
+
+**Implemented enhancements:**
+
+- Distinguish between proofreading in OSMBC and WP [\#215](https://github.com/TheFive/osmbc/issues/215)
+
+**Closed issues:**
+
+- Block in Review - Edit in Markdown should be possible [\#213](https://github.com/TheFive/osmbc/issues/213)
+- Review is done in wordpress, please document your review here. [\#212](https://github.com/TheFive/osmbc/issues/212)
+
+## [0.4.6b](https://github.com/TheFive/osmbc/tree/0.4.6b) (2015-12-20)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6a...0.4.6b)
+
+## [0.4.6a](https://github.com/TheFive/osmbc/tree/0.4.6a) (2015-12-20)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6...0.4.6a)
+
+**Fixed bugs:**
+
+- Whos Online List shows time in russian \(sometimes\) [\#210](https://github.com/TheFive/osmbc/issues/210)
+
 ## [0.4.6](https://github.com/TheFive/osmbc/tree/0.4.6) (2015-12-20)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.5...0.4.6)
 
