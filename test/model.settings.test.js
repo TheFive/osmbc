@@ -9,7 +9,7 @@ describe('model/settings', function() {
      var c =settingsModule.getSettings("fullES");
      should(c).eql({glyphicon_edit:true,glyphicon_view:true,edit:true,comment:true,marktext:true,left_lang:"ES",right_lang:"--",smallPicture:true});
      var c =settingsModule.getSettings("fullfinalEN.ES");
-     should(c).eql({bilingual:true,edit:true,shortEditLink:true,left_lang:"EN",right_lang:"ES",smallPicture:false});
+     should(c).eql({bilingual:true,edit:true,fullfinal:true,shortEditLink:true,left_lang:"EN",right_lang:"ES",smallPicture:false});
   })
   it('should give a standard result',function(){
      var undef;
@@ -24,7 +24,7 @@ describe('model/settings', function() {
   })
   it('should return a small object for one language',function() {
      var c =settingsModule.getSettings("EN");
-     should(c).eql({edit:false,left_lang:"EN",right_lang:"--"});    
+     should(c).eql({edit:false,fullfinal:true,left_lang:"EN",right_lang:"--"});    
   })
   it('should return a small object for two languages',function() {
      var c =settingsModule.getSettings("EN.ES");

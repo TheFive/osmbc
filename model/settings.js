@@ -41,6 +41,7 @@ settings.full = {
           }
 settings.fullfinal = {
             edit : true,
+            fullfinal : true,
             shortEditLink : true,
             smallPicture : false
           }
@@ -105,7 +106,7 @@ function getSettings(string) {
   for (var i=0;i<config.getLanguages().length;i++) {
     var ll = config.getLanguages()[i];
     if (string==ll) {
-      return {edit:false,left_lang:string,right_lang:"--"};
+      return {edit:false,fullfinal:true,left_lang:string,right_lang:"--"};
     }
     for (var z=0;z<config.getLanguages().length;z++) {
       var rl = config.getLanguages()[z];

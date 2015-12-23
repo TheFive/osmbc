@@ -14,10 +14,11 @@ markdown.use(mdFigCaption);
 var should   = require('should');
 var moment   = require('moment');
 
-var articleModule = require('../model/article.js');
-var settingsModule = require('../model/settings.js');
-var logModule = require('../model/logModule.js');
+var articleModule       = require('../model/article.js');
+var settingsModule      = require('../model/settings.js');
+var logModule           = require('../model/logModule.js');
 var categoryTranslation = require('../data/categoryTranslation.js');
+var editorStrings       = require('../data/editorStrings.js');
 
 var pgMap = require('./pgMap.js')
 var debug = require('debug')('OSMBC:model:blog');
@@ -262,6 +263,52 @@ function createNewBlog(proto,callback) {
   });
 }
 
+function convertLogsToTeamString(logs,lang) {
+  debug('convertLogsToTeamString');
+  var editors = [];
+  function addEditors(property,min) {
+    for (user in logs[property]) {
+      if (logs[property][user]>=min) {
+        if (editors.indexOf(user)<0) {
+          editors.push(user);
+        }
+      }
+    }
+  }
+  addEditors("collection",3);
+  addEditors("markdown"+lang,2);
+  addEditors("review"+lang,1);
+  editors.sort();
+  editorsString = "";
+  if (editors.length>=1) editorsString = editors[0];
+  for (var i = 1;i<editors.length;i++){
+    editorsString += ", "+editors[i];
+  }
+
+ 
+  return editorStrings[lang].replace("##team##",editorsString);
+
+}
+
+function createTeamString(lang,callback) {
+  debug('createTeamString');
+  should(typeof(lang)).eql("string");
+  should(typeof(callback)).eql("function");
+  var self = this;
+  var logs;
+  async.series([
+    function readLogs(cb){
+      logModule.countLogsForBlog(self.name,function (err,result){
+        if (err) return cb(err);
+        logs = result;
+        return (cb(null));
+      });
+    }],function finalFunction(err) {
+      if (err) return callback(err);
+      var result = convertLogsToTeamString(logs,lang);
+      return callback(null,result);
+    })
+}
 
 function getPreview(style,user,callback) {
   debug('getPreview');
@@ -279,122 +326,146 @@ function getPreview(style,user,callback) {
 
   var articles = {};
   var preview = "";
+  var teamString  = "";
 
   var bilingual = options.bilingual;
   var imageHTML;
 
-  articleModule.find({blog:this.name},{column:"title"},function(err,result){
-    
-
-    // in case of a normal blog, generate the start and end time
-    // for a help blog, use the Name of the Blog
-    // not in edit mode.
-    if (!options.markdown) {
-      if (self.startDate && self.endDate) {
-        preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
-      }
-      if (!options.edit) {
-       // if (!imageHTML) preview += "<!--         place picture here              -->\n"   
-       // else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
-      }
-    }
-    else {
-      preview = "";
-      if (self.startDate && self.endDate) {
-        preview += moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'\n\n';
-      }
-    }
+  async.parallel([
+    function readArticles(cb) {
+      debug('readArticles');
+      articleModule.find({blog:self.name},{column:"title"},function(err,result){
       
-    // Put every article in an array for the category
-    if (result) {
-      for (var i=0;i<result.length;i++ ) {
-        var r = result[i];
-        if (!options.edit && r["markdown"+options.left_lang]=="no translation") continue;
-        if (typeof(articles[r.categoryEN]) == 'undefined') {
-          articles[r.categoryEN] = [];
+
+      // in case of a normal blog, generate the start and end time
+      // for a help blog, use the Name of the Blog
+      // not in edit mode.
+      if (!options.markdown) {
+        if (self.startDate && self.endDate) {
+          preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
         }
-        articles[r.categoryEN].push(r);
+        if (!options.edit) {
+         // if (!imageHTML) preview += "<!--         place picture here              -->\n"   
+         // else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
+        }
       }
-    }
-    var clist = self.getCategories();
-
-    
-    
-    // Generate the blog result along the categories
-    for (var i=0;i<clist.length;i++) {
-      var category = clist[i].EN;
-
-      var categoryRIGHT = "";
-      var categoryLEFT = clist[i][options.left_lang];
-      if (bilingual) {
-        categoryRIGHT = clist[i][options.right_lang]
+      else {
+        preview = "";
+        if (self.startDate && self.endDate) {
+          preview += moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'\n\n';
+        }
       }
+        
+      // Put every article in an array for the category
+      if (result) {
+        for (var i=0;i<result.length;i++ ) {
+          var r = result[i];
+          if (!options.edit && r["markdown"+options.left_lang]=="no translation") continue;
+          if (typeof(articles[r.categoryEN]) == 'undefined') {
+            articles[r.categoryEN] = [];
+          }
+          articles[r.categoryEN].push(r);
+        }
+      }
+      var clist = self.getCategories();
+
+      
+      
+      // Generate the blog result along the categories
+      for (var i=0;i<clist.length;i++) {
+        var category = clist[i].EN;
+
+        var categoryRIGHT = "";
+        var categoryLEFT = clist[i][options.left_lang];
+        if (bilingual) {
+          categoryRIGHT = clist[i][options.right_lang]
+        }
+
+       
+        // ignore any "unpublished" category not in edit mode
+        if (!(options.edit) && category =="--unpublished--") continue;
 
      
-      // ignore any "unpublished" category not in edit mode
-      if (!(options.edit) && category =="--unpublished--") continue;
+        // If the category exists, generate HTML for it
+        if (typeof(articles[category])!='undefined') {
+          debug('Generating HTML for category %s',category);
+          var htmlForCategory = ''
 
-   
-      // If the category exists, generate HTML for it
-      if (typeof(articles[category])!='undefined') {
-        debug('Generating HTML for category %s',category);
-        var htmlForCategory = ''
+          for (var j=0;j<articles[category].length;j++) {
+            var r = articles[category][j];
 
-        for (var j=0;j<articles[category].length;j++) {
-          var r = articles[category][j];
+            var articleMarkdown = r.getPreview(style,user);
+            if (options.markdown) articleMarkdown = "* " + r["markdown"+options.left_lang]+"\n\n";
 
-          var articleMarkdown = r.getPreview(style,user);
-          if (options.markdown) articleMarkdown = "* " + r["markdown"+options.left_lang]+"\n\n";
-
-          htmlForCategory += articleMarkdown;
-        }
-        var header ='';
-        if (category!="Picture") {
-          header = '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n';
-          if (bilingual) {
-          header = '<div class="row"><div class = "col-md-6">' +
-                   '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n' +
-                   '</div><div class = "col-md-6">' +
-                   '<h2 id="'+util.linkify(self.name+'_'+categoryRIGHT)+'">'+categoryRIGHT+'</h2>\n' +
-                   '</div></div>';
+            htmlForCategory += articleMarkdown;
           }
-          //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
-        } else {
-          header = "<!--         place picture here              -->\n" 
-          if (bilingual) {
+          var header ='';
+          if (category!="Picture") {
+            header = '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n';
+            if (bilingual) {
             header = '<div class="row"><div class = "col-md-6">' +
+                     '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n' +
                      '</div><div class = "col-md-6">' +
+                     '<h2 id="'+util.linkify(self.name+'_'+categoryRIGHT)+'">'+categoryRIGHT+'</h2>\n' +
                      '</div></div>';
-            htmlForCategory = header + '\n'+htmlForCategory+'\n'                 
+            }
+            //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+          } else {
+            header = "<!--         place picture here              -->\n" 
+            if (bilingual) {
+              header = '<div class="row"><div class = "col-md-6">' +
+                       '</div><div class = "col-md-6">' +
+                       '</div></div>';
+              htmlForCategory = header + '\n'+htmlForCategory+'\n'                 
+            }
           }
-        }
-        if (options.markdown) header = "## "+categoryLEFT;
+          if (options.markdown) header = "## "+categoryLEFT;
 
-        
-        if (options.markdown) {
-          htmlForCategory = header + "\n\n"+htmlForCategory;
-        } else {
-          htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
-        }
+          
+          if (options.markdown) {
+            htmlForCategory = header + "\n\n"+htmlForCategory;
+          } else {
+            htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+          }
 
-        preview += htmlForCategory;
-        delete articles[category];
+          preview += htmlForCategory;
+          delete articles[category];
+        }
       }
-    }
-    for (k in articles) {
-      preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
-      preview += "<p> Please use [edit blog detail] to enter category</p>\n";
-      preview += "<p> Or edit The Articles ";
-      for (var i=0;i<articles[k].length;i++) {
-        preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</span></a> ';
+      for (k in articles) {
+        preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
+        preview += "<p> Please use [edit blog detail] to enter category</p>\n";
+        preview += "<p> Or edit The Articles ";
+        for (var i=0;i<articles[k].length;i++) {
+          preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</span></a> ';
+        }
+        preview += "</p>\n";
       }
-      preview += "</p>\n";
+      cb(null);
+    })
+    },
+    function createTeam(cb) {
+      debug('createTeam');
+      if (options.fullfinal) {
+        self.createTeamString(lang,function (err,result){
+          if (err) return cb(err);
+          teamString = result;
+          console.log("Teamstring"+teamString);
+          return cb(null);
+        })      
+      }
+      else return cb(null);
     }
-    var result = {};
-    result.preview = preview;
-    result.articles = articles;
-    callback(null, result);
-  })
+
+    ],function finalFunction(err){
+      debug("finalFunction");
+    
+      if (err) return callback(err);
+      var result = {};
+      result.preview = preview+teamString;
+      result.articles = articles;
+      callback(null, result);      
+    })
 }
 
 
@@ -490,6 +561,9 @@ Blog.prototype.save = pgMap.save;
 
 // delete the object from the database
 Blog.prototype.remove = pgMap.remove;
+
+Blog.prototype.createTeamString = createTeamString;
+Blog.prototype.convertLogsToTeamString = convertLogsToTeamString;
 
 // Get Categories of the blog
 // This can be the global defined, or the one from the blog itself
