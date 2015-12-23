@@ -128,7 +128,7 @@ describe('routes/blog',function() {
             var call = res.render.firstCall;
             var v = call.args[1];
 
-            should(v.preview).equal('<p>12.12.2015-13.12.2015</p>\n');
+            should(v.preview).equal('<p>12.12.2015-13.12.2015</p>\n<p>This weekly was produced by .</p>');
             should(v.blog.id).equal(blog.id);
             should(v.layout).equal("calculated layout");
             //should(v.articles.length).equal(0);

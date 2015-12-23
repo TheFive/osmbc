@@ -11,7 +11,8 @@ var pgMap     = require('../model/pgMap.js');
 
 config.initialise();
 
-
+var blogs = {};
+var articlesMap = {};
 async.series([
   function articles(done) {
     articleModule.find({},function(err,result){
@@ -25,6 +26,7 @@ async.series([
         var count = 0;
         async.eachSeries(result,function iterator (item,cb){
           count ++;
+          articlesMap[item.id] = item;
           var save=false;
 
           // place convert code here
@@ -67,26 +69,11 @@ async.series([
         var count = 0;
         async.eachSeries(result,function iterator (item,cb){
           count ++;
+          blogs[item.id]=item;
           var save=false;
 
           // place convert code here
-          for (var i=0;i<config.getLanguages().length;i++) {
-            var rcl = "reviewComment"+config.getLanguages()[i];
-            if (item[rcl]) {
-              console.log("Review comment found");
-              for (var j=0;j<item[rcl].length;j++){
-                console.log("Review comment found" + j);
-                
-                if (typeof(item[rcl][j].user)=='object'){
-                  console.log("Found defect User in blog");
-                  console.dir(item[rcl][j]);
-                  item[rcl][j].user = item[rcl][j].user.displayName;
-                  console.dir(item[rcl][j]);
-                  save = true;
-                }
-              }
-            }    
-          }
+    
         
          
 
@@ -96,7 +83,7 @@ async.series([
         },function (){done();})
       }
     })},
- /*function changes(done) {
+   function changes(done) {
     logModule.find({},function(err,result){
       if (err) {
         console.log(err);
@@ -111,13 +98,26 @@ async.series([
           var save=false;
 
           // place convert code here
+
+          // check for objects i log history.
           if (typeof(item.user)=='object') {
             console.log("Found defect User in log");
-            console.dir(item);
             item.user = item.user.displayName;
-            console.dir(item);
             save = true;
           }
+
+          // try to set the blog field for the log
+          if (item.table == "article" && item.oid) {
+            if (articlesMap[item.oid]) {
+              item.blog = articlesMap[item.oid].blog;
+              save = true;
+            }
+          }
+          if (item.property=="blog") {
+                item.blog = item.to;
+                save = true;
+          }   
+        
        
         
          
@@ -126,12 +126,11 @@ async.series([
           progress.tick();
           if (save) {
             item._meta = {table : logModule.table};
-            console.dir(item);
-            pgMap.save(cb).bind(item); 
+            (pgMap.save.bind(item))(cb); 
           } else cb();
         },function (){done();})
       }
-    })},*/
+    })},
   
 
 ],function(err) {console.log("READY.")})

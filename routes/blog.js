@@ -99,7 +99,7 @@ function renderBlogId(req, res, next) {
         if (typeof(req.query.setStatus)!='undefined')
         {
           var changes = {status:req.query.setStatus};
-          blog.setAndSave(user,changes,function(err) {
+          blog.setAndSave(user.displayName,changes,function(err) {
             if (err) {
               console.dir(err);
               info.message = JSON.stringify(err);
@@ -143,7 +143,7 @@ function renderBlogId(req, res, next) {
           for (var i=0;i<result.length;i++ ) {
             var r = result[i];
             if (typeof(articles[r.category]) == 'undefined') {
-              articles[r.category] = [];
+            articles[r.category] = [];
             }
             articles[r.category].push(r);
           }
