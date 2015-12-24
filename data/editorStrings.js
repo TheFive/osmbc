@@ -1,8 +1,8 @@
-var weeklyDesign = "<p>##text##</p>";
-var wnDesign = "<p>##text##</p>";
+var weeklyDesign = '<p align="right"><i>##text##</i></p>';
+var wnDesign = weeklyDesign;
 
 var text = {
-  "DE":"Diese Wochennotitz wurde erstellt von ##team##.",
+  "DE":"Diese Wochennotiz wurde erstellt von ##team##.",
   "EN":"This weekly was produced by ##team##.",
   "ES": "This weekly was produced by ##team##.",
   "FR": "This weekly was produced by ##team##.",

@@ -277,7 +277,7 @@ function convertLogsToTeamString(logs,lang) {
   }
   addEditors("collection",3);
   addEditors("markdown"+lang,2);
-  addEditors("review"+lang,1);
+  addEditors("reviewComment"+lang,1);
   editors.sort();
   editorsString = "";
   if (editors.length>=1) editorsString = editors[0];
@@ -447,7 +447,7 @@ function getPreview(style,user,callback) {
     function createTeam(cb) {
       debug('createTeam');
       if (options.fullfinal) {
-        self.createTeamString(lang,function (err,result){
+        self.createTeamString(options.left_lang,function (err,result){
           if (err) return cb(err);
           teamString = result;
           console.log("Teamstring"+teamString);
