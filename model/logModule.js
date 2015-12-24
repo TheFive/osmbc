@@ -87,7 +87,7 @@ function countLogsForBlog(blog,callback) {
       return (callback(err));
     }
    
-    var sqlQuery =  "select data->>'user' as user,data->>'property' as property,count(*) as change_nr from changes where data->>'blog' = $1 group by data->>'blog',data->>'user',data->>'property'";
+    var sqlQuery =  "select data->>'user' as user,data->>'property' as property,count(*) as change_nr from changes where (((data->>'to' != 'startreview') and (data->>'to' != 'markexported'))or ((data->'to') is null))  and (data->>'blog' = $1) group by data->>'blog',data->>'user',data->>'property' ";
     var sqlArray = [blog];
     var startTime = new Date().getTime();
     var result = [];
@@ -100,7 +100,8 @@ function countLogsForBlog(blog,callback) {
       for (var k in row) {
         r[k]=row[k];
       }
-      result.push(r);
+      
+       result.push(r);
     })
     query.on('end',function (pgresult) {    
       pgdone();
