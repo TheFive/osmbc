@@ -57,6 +57,16 @@ block content
           .col-md-1
             input(type="submit", class="btn btn-primary",value="OK")
             a(href="#{layout.htmlroot}/usert/#{usershown.id}?edit=false" class="btn btn-default" role="button") Cancel
+        .row
+          .col-md-2
+            | WNAuthor 
+          .col-md-3
+            textarea.form-control(name="WNAuthor",rows=1) #{usershown.WNAuthor}
+        .row
+          .col-md-2
+            | WeeklyAuthor 
+          .col-md-3
+            textarea.form-control(name="WeeklyAuthor",rows=1) #{usershown.WeeklyAuthor}
 
 
         .row
@@ -101,6 +111,18 @@ block content
         .col-md-5
         .col-md-1
           a(href="#{layout.htmlroot}/usert/#{usershown.id}?edit=true" class="btn btn-primary" role="button") Edit
+     .row
+        .col-md-2
+          | WNAuthor <br>
+        .col-md-4
+          h2
+            | #{usershown.WNAuthor}
+     .row
+        .col-md-2
+          | Weekly Author <br>
+        .col-md-4
+          h2
+            | #{usershown.WeeklyAuthor}
       .row
         .col-md-2
           | Language

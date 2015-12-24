@@ -83,8 +83,11 @@ exports.importData = function importData(data,callback) {
   async.series([
     function importAllUsers(cb1) {
       debug('importAllUsers');
-      // to be implmeneted
-      cb1();
+      if (typeof(data.user)!='undefined') {  
+        async.each(data.user,function importOneUser(d,cb){
+          userModule.createNewUser(d,cb);
+        },cb1)
+      } else cb1();
     },
     function importAllBlogs(cb2) {
       debug('importAllBlogs');

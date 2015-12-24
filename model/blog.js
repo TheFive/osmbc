@@ -17,6 +17,7 @@ var moment   = require('moment');
 var articleModule       = require('../model/article.js');
 var settingsModule      = require('../model/settings.js');
 var logModule           = require('../model/logModule.js');
+var userModule          = require('../model/user.js');
 var categoryTranslation = require('../data/categoryTranslation.js');
 var editorStrings       = require('../data/editorStrings.js');
 
@@ -263,7 +264,7 @@ function createNewBlog(proto,callback) {
   });
 }
 
-function convertLogsToTeamString(logs,lang) {
+function convertLogsToTeamString(logs,lang,users) {
   debug('convertLogsToTeamString');
   var editors = [];
   function addEditors(property,min) {
@@ -279,6 +280,15 @@ function convertLogsToTeamString(logs,lang) {
   addEditors("markdown"+lang,2);
   addEditors("reviewComment"+lang,1);
   editors.sort();
+  if (users && lang=="DE") {
+    for (var i =0;i<editors.length;i++){
+      for (var j =0;j<users.length;j++ ){
+        if (editors[i]==users[j].OSMUser && users[j].WNAuthor) {
+          editors[i]='<a href="http://blog.openstreetmap.de/blog/author/'+users[j].WNAuthor+'">'+users[j].WNAuthor+'</a>';
+        }
+      }
+    }
+  }
   editorsString = "";
   if (editors.length>=1) editorsString = editors[0];
   for (var i = 1;i<editors.length;i++){
@@ -296,6 +306,7 @@ function createTeamString(lang,callback) {
   should(typeof(callback)).eql("function");
   var self = this;
   var logs;
+  var users = null;
   async.series([
     function readLogs(cb){
       logModule.countLogsForBlog(self.name,function (err,result){
@@ -303,9 +314,15 @@ function createTeamString(lang,callback) {
         logs = result;
         return (cb(null));
       });
+    },function readusers(cb) {
+      userModule.find({},function(err,result){
+        if (err) return cb(err);
+        users = result;
+        cb();
+      })
     }],function finalFunction(err) {
       if (err) return callback(err);
-      var result = convertLogsToTeamString(logs,lang);
+      var result = convertLogsToTeamString(logs,lang,users);
       return callback(null,result);
     })
 }

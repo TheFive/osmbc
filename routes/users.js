@@ -110,6 +110,8 @@ function postUserId(req, res, next) {
    
    
     var changes = {OSMUser:req.body.OSMUser,
+                   WNAuthor:req.body.WNAuthor,
+                   WeeklyAuthor:req.body.WeeklyAuthor,
                    language:req.body.language,
                    access:req.body.access};
     for (var i =0;i<15;i++) {
