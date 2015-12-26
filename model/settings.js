@@ -29,6 +29,7 @@ settings.translation = {
             comment : true,
             glyphicon_view : true,
             editLink : true,
+            marktext : true,
             overview : true,
             languageLinks:true
           };
