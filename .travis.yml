@@ -18,8 +18,16 @@ install:
 services:
 
 addons:
- postgresql: "9.3"
+  postgresql: "9.3"
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 
+env:
+  global:
+    - CXX=g++-4.8
 
 before_script:
   - psql -c 'create database testdb;' -U postgres
