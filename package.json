@@ -35,6 +35,7 @@
     "should": "^8.0.1"
   },
   "devDependencies": {
+    "mocha-jshint": "^2.2.5",
     "nock": "^3.3.2",
     "sinon": "^1.17.0",
     "zombie": "^2.0"

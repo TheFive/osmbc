@@ -1,19 +1,19 @@
 var request = require("request");
-var fs = require("fs");
 var toMarkdown = require('to-markdown');
 var htmlparser = require("htmlparser2");
-var debug = require('debug')('OSMBC:import:download')
+var debug = require('debug')('OSMBC:import:download');
 
 var articleModule = require('../model/article.js');
 var blogModule = require('../model/blog.js');
-var config=require('../config.js')
+var config=require('../config.js');
 
 var async = require('async');
 
 
+
 // For Translation:
 
-categoryTranslation = 
+var categoryTranslation = 
 {
   "[Aktuelle Kategorie]":"[Actual Category]",
   "In eigener Sache":"About us",
@@ -50,7 +50,7 @@ categoryTranslation =
   "#switch2osm":"#switch2osm",
   "Weltweit & sonstiges":"Global & Other"
 
-}
+};
 
 
 // This is the simple HTML Parser for the WN
@@ -58,7 +58,7 @@ categoryTranslation =
 var currentCategory = new Category();
 var currentElement = "";
 
-var status = null;
+var state = null;
 var result = [];
 var categoryList = [];
 
@@ -66,54 +66,54 @@ var categoryList = [];
 var parser = new htmlparser.Parser({
     onopentag: function(name, attribs){
         // ignore everything in comment mode
-        if (status == "finished") return;
+        if (state == "finished") return;
         
         if(name == "h2" ){
-            status = "category";
+            state = "category";
           
         }
         if (name == "li") {
-          status = "list";
+          state = "list";
         }
-        if (name == "a" && status == "list") {
+        if (name == "a" && state == "list") {
             currentElement += "<a href=\""+attribs.href+"\">";
           
         }
         if (name == "div") {
           if (attribs.id == "entry-author-info") {
-            status = "finished";
+            state = "finished";
             result.push(currentCategory);
           }
         }
     },
     ontext: function(text){
-        if (status == "finished") return;
+        if (state == "finished") return;
 
         
-        if (status == "category" && text != currentCategory.title) {
-          text = text.replace("&amp;","&")
+        if (state == "category" && text != currentCategory.title) {
+          text = text.replace("&amp;","&");
           result.push(currentCategory);
           currentCategory =new Category();
           currentCategory.title = text;
           categoryList.push(text);
         }
-        if (status == "list") {
+        if (state == "list") {
           currentElement += text;
         }
        
 
     },
     onclosetag: function(tagname){
-        if (status == "finished") return;
+        if (state == "finished") return;
         if(tagname === "h2"){
-           status = "";
+           state = "";
         }
         if(tagname === "li"){
-           status = "";
+           state = "";
            currentCategory.element.push(currentElement);
            currentElement = "";
         }
-        if (tagname == "a" && status == "list") {
+        if (tagname == "a" && state == "list") {
             currentElement += "</a>";
           
         }
@@ -156,7 +156,7 @@ function importBlog(nr,callback) {
           debug('Not found URL %s',u);
         }
         cb();
-      })
+      });
     },
     function tryOtherName(cb) {
       debug('tryOtherName');
@@ -170,15 +170,15 @@ function importBlog(nr,callback) {
           debug('Not found URL %s',u);
         }
         cb();
-      })
+      });
     }
 
     ],
     function loadedWN(err){ 
       debug('loadedWN');
-      website = body;
+      if (err) console.dir(err);
       if (body) {
-        status = null;
+        state = null;
         result = [];
         categoryList = [];
         parser.write(body);
@@ -204,12 +204,12 @@ function importBlog(nr,callback) {
         
 
 
-        blog.setAndSave("IMPORT",{name:blogName,status:"published",categories:cat},function(err,erg){
+        blog.setAndSave("IMPORT",{name:blogName,status:"published",categories:cat},function(err){
           console.log("Blog Saved Error("+err+")");
           async.each(result,function iterator(item,cb) {
             var category = item.title;
             //console.dir("ITEM"+item);
-            if (category == null) return cb();
+            if (category === null) return cb();
             //console.dir("Import Category: "+category);
             //console.dir(item.element.length+" Elements in Category");
             async.each(item.element,function eachArticle(articleProto,cba) {
@@ -223,18 +223,18 @@ function importBlog(nr,callback) {
 
 
             }, function done() {cb();}
-            )
+            );
 
 
 
-          }, function(done) {
+          }, function() {
             console.log("Blog "+blogName+ " imported");
             callback();
           }
-          ) 
-        })
+          ) ;
+        });
       }
-    })
+    });
 
     
   });
@@ -243,10 +243,10 @@ function importBlog(nr,callback) {
 
 config.initialise();
 
-importBlog(268,function(){console.log("Ready.")});
-importBlog(269,function(){console.log("Ready.")});
-importBlog(270,function(){console.log("Ready.")});
-importBlog(271,function(){console.log("Ready.")});
+importBlog(268,function(){console.log("Ready.");});
+importBlog(269,function(){console.log("Ready.");});
+importBlog(270,function(){console.log("Ready.");});
+importBlog(271,function(){console.log("Ready.");});
 /*
 async.timesLimit(1,1,function (n,next){
   console.log("Start Import for "+n);

@@ -1,5 +1,3 @@
-var pg = require('pg');
-var config = require('../config.js');
 var pgMap = require('./pgMap.js');
 var debug = require('debug')('OSMBC:model:user');
 var should = require('should');
@@ -27,9 +25,9 @@ function createNewUser (proto,callback) {
   debug("createNewUser");
   if (typeof(proto)=='function') {
     callback = proto;
-    delete proto;
+    proto = null;
   }
-  should.not.exist(proto.id);
+  if (proto) should.not.exist(proto.id);
   var user = create(proto);
   user.save(callback);
 }
@@ -54,10 +52,10 @@ function findOne(obj1,obj2,callback) {
 
 function createTable(cb) {
   debug('createTable');
-  createString = 'CREATE TABLE usert (  id bigserial NOT NULL,  data json,  \
-                  CONSTRAINT user_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
-
-  pgMap.createTable('usert',createString,createView,cb)
+  var createString = 'CREATE TABLE usert (  id bigserial NOT NULL,  data json,  \
+                  CONSTRAINT user_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
+  var createView="";
+  pgMap.createTable('usert',createString,createView,cb);
 }
 
 function dropTable(cb) {
@@ -97,14 +95,14 @@ function setAndSave(user,data,callback) {
         }
       ],function(err){
         cb_eachOf(err);
-      })
+      });
 
   },function setAndSaveFinalCB(err) {
     if (err) return callback(err);
     self.save(function (err) {
       callback(err);
     });
-  })
+  });
 } 
 
 // Creates an User object and stores it to database

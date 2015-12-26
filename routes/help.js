@@ -6,14 +6,14 @@ var config = require('../config.js');
 var markdown = require('markdown-it')();
 
 
-var token;
+var token = null;
 
-function initToken(){
+function initToken() {
   debug("initToken");
   if (token) return;
   token = {
     "##osmbcroot##":config.getValue("htmlroot")
-  }
+  };
 }
 
 

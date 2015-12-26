@@ -33,9 +33,9 @@ async.series([
       
           progress.tick();
           if (save) item.save(cb); else cb();
-        },function (){done();})
+        },function (){done();});
       }
-    })},
+    });},
   function users(done) {
     userModule.find({},function(err,result){
       if (err) {
@@ -54,9 +54,9 @@ async.series([
 
           progress.tick();
           if (save) item.save(cb); else cb();
-        },function (){done();})
+        },function (){done();});
       }
-    })},
+    });},
  function blog(done) {
     blogModule.find({},function(err,result){
       if (err) {
@@ -80,9 +80,9 @@ async.series([
 
           progress.tick();
           if (save) item.save(cb); else cb();
-        },function (){done();})
+        },function (){done();});
       }
-    })},
+    });},
    function changes(done) {
     logModule.find({},function(err,result){
       if (err) {
@@ -128,9 +128,9 @@ async.series([
             item._meta = {table : logModule.table};
             (pgMap.save.bind(item))(cb); 
           } else cb();
-        },function (){done();})
+        },function (){done();});
       }
-    })},
+    });},
   
 
-],function(err) {console.log("READY.")})
+],function(err) {if (err) console.dir(err);console.log("READY.");});

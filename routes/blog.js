@@ -5,13 +5,11 @@ var should   = require('should');
 var debug    = require('debug')('OSMBC:routes:blog');
 var config   = require('../config.js');
 var moment   = require('moment');
-var markdown = require('markdown-it')();
 var help     = require('../routes/help.js');
 
 
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
-var articleModule = require('../model/article.js');
 var settingsModule = require('../model/settings.js');
 
 function findBlogByRouteId(id,callback) {
@@ -22,22 +20,22 @@ function findBlogByRouteId(id,callback) {
       if (err) return cb(err);
       if (r) blog= r;
       return cb();
-    })
+    });
   },
   function findByName(cb) {
     if (blog) return cb();
     blogModule.find({name:id},function(err,r) {
       if (err) return cb(err);
-      if (r.length==0) return cb();
+      if (r.length===0) return cb();
       if (r.length>1) return cb(new Error("Blog >"+id+"< exists twice"));
       if (r) blog= r[0];
       return cb();
-    })
+    });
   }], function(err) {
     if (err) return callback(err);
     if (!blog) return callback(new Error("Blog >"+id+"< not found"));
     callback(null,blog);
-  })
+  });
 }
 
 /* GET users listing. */
@@ -67,7 +65,7 @@ function renderBlogId(req, res, next) {
       user["blogSetting"+i] = "";
       user["blogLanguages"+i] = "";
     }
-    if (user.blogSetting0 == "") {
+    if (user.blogSetting0 === "") {
       user.blogSetting0 = "overview";
       user.blogLanguages0 = "DE.EN";
     }
@@ -93,33 +91,23 @@ function renderBlogId(req, res, next) {
           main_text = result.preview;
           articles = result.articles;
           callback();
-        })
+        });
       },
       function (callback) {
         if (typeof(req.query.setStatus)!='undefined')
         {
           var changes = {status:req.query.setStatus};
           blog.setAndSave(user.displayName,changes,function(err) {
-            if (err) {
-              console.dir(err);
-              info.message = JSON.stringify(err);
-              info.status = 'error';
-            }
-            return callback();
-          })
+            return callback(err);
+          });
         } else return callback();
       },
       function (callback) {
         if (typeof(req.query.reviewComment)!='undefined')
         {
           blog.setReviewComment(options.left_lang,user.displayName,req.query.reviewComment,function(err) {
-            if (err) {
-              console.dir(err);
-              info.message = JSON.stringify(err);
-              info.status = 'error';
-            }
-            return callback();
-          })
+            return callback(err);
+          });
         } else return callback();
       },
       function (callback) {
@@ -128,13 +116,8 @@ function renderBlogId(req, res, next) {
           var status = true;
           if (req.query.status && req.query.status == "false") status = false;
           blog.closeBlog(options.left_lang,user.displayName,status,function(err) {
-            if (err) {
-              console.dir(err);
-              info.message = JSON.stringify(err);
-              info.status = 'error';
-            }
-            return callback();
-          })
+            return callback(err);
+          });
         } else return callback();
       },
  
@@ -156,10 +139,11 @@ function renderBlogId(req, res, next) {
           changes = result;
 
           callback();
-        })
+        });
       }],
       function (err) {
         should.exist(res.rendervar);
+        if (err) return next(err);
         res.render('blog',{layout:res.rendervar.layout,
                            main_text:main_text,
                            blog:blog,
@@ -170,7 +154,7 @@ function renderBlogId(req, res, next) {
                            right_lang:options.right_lang,
                            categories:blog.getCategories()});
       }
-    )
+    );
   });
 }
  
@@ -191,7 +175,7 @@ function renderBlogId(req, res, next) {
  
     async.series([
       function readLogs(callback) {
-        debug("readLogs")
+        debug("readLogs");
         logModule.countLogsForBlog(name,function(err,result) {
           debug('countLogsForBlog Function');
           logs = result;
@@ -199,13 +183,13 @@ function renderBlogId(req, res, next) {
           if (err) return callback(err);
       
           callback();
-        })
+        });
       }, function calculateEditors(callback) {
         for (var i=0;i<config.getLanguages().length;i++) {
           var lang = config.getLanguages()[i];
           editors[lang]=[];
-          function addEditors(property,min) {
-            for (user in logs[property]) {
+          function addEditors(property,min) {  //jshint ignore:line
+            for (var user in logs[property]) {
               if (logs[property][user]>=min) {
                 if (editors[lang].indexOf(user)<0) {
                   editors[lang].push(user);
@@ -223,13 +207,14 @@ function renderBlogId(req, res, next) {
       ],
       function (err) {
         should.exist(res.rendervar);
+        if (err) return next(err);
         res.render('blogstat',{layout:res.rendervar.layout,
                            logs:logs,
                            blog:blog,
                            editors:editors,
                            languages:config.getLanguages()});
       }
-    )
+    );
   });
 }
 
@@ -252,15 +237,16 @@ function renderBlogList(req, res, next) {
         blogs:function(callback) {
                  blogModule.find(query,{column:"name",desc:true},function(err,blogs) {
                  callback(err,blogs);
-              })
+              });
         }
       },function(err,result) {
           should.exist(res.rendervar);
+          if (err) return next(err);
           res.render('bloglist',{layout:res.rendervar.layout,
                                 additionalText:additionalText,
                                 blogs:result.blogs});
         });
-};
+}
 
 function renderBlogPreview(req, res, next) {
   debug('renderBlogPreview');
@@ -276,7 +262,6 @@ function renderBlogPreview(req, res, next) {
     var options = settingsModule.getSettings(lang);
     var markdown = options.markdown;
 
-    var changes = [];
     var returnToUrl = req.session.articleReturnTo;
 
     if (blog.status == "help") {
@@ -293,13 +278,13 @@ function renderBlogPreview(req, res, next) {
                       blog.getPreview(lang,function(err,result) {
                         
                         return callback(err,result);
-                      })
+                      });
                   }
       },
       function(err,result) {
         debug("final function");
         if (req.query.download=="true") {
-          var content = result.converter.preview;
+          
           
           if (markdown) {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
@@ -324,18 +309,19 @@ function renderBlogPreview(req, res, next) {
                              categories:blog.getCategories()});
         }
       }
-    )
+    );
   });
 }
 
 function createBlog(req, res, next) {
   debug('router.get /create');
 
-  blogModule.createNewBlog(function(err,blogs) {
+  blogModule.createNewBlog(function(err) {
+    if (err) return next(err);
     res.redirect(config.getValue('htmlroot')+'/blog/list?status=open');
     //res.render('bloglist',{blogs:blogs,user:req.user});
   });
-};
+}
 
 function editBlogId(req,res,next) {
   debug('editBlogId');
@@ -353,7 +339,7 @@ function editBlogId(req,res,next) {
                        blog:blog,
                        params:params,
                        categories:blog.getCategories()});
-  })
+  });
 }
 
 function postBlogId(req, res, next) {
@@ -380,7 +366,7 @@ function postBlogId(req, res, next) {
         return next(err);
       }
       res.redirect(config.getValue('htmlroot')+"/blog/edit/"+id);    
-    })
+    });
   });
 }
 

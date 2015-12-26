@@ -12,10 +12,10 @@ var text = {
   "JP": "This weekly was produced by ##team##.",
   "ID": "This weekly was produced by ##team##.",
   "TR": "This weekly was produced by ##team##.",
-}
+};
 
 var designedText = {};
-for (k in text) {
+for (var k in text) {
   if (k == "DE") designedText[k]=wnDesign.replace("##text##",text[k]);
   else designedText[k]=weeklyDesign.replace("##text##",text[k]);
 }

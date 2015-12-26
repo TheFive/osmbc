@@ -9,4 +9,4 @@ module.exports = {
   "Niederländisch":"http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", 
   "Brasilianisches Portugiesisch":"http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg",
   "Polish":"http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg"
-}
+};

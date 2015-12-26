@@ -4,15 +4,12 @@ var async = require('async');
 var userModule = require('../model/user.js');
 var debug = require('debug')('OSMBC:routes:users');
 var router = express.Router();
-var util = require('../util.js');
-var moment = require('moment');
-var articleModule = require('../model/article.js');
 var logModule = require('../model/logModule.js');
 var settingsModule = require('../model/settings.js');
 var config = require('../config.js');
 
 
-function renderList(req,res,next) {
+function renderList(req,res,next) {  
   debug('renderList');
   var users;
   var query = {};
@@ -27,15 +24,16 @@ function renderList(req,res,next) {
         userModule.find(query,sort,function(err,result) {
           users = result;
           callback();
-        })
+        });
       }
 
-    ],function(error) {
+    ],function(error) { 
+        if (error) return next(error);
         should.exist(res.rendervar);
         res.render('userList',{layout:res.rendervar.layout,
                                 users:users});      
     }
-  )
+  );
 
 }
 
@@ -50,8 +48,6 @@ function renderUserId(req, res, next) {
   if (req.query.numberconfig) params.numberconfig = req.query.numberconfig;
   var user;
   var changes;
-  var settings = settingsModule.listSettings;
-  var languages = settingsModule.listLanguages;
   async.series([
     function findAndLoadChanges(cb) {
       debug('findAndLoadChanges');
@@ -60,10 +56,11 @@ function renderUserId(req, res, next) {
         if (err) return cb(err);
         changes = result;
         cb();
-      })
+      });
     },
     function findAndLoaduser(cb){
       debug('findAndLoaduser');
+      var i;
       userModule.findById(id,function findAndLoaduser_CB(err,result) {
         debug('findAndLoaduser_CB');
         if (err) return cb(err);
@@ -71,19 +68,19 @@ function renderUserId(req, res, next) {
 
         if (!params.numberconfig) {
           params.numberconfig = 3; 
-          for (var i =0;i<99;i++) {
+          for (i =0;i<99;i++) {
             if (user && typeof(user["blogSetting"+i])== 'undefined') break;
             if (user &&(user["blogSetting"+i])!= '-') {
               params.numberconfig=i;
-            };
+            }
           }
         } else {
-          for (var i =0;i<=params.numberconfig;i++) {
+          for (i =0;i<=params.numberconfig;i++) {
              if (typeof(user["blogSetting"+i])== 'undefined') user["blogSetting"+i]="-";
           }
         }
         cb();
-      })
+      });
     }
     ],
     function finalRenderCB(err) {
@@ -99,7 +96,7 @@ function renderUserId(req, res, next) {
                         languages:settingsModule.listLanguages,
                         layout:res.rendervar.layout});
     }
-  ) 
+  ) ;
 }
 
 function postUserId(req, res, next) {
@@ -126,7 +123,7 @@ function postUserId(req, res, next) {
         return next(err);
       }
       res.redirect(config.getValue('htmlroot')+"/usert/"+id);    
-    })
+    });
   });
 }
 
@@ -134,9 +131,10 @@ function createUser(req, res, next) {
   debug('createUser');
   var proto = {};
   userModule.createNewUser(proto,function(err,user) {
+    if (err) return next(err);
     res.redirect(config.getValue('htmlroot')+'/usert/'+user.id+"?edit=true");
   });
-};
+}
 
 router.get('/list',renderList);
 router.get('/create',createUser);

@@ -1,40 +1,40 @@
+//"use strict";
 // Exported Functions and prototypes are defined at end of file
 
 
-var pg     = require('pg');
-var async  = require('async');
-var should = require('should');
-var markdown = require('markdown-it')()
-          .use(require('markdown-it-sup'))
-          .use(require('markdown-it-imsize'), { autofill: true });;
-var debug  = require('debug')('OSMBC:model:article');
+var pg       = require("pg");
+var async    = require("async");
+var should   = require("should");
+var markdown = require("markdown-it")()
+          .use(require("markdown-it-sup"))
+          .use(require("markdown-it-imsize"), { autofill: true });
+var debug    = require("debug")("OSMBC:model:article");
 
 
-var config    = require('../config.js');
-var util      = require('../util.js');
+var config    = require("../config.js");
+var util      = require("../util.js");
 
-var logModule = require('../model/logModule.js');
-var settingsModule = require('../model/settings.js');
-var blogModule = require('../model/blog.js');
-var pgMap     = require('../model/pgMap.js');
+var logModule      = require("../model/logModule.js");
+var settingsModule = require("../model/settings.js");
+var blogModule     = require("../model/blog.js");
+var pgMap          = require("../model/pgMap.js");
 
-var categoryTranslation = require('../data/categoryTranslation.js')
-var calenderTranslation = require('../data/calenderTranslation.js')
-var languageFlags       = require('../data/languageFlags.js')
+var categoryTranslation = require("../data/categoryTranslation.js");
+var calenderTranslation = require("../data/calenderTranslation.js");
+var languageFlags       = require("../data/languageFlags.js");
 
-var blogModule = require('../model/blog.js');
 
 
 var listOfOrphanBlog = null;
 
 
 function getListOfOrphanBlog(callback) {
-  debug('getListOfOrphanBlog');
+  debug("getListOfOrphanBlog");
   if (listOfOrphanBlog) return callback(null,listOfOrphanBlog);
 
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) {
-      console.log("Connection Error")
+      console.log("Connection Error");
       console.dir(err);
 
       pgdone();
@@ -45,12 +45,12 @@ function getListOfOrphanBlog(callback) {
     listOfOrphanBlog = [];
     query.on('row',function(row) {
       listOfOrphanBlog.push(row.name);
-    })
-    query.on('end',function (pgresult) {    
+    });
+    query.on('end',function () {    
       pgdone();
       callback(null,listOfOrphanBlog);
-    })
-  })  
+    });
+  });  
 }
 
 
@@ -76,9 +76,9 @@ function createNewArticle (proto,callback) {
   debug("createNewArticle");
   if (typeof(proto)=='function') {
     callback = proto;
-    delete proto;
+    proto = null;
   }
-  should.not.exist(proto.id);
+  if (proto) should.not.exist(proto.id);
   var article = create(proto);
   article.save(callback);
 }
@@ -86,7 +86,8 @@ function createNewArticle (proto,callback) {
 
 
 
-function getPreview(style,user) {
+
+Article.prototype.getPreview = function getPreview(style,user) {
   debug("getPreview");
   should.exist(style);
   var options;
@@ -95,7 +96,14 @@ function getPreview(style,user) {
   }
   var self = this;
 
-    options = settingsModule.getSettings(style);
+  options = settingsModule.getSettings(style);
+
+  function editHREF(text) { 
+    return ' <a href="'+config.getValue('htmlroot')+'/article/'+self.id+'?style='+style+'&edit=true">'+text+'</a>';
+  }
+  function viewHREF(text) { 
+    return ' <a href="'+ config.getValue('htmlroot')+'/article/'+self.id+'?style='+style+ '">'+text+'</a>';
+  }
 
   
 
@@ -104,7 +112,6 @@ function getPreview(style,user) {
   var markdownLANG = markdownEDIT;  
 
   // Calculate markup for comment
-  var commentMarkup = "";
   var editLink = '';
   var blogRef = this.blog;
   if (!blogRef) blogRef = "undefined";
@@ -129,7 +136,7 @@ function getPreview(style,user) {
     }
   }
   if (this.categoryEN == "Picture") {
-    liON = '<div style="width: ##width##px" class="wp-caption alignnone"> \n'
+    liON = '<div style="width: ##width##px" class="wp-caption alignnone"> \n';
     liOFF = '</div>\n';
   }
   if (this.categoryEN == "Upcoming Events") {
@@ -138,8 +145,6 @@ function getPreview(style,user) {
   }
 
   if (options.edit) {
-    function editHREF(text) { return ' <a href="'+config.getValue('htmlroot')+'/article/'+self.id+'?style='+style+'&edit=true">'+text+'</a>';}
-    function viewHREF(text) { return ' <a href="'+ config.getValue('htmlroot')+'/article/'+self.id+'?style='+style+ '">'+text+'</a>';}
 
     // generate Glyphicon for Editing
     if (options.glyphicon_view) {
@@ -150,7 +155,7 @@ function getPreview(style,user) {
     }
     // Generate Translation & Edit Links
     if (options.viewLink ) {
-      editLink += viewHREF('View')   
+      editLink += viewHREF('View');   
     }
     if (options.shortViewLink ) {
       editLink += viewHREF('…');    
@@ -161,10 +166,10 @@ function getPreview(style,user) {
     if (options.editLink ) {
       var el = 'Edit'; //editLink overwrites Gylphicon
 
-      if (typeof(this[markdownEDIT])=='undefined' || this[markdownEDIT] == '') {
+      if (typeof(this[markdownEDIT])==='undefined' || this[markdownEDIT] === '') {
         el = "Create";
       }
-      if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS] == '')) {
+      if ((markdownTRANS != "markdown--") &&(typeof(this[markdownTRANS])==='undefined' || this[markdownTRANS] === '')) {
         if (el == "Create") {
           el = "Create&Translate";
         } else {
@@ -176,7 +181,7 @@ function getPreview(style,user) {
     if (options.languageLinks && options.right_lang=="--") {
       var addEdit;
       for (var z=0;z<config.getLanguages().length;z++) {
-        var lll = config.getLanguages()[z]
+        var lll = config.getLanguages()[z];
         if (lll==options.left_lang) continue;
         if (this["markdown"+lll] && this["markdown"+lll].length>=4 && this["markdown"+lll]!="no translation") {
           if (!addEdit) addEdit = " translate from:";
@@ -191,17 +196,18 @@ function getPreview(style,user) {
   // Generate Text for display
   var text ='';
   var textright = '';
+  var md;
   if (options.overview) { // just generate the overview text
     debug("options overview is set");
     text=this.displayTitle(90);
     textright = this.displayTitle(90);
   } else { // generate the full text
-    if (typeof(this[markdownLANG])!='undefined' && this[markdownLANG]!='') {
-      var md = this[markdownLANG];
+    if (typeof(this[markdownLANG])!=='undefined' && this[markdownLANG]!=='') {
+      md = this[markdownLANG];
 
 
       // Does the markdown text starts with '* ', so ignore it
-      if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
+      if (md.substring(0,2)=='* ') {md = md.substring(2,99999);}
       // Return an list Element for the blog article
       text = markdown.render(md);
 
@@ -222,11 +228,11 @@ function getPreview(style,user) {
     } else {
       text = this.displayTitle();
     }    
-    if (typeof(this[markdownTRANS])!='undefined' && this[markdownTRANS]!='') {
-      var md = this[markdownTRANS];
+    if (typeof(this[markdownTRANS])!=='undefined' && this[markdownTRANS]!=='') {
+      md = this[markdownTRANS];
 
       // Does the markdown text starts with '* ', so ignore it
-      if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
+      if (md.substring(0,2)=='* ') {md = md.substring(2,99999);}
       // Return an list Element for the blog article
       textright = markdown.render(md);
       if (this.categoryEN == "Picture") textright = "<p> For Picture Preview use only one column </p>";
@@ -253,15 +259,15 @@ function getPreview(style,user) {
   // calculate Markup Display for Missing Edits
   var markON = '';
   var markOFF = '';
-  if (options.marktext && (typeof(this[markdownLANG])=='undefined' || this[markdownLANG]=='')) {
+  if (options.marktext && (typeof(this[markdownLANG])==='undefined' || this[markdownLANG]==='')) {
     markON = '<mark>';
-    markOFF = '</mark>'
+    markOFF = '</mark>';
   }
   var markrightON = '';
   var markrightOFF = '';
-  if (options.marktext && (typeof(this[markdownTRANS])=='undefined' || this[markdownTRANS]=='')) {
+  if (options.marktext && (typeof(this[markdownTRANS])==='undefined' || this[markdownTRANS]==='')) {
     markrightON = '<mark>';
-    markrightOFF = '</mark>'
+    markrightOFF = '</mark>';
   }
   if (!options.bilingual) {
       return liON + 
@@ -289,14 +295,12 @@ function getPreview(style,user) {
             //  editLink+     
               liOFF +
              '</div>'+
-           '</div>'
+           '</div>';
   }
+};
 
 
-}
-
-
-function doLock(user,callback) {
+Article.prototype.doLock = function doLock(user,callback) {
   debug('doLock');
   var self = this;
   if (self.lock) return callback();
@@ -310,32 +314,33 @@ function doLock(user,callback) {
         var status = "not found";
         if (result) status = result.status;
         if (status == "closed") delete self.lock;
-        cb()
-      })
+        cb();
+      });
     },
-    ],function(err){
+    ],function(){
       // ignore Error and unlock if article is closed
 
       self.save(callback);
     }
-  )
-}
-function doUnlock(callback) {
+  );
+};
+
+Article.prototype.doUnlock = function doUnlock(callback) {
   debug('doUnlock');
   var self = this;
   if (typeof(self.lock)=='undefined') return callback();
   delete self.lock;
   self.save(callback);
-}
+};
 
-function setAndSave(user,data,callback) {
+Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   debug("setAndSave");
   should(typeof(user)).equal('string');
   should(typeof(data)).equal('object');
   should(typeof(callback)).equal('function');
   listOfOrphanBlog = null;
   // trim all markdown Values
-  for (k in data) {
+  for (var k in data) {
     if (k.substring(0,8)== "markdown" && data[k]) {
       data[k]=data[k].trim();
     }
@@ -348,7 +353,7 @@ function setAndSave(user,data,callback) {
   debug("Version of dataset %s",data.version);
 
   if (self.version && data.version && self.version != parseInt(data.version)) {
-    error = new Error("Version Number Differs");
+    var error = new Error("Version Number Differs");
     return callback(error);
   }
 
@@ -360,7 +365,7 @@ function setAndSave(user,data,callback) {
 
   async.series([
     function checkID(cb) {
-      if (self.id == 0) {
+      if (self.id === 0) {
         self.save(cb);
       } else cb();
     },
@@ -378,11 +383,12 @@ function setAndSave(user,data,callback) {
           }
         } 
         cb();           
-      })
+      });
     }
 
   ],function(err){
-    should(self.id).exist;
+    if (err) return callback(err);
+    should.exist(self.id);
     should(self.id).not.equal(0);
     var logblog = self.blog;
     if (data.blog) logblog = data.blog;
@@ -393,7 +399,7 @@ function setAndSave(user,data,callback) {
       // The Value to be set, is the same then in the object itself
       // so do nothing
       if (value == self[key]) return cb_eachOf();
-      if (typeof(self[key])=='undefined' && value == '') return cb_eachOf();
+      if (typeof(self[key])==='undefined' && value === '') return cb_eachOf();
       
       debug("Set Key %s to value >>%s<<",key,value);
       debug("Old Value Was >>%s<<",self[key]);
@@ -408,16 +414,16 @@ function setAndSave(user,data,callback) {
           }
         ],function(err){
           cb_eachOf(err);
-        })
+        });
 
     },function setAndSaveFinalCB(err) {
       if (err) return callback(err);
       self.save(function (err) {
         callback(err);
       });
-    })
+    });
   });
-} 
+} ;
 
 
 
@@ -425,6 +431,7 @@ function find(obj,order,callback) {
 	debug("find");
   pgMap.find(this,obj,order,callback);
 }
+
 function findById(id,callback) {
 	debug("findById %s",id);
   pgMap.findById(id,this,callback);
@@ -441,7 +448,7 @@ function fullTextSearch(search,order,callback) {
 }
 
 
-function calculateLinks() {
+Article.prototype.calculateLinks = function calculateLinks() {
   debug("calculateLinks");
   var links = [];
 
@@ -449,7 +456,7 @@ function calculateLinks() {
   for (var i= 0;i<config.getLanguages().length;i++) {
     listOfField.push("markdown"+config.getLanguages()[i]);
   }
-  for (var i=0;i<listOfField.length;i++) {
+  for (i=0;i<listOfField.length;i++) {
     if (typeof(this[listOfField[i]])!='undefined') {
       var res = this[listOfField[i]].match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
       var add = true;
@@ -463,15 +470,15 @@ function calculateLinks() {
     }    
   }
   return links;
-}
+};
 
 
 
-function displayTitle(maxlength) {
+Article.prototype.displayTitle = function displayTitle(maxlength) {
   if (typeof(maxlength) == 'undefined') maxlength = 30;
   var result = "";
-  if (typeof(this.title)!='undefined' && this.title != "") {
-    result = util.shorten(this.title,maxlength)
+  if (typeof(this.title)!=='undefined' && this.title !== "") {
+    result = util.shorten(this.title,maxlength);
   } else 
   /* it is a very bad idea to shorten HTML this way.
   if (typeof(this.markdownDE)!='undefined' && this.markdownDE !="") {
@@ -479,12 +486,12 @@ function displayTitle(maxlength) {
     if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
     result = util.shorten(md,maxlength)
   } else*/
-  if (typeof(this.collection)!='undefined' && this.collection !="") {
-    result = util.shorten(this.collection,maxlength)
+  if (typeof(this.collection)!=='undefined' && this.collection !=="") {
+    result = util.shorten(this.collection,maxlength);
   }
-  if (result.trim()=="") result = "No Title";
+  if (result.trim()==="") result = "No Title";
   return result;
-}
+};
 
 /*
 function displayTitleEN(maxlength) {
@@ -507,7 +514,7 @@ function displayTitleEN(maxlength) {
 function createTable(cb) {
   debug('createTable');
   var createString = 'CREATE TABLE article (  id bigserial NOT NULL,  data json,  \
-                  CONSTRAINT article_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);'
+                  CONSTRAINT article_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
   var createView = "CREATE OR REPLACE VIEW \"OpenBlogWithArticle\" AS \
              SELECT DISTINCT article.data ->> 'blog'::text AS name \
                FROM article \
@@ -525,7 +532,7 @@ function createTable(cb) {
                 (to_tsvector('english'::regconfig, \
                   COALESCE(data ->> 'collection'::text, ''::text) ||' ' || \
                   COALESCE(data ->> 'markdownEN'::text, ''::text)));";
-  pgMap.createTable('article',createString,createView,cb)
+  pgMap.createTable('article',createString,createView,cb);
 }
 
 function dropTable(cb) {
@@ -535,7 +542,6 @@ function dropTable(cb) {
 
 function calculateUsedLinks(callback) {
   debug('calculateUsedLinks');
-  var self = this;
   // Get all Links in this article
   var usedLinks = this.calculateLinks();
 
@@ -572,14 +578,14 @@ function calculateUsedLinks(callback) {
   );
 }
 
-function getCategory(lang) {
+Article.prototype.getCategory = function getCategory(lang) {
   debug("getCategory");
   var result = this.categoryEN;
   if (categoryTranslation[result] && categoryTranslation[result][lang]) {
     result = categoryTranslation[result][lang];
   }
   return result;
-}
+};
 
 
 // Calculate a Title with a maximal length for Article
@@ -588,12 +594,12 @@ function getCategory(lang) {
 // b) Markdown (final Text)
 // c) Collection 
 // the maximal length is optional (default is 30)
-Article.prototype.displayTitle = displayTitle;
+//Article.prototype.displayTitle = displayTitle;
 //Article.prototype.displayTitleEN = displayTitleEN;
 
 // Calculate all links in markdown (final Text) and collection
 // there is no double check for the result
-Article.prototype.calculateLinks = calculateLinks;
+//Article.prototype.calculateLinks = calculateLinks;
 
 // Set a Value (List of Values) and store it in the database
 // Store the changes in the change (history table) too.
@@ -605,7 +611,7 @@ Article.prototype.calculateLinks = calculateLinks;
 // the object is written in total
 // There is no version checking on the database, so it is
 // an very optimistic "locking"
-Article.prototype.setAndSave = setAndSave;
+//Article.prototype.setAndSave = setAndSave;
 
 // save stores the current object to database
 Article.prototype.save = pgMap.save;
@@ -624,8 +630,8 @@ Article.prototype.remove = pgMap.remove;
 //      editLink:  true if an "Edit&Translate" should be placed at the end of an article
 //      overview:  true if title or a small text is shown, instead of an article
 //      marktext:  true if missing language markdown should be <mark>ed.
-Article.prototype.getPreview = getPreview;
-Article.prototype.getCategory = getCategory;
+//Article.prototype.getPreview = getPreview;
+//Article.prototype.getCategory = getCategory;
 
 
 // calculateUsedLinks(callback)
@@ -636,8 +642,8 @@ Article.prototype.calculateUsedLinks = calculateUsedLinks;
 
 // lock an Article for editing
 // adds a timestamp for the lock
-Article.prototype.doLock = doLock;
-Article.prototype.doUnlock = doUnlock;
+//Article.prototype.doLock = doLock;
+//Article.prototype.doUnlock = doUnlock;
 
 
 // Create an Article object in memory, do not save
@@ -682,4 +688,4 @@ module.exports.dropTable = dropTable;
 module.exports.removeOpenBlogCache = function() {
   debug('removeOpenBlogCache');
   listOfOrphanBlog = null;
-}
+};

@@ -1,8 +1,6 @@
-var should = require('should');
 var debug = require('debug')('OSMBC:routes:tool');
 var express = require('express');
 var router = express.Router();
-var help = require('../routes/help.js');
 var config = require('../config.js');
 
 var parseEvent = require('../model/parseEvent.js');
@@ -23,14 +21,15 @@ function renderCalenderAsMarkdown(req,res,next) {
 
 
   parseEvent.calenderToMarkdown(calenderLanguage,function(err,result){
+    if (err) return next(err);
     res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
                                 disablePrettify:disablePrettify,
                                 calenderLanguage:calenderLanguage,
                                 layout:res.rendervar.layout});  
 
-  })
+  });
 }
-function postCalenderAsMarkdown(req,res,next) {
+function postCalenderAsMarkdown(req,res,next) { //jshint ignore:line
   debug('postCalenderAsMarkdown');
   console.dir(req.body);
   var disablePrettify = (req.body.disablePrettify=="true");
