@@ -140,17 +140,17 @@ function postUserId(req, res, next) {
               changes["blogLanguages"+i] = req.body["blogLanguages"+i];
             }
           }
-
           user.setAndSave(req.user.displayName,changes,function(err) {
-            if (err) {
-              return next(err);
-            }
-            res.redirect(config.getValue('htmlroot')+"/usert/"+id);    
+            cb(err);
           });
         });      
     }
 
-    ],function(){return;})
+    ],function(err){
+      if (err) return next(err);
+      res.redirect(config.getValue('htmlroot')+"/usert/"+id);    
+  
+    });
 
 }
 

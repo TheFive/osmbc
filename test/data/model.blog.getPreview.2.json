@@ -21,7 +21,7 @@
             {"blog":"BLOG","user":"USER3","property":"collection","to":"value"},
             {"blog":"BLOG","user":"USER4","property":"collection","to":"value"},
             {"blog":"BLOG","user":"USER5","property":"collection","to":"value"}],
-  "user":[{"OSMUser":"USER1","WNAuthor":"user_1"}],
+  "user":[{"OSMUser":"USER1","WNAuthor":"user_1","WNPublicAuthor":"PaulTemple"}],
   "testBlogName":"BLOG",
   "style":"DE",
   "testBlogResultHtml":"model.blog.preview.2.html"
