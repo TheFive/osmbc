@@ -35,7 +35,7 @@ block content
                  a(href='http://www.openstreetmap.org/user/#{user.OSMUser}') [OSM]
               td
                 if user.WNAuthor
-                 a(href='https://blog.openstreetmap.de/blog/author/#{user.WNAuthor}') [WNAuthor]
+                 a(href='https://blog.openstreetmap.de/blog/author/#{user.WNAuthor}') #{(user.WNPublicAuthor)?user.WNPublicAuthor:user.WNAuthor}
 
               td= user.language
               td= user.access
