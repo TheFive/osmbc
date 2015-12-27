@@ -223,6 +223,7 @@ function findOne(obj1,obj2,callback) {
   pgMap.findOne(this,obj1,obj2,callback);
 }
 
+
 function createNewBlog(proto,callback) {
   debug("createNewBlog");
   if (typeof(proto)=='function') {
@@ -253,13 +254,40 @@ function createNewBlog(proto,callback) {
     var blog = create();
     blog.name = newName;
     blog.status = "open";
-    blog.startDate = startDate;
-    blog.endDate = endDate;
+    blog.startDate = startDate.toISOString();
+    blog.endDate = endDate.toISOString();
     //copy flat prototype to object.
     for (var k in proto) {
       blog[k]=proto[k];
     }
     blog.save(callback);
+  });
+}
+
+
+function autoCloseBlog(callback) {
+  debug("autoCloseBlog");
+
+
+  this.findOne({status:"open"},{column:"endDate",desc:false},function(err,result) {
+    if (err) return callback(err);
+    if (!result) return callback();
+    var time = new Date().getTime();
+    var endDateBlog = (new Date(result.endDate)).getTime();
+    if (endDateBlog <= time) {
+      var changes = {status:"edit"};
+      result.setAndSave("autoclose",changes,function(err){
+        if (err) return callback(err);
+        exports.findOne({status:"open"},function(err,result){
+          if (err) return callback(err);
+          if (!result) {
+            exports.createNewBlog(callback);
+            return;
+          }
+          callback();
+        });
+      });
+    } else return callback();
   });
 }
 
@@ -607,6 +635,7 @@ module.exports.create= create;
 module.exports.createNewBlog = createNewBlog;
 
 
+module.exports.autoCloseBlog = autoCloseBlog;
 // Find Functions
 
 // find(object,order,callback)

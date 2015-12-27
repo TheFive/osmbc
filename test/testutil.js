@@ -117,6 +117,58 @@ exports.importData = function importData(data,callback) {
     ],function(err) {callback(err,data);});
 };
 
+exports.checkData = function checkData(data,callback) {
+  debug('checkData');
+
+  async.series([
+    function checkAllUsers(cb1) {
+      debug('checkAllUsers');
+      if (typeof(data.user)!='undefined') { 
+        userModule.find({},function(err,result){
+          should.not.exist(err);
+          should(result.length).eql(data.user.length);
+          should(result).containDeep(data.user);
+          cb1();
+        }); 
+      } else cb1();
+    },
+    function checkAllBlogs(cb2) {
+      debug('checkAllBlogs');
+      if (typeof(data.blog)!='undefined') {  
+        async.each(data.blog,function checkOneBlog(d,cb){
+          blogModule.findOne(d,function(err,result){
+            should.not.exist(err);
+            should.exist(result,"NOT Found: "+JSON.stringify(d));
+            cb();
+          });
+        },function(err) {
+          should.not.exist(err);
+          blogModule.find({},function(err,result){
+            should.not.exist(err);
+            should.exist(result);
+            should(result.length).eql(data.blog.length);
+            cb2();
+          })
+        });
+      } else cb2();
+    },
+    function importAllArticles(cb3) {
+      debug('importAllArticles');
+      if (typeof(data.article)!='undefined') {  
+        should(false).be.True(); 
+        cb3();
+      } else cb3();
+    },
+    function importAllChanges(cb4) {
+      debug('importAllChanges');
+      if (typeof(data.change)!='undefined') {  
+        should(false).be.True(); 
+      } else cb4();
+    }
+
+    ],function(err) {callback(err,data);});
+};
+
 // Comparing 2 HTML Trees with JSDOM and DomCompare
 // the result gives getResult()=true, if the trees are equal
 // result.getDifferences() is an array with the differences
@@ -169,3 +221,21 @@ exports.startBrowser = function startBrowser(callback) {
   passportStub.login({displayName:"TheFive"});
   callback(null,browser); 
  };
+
+
+ exports.doATest = function doATest(dataBefore,test,dataAfter,callback) {
+  async.series([
+    exports.clearDB,
+    exports.importData.bind(this,dataBefore),
+    test,
+    exports.checkData.bind(this,dataAfter)
+    ],function final(err){
+    should.not.exist(err);
+    callback();
+  })
+
+ };
+
+
+
+
