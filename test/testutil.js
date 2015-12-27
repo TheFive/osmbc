@@ -148,7 +148,7 @@ exports.checkData = function checkData(data,callback) {
             should.exist(result);
             should(result.length).eql(data.blog.length);
             cb2();
-          })
+          });
         });
       } else cb2();
     },
@@ -232,7 +232,7 @@ exports.startBrowser = function startBrowser(callback) {
     ],function final(err){
     should.not.exist(err);
     callback();
-  })
+  });
 
  };
 

@@ -1,13 +1,10 @@
 
 
-var pg     = require('pg');
 var async  = require('async');
 var should = require('should');
 var path   = require('path');
 var fs     = require('fs');
-var debug  = require('debug')('OSMBC:test:blog.test');
 
-var config = require('../config.js');
 
 var testutil = require('./testutil.js');
 
@@ -31,7 +28,7 @@ describe('model/blog', function() {
       testutil.clearDB(bddone);
     }) ;
     it('should createNewArticle with prototype',function(bddone) {
-      var newBlog = blogModule.createNewBlog({name:"test",status:"open"},function (err,result){
+      blogModule.createNewBlog({name:"test",status:"open"},function (err,result){
         should.not.exist(err);
         var id = result.id;
         testutil.getJsonWithId("blog",id,function(err,result){
@@ -51,7 +48,7 @@ describe('model/blog', function() {
       });
     });
     it('should createNewArticle without prototype',function(bddone) {
-      var newBlog = blogModule.createNewBlog(function (err,result){
+      blogModule.createNewBlog(function (err,result){
         should.not.exist(err);
         var id = result.id;
         testutil.getJsonWithId("blog",id,function(err,result){
@@ -63,13 +60,13 @@ describe('model/blog', function() {
       });
     });
     it('should createNewArticle with existing WN',function(bddone) {
-      var previousBlog = blogModule.createNewBlog({name:"WN100",endDate:new Date("1.1.2000")},function(err,result){
+      blogModule.createNewBlog({name:"WN100",endDate:new Date("1.1.2000")},function(err,result){
 
         should.not.exist(err);
         should.exist(result);
         result.save(function(err) {
           should.not.exist(err);
-          var newBlog = blogModule.createNewBlog(function (err,result){
+          blogModule.createNewBlog(function (err,result){
             should.not.exist(err);
             var id = result.id;
             testutil.getJsonWithId("blog",id,function(err,result){
@@ -87,7 +84,8 @@ describe('model/blog', function() {
     });
     it('should create no New Article with ID',function(bddone){
       (function() {
-        var newBlog = blogModule.createNewBlog({id:2,name:"test",status:"**"},function (err,result){
+        blogModule.createNewBlog({id:2,name:"test",status:"**"},function (){
+
         });
       }).should.throw();
       bddone();
@@ -135,8 +133,8 @@ describe('model/blog', function() {
           should.not.exist(newBlog.reviewCommentDE);
           cb();
         }
-      )
-    })
+      );
+    });
     it('should handle an review by error with reopening (without review in WP)',function(cb){
       // Please ensure, that "EN" is not in ReviewInWP in config
       var newBlog = blogModule.create({name:"test",status:"**"});
@@ -178,7 +176,7 @@ describe('model/blog', function() {
         should.exist(newBlog);
         var id =newBlog.id;
         newBlog.name = "New Title";
-        newBlog.setAndSave("user",{status:"published",field:"test"},function(err,result) {
+        newBlog.setAndSave("user",{status:"published",field:"test"},function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog",id,function(err,result){
             should.not.exist(err);
@@ -226,7 +224,7 @@ describe('model/blog', function() {
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
-        newBlog.closeBlog("DE","user",true,function(err,result) {
+        newBlog.closeBlog("DE","user",true,function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog",id,function(err,result){
             should.not.exist(err);
@@ -267,7 +265,7 @@ describe('model/blog', function() {
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
-        newBlog.setReviewComment("DE","user","it is approved.",function(err,result) {
+        newBlog.setReviewComment("DE","user","it is approved.",function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog",id,function(err,result){
             should.not.exist(err);
@@ -324,7 +322,7 @@ describe('model/blog', function() {
           should.not.exist(err);
           bddone();
         });
-    })
+    });
     describe('find',function() {
       it('should find multiple objects with sort',function(bddone){
         blogModule.find({status:"open"},{column:"name"},function(err,result){
@@ -344,9 +342,9 @@ describe('model/blog', function() {
           should(result[0]).eql({name:"WN1",status:"open",version:1});
           should(result[1]).eql({name:"WN2",status:"open",version:1});
           bddone();
-        })
-      })
-    })
+        });
+      });
+    });
     describe('findOne',function() {
       it('should findOne object with sort',function(bddone){
         blogModule.findOne({status:"open"},{column:"name"},function(err,result){
@@ -362,9 +360,9 @@ describe('model/blog', function() {
           should(new Date(result.endDate).toLocaleDateString()).equal(new Date("2016-01-01").toLocaleDateString());
 
           bddone();
-        })
-      })
-    })
+        });
+      });
+    });
     describe('findById',function() {
       it('should find saved Object',function(bddone){
         blogModule.findById(idToFindLater,function(err,result){
@@ -375,15 +373,15 @@ describe('model/blog', function() {
           delete result.id;
           should(result).eql({name:"WN3",status:"finished",version:1,startDate:"2015-01-01",endDate:"2016-01-01"});
           bddone();
-        })
-      })
-    })
-  })
+        });
+      });
+    });
+  });
  
   describe('getPreview',function() {
     beforeEach(function (bddone) {
       testutil.clearDB(bddone);
-    })
+    });
     function doATest(filename) {
      
       it('should handle testfile '+filename,function (bddone) {
@@ -391,7 +389,6 @@ describe('model/blog', function() {
         var data =  JSON.parse(fs.readFileSync(file));
        
         var blog;
-        var md;
         var html;
         var articles;
 
@@ -405,7 +402,7 @@ describe('model/blog', function() {
               blog = result;
               should.exist(blog);
               done();
-            })         
+            }) ;        
           } ,
           function(done) {
             blog.getPreview(data.style,"user",function(err,result){
@@ -413,7 +410,7 @@ describe('model/blog', function() {
               html = result.preview;
               articles = result.articles;
               done();
-            })
+            });
           }
 
           ],
@@ -443,12 +440,12 @@ describe('model/blog', function() {
             }
             bddone();
           }
-        )   
-      })
+        );   
+      });
     }
     testutil.generateTests("data",/^model.blog.getPreview.+json/,doATest);
-  })  
-  context('autoCloseBlog',function(){
+  });  
+  describe('autoCloseBlog',function(){
 
     it('should close a blog and create a new',function(bddone){
       var time = (new Date()).toISOString();
@@ -463,7 +460,7 @@ describe('model/blog', function() {
               {name:"WN4",status:"open",startDate:(new Date("2016-01-02")).toISOString(),endDate:(new Date("2016-01-08")).toISOString()}]};
       var testFunction = function testFunction(cb) {
         blogModule.autoCloseBlog(cb);
-      }        
+      };        
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
     });
     it('should close a blog and not create new if there is one open',function(bddone){
@@ -478,7 +475,7 @@ describe('model/blog', function() {
               {name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"}]};
       var testFunction = function testFunction(cb) {
         blogModule.autoCloseBlog(cb);
-      }        
+      };        
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
 
     }); 
@@ -496,9 +493,9 @@ describe('model/blog', function() {
               {name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"}]};
       var testFunction = function testFunction(cb) {
         blogModule.autoCloseBlog(cb);
-      }        
+      };        
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
 
     }); 
-  })
-})
+  });
+});

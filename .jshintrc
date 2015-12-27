@@ -16,5 +16,6 @@
   "undef": true,
   "unused": true,
   "multistr": true,
+  "mocha":true,
   "strict":false  // to be disabled later, some refectoring seems necessary for it.
 }
