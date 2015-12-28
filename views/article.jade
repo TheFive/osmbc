@@ -100,6 +100,7 @@ block content
           .col-md-5
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
+             p(id="categoryDisplay" style={color:'Gray'})
 
           .col-md-1
             button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
@@ -185,17 +186,18 @@ block content
           
 
         .row
-          .col-md-1
-            |Preview
-          +leftcolumn
-            .panel.panel-default.panel-body(id="previewLEFT")
-                :verbatim
-                  !{article["textHtml"+params.left_lang]}
-          +rightcolumn
-            .panel.panel-default
-              .panel-body(id="previewRIGHT")
-                :verbatim
-                  !{article["textHtml"+params.right_lang]}
+          if article.categoryEN != "Picture"
+            .col-md-1
+              |Preview
+            +leftcolumn
+              .panel.panel-default.panel-body(id="previewLEFT")
+                  :verbatim
+                    !{article["textHtml"+params.left_lang]}
+            +rightcolumn
+              .panel.panel-default
+                .panel-body(id="previewRIGHT")
+                  :verbatim
+                    !{article["textHtml"+params.right_lang]}
         .row
           .col-md-1
             |Comment <br>
@@ -269,20 +271,21 @@ block content
               .panel.panel-default
                 .panel-body #{article["markdown"+params.right_lang]}
       .row
-        .col-md-1
-          |Preview
+        if article.categoryEN != "Picture"
+          .col-md-1
+            |Preview
 
-        +leftcolumn 
-          .panel.panel-default
-            .panel-body(id="previewLEFT")
-                :verbatim
-                  !{article["textHtml"+params.left_lang]}
-        +rightcolumn 
-          .panel.panel-default
-            .panel-body(id="previewRIGHT")
-                :verbatim
-                  !{article["textHtml"+params.right_lang]}
-        
+          +leftcolumn 
+            .panel.panel-default
+              .panel-body(id="previewLEFT")
+                  :verbatim
+                    !{article["textHtml"+params.left_lang]}
+          +rightcolumn 
+            .panel.panel-default
+              .panel-body(id="previewRIGHT")
+                  :verbatim
+                    !{article["textHtml"+params.right_lang]}
+          
       .row
          if (article.comment && article.comment!="")
           .col-md-1
@@ -415,6 +418,12 @@ block scripts
       onchangeLEFT();
       onchangeRIGHT();
 
+      categoryDisplay = document.getElementById("categoryDisplay");
+      categoryEN = document.getElementById("categoryEN");
+      categoryEN.onchange = onchangeCategory;
+      onchangeCategory();
+
+
     }
 
     function onleaveLEFT() {
@@ -443,6 +452,12 @@ block scripts
       
 
       text = '<ul><li>'+text+'</li></ul>';
+
+      if (document.getElementById("categoryEN").value=="Picture") {
+         text = '<ul><li>Live Preview not supported here</li></ul>';
+
+        
+        }
       
       return text;
 
@@ -535,12 +550,26 @@ block scripts
 
     }
 
+    function checkForTable(field) {
+      var md = document.getElementById(field).value;
+      var f = document.getElementById(field);
+      if (!f) return;
+      if (md.indexOf("|----")>= 0) {
+        f.wrap = 'off';
+        }
+      else {
+        f.wrap = 'on';
+        }
+    }
+
     
     function onchangeLEFT() {
       var md = document.getElementById("markdownLEFT").value;
       previewLEFT = document.getElementById("previewLEFT");
       textLeft = document.getElementById("text_left");
 
+
+      checkForTable("markdownLEFT");
       FitToContent("markdownLEFT");
       
       previewLEFT.innerHTML = convert(md);
@@ -565,6 +594,7 @@ block scripts
       textRight = document.getElementById("text_right");
       textLeft = document.getElementById("text_left");
       //console.log("beforeFit");
+      checkForTable("markdownRIGHT");
       FitToContent("markdownRIGHT");
       //console.log("AfterFit");
       previewRIGHT.innerHTML = convert(mdEN);
@@ -659,5 +689,17 @@ block scripts
 
 
 
+      var placeholder = !{JSON.stringify(placeholder.categories)}
+
+
+    
+
+      function onchangeCategory() {
+        var c = categoryEN.value;
+        if (placeholder[c]) {
+           categoryDisplay.innerHTML = placeholder[c];    
+          }
+      }
+   
 
 
