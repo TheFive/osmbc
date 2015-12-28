@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.5.1](https://github.com/TheFive/osmbc/tree/0.5.1) (2015-12-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.0...0.5.1)
+
+**Implemented enhancements:**
+
+- Put the category description in help. [\#228](https://github.com/TheFive/osmbc/issues/228)
+- Allow horizontal Scrolling for markdown that contains table. [\#202](https://github.com/TheFive/osmbc/issues/202)
+- Create a list of all contributors of an issue [\#42](https://github.com/TheFive/osmbc/issues/42)
+
+**Fixed bugs:**
+
+- No action for the button "cancel" in an user details screen [\#231](https://github.com/TheFive/osmbc/issues/231)
+- When switching category in article to the same "animation" than in collect, to show the content of a category. [\#229](https://github.com/TheFive/osmbc/issues/229)
+- Fixes for image preview [\#195](https://github.com/TheFive/osmbc/issues/195)
+
 ## [0.5.0](https://github.com/TheFive/osmbc/tree/0.5.0) (2015-12-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.7...0.5.0)
 
