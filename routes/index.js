@@ -18,17 +18,17 @@ function renderHome(req,res,next) {
     res.render('index', { title: 'OSMBC' , 
                           layout:res.rendervar.layout,
                           changes:result});  
-  })
+  });
 }
 
-function renderReleaseNotes(req,res,next) {
+function renderReleaseNotes(req,res,next) {  // jshint ignore:line
   debug('renderReleaseNotes');
   var level = req.query.level;
   should.exist(res.rendervar.layout);
   res.render('release_notes',{level:level,
                               layout:res.rendervar.layout});  
 }
-function renderHelp(req,res,next) {
+function renderHelp(req,res,next) { // jshint ignore:line
   debug('help');
   should.exist(res.rendervar.layout);
   var title = req.params.title;

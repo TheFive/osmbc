@@ -60,4 +60,4 @@ module.exports = {
       "ID":'<p>Note: If you like to see your <span class="message_body">event here, please <a href="https://wiki.openstreetmap.org/wiki/Template:Calendar">put it into</a> the calendar. </span><span class="message_body">Only data which is there, will appear in weeklyOSM. Please don&#8217;t forget to mention the city and the country in the <a href="https://wiki.openstreetmap.org/wiki/Current_events">calendar</a>.</span></p>',
       "TR":'<p>Note: If you like to see your <span class="message_body">event here, please <a href="https://wiki.openstreetmap.org/wiki/Template:Calendar">put it into</a> the calendar. </span><span class="message_body">Only data which is there, will appear in weeklyOSM. Please don&#8217;t forget to mention the city and the country in the <a href="https://wiki.openstreetmap.org/wiki/Current_events">calendar</a>.</span></p>'
      }
-}
+};

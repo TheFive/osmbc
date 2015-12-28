@@ -1,10 +1,13 @@
 language: node_js
 
 node_js:
- - "0.10"
+ - "4.0"
+ - "4.1"
+ - "4.2"
 
 
-
+before_install:
+  npm i npm@2.14.4 --global
 
 install:
  - npm install
@@ -13,8 +16,16 @@ install:
 services:
 
 addons:
- postgresql: "9.3"
+  postgresql: "9.3"
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 
+env:
+  global:
+    - CXX=g++-4.8
 
 before_script:
   - psql -c 'create database testdb;' -U postgres

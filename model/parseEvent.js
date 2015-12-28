@@ -7,10 +7,10 @@ var ct = require('../data/calenderTranslation.js');
 
 
 // This page is delivering the calendar events
-var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json"
+var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json";
 
 
-regexList = [ {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(......*), *\[\[(.*)\]\].*\[\[(.*)\]\].*/gi,
+var regexList = [ {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(......*), *\[\[(.*)\]\].*\[\[(.*)\]\].*/gi,
                keys:[               "type",                "date",              "desc",         "town",       "country"]},
                {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(......*) *\[\[(.*)\]\].*\[\[(.*)\]\].*/gi,
                keys:[               "type",               "date",                "desc",        "town",       "country"]},
@@ -72,7 +72,7 @@ function parseEndDate(string) {
   } 
   datestart = nextDate(datestart);
   dateend = nextDate(dateend);
-  if (dateend == null) dateend = datestart;
+  if (dateend === null) dateend = datestart;
   return dateend;
 }
 
@@ -111,36 +111,39 @@ exports.parseLine = parseLine;
 
 function parseWikiInfo(description) {
   debug('parseWikiInfo %s',description);
-  var result = ""
-  while (description && description.trim()!="") {
+  var result = "";
+  var end,next,desc,split;
+  var title,link;
+  while (description && description.trim()!=="") {
     debug("parse %s",description);
-    var next = description.indexOf("[[");
-    var end = description.indexOf("]]");
+    next = description.indexOf("[[");
+    end = description.indexOf("]]");
     if (description.indexOf("[")< next) next = -1;
     if (next >= 0 && end >= 0) {
       debug("found [[]] %s %s",next,end);
       result += description.substring(0,next);
-      var desc = description.substring(next+2,end);
+      desc = description.substring(next+2,end);
       description = description.substring(end+2);
-      var split = desc.indexOf("|");
+      split = desc.indexOf("|");
       if (split < 0) {
         title = desc;
         link = "https://wiki.openstreetmap.org/wiki/"+desc;
       } else {
         title = desc.substring(split+1,desc.length);
+        
         link = "https://wiki.openstreetmap.org/wiki/"+desc.substring(0,split);
       }
       while (link.indexOf(" ")>=0) link = link.replace(" ","%20");
       result += "["+title+"]("+link+")";
     } else {   
       next = description.indexOf("[");
-      var end = description.indexOf("]");
+      end = description.indexOf("]");
       if (next >= 0 && end >= 0) {
         debug("found [] %s %s",next,end);
         result += description.substring(0,next);
-        var desc = description.substring(next+1,end);
+        desc = description.substring(next+1,end);
         description = description.substring(end+1);
-        var split = desc.indexOf(" ");
+        split = desc.indexOf(" ");
         if (split < 0) {
           title = desc.substring(0,desc.length);
           link = title;
@@ -191,8 +194,8 @@ function calenderToMarkdown(lang,date,duration,cb) {
   request(wikiEventPage, function(error, response, body) {
     var json = JSON.parse(body);
     //body = (json.query.pages[2567].revisions[0]["*"]);
-    var body = json.query.pages;
-    for (k in body) {
+    body = json.query.pages;
+    for (var k in body) {
       body = body[k];
       break;
     }
@@ -235,7 +238,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
     // First sort Events by Date
 
 
-    events.sort(function cmpEvent(a,b){return a.startDate - b.startDate});
+    events.sort(function cmpEvent(a,b){return a.startDate - b.startDate;});
 
     for (var i=0;i<events.length;i++) {
       var e = events[i];
@@ -252,17 +255,17 @@ function calenderToMarkdown(lang,date,duration,cb) {
        dateString = sd.format("L");
       }
       if (e.endDate) {
-        if (!(e.startDate.getTime() === e.endDate.getTime())) {
+        if ((e.startDate.getTime() !== e.endDate.getTime())) {
           dateString = sd.format("L")+"-"+ed.format("L");
         }
       }
       e.dateString = dateString;
-      dateLength = Math.max(dateLength,dateString.length)
+      dateLength = Math.max(dateLength,dateString.length);
     }
-    var result = "";
+    result = "";
     result += "|"+wl(ct.town[lang],townLength)+"|"+wl(ct.title[lang],descLength)+"|"+wl(ct.date[lang],dateLength)+"|"+wl(ct.country[lang],countryLength)+"|\n";
     result += "|"+ll(townLength)+"|"+ll(descLength)+"|"+ll(dateLength)+"|"+ll(countryLength)+"|\n";  
-    for (var i=0;i<events.length;i++) {
+    for (i=0;i<events.length;i++) {
       var t = events[i].town;
       if (!t) t= "";
       var c = events[i].country;
@@ -286,7 +289,7 @@ function calenderToHtml(date,callback) {
     debug('convert markdown to html');
     var result = markdown.render(t);
     return callback(null,result);
-  })
+  });
 }
 /* this function reads the content of the calender wiki, and convertes it to a markdonw
    in the form |town|description|date|country|*/

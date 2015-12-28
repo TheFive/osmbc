@@ -7,36 +7,38 @@
     "test": "NODE_ENV=test ./test$TRAVIS.sh"
   },
   "dependencies": {
-    "async": "^1.4.2",
-    "body-parser": "~1.14.0",
+    "async": "^1.5.0",
+    "body-parser": "~1.14.2",
     "cookie-parser": "~1.4.0",
     "debug": "~2.2.0",
     "dom-compare": "^0.2.1",
     "express": "~4.13.3",
-    "express-session": "^1.11.3",
-    "htmlparser2": "^3.8.3",
+    "express-session": "^1.12.1",
+    "htmlparser2": "^3.9.0",
     "istanbul": "^0.4.1",
     "jade": "~1.11.0",
-    "markdown-it": "^5.0.1",
+    "markdown-it": "^5.0.2",
     "markdown-it-imsize": "^2.0.1",
     "markdown-it-sup": "^1.0.0",
     "mdfigcaption": "^0.1.1",
-    "mocha": "^2.3.3",
+    "mocha": "^2.3.4",
     "moment": "^2.10.6",
     "morgan": "~1.6.1",
     "node-jsdom": "^3.1.5",
+    "node-schedule": "^0.6.0",
     "passport": "^0.3.2",
     "passport-openstreetmap": "^0.1.2",
-    "pg": "^4.4.2",
+    "pg": "^4.4.3",
     "progress": "^1.1.8",
-    "request": "^2.65.0",
+    "request": "^2.67.0",
     "serve-favicon": "~2.3.0",
-    "session-file-store": "0.0.24",
-    "should": "^8.0.1"
+    "session-file-store": "0.0.21",
+    "should": "^8.0.2"
   },
   "devDependencies": {
-    "nock": "^3.3.2",
-    "sinon": "^1.17.0",
-    "zombie": "^2.0"
+    "mocha-jshint": "^2.2.5",
+    "nock": "^3.6.0",
+    "sinon": "^1.17.2",
+    "zombie": "^4.2"
   }
 }

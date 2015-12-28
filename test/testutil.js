@@ -37,14 +37,14 @@ exports.getJsonWithId = function getJsonWithId(table,id,cb) {
     var result;
     query.on('row',function(row) {
       result = row.data;
-    })
-    query.on('end',function(err,r) {
+    });
+    query.on('end',function() {
       pgdone();
       cb(null,result);
       return;
-    })
-  })
-}
+    });
+  });
+};
 
 // This function is used to clean up the tables in the test module
 // and create them new
@@ -55,21 +55,21 @@ exports.getJsonWithId = function getJsonWithId(table,id,cb) {
 exports.clearDB = function clearDB(done) {
   should(config.env).equal("test");
   async.series([
-    function(done) {config.initialise(done)},
-    function(done) {blogModule.dropTable(done)},
-    function(done) {blogModule.createTable(done)},
-    function(done) {articleModule.dropTable(done)},
-    function(done) {articleModule.createTable(done)},
-    function(done) {logModule.dropTable(done)},
-    function(done) {logModule.createTable(done)},
-    function(done) {userModule.dropTable(done)},
-    function(done) {userModule.createTable(done)}
+    function(done) {config.initialise(done);},
+    function(done) {blogModule.dropTable(done);},
+    function(done) {blogModule.createTable(done);},
+    function(done) {articleModule.dropTable(done);},
+    function(done) {articleModule.createTable(done);},
+    function(done) {logModule.dropTable(done);},
+    function(done) {logModule.createTable(done);},
+    function(done) {userModule.dropTable(done);},
+    function(done) {userModule.createTable(done);}
   ],function(err) {
     if (err) console.dir(err);
     should.not.exist(err);
     done();
   });  
-}
+};
 
 // Import Test Data from File
 // Expected Fileformat
@@ -83,15 +83,18 @@ exports.importData = function importData(data,callback) {
   async.series([
     function importAllUsers(cb1) {
       debug('importAllUsers');
-      // to be implmeneted
-      cb1();
+      if (typeof(data.user)!='undefined') {  
+        async.each(data.user,function importOneUser(d,cb){
+          userModule.createNewUser(d,cb);
+        },cb1);
+      } else cb1();
     },
     function importAllBlogs(cb2) {
       debug('importAllBlogs');
       if (typeof(data.blog)!='undefined') {  
         async.each(data.blog,function importOneBlog(d,cb){
           blogModule.createNewBlog(d,cb);
-        },cb2)
+        },cb2);
       } else cb2();
     },
     function importAllArticles(cb3) {
@@ -99,7 +102,7 @@ exports.importData = function importData(data,callback) {
       if (typeof(data.article)!='undefined') {  
         async.each(data.article,function importOneArticle(d,cb){
           articleModule.createNewArticle(d,cb);
-        },cb3)
+        },cb3);
       } else cb3();
     },
     function importAllChanges(cb4) {
@@ -107,12 +110,64 @@ exports.importData = function importData(data,callback) {
       if (typeof(data.change)!='undefined') {  
         async.eachSeries(data.change,function importOneChange(d,cb){
           logModule.log(d,function waitShort() {setTimeout(cb,10);});
-        },cb4)
+        },cb4);
       } else cb4();
     }
 
-    ],function(err) {callback(err,data)})
-}
+    ],function(err) {callback(err,data);});
+};
+
+exports.checkData = function checkData(data,callback) {
+  debug('checkData');
+
+  async.series([
+    function checkAllUsers(cb1) {
+      debug('checkAllUsers');
+      if (typeof(data.user)!='undefined') { 
+        userModule.find({},function(err,result){
+          should.not.exist(err);
+          should(result.length).eql(data.user.length);
+          should(result).containDeep(data.user);
+          cb1();
+        }); 
+      } else cb1();
+    },
+    function checkAllBlogs(cb2) {
+      debug('checkAllBlogs');
+      if (typeof(data.blog)!='undefined') {  
+        async.each(data.blog,function checkOneBlog(d,cb){
+          blogModule.findOne(d,function(err,result){
+            should.not.exist(err);
+            should.exist(result,"NOT Found: "+JSON.stringify(d));
+            cb();
+          });
+        },function(err) {
+          should.not.exist(err);
+          blogModule.find({},function(err,result){
+            should.not.exist(err);
+            should.exist(result);
+            should(result.length).eql(data.blog.length);
+            cb2();
+          });
+        });
+      } else cb2();
+    },
+    function importAllArticles(cb3) {
+      debug('importAllArticles');
+      if (typeof(data.article)!='undefined') {  
+        should(false).be.True(); 
+        cb3();
+      } else cb3();
+    },
+    function importAllChanges(cb4) {
+      debug('importAllChanges');
+      if (typeof(data.change)!='undefined') {  
+        should(false).be.True(); 
+      } else cb4();
+    }
+
+    ],function(err) {callback(err,data);});
+};
 
 // Comparing 2 HTML Trees with JSDOM and DomCompare
 // the result gives getResult()=true, if the trees are equal
@@ -136,7 +191,7 @@ exports.domcompare = function domcompare(actualHTML,expectedHTML) {
 
   return result;
 
-}
+};
 
 
 // This function reads the data directory (as a subdirectory of test directory)
@@ -144,7 +199,7 @@ exports.domcompare = function domcompare(actualHTML,expectedHTML) {
 // callback with the filename to create one or several it() tests for it.
 exports.generateTests = function generateTests(datadir,fileregex,createTestFunction) {
   debug('generateTests');
-  var testdir = path.resolve(__dirname, datadir)
+  var testdir = path.resolve(__dirname, datadir);
   var fileList=fs.readdirSync(testdir);
   for (var i =0;i<fileList.length;i++){
     var filenameLong=path.resolve(testdir,fileList[i]);
@@ -152,7 +207,7 @@ exports.generateTests = function generateTests(datadir,fileregex,createTestFunct
     if (!((fileList[i]).match(fileregex) )) continue;
     createTestFunction(fileList[i]);
   }
- }
+ };
 
 var browser = null;
 var server;
@@ -165,4 +220,22 @@ exports.startBrowser = function startBrowser(callback) {
   passportStub.install(app);
   passportStub.login({displayName:"TheFive"});
   callback(null,browser); 
- }
+ };
+
+
+ exports.doATest = function doATest(dataBefore,test,dataAfter,callback) {
+  async.series([
+    exports.clearDB,
+    exports.importData.bind(this,dataBefore),
+    test,
+    exports.checkData.bind(this,dataAfter)
+    ],function final(err){
+    should.not.exist(err);
+    callback();
+  });
+
+ };
+
+
+
+

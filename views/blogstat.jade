@@ -12,15 +12,6 @@ block content
     h1
       | Blog Statistics for #{blog.name}
  
-  row
-    h1
-      | List of all language credits (in progress)
-    for lang in languages
-      h4
-        | Credits #{lang}
-      :verbatim
-      |!{blog.convertLogsToTeamString(logs,lang)}
-
 
   row
     h1
@@ -28,7 +19,7 @@ block content
     - var field = ["collection","comment"]
     for lang in languages
       - field.push("markdown"+lang)
-      - field.push("review"+lang)
+      - field.push("reviewComment"+lang)
       - userlist = {};
     for v in field
       - for (u in logs[v])
@@ -54,6 +45,15 @@ block content
                   | 
 
 
-  
+  row
+    h1
+      | List of all language credits (in progress)
+    for lang in languages
+      h4
+        | Credits #{lang}
+      :verbatim
+      |!{blog.convertLogsToTeamString(logs,lang)}
+
+
 
   

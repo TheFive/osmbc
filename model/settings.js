@@ -1,5 +1,6 @@
+"use strict";
 var debug= require("debug")("model/settings");
-var config = require('../config.js');
+var config = require("../config.js");
 
 // information from article:
 //      edit:      true if any additional edit links should be generated
@@ -22,15 +23,16 @@ settings.overview = {
             overview : true,
             marktext : true,
             smallPicture : true
-          }
+          };
 settings.translation = {
             edit : true,
             comment : true,
             glyphicon_view : true,
             editLink : true,
+            marktext : true,
             overview : true,
             languageLinks:true
-          }
+          };
 settings.full = {
             edit : true,
             comment : true,
@@ -38,17 +40,17 @@ settings.full = {
             glyphicon_view : true,
             marktext : true,
             smallPicture : true
-          }
+          };
 settings.fullfinal = {
             edit : true,
             fullfinal : true,
             shortEditLink : true,
             smallPicture : false
-          }
+          };
 settings.markdown = {
             
             markdown : true
-          }
+          };
 
 
 var languages = {};
@@ -56,7 +58,7 @@ var languages = {};
 
 
 for (var i = 0;i<config.getLanguages().length;i++) {
-  lang = config.getLanguages()[i];
+  var lang = config.getLanguages()[i];
   languages[lang] = {};
   languages[lang].left_lang = lang;
   languages[lang].right_lang = "--";
@@ -93,12 +95,13 @@ languages["ES(PT)"].right_lang = "PT";
 exports.settings = settings;
 exports.languages=languages;
 
+ /*exported getSettings */
 function getSettings(string) {
   debug("getSettings(%s)",string);
 
 
-  if (typeof(string)=='undefined') {
-    string = '';
+  if (typeof(string)=="undefined") {
+    string = "";
   }
   var s = settings.full;
   var l = languages["DE(EN)"];
@@ -117,10 +120,10 @@ function getSettings(string) {
   }
 
   for (var k in settings) {
-    var temp = string.replace(k,'');
+    var temp = string.replace(k,"");
     if (temp != string) {
       s = settings[k];
-      if (typeof(languages[temp])!='undefined') {
+      if (typeof(languages[temp])!="undefined") {
         l = languages[temp];
          break;
       }
@@ -128,8 +131,8 @@ function getSettings(string) {
   }
 
   var result = {};
-  for (k in s) {result[k]=s[k]};
-  for (k in l) {result[k]=l[k]};
+  for (k in s) {result[k]=s[k];}
+  for (k in l) {result[k]=l[k];}
   return result;
 }
 

@@ -118,7 +118,11 @@ block content
         <br><br> 
         !{main_text}
   .row
-    .col-md-10
+    .col-md-9
+    .col-md-1
+      p
+        a(href="#{layout.htmlroot}/blog/#{blog.name}/stat") [Statistic]
+
     .col-md-2
       p
         a(href="#{layout.htmlroot}/blog/edit/#{blog.name}") [Edit Blog Detail]
@@ -131,7 +135,8 @@ block content
       div
         table.table.table-striped
           thead
-            tr 
+            tr
+              th 
               th
                | user
               th

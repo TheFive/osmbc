@@ -2,16 +2,14 @@ var express  = require('express');
 var async    = require('async');
 var moment   = require('moment');
 var router   = express.Router();
-var should  = require('should');
 var debug    = require('debug')('OSMBC:routes:layout');
 
 var util          = require('../util.js');
 var config        = require('../config.js');
-var version = require('../version.js')
+var version = require('../version.js');
 
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
-var logModule     = require('../model/logModule.js');
 
 var htmlRoot = config.getValue("htmlroot");
 var bootstrap = config.getValue("bootstrap");
@@ -25,10 +23,6 @@ function prepareRenderLayout(req,res,next) {
   // Variables for rendering purposes
 
   // ListOfOrphanBlog is used to show all orphanedBlog to assign an article to
-  var listOfOrphanBlog;
-  var listOfOpenBlog;
-  var listOfReviewBlog;
-  var listOfHelpBlog;
   var style = "style.css";
   if (req.query.tempstyleOff == 'true') req.session.tempstyle=true;
   if (req.query.tempstyleOff == 'false') delete req.session.tempstyle;
@@ -50,7 +44,7 @@ function prepareRenderLayout(req,res,next) {
     function (callback) {
       articleModule.getListOfOrphanBlog(function(err,result) {
         callback(err,result);
-      })
+      });
     },
     listOfOpenBlog:
     function (callback) {
@@ -61,7 +55,7 @@ function prepareRenderLayout(req,res,next) {
           list.push(result[i]);
         }
         callback(err,list);
-      })
+      });
     },
     listOfEditBlog:
     function (callback) {
@@ -74,7 +68,7 @@ function prepareRenderLayout(req,res,next) {
           }
         }
         callback(err,list);
-      })
+      });
     },
     listOfReviewBlog:
     function (callback) {
@@ -88,7 +82,7 @@ function prepareRenderLayout(req,res,next) {
           }
         }
         callback(err,list);
-      })
+      });
     },
     listOfHelpBlog:
     function (callback) {
@@ -99,7 +93,7 @@ function prepareRenderLayout(req,res,next) {
           list.push(result[i]);
         }
         callback(err,list);
-      })
+      });
     }},
   
     function (err,result) {
@@ -118,7 +112,7 @@ function prepareRenderLayout(req,res,next) {
                       bootstrap:bootstrap,
                       osmbc_version:version.osmbc_version,
                       style:style
-                    }
+                    };
       next();
     }
   );

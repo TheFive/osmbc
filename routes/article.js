@@ -6,9 +6,7 @@ var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
 var path     = require('path');
 var fs       = require('fs');
-var jade     = require('jade');
 
-var util          = require('../util.js');
 var config        = require('../config.js');
 
 var languageFlags = require('../data/languageFlags.js');
@@ -21,7 +19,7 @@ var logModule     = require('../model/logModule.js');
 
 var placeholder = {
   
-}
+};
 
 
 
@@ -36,7 +34,7 @@ function renderArticleId(req,res,next) {
   for (var i=0;i<config.getLanguages();i++) {
     var lang = config.getLanguages()[i];
     if (!(placeholder.markdown[lang])) {
-      placeholder.markdown[lang]=placeholder.markdown["EN"];
+      placeholder.markdown[lang]=placeholder.markdown.EN;
     }
   }
     
@@ -54,8 +52,7 @@ function renderArticleId(req,res,next) {
 
     // Variables for rendering purposes
 
-    // Used for display changes (logModule)
-    var changes = [];
+   
     var categories = blogModule.getCategories();
 
     // Params is used for indicating EditMode
@@ -71,8 +68,7 @@ function renderArticleId(req,res,next) {
     params.right_lang = s.right_lang;
 
 
-    // calculate all used Links for the article
-    var usedLinks = article.calculateLinks();
+ 
 
     async.auto({
       // Find usage of Links in other articles
@@ -88,11 +84,11 @@ function renderArticleId(req,res,next) {
           if (blog) {
             categories = blog.getCategories();
           } else {
-            debug('no blog found !!')
+            debug('no blog found !!');
           }
 
           callback(err,blog);
-        })
+        });
       },
       // Find all log messages for the article
       changes:
@@ -103,7 +99,7 @@ function renderArticleId(req,res,next) {
           debug('renderArticleId->findLog');
 
           callback(err,result);
-        })
+        });
       },
       // (informal) locking information for the article
       edit:
@@ -119,7 +115,7 @@ function renderArticleId(req,res,next) {
           article.doLock(req.user.displayName,callback);
           return;
         } else { 
-          return callback()
+          return callback();
         }
       }},
         function (err,result) {
@@ -134,7 +130,7 @@ function renderArticleId(req,res,next) {
             }
           }
           if (typeof(article.comment)!='undefined') {
-            article.commentHtml = markdown.render(article.comment)
+            article.commentHtml = markdown.render(article.comment);
           } 
 
           // 
@@ -200,7 +196,7 @@ function searchAndCreate(req,res,next) {
                            showCollect:true,
                            categories:blogModule.getCategories(),
                            foundArticles:result});
-  })
+  });
 }
  // Generate Compile Error
 
@@ -231,7 +227,7 @@ function postArticle(req, res, next) {
 
   async.parallel([
       function searchArticle(cb) {
-        debug('postArticle->searchArticle')
+        debug('postArticle->searchArticle');
         if (typeof(id)=='undefined') return cb(); 
         articleModule.findById(id,function(err,result) {
           debug('postArticle->searchArticle->findById');
@@ -241,7 +237,7 @@ function postArticle(req, res, next) {
           returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
           if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
           cb();
-        })
+        });
       },
       function createArticle(cb) {
         debug('postArticle->createArticle');
@@ -254,7 +250,7 @@ function postArticle(req, res, next) {
           article = result;
           returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
           cb();          
-        })
+        });
       }
     ],
     function setValues(err) {
@@ -268,9 +264,9 @@ function postArticle(req, res, next) {
           return;
         }
         res.redirect(returnToUrl);    
-      })
+      });
     }
-  )
+  );
 }
 
 function createArticle(req, res, next) {
@@ -300,11 +296,12 @@ function createArticle(req, res, next) {
           }
         }
         callback();
-      })
+      });
     }
     ],
     function finalFunction(err) {
       debug('createArticle->finalFunction');
+        if (err) return next(err);
         should.exist(res.rendervar);
         res.render("collect",{layout:res.rendervar.layout,
                               search:"",
@@ -316,7 +313,7 @@ function createArticle(req, res, next) {
 }
  
 
-function search(req, res, next) {
+function searchArticles(req, res, next) {
   debug('search');
   var search = req.query.search;
   if (!search || typeof(search)=='undefined') search = "";
@@ -325,13 +322,13 @@ function search(req, res, next) {
   async.series([
     function doSearch(cb) {
       debug('search->doSearch');
-      if (search != "") {
+      if (search !== "") {
         articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,r){
           debug('search->doSearch->fullTextSearch');
           if (err) return cb(err);
           result = r;
           cb();
-        })            
+        });            
       }
       else return cb();
     }
@@ -383,16 +380,17 @@ function renderList(req,res,next) {
           debug('renderList->findArticleFunction->find');
           articles = result;
           callback();
-        })
+        });
       }
 
     ],function finalFunction(error) {
       debug('renderList->finalFunction');
+        if (error) return next(error);
         should.exist(res.rendervar);
         res.render('articlelist',{layout:res.rendervar.layout,
                                   articles:articles});      
     }
-  )
+  );
 }
 
 
@@ -406,14 +404,14 @@ exports.renderList = renderList;
 exports.postArticle = postArticle;
 exports.createArticle = createArticle;
 exports.searchAndCreate = searchAndCreate;
-exports.search = search;
+exports.searchArticles = searchArticles;
 
 
 // And configure router to use render Functions
 router.get('/list', exports.renderList);
 router.get('/create',exports.createArticle);
 router.get('/searchandcreate',exports.searchAndCreate);
-router.get('/search',exports.search);
+router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
 
 router.get('/:article_id', exports.renderArticleId );

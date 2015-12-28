@@ -1,5 +1,4 @@
 var express = require('express');
-var async   = require('async');
 var should = require('should');
 var router = express.Router();
 var debug = require('debug')('OSMBC:routes:changes');
