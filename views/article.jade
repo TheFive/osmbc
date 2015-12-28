@@ -100,6 +100,7 @@ block content
           .col-md-5
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
+             p(id="categoryDisplay" style={color:'Gray'})
 
           .col-md-1
             button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
@@ -415,6 +416,12 @@ block scripts
       onchangeLEFT();
       onchangeRIGHT();
 
+      categoryDisplay = document.getElementById("categoryDisplay");
+      categoryEN = document.getElementById("categoryEN");
+      categoryEN.onchange = onchangeCategory;
+      onchangeCategory();
+
+
     }
 
     function onleaveLEFT() {
@@ -674,5 +681,17 @@ block scripts
 
 
 
+      var placeholder = !{JSON.stringify(placeholder.categories)}
+
+
+    
+
+      function onchangeCategory() {
+        var c = categoryEN.value;
+        if (placeholder[c]) {
+           categoryDisplay.innerHTML = placeholder[c];    
+          }
+      }
+   
 
 
