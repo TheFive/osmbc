@@ -535,12 +535,26 @@ block scripts
 
     }
 
+    function checkForTable(field) {
+      var md = document.getElementById(field).value;
+      var f = document.getElementById(field);
+      if (!f) return;
+      if (md.indexOf("|----")>= 0) {
+        f.wrap = 'off';
+        }
+      else {
+        f.wrap = 'on';
+        }
+    }
+
     
     function onchangeLEFT() {
       var md = document.getElementById("markdownLEFT").value;
       previewLEFT = document.getElementById("previewLEFT");
       textLeft = document.getElementById("text_left");
 
+
+      checkForTable("markdownLEFT");
       FitToContent("markdownLEFT");
       
       previewLEFT.innerHTML = convert(md);
@@ -565,6 +579,7 @@ block scripts
       textRight = document.getElementById("text_right");
       textLeft = document.getElementById("text_left");
       //console.log("beforeFit");
+      checkForTable("markdownRIGHT");
       FitToContent("markdownRIGHT");
       //console.log("AfterFit");
       previewRIGHT.innerHTML = convert(mdEN);
