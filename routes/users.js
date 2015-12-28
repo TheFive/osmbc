@@ -45,7 +45,7 @@ function renderUserId(req, res, next) {
   var id = req.params.user_id;
   should.exist(id);
   var params = {};
-  if (req.query.edit) params.edit = req.query.edit;
+  if (req.query.edit) params.edit = (req.query.edit==="true");
   if (req.query.numberconfig) params.numberconfig = req.query.numberconfig;
   var user;
   var changes;
