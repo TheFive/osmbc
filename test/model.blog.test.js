@@ -463,18 +463,26 @@ describe('model/blog', function() {
       };        
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
     });
-    it('should close a blog and not create new if there is one open',function(bddone){
+    it('should close 2 blog and not create new if there is one open and should not be started twice',function(bddone){
       var time = (new Date()).toISOString();
       var dataBefore = {blog:[
+              {name:"WN0",status:"open",startDate:"2015-01-01",endDate:time},
               {name:"WN1",status:"open",startDate:"2015-01-01",endDate:time},
               {name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},
               {name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"}]};
       var dataAfter = {blog:[
+              {name:"WN0",status:"edit",startDate:"2015-01-01",endDate:time},
               {name:"WN1",status:"edit",startDate:"2015-01-01",endDate:time},
               {name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},
               {name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"}]};
       var testFunction = function testFunction(cb) {
-        blogModule.autoCloseBlog(cb);
+        async.parallel([
+          blogModule.autoCloseBlog,
+          blogModule.autoCloseBlog,
+          ], function (err){
+            should.not.exist(err);
+            cb();
+          });
       };        
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
 

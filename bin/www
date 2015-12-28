@@ -5,9 +5,12 @@
  */
 
 var app = require('../app');
+
 var config = require('../config.js');
 var debug = require('debug')('osmbc:server');
 var http = require('http');
+
+var blogModule = require('../model/blog.js');
 
 /**
  * Get port from environment and store in Express.
@@ -30,6 +33,15 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 console.log("Server Listening on port "+port);
+
+blogModule.startAllTimers(function(err){
+  if (err) {
+    console.log("Error starting timer");
+    console.dir(err);
+    return;
+  }
+  console.log("Timer for Auto Close started");
+})
 
 
 /**

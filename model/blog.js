@@ -19,6 +19,7 @@ var logModule           = require('../model/logModule.js');
 var userModule          = require('../model/user.js');
 var categoryTranslation = require('../data/categoryTranslation.js');
 var editorStrings       = require('../data/editorStrings.js');
+var schedule            = require('node-schedule');
 
 var pgMap = require('./pgMap.js');
 var debug = require('debug')('OSMBC:model:blog');
@@ -112,6 +113,7 @@ function setAndSave(user,data,callback) {
 
     },function(err) {
       if (err) return callback(err);
+      self.startCloseTimer();
       self.save(callback);
     });
   });
@@ -264,30 +266,62 @@ function createNewBlog(proto,callback) {
   });
 }
 
+Blog.prototype.autoClose = function autoClose(cb) {
+  debug("autoClose");
+  if (!this.endDate) return cb();
+
+  var time = new Date().getTime();
+  var endDateBlog = (new Date(this.endDate)).getTime();
+  if (endDateBlog <= time) {
+    var changes = {status:"edit"};
+    this.setAndSave("autoclose",changes,function(err){
+      cb(err);
+    });
+  } else cb();
+};
+
+var _autoCloseRunning = false;
+
+
 
 function autoCloseBlog(callback) {
   debug("autoCloseBlog");
+  // Do not run this function twice !
+  if (_autoCloseRunning) return callback();
+  _autoCloseRunning = true;
 
 
-  this.findOne({status:"open"},{column:"endDate",desc:false},function(err,result) {
-    if (err) return callback(err);
-    if (!result) return callback();
-    var time = new Date().getTime();
-    var endDateBlog = (new Date(result.endDate)).getTime();
-    if (endDateBlog <= time) {
-      var changes = {status:"edit"};
-      result.setAndSave("autoclose",changes,function(err){
-        if (err) return callback(err);
+ 
+
+  exports.find({status:"open"},{column:"endDate",desc:false},function(err,result) {
+    if (err) {
+        _autoCloseRunning = false;
+      return callback(err);
+    }
+    if (!result) {
+       _autoCloseRunning = false;
+       return callback();
+    }
+    async.series([
+      function closeAllBlogs(cb) {
+        async.each(result,function(data,cb){
+          data.autoClose(cb);
+        },function finish() {cb();});        
+      },
+      function createNewBlog(cb) {
         exports.findOne({status:"open"},function(err,result){
-          if (err) return callback(err);
+          if (err) return cb(err);
           if (!result) {
-            exports.createNewBlog(callback);
+            exports.createNewBlog(cb);
             return;
-          }
-          callback();
+          } 
+          cb();
         });
+      } 
+    ],function(err){
+        _autoCloseRunning = false;
+        callback(err);
       });
-    } else return callback();
   });
 }
 
@@ -580,7 +614,38 @@ function isEditable(lang) {
 }
 
 
+var _allTimer = {};
 
+Blog.prototype.startCloseTimer = function startCloseTimer() {
+  debug("startCloseTimer");
+
+  // if there is a timer, stop it frist, than decide a new start
+  if (_allTimer[this.id]) {
+    _allTimer[this.id].cancel();
+    _allTimer[this.id] = null;
+  }
+  if (this.status!="open") return;
+  if (this.endDate) {
+    var date = new Date(this.endDate);
+    console.log("Setting timer to "+date);
+    _allTimer[this.id] = schedule.scheduleJob(date,function(){
+      console.log("Timer Called");
+      exports.autoCloseBlog(function(){});
+    });
+  }
+};
+
+exports.startAllTimers = function startAllTimers(callback) {
+  debug("startAllTimers");
+  exports.find({status:"open"},function(err,result) {
+    if (err) return callback(err);
+    if (!result) return callback();
+    for (var i=0;i<result.length;i++) {
+      result[i].startCloseTimer();
+    }
+    exports.autoCloseBlog(callback);
+  });
+};
 
 // Prototype Functions
 

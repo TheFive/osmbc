@@ -40,9 +40,9 @@ function getListOfOrphanBlog(callback) {
       pgdone();
       return (callback(err));
     }
+    listOfOrphanBlog = [];
     var query = client.query('select name from "OpenBlogWithArticle" order by name');
     debug("reading list of open blog");
-    listOfOrphanBlog = [];
     query.on('row',function(row) {
       listOfOrphanBlog.push(row.name);
     });

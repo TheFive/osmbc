@@ -27,7 +27,7 @@ function findBlogByRouteId(id,callback) {
     blogModule.find({name:id},function(err,r) {
       if (err) return cb(err);
       if (r.length===0) return cb();
-      if (r.length>1) return cb(new Error("Blog >"+id+"< exists twice"));
+      if (r.length>1) return cb(new Error("Blog >"+id+"< exists twice, internal id of first: "+r[0].id));
       if (r) blog= r[0];
       return cb();
     });

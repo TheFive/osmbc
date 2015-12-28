@@ -25,7 +25,7 @@ block content
 
           
     if (params && params.edit) 
-      form(name="input", action="#{layout.htmlroot}/blog/edit/#{blog.name}", method="post")
+      form(name="input", action="#{layout.htmlroot}/blog/edit/#{blog.id}", method="post")
         .row
           .col-md-2
             | Name 
@@ -51,11 +51,6 @@ block content
               option(value="open") open
               option(value="edit") edit
               option(value="close") closed
-        .row
-          .col-md-2
-            | Image 
-          .col-md-6
-            textarea.form-control(name ="markdownImage" ,rows = 7) #{blog.markdownImage} 
  
         .row
           .col-md-2
@@ -125,12 +120,6 @@ block content
             a(href="#{layout.htmlroot}/article/list?blog=#{blog.name}") List of all articles 
           p 
             Use this link to go to "unlinked" articles.
-      .row
-        .col-md-2
-          | Markdown <br> Image 
-        .col-md-6
-          .panel.panel-default
-            .panel-body #{blog.markdownImage}
       
       .row
         .col-md-2

@@ -25,13 +25,14 @@
     "moment": "^2.10.6",
     "morgan": "~1.6.1",
     "node-jsdom": "^3.1.5",
+    "node-schedule": "^0.6.0",
     "passport": "^0.3.2",
     "passport-openstreetmap": "^0.1.2",
     "pg": "^4.4.3",
     "progress": "^1.1.8",
     "request": "^2.67.0",
     "serve-favicon": "~2.3.0",
-    "session-file-store": "0.0.24",
+    "session-file-store": "0.0.21",
     "should": "^8.0.2"
   },
   "devDependencies": {
