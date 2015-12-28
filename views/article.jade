@@ -186,17 +186,18 @@ block content
           
 
         .row
-          .col-md-1
-            |Preview
-          +leftcolumn
-            .panel.panel-default.panel-body(id="previewLEFT")
-                :verbatim
-                  !{article["textHtml"+params.left_lang]}
-          +rightcolumn
-            .panel.panel-default
-              .panel-body(id="previewRIGHT")
-                :verbatim
-                  !{article["textHtml"+params.right_lang]}
+          if article.categoryEN != "Picture"
+            .col-md-1
+              |Preview
+            +leftcolumn
+              .panel.panel-default.panel-body(id="previewLEFT")
+                  :verbatim
+                    !{article["textHtml"+params.left_lang]}
+            +rightcolumn
+              .panel.panel-default
+                .panel-body(id="previewRIGHT")
+                  :verbatim
+                    !{article["textHtml"+params.right_lang]}
         .row
           .col-md-1
             |Comment <br>
@@ -270,20 +271,21 @@ block content
               .panel.panel-default
                 .panel-body #{article["markdown"+params.right_lang]}
       .row
-        .col-md-1
-          |Preview
+        if article.categoryEN != "Picture"
+          .col-md-1
+            |Preview
 
-        +leftcolumn 
-          .panel.panel-default
-            .panel-body(id="previewLEFT")
-                :verbatim
-                  !{article["textHtml"+params.left_lang]}
-        +rightcolumn 
-          .panel.panel-default
-            .panel-body(id="previewRIGHT")
-                :verbatim
-                  !{article["textHtml"+params.right_lang]}
-        
+          +leftcolumn 
+            .panel.panel-default
+              .panel-body(id="previewLEFT")
+                  :verbatim
+                    !{article["textHtml"+params.left_lang]}
+          +rightcolumn 
+            .panel.panel-default
+              .panel-body(id="previewRIGHT")
+                  :verbatim
+                    !{article["textHtml"+params.right_lang]}
+          
       .row
          if (article.comment && article.comment!="")
           .col-md-1
@@ -450,6 +452,12 @@ block scripts
       
 
       text = '<ul><li>'+text+'</li></ul>';
+
+      if (document.getElementById("categoryEN").value=="Picture") {
+         text = '<ul><li>Live Preview not supported here</li></ul>';
+
+        
+        }
       
       return text;
 
