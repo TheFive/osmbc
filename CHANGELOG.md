@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.5.0](https://github.com/TheFive/osmbc/tree/0.5.0) (2015-12-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.7...0.5.0)
+
+**Implemented enhancements:**
+
+- Load public name from blog.openstreetmap.de for every author. [\#226](https://github.com/TheFive/osmbc/issues/226)
+- Switch to node.js 4.\(2.x\)  [\#225](https://github.com/TheFive/osmbc/issues/225)
+
+**Closed issues:**
+
+- Add a link to the generated Author text for the Weekly. [\#223](https://github.com/TheFive/osmbc/issues/223)
+- translationXX views with orange highlights for untranslated entries [\#222](https://github.com/TheFive/osmbc/issues/222)
+- time controlled closing of collection - depending from our editorial deadline [\#221](https://github.com/TheFive/osmbc/issues/221)
+
 ## [0.4.7](https://github.com/TheFive/osmbc/tree/0.4.7) (2015-12-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6b...0.4.7)
 
@@ -65,7 +79,6 @@
 
 - Change Text for Ort and Town to Where and Wo in Calender2Markdown tool. [\#199](https://github.com/TheFive/osmbc/issues/199)
 - Blog History is not shown in Blog Views. [\#198](https://github.com/TheFive/osmbc/issues/198)
-- Error storing session object. [\#151](https://github.com/TheFive/osmbc/issues/151)
 
 ## [0.4.2a](https://github.com/TheFive/osmbc/tree/0.4.2a) (2015-12-14)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.2...0.4.2a)
