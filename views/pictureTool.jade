@@ -2,47 +2,83 @@ extends layout
 
 
 block content
-  h1
-    | Current OSM Wiki Calender as Markdown
-  p
-    | This is a view on the calender in OpenStreetMap.
-    | It displays the events from today until 3 weeks.<br>
-    | Markdown is converted and previewed on this page.
-    | OSMBC tries to have a nice looking markdown table, if this disturbs your edit experience
-    | please disable prettifying.
-    | You can copy the markdown to an article (or copy the HTML direct to WP).
-  form(name="input", action="#{layout.htmlroot}/tool/calender2markdown", method="post")
-    .row
-      .col-md-3
-        .checkbox 
-         label
-          if (!disablePrettify)
-            input(type='checkbox', id='disable',name="disablePrettify" value='true')
-          else
-            input(type='checkbox', id='disable',name="disablePrettify" value='true' checked)
 
-          | Disable Prettify Table  
-      .col-md-1
-        select(id="calenderLanguage",name="calenderLanguage").form-control
-          option(value="#{calenderLanguage}" selected) #{calenderLanguage}
+  if warning
+    each w in warning
+      .alert.alert-dismissable.alert-danger
+        button.close( type="button", data-dismiss="alert" ) ×
+        |#{w}
+    
+  h1
+    | Generate OSMBC Picture Markdown
+  p
+    | An <b>experimental</b> tool for generating pictures for OSMBC. 
+    | It takes a picture, checking it on size, resizes it to 800px, and puts
+    | some warnings, regarding size and location.
+    | If the picture is under a license, please put it in. CC0 and CC3 are with reference to their license and allow a markdown reference to the author.
+
+  form(name="input", action="#{layout.htmlroot}/tool/picturetool", method="post")
+    .row
+      .col-md-2
+        p
+          |Language
+      .col-md-5
+        select(id="pictureLanguage",name="pictureLanguage").form-control
+          option(value="#{pictureLanguage}" selected) #{pictureLanguage}
           each l in layout.languages
             option(value="#{l}") #{l}
+    .row
+      .col-md-2
+        p
+          | Alternative Text
+      .col-md-9
+        textarea(id="pictureAText" name="pictureAText" rows=1 cols=100 style="font-family:monospace")
+          |#{pictureAText}
+    .row
+      .col-md-2
+        p 
+        |Picture URL
+      .col-md-9
+        textarea(id="pictureURL" name="pictureURL" rows=1 cols=100 style="font-family:monospace")
+          |#{pictureURL}
+    .row
+      .col-md-2
+        p
+          |Subtitle Markup
+      .col-md-9
+        textarea(id="pictureMarkup" name="pictureMarkup" rows=1 cols=100 style="font-family:monospace")
+          |#{pictureMarkup}
+
       .col-md-1
        input(type="submit", class="btn btn-primary",value="OK")
+    .row
+      .col-md-2
+        p
+          |License
+      .col-md-5
+        select(id="pictureLicense",name="pictureLicense").form-control
+          option(value="#{pictureLicense}" selected) #{pictureLicense}
+          - for (l in licenses)
+            option(value="#{l}") #{l}
+    .row
+      .col-md-2
+        p
+          |Picture Author (MD)
+      .col-md-5
+       textarea(id="pictureAuthor" name="pictureAuthor" rows=1 cols=100 style="font-family:monospace")
+          |#{pictureAuthor}
   
        
 
   h3
-    | Markdown, please edit
-  textarea(id="markdown" rows=25 cols=500 style="font-family:monospace")
-    |#{calenderAsMarkdown}
-  h3 
-   | Preview
-  p(id="preview")
+    | Markdown, for Copy
+  textarea(id="markdown" rows=5 cols=500 style="font-family:monospace")
+    |#{genMarkup}
   h3
-    | HTML to copy
-  textarea(id="html" rows=20 cols=500 style="font-family:monospace")
-  
+    | Preview
+    :verbatim
+    !{preview}
+ 
 
 block scripts                
   script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
