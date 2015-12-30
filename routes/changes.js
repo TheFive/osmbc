@@ -10,6 +10,10 @@ function generateHTMLDiff(one,other) {
   debug("generateHTMLDiff");
   if (!one) one = "";
   if (! other) other = "";
+
+  if (typeof(one)!= "string") return "";
+  if (typeof(other)!= "string") return "";
+  
   var diff = jsdiff.diffChars(one, other);
 
   var result = "";
