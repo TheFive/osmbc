@@ -230,14 +230,14 @@ module.exports = {
      "Upcoming Events": {
           "EN": "Upcoming Events",
           "DE": "Wochenvorschau",
-          "ES": "Upcoming Events",
+          "ES": "Próximos eventos",
           "FR": "Upcoming Events",
-          "CZ": "Upcoming Events",
-          "PT": "Upcoming Events",
-          "RU": "Upcoming Events",
+          "CZ": "blížící se akce",
+          "PT": "Próximos eventos",
+          "RU": "Предстоящие события",
           "JP": "Upcoming Events",
           "ID": "Upcoming Events",
-          "TR": "Upcoming Events"
+          "TR": "Gelecek etkinlikler"
      },
      "--unpublished--": {
           "EN": "--unpublished--",
