@@ -1,5 +1,11 @@
 # How to integrate a Picture in OSMBC
 
+## tl&dr
+
+If you do not want to read this article, just try the picture tool found in the menue "Tool". But please read how to embed superscript in this help.
+
+## Definition of markdown
+
 Use an article to integrate a picture. You can collect different picture ideas / links in the collection, but the rendering of the picture is taken out of the markdown, so it can be language specific, and it has to be copied and translated.
 
 Add the picture to the categorie picture and use only one article in this category.
