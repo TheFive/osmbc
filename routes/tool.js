@@ -119,8 +119,9 @@ function renderPictureTool(req,res,next) { //jshint ignore:line
          genMarkup += "\n";
       }
       genMarkup += pictureMarkup;
+      var ltext = generateCCLicense(pictureLicense,pictureLanguage,pictureAuthor);
+      if (ltext !== "") genMarkup += " | "+ltext;
 
-      genMarkup += " | "+generateCCLicense(pictureLicense,pictureLanguage,pictureAuthor);
       var article = articleModule.create();
       article["markdown"+pictureLanguage]=genMarkup;
       article.categoryEN = "Picture";
