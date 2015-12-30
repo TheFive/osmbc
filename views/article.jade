@@ -52,7 +52,7 @@ block content
 
 
           
-    if (params.edit && !(blog.status=="closed") )
+    if (params.edit && !( blog && blog.status=="closed") )
       form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
         .row
           .col-md-1
@@ -154,7 +154,7 @@ block content
           .col-md-1
             |Markdown 
           +leftcolumn
-            if  !blog.isEditable(params.left_lang)
+            if blog && !blog.isEditable(params.left_lang)
               .panel.panel-default
                 .panel-body #{article["markdown"+params.left_lang]}         
             else
@@ -167,7 +167,7 @@ block content
                 |'no translation' or '-' to specify no translation wanted.
  
           +rightcolumn
-            if !blog.isEditable(params.right_lang)
+            if blog && !blog.isEditable(params.right_lang)
               .panel.panel-default
                 .panel-body #{article["markdown"+params.right_lang]}         
             else
@@ -368,7 +368,7 @@ block scripts
   script.
     window.onload = init;
 
-    if ('#{params.edit}'=='true'  && !("#{blog.status}"=="closed")) {
+    if ('#{params.edit}'=='true'  && !("#{(blog)?blog.status:"open"}"=="closed")) {
         window.onbeforeunload = function(event) {
           event.returnValue = "Please use Cancel or OK to remove lock information.";
       };
