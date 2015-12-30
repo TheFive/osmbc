@@ -64,10 +64,10 @@ function renderPictureTool(req,res,next) { //jshint ignore:line
   debug('renderPictureTool');
 
   var pictureLanguage = "DE";
-  var pictureURL = "";
-  var pictureMarkup = "";
-  var pictureAText = "";
-  var pictureLicense = "CC0";
+  var pictureURL = "http://blog.openstreetmap.de/wp-content/themes/osmblog/images/headers/blog.png";
+  var pictureMarkup = "Some cool markdown text with [^1^](#blog_article) superscript";
+  var pictureAText = "Logo";
+  var pictureLicense = "CC3";
   var pictureAuthor = "[Author Name](LINK)";
   var sessionData = req.session.pictureTool;
   
