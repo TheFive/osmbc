@@ -552,13 +552,19 @@ block scripts
 
     function checkForTable(field) {
       var md = document.getElementById(field).value;
+      var cl = document.getElementById("collection");
+
       var f = document.getElementById(field);
+      if (!cl) cl = f;
       if (!f) return;
       if (md.indexOf("|----")>= 0) {
         f.wrap = 'off';
+        f.style.fontFamily="monospace"
         }
       else {
         f.wrap = 'on';
+        f.style.fontFamily = cl.style.fontFamily;
+
         }
     }
 
