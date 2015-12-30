@@ -16,10 +16,12 @@ function generateHTMLDiff(one,other) {
   diff.forEach(function(part){
     // green for additions, red for deletions
     // grey for common parts
-    var color = part.added ? 'green' :
-      part.removed ? 'red' : 'grey';
+    var styleColor               = 'style="color:grey"';
+    if (part.added) styleColor   = 'style="background-color:green;color:white"';
+    if (part.removed) styleColor = 'style="background-color:red;color:white"';
+  
 
-    result += '<span style="color:'+color+'">'+part.value+'</span>';
+    result += '<span '+styleColor+'>'+part.value+'</span>';
   });  
   return result;
 }

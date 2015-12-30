@@ -66,7 +66,7 @@ describe('routes/changes',function() {
             var renderData = call.args[1];
             should(renderData.layout).equal("TEMP");
             should(renderData.change).eql({titel:"Hallo",id:"1",from:"First Text",to:"First new test",timestamp:timestamp.toISOString()});
-            should(renderData.coloredChange).eql('<span style="color:grey">First </span><span style="color:red">T</span><span style="color:green">n</span><span style="color:grey">e</span><span style="color:red">x</span><span style="color:green">w </span><span style="color:grey">t</span><span style="color:green">est</span>');
+            should(renderData.coloredChange).eql('<span style="color:grey">First </span><span style="background-color:red;color:white">T</span><span style="background-color:green;color:white">n</span><span style="color:grey">e</span><span style="background-color:red;color:white">x</span><span style="background-color:green;color:white">w </span><span style="color:grey">t</span><span style="background-color:green;color:white">est</span>');
             //should(renderData.moment).equal(moment);
             bddone();            
           }
