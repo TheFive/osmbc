@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.5.4](https://github.com/TheFive/osmbc/tree/0.5.4) (2015-12-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.3...0.5.4)
+
+**Closed issues:**
+
+- bug during editing articles on OSX with Chrome and Safari - NOT with FF [\#232](https://github.com/TheFive/osmbc/issues/232)
+
+## [0.5.3](https://github.com/TheFive/osmbc/tree/0.5.3) (2015-12-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.2...0.5.3)
+
 ## [0.5.2](https://github.com/TheFive/osmbc/tree/0.5.2) (2015-12-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.1...0.5.2)
 
