@@ -1,7 +1,6 @@
 var should = require('should');
 var async = require('async');
 var sinon = require('sinon');
-var moment = require('moment');
 var logRoutes = require('../routes/changes.js');
 var logModule = require('../model/logModule.js');
 var testutil = require('./testutil.js');
@@ -20,10 +19,11 @@ describe('routes/changes',function() {
         req.params.change_id = newId;
         var res = {};
         res.rendervar = {layout:"TEMP"};
+        var next;
 
         async.series([
           function(callback) {
-            res.render = sinon.spy(callback)
+            res.render = sinon.spy(callback);
             next = sinon.spy(callback);
             logRoutes.renderChangeId(req,res,next);
           }],
@@ -33,9 +33,9 @@ describe('routes/changes',function() {
             should(res.render.called).be.false();
             bddone();            
           }
-        )
-      })
-    })
+        );
+      });
+    });
     it('should call prepare rendering',function(bddone) {
       var timestamp = new Date();
       logModule.log({titel:"Hallo",from:"First Text",to:"First new test",timestamp:timestamp},function(err) {
@@ -47,14 +47,16 @@ describe('routes/changes',function() {
         req.params.change_id = newId;
         var res = {};
         res.rendervar = {layout:"TEMP"};
+        var next;
 
         async.series([
           function(callback) {
-            res.render = sinon.spy(callback)
+            res.render = sinon.spy(callback);
             next = sinon.spy(callback);
             logRoutes.renderChangeId(req,res,next);
           }],
-          function(err) {
+          function() {
+            
             
             should(next.called).be.false();
             should(res.render.called).be.true();
@@ -68,11 +70,11 @@ describe('routes/changes',function() {
             //should(renderData.moment).equal(moment);
             bddone();            
           }
-        )
-      })
-    })
-  })
-})
+        );
+      });
+    });
+  });
+});
 
 
 
