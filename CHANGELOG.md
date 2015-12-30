@@ -1,12 +1,24 @@
 # Change Log
 
+## [0.5.2](https://github.com/TheFive/osmbc/tree/0.5.2) (2015-12-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.1...0.5.2)
+
+**Implemented enhancements:**
+
+- translations of Upcoming Events are more or less ready [\#235](https://github.com/TheFive/osmbc/issues/235)
+- Use kpdecker/jsdiff to show differences in Change Object [\#3](https://github.com/TheFive/osmbc/issues/3)
+
+**Fixed bugs:**
+
+- below the \*Próximos eventos\*  [\#236](https://github.com/TheFive/osmbc/issues/236)
+- include new blogstatus\_3.pdf please [\#234](https://github.com/TheFive/osmbc/issues/234)
+
 ## [0.5.1](https://github.com/TheFive/osmbc/tree/0.5.1) (2015-12-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.0...0.5.1)
 
 **Implemented enhancements:**
 
 - Put the category description in help. [\#228](https://github.com/TheFive/osmbc/issues/228)
-- Allow horizontal Scrolling for markdown that contains table. [\#202](https://github.com/TheFive/osmbc/issues/202)
 - Create a list of all contributors of an issue [\#42](https://github.com/TheFive/osmbc/issues/42)
 
 **Fixed bugs:**
