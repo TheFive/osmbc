@@ -50,8 +50,8 @@ function postCalenderAsMarkdown(req,res,next) { //jshint ignore:line
 
 function generateCCLicense(license,lang,author){
   debug("generateCCLicense");
-  if (!license || license == "") license = "CC0"
-  if (!lang || lang == "") lang = "EN";
+  if (!license || license === "") license = "CC0";
+  if (!lang || lang === "") lang = "EN";
   if (!author) author = "";  
   console.log(license);
   console.dir(licenses);
@@ -60,7 +60,7 @@ function generateCCLicense(license,lang,author){
   return text.replace("##author##",author);
 } 
 
-function renderPictureTool(req,res,next) {
+function renderPictureTool(req,res,next) { //jshint ignore:line
   debug('renderPictureTool');
 
   var pictureLanguage = "DE";
@@ -102,8 +102,8 @@ function renderPictureTool(req,res,next) {
       var sizeX = 100;
       var sizeY = 100;
       try {
-        var sizeX = sizeOf(buffer).width;
-        var sizeY = sizeOf(buffer).height;
+        sizeX = sizeOf(buffer).width;
+        sizeY = sizeOf(buffer).height;
       } catch (err) {
         warning.push(err);
       }
@@ -116,7 +116,7 @@ function renderPictureTool(req,res,next) {
       sizeX = 800; 
       genMarkup = "!["+pictureAText+"]("+pictureURL+ " ="+sizeX+"x"+sizeY+")\n";
       if (pictureLanguage=="DE") {
-         genMarkup += "\n"
+         genMarkup += "\n";
       }
       genMarkup += pictureMarkup;
 
@@ -141,9 +141,9 @@ function renderPictureTool(req,res,next) {
   
 
 
-  request.on('error',function(err) {
+  request.on('error',function() {
     console.log("error");
-    warning.push(">"+pictureURL+"< pictureURL not found")
+    warning.push(">"+pictureURL+"< pictureURL not found");
    
     res.render('pictureTool',{genMarkup:"picture not found",
                               warning:warning,
@@ -157,19 +157,19 @@ function renderPictureTool(req,res,next) {
                               pictureAuthor:pictureAuthor,
                               layout:res.rendervar.layout});  
 
-  })
+  });
   request.end();
 
 }
 function postPictureTool(req,res,next) { //jshint ignore:line
   debug('postPictureTool');
 
-  pictureLanguage = req.body.pictureLanguage;
-  pictureURL = req.body.pictureURL;
-  pictureMarkup = req.body.pictureMarkup;
-  pictureAText = req.body.pictureAText;
-  pictureLicense = req.body.pictureLicense;
-  pictureAuthor = req.body.pictureAuthor;
+  var pictureLanguage = req.body.pictureLanguage;
+  var pictureURL = req.body.pictureURL;
+  var pictureMarkup = req.body.pictureMarkup;
+  var pictureAText = req.body.pictureAText;
+  var pictureLicense = req.body.pictureLicense;
+  var pictureAuthor = req.body.pictureAuthor;
 
   req.session.pictureTool = {pictureLanguage:pictureLanguage,
                               pictureURL:pictureURL,
