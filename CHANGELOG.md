@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.5.6](https://github.com/TheFive/osmbc/tree/0.5.6) (2015-12-31)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.5...0.5.6)
+
+**Implemented enhancements:**
+
+- Show articles changes by an author in statistic view. [\#239](https://github.com/TheFive/osmbc/issues/239)
+- a list with all articles per blog, sortable by persons who initally collected the article [\#227](https://github.com/TheFive/osmbc/issues/227)
+
 ## [0.5.5](https://github.com/TheFive/osmbc/tree/0.5.5) (2015-12-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.4...0.5.5)
 
@@ -14,7 +22,7 @@
 ## [0.5.4](https://github.com/TheFive/osmbc/tree/0.5.4) (2015-12-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.3...0.5.4)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - bug during editing articles on OSX with Chrome and Safari - NOT with FF [\#232](https://github.com/TheFive/osmbc/issues/232)
 
