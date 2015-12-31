@@ -81,6 +81,12 @@ exports.importData = function importData(data,callback) {
   debug('importData');
 
   async.series([
+    function clearDB(cb1) {
+      debug('clearDB');
+      if (data.clear) {  
+        exports.clearDB(cb1);
+      } else cb1();
+    },
     function importAllUsers(cb1) {
       debug('importAllUsers');
       if (typeof(data.user)!='undefined') {  

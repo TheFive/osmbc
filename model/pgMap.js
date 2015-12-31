@@ -1,17 +1,24 @@
 var pg     = require('pg');
 var should = require('should');
 var async  = require('async');
-var debug  = require('debug')('OSMBC:model:pgMap')
+var debug  = require('debug')('OSMBC:model:pgMap');
 
 var config = require('../config.js');
 var util = require('../util.js');
 
 function generateQuery(table,obj,order) {
   debug('generateQuery');
+
   var whereClause = "";
 
   if (typeof(obj)=='string') {
     whereClause = obj;
+
+    // if there is a select statement, expect and id and data, and take it.
+    if (obj.substring(0,6)==="select") {
+      debug(obj);
+      return obj;
+    }
   } else {
     if (obj) {
       for (var k in obj) {
@@ -29,7 +36,7 @@ function generateQuery(table,obj,order) {
 
         var n = "data->>'"+k+"'"+op+"'"+value+"'"; 
 
-        if (value=="") {
+        if (value==="") {
           if (op == "=") {
             n = "("+n+" or (data->'"+k+"') is null)";
           }
@@ -37,7 +44,7 @@ function generateQuery(table,obj,order) {
             n = "("+n+" and (data->'"+k+"') is not null)";
           }
         }
-        if (whereClause =="") whereClause = " where "+n;
+        if (whereClause ==="") whereClause = " where "+n;
         else whereClause += " and "+n;
       }    
     }
@@ -67,7 +74,7 @@ module.exports.save = function(callback) {
   var table = self._meta.table;
 
   // first check, wether ID is known or not
-  if (self.id == 0) {
+  if (self.id === 0) {
     // we have to create the object
     debug("Object has to be created");
 
@@ -85,16 +92,16 @@ module.exports.save = function(callback) {
       query.on('row',function(row) {
         debug("Created Row ID %s",row.id);
         self.id = row.id;
-      })
-      query.on('end',function (result) {
+      });
+      query.on('end',function () {
 
         var endTime = new Date().getTime();
-       // console.log("SQL: ["+ (endTime - startTime)/1000 +"] insert to "+ table);
+        debug("SQL: ["+ (endTime - startTime)/1000 +"] insert to "+ table);
         
         pgdone();
         return callback(null,self);
-      })
-    })
+      });
+    });
   } else {
     debug("Object will be updated, current version is %s",self.version);
     // we have to change the beer
@@ -110,8 +117,8 @@ module.exports.save = function(callback) {
           var query = client.query("select (data->>'version')::int as version from "+table+" where id = $1",[self.id]);
             var startTime = new Date().getTime();
             query.on('row',function(row) {
-            debug('Version in Database %s',row.version)
-            if (row.version==null) {
+            debug('Version in Database %s',row.version);
+            if (row.version===null) {
               // No Data in Database, so no conflict.
               versionsEqual = true;
             }
@@ -119,17 +126,17 @@ module.exports.save = function(callback) {
               debug('No Error');
               versionsEqual = true;
             }
-          })
-          query.on('end',function(result){
+          });
+          query.on('end',function(){
             var err = null;
             var endTime = new Date().getTime();
-         //   console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
+            debug("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
             if (!versionsEqual) {
-              debug('send error')
+              debug('send error');
               err = new Error("Version Number Differs");
             }
             return cb(err);
-          })
+          });
         }
         ],
         function(err) {
@@ -146,19 +153,19 @@ module.exports.save = function(callback) {
           query.on('end',function (result) {
             pgdone();
             return callback(null,result);
-          })
+          });
         }
-      )
-    })
+      );
+    });
   }
-}
+};
 
 module.exports.remove = function(callback) {
   debug("remove");
   var self = this;
   var table = self._meta.table;
   // first check, wether ID is known or not
-  if (self.id == 0) {
+  if (self.id === 0) {
     // we have to create the beer
     callback(new Error("ID is zero, transient object not deleted."));
     return;
@@ -177,9 +184,9 @@ module.exports.remove = function(callback) {
       
       pgdone();
       callback(null,result);
-    })
-  })
-}
+    });
+  });
+};
 
 module.exports.find = function find(module,obj,order,callback) {
   debug("find");
@@ -200,7 +207,7 @@ module.exports.find = function find(module,obj,order,callback) {
   pg.connect(config.pgstring, function find_pgConnect(err, client, pgdone) {
     debug('find_pgConnect');
     if (err) {
-      console.log("Connection Error")
+      console.log("Connection Error");
       console.dir(err);
       pgdone();
       return (callback(err));
@@ -227,15 +234,15 @@ module.exports.find = function find(module,obj,order,callback) {
       pgdone();
       callback(error);
     });
-    query.on('end',function findEndFunction(pgresult) {   
+    query.on('end',function findEndFunction() {   
       debug('findEndFunction');
       var endTime = new Date().getTime();
-     // console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
+      debug("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
       pgdone();
       callback(null,result);
     });
-  })
-}
+  });
+};
 
 
 
@@ -256,8 +263,7 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
       pgdone();
       return (callback(err));
     }
-    var table = module.table;
-
+ 
     var result = [];
 
     var orderBy = "";
@@ -305,19 +311,19 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
       }
       r.id = row.id;
       result.push(r);
-    })
-    query.on('end',function (pgresult) {    
+    });
+    query.on('end',function () {    
       pgdone();
       var endTime = new Date().getTime();
-     // console.log("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
+      debug("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
       callback(null,result);
-    })
+    });
     query.on('error',function (err) {    
       pgdone();
       callback(err);
-    })
-  })
-}
+    });
+  });
+};
 
 
 module.exports.findById = function findById(id,module,callback) {
@@ -347,19 +353,18 @@ module.exports.findById = function findById(id,module,callback) {
         result[k]=row.data[k];
       }
       result.id = row.id;
-    })
-    query.on('end',function (pgresult) {    
+    });
+    query.on('end',function () {    
       pgdone();
       var endTime = new Date().getTime();
-     // console.log("SQL: ["+ (endTime - startTime)/1000 +"] Select by id from "+ table);
+      debug("SQL: ["+ (endTime - startTime)/1000 +"] Select by id from "+ table);
       callback(null,result);
-    })
-  })
-}
+    });
+  });
+};
 
 module.exports.findOne = function findOne(module,obj,order,callback) {
   debug("findOne");
-  var table = module.table;
   if (typeof(obj)=='function') {
     callback = obj;
     obj = null;
@@ -389,15 +394,15 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
         result[k]=row.data[k];
       }
       result.id = row.id;
-    })
-    query.on('end',function (pgresult) {
+    });
+    query.on('end',function () {
       pgdone();
       var endTime = new Date().getTime();
-     // console.log("SQL: ["+ (endTime - startTime)/1000 +"]"+ sqlQuery);
+      debug("SQL: ["+ (endTime - startTime)/1000 +"]"+ sqlQuery);
       callback(null,result);      
-    })
-  })
-}
+    });
+  });
+};
 
 
 exports.createTable = function(table,createString,createView,cb) {
@@ -419,20 +424,20 @@ exports.createTable = function(table,createString,createView,cb) {
         return;
       }
       debug('%s Table Created',table);
-      if (typeof(createView)!='') {
+      if (createView!=='') {
         client.query(createView,function(err){
           debug('%s Index Created',table);
           cb(err);
           pgdone();
-        })
+        });
       } else {
         // No Index to be defined, close Function correct
         cb(err);
         pgdone();
       }
-    })
-  })
-} 
+    });
+  });
+}; 
 
 exports.dropTable = function dropTable(table,cb) {
   debug('dropTable');
@@ -452,8 +457,9 @@ exports.dropTable = function dropTable(table,cb) {
       cb(err);
       pgdone();
     });
-    query.on('end',function(){cb(null);pgdone();})
-  })
-}
+    query.on('end',function(){cb(null);pgdone();});
+  });
+};
+
 
 

@@ -39,11 +39,19 @@ block content
             th=v
             -for (u in userlist)
               if logs[v]
-                td=logs[v][u]
+                td
+                  a(href="#{layout.htmlroot}/article/list?blog=#{blog.name}&user=#{u}&property=#{v}") #{logs[v][u]}
               else
                 td
                   | 
 
+  row
+    h2
+      | Hint for the statistic table
+    p
+      | This table counts the number of property changes for an article in a blog. 
+      | The referenced links show the articles (may be less than edits), that were
+      | changed by the user with the property.
 
   row
     h1
