@@ -453,11 +453,23 @@ function findEmptyUserCollectedArticles(lang,user,callback) {
            where (article.id)::text = changes.data->>'oid' and changes.data->>'table'='article' \
            and changes.data->>'blog' = blog.data->>'name' \
            and article.data->>'blog' != 'Trash' \
+           and changes.data->>'property' = 'collection' \
            and article.data->>'categoryEN' != '--unpublished--' \
            and changes.data->>'user' = '"+user+"' \
            and blog.data->>'status' != 'closed' \
            and ((blog.data->'exported"+lang+"') is null or blog.data->>'exorted"+lang+"'!='true') \
            and ((article.data->'markdown"+lang+"') is null or article.data->>'markdown"+lang+"' = '')";
+
+  pgMap.find(this,query,callback);
+}
+
+function findUserEditFieldsArticles(blog,user,field,callback) {
+  debug('findUserEditFieldsArticles');
+  var query = "select distinct on (article.id) article.id as id, article.data as data from article, changes \
+           where (article.id)::text = changes.data->>'oid' and changes.data->>'table'='article' \
+           and changes.data->>'blog' = '"+blog+"' \
+           and changes.data->>'user' = '"+user+"' \
+           and changes.data->>'property' = '"+field+"'";
 
   pgMap.find(this,query,callback);
 }
@@ -678,6 +690,8 @@ module.exports.createNewArticle = createNewArticle;
 module.exports.find = find;
 
 module.exports.findEmptyUserCollectedArticles = findEmptyUserCollectedArticles;
+
+module.exports.findUserEditFieldsArticles = findUserEditFieldsArticles;
 
 // Find an Article in database by ID
 module.exports.findById = findById;

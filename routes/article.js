@@ -353,23 +353,11 @@ function renderList(req,res,next) {
   debug('renderList');
   req.session.articleReturnTo = req.originalUrl;
   var blog = req.query.blog;
+  var user = req.query.user;
+  var property = req.query.property;
   var myArticles = (req.query.myArticles === "true");
-  var markdownDE = req.query.markdownDE;
-  var markdownEN = req.query.markdownEN;
-  var categoryEN = req.query.categoryEN;
-  var query = {};
-  if (typeof(blog)!='undefined') {
-    query.blog = blog;
-  }
-  if (typeof(markdownDE)!='undefined') {
-    query.markdownDE = markdownDE;
-  }
-  if (typeof(markdownEN)!='undefined') {
-    query.markdownEN = markdownEN;
-  }
-  if (typeof(categoryEN)!='undefined') {
-    query.categoryEN = categoryEN;
-  }
+  var listOfChanges = (typeof(user)=="string" && typeof(property)=="string");
+  var simpleFind = !(listOfChanges || myArticles);
 
   
   var articles;
@@ -377,7 +365,11 @@ function renderList(req,res,next) {
   async.parallel([
       function findArticleFunction(callback) {
         debug('renderList->findArticleFunction');
-        if (myArticles) return callback();
+        if (!simpleFind) return callback();
+        var query = {};
+        if (typeof(blog)!='undefined') {
+          query.blog = blog;
+        }
         articleModule.find(query,{column:"title"},function(err,result) {
           debug('renderList->findArticleFunction->find');
           articles = result;
@@ -387,8 +379,20 @@ function renderList(req,res,next) {
       function findMyArticles(callback) {
         debug('renderList->findMyArticles');
         if (!myArticles) return callback();
-        console.dir(req.user);
+
+  
         articleModule.findEmptyUserCollectedArticles(req.user.language,req.user.displayName,function(err,result) {
+          debug('renderList->findMyArticles->find');
+          articles = result;
+          callback();
+        });
+      },
+      function findUserEditedArticles(callback) {
+        debug('renderList->findMyArticles');
+        if (!listOfChanges) return callback();
+
+  
+        articleModule.findUserEditFieldsArticles(blog,user,property,function(err,result) {
           debug('renderList->findMyArticles->find');
           articles = result;
           callback();
