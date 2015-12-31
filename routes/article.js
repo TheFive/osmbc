@@ -353,6 +353,7 @@ function renderList(req,res,next) {
   debug('renderList');
   req.session.articleReturnTo = req.originalUrl;
   var blog = req.query.blog;
+  var myArticles = (req.query.myArticles === "true");
   var markdownDE = req.query.markdownDE;
   var markdownEN = req.query.markdownEN;
   var categoryEN = req.query.categoryEN;
@@ -376,12 +377,24 @@ function renderList(req,res,next) {
   async.parallel([
       function findArticleFunction(callback) {
         debug('renderList->findArticleFunction');
+        if (myArticles) return callback();
         articleModule.find(query,{column:"title"},function(err,result) {
           debug('renderList->findArticleFunction->find');
           articles = result;
           callback();
         });
+      },
+      function findMyArticles(callback) {
+        debug('renderList->findMyArticles');
+        if (!myArticles) return callback();
+        console.dir(req.user);
+        articleModule.findEmptyUserCollectedArticles(req.user.language,req.user.displayName,function(err,result) {
+          debug('renderList->findMyArticles->find');
+          articles = result;
+          callback();
+        });
       }
+
 
     ],function finalFunction(error) {
       debug('renderList->finalFunction');
