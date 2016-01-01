@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.5.7](https://github.com/TheFive/osmbc/tree/0.5.7) (2016-01-01)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.6...0.5.7)
+
+**Implemented enhancements:**
+
+- Better display on mobile devices. [\#241](https://github.com/TheFive/osmbc/issues/241)
+
 ## [0.5.6](https://github.com/TheFive/osmbc/tree/0.5.6) (2015-12-31)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.5...0.5.6)
 
