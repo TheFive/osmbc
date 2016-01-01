@@ -94,7 +94,7 @@ html(lang='en')
                 li.dropdown-header Action
                 li
                   a(href="#{layout.htmlroot}/blog/create") Create Blog
-            li.dropdown
+            li.dropdown.hidden-xs
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | User 
                 span.caret
@@ -108,7 +108,7 @@ html(lang='en')
                   a(href="#{layout.htmlroot}/usert/list?access=denied") List Denied      
                 li
                   a(href="#{layout.htmlroot}/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
-            li.dropdown
+            li.dropdown.hidden-xs
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | Tool 
                 span.caret
