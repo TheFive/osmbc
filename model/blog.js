@@ -551,7 +551,38 @@ function getPreview(style,user,callback) {
     });
 }
 
+Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) {
+  debug('countUneditedMarkdown');
+  // allready done, nothing to do.
+  if (this._countUneditedMarkdown) return callback();
+  var self = this;
 
+
+  self._countUneditedMarkdown = {};
+
+  articleModule.find({blog:this.name},function (err,result) {
+    if (err) {
+      console.log("Error during count Module");
+      console.dir(err);
+    }
+    for (var i=0;i<config.getLanguages().length;i++) {
+      var l = config.getLanguages()[i];
+      if (!result) {
+        self._countUneditedMarkdown[l]=99;
+      }
+      else {
+        self._countUneditedMarkdown[l]=0;
+        for (var j=0;j<result.length;j++) {
+          if (result[j].categoryEN == "--unpublished--") continue;
+          var m = result[j]["markdown"+l];
+          if (!m || m ==="" ) self._countUneditedMarkdown[l] +=1;
+        }
+      }
+    }
+    console.dir(self);
+    return callback();
+  });
+}
 
 
 function translateCategories(cat) {

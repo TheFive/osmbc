@@ -54,7 +54,9 @@ function prepareRenderLayout(req,res,next) {
         for (var i=0;i<result.length;i++) {
           list.push(result[i]);
         }
-        callback(err,list);
+        async.each(list,function(item,cb){
+          item.countUneditedMarkdown(cb);
+        },function(err){callback(err,list);})
       });
     },
     listOfEditBlog:
@@ -67,7 +69,9 @@ function prepareRenderLayout(req,res,next) {
             list.push(result[i]);
           }
         }
-        callback(err,list);
+        async.each(list,function(item,cb){
+          item.countUneditedMarkdown(cb);
+        },function(err){callback(err,list);})
       });
     },
     listOfReviewBlog:
@@ -81,7 +85,9 @@ function prepareRenderLayout(req,res,next) {
             list.push(result[i]);
           }
         }
-        callback(err,list);
+        async.each(list,function(item,cb){
+          item.countUneditedMarkdown(cb);
+        },function(err){callback(err,list);})
       });
     },
     listOfHelpBlog:
@@ -92,7 +98,9 @@ function prepareRenderLayout(req,res,next) {
         for (var i=0;i<result.length;i++) {
           list.push(result[i]);
         }
-        callback(err,list);
+        async.each(list,function(item,cb){
+          item.countUneditedMarkdown(cb);
+        },function(err){callback(err,list);})
       });
     }},
   
