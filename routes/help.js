@@ -3,7 +3,9 @@ var path = require('path');
 var debug = require('debug')('OSMBC:routes:help');
 var config = require('../config.js');
 
-var markdown = require('markdown-it')();
+var markdown = require("markdown-it")()
+          .use(require("markdown-it-sup"))
+          .use(require("markdown-it-imsize"), { autofill: true });
 
 
 var token = null;

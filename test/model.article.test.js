@@ -291,42 +291,43 @@ describe('model/article', function() {
         });
       });
     });
-    describe('findEmptyUserCollectedArticles',function(){
-      before(function (bddone) {
-        testutil.importData({clear:true,
-                             blog:[{name:"WN1",exportedDE:true,status:"edit"},
-                                   {name:"WNclosed",status:"closed"},
-                                   {name:"WN2",status:"open"},
-                                   {name:"WrongBlog",status:"open"}],
-                             article:[{blog:"WN1",title:"first"},
-                                      {blog:"WN2",title:"second",categoryEN:"cat",markdownEN:"Hallole"},
-                                      {blog:"WNclosed",title:"third"},
-                                      {blog:"WN1",title:"forth"},
-                                      {blog:"WrongBlog",title:"fifth",categoryEN:"cat"}],
-                            change:[{blog:"WN1",property:"collection",user:"test",oid:1,table:"article"},
-                                    {blog:"WN2",property:"collection",user:"test",oid:2,table:"article"},
-                                    {blog:"WN2",property:"collection",user:"test",oid:2,table:"article"},
-                                    {blog:"WN2",property:"collection",user:"test",oid:2,table:"article"},
-                                    {blog:"WNclosed",property:"collection",user:"test",oid:3,table:"article"},
-                                    {blog:"WN2",property:"collection",user:"test2",oid:4,table:"article"},
-                                    {blog:"WrongBlog",property:"markdownDE",user:"test",oid:5,table:"article"}]},bddone);
-      });
-      it('should find all empty article for a user',function(bddone){
-        articleModule.findEmptyUserCollectedArticles("DE","test",function(err,result){
-          should.not.exist(err);
-          should(result.length).eql(1);
-          should(result[0].title).eql("second");
-          bddone();
-        });
-      });
-      it('should find all empty article for a user',function(bddone){
-        articleModule.findEmptyUserCollectedArticles("EN","test",function(err,result){
-          should.not.exist(err);
-          should(result.length).eql(0);
-          bddone();
-        });
+  });
+  describe('findEmptyUserCollectedArticles',function(){
+    before(function (bddone) {
+      testutil.importData({clear:true,
+                           blog:[{name:"WN1",exportedDE:true,status:"edit"},
+                                 {name:"WNclosed",status:"closed"},
+                                 {name:"WN2",status:"open"},
+                                 {name:"WrongBlog",status:"open"}],
+                           article:[{blog:"WN1",title:"first"},
+                                    {blog:"WN2",title:"second",categoryEN:"cat",markdownEN:"Hallole"},
+                                    {blog:"WNclosed",title:"third"},
+                                    {blog:"WN1",title:"forth"},
+                                    {blog:"WrongBlog",title:"fifth",categoryEN:"cat"}],
+                          change:[{blog:"WN1",property:"collection",user:"test",oid:1,table:"article"},
+                                  {blog:"WN2",property:"collection",user:"test",oid:2,table:"article"},
+                                  {blog:"WN2",property:"collection",user:"test",oid:2,table:"article"},
+                                  {blog:"WN2",property:"collection",user:"test",oid:2,table:"article"},
+                                  {blog:"WNclosed",property:"collection",user:"test",oid:3,table:"article"},
+                                  {blog:"WN2",property:"collection",user:"test2",oid:4,table:"article"},
+                                  {blog:"WrongBlog",property:"markdownDE",user:"test",oid:5,table:"article"}]},bddone);
+    });
+    it('should find all empty article for a user',function(bddone){
+      articleModule.findEmptyUserCollectedArticles("DE","test",function(err,result){
+        should.not.exist(err);
+        should(result.length).eql(1);
+        should(result[0].title).eql("second");
+        bddone();
       });
     });
+    it('should find all empty article for a user',function(bddone){
+      articleModule.findEmptyUserCollectedArticles("EN","test",function(err,result){
+        should.not.exist(err);
+        should(result.length).eql(0);
+        bddone();
+      });
+    });
+
   });
   describe('displayTitle',function() {
     var article;

@@ -81,16 +81,16 @@ exports.importData = function importData(data,callback) {
   debug('importData');
 
   async.series([
-    function clearDB(cb1) {
+    function clearDB(cb0) {
       debug('clearDB');
       if (data.clear) {  
-        exports.clearDB(cb1);
-      } else cb1();
+        exports.clearDB(cb0);
+      } else cb0();
     },
     function importAllUsers(cb1) {
       debug('importAllUsers');
       if (typeof(data.user)!='undefined') {  
-        async.each(data.user,function importOneUser(d,cb){
+        async.eachSeries(data.user,function importOneUser(d,cb){
           userModule.createNewUser(d,cb);
         },cb1);
       } else cb1();
@@ -98,7 +98,7 @@ exports.importData = function importData(data,callback) {
     function importAllBlogs(cb2) {
       debug('importAllBlogs');
       if (typeof(data.blog)!='undefined') {  
-        async.each(data.blog,function importOneBlog(d,cb){
+        async.eachSeries(data.blog,function importOneBlog(d,cb){
           blogModule.createNewBlog(d,cb);
         },cb2);
       } else cb2();
@@ -106,7 +106,7 @@ exports.importData = function importData(data,callback) {
     function importAllArticles(cb3) {
       debug('importAllArticles');
       if (typeof(data.article)!='undefined') {  
-        async.each(data.article,function importOneArticle(d,cb){
+        async.eachSeries(data.article,function importOneArticle(d,cb){
           articleModule.createNewArticle(d,cb);
         },cb3);
       } else cb3();
@@ -120,7 +120,9 @@ exports.importData = function importData(data,callback) {
       } else cb4();
     }
 
-    ],function(err) {callback(err,data);});
+    ],function(err) {
+      debug("importData->final");
+      callback(err,data);});
 };
 
 exports.checkData = function checkData(data,callback) {

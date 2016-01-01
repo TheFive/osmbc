@@ -28,22 +28,30 @@ block content
         p
           a(style={color:'Gray'}) 
             | #{foundArticles.length} articles found.
-        row
+        table.table.table-striped.table-condensed.table-responsive
+          thead
+            tr 
+              th
+                |Blog
+              th
+                |Title
+              th.hidden-xs
+                |Cat (EN)
+              th.hidden-xs
+                |Preview (#{layout.user.language})
+          tbody
+       
+      
           each  article in foundArticles
-            .row
-              .col-md-1
-                p 
-                  a(href="#{layout.htmlroot}/blog/#{article.blog}") #{article.blog}
-              .col-md-3
-                p
-                  a(href="#{layout.htmlroot}/article/#{article.id}") #{(article.title)?article.title:"No Title"}
-                p= article.categoryEN 
-              .col-md-4
+            tr
+              td
+                a(href="#{layout.htmlroot}/blog/#{article.blog}") #{article.blog}
+              td
+                a(href="#{layout.htmlroot}/article/#{article.id}") #{(article.title)?article.title:"No Title"}
+              td.hidden-xs=article.categoryEN 
+              td.hidden-xs
                 :verbatim
-                !{article.getPreview("DE")}
-              .col-md-4
-                :verbatim
-                !{article.getPreview("EN")}
+                !{article.getPreview(layout.user.language)}
            
       else
         p
