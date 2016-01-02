@@ -82,12 +82,20 @@ block content
   .row
     .col-md-12
       ul.nav.nav-tabs
-        - v = 0
-        while layout.user["blogSetting"+v]
-          if layout.user["blogSetting"+v]!="-"
-            - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
-            +navbutton(style0,style)
-          - v++
+        +navbutton("OVERVIEW",style)
+        +navbutton("TRANSLATE",style)
+        +navbutton("FULL",style)
+        +navbutton("FULLFINAL",style)
+
+        li
+          a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{left_lang}") 
+        //
+          - v = 0
+          while layout.user["blogSetting"+v]
+            if layout.user["blogSetting"+v]!="-"
+              - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
+              +navbutton(style0,style)
+            - v++ 
       
         li
           a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{left_lang}") 

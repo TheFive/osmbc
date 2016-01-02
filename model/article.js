@@ -90,13 +90,16 @@ function createNewArticle (proto,callback) {
 Article.prototype.getPreview = function getPreview(style,user) {
   debug("getPreview");
   should.exist(style);
-  var options;
+  var options = style;
+
+  if (typeof(style) == "string") {
+    options = settingsModule.getSettings(style);
+  }
   if (typeof(user)=='object') {
     user = user.displayName;
   }
   var self = this;
 
-  options = settingsModule.getSettings(style);
 
   function editHREF(text) { 
     return ' <a href="'+config.getValue('htmlroot')+'/article/'+self.id+'?style='+style+'&edit=true">'+text+'</a>';

@@ -1,6 +1,7 @@
 "use strict";
 var debug= require("debug")("model/settings");
 var config = require("../config.js");
+var should = require("should");
 
 // information from article:
 //      edit:      true if any additional edit links should be generated
@@ -100,7 +101,7 @@ exports.settings = settings;
 exports.languages=languages;
 
  /*exported getSettings */
-function getSettings(string) {
+function getSettings(string,language,language2) {
   debug("getSettings(%s)",string);
 
 
@@ -123,21 +124,49 @@ function getSettings(string) {
     }
   }
 
+  var oldstyle = false;
+
   for (var k in settings) {
     var temp = string.replace(k,"");
     if (temp != string) {
       s = settings[k];
       if (typeof(languages[temp])!="undefined") {
         l = languages[temp];
-         break;
+        oldstyle = true;
+        break;
       }
+    }
+    if (string.toUpperCase() === k.toUpperCase()) {
+      should.exist(language);
+      s = settings[k];
+      oldstyle = false;
+      break;
     }
   }
 
-  var result = {};
-  for (k in s) {result[k]=s[k];}
-  for (k in l) {result[k]=l[k];}
-  return result;
+  if (oldstyle) {
+    var result = {};
+    for (k in s) {result[k]=s[k];}
+    for (k in l) {result[k]=l[k];}
+    return result;    
+  }
+  if (!oldstyle) {
+    var result ={};
+    for (k in s) {result[k]=s[k];}
+    if (language2) {
+      result.bilingual=true;
+      result.left_lang = language;
+      result.right_lang = language2;
+    } else {
+      result.left_lang = language;
+      result.right_lang = "--";
+    }
+    console.log(">>>>"+string);
+    console.dir(result);
+    return result;
+  }
+  console.log(">>> aölsdkjfaölsdkfjöalsdkfj");
+  return null;
 }
 
 var listSettings = [];

@@ -393,17 +393,19 @@ function createTeamString(lang,callback) {
 function getPreview(style,user,callback) {
   debug('getPreview');
   var self = this;
+  
 
-
+  var options = style;
   // first check the parameter
-  should(typeof(style)).equal("string");
+  if (typeof(style) ==="string") {
+    options = settingsModule.getSettings(style);
+  }
   if (typeof(user)=="function") {
     callback = user;
     user = "--";
   }
   should.exist(user);
 
-  var options = settingsModule.getSettings(style);
 
   var articles = {};
   var preview = "";
@@ -426,6 +428,7 @@ function getPreview(style,user,callback) {
       // not in edit mode.
       if (!options.markdown) {
         if (self.startDate && self.endDate) {
+          console.log(">>>"+options.left_lang);
           preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
         }
         if (!options.edit) {
