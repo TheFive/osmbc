@@ -125,12 +125,22 @@ function ensureAuthenticated(req, res, next) {
             result[0].lastAccess = new Date();
             result[0].save(function(err) {});            
           }
+          if (!req.session.language) req.session.language == result[0].language;
           debug("User accepted");
           return next();
         }
       }
       debug("User Not Found %s(found)",result.length);
-      var err = new Error('OSM User >'+req.user.displayName+'< has no access rights');
+      var err;
+      if (result.length > 1) {
+        err = new Error('OSM User >'+req.user.displayName+'< exists multiple times');
+      }
+      if (result.length == 1) {
+        err = new Error('OSM User >'+req.user.displayName+'< has no access rights');
+      }
+      if (result.length == 0) {
+        err = new Error('OSM User >'+req.user.displayName+'< does not exist.');
+      }
       return next(err);
     })
     return;

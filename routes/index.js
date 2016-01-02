@@ -21,6 +21,15 @@ function renderHome(req,res,next) {
   });
 }
 
+function languageSwitcher(req,res,next) {
+  debug('languageSwitcher');
+  var lang = req.body.lang;
+  if (config.getLanguages().indexOf(lang)>=0) {
+    res.session.language = lang;
+  }
+  res.redirect(req.get('referer'));
+}
+
 function renderReleaseNotes(req,res,next) {  // jshint ignore:line
   debug('renderReleaseNotes');
   var level = req.query.level;
@@ -41,7 +50,7 @@ router.get('/osmbc.html', renderHome);
 router.get('/osmbc', renderHome);
 router.get('/release_notes.html', renderReleaseNotes);
 router.get('/help/:title', renderHelp);
-
+router.post('/language',languageSwitcher);
 
 
 
