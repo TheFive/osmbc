@@ -161,6 +161,10 @@ function getSettings(string,language,language2) {
       result.left_lang = language;
       result.right_lang = "--";
     }
+    if (string === "TRANSLATION" || string === "FULLFINAL") {
+      result.right_lang = "--";
+      result.bilingual = false;
+    }
     console.log(">>>>"+string);
     console.dir(result);
     return result;
