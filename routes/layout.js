@@ -100,6 +100,7 @@ function prepareRenderLayout(req,res,next) {
                       htmlroot: htmlRoot,
                       languages:languages,
                       language:req.session.language,
+                      language2:req.session.language2,
                       listOfOpenBlog:result.listOfOpenBlog,
                       listOfEditBlog:result.listOfEditBlog,
                       listOfReviewBlog:result.listOfReviewBlog,

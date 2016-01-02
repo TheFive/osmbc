@@ -13,40 +13,13 @@ var config = require("../config.js");
 
 var settings = {};
 
-settings["overview ##"] = {
-            edit : true,
-            comment : true,
-            viewLink : true,
-            editLink: true,
-            overview : true,
-            marktext : true,
-            smallPicture : true  
-}
-settings["overview ## with Translation"] = {
-            edit : true,
-            comment : true,
-            glyphicon_view : true,
-            editLink : true,
-            marktext : true,
-            overview : true,
-            languageLinks:true 
-}
 
-settings["overview ## "] = {
-            edit : true,
-            comment : true,
-            glyphicon_view : true,
-            editLink : true,
-            marktext : true,
-            overview : true,
-            languageLinks:true 
-}
 
-var settingsOld = {};
+var settings = {};
 
 
 
-settingsOld.overview = {
+settings.overview = {
             edit : true,
             comment : true,
             viewLink : true,
@@ -55,7 +28,7 @@ settingsOld.overview = {
             marktext : true,
             smallPicture : true
           };
-settingsOld.translation = {
+settings.translation = {
             edit : true,
             comment : true,
             glyphicon_view : true,
@@ -64,7 +37,7 @@ settingsOld.translation = {
             overview : true,
             languageLinks:true
           };
-settingsOld.full = {
+settings.full = {
             edit : true,
             comment : true,
             glyphicon_edit : true,
@@ -72,56 +45,56 @@ settingsOld.full = {
             marktext : true,
             smallPicture : true
           };
-settingsOld.fullfinal = {
+settings.fullfinal = {
             edit : true,
             fullfinal : true,
             shortEditLink : true,
             smallPicture : false
           };
-settingsOld.markdown = {
+settings.markdown = {
             
             markdown : true
           };
 
 
-var languagesOld = {};
+var languages = {};
 
 
 
 for (var i = 0;i<config.getLanguages().length;i++) {
   var lang = config.getLanguages()[i];
-  languagesOld[lang] = {};
-  languagesOld[lang].left_lang = lang;
-  languagesOld[lang].right_lang = "--";
+  languages[lang] = {};
+  languages[lang].left_lang = lang;
+  languages[lang].right_lang = "--";
   
   if (lang != "EN") {
-    languagesOld["EN."+lang] = {};
-    languagesOld["EN."+lang].left_lang = "EN";
-    languagesOld["EN."+lang].right_lang = lang;
-    languagesOld["EN."+lang].bilingual = true;
+    languages["EN."+lang] = {};
+    languages["EN."+lang].left_lang = "EN";
+    languages["EN."+lang].right_lang = lang;
+    languages["EN."+lang].bilingual = true;
 
-    languagesOld["EN("+lang+")"] = {};
-    languagesOld["EN("+lang+")"].left_lang = "EN";
-    languagesOld["EN("+lang+")"].right_lang = lang;
+    languages["EN("+lang+")"] = {};
+    languages["EN("+lang+")"].left_lang = "EN";
+    languages["EN("+lang+")"].right_lang = lang;
   }
 }
-languagesOld["DE.EN"] = {};
-languagesOld["DE.EN"].left_lang = "DE";
-languagesOld["DE.EN"].right_lang = "EN";
-languagesOld["DE.EN"].bilingual = true;
+languages["DE.EN"] = {};
+languages["DE.EN"].left_lang = "DE";
+languages["DE.EN"].right_lang = "EN";
+languages["DE.EN"].bilingual = true;
 
-languagesOld["DE(EN)"] = {};
-languagesOld["DE(EN)"].left_lang = "DE";
-languagesOld["DE(EN)"].right_lang = "EN";
+languages["DE(EN)"] = {};
+languages["DE(EN)"].left_lang = "DE";
+languages["DE(EN)"].right_lang = "EN";
 
-languagesOld["ES.PT"] = {};
-languagesOld["ES.PT"].left_lang = "ES";
-languagesOld["ES.PT"].right_lang = "PT";
-languagesOld["ES.PT"].bilingual = true;
+languages["ES.PT"] = {};
+languages["ES.PT"].left_lang = "ES";
+languages["ES.PT"].right_lang = "PT";
+languages["ES.PT"].bilingual = true;
 
-languagesOld["ES(PT)"] = {};
-languagesOld["ES(PT)"].left_lang = "ES";
-languagesOld["ES(PT)"].right_lang = "PT";
+languages["ES(PT)"] = {};
+languages["ES(PT)"].left_lang = "ES";
+languages["ES(PT)"].right_lang = "PT";
 
 exports.settings = settings;
 exports.languages=languages;

@@ -37,30 +37,39 @@ html(lang='en')
               li
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')
                   |#{layout.listOfOpenBlog[0].name} 
-                  span.badge.alert-info
+                  span.badge.osmbc-lang
                     |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.language]}
+                  if layout.language2
+                    span.badge.osmbc-lang2
+                      |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.language2]}
        
             if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
               li
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].name}') 
                   |#{layout.listOfEditBlog[0].name}
-                  span.badge.alert-info
+                  span.badge.osmbc-lang
                     |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language]}
+                  if layout.language2
+                    span.badge.osmbc-lang2
+                      |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language2]}
             if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
               li
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].name}') 
                   |#{layout.listOfReviewBlog[0].name}
-                  span.badge.alert-info
+                  span.badge.osmbc-lang
                     |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language]}
+                  if layout.language2
+                    span.badge.osmbc-lang2
+                      |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language2]}
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
-                | Article 
+                | Lists 
                 span.caret
               ul.dropdown-menu(role='menu')
+                li.dropdown-header Articles
                 li
                   a(href='#{layout.htmlroot}/article/search') Search
                   a(href='#{layout.htmlroot}/article/list?myArticles=true') My Collections
-                li.divider
                 li.dropdown-header Orphaned Article
                 if (layout.listOfOrphanBlog) 
                   for blog in layout.listOfOrphanBlog
@@ -68,44 +77,16 @@ html(lang='en')
                       a(href="#{layout.htmlroot}/article/list?blog=#{blog}") #{blog}
                 li
                   a(href='#{layout.htmlroot}/article/list?blog=') No Blog
-            li.dropdown.hidden-xs
-              a.dropdown-toggle(href='#', data-toggle='dropdown')
-                | WN 
-                span.caret
-              ul.dropdown-menu(role='menu')
-                if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
-                  li.dropdown-header open
-                  for o  in layout.listOfOpenBlog
-                    li
-                      a(href="#{layout.htmlroot}/blog/#{o.name}") #{o.name} #{blogNumber(o)}
-                if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
-                  li.dropdown-header edit
-                  for edit in layout.listOfEditBlog
-                    li
-                      a(href="#{layout.htmlroot}/blog/#{edit.name}") #{edit.name}  #{blogNumber(edit)}
-                if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
-                  li.dropdown-header review #{layout.language}
-                  for review in layout.listOfReviewBlog
-                    li
-                      a(href="#{layout.htmlroot}/blog/#{review.name}") #{review.name} #{blogNumber(review)}
-
-
-
-                li.dropdown-header List
+                li.divider
+                li.dropdown-header Blog
                 li
                   a(href="#{layout.htmlroot}/blog/list?status=open") open
-                li
-                  a(href="#{layout.htmlroot}/blog/list?status=!=closed") all open
                 li
                   a(href="#{layout.htmlroot}/blog/list?status=edit") edit
                 li 
                   a(href="#{layout.htmlroot}/blog/list?status=trash") trash
                 li 
                   a(href="#{layout.htmlroot}/blog/list?status=closed") closed
-                li.divider
-                li.dropdown-header Action
-                li
-                  a(href="#{layout.htmlroot}/blog/create") Create Blog
             li.dropdown.hidden-xs
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | User 
@@ -125,11 +106,15 @@ html(lang='en')
                 | Tool 
                 span.caret
               ul.dropdown-menu(role='menu')
+                li.dropdown-header Markdown Helper
                 li
                   a(href="#{layout.htmlroot}/tool/calender2markdown") OSM Calender2Markdown
                 li
                   a(href="#{layout.htmlroot}/tool/picturetool") Picture Tool
-               
+                li.dropdown-header Action
+                li
+                  a(href="#{layout.htmlroot}/blog/create") Create Blog
+                      
           ul.nav.navbar-nav.navbar-right  
             li.dropdown 
               a.dropdown-toggle(href='#', data-toggle='dropdown')
@@ -149,13 +134,23 @@ html(lang='en')
                 li
                   a(href="#{layout.htmlroot}/help/Categories") Which Category to use ?                    
             li.dropdown
-              a.dropdown-toggle.alert-info(href='#', data-toggle='dropdown')
+              a.dropdown-toggle.osmbc-lang(href='#', data-toggle='dropdown')
                 |#{layout.language} 
                 span.caret
               ul.dropdown-menu(role='menu')
                 each l in layout.languages
                   li
                     a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
+            li.dropdown
+              a.dropdown-toggle.osmbc-lang2(href='#', data-toggle='dropdown')
+                |#{layout.language2} 
+                span.caret
+              ul.dropdown-menu(role='menu')
+                li 
+                  a(href='#{layout.htmlroot}/language?lang2=none') none
+                each l in layout.languages
+                  li
+                    a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
             if layout.user
                 li 
                   a(href='http://www.openstreetmap.org/user/#{layout.user.displayName}') #{layout.user.displayName}
