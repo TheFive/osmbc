@@ -13,9 +13,40 @@ var config = require("../config.js");
 
 var settings = {};
 
+settings["overview ##"] = {
+            edit : true,
+            comment : true,
+            viewLink : true,
+            editLink: true,
+            overview : true,
+            marktext : true,
+            smallPicture : true  
+}
+settings["overview ## with Translation"] = {
+            edit : true,
+            comment : true,
+            glyphicon_view : true,
+            editLink : true,
+            marktext : true,
+            overview : true,
+            languageLinks:true 
+}
+
+settings["overview ## "] = {
+            edit : true,
+            comment : true,
+            glyphicon_view : true,
+            editLink : true,
+            marktext : true,
+            overview : true,
+            languageLinks:true 
+}
+
+var settingsOld = {};
 
 
-settings.overview = {
+
+settingsOld.overview = {
             edit : true,
             comment : true,
             viewLink : true,
@@ -24,7 +55,7 @@ settings.overview = {
             marktext : true,
             smallPicture : true
           };
-settings.translation = {
+settingsOld.translation = {
             edit : true,
             comment : true,
             glyphicon_view : true,
@@ -33,7 +64,7 @@ settings.translation = {
             overview : true,
             languageLinks:true
           };
-settings.full = {
+settingsOld.full = {
             edit : true,
             comment : true,
             glyphicon_edit : true,
@@ -41,56 +72,56 @@ settings.full = {
             marktext : true,
             smallPicture : true
           };
-settings.fullfinal = {
+settingsOld.fullfinal = {
             edit : true,
             fullfinal : true,
             shortEditLink : true,
             smallPicture : false
           };
-settings.markdown = {
+settingsOld.markdown = {
             
             markdown : true
           };
 
 
-var languages = {};
+var languagesOld = {};
 
 
 
 for (var i = 0;i<config.getLanguages().length;i++) {
   var lang = config.getLanguages()[i];
-  languages[lang] = {};
-  languages[lang].left_lang = lang;
-  languages[lang].right_lang = "--";
+  languagesOld[lang] = {};
+  languagesOld[lang].left_lang = lang;
+  languagesOld[lang].right_lang = "--";
   
   if (lang != "EN") {
-    languages["EN."+lang] = {};
-    languages["EN."+lang].left_lang = "EN";
-    languages["EN."+lang].right_lang = lang;
-    languages["EN."+lang].bilingual = true;
+    languagesOld["EN."+lang] = {};
+    languagesOld["EN."+lang].left_lang = "EN";
+    languagesOld["EN."+lang].right_lang = lang;
+    languagesOld["EN."+lang].bilingual = true;
 
-    languages["EN("+lang+")"] = {};
-    languages["EN("+lang+")"].left_lang = "EN";
-    languages["EN("+lang+")"].right_lang = lang;
+    languagesOld["EN("+lang+")"] = {};
+    languagesOld["EN("+lang+")"].left_lang = "EN";
+    languagesOld["EN("+lang+")"].right_lang = lang;
   }
 }
-languages["DE.EN"] = {};
-languages["DE.EN"].left_lang = "DE";
-languages["DE.EN"].right_lang = "EN";
-languages["DE.EN"].bilingual = true;
+languagesOld["DE.EN"] = {};
+languagesOld["DE.EN"].left_lang = "DE";
+languagesOld["DE.EN"].right_lang = "EN";
+languagesOld["DE.EN"].bilingual = true;
 
-languages["DE(EN)"] = {};
-languages["DE(EN)"].left_lang = "DE";
-languages["DE(EN)"].right_lang = "EN";
+languagesOld["DE(EN)"] = {};
+languagesOld["DE(EN)"].left_lang = "DE";
+languagesOld["DE(EN)"].right_lang = "EN";
 
-languages["ES.PT"] = {};
-languages["ES.PT"].left_lang = "ES";
-languages["ES.PT"].right_lang = "PT";
-languages["ES.PT"].bilingual = true;
+languagesOld["ES.PT"] = {};
+languagesOld["ES.PT"].left_lang = "ES";
+languagesOld["ES.PT"].right_lang = "PT";
+languagesOld["ES.PT"].bilingual = true;
 
-languages["ES(PT)"] = {};
-languages["ES(PT)"].left_lang = "ES";
-languages["ES(PT)"].right_lang = "PT";
+languagesOld["ES(PT)"] = {};
+languagesOld["ES(PT)"].left_lang = "ES";
+languagesOld["ES(PT)"].right_lang = "PT";
 
 exports.settings = settings;
 exports.languages=languages;

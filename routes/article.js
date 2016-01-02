@@ -381,7 +381,7 @@ function renderList(req,res,next) {
         if (!myArticles) return callback();
 
   
-        articleModule.findEmptyUserCollectedArticles(req.user.language,req.user.displayName,function(err,result) {
+        articleModule.findEmptyUserCollectedArticles(req.session.language,req.user.displayName,function(err,result) {
           debug('renderList->findMyArticles->find');
           articles = result;
           callback();

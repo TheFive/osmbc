@@ -3,6 +3,7 @@ var debug = require('debug')('OSMBC:routes:index');
 var express = require('express');
 var router = express.Router();
 var help = require('../routes/help.js');
+var config = require('../config.js');
 
 var logModule = require('../model/logModule.js');
 
@@ -21,11 +22,11 @@ function renderHome(req,res,next) {
   });
 }
 
-function languageSwitcher(req,res,next) {
+function languageSwitcher(req,res,next) { //jshint ignore:line
   debug('languageSwitcher');
-  var lang = req.body.lang;
+  var lang = req.query.lang;
   if (config.getLanguages().indexOf(lang)>=0) {
-    res.session.language = lang;
+    req.session.language = lang;
   }
   res.redirect(req.get('referer'));
 }
@@ -50,7 +51,7 @@ router.get('/osmbc.html', renderHome);
 router.get('/osmbc', renderHome);
 router.get('/release_notes.html', renderReleaseNotes);
 router.get('/help/:title', renderHelp);
-router.post('/language',languageSwitcher);
+router.get('/language',languageSwitcher);
 
 
 

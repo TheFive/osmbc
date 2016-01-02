@@ -56,7 +56,7 @@ function prepareRenderLayout(req,res,next) {
         }
         async.each(list,function(item,cb){
           item.countUneditedMarkdown(cb);
-        },function(err){callback(err,list);})
+        },function(err){callback(err,list);});
       });
     },
     listOfEditBlog:
@@ -65,13 +65,13 @@ function prepareRenderLayout(req,res,next) {
         if (err) return callback(err);
         var list = [];
         for (var i=0;i<result.length;i++) {
-          if (!(result[i]["reviewComment"+req.user.language])) {
+          if (!(result[i]["reviewComment"+req.session.language])) {
             list.push(result[i]);
           }
         }
         async.each(list,function(item,cb){
           item.countUneditedMarkdown(cb);
-        },function(err){callback(err,list);})
+        },function(err){callback(err,list);});
       });
     },
     listOfReviewBlog:
@@ -80,29 +80,17 @@ function prepareRenderLayout(req,res,next) {
         if (err) return callback(err);
         var list = [];
         for (var i=0;i<result.length;i++) {
-          if ((result[i]["reviewComment"+req.user.language]) &&
-              !(result[i]["close"+req.user.language])) {
+          if ((result[i]["reviewComment"+req.session.language]) &&
+              !(result[i]["close"+req.session.language])) {
             list.push(result[i]);
           }
         }
         async.each(list,function(item,cb){
           item.countUneditedMarkdown(cb);
-        },function(err){callback(err,list);})
+        },function(err){callback(err,list);});
       });
-    },
-    listOfHelpBlog:
-    function (callback) {
-      blogModule.find({status:"help"},function(err,result) {
-        if (err) return callback(err);
-        var list = [];
-        for (var i=0;i<result.length;i++) {
-          list.push(result[i]);
-        }
-        async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
-        },function(err){callback(err,list);})
-      });
-    }},
+    }
+  },
   
     function (err,result) {
       if (err) return next(err);
@@ -111,6 +99,7 @@ function prepareRenderLayout(req,res,next) {
                       listOfOrphanBlog:result.listOfOrphanBlog,
                       htmlroot: htmlRoot,
                       languages:languages,
+                      language:req.session.language,
                       listOfOpenBlog:result.listOfOpenBlog,
                       listOfEditBlog:result.listOfEditBlog,
                       listOfReviewBlog:result.listOfReviewBlog,

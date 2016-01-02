@@ -78,10 +78,10 @@ block content
               if (layout.listOfReviewBlog)  
                 for blog in layout.listOfReviewBlog 
                   if blog.name == article.blog         
-                    option(value="#{blog.name}" selected) #{blog.name} (Review #{layout.user.language})
+                    option(value="#{blog.name}" selected) #{blog.name} (Review #{layout.language})
                     - displayed = true;
                   else
-                     option(value="#{blog.name}" ) #{blog.name} (Review #{layout.user.language})
+                     option(value="#{blog.name}" ) #{blog.name} (Review #{layout.language})
               if (article.blog == "Trash")
                 option(value="Trash" selected) Trash
                 - displayed = true;

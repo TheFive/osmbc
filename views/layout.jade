@@ -30,7 +30,7 @@ html(lang='en')
             span.icon-bar
             span.icon-bar
         .navbar-collapse.collapse
-          - function blogNumber(blog) {return (blog._countUneditedMarkdown)?blog._countUneditedMarkdown[layout.user.language]:"?";}
+          - function blogNumber(blog) {return (blog._countUneditedMarkdown)?blog._countUneditedMarkdown[layout.language]:"?";}
 
           ul.nav.navbar-nav.navbar-left
             if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
@@ -38,20 +38,20 @@ html(lang='en')
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')
                   |#{layout.listOfOpenBlog[0].name} 
                   span.badge.alert-info
-                    |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.user.language]}
+                    |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.language]}
        
             if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
               li
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].name}') 
                   |#{layout.listOfEditBlog[0].name}
                   span.badge.alert-info
-                    |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.user.language]}
+                    |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language]}
             if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
               li
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].name}') 
                   |#{layout.listOfReviewBlog[0].name}
                   span.badge.alert-info
-                    |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.user.language]}
+                    |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language]}
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | Article 
@@ -84,7 +84,7 @@ html(lang='en')
                     li
                       a(href="#{layout.htmlroot}/blog/#{edit.name}") #{edit.name}  #{blogNumber(edit)}
                 if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
-                  li.dropdown-header review #{layout.user.language}
+                  li.dropdown-header review #{layout.language}
                   for review in layout.listOfReviewBlog
                     li
                       a(href="#{layout.htmlroot}/blog/#{review.name}") #{review.name} #{blogNumber(review)}
@@ -149,13 +149,13 @@ html(lang='en')
                 li
                   a(href="#{layout.htmlroot}/help/Categories") Which Category to use ?                    
             li.dropdown
-              a.dropdown-toggle(href='#', data-toggle='dropdown')
-                | DE 
+              a.dropdown-toggle.alert-info(href='#', data-toggle='dropdown')
+                |#{layout.language} 
                 span.caret
               ul.dropdown-menu(role='menu')
-                li
-                  a(href='#{layout.htmlroot}/article/search') DE
-                  a(href='#{layout.htmlroot}/article/search') EN
+                each l in layout.languages
+                  li
+                    a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
             if layout.user
                 li 
                   a(href='http://www.openstreetmap.org/user/#{layout.user.displayName}') #{layout.user.displayName}
