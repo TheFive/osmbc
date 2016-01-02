@@ -35,9 +35,9 @@ block content
                 |Blog
               th
                 |Title
-              th
+              th.hidden-xs
                 |Cat (EN)
-              th
+              th.hidden-xs
                 |Preview (#{layout.user.language})
           tbody
        
@@ -48,8 +48,8 @@ block content
                 a(href="#{layout.htmlroot}/blog/#{article.blog}") #{article.blog}
               td
                 a(href="#{layout.htmlroot}/article/#{article.id}") #{(article.title)?article.title:"No Title"}
-              td=article.categoryEN 
-              td
+              td.hidden-xs=article.categoryEN 
+              td.hidden-xs
                 :verbatim
                 !{article.getPreview(layout.user.language)}
            

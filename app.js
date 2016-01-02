@@ -53,7 +53,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(name, done) {
   debug("passport.deserializeUser CB");
-  var user = {}
+  var user = {};
   user.displayName = name;
   done(null, user);
 });
@@ -102,7 +102,16 @@ passport.use(new OpenStreetMapStrategy({
     })
   );*/
 
+function checkAuthentification(req,res,next) {
+  debug('checkAuthentification');
 
+  // Route / checks for authentification, so nothing has to be done,
+  // just check authentification.
+
+  if (req.isAuthenticated()) return next();
+  req.session.returnTo = req.originalUrl; 
+  res.redirect(htmlRoot+'/auth/openstreetmap');
+}
 
 function ensureAuthenticated(req, res, next) {
   debug("ensureAuthenticated");
@@ -110,7 +119,7 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { 
     // check User
     userModule.find({OSMUser:req.user.displayName},function(err,result){
-      debug('ensureAuthenticated->userFind')
+      debug('ensureAuthenticated->userFind');
       if (err) return next(err);
       if (result.length==1) {
         for (var k in result[0]) {
@@ -123,7 +132,7 @@ function ensureAuthenticated(req, res, next) {
           var lastStore = new Date(result[0].lastAccess);
           if (!result[0].lastAccess || (date.getTime()-lastStore.getTime()) > 1000*60*2) {
             result[0].lastAccess = new Date();
-            result[0].save(function(err) {});            
+            result[0].save(function(err) {console.log(err);});            
           }
           if (!req.session.language) req.session.language == result[0].language;
           debug("User accepted");
@@ -142,11 +151,11 @@ function ensureAuthenticated(req, res, next) {
         err = new Error('OSM User >'+req.user.displayName+'< does not exist.');
       }
       return next(err);
-    })
+    });
     return;
   }
   req.session.returnTo = req.originalUrl; 
-  res.redirect(htmlRoot+'/auth/openstreetmap')
+  res.redirect(htmlRoot+'/auth/openstreetmap');
 
 }
  
@@ -194,6 +203,8 @@ app.get(htmlRoot + '/auth/openstreetmap',
   passport.authenticate('openstreetmap'),
   function(req, res){
     debug('never come here function!!!');
+    debug(req);
+    debug(res);
     // The request will be redirected to OpenStreetMap for authentication, so this
     // function will not be called.
   });
@@ -212,7 +223,7 @@ app.get(htmlRoot + '/auth/openstreetmap/callback',
   });
 
 app.get(htmlRoot + '/logout', function(req, res){
-  debug('logoutFunction')
+  debug('logoutFunction');
   req.logout();
   res.redirect('/');
 });
@@ -221,12 +232,12 @@ app.get(htmlRoot + '/logout', function(req, res){
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
 app.use(htmlRoot + '/',ensureAuthenticated,layout);
-app.use(htmlRoot + '/',ensureAuthenticated,index);
-app.use(htmlRoot + '/usert',ensureAuthenticated, users);
-app.use(htmlRoot + '/article',ensureAuthenticated, article);
-app.use(htmlRoot + '/changes',ensureAuthenticated, changes);
-app.use(htmlRoot + '/blog',ensureAuthenticated, blog);
-app.use(htmlRoot + '/tool',ensureAuthenticated, tool);
+app.use(htmlRoot + '/',checkAuthentification,index);
+app.use(htmlRoot + '/usert',checkAuthentification, users);
+app.use(htmlRoot + '/article',checkAuthentification, article);
+app.use(htmlRoot + '/changes',checkAuthentification, changes);
+app.use(htmlRoot + '/blog',checkAuthentification, blog);
+app.use(htmlRoot + '/tool',checkAuthentification, tool);
 
 
 // Simple route middleware to ensure user is authenticated.
@@ -250,7 +261,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
+  app.use(function(err, req, res, next) { // jshint ignore:line
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
     res.render('error', {
@@ -263,7 +274,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res, next) {// jshint ignore:line
   debug('app.use status function');
   debug(JSON.stringify(err));
   res.status(err.status || 500);

@@ -468,12 +468,12 @@ describe('model/blog', function() {
       var dataBefore = {blog:[
               {name:"WN0",status:"open",startDate:"2015-01-01",endDate:time},
               {name:"WN1",status:"open",startDate:"2015-01-01",endDate:time},
-              {name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},
+              {name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2099-01-01"},
               {name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"}]};
       var dataAfter = {blog:[
               {name:"WN0",status:"edit",startDate:"2015-01-01",endDate:time},
               {name:"WN1",status:"edit",startDate:"2015-01-01",endDate:time},
-              {name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},
+              {name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2099-01-01"},
               {name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"}]};
       var testFunction = function testFunction(cb) {
         async.parallel([
