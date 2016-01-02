@@ -205,7 +205,7 @@ module.exports = {
      },
      "Did you know …": {
           "EN": "Did you know …",
-          "DE": "Kennst Du schon …",
+          "DE": "Kennst du schon …",
           "ES": "Sabías que …",
           "FR": "Connaissez-vous …",
           "CZ": "Věděli jste …",
