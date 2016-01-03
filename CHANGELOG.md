@@ -1,5 +1,24 @@
 # Change Log
 
+## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.7...0.5.8)
+
+**Implemented enhancements:**
+
+- hide the Close WNxxx for new articles button [\#245](https://github.com/TheFive/osmbc/issues/245)
+
+**Fixed bugs:**
+
+- Error storing session object. [\#151](https://github.com/TheFive/osmbc/issues/151)
+
+**Closed issues:**
+
+- Fix the width for the Status Flow Chart [\#240](https://github.com/TheFive/osmbc/issues/240)
+
+**Merged pull requests:**
+
+- PT in data/editorStrings.js [\#243](https://github.com/TheFive/osmbc/pull/243) ([alexandre-mbm](https://github.com/alexandre-mbm))
+
 ## [0.5.7](https://github.com/TheFive/osmbc/tree/0.5.7) (2016-01-01)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.6...0.5.7)
 
