@@ -579,7 +579,6 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
           var c = result[j].categoryEN;
           if (c == "--unpublished--") continue;
           var m = result[j]["markdown"+l];
-          var 
           if (!m || m ==="" || c ==="-- no category yet --") self._countUneditedMarkdown[l] +=1;
         }
       }

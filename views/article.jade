@@ -144,11 +144,18 @@ block content
                 
         .row 
           .col-md-1
+          - var lbg;
+          - if (params.left_lang===layout.language) lbg = "osmbc-lang";
+          - if (params.left_lang===layout.language2) lbg = "osmbc-lang2";
+          - var rbg;
+          - if (params.right_lang===layout.language) rbg = "osmbc-lang";
+          - if (params.right_lang===layout.language2) rbg = "osmbc-lang2";
+
           +leftcolumn
-            div(id="left_lang") 
+            span.label.label-default(id="left_lang" class="#{lbg}") 
               |#{params.left_lang}
           +rightcolumn
-            div(id="right_lang")
+            span.label.label-default(id="right_lang" class="#{rbg}" )
               |#{params.right_lang}
         .row
           .col-md-1
@@ -255,11 +262,20 @@ block content
                 |<pre>!{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
       .row 
         .col-md-1
-        +leftcolumn
-          |#{params.left_lang}
-        +rightcolumn
-          |#{params.right_lang}
+        - var lbg;
+        - if (params.left_lang===layout.language) lbg = "osmbc-lang";
+        - if (params.left_lang===layout.language2) lbg = "osmbc-lang2";
+        - var rbg;
+        - if (params.right_lang===layout.language) rbg = "osmbc-lang";
+        - if (params.right_lang===layout.language2) rbg = "osmbc-lang2";
 
+        +leftcolumn
+          span.label.label-default(id="left_lang" class="#{lbg}") 
+            |#{params.left_lang}
+        +rightcolumn
+          span.label.label-default(id="right_lang" class="#{rbg}" )
+            |#{params.right_lang}
+  
       if (false)
         .row
           .col-md-1
