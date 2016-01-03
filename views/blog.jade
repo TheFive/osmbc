@@ -48,9 +48,7 @@ block content
                 | <strong>Blog is exported, please do the last Review in WordPress</strong>
       
         else
-          if blog.status=="open"
-            button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?setStatus=edit';") Close #{blog.name} for new articles
-          else 
+          if blog.status != "open"
             button.btn.btn-large.btn-primary(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=startreview&&style=#{style}';") Set #{blog.name}(#{left_lang}) ready for review
 
   .row
