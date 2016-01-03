@@ -148,6 +148,7 @@ function getSettings(string,language,language2) {
     var result = {};
     for (k in s) {result[k]=s[k];}
     for (k in l) {result[k]=l[k];}
+    result.style = string;
     return result;    
   }
   if (!oldstyle) {
@@ -167,6 +168,7 @@ function getSettings(string,language,language2) {
     }
     console.log(">>>>"+string);
     console.dir(result);
+    result.style=string;
     return result;
   }
   console.log(">>> aölsdkjfaölsdkfjöalsdkfj");

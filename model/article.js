@@ -95,6 +95,7 @@ Article.prototype.getPreview = function getPreview(style,user) {
   if (typeof(style) == "string") {
     options = settingsModule.getSettings(style);
   }
+  style = options.style;
   if (typeof(user)=='object') {
     user = user.displayName;
   }
