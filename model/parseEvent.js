@@ -187,7 +187,8 @@ function calenderToMarkdown(lang,date,duration,cb) {
   if (typeof(date)=='function') {
     cb = date;
     date = new Date();
-    duration = 21;
+    date.setDate(date.getDate()-3);
+    duration = 24;
   } 
   var result;
   debug("Date: %s",date);
@@ -281,6 +282,7 @@ function calenderToHtml(date,callback) {
   if (typeof(date)=='function') {
     callback = date;
     date = new Date();
+    date.setDate(date.getDate()-3);
   } 
   calenderToMarkdown(date,function(err,t){
     debug('calenderToHtml:subfunction');

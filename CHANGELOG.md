@@ -1,5 +1,101 @@
 # Change Log
 
+## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.7...0.5.8)
+
+**Implemented enhancements:**
+
+- hide the Close WNxxx for new articles button [\#245](https://github.com/TheFive/osmbc/issues/245)
+
+**Fixed bugs:**
+
+- Error storing session object. [\#151](https://github.com/TheFive/osmbc/issues/151)
+
+**Closed issues:**
+
+- Fix the width for the Status Flow Chart [\#240](https://github.com/TheFive/osmbc/issues/240)
+
+**Merged pull requests:**
+
+- PT in data/editorStrings.js [\#243](https://github.com/TheFive/osmbc/pull/243) ([alexandre-mbm](https://github.com/alexandre-mbm))
+
+## [0.5.7](https://github.com/TheFive/osmbc/tree/0.5.7) (2016-01-01)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.6...0.5.7)
+
+**Implemented enhancements:**
+
+- Better display on mobile devices. [\#241](https://github.com/TheFive/osmbc/issues/241)
+
+## [0.5.6](https://github.com/TheFive/osmbc/tree/0.5.6) (2015-12-31)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.5...0.5.6)
+
+**Implemented enhancements:**
+
+- Show articles changes by an author in statistic view. [\#239](https://github.com/TheFive/osmbc/issues/239)
+- a list with all articles per blog, sortable by persons who initally collected the article [\#227](https://github.com/TheFive/osmbc/issues/227)
+
+## [0.5.5](https://github.com/TheFive/osmbc/tree/0.5.5) (2015-12-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.4...0.5.5)
+
+**Implemented enhancements:**
+
+- Implement a Tool like the calender tool to simplify Image Integration. [\#211](https://github.com/TheFive/osmbc/issues/211)
+
+**Closed issues:**
+
+- Proxy Error with request GET /changes/46283 [\#238](https://github.com/TheFive/osmbc/issues/238)
+
+## [0.5.4](https://github.com/TheFive/osmbc/tree/0.5.4) (2015-12-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.3...0.5.4)
+
+**Fixed bugs:**
+
+- bug during editing articles on OSX with Chrome and Safari - NOT with FF [\#232](https://github.com/TheFive/osmbc/issues/232)
+
+## [0.5.3](https://github.com/TheFive/osmbc/tree/0.5.3) (2015-12-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.2...0.5.3)
+
+## [0.5.2](https://github.com/TheFive/osmbc/tree/0.5.2) (2015-12-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.1...0.5.2)
+
+**Implemented enhancements:**
+
+- translations of Upcoming Events are more or less ready [\#235](https://github.com/TheFive/osmbc/issues/235)
+- Use kpdecker/jsdiff to show differences in Change Object [\#3](https://github.com/TheFive/osmbc/issues/3)
+
+**Fixed bugs:**
+
+- below the \*Próximos eventos\*  [\#236](https://github.com/TheFive/osmbc/issues/236)
+- include new blogstatus\_3.pdf please [\#234](https://github.com/TheFive/osmbc/issues/234)
+
+## [0.5.1](https://github.com/TheFive/osmbc/tree/0.5.1) (2015-12-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.0...0.5.1)
+
+**Implemented enhancements:**
+
+- Put the category description in help. [\#228](https://github.com/TheFive/osmbc/issues/228)
+- Create a list of all contributors of an issue [\#42](https://github.com/TheFive/osmbc/issues/42)
+
+**Fixed bugs:**
+
+- No action for the button "cancel" in an user details screen [\#231](https://github.com/TheFive/osmbc/issues/231)
+- When switching category in article to the same "animation" than in collect, to show the content of a category. [\#229](https://github.com/TheFive/osmbc/issues/229)
+- Fixes for image preview [\#195](https://github.com/TheFive/osmbc/issues/195)
+
+## [0.5.0](https://github.com/TheFive/osmbc/tree/0.5.0) (2015-12-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.7...0.5.0)
+
+**Implemented enhancements:**
+
+- Load public name from blog.openstreetmap.de for every author. [\#226](https://github.com/TheFive/osmbc/issues/226)
+- Switch to node.js 4.\(2.x\)  [\#225](https://github.com/TheFive/osmbc/issues/225)
+
+**Closed issues:**
+
+- Add a link to the generated Author text for the Weekly. [\#223](https://github.com/TheFive/osmbc/issues/223)
+- translationXX views with orange highlights for untranslated entries [\#222](https://github.com/TheFive/osmbc/issues/222)
+- time controlled closing of collection - depending from our editorial deadline [\#221](https://github.com/TheFive/osmbc/issues/221)
+
 ## [0.4.7](https://github.com/TheFive/osmbc/tree/0.4.7) (2015-12-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6b...0.4.7)
 
@@ -65,7 +161,6 @@
 
 - Change Text for Ort and Town to Where and Wo in Calender2Markdown tool. [\#199](https://github.com/TheFive/osmbc/issues/199)
 - Blog History is not shown in Blog Views. [\#198](https://github.com/TheFive/osmbc/issues/198)
-- Error storing session object. [\#151](https://github.com/TheFive/osmbc/issues/151)
 
 ## [0.4.2a](https://github.com/TheFive/osmbc/tree/0.4.2a) (2015-12-14)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.2...0.4.2a)
@@ -571,17 +666,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
