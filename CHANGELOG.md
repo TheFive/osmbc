@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.5.8a](https://github.com/TheFive/osmbc/tree/0.5.8a) (2016-01-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8...0.5.8a)
+
+**Fixed bugs:**
+
+- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
+
+**Closed issues:**
+
+- blog difference in shown date and blog date [\#250](https://github.com/TheFive/osmbc/issues/250)
+
 ## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.7...0.5.8)
 
