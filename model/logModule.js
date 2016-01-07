@@ -8,6 +8,8 @@ var articleModule = require('../model/article.js');
 var blogModule = require('../model/blog.js');
 var userModule = require('../model/user.js');
 
+var jsdiff = require('diff');
+
 
 module.exports.log = function log(object,callback) {
 	debug("log");
@@ -68,10 +70,38 @@ module.exports.findById = function(id,callback) {
   pgMap.findById(id,this,callback);
 };
 
+function Change() {};
+
 module.exports.create = function() {
-  return {};
+  return new Change();
 };
 
+
+Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
+  debug("htmlDiffText");
+  var from = "";
+  var to = "";
+  if (this.from) from = this.from;
+  if (this.to) to = this.to;
+  var diff = jsdiff.diffWordsWithSpace(from, to);
+  
+  var result = "";
+  var chars = maxChars;
+  diff.forEach(function(part){
+    // green for additions, red for deletions
+    // grey for common parts
+    var styleColor               = 'style="color:grey"';
+    if (part.added) styleColor   = 'style="color:green"';
+    if (part.removed) styleColor = 'style="color:red"';
+    var partstr = part.value;
+    if (!(part.added || part.removed)) partstr = "…";
+    partstr = partstr.substring(0,chars);
+    chars -= Math.max(0,partstr.length);
+    result += '<span '+styleColor+'>'+partstr+'</span>';
+  });  
+  result+="\n";
+  return result;
+}
 
 
 function countLogsForBlog(blog,callback) {
