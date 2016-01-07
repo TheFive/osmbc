@@ -83,7 +83,7 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
   var to = "";
   if (this.from) from = this.from;
   if (this.to) to = this.to;
-  var diff = jsdiff.diffChars(from, to);
+  var diff = jsdiff.diffWordsWithSpace(from, to);
   
   var result = "";
   var chars = maxChars;
