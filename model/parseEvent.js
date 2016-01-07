@@ -227,7 +227,6 @@ function calenderToMarkdown(lang,date,duration,cb) {
         if (result.endDate >= from && result.startDate <= to) {
           events.push(result);
           result.markdown = parseWikiInfo(result.desc);
-
         }
       }
     }
