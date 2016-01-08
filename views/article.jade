@@ -251,8 +251,8 @@ block content
           |Collection <br>
         .col-md-10
           if (article.collection)
-                :verbatim
-                |<pre>!{article.collection.replace(/(https?:\/\/[^\[\] ]*)/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
+            :verbatim
+            |<pre>!{article.collection.replace(/(https?:\/\/[^\[\] ]*)/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
       .row 
         .col-md-1
         +leftcolumn

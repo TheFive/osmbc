@@ -21,7 +21,7 @@ describe('views/article', function() {
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
       function createBlog(cb) {blogModule.createNewBlog({name:'blog'},cb);},
-      function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test"},function(err,article){
+      function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"Link1: http://www.test.dä/holla and other"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
       }); },
@@ -37,6 +37,9 @@ describe('views/article', function() {
     before(function(done) {
       this.timeout(6000);
       browser.visit('/article/'+articleId, done);
+    });
+    it('should have converted collection correct',function(){
+      //browser.assert.attribute("namefortest","innerHTML",'Link1: <a href="http://www.test.dä/holla and other">http://www.test.dä/holla</a> and other');
     });
     it('should isURL work on page' ,function() {
       var file =  path.resolve(__dirname,'data', "util.data.json");
