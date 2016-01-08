@@ -251,8 +251,8 @@ block content
           |Collection <br>
         .col-md-10
           if (article.collection)
-                :verbatim
-                |<pre>!{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
+            :verbatim
+            |<pre>!{article.collection.replace(/(https?:\/\/[^\[\] ]*)/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
       .row 
         .col-md-1
         +leftcolumn
@@ -627,7 +627,8 @@ block scripts
         if (clfield) cl = clfield.value;
         var linkArea = document.getElementById("linkArea");
 
-        regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
+       // regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
+        regexToken = /(https?:\/\/[^\[\] ]*)/g
         var linkList;
        
         var result = "";
