@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.5.8b](https://github.com/TheFive/osmbc/tree/0.5.8b) (2016-01-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8a...0.5.8b)
+
+**Fixed bugs:**
+
+- links with non standard characters are not identified in full in article screen [\#252](https://github.com/TheFive/osmbc/issues/252)
+
 ## [0.5.8a](https://github.com/TheFive/osmbc/tree/0.5.8a) (2016-01-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8...0.5.8a)
 
