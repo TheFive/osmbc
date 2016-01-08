@@ -91,8 +91,8 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
     // green for additions, red for deletions
     // grey for common parts
     var styleColor               = 'style="color:grey"';
-    if (part.added) styleColor   = 'style=".osmbc-inserted"';
-    if (part.removed) styleColor = 'style=".osmbc-deleted"';
+    if (part.added) styleColor   = 'class="osmbc-inserted"';
+    if (part.removed) styleColor = 'class="osmbc-deleted"';
     var partstr = part.value;
     if (!(part.added || part.removed)) partstr = "…";
     partstr = partstr.substring(0,chars);
