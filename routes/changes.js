@@ -21,8 +21,8 @@ function generateHTMLDiff(one,other) {
     // green for additions, red for deletions
     // grey for common parts
     var styleColor               = 'style="color:grey"';
-    if (part.added) styleColor   = 'style="background-color:green;color:white"';
-    if (part.removed) styleColor = 'style="background-color:red;color:white"';
+    if (part.added) styleColor   = 'class="osmbc-inserted-inverted"';
+    if (part.removed) styleColor = 'class="osmbc-deleted-inverted"';
   
 
     result += '<span '+styleColor+'>'+part.value+'</span>';
