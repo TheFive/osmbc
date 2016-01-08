@@ -5,7 +5,14 @@
                 "http://www.google.de/test",
                 "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE",
                 "http://www.google.de/test?param=ADSFASF&d=asdfa",
-                "http://www.openstreetmap.org/user/Severák/diary/37681"],
+                "http://www.openstreetmap.org/user/Severák/diary/37681",
+                "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE"],
   "isNoURLArray":["Wort", 
-                  "Mehr Text mal am stück","Fertiges (markdown)[www.wikipedia.de]"]
+                  "Mehr Text mal am stück","Fertiges (markdown)[www.wikipedia.de]"],
+ "isURLArrayEncoded":["https://www.google.de",
+                "http://www.google.de/test",
+                "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE",
+                "http://www.google.de/test?param=ADSFASF&amp;d=asdfa",
+                "http://www.openstreetmap.org/user/Severák/diary/37681",
+                "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE"]
 }
