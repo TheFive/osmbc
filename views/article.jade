@@ -258,8 +258,8 @@ block content
           |Collection <br>
         .col-md-10
           if (article.collection)
-                :verbatim
-                |<pre>!{article.collection.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
+            :verbatim
+            |<pre>!{article.collection.replace(/(https?:\/\/[^\[\] \n\r]*)/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
       .row 
         .col-md-1
         - var lbg;
@@ -360,9 +360,7 @@ block content
                 th
                  |what
                 th
-                 |from
-                th
-                 |to
+                 |change
                 th
                  |when
              tbody
@@ -373,9 +371,18 @@ block content
                       span.glyphicon.glyphicon-info-sign 
                   td= change.user
                   td= change.property
-                  td= layout.util.shorten(change.from)
-                  td= layout.util.shorten(change.to)
+                  td
+                    :verbatim
+                    !{change.htmlDiffText(100)}
                   td= layout.moment(change.timestamp).fromNow() 
+        div
+          p
+            |only displaying changes 
+            span.osmbc-inserted
+              |inserted text 
+            span.osmbc-deleted
+              |removed text
+
  
 block scripts                
   script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
@@ -643,7 +650,8 @@ block scripts
         if (clfield) cl = clfield.value;
         var linkArea = document.getElementById("linkArea");
 
-        regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
+       // regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
+        regexToken = /(https?:\/\/[^\[\] \n\r]*)/g
         var linkList;
        
         var result = "";

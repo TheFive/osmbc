@@ -41,3 +41,20 @@ margin: 0;
 .osmbc-lang2 {
   background-color:  #ffe6cc;
 }
+
+.osmbc-deleted-inverted {
+  background-color: #ff0000;
+  color: white;
+}
+
+.osmbc-inserted-inverted {
+  background-color:  #3366ff;
+  color: white;
+}
+.osmbc-deleted {
+  color: #ff0000;
+}
+
+.osmbc-inserted {
+  color:  #3366ff;
+}

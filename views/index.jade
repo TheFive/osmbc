@@ -56,10 +56,10 @@ block content
                 th
                  | what
                 th
-                 |  to
+                 | Change
                 th
                  | when
-             tbody
+            tbody
               each change, i in changes
                 tr
                   td
@@ -69,8 +69,18 @@ block content
                   td= change.user
                   td= change.table
                   td= change.property
-                  td= layout.util.shorten(change.to)
+                  td
+                    :verbatim
+                    !{change.htmlDiffText(40)}
                   td= layout.moment(change.timestamp).fromNow()
+        div
+          p
+            |only displaying changes 
+            span.osmbc-inserted
+              |inserted text 
+            span.osmbc-deleted
+              |removed text
+
   .row
     .col-md-8
     .col-md-4

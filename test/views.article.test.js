@@ -3,7 +3,6 @@ var path = require('path');
 var fs = require('fs');
 var should = require('should');
 var testutil = require('./testutil.js');
-
 var userModule = require("../model/user.js");
 var articleModule = require("../model/article.js");
 var blogModule = require("../model/blog.js");
@@ -17,21 +16,20 @@ var blogModule = require("../model/blog.js");
 describe('views/article', function() {
   var browser;
   var articleId;
-  var server;
   before(function(bddone) {
     async.series([
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
       function createBlog(cb) {blogModule.createNewBlog({name:'blog'},cb);},
-      function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test"},function(err,article){
+      function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"Link1: http://www.test.dä/holla and other"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
       }); },
-      function createBrowser(cb) {testutil.startBrowser(function(err,result){browser=result;cb()})}
+      function createBrowser(cb) {testutil.startBrowser(function(err,result){browser=result;cb();});}
     ], function(err) {
       bddone(err);
       
-    })
+    });
   });
 
 
@@ -40,18 +38,21 @@ describe('views/article', function() {
       this.timeout(6000);
       browser.visit('/article/'+articleId, done);
     });
+    it('should have converted collection correct',function(){
+      //browser.assert.attribute("namefortest","innerHTML",'Link1: <a href="http://www.test.dä/holla and other">http://www.test.dä/holla</a> and other');
+    });
     it('should isURL work on page' ,function() {
       var file =  path.resolve(__dirname,'data', "util.data.json");
       var data = JSON.parse(fs.readFileSync(file));
       for (var i=0;i<data.isURLArray.length;i++) {
         should(browser.evaluate("isURL('"+data.isURLArray[i]+"')")).is.True();
       }
-      for (var i=0;i<data.isNoURLArray.length;i++) {
+      for (i=0;i<data.isNoURLArray.length;i++) {
         should(browser.evaluate("isURL('"+data.isNoURLArray[i]+"')")).is.False();
       }
     });
   
-    context('generateMarkdownLink2',function() {
+    describe('generateMarkdownLink2',function() {
       it('should return NULL if no link is pasted',function(){
         should(browser.evaluate("generateMarkdownLink2(\
              {text:'the origin text.',startselection:0,endselection:0},\
@@ -62,7 +63,7 @@ describe('views/article', function() {
         should(browser.evaluate("generateMarkdownLink2(\
              {text:'the origin text',startselection:11, endselection:11},\
              {text:'the origin in the middle text',startselection:25,endselection:25})")).equal(null);
-      })
+      });
       it('should return NULL if no link is pasted with selection',function(){
         should(browser.evaluate("generateMarkdownLink2(\
           {text:'ex the origin text.',startselection:0,endselection:2},\
@@ -73,7 +74,7 @@ describe('views/article', function() {
         should(browser.evaluate("generateMarkdownLink2(\
           {text:'the origin --change here -- text',startselection:11,endselection:27},\
           {text:'the origin in the middle text',startselection:24,endselection:24})")).equal(null);
-      })
+      });
       it('should return new value if link is inserted',function(){
         should(browser.evaluate("generateMarkdownLink2(\
           {text:'the origin text.',startselection:0,endselection:0},\
@@ -84,7 +85,7 @@ describe('views/article', function() {
         should(browser.evaluate("generateMarkdownLink2(\
           {text:'the origin text.',startselection:4,endselection:4},\
           {text:'the http://www.google.deorigin text.',startselection:24,endselection:24})")).eql({pos:5,text:'the [](http://www.google.de)origin text.'});
-      })
+      });
       it('should return new value if link is inserted with selection',function(){
         should(browser.evaluate("generateMarkdownLink2(\
           {text:'Google the origin text.',startselection:0,endselection:6},\
@@ -98,9 +99,9 @@ describe('views/article', function() {
         should(browser.evaluate("generateMarkdownLink2(\
           {text:'the ---LINK---origin text.',startselection:4,endselection:14},\
           {text:'the http://www.google.deorigin text.',startselection:24,endselection:24})")).eql({pos:38,text:'the [---LINK---](http://www.google.de)origin text.'});
-      })
-    })
-  })
+      });
+    });
+  });
   describe('Scripting Functions in Edit Mode',function() {
     before(function(done) {
       this.timeout(12000);
@@ -111,12 +112,31 @@ describe('views/article', function() {
       });
     });
 
-    context('onchangeCollection',function(){
+    describe('onchangeCollection',function(){
       it('should show the links from collection field under the field', function(){
-        browser.document.getElementById('collection').value="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE";
+        var file =  path.resolve(__dirname,'data', "util.data.json");
+        var data = JSON.parse(fs.readFileSync(file));
+        for (var i=0;i<data.isURLArray.length;i++) {
+          var link = data.isURLArray[i];
+          var linkUrl = data.isURLArrayEncoded[i];
+        
+          browser.document.getElementById('collection').value=link;
+          browser.evaluate('onchangeCollection()');
+          should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="'+linkUrl+'" target="_blank">'+linkUrl+'</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u='+linkUrl+'" target="_blank"> \nDE</a><br>\n</p>');
+        }
+      });
+      it('should show multiple links from collection field under the field', function(){
+      
+        browser.document.getElementById('collection').value="Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: http://www.openstreetmap.org/user/Severák/diary/37681";
         browser.evaluate('onchangeCollection()');
-        should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank"> \nDE</a><br>\n</p>');
-      })
-    })
-  })
+        should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank"> \nDE</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank"> \nDE</a><br>\n</p>');
+      });
+      it('should show multiple links from collection only separated by carrige return', function(){
+      
+        browser.document.getElementById('collection').value="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681";
+        browser.evaluate('onchangeCollection()');
+        should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank"> \nDE</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank"> \nDE</a><br>\n</p>');
+      });
+    });
+  });
 });

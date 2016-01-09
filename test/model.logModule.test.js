@@ -3,32 +3,42 @@ var async  = require('async');
 var testutil = require('./testutil.js');
 var logModule = require('../model/logModule.js');
 
+/* jshint undef: true, unused: true */
+/* globals context */
 
 describe('model/changes',function() {
+  context('Change Constructor',function(){
+    it('should create a Change object',function(){
+      var change = logModule.create({oid:"Test"});
+      should(change.oid).eql("Test");
+      should(typeof(change)).eql('object');
+      should(change instanceof logModule.Class).be.True();
+    });
+  });
   context('find',function() {
     beforeEach(function (bddone) {
       testutil.clearDB(bddone);
-    })
+    });
     it('should find nothing',function (bddone) {
       logModule.find({table:"usert",oid:1},{column:"oid"},function(err,result){
         should.not.exist(err);
         should(result).eql([]);
         bddone();
-      })
-    })
-  })
+      });
+    });
+  });
   context('countLogsForBlog',function(){
     beforeEach(function(bddone){
       testutil.clearDB(bddone);
-    })
+    });
     it('should count the different logs',function(bddone){
       async.parallel([
-        function writeLog1(cb){logModule.log({user:"Test1",blog:"Test",property:"field1"},cb)},
-        function writeLog2(cb){logModule.log({user:"Test1",blog:"Test",property:"field1"},cb)},
-        function writeLog3(cb){logModule.log({user:"Test2",blog:"Test",property:"field2"},cb)},
-        function writeLog4(cb){logModule.log({user:"Test2",blog:"Test",property:"field3"},cb)},
-        function writeLog5(cb){logModule.log({user:"Test2",blog:"Test",property:"field4"},cb)},
-        function writeLog6(cb){logModule.log({user:"Test2",blog:"OtherTest",property:"field1"},cb)}
+        function writeLog1(cb){logModule.log({user:"Test1",blog:"Test",property:"field1"},cb);},
+        function writeLog2(cb){logModule.log({user:"Test1",blog:"Test",property:"field1"},cb);},
+        function writeLog3(cb){logModule.log({user:"Test2",blog:"Test",property:"field2"},cb);},
+        function writeLog4(cb){logModule.log({user:"Test2",blog:"Test",property:"field3"},cb);},
+        function writeLog5(cb){logModule.log({user:"Test2",blog:"Test",property:"field4"},cb);},
+        function writeLog6(cb){logModule.log({user:"Test2",blog:"OtherTest",property:"field1"},cb);}
 
       ],function(err){
         should.not.exist(err);
@@ -36,8 +46,22 @@ describe('model/changes',function() {
           should.not.exist(err);
           should(result).eql({"field1":{"Test1":2},"field2":{"Test2":1},"field3":{"Test2":1},"field4":{"Test2":1}});
           bddone();
-        })
-      })
-    })
-  })
-})
+        });
+      });
+    });
+  });
+  context('htmlDiffText',function() {
+    it('should generate a colored word based diff',function(){
+      var change = new logModule.Class({from:"This is The origin text",to:"And This is the changed text"});
+      should(change.htmlDiffText(40)).equal('<span class="osmbc-inserted">And </span>\n<span style="color:grey">…</span>\n<span class="osmbc-deleted">The</span>\n<span class="osmbc-inserted">the</span>\n<span style="color:grey">…</span>\n<span class="osmbc-deleted">origin</span>\n<span class="osmbc-inserted">changed</span>\n<span style="color:grey">…</span>\n');
+    });
+    it('should find out only inserted spaces',function(){
+      var change = new logModule.Class({from:"This is The origin text with [markup](www.google.de)",to:"This is The origin text with [markup] (www.go ogle.de)"});
+      should(change.htmlDiffText(40)).eql('<span class="osmbc-inserted">ONLY SPACES ADDED</span>');
+    });
+    it('should find out only deleted spaces',function(){
+      var change = new logModule.Class({to:"This is The origin text with [markup](www.google.de)",from:"This is The origin text with [markup] (www.go ogle.de)"});
+      should(change.htmlDiffText(40)).eql('<span class="osmbc-deleted">Only spaces removed</span>');
+    });
+  });
+});

@@ -723,3 +723,5 @@ module.exports.removeOpenBlogCache = function() {
   debug('removeOpenBlogCache');
   listOfOrphanBlog = null;
 };
+
+module.exports.Class = Article;

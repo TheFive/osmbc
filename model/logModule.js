@@ -8,7 +8,25 @@ var articleModule = require('../model/article.js');
 var blogModule = require('../model/blog.js');
 var userModule = require('../model/user.js');
 
+var jsdiff = require('diff');
 
+
+
+function Change(proto)
+{
+  debug("Change");
+  debug("Prototype %s",JSON.stringify(proto));
+  for (var k in proto) {
+    this[k] = proto[k];
+  }
+}
+
+function create(proto) {
+  debug('create');
+  var v = new Change(proto);
+
+  return v;
+}
 module.exports.log = function log(object,callback) {
 	debug("log");
   async.series([
@@ -68,8 +86,62 @@ module.exports.findById = function(id,callback) {
   pgMap.findById(id,this,callback);
 };
 
+
 module.exports.create = function() {
-  return {};
+  return new Change();
+};
+
+
+Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
+  debug("htmlDiffText");
+  var from = "";
+  var to = "";
+  if (this.from) from = this.from;
+  if (this.to) to = this.to;
+
+  // first check on only spaces
+  var diff = jsdiff.diffChars(from,to);
+  var onlySpacesAdd = true;
+  var onlySpacesDel = true;
+  diff.forEach(function(part){
+    var partOnlySpace = (part.value.trim() === "");
+    if (part.removed) {
+      onlySpacesAdd = false;
+      if (!partOnlySpace) onlySpacesDel = false;
+    }
+
+    if (part.added) {
+      onlySpacesDel = false;
+      if (!partOnlySpace) onlySpacesAdd = false;
+    }
+  });
+  if (onlySpacesAdd) {
+    return '<span class="osmbc-inserted">ONLY SPACES ADDED</span>';
+  }
+  if (onlySpacesDel) {
+    return '<span class="osmbc-deleted">Only spaces removed</span>';
+  }
+  diff = jsdiff.diffWordsWithSpace(from, to);
+  
+  var result = "";
+  var chars = maxChars;
+  diff.forEach(function(part){
+    // green for additions, red for deletions
+    // grey for common parts
+    var styleColor               = 'style="color:grey"';
+    if (part.added) {
+      styleColor   = 'class="osmbc-inserted"';
+    }
+    if (part.removed) {
+      styleColor = 'class="osmbc-deleted"';
+    }
+    var partstr = part.value;
+    if (!(part.added || part.removed)) partstr = "…";
+    partstr = partstr.substring(0,chars);
+    chars -= Math.max(0,partstr.length);
+    result += '<span '+styleColor+'>'+partstr+'</span>\n';
+  }); 
+  return result;
 };
 
 
@@ -154,3 +226,5 @@ module.exports.table = "changes";
 module.exports.countLogsForBlog = countLogsForBlog;
 module.exports.createTable = createTable;
 module.exports.dropTable = dropTable;
+module.exports.create = create;
+module.exports.Class = Change;

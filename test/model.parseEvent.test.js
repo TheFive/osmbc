@@ -1,13 +1,22 @@
 var should = require('should');
-var testutil = require('./testutil.js');
 var parseEvent = require('../model/parseEvent.js');
 var nock = require('nock');
 var path = require('path');
 var fs = require('fs');
+var sinon = require('sinon');
 
 
 describe('model/parseEvent',function() {
-  context('nextDate',function() {
+  var clock;
+  before(function(bddone){
+    clock = sinon.useFakeTimers(new Date("2015-12-06").getTime());
+    bddone();
+  });
+  after(function(bddone){
+    clock.restore();
+    bddone();
+  });
+  describe('nextDate',function() {
     it('should generate a date in the timeframe [now-50:now+316]',function(){
       var d = new Date();
       var timeMin = d.getTime()-1000*60*60*24*50;
@@ -43,9 +52,9 @@ describe('model/parseEvent',function() {
       should(isInRange(date)).be.True();
       date = parseEvent.nextDate(new Date('Dec 24'));
       should(isInRange(date)).be.True();
-    })
-  })
-  context('parseWikiInfo',function(){
+    });
+  });
+  describe('parseWikiInfo',function(){
     it('should parse a [[]] reference',function(){
       should(parseEvent.parseWikiInfo('  Text [[link]] another Text'))
         .equal('Text [link](https://wiki.openstreetmap.org/wiki/link) another Text');
@@ -72,27 +81,27 @@ describe('model/parseEvent',function() {
     });
 
 
-  })
-  context('parseLineEvent',function(){
+  });
+  describe('parseLineEvent',function(){
     it('should return null for wrong lines',function() {
       should(parseEvent.parseLine('|-  ')).equal(null);
       should(parseEvent.parseLine('|-')).equal(null);
       should(parseEvent.parseLine('|-        ')).equal(null);
-    })
+    });
     it('should return values for entry with no town',function() {
       var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
      
-      delete result.startDate
+      delete result.startDate;
       should(result).deepEqual({type:"social",
                                 
                                 desc:"[[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]]",
                                
                                 country:"Germany"
-                              })
-    })
+                              });
+    });
     it('should return values for entry with comma separated town',function() {
       var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]],  [[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
@@ -103,8 +112,8 @@ describe('model/parseEvent',function() {
                                 desc:"[[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]]",
                                 town:"Düsseldorf",
                                 country:"Germany"
-                              })
-    })
+                              });
+    });
     it('should return values for entry with town (no comma)',function() {
       var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || Stammtisch  [[Düsseldorf]]  [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
@@ -115,8 +124,8 @@ describe('model/parseEvent',function() {
                                 desc:"Stammtisch",
                                 town:"Düsseldorf",
                                 country:"Germany"
-                              })
-    })
+                              });
+    });
     it('should return values for entry with town (comma)',function() {
       var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || Stammtisch , [[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
@@ -133,8 +142,8 @@ describe('model/parseEvent',function() {
                                 desc:"Stammtisch",
                                 town:"Düsseldorf",
                                 country:"Germany"
-                              })
-    })
+                              });
+    });
     it('should return values for entry with town and external description',function() {
       var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || [https://www.link.de/sublink Tolle Veranstaltung]  ,[[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
@@ -145,8 +154,8 @@ describe('model/parseEvent',function() {
                                 desc:"[https://www.link.de/sublink Tolle Veranstaltung]",
                                 town:"Düsseldorf",
                                 country:"Germany"
-                              })
-    })
+                              });
+    });
     // 
     it('should return values for entry with more complex description',function() {
       var result = parseEvent.parseLine("|- {{cal|conference}} || {{dm|Aug 24|Aug 26}} || <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] {{SmallFlag|Germany}}");
@@ -158,8 +167,8 @@ describe('model/parseEvent',function() {
                                 desc:"<big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>",
                                 town:"Bonn",
                                 country:"Germany"
-                              })
-    })
+                              });
+    });
   
     it('should return values for entry with no town and country',function() {
       var result = parseEvent.parseLine("| {{cal|info}} || {{dm|Dec 5}} || [[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]]");
@@ -168,24 +177,24 @@ describe('model/parseEvent',function() {
       delete result.endDate;
       should(result).deepEqual({type:"info",
                                 desc:"[[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]]"
-                              })
-    })
-  })
-  context('calenderToMarkdown',function(){
+                              });
+    });
+  });
+  describe('calenderToMarkdown',function(){
     before(function(){
       var fileName = path.join(__dirname,'/data/calenderData.wiki');
  
-      var scope = nock('https://wiki.openstreetmap.org')
+      nock('https://wiki.openstreetmap.org')
                 .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
               
                 .replyWithFile(200,fileName);
     });
     it('should load date form wiki and generate a Markdown String',function(bddone){
-      var result = parseEvent.calenderToMarkdown("DE",new Date("11/28/2015"),14,function(err,result){
+      parseEvent.calenderToMarkdown("DE",new Date("11/28/2015"),14,function(err,result){
         var excpeted = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
         should(result).equal(excpeted);
          bddone();
       });
     });
-  })
-})
+  });
+});
