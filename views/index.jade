@@ -59,7 +59,7 @@ block content
                  | Change
                 th
                  | when
-             tbody
+            tbody
               each change, i in changes
                 tr
                   td
@@ -73,6 +73,14 @@ block content
                     :verbatim
                     !{change.htmlDiffText(40)}
                   td= layout.moment(change.timestamp).fromNow()
+        div
+          p
+            |only displaying changes 
+            span.osmbc-inserted
+              |inserted text 
+            span.osmbc-deleted
+              |removed text
+
   .row
     .col-md-8
     .col-md-4

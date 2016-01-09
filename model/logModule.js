@@ -116,10 +116,10 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
     }
   });
   if (onlySpacesAdd) {
-    return '<span class="osmbc-deleted">ONLY SPACES ADDED</span>';
+    return '<span class="osmbc-inserted">ONLY SPACES ADDED</span>';
   }
   if (onlySpacesDel) {
-    return '<span class="osmbc-inserted">Only spaces removed</span>';
+    return '<span class="osmbc-deleted">Only spaces removed</span>';
   }
   diff = jsdiff.diffWordsWithSpace(from, to);
   

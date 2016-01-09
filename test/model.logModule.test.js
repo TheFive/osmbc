@@ -57,11 +57,11 @@ describe('model/changes',function() {
     });
     it('should find out only inserted spaces',function(){
       var change = new logModule.Class({from:"This is The origin text with [markup](www.google.de)",to:"This is The origin text with [markup] (www.go ogle.de)"});
-      should(change.htmlDiffText(40)).eql('<span class="osmbc-deleted">ONLY SPACES ADDED</span>');
+      should(change.htmlDiffText(40)).eql('<span class="osmbc-inserted">ONLY SPACES ADDED</span>');
     });
     it('should find out only deleted spaces',function(){
       var change = new logModule.Class({to:"This is The origin text with [markup](www.google.de)",from:"This is The origin text with [markup] (www.go ogle.de)"});
-      should(change.htmlDiffText(40)).eql('<span class="osmbc-inserted">Only spaces removed</span>');
+      should(change.htmlDiffText(40)).eql('<span class="osmbc-deleted">Only spaces removed</span>');
     });
   });
 });
