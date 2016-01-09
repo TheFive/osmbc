@@ -15,7 +15,6 @@ var jsdiff = require('diff');
 function Change(proto)
 {
   debug("Change");
-  console.log(proto);
   debug("Prototype %s",JSON.stringify(proto));
   for (var k in proto) {
     this[k] = proto[k];
@@ -24,7 +23,6 @@ function Change(proto)
 
 function create(proto) {
   debug('create');
-  console.log(proto);
   var v = new Change(proto);
 
   return v;
@@ -100,7 +98,30 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
   var to = "";
   if (this.from) from = this.from;
   if (this.to) to = this.to;
-  var diff = jsdiff.diffWordsWithSpace(from, to);
+
+  // first check on only spaces
+  var diff = jsdiff.diffChars(from,to);
+  var onlySpacesAdd = true;
+  var onlySpacesDel = true;
+  diff.forEach(function(part){
+    var partOnlySpace = (part.value.trim() === "");
+    if (part.removed) {
+      onlySpacesAdd = false;
+      if (!partOnlySpace) onlySpacesDel = false;
+    }
+
+    if (part.added) {
+      onlySpacesDel = false;
+      if (!partOnlySpace) onlySpacesAdd = false;
+    }
+  });
+  if (onlySpacesAdd) {
+    return '<span class="osmbc-deleted">ONLY SPACES ADDED</span>';
+  }
+  if (onlySpacesDel) {
+    return '<span class="osmbc-inserted">Only spaces removed</span>';
+  }
+  diff = jsdiff.diffWordsWithSpace(from, to);
   
   var result = "";
   var chars = maxChars;
@@ -108,15 +129,18 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
     // green for additions, red for deletions
     // grey for common parts
     var styleColor               = 'style="color:grey"';
-    if (part.added) styleColor   = 'class="osmbc-inserted"';
-    if (part.removed) styleColor = 'class="osmbc-deleted"';
+    if (part.added) {
+      styleColor   = 'class="osmbc-inserted"';
+    }
+    if (part.removed) {
+      styleColor = 'class="osmbc-deleted"';
+    }
     var partstr = part.value;
     if (!(part.added || part.removed)) partstr = "…";
     partstr = partstr.substring(0,chars);
     chars -= Math.max(0,partstr.length);
-    result += '<span '+styleColor+'>'+partstr+'</span>';
-  });  
-  result+="\n";
+    result += '<span '+styleColor+'>'+partstr+'</span>\n';
+  }); 
   return result;
 };
 
