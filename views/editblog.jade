@@ -76,10 +76,10 @@ block content
           | Period 
         .col-md-3
           .panel.panel-default
-            .panel-body #{blog.startDate}
+            .panel-body #{layout.moment(blog.startDate).locale(layout.user.language).format("l")}
         .col-md-3
           .panel.panel-default
-            .panel-body #{blog.endDate}
+            .panel-body #{layout.moment(blog.endDate).locale(layout.user.language).format("l")}
       .row
         .col-md-2
           | Status 
