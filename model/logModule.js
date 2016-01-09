@@ -104,7 +104,7 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
   var onlySpacesAdd = true;
   var onlySpacesDel = true;
   diff.forEach(function(part){
-    var partOnlySpace = (part.value.trim() == "");
+    var partOnlySpace = (part.value.trim() === "");
     if (part.removed) {
       onlySpacesAdd = false;
       if (!partOnlySpace) onlySpacesDel = false;
