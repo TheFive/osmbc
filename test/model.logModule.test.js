@@ -50,4 +50,18 @@ describe('model/changes',function() {
       });
     });
   });
+  context('htmlDiffText',function() {
+    it('should generate a colored word based diff',function(){
+      var change = new logModule.Class({from:"This is The origin text",to:"And This is the changed text"});
+      should(change.htmlDiffText(40)).equal('<span class="osmbc-inserted">And </span>\n<span style="color:grey">…</span>\n<span class="osmbc-deleted">The</span>\n<span class="osmbc-inserted">the</span>\n<span style="color:grey">…</span>\n<span class="osmbc-deleted">origin</span>\n<span class="osmbc-inserted">changed</span>\n<span style="color:grey">…</span>\n');
+    });
+    it('should find out only inserted spaces',function(){
+      var change = new logModule.Class({from:"This is The origin text with [markup](www.google.de)",to:"This is The origin text with [markup] (www.go ogle.de)"});
+      should(change.htmlDiffText(40)).eql('<span class="osmbc-deleted">ONLY SPACES ADDED</span>');
+    });
+    it('should find out only deleted spaces',function(){
+      var change = new logModule.Class({to:"This is The origin text with [markup](www.google.de)",from:"This is The origin text with [markup] (www.go ogle.de)"});
+      should(change.htmlDiffText(40)).eql('<span class="osmbc-inserted">Only spaces removed</span>');
+    });
+  });
 });
