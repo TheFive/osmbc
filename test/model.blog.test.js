@@ -204,8 +204,8 @@ describe('model/blog', function() {
               delete result[0].timestamp;
               delete result[1].timestamp;
 
-              should(result).containEql({oid:id,blog:"New Title",user:"user",table:"blog",property:"status",from:"TEST",to:"published"});
-              should(result).containEql({oid:id,blog:"New Title",user:"user",table:"blog",property:"field",to:"test"});
+              should(result).containEql(logModule.create({oid:id,blog:"New Title",user:"user",table:"blog",property:"status",from:"TEST",to:"published"}));
+              should(result).containEql(logModule.create({oid:id,blog:"New Title",user:"user",table:"blog",property:"field",to:"test"}));
               bddone();
             });
           });
@@ -247,7 +247,7 @@ describe('model/blog', function() {
               should(t0diff).be.below(10);
               delete result[0].timestamp;
         
-              should(result).containEql({oid:id,blog:"Title",user:"user",table:"blog",property:"closeDE",to:true});
+              should(result).containEql(logModule.create({oid:id,blog:"Title",user:"user",table:"blog",property:"closeDE",to:true}));
               bddone();
             });
           });
@@ -295,7 +295,7 @@ describe('model/blog', function() {
               should(t0diff).be.below(10);
               delete result[0].timestamp;
         
-              should(result).containEql({oid:id,blog:"Title",user:"user",table:"blog",property:"reviewCommentDE",to:"it is approved.",from:"Add"});
+              should(result).containEql(logModule.create({oid:id,blog:"Title",user:"user",table:"blog",property:"reviewCommentDE",to:"it is approved.",from:"Add"}));
               bddone();
             });
           });

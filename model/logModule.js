@@ -11,6 +11,24 @@ var userModule = require('../model/user.js');
 var jsdiff = require('diff');
 
 
+
+function Change(proto)
+{
+  debug("Change");
+  console.log(proto);
+  debug("Prototype %s",JSON.stringify(proto));
+  for (var k in proto) {
+    this[k] = proto[k];
+  }
+}
+
+function create(proto) {
+  debug('create');
+  console.log(proto);
+  var v = new Change(proto);
+
+  return v;
+}
 module.exports.log = function log(object,callback) {
 	debug("log");
   async.series([
@@ -70,7 +88,6 @@ module.exports.findById = function(id,callback) {
   pgMap.findById(id,this,callback);
 };
 
-function Change() {};
 
 module.exports.create = function() {
   return new Change();
@@ -101,7 +118,8 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
   });  
   result+="\n";
   return result;
-}
+};
+
 
 
 function countLogsForBlog(blog,callback) {
@@ -184,3 +202,5 @@ module.exports.table = "changes";
 module.exports.countLogsForBlog = countLogsForBlog;
 module.exports.createTable = createTable;
 module.exports.dropTable = dropTable;
+module.exports.create = create;
+module.exports.Class = Change;

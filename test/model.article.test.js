@@ -25,7 +25,14 @@ describe('model/article', function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
   }); 
-
+  context('Article Constructor',function(){
+    it('should create an Article object',function(){
+      var article = articleModule.create({oid:"Test"});
+      should(article.oid).eql("Test");
+      should(typeof(article)).eql('object');
+      should(article instanceof articleModule.Class).be.True();
+    });
+  });
   describe('createNewArticle',function() {
     it('should createNewArticle with prototype',function(bddone) {
       articleModule.createNewArticle({blog:"test",markdownDE:"**"},function (err,result){
