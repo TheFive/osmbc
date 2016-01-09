@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.5.9](https://github.com/TheFive/osmbc/tree/0.5.9) (2016-01-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8b...0.5.9)
+
+**Implemented enhancements:**
+
+- Use jsdiff in word mode to display differences on main page. [\#253](https://github.com/TheFive/osmbc/issues/253)
+- blog difference in shown date and blog date [\#249](https://github.com/TheFive/osmbc/issues/249)
+
+**Closed issues:**
+
+- Collection does not separate links [\#254](https://github.com/TheFive/osmbc/issues/254)
+
 ## [0.5.8b](https://github.com/TheFive/osmbc/tree/0.5.8b) (2016-01-08)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8a...0.5.8b)
 
