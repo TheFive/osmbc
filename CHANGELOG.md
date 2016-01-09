@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.5.9a](https://github.com/TheFive/osmbc/tree/0.5.9a) (2016-01-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.9...0.5.9a)
+
+**Fixed bugs:**
+
+- typo: Any thng which is interesting in OSM and worth sharing [\#255](https://github.com/TheFive/osmbc/issues/255)
+
 ## [0.5.9](https://github.com/TheFive/osmbc/tree/0.5.9) (2016-01-09)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8b...0.5.9)
 
@@ -8,7 +15,7 @@
 - Use jsdiff in word mode to display differences on main page. [\#253](https://github.com/TheFive/osmbc/issues/253)
 - blog difference in shown date and blog date [\#249](https://github.com/TheFive/osmbc/issues/249)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - Collection does not separate links [\#254](https://github.com/TheFive/osmbc/issues/254)
 
@@ -24,11 +31,8 @@
 
 **Fixed bugs:**
 
-- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
-
-**Closed issues:**
-
 - blog difference in shown date and blog date [\#250](https://github.com/TheFive/osmbc/issues/250)
+- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
 
 ## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.7...0.5.8)
@@ -70,10 +74,6 @@
 **Implemented enhancements:**
 
 - Implement a Tool like the calender tool to simplify Image Integration. [\#211](https://github.com/TheFive/osmbc/issues/211)
-
-**Closed issues:**
-
-- Proxy Error with request GET /changes/46283 [\#238](https://github.com/TheFive/osmbc/issues/238)
 
 ## [0.5.4](https://github.com/TheFive/osmbc/tree/0.5.4) (2015-12-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.3...0.5.4)
@@ -119,12 +119,12 @@
 
 - Load public name from blog.openstreetmap.de for every author. [\#226](https://github.com/TheFive/osmbc/issues/226)
 - Switch to node.js 4.\(2.x\)  [\#225](https://github.com/TheFive/osmbc/issues/225)
+- Add a link to the generated Author text for the Weekly. [\#223](https://github.com/TheFive/osmbc/issues/223)
+- time controlled closing of collection - depending from our editorial deadline [\#221](https://github.com/TheFive/osmbc/issues/221)
 
 **Closed issues:**
 
-- Add a link to the generated Author text for the Weekly. [\#223](https://github.com/TheFive/osmbc/issues/223)
 - translationXX views with orange highlights for untranslated entries [\#222](https://github.com/TheFive/osmbc/issues/222)
-- time controlled closing of collection - depending from our editorial deadline [\#221](https://github.com/TheFive/osmbc/issues/221)
 
 ## [0.4.7](https://github.com/TheFive/osmbc/tree/0.4.7) (2015-12-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6b...0.4.7)
@@ -132,10 +132,10 @@
 **Implemented enhancements:**
 
 - Distinguish between proofreading in OSMBC and WP [\#215](https://github.com/TheFive/osmbc/issues/215)
+- Block in Review - Edit in Markdown should be possible [\#213](https://github.com/TheFive/osmbc/issues/213)
 
 **Closed issues:**
 
-- Block in Review - Edit in Markdown should be possible [\#213](https://github.com/TheFive/osmbc/issues/213)
 - Review is done in wordpress, please document your review here. [\#212](https://github.com/TheFive/osmbc/issues/212)
 
 ## [0.4.6b](https://github.com/TheFive/osmbc/tree/0.4.6b) (2015-12-20)
@@ -696,17 +696,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
