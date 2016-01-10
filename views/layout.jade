@@ -40,7 +40,7 @@ html(lang='en')
                   span.badge.osmbc-lang
                     |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.language]}
                   if layout.language2
-                    span.badge.osmbc-lang2
+                    span.badge.osmbc-lang2.hidden-xs
                       |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.language2]}
        
             if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
@@ -141,7 +141,7 @@ html(lang='en')
                 each l in layout.languages
                   li
                     a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
-            li.dropdown
+            li.dropdown.hidden-xs
               a.btn.dropdown-toggle.osmbc-lang2(href='#',style="color:white", data-toggle='dropdown')
                 |#{layout.language2} 
                 span.caret
