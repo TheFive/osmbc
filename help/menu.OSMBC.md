@@ -74,9 +74,7 @@ Similar to final, No colored glyphicons, no coloured commentsmarks. Edit&transla
 
 You can choose a language to display a blog.
 
-* **EN:** Blog and article is one columned in EN.
-* **EN(ES):** Blog is in english, article view is english & spanish
-* **EN.ES:** Blog is bilingual as the article.
+Just use the dropdown in the upper right corner of OSMBC, with these dropdowns you are although able to switch the languages in the artcile view.
 
 ### Which markdown can be used
 

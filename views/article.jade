@@ -17,7 +17,7 @@ mixin leftcolumn
 
 mixin rightcolumn
   if (params.right_lang !="--")
-    .col-md-5
+    .col-md-5.hidden-xs
       if block
         block
       else
@@ -78,10 +78,10 @@ block content
               if (layout.listOfReviewBlog)  
                 for blog in layout.listOfReviewBlog 
                   if blog.name == article.blog         
-                    option(value="#{blog.name}" selected) #{blog.name} (Review #{layout.user.language})
+                    option(value="#{blog.name}" selected) #{blog.name} (Review #{layout.language})
                     - displayed = true;
                   else
-                     option(value="#{blog.name}" ) #{blog.name} (Review #{layout.user.language})
+                     option(value="#{blog.name}" ) #{blog.name} (Review #{layout.language})
               if (article.blog == "Trash")
                 option(value="Trash" selected) Trash
                 - displayed = true;
@@ -126,8 +126,20 @@ block content
         .row
           .col-md-1
             |Title <br>
-          .col-md-10
+          .col-md-7
             textarea.form-control(name="title",rows=1) #{article.title}
+          .col-md-3
+            each lang in layout.languages
+              if (article["markdown"+lang])
+                if (article["markdown"+lang]!=="no translation") 
+                  span.label.label-success
+                    |#{lang}
+                else    
+                  span.label.label-danger
+                    |#{lang}
+              else
+                span.label.label-default
+                  |#{lang}
                
         .row
           .col-md-1
@@ -144,11 +156,18 @@ block content
                 
         .row 
           .col-md-1
+          - var lbg;
+          - if (params.left_lang===layout.language) lbg = "osmbc-lang";
+          - if (params.left_lang===layout.language2) lbg = "osmbc-lang2";
+          - var rbg;
+          - if (params.right_lang===layout.language) rbg = "osmbc-lang";
+          - if (params.right_lang===layout.language2) rbg = "osmbc-lang2";
+
           +leftcolumn
-            div(id="left_lang") 
+            span.label.label-default(id="left_lang" class="#{lbg}") 
               |#{params.left_lang}
           +rightcolumn
-            div(id="right_lang")
+            span.label.label-default(id="right_lang" class="#{rbg}" )
               |#{params.right_lang}
         .row
           .col-md-1
@@ -243,9 +262,22 @@ block content
       .row
         .col-md-1
           |Title <br>
-        .col-md-10
+        .col-md-7
           h3
             |#{article.title}
+        .col-md-3
+          each lang in layout.languages
+            if (article["markdown"+lang])
+              if (article["markdown"+lang]!=="no translation") 
+                span.label.label-success
+                  |#{lang}
+              else    
+                span.label.label-danger
+                  |#{lang}
+            else
+              span.label.label-default
+                |#{lang}
+
       .row
         .col-md-1
           |Collection <br>
@@ -255,11 +287,20 @@ block content
             |<pre>!{article.collection.replace(/(https?:\/\/[^\[\] \n\r]*)/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
       .row 
         .col-md-1
-        +leftcolumn
-          |#{params.left_lang}
-        +rightcolumn
-          |#{params.right_lang}
+        - var lbg;
+        - if (params.left_lang===layout.language) lbg = "osmbc-lang";
+        - if (params.left_lang===layout.language2) lbg = "osmbc-lang2";
+        - var rbg;
+        - if (params.right_lang===layout.language) rbg = "osmbc-lang";
+        - if (params.right_lang===layout.language2) rbg = "osmbc-lang2";
 
+        +leftcolumn
+          span.label.label-default(id="left_lang" class="#{lbg}") 
+            |#{params.left_lang}
+        +rightcolumn
+          span.label.label-default(id="right_lang" class="#{rbg}" )
+            |#{params.right_lang}
+  
       if (false)
         .row
           .col-md-1
@@ -344,9 +385,7 @@ block content
                 th
                  |what
                 th
-                 |from
-                th
-                 |to
+                 |change
                 th
                  |when
              tbody
@@ -357,9 +396,18 @@ block content
                       span.glyphicon.glyphicon-info-sign 
                   td= change.user
                   td= change.property
-                  td= layout.util.shorten(change.from)
-                  td= layout.util.shorten(change.to)
+                  td
+                    :verbatim
+                    !{change.htmlDiffText(100)}
                   td= layout.moment(change.timestamp).fromNow() 
+        div
+          p
+            |only displaying changes 
+            span.osmbc-inserted
+              |inserted text 
+            span.osmbc-deleted
+              |removed text
+
  
 block scripts                
   script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')

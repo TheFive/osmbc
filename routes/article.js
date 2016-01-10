@@ -61,7 +61,7 @@ function renderArticleId(req,res,next) {
     if (!style) if (req.session.lastStyle) style = req.session.lastStyle;
     if (!style) style = req.user.blogSetting0 + req.user.blogLanguages0;
     if (!style) style = "overviewEN";
-    var s = settingsModule.getSettings(style);
+    var s = settingsModule.getSettings(style,req.session.language,req.session.language2);
     if (style) params.style = style;
     params.edit = req.query.edit;
     params.left_lang = s.left_lang;
@@ -381,7 +381,7 @@ function renderList(req,res,next) {
         if (!myArticles) return callback();
 
   
-        articleModule.findEmptyUserCollectedArticles(req.user.language,req.user.displayName,function(err,result) {
+        articleModule.findEmptyUserCollectedArticles(req.session.language,req.user.displayName,function(err,result) {
           debug('renderList->findMyArticles->find');
           articles = result;
           callback();

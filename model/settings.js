@@ -1,6 +1,7 @@
 "use strict";
 var debug= require("debug")("model/settings");
 var config = require("../config.js");
+var should = require("should");
 
 // information from article:
 //      edit:      true if any additional edit links should be generated
@@ -9,6 +10,10 @@ var config = require("../config.js");
 //      editLink:  true if an "Edit&Translate" should be placed at the end of an article
 //      overview:  true if title or a small text is shown, instead of an article
 //      marktext:  true if missing language markdown should be <mark>ed.
+
+
+var settings = {};
+
 
 
 var settings = {};
@@ -96,7 +101,7 @@ exports.settings = settings;
 exports.languages=languages;
 
  /*exported getSettings */
-function getSettings(string) {
+function getSettings(string,language,language2) {
   debug("getSettings(%s)",string);
 
 
@@ -119,21 +124,57 @@ function getSettings(string) {
     }
   }
 
+  var oldstyle = false;
+
   for (var k in settings) {
     var temp = string.replace(k,"");
     if (temp != string) {
       s = settings[k];
       if (typeof(languages[temp])!="undefined") {
         l = languages[temp];
-         break;
+        oldstyle = true;
+        break;
       }
     }
+    if (string.toUpperCase() === k.toUpperCase()) {
+      should.exist(language);
+      s = settings[k];
+      oldstyle = false;
+      break;
+    }
   }
-
-  var result = {};
-  for (k in s) {result[k]=s[k];}
-  for (k in l) {result[k]=l[k];}
-  return result;
+  var result;
+  if (oldstyle) {
+    result = {};
+    for (k in s) {result[k]=s[k];}
+    for (k in l) {result[k]=l[k];}
+    result.style = string;
+    return result;    
+  }
+  if (!oldstyle) {
+    result ={};
+    for (k in s) {result[k]=s[k];}
+    if (language2) {
+      result.bilingual=true;
+      result.left_lang = language;
+      result.right_lang = language2;
+    } else {
+      result.left_lang = language;
+      result.right_lang = "--";
+    }
+    if (string === "TRANSLATION") {
+      result.right_lang = "--";
+      result.bilingual = false;
+    }
+    if (string === "TRANSLATION" || string === "FULLFINAL" || string == "OVERVIEW") {
+     // result.right_lang = "--";
+      result.bilingual = false;
+    }
+    result.style=string;
+    return result;
+  }
+  console.log(">>> aölsdkjfaölsdkfjöalsdkfj");
+  return null;
 }
 
 var listSettings = [];

@@ -56,7 +56,7 @@ function renderBlogId(req, res, next) {
     style = req.query.style;
     req.session.lastStyle = style;
   }
-  var options = settingsModule.getSettings(style);
+  var options = settingsModule.getSettings(style,req.session.language,req.session.language2);
 
 
   var user = req.user;
@@ -86,7 +86,7 @@ function renderBlogId(req, res, next) {
 
     async.series([
       function (callback) {
-        blog.getPreview(style,user,function(err,result) {
+        blog.getPreview(options,user,function(err,result) {
           if (err) return callback(err);
           main_text = result.preview;
           articles = result.articles;

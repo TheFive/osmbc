@@ -32,7 +32,7 @@ block content
                   | #{openBlog.name}
           .col-md-4
             h4
-              | Review #{layout.user.language}
+              | Review #{layout.language}
             if (layout.listOfReviewBlog)
               for openBlog in layout.listOfReviewBlog
                 button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.name}","_self")')
@@ -59,7 +59,7 @@ block content
                  | Change
                 th
                  | when
-             tbody
+            tbody
               each change, i in changes
                 tr
                   td
@@ -73,6 +73,14 @@ block content
                     :verbatim
                     !{change.htmlDiffText(40)}
                   td= layout.moment(change.timestamp).fromNow()
+        div
+          p
+            |only displaying changes 
+            span.osmbc-inserted
+              |inserted text 
+            span.osmbc-deleted
+              |removed text
+
   .row
     .col-md-8
     .col-md-4

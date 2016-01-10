@@ -38,7 +38,7 @@ block content
               th.hidden-xs
                 |Cat (EN)
               th.hidden-xs
-                |Preview (#{layout.user.language})
+                |Preview (#{layout.language})
           tbody
        
       
@@ -51,7 +51,7 @@ block content
               td.hidden-xs=article.categoryEN 
               td.hidden-xs
                 :verbatim
-                !{article.getPreview(layout.user.language)}
+                !{article.getPreview(layout.language)}
            
       else
         p
@@ -78,7 +78,7 @@ block content
                           option(value="#{blog.name}") #{blog.name} (Edit)
                       if (layout.listOfReviewBlog)  
                         for blog in layout.listOfReviewBlog        
-                          option(value="#{blog.name}") #{blog.name} (Review #{layout.user.language})
+                          option(value="#{blog.name}") #{blog.name} (Review #{layout.language})
                       option(value="Future") Future
                       option(value="Trash") Trash
                       if (layout.listOfHelpBlog)

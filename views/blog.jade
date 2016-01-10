@@ -80,12 +80,18 @@ block content
   .row
     .col-md-12
       ul.nav.nav-tabs
-        - v = 0
-        while layout.user["blogSetting"+v]
-          if layout.user["blogSetting"+v]!="-"
-            - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
-            +navbutton(style0,style)
-          - v++
+        +navbutton("OVERVIEW",style)
+        +navbutton("TRANSLATION",style)
+        +navbutton("FULL",style)
+        +navbutton("FULLFINAL",style)
+
+        //
+          - v = 0
+          while layout.user["blogSetting"+v]
+            if layout.user["blogSetting"+v]!="-"
+              - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
+              +navbutton(style0,style)
+            - v++ 
       
         li
           a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{left_lang}") 
@@ -140,7 +146,7 @@ block content
               th
                |  what
               th
-               |  to
+               | change
               th
                | when
            tbody
@@ -151,9 +157,18 @@ block content
                     span.glyphicon.glyphicon-info-sign 
                 td= change.user
                 td= change.property
-                td= layout.util.shorten(change.to)
+                td 
+                    :verbatim
+                    !{change.htmlDiffText(100)}
                 td= layout.moment(change.timestamp).fromNow() 
 
+      div
+        p
+          |only displaying changes 
+          span.osmbc-inserted
+            |inserted text 
+          span.osmbc-deleted
+            |removed text
 
 
 block scripts                
