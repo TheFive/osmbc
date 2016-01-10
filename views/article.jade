@@ -250,9 +250,22 @@ block content
       .row
         .col-md-1
           |Title <br>
-        .col-md-10
+        .col-md-7
           h3
             |#{article.title}
+        .col-md-3
+          each lang in layout.languages
+            if (article["markdown"+lang])
+              if (article["markdown"+lang]!=="no translation") 
+                span.label.label-success
+                  |#{lang}
+              else    
+                span.label.label-danger
+                  |#{lang}
+            else
+              span.label.label-default
+                |#{lang}
+
       .row
         .col-md-1
           |Collection <br>
