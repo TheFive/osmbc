@@ -143,16 +143,16 @@ function getSettings(string,language,language2) {
       break;
     }
   }
-
+  var result;
   if (oldstyle) {
-    var result = {};
+    result = {};
     for (k in s) {result[k]=s[k];}
     for (k in l) {result[k]=l[k];}
     result.style = string;
     return result;    
   }
   if (!oldstyle) {
-    var result ={};
+    result ={};
     for (k in s) {result[k]=s[k];}
     if (language2) {
       result.bilingual=true;
@@ -170,8 +170,6 @@ function getSettings(string,language,language2) {
      // result.right_lang = "--";
       result.bilingual = false;
     }
-    console.log(">>>>"+string);
-    console.dir(result);
     result.style=string;
     return result;
   }

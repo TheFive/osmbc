@@ -428,7 +428,6 @@ function getPreview(style,user,callback) {
       // not in edit mode.
       if (!options.markdown) {
         if (self.startDate && self.endDate) {
-          console.log(">>>"+options.left_lang);
           preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
         }
         if (!options.edit) {
