@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.6.0](https://github.com/TheFive/osmbc/tree/0.6.0) (2016-01-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.9a...0.6.0)
+
+**Implemented enhancements:**
+
+- More flexible language switch by putting switching to navbar. [\#258](https://github.com/TheFive/osmbc/issues/258)
+
 ## [0.5.9a](https://github.com/TheFive/osmbc/tree/0.5.9a) (2016-01-09)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.9...0.5.9a)
 
