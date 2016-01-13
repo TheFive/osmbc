@@ -30,7 +30,7 @@ html(lang='en')
             span.icon-bar
             span.icon-bar
         .navbar-collapse.collapse
-          - function blogNumber(blog) {return (blog._countUneditedMarkdown)?blog._countUneditedMarkdown[layout.language]:"?";}
+          - function blogNumber(blog) {return (blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[layout.language]:"?";}
 
           ul.nav.navbar-nav.navbar-left
             if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
