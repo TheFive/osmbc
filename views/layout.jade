@@ -148,7 +148,7 @@ html(lang='en')
                     a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
             li.dropdown.hidden-xs
               a.btn.dropdown-toggle.osmbc-lang2(href='#',style="color:white", data-toggle='dropdown')
-                |#{layout.language2} 
+                |#{(layout.language2)?layout.language2:"--"} 
                 span.caret
               ul.dropdown-menu(role='menu')
                 li 
