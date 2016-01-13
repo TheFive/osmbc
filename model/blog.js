@@ -559,7 +559,6 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
   if (this._countUneditedMarkdown) return callback();
   var self = this;
 
-
   self._countUneditedMarkdown = {};
 
   articleModule.find({blog:this.name},function (err,result) {
@@ -575,16 +574,16 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
       else {
         self._countUneditedMarkdown[l]=0;
         for (var j=0;j<result.length;j++) {
-          var c = result[j].categoryEN;
-          if (c == "--unpublished--") continue;
+          if (result[j].categoryEN == "--unpublished--") continue;
           var m = result[j]["markdown"+l];
-          if (!m || m ==="" || c ==="-- no category yet --") self._countUneditedMarkdown[l] +=1;
+          if (!m || m ==="" ) self._countUneditedMarkdown[l] +=1;
         }
       }
     }
+    console.dir(self);
     return callback();
   });
-};
+}
 
 
 function translateCategories(cat) {

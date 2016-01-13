@@ -30,37 +30,56 @@ html(lang='en')
             span.icon-bar
             span.icon-bar
         .navbar-collapse.collapse
+<<<<<<< Updated upstream
           - function blogNumber(blog) {return (blog._countUneditedMarkdown)?blog._countUneditedMarkdown[layout.language]:"?";}
+=======
+          - function blogNumber(blog) {return (blog._countUneditedMarkdown)?blog._countUneditedMarkdown[layout.user.language]:"?";}
+>>>>>>> Stashed changes
 
           ul.nav.navbar-nav.navbar-left
             if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
               li
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')
                   |#{layout.listOfOpenBlog[0].name} 
+<<<<<<< Updated upstream
                   span.badge.osmbc-lang
                     |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.language]}
                   if layout.language2
                     span.badge.osmbc-lang2.hidden-xs
                       |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.language2]}
+=======
+                  span.badge.alert-info
+                    |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.user.language]}
+>>>>>>> Stashed changes
        
             if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
               li
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].name}') 
                   |#{layout.listOfEditBlog[0].name}
+<<<<<<< Updated upstream
                   span.badge.osmbc-lang
                     |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language]}
                   if layout.language2
                     span.badge.osmbc-lang2
                       |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language2]}
+=======
+                  span.badge.alert-info
+                    |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.user.language]}
+>>>>>>> Stashed changes
             if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
               li
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].name}') 
                   |#{layout.listOfReviewBlog[0].name}
+<<<<<<< Updated upstream
                   span.badge.osmbc-lang
                     |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language]}
                   if layout.language2
                     span.badge.osmbc-lang2
                       |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language2]}
+=======
+                  span.badge.alert-info
+                    |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.user.language]}
+>>>>>>> Stashed changes
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | Lists 
@@ -77,8 +96,35 @@ html(lang='en')
                       a(href="#{layout.htmlroot}/article/list?blog=#{blog}") #{blog}
                 li
                   a(href='#{layout.htmlroot}/article/list?blog=') No Blog
+<<<<<<< Updated upstream
                 li.divider
                 li.dropdown-header Blog
+=======
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown')
+                | WN 
+                span.caret
+              ul.dropdown-menu(role='menu')
+                if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
+                  li.dropdown-header open
+                  for o  in layout.listOfOpenBlog
+                    li
+                      a(href="#{layout.htmlroot}/blog/#{o.name}") #{o.name} #{blogNumber(o)}
+                if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
+                  li.dropdown-header edit
+                  for edit in layout.listOfEditBlog
+                    li
+                      a(href="#{layout.htmlroot}/blog/#{edit.name}") #{edit.name}  #{blogNumber(edit)}
+                if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
+                  li.dropdown-header review #{layout.user.language}
+                  for review in layout.listOfReviewBlog
+                    li
+                      a(href="#{layout.htmlroot}/blog/#{review.name}") #{review.name} #{blogNumber(review)}
+
+
+
+                li.dropdown-header List
+>>>>>>> Stashed changes
                 li
                   a(href="#{layout.htmlroot}/blog/list?status=open") open
                 li
