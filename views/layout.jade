@@ -57,10 +57,10 @@ html(lang='en')
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].name}') 
                   |#{layout.listOfReviewBlog[0].name}
                   span.badge.osmbc-lang
-                    |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language]}
+                    |#{layout.listOfReviewBlog[0]._countUneditedMarkdown[layout.language]}
                   if layout.language2
                     span.badge.osmbc-lang2
-                      |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language2]}
+                      |#{layout.listOfReviewBlog[0]._countUneditedMarkdown[layout.language2]}
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | Lists 
