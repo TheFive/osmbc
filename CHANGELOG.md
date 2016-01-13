@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.6.2](https://github.com/TheFive/osmbc/tree/0.6.2) (2016-01-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.1...0.6.2)
+
+**Implemented enhancements:**
+
+- Allow horizontal Scrolling for markdown that contains table. [\#202](https://github.com/TheFive/osmbc/issues/202)
+
+**Fixed bugs:**
+
+- Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
+- Add list to ALL users not only denied and full. [\#263](https://github.com/TheFive/osmbc/issues/263)
+
+**Closed issues:**
+
+- Add Link to google Skill Matrix in OSMBC. [\#264](https://github.com/TheFive/osmbc/issues/264)
+
 ## [0.6.1](https://github.com/TheFive/osmbc/tree/0.6.1) (2016-01-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.0...0.6.1)
 
