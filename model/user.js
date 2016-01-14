@@ -2,7 +2,7 @@ var pgMap = require('./pgMap.js');
 var debug = require('debug')('OSMBC:model:user');
 var should = require('should');
 var async = require('async');
-var logModule = require('../model/logModule.js');
+var messageCenter = require('../model/messageCenter.js');
 
 function User (proto)
 {
@@ -87,7 +87,7 @@ function setAndSave(user,data,callback) {
 
     async.series ( [
         function(cb) {
-           logModule.log({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:value},cb);
+           messageCenter.sendInfo({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:value},cb);
         },
         function(cb) {
           self[key] = value;

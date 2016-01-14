@@ -16,6 +16,7 @@ var moment   = require('moment');
 var articleModule       = require('../model/article.js');
 var settingsModule      = require('../model/settings.js');
 var logModule           = require('../model/logModule.js');
+var messageCenter       = require('../model/messageCenter.js');
 var userModule          = require('../model/user.js');
 var categoryTranslation = require('../data/categoryTranslation.js');
 var editorStrings       = require('../data/editorStrings.js');
@@ -101,7 +102,7 @@ function setAndSave(user,data,callback) {
       articleModule.removeOpenBlogCache();
       async.series ( [
           function(callback) {
-             logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:key,from:self[key],to:value},callback);
+             messageCenter.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:key,from:self[key],to:value},callback);
           },
           function(callback) {
             self[key] = value;
@@ -142,7 +143,7 @@ function setReviewComment(lang,user,data,callback) {
     async.series ( [
         function logInformation(callback) {
            debug("setReviewComment->logInformation");
-           logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
+           messageCenter.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
         },
         function checkSpecialCommands(cb) {
           debug("setReviewComment->checkSpecialCommands");
@@ -151,7 +152,7 @@ function setReviewComment(lang,user,data,callback) {
             // Start Review, check wether review is done in WP or not
             if (config.getValue("ReviewInWP").indexOf(lang)>=0) {
               self[exported]=true;
-              logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
+              messageCenter.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
               return;
             }
             // nothing has to be written to the review comments
@@ -189,7 +190,7 @@ function closeBlog(lang,user,status,callback) {
     should(self.id).not.equal(0);
     async.series ( [
         function logEntry(callback) {
-           logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
+           messageCenter.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
         },
         function setCloseField(callback) {
           self[closeField] = status;
@@ -580,10 +581,9 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
         }
       }
     }
-    console.dir(self);
     return callback();
   });
-}
+};
 
 
 function translateCategories(cat) {

@@ -14,7 +14,7 @@ var debug    = require("debug")("OSMBC:model:article");
 var config    = require("../config.js");
 var util      = require("../util.js");
 
-var logModule      = require("../model/logModule.js");
+var messageCenter  = require("../model/messageCenter.js");
 var settingsModule = require("../model/settings.js");
 var blogModule     = require("../model/blog.js");
 var pgMap          = require("../model/pgMap.js");
@@ -410,7 +410,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
      
       async.series ( [
           function(cb) {
-             logModule.log({oid:self.id,blog:logblog,user:user,table:"article",property:key,from:self[key],to:value},cb);
+             messageCenter.sendInfo({oid:self.id,blog:logblog,user:user,table:"article",property:key,from:self[key],to:value},cb);
           },
           function(cb) {
             self[key] = value;

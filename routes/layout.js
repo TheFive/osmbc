@@ -56,11 +56,7 @@ function prepareRenderLayout(req,res,next) {
         }
         async.each(list,function(item,cb){
           item.countUneditedMarkdown(cb);
-<<<<<<< Updated upstream
         },function(err){callback(err,list);});
-=======
-        },function(err){callback(err,list);})
->>>>>>> Stashed changes
       });
     },
     listOfEditBlog:
@@ -75,11 +71,7 @@ function prepareRenderLayout(req,res,next) {
         }
         async.each(list,function(item,cb){
           item.countUneditedMarkdown(cb);
-<<<<<<< Updated upstream
         },function(err){callback(err,list);});
-=======
-        },function(err){callback(err,list);})
->>>>>>> Stashed changes
       });
     },
     listOfReviewBlog:
@@ -95,29 +87,10 @@ function prepareRenderLayout(req,res,next) {
         }
         async.each(list,function(item,cb){
           item.countUneditedMarkdown(cb);
-<<<<<<< Updated upstream
         },function(err){callback(err,list);});
       });
     }
   },
-=======
-        },function(err){callback(err,list);})
-      });
-    },
-    listOfHelpBlog:
-    function (callback) {
-      blogModule.find({status:"help"},function(err,result) {
-        if (err) return callback(err);
-        var list = [];
-        for (var i=0;i<result.length;i++) {
-          list.push(result[i]);
-        }
-        async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
-        },function(err){callback(err,list);})
-      });
-    }},
->>>>>>> Stashed changes
   
     function (err,result) {
       if (err) return next(err);
