@@ -1,6 +1,31 @@
 var debug = require('debug')('OSMBC:model:messageCenter');
 var async = require('async');
 var logModule = require('../model/logModule.js');
+var messageFilter = require('../model/messageFilter.js');
+
+var nodemailer = require('nodemailer');
+var templates = require('node-mailer-templates');
+
+ 
+// create reusable transporter object using the default SMTP transport 
+var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com');
+ 
+// setup e-mail data with unicode symbols 
+var mailOptions = {
+    from: 'Fred Foo 👥 <foo@blurdybloop.com>', // sender address 
+    to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers 
+    subject: 'Hello ✔', // Subject line 
+    text: 'Hello world 🐴', // plaintext body 
+    html: '<b>Hello world 🐴</b>' // html body 
+};
+ 
+// send mail with defined transport object 
+transporter.sendMail(mailOptions, function(error, info){
+    if(error){
+        return console.log(error);
+    }
+    console.log('Message sent: ' + info.response);
+});
 
 function MessageCenter() {
   debug('MessageCenter::MessageCenter');
@@ -31,42 +56,6 @@ LogModuleReceiver.prototype.sendInfo= function(object,cb) {
   debug('LogModuleReceiver::sendInfo');
   logModule.log(object,cb);
 };
-function FilterNewCollection(receiver) {
-  debug('FilterNewCollection::FilterNewCollection');
-  this.receiver = receiver;
-}
-
-FilterNewCollection.prototype.sendInfo= function(object,cb) {
-  debug('FilterNewCollection::sendInfo');
-  if (object.property != "collection") return cb();
-  if (object.from !== "") return cb();
-  if (object.to !== "") return cb();
-  this.receiver.sendInfo(object,cb);
-};
-
-function FilterAllComment(receiver) {
-  debug('FilterAllComment::FilterAllComment');
-  this.receiver = receiver;
-}
-
-FilterAllComment.prototype.sendInfo = function(object,cb) {
-  debug('FilterAllComment::sendInfo');
-  if (object.property != "comment") return cb();
-  this.receiver.sendInfo(object,cb);
-};
-
-function FilterComment(what,receiver) { //jshint ignore:line
-  debug('FilterAllComment::FilterComment');
-  this.receiver = receiver;
-  this.what = what;
-}
-
-FilterComment.prototype.sendInfo = function(object,cb) {
-  debug('FilterComment::sendInfo');
-  if (object.property != "comment") return cb();
-  if (object.to.indexOf("@"+this.what)<0) return cb();
-  this.receiver.sendInfo(object,cb);
-};
 
 
 MessageCenter.prototype.registerReceiver = function(receiver) {
@@ -76,8 +65,8 @@ MessageCenter.prototype.registerReceiver = function(receiver) {
 
 var messageCenter = new MessageCenter();
 
-messageCenter.registerReceiver(new FilterComment("TheFive",new ConsoleReceiver()));
-messageCenter.registerReceiver(new FilterNewCollection(new ConsoleReceiver()));
+messageCenter.registerReceiver(new messageFilter.withParam.comment("TheFive",new ConsoleReceiver()));
+messageCenter.registerReceiver(new messageFilter.global.newCollection(new ConsoleReceiver()));
 messageCenter.registerReceiver(new LogModuleReceiver());
 
 
