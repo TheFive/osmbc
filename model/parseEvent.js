@@ -17,7 +17,14 @@ var regexList = [ {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *
                    keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"]},
                    {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\}/gi,
                    keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"]},
+                   {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\} *\{\{SmallFlag\|(.*)\}\}/gi,
+                   keys:[               "type",                "date",              "desc",       "country","wappenflag","countryflag"]},
+                   {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\}/gi,
+                   keys:[               "type",                "date",              "desc",       "country","countryflag"]},
+                   {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) */gi,
+                   keys:[               "type",                "date",              "desc"]},
               ];
+
 
 
 /* next Date is interpreting a date of the form 27 Feb as a date, that
