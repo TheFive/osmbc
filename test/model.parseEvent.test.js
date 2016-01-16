@@ -89,7 +89,7 @@ describe('model/parseEvent',function() {
       should(parseEvent.parseLine('|-        ')).equal(null);
     });
     it('should return values for entry with no town',function() {
-      var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch]], [[Düsseldorf]], [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -190,7 +190,7 @@ describe('model/parseEvent',function() {
                 .replyWithFile(200,fileName);
     });
     it('should load date form wiki and generate a Markdown String',function(bddone){
-      parseEvent.calenderToMarkdown("DE",new Date("11/28/2015"),14,function(err,result){
+      parseEvent.calenderToMarkdown({lang:"DE"},new Date("11/28/2015"),14,function(err,result){
         var excpeted = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
         should(result).equal(excpeted);
          bddone();
