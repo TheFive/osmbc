@@ -101,6 +101,7 @@ function parseLine(string) {
       return r;
     } 
   }
+  if (string.trim() =="|}") return null;
   if (string.trim().substring(0,2)=="|=") return null;
   if (string.trim().substring(0,1)!="|") return null;
   if (string.indexOf('style="width:16px"')>=0) return null;
