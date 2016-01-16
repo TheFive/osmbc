@@ -106,7 +106,7 @@ function parseLine(string) {
   if (string.indexOf('style="width:16px"')>=0) return null;
   if (string.indexOf('{{cal|none}}')>=0) return null;
 
-  
+
 
   if (string.trim().substring(0,2) != "|-" && string.trim().substring(0,1)=="|") return string;
   return null;
@@ -262,7 +262,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
 
       if (e.country) {
         var country = e.country.toLowerCase();
-        if (countryFlags[country]) e.country = "!["+c+"]("+countryFlags[country]+")";
+        if (countryFlags[country]) e.country = "!["+country+"]("+countryFlags[country]+")";
       }
       if (e.town) townLength = Math.max(e.town.length,townLength);
       if (e.markdown) descLength = Math.max(e.markdown.length,descLength);
