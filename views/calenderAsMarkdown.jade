@@ -22,6 +22,15 @@ block content
             input(type='checkbox', id='disable',name="disablePrettify" value='true' checked)
 
           | Disable Prettify Table  
+      .col-md-3
+        .checkbox 
+         label
+          if (!enableCountryFlags)
+            input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='true')
+          else
+            input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='true' checked)
+
+          | enable Country Flags 
       .col-md-1
         select(id="calenderLanguage",name="calenderLanguage").form-control
           option(value="#{calenderLanguage}" selected) #{calenderLanguage}
@@ -36,6 +45,10 @@ block content
     | Markdown, please edit
   textarea(id="markdown" rows=25 cols=500 style="font-family:monospace")
     |#{calenderAsMarkdown}
+  if (errors)
+    h3
+      |Error during convert
+    pre(cols=200)=errors
   h3 
    | Preview
   p(id="preview")
