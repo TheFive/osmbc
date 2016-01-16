@@ -11,11 +11,16 @@ module.exports = {
   "taiwan":"http://blog.openstreetmap.de/wp-uploads//2016/01/tw.svg",
   "switzerland":"http://blog.openstreetmap.de/wp-uploads//2016/01/ch.svg",
   "schweiz":"http://blog.openstreetmap.de/wp-uploads//2016/01/ch.svg",
+  "italia":"http://blog.openstreetmap.de/wp-uploads//2016/01/it.svg",
   "italy":"http://blog.openstreetmap.de/wp-uploads//2016/01/it.svg",
   "us":"http://blog.openstreetmap.de/wp-uploads//2016/01/us.svg",
   "austria":"http://blog.openstreetmap.de/wp-uploads//2016/01/at.svg",
   "österreich":"http://blog.openstreetmap.de/wp-uploads//2016/01/at.svg",
   "philippines":"http://blog.openstreetmap.de/wp-uploads//2016/01/ph.svg",
   "belgium":"http://blog.openstreetmap.de/wp-uploads//2016/01/be.svg",
-  "argentina":"http://blog.openstreetmap.de/wp-uploads//2016/01/ar.svg"
+  "argentina":"http://blog.openstreetmap.de/wp-uploads//2016/01/ar.svg",
+  "england":"http://blog.openstreetmap.de/wp-uploads//2015/01/en.svg",
+  "uk":"http://blog.openstreetmap.de/wp-uploads//2015/01/en.svg",
+  "germany":"http://blog.openstreetmap.de/wp-uploads//2015/01/de.svg",
+  "deutschland":"http://blog.openstreetmap.de/wp-uploads//2015/01/de.svg"
 };
