@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.3a...0.6.4)
+
+**Implemented enhancements:**
+
+- Upcomming events should have country flags. [\#267](https://github.com/TheFive/osmbc/issues/267)
+
+## [0.6.3a](https://github.com/TheFive/osmbc/tree/0.6.3a) (2016-01-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.2...0.6.3a)
+
 ## [0.6.2](https://github.com/TheFive/osmbc/tree/0.6.2) (2016-01-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.1...0.6.2)
 
