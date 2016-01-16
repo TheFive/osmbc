@@ -29,11 +29,12 @@ function renderCalenderAsMarkdown(req,res,next) {
   }
 
 
-  parseEvent.calenderToMarkdown(calenderLanguage,function(err,result){
+  parseEvent.calenderToMarkdown(calenderLanguage,function(err,result,errors){
     if (err) return next(err);
     res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
                                 disablePrettify:disablePrettify,
                                 calenderLanguage:calenderLanguage,
+                                errors:errors,
                                 layout:res.rendervar.layout});  
 
   });

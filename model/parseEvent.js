@@ -3,6 +3,7 @@ var moment  = require("moment");
 var request = require("request");
 var markdown = require('markdown-it')();
 var ct = require('../data/calenderTranslation.js');
+var countryFlags = require('../data/countryFlags.js');
 
 
 
@@ -10,16 +11,13 @@ var ct = require('../data/calenderTranslation.js');
 var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json";
 
 
-var regexList = [ {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(......*), *\[\[(.*)\]\].*\[\[(.*)\]\].*/gi,
-               keys:[               "type",                "date",              "desc",         "town",       "country"]},
-               {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(......*) *\[\[(.*)\]\].*\[\[(.*)\]\].*/gi,
-               keys:[               "type",               "date",                "desc",        "town",       "country"]},
-               {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(......*) *, *\[\[(.*)\]\] *, *\[\[(.*)\]\].*/gi,
-               keys:[               "type",               "date",               "desc",        "town",          "country"]}, 
-               {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(......*), *\[\[(.*)\]\].*/gi,
-               keys:[               "type",               "date",                "desc",         "country"]},
-               {regex:/\|.*\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(......*)/gi,
-               keys:[               "type",               "date",                "desc"]} ];
+var regexList = [ {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *\[\[(.*)\]\] *, *\[\[(.*)\]\] *\{\{SmallFlag\|(.*)\}\}/gi,
+                   keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"]},
+                   {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *, *\[\[(.*)\]\] *\{\{SmallFlag\|(.*)\}\}/gi,
+                   keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"]},
+                   {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\}/gi,
+                   keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"]},
+              ];
 
 
 /* next Date is interpreting a date of the form 27 Feb as a date, that
@@ -94,6 +92,8 @@ function parseLine(string) {
           r.startDate = parseStartDate(value);
           r.endDate = parseEndDate(value);
 
+        } else if ( (list[j]== "town"||list[j]=="country") && value.substring(0,2)=="[[") {
+          r[list[j]]=value.substring(2,value.length-2);
         } else {
           r[list[j]]=value;
         }
@@ -101,6 +101,14 @@ function parseLine(string) {
       return r;
     } 
   }
+  if (string.trim().substring(0,2)=="|=") return null;
+  if (string.trim().substring(0,1)!="|") return null;
+  if (string.indexOf('style="width:16px"')>=0) return null;
+  if (string.indexOf('{{cal|none}}')>=0) return null;
+
+  
+
+  if (string.trim().substring(0,2) != "|-" && string.trim().substring(0,1)=="|") return string;
   return null;
 }
 
@@ -191,6 +199,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
     duration = 24;
   } 
   var result;
+  var errors = null;
   debug("Date: %s",date);
   request(wikiEventPage, function(error, response, body) {
     var json = JSON.parse(body);
@@ -220,6 +229,12 @@ function calenderToMarkdown(lang,date,duration,cb) {
       body = body.substring(point+1,999999999);
       point = body.indexOf("\n");
       result = parseLine(line);
+
+      if (typeof(result)=="string") {
+        if (!errors) errors = "\n\nUnrecognized\n";
+        errors +=result+"\n";
+        result = null;
+      }
     
 
 
@@ -230,7 +245,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
         }
       }
     }
-     var townLength = 0;
+    var townLength = 0;
     var descLength = 0;
     var dateLength = 0;
     var countryLength = 0;
@@ -242,6 +257,13 @@ function calenderToMarkdown(lang,date,duration,cb) {
 
     for (var i=0;i<events.length;i++) {
       var e = events[i];
+
+      // first try to convert country flags:
+
+      if (e.country) {
+        var country = e.country.toLowerCase();
+        if (countryFlags[country]) e.country = "!["+c+"]("+countryFlags[country]+")";
+      }
       if (e.town) townLength = Math.max(e.town.length,townLength);
       if (e.markdown) descLength = Math.max(e.markdown.length,descLength);
       if (e.country) countryLength = Math.max(e.country.length,countryLength);
@@ -272,7 +294,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
       if (!c) c="";
       result += "|"+wl(t,townLength)+"|"+wl(events[i].markdown,descLength)+"|"+wl(events[i].dateString,dateLength)+"|"+wl(c,countryLength)+"|\n";  
     }
-    cb(null,result);
+    cb(null,result,errors);
   });
 }
 
