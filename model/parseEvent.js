@@ -204,7 +204,7 @@ function calenderToMarkdown(option,date,duration,cb) {
     cb = date;
     date = new Date();
     date.setDate(date.getDate()-3);
-    duration = 90;
+    duration = 24;
   } 
   var lang = option.lang;
   var enableCountryFlags = option.countryFlags;
