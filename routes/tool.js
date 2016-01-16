@@ -22,18 +22,22 @@ function renderCalenderAsMarkdown(req,res,next) {
 
   var disablePrettify = false;
   var calenderLanguage = "DE";
+  var enableCountryFlags = false;
   var sessionData = req.session.calenderTool;
   if (sessionData) {
     disablePrettify = sessionData.disablePrettify;
     calenderLanguage = sessionData.calenderLanguage;
+    enableCountryFlags = sessionData.enableCountryFlags;
   }
 
 
-  parseEvent.calenderToMarkdown(calenderLanguage,function(err,result){
+  parseEvent.calenderToMarkdown({lang:calenderLanguage,countryFlags:enableCountryFlags},function(err,result,errors){
     if (err) return next(err);
     res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
                                 disablePrettify:disablePrettify,
                                 calenderLanguage:calenderLanguage,
+                                enableCountryFlags:enableCountryFlags,
+                                errors:errors,
                                 layout:res.rendervar.layout});  
 
   });
@@ -43,8 +47,10 @@ function postCalenderAsMarkdown(req,res,next) { //jshint ignore:line
   console.dir(req.body);
   var disablePrettify = (req.body.disablePrettify=="true");
   var calenderLanguage = req.body.calenderLanguage;
-  req.session.calenderTool = {disablePrettify:disablePrettify,calenderLanguage:calenderLanguage};
-  console.dir(req.session);
+  var enableCountryFlags = req.body.enableCountryFlags;
+  req.session.calenderTool = {disablePrettify:disablePrettify,
+                              calenderLanguage:calenderLanguage,
+                              enableCountryFlags:enableCountryFlags};
   res.redirect(config.getValue('htmlroot')+"/tool/calender2markdown");
 }
 
