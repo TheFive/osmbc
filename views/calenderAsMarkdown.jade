@@ -22,6 +22,15 @@ block content
             input(type='checkbox', id='disable',name="disablePrettify" value='true' checked)
 
           | Disable Prettify Table  
+      .col-md-3
+        .checkbox 
+         label
+          if (!enableCountryFlags)
+            input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='true')
+          else
+            input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='true' checked)
+
+          | enable Country Flags 
       .col-md-1
         select(id="calenderLanguage",name="calenderLanguage").form-control
           option(value="#{calenderLanguage}" selected) #{calenderLanguage}

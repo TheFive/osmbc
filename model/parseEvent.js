@@ -191,7 +191,7 @@ function ll(length) {
 }
 
 
-function calenderToMarkdown(lang,date,duration,cb) {
+function calenderToMarkdown(option,date,duration,cb) {
   debug('calenderToMarkdown');
   if (typeof(date)=='function') {
     cb = date;
@@ -199,6 +199,9 @@ function calenderToMarkdown(lang,date,duration,cb) {
     date.setDate(date.getDate()-3);
     duration = 90;
   } 
+  var lang = option.lang;
+  var enableCountryFlags = option.countryFlags;
+
   var result;
   var errors = null;
   debug("Date: %s",date);
@@ -261,7 +264,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
 
       // first try to convert country flags:
 
-      if (e.country) {
+      if (e.country && enableCountryFlags) {
         var country = e.country.toLowerCase();
         if (countryFlags[country]) e.country = "!["+country+"]("+countryFlags[country]+")";
       }
