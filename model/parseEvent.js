@@ -196,7 +196,7 @@ function calenderToMarkdown(lang,date,duration,cb) {
     cb = date;
     date = new Date();
     date.setDate(date.getDate()-3);
-    duration = 24;
+    duration = 90;
   } 
   var result;
   var errors = null;
