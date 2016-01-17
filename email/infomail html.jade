@@ -1,0 +1,30 @@
+h2
+  | Change in article of #{change.blog}
+p
+  a(href="https://thefive.sabic.uberspace.de/#{layout.htmlroot}/article/#{change.oid}")
+  |  Article changed:
+if change.property ==== "collection"
+  if change.from 
+    p
+      | Changed collection
+  else
+    p
+      |  New Collection
+if change.property ==== "comment"
+  if change.from 
+    p
+      | New Comment
+  else
+    p
+      | Changed Comment
+if change.property.substring(0,8) ==== "markdown"
+  if change.from 
+    p
+      | New Markdown
+  else
+    p
+      | Changed Markdown
+
+p
+  
+
