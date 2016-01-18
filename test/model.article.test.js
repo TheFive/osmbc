@@ -105,7 +105,7 @@ describe('model/article', function() {
         newArticle = result;
         var id =result.id;
         newArticle.markdownDE = "This Value will not be logged";
-        newArticle.setAndSave("user",{version:"1",blog:"Reference",collection:"text",categoryEN:"Imports"},function(err) {
+        newArticle.setAndSave("user",{version:1,blog:"Reference",collection:"text",categoryEN:"Imports"},function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);

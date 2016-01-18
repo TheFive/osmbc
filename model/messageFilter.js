@@ -9,10 +9,15 @@ function FilterNewCollection(receiver) {
 
 FilterNewCollection.prototype.sendInfo= function(object,cb) {
   debug('FilterNewCollection::sendInfo');
-  if (object.property != "collection") return cb();
-  if (object.from !== "") return cb();
-  if (object.to !== "") return cb();
-  this.receiver.sendInfo(object,cb);
+  return cb();
+};
+
+
+FilterNewCollection.prototype.updateArticle= function(user,article,change,cb) {
+  debug('FilterNewCollection::updateArticle');
+  if (article.collection) return cb();
+  if (!change.collection) return cb();
+  this.receiver.updateArticle(user,article,change,cb);
 };
 
 function FilterAllComment(receiver) {
@@ -22,8 +27,13 @@ function FilterAllComment(receiver) {
 
 FilterAllComment.prototype.sendInfo = function(object,cb) {
   debug('FilterAllComment::sendInfo');
-  if (object.property != "comment") return cb();
-  this.receiver.sendInfo(object,cb);
+  return cb();
+};
+
+FilterAllComment.prototype.updateArticle= function(user,article,change,cb) {
+  debug('FilterAllComment::updateArticle');
+  if (!change.comment) return cb();
+  this.receiver.updateArticle(user,article,change,cb);
 };
 
 function FilterComment(what,receiver) { //jshint ignore:line
@@ -34,9 +44,14 @@ function FilterComment(what,receiver) { //jshint ignore:line
 
 FilterComment.prototype.sendInfo = function(object,cb) {
   debug('FilterComment::sendInfo');
-  if (object.property != "comment") return cb();
-  if (object.to.indexOf("@"+this.what)<0) return cb();
-  this.receiver.sendInfo(object,cb);
+  return cb();
+};
+
+FilterComment.prototype.updateArticle = function(user,article,change,cb) {
+  debug('FilterComment::updateArticle');
+  if (!change.comment) return cb();
+  if (change.comment.indexOf("@"+this.what)<0) return cb();
+  this.receiver.updateArticle(user,article,change,cb);
 };
 
 var filterList = {

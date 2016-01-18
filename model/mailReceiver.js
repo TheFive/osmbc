@@ -1,8 +1,6 @@
 var debug = require('debug')('OSMBC:model:mailReceiver');
-var async = require('async');
-var path = require('path')
+var path = require('path');
 var config = require('../config.js');
-var logModule = require('../model/logModule.js');
 
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
@@ -17,10 +15,12 @@ var transporter = nodemailer.createTransport(smtpTransport(config.getValue("SMTP
 
 
 function MailReceiver(user) {
+  debug("MailReceiver::MailReceiver");
   this.user = user;
 }
 
-MailReceiver.prototype.sendInfo(info,callback) {
+MailReceiver.prototype.sendInfo = function sendInfo(info,callback) {
+  debug("MailReceiver::sendInfo");
 
   var subject;
 
@@ -68,8 +68,9 @@ MailReceiver.prototype.sendInfo(info,callback) {
         }
         console.log('Message sent: ' + info.response);
     });
-  })
-}
+  });
+  callback();
+};
 
 
  
