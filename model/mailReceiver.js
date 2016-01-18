@@ -13,7 +13,10 @@ var templateDir = path.join(__dirname, '..','email', 'infomail');
 var infomail = new EmailTemplate(templateDir);
 var transporter = nodemailer.createTransport(smtpTransport(config.getValue("SMTP")));
 
-
+var layout = {
+  htmlroot : config.getValue("htmlroot"),
+  url: config.getValue("url")
+}
 function MailReceiver(user) {
   debug("MailReceiver::MailReceiver");
   this.user = user;
@@ -21,34 +24,32 @@ function MailReceiver(user) {
 
 MailReceiver.prototype.sendInfo = function sendInfo(info,callback) {
   debug("MailReceiver::sendInfo");
+  return callback();
+}
+
+MailReceiver.prototype.updateArticle = function sendInfo(user,article,change,callback) {
+  debug("MailReceiver::sendInfo");
 
   var subject;
+  var logblog = article.blog;
+  if (change.blog) logblog = change.blog;
 
-  if (info.property === "collection") {
-    if (info.from === "") {
-      subject = info.blog + " added collection";
-    }
-    else {
-      subject = info.blog + " changed collection";
-    }
+  if (!article.collection && change.collection) {
+     subject = logblog + " added collection";
   }
-  if (info.property.substring(0,8)==="markdown") {
-    if (info.from === "") {
-      subject = info.blog + " added markdown";
-    }
-    else {
-      subject = info.blog + " changed markdown";
-    }
+  if (article.collection && change.collection) {
+     subject = logblog + " changed collection";
   }
-  if (info.property.substring(0,8)==="comment") {
-    if (info.from === "") {
-      subject = info.blog + " added comment";
-    }
-    else {
-      subject = info.blog + " changed comment";
-    }
+  if (!article.comment && change.comment) {
+     subject = logblog + " added comment";
   }
-  var data = {user:this.user,change:info};
+  if (article.comment && change.comment) {
+     subject = logblog + " changed comment";
+  }
+
+
+  var data = {user:this.user,changeby:user,article:article,change:change,layout:layout,logblog:logblog};
+
   infomail.render(data, function (err, results) {
     if (err) return console.dir(err);
 
@@ -72,6 +73,6 @@ MailReceiver.prototype.sendInfo = function sendInfo(info,callback) {
   callback();
 };
 
-
+module.exports = MailReceiver;
  
 // setup e-mail data with unicode symbols 

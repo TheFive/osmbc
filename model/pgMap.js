@@ -145,9 +145,7 @@ module.exports.save = function(callback) {
             pgdone();
             return callback(err);
           }
-          console.dir(self);
           self.version += 1;
-          console.dir(self);
           var query = client.query("update "+table+" set data = $2 where id = $1", [self.id,self]);
           /*query.on('row',function(row) {
             results.push(row);

@@ -1,7 +1,5 @@
 var debug = require('debug')('OSMBC:model:messageCenter');
-var async = require('async');
-var logModule = require('../model/logModule.js');
-
+  
 function FilterNewCollection(receiver) {
   debug('FilterNewCollection::FilterNewCollection');
   this.receiver = receiver;
@@ -16,7 +14,7 @@ FilterNewCollection.prototype.sendInfo= function(object,cb) {
 FilterNewCollection.prototype.updateArticle= function(user,article,change,cb) {
   debug('FilterNewCollection::updateArticle');
   if (article.collection) return cb();
-  if (!change.collection) return cb();
+  if (change.collection === article.collection) return cb();
   this.receiver.updateArticle(user,article,change,cb);
 };
 
@@ -33,6 +31,7 @@ FilterAllComment.prototype.sendInfo = function(object,cb) {
 FilterAllComment.prototype.updateArticle= function(user,article,change,cb) {
   debug('FilterAllComment::updateArticle');
   if (!change.comment) return cb();
+  if (change.comment === article.comment) return cb();
   this.receiver.updateArticle(user,article,change,cb);
 };
 
@@ -50,6 +49,7 @@ FilterComment.prototype.sendInfo = function(object,cb) {
 FilterComment.prototype.updateArticle = function(user,article,change,cb) {
   debug('FilterComment::updateArticle');
   if (!change.comment) return cb();
+  if (change.comment === article.comment ) return cb();
   if (change.comment.indexOf("@"+this.what)<0) return cb();
   this.receiver.updateArticle(user,article,change,cb);
 };

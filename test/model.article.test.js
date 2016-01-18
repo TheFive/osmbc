@@ -22,6 +22,7 @@ var blogModule    = require('../model/blog.js');
 
 
 describe('model/article', function() {
+  var testUser = {displayName:"user"};
   before(function (bddone) {
     testutil.clearDB(bddone);
   }); 
@@ -105,7 +106,7 @@ describe('model/article', function() {
         newArticle = result;
         var id =result.id;
         newArticle.markdownDE = "This Value will not be logged";
-        newArticle.setAndSave("user",{version:1,blog:"Reference",collection:"text",categoryEN:"Imports"},function(err) {
+        newArticle.setAndSave(testUser,{version:1,blog:"Reference",collection:"text",categoryEN:"Imports"},function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
@@ -151,7 +152,7 @@ describe('model/article', function() {
         should.not.exist(err); 
         newArticle = result;
         var id =result.id;
-        newArticle.setAndSave("user",{version:"1",markdownDE:"  to be trimmed "},function(err) {
+        newArticle.setAndSave(testUser,{version:"1",markdownDE:"  to be trimmed "},function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
@@ -173,7 +174,7 @@ describe('model/article', function() {
         changeValues.markdownDE = newArticle.markdownDE;
         changeValues.blog = empty;
         changeValues.version = "1";
-        newArticle.setAndSave("user",changeValues,function(err) {
+        newArticle.setAndSave(testUser,changeValues,function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
@@ -204,10 +205,11 @@ describe('model/article', function() {
           var alternativeArticle = result;
 
           debug('save New Article with blogname TESTNEW');
-          newArticle.setAndSave("TEST",{version:"1",blog:"TESTNEW"},function(err){
+
+          newArticle.setAndSave({displayName:"TEST"},{version:"1",blog:"TESTNEW"},function(err){
             should.not.exist(err);
             debug('save alternative Article with blogname TESTNEW');
-            alternativeArticle.setAndSave("TEST",{version:"1",blog:"TESTALTERNATIVE"},function(err){
+            alternativeArticle.setAndSave({displayName:"TEST"},{version:"1",blog:"TESTALTERNATIVE"},function(err){
               //debug(err);
               //should.exist(err);
               should(err).eql(Error("Version Number Differs"));
@@ -424,7 +426,7 @@ describe('model/article', function() {
         blogModule.findOne({name:"WN2"},{column:"name"},function(err,blog){
           should.not.exist(err);
           should.exist(blog);
-          blog.setAndSave("user",{status:"published"},function (){
+          blog.setAndSave(testUser,{status:"published"},function (){
             articleModule.getListOfOrphanBlog(function(err,result){
               should.not.exist(err);
               should.exist(result);

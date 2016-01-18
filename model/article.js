@@ -402,7 +402,10 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
         messageCenter.updateArticle(user,self,data,cb);
       },
       function putValues (cb) {
-        for (k in data) {self[k]=data[k];}
+        for (k in data) {
+          if (k==="version") continue; 
+          if (data[k]) self[k]=data[k];
+        }
         cb();
       }], 
       function setAndSaveFinalCB(err) {
