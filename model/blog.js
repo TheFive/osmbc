@@ -412,8 +412,16 @@ function getPreview(style,user,callback) {
   var teamString  = "";
 
   var bilingual = options.bilingual;
+  var futureArticles;
 
-  async.parallel([
+  async.series([
+    function readFuture(cb) {
+      articleModule.find({blog:"Future"},{column:"title"},function(err,result){
+        if (err) return cb(err);
+        if (result) futureArticles = result;
+        return cb();
+      });
+    },
     function readArticles(cb) {
 
        var i,j; // often used iterator, declared here because there is no block scope in JS.
@@ -523,9 +531,16 @@ function getPreview(style,user,callback) {
         preview += "<p> Please use [edit blog detail] to enter category</p>\n";
         preview += "<p> Or edit The Articles ";
         for (i=0;i<articles[k].length;i++) {
-          preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</span></a> ';
+          preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</a> ';
         }
         preview += "</p>\n";
+      }
+      if (futureArticles && !options.fullfinal && futureArticles.length>0) {
+        preview += "<h3>Articles waiting in Future Blog</h3>\n<ul>";
+        for (i = 0;i<futureArticles.length;i++) {
+          preview += '<li><a href="'+config.getValue('htmlroot')+'/article/'+futureArticles[i].id+'">'+futureArticles[i].title+'</a></li>';
+        }
+        preview += "</ul>";
       }
       cb(null);
     });
