@@ -3,6 +3,9 @@ var debug = require('debug')('OSMBC:model:user');
 var should = require('should');
 var async = require('async');
 var messageCenter = require('../notification/messageCenter.js');
+var mailReceiver = require('../notification/mailReceiver.js');
+var random = require('node-random');
+
 
 function User (proto)
 {
@@ -71,6 +74,13 @@ function setAndSave(user,data,callback) {
   should(typeof(callback)).equal('function');
   var self = this;
   delete self.lock;
+  delete data.emailAdressValidated;
+
+  if (data.emailAddress !== self.emailAdress) {
+    data.emailAdressValidated = false;
+    data.emailAdressValidationKey = random.strings({length:20});
+    mailReceiver.sendWelcomeMail(self);
+  }
 
 
   async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
@@ -100,10 +110,19 @@ function setAndSave(user,data,callback) {
   },function setAndSaveFinalCB(err) {
     if (err) return callback(err);
     self.save(function (err) {
+      // Inform Mail Receiver Module, that there could be a change
+      mailReceiver.updateUser(self);
+
       callback(err);
     });
   });
 } 
+
+User.prototype.getNotificationStatus(channel, type) {
+  debug("User.prototype.getNotificationStatus");
+  return this.notification[channel][type];
+}
+
 
 // Creates an User object and stores it to database
 // can use a prototype to initialise data

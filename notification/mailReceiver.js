@@ -73,6 +73,43 @@ MailReceiver.prototype.updateArticle = function sendInfo(user,article,change,cal
   callback();
 };
 
-module.exports = MailReceiver;
+function MailUserReceiver(user) {
+  debug('MailUserReceiver::MailUserReceiver');
+  this.user = user;
+  // No Access No Mail.
+  if (this.user.access !=="full") return;
+
+  this.mc = new MessageCenter();
+  // ONE Receiver for all mails !!
+  var receiver = new MailReceiver(this.user);
+  if (user.getNotificationStatus("mail","allComment")) {
+    this.mc.registerReceiver(new messageFilter.global.allComment(receiver));
+  }
+  if (user.getNotificationStatus("mail","newCollection")) {
+    this.mc.registerReceiver(new messageFilter.global.newCollection(receiver));
+  }
+  var u = user.getNotificationStatus("mail","comment") {
+    this.mc.registerReceiver(new messageFilter.paramFilterList.comment(u,receiver));
+  }
+}
+
+var userReceiverMap = {};
+function initialise(userList) {
+  for (var i=0;i<userList;i++) {
+    var u = userList[i];
+    if (u.access !== "full") continue;
+    userReceivMap[user.displayName] = new MailUserReceiver(user);
+  }
+}
+
+function updateUser(user) {
+  delete userReceiverMap[user.displayName];
+  if (user.access !== "full") return;
+  userReceivMap[user.displayName] = new MailUserReceiver(user);
+}
+
+module.exports.MailReceiver = MailReceiver;
+module.exports.initialise = initialise;
+module.exports.updateUser = updateUser;
  
 // setup e-mail data with unicode symbols 

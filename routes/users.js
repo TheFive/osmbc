@@ -66,21 +66,11 @@ function renderUserId(req, res, next) {
         debug('findAndLoaduser_CB');
         if (err) return cb(err);
         user = result;
-
-        if (!params.numberconfig) {
-          params.numberconfig = 3; 
-          for (i =0;i<99;i++) {
-            if (user && typeof(user["blogSetting"+i])== 'undefined') break;
-            if (user &&(user["blogSetting"+i])!= '-') {
-              params.numberconfig=i;
-            }
-          }
-        } else {
-          for (i =0;i<=params.numberconfig;i++) {
-             if (typeof(user["blogSetting"+i])== 'undefined') user["blogSetting"+i]="-";
-          }
-        }
-        cb();
+        if (req.query.validation && user.emailValidationString === req.query.validation) {
+          user.emailAdressValidated = true;
+          delete user.emailValidationString;
+          user.save(cb);
+        } else cb();
       });
     }
     ],
@@ -103,10 +93,15 @@ function renderUserId(req, res, next) {
 function postUserId(req, res, next) {
   debug('postUserId');
   var id = req.params.user_id;
+  var notification = {mail:{allComment:req.body.mailAllComment,
+                            newCollection:req.body.mailNewCollection,
+                            comment:req.body.mailComment}};
   var changes = {OSMUser:req.body.OSMUser,
                  WNAuthor:req.body.WNAuthor,
                  WeeklyAuthor:req.body.WeeklyAuthor,
                  language:req.body.language,
+                 notification:notification,
+                 mailAddress:req.body.mailAddress,
                  access:req.body.access};
   async.series([
     function getPublicAuthor(cb) {

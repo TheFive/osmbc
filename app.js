@@ -29,6 +29,9 @@ var layout     = require('./routes/layout').router;
 
 var userModule = require('./model/user.js');
 
+var mailReceiver = require('../notification/mailReceiver.js');
+
+
 
 // Initialise config Module
 config.initialise();
@@ -282,6 +285,17 @@ app.use(function(err, req, res, next) {// jshint ignore:line
     error: {},
     layout:{htmlroot:htmlRoot}
   });
+});
+
+// Initialise Mail Module with all users
+
+userModule.find({access:"full"},function initUsers(err,result) {
+  if (err) {
+    console.log("Error during Mail Receiver Initialising");
+    console.dir(err);
+    return;
+  }
+  mailReceiver.initialise(result);
 });
 
 
