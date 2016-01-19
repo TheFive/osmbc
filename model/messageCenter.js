@@ -62,6 +62,7 @@ LogModuleReceiver.prototype.updateArticle= function(user,article,change,cb) {
   should(article.id).not.equal(0);
   var logblog = article.blog;
   if (change.blog) logblog = change.blog;
+  var timestamp = new Date();
   async.forEachOf(change,function setAndSaveEachOf(value,key,cb_eachOf){
     // There is no Value for the key, so do nothing
     if (typeof(value)=='undefined') return cb_eachOf();
@@ -72,7 +73,14 @@ LogModuleReceiver.prototype.updateArticle= function(user,article,change,cb) {
     if (typeof(article[key])==='undefined' && value === '') return cb_eachOf();
     async.series ( [
         function(cb) {
-           logModule.log({oid:article.id,blog:logblog,user:user.displayName,table:"article",property:key,from:article[key],to:value},cb);
+           logModule.log({oid:article.id,
+                          blog:logblog,
+                          user:user.displayName,
+                          table:"article",
+                          property:key,
+                          from:article[key],
+                          to:value,
+                          timestamp:timestamp},cb);
         }
       ],function(err){
         cb_eachOf(err);
