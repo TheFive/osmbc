@@ -16,7 +16,7 @@ var transporter = nodemailer.createTransport(smtpTransport(config.getValue("SMTP
 var layout = {
   htmlroot : config.getValue("htmlroot"),
   url: config.getValue("url")
-}
+};
 function MailReceiver(user) {
   debug("MailReceiver::MailReceiver");
   this.user = user;
@@ -25,7 +25,7 @@ function MailReceiver(user) {
 MailReceiver.prototype.sendInfo = function sendInfo(info,callback) {
   debug("MailReceiver::sendInfo");
   return callback();
-}
+};
 
 MailReceiver.prototype.updateArticle = function sendInfo(user,article,change,callback) {
   debug("MailReceiver::sendInfo");

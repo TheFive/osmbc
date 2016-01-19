@@ -1,15 +1,10 @@
 var debug = require('debug')('OSMBC:model:messageCenter');
 var async = require('async');
-var path = require('path');
 var should = require('should');
-var config = require('../config.js');
 var logModule = require('../model/logModule.js');
-var messageFilter = require('../model/messageFilter.js');
-var MailReceiver = require('../model/mailReceiver.js');
+var messageFilter = require('../notification/messageFilter.js');
+var MailReceiver = require('../notification/mailReceiver.js');
 
-var nodemailer = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
-var EmailTemplate = require('email-templates').EmailTemplate;
 
 
 

@@ -2,7 +2,7 @@ var pgMap = require('./pgMap.js');
 var debug = require('debug')('OSMBC:model:user');
 var should = require('should');
 var async = require('async');
-var messageCenter = require('../model/messageCenter.js');
+var messageCenter = require('../notification/messageCenter.js');
 
 function User (proto)
 {

@@ -14,7 +14,7 @@ var debug    = require("debug")("OSMBC:model:article");
 var config    = require("../config.js");
 var util      = require("../util.js");
 
-var messageCenter  = require("../model/messageCenter.js");
+var messageCenter  = require("../notification/messageCenter.js");
 var settingsModule = require("../model/settings.js");
 var blogModule     = require("../model/blog.js");
 var pgMap          = require("../model/pgMap.js");
@@ -396,14 +396,17 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
     should(self.id).not.equal(0);
     var logblog = self.blog;
     if (data.blog) logblog = data.blog;
-
+    delete data.version;
+    for (var k in data) {
+      if (data[k] === self[k]) delete data[k];
+      if (data[k] === '' && typeof(self[k])=='undefined') delete data[k];
+    }
     async.series(
       [function logIt (cb) {
         messageCenter.updateArticle(user,self,data,cb);
       },
       function putValues (cb) {
         for (k in data) {
-          if (k==="version") continue; 
           if (data[k]) self[k]=data[k];
         }
         cb();
