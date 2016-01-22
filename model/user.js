@@ -4,7 +4,7 @@ var should = require('should');
 var async = require('async');
 var messageCenter = require('../notification/messageCenter.js');
 var mailReceiver = require('../notification/mailReceiver.js');
-var random = require('node-random');
+var random = require('randomstring');
 
 
 function User (proto)
@@ -66,6 +66,19 @@ function dropTable(cb) {
   pgMap.dropTable('usert',cb);
 }
 
+function validateEmailAddress(validationCode,callback) {
+  debug('validateEmailAddress');
+  var self = this;
+  if (validationCode !== self.emailAdressValidationKey) {
+    var err = new Error("Wrong Validation Code for EMail for user >"+self.displayName+"<");
+    return callback(err);
+  }
+  self.emailAddress = self.emailAddressValidating;
+  delete self.emailAddressValidating;
+  delete self.emailAddressValidationKey;
+  self.save(callback);
+}
+
 
 function setAndSave(user,data,callback) {
   debug("setAndSave");
@@ -75,11 +88,16 @@ function setAndSave(user,data,callback) {
   var self = this;
   delete self.lock;
   delete data.emailAdressValidated;
+  var sendWelcomeEmail = false;
 
-  if (data.emailAddress !== self.emailAdress) {
-    data.emailAdressValidated = false;
-    data.emailAdressValidationKey = random.strings({length:20});
-    mailReceiver.sendWelcomeMail(self);
+  if (data.emailAddress !== self.emailAddress) {
+    data.emailAddressValidating = data.emailAddress;
+    delete data.emailAddress;
+   
+    data.emailAdressValidationKey = random.generate();
+    var m = new mailReceiver.MailReceiver(self);
+    sendWelcomeEmail = true;
+    m.sendWelcomeMail(user);
   }
 
 
@@ -97,7 +115,10 @@ function setAndSave(user,data,callback) {
 
     async.series ( [
         function(cb) {
-           messageCenter.sendInfo({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:value},cb);
+          // do not log validation key in logfile
+          var toValue = value;
+          if (key === "emailAdressValidationKey") toValue = "SET";
+           messageCenter.global.sendInfo({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:toValue},cb);
         },
         function(cb) {
           self[key] = value;
@@ -112,16 +133,20 @@ function setAndSave(user,data,callback) {
     self.save(function (err) {
       // Inform Mail Receiver Module, that there could be a change
       mailReceiver.updateUser(self);
+      if (sendWelcomeEmail) m.sendWelcomeMail(user);
 
       callback(err);
     });
   });
 } 
 
-User.prototype.getNotificationStatus(channel, type) {
+User.prototype.getNotificationStatus = function getNotificationStatus(channel, type) {
   debug("User.prototype.getNotificationStatus");
+  if (!this.notificationStatus) return null;
+  if (!this.notificationStatus[channel]) return null;
   return this.notification[channel][type];
-}
+};
+
 
 
 // Creates an User object and stores it to database
@@ -135,6 +160,7 @@ module.exports.createNewUser = createNewUser;
 // save stores the current object to database
 User.prototype.save = pgMap.save;
 User.prototype.setAndSave = setAndSave;
+User.prototype.validateEmailAddress = validateEmailAddress;
 
 // Create Tables and Views
 module.exports.createTable = createTable;

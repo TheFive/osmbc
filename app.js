@@ -29,7 +29,7 @@ var layout     = require('./routes/layout').router;
 
 var userModule = require('./model/user.js');
 
-var mailReceiver = require('../notification/mailReceiver.js');
+var mailReceiver = require('./notification/mailReceiver.js');
 
 
 

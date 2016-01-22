@@ -403,7 +403,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
     }
     async.series(
       [function logIt (cb) {
-        messageCenter.updateArticle(user,self,data,cb);
+        messageCenter.global.updateArticle(user,self,data,cb);
       },
       function putValues (cb) {
         for (k in data) {

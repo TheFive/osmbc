@@ -61,7 +61,6 @@ function renderUserId(req, res, next) {
     },
     function findAndLoaduser(cb){
       debug('findAndLoaduser');
-      var i;
       userModule.findById(id,function findAndLoaduser_CB(err,result) {
         debug('findAndLoaduser_CB');
         if (err) return cb(err);
@@ -101,7 +100,7 @@ function postUserId(req, res, next) {
                  WeeklyAuthor:req.body.WeeklyAuthor,
                  language:req.body.language,
                  notification:notification,
-                 mailAddress:req.body.mailAddress,
+                 emailAddress:req.body.emailAddress,
                  access:req.body.access};
   async.series([
     function getPublicAuthor(cb) {

@@ -6,11 +6,15 @@ var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var EmailTemplate = require('email-templates').EmailTemplate;
 
+var messageCenter = require('../notification/messageCenter.js');
+var messageFilter = require('../notification/messageFilter.js');
 config.initialise();
 
 
-var templateDir = path.join(__dirname, '..','email', 'infomail');
-var infomail = new EmailTemplate(templateDir);
+var infoMailtemplateDir = path.join(__dirname, '..','email', 'infomail');
+var infomail = new EmailTemplate(infoMailtemplateDir);
+var welcomeMailtemplateDir = path.join(__dirname, '..','email', 'welcome');
+var welcomemail = new EmailTemplate(welcomeMailtemplateDir);
 var transporter = nodemailer.createTransport(smtpTransport(config.getValue("SMTP")));
 
 var layout = {
@@ -21,6 +25,39 @@ function MailReceiver(user) {
   debug("MailReceiver::MailReceiver");
   this.user = user;
 }
+
+MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callback) {
+  debug("MailReceiver::sendWelcomeMail");
+
+
+  var self = this;
+  var data = {user:this.user,inviter:inviter,layout:layout};
+
+  welcomemail.render(data, function (err, results) {
+    if (err) return console.dir(err);
+    console.dir(self.user);
+
+    var mailOptions = {
+        from: ' <noreply@gmail.com>', // sender address 
+        to: self.user.emailAddressValidating, // list of receivers 
+        subject: "Welcome to OSMBC", // Subject line 
+        text: results.text,
+        html: results.html
+    };
+     
+    // send mail with defined transport object 
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+          console.log("Connection Error while send Welcome Email to "+self.user.displayName);
+          console.log(error);
+        } else {
+          console.log('Welcome Mail send to '+self.user.displayName + " "+info.response);
+        }
+        if (callback) callback();
+        return;
+    });
+  }); 
+};
 
 MailReceiver.prototype.sendInfo = function sendInfo(info,callback) {
   debug("MailReceiver::sendInfo");
@@ -79,7 +116,7 @@ function MailUserReceiver(user) {
   // No Access No Mail.
   if (this.user.access !=="full") return;
 
-  this.mc = new MessageCenter();
+  this.mc = new messageCenter.Class();
   // ONE Receiver for all mails !!
   var receiver = new MailReceiver(this.user);
   if (user.getNotificationStatus("mail","allComment")) {
@@ -88,7 +125,8 @@ function MailUserReceiver(user) {
   if (user.getNotificationStatus("mail","newCollection")) {
     this.mc.registerReceiver(new messageFilter.global.newCollection(receiver));
   }
-  var u = user.getNotificationStatus("mail","comment") {
+  var u = user.getNotificationStatus("mail","comment");
+  if (u) {
     this.mc.registerReceiver(new messageFilter.paramFilterList.comment(u,receiver));
   }
 }
@@ -98,14 +136,14 @@ function initialise(userList) {
   for (var i=0;i<userList;i++) {
     var u = userList[i];
     if (u.access !== "full") continue;
-    userReceivMap[user.displayName] = new MailUserReceiver(user);
+    userReceiverMap[u.displayName] = new MailUserReceiver(u);
   }
 }
 
 function updateUser(user) {
   delete userReceiverMap[user.displayName];
   if (user.access !== "full") return;
-  userReceivMap[user.displayName] = new MailUserReceiver(user);
+  userReceiverMap[user.displayName] = new MailUserReceiver(user);
 }
 
 module.exports.MailReceiver = MailReceiver;

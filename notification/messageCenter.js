@@ -3,7 +3,7 @@ var async = require('async');
 var should = require('should');
 var logModule = require('../model/logModule.js');
 var messageFilter = require('../notification/messageFilter.js');
-var MailReceiver = require('../notification/mailReceiver.js');
+var mailReceiver = require('../notification/mailReceiver.js');
 
 
 
@@ -93,9 +93,10 @@ var messageCenter = new MessageCenter();
 
 messageCenter.registerReceiver(new messageFilter.withParam.comment("TheFive",new ConsoleReceiver()));
 messageCenter.registerReceiver(new messageFilter.global.newCollection(new ConsoleReceiver()));
-messageCenter.registerReceiver(new messageFilter.global.newCollection(new MailReceiver(null)));
-messageCenter.registerReceiver(new messageFilter.global.allComment(new MailReceiver(null)));
+messageCenter.registerReceiver(new messageFilter.global.newCollection(new mailReceiver.MailReceiver(null)));
+messageCenter.registerReceiver(new messageFilter.global.allComment(new mailReceiver.MailReceiver(null)));
 messageCenter.registerReceiver(new LogModuleReceiver());
 
 
-module.exports = messageCenter;
+module.exports.global = messageCenter;
+module.exports.Class = MessageCenter;
