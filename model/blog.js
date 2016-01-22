@@ -576,6 +576,7 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
 
 
   self._countUneditedMarkdown = {};
+  self._countExpectedMarkdown = {};
 
   articleModule.find({blog:this.name},function (err,result) {
     if (err) {
@@ -586,14 +587,17 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
       var l = config.getLanguages()[i];
       if (!result) {
         self._countUneditedMarkdown[l]=99;
+        self._countExpectedMarkdown[l]=99;
       }
       else {
         self._countUneditedMarkdown[l]=0;
+        self._countExpectedMarkdown[l]=0;
         for (var j=0;j<result.length;j++) {
           var c = result[j].categoryEN;
           if (c == "--unpublished--") continue;
           var m = result[j]["markdown"+l];
           if (!m || m ==="" || c ==="-- no category yet --") self._countUneditedMarkdown[l] +=1;
+          if (m!=="no translation") self._countExpectedMarkdown[l] +=1;
         }
       }
     }
