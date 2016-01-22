@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.6.5](https://github.com/TheFive/osmbc/tree/0.6.5) (2016-01-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.4...0.6.5)
+
+**Implemented enhancements:**
+
+- would it be possible to have the number of "all" articles in that blog? [\#275](https://github.com/TheFive/osmbc/issues/275)
+- view Message from the category future after the current [\#271](https://github.com/TheFive/osmbc/issues/271)
+
+**Fixed bugs:**
+
+- WNAuthor: change unwanted [\#273](https://github.com/TheFive/osmbc/issues/273)
+
 ## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.3a...0.6.4)
 
