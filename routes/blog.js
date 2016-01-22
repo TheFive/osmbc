@@ -225,7 +225,12 @@ function renderBlogList(req, res, next) {
                  blogModule.find(query,{column:"name",desc:true},function(err,blogs) {
                  callback(err,blogs);
               });},
-        count:["blogs",function(callback,result) {async.each(result.blogs,function(item,cb){item.countUneditedMarkdown(cb);},function(err){callback(err);}) }]
+        count:["blogs",function(callback,result) {
+                  async.each(result.blogs,function(item,cb){
+                    item.countUneditedMarkdown(cb);
+                  },function(err){
+                    callback(err);
+                  }); }]
       },function(err,result) {
           should.exist(res.rendervar);
           if (err) return next(err);
