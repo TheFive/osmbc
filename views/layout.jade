@@ -30,7 +30,8 @@ html(lang='en')
             span.icon-bar
             span.icon-bar
         .navbar-collapse.collapse
-          - function blogNumber(blog) {return (blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[layout.language]:"?";}
+          - function blogNumber(blog,language) {return ((blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[language]:"?") }
+          - function blogCount(blog,language) {return ((blog && blog._countExpectedMarkdown)?blog._countExpectedMarkdown[language]:"?") }
 
           ul.nav.navbar-nav.navbar-left
             if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
@@ -38,29 +39,29 @@ html(lang='en')
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')
                   |#{layout.listOfOpenBlog[0].name} 
                   span.badge.osmbc-lang
-                    |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.language]}
+                    |#{blogNumber(layout.listOfOpenBlog[0],layout.language)}
                   if layout.language2
                     span.badge.osmbc-lang2.hidden-xs
-                      |#{layout.listOfOpenBlog[0]._countUneditedMarkdown[layout.language2]}
+                      |#{blogNumber(layout.listOfOpenBlog[0],layout.language2)}
        
             if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
               li
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].name}') 
                   |#{layout.listOfEditBlog[0].name}
                   span.badge.osmbc-lang
-                    |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language]}
+                    |#{blogNumber(layout.listOfEditBlog[0],layout.language)}
                   if layout.language2
                     span.badge.osmbc-lang2
-                      |#{layout.listOfEditBlog[0]._countUneditedMarkdown[layout.language2]}
+                      |#{blogNumber(layout.listOfEditBlog[0],layout.language2)}
             if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
               li
                 a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].name}') 
                   |#{layout.listOfReviewBlog[0].name}
                   span.badge.osmbc-lang
-                    |#{layout.listOfReviewBlog[0]._countUneditedMarkdown[layout.language]}
+                    |#{blogNumber(layout.listOfReviewBlog[0],layout.language)}
                   if layout.language2
                     span.badge.osmbc-lang2
-                      |#{layout.listOfReviewBlog[0]._countUneditedMarkdown[layout.language2]}
+                      |#{blogNumber(layout.listOfReviewBlog[0],layout.language2)}
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | Lists 

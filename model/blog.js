@@ -412,8 +412,16 @@ function getPreview(style,user,callback) {
   var teamString  = "";
 
   var bilingual = options.bilingual;
+  var futureArticles;
 
-  async.parallel([
+  async.series([
+    function readFuture(cb) {
+      articleModule.find({blog:"Future"},{column:"title"},function(err,result){
+        if (err) return cb(err);
+        if (result) futureArticles = result;
+        return cb();
+      });
+    },
     function readArticles(cb) {
 
        var i,j; // often used iterator, declared here because there is no block scope in JS.
@@ -523,9 +531,16 @@ function getPreview(style,user,callback) {
         preview += "<p> Please use [edit blog detail] to enter category</p>\n";
         preview += "<p> Or edit The Articles ";
         for (i=0;i<articles[k].length;i++) {
-          preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</span></a> ';
+          preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</a> ';
         }
         preview += "</p>\n";
+      }
+      if (futureArticles && !options.fullfinal && futureArticles.length>0) {
+        preview += "<h3>Articles waiting in Future Blog</h3>\n<ul>";
+        for (i = 0;i<futureArticles.length;i++) {
+          preview += '<li><a href="'+config.getValue('htmlroot')+'/article/'+futureArticles[i].id+'">'+futureArticles[i].title+'</a></li>';
+        }
+        preview += "</ul>";
       }
       cb(null);
     });
@@ -561,6 +576,7 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
 
 
   self._countUneditedMarkdown = {};
+  self._countExpectedMarkdown = {};
 
   articleModule.find({blog:this.name},function (err,result) {
     if (err) {
@@ -571,14 +587,17 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
       var l = config.getLanguages()[i];
       if (!result) {
         self._countUneditedMarkdown[l]=99;
+        self._countExpectedMarkdown[l]=99;
       }
       else {
         self._countUneditedMarkdown[l]=0;
+        self._countExpectedMarkdown[l]=0;
         for (var j=0;j<result.length;j++) {
           var c = result[j].categoryEN;
           if (c == "--unpublished--") continue;
           var m = result[j]["markdown"+l];
           if (!m || m ==="" || c ==="-- no category yet --") self._countUneditedMarkdown[l] +=1;
+          if (m!=="no translation") self._countExpectedMarkdown[l] +=1;
         }
       }
     }

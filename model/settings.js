@@ -103,7 +103,8 @@ exports.languages=languages;
  /*exported getSettings */
 function getSettings(string,language,language2) {
   debug("getSettings(%s)",string);
-
+  if (!language) language="DE";
+  
 
   if (typeof(string)=="undefined") {
     string = "";
