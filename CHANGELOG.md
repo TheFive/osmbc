@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.6.5c](https://github.com/TheFive/osmbc/tree/0.6.5c) (2016-01-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5b...0.6.5c)
+
+**Implemented enhancements:**
+
+- add Colombia & Colivia country flags. [\#277](https://github.com/TheFive/osmbc/issues/277)
+
+**Fixed bugs:**
+
+- is it possible to to \*not export\* the Blog Missing Cat: --unpublished-- [\#276](https://github.com/TheFive/osmbc/issues/276)
+
 ## [0.6.5b](https://github.com/TheFive/osmbc/tree/0.6.5b) (2016-01-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.ar...0.6.5b)
 
@@ -753,17 +764,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
