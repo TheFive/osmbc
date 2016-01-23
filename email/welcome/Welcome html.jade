@@ -2,7 +2,7 @@ h2
   | Welcome #{user.displayName}
 
 p
-  | #{inviter.displayName} has invited you to OSMBC. (May be he just changed your EMail adress in OSMBC)
+  | #{inviter} has invited you to OSMBC. (May be he just changed your EMail adress in OSMBC)
   | You can login to OSMBC with your OpenStreetMap credentials via OAuth.
 p
   a(href="https://thefive.sabic.uberspace.de/osmbc.html") OSMBC
@@ -10,7 +10,7 @@ p
   | Someone has invited you to join. You can login with your OpenStreetMap credentials, and the above link.
 p
   | If you would like to use this email address for OSMBC click on this link: 
-  a(href='#{layout.url}#{layout.htmlroot}/usert/#{user.id}?verify="#{user.emailAdressValidationKey}"') Link To Click On.
+  a(href='#{layout.url}#{layout.htmlroot}/usert/#{user.id}?verify=#{user.emailValidationKey}') Link To Click On.
 p
   | If you would like to check your User Settings go to
   a(href='#{layout.url}#{layout.htmlroot}/usert/#{user.id}') User Settings 

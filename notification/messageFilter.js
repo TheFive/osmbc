@@ -50,7 +50,12 @@ FilterComment.prototype.updateArticle = function(user,article,change,cb) {
   debug('FilterComment::updateArticle');
   if (!change.comment) return cb();
   if (change.comment === article.comment ) return cb();
-  if (change.comment.indexOf("@"+this.what)<0) return cb();
+  var userlist = this.what.split(" ");
+  var mail = false;
+  for (var i=0;i<userlist.length;i++) {
+    if (change.comment.indexOf("@"+userlist[i])>=0) mail = true; 
+  }
+  if (!mail) return cb();
   this.receiver.updateArticle(user,article,change,cb);
 };
 

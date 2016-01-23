@@ -66,18 +66,19 @@ function dropTable(cb) {
   pgMap.dropTable('usert',cb);
 }
 
-function validateEmailAddress(validationCode,callback) {
-  debug('validateEmailAddress');
+function validateEmail(validationCode,callback) {
+  debug('validateEmail');
   var self = this;
-  if (validationCode !== self.emailAdressValidationKey) {
-    var err = new Error("Wrong Validation Code for EMail for user >"+self.displayName+"<");
+  if (validationCode !== self.emailValidationKey) {
+    var err = new Error("Wrong Validation Code for EMail for user >"+self.OSMUser+"<");
     return callback(err);
   }
-  self.emailAddress = self.emailAddressValidating;
-  delete self.emailAddressValidating;
-  delete self.emailAddressValidationKey;
+  self.email = self.emailInvalidation;
+  delete self.emailInvalidation;
+  delete self.emailValidationKey;
   self.save(callback);
 }
+
 
 
 function setAndSave(user,data,callback) {
@@ -87,17 +88,14 @@ function setAndSave(user,data,callback) {
   should(typeof(callback)).equal('function');
   var self = this;
   delete self.lock;
-  delete data.emailAdressValidated;
   var sendWelcomeEmail = false;
 
-  if (data.emailAddress !== self.emailAddress) {
-    data.emailAddressValidating = data.emailAddress;
-    delete data.emailAddress;
+  if (data.email !== self.email) {
+    data.emailInvalidation = data.email;
+    delete data.email;
    
-    data.emailAdressValidationKey = random.generate();
-    var m = new mailReceiver.MailReceiver(self);
+    data.emailValidationKey = random.generate();
     sendWelcomeEmail = true;
-    m.sendWelcomeMail(user);
   }
 
 
@@ -117,8 +115,10 @@ function setAndSave(user,data,callback) {
         function(cb) {
           // do not log validation key in logfile
           var toValue = value;
-          if (key === "emailAdressValidationKey") toValue = "SET";
-           messageCenter.global.sendInfo({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:toValue},cb);
+          // Hide Validation Key not to show to all users
+          if (key === "emailValidationKey") return cb();
+
+          messageCenter.global.sendInfo({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:toValue},cb);
         },
         function(cb) {
           self[key] = value;
@@ -133,6 +133,7 @@ function setAndSave(user,data,callback) {
     self.save(function (err) {
       // Inform Mail Receiver Module, that there could be a change
       mailReceiver.updateUser(self);
+      var m = new mailReceiver.MailReceiver(self);
       if (sendWelcomeEmail) m.sendWelcomeMail(user);
 
       callback(err);
@@ -160,7 +161,7 @@ module.exports.createNewUser = createNewUser;
 // save stores the current object to database
 User.prototype.save = pgMap.save;
 User.prototype.setAndSave = setAndSave;
-User.prototype.validateEmailAddress = validateEmailAddress;
+User.prototype.validateEmail = validateEmail;
 
 // Create Tables and Views
 module.exports.createTable = createTable;

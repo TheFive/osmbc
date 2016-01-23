@@ -1,28 +1,7 @@
 extends layout
 
 
-mixin blogConfig(number)
- .row
-    .col-md-2
-      | Blog Config #{number}
-    .col-md-3
-      select(id="blogSetting#{number}",name="blogSetting#{number}").form-control
-        option(value="#{usershown['blogSetting'+number]}" selected) #{usershown['blogSetting'+number]} (*)
-        option(value="-" ) - 
-        each setting in settings
-          option(value="#{setting}" ) #{setting}
-    .col-md-3
-      select(id="blogLanguages#{number}",name="blogLanguages#{number}").form-control
-        option(value="#{usershown['blogLanguages'+number]}" selected) #{usershown['blogLanguages'+number]} (*)
-        each lang in languages
-          option(value="#{lang}" ) #{lang}
 
-mixin blogConfigDisplay(number)
-  .row
-    .col-md-2
-      | blog Config #{number}
-    .col-md-5
-      | #{usershown['blogSetting'+number]} + #{usershown['blogLanguages'+number]}
 
 
 block content
@@ -61,27 +40,17 @@ block content
           .col-md-2
             | EMail 
           .col-md-3
-            textarea.form-control(name="emailAddress",rows=1) #{usershown.emailAddress}
-            if (usershown.emailAddressValidating) 
+            textarea.form-control(name="email",rows=1) #{usershown.email}
+            if (usershown.emailInvalidation) 
               p
-                | Waiting for validation of EMail #{usershown.emailAddressValidating}
+                | Waiting for validation of EMail #{usershown.emailInvalidation}
 
-        .row
-          .col-md-2
-            | WeeklyAuthor 
-          .col-md-3
-            textarea.form-control(name="WeeklyAuthor",rows=1) #{usershown.WeeklyAuthor}
         .row
           .col-md-2
             | WNAuthor 
           .col-md-3
             textarea.form-control(name="WNAuthor",rows=1) #{usershown.WNAuthor}
-        .row
-          .col-md-2
-            | WeeklyAuthor 
-          .col-md-3
-            textarea.form-control(name="WeeklyAuthor",rows=1) #{usershown.WeeklyAuthor}
-
+  
 
         .row
           .col-md-2
@@ -100,23 +69,31 @@ block content
               option(value="full" ) full
               option(value="read" ) only collected Article (not implemented)
               option(value="denied" ) denied
-        - val = 0
-        while (val<=params.numberconfig)
-           +blogConfig(val)
-           - val++
         .row
           .col-md-2
-          .col-md-5
-           a(href="#{layout.htmlroot}/usert/#{usershown.id}?edit=true&numberconfig=#{params.numberconfig+1}") Add Row
-      
-    
-     
-
-                
-      
-
+            | mailAllcomment
+          .col-md-3
+            select(id="mailAllComment",name="mailAllComment").form-control
+              option(value="#{usershown.mailAllComment}" selected) #{usershown.mailAllcomment+'(*)'}
+                option(value="true") ON 
+                option(value="false") OFF 
+        .row
+          .col-md-2
+            | mailNewCollection
+          .col-md-3
+            select(id="mailNewCollection",name="mailNewCollection").form-control
+              option(value="#{usershown.mailNewCollection}" selected) #{usershown.mailNewCollection+'(*)'}
+                option(value="true") ON 
+                option(value="false") OFF
+        .row
+          .col-md-2
+            | mailComment 
+          .col-md-3
+            textarea.form-control(name="mailComment",rows=1) #{usershown.mailComment}
+            p
+              | Please enter for example "DE marc ES" to be informet about comments for @DE @ES @marc
     else
-     .row
+      .row
         .col-md-2
           | OSM Name <br>
         .col-md-4
@@ -125,32 +102,26 @@ block content
         .col-md-5
         .col-md-1
           a(href="#{layout.htmlroot}/usert/#{usershown.id}?edit=true" class="btn btn-primary" role="button") Edit
-    .row
+      .row
         .col-md-2
           | EMail 
         .col-md-3
-          | #{usershown.emailAddress}
-          if (usershown.emailAddressValidating) 
+          | #{usershown.email}
+          if (usershown.emailInvalidation) 
             p
-              | Waiting for validation of EMail #{usershown.emailAddressValidating}
-     .row
+              | Waiting for validation of EMail #{usershown.emailInvalidation}
+      .row
         .col-md-2
           | WNPublicAuthor <br>
         .col-md-4
           h2
             | #{usershown.WNPublicAuthor}
-     .row
+      .row
         .col-md-2
           | WNAuthor <br>
         .col-md-4
           h2
             | #{usershown.WNAuthor}
-     .row
-        .col-md-2
-          | Weekly Author <br>
-        .col-md-4
-          h2
-            | #{usershown.WeeklyAuthor}
       .row
         .col-md-2
           | Language
@@ -169,12 +140,25 @@ block content
         .col-md-5
           p
             a(href='http://www.openstreetmap.org/user/#{usershown.OSMUser}') #{usershown.OSMUser}
-      - val = 0
-      while (val<=params.numberconfig)
-        
-        +blogConfigDisplay(val)
-        - val++
-
+      .row
+        .col-md-2
+          | mailAllComment
+        .col-md-5
+          p
+            |#{usershown.mailAllComment}
+      .row
+        .col-md-2
+          | mailNewCollection
+        .col-md-5
+          p
+            |#{usershown.mailNewCollection}
+      .row
+        .col-md-2
+          | mailComment
+        .col-md-5
+          p
+            |#{usershown.mailComment}
+ 
    
   .row
     if changes
