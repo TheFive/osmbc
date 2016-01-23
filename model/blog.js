@@ -526,7 +526,6 @@ function getPreview(style,user,callback) {
           delete articles[category];
         }
       }
-      delete articles["--unpublished--"];
       for (var k in articles) {
         preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
         preview += "<p> Please use [edit blog detail] to enter category</p>\n";

@@ -1,5 +1,34 @@
 # Change Log
 
+## [0.6.5a](https://github.com/TheFive/osmbc/tree/0.6.5a) (2016-01-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5...0.6.5a)
+
+**Fixed bugs:**
+
+- is it possible to to \*not export\* the Blog Missing Cat: --unpublished--  [\#276](https://github.com/TheFive/osmbc/issues/276)
+
+## [0.6.5](https://github.com/TheFive/osmbc/tree/0.6.5) (2016-01-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.4...0.6.5)
+
+**Implemented enhancements:**
+
+- would it be possible to have the number of "all" articles in that blog? [\#275](https://github.com/TheFive/osmbc/issues/275)
+- view Message from the category future after the current [\#271](https://github.com/TheFive/osmbc/issues/271)
+
+**Fixed bugs:**
+
+- WNAuthor: change unwanted [\#273](https://github.com/TheFive/osmbc/issues/273)
+
+## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.3a...0.6.4)
+
+**Implemented enhancements:**
+
+- Upcomming events should have country flags. [\#267](https://github.com/TheFive/osmbc/issues/267)
+
+## [0.6.3a](https://github.com/TheFive/osmbc/tree/0.6.3a) (2016-01-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.2...0.6.3a)
+
 ## [0.6.2](https://github.com/TheFive/osmbc/tree/0.6.2) (2016-01-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.1...0.6.2)
 
@@ -722,17 +751,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
