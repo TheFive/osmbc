@@ -1,11 +1,10 @@
 # Change Log
 
+## [0.6.ar](https://github.com/TheFive/osmbc/tree/0.6.ar) (2016-01-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.ar)
+
 ## [0.6.5a](https://github.com/TheFive/osmbc/tree/0.6.5a) (2016-01-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5...0.6.5a)
-
-**Fixed bugs:**
-
-- is it possible to to \*not export\* the Blog Missing Cat: --unpublished--  [\#276](https://github.com/TheFive/osmbc/issues/276)
 
 ## [0.6.5](https://github.com/TheFive/osmbc/tree/0.6.5) (2016-01-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.4...0.6.5)
