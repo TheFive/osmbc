@@ -39,8 +39,8 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
     console.dir(self.user);
 
     var mailOptions = {
-        from: ' <noreply@gmail.com>', // sender address 
-        to: self.user.emailAddressValidating, // list of receivers 
+        from: config.getValue("EmailSender"), // sender address 
+        to: self.user.emailInvalidation, // list of receivers 
         subject: "Welcome to OSMBC", // Subject line 
         text: results.text,
         html: results.html
