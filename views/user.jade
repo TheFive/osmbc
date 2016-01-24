@@ -74,17 +74,17 @@ block content
             | mailAllcomment
           .col-md-3
             select(id="mailAllComment",name="mailAllComment").form-control
-              option(value="#{usershown.mailAllComment}" selected) #{usershown.mailAllcomment+'(*)'}
-                option(value="true") ON 
-                option(value="false") OFF 
+              option(value="#{usershown.mailAllComment}" selected) #{usershown.mailAllComment+'(*)'}
+              option(value="true") ON 
+              option(value="false") OFF 
         .row
           .col-md-2
             | mailNewCollection
           .col-md-3
             select(id="mailNewCollection",name="mailNewCollection").form-control
               option(value="#{usershown.mailNewCollection}" selected) #{usershown.mailNewCollection+'(*)'}
-                option(value="true") ON 
-                option(value="false") OFF
+              option(value="true") ON 
+              option(value="false") OFF
         .row
           .col-md-2
             | mailComment 

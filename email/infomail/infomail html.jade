@@ -1,20 +1,21 @@
 h2
-  | Change in article of #{logblog}
+  | Change in article of #{newArticle.blog}
 
 p
-  | Article was changed by #{changeby.displayName}
-  a(href="#{layout.url}#{layout.htmlroot}/article/#{article.id}") #{(article.title)?article.title:"NO TITLE"}
-
+  | Article 
+  a(href="#{layout.url}#{layout.htmlroot}/article/#{article.id}") #{(newArticle.title)?newArticle.title:"NO TITLE"}
+  |  was changed by #{changeby.displayName} 
 
 - for (prop in change)
-  if (prop !== "version")
-    if change[prop] && change[prop]!==article[prop]
-      if article[prop]
-        p
-          | #{prop} was changed
-      else
-        p
-          | #{prop} was added
-      p=change[prop]
+  p
+    if (prop !== "version")
+      if newArticle[prop]!==article[prop]
+        if article[prop]
+          h3
+            | #{prop} was changed
+        else
+          h3
+            | #{prop} was added
+        p=newArticle[prop]
 
 

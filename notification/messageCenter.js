@@ -1,9 +1,7 @@
-var debug = require('debug')('OSMBC:model:messageCenter');
-var async = require('async');
-var should = require('should');
+var debug     = require('debug')('OSMBC:notification:messageCenter');
+var async     = require('async');
+var should    = require('should');
 var logModule = require('../model/logModule.js');
-var messageFilter = require('../notification/messageFilter.js');
-var mailReceiver = require('../notification/mailReceiver.js');
 
 
 
@@ -29,20 +27,6 @@ MessageCenter.prototype.updateArticle = function (user,article,change,callback) 
 };
 
 
-function ConsoleReceiver() {
-  debug("ConsoleReceiver::ConsoleReceiver");
-
-}
-ConsoleReceiver.prototype.sendInfo = function(object,cb) {
-  console.log("ConsoleReceiver::Info Received");
-  console.dir(object);
-  cb();
-};
-
-ConsoleReceiver.prototype.updateArticle = function(user,article,change,cb) { //jshint ignore:line
-  console.log("Update Artcile was called");
-  return cb();
-};
 
 function LogModuleReceiver() {}
 
@@ -91,10 +75,6 @@ MessageCenter.prototype.registerReceiver = function(receiver) {
 
 var messageCenter = new MessageCenter();
 
-messageCenter.registerReceiver(new messageFilter.withParam.comment("TheFive",new ConsoleReceiver()));
-messageCenter.registerReceiver(new messageFilter.global.newCollection(new ConsoleReceiver()));
-messageCenter.registerReceiver(new messageFilter.global.newCollection(new mailReceiver.MailReceiver(null)));
-messageCenter.registerReceiver(new messageFilter.global.allComment(new mailReceiver.MailReceiver(null)));
 messageCenter.registerReceiver(new LogModuleReceiver());
 
 

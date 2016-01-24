@@ -7,12 +7,13 @@ var path   = require('path');
 var debug  = require('debug')('OSMBC:test:user.test');
 
 var config = require('../config.js');
+var sinon  = require('sinon');
 
 var testutil = require('./testutil.js');
 
 var userModule = require('../model/user.js');
 var logModule = require('../model/logModule.js');
-
+var mailReceiver= require('../notification/mailReceiver.js');
 
 
 
@@ -177,6 +178,30 @@ describe('model/user', function() {
           })
         })
       })
-    })    
+    }) 
+    describe('trigger welcome email',function() {
+      var oldtransporter;
+      beforeEach(function (bddone){
+        var oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
+        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"})});
+
+        testutil.importData({user:[{OSMUser:"WelcomeMe",email:"none"},
+                                   {OSMUser:"InviteYou",email:"invite@mail.org"}]},bddone);
+      });
+      afterEach(function (bddone){
+        mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+        bddone();
+      });
+      it('should send out an email when changing email',function (bddone){
+        userModule.findOne({OSMUser:"WelcomeMe"},function(err,user){
+          user.setAndSave("InviteYou",{email:"WelcomeMe@newemail.org"},function (err){
+            should.not.exist(err);
+            should(typeof(mailReceiver.for_test_only.transporter.sendMail)).eql("function");
+            should(mailReceiver.for_test_only.transporter.sendMail.called).be.True();
+            bddone();
+          })
+        });
+      });
+    });   
   })
 })

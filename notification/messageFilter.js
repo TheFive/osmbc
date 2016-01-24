@@ -1,4 +1,4 @@
-var debug = require('debug')('OSMBC:model:messageCenter');
+var debug = require('debug')('OSMBC:notification:messageFilter');
   
 function FilterNewCollection(receiver) {
   debug('FilterNewCollection::FilterNewCollection');
@@ -50,13 +50,54 @@ FilterComment.prototype.updateArticle = function(user,article,change,cb) {
   debug('FilterComment::updateArticle');
   if (!change.comment) return cb();
   if (change.comment === article.comment ) return cb();
-  var userlist = this.what.split(" ");
+  var userList = [];
+  if (this.what) userList = this.what.split(" ");
   var mail = false;
-  for (var i=0;i<userlist.length;i++) {
-    if (change.comment.indexOf("@"+userlist[i])>=0) mail = true; 
+  for (var i=0;i<userList.length;i++) {
+    if (change.comment.indexOf("@"+userList[i])>=0) mail = true; 
   }
   if (!mail) return cb();
   this.receiver.updateArticle(user,article,change,cb);
+};
+
+function UserConfigFilter(user,receiver){
+  debug('UserConfigFilter');
+  this.user = user;
+  this.receiver = receiver;
+}
+
+UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user,article,change,cb) {
+  debug('UserConfigFilter.prototype.updateArticle');
+  var sendMail = false;
+
+  // check Collection
+  if (this.user.mailNewCollection == "true") {
+    if (change.collection && change.collection != article.collection) {
+      sendMail = true;
+      debug("Mail sent because new Collection");
+    }
+  }
+  if (this.user.mailAllComment == "true") {
+    if (change.comment && change.comment != article.comment) {
+      sendMail = true;
+      debug("Mail send because changed comment");
+    }
+  }
+  var userList = [];
+  if (this.what) userList = this.what.split(" ");
+  for (var i=0;i<userList.length;i++) {
+    if (change.comment.indexOf("@"+userList[i])>=0) {
+      sendMail = true; 
+      debug("Mail send because comment for @"+userList[i]);
+    }
+  }
+  if (!sendMail) return cb();
+  this.receiver.updateArticle(user,article,change,cb);
+};
+
+UserConfigFilter.prototype.sendInfo = function ucfSendInfo(object,cb) {
+  debug('UserConfigFilter.prototype.sendInfo');
+  return cb();
 };
 
 var filterList = {
@@ -69,3 +110,4 @@ var paramFilterList = {
 
 module.exports.global =  filterList;
 module.exports.withParam = paramFilterList;
+module.exports.UserConfigFilter = UserConfigFilter;

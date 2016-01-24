@@ -1,14 +1,15 @@
-var debug = require('debug')('OSMBC:model:mailReceiver');
-var path = require('path');
-var config = require('../config.js');
-
-var nodemailer = require('nodemailer');
+var path          = require('path');
+var config        = require('../config.js');
+var async         = require('async');
+var debug         = require('debug')('OSMBC:notification:mailReceiver');
+var nodemailer    = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var EmailTemplate = require('email-templates').EmailTemplate;
 
 var messageCenter = require('../notification/messageCenter.js');
 var messageFilter = require('../notification/messageFilter.js');
-config.initialise();
+var articleModule = require('../model/article.js');
+
 
 
 var infoMailtemplateDir = path.join(__dirname, '..','email', 'infomail');
@@ -53,8 +54,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
         } else {
           console.log('Welcome Mail send to '+self.user.displayName + " "+info.response);
         }
-        if (callback) callback();
-        return;
+        return callback();
     });
   }); 
 };
@@ -64,8 +64,8 @@ MailReceiver.prototype.sendInfo = function sendInfo(info,callback) {
   return callback();
 };
 
-MailReceiver.prototype.updateArticle = function sendInfo(user,article,change,callback) {
-  debug("MailReceiver::sendInfo");
+MailReceiver.prototype.updateArticle = function updateArticle(user,article,change,callback) {
+  debug("MailReceiver::updateArticle");
 
   var subject;
   var logblog = article.blog;
@@ -83,9 +83,14 @@ MailReceiver.prototype.updateArticle = function sendInfo(user,article,change,cal
   if (article.comment && change.comment) {
      subject = logblog + " changed comment";
   }
+  var newArticle = articleModule.create();
+  for (var k in article) {
+    newArticle[k] = article[k];
+    if (change[k]) newArticle = change[k];
+  }
 
 
-  var data = {user:this.user,changeby:user,article:article,change:change,layout:layout,logblog:logblog};
+  var data = {user:this.user,changeby:user,article:article,newArticle:newArticle,layout:layout,logblog:logblog};
 
   infomail.render(data, function (err, results) {
     if (err) return console.dir(err);
@@ -110,44 +115,55 @@ MailReceiver.prototype.updateArticle = function sendInfo(user,article,change,cal
   callback();
 };
 
-function MailUserReceiver(user) {
-  debug('MailUserReceiver::MailUserReceiver');
-  this.user = user;
-  // No Access No Mail.
-  if (this.user.access !=="full") return;
+var userReceiverMap = {};
 
-  this.mc = new messageCenter.Class();
-  // ONE Receiver for all mails !!
-  var receiver = new MailReceiver(this.user);
-  if (user.getNotificationStatus("mail","allComment")) {
-    this.mc.registerReceiver(new messageFilter.global.allComment(receiver));
-  }
-  if (user.getNotificationStatus("mail","newCollection")) {
-    this.mc.registerReceiver(new messageFilter.global.newCollection(receiver));
-  }
-  var u = user.getNotificationStatus("mail","comment");
-  if (u) {
-    this.mc.registerReceiver(new messageFilter.paramFilterList.comment(u,receiver));
-  }
+
+function MailUserReceiver() {
+  debug('MailUserReceiver::MailUserReceiver');
 }
 
-var userReceiverMap = {};
+MailUserReceiver.prototype.sendInfo = function murSendInfo(object,callback) {
+  debug('MailUserReceiver.prototype.sendInfo');
+  async.forEachOf(userReceiverMap,function(value,key,cb) {
+    value.sendInfo(object,cb);
+  },function(err) {
+    return callback(err);
+  });
+};
+MailUserReceiver.prototype.updateArticle = function murUpdateArticle(user,article,change,callback) {
+  debug('MailUserReceiver.prototype.updateArticle');
+  for (k in userReceiverMap) console.log(k);
+  async.forEachOf(userReceiverMap,function(value,key,cb) {
+    debug('forEachOf'+key);
+    value.updateArticle(user,article,change,cb);
+  },function(err) {
+    return callback(err);
+  });
+};
+
+
 function initialise(userList) {
-  for (var i=0;i<userList;i++) {
+  debug('initialise');
+  for (var i=0;i<userList.length;i++) {
     var u = userList[i];
     if (u.access !== "full") continue;
-    userReceiverMap[u.displayName] = new MailUserReceiver(u);
+    userReceiverMap[u.OSMUser] = new messageFilter.UserConfigFilter(u,new MailReceiver(u));
   }
+  messageCenter.global.registerReceiver(new MailUserReceiver());
 }
 
 function updateUser(user) {
-  delete userReceiverMap[user.displayName];
+  debug('updateUser');
+  delete userReceiverMap[user.OSMUser];
   if (user.access !== "full") return;
-  userReceiverMap[user.displayName] = new MailUserReceiver(user);
+  userReceiverMap[user.OSMUser] = new messageFilter.UserConfigFilter(user,new MailReceiver(user));
 }
+
 
 module.exports.MailReceiver = MailReceiver;
 module.exports.initialise = initialise;
 module.exports.updateUser = updateUser;
+
+module.exports.for_test_only= {transporter:transporter};
  
 // setup e-mail data with unicode symbols 

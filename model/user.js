@@ -129,14 +129,13 @@ function setAndSave(user,data,callback) {
       });
 
   },function setAndSaveFinalCB(err) {
+    debug('setAndSaveFinalCB');
     if (err) return callback(err);
     self.save(function (err) {
       // Inform Mail Receiver Module, that there could be a change
       mailReceiver.updateUser(self);
       var m = new mailReceiver.MailReceiver(self);
-      if (sendWelcomeEmail) m.sendWelcomeMail(user);
-
-      callback(err);
+      if (sendWelcomeEmail) m.sendWelcomeMail(user,callback);
     });
   });
 } 
