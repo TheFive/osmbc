@@ -36,7 +36,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
 
   welcomemail.render(data, function (err, results) {
     if (err) return console.dir(err);
-    console.dir(self.user);
+    //console.dir(self.user);
 
     var mailOptions = {
         from: config.getValue("EmailSender"), // sender address 
@@ -49,10 +49,10 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
     // send mail with defined transport object 
     transporter.sendMail(mailOptions, function(error, info){
         if(error){
-          console.log("Connection Error while send Welcome Email to "+self.user.displayName);
+          console.log("Connection Error while send Welcome Email to "+self.user.OSMUser);
           console.log(error);
         } else {
-          console.log('Welcome Mail send to '+self.user.displayName + " "+info.response);
+          console.log('Welcome Mail send to '+self.user.OSMUser + " "+info.response);
         }
         return callback();
     });
@@ -132,7 +132,7 @@ MailUserReceiver.prototype.sendInfo = function murSendInfo(object,callback) {
 };
 MailUserReceiver.prototype.updateArticle = function murUpdateArticle(user,article,change,callback) {
   debug('MailUserReceiver.prototype.updateArticle');
-  for (k in userReceiverMap) console.log(k);
+  for (var k in userReceiverMap) console.log(k);
   async.forEachOf(userReceiverMap,function(value,key,cb) {
     debug('forEachOf'+key);
     value.updateArticle(user,article,change,cb);

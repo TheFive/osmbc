@@ -133,9 +133,12 @@ function setAndSave(user,data,callback) {
     if (err) return callback(err);
     self.save(function (err) {
       // Inform Mail Receiver Module, that there could be a change
+      if (err) return callback(err);
       mailReceiver.updateUser(self);
       var m = new mailReceiver.MailReceiver(self);
-      if (sendWelcomeEmail) m.sendWelcomeMail(user,callback);
+      if (sendWelcomeEmail) {
+        m.sendWelcomeMail(user,callback);
+      } else return callback();
     });
   });
 } 
