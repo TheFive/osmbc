@@ -2,8 +2,6 @@ extends layout
 
 
 
-
-
 block content
 
 
@@ -159,6 +157,18 @@ block content
           p
             |#{usershown.mailComment}
  
+      .row 
+        .col-md-2
+        .col-md-5
+          p
+            |Please use 
+            .btn.osmbc-lang(href='#', style="color:white", data-toggle='dropdown') DE
+            .btn.osmbc-lang2(href='#', style="color:white", data-toggle='dropdown') EN
+            |In the upper right corner to configure your languages.
+
+
+  
+
    
   .row
     if changes

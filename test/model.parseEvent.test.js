@@ -89,7 +89,7 @@ describe('model/parseEvent',function() {
       should(parseEvent.parseLine('|-        ')).equal(null);
     });
     it('should return values for entry with no town',function() {
-      var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -98,12 +98,13 @@ describe('model/parseEvent',function() {
       should(result).deepEqual({type:"social",
                                 
                                 desc:"[[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]]",
+                                countryflag:"Germany",
                                
                                 country:"Germany"
                               });
     });
     it('should return values for entry with comma separated town',function() {
-      var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]],  [[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]],  [[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -111,11 +112,12 @@ describe('model/parseEvent',function() {
                               
                                 desc:"[[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]]",
                                 town:"Düsseldorf",
-                                country:"Germany"
+                                country:"Germany",
+                                countryflag:"Germany"
                               });
     });
-    it('should return values for entry with town (no comma)',function() {
-      var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || Stammtisch  [[Düsseldorf]]  [[Germany]] {{SmallFlag|Germany}}");
+    it('should return values for entry with town (comma)',function() {
+      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Nov 25}} || Stammtisch,  [[Düsseldorf]],  [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -123,11 +125,12 @@ describe('model/parseEvent',function() {
                                
                                 desc:"Stammtisch",
                                 town:"Düsseldorf",
-                                country:"Germany"
+                                country:"Germany",
+                                countryflag:"Germany"
                               });
     });
     it('should return values for entry with town (comma)',function() {
-      var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || Stammtisch , [[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Nov 25}} || Stammtisch , [[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
       should(result.startDate.getDate()).equal(25);
       should(result.startDate.getMonth()).equal(10);
@@ -141,11 +144,12 @@ describe('model/parseEvent',function() {
       should(result).deepEqual({type:"social",
                                 desc:"Stammtisch",
                                 town:"Düsseldorf",
-                                country:"Germany"
+                                country:"Germany",
+                                countryflag:"Germany"
                               });
     });
     it('should return values for entry with town and external description',function() {
-      var result = parseEvent.parseLine("|- {{cal|social}} || {{dm|Nov 25}} || [https://www.link.de/sublink Tolle Veranstaltung]  ,[[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Nov 25}} || [https://www.link.de/sublink Tolle Veranstaltung]  ,[[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -153,12 +157,13 @@ describe('model/parseEvent',function() {
                               
                                 desc:"[https://www.link.de/sublink Tolle Veranstaltung]",
                                 town:"Düsseldorf",
-                                country:"Germany"
+                                country:"Germany",
+                                countryflag:"Germany"
                               });
     });
     // 
     it('should return values for entry with more complex description',function() {
-      var result = parseEvent.parseLine("|- {{cal|conference}} || {{dm|Aug 24|Aug 26}} || <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine("| {{cal|conference}} || {{dm|Aug 24|Aug 26}} || <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] {{SmallFlag|Germany}}");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -166,7 +171,8 @@ describe('model/parseEvent',function() {
                                 
                                 desc:"<big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>",
                                 town:"Bonn",
-                                country:"Germany"
+                                country:"Germany",
+                                countryflag:"Germany"
                               });
     });
   
@@ -177,6 +183,18 @@ describe('model/parseEvent',function() {
       delete result.endDate;
       should(result).deepEqual({type:"info",
                                 desc:"[[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]]"
+                              });
+    });
+    it('should return values for entry with country and two flags',function() {
+      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Dec 3}} || [[Wien/Stammtisch|53. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Wien|Wien Wappen.svg}} {{SmallFlag|Austria}}");
+      should.exist(result);
+      delete result.startDate;
+      delete result.endDate;
+      should(result).deepEqual({type:"social",
+                                desc:"[[Wien/Stammtisch|53. Wiener Stammtisch]]",
+                                country:"Austria",
+                                countryflag:"Austria",
+                                wappenflag:"Wien|Wien Wappen.svg",
                               });
     });
   });
@@ -190,7 +208,7 @@ describe('model/parseEvent',function() {
                 .replyWithFile(200,fileName);
     });
     it('should load date form wiki and generate a Markdown String',function(bddone){
-      parseEvent.calenderToMarkdown("DE",new Date("11/28/2015"),14,function(err,result){
+      parseEvent.calenderToMarkdown({lang:"DE"},new Date("11/28/2015"),14,function(err,result){
         var excpeted = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
         should(result).equal(excpeted);
          bddone();

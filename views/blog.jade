@@ -109,9 +109,25 @@ block content
             for lang in layout.languages
               li
                 a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{lang}") Export #{lang}
-        li
-          a(href="#{layout.htmlroot}/usert/#{layout.user.id}")
-            span.glyphicon.glyphicon-cog
+        li.dropdown
+          a.btn.btn-xs.dropdown-toggle.osmbc-lang(href='#', style="color:white", data-toggle='dropdown')
+            |#{layout.language} 
+            span.caret
+          ul.dropdown-menu(role='menu')
+            each l in layout.languages
+              li
+                a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
+        li.dropdown.hidden-xs
+          a.btn.btn-xs.dropdown-toggle.osmbc-lang2(href='#',style="color:white", data-toggle='dropdown')
+            |#{(layout.language2)?layout.language2:"--"} 
+            span.caret
+          ul.dropdown-menu(role='menu')
+            li 
+              a(href='#{layout.htmlroot}/language?lang2=none') none
+            each l in layout.languages
+              li
+                a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
+
            
 
     

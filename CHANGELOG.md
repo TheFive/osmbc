@@ -1,15 +1,92 @@
 # Change Log
 
+## [0.6.ar](https://github.com/TheFive/osmbc/tree/0.6.ar) (2016-01-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.ar)
+
+## [0.6.5a](https://github.com/TheFive/osmbc/tree/0.6.5a) (2016-01-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5...0.6.5a)
+
+## [0.6.5](https://github.com/TheFive/osmbc/tree/0.6.5) (2016-01-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.4...0.6.5)
+
+**Implemented enhancements:**
+
+- would it be possible to have the number of "all" articles in that blog? [\#275](https://github.com/TheFive/osmbc/issues/275)
+- view Message from the category future after the current [\#271](https://github.com/TheFive/osmbc/issues/271)
+
+**Fixed bugs:**
+
+- WNAuthor: change unwanted [\#273](https://github.com/TheFive/osmbc/issues/273)
+
+## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.3a...0.6.4)
+
+**Implemented enhancements:**
+
+- Upcomming events should have country flags. [\#267](https://github.com/TheFive/osmbc/issues/267)
+
+## [0.6.3a](https://github.com/TheFive/osmbc/tree/0.6.3a) (2016-01-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.2...0.6.3a)
+
+## [0.6.2](https://github.com/TheFive/osmbc/tree/0.6.2) (2016-01-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.1...0.6.2)
+
+**Implemented enhancements:**
+
+- Allow horizontal Scrolling for markdown that contains table. [\#202](https://github.com/TheFive/osmbc/issues/202)
+
+**Fixed bugs:**
+
+- Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
+- Add list to ALL users not only denied and full. [\#263](https://github.com/TheFive/osmbc/issues/263)
+
+**Closed issues:**
+
+- Add Link to google Skill Matrix in OSMBC. [\#264](https://github.com/TheFive/osmbc/issues/264)
+
+## [0.6.1](https://github.com/TheFive/osmbc/tree/0.6.1) (2016-01-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.0...0.6.1)
+
+## [0.6.0](https://github.com/TheFive/osmbc/tree/0.6.0) (2016-01-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.9a...0.6.0)
+
+**Implemented enhancements:**
+
+- More flexible language switch by putting switching to navbar. [\#258](https://github.com/TheFive/osmbc/issues/258)
+
+## [0.5.9a](https://github.com/TheFive/osmbc/tree/0.5.9a) (2016-01-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.9...0.5.9a)
+
+**Fixed bugs:**
+
+- typo: Any thng which is interesting in OSM and worth sharing [\#255](https://github.com/TheFive/osmbc/issues/255)
+
+## [0.5.9](https://github.com/TheFive/osmbc/tree/0.5.9) (2016-01-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8b...0.5.9)
+
+**Implemented enhancements:**
+
+- Use jsdiff in word mode to display differences on main page. [\#253](https://github.com/TheFive/osmbc/issues/253)
+- blog difference in shown date and blog date [\#249](https://github.com/TheFive/osmbc/issues/249)
+
+**Fixed bugs:**
+
+- Collection does not separate links [\#254](https://github.com/TheFive/osmbc/issues/254)
+
+## [0.5.8b](https://github.com/TheFive/osmbc/tree/0.5.8b) (2016-01-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8a...0.5.8b)
+
+**Fixed bugs:**
+
+- links with non standard characters are not identified in full in article screen [\#252](https://github.com/TheFive/osmbc/issues/252)
+
 ## [0.5.8a](https://github.com/TheFive/osmbc/tree/0.5.8a) (2016-01-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8...0.5.8a)
 
 **Fixed bugs:**
 
-- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
-
-**Closed issues:**
-
 - blog difference in shown date and blog date [\#250](https://github.com/TheFive/osmbc/issues/250)
+- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
 
 ## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.7...0.5.8)
@@ -51,10 +128,6 @@
 **Implemented enhancements:**
 
 - Implement a Tool like the calender tool to simplify Image Integration. [\#211](https://github.com/TheFive/osmbc/issues/211)
-
-**Closed issues:**
-
-- Proxy Error with request GET /changes/46283 [\#238](https://github.com/TheFive/osmbc/issues/238)
 
 ## [0.5.4](https://github.com/TheFive/osmbc/tree/0.5.4) (2015-12-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.3...0.5.4)
@@ -100,12 +173,12 @@
 
 - Load public name from blog.openstreetmap.de for every author. [\#226](https://github.com/TheFive/osmbc/issues/226)
 - Switch to node.js 4.\(2.x\)  [\#225](https://github.com/TheFive/osmbc/issues/225)
+- Add a link to the generated Author text for the Weekly. [\#223](https://github.com/TheFive/osmbc/issues/223)
+- time controlled closing of collection - depending from our editorial deadline [\#221](https://github.com/TheFive/osmbc/issues/221)
 
 **Closed issues:**
 
-- Add a link to the generated Author text for the Weekly. [\#223](https://github.com/TheFive/osmbc/issues/223)
 - translationXX views with orange highlights for untranslated entries [\#222](https://github.com/TheFive/osmbc/issues/222)
-- time controlled closing of collection - depending from our editorial deadline [\#221](https://github.com/TheFive/osmbc/issues/221)
 
 ## [0.4.7](https://github.com/TheFive/osmbc/tree/0.4.7) (2015-12-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6b...0.4.7)
@@ -113,10 +186,10 @@
 **Implemented enhancements:**
 
 - Distinguish between proofreading in OSMBC and WP [\#215](https://github.com/TheFive/osmbc/issues/215)
+- Block in Review - Edit in Markdown should be possible [\#213](https://github.com/TheFive/osmbc/issues/213)
 
 **Closed issues:**
 
-- Block in Review - Edit in Markdown should be possible [\#213](https://github.com/TheFive/osmbc/issues/213)
 - Review is done in wordpress, please document your review here. [\#212](https://github.com/TheFive/osmbc/issues/212)
 
 ## [0.4.6b](https://github.com/TheFive/osmbc/tree/0.4.6b) (2015-12-20)

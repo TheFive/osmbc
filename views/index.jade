@@ -15,6 +15,8 @@ block content
           h3
             | Blogs to work on 
             a(href="#{layout.htmlroot}/blog/list?status=!=closed") (more)
+       
+       
         .row
           .col-md-4
             h4
@@ -23,6 +25,7 @@ block content
               for openBlog in layout.listOfOpenBlog
                 button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.name}","_self")')
                   | #{openBlog.name}
+               
           .col-md-4
             h4
               | Edit

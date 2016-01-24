@@ -34,20 +34,54 @@ block content
                 for lang in layout.languages
                   td
                     if blog["close"+lang]
-                      | closed
+                      - labeltype = "label-success"
+                      - urlblog = layout.htmlroot+"/blog/"+blog.name+"?style=fullfinal"+lang
                     else 
-                      - allclosed = false
+                      if lang!="PT"
+                        - allclosed = false
                       if blog["reviewComment"+lang]
-                        | review
+                        - labeltype = "label-primary"
+                        - urlblog =  layout.htmlroot+"/blog/"+blog.name+"?style=fullfinal"+lang
+
                       else 
-                        a(href="#{layout.htmlroot}/article/list?markdown#{lang}=&category=!=--unpublished--&blog=#{blog.name}")
-                          span.glyphicon.glyphicon-pencil
+                        - labeltype = "label-danger"
+                        - urlblog = layout.htmlroot+"/article/list?markdown"+lang+"=&category=!=--unpublished--&blog="+blog.name
+                       
+                    a(href="#{urlblog}")
+                      span.label.label-default
+                        |#{blogNumber(blog,lang)}
+                    a(href="#{urlblog}")
+                      span.label(class="#{labeltype}")
+                       |#{blogCount(blog,lang)} 
 
                 td
                   if allclosed
                     a(href="#{layout.htmlroot}/blog/#{blog.name}?setStatus=closed") Close Blog
                   else
                     | -
+  row
+    p
+      | Click on any label to edit the articles or view the blog.
+    p
+      span.label.label-default
+        | missing
+      span.label.label-success
+        | total
+      |  Closed Blog
+
+    p
+      span.label.label-default
+        | missing
+      span.label.label-primary
+        | total
+      |  Reviewed Blog
+    p
+      span.label.label-default
+        | missing
+      span.label.label-danger
+        | total
+      |  Open Blog
+
   row.hidden-xs
     div(id="additionalText")
       if additionalText
