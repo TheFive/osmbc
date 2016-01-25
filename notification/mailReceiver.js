@@ -54,7 +54,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
         } else {
           console.log('Welcome Mail send to '+self.user.OSMUser + " "+info.response);
         }
-        return callback();
+        return callback(error);
     });
   }); 
 };
@@ -165,5 +165,6 @@ module.exports.initialise = initialise;
 module.exports.updateUser = updateUser;
 
 module.exports.for_test_only= {transporter:transporter};
+
  
 // setup e-mail data with unicode symbols 

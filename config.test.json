@@ -16,7 +16,8 @@
   "bootstrap":"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5",
   "ReviewInWP":["DE"],
   "EmailSender":"noreply@gmail.com",
-  "url":"https://testosm.bc"
+  "url":"https://testosm.bc",
+  "SMTP":"smtps not defined, as all mails should be mocked by sinon in test"
 
 
 }
