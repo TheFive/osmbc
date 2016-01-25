@@ -203,6 +203,18 @@ module.exports = {
           "ID": "Software",
           "TR": "Programlama"
      },
+     "Releases": {
+          "EN": "Releases",
+          "DE": "Releases",
+          "ES": "Releases",
+          "FR": "Releases",
+          "CZ": "Releases",
+          "PT": "Releases",
+          "RU": "Releases",                 
+          "JP": "Releases",
+          "ID": "Releases",
+          "TR": "Releases"
+     },
      "Did you know …": {
           "EN": "Did you know …",
           "DE": "Kennst du schon …",

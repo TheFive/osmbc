@@ -46,6 +46,7 @@ module.exports.categories = [
   {DE:"Lizenzen",EN:"Licences"},
   {DE:"Programme",EN:"Software"},
   {DE:"Programmierung",EN:"Programming"},
+  {DE:"Releases",EN:"Releases"},
   {DE:"Kennst Du schon …",EN:"Did you know …"},
   {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
   {DE:"Wochenvorschau" ,EN:"Upcoming Events"},
