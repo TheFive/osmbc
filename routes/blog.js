@@ -69,7 +69,7 @@ function renderBlogId(req, res, next) {
     var changes = [];
     var articles = {};
     var main_text;
-
+    var clearParams = false;
 
     async.series([
       function (callback) {
@@ -83,6 +83,7 @@ function renderBlogId(req, res, next) {
       function (callback) {
         if (typeof(req.query.setStatus)!='undefined')
         {
+          clearParams = true;
           var changes = {status:req.query.setStatus};
           blog.setAndSave(user.displayName,changes,function(err) {
             return callback(err);
@@ -92,6 +93,7 @@ function renderBlogId(req, res, next) {
       function (callback) {
         if (typeof(req.query.reviewComment)!='undefined')
         {
+          clearParams = true;
           blog.setReviewComment(options.left_lang,user.displayName,req.query.reviewComment,function(err) {
             return callback(err);
           });
@@ -100,6 +102,7 @@ function renderBlogId(req, res, next) {
       function (callback) {
         if (typeof(req.query.closeLang)!='undefined')
         {
+          clearParams = true;
           var status = true;
           if (req.query.status && req.query.status == "false") status = false;
           blog.closeBlog(options.left_lang,user.displayName,status,function(err) {
@@ -130,6 +133,13 @@ function renderBlogId(req, res, next) {
       }],
       function (err) {
         should.exist(res.rendervar);
+        if (clearParams) {
+          var url = config.getValue('htmlroot')+"/blog/"+blog.name;
+          var styleParam = "";
+          if (req.param.style) styleParam = "?style="+styleParam;
+          res.redirect(url+styleParam);
+          return;
+        }
         if (err) return next(err);
         res.render('blog',{layout:res.rendervar.layout,
                            main_text:main_text,
