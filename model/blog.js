@@ -444,7 +444,7 @@ function getPreview(style,user,callback) {
                 sep = ",";
               }
             }
-            return each_cb();
+            return each_cb(); 
           });
         },function finalFunction(err){
           if (err) return cb(err);
