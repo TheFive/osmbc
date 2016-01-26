@@ -228,6 +228,19 @@ describe('model/article', function() {
         });
       });
     });
+    describe('trigger info email',function() {
+      beforeEach(function (bddone){
+
+        testutil.importData({user:[{OSMUser:"User1",email:"user1@mail.bc",mailNewCollection:"true"},
+                                   {OSMUser:"User2",email:"user2@mail.bc",mailAllComment:"true"},
+                                   {OSMUser:"User3",email:"user3@mail.bc",mailComment:"User3"},
+                                   {OSMUser:"User4",email:"user4@mail.bc"},
+                                   {OSMUser:"User5",                     ,mailAllComment:"true"}],bddone);
+      });
+      it('should send out mail, when collecting article.',function (bddone){
+       // do something here
+      });
+    }); 
   });
   describe('findFunctions',function() {
     var idToFindLater;
