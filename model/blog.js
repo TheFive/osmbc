@@ -439,7 +439,7 @@ function getPreview(style,user,callback) {
               }
               var sep = "";
               item.collector = "";
-              for (k in list) {
+              for (var k in list) {
                 item.collector += sep + k;
                 sep = ",";
               }
