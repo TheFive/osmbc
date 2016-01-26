@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.6.7](https://github.com/TheFive/osmbc/tree/0.6.7) (2016-01-26)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.6...0.6.7)
+
+**Closed issues:**
+
+- Add a Trash for blogs [\#280](https://github.com/TheFive/osmbc/issues/280)
+
 ## [0.6.6](https://github.com/TheFive/osmbc/tree/0.6.6) (2016-01-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5c...0.6.6)
 
@@ -16,7 +23,7 @@
 
 **Implemented enhancements:**
 
-- add Colombia & Colivia country flags. [\#277](https://github.com/TheFive/osmbc/issues/277)
+- add Colombia & Bolivia country flags. [\#277](https://github.com/TheFive/osmbc/issues/277)
 
 **Fixed bugs:**
 
