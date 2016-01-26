@@ -214,7 +214,7 @@ function renderBlogList(req, res, next) {
 
   if (typeof(status)!='undefined') {
     query.status = status;
-    if (status == '!=closed') {
+    if (status == "IN('open','edit')") {
       additionalText = help.getText( "blog.list.notClosed.md");
     }
   }
