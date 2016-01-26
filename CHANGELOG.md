@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7...HEAD)
+
+**Fixed bugs:**
+
+- Changing a language after set a blog to review sets the new blog to review too. [\#282](https://github.com/TheFive/osmbc/issues/282)
+
 ## [0.6.7](https://github.com/TheFive/osmbc/tree/0.6.7) (2016-01-26)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.6...0.6.7)
 
