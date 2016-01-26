@@ -203,7 +203,8 @@ Article.prototype.getPreview = function getPreview(style,user) {
   var md;
   if (options.overview) { // just generate the overview text
     debug("options overview is set");
-    text=this.displayTitle(90);
+    if (this.collector) text = "["+this.collector+"] ";
+    text += this.displayTitle(90);
     textright = this.displayTitle(90);
   } else { // generate the full text
     if (typeof(this[markdownLANG])!=='undefined' && this[markdownLANG]!=='') {
