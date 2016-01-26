@@ -430,9 +430,20 @@ function getPreview(style,user,callback) {
       debug('readArticlesWithCollector');
       articleModule.find({blog:self.name},{column:"title"},function(err,result){
         async.each(result,function(item,each_cb){
-          logModule.find({table:"article",oid:item.id},{column:"timestamp",desc:true},function(err,result){
+          logModule.find({table:"article",property:"collection",oid:item.id},{column:"timestamp",desc:true},function(err,result){
             if (err) return each_cb(err);
-            if (result && result.length>0) item.collector = result[0].user;
+            if (result && result.length>0) {
+              var list = {};
+              for (var i =0;i<result.length;i++) {
+                list[result[i].user]="-";
+              }
+              var sep = "";
+              item.collector = "";
+              for (k in list) {
+                item.collector += sep + k;
+                sep = ",";
+              }
+            }
             return each_cb();
           });
         },function finalFunction(err){

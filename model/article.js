@@ -231,7 +231,8 @@ Article.prototype.getPreview = function getPreview(style,user) {
       }
   
     } else {
-      text = this.displayTitle();
+      if (this.collector) text = "["+this.collector+"] ";
+      text += this.displayTitle(90);
     }    
     if (typeof(this[markdownTRANS])!=='undefined' && this[markdownTRANS]!=='') {
       md = this[markdownTRANS];
@@ -245,7 +246,8 @@ Article.prototype.getPreview = function getPreview(style,user) {
  
       // clean up <p> and </p> of markdown generation.
     } else {
-      textright = this.displayTitle();
+      if (this.collector) textright = "["+this.collector+"] ";
+      textright += this.displayTitle(90);
     }
   }
   if (text) {
