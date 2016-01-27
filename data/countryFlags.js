@@ -20,11 +20,13 @@ module.exports = {
   "philippines":"http://blog.openstreetmap.de/wp-uploads//2016/01/ph.svg",
   "belgium":"http://blog.openstreetmap.de/wp-uploads//2016/01/be.svg",
   "argentina":"http://blog.openstreetmap.de/wp-uploads//2016/01/ar.svg",
-  "england":"http://blog.openstreetmap.de/wp-uploads//2015/01/en.svg",
+  "england":"http://blog.openstreetmap.de/wp-uploads//2016/01/en.svg",
   "uk":"http://blog.openstreetmap.de/wp-uploads//2015/01/en.svg",
   "germany":"http://blog.openstreetmap.de/wp-uploads//2015/01/de.svg",
   "deutschland":"http://blog.openstreetmap.de/wp-uploads//2015/01/de.svg",
   "bolivia":"http://blog.openstreetmap.de/wp-uploads//2016/01/bo.svg",
+   "canada":"http://blog.openstreetmap.de/wp-uploads//2016/01/ca.svg",
+   "india":"http://blog.openstreetmap.de/wp-uploads//2016/01/in.svg",
   "colombia":"http://blog.openstreetmap.de/wp-uploads//2016/01/co.svg"
 
 };
