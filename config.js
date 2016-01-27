@@ -10,7 +10,6 @@ var debug   = require('debug')('configuration');
 var should  = require('should');
 var env = process.env.NODE_ENV || 'development';
 
-var pg = require('pg');
 
 
 
@@ -28,15 +27,14 @@ function getPostgresDBString() {
   debug('getPostgresDBString');
   configuration=exports.getConfiguration();
   var userString = "";
-  if (configuration.postgres.username != "") {
-    userString = configuration.postgres.username + ':'
-                 + configuration.postgres.password +'@';
+  if (configuration.postgres.username !== "") {
+    userString = configuration.postgres.username + ':' + configuration.postgres.password +'@';
   }
-  var connectStr ='postgres://'
-             + userString
-             + configuration.postgres.database;
+  var connectStr ='postgres://' +
+              userString +
+              configuration.postgres.database;
   if ((typeof(configuration.postgres.connectstr)!='undefined' ) &&
-      (configuration.postgres.connectstr != '' )) {
+      (configuration.postgres.connectstr !== '' )) {
         connectStr = configuration.postgres.connectstr;
       }
   return connectStr;
@@ -46,7 +44,7 @@ exports.getLanguages = function() {
   debug('getLanguages');
   configuration=exports.getConfiguration();
   return configuration.languages;
-}
+};
 
 
 
@@ -69,12 +67,12 @@ exports.initialise = function(callback) {
 
   // Do some tests with the types
 
-  should(typeof(configuration["ReviewInWP"])).equal("object");
+  should(typeof(configuration.ReviewInWP)).equal("object");
   should(typeof(configuration.languages)).equal("object");
 
   exports.pgstring = getPostgresDBString();
 	if (callback) callback();
-}
+};
 
 
 
@@ -84,7 +82,7 @@ exports.getConfiguration = function() {
     	exports.initialise();
     }
 	return configuration;
-}
+};
 exports.getValue = function(key,defValue) {
     if (typeof(configuration)=='undefined')
     {
@@ -95,7 +93,7 @@ exports.getValue = function(key,defValue) {
     	result = configuration[key];
     }
     return result;
-}
+};
 
 
 
@@ -109,14 +107,14 @@ exports.getServerPort = function() {
     exports.initialise();
   }
 	return configuration.serverport;
-}
+};
 exports.getCallbackUrl = function() {
   if (typeof(configuration)=='undefined')
   {
     exports.initialise();
   }
   return configuration.callbackUrl;
-}
+};
 
 exports.env = env;
 
