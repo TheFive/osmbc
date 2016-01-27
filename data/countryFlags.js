@@ -14,6 +14,7 @@ module.exports = {
   "italia":"http://blog.openstreetmap.de/wp-uploads//2016/01/it.svg",
   "italy":"http://blog.openstreetmap.de/wp-uploads//2016/01/it.svg",
   "us":"http://blog.openstreetmap.de/wp-uploads//2016/01/us.svg",
+  "united states":"http://blog.openstreetmap.de/wp-uploads//2016/01/us.svg",
   "austria":"http://blog.openstreetmap.de/wp-uploads//2016/01/at.svg",
   "österreich":"http://blog.openstreetmap.de/wp-uploads//2016/01/at.svg",
   "philippines":"http://blog.openstreetmap.de/wp-uploads//2016/01/ph.svg",
