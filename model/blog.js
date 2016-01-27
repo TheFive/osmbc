@@ -227,8 +227,9 @@ function findOne(obj1,obj2,callback) {
 }
 
 
-function createNewBlog(proto,callback) {
+function createNewBlog(user, proto,callback) {
   debug("createNewBlog");
+  should(typeof(user)).eql("string");
   if (typeof(proto)=='function') {
     callback = proto;
     proto = null;
@@ -251,19 +252,21 @@ function createNewBlog(proto,callback) {
     var newWnId = parseInt(wnId) +1;
     var newName = "WN"+newWnId;
     var startDate = new Date(endDate);
+    var change = {};
     
     startDate.setDate(startDate.getDate()+1);
     endDate.setDate(endDate.getDate()+7);
     var blog = create();
-    blog.name = newName;
-    blog.status = "open";
-    blog.startDate = startDate.toISOString();
-    blog.endDate = endDate.toISOString();
+    change.name = newName;
+    change.status = "open";
+    change.startDate = startDate.toISOString();
+    change.endDate = endDate.toISOString();
+
     //copy flat prototype to object.
     for (var k in proto) {
-      blog[k]=proto[k];
+      change[k]=proto[k];
     }
-    blog.save(callback);
+    blog.setAndSave(user,change,callback);
   });
 }
 
@@ -313,7 +316,7 @@ function autoCloseBlog(callback) {
         exports.findOne({status:"open"},function(err,result){
           if (err) return cb(err);
           if (!result) {
-            exports.createNewBlog(cb);
+            exports.createNewBlog("autocreate",cb);
             return;
           } 
           cb();

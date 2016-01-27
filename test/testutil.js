@@ -99,7 +99,7 @@ exports.importData = function importData(data,callback) {
       debug('importAllBlogs');
       if (typeof(data.blog)!='undefined') {  
         async.eachSeries(data.blog,function importOneBlog(d,cb){
-          blogModule.createNewBlog(d,cb);
+          blogModule.createNewBlog("test",d,cb);
         },cb2);
       } else cb2();
     },

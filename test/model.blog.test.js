@@ -28,7 +28,7 @@ describe('model/blog', function() {
       testutil.clearDB(bddone);
     }) ;
     it('should createNewArticle with prototype',function(bddone) {
-      blogModule.createNewBlog({name:"test",status:"open"},function (err,result){
+      blogModule.createNewBlog("test",{name:"test",status:"open"},function (err,result){
         should.not.exist(err);
         var id = result.id;
         testutil.getJsonWithId("blog",id,function(err,result){
@@ -48,7 +48,7 @@ describe('model/blog', function() {
       });
     });
     it('should createNewArticle without prototype',function(bddone) {
-      blogModule.createNewBlog(function (err,result){
+      blogModule.createNewBlog("test",function (err,result){
         should.not.exist(err);
         var id = result.id;
         testutil.getJsonWithId("blog",id,function(err,result){
@@ -60,13 +60,13 @@ describe('model/blog', function() {
       });
     });
     it('should createNewArticle with existing WN',function(bddone) {
-      blogModule.createNewBlog({name:"WN100",endDate:new Date("1.1.2000")},function(err,result){
+      blogModule.createNewBlog("test",{name:"WN100",endDate:new Date("1.1.2000")},function(err,result){
 
         should.not.exist(err);
         should.exist(result);
         result.save(function(err) {
           should.not.exist(err);
-          blogModule.createNewBlog(function (err,result){
+          blogModule.createNewBlog("test",function (err,result){
             should.not.exist(err);
             var id = result.id;
             testutil.getJsonWithId("blog",id,function(err,result){
@@ -84,7 +84,7 @@ describe('model/blog', function() {
     });
     it('should create no New Article with ID',function(bddone){
       (function() {
-        blogModule.createNewBlog({id:2,name:"test",status:"**"},function (){
+        blogModule.createNewBlog("test",{id:2,name:"test",status:"**"},function (){
 
         });
       }).should.throw();
@@ -171,7 +171,7 @@ describe('model/blog', function() {
       testutil.clearDB(bddone);
     }); 
     it('should set only the one Value in the database', function (bddone){
-      blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
+      blogModule.createNewBlog("test",{name:"Title",status:"TEST"},function(err,newBlog){
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
@@ -220,7 +220,7 @@ describe('model/blog', function() {
     }); 
 
     it('should close the Blog and write a log Message', function (bddone){
-      blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
+      blogModule.createNewBlog("test",{name:"Title",status:"TEST"},function(err,newBlog){
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
@@ -261,7 +261,7 @@ describe('model/blog', function() {
       process.env.TZ = 'Europe/Amsterdam';
     }) ;
     it('should review the Blog and write a log Message', function (bddone){
-      blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
+      blogModule.createNewBlog("test",{name:"Title",status:"TEST"},function(err,newBlog){
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
@@ -309,9 +309,9 @@ describe('model/blog', function() {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) {blogModule.createNewBlog({name:"WN1",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},cb);},
-        function c2(cb) {blogModule.createNewBlog({name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},cb);},
-        function c3(cb) {blogModule.createNewBlog({name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"},
+        function c1(cb) {blogModule.createNewBlog("test",{name:"WN1",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},cb);},
+        function c2(cb) {blogModule.createNewBlog("test",{name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},cb);},
+        function c3(cb) {blogModule.createNewBlog("test",{name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"},
                          function(err,result){
                           should.not.exist(err);
                           idToFindLater = result.id;
