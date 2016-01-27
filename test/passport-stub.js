@@ -6,7 +6,7 @@ done = function(user, req, next) {
 };
 
 passportStub = (function(_this) {
-  debug("passportStub")
+  debug("passportStub");
   return function(req, res, next) {
     var passport;
     if (!_this.active) {
@@ -30,7 +30,7 @@ passportStub = (function(_this) {
       return _this.user;
     });
     req.__defineSetter__('user', function(val) {
-      return _this.user = val;
+      return _this.user = val; //jshint ignore:line
     });
     return next();
   };
@@ -52,7 +52,7 @@ exports.install = function(app) {
 
 exports.uninstall = function() {
   debug("uninstall");
-  if (this.app == null) {
+  if (this.app === null) {
     return;
   }
   return this.app._router.stack.forEach(function(middleware, index, stack) {
@@ -64,14 +64,14 @@ exports.uninstall = function() {
 
 exports.login = function(user) {
   debug("login");
-  if (this.app == null) {
+  if (this.app === null) {
     throw new Error('Passport Stub not installed. Please run "passportStub.install(app)" first.');
   }
   this.active = true;
-  return this.user = user;
+  return this.user = user; //jshint ignore:line
 };
 
 exports.logout = function() {
   debug("logout");
-  return this.active = false;
+  return this.active = false; // jshint ignore:line
 };
