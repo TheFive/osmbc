@@ -8,6 +8,10 @@
 
 - Changing a language after set a blog to review sets the new blog to review too. [\#282](https://github.com/TheFive/osmbc/issues/282)
 
+**Closed issues:**
+
+- Display name of all collectors in Blog Preview. [\#283](https://github.com/TheFive/osmbc/issues/283)
+
 ## [0.6.7](https://github.com/TheFive/osmbc/tree/0.6.7) (2016-01-26)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.6...0.6.7)
 
@@ -161,6 +165,9 @@
 
 - Show articles changes by an author in statistic view. [\#239](https://github.com/TheFive/osmbc/issues/239)
 - a list with all articles per blog, sortable by persons who initally collected the article [\#227](https://github.com/TheFive/osmbc/issues/227)
+
+## [0.5.5](https://github.com/TheFive/osmbc/tree/0.5.5) (2015-12-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.5...0.5.5)
 
 ## [0.5.5](https://github.com/TheFive/osmbc/tree/0.5.5) (2015-12-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.4...0.5.5)
