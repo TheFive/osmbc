@@ -237,6 +237,7 @@ function createNewBlog(user, proto,callback) {
   if (proto) should.not.exist(proto.id);
 
   this.findOne(null,{column:"name",desc:true},function(err,result) {
+    var blog = create();
     var name = "WN250";
     var endDate = new Date();
     if (result) {
@@ -252,21 +253,32 @@ function createNewBlog(user, proto,callback) {
     var newWnId = parseInt(wnId) +1;
     var newName = "WN"+newWnId;
     var startDate = new Date(endDate);
-    var change = {};
-    
     startDate.setDate(startDate.getDate()+1);
     endDate.setDate(endDate.getDate()+7);
-    var blog = create();
-    change.name = newName;
-    change.status = "open";
-    change.startDate = startDate.toISOString();
-    change.endDate = endDate.toISOString();
-
-    //copy flat prototype to object.
+    blog.name = newName;
+    blog.status = "open";
+    blog.startDate = startDate.toISOString();
+    blog.endDate = endDate.toISOString();    
     for (var k in proto) {
-      change[k]=proto[k];
-    }
-    blog.setAndSave(user,change,callback);
+      blog[k] = proto[k];
+    } 
+
+    var props = ["name","status","startDate","endDate"];
+    blog.save(function feedback(err,savedblog){
+      if (err) return callback(err);
+      var timestamp = new Date();
+      async.each(props,function doeach(key,cb){
+        logModule.log({oid:savedblog.id, 
+                       blog:savedblog.name,
+                       user:user,
+                       table:"blog",
+                       property:key,
+                       from:"",
+                       to:savedblog[key],
+                       timestamp:timestamp},cb);
+
+      },function final(err){return callback(err,savedblog);});
+    });
   });
 }
 

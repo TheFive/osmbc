@@ -132,6 +132,7 @@ describe('routes/blog',function() {
             var call = res.render.firstCall;
             var v = call.args[1];
 
+
             should(v.preview).equal('<p>12.12.2015-13.12.2015</p>\n<p align="right"><i>Diese Wochennotiz wurde erstellt von .</i></p>');
             should(v.blog.id).equal(blog.id);
             should(v.layout).equal("calculated layout");

@@ -188,11 +188,11 @@ describe('model/blog', function() {
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
-              should(result.length).equal(2);
-              delete result[0].id;
+              should(result.length).equal(6);
               delete result[1].id;
-              var t0 = result[0].timestamp;
-              var t1 = result[1].timestamp;
+              delete result[5].id;
+              var t0 = result[2].timestamp;
+              var t1 = result[5].timestamp;
               var now = new Date();
               var t0diff = ((new Date(t0)).getTime()-now.getTime());
               var t1diff = ((new Date(t1)).getTime()-now.getTime());
@@ -201,8 +201,8 @@ describe('model/blog', function() {
               // for the test machine.
               should(t0diff).be.below(10);
               should(t1diff).be.below(10);
-              delete result[0].timestamp;
               delete result[1].timestamp;
+              delete result[5].timestamp;
 
               should(result).containEql(logModule.create({oid:id,blog:"New Title",user:"user",table:"blog",property:"status",from:"TEST",to:"published"}));
               should(result).containEql(logModule.create({oid:id,blog:"New Title",user:"user",table:"blog",property:"field",to:"test"}));
@@ -236,7 +236,7 @@ describe('model/blog', function() {
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
-              should(result.length).equal(1);
+              should(result.length).equal(5);
               delete result[0].id;
               var t0 = result[0].timestamp;
               var now = new Date();
@@ -285,15 +285,15 @@ describe('model/blog', function() {
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
-              should(result.length).equal(1);
-              delete result[0].id;
-              var t0 = result[0].timestamp;
+              should(result.length).equal(5);
+              delete result[2].id;
+              var t0 = result[2].timestamp;
               var t0diff = ((new Date(t0)).getTime()-now.getTime());
         
               // The Value for comparison should be small, but not to small
               // for the test machine.
               should(t0diff).be.below(10);
-              delete result[0].timestamp;
+              delete result[2].timestamp;        
         
               should(result).containEql(logModule.create({oid:id,blog:"Title",user:"user",table:"blog",property:"reviewCommentDE",to:"it is approved.",from:"Add"}));
               bddone();
