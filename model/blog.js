@@ -236,7 +236,7 @@ function createNewBlog(user, proto,callback) {
   }
   if (proto) should.not.exist(proto.id);
 
-  this.findOne(null,{column:"name",desc:true},function(err,result) {
+  this.findOne(" where data->>'name' like 'WN%'",{column:"name",desc:true},function(err,result) {
     var blog = create();
     var name = "WN250";
     var endDate = new Date();
