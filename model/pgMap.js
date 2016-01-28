@@ -160,9 +160,9 @@ module.exports.save = function(callback) {
           /*query.on('row',function(row) {
             results.push(row);
           })*/
-          query.on('end',function (result) {
+          query.on('end',function () {
             pgdone();
-            return callback(null,result);
+            return callback(null,self);
           });
         }
       );

@@ -19,7 +19,7 @@ describe('routes/blog',function() {
 
   describe('renderBlogPreview',function() {
     it('should call next if blog id not exist',function(bddone) {
-      blogModule.createNewBlog({title:"WN333"},function(err,blog) {
+      blogModule.createNewBlog("test",{title:"WN333"},function(err,blog) {
         should.not.exist(err);
         should(blog.id).not.equal(0);
         var newId = blog.id +1;
@@ -46,7 +46,7 @@ describe('routes/blog',function() {
       });
     });
     it('should call next if blog name not exist',function(bddone) {
-      blogModule.createNewBlog({title:"WN333"},function(err,blog) {
+      blogModule.createNewBlog("test",{title:"WN333"},function(err,blog) {
         should.not.exist(err);
         should(blog.id).not.equal(0);
         var newId = "WN332";
@@ -72,9 +72,9 @@ describe('routes/blog',function() {
       });
     });
     it('should call next if blog exists twice',function(bddone) {
-      blogModule.createNewBlog({name:"WN333"},function(err,blog) {
+      blogModule.createNewBlog("test",{name:"WN333"},function(err,blog) {
         should.not.exist(err);
-        blogModule.createNewBlog({name:"WN333"},function(err,blog2) {
+        blogModule.createNewBlog("test",{name:"WN333"},function(err,blog2) {
           should.not.exist(err);
           should.exist(blog2);
           should(blog.id).not.equal(0);
@@ -106,7 +106,7 @@ describe('routes/blog',function() {
       });
     });
     it('should render a blog Preview',function(bddone) {
-      blogModule.createNewBlog({name:"WN333",startDate:"2015-12-12T00:00:00",endDate:"2015-12-13T00:00:00"},function(err,blog) {
+      blogModule.createNewBlog("test",{name:"WN333",startDate:"2015-12-12T00:00:00",endDate:"2015-12-13T00:00:00"},function(err,blog) {
         should.not.exist(err);
         should(blog.id).not.equal(0);
         var newId = "WN333";
@@ -132,6 +132,7 @@ describe('routes/blog',function() {
             var call = res.render.firstCall;
             var v = call.args[1];
 
+
             should(v.preview).equal('<p>12.12.2015-13.12.2015</p>\n<p align="right"><i>Diese Wochennotiz wurde erstellt von .</i></p>');
             should(v.blog.id).equal(blog.id);
             should(v.layout).equal("calculated layout");
@@ -148,7 +149,7 @@ describe('routes/blog',function() {
   });
   describe('renderBlogId',function() {
     it('should call next if blog id not exist',function(bddone) {
-      blogModule.createNewBlog({title:"WN333"},function(err,blog) {
+      blogModule.createNewBlog("test",{title:"WN333"},function(err,blog) {
         should.not.exist(err);
         should(blog.id).not.equal(0);
         var newId = blog.id +1;
@@ -178,7 +179,7 @@ describe('routes/blog',function() {
       });
     });
     it('should call next if blog name not exist',function(bddone) {
-      blogModule.createNewBlog({title:"WN333"},function(err,blog) {
+      blogModule.createNewBlog("test",{title:"WN333"},function(err,blog) {
         should.not.exist(err);
         should(blog.id).not.equal(0);
         var newId = "WN332";
@@ -207,9 +208,9 @@ describe('routes/blog',function() {
       });
     });
     it('should call next if blog exists twice',function(bddone) {
-      blogModule.createNewBlog({name:"WN333"},function(err,blog) {
+      blogModule.createNewBlog("test",{name:"WN333"},function(err,blog) {
         should.not.exist(err);
-        blogModule.createNewBlog({name:"WN333"},function(err,blog2) {
+        blogModule.createNewBlog("test",{name:"WN333"},function(err,blog2) {
           should.not.exist(err);
           should.exist(blog2);
           should(blog.id).not.equal(0);
