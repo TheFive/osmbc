@@ -1,8 +1,22 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [0.6.9](https://github.com/TheFive/osmbc/tree/0.6.9) (2016-01-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7a...0.6.9)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7...HEAD)
+**Closed issues:**
+
+- Document Source of Blog Creation. [\#284](https://github.com/TheFive/osmbc/issues/284)
+- Base calculation of new WN Number on non trash blogs startin with WN [\#281](https://github.com/TheFive/osmbc/issues/281)
+
+**Merged pull requests:**
+
+- new countryFlags.js [\#285](https://github.com/TheFive/osmbc/pull/285) ([fredao](https://github.com/fredao))
+
+## [0.6.7a](https://github.com/TheFive/osmbc/tree/0.6.7a) (2016-01-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.8...0.6.7a)
+
+## [0.6.8](https://github.com/TheFive/osmbc/tree/0.6.8) (2016-01-26)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7...0.6.8)
 
 **Fixed bugs:**
 
@@ -165,9 +179,6 @@
 
 - Show articles changes by an author in statistic view. [\#239](https://github.com/TheFive/osmbc/issues/239)
 - a list with all articles per blog, sortable by persons who initally collected the article [\#227](https://github.com/TheFive/osmbc/issues/227)
-
-## [0.5.5](https://github.com/TheFive/osmbc/tree/0.5.5) (2015-12-30)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.5...0.5.5)
 
 ## [0.5.5](https://github.com/TheFive/osmbc/tree/0.5.5) (2015-12-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.4...0.5.5)
@@ -797,17 +808,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
