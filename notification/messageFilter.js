@@ -86,7 +86,7 @@ UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user,articl
   var userList = [];
   if (this.user.mailComment) userList = this.user.mailComment.split(" ");
   for (var i=0;i<userList.length;i++) {
-    if (change.comment.indexOf("@"+userList[i])>=0) {
+    if (change.comment && change.comment.indexOf("@"+userList[i])>=0) {
       sendMail = true; 
       debug("Mail send because comment for @"+userList[i]);
     }

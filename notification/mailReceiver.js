@@ -106,7 +106,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
     if (err) return console.dir(err);
 
     var mailOptions = {
-        from: 'noreply@gmail.com', // sender address 
+        from: config.getValue("EmailSender"), // sender address 
         to: self.user.email, // list of receivers 
         subject: subject, // Subject line 
         text: results.text,
