@@ -3,19 +3,18 @@ h2
 
 p
   | Article 
-  a(href="#{layout.url}#{layout.htmlroot}/article/#{article.id}") #{(newArticle.title)?newArticle.title:"NO TITLE"}
-  |  was changed by #{changeby.displayName} 
+  a(href="#{layout.url}#{layout.htmlroot}/article/#{article.id}") #{(newArticle.blog)?newArticle.blog:"NO TITLE"}
+  |  was changed by #{changeby.OSMUser} 
 
-- for (prop in change)
-  p
-    if (prop !== "version")
-      if newArticle[prop]!==article[prop]
-        if article[prop]
-          h3
-            | #{prop} was changed
-        else
-          h3
-            | #{prop} was added
-        p=newArticle[prop]
+- for (prop in newArticle)
+  if (prop !== "version")
+    if newArticle[prop]!==article[prop]
+      if article[prop]
+        h3
+          | #{prop} was changed
+      else
+        h3
+          | #{prop} was added
+      p=newArticle[prop]
 
 

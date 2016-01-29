@@ -6,6 +6,7 @@
 
 var async  = require('async');
 var should = require('should');
+var sinon  = require('sinon');
 var debug  = require('debug')('OSMBC:test:article.test');
 
 
@@ -14,6 +15,8 @@ var testutil = require('./testutil.js');
 var articleModule = require('../model/article.js');
 var logModule     = require('../model/logModule.js');
 var blogModule    = require('../model/blog.js');
+
+var mailReceiver  = require('../notification/mailReceiver.js');
 
 
 
@@ -229,16 +232,72 @@ describe('model/article', function() {
       });
     });
     describe('trigger info email',function() {
-      beforeEach(function (bddone){
+      var oldtransporter;
+      afterEach(function (bddone){
+        mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+        bddone();
+      });
 
-        testutil.importData({user:[{OSMUser:"User1",email:"user1@mail.bc",mailNewCollection:"true"},
-                                   {OSMUser:"User2",email:"user2@mail.bc",mailAllComment:"true"},
-                                   {OSMUser:"User3",email:"user3@mail.bc",mailComment:"User3"},
-                                   {OSMUser:"User4",email:"user4@mail.bc"},
-                                   {OSMUser:"User5",                     ,mailAllComment:"true"}],bddone);
+      beforeEach(function (bddone){
+        oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
+        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ console.log("Send Mail");console.dir(obj);return doit(null,{response:"t"});});
+        testutil.importData({user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailNewCollection:"true"},
+                                   {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailAllComment:"true"},
+                                   {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailComment:"User3"},
+                                   {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
+                                   {OSMUser:"User5",                     access:"full",mailAllComment:"true"}]},bddone);
       });
       it('should send out mail, when collecting article.',function (bddone){
-       // do something here
+        articleModule.createNewArticle(function(err,article){
+          article.setAndSave({OSMUser:"testuser"},{blog:"WN789",collection:"newtext"},function(err) {
+            should.not.exist(err);
+            should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">WN789</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p>';
+            should(result.html).eql(expectedMail);
+            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+              {from:"noreply@gmail.com",
+              to:"user1@mail.bc",
+              subject:"WN789 added collection",
+              html:expectedMail,
+              text:null});
+
+
+            bddone();
+          });
+        });
+      });
+      it('should send out mail, when adding comment.',function (bddone){
+        articleModule.createNewArticle(function(err,article){
+          article.setAndSave({OSMUser:"testuser"},{blog:"WN789",comment:"Information for @User3"},function(err) {
+            should.not.exist(err);
+            should(mailReceiver.for_test_only.transporter.sendMail.calledTwice).be.True();
+
+            // First Mail Check
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">WN789</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>comment was added</h3><p>Information for @User3</p><h3>commentStatus was added</h3><p>open</p>';
+            should(result.html).eql(expectedMail);
+            should(result).eql(
+              {from:"noreply@gmail.com",
+              to:"user2@mail.bc",
+              subject:"WN789 added comment",
+              html:expectedMail,
+              text:null});
+
+            // Second Mail Check
+            result = mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0];
+            should(result.html).eql(expectedMail);
+            should(result).eql(
+              {from:"noreply@gmail.com",
+              to:"user3@mail.bc",
+              subject:"WN789 added comment",
+              html:expectedMail,
+              text:null});
+
+
+            bddone();
+          });
+        });
       });
     }); 
   });

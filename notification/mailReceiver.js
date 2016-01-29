@@ -22,6 +22,8 @@ var layout = {
   htmlroot : config.getValue("htmlroot"),
   url: config.getValue("url")
 };
+
+
 function MailReceiver(user) {
   debug("MailReceiver::MailReceiver");
   this.user = user;
@@ -47,14 +49,15 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
     };
      
     // send mail with defined transport object 
-    transporter.sendMail(mailOptions, function(error, info){
-        if(error){
-          console.log("Connection Error while send Welcome Email to "+self.user.OSMUser);
-          console.log(error);
-        } else {
-          console.log('Welcome Mail send to '+self.user.OSMUser + " "+info.response);
-        }
-        return callback(error);
+    transporter.sendMail(mailOptions, function sendMailFunction(error, info) {
+      debug('sendMailFunction');
+      if(error){
+        console.log("Connection Error while send Welcome Email to "+self.user.OSMUser);
+        console.log(error);
+      } else {
+        console.log('Welcome Mail send to '+self.user.OSMUser + " "+info.response);
+      }
+      return callback(error);
     });
   }); 
 };
@@ -66,6 +69,17 @@ MailReceiver.prototype.sendInfo = function sendInfo(info,callback) {
 
 MailReceiver.prototype.updateArticle = function updateArticle(user,article,change,callback) {
   debug("MailReceiver::updateArticle");
+  var self = this;
+  var newArticle = articleModule.create();
+  var k;
+  for (k in article) {
+    newArticle[k] = article[k];
+    if (change[k]) newArticle = change[k];
+  }
+  for (k in change) {
+    newArticle[k] = change[k];
+  }
+
 
   var subject;
   var logblog = article.blog;
@@ -83,36 +97,32 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
   if (article.comment && change.comment) {
      subject = logblog + " changed comment";
   }
-  var newArticle = articleModule.create();
-  for (var k in article) {
-    newArticle[k] = article[k];
-    if (change[k]) newArticle = change[k];
-  }
 
 
   var data = {user:this.user,changeby:user,article:article,newArticle:newArticle,layout:layout,logblog:logblog};
 
-  infomail.render(data, function (err, results) {
+  infomail.render(data, function infomailRender(err, results) {
+    debug('infomailRender');
     if (err) return console.dir(err);
 
     var mailOptions = {
-        from: ' <noreply@gmail.com>', // sender address 
-        to: 'thefive.osm@gmail.com', // list of receivers 
+        from: 'noreply@gmail.com', // sender address 
+        to: self.user.email, // list of receivers 
         subject: subject, // Subject line 
         text: results.text,
         html: results.html
     };
      
     // send mail with defined transport object 
-    transporter.sendMail(mailOptions, function(error, info){
-        if(error){
-          console.log("Connection Error");
-            return console.log(error);
-        }
-        console.log('Message sent: ' + info.response);
+    transporter.sendMail(mailOptions, function transporterSendMail(error, info) {
+      debug('transporterSendMail');
+      if(error){
+          return callback(error);
+      }
+      console.log('Message sent: ' + info.response);
+      callback();
     });
   });
-  callback();
 };
 
 var userReceiverMap = {};
@@ -130,9 +140,9 @@ MailUserReceiver.prototype.sendInfo = function murSendInfo(object,callback) {
     return callback(err);
   });
 };
+
 MailUserReceiver.prototype.updateArticle = function murUpdateArticle(user,article,change,callback) {
   debug('MailUserReceiver.prototype.updateArticle');
-  for (var k in userReceiverMap) console.log(k);
   async.forEachOf(userReceiverMap,function(value,key,cb) {
     debug('forEachOf'+key);
     value.updateArticle(user,article,change,cb);
@@ -144,18 +154,21 @@ MailUserReceiver.prototype.updateArticle = function murUpdateArticle(user,articl
 
 function initialise(userList) {
   debug('initialise');
+  userReceiverMap = {};
   for (var i=0;i<userList.length;i++) {
     var u = userList[i];
     if (u.access !== "full") continue;
     userReceiverMap[u.OSMUser] = new messageFilter.UserConfigFilter(u,new MailReceiver(u));
   }
-  messageCenter.global.registerReceiver(new MailUserReceiver());
 }
+
+messageCenter.global.registerReceiver(new MailUserReceiver());
 
 function updateUser(user) {
   debug('updateUser');
   delete userReceiverMap[user.OSMUser];
   if (user.access !== "full") return;
+  if (!user.email) return;
   userReceiverMap[user.OSMUser] = new messageFilter.UserConfigFilter(user,new MailReceiver(user));
 }
 
