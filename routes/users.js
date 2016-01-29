@@ -65,7 +65,7 @@ function renderUserId(req, res, next) {
         debug('findAndLoaduser_CB');
         if (err) return cb(err);
         user = result;
-        if (req.query.validation && user.emailValidationKey === req.query.validation) {
+        if (req.query.validation) {
           user.validateEmail(req.query.validation,cb);
         } else cb();
       });
