@@ -253,7 +253,7 @@ describe('model/article', function() {
             should.not.exist(err);
             should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">WN789</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p>';
+            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p>';
             should(result.html).eql(expectedMail);
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
@@ -275,7 +275,7 @@ describe('model/article', function() {
 
             // First Mail Check
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">WN789</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>comment was added</h3><p>Information for @User3</p><h3>commentStatus was added</h3><p>open</p>';
+            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>comment was added</h3><p>Information for @User3</p><h3>commentStatus was added</h3><p>open</p>';
             should(result.html).eql(expectedMail);
             should(result).eql(
               {from:"noreply@gmail.com",
