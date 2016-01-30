@@ -81,44 +81,36 @@ function setAndSave(user,data,callback) {
   debug('user %s',user);
   var self = this;
   delete self.lock;
+  articleModule.removeOpenBlogCache(); 
   async.series([
     function checkID(cb) {
       if (self.id === 0) {
         self.save(cb);
       } else cb();
-    }
-  ],function(){
-    should.exist(self.id);
-    should(self.id).not.equal(0);
-    async.forEachOf(data,function(value,key,callback){
-      if (typeof(value)=='undefined') return callback();
-      if (value === self[key]) return callback();
-      if (value === '' && typeof(self[key])==='undefined') return callback();
-      if (typeof(value)=='object') {
-        if (JSON.stringify(value)==JSON.stringify(self[key])) return callback();
+    },
+    function(cb){
+      should.exist(self.id);
+      should(self.id).not.equal(0);
+      for (var key in data) {
+        var value = data[key];
+        if (typeof(value)=='undefined')  continue;
+        if (value === self[key]) continue;
+        if (value === '' && typeof(self[key])==='undefined') continue;
+        if (typeof(value)=='object') {
+          if (JSON.stringify(value)==JSON.stringify(self[key])) continue;
+        }
+        self[key] = value;
       }
-      debug("Set Key %s to value %s",key,value);
-      debug("Old Value Was %s",self[key]);
-      articleModule.removeOpenBlogCache();
-      async.series ( [
-          function(callback) {
-             messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:key,from:self[key],to:value},callback);
-          },
-          function(callback) {
-            self[key] = value;
-            callback();
-          }
-        ],function(err){
-          callback(err);
-        });
-
-    },function(err) {
+      messageCenter.global.updateBlog(user,self,data,cb);
+    }],function(err) {
       if (err) return callback(err);
       self.startCloseTimer();
       self.save(callback);
-    });
-  });
+     }
+  );
 } 
+
+
 function setReviewComment(lang,user,data,callback) {
   debug("reviewComment");
   var self = this;

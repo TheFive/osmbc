@@ -10,13 +10,19 @@ var EmailTemplate = require('email-templates').EmailTemplate;
 var messageCenter = require('../notification/messageCenter.js');
 var messageFilter = require('../notification/messageFilter.js');
 var articleModule = require('../model/article.js');
+var blogModule = require('../model/blog.js');
 
 
 
 var infoMailtemplateDir = path.join(__dirname, '..','email', 'infomail');
 var infomail = new EmailTemplate(infoMailtemplateDir);
+
+var infoMailBlogtemplateDir = path.join(__dirname, '..','email', 'infomailBlog');
+var infomailBlog = new EmailTemplate(infoMailBlogtemplateDir);
+
 var welcomeMailtemplateDir = path.join(__dirname, '..','email', 'welcome');
 var welcomemail = new EmailTemplate(welcomeMailtemplateDir);
+
 var transporter = nodemailer.createTransport(smtpTransport(config.getValue("SMTP")));
 
 var layout = {
@@ -129,6 +135,58 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
   });
 };
 
+
+MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callback) {
+  debug("MailReceiver::updateBlog");
+
+
+  var self = this;
+  var newBlog = blogModule.create();
+  var k;
+  for (k in blog) {
+    newBlog[k] = blog[k];
+    if (change[k]) newBlog[k] = change[k];
+  }
+  for (k in change) {
+    newBlog[k] = change[k];
+  }
+
+
+  var subject;
+  var blogName = blog.name;
+  if (change.name) blogName = change.name;
+
+  if (!blog.name && change.name) {
+     subject = blogName + " was created";
+  } else  {
+     subject = blogName + " changed status";
+  }
+ 
+
+  var data = {user:this.user,changeby:user,blog:blog,newBlog:newBlog,layout:layout,blogName:blogName};
+
+  infomailBlog.render(data, function infomailRenderBlog(err, results) {
+    debug('infomailRenderBlog');
+    if (err) return console.dir(err);
+
+    var mailOptions = {
+        from: config.getValue("EmailSender"), // sender address 
+        to: self.user.email, // list of receivers 
+        subject: subject, // Subject line 
+        text: results.text,
+        html: results.html
+    };
+     
+    // send mail with defined transport object 
+    transporter.sendMail(mailOptions, function transporterSendMail(error) {
+      debug('transporterSendMail');
+      if(error){
+          return callback(error);
+      }
+      callback();
+    });
+  });
+};
 var userReceiverMap = {};
 
 
@@ -150,6 +208,15 @@ MailUserReceiver.prototype.updateArticle = function murUpdateArticle(user,articl
   async.forEachOf(userReceiverMap,function(value,key,cb) {
     debug('forEachOf'+key);
     value.updateArticle(user,article,change,cb);
+  },function(err) {
+    return callback(err);
+  });
+};
+MailUserReceiver.prototype.updateBlog = function murUpdateBlog(user,blog,change,callback) {
+  debug('MailUserReceiver.prototype.updateBlog');
+  async.forEachOf(userReceiverMap,function(value,key,cb) {
+    debug('forEachOf'+key);
+    value.updateBlog(user,blog,change,cb);
   },function(err) {
     return callback(err);
   });

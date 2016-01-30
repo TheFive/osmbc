@@ -95,6 +95,33 @@ UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user,articl
   this.receiver.updateArticle(user,article,change,cb);
 };
 
+UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
+  debug('UserConfigFilter.prototype.updateBlog');
+  var sendMail = false;
+
+  // check Collection
+  if (this.user.mailBlogStatusChange == "true") {
+    if (change.status && change.status != blog.status) {
+      sendMail = true;
+    }
+  }
+  var wnList = [];
+  if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange.split(" ");
+  for (var i=0;i<wnList.length;i++) {
+    var key = "reviewComment"+wnList[i];
+    if (change[key] && change[key]!== blog[key]) {
+      sendMail = true; 
+    }
+    key = "close";
+    if (change[key] && change[key]!== blog[key] ){
+      sendMail = true; 
+    }   
+  }
+  if (!sendMail) return cb();
+  this.receiver.updateBlog(user,blog,change,cb);
+};
+
+
 UserConfigFilter.prototype.sendInfo = function ucfSendInfo(object,cb) {
   debug('UserConfigFilter.prototype.sendInfo');
   return cb();
