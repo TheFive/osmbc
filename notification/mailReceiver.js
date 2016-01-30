@@ -1,5 +1,6 @@
 var path          = require('path');
 var config        = require('../config.js');
+var should        = require('should');
 var async         = require('async');
 var debug         = require('debug')('OSMBC:notification:mailReceiver');
 var nodemailer    = require('nodemailer');
@@ -69,12 +70,16 @@ MailReceiver.prototype.sendInfo = function sendInfo(info,callback) {
 
 MailReceiver.prototype.updateArticle = function updateArticle(user,article,change,callback) {
   debug("MailReceiver::updateArticle");
+
+  should(typeof(change)).eql("object");
+ 
+
   var self = this;
   var newArticle = articleModule.create();
   var k;
   for (k in article) {
     newArticle[k] = article[k];
-    if (change[k]) newArticle = change[k];
+    if (change[k]) newArticle[k] = change[k];
   }
   for (k in change) {
     newArticle[k] = change[k];
@@ -114,12 +119,11 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
     };
      
     // send mail with defined transport object 
-    transporter.sendMail(mailOptions, function transporterSendMail(error, info) {
+    transporter.sendMail(mailOptions, function transporterSendMail(error) {
       debug('transporterSendMail');
       if(error){
           return callback(error);
       }
-      console.log('Message sent: ' + info.response);
       callback();
     });
   });
