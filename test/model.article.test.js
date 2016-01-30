@@ -243,7 +243,7 @@ describe('model/article', function() {
         mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
         testutil.importData({user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailNewCollection:"true"},
                                    {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailAllComment:"true"},
-                                   {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailComment:"User3"},
+                                   {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailComment:"DE User3"},
                                    {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
                                    {OSMUser:"User5",                     access:"full",mailAllComment:"true"}]},bddone);
       });
