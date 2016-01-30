@@ -70,7 +70,7 @@ function renderUserId(req, res, next) {
           user.validateEmail(req.query.validation,function (err){
             if (err) next(err);
             console.dir("Success redirectding to "+res.rendervar.layout.htmlroot+"/user/"+user.id);
-            res.redirect(res.rendervar.layout.htmlroot+"/user/"+user.id);
+            res.redirect(res.rendervar.layout.htmlroot+"/usert/"+user.id);
             return cb();
           });
         } else cb();
