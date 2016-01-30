@@ -12,8 +12,8 @@ var OpenStreetMapStrategy
                  = require('passport-openstreetmap').Strategy;
 
 var session      = require('express-session');
-var FileStore    = require('session-file-store')(session);
 
+var pg = require('pg');
 
 var debug        = require('debug')('OSMBC:app');
 
@@ -171,12 +171,36 @@ app.set('view engine', 'jade');
 app.use(favicon(path.join(__dirname , 'public','images','favicon.ico')));
 
 
-// take from https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
-app.use(session({ store: new FileStore(),
-                  secret: 'LvwnH}uHhDLxvAu3X6' ,
-                  resave:true,
-                  saveUninitialized:true,
-                  cookie:{_expires : 1000*60*60*24*365}}));
+
+if (config.getValue("sessionStore")==="session-file-store") {
+
+  var FileStore    = require('session-file-store')(session);
+
+
+  // take from https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
+  app.use(session({ store: new FileStore(),
+                    secret: 'LvwnH}uHhDLxvAu3X6' ,
+                    resave:true,
+                    saveUninitialized:true,
+                    cookie:{_expires : 1000*60*60*24*365}}));
+ 
+} else if (config.getValue("sessionStore")=="connect-pg-simple") {
+  var pgSession = require('connect-pg-simple')(session);
+
+  app.use(session({
+    store: new pgSession({
+      pg : pg,                                  // Use global pg-module 
+      conString : config.pgstring // Connect using something else than default DATABASE_URL env variable 
+    }),
+    secret: 'LvwnH}uHhDLxvAu3X6' ,
+    resave: false,
+    cookie: { maxAge: 1000*60*60*24*365 } 
+  }));
+} else {
+  console.log("No File Store defined, OSMBC will not run.");
+  console.log("to solve set sessionStore in config._.json");
+  process.exit(1);
+}
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
 app.use(passport.initialize());
