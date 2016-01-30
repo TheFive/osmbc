@@ -65,8 +65,14 @@ function renderUserId(req, res, next) {
         debug('findAndLoaduser_CB');
         if (err) return cb(err);
         user = result;
+        if (! user || typeof(user.id) == 'undefined') return next(new Error("User ID not Found"));
         if (req.query.validation) {
-          user.validateEmail(req.query.validation,cb);
+          user.validateEmail(req.query.validation,function (err){
+            if (err) next(err);
+            console.dir("Success redirectding to "+res.rendervar.layout.htmlroot+"/user/"+user.id);
+            res.redirect(res.rendervar.layout.htmlroot+"/user/"+user.id);
+            return cb();
+          });
         } else cb();
       });
     }
@@ -74,7 +80,6 @@ function renderUserId(req, res, next) {
     function finalRenderCB(err) {
       debug('finalRenderCB');
       if (err) return next(err);
-      if (! user || typeof(user.id) == 'undefined') return next(new Error("User ID not Found"));
       should.exist(res.rendervar);
       res.render('user',{usershown:user,
                         changes:changes,

@@ -69,8 +69,16 @@ function dropTable(cb) {
 function validateEmail(validationCode,callback) {
   debug('validateEmail');
   var self = this;
+  if (!self.emailInvalidation) {
+    var err = new Error("No Validation pending for user >"+self.OSMUser+"<");
+    console.dir(self);
+    return callback(err);
+  }
   if (validationCode !== self.emailValidationKey) {
     var err = new Error("Wrong Validation Code for EMail for user >"+self.OSMUser+"<");
+    console.log("Given Key:"+validationCode);
+    console.log("Expected :"+self.emailValidationKey);
+    console.dir(self);
     return callback(err);
   }
   self.email = self.emailInvalidation;
