@@ -23,7 +23,7 @@ module.exports = {
   "england":"http://blog.openstreetmap.de/wp-uploads//2015/01/en.svg",
   "uk":"http://blog.openstreetmap.de/wp-uploads//2015/01/en.svg",
   "germany":"http://blog.openstreetmap.de/wp-uploads//2015/01/de.svg",
-  "deutschland":"http://blog.openstreetmap.de/wp-uploads//2015/01/de.svg",
+  "deutschland":"http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg",
   "bolivia":"http://blog.openstreetmap.de/wp-uploads//2016/01/bo.svg",
    "canada":"http://blog.openstreetmap.de/wp-uploads//2016/01/ca.svg",
    "india":"http://blog.openstreetmap.de/wp-uploads//2016/01/in.svg",
