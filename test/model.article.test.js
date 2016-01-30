@@ -240,7 +240,7 @@ describe('model/article', function() {
 
       beforeEach(function (bddone){
         oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
-        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ console.log("Send Mail");console.dir(obj);return doit(null,{response:"t"});});
+        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
         testutil.importData({user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailNewCollection:"true"},
                                    {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailAllComment:"true"},
                                    {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailComment:"User3"},
@@ -299,6 +299,56 @@ describe('model/article', function() {
           });
         });
       });
+      it('should send out mail, when changing comment.',function (bddone){
+        articleModule.createNewArticle(function(err,article){
+          should.not.exist(err);
+          article.setAndSave({OSMUser:"testuser"},{blog:"WN789",comment:"Information for noone"},function(err) {
+            should.not.exist(err);
+            article.setAndSave({OSMUser:"testuser"},{comment:"Information for noone and for @User3"},function(err) {
+              should.not.exist(err);
+              should(mailReceiver.for_test_only.transporter.sendMail.calledThrice).be.True();
+
+              // First Mail Check
+              var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+              var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>comment was added</h3><p>Information for noone</p><h3>commentStatus was added</h3><p>open</p>';
+              should(result.html).eql(expectedMail);
+              should(result).eql(
+                {from:"noreply@gmail.com",
+                to:"user2@mail.bc",
+                subject:"WN789 added comment",
+                html:expectedMail,
+                text:null});
+
+              // Second Mail Check
+              result = mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0];
+              expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for noone and for @User3</p>';
+              should(result.html).eql(expectedMail);
+              should(result).eql(
+                {from:"noreply@gmail.com",
+                to:"user2@mail.bc",
+                subject:"WN789 changed comment",
+                html:expectedMail,
+                text:null});
+
+              // Third Mail Check
+              
+              result = mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0];
+              expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for noone and for @User3</p>';
+              should(result.html).eql(expectedMail);
+              should(result).eql(
+                {from:"noreply@gmail.com",
+                to:"user3@mail.bc",
+                subject:"WN789 changed comment",
+                html:expectedMail,
+                text:null});
+
+
+              bddone();
+            });
+          });
+        });
+      });
+
     }); 
   });
   describe('findFunctions',function() {
