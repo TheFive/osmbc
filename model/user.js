@@ -5,6 +5,7 @@ var async = require('async');
 var messageCenter = require('../notification/messageCenter.js');
 var mailReceiver = require('../notification/mailReceiver.js');
 var random = require('randomstring');
+var emailValidator = require('email-validator');
 
 
 function User (proto)
@@ -99,11 +100,18 @@ function setAndSave(user,data,callback) {
   var sendWelcomeEmail = false;
 
   if (data.email !== self.email) {
-    data.emailInvalidation = data.email;
-    delete data.email;
+    if (data.email && data.email !== "" && !emailValidator.validate(data.email)) {
+      var error = new Error("Invalid Email Adress: "+data.email);
+      return callback(error);
+    }
+    if (data.email !== "") {
+      data.emailInvalidation = data.email;
+      delete data.email;
+    }
+
    
     data.emailValidationKey = random.generate();
-    sendWelcomeEmail = true;
+    if (emailValidator.validate(data.emailInvalidation)) sendWelcomeEmail = true;
   }
 
 
