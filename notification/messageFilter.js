@@ -1,64 +1,7 @@
 var debug = require('debug')('OSMBC:notification:messageFilter');
   
-function FilterNewCollection(receiver) {
-  debug('FilterNewCollection::FilterNewCollection');
-  this.receiver = receiver;
-}
-
-FilterNewCollection.prototype.sendInfo= function(object,cb) {
-  debug('FilterNewCollection::sendInfo');
-  return cb();
-};
 
 
-FilterNewCollection.prototype.updateArticle= function(user,article,change,cb) {
-  debug('FilterNewCollection::updateArticle');
-  if (article.collection) return cb();
-  if (change.collection === article.collection) return cb();
-  this.receiver.updateArticle(user,article,change,cb);
-};
-
-function FilterAllComment(receiver) {
-  debug('FilterAllComment::FilterAllComment');
-  this.receiver = receiver;
-}
-
-FilterAllComment.prototype.sendInfo = function(object,cb) {
-  debug('FilterAllComment::sendInfo');
-  return cb();
-};
-
-FilterAllComment.prototype.updateArticle= function(user,article,change,cb) {
-  debug('FilterAllComment::updateArticle');
-  if (!change.comment) return cb();
-  if (change.comment === article.comment) return cb();
-  this.receiver.updateArticle(user,article,change,cb);
-};
-
-function FilterComment(what,receiver) { //jshint ignore:line
-  debug('FilterAllComment::FilterComment');
-  this.receiver = receiver;
-  this.what = what;
-}
-
-FilterComment.prototype.sendInfo = function(object,cb) {
-  debug('FilterComment::sendInfo');
-  return cb();
-};
-
-FilterComment.prototype.updateArticle = function(user,article,change,cb) {
-  debug('FilterComment::updateArticle');
-  if (!change.comment) return cb();
-  if (change.comment === article.comment ) return cb();
-  var userList = [];
-  if (this.what) userList = this.what.split(" ");
-  var mail = false;
-  for (var i=0;i<userList.length;i++) {
-    if (change.comment.indexOf("@"+userList[i])>=0) mail = true; 
-  }
-  if (!mail) return cb();
-  this.receiver.updateArticle(user,article,change,cb);
-};
 
 function UserConfigFilter(user,receiver){
   debug('UserConfigFilter');
@@ -105,18 +48,7 @@ UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,chan
       sendMail = true;
     }
   }
-  var wnList = [];
-  if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange.split(" ");
-  for (var i=0;i<wnList.length;i++) {
-    var key = "reviewComment"+wnList[i];
-    if (change[key] && change[key]!== blog[key]) {
-      sendMail = true; 
-    }
-    key = "close";
-    if (change[key] && change[key]!== blog[key] ){
-      sendMail = true; 
-    }   
-  }
+ 
   if (!sendMail) return cb();
   this.receiver.updateBlog(user,blog,change,cb);
 };
@@ -124,17 +56,22 @@ UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,chan
 
 UserConfigFilter.prototype.sendInfo = function ucfSendInfo(object,cb) {
   debug('UserConfigFilter.prototype.sendInfo');
-  return cb();
+  debug(object);
+  if (object.table!=="blog") return callback();
+  if (object.from !== "Add") return callback();
+  var wnList = [];
+  var sendMail = false;
+  if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange.split(" ");
+  for (var i=0;i<wnList.length;i++) {
+    var lang = wnList[i];
+    debug("Check language "+lang);
+    if (object.property === "reviewCommment"+lang || object.property === "exported"+lang || object.property === "close"+lang ) {
+      sendMail = true; 
+    }
+  }
+  if (!sendMail) return cb();
+  debug("Send out mail");
+  this.receiver.sendInfo(object,cb);
 };
 
-var filterList = {
-  newCollection: FilterNewCollection,
-  allComment: FilterAllComment
-};
-var paramFilterList = {
-  comment: FilterComment
-};
-
-module.exports.global =  filterList;
-module.exports.withParam = paramFilterList;
 module.exports.UserConfigFilter = UserConfigFilter;

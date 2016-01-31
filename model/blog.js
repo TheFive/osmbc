@@ -118,7 +118,7 @@ function setAndSave(user,data,callback) {
 
 
 function setReviewComment(lang,user,data,callback) {
-  debug("reviewComment");
+  debug("setReviewComment");
   var self = this;
   var rc = "reviewComment"+lang;
   var exported = "exported"+lang;

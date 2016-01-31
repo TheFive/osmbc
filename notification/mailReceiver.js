@@ -20,6 +20,9 @@ var infomail = new EmailTemplate(infoMailtemplateDir);
 var infoMailBlogtemplateDir = path.join(__dirname, '..','email', 'infomailBlog');
 var infomailBlog = new EmailTemplate(infoMailBlogtemplateDir);
 
+var infoMailInfotemplateDir = path.join(__dirname, '..','email', 'infomailBlog');
+var infomailInfo = new EmailTemplate(infoMailBlogtemplateDir);
+
 var welcomeMailtemplateDir = path.join(__dirname, '..','email', 'welcome');
 var welcomemail = new EmailTemplate(welcomeMailtemplateDir);
 
@@ -71,7 +74,34 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
 
 MailReceiver.prototype.sendInfo = function sendInfo(info,callback) {
   debug("MailReceiver::sendInfo");
-  return callback();
+
+  var self = this;
+
+  var data = {user:this.user,info:info};
+
+  var subject = info.blog +" has changed "+info.property+" from "+info.from+" to "+info.to;
+
+  infomailInfo.render(data, function infomailRenderBlog(err, results) {
+    debug('infomailRenderInfo');
+    if (err) return console.dir(err);
+
+    var mailOptions = {
+        from: config.getValue("EmailSender"), // sender address 
+        to: self.user.email, // list of receivers 
+        subject: subject, // Subject line 
+        text: results.text,
+        html: results.html
+    };
+     
+    // send mail with defined transport object 
+    transporter.sendMail(mailOptions, function transporterSendMail(error) {
+      debug('transporterSendMail');
+      if(error){
+          return callback(error);
+      }
+      callback();
+    });
+  });
 };
 
 MailReceiver.prototype.updateArticle = function updateArticle(user,article,change,callback) {

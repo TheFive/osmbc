@@ -285,6 +285,28 @@ describe('model/blog', function() {
           });
         });
       });
+      it('should send out mail when review is started',function (bddone){
+        blogModule.createNewBlog({OSMUser:"testuser"},function(err,blog){
+          should.not.exist(err);
+          // reset sinon spy:
+          mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+          blog.setReviewComment("ES",{OSMUser:"testuser"},{reviewComment:"startreview"},function(err){
+            should.not.exist(err);
+
+            should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>reviewCommentES</td><td>startreview</td></tr></table>';
+            should(result.html).eql(expectedMail);
+            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+              {from:"noreply@gmail.com",
+              to:"user1@mail.bc",
+              subject:"WN251 changed status",
+              html:expectedMail,
+              text:null});
+            bddone();
+          });
+        });
+      });
     }); 
   });
   describe('closeBlog',function() {
