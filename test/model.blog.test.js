@@ -30,7 +30,7 @@ describe('model/blog', function() {
       testutil.clearDB(bddone);
     }) ;
     it('should createNewArticle with prototype',function(bddone) {
-      blogModule.createNewBlog({name:"test",status:"open"},function (err,result){
+      blogModule.createNewBlog({OSMUser:"test"},{name:"test",status:"open"},function (err,result){
         should.not.exist(err);
         var id = result.id;
         testutil.getJsonWithId("blog",id,function(err,result){
@@ -50,7 +50,7 @@ describe('model/blog', function() {
       });
     });
     it('should createNewArticle without prototype',function(bddone) {
-      blogModule.createNewBlog(function (err,result){
+      blogModule.createNewBlog({OSMUser:"test"},function (err,result){
         should.not.exist(err);
         var id = result.id;
         testutil.getJsonWithId("blog",id,function(err,result){
@@ -62,13 +62,15 @@ describe('model/blog', function() {
       });
     });
     it('should createNewArticle with existing WN',function(bddone) {
-      blogModule.createNewBlog({name:"WN100",endDate:new Date("1.1.2000")},function(err,result){
+      blogModule.createNewBlog({OSMUser:"test"},
+                               {name:"WN100",endDate:new Date("1.1.2000")},
+                               function(err,result){
 
         should.not.exist(err);
         should.exist(result);
         result.save(function(err) {
           should.not.exist(err);
-          blogModule.createNewBlog(function (err,result){
+          blogModule.createNewBlog({OSMUser:"test"},function (err,result){
             should.not.exist(err);
             var id = result.id;
             testutil.getJsonWithId("blog",id,function(err,result){
@@ -86,7 +88,7 @@ describe('model/blog', function() {
     });
     it('should create no New Article with ID',function(bddone){
       (function() {
-        blogModule.createNewBlog({id:2,name:"test",status:"**"},function (){
+        blogModule.createNewBlog({OSMUser:"test"},{id:2,name:"test",status:"**"},function (){
 
         });
       }).should.throw();
@@ -173,12 +175,12 @@ describe('model/blog', function() {
       testutil.clearDB(bddone);
     }); 
     it('should set only the one Value in the database', function (bddone){
-      blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
+      blogModule.createNewBlog({OSMUser:"test"},{name:"Title",status:"TEST"},function(err,newBlog){
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
         newBlog.name = "New Title";
-        newBlog.setAndSave("user",{status:"published",field:"test"},function(err) {
+        newBlog.setAndSave({OSMUser:"user"},{status:"published",field:"test"},function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog",id,function(err,result){
             should.not.exist(err);
@@ -190,11 +192,11 @@ describe('model/blog', function() {
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
-              should(result.length).equal(2);
-              delete result[0].id;
+              should(result.length).equal(6);
               delete result[1].id;
-              var t0 = result[0].timestamp;
-              var t1 = result[1].timestamp;
+              delete result[5].id;
+              var t0 = result[2].timestamp;
+              var t1 = result[5].timestamp;
               var now = new Date();
               var t0diff = ((new Date(t0)).getTime()-now.getTime());
               var t1diff = ((new Date(t1)).getTime()-now.getTime());
@@ -203,8 +205,8 @@ describe('model/blog', function() {
               // for the test machine.
               should(t0diff).be.below(10);
               should(t1diff).be.below(10);
-              delete result[0].timestamp;
               delete result[1].timestamp;
+              delete result[5].timestamp;
 
               should(result).containEql(logModule.create({oid:id,blog:"New Title",user:"user",table:"blog",property:"status",from:"TEST",to:"published"}));
               should(result).containEql(logModule.create({oid:id,blog:"New Title",user:"user",table:"blog",property:"field",to:"test"}));
@@ -218,35 +220,69 @@ describe('model/blog', function() {
       var oldtransporter;
       afterEach(function (bddone){
         mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+        this.clock.restore();
         bddone();
       });
 
       beforeEach(function (bddone){
+        this.clock = sinon.useFakeTimers();
         oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
         mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
-        testutil.importData({user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailBlogStatusChange:"true"},
+        testutil.importData({clear:true,
+                             user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailBlogStatusChange:"true"},
                                    {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailBlogStatusChange:"true"},
                                    {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailBlogLanguageStatusChange:"EN ES"},
                                    {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
                                    {OSMUser:"User5",                     access:"full",mailBlogStatusChange:"true"}]},bddone);
       });
       it('should send out mail when creating a blog',function (bddone){
-        blogModule.createNewBlog({OSMUser:"testuser"},function(err,article){
+        blogModule.createNewBlog({OSMUser:"testuser"},function(err){
           should.not.exist(err);
           should(mailReceiver.for_test_only.transporter.sendMail.calledTwice).be.True();
           var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-          //var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p>';
-          //should(result.html).eql(expectedMail);
+          var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
+          should(result.html).eql(expectedMail);
           should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
             {from:"noreply@gmail.com",
             to:"user1@mail.bc",
-            subject:"WN789 added collection",
+            subject:"WN251 was created",
             html:expectedMail,
             text:null});
-
-
+          should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
+            {from:"noreply@gmail.com",
+            to:"user2@mail.bc",
+            subject:"WN251 was created",
+            html:expectedMail,
+            text:null});
           bddone();
+        });
+      });
+      it('should send out mail when change blog status',function (bddone){
+        blogModule.createNewBlog({OSMUser:"testuser"},function(err,blog){
+          should.not.exist(err);
+          // reset sinon spy:
+          mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+          blog.setAndSave({OSMUser:"testuser"},{status:"edit"},function(err){
+            should.not.exist(err);
 
+            should(mailReceiver.for_test_only.transporter.sendMail.calledTwice).be.True();
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>status</td><td>edit</td></tr></table>';
+            should(result.html).eql(expectedMail);
+            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+              {from:"noreply@gmail.com",
+              to:"user1@mail.bc",
+              subject:"WN251 changed status",
+              html:expectedMail,
+              text:null});
+            should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
+              {from:"noreply@gmail.com",
+              to:"user2@mail.bc",
+              subject:"WN251 changed status",
+              html:expectedMail,
+              text:null});
+            bddone();
+          });
         });
       });
     }); 
@@ -258,7 +294,7 @@ describe('model/blog', function() {
     }); 
 
     it('should close the Blog and write a log Message', function (bddone){
-      blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
+      blogModule.createNewBlog({OSMUser:"test"},{name:"Title",status:"TEST"},function(err,newBlog){
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
@@ -274,7 +310,7 @@ describe('model/blog', function() {
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
-              should(result.length).equal(1);
+              should(result.length).equal(5);
               delete result[0].id;
               var t0 = result[0].timestamp;
               var now = new Date();
@@ -299,7 +335,7 @@ describe('model/blog', function() {
       process.env.TZ = 'Europe/Amsterdam';
     }) ;
     it('should review the Blog and write a log Message', function (bddone){
-      blogModule.createNewBlog({name:"Title",status:"TEST"},function(err,newBlog){
+      blogModule.createNewBlog({OSMUser:"test"},{name:"Title",status:"TEST"},function(err,newBlog){
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
@@ -323,15 +359,15 @@ describe('model/blog', function() {
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);
-              should(result.length).equal(1);
-              delete result[0].id;
-              var t0 = result[0].timestamp;
+              should(result.length).equal(5);
+              delete result[2].id;
+              var t0 = result[2].timestamp;
               var t0diff = ((new Date(t0)).getTime()-now.getTime());
         
               // The Value for comparison should be small, but not to small
               // for the test machine.
               should(t0diff).be.below(10);
-              delete result[0].timestamp;
+              delete result[2].timestamp;        
         
               should(result).containEql(logModule.create({oid:id,blog:"Title",user:"user",table:"blog",property:"reviewCommentDE",to:"it is approved.",from:"Add"}));
               bddone();
@@ -347,9 +383,9 @@ describe('model/blog', function() {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) {blogModule.createNewBlog({name:"WN1",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},cb);},
-        function c2(cb) {blogModule.createNewBlog({name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},cb);},
-        function c3(cb) {blogModule.createNewBlog({name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"},
+        function c1(cb) {blogModule.createNewBlog({OSMUser:"test"},{name:"WN1",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},cb);},
+        function c2(cb) {blogModule.createNewBlog({OSMUser:"test"},{name:"WN2",status:"open",startDate:"2015-01-01",endDate:"2016-01-01"},cb);},
+        function c3(cb) {blogModule.createNewBlog({OSMUser:"test"},{name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"},
                          function(err,result){
                           should.not.exist(err);
                           idToFindLater = result.id;

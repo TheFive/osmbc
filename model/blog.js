@@ -47,6 +47,7 @@ module.exports.categories = [
   {DE:"Lizenzen",EN:"Licences"},
   {DE:"Programme",EN:"Software"},
   {DE:"Programmierung",EN:"Programming"},
+  {DE:"Releases",EN:"Releases"},
   {DE:"Kennst Du schon …",EN:"Did you know …"},
   {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
   {DE:"Wochenvorschau" ,EN:"Upcoming Events"},
@@ -79,6 +80,7 @@ function create (proto) {
 function setAndSave(user,data,callback) {
   debug("setAndSave");
   debug('user %s',user);
+  should(typeof("user")).eql("string");
   var self = this;
   delete self.lock;
   articleModule.removeOpenBlogCache(); 
@@ -223,15 +225,17 @@ function findOne(obj1,obj2,callback) {
 }
 
 
-function createNewBlog(proto,callback) {
+function createNewBlog(user, proto,callback) {
   debug("createNewBlog");
+  should(typeof(user)).eql("object");
   if (typeof(proto)=='function') {
     callback = proto;
     proto = null;
   }
   if (proto) should.not.exist(proto.id);
 
-  this.findOne(null,{column:"name",desc:true},function(err,result) {
+  this.findOne(" where data->>'name' like 'WN%'",{column:"name",desc:true},function(err,result) {
+    var blog = create();
     var name = "WN250";
     var endDate = new Date();
     if (result) {
@@ -247,19 +251,31 @@ function createNewBlog(proto,callback) {
     var newWnId = parseInt(wnId) +1;
     var newName = "WN"+newWnId;
     var startDate = new Date(endDate);
-    
     startDate.setDate(startDate.getDate()+1);
     endDate.setDate(endDate.getDate()+7);
-    var blog = create();
     blog.name = newName;
     blog.status = "open";
     blog.startDate = startDate.toISOString();
-    blog.endDate = endDate.toISOString();
-    //copy flat prototype to object.
+    blog.endDate = endDate.toISOString();    
     for (var k in proto) {
-      blog[k]=proto[k];
-    }
-    blog.save(callback);
+      blog[k] = proto[k];
+    } 
+    var change={};
+    change.name      = blog.name;
+    change.status    = blog.status;
+    change.startDate = blog.startDate;
+    change.endDate   = blog.endDate;
+    // create an Empty blog and simualte an id != 0
+    var emptyBlog = exports.create();
+    emptyBlog.id = -1;
+
+    blog.save(function feedback(err,savedblog){
+      if (err) return callback(err);
+      messageCenter.global.updateBlog(user,emptyBlog,change,function(err){
+        if (err) return callback(err);
+        return callback(null,savedblog);
+      });
+    });
   });
 }
 
@@ -271,7 +287,7 @@ Blog.prototype.autoClose = function autoClose(cb) {
   var endDateBlog = (new Date(this.endDate)).getTime();
   if (endDateBlog <= time) {
     var changes = {status:"edit"};
-    this.setAndSave("autoclose",changes,function(err){
+    this.setAndSave({OSMUser:"autoclose"},changes,function(err){
       cb(err);
     });
   } else cb();
@@ -309,7 +325,7 @@ function autoCloseBlog(callback) {
         exports.findOne({status:"open"},function(err,result){
           if (err) return cb(err);
           if (!result) {
-            exports.createNewBlog(cb);
+            exports.createNewBlog({OSMUser:"autocreate"},cb);
             return;
           } 
           cb();
@@ -411,12 +427,42 @@ function getPreview(style,user,callback) {
   var bilingual = options.bilingual;
   var futureArticles;
 
+  var articleList = null;
+
   async.series([
     function readFuture(cb) {
+      debug('readFuture');
       articleModule.find({blog:"Future"},{column:"title"},function(err,result){
         if (err) return cb(err);
         if (result) futureArticles = result;
         return cb();
+      });
+    },
+    function readArticlesWithCollector(cb) {
+      debug('readArticlesWithCollector');
+      articleModule.find({blog:self.name},{column:"title"},function(err,result){
+        async.each(result,function(item,each_cb){
+          logModule.find({table:"article",property:"collection",oid:item.id},{column:"timestamp",desc:true},function(err,result){
+            if (err) return each_cb(err);
+            if (result && result.length>0) {
+              var list = {};
+              for (var i =0;i<result.length;i++) {
+                list[result[i].user]="-";
+              }
+              var sep = "";
+              item.collector = "";
+              for (var k in list) {
+                item.collector += sep + k;
+                sep = ",";
+              }
+            }
+            return each_cb(); 
+          });
+        },function finalFunction(err){
+          if (err) return cb(err);
+          articleList = result;
+          return cb();
+        });
       });
     },
     function readArticles(cb) {
@@ -425,123 +471,125 @@ function getPreview(style,user,callback) {
          // (check let...)
 
       debug('readArticles');
-      articleModule.find({blog:self.name},{column:"title"},function(err,result){
-      
-
-      // in case of a normal blog, generate the start and end time
-      // for a help blog, use the Name of the Blog
-      // not in edit mode.
-      if (!options.markdown) {
-        if (self.startDate && self.endDate) {
-          preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
-        }
-        if (!options.edit) {
-         // if (!imageHTML) preview += "<!--         place picture here              -->\n"   
-         // else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
-        }
-      }
-      else {
-        preview = "";
-        if (self.startDate && self.endDate) {
-          preview += moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'\n\n';
-        }
-      }
+      //articleModule.find({blog:self.name},{column:"title"},function(err,result)
+      var result = articleList;
+      {
         
-      // Put every article in an array for the category
-      if (result) {
-        for (i=0;i<result.length;i++ ) {
-          var r = result[i];
-          if (!options.edit && r["markdown"+options.left_lang]=="no translation") continue;
-          if (typeof(articles[r.categoryEN]) == 'undefined') {
-            articles[r.categoryEN] = [];
+
+        // in case of a normal blog, generate the start and end time
+        // for a help blog, use the Name of the Blog
+        // not in edit mode.
+        if (!options.markdown) {
+          if (self.startDate && self.endDate) {
+            preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
           }
-          articles[r.categoryEN].push(r);
+          if (!options.edit) {
+           // if (!imageHTML) preview += "<!--         place picture here              -->\n"   
+           // else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
+          }
         }
-      }
-      var clist = self.getCategories();
-
-      
-      
-      // Generate the blog result along the categories
-      for (i=0;i<clist.length;i++) {
-        var category = clist[i].EN;
-
-        var categoryRIGHT = "";
-        var categoryLEFT = clist[i][options.left_lang];
-        if (bilingual) {
-          categoryRIGHT = clist[i][options.right_lang];
+        else {
+          preview = "";
+          if (self.startDate && self.endDate) {
+            preview += moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'\n\n';
+          }
         }
+          
+        // Put every article in an array for the category
+        if (result) {
+          for (i=0;i<result.length;i++ ) {
+            var r = result[i];
+            if (!options.edit && r["markdown"+options.left_lang]=="no translation") continue;
+            if (typeof(articles[r.categoryEN]) == 'undefined') {
+              articles[r.categoryEN] = [];
+            }
+            articles[r.categoryEN].push(r);
+          }
+        }
+        var clist = self.getCategories();
+
+        
+        
+        // Generate the blog result along the categories
+        for (i=0;i<clist.length;i++) {
+          var category = clist[i].EN;
+
+          var categoryRIGHT = "";
+          var categoryLEFT = clist[i][options.left_lang];
+          if (bilingual) {
+            categoryRIGHT = clist[i][options.right_lang];
+          }
+
+         
+          // ignore any "unpublished" category not in edit mode
+          if (!(options.edit) && category =="--unpublished--") continue;
 
        
-        // ignore any "unpublished" category not in edit mode
-        if (!(options.edit) && category =="--unpublished--") continue;
+          // If the category exists, generate HTML for it
+          if (typeof(articles[category])!='undefined') {
+            debug('Generating HTML for category %s',category);
+            var htmlForCategory = '';
 
-     
-        // If the category exists, generate HTML for it
-        if (typeof(articles[category])!='undefined') {
-          debug('Generating HTML for category %s',category);
-          var htmlForCategory = '';
+            for ( j=0;j<articles[category].length;j++) {
+              var row = articles[category][j];
 
-          for ( j=0;j<articles[category].length;j++) {
-            var row = articles[category][j];
+              var articleMarkdown = row.getPreview(style,user);
+              if (options.markdown) articleMarkdown = "* " + row["markdown"+options.left_lang]+"\n\n";
 
-            var articleMarkdown = row.getPreview(style,user);
-            if (options.markdown) articleMarkdown = "* " + row["markdown"+options.left_lang]+"\n\n";
-
-            htmlForCategory += articleMarkdown;
-          }
-          var header ='';
-          if (category!="Picture") {
-            header = '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n';
-            if (bilingual) {
-            header = '<div class="row"><div class = "col-md-6">' +
-                     '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n' +
-                     '</div><div class = "col-md-6">' +
-                     '<h2 id="'+util.linkify(self.name+'_'+categoryRIGHT)+'">'+categoryRIGHT+'</h2>\n' +
-                     '</div></div>';
+              htmlForCategory += articleMarkdown;
             }
-            //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
-          } else {
-            header = "<!--         place picture here              -->\n" ;
-            if (bilingual) {
+            var header ='';
+            if (category!="Picture") {
+              header = '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n';
+              if (bilingual) {
               header = '<div class="row"><div class = "col-md-6">' +
+                       '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n' +
                        '</div><div class = "col-md-6">' +
+                       '<h2 id="'+util.linkify(self.name+'_'+categoryRIGHT)+'">'+categoryRIGHT+'</h2>\n' +
                        '</div></div>';
-              htmlForCategory = header + '\n'+htmlForCategory+'\n';                 
+              }
+              //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+            } else {
+              header = "<!--         place picture here              -->\n" ;
+              if (bilingual) {
+                header = '<div class="row"><div class = "col-md-6">' +
+                         '</div><div class = "col-md-6">' +
+                         '</div></div>';
+                htmlForCategory = header + '\n'+htmlForCategory+'\n';                 
+              }
             }
-          }
-          if (options.markdown) header = "## "+categoryLEFT;
+            if (options.markdown) header = "## "+categoryLEFT;
 
-          
-          if (options.markdown) {
-            htmlForCategory = header + "\n\n"+htmlForCategory;
-          } else {
-            htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n';
-          }
+            
+            if (options.markdown) {
+              htmlForCategory = header + "\n\n"+htmlForCategory;
+            } else {
+              htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n';
+            }
 
-          preview += htmlForCategory;
-          delete articles[category];
+            preview += htmlForCategory;
+            delete articles[category];
+          }
         }
-      }
-      delete articles["--unpublished--"];
-      for (var k in articles) {
-        preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
-        preview += "<p> Please use [edit blog detail] to enter category</p>\n";
-        preview += "<p> Or edit The Articles ";
-        for (i=0;i<articles[k].length;i++) {
-          preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</a> ';
+        delete articles["--unpublished--"];
+        for (var k in articles) {
+          preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
+          preview += "<p> Please use [edit blog detail] to enter category</p>\n";
+          preview += "<p> Or edit The Articles ";
+          for (i=0;i<articles[k].length;i++) {
+            preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</a> ';
+          }
+          preview += "</p>\n";
         }
-        preview += "</p>\n";
-      }
-      if (futureArticles && !options.fullfinal && futureArticles.length>0) {
-        preview += "<h3>Articles waiting in Future Blog</h3>\n<ul>";
-        for (i = 0;i<futureArticles.length;i++) {
-          preview += '<li><a href="'+config.getValue('htmlroot')+'/article/'+futureArticles[i].id+'">'+futureArticles[i].title+'</a></li>';
+        if (futureArticles && !options.fullfinal && futureArticles.length>0) {
+          preview += "<h3>Articles waiting in Future Blog</h3>\n<ul>";
+          for (i = 0;i<futureArticles.length;i++) {
+            preview += '<li><a href="'+config.getValue('htmlroot')+'/article/'+futureArticles[i].id+'">'+futureArticles[i].title+'</a></li>';
+          }
+          preview += "</ul>";
         }
-        preview += "</ul>";
-      }
-      cb(null);
-    });
+        cb(null);
+      }//);
     },
     function createTeam(cb) {
       debug('createTeam');

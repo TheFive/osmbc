@@ -1,5 +1,63 @@
 # Change Log
 
+## [0.6.9](https://github.com/TheFive/osmbc/tree/0.6.9) (2016-01-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7a...0.6.9)
+
+**Closed issues:**
+
+- Document Source of Blog Creation. [\#284](https://github.com/TheFive/osmbc/issues/284)
+- Base calculation of new WN Number on non trash blogs startin with WN [\#281](https://github.com/TheFive/osmbc/issues/281)
+
+**Merged pull requests:**
+
+- new countryFlags.js [\#285](https://github.com/TheFive/osmbc/pull/285) ([fredao](https://github.com/fredao))
+
+## [0.6.7a](https://github.com/TheFive/osmbc/tree/0.6.7a) (2016-01-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.8...0.6.7a)
+
+## [0.6.8](https://github.com/TheFive/osmbc/tree/0.6.8) (2016-01-26)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7...0.6.8)
+
+**Fixed bugs:**
+
+- Changing a language after set a blog to review sets the new blog to review too. [\#282](https://github.com/TheFive/osmbc/issues/282)
+
+**Closed issues:**
+
+- Display name of all collectors in Blog Preview. [\#283](https://github.com/TheFive/osmbc/issues/283)
+
+## [0.6.7](https://github.com/TheFive/osmbc/tree/0.6.7) (2016-01-26)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.6...0.6.7)
+
+**Closed issues:**
+
+- Add a Trash for blogs [\#280](https://github.com/TheFive/osmbc/issues/280)
+
+## [0.6.6](https://github.com/TheFive/osmbc/tree/0.6.6) (2016-01-25)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5c...0.6.6)
+
+**Implemented enhancements:**
+
+- Add links to WN and Weekly Wiki. [\#278](https://github.com/TheFive/osmbc/issues/278)
+
+**Closed issues:**
+
+- new category "Software Releases" [\#279](https://github.com/TheFive/osmbc/issues/279)
+
+## [0.6.5c](https://github.com/TheFive/osmbc/tree/0.6.5c) (2016-01-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5b...0.6.5c)
+
+**Implemented enhancements:**
+
+- add Colombia & Bolivia country flags. [\#277](https://github.com/TheFive/osmbc/issues/277)
+
+**Fixed bugs:**
+
+- is it possible to to \*not export\* the Blog Missing Cat: --unpublished-- [\#276](https://github.com/TheFive/osmbc/issues/276)
+
+## [0.6.5b](https://github.com/TheFive/osmbc/tree/0.6.5b) (2016-01-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.ar...0.6.5b)
+
 ## [0.6.ar](https://github.com/TheFive/osmbc/tree/0.6.ar) (2016-01-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.ar)
 

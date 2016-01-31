@@ -60,7 +60,7 @@ LogModuleReceiver.prototype.updateArticle= function(user,article,change,cb) {
         function(cb) {
            logModule.log({oid:article.id,
                           blog:logblog,
-                          user:user.displayName,
+                          user:user.OSMUser,
                           table:"article",
                           property:key,
                           from:article[key],
@@ -78,6 +78,7 @@ LogModuleReceiver.prototype.updateBlog= function(user,blog,change,cb) {
   debug('LogModuleReceiver::updateBlog');
   should.exist(blog.id);
   should(blog.id).not.equal(0);
+  should(typeof(user)).eql("object");
   var timestamp = new Date();
   async.forEachOf(change,function setAndSaveEachOf(value,key,cb_eachOf){
     debug('setAndSaveEachOf');
@@ -100,7 +101,7 @@ LogModuleReceiver.prototype.updateBlog= function(user,blog,change,cb) {
         debug('writeLog');
         logModule.log({oid:blog.id,
                         blog:blog.name,
-                        user:user,
+                        user:user.OSMUser,
                         table:"blog",
                         property:key,
                         from:blog[key],

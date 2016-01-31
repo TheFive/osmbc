@@ -4,11 +4,9 @@ var async  = require('async');
 var path   = require('path');
 var fs     = require('fs');
 
-var blogModule    = require('../model/blog.js');
 var articleModule = require('../model/article.js');
 
 var articleRouter = require('../routes/article.js');
-var util = require('../util.js');
 
 var testutil = require('./testutil.js');
 
@@ -18,7 +16,7 @@ describe('router/article',function() {
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     testutil.clearDB(bddone);
-  }) 
+  }); 
   describe('renderArticleId',function() {
     it('should call next if article not exist',function(bddone) {
       articleModule.createNewArticle({titel:"Hallo"},function(err,article) {
@@ -29,10 +27,11 @@ describe('router/article',function() {
         req.params = {};
         req.params.id = newId;
         var res = {};
+        var next;
 
         async.series([
           function(callback) {
-            res.render = sinon.spy(callback)
+            res.render = sinon.spy(callback);
             next = sinon.spy(callback);
             articleRouter.renderArticleId(req,res,next);
           }],
@@ -42,14 +41,14 @@ describe('router/article',function() {
             should(res.render.called).be.false();
             bddone();            
           }
-        )
-      })
-    })
+        );
+      });
+    });
     describe('Do file base tests',function() {
       beforeEach(function (bddone) {
         articleModule.removeOpenBlogCache();
         testutil.clearDB(bddone);
-      })
+      });
       function doATest(filename) {
        
         it('should test: '+filename,function (bddone) {
@@ -57,8 +56,6 @@ describe('router/article',function() {
 
           var data =  JSON.parse(fs.readFileSync(file));
          
-          var md;
-          var html;
           var article;
           var res = {};
           var req = {};
@@ -81,12 +78,12 @@ describe('router/article',function() {
                 article = result;
                 req.params.article_id = result.id;
                 done();
-              })         
+              });    
             } ,
             function(done) {
               // do the test
-              res.render = sinon.spy(function(){done()});
-              next = sinon.spy(function(){done()});
+              res.render = sinon.spy(function(){done();});
+              next = sinon.spy(function(){done();});
 
               articleRouter.renderArticleId(req,res,next);
             }
@@ -119,7 +116,7 @@ describe('router/article',function() {
               for (var k in renderData.articleReferences) {
                 if (k=="count") continue;
                 var a= renderData.articleReferences[k];
-                for (var i=0;i<a.length;i++) {
+                for (i=0;i<a.length;i++) {
                   delete a[i]._meta;
                   delete a[i].id;
                 }
@@ -131,17 +128,17 @@ describe('router/article',function() {
  
               bddone();
             }
-          )   
-        })
+          );   
+        });
       }
       testutil.generateTests("data",/^router.article.renderArticleId.+json/,doATest);
-    })     
-  })
+    });
+  });
   describe('list',function() {
     describe('Do file base tests',function() {
       beforeEach(function (bddone) {
         testutil.clearDB(bddone);
-      })
+      });
       function doATest(filename) {
        
         it('should test: '+filename,function (bddone) {
@@ -149,7 +146,6 @@ describe('router/article',function() {
 
           var data =  JSON.parse(fs.readFileSync(file));
          
-          var articles;
           var res = {};
           var req = {};
           req.params ={};
@@ -173,8 +169,8 @@ describe('router/article',function() {
 
             function(done) {
               // do the test
-              res.render = sinon.spy(function(){done()});
-              next = sinon.spy(function(){done()});
+              res.render = sinon.spy(function(){done();});
+              next = sinon.spy(function(){done();});
 
               articleRouter.renderList(req,res,next);
             }
@@ -206,12 +202,12 @@ describe('router/article',function() {
  
               bddone();
             }
-          )   
-        })
+          );
+        });
       }
       testutil.generateTests("data",/^router.article.list.+json/,doATest);
-    })     
-  })
+    });
+  });
   describe('postArticleID',function() {
     it('should call next if article not exist',function(bddone) {
       articleModule.createNewArticle({titel:"Hallo"},function(err,article) {
@@ -224,6 +220,7 @@ describe('router/article',function() {
         req.user = {displayName:"test"};
         req.body = {};
         var res = {};
+        var next;
 
         async.series([
           function(callback) {
@@ -239,9 +236,9 @@ describe('router/article',function() {
             should(next.called).be.true();
             bddone();            
           }
-        )
-      })
-    })
+        );
+      });
+    });
     it('should post All Values',function(bddone) {
       articleModule.createNewArticle({title:"Hallo"},function(err,article) {
         should.not.exist(err);
@@ -258,7 +255,7 @@ describe('router/article',function() {
                    category:"CATEGORY",
                    categoryEN:"CATEGORYEN",
                    version:"1",
-                   title:"TITLE"}
+                   title:"TITLE"};
         req.user = {displayName:"TESTUSER"};
         req.session = {};
         var res = {};
@@ -267,7 +264,7 @@ describe('router/article',function() {
 
         async.series([
           function(callback) {
-            res.redirect = sinon.spy(function (value) {callback();})
+            res.redirect = sinon.spy(function () {callback();});
             next = sinon.spy(callback);
             articleRouter.postArticle(req,res,next);
           },
@@ -276,7 +273,7 @@ describe('router/article',function() {
               should.not.exist(err);
               article = result;
               callback();
-            })
+            });
           }
           ],
           function(err) {
@@ -293,13 +290,13 @@ describe('router/article',function() {
                    collection:"COLLECTION",
                    comment:"COMMENT",
                    categoryEN:"CATEGORYEN",
-                   title:"TITLE",version:2})
+                   title:"TITLE",version:2});
             bddone();            
           }
-        )
-      })
-    })
-  })
+        );
+      });
+    });
+  });
   describe('createArticle ',function() {
     it('should call create an article whith given blog and category',function(bddone) {
       var req = {};
@@ -307,7 +304,6 @@ describe('router/article',function() {
 
       var res = {};
       var next;
-      var article_id;
       res.rendervar = {layout:"TEMP"};
 
 
@@ -315,8 +311,8 @@ describe('router/article',function() {
 
       async.series([
         function(callback) {
-          res.redirect = sinon.spy(function (value) {callback();})
-          res.render = sinon.spy(function (value) {callback();})
+          res.redirect = sinon.spy(function () {callback();});
+          res.render = sinon.spy(function () {callback();});
           next = sinon.spy(callback);
           articleRouter.createArticle(req,res,next);
         }
@@ -329,15 +325,15 @@ describe('router/article',function() {
           should(res.redirect.called).be.false();
           bddone();            
         }
-      )
-    })
-  })
+      );
+    });
+  });
   describe('searchAndCreate',function() {
     describe('Do file base tests',function() {
       beforeEach(function (bddone) {
         articleModule.removeOpenBlogCache();
         testutil.clearDB(bddone);
-      })
+      });
       function doATest(filename) {
        
         it('should test: '+filename,function (bddone) {
@@ -360,8 +356,8 @@ describe('router/article',function() {
             },
             function(done) {
               // do the test
-              res.render = sinon.spy(function(){done()});
-              next = sinon.spy(function(){done()});
+              res.render = sinon.spy(function(){done();});
+              next = sinon.spy(function(){done();});
 
               articleRouter.searchAndCreate(req,res,next);
             }
@@ -388,10 +384,10 @@ describe('router/article',function() {
  
               bddone();
             }
-          )   
-        })
+          );
+        });
       }
       testutil.generateTests("data",/^router.article.searchAndCreate.+json/,doATest);
-    })     
-  })
-})
+    });
+  });
+});

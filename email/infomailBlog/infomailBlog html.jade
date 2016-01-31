@@ -1,14 +1,22 @@
 h2
-  | Blog #{logblog} changed.
+  | Blog #{newBlog.name} changed.
 
 p
   | Blog 
   a(href="#{layout.url}#{layout.htmlroot}/blog/#{newBlog.name}") #{(newBlog.name)?newBlog.name:"MISSING NAME"}
-  |  was changed by #{changeby.OSMUser} 
+  |  was changed by #{changeby.OSMUser}
 
-- for (prop in newBlog)
-  if (prop !== "version")
-    if newBlog[prop]!==blog[prop]
-        p=newBlog[prop]
-
+table
+  tr
+    th
+      |Key
+    th
+      |Value
+  - for (prop in newBlog)
+    if (prop !== "version")
+      if newBlog[prop]!==blog[prop]
+        tr
+          td=prop
+          td=newBlog[prop]
+  
 

@@ -25,16 +25,26 @@ function generateQuery(table,obj,order) {
         var value = obj[k];
         var op = "=";
         if (typeof(value)=='string') {
-          // escape the Apostroph
-          value = value.replace("'","''");
           // check first operator in string
           if (value.substring(0,2)=="!=") {
             op = "!=";
             value = value.substring(2,9999);
-          }           
+          }   
+          if (value.substring(0,2) == "IN") {
+            op = "in";
+            value = value.substring(2,999999);
+          }
+          if (op != "in") {
+            // escape the Apostroph
+            value = value.replace("'","''");
+          }             
         }
 
         var n = "data->>'"+k+"'"+op+"'"+value+"'"; 
+        if (op == "in") {
+          n = "data->>'"+k+"'"+op+" "+value; 
+          n = "("+n+" and (data->'"+k+"') is not null)";
+        }
 
         if (value==="") {
           if (op == "=") {
@@ -150,9 +160,9 @@ module.exports.save = function(callback) {
           /*query.on('row',function(row) {
             results.push(row);
           })*/
-          query.on('end',function (result) {
+          query.on('end',function () {
             pgdone();
-            return callback(null,result);
+            return callback(null,self);
           });
         }
       );

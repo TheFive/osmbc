@@ -81,7 +81,13 @@ block content
       span.label.label-danger
         | total
       |  Open Blog
-
+    p
+      | More bloglists
+    p
+       a(href="#{layout.htmlroot}/blog/list?status=open") (open) 
+       a(href="#{layout.htmlroot}/blog/list?status=edit") (edit) 
+       a(href="#{layout.htmlroot}/blog/list?status=closed") (closed) 
+       a(href="#{layout.htmlroot}/blog/list?status=trash") (trash) 
   row.hidden-xs
     div(id="additionalText")
       if additionalText

@@ -25,7 +25,7 @@ var mailReceiver  = require('../notification/mailReceiver.js');
 
 
 describe('model/article', function() {
-  var testUser = {displayName:"user"};
+  var testUser = {displayName:"user",OSMUser:"user"};
   before(function (bddone) {
     testutil.clearDB(bddone);
   }); 
@@ -533,7 +533,7 @@ describe('model/article', function() {
         function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test1",collection:"col1",category:"catA"},cb);},
         function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test2",collection:"col2",category:"catB"},cb);},
         function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdownDE:"test3",collection:"col3",category:"catA"},cb);},
-        function b1(cb) {blogModule.createNewBlog({name:"WN2",status:"open"},cb);}
+        function b1(cb) {blogModule.createNewBlog({OSMUser:"test"},{name:"WN2",status:"open"},cb);}
 
         ],function(err) {
           should.not.exist(err);
@@ -604,9 +604,9 @@ describe('model/article', function() {
         function c1(cb) {articleModule.createNewArticle({blog:"WN1",title:"1",markdownDE:"test1 some [ping](https://link.to/hallo)",collection:"col1 http://link.to/hallo",category:"catA"},cb);},
         function c2(cb) {articleModule.createNewArticle({blog:"WN1",blogEN:"EN1",title:"2",markdownDE:"test1 some [ping](https://link.to/hallo) http://www.osm.de/12345",collection:"http://www.osm.de/12345",category:"catB"},cb);},
         function c3(cb) {articleModule.createNewArticle({blog:"WN2",blogEN:"EN1",title:"3",markdownDE:"test1 some [ping](https://link.to/hallo)",collection:"col3 http://www.google.de",category:"catA"},cb);},
-        function a1(cb) {blogModule.createNewBlog({title:"WN1",status:"closed"},cb);},
-        function a2(cb) {blogModule.createNewBlog({title:"WN2",status:"open"},cb);},
-        function a2(cb) {blogModule.createNewBlog({title:"EN1",status:"closed"},cb);}
+        function a1(cb) {blogModule.createNewBlog({OSMUser:"test"},{title:"WN1",status:"closed"},cb);},
+        function a2(cb) {blogModule.createNewBlog({OSMUser:"test"},{title:"WN2",status:"open"},cb);},
+        function a2(cb) {blogModule.createNewBlog({OSMUser:"test"},{title:"EN1",status:"closed"},cb);}
                       
         ],function(err) {
           should.not.exist(err);

@@ -129,6 +129,7 @@ html(lang='en')
               ul.dropdown-menu(role='menu')
                 li
                   a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md") Version #{layout.osmbc_version} 
+                li.divider
                 li
                   a(href="#{layout.htmlroot}/help/OSMBC") OSMBC   
                 li
@@ -140,7 +141,13 @@ html(lang='en')
                 li
                   a(href="#{layout.htmlroot}/help/Beginner's How To") Beginner's How To                    
                 li
-                  a(href="#{layout.htmlroot}/help/Categories") Which Category to use ?                    
+                  a(href="#{layout.htmlroot}/help/Categories") Which Category to use ?   
+                li.divider
+                li
+                  a(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
+                li
+                  a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
+
             li.dropdown
               a.btn.dropdown-toggle.osmbc-lang(href='#', style="color:white", data-toggle='dropdown')
                 |#{layout.language} 
