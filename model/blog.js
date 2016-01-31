@@ -88,6 +88,10 @@ function setAndSave(user,data,callback) {
         self.save(cb);
       } else cb();
     },
+    function logit(cb) {
+      messageCenter.global.updateBlog(user,self,data,cb);
+    },
+ 
     function(cb){
       should.exist(self.id);
       should(self.id).not.equal(0);
@@ -101,7 +105,7 @@ function setAndSave(user,data,callback) {
         }
         self[key] = value;
       }
-      messageCenter.global.updateBlog(user,self,data,cb);
+      cb();
     }],function(err) {
       if (err) return callback(err);
       self.startCloseTimer();

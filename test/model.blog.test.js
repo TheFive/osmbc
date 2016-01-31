@@ -4,12 +4,14 @@ var async  = require('async');
 var should = require('should');
 var path   = require('path');
 var fs     = require('fs');
+var sinon  = require('sinon');
 
 
 var testutil = require('./testutil.js');
 
 var logModule     = require('../model/logModule.js');
 var blogModule    = require('../model/blog.js');
+var mailReceiver  = require('../notification/mailReceiver.js'); 
 
 
 
@@ -212,6 +214,42 @@ describe('model/blog', function() {
         });
       });
     });
+    describe('trigger info email',function() {
+      var oldtransporter;
+      afterEach(function (bddone){
+        mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+        bddone();
+      });
+
+      beforeEach(function (bddone){
+        oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
+        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+        testutil.importData({user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailBlogStatusChange:"true"},
+                                   {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailBlogStatusChange:"true"},
+                                   {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailBlogLanguageStatusChange:"EN ES"},
+                                   {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
+                                   {OSMUser:"User5",                     access:"full",mailBlogStatusChange:"true"}]},bddone);
+      });
+      it('should send out mail when creating a blog',function (bddone){
+        blogModule.createNewBlog({OSMUser:"testuser"},function(err,article){
+          should.not.exist(err);
+          should(mailReceiver.for_test_only.transporter.sendMail.calledTwice).be.True();
+          var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+          //var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p>';
+          //should(result.html).eql(expectedMail);
+          should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+            {from:"noreply@gmail.com",
+            to:"user1@mail.bc",
+            subject:"WN789 added collection",
+            html:expectedMail,
+            text:null});
+
+
+          bddone();
+
+        });
+      });
+    }); 
   });
   describe('closeBlog',function() {
     before(function (bddone) {

@@ -82,20 +82,25 @@ LogModuleReceiver.prototype.updateBlog= function(user,blog,change,cb) {
   async.forEachOf(change,function setAndSaveEachOf(value,key,cb_eachOf){
     debug('setAndSaveEachOf');
     // There is no Value for the key, so do nothing
+
     if (typeof(value)=='undefined') return cb_eachOf();
     // The Value to be set, is the same then in the object itself
+
     // so do nothing
     if (value === blog[key]) return cb_eachOf();
+
     if (typeof(blog[key])==='undefined' && value === '') return cb_eachOf();
+
     if (typeof(value)=='object') {
         if (JSON.stringify(value)==JSON.stringify(blog[key])) return cb_eachOf();
     }
+
     async.series ( [
       function writeLog(cb) {
         debug('writeLog');
         logModule.log({oid:blog.id,
                         blog:blog.name,
-                        user:user.displayName,
+                        user:user,
                         table:"blog",
                         property:key,
                         from:blog[key],
