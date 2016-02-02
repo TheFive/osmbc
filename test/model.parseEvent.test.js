@@ -1,3 +1,5 @@
+"use strict";
+
 var should = require('should');
 var parseEvent = require('../model/parseEvent.js');
 var nock = require('nock');

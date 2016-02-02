@@ -1,3 +1,4 @@
+"use strict";
 // Article createNewArticle
 // create article with prototyp
 // create Article without prototyp
@@ -644,9 +645,9 @@ describe('model/article', function() {
         article.calculateUsedLinks(function(err,result){
           should.not.exist(err);
           should.exist(result);
-          should(result.count).equal(4);
-          should(result["https://link.to/hallo"].length).equal(3);
-          should(result["http://www.google.de"].length).equal(1);
+          should(result.count).equal(2);
+          should(result["https://link.to/hallo"].length).equal(2);
+          should(result["http://www.google.de"].length).equal(0);
 
           bddone();
 

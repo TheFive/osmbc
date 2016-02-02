@@ -1,3 +1,5 @@
+"use strict";
+
 var debug = require("debug")("passport-stub");
 var done, passportStub;
 
@@ -30,11 +32,12 @@ passportStub = (function(_this) {
       return _this.user;
     });
     req.__defineSetter__('user', function(val) {
-      return _this.user = val; //jshint ignore:line
+      _this.user = val;
+      return val; 
     });
     return next();
   };
-})(this);
+})(this); //jshint ignore:line
 
 exports.install = function(app) {
   debug("passportStub");
@@ -68,10 +71,12 @@ exports.login = function(user) {
     throw new Error('Passport Stub not installed. Please run "passportStub.install(app)" first.');
   }
   this.active = true;
-  return this.user = user; //jshint ignore:line
+  this.user = user;
+  return user; 
 };
 
 exports.logout = function() {
   debug("logout");
-  return this.active = false; // jshint ignore:line
+  this.active = false;
+  return false; 
 };

@@ -1,11 +1,11 @@
+"use strict";
+
 var async = require('async');
 var sinon = require('sinon');
 var should = require('should');
 var userRouter = require('../routes/users.js');
 var userModule = require('../model/user.js');
 var testutil = require('./testutil.js');
-var pg = require('pg');
-var debug = require('debug')('OSMBC:test');
 
 
 describe('router/user',function() {
@@ -19,11 +19,12 @@ describe('router/user',function() {
 
       var res = {};
       var next;
-      var article_id;
+      var user_id;
+     
 
       async.series([
         function(callback) {
-          res.redirect = sinon.spy(function (value) {callback();})
+          res.redirect = sinon.spy(function () {callback();});
           next = sinon.spy(callback);
           userRouter.createUser(req,res,next);
         },
@@ -33,7 +34,7 @@ describe('router/user',function() {
             should.exist(result);
             user_id = result.id;
             callback();
-          })
+          });
         }
 
         ],
@@ -44,9 +45,9 @@ describe('router/user',function() {
           should(res.redirect.firstCall.calledWith("/usert/"+user_id+"?edit=true")).be.true();
           bddone();            
         }
-      )
-    })
-  })
+      );
+    });
+  });
   describe('postUserId',function() {
     it('should call save changed Values',function(bddone) {
       var req = {body:{OSMUser:"testNew",access:"full"},params:{},user:{displayName:"test"}};
@@ -63,10 +64,10 @@ describe('router/user',function() {
             user_id = user.id;
             req.params.user_id = user_id;
             callback();
-          })
+          });
         },
         function(callback) {
-          res.redirect = sinon.spy(function (value) {callback();})
+          res.redirect = sinon.spy(function () {callback();});
           next = sinon.spy(callback);
           userRouter.postUserId(req,res,next);
         },
@@ -76,7 +77,7 @@ describe('router/user',function() {
             should.exist(result);
             newUser = result;
             callback();
-          })
+          });
         }
 
         ],
@@ -89,14 +90,14 @@ describe('router/user',function() {
           should(res.redirect.firstCall.calledWith("/usert/"+user_id)).be.true();
           bddone();            
         }
-      )
-    })
-  })
+      );
+    });
+  });
   describe('renderUserId',function() {
     after(function (bddone){
      // console.dir(GLOBAL);
       bddone();
-    })
+    });
     it('should call next if user not exist',function(bddone) {
       this.timeout(5000);
       userModule.createNewUser({displayName:"TeST"},function(err,user) {
@@ -110,7 +111,7 @@ describe('router/user',function() {
 
         async.series([
           function(callback) {
-            res.render = sinon.spy(callback)
+            res.render = sinon.spy(callback);
             next = sinon.spy(callback);
             userRouter.renderUserId(req,res,next);
           }],
@@ -121,10 +122,10 @@ describe('router/user',function() {
             should(res.render.called).be.false();
             bddone();            
           }
-        )
-      })
-    })
-  })
+        );
+      });
+    });
+  });
   describe('renderList',function(){
     before(testutil.clearDB);
     it('should render 2 of 3 users',function(bddone){
@@ -147,11 +148,12 @@ describe('router/user',function() {
 
           async.series([
             function(callback) {
-              res.render = sinon.spy(callback)
+              res.render = sinon.spy(callback);
               next = sinon.spy(callback);
               userRouter.renderList(req,res,next);
             }],
-            function(err) {
+            function() {
+
               should(next.called).be.false();
               should(res.render.called).be.true();
               should(res.render.firstCall.calledWith("user"));
@@ -160,16 +162,16 @@ describe('router/user',function() {
               should(param.users[0].displayName).equal("Test1");
               should(param.users[1].displayName).equal("Test2");
 
-              bddone();            
+              cb();            
             }
-          )
+          );
         }
 
 
       ],function(err){
         should.not.exist(err);
         bddone();
-      })
-    })
+      });
+    });
   });
-})
+});

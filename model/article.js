@@ -1,4 +1,4 @@
-//"use strict";
+"use strict";
 // Exported Functions and prototypes are defined at end of file
 
 
@@ -59,12 +59,14 @@ function Article (proto)
 	debug("Article");
   debug("Prototype %s",JSON.stringify(proto));
 	this.id = 0;
-  this._meta={};
-  this._meta.table = "article";
 	for (var k in proto) {
     this[k] = proto[k];
   }
 }
+
+Article.prototype.getTable= function getTable() {
+  return "article";
+};
 
 function create (proto) {
 	debug("create");
@@ -85,6 +87,20 @@ function createNewArticle (proto,callback) {
 
 
 
+
+
+// getPreview deliveres the HTML for an article.
+// Parameter1: lang
+//             language for the preview
+// parameter2: Options
+//      edit:      true if any additional edit links should be generated
+//      comment:   true if blue or red border should be placed based on comment
+//      glyphicon: true if the bullet should be an edit glyphicon
+//      editLink:  true if an "Edit&Translate" should be placed at the end of an article
+//      overview:  true if title or a small text is shown, instead of an article
+//      marktext:  true if missing language markdown should be <mark>ed.
+//Article.prototype.getPreview = getPreview;
+//Article.prototype.getCategory = getCategory;
 
 
 Article.prototype.getPreview = function getPreview(style,user) {
@@ -436,22 +452,22 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
 
 function find(obj,order,callback) {
 	debug("find");
-  pgMap.find(this,obj,order,callback);
+  pgMap.find({table:"article",create:create},obj,order,callback);
 }
 
 function findById(id,callback) {
 	debug("findById %s",id);
-  pgMap.findById(id,this,callback);
+  pgMap.findById(id,{table:"article",create:create},callback);
 }
 
 function findOne(obj1,obj2,callback) {
   debug("findOne");
-  pgMap.findOne(this,obj1,obj2,callback);
+  pgMap.findOne({table:"article",create:create},obj1,obj2,callback);
 }
 
 function fullTextSearch(search,order,callback) {
   debug('fullTextSearch');
-  pgMap.fullTextSearch(module.exports,search,order,callback);
+  pgMap.fullTextSearch({table:"article",create:create},search,order,callback);
 }
 
 function findEmptyUserCollectedArticles(lang,user,callback) {
@@ -467,7 +483,7 @@ function findEmptyUserCollectedArticles(lang,user,callback) {
            and ((blog.data->'exported"+lang+"') is null or blog.data->>'exorted"+lang+"'!='true') \
            and ((article.data->'markdown"+lang+"') is null or article.data->>'markdown"+lang+"' = '')";
 
-  pgMap.find(this,query,callback);
+  pgMap.find({table:"article",create:create},query,callback);
 }
 
 function findUserEditFieldsArticles(blog,user,field,callback) {
@@ -478,7 +494,7 @@ function findUserEditFieldsArticles(blog,user,field,callback) {
            and changes.data->>'user' = '"+user+"' \
            and changes.data->>'property' = '"+field+"'";
 
-  pgMap.find(this,query,callback);
+  pgMap.find({table:"article",create:create},query,callback);
 }
 
 Article.prototype.calculateLinks = function calculateLinks() {
@@ -573,10 +589,15 @@ function dropTable(cb) {
   pgMap.dropTable('article',cb);
 }
 
-function calculateUsedLinks(callback) {
+// calculateUsedLinks(callback)
+// Async function to search for each Link in the article in the database
+// callback forwards every error, and as result offers an
+// object map, with and array of Articles for each shortened link
+Article.prototype.calculateUsedLinks = function calculateUsedLinks(callback) {
   debug('calculateUsedLinks');
   // Get all Links in this article
   var usedLinks = this.calculateLinks();
+  var self = this;
 
   var articleReferences = {};
   articleReferences.count = 0;
@@ -593,9 +614,11 @@ function calculateUsedLinks(callback) {
        
       // search in the full Module for the link
       fullTextSearch(reference,{column:"blog",desc:true},function(err,result) {
+        debug("fullTextSearch Result");
+        if (err) return cb(err);
         if (result) {
           for (var i=result.length-1;i>=0;i--){
-            if (result[i].id == this.id) {
+            if (result[i].id == self.id) {
               result.splice(i,1);
             }
           }
@@ -605,11 +628,12 @@ function calculateUsedLinks(callback) {
         else articleReferences[reference] = [];
         cb();
       });
-    },function(err) {
+    },function finalFunction(err) {
+        debug('finalFunction');
         callback(err,articleReferences);
       }
   );
-}
+};
 
 Article.prototype.getCategory = function getCategory(lang) {
   debug("getCategory");
@@ -653,25 +677,6 @@ Article.prototype.save = pgMap.save;
 Article.prototype.remove = pgMap.remove;
 
 
-// getPreview deliveres the HTML for an article.
-// Parameter1: lang
-//             language for the preview
-// parameter2: Options
-//      edit:      true if any additional edit links should be generated
-//      comment:   true if blue or red border should be placed based on comment
-//      glyphicon: true if the bullet should be an edit glyphicon
-//      editLink:  true if an "Edit&Translate" should be placed at the end of an article
-//      overview:  true if title or a small text is shown, instead of an article
-//      marktext:  true if missing language markdown should be <mark>ed.
-//Article.prototype.getPreview = getPreview;
-//Article.prototype.getCategory = getCategory;
-
-
-// calculateUsedLinks(callback)
-// Async function to search for each Link in the article in the database
-// callback forwards every error, and as result offers an
-// object map, with and array of Articles for each shortened link
-Article.prototype.calculateUsedLinks = calculateUsedLinks;
 
 // lock an Article for editing
 // adds a timestamp for the lock
@@ -708,7 +713,6 @@ module.exports.fullTextSearch = fullTextSearch;
 
 // Find one Object (similar to find, but returns first result)
 module.exports.findOne = findOne;
-module.exports.table = "article";
 
 // Return an String Array, with all blog references in Article
 // that does not have a "finished" Blog in database

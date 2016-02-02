@@ -1,3 +1,5 @@
+"use strict";
+
 var debug = require('debug')('OSMBC:routes:tool');
 var express = require('express');
 var router = express.Router();

@@ -1,3 +1,5 @@
+"use strict";
+
 var should = require('should');
 var debug = require('debug')('OSMBC:routes:index');
 var express = require('express');

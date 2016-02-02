@@ -1,3 +1,5 @@
+"use strict";
+
 var config = require('../config.js');
 var async = require('async');
 var should = require('should');

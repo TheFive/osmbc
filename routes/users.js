@@ -1,3 +1,5 @@
+"use strict";
+
 var express = require('express');
 var should = require('should');
 var async = require('async');

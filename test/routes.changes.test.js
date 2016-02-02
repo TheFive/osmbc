@@ -1,3 +1,5 @@
+"use strict";
+
 var should = require('should');
 var async = require('async');
 var sinon = require('sinon');

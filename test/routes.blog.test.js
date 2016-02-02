@@ -1,8 +1,8 @@
+"use strict";
+
 var async = require('async');
 var sinon = require('sinon');
 var should = require('should');
-var path = require('path'); //jshint ignore:line
-var fs = require('fs');//jshint ignore:line
 
 var testutil = require('../test/testutil.js');
 var blogModule = require('../model/blog.js');

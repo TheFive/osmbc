@@ -1,3 +1,5 @@
+"use strict";
+
 var pg     = require('pg');
 var should = require('should');
 var async  = require('async');
