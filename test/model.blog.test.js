@@ -286,7 +286,7 @@ describe('model/blog', function() {
         });
       });
       it('should send out mail when review is started',function (bddone){
-        blogModule.createNewBlog({OSMUser:"testuser"},function(err,blog){
+        blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
           should.not.exist(err);
           // reset sinon spy:
           mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});

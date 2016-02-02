@@ -21,7 +21,7 @@ var infoMailBlogtemplateDir = path.join(__dirname, '..','email', 'infomailBlog')
 var infomailBlog = new EmailTemplate(infoMailBlogtemplateDir);
 
 var infoMailInfotemplateDir = path.join(__dirname, '..','email', 'infomailBlog');
-var infomailInfo = new EmailTemplate(infoMailBlogtemplateDir);
+var infomailInfo = new EmailTemplate(infoMailInfotemplateDir);
 
 var welcomeMailtemplateDir = path.join(__dirname, '..','email', 'welcome');
 var welcomemail = new EmailTemplate(welcomeMailtemplateDir);
@@ -72,14 +72,20 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
   }); 
 };
 
-MailReceiver.prototype.sendInfo = function sendInfo(info,callback) {
-  debug("MailReceiver::sendInfo");
+MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,status,callback) {
+  debug("MailReceiver::sendLanguageStatus");
 
   var self = this;
 
-  var data = {user:this.user,info:info};
 
-  var subject = info.blog +" has changed "+info.property+" from "+info.from+" to "+info.to;
+  var subject = blog.name +"("+lang+") has been reviewed by user "+user.OSMName;
+  if (status === "startreview") {
+    subject = blog.name +"("+lang+") review has been started";
+  }
+  if (status === "markexported") {
+    subject = blog.name + "("+lang+") is exported to WordPress";
+  }
+  data = {user:user,blog:blog,status:status};
 
   infomailInfo.render(data, function infomailRenderBlog(err, results) {
     debug('infomailRenderInfo');
@@ -224,10 +230,10 @@ function MailUserReceiver() {
   debug('MailUserReceiver::MailUserReceiver');
 }
 
-MailUserReceiver.prototype.sendInfo = function murSendInfo(object,callback) {
-  debug('MailUserReceiver.prototype.sendInfo');
+MailUserReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,status,callback) {
+  debug('MailUserReceiver.prototype.sendLanguageStatus');
   async.forEachOf(userReceiverMap,function(value,key,cb) {
-    value.sendInfo(object,cb);
+    value.sendLanguageStatus(user,blog,status,cb);
   },function(err) {
     return callback(err);
   });

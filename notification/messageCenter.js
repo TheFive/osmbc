@@ -31,6 +31,12 @@ MessageCenter.prototype.updateBlog = function (user,blog,change,callback) {
     element.updateBlog(user,blog,change,cb);
   },function final(err) {callback(err);});
 };
+MessageCenter.prototype.sendLanguageStatus = function(user,blog,lang,status,callback) {
+  debug("MessageCenter.prototype.sendLanguageStatus");
+  async.each(this.receiverList,function sendIt(element,cb){
+    element.sendLanguageStatus(user,blog,lang,status,cb);
+  },function final(err) {callback(err);});
+}
 
 
 
@@ -114,8 +120,26 @@ LogModuleReceiver.prototype.updateBlog= function(user,blog,change,cb) {
   },function finalFunction(err) {cb(err);});
 };
 
+LogModuleReceiver.prototype.sendLanguageStatus = function(user,blog,lang,status,callback) {
+  debug("LogModuleReceiver.prototype.sendLanguageStatus");
+  should.exist(blog.id);
+  should(blog.id).not.equal(0);
+  should(typeof(user)).eql("object");
+  var timestamp = new Date();
+  logModule.log({oid:blog.id,
+    blog:blog.name,
+    user:user.OSMUser,
+    table:"blog",
+    property:"ReviewComment"+lang,
+    from:"Add",
+    to:status,
+    timestamp:timestamp},cb);
+  }
+}
 
-MessageCenter.prototype.registerReceiver = function(receiver) {
+
+
+  MessageCenter.prototype.registerReceiver = function(receiver) {
   debug('MessageCenter::registerReceiver');
   this.receiverList.push(receiver);
 };

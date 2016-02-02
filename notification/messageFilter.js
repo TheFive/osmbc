@@ -54,24 +54,18 @@ UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,chan
 };
 
 
-UserConfigFilter.prototype.sendInfo = function ucfSendInfo(object,cb) {
-  debug('UserConfigFilter.prototype.sendInfo');
-  debug(object);
-  if (object.table!=="blog") return callback();
-  if (object.from !== "Add") return callback();
+UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,status,cb) {
+  debug('UserConfigFilter.prototype.sendLanguageStatus');
   var wnList = [];
   var sendMail = false;
   if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange.split(" ");
   for (var i=0;i<wnList.length;i++) {
-    var lang = wnList[i];
-    debug("Check language "+lang);
-    if (object.property === "reviewCommment"+lang || object.property === "exported"+lang || object.property === "close"+lang ) {
-      sendMail = true; 
-    }
+    var l = wnList[i];
+    if (l === lang) sendMail = true;
   }
   if (!sendMail) return cb();
   debug("Send out mail");
-  this.receiver.sendInfo(object,cb);
+  this.receiver.sendLanguageStatus(user,blog,status,cb);
 };
 
 module.exports.UserConfigFilter = UserConfigFilter;

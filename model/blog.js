@@ -141,7 +141,9 @@ function setReviewComment(lang,user,data,callback) {
     async.series ( [
         function logInformation(callback) {
            debug("setReviewComment->logInformation");
-           messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
+           messageCenter.global.sendLanguageStatus(user,self,lang,data,callback);
+          // This is the old log and has to be moved to the messageCenter (logReceiver)
+          // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
         },
         function checkSpecialCommands(cb) {
           debug("setReviewComment->checkSpecialCommands");
@@ -150,6 +152,10 @@ function setReviewComment(lang,user,data,callback) {
             // Start Review, check wether review is done in WP or not
             if (config.getValue("ReviewInWP").indexOf(lang)>=0) {
               self[exported]=true;
+
+              // Review is set on WP, so the blog can be marked as exoprted
+              messageCenter.global.sendLanguageStatus(user,self,lang,"markexported",callback);
+              // This is the old log, that has to be moved to the messageCenter
               messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
               return;
             }
