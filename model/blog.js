@@ -122,6 +122,7 @@ function setReviewComment(lang,user,data,callback) {
   var self = this;
   var rc = "reviewComment"+lang;
   var exported = "exported"+lang;
+  should(typeof(user)).eql("object");
   async.series([
     function checkID(cb) {
       if (self.id === 0) {
@@ -139,9 +140,9 @@ function setReviewComment(lang,user,data,callback) {
       if (self[rc][i].user == user && self[rc][i].text == data) return callback();
     }
     async.series ( [
-        function logInformation(callback) {
+        function logInformation(cb) {
            debug("setReviewComment->logInformation");
-           messageCenter.global.sendLanguageStatus(user,self,lang,data,callback);
+           messageCenter.global.sendLanguageStatus(user,self,lang,data,cb);
           // This is the old log and has to be moved to the messageCenter (logReceiver)
           // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
         },
@@ -154,9 +155,9 @@ function setReviewComment(lang,user,data,callback) {
               self[exported]=true;
 
               // Review is set on WP, so the blog can be marked as exoprted
-              messageCenter.global.sendLanguageStatus(user,self,lang,"markexported",callback);
+              messageCenter.global.sendLanguageStatus(user,self,lang,"markexported",cb);
               // This is the old log, that has to be moved to the messageCenter
-              messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
+              //messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
               return;
             }
             // nothing has to be written to the review comments
@@ -167,8 +168,8 @@ function setReviewComment(lang,user,data,callback) {
             // nothing has to be written to review Comment
             return cb();
           }
-          self[rc].push({user:user,text:data,timestamp:date});
-          cb();
+          self[rc].push({user:user.OSMUser,text:data,timestamp:date});
+          return cb();
         }
       ],function(err){
         debug("setReviewComment->FinalFunction");

@@ -1,22 +1,12 @@
 h2
-  | Blog #{newBlog.name} changed.
+  | Blog #{blog.name} changed status for #{lang}.
 
 p
   | Blog 
-  a(href="#{layout.url}#{layout.htmlroot}/blog/#{newBlog.name}") #{(newBlog.name)?newBlog.name:"MISSING NAME"}
-  |  was changed by #{changeby.OSMUser}
+  a(href="#{layout.url}#{layout.htmlroot}/blog/#{blog.name}") #{(blog.name)?blog.name:"MISSING NAME"}
+  |  was changed by #{user.OSMUser}
 
-table
-  tr
-    th
-      |Key
-    th
-      |Value
-  - for (prop in newBlog)
-    if (prop !== "version")
-      if newBlog[prop]!==blog[prop]
-        tr
-          td=prop
-          td=newBlog[prop]
+p
+  | Review status was set to #{status}
   
 

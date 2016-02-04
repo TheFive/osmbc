@@ -54,7 +54,7 @@ UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,chan
 };
 
 
-UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,status,cb) {
+UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,cb) {
   debug('UserConfigFilter.prototype.sendLanguageStatus');
   var wnList = [];
   var sendMail = false;
@@ -65,7 +65,7 @@ UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user
   }
   if (!sendMail) return cb();
   debug("Send out mail");
-  this.receiver.sendLanguageStatus(user,blog,status,cb);
+  this.receiver.sendLanguageStatus(user,blog,lang,status,cb);
 };
 
 module.exports.UserConfigFilter = UserConfigFilter;

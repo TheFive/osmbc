@@ -36,7 +36,12 @@ MessageCenter.prototype.sendLanguageStatus = function(user,blog,lang,status,call
   async.each(this.receiverList,function sendIt(element,cb){
     element.sendLanguageStatus(user,blog,lang,status,cb);
   },function final(err) {callback(err);});
-}
+};
+
+MessageCenter.prototype.registerReceiver = function(receiver) {
+  debug('MessageCenter::registerReceiver');
+  this.receiverList.push(receiver);
+};
 
 
 
@@ -51,6 +56,7 @@ LogModuleReceiver.prototype.updateArticle= function(user,article,change,cb) {
   debug('LogModuleReceiver::updateArticle');
   should.exist(article.id);
   should(article.id).not.equal(0);
+  should(typeof(user)).eql("object");
   var logblog = article.blog;
   if (change.blog) logblog = change.blog;
   var timestamp = new Date();
@@ -120,29 +126,25 @@ LogModuleReceiver.prototype.updateBlog= function(user,blog,change,cb) {
   },function finalFunction(err) {cb(err);});
 };
 
-LogModuleReceiver.prototype.sendLanguageStatus = function(user,blog,lang,status,callback) {
+LogModuleReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,cb) {
   debug("LogModuleReceiver.prototype.sendLanguageStatus");
   should.exist(blog.id);
   should(blog.id).not.equal(0);
   should(typeof(user)).eql("object");
+  should.exist(user.OSMUser);
   var timestamp = new Date();
   logModule.log({oid:blog.id,
     blog:blog.name,
     user:user.OSMUser,
     table:"blog",
-    property:"ReviewComment"+lang,
+    property:"reviewComment"+lang,
     from:"Add",
     to:status,
     timestamp:timestamp},cb);
-  }
-}
-
-
-
-  MessageCenter.prototype.registerReceiver = function(receiver) {
-  debug('MessageCenter::registerReceiver');
-  this.receiverList.push(receiver);
 };
+
+
+
 
 var messageCenter = new MessageCenter();
 

@@ -117,11 +117,18 @@ describe('model/blog', function() {
       var newBlog = blogModule.create({name:"test",status:"**"});
       async.series([
           function (cb1) {newBlog.save(cb1);},
-          function (cb1) {blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});},
+          function (cb1) {
+            blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});},
           function (cb1) {
             should(newBlog.isEditable("DE")).be.True();
-            newBlog.setReviewComment("DE","Test","startreview",cb1);},
-          function (cb1) {blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});},
+            newBlog.setReviewComment("DE",{OSMUser:"Test"},"startreview",cb1);},
+          function (cb1) {
+            blogModule.find({name:"test"},function(err,result){
+              should(result.length).eql(1);
+              newBlog = result[0];
+              cb1(err);
+            });
+          },
           function (cb2) {
             should(newBlog.isEditable("DE")).be.False();
             newBlog.closeBlog("DE","Test",true,cb2);},
@@ -147,11 +154,11 @@ describe('model/blog', function() {
           function (cb1) {blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});},
           function (cb1) {
             should(newBlog.isEditable("EN")).be.True();
-            newBlog.setReviewComment("EN","Test","startreview",cb1);},
+            newBlog.setReviewComment("EN",{OSMUser:"Test"},"startreview",cb1);},
           function (cb1) {blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});},
           function (cb2) {
             should(newBlog.isEditable("EN")).be.True();
-            newBlog.setReviewComment("EN","Test","markexported",cb2);},
+            newBlog.setReviewComment("EN",{OSMUser:"Test"},"markexported",cb2);},
           function (cb1) {
             should(newBlog.isEditable("EN")).be.False();
             blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});},
@@ -290,17 +297,17 @@ describe('model/blog', function() {
           should.not.exist(err);
           // reset sinon spy:
           mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
-          blog.setReviewComment("ES",{OSMUser:"testuser"},{reviewComment:"startreview"},function(err){
+          blog.setReviewComment("ES",{OSMUser:"testuser"},"startreview",function(err){
             should.not.exist(err);
 
             should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-            var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>reviewCommentES</td><td>startreview</td></tr></table>';
+            var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to startreview</p>';
             should(result.html).eql(expectedMail);
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
-              to:"user1@mail.bc",
-              subject:"WN251 changed status",
+              to:"user3@mail.bc",
+              subject:"blog(ES) review has been started",
               html:expectedMail,
               text:null});
             bddone();
@@ -361,7 +368,7 @@ describe('model/blog', function() {
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
-        newBlog.setReviewComment("DE","user","it is approved.",function(err) {
+        newBlog.setReviewComment("DE",{OSMUser:"user"},"it is approved.",function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog",id,function(err,result){
             should.not.exist(err);
@@ -382,15 +389,11 @@ describe('model/blog', function() {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(5);
-              delete result[2].id;
-              var t0 = result[2].timestamp;
-              var t0diff = ((new Date(t0)).getTime()-now.getTime());
-        
-              // The Value for comparison should be small, but not to small
-              // for the test machine.
-              should(t0diff).be.below(10);
-              delete result[2].timestamp;        
-        
+              for (var i=0;i<result.length;i++) {
+                delete result[i].id;
+                delete result[i].timestamp;
+              }
+
               should(result).containEql(logModule.create({oid:id,blog:"Title",user:"user",table:"blog",property:"reviewCommentDE",to:"it is approved.",from:"Add"}));
               bddone();
             });

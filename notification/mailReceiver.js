@@ -20,7 +20,7 @@ var infomail = new EmailTemplate(infoMailtemplateDir);
 var infoMailBlogtemplateDir = path.join(__dirname, '..','email', 'infomailBlog');
 var infomailBlog = new EmailTemplate(infoMailBlogtemplateDir);
 
-var infoMailInfotemplateDir = path.join(__dirname, '..','email', 'infomailBlog');
+var infoMailInfotemplateDir = path.join(__dirname, '..','email', 'infomailinfo');
 var infomailInfo = new EmailTemplate(infoMailInfotemplateDir);
 
 var welcomeMailtemplateDir = path.join(__dirname, '..','email', 'welcome');
@@ -72,7 +72,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
   }); 
 };
 
-MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,status,callback) {
+MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,callback) {
   debug("MailReceiver::sendLanguageStatus");
 
   var self = this;
@@ -85,7 +85,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blo
   if (status === "markexported") {
     subject = blog.name + "("+lang+") is exported to WordPress";
   }
-  data = {user:user,blog:blog,status:status};
+  var data = {user:user,blog:blog,status:status,lang:lang,layout:layout};
 
   infomailInfo.render(data, function infomailRenderBlog(err, results) {
     debug('infomailRenderInfo');
@@ -105,7 +105,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blo
       if(error){
           return callback(error);
       }
-      callback();
+      return callback();
     });
   });
 };
@@ -230,10 +230,10 @@ function MailUserReceiver() {
   debug('MailUserReceiver::MailUserReceiver');
 }
 
-MailUserReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,status,callback) {
+MailUserReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,callback) {
   debug('MailUserReceiver.prototype.sendLanguageStatus');
   async.forEachOf(userReceiverMap,function(value,key,cb) {
-    value.sendLanguageStatus(user,blog,status,cb);
+    value.sendLanguageStatus(user,blog,lang,status,cb);
   },function(err) {
     return callback(err);
   });
@@ -256,6 +256,11 @@ MailUserReceiver.prototype.updateBlog = function murUpdateBlog(user,blog,change,
   },function(err) {
     return callback(err);
   });
+};
+
+MailUserReceiver.prototype.sendInfo = function sendInfo(data,cb) {
+  debug("MailUserReceiver.prototype.sendInfo");
+  return cb();
 };
 
 

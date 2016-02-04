@@ -94,7 +94,7 @@ function renderBlogId(req, res, next) {
         if (typeof(req.query.reviewComment)!='undefined')
         {
           clearParams = true;
-          blog.setReviewComment(options.left_lang,user.displayName,req.query.reviewComment,function(err) {
+          blog.setReviewComment(options.left_lang,user,req.query.reviewComment,function(err) {
             return callback(err);
           });
         } else return callback();
