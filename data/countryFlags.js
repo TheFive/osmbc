@@ -26,7 +26,7 @@ module.exports = {
   "deutschland":"http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg",
   "bolivia":"http://blog.openstreetmap.de/wp-uploads//2016/01/bo.svg",
    "canada":"http://blog.openstreetmap.de/wp-uploads//2016/01/ca.svg",
-   "hungary":"http://blog.openstreetmap.de/wp-uploads//2016/02/hg.svg",c
+   "hungary":"http://blog.openstreetmap.de/wp-uploads//2016/02/hu.svg",c
    "india":"http://blog.openstreetmap.de/wp-uploads//2016/01/in.svg",
   "colombia":"http://blog.openstreetmap.de/wp-uploads//2016/02/co.svg"
 
