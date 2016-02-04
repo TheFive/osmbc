@@ -292,29 +292,73 @@ describe('model/blog', function() {
           });
         });
       });
-      it('should send out mail when review is started',function (bddone){
+      it('should send out mail when review status is set',function (bddone){
         blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
           should.not.exist(err);
           // reset sinon spy:
           mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
-          blog.setReviewComment("ES",{OSMUser:"testuser"},"startreview",function(err){
+          blog.setReviewComment("ES",{OSMUser:"testuser"},"I have reviewed",function(err){
             should.not.exist(err);
 
             should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-            var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to startreview</p>';
+            var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to I have reviewed</p>';
             should(result.html).eql(expectedMail);
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
-              to:"user3@mail.bc",
-              subject:"blog(ES) review has been started",
-              html:expectedMail,
-              text:null});
+                to:"user3@mail.bc",
+                subject:"blog(ES) has been reviewed by user testuser",
+                html:expectedMail,
+                text:null});
             bddone();
           });
         });
       });
-    }); 
+      it('should send out mail when review is marked as exported',function (bddone){
+        blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
+          should.not.exist(err);
+          // reset sinon spy:
+          mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+          blog.setReviewComment("ES",{OSMUser:"testuser"},"markexported",function(err){
+            should.not.exist(err);
+
+            should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to exported.</p>';
+            should(result.html).eql(expectedMail);
+            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+              {from:"noreply@gmail.com",
+                to:"user3@mail.bc",
+                subject:"blog(ES) is exported to WordPress",
+                html:expectedMail,
+                text:null});
+            bddone();
+          });
+        });
+      });
+      it('should send out mail when review is marked as exported',function (bddone){
+        blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
+          should.not.exist(err);
+          // reset sinon spy:
+          mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+          blog.setReviewComment("ES",{OSMUser:"testuser"},"markexported",function(err){
+            should.not.exist(err);
+
+            should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to exported.</p>';
+            should(result.html).eql(expectedMail);
+            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+              {from:"noreply@gmail.com",
+                to:"user3@mail.bc",
+                subject:"blog(ES) is exported to WordPress",
+                html:expectedMail,
+                text:null});
+            bddone();
+          });
+        });
+      });
+    });
   });
   describe('closeBlog',function() {
     before(function (bddone) {

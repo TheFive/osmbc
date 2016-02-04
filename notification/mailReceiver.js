@@ -78,7 +78,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blo
   var self = this;
 
 
-  var subject = blog.name +"("+lang+") has been reviewed by user "+user.OSMName;
+  var subject = blog.name +"("+lang+") has been reviewed by user "+user.OSMUser;
   if (status === "startreview") {
     subject = blog.name +"("+lang+") review has been started";
   }
