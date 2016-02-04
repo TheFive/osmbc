@@ -85,11 +85,19 @@ block content
               option(value="false") OFF
         .row
           .col-md-2
-            | mailComment 
+            | mailComment
           .col-md-3
             textarea.form-control(name="mailComment",rows=1) #{usershown.mailComment}
             p
-              | Please enter for example "DE marc ES" to be informet about comments for @DE @ES @marc
+              | Please enter for example "DE marc ES" to be informed about comments for @DE @ES @marc
+        .row
+          .col-md-2
+            | mailBlogStatus
+          .col-md-3
+            textarea.form-control(name="mailBlogLanguageStatusChange",rows=1) #{usershown.mailBlogLanguageStatusChange}
+            p
+              | Please enter for example "DE ES" to be informed about comments for DE and ES changes
+
     else
       .row
         .col-md-2
@@ -155,8 +163,16 @@ block content
           | mailComment
         .col-md-5
           p
-            |#{usershown.mailComment}
- 
+            | #{usershown.mailComment}
+      .row
+        .col-md-2
+          | mailStatusChange
+        .col-md-5
+          p
+            | #{usershown.mailBlogLanguageStatusChange}
+
+
+      mailBlogLanguageStatusChange
       .row 
         .col-md-2
         .col-md-5

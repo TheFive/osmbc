@@ -102,6 +102,7 @@ function postUserId(req, res, next) {
                  mailAllComment:req.body.mailAllComment,
                  mailNewCollection:req.body.mailNewCollection,
                  mailComment:req.body.mailComment,
+                 mailBlogLanguageStatusChange:req.body.mailBlogLanguageStatusChange,
                  email:req.body.email,
                  access:req.body.access};
   async.series([
