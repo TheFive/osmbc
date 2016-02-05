@@ -19,7 +19,7 @@ block content
     .col-md-1
       div.label.label-info.osmbc-lang(style="color:white")=left_lang
     .col-md-11
-     div.progress
+     div.progress(style="margin-bottom:2px")
       div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
       div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
       div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
@@ -33,7 +33,7 @@ block content
       .col-md-1
         div.label.label-info.osmbc-lang2(style="color:white")=right_lang
       .col-md-11
-       div.progress
+       div.progress(style="margin-bottom:10px")
         div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
         div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
         div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
