@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.6.9c](https://github.com/TheFive/osmbc/tree/0.6.9c) (2016-02-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9b...0.6.9c)
+
+**Merged pull requests:**
+
+- bitte nur den letzten nehmen ... [\#294](https://github.com/TheFive/osmbc/pull/294) ([fredao](https://github.com/fredao))
+
 ## [0.6.9b](https://github.com/TheFive/osmbc/tree/0.6.9b) (2016-01-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9a...0.6.9b)
 
