@@ -189,11 +189,13 @@ if (config.getValue("sessionStore")==="session-file-store") {
 
   app.use(session({
     store: new pgSession({
-      pg : pg,                                  // Use global pg-module 
+      pg : pg,        // Use global pg-module 
       conString : config.pgstring // Connect using something else than default DATABASE_URL env variable 
     }),
     secret: 'LvwnH}uHhDLxvAu3X6' ,
     resave: false,
+    saveUninitialized:true,
+      
     cookie: { maxAge: 1000*60*60*24*365 } 
   }));
 } else {
