@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="006caae8-bd95-47e8-94f5-9ca7528319c8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notification/messageFilter.js" afterPath="$PROJECT_DIR$/notification/messageFilter.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/changes.js" afterPath="$PROJECT_DIR$/routes/changes.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/model.article.test.js" afterPath="$PROJECT_DIR$/test/model.article.test.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/model.blog.test.js" afterPath="$PROJECT_DIR$/test/model.blog.test.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/user.jade" afterPath="$PROJECT_DIR$/views/user.jade" />
     </list>
     <ignored path="osmbc.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -41,7 +37,7 @@
         <entry file="file://$PROJECT_DIR$/routes/changes.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="40" column="17" selection-start-line="40" selection-start-column="17" selection-end-line="40" selection-end-column="17" />
+              <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -893,7 +889,7 @@
     <entry file="file://$PROJECT_DIR$/routes/changes.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="40" column="17" selection-start-line="40" selection-start-column="17" selection-end-line="40" selection-end-column="17" />
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
           <folding />
         </state>
       </provider>

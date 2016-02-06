@@ -37,15 +37,7 @@ function renderOutgoingMailLog(req,res,next) {
   logModule.find("select id, data from changes where data->>'table' = 'mail' and substring(data->>'timestamp' from 1 for "+ d.length+") ='"+d+"'",function (err,result){
     debug("logModule.find");
     if (err) return next(err);
-    var rs = "Receipt,to,subject,response\n";
-    if (result) {
-      for (var i=0;i<result.length;i++) {
-        var r = result[i];
-        rs += r.to+","+ r.subject+","+ r.timestamp+",>>"+ r.response+"<<\n";
-      }
-      rs = "<pre>"+rs+"</pre>";
-    }
-    res.end(rs,"utf8");
+    res.render("maillog",{maillog:result,layout:res.rendervar.layout});
   });
 }
 

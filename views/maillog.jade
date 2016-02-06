@@ -1,0 +1,33 @@
+extends layout
+
+
+
+
+block content
+
+
+
+
+  row
+    
+      table
+        thead
+          tr 
+            th address
+            th subject
+            th timestamp
+            th response
+         tbody
+          if (maillog)
+            each mail in maillog
+              tr
+                td=mail.to
+                td=mail.subject
+                td=mail.timestamp
+                td=mail.response
+             
+
+          
+
+
+  
