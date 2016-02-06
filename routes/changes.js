@@ -45,7 +45,7 @@ function renderOutgoingMailLog(req,res,next) {
       }
       rs = "<pre>"+rs+"</pre>";
     }
-    res.end(rs);
+    res.end(rs,"utf8");
   });
 }
 
