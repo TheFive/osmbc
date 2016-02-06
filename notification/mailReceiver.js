@@ -48,7 +48,7 @@ function sendMailWithLog(mailOptions,callback) {
       subject:mailOptions.subject,
       text:mailOptions.text,
       error:error,
-      response:info.response
+      response:(info.response)?info.response:"no response"
     };
     if (error) {
       logModule.log(logObject,function cb(){
