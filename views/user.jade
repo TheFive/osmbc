@@ -11,7 +11,7 @@ mixin labeledInput(label,name,value,explanation)
 mixin labeledSelect(label,name,value,values,displayValues,explanation)
   - if (!value) value =""
   div.form-group
-    label.control-label.col-sm-2(for="name")=label
+    label.control-label.col-sm-2(for="#{name}")=label
     div.col-sm-4
       select(id="#{name}",name="#{name}").form-control
         each v,i in values
@@ -20,6 +20,22 @@ mixin labeledSelect(label,name,value,values,displayValues,explanation)
           else
             option(value="#{v}" ) #{displayValues[i]}
     div.col-sm-6.text-muted=explanation
+mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
+  - if (!value) value =""
+  div.form-group
+    label.control-label.col-sm-2(for="#{name}")=label
+    div.col-sm-4
+      each v,i in values
+        if (value.indexOf(v)>=0)
+          label.checkbox-inline
+            input(type="checkbox" value="#{v}" name="#{name}" checked="checked") 
+            |#{displayValues[i]}
+        else
+          label.checkbox-inline
+            input(type="checkbox" name="#{name}" value="#{v}") 
+            |#{displayValues[i]}
+    div.col-sm-6.text-muted=explanation
+      p=value
      
 
 
@@ -73,8 +89,24 @@ block content
                      ["true","false"],
                      ["on","off"],
                      "Send a mail for every new Collect.")
-      +labeledInput("Mail defined comments","mailComment",usershown.mailComment,"Please enter for example DE marc ES to be informed about comments for @DE @ES @marc")
-      +labeledInput("Mail Status Change","mailBlogLanguageStatusChange",usershown.mailBlogLanguageStatusChange,"Please enter for example DE ES to be informed about comments for DE and ES changes")
+
+    
+      - var langlistWithUser = langlist.concat(usershown.OSMUser)
+
+      +labeledMultiSelect("Mail defined comments",
+                     "mailComment",
+                     usershown.mailComment,
+                     langlistWithUser,
+                     langlistWithUser,
+                     "Please check comments you are interested in.")
+      +labeledMultiSelect("Mail Status Change",
+                     "mailBlogLanguageStatusChange",
+                     usershown.mailBlogLanguageStatusChange,
+                     langlist,
+                     langlist,
+                     "Please choose your languagues of your interest for status information")
+
+ 
 
 
 
