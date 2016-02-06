@@ -7,6 +7,7 @@
 
 var async  = require('async');
 var should = require('should');
+var sinon  = require('sinon');
 var debug  = require('debug')('OSMBC:test:article.test');
 
 
@@ -16,6 +17,8 @@ var articleModule = require('../model/article.js');
 var logModule     = require('../model/logModule.js');
 var blogModule    = require('../model/blog.js');
 
+var mailReceiver  = require('../notification/mailReceiver.js');
+
 
 
 
@@ -23,6 +26,7 @@ var blogModule    = require('../model/blog.js');
 
 
 describe('model/article', function() {
+  var testUser = {displayName:"user",OSMUser:"user"};
   before(function (bddone) {
     testutil.clearDB(bddone);
   }); 
@@ -106,7 +110,7 @@ describe('model/article', function() {
         newArticle = result;
         var id =result.id;
         newArticle.markdownDE = "This Value will not be logged";
-        newArticle.setAndSave("user",{version:"1",blog:"Reference",collection:"text",categoryEN:"Imports"},function(err) {
+        newArticle.setAndSave(testUser,{version:1,blog:"Reference",collection:"text",categoryEN:"Imports"},function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
@@ -152,7 +156,7 @@ describe('model/article', function() {
         should.not.exist(err); 
         newArticle = result;
         var id =result.id;
-        newArticle.setAndSave("user",{version:"1",markdownDE:"  to be trimmed "},function(err) {
+        newArticle.setAndSave(testUser,{version:"1",markdownDE:"  to be trimmed "},function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
@@ -174,7 +178,7 @@ describe('model/article', function() {
         changeValues.markdownDE = newArticle.markdownDE;
         changeValues.blog = empty;
         changeValues.version = "1";
-        newArticle.setAndSave("user",changeValues,function(err) {
+        newArticle.setAndSave(testUser,changeValues,function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("article",id,function(err,result){
             should.not.exist(err);
@@ -205,10 +209,11 @@ describe('model/article', function() {
           var alternativeArticle = result;
 
           debug('save New Article with blogname TESTNEW');
-          newArticle.setAndSave("TEST",{version:"1",blog:"TESTNEW"},function(err){
+
+          newArticle.setAndSave({displayName:"TEST"},{version:"1",blog:"TESTNEW"},function(err){
             should.not.exist(err);
             debug('save alternative Article with blogname TESTNEW');
-            alternativeArticle.setAndSave("TEST",{version:"1",blog:"TESTALTERNATIVE"},function(err){
+            alternativeArticle.setAndSave({displayName:"TEST"},{version:"1",blog:"TESTALTERNATIVE"},function(err){
               //debug(err);
               //should.exist(err);
               should(err).eql(Error("Version Number Differs"));
@@ -227,6 +232,131 @@ describe('model/article', function() {
         });
       });
     });
+    describe('trigger info email',function() {
+      var oldtransporter;
+      afterEach(function (bddone){
+        mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+        bddone();
+      });
+
+      beforeEach(function (bddone){
+        oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
+        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+        testutil.importData({user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailNewCollection:"true"},
+                                   {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailAllComment:"true"},
+                                   {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailComment:["DE","User3"]},
+                                   {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
+                                   {OSMUser:"User5",                     access:"full",mailAllComment:"true"}]},bddone);
+      });
+      it('should send out mail, when collecting article.',function (bddone){
+        articleModule.createNewArticle(function(err,article){
+          article.setAndSave({OSMUser:"testuser"},{blog:"WN789",collection:"newtext"},function(err) {
+            should.not.exist(err);
+            should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p>';
+            should(result.html).eql(expectedMail);
+            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+              {from:"noreply@gmail.com",
+              to:"user1@mail.bc",
+              subject:"WN789 added collection",
+              html:expectedMail,
+              text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext"});
+
+
+            bddone();
+          });
+        });
+      });
+      it('should send out mail, when adding comment.',function (bddone){
+        articleModule.createNewArticle(function(err,article){
+          article.setAndSave({OSMUser:"testuser"},{blog:"WN789",comment:"Information for @User3"},function(err) {
+            should.not.exist(err);
+            should(mailReceiver.for_test_only.transporter.sendMail.calledTwice).be.True();
+
+            // First Mail Check
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>comment was added</h3><p>Information for @User3</p><h3>commentStatus was added</h3><p>open</p>';
+            should(result.html).eql(expectedMail);
+            should(result).eql(
+              {from:"noreply@gmail.com",
+              to:"user2@mail.bc",
+              subject:"WN789 added comment",
+              html:expectedMail,
+              text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
+
+            // Second Mail Check
+            result = mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0];
+            should(result.html).eql(expectedMail);
+            should(result).eql(
+              {from:"noreply@gmail.com",
+              to:"user3@mail.bc",
+              subject:"WN789 added comment",
+              html:expectedMail,
+              text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
+
+
+            bddone();
+          });
+        });
+      });
+      it('should send out mail, when changing comment.',function (bddone){
+        articleModule.createNewArticle(function(err,article){
+          should.not.exist(err);
+          article.setAndSave({OSMUser:"testuser"},{blog:"WN789",comment:"Information for noone"},function(err) {
+            should.not.exist(err);
+            article.setAndSave({OSMUser:"testuser"},{comment:"Information for noone and for @User3"},function(err) {
+              should.not.exist(err);
+              should(mailReceiver.for_test_only.transporter.sendMail.calledThrice).be.True();
+
+              // First Mail Check
+              var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+              var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>comment was added</h3><p>Information for noone</p><h3>commentStatus was added</h3><p>open</p>';
+              var expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for noone\n\nCOMMENTSTATUS WAS ADDED\nopen';
+              should(result.html).eql(expectedMail);
+              should(result.text).eql(expectedText);
+              should(result).eql(
+                {from:"noreply@gmail.com",
+                to:"user2@mail.bc",
+                subject:"WN789 added comment",
+                html:expectedMail,
+                text:expectedText});
+              // Second Mail Check
+              result = mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0];
+              expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for noone and for @User3</p>';
+              expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nCOMMENT WAS CHANGED\nInformation for noone and for @User3';
+              should(result.html).eql(expectedMail);
+              should(result.text).eql(expectedText);
+              should(result).eql(
+                {from:"noreply@gmail.com",
+                to:"user2@mail.bc",
+                subject:"WN789 changed comment",
+                html:expectedMail,
+                text:expectedText});
+
+              // Third Mail Check
+              
+              result = mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0];
+              expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for noone and for @User3</p>';
+              expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nCOMMENT WAS CHANGED\nInformation for noone and for @User3';
+
+              should(result.html).eql(expectedMail);
+              should(result.text).eql(expectedText);
+              should(result).eql(
+                {from:"noreply@gmail.com",
+                to:"user3@mail.bc",
+                subject:"WN789 changed comment",
+                html:expectedMail,
+                text:expectedText});
+
+
+              bddone();
+            });
+          });
+        });
+      });
+
+    }); 
   });
   describe('findFunctions',function() {
     var idToFindLater;
@@ -410,7 +540,7 @@ describe('model/article', function() {
         function c1(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test1",collection:"col1",category:"catA"},cb);},
         function c2(cb) {articleModule.createNewArticle({blog:"WN1",markdownDE:"test2",collection:"col2",category:"catB"},cb);},
         function c3(cb) {articleModule.createNewArticle({blog:"WN2",markdownDE:"test3",collection:"col3",category:"catA"},cb);},
-        function b1(cb) {blogModule.createNewBlog("test",{name:"WN2",status:"open"},cb);}
+        function b1(cb) {blogModule.createNewBlog({OSMUser:"test"},{name:"WN2",status:"open"},cb);}
 
         ],function(err) {
           should.not.exist(err);
@@ -425,7 +555,7 @@ describe('model/article', function() {
         blogModule.findOne({name:"WN2"},{column:"name"},function(err,blog){
           should.not.exist(err);
           should.exist(blog);
-          blog.setAndSave("user",{status:"published"},function (){
+          blog.setAndSave(testUser,{status:"published"},function (){
             articleModule.getListOfOrphanBlog(function(err,result){
               should.not.exist(err);
               should.exist(result);
@@ -481,9 +611,9 @@ describe('model/article', function() {
         function c1(cb) {articleModule.createNewArticle({blog:"WN1",title:"1",markdownDE:"test1 some [ping](https://link.to/hallo)",collection:"col1 http://link.to/hallo",category:"catA"},cb);},
         function c2(cb) {articleModule.createNewArticle({blog:"WN1",blogEN:"EN1",title:"2",markdownDE:"test1 some [ping](https://link.to/hallo) http://www.osm.de/12345",collection:"http://www.osm.de/12345",category:"catB"},cb);},
         function c3(cb) {articleModule.createNewArticle({blog:"WN2",blogEN:"EN1",title:"3",markdownDE:"test1 some [ping](https://link.to/hallo)",collection:"col3 http://www.google.de",category:"catA"},cb);},
-        function a1(cb) {blogModule.createNewBlog("test",{title:"WN1",status:"closed"},cb);},
-        function a2(cb) {blogModule.createNewBlog("test",{title:"WN2",status:"open"},cb);},
-        function a2(cb) {blogModule.createNewBlog("test",{title:"EN1",status:"closed"},cb);}
+        function a1(cb) {blogModule.createNewBlog({OSMUser:"test"},{title:"WN1",status:"closed"},cb);},
+        function a2(cb) {blogModule.createNewBlog({OSMUser:"test"},{title:"WN2",status:"open"},cb);},
+        function a2(cb) {blogModule.createNewBlog({OSMUser:"test"},{title:"EN1",status:"closed"},cb);}
                       
         ],function(err) {
           should.not.exist(err);

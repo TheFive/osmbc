@@ -15,7 +15,7 @@ function renderHome(req,res,next) {
   debug('renderHome');
   should.exist(res.rendervar.layout);
 
-  logModule.find({},{column:"id",desc :true,limit:20},function(err,result) {
+  logModule.find({table:"IN('blog','article','usert')"},{column:"id",desc :true,limit:20},function(err,result) {
     if (err) return next(err);
   
     res.render('index', { title: 'OSMBC' , 

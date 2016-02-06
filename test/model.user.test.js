@@ -3,11 +3,13 @@
 var async  = require('async');
 var should = require('should');
 
+var sinon  = require('sinon');
+
 var testutil = require('./testutil.js');
 
 var userModule = require('../model/user.js');
 var logModule = require('../model/logModule.js');
-
+var mailReceiver= require('../notification/mailReceiver.js');
 
 
 
@@ -18,7 +20,6 @@ describe('model/user', function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
   }); 
-
   describe('createNewUser',function() {
     it('should createNewUser with prototype',function(bddone) {
       userModule.createNewUser({name:"user"},function (err,result){
@@ -111,8 +112,15 @@ describe('model/user', function() {
     });
   });
   describe('setAndSave',function() {
+    var oldtransporter;
     beforeEach(function (bddone) {
+      oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
+      mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
       testutil.clearDB(bddone);
+    }) ;
+    afterEach(function (bddone){
+      mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+      bddone();
     });
     it('should set only the one Value in the database', function (bddone){
       var newUser;
@@ -140,6 +148,9 @@ describe('model/user', function() {
               // for the test machine.
               should(t0diff).be.below(10);
               should(result[0]).eql({id:r0id,timestamp:t0,oid:id,user:"user",table:"usert",property:"OSMUser",from:"Test",to:"Test2"});
+
+              // There should be no mail
+              should(mailReceiver.for_test_only.transporter.sendMail.called).be.False();
               bddone();
             });
           });
@@ -166,11 +177,59 @@ describe('model/user', function() {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(0);
+
+              // There should be no mail
+              should(mailReceiver.for_test_only.transporter.sendMail.called).be.False();
               bddone();
             });
           });
         });
       });
     }); 
+
+    describe('trigger welcome email',function() {
+      beforeEach(function (bddone){
+
+        testutil.importData({user:[{OSMUser:"WelcomeMe",email:"none"},
+                                   {OSMUser:"InviteYou",email:"invite@mail.org"}]},bddone);
+      });
+      it('should send out an email when changing email',function (bddone){
+        userModule.findOne({OSMUser:"WelcomeMe"},function(err,user){
+          // First set a new EMail Adress for the WecomeMe user, by InviteYou.
+          user.setAndSave("InviteYou",{email:"WelcomeMe@newemail.org"},function (err){
+            should.not.exist(err);
+            should(typeof(mailReceiver.for_test_only.transporter.sendMail)).eql("function");
+            should(mailReceiver.for_test_only.transporter.sendMail.called).be.True();
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var code = user.emailValidationKey;
+            var expectedMail = "<h2>Welcome </h2><p>InviteYou has invited you to OSMBC. (May be he just changed your EMail adress in OSMBC)\nYou can login to OSMBC with your OpenStreetMap credentials via OAuth.</p><p><a href=\"https://testosm.bc/osmbc.html\">OSMBC</a> is the tool for the international WeeklyOSM and the German Wochennotiz Team to collaborate writing and translating the weekly news.\nSomeone has invited you to join. You can login with your OpenStreetMap credentials, and the above link.</p><p>If you would like to use this email address for OSMBC click on this link: <a href=\"https://testosm.bc/usert/1?validation="+code+"\">Link To Click On.</a></p><p>If you would like to check your User Settings go to<a href=\"https://testosm.bc/usert/1\">User Settings </a>.</p><p>Thanks for supporting Weekly & Wochennotiz.</p><p>Have fun with OSMBC. </p><p>Christoph (TheFive).</p>";
+            var expectedText = 'WELCOME\nInviteYou has invited you to OSMBC. (May be he just changed your EMail adress in\nOSMBC) You can login to OSMBC with your OpenStreetMap credentials via OAuth.\n\nOSMBC [https://testosm.bc/osmbc.html] is the tool for the international WeeklyOSM and the German Wochennotiz Team to\ncollaborate writing and translating the weekly news. Someone has invited you to\njoin. You can login with your OpenStreetMap credentials, and the above link.\n\nIf you would like to use this email address for OSMBC click on this link: Link To Click On.\n[https://testosm.bc/usert/1?validation='+code+']\n\nIf you would like to check your User Settings go to User Settings [https://testosm.bc/usert/1] .\n\nThanks for supporting Weekly & Wochennotiz.\n\nHave fun with OSMBC.\n\nChristoph (TheFive).';
+
+            should(result.html).eql(expectedMail);
+            should(result.text).eql(expectedText);
+            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+              {from:"noreply@gmail.com",
+              to:"WelcomeMe@newemail.org",
+              subject:"Welcome to OSMBC",
+              html:expectedMail,
+              text:expectedText});
+
+            // Email is send out, now check email Verification first with wrong code
+            user.validateEmail("wrong code",function(err){
+              should(err).eql(new Error("Wrong Validation Code for EMail for user >WelcomeMe<"));
+
+              // and now with correct code
+              user.validateEmail(code,function(err){
+                should.not.exist(err);
+                should(user.email).eql("WelcomeMe@newemail.org");
+                should.not.exist(user.emailValidationKey);
+                bddone();
+              });
+            });
+          });
+        });
+      });
+    });   
   });
 });
+

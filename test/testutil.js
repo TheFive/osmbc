@@ -24,6 +24,8 @@ var articleModule = require('../model/article.js');
 var logModule     = require('../model/logModule.js');
 var userModule     = require('../model/user.js');
 
+var mailReceiver   = require('../notification/mailReceiver.js');
+
 
 
 // getJsonWithID can be used to select a id,data structure from postgres
@@ -56,6 +58,7 @@ exports.getJsonWithId = function getJsonWithId(table,id,cb) {
 
 exports.clearDB = function clearDB(done) {
   should(config.env).equal("test");
+  mailReceiver.initialise([]);
   async.series([
     function(done) {config.initialise(done);},
     function(done) {blogModule.dropTable(done);},
@@ -93,7 +96,11 @@ exports.importData = function importData(data,callback) {
       debug('importAllUsers');
       if (typeof(data.user)!='undefined') {  
         async.eachSeries(data.user,function importOneUser(d,cb){
-          userModule.createNewUser(d,cb);
+          userModule.createNewUser(d,function up(err,user){
+            if (err) return cb(err);
+            mailReceiver.updateUser(user);
+            return cb();
+          });
         },cb1);
       } else cb1();
     },
@@ -101,7 +108,7 @@ exports.importData = function importData(data,callback) {
       debug('importAllBlogs');
       if (typeof(data.blog)!='undefined') {  
         async.eachSeries(data.blog,function importOneBlog(d,cb){
-          blogModule.createNewBlog("test",d,cb);
+          blogModule.createNewBlog({displayName:"test"},d,cb);
         },cb2);
       } else cb2();
     },

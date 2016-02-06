@@ -1,0 +1,20 @@
+h2
+  | Blog #{blog.name} changed status for #{lang}.
+
+p
+  | Blog 
+  a(href="#{layout.url}#{layout.htmlroot}/blog/#{blog.name}") #{(blog.name)?blog.name:"MISSING NAME"}
+  |  was changed by #{user.OSMUser}
+
+
+if status === "markexported"
+  p
+    | Review status was set to exported.
+else if status === "startreview"
+  p
+    | Review was started.
+else
+  p
+    | Review status was set to #{status}
+  
+

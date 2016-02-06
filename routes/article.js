@@ -259,7 +259,7 @@ function postArticle(req, res, next) {
       debug('postArticle->setValues');
       if (err) {return next(err);}
       should.exist(article);
-      article.setAndSave(req.user.displayName,changes,function(err) {
+      article.setAndSave(req.user,changes,function(err) {
        debug('postArticle->setValues->setAndSave');
         if (err ) {
           next(err);

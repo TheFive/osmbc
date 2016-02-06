@@ -1,5 +1,49 @@
 # Change Log
 
+## [0.7.0](https://github.com/TheFive/osmbc/tree/0.7.0) (2016-02-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9c...0.7.0)
+
+**Implemented enhancements:**
+
+- Generate an outgoing mail log for debugging purposes. [\#298](https://github.com/TheFive/osmbc/issues/298)
+- Generate Text EMails as alternative to html. [\#297](https://github.com/TheFive/osmbc/issues/297)
+- Build an easier way to configure personal settings \(eg. via user name in navbar\) [\#296](https://github.com/TheFive/osmbc/issues/296)
+- Show a progress bar for each blog with translated, edited and open articles. [\#295](https://github.com/TheFive/osmbc/issues/295)
+- automated mail to contributors, when new collection is added, ore something other was changed. [\#270](https://github.com/TheFive/osmbc/issues/270)
+- automated email to contributors, when blog is set to Edit and set to Review differenciated by user's language [\#168](https://github.com/TheFive/osmbc/issues/168)
+- Show, that there are new collections. [\#100](https://github.com/TheFive/osmbc/issues/100)
+
+**Fixed bugs:**
+
+- Add creation of blog to the log history. [\#260](https://github.com/TheFive/osmbc/issues/260)
+
+## [0.6.9c](https://github.com/TheFive/osmbc/tree/0.6.9c) (2016-02-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9b...0.6.9c)
+
+**Merged pull requests:**
+
+- bitte nur den letzten nehmen ... [\#294](https://github.com/TheFive/osmbc/pull/294) ([fredao](https://github.com/fredao))
+
+## [0.6.9b](https://github.com/TheFive/osmbc/tree/0.6.9b) (2016-01-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9a...0.6.9b)
+
+**Fixed bugs:**
+
+- If a comment is changed, the change is displayed character wise in the email. [\#290](https://github.com/TheFive/osmbc/issues/290)
+- Check on valid email address before sending out Welcome Email. [\#289](https://github.com/TheFive/osmbc/issues/289)
+
+**Merged pull requests:**
+
+- German flag - last change [\#288](https://github.com/TheFive/osmbc/pull/288) ([fredao](https://github.com/fredao))
+
+## [0.6.9a](https://github.com/TheFive/osmbc/tree/0.6.9a) (2016-01-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9...0.6.9a)
+
+**Merged pull requests:**
+
+- geänderte Flaggen: Taiwan, Österreich, Deutschland [\#287](https://github.com/TheFive/osmbc/pull/287) ([fredao](https://github.com/fredao))
+- Hi theFive - hier kommen die neuen Flaggen [\#286](https://github.com/TheFive/osmbc/pull/286) ([fredao](https://github.com/fredao))
+
 ## [0.6.9](https://github.com/TheFive/osmbc/tree/0.6.9) (2016-01-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7a...0.6.9)
 
@@ -808,17 +852,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
