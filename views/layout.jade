@@ -179,7 +179,7 @@ html(lang='en')
                     a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
             if layout.user
                 li 
-                  a(href='http://www.openstreetmap.org/user/#{layout.user.displayName}') #{layout.user.displayName}
+                  a(href='#{layout.htmlroot}/usert/#{layout.user.id}') #{layout.user.displayName}
               else
                 li  
                   a(href='./') Anonymous
