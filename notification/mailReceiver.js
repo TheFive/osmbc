@@ -52,7 +52,7 @@ function sendMailWithLog(mailOptions,callback) {
     };
     if (error) {
       logModule.log(logObject,function cb(){
-        return callback(error);
+        return callback();
       });
     } else {
       logModule.log(logObject,callback);
