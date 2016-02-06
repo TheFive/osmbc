@@ -203,13 +203,16 @@ describe('model/user', function() {
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
             var code = user.emailValidationKey;
             var expectedMail = "<h2>Welcome </h2><p>InviteYou has invited you to OSMBC. (May be he just changed your EMail adress in OSMBC)\nYou can login to OSMBC with your OpenStreetMap credentials via OAuth.</p><p><a href=\"https://testosm.bc/osmbc.html\">OSMBC</a> is the tool for the international WeeklyOSM and the German Wochennotiz Team to collaborate writing and translating the weekly news.\nSomeone has invited you to join. You can login with your OpenStreetMap credentials, and the above link.</p><p>If you would like to use this email address for OSMBC click on this link: <a href=\"https://testosm.bc/usert/1?validation="+code+"\">Link To Click On.</a></p><p>If you would like to check your User Settings go to<a href=\"https://testosm.bc/usert/1\">User Settings </a>.</p><p>Thanks for supporting Weekly & Wochennotiz.</p><p>Have fun with OSMBC. </p><p>Christoph (TheFive).</p>";
+            var expectedText = 'WELCOME\nInviteYou has invited you to OSMBC. (May be he just changed your EMail adress in\nOSMBC) You can login to OSMBC with your OpenStreetMap credentials via OAuth.\n\nOSMBC [https://testosm.bc/osmbc.html] is the tool for the international WeeklyOSM and the German Wochennotiz Team to\ncollaborate writing and translating the weekly news. Someone has invited you to\njoin. You can login with your OpenStreetMap credentials, and the above link.\n\nIf you would like to use this email address for OSMBC click on this link: Link To Click On.\n[https://testosm.bc/usert/1?validation='+code+']\n\nIf you would like to check your User Settings go to User Settings [https://testosm.bc/usert/1] .\n\nThanks for supporting Weekly & Wochennotiz.\n\nHave fun with OSMBC.\n\nChristoph (TheFive).';
+
             should(result.html).eql(expectedMail);
+            should(result.text).eql(expectedText);
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
               to:"WelcomeMe@newemail.org",
               subject:"Welcome to OSMBC",
               html:expectedMail,
-              text:null});
+              text:expectedText});
 
             // Email is send out, now check email Verification first with wrong code
             user.validateEmail("wrong code",function(err){

@@ -260,7 +260,7 @@ describe('model/article', function() {
               to:"user1@mail.bc",
               subject:"WN789 added collection",
               html:expectedMail,
-              text:null});
+              text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext"});
 
 
             bddone();
@@ -282,7 +282,7 @@ describe('model/article', function() {
               to:"user2@mail.bc",
               subject:"WN789 added comment",
               html:expectedMail,
-              text:null});
+              text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
 
             // Second Mail Check
             result = mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0];
@@ -292,7 +292,7 @@ describe('model/article', function() {
               to:"user3@mail.bc",
               subject:"WN789 added comment",
               html:expectedMail,
-              text:null});
+              text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
 
 
             bddone();
@@ -311,36 +311,42 @@ describe('model/article', function() {
               // First Mail Check
               var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
               var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>comment was added</h3><p>Information for noone</p><h3>commentStatus was added</h3><p>open</p>';
+              var expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for noone\n\nCOMMENTSTATUS WAS ADDED\nopen';
               should(result.html).eql(expectedMail);
+              should(result.text).eql(expectedText);
               should(result).eql(
                 {from:"noreply@gmail.com",
                 to:"user2@mail.bc",
                 subject:"WN789 added comment",
                 html:expectedMail,
-                text:null});
-
+                text:expectedText});
               // Second Mail Check
               result = mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0];
               expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for noone and for @User3</p>';
+              expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nCOMMENT WAS CHANGED\nInformation for noone and for @User3';
               should(result.html).eql(expectedMail);
+              should(result.text).eql(expectedText);
               should(result).eql(
                 {from:"noreply@gmail.com",
                 to:"user2@mail.bc",
                 subject:"WN789 changed comment",
                 html:expectedMail,
-                text:null});
+                text:expectedText});
 
               // Third Mail Check
               
               result = mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0];
               expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for noone and for @User3</p>';
+              expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nCOMMENT WAS CHANGED\nInformation for noone and for @User3';
+
               should(result.html).eql(expectedMail);
+              should(result.text).eql(expectedText);
               should(result).eql(
                 {from:"noreply@gmail.com",
                 to:"user3@mail.bc",
                 subject:"WN789 changed comment",
                 html:expectedMail,
-                text:null});
+                text:expectedText});
 
 
               bddone();

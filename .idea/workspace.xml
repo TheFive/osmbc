@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="006caae8-bd95-47e8-94f5-9ca7528319c8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/users.js" afterPath="$PROJECT_DIR$/routes/users.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/user.jade" afterPath="$PROJECT_DIR$/views/user.jade" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notification/mailReceiver.js" afterPath="$PROJECT_DIR$/notification/mailReceiver.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/model.article.test.js" afterPath="$PROJECT_DIR$/test/model.article.test.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/model.blog.test.js" afterPath="$PROJECT_DIR$/test/model.blog.test.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/model.user.test.js" afterPath="$PROJECT_DIR$/test/model.user.test.js" />
     </list>
     <ignored path="osmbc.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,16 +36,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="logModule.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/logModule.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="76" column="0" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="views.article.test.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/views.article.test.js">
           <provider selected="true" editor-type-id="text-editor">
@@ -58,27 +50,26 @@
         <entry file="file://$PROJECT_DIR$/notification/mailReceiver.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="80" column="79" selection-start-line="80" selection-start-column="79" selection-end-line="80" selection-end-column="79" />
-              <folding />
+              <caret line="86" column="33" selection-start-line="86" selection-start-column="33" selection-end-line="86" selection-end-column="33" />
+              <folding>
+                <marker date="1454764191000" expanded="true" signature="6654:6660" placeholder="{...}" />
+                <marker date="1454764191000" expanded="true" signature="6654:6664" placeholder="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="model.blog.test.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="model.blog.test.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/model.blog.test.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="309" column="68" selection-start-line="309" selection-start-column="68" selection-end-line="309" selection-end-column="68" />
+            <state vertical-scroll-proportion="0.8921053">
+              <caret line="367" column="33" selection-start-line="367" selection-start-column="33" selection-end-line="367" selection-end-column="33" />
               <folding>
                 <element signature="e#5717#7240#0" expanded="false" />
                 <element signature="e#7315#7354#0" expanded="false" />
                 <element signature="e#7431#9315#0" expanded="false" />
-                <element signature="e#11890#13341#0" expanded="false" />
-                <element signature="e#14725#15926#0" expanded="false" />
-                <element signature="e#16012#17213#0" expanded="false" />
-                <element signature="e#17264#18888#0" expanded="false" />
-                <element signature="e#20776#23753#0" expanded="false" />
-                <element signature="e#25807#29004#0" expanded="false" />
+                <element signature="e#21976#24953#0" expanded="false" />
+                <element signature="e#27007#30204#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -104,11 +95,39 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="users.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="users.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/users.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.65648854">
-              <caret line="104" column="46" selection-start-line="104" selection-start-column="46" selection-end-line="104" selection-end-column="46" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="101" column="46" selection-start-line="101" selection-start-column="46" selection-end-line="101" selection-end-column="46" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="model.article.test.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/model.article.test.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="348" column="33" selection-start-line="348" selection-start-column="33" selection-end-line="348" selection-end-column="33" />
+              <folding>
+                <marker date="1454763883000" expanded="true" signature="33466:33512" placeholder="..." />
+                <marker date="1454763883000" expanded="true" signature="34069:34115" placeholder="..." />
+                <marker date="1454763883000" expanded="true" signature="34690:34736" placeholder="..." />
+                <marker date="1454763883000" expanded="true" signature="35313:35359" placeholder="..." />
+                <marker date="1454763883000" expanded="true" signature="35954:36002" placeholder="..." />
+                <marker date="1454763883000" expanded="true" signature="36596:36641" placeholder="..." />
+                <marker date="1454763883000" expanded="true" signature="37237:37285" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="model.user.test.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/model.user.test.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="189" column="4" selection-start-line="189" selection-start-column="4" selection-end-line="189" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -137,17 +156,18 @@
         <option value="$PROJECT_DIR$/test/routes.article.test.js" />
         <option value="$PROJECT_DIR$/test/data/router.article.renderArticleId.2.json" />
         <option value="$PROJECT_DIR$/test/passport-stub.js" />
-        <option value="$PROJECT_DIR$/test/model.article.test.js" />
         <option value="$PROJECT_DIR$/routes/blog.js" />
         <option value="$PROJECT_DIR$/model/pgMap.js" />
         <option value="$PROJECT_DIR$/notification/messageFilter.js" />
         <option value="$PROJECT_DIR$/model/blog.js" />
         <option value="$PROJECT_DIR$/notification/messageCenter.js" />
         <option value="$PROJECT_DIR$/email/infomailInfo/infomailBlog html.jade" />
-        <option value="$PROJECT_DIR$/test/model.blog.test.js" />
         <option value="$PROJECT_DIR$/notification/mailReceiver.js" />
         <option value="$PROJECT_DIR$/views/user.jade" />
         <option value="$PROJECT_DIR$/routes/users.js" />
+        <option value="$PROJECT_DIR$/test/model.article.test.js" />
+        <option value="$PROJECT_DIR$/test/model.user.test.js" />
+        <option value="$PROJECT_DIR$/test/model.blog.test.js" />
       </list>
     </option>
   </component>
@@ -190,7 +210,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -254,6 +273,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -339,6 +359,24 @@
       </test-names>
       <method />
     </configuration>
+    <configuration default="false" name="model/user.setAndSave.trigger welcome email" type="mocha-javascript-test-runner" factoryName="Mocha" temporary="true" nameIsGenerated="true">
+      <node-options />
+      <working-directory>$PROJECT_DIR$</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <envs>
+        <env name="NODE_ENV" value="test" />
+      </envs>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>SUITE</test-kind>
+      <test-file>$PROJECT_DIR$/test/model.user.test.js</test-file>
+      <test-names>
+        <name value="model/user" />
+        <name value="setAndSave" />
+        <name value="trigger welcome email" />
+      </test-names>
+      <method />
+    </configuration>
     <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
       <method />
     </configuration>
@@ -413,18 +451,20 @@
       <envs />
       <method />
     </configuration>
-    <list size="5">
+    <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Mocha.mocha OSMBC" />
       <item index="1" class="java.lang.String" itemvalue="npm.run OSMBC" />
       <item index="2" class="java.lang.String" itemvalue="Mocha.model/blog.setAndSave.trigger info email" />
       <item index="3" class="java.lang.String" itemvalue="Mocha.model/blog.setAndSave.trigger info email.should send out mail when review is started" />
       <item index="4" class="java.lang.String" itemvalue="Mocha.model/blog.setAndSave.trigger info email.should send out mail when creating a blog" />
+      <item index="5" class="java.lang.String" itemvalue="Mocha.model/user.setAndSave.trigger welcome email" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Mocha.model/blog.setAndSave.trigger info email" />
-        <item index="1" class="java.lang.String" itemvalue="Mocha.model/blog.setAndSave.trigger info email.should send out mail when creating a blog" />
-        <item index="2" class="java.lang.String" itemvalue="Mocha.model/blog.setAndSave.trigger info email.should send out mail when review is started" />
+      <list size="4">
+        <item index="0" class="java.lang.String" itemvalue="Mocha.model/user.setAndSave.trigger welcome email" />
+        <item index="1" class="java.lang.String" itemvalue="Mocha.model/blog.setAndSave.trigger info email" />
+        <item index="2" class="java.lang.String" itemvalue="Mocha.model/blog.setAndSave.trigger info email.should send out mail when creating a blog" />
+        <item index="3" class="java.lang.String" itemvalue="Mocha.model/blog.setAndSave.trigger info email.should send out mail when review is started" />
       </list>
     </recent_temporary>
   </component>
@@ -442,35 +482,35 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="mocha_OSMBC - 2016.02.04 at 21h 11m 51s.xml">
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 07m 54s.xml">
       <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="mocha_OSMBC - 2016.02.04 at 21h 12m 22s.xml">
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 10m 04s.xml">
       <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="mocha_OSMBC - 2016.02.04 at 21h 16m 30s.xml">
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 11m 18s.xml">
       <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="mocha_OSMBC - 2016.02.04 at 21h 18m 59s.xml">
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 12m 46s.xml">
       <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="mocha_OSMBC - 2016.02.04 at 21h 21m 00s.xml">
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 13m 15s.xml">
       <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="mocha_OSMBC - 2016.02.04 at 21h 22m 33s.xml">
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 14m 14s.xml">
       <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="mocha_OSMBC - 2016.02.04 at 21h 23m 12s.xml">
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 16m 02s.xml">
       <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="mocha_OSMBC - 2016.02.04 at 21h 25m 07s.xml">
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 16m 28s.xml">
       <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="mocha_OSMBC - 2016.02.04 at 21h 26m 09s.xml">
-      <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
+    <history-entry file="model_user_setAndSave_trigger_welcome_email - 2016.02.06 at 14h 07m 25s.xml">
+      <configuration name="model/user.setAndSave.trigger welcome email" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="mocha_OSMBC - 2016.02.04 at 21h 27m 04s.xml">
-      <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
+    <history-entry file="model_user_setAndSave_trigger_welcome_email - 2016.02.06 at 14h 07m 35s.xml">
+      <configuration name="model/user.setAndSave.trigger welcome email" configurationId="mocha-javascript-test-runner" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
@@ -482,7 +522,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32984293" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3516999" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5205158" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -531,7 +571,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/test/model.blog.test.js</url>
-          <line>299</line>
+          <line>304</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -566,7 +606,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/notification/mailReceiver.js</url>
-          <line>235</line>
+          <line>237</line>
           <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
@@ -575,19 +615,14 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/test/routes.article.test.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="121" column="17" selection-start-line="121" selection-start-column="17" selection-end-line="121" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/notification/mailReceiver.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="266" column="0" selection-start-line="266" selection-start-column="0" selection-end-line="266" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1454764191000" expanded="true" signature="6654:6660" placeholder="{...}" />
+            <marker date="1454764191000" expanded="true" signature="6654:6664" placeholder="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -638,7 +673,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1454764191000" expanded="true" signature="6654:6660" placeholder="{...}" />
+            <marker date="1454764191000" expanded="true" signature="6654:6664" placeholder="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -650,12 +688,8 @@
             <element signature="e#5717#7240#0" expanded="false" />
             <element signature="e#7315#7354#0" expanded="false" />
             <element signature="e#7431#9315#0" expanded="false" />
-            <element signature="e#11890#13341#0" expanded="false" />
-            <element signature="e#14725#15926#0" expanded="false" />
-            <element signature="e#16012#17213#0" expanded="false" />
-            <element signature="e#17264#18888#0" expanded="false" />
-            <element signature="e#20776#23753#0" expanded="false" />
-            <element signature="e#25807#29004#0" expanded="false" />
+            <element signature="e#21976#24953#0" expanded="false" />
+            <element signature="e#27007#30204#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -730,7 +764,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1454764191000" expanded="true" signature="6654:6660" placeholder="{...}" />
+            <marker date="1454764191000" expanded="true" signature="6654:6664" placeholder="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -833,13 +870,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/model.article.test.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.029013539">
-          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/routes/blog.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33265308">
@@ -873,13 +903,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.029013539">
           <caret line="16" column="21" selection-start-line="16" selection-start-column="21" selection-end-line="16" selection-end-column="21" />
-          <folding>
-            <marker date="1454398069000" expanded="true" signature="3756:3815" placeholder="..." />
-            <marker date="1454398069000" expanded="true" signature="3894:3912" placeholder="..." />
-            <marker date="1454398069000" expanded="true" signature="8828:9288" placeholder="..." />
-            <marker date="1454398069000" expanded="true" signature="8867:9040" placeholder="..." />
-            <marker date="1454398069000" expanded="true" signature="9079:9267" placeholder="..." />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -930,29 +953,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/model.blog.test.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="309" column="68" selection-start-line="309" selection-start-column="68" selection-end-line="309" selection-end-column="68" />
-          <folding>
-            <element signature="e#5717#7240#0" expanded="false" />
-            <element signature="e#7315#7354#0" expanded="false" />
-            <element signature="e#7431#9315#0" expanded="false" />
-            <element signature="e#11890#13341#0" expanded="false" />
-            <element signature="e#14725#15926#0" expanded="false" />
-            <element signature="e#16012#17213#0" expanded="false" />
-            <element signature="e#17264#18888#0" expanded="false" />
-            <element signature="e#20776#23753#0" expanded="false" />
-            <element signature="e#25807#29004#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/notification/mailReceiver.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="80" column="79" selection-start-line="80" selection-start-column="79" selection-end-line="80" selection-end-column="79" />
-          <folding />
+          <caret line="86" column="33" selection-start-line="86" selection-start-column="33" selection-end-line="86" selection-end-column="33" />
+          <folding>
+            <marker date="1454764191000" expanded="true" signature="6654:6660" placeholder="{...}" />
+            <marker date="1454764191000" expanded="true" signature="6654:6664" placeholder="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -968,15 +976,52 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.60544217">
           <caret line="95" column="19" selection-start-line="95" selection-start-column="19" selection-end-line="95" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/users.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.65648854">
-          <caret line="104" column="46" selection-start-line="104" selection-start-column="46" selection-end-line="104" selection-end-column="46" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="101" column="46" selection-start-line="101" selection-start-column="46" selection-end-line="101" selection-end-column="46" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/model.article.test.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="348" column="33" selection-start-line="348" selection-start-column="33" selection-end-line="348" selection-end-column="33" />
+          <folding>
+            <marker date="1454763883000" expanded="true" signature="33466:33512" placeholder="..." />
+            <marker date="1454763883000" expanded="true" signature="34069:34115" placeholder="..." />
+            <marker date="1454763883000" expanded="true" signature="34690:34736" placeholder="..." />
+            <marker date="1454763883000" expanded="true" signature="35313:35359" placeholder="..." />
+            <marker date="1454763883000" expanded="true" signature="35954:36002" placeholder="..." />
+            <marker date="1454763883000" expanded="true" signature="36596:36641" placeholder="..." />
+            <marker date="1454763883000" expanded="true" signature="37237:37285" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/model.user.test.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="189" column="4" selection-start-line="189" selection-start-column="4" selection-end-line="189" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/model.blog.test.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8921053">
+          <caret line="367" column="33" selection-start-line="367" selection-start-column="33" selection-end-line="367" selection-end-column="33" />
+          <folding>
+            <element signature="e#5717#7240#0" expanded="false" />
+            <element signature="e#7315#7354#0" expanded="false" />
+            <element signature="e#7431#9315#0" expanded="false" />
+            <element signature="e#21976#24953#0" expanded="false" />
+            <element signature="e#27007#30204#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

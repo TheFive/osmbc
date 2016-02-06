@@ -11,7 +11,7 @@ var messageCenter = require('../notification/messageCenter.js');
 var messageFilter = require('../notification/messageFilter.js');
 var articleModule = require('../model/article.js');
 var blogModule = require('../model/blog.js');
-var logModule  = require('../model/changes.js');
+var logModule  = require('../model/logModule.js');
 
 var htmlToText = require('html-to-text');
 
@@ -49,15 +49,15 @@ function sendMailWithLog(mailOptions,callback) {
       text:mailOptions.text,
       error:error,
       response:info.response
-    }
+    };
     if (error) {
       logModule.log(logObject,function cb(){
-        return callback(err);
+        return callback(error);
       });
     } else {
       logModule.log(logObject,callback);
     }
-  })
+  });
 }
 function MailReceiver(user) {
   debug("MailReceiver::MailReceiver");
@@ -86,7 +86,6 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
      
     // send mail with defined transport object 
     sendMailWithLog(mailOptions,callback);
-    });
   }); 
 };
 
@@ -119,13 +118,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blo
     };
      
     // send mail with defined transport object 
-    transporter.sendMail(mailOptions, function transporterSendMail(error) {
-      debug('transporterSendMail');
-      if(error){
-          return callback(error);
-      }
-      return callback();
-    });
+    sendMailWithLog(mailOptions,callback);
   });
 };
 
@@ -181,13 +174,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
     };
      
     // send mail with defined transport object 
-    transporter.sendMail(mailOptions, function transporterSendMail(error) {
-      debug('transporterSendMail');
-      if(error){
-          return callback(error);
-      }
-      callback();
-    });
+    sendMailWithLog(mailOptions,callback);
   });
 };
 
@@ -235,13 +222,7 @@ MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callbac
     };
      
     // send mail with defined transport object 
-    transporter.sendMail(mailOptions, function transporterSendMail(error) {
-      debug('transporterSendMail');
-      if(error){
-          return callback(error);
-      }
-      callback();
-    });
+    sendMailWithLog(mailOptions,callback);
   });
 };
 var userReceiverMap = {};

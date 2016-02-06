@@ -248,19 +248,22 @@ describe('model/blog', function() {
           should(mailReceiver.for_test_only.transporter.sendMail.calledTwice).be.True();
           var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
           var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
+          var expectedText = 'BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value name WN251 status open startDate 1970-01-02T00:00:00.000Z endDate 1970-01-08T00:00:00.000Z';
+
           should(result.html).eql(expectedMail);
+          should(result.text).eql(expectedText);
           should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
             {from:"noreply@gmail.com",
             to:"user1@mail.bc",
             subject:"WN251 was created",
             html:expectedMail,
-            text:null});
+            text:expectedText});
           should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
             {from:"noreply@gmail.com",
             to:"user2@mail.bc",
             subject:"WN251 was created",
             html:expectedMail,
-            text:null});
+            text:expectedText});
           bddone();
         });
       });
@@ -275,19 +278,21 @@ describe('model/blog', function() {
             should(mailReceiver.for_test_only.transporter.sendMail.calledTwice).be.True();
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
             var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>status</td><td>edit</td></tr></table>';
+            var expectedText ='BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value status edit';
             should(result.html).eql(expectedMail);
+            should(result.text).eql(expectedText);
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
               to:"user1@mail.bc",
               subject:"WN251 changed status",
               html:expectedMail,
-              text:null});
+              text:expectedText});
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
               {from:"noreply@gmail.com",
               to:"user2@mail.bc",
               subject:"WN251 changed status",
               html:expectedMail,
-              text:null});
+              text:expectedText});
             bddone();
           });
         });
@@ -303,13 +308,15 @@ describe('model/blog', function() {
             should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
             var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to I have reviewed</p>';
+            var expectedText = 'BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to I have reviewed';
             should(result.html).eql(expectedMail);
+            should(result.text).eql(expectedText);
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
                 to:"user3@mail.bc",
                 subject:"blog(ES) has been reviewed by user testuser",
                 html:expectedMail,
-                text:null});
+                text:expectedText});
             bddone();
           });
         });
@@ -325,13 +332,16 @@ describe('model/blog', function() {
             should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
             var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to exported.</p>';
+            var expectedText = 'BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to exported.';
+
             should(result.html).eql(expectedMail);
+            should(result.text).eql(expectedText);
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
                 to:"user3@mail.bc",
                 subject:"blog(ES) is exported to WordPress",
                 html:expectedMail,
-                text:null});
+                text:expectedText});
             bddone();
           });
         });
@@ -347,13 +357,15 @@ describe('model/blog', function() {
             should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
             var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to exported.</p>';
+            var expectedText = 'BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to exported.';
             should(result.html).eql(expectedMail);
+            should(result.text).eql(expectedText);
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
                 to:"user3@mail.bc",
                 subject:"blog(ES) is exported to WordPress",
                 html:expectedMail,
-                text:null});
+                text:expectedText});
             bddone();
           });
         });
