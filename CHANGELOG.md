@@ -1,15 +1,5 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.0...HEAD)
-
-**Implemented enhancements:**
-
-- automated mail to contributors, when new collection is added, ore something other was changed. [\#270](https://github.com/TheFive/osmbc/issues/270)
-- automated email to contributors, when blog is set to Edit and set to Review differenciated by user's language [\#168](https://github.com/TheFive/osmbc/issues/168)
-- Show, that there are new collections. [\#100](https://github.com/TheFive/osmbc/issues/100)
-
 ## [0.7.0](https://github.com/TheFive/osmbc/tree/0.7.0) (2016-02-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9c...0.7.0)
 
@@ -19,6 +9,9 @@
 - Generate Text EMails as alternative to html. [\#297](https://github.com/TheFive/osmbc/issues/297)
 - Build an easier way to configure personal settings \(eg. via user name in navbar\) [\#296](https://github.com/TheFive/osmbc/issues/296)
 - Show a progress bar for each blog with translated, edited and open articles. [\#295](https://github.com/TheFive/osmbc/issues/295)
+- automated mail to contributors, when new collection is added, ore something other was changed. [\#270](https://github.com/TheFive/osmbc/issues/270)
+- automated email to contributors, when blog is set to Edit and set to Review differenciated by user's language [\#168](https://github.com/TheFive/osmbc/issues/168)
+- Show, that there are new collections. [\#100](https://github.com/TheFive/osmbc/issues/100)
 
 **Fixed bugs:**
 
