@@ -238,7 +238,7 @@ describe('model/blog', function() {
         testutil.importData({clear:true,
                              user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailBlogStatusChange:"true"},
                                    {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailBlogStatusChange:"true"},
-                                   {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailBlogLanguageStatusChange:"EN,ES"},
+                                   {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailBlogLanguageStatusChange:["EN","ES"]},
                                    {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
                                    {OSMUser:"User5",                     access:"full",mailBlogStatusChange:"true"}]},bddone);
       });
