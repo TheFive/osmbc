@@ -120,6 +120,7 @@ function ensureAuthenticated(req, res, next) {
   debug("ensureAuthenticated");
 
   if (req.isAuthenticated()) { 
+    //if (req.user.displayName =="TheFive") return next();
     // check User
     userModule.find({OSMUser:req.user.displayName},function(err,result){
       debug('ensureAuthenticated->userFind');

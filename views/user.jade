@@ -1,189 +1,85 @@
 extends layout
 
+mixin labeledInput(label,name,value,explanation)
+  div.form-group
+    label.control-label.col-sm-2(for="#{name}")=label
+    div.col-sm-4
+      input.form-control(name="#{name}",value = "#{value}")
+    div.col-sm-6.text-muted
+      |#{explanation}
+mixin labeledSelect(label,name,value,values,displayValues,explanation)
+  div.form-group
+    label.control-label.col-sm-2(for="name")=label
+    div.col-sm-4
+      select(id="#{name}",name="#{name}").form-control
+        each v,i in values
+          if (value ==v)
+            option(value="#{v}" selected) #{displayValues[i]}
+          else
+            option(value="#{v}" ) #{displayValues[i]}
+    div.col-sm-6.text-muted=explanation
+     
 
 
 block content
-
-
-  p
-    if usershown.lock
-      .alert.alert-dismissable.alert-info
-        button.close( type="button", data-dismiss="alert" ) ×
-        | #{usershown.lock.user} edits since #{layout.moment(usershown.lock.timestamp).fromNow()} Version #{user.version}
-    if info
-      if info.message
-        if info.status == 'error'
-          .alert.alert-dismissable.alert-danger
-            button.close( type="button", data-dismiss="alert" ) ×
-            | #{info.message}
-        if info.status == 'message'
-          .alert.alert-dismissable.alert-success
-            button.close( type="button", data-dismiss="alert" ) ×
-            | #{info.message}
-  
-
-          
-    if (params && params.edit) 
-      form(name="input", action="#{layout.htmlroot}/usert/#{usershown.id}", method="post")
-        .row
-          .col-md-2
-            | OSM Name 
-          .col-md-3
-            textarea.form-control(name="OSMUser",rows=1) #{usershown.OSMUser}
-
-          .col-md-1
-            input(type="submit", class="btn btn-primary",value="OK")
-            a(href="#{layout.htmlroot}/usert/#{usershown.id}?edit=false" class="btn btn-default" role="button") Cancel
-        .row
-          .col-md-2
-            | EMail 
-          .col-md-3
-            textarea.form-control(name="email",rows=1) #{usershown.email}
-            if (usershown.emailInvalidation) 
-              p
-                | Waiting for validation of EMail #{usershown.emailInvalidation}
-
-        .row
-          .col-md-2
-            | WNAuthor 
-          .col-md-3
-            textarea.form-control(name="WNAuthor",rows=1) #{usershown.WNAuthor}
-  
-
-        .row
-          .col-md-2
-            | Language
-          .col-md-5
-            select(id="language",name="language").form-control
-              option(value="#{usershown.language}" selected) #{usershown.language+'(*)'}
-              each l in langlist
-                option(value="#{l}") #{l}
-        .row
-          .col-md-2
-            | Access
-          .col-md-5
-            select(id="access",name="access").form-control
-              option(value="#{usershown.access}" selected) #{usershown.access+'(*)'}
-              option(value="full" ) full
-              option(value="read" ) only collected Article (not implemented)
-              option(value="denied" ) denied
-        .row
-          .col-md-2
-            | mailAllcomment
-          .col-md-3
-            select(id="mailAllComment",name="mailAllComment").form-control
-              option(value="#{usershown.mailAllComment}" selected) #{usershown.mailAllComment+'(*)'}
-              option(value="true") ON 
-              option(value="false") OFF 
-        .row
-          .col-md-2
-            | mailNewCollection
-          .col-md-3
-            select(id="mailNewCollection",name="mailNewCollection").form-control
-              option(value="#{usershown.mailNewCollection}" selected) #{usershown.mailNewCollection+'(*)'}
-              option(value="true") ON 
-              option(value="false") OFF
-        .row
-          .col-md-2
-            | mailComment
-          .col-md-3
-            textarea.form-control(name="mailComment",rows=1) #{usershown.mailComment}
-            p
-              | Please enter for example "DE marc ES" to be informed about comments for @DE @ES @marc
-        .row
-          .col-md-2
-            | mailBlogStatus
-          .col-md-3
-            textarea.form-control(name="mailBlogLanguageStatusChange",rows=1) #{usershown.mailBlogLanguageStatusChange}
-            p
-              | Please enter for example "DE ES" to be informed about comments for DE and ES changes
-
-    else
-      .row
-        .col-md-2
-          | OSM Name <br>
-        .col-md-4
-          h2
-            | #{usershown.OSMUser}
-        .col-md-5
-        .col-md-1
-          a(href="#{layout.htmlroot}/usert/#{usershown.id}?edit=true" class="btn btn-primary" role="button") Edit
-      .row
-        .col-md-2
-          | EMail 
-        .col-md-3
-          | #{usershown.email}
-          if (usershown.emailInvalidation) 
-            p
-              | Waiting for validation of EMail #{usershown.emailInvalidation}
-      .row
-        .col-md-2
-          | WNPublicAuthor <br>
-        .col-md-4
-          h2
-            | #{usershown.WNPublicAuthor}
-      .row
-        .col-md-2
-          | WNAuthor <br>
-        .col-md-4
-          h2
-            | #{usershown.WNAuthor}
-      .row
-        .col-md-2
-          | Language
-        .col-md-5
-          h2
-            | #{usershown.language}
-      .row
-        .col-md-2
-          | Access <br>
-        .col-md-5
-          h2
-            | #{usershown.access}
-      .row
-        .col-md-2
-          | OSM <br>
-        .col-md-5
+  h1
+    |Edit OSMBC User
+  form(name="input", action="#{layout.htmlroot}/usert/#{usershown.id}", method="post")
+    div.form-horizontal(role="form")
+      +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
+      +labeledInput("EMail","email",usershown.email,"This mail is used for information about changes.")
+      if (usershown.emailInvalidation)
+        div.col-sm-offset-2.col-sm-10
+          p.bg-info
+            |Waiting for validation of EMail #{usershown.emailInvalidation}
+      +labeledInput("WNAuthor","WNAuthor",usershown.WNAuthor,"WP user for the Wochennotiz Blog blog.openstreetmap.de")
+      if (usershown.WNPublicAuthor)
+        div.col-sm-offset-2.col-sm-10
           p
-            a(href='http://www.openstreetmap.org/user/#{usershown.OSMUser}') #{usershown.OSMUser}
-      .row
-        .col-md-2
-          | mailAllComment
-        .col-md-5
-          p
-            |#{usershown.mailAllComment}
-      .row
-        .col-md-2
-          | mailNewCollection
-        .col-md-5
-          p
-            |#{usershown.mailNewCollection}
-      .row
-        .col-md-2
-          | mailComment
-        .col-md-5
-          p
-            | #{usershown.mailComment}
-      .row
-        .col-md-2
-          | mailStatusChange
-        .col-md-5
-          p
-            | #{usershown.mailBlogLanguageStatusChange}
+            | Public Author name is: #{usershown.WNPublicAuthor}
 
 
-      mailBlogLanguageStatusChange
-      .row 
-        .col-md-2
-        .col-md-5
-          p
-            |Please use 
-            .btn.osmbc-lang(href='#', style="color:white", data-toggle='dropdown') DE
-            .btn.osmbc-lang2(href='#', style="color:white", data-toggle='dropdown') EN
-            |In the upper right corner to configure your languages.
+
+      +labeledSelect("Language",
+                    "language",
+                     usershown.language,
+                     langlist,
+                     langlist,
+                     "Main Language for the user, used for default values.")
+      +labeledSelect("Access",
+                     "access",
+                     usershown.access,
+                     ["full","read","denied"],
+                     ["full","read (not implemented yet)","denied"],
+                     "Define Users Access to OSMBC")
+      +labeledSelect("Mail All Comments",
+                     "mailAllComment",
+                     usershown.mailAllComment,
+                     ["true","false"],
+                     ["on","off"],
+                     "Send a mail for every change of a comment.")
+      +labeledSelect("Mail a new Collection",
+                     "mailNewCollection",
+                     usershown.mailNewCollection,
+                     ["true","false"],
+                     ["on","off"],
+                     "Send a mail for every new Collect.")
+      +labeledInput("Mail defined comments","mailComment",usershown.mailComment,"Please enter for example DE marc ES to be informed about comments for @DE @ES @marc")
+      +labeledInput("Mail Status Change","mailBlogStatus",usershown.mailBlogStatus,"Please enter for example DE ES to be informed about comments for DE and ES changes")
 
 
-  
+
+
+
+      form-group
+        div.col-sm-offset-2.col-sm-10
+          input(type="submit", class="btn btn-primary",value="OK")
+
+    
+
+    
+      
+    
 
    
   .row
