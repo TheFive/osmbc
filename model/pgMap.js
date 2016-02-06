@@ -80,7 +80,6 @@ function generateQuery(table,obj,order) {
 module.exports.save = function(callback) {
   debug("save");
   var self = this;
-
   var table = self._meta.table;
 
   // first check, wether ID is known or not
@@ -114,7 +113,6 @@ module.exports.save = function(callback) {
     });
   } else {
     debug("Object will be updated, current version is %s",self.version);
-    // we have to change the beer
     pg.connect(config.pgstring, function(err, client, pgdone) {
       if (err) {
         pgdone();
@@ -122,31 +120,33 @@ module.exports.save = function(callback) {
       }
       async.series([
         function(cb) {
+          debug("Check version of object");
           var versionsEqual = false;
 
           var query = client.query("select (data->>'version')::int as version from "+table+" where id = $1",[self.id]);
             var startTime = new Date().getTime();
             query.on('row',function(row) {
-            debug('Version in Database %s',row.version);
-            if (row.version===null) {
-              // No Data in Database, so no conflict.
-              versionsEqual = true;
-            }
-            else if (row.version == self.version) {
-              debug('No Error');
-              versionsEqual = true;
-            }
-          });
-          query.on('end',function(){
-            var err = null;
-            var endTime = new Date().getTime();
-            debug("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
-            if (!versionsEqual) {
-              debug('send error');
-              err = new Error("Version Number Differs");
-            }
-            return cb(err);
-          });
+              debug('row Version in Database %s',row.version);
+              if (row.version===null) {
+                // No Data in Database, so no conflict.
+                versionsEqual = true;
+              }
+              else if (row.version == self.version) {
+                debug('No Error');
+                versionsEqual = true;
+              }
+            });
+            query.on('end',function(){
+              debug("end");
+              var err = null;
+              var endTime = new Date().getTime();
+              debug("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
+              if (!versionsEqual) {
+                debug('send error');
+                err = new Error("Version Number Differs");
+              }
+              return cb(err);
+            });
         }
         ],
         function(err) {

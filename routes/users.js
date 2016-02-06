@@ -45,8 +45,6 @@ function renderUserId(req, res, next) {
   var id = req.params.user_id;
   should.exist(id);
   var params = {};
-  if (req.query.edit) params.edit = (req.query.edit==="true");
-  if (req.query.numberconfig) params.numberconfig = req.query.numberconfig;
   var user;
   var changes;
   async.series([
@@ -61,33 +59,25 @@ function renderUserId(req, res, next) {
     },
     function findAndLoaduser(cb){
       debug('findAndLoaduser');
-      var i;
       userModule.findById(id,function findAndLoaduser_CB(err,result) {
         debug('findAndLoaduser_CB');
         if (err) return cb(err);
         user = result;
-
-        if (!params.numberconfig) {
-          params.numberconfig = 3; 
-          for (i =0;i<99;i++) {
-            if (user && typeof(user["blogSetting"+i])== 'undefined') break;
-            if (user &&(user["blogSetting"+i])!= '-') {
-              params.numberconfig=i;
-            }
-          }
-        } else {
-          for (i =0;i<=params.numberconfig;i++) {
-             if (typeof(user["blogSetting"+i])== 'undefined') user["blogSetting"+i]="-";
-          }
-        }
-        cb();
+        if (! user || typeof(user.id) == 'undefined') return next(new Error("User ID not Found"));
+        if (req.query.validation) {
+          user.validateEmail(req.query.validation,function (err){
+            if (err) next(err);
+            console.dir("Success redirectding to "+res.rendervar.layout.htmlroot+"/user/"+user.id);
+            res.redirect(res.rendervar.layout.htmlroot+"/usert/"+user.id);
+            return cb();
+          });
+        } else cb();
       });
     }
     ],
     function finalRenderCB(err) {
       debug('finalRenderCB');
       if (err) return next(err);
-      if (! user || typeof(user.id) == 'undefined') return next(new Error("User ID not Found"));
       should.exist(res.rendervar);
       res.render('user',{usershown:user,
                         changes:changes,
@@ -107,6 +97,11 @@ function postUserId(req, res, next) {
                  WNAuthor:req.body.WNAuthor,
                  WeeklyAuthor:req.body.WeeklyAuthor,
                  language:req.body.language,
+                 mailAllComment:req.body.mailAllComment,
+                 mailNewCollection:req.body.mailNewCollection,
+                 mailComment:req.body.mailComment,
+                 mailBlogLanguageStatusChange:req.body.mailBlogLanguageStatusChange,
+                 email:req.body.email,
                  access:req.body.access};
   async.series([
     function getPublicAuthor(cb) {

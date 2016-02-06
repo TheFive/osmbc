@@ -16,6 +16,7 @@ var moment   = require('moment');
 var articleModule       = require('../model/article.js');
 var settingsModule      = require('../model/settings.js');
 var logModule           = require('../model/logModule.js');
+var messageCenter       = require('../notification/messageCenter.js');
 var userModule          = require('../model/user.js');
 var categoryTranslation = require('../data/categoryTranslation.js');
 var editorStrings       = require('../data/editorStrings.js');
@@ -79,51 +80,49 @@ function create (proto) {
 function setAndSave(user,data,callback) {
   debug("setAndSave");
   debug('user %s',user);
+  should(typeof("user")).eql("string");
   var self = this;
   delete self.lock;
+  articleModule.removeOpenBlogCache(); 
   async.series([
     function checkID(cb) {
       if (self.id === 0) {
         self.save(cb);
       } else cb();
-    }
-  ],function(){
-    should.exist(self.id);
-    should(self.id).not.equal(0);
-    async.forEachOf(data,function(value,key,callback){
-      if (typeof(value)=='undefined') return callback();
-      if (value === self[key]) return callback();
-      if (value === '' && typeof(self[key])==='undefined') return callback();
-      if (typeof(value)=='object') {
-        if (JSON.stringify(value)==JSON.stringify(self[key])) return callback();
+    },
+    function logit(cb) {
+      messageCenter.global.updateBlog(user,self,data,cb);
+    },
+ 
+    function(cb){
+      should.exist(self.id);
+      should(self.id).not.equal(0);
+      for (var key in data) {
+        var value = data[key];
+        if (typeof(value)=='undefined')  continue;
+        if (value === self[key]) continue;
+        if (value === '' && typeof(self[key])==='undefined') continue;
+        if (typeof(value)=='object') {
+          if (JSON.stringify(value)==JSON.stringify(self[key])) continue;
+        }
+        self[key] = value;
       }
-      debug("Set Key %s to value %s",key,value);
-      debug("Old Value Was %s",self[key]);
-      articleModule.removeOpenBlogCache();
-      async.series ( [
-          function(callback) {
-             logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:key,from:self[key],to:value},callback);
-          },
-          function(callback) {
-            self[key] = value;
-            callback();
-          }
-        ],function(err){
-          callback(err);
-        });
-
-    },function(err) {
+      cb();
+    }],function(err) {
       if (err) return callback(err);
       self.startCloseTimer();
       self.save(callback);
-    });
-  });
+     }
+  );
 } 
+
+
 function setReviewComment(lang,user,data,callback) {
-  debug("reviewComment");
+  debug("setReviewComment");
   var self = this;
   var rc = "reviewComment"+lang;
   var exported = "exported"+lang;
+  should(typeof(user)).eql("object");
   async.series([
     function checkID(cb) {
       if (self.id === 0) {
@@ -141,9 +140,11 @@ function setReviewComment(lang,user,data,callback) {
       if (self[rc][i].user == user && self[rc][i].text == data) return callback();
     }
     async.series ( [
-        function logInformation(callback) {
+        function logInformation(cb) {
            debug("setReviewComment->logInformation");
-           logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
+           messageCenter.global.sendLanguageStatus(user,self,lang,data,cb);
+          // This is the old log and has to be moved to the messageCenter (logReceiver)
+          // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
         },
         function checkSpecialCommands(cb) {
           debug("setReviewComment->checkSpecialCommands");
@@ -152,7 +153,11 @@ function setReviewComment(lang,user,data,callback) {
             // Start Review, check wether review is done in WP or not
             if (config.getValue("ReviewInWP").indexOf(lang)>=0) {
               self[exported]=true;
-              logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
+
+              // Review is set on WP, so the blog can be marked as exoprted
+              messageCenter.global.sendLanguageStatus(user,self,lang,"markexported",cb);
+              // This is the old log, that has to be moved to the messageCenter
+              //messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
               return;
             }
             // nothing has to be written to the review comments
@@ -163,8 +168,8 @@ function setReviewComment(lang,user,data,callback) {
             // nothing has to be written to review Comment
             return cb();
           }
-          self[rc].push({user:user,text:data,timestamp:date});
-          cb();
+          self[rc].push({user:user.OSMUser,text:data,timestamp:date});
+          return cb();
         }
       ],function(err){
         debug("setReviewComment->FinalFunction");
@@ -190,7 +195,7 @@ function closeBlog(lang,user,status,callback) {
     should(self.id).not.equal(0);
     async.series ( [
         function logEntry(callback) {
-           logModule.log({oid:self.id,blog:self.name,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
+           messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
         },
         function setCloseField(callback) {
           self[closeField] = status;
@@ -229,7 +234,7 @@ function findOne(obj1,obj2,callback) {
 
 function createNewBlog(user, proto,callback) {
   debug("createNewBlog");
-  should(typeof(user)).eql("string");
+  should(typeof(user)).eql("object");
   if (typeof(proto)=='function') {
     callback = proto;
     proto = null;
@@ -262,22 +267,21 @@ function createNewBlog(user, proto,callback) {
     for (var k in proto) {
       blog[k] = proto[k];
     } 
+    var change={};
+    change.name      = blog.name;
+    change.status    = blog.status;
+    change.startDate = blog.startDate;
+    change.endDate   = blog.endDate;
+    // create an Empty blog and simualte an id != 0
+    var emptyBlog = exports.create();
+    emptyBlog.id = -1;
 
-    var props = ["name","status","startDate","endDate"];
     blog.save(function feedback(err,savedblog){
       if (err) return callback(err);
-      var timestamp = new Date();
-      async.each(props,function doeach(key,cb){
-        logModule.log({oid:savedblog.id, 
-                       blog:savedblog.name,
-                       user:user,
-                       table:"blog",
-                       property:key,
-                       from:"",
-                       to:savedblog[key],
-                       timestamp:timestamp},cb);
-
-      },function final(err){return callback(err,savedblog);});
+      messageCenter.global.updateBlog(user,emptyBlog,change,function(err){
+        if (err) return callback(err);
+        return callback(null,savedblog);
+      });
     });
   });
 }
@@ -290,7 +294,7 @@ Blog.prototype.autoClose = function autoClose(cb) {
   var endDateBlog = (new Date(this.endDate)).getTime();
   if (endDateBlog <= time) {
     var changes = {status:"edit"};
-    this.setAndSave("autoclose",changes,function(err){
+    this.setAndSave({OSMUser:"autoclose"},changes,function(err){
       cb(err);
     });
   } else cb();
@@ -328,7 +332,7 @@ function autoCloseBlog(callback) {
         exports.findOne({status:"open"},function(err,result){
           if (err) return cb(err);
           if (!result) {
-            exports.createNewBlog("autocreate",cb);
+            exports.createNewBlog({OSMUser:"autocreate"},cb);
             return;
           } 
           cb();
@@ -623,7 +627,6 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
   if (this._countUneditedMarkdown) return callback();
   var self = this;
 
-
   self._countUneditedMarkdown = {};
   self._countExpectedMarkdown = {};
   self._countNoTranslateMarkdown = {};
@@ -646,7 +649,7 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
         self._countNoTranslateMarkdown[l] = 0;
         for (var j=0;j<result.length;j++) {
           var c = result[j].categoryEN;
-          if (c == "--unpublished--") continue;
+          if ( c == "--unpublished--") continue;
           self._countExpectedMarkdown[l] +=1;
           var m = result[j]["markdown"+l];
           if (m==="no translation") {
