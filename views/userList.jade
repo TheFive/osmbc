@@ -15,9 +15,9 @@ block content
             th 
               | OSM
             th
-              | Email
-            th
               | WNAuthor
+            th
+              | Email
             th
               | Language
             th
@@ -36,12 +36,14 @@ block content
               td
                  a(href='http://www.openstreetmap.org/user/#{user.OSMUser}') [OSM]
               td
-                if user.email
-                  span.glyphicon.glyphicon-ok
-
-              td
                 if user.WNAuthor
                  a(href='https://blog.openstreetmap.de/blog/author/#{user.WNAuthor}') #{(user.WNPublicAuthor)?user.WNPublicAuthor:user.WNAuthor}
+              td
+                if user.email
+                  span.glyphicon.glyphicon-ok
+                else if user.emailInvalidation
+                  span.glyphicon.glyphicon-question-sign
+
 
               td= user.language
               td= user.access
