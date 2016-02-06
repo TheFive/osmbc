@@ -18,6 +18,7 @@
     "email-validator": "^1.0.4",
     "express": "~4.13.4",
     "express-session": "^1.13.0",
+    "html-to-text": "^1.6.0",
     "htmlparser2": "^3.9.0",
     "image-size": "^0.4.0",
     "istanbul": "^0.4.2",

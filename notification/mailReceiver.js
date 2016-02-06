@@ -11,6 +11,10 @@ var messageCenter = require('../notification/messageCenter.js');
 var messageFilter = require('../notification/messageFilter.js');
 var articleModule = require('../model/article.js');
 var blogModule = require('../model/blog.js');
+var logModule  = require('../model/changes.js');
+
+var htmlToText = require('html-to-text');
+
 
 
 
@@ -34,6 +38,27 @@ var layout = {
 };
 
 
+
+function sendMailWithLog(mailOptions,callback) {
+  transporter.sendMail(mailOptions,function logMail(error,info){
+    debug("logMail");
+    var logObject = {
+      table:"mail",
+      to:mailOptions.to,
+      subject:mailOptions.subject,
+      text:mailOptions.text,
+      error:error,
+      response:info.response
+    }
+    if (error) {
+      logModule.log(logObject,function cb(){
+        return callback(err);
+      });
+    } else {
+      logModule.log(logObject,callback);
+    }
+  })
+}
 function MailReceiver(user) {
   debug("MailReceiver::MailReceiver");
   this.user = user;
@@ -49,6 +74,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
   welcomemail.render(data, function (err, results) {
     if (err) return console.dir(err);
     //console.dir(self.user);
+    results.text = htmlToText.fromString(results.html); 
 
     var mailOptions = {
         from: config.getValue("EmailSender"), // sender address 
@@ -59,15 +85,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
     };
      
     // send mail with defined transport object 
-    transporter.sendMail(mailOptions, function sendMailFunction(error, info) {
-      debug('sendMailFunction');
-      if(error){
-        console.log("Connection Error while send Welcome Email to "+self.user.OSMUser);
-        console.log(error);
-      } else {
-        console.log('Welcome Mail send to '+self.user.OSMUser + " "+info.response);
-      }
-      return callback(error);
+    sendMailWithLog(mailOptions,callback);
     });
   }); 
 };
@@ -90,6 +108,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blo
   infomailInfo.render(data, function infomailRenderBlog(err, results) {
     debug('infomailRenderInfo');
     if (err) return console.dir(err);
+    results.text = htmlToText.fromString(results.html); 
 
     var mailOptions = {
         from: config.getValue("EmailSender"), // sender address 
@@ -151,6 +170,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
   infomail.render(data, function infomailRender(err, results) {
     debug('infomailRender');
     if (err) return console.dir(err);
+    results.text = htmlToText.fromString(results.html); 
 
     var mailOptions = {
         from: config.getValue("EmailSender"), // sender address 
@@ -204,6 +224,7 @@ MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callbac
   infomailBlog.render(data, function infomailRenderBlog(err, results) {
     debug('infomailRenderBlog');
     if (err) return console.dir(err);
+    results.text = htmlToText.fromString(results.html); 
 
     var mailOptions = {
         from: config.getValue("EmailSender"), // sender address 
