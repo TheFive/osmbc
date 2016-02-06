@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="006caae8-bd95-47e8-94f5-9ca7528319c8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notification/mailReceiver.js" afterPath="$PROJECT_DIR$/notification/mailReceiver.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notification/messageFilter.js" afterPath="$PROJECT_DIR$/notification/messageFilter.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/model.article.test.js" afterPath="$PROJECT_DIR$/test/model.article.test.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/model.blog.test.js" afterPath="$PROJECT_DIR$/test/model.blog.test.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/model.user.test.js" afterPath="$PROJECT_DIR$/test/model.user.test.js" />
     </list>
     <ignored path="osmbc.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -62,12 +61,10 @@
       <file leaf-file-name="model.blog.test.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/model.blog.test.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8921053">
-              <caret line="367" column="33" selection-start-line="367" selection-start-column="33" selection-end-line="367" selection-end-column="33" />
+            <state vertical-scroll-proportion="0.22894737">
+              <caret line="240" column="121" selection-start-line="240" selection-start-column="121" selection-end-line="240" selection-end-column="121" />
               <folding>
                 <element signature="e#5717#7240#0" expanded="false" />
-                <element signature="e#7315#7354#0" expanded="false" />
-                <element signature="e#7431#9315#0" expanded="false" />
                 <element signature="e#21976#24953#0" expanded="false" />
                 <element signature="e#27007#30204#0" expanded="false" />
               </folding>
@@ -88,8 +85,8 @@
       <file leaf-file-name="messageFilter.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/notification/messageFilter.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="60" column="44" selection-start-line="60" selection-start-column="16" selection-end-line="60" selection-end-column="44" />
+            <state vertical-scroll-proportion="-4.3333335">
+              <caret line="60" column="99" selection-start-line="60" selection-start-column="94" selection-end-line="60" selection-end-column="99" />
               <folding />
             </state>
           </provider>
@@ -109,15 +106,15 @@
         <entry file="file://$PROJECT_DIR$/test/model.article.test.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="348" column="33" selection-start-line="348" selection-start-column="33" selection-end-line="348" selection-end-column="33" />
+              <caret line="245" column="104" selection-start-line="245" selection-start-column="104" selection-end-line="245" selection-end-column="104" />
               <folding>
-                <marker date="1454763883000" expanded="true" signature="33466:33512" placeholder="..." />
-                <marker date="1454763883000" expanded="true" signature="34069:34115" placeholder="..." />
-                <marker date="1454763883000" expanded="true" signature="34690:34736" placeholder="..." />
-                <marker date="1454763883000" expanded="true" signature="35313:35359" placeholder="..." />
-                <marker date="1454763883000" expanded="true" signature="35954:36002" placeholder="..." />
-                <marker date="1454763883000" expanded="true" signature="36596:36641" placeholder="..." />
-                <marker date="1454763883000" expanded="true" signature="37237:37285" placeholder="..." />
+                <marker date="1454764792000" expanded="true" signature="33466:33512" placeholder="..." />
+                <marker date="1454764792000" expanded="true" signature="34069:34115" placeholder="..." />
+                <marker date="1454764792000" expanded="true" signature="34690:34736" placeholder="..." />
+                <marker date="1454764792000" expanded="true" signature="35313:35359" placeholder="..." />
+                <marker date="1454764792000" expanded="true" signature="35954:36002" placeholder="..." />
+                <marker date="1454764792000" expanded="true" signature="36596:36641" placeholder="..." />
+                <marker date="1454764792000" expanded="true" signature="37237:37285" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -158,15 +155,15 @@
         <option value="$PROJECT_DIR$/test/passport-stub.js" />
         <option value="$PROJECT_DIR$/routes/blog.js" />
         <option value="$PROJECT_DIR$/model/pgMap.js" />
-        <option value="$PROJECT_DIR$/notification/messageFilter.js" />
         <option value="$PROJECT_DIR$/model/blog.js" />
         <option value="$PROJECT_DIR$/notification/messageCenter.js" />
         <option value="$PROJECT_DIR$/email/infomailInfo/infomailBlog html.jade" />
         <option value="$PROJECT_DIR$/notification/mailReceiver.js" />
         <option value="$PROJECT_DIR$/views/user.jade" />
         <option value="$PROJECT_DIR$/routes/users.js" />
-        <option value="$PROJECT_DIR$/test/model.article.test.js" />
         <option value="$PROJECT_DIR$/test/model.user.test.js" />
+        <option value="$PROJECT_DIR$/notification/messageFilter.js" />
+        <option value="$PROJECT_DIR$/test/model.article.test.js" />
         <option value="$PROJECT_DIR$/test/model.blog.test.js" />
       </list>
     </option>
@@ -482,12 +479,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 07m 54s.xml">
-      <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
-    </history-entry>
-    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 10m 04s.xml">
-      <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
-    </history-entry>
     <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 11m 18s.xml">
       <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
@@ -506,11 +497,17 @@
     <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 16m 28s.xml">
       <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="model_user_setAndSave_trigger_welcome_email - 2016.02.06 at 14h 07m 25s.xml">
-      <configuration name="model/user.setAndSave.trigger welcome email" configurationId="mocha-javascript-test-runner" />
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 19m 44s.xml">
+      <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="model_user_setAndSave_trigger_welcome_email - 2016.02.06 at 14h 07m 35s.xml">
-      <configuration name="model/user.setAndSave.trigger welcome email" configurationId="mocha-javascript-test-runner" />
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 20m 03s.xml">
+      <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 21m 14s.xml">
+      <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="mocha_OSMBC - 2016.02.06 at 14h 21m 29s.xml">
+      <configuration name="mocha OSMBC" configurationId="mocha-javascript-test-runner" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
@@ -686,8 +683,6 @@
           <caret line="295" column="28" selection-start-line="295" selection-start-column="28" selection-end-line="295" selection-end-column="28" />
           <folding>
             <element signature="e#5717#7240#0" expanded="false" />
-            <element signature="e#7315#7354#0" expanded="false" />
-            <element signature="e#7431#9315#0" expanded="false" />
             <element signature="e#21976#24953#0" expanded="false" />
             <element signature="e#27007#30204#0" expanded="false" />
           </folding>
@@ -964,14 +959,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/notification/messageFilter.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="60" column="44" selection-start-line="60" selection-start-column="16" selection-end-line="60" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/views/user.jade">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.60544217">
@@ -987,22 +974,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/model.article.test.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="348" column="33" selection-start-line="348" selection-start-column="33" selection-end-line="348" selection-end-column="33" />
-          <folding>
-            <marker date="1454763883000" expanded="true" signature="33466:33512" placeholder="..." />
-            <marker date="1454763883000" expanded="true" signature="34069:34115" placeholder="..." />
-            <marker date="1454763883000" expanded="true" signature="34690:34736" placeholder="..." />
-            <marker date="1454763883000" expanded="true" signature="35313:35359" placeholder="..." />
-            <marker date="1454763883000" expanded="true" signature="35954:36002" placeholder="..." />
-            <marker date="1454763883000" expanded="true" signature="36596:36641" placeholder="..." />
-            <marker date="1454763883000" expanded="true" signature="37237:37285" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/model.user.test.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1011,14 +982,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/notification/messageFilter.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.3333335">
+          <caret line="60" column="99" selection-start-line="60" selection-start-column="94" selection-end-line="60" selection-end-column="99" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/model.article.test.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="245" column="104" selection-start-line="245" selection-start-column="104" selection-end-line="245" selection-end-column="104" />
+          <folding>
+            <marker date="1454764792000" expanded="true" signature="33466:33512" placeholder="..." />
+            <marker date="1454764792000" expanded="true" signature="34069:34115" placeholder="..." />
+            <marker date="1454764792000" expanded="true" signature="34690:34736" placeholder="..." />
+            <marker date="1454764792000" expanded="true" signature="35313:35359" placeholder="..." />
+            <marker date="1454764792000" expanded="true" signature="35954:36002" placeholder="..." />
+            <marker date="1454764792000" expanded="true" signature="36596:36641" placeholder="..." />
+            <marker date="1454764792000" expanded="true" signature="37237:37285" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test/model.blog.test.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8921053">
-          <caret line="367" column="33" selection-start-line="367" selection-start-column="33" selection-end-line="367" selection-end-column="33" />
+        <state vertical-scroll-proportion="0.22894737">
+          <caret line="240" column="121" selection-start-line="240" selection-start-column="121" selection-end-line="240" selection-end-column="121" />
           <folding>
             <element signature="e#5717#7240#0" expanded="false" />
-            <element signature="e#7315#7354#0" expanded="false" />
-            <element signature="e#7431#9315#0" expanded="false" />
             <element signature="e#21976#24953#0" expanded="false" />
             <element signature="e#27007#30204#0" expanded="false" />
           </folding>

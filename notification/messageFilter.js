@@ -27,7 +27,7 @@ UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user,articl
     }
   }
   var userList = [];
-  if (this.user.mailComment) userList = this.user.mailComment.split(" ");
+  if (this.user.mailComment) userList = this.user.mailComment.split(",");
   for (var i=0;i<userList.length;i++) {
     if (change.comment && change.comment.indexOf("@"+userList[i])>=0) {
       sendMail = true; 
@@ -58,7 +58,7 @@ UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user
   debug('UserConfigFilter.prototype.sendLanguageStatus');
   var wnList = [];
   var sendMail = false;
-  if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange.split(" ");
+  if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange.split(",");
   for (var i=0;i<wnList.length;i++) {
     var l = wnList[i];
     if (l === lang) sendMail = true;
