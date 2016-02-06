@@ -12,8 +12,8 @@ var OpenStreetMapStrategy
                  = require('passport-openstreetmap').Strategy;
 
 var session      = require('express-session');
-var FileStore    = require('session-file-store')(session);
 
+var pg = require('pg');
 
 var debug        = require('debug')('OSMBC:app');
 
@@ -28,6 +28,9 @@ var tool       = require('./routes/tool').router;
 var layout     = require('./routes/layout').router;
 
 var userModule = require('./model/user.js');
+
+var mailReceiver = require('./notification/mailReceiver.js');
+
 
 
 // Initialise config Module
@@ -117,6 +120,7 @@ function ensureAuthenticated(req, res, next) {
   debug("ensureAuthenticated");
 
   if (req.isAuthenticated()) { 
+    //if (req.user.displayName =="TheFive") return next();
     // check User
     userModule.find({OSMUser:req.user.displayName},function(err,result){
       debug('ensureAuthenticated->userFind');
@@ -168,12 +172,38 @@ app.set('view engine', 'jade');
 app.use(favicon(path.join(__dirname , 'public','images','favicon.ico')));
 
 
-// take from https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
-app.use(session({ store: new FileStore(),
-                  secret: 'LvwnH}uHhDLxvAu3X6' ,
-                  resave:true,
-                  saveUninitialized:true,
-                  cookie:{_expires : 1000*60*60*24*365}}));
+
+if (config.getValue("sessionStore")==="session-file-store") {
+
+  var FileStore    = require('session-file-store')(session);
+
+
+  // take from https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
+  app.use(session({ store: new FileStore(),
+                    secret: 'LvwnH}uHhDLxvAu3X6' ,
+                    resave:true,
+                    saveUninitialized:true,
+                    cookie:{_expires : 1000*60*60*24*365}}));
+ 
+} else if (config.getValue("sessionStore")=="connect-pg-simple") {
+  var pgSession = require('connect-pg-simple')(session);
+
+  app.use(session({
+    store: new pgSession({
+      pg : pg,        // Use global pg-module 
+      conString : config.pgstring // Connect using something else than default DATABASE_URL env variable 
+    }),
+    secret: 'LvwnH}uHhDLxvAu3X6' ,
+    resave: false,
+    saveUninitialized:true,
+      
+    cookie: { maxAge: 1000*60*60*24*365 } 
+  }));
+} else {
+  console.log("No File Store defined, OSMBC will not run.");
+  console.log("to solve set sessionStore in config._.json");
+  process.exit(1);
+}
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
 app.use(passport.initialize());
@@ -282,6 +312,17 @@ app.use(function(err, req, res, next) {// jshint ignore:line
     error: {},
     layout:{htmlroot:htmlRoot}
   });
+});
+
+// Initialise Mail Module with all users
+
+userModule.find({access:"full"},function initUsers(err,result) {
+  if (err) {
+    console.log("Error during Mail Receiver Initialising");
+    console.dir(err);
+    return;
+  }
+  mailReceiver.initialise(result);
 });
 
 

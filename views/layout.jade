@@ -120,8 +120,19 @@ html(lang='en')
                 li.dropdown-header Action
                 li
                   a(href="#{layout.htmlroot}/blog/create") Create Blog
-                      
-          ul.nav.navbar-nav.navbar-right  
+                li.dropdown-header OutgoingMail
+                li
+                  - var d = new Date();
+                  - d= d.toISOString();
+                  - d= d.substring(0,10);
+                  a(href="#{layout.htmlroot+'/changes/mail/'+d}") Mail Log Today
+                li
+                  - var d = new Date();
+                  - d= d.toISOString();
+                  - d= d.substring(0,13);
+                  a(href="#{layout.htmlroot + '/changes/mail/' + d}") Mail Log This Hour
+
+          ul.nav.navbar-nav.navbar-right
             li.dropdown 
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 | Help 
@@ -134,6 +145,8 @@ html(lang='en')
                   a(href="#{layout.htmlroot}/help/OSMBC") OSMBC   
                 li
                   a(href="#{layout.htmlroot}/help/How To Integrate A Picture") How To Integrate A Picture   
+                li
+                  a(href="#{layout.htmlroot}/help/Notification") Using OSMBC Notifications   
                 li
                   a(href="#{layout.htmlroot}/help/The Blog Views") The Blog Views
                 li
@@ -166,7 +179,7 @@ html(lang='en')
                     a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
             if layout.user
                 li 
-                  a(href='http://www.openstreetmap.org/user/#{layout.user.displayName}') #{layout.user.displayName}
+                  a(href='#{layout.htmlroot}/usert/#{layout.user.id}') #{layout.user.displayName}
               else
                 li  
                   a(href='./') Anonymous

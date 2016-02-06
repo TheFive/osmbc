@@ -2,7 +2,11 @@ var pgMap = require('./pgMap.js');
 var debug = require('debug')('OSMBC:model:user');
 var should = require('should');
 var async = require('async');
-var logModule = require('../model/logModule.js');
+var messageCenter = require('../notification/messageCenter.js');
+var mailReceiver = require('../notification/mailReceiver.js');
+var random = require('randomstring');
+var emailValidator = require('email-validator');
+
 
 function User (proto)
 {
@@ -63,6 +67,29 @@ function dropTable(cb) {
   pgMap.dropTable('usert',cb);
 }
 
+function validateEmail(validationCode,callback) {
+  debug('validateEmail');
+  var self = this;
+  var err;
+  if (!self.emailInvalidation) {
+    err = new Error("No Validation pending for user >"+self.OSMUser+"<");
+    console.dir(self);
+    return callback(err);
+  }
+  if (validationCode !== self.emailValidationKey) {
+    err = new Error("Wrong Validation Code for EMail for user >"+self.OSMUser+"<");
+    console.log("Given Key:"+validationCode);
+    console.log("Expected :"+self.emailValidationKey);
+    console.dir(self);
+    return callback(err);
+  }
+  self.email = self.emailInvalidation;
+  delete self.emailInvalidation;
+  delete self.emailValidationKey;
+  self.save(callback);
+}
+
+
 
 function setAndSave(user,data,callback) {
   debug("setAndSave");
@@ -71,6 +98,22 @@ function setAndSave(user,data,callback) {
   should(typeof(callback)).equal('function');
   var self = this;
   delete self.lock;
+  var sendWelcomeEmail = false;
+
+  if (data.email !== self.email) {
+    if (data.email && data.email !== "" && !emailValidator.validate(data.email)) {
+      var error = new Error("Invalid Email Adress: "+data.email);
+      return callback(error);
+    }
+    if (data.email !== "") {
+      data.emailInvalidation = data.email;
+      delete data.email;
+    }
+
+   
+    data.emailValidationKey = random.generate();
+    if (emailValidator.validate(data.emailInvalidation)) sendWelcomeEmail = true;
+  }
 
 
   async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
@@ -89,7 +132,12 @@ function setAndSave(user,data,callback) {
 
     async.series ( [
         function(cb) {
-           logModule.log({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:value},cb);
+          // do not log validation key in logfile
+          var toValue = value;
+          // Hide Validation Key not to show to all users
+          if (key === "emailValidationKey") return cb();
+
+          messageCenter.global.sendInfo({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:toValue},cb);
         },
         function(cb) {
           self[key] = value;
@@ -100,12 +148,28 @@ function setAndSave(user,data,callback) {
       });
 
   },function setAndSaveFinalCB(err) {
+    debug('setAndSaveFinalCB');
     if (err) return callback(err);
     self.save(function (err) {
-      callback(err);
+      // Inform Mail Receiver Module, that there could be a change
+      if (err) return callback(err);
+      mailReceiver.updateUser(self);
+      var m = new mailReceiver.MailReceiver(self);
+      if (sendWelcomeEmail) {
+        m.sendWelcomeMail(user,callback);
+      } else return callback();
     });
   });
 } 
+
+User.prototype.getNotificationStatus = function getNotificationStatus(channel, type) {
+  debug("User.prototype.getNotificationStatus");
+  if (!this.notificationStatus) return null;
+  if (!this.notificationStatus[channel]) return null;
+  return this.notification[channel][type];
+};
+
+
 
 // Creates an User object and stores it to database
 // can use a prototype to initialise data
@@ -118,6 +182,7 @@ module.exports.createNewUser = createNewUser;
 // save stores the current object to database
 User.prototype.save = pgMap.save;
 User.prototype.setAndSave = setAndSave;
+User.prototype.validateEmail = validateEmail;
 
 // Create Tables and Views
 module.exports.createTable = createTable;

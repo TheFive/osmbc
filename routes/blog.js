@@ -31,6 +31,10 @@ function findBlogByRouteId(id,callback) {
       if (r) blog= r[0];
       return cb();
     });
+  },
+  function countItems(cb) {
+    if (blog) return blog.countUneditedMarkdown(cb);
+    return cb();
   }], function(err) {
     if (err) return callback(err);
     if (!blog) return callback(new Error("Blog >"+id+"< not found"));
@@ -94,7 +98,7 @@ function renderBlogId(req, res, next) {
         if (typeof(req.query.reviewComment)!='undefined')
         {
           clearParams = true;
-          blog.setReviewComment(options.left_lang,user.displayName,req.query.reviewComment,function(err) {
+          blog.setReviewComment(options.left_lang,user,req.query.reviewComment,function(err) {
             return callback(err);
           });
         } else return callback();
