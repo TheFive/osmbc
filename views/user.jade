@@ -1,6 +1,7 @@
 extends layout
 
 mixin labeledInput(label,name,value,explanation)
+  - if (!value) value =""
   div.form-group
     label.control-label.col-sm-2(for="#{name}")=label
     div.col-sm-4
@@ -8,6 +9,7 @@ mixin labeledInput(label,name,value,explanation)
     div.col-sm-6.text-muted
       |#{explanation}
 mixin labeledSelect(label,name,value,values,displayValues,explanation)
+  - if (!value) value =""
   div.form-group
     label.control-label.col-sm-2(for="name")=label
     div.col-sm-4
@@ -28,10 +30,17 @@ block content
     div.form-horizontal(role="form")
       +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
       +labeledInput("EMail","email",usershown.email,"This mail is used for information about changes.")
+
       if (usershown.emailInvalidation)
-        div.col-sm-offset-2.col-sm-10
-          p.bg-info
-            |Waiting for validation of EMail #{usershown.emailInvalidation}
+        div.form-group
+          div.col-sm-offset-2.col-sm-4
+            p
+              span
+                |Waiting for validation of EMail 
+              span.bg-info=usershown.emailInvalidation
+          div.col-sm-6
+          
+
       +labeledInput("WNAuthor","WNAuthor",usershown.WNAuthor,"WP user for the Wochennotiz Blog blog.openstreetmap.de")
       if (usershown.WNPublicAuthor)
         div.col-sm-offset-2.col-sm-10
