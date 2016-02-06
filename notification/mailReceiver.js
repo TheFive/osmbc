@@ -20,7 +20,7 @@ var infomail = new EmailTemplate(infoMailtemplateDir);
 var infoMailBlogtemplateDir = path.join(__dirname, '..','email', 'infomailBlog');
 var infomailBlog = new EmailTemplate(infoMailBlogtemplateDir);
 
-var infoMailInfotemplateDir = path.join(__dirname, '..','email', 'infomailinfo');
+var infoMailInfotemplateDir = path.join(__dirname, '..','email', 'infomailInfo');
 var infomailInfo = new EmailTemplate(infoMailInfotemplateDir);
 
 var welcomeMailtemplateDir = path.join(__dirname, '..','email', 'welcome');
