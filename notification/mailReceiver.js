@@ -52,7 +52,7 @@ function sendMailWithLog(mailOptions,callback) {
     };
     if (error) {
       logModule.log(logObject,function cb(){
-        return callback(error);
+        return callback();
       });
     } else {
       logModule.log(logObject,callback);
@@ -272,6 +272,8 @@ function initialise(userList) {
   for (var i=0;i<userList.length;i++) {
     var u = userList[i];
     if (u.access !== "full") continue;
+    if (!user.email) return;
+    if (user.email === "") return;
     userReceiverMap[u.OSMUser] = new messageFilter.UserConfigFilter(u,new MailReceiver(u));
   }
 }
@@ -283,6 +285,7 @@ function updateUser(user) {
   delete userReceiverMap[user.OSMUser];
   if (user.access !== "full") return;
   if (!user.email) return;
+  if (user.email === "") return;
   userReceiverMap[user.OSMUser] = new messageFilter.UserConfigFilter(user,new MailReceiver(user));
 }
 
