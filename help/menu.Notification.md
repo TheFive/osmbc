@@ -7,8 +7,8 @@ In OSMBC there are some hooks implemented, that allows to send information out o
 * a new article was written
 * a comment was added/changed
 * a comment was added/changed containing a defined @ADRESSEE
+* a blog was set to review, a review was done, or a blog is marked as exported
 
-There will be more types implemented later.
 
 ## Delivery of Notifications
 
@@ -30,12 +30,15 @@ To resend an welcome email you have to change the email string to an empty one a
 
 There is a simple config system in the user page, with some options for now.
 
-* mailAllComment
+* Mail All Comments
   send a mail for every comment change.
-* mailNewCollection
+* Mail a new Collection
   send a mail for every new article.
-* mailComment
-  Here you can enter a string like DE, ES peda to filter for @DE @ES @peda in a comment.
+* Mail defined comments
+  Filter from all comments by language or your User Name.
+* Mail Status Change
+  Mail all changes regarding review status of a blog.
 
+  
 There will be more types implemented later.
 

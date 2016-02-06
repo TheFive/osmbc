@@ -1,6 +1,6 @@
 module.exports = {
   "japan":"http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg",
-  "france":"http://blog.openstreetmap.de/wp-uploads//2016/01/fr.svg",
+  "france":"http://blog.openstreetmap.de/wp-uploads//2016/02/fr.svg",
   "spain":"http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg",
   "czech republic":"http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg",
   "russia":"http://blog.openstreetmap.de/wp-uploads//2016/01/ru.svg",
@@ -16,7 +16,7 @@ module.exports = {
   "us":"http://blog.openstreetmap.de/wp-uploads//2016/01/us.svg",
   "united states":"http://blog.openstreetmap.de/wp-uploads//2016/01/us.svg",
   "austria":"http://blog.openstreetmap.de/wp-uploads//2016/01/at.svg",
-  "österreich":"http://blog.openstreetmap.de/wp-uploads//2016/01/at.svg",
+  "österreich":"http://blog.openstreetmap.de/wp-uploads//2016/02/at.svg",
   "philippines":"http://blog.openstreetmap.de/wp-uploads//2016/01/ph.svg",
   "belgium":"http://blog.openstreetmap.de/wp-uploads//2016/01/be-1.svg",
   "argentina":"http://blog.openstreetmap.de/wp-uploads//2016/01/ar.svg",
@@ -25,8 +25,9 @@ module.exports = {
   "germany":"http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg",
   "deutschland":"http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg",
   "bolivia":"http://blog.openstreetmap.de/wp-uploads//2016/01/bo.svg",
-   "canada":"http://blog.openstreetmap.de/wp-uploads//2016/01/ca.svg",
-   "india":"http://blog.openstreetmap.de/wp-uploads//2016/01/in.svg",
-  "colombia":"http://blog.openstreetmap.de/wp-uploads//2016/01/co.svg"
+  "canada":"http://blog.openstreetmap.de/wp-uploads//2016/01/ca.svg",
+  "hungary":"http://blog.openstreetmap.de/wp-uploads//2016/02/hu.svg",
+  "india":"http://blog.openstreetmap.de/wp-uploads//2016/01/in.svg",
+  "colombia":"http://blog.openstreetmap.de/wp-uploads//2016/02/co.svg"
 
 };

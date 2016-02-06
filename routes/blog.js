@@ -31,6 +31,10 @@ function findBlogByRouteId(id,callback) {
       if (r) blog= r[0];
       return cb();
     });
+  },
+  function countItems(cb) {
+    if (blog) return blog.countUneditedMarkdown(cb);
+    return cb();
   }], function(err) {
     if (err) return callback(err);
     if (!blog) return callback(new Error("Blog >"+id+"< not found"));
