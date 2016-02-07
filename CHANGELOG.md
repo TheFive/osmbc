@@ -1,5 +1,24 @@
 # Change Log
 
+## [0.7.1](https://github.com/TheFive/osmbc/tree/0.7.1) (2016-02-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.0a...0.7.1)
+
+**Implemented enhancements:**
+
+- Display editor\(s\) of markdown in article previews [\#293](https://github.com/TheFive/osmbc/issues/293)
+
+**Fixed bugs:**
+
+- Disable the possibility to have a DE / DE view. [\#300](https://github.com/TheFive/osmbc/issues/300)
+
+**Closed issues:**
+
+- please add the emailaddress [\#299](https://github.com/TheFive/osmbc/issues/299)
+- Enable "strict mode" in all js files & jshint, [\#224](https://github.com/TheFive/osmbc/issues/224)
+
+## [0.7.0a](https://github.com/TheFive/osmbc/tree/0.7.0a) (2016-02-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.0...0.7.0a)
+
 ## [0.7.0](https://github.com/TheFive/osmbc/tree/0.7.0) (2016-02-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9c...0.7.0)
 
@@ -100,10 +119,7 @@
 - is it possible to to \*not export\* the Blog Missing Cat: --unpublished-- [\#276](https://github.com/TheFive/osmbc/issues/276)
 
 ## [0.6.5b](https://github.com/TheFive/osmbc/tree/0.6.5b) (2016-01-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.ar...0.6.5b)
-
-## [0.6.ar](https://github.com/TheFive/osmbc/tree/0.6.ar) (2016-01-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.ar)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.5b)
 
 ## [0.6.5a](https://github.com/TheFive/osmbc/tree/0.6.5a) (2016-01-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5...0.6.5a)
@@ -852,17 +868,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
@@ -872,22 +888,13 @@
 - Mark long HTML Links in Text in Warning or Danger. [\#19](https://github.com/TheFive/osmbc/issues/19)
 
 ## [0.2.16b](https://github.com/TheFive/osmbc/tree/0.2.16b) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/Use_Return_to_search_in_collection...0.2.16b)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16a...0.2.16b)
 
 **Closed issues:**
 
 - Error: \[home page\] Not found [\#25](https://github.com/TheFive/osmbc/issues/25)
 - Error: Artcile does not exist [\#24](https://github.com/TheFive/osmbc/issues/24)
 - Login impossible, getting strange exception backtrace [\#21](https://github.com/TheFive/osmbc/issues/21)
-
-## [Use_Return_to_search_in_collection](https://github.com/TheFive/osmbc/tree/Use_Return_to_search_in_collection) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/Edit_in_BlogPreview_return_to_blog...Use_Return_to_search_in_collection)
-
-## [Edit_in_BlogPreview_return_to_blog](https://github.com/TheFive/osmbc/tree/Edit_in_BlogPreview_return_to_blog) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/Fix_Download_EN_Version...Edit_in_BlogPreview_return_to_blog)
-
-## [Fix_Download_EN_Version](https://github.com/TheFive/osmbc/tree/Fix_Download_EN_Version) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16a...Fix_Download_EN_Version)
 
 ## [0.2.16a](https://github.com/TheFive/osmbc/tree/0.2.16a) (2015-10-02)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16...0.2.16a)
@@ -1006,27 +1013,6 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.1...0.2)
 
 ## [0.1](https://github.com/TheFive/osmbc/tree/0.1) (2015-08-29)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/P1.6...0.1)
-
-## [P1.6](https://github.com/TheFive/osmbc/tree/P1.6) (2015-08-07)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/P1.5...P1.6)
-
-## [P1.5](https://github.com/TheFive/osmbc/tree/P1.5) (2015-08-07)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/P1.4...P1.5)
-
-## [P1.4](https://github.com/TheFive/osmbc/tree/P1.4) (2015-08-06)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/P1.3...P1.4)
-
-## [P1.3](https://github.com/TheFive/osmbc/tree/P1.3) (2015-08-05)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/P.1.1...P1.3)
-
-## [P.1.1](https://github.com/TheFive/osmbc/tree/P.1.1) (2015-08-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/P1.2...P.1.1)
-
-## [P1.2](https://github.com/TheFive/osmbc/tree/P1.2) (2015-08-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/P.1...P1.2)
-
-## [P.1](https://github.com/TheFive/osmbc/tree/P.1) (2015-08-04)
 
 
 \* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
