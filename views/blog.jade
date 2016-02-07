@@ -223,18 +223,38 @@ block scripts
   script.
     reviewButton = document.getElementById("reviewButton");
     reviewComment = document.getElementById("reviewComment");
-    reviewComment.onchange = onchange;
-    reviewComment.onkeyup = onchange;
+    if (reviewComment) reviewComment.onchange = onchange;
+    if (reviewComment) reviewComment.onkeyup = onchange;
 
-    reviewButton.disabled = true;
+    if (reviewButton) reviewButton.disabled = true;
     
     function onchange() {
       
       reviewButton.disabled = (review.comment == "");
     }
   
+    window.onload = function() {
+      if (typeof(Storage)!=="undefined") {
+        if (window.sessionStorage.blogUrl !== window.location.href) return;
+        var x = window.sessionStorage.blogX;
+        var y = window.sessionStorage.blogY;
+        window.scrollTo(x,y);
+      }
+    }
 
-
+ 
+    window.onbeforeunload = function(event) {
+        // store the scroll Position in the local Store
+        s = {x:window.scrollX,y:window.scrollY};
+        console.log("Check local storage");
+        if (typeof(Storage)!=="undefined") {
+          console.log("Storing data");
+          window.sessionStorage.blogUrl = window.location.href;
+          window.sessionStorage.blogX = s.x;
+          window.sessionStorage.blogY = s.y;
+        }
+      };    
+   
 
 
 

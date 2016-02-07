@@ -144,7 +144,7 @@ describe('routes/blog',function() {
             bddone();            
           }
         );
-      });
+      },true); // do not create additional articles
     });
   });
   describe('renderBlogId',function() {

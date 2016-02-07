@@ -108,7 +108,7 @@ exports.importData = function importData(data,callback) {
       debug('importAllBlogs');
       if (typeof(data.blog)!='undefined') {  
         async.eachSeries(data.blog,function importOneBlog(d,cb){
-          blogModule.createNewBlog({displayName:"test"},d,cb);
+          blogModule.createNewBlog({displayName:"test"},d,cb,true);
         },cb2);
       } else cb2();
     },
