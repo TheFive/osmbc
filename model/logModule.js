@@ -1,3 +1,5 @@
+"use strict";
+
 var pg = require('pg');
 var async = require('async');
 var config = require('../config.js');
@@ -32,19 +34,20 @@ module.exports.log = function log(object,callback) {
   async.series([
     function checkOid(oidcb) {
       debug("checkOid");
-      
+      // this is the normal case
       if (typeof(object.oid)!="object") return oidcb();
 
+      // this part is used, when data is imported.
       var table = object.oid.table;
       var reference = object.oid;
       delete reference.table;
-      var module;
+      var module = {table:table};
 
 
       switch (table) {
-        case "article": module = articleModule;break;
-        case "blog": module = blogModule;break;
-        case "user": module = userModule;break;
+        case "article": module = {table:table,create:articleModule.create};break;
+        case "blog": module = {table:table,create:blogModule.create};break;
+        case "user": module = {table:table,create:userModule.create};break;
         default: module = null;
       }
       pgMap.find(module,reference,function findObject(err,result) {

@@ -1,4 +1,5 @@
 "use strict";
+
 var debug= require("debug")("model/settings");
 var config = require("../config.js");
 var should = require("should");

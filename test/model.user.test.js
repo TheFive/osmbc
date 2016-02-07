@@ -1,4 +1,4 @@
-
+"use strict";
 
 var async  = require('async');
 var should = require('should');
@@ -19,8 +19,7 @@ var mailReceiver= require('../notification/mailReceiver.js');
 describe('model/user', function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
-  });
-
+  }); 
   describe('createNewUser',function() {
     it('should createNewUser with prototype',function(bddone) {
       userModule.createNewUser({name:"user"},function (err,result){
@@ -157,7 +156,7 @@ describe('model/user', function() {
           });
         });
       });
-    });    
+    }); 
     it('should ignore unchanged Values', function (bddone){
       var newUser;
       userModule.createNewUser({OSMUser:"Test",access:"full"},function(err,result){
@@ -187,6 +186,7 @@ describe('model/user', function() {
         });
       });
     }); 
+
     describe('trigger welcome email',function() {
       beforeEach(function (bddone){
 

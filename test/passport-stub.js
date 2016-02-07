@@ -1,5 +1,13 @@
+
+// jshint ignore: start
+// this is external code stubbing the passport lib for tests
+// as there is an "this" error with use-strict i have totally 
+// disabled jshint for this file.
+
+
 var debug = require("debug")("passport-stub");
 var done, passportStub;
+
 
 done = function(user, req, next) {
   return next(null, user);
@@ -30,11 +38,12 @@ passportStub = (function(_this) {
       return _this.user;
     });
     req.__defineSetter__('user', function(val) {
-      return _this.user = val; //jshint ignore:line
+      _this.user = val;
+      return val; 
     });
     return next();
   };
-})(this);
+})(this); 
 
 exports.install = function(app) {
   debug("passportStub");
@@ -68,10 +77,12 @@ exports.login = function(user) {
     throw new Error('Passport Stub not installed. Please run "passportStub.install(app)" first.');
   }
   this.active = true;
-  return this.user = user; //jshint ignore:line
+  this.user = user;
+  return user; 
 };
 
 exports.logout = function() {
   debug("logout");
-  return this.active = false; // jshint ignore:line
+  this.active = false;
+  return false; 
 };

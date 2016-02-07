@@ -1,3 +1,5 @@
+"use strict";
+
 var path         = require('path');
 
 var express      = require('express');
@@ -290,7 +292,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) { // jshint ignore:line
+  app.use(function(err, req, res) { 
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
     res.render('error', {
@@ -303,7 +305,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {// jshint ignore:line
+app.use(function(err, req, res) {
   debug('app.use status function');
   debug(JSON.stringify(err));
   res.status(err.status || 500);
