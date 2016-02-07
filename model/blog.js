@@ -297,13 +297,25 @@ function createNewBlog(user, proto,callback) {
     var emptyBlog = exports.create();
     emptyBlog.id = -1;
 
-    blog.save(function feedback(err,savedblog){
-      if (err) return callback(err);
-      messageCenter.global.updateBlog(user,emptyBlog,change,function(err){
+    async.parallel([
+      function createCalendar(cb) {
+        articleModule.createNewArticle({blog:blog.name,categoryEN:"Upcoming Events"},cb);
+      },
+      function createCalendar(cb) {
+        articleModule.createNewArticle({blog:blog.name,categoryEN:"Picture"},cb);
+      }
+      ],
+      function finalFunction(err) {
         if (err) return callback(err);
-        return callback(null,savedblog);
-      });
-    });
+        blog.save(function feedback(err,savedblog){
+          if (err) return callback(err);
+          messageCenter.global.updateBlog(user,emptyBlog,change,function(err){
+            if (err) return callback(err);
+            return callback(null,savedblog);
+          });
+        });
+      }
+    )
   });
 }
 
