@@ -28,7 +28,8 @@ function languageSwitcher(req,res) {
   debug('languageSwitcher');
   var lang = req.query.lang;
   var lang2 = req.query.lang2;
-  console.dir(req.query);
+  if (lang2 === lang) lang2 = "none";
+
   if (config.getLanguages().indexOf(lang)>=0) {
     req.session.language = lang;
   }
@@ -36,7 +37,6 @@ function languageSwitcher(req,res) {
     req.session.language2 = lang2;
   }
   if (lang2==="none") {req.session.language2=null;}
-  console.dir(req.session);
   res.redirect(req.get('referer'));
 }
 
