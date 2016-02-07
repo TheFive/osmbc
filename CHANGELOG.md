@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.7.1a](https://github.com/TheFive/osmbc/tree/0.7.1a) (2016-02-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.1...0.7.1a)
+
+**Fixed bugs:**
+
+- Blog Stats throws internal error. [\#301](https://github.com/TheFive/osmbc/issues/301)
+
 ## [0.7.1](https://github.com/TheFive/osmbc/tree/0.7.1) (2016-02-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.0a...0.7.1)
 
