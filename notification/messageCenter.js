@@ -1,3 +1,5 @@
+"use strict";
+
 var debug     = require('debug')('OSMBC:notification:messageCenter');
 var async     = require('async');
 var should    = require('should');

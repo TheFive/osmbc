@@ -188,18 +188,18 @@ function renderBlogId(req, res, next) {
           callback();
         });
       }, function calculateEditors(callback) {
-        for (var i=0;i<config.getLanguages().length;i++) {
-          var lang = config.getLanguages()[i];
-          editors[lang]=[];
-          function addEditors(property,min) {  //jshint ignore:line
-            for (var user in logs[property]) {
-              if (logs[property][user]>=min) {
-                if (editors[lang].indexOf(user)<0) {
-                  editors[lang].push(user);
-                }
+        var addEditors = function (property,min) {  
+          for (var user in logs[property]) {
+            if (logs[property][user]>=min) {
+              if (editors[lang].indexOf(user)<0) {
+                editors[lang].push(user);
               }
             }
           }
+        };
+        for (var i=0;i<config.getLanguages().length;i++) {
+          var lang = config.getLanguages()[i];
+          editors[lang]=[];
           addEditors("collection",3);
           addEditors("markdown"+lang,2);
           addEditors("review"+lang,1);
