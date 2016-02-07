@@ -219,11 +219,11 @@ Article.prototype.getPreview = function getPreview(style,user) {
   var md;
   if (options.overview) { // just generate the overview text
     debug("options overview is set");
-    if (!this.author[markdownLANG] && this.author.collection) text = "["+this.author.collection+"] ";
+    if (this.author && !this.author[markdownLANG] && this.author.collection) text = "["+this.author.collection+"] ";
     text += this.displayTitle(90);
     textright = this.displayTitle(90);
-    if (this.author[markdownLANG]) text += " ["+this.author[markdownLANG]+"] ";
-    if (this.author[markdownTRANS]) textright += " ["+this.author[markdownTRANS]+"] ";
+    if (this.author &&  this.author[markdownLANG]) text += " ["+this.author[markdownLANG]+"] ";
+    if (this.author && this.author[markdownTRANS]) textright += " ["+this.author[markdownTRANS]+"] ";
   } else { // generate the full text
     if (typeof(this[markdownLANG])!=='undefined' && this[markdownLANG]!=='') {
       md = this[markdownLANG];
@@ -249,7 +249,7 @@ Article.prototype.getPreview = function getPreview(style,user) {
       }
   
     } else {
-      if (this.author.collection) text = "["+this.author.collection+"] ";
+      if (this.author && this.author.collection) text = "["+this.author.collection+"] ";
       text += this.displayTitle(90);
     }    
     if (typeof(this[markdownTRANS])!=='undefined' && this[markdownTRANS]!=='') {
