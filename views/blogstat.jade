@@ -4,16 +4,34 @@ extends layout
 
 
 block content
-  row
-    p
-      | here the logs for any property for the blog are counted.
-      | This is used to do the definition of "participation" for a blog.
-  row
+
+
+  h1
+    | Progress Overview
+
+  each l in layout.languages
+
+    - unedited = blog._countUneditedMarkdown[l];
+    - notranslate = blog._countNoTranslateMarkdown[l];
+    - total = blog._countExpectedMarkdown[l] 
+    - ready = (total-unedited - notranslate)
+    - if (total == 0) total = 1
+    .row
+      .col-md-1
+        div.label.label-default(style="color:white")=l
+      .col-md-11
+        div.progress(style="margin-bottom:2px")
+          div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
+          div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
+          div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
+    
+
+  .row
     h1
       | Blog Statistics for #{blog.name}
  
 
-  row
+  .row
     h1
       | Table of Collections, Edits & Review Counts
     - var field = ["collection","comment"]
@@ -53,15 +71,7 @@ block content
       | The referenced links show the articles (may be less than edits), that were
       | changed by the user with the property.
 
-  row
-    h1
-      | List of all language credits (in progress)
-    for lang in languages
-      h4
-        | Credits #{lang}
-      :verbatim
-      |!{blog.convertLogsToTeamString(logs,lang)}
-
+ 
 
 
   
