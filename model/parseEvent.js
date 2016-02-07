@@ -1,3 +1,5 @@
+"use strict";
+
 var debug   = require("debug")("OSMBC:model:parseEvent");
 var moment  = require("moment");
 var request = require("request");

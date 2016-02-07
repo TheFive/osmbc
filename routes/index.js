@@ -1,3 +1,5 @@
+"use strict";
+
 var should = require('should');
 var debug = require('debug')('OSMBC:routes:index');
 var express = require('express');
@@ -22,11 +24,12 @@ function renderHome(req,res,next) {
   });
 }
 
-function languageSwitcher(req,res,next) { //jshint ignore:line
+function languageSwitcher(req,res) {
   debug('languageSwitcher');
   var lang = req.query.lang;
   var lang2 = req.query.lang2;
-  console.dir(req.query);
+  if (lang2 === lang) lang2 = "none";
+
   if (config.getLanguages().indexOf(lang)>=0) {
     req.session.language = lang;
   }
@@ -34,18 +37,17 @@ function languageSwitcher(req,res,next) { //jshint ignore:line
     req.session.language2 = lang2;
   }
   if (lang2==="none") {req.session.language2=null;}
-  console.dir(req.session);
   res.redirect(req.get('referer'));
 }
 
-function renderReleaseNotes(req,res,next) {  // jshint ignore:line
+function renderReleaseNotes(req,res) { 
   debug('renderReleaseNotes');
   var level = req.query.level;
   should.exist(res.rendervar.layout);
   res.render('release_notes',{level:level,
                               layout:res.rendervar.layout});  
 }
-function renderHelp(req,res,next) { // jshint ignore:line
+function renderHelp(req,res) { 
   debug('help');
   should.exist(res.rendervar.layout);
   var title = req.params.title;

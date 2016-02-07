@@ -1,3 +1,5 @@
+"use strict";
+
 var pg     = require('pg');
 var should = require('should');
 var async  = require('async');
@@ -80,7 +82,7 @@ function generateQuery(table,obj,order) {
 module.exports.save = function(callback) {
   debug("save");
   var self = this;
-  var table = self._meta.table;
+  var table = self.getTable();
 
   // first check, wether ID is known or not
   if (self.id === 0) {
@@ -173,7 +175,7 @@ module.exports.save = function(callback) {
 module.exports.remove = function(callback) {
   debug("remove");
   var self = this;
-  var table = self._meta.table;
+  var table = self.getTable();
   // first check, wether ID is known or not
   if (self.id === 0) {
     // we have to create the beer
@@ -258,8 +260,9 @@ module.exports.find = function find(module,obj,order,callback) {
 
 module.exports.fullTextSearch = function fullTextSearch(module,search,order,callback) {
   debug("fullTextSearch");
-  should.exist(module);
+  should.exist(module.table);
   should.exist(module.create);
+  should(typeof(search)).eql("string");
   if (typeof(order)=='function') {
     callback = order;
     order = null;
@@ -315,6 +318,7 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
     var query = client.query(sqlQuery);
 
     query.on('row',function(row) {
+      debug("query.on row");
       var r = module.create();
       for (var k in row.data) {
         r[k]=row.data[k];
@@ -323,14 +327,17 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
       result.push(r);
     });
     query.on('end',function () {    
+      debug("query.on end");
       pgdone();
       var endTime = new Date().getTime();
       debug("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
-      callback(null,result);
+      return callback(null,result);
     });
-    query.on('error',function (err) {    
+    query.on('error',function (err) {  
+      debug("query on err");
+      debug(err);  
       pgdone();
-      callback(err);
+      return callback(err);
     });
   });
 };

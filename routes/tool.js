@@ -1,3 +1,5 @@
+"use strict";
+
 var debug = require('debug')('OSMBC:routes:tool');
 var express = require('express');
 var router = express.Router();
@@ -42,7 +44,7 @@ function renderCalenderAsMarkdown(req,res,next) {
 
   });
 }
-function postCalenderAsMarkdown(req,res,next) { //jshint ignore:line
+function postCalenderAsMarkdown(req,res) { 
   debug('postCalenderAsMarkdown');
   console.dir(req.body);
   var disablePrettify = (req.body.disablePrettify=="true");
@@ -66,7 +68,7 @@ function generateCCLicense(license,lang,author){
   return text.replace("##author##",author);
 } 
 
-function renderPictureTool(req,res,next) { //jshint ignore:line
+function renderPictureTool(req,res) { 
   debug('renderPictureTool');
 
   var pictureLanguage = "DE";
@@ -168,7 +170,7 @@ function renderPictureTool(req,res,next) { //jshint ignore:line
   request.end();
 
 }
-function postPictureTool(req,res,next) { //jshint ignore:line
+function postPictureTool(req,res) { 
   debug('postPictureTool');
 
   var pictureLanguage = req.body.pictureLanguage;

@@ -1,3 +1,5 @@
+"use strict";
+
 var pgMap = require('./pgMap.js');
 var debug = require('debug')('OSMBC:model:user');
 var should = require('should');
@@ -13,8 +15,6 @@ function User (proto)
 	debug("User");
   debug("Prototype %s",JSON.stringify(proto));
   this.id = 0;
-  this._meta={};
-  this._meta.table = "usert";
   for (var k in proto) {
     this[k] = proto[k];
   }
@@ -42,16 +42,16 @@ User.prototype.remove = pgMap.remove;
 
 function find(obj,ord,callback) {
 	debug("find");
-  pgMap.find(this,obj,ord,callback);
+  pgMap.find({table:"usert",create:create},obj,ord,callback);
 }
 function findById(id,callback) {
 	debug("findById %s",id);
-  pgMap.findById(id,this,callback);
+  pgMap.findById(id,{table:"usert",create:create},callback);
 }
 
 function findOne(obj1,obj2,callback) {
   debug("findOne");
-  pgMap.findOne(this,obj1,obj2,callback);
+  pgMap.findOne({table:"usert",create:create},obj1,obj2,callback);
 }
 
 function createTable(cb) {
@@ -67,7 +67,7 @@ function dropTable(cb) {
   pgMap.dropTable('usert',cb);
 }
 
-function validateEmail(validationCode,callback) {
+User.prototype.validateEmail = function validateEmail(validationCode,callback) {
   debug('validateEmail');
   var self = this;
   var err;
@@ -87,11 +87,11 @@ function validateEmail(validationCode,callback) {
   delete self.emailInvalidation;
   delete self.emailValidationKey;
   self.save(callback);
-}
+};
 
 
 
-function setAndSave(user,data,callback) {
+User.prototype.setAndSave = function setAndSave(user,data,callback) {
   debug("setAndSave");
   should(typeof(user)).equal('string');
   should(typeof(data)).equal('object');
@@ -160,7 +160,8 @@ function setAndSave(user,data,callback) {
       } else return callback();
     });
   });
-} 
+};
+
 
 User.prototype.getNotificationStatus = function getNotificationStatus(channel, type) {
   debug("User.prototype.getNotificationStatus");
@@ -180,11 +181,7 @@ module.exports.createNewUser = createNewUser;
 
 
 // save stores the current object to database
-User.prototype.save = pgMap.save;
-User.prototype.setAndSave = setAndSave;
-User.prototype.validateEmail = validateEmail;
-
-// Create Tables and Views
+User.prototype.save = pgMap.save; // Create Tables and Views
 module.exports.createTable = createTable;
 
 // Drop Table (and views)
@@ -194,4 +191,7 @@ module.exports.create= create;
 module.exports.find = find;
 module.exports.findById = findById;
 module.exports.findOne = findOne;
-module.exports.table = "usert";
+
+User.prototype.getTable = function getTable() {
+  return "usert";
+};

@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('../util.js');
 var should = require('should');
 var path = require('path');

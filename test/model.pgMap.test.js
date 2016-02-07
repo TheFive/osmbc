@@ -1,3 +1,5 @@
+"use strict";
+
 var config = require('../config.js');
 var should = require('should');
 var async  = require('async');
@@ -5,11 +7,19 @@ var async  = require('async');
 var pgMap = require('../model/pgMap.js');
 
 
-var testModule = {table:"TestTable"};
-testModule.create = function create(){
-  var result = {_meta:{table:testModule.table}};
+function TestTable(proto) {
+  for (var k in proto) {
+    this[k]=proto[k];
+  }
+}
+TestTable.prototype.getTable= function getTable() {return "TestTable";};
+function create(proto){
+  var result = new TestTable(proto);
+
   return result;
-};
+}
+var testModule = {table:"TestTable",create:create};
+
 
 var testTableCreateString =  'CREATE TABLE testtable (  id bigserial NOT NULL , data json,  \
                   CONSTRAINT testtable_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
@@ -98,22 +108,22 @@ describe('model/pgMap',function(){
           function(cb){pgMap.dropTable("testtable",cb);},
           function(cb){pgMap.createTable("testtable",testTableCreateString,"",cb);},
           function(cb){
-            var to = {_meta:{table:testModule.table},id:0,name:''};
+            var to = new TestTable({id:0,name:''});
             to.save = pgMap.save;
             to.save(cb);
           },
           function(cb){
-            var to = {_meta:{table:testModule.table},id:0,nameEN:''};
+            var to = new TestTable({id:0,nameEN:''});
             to.save = pgMap.save;
             to.save(cb);
           },
           function(cb){
-            var to = {_meta:{table:testModule.table},id:0,name:'Hallo',value:3};
+            var to = new TestTable({id:0,name:'Hallo',value:3});
             to.save = pgMap.save;
             to.save(cb);
           },
           function(cb){
-            var to = {_meta:{table:testModule.table},id:0,name:'Hallo',value:4};
+            var to = new TestTable({id:0,name:'Hallo',value:4});
             to.save = pgMap.save;
             to.save(cb);
           }
@@ -124,7 +134,7 @@ describe('model/pgMap',function(){
       it('should return an error, if problems with the database',function(bddone){
         var connectString = config.pgstring;
         config.pgstring = "This wont work";
-        pgMap.find(testModule,1,function(err,result){
+        pgMap.find({table:"testtable"},1,function(err,result){
           should.not.exist(result);
           should.exist(err);
           config.pgstring = connectString;
@@ -175,7 +185,7 @@ describe('model/pgMap',function(){
   });
   describe('remove',function(){
     it('should return an error, if id is 0',function(bddone){
-      var testObject = {_meta:{table:testModule.table},id:0};
+      var testObject = new TestTable({id:0});
       testObject.remove = pgMap.remove;
       testObject.remove(function(err,result){
         should.not.exist(result);
@@ -187,7 +197,7 @@ describe('model/pgMap',function(){
   });
   describe('save',function(){
     it('should return an error, if problems with the database (id=0)',function(bddone){
-      var testObject = {_meta:{table:testModule.table},id:0};
+      var testObject = new TestTable({id:0});
       var connectString = config.pgstring;
       config.pgstring = "This wont work";
       testObject.save = pgMap.save;
@@ -199,7 +209,7 @@ describe('model/pgMap',function(){
       });      
     });
     it('should return an error, if problems with the database (id!=0)',function(bddone){
-      var testObject = {_meta:{table:testModule.table},id:1};
+      var testObject = new TestTable({id:1});
       var connectString = config.pgstring;
       config.pgstring = "This wont work";
       testObject.save = pgMap.save;

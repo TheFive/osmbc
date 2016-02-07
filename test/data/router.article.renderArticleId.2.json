@@ -24,12 +24,12 @@
           "to": "test"
        }
        ],
-            "articleReferences":{ "://link.de": [ {  "title": "BLOG","blog": "BLOG", "category": "Keine","markdownDE": "* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)"},
-                                                  { "blog": "Alternativ Blog", "category": "Keine","markdownDE": "* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)"}],"count":2},
            "listOfOpenBlog":["BLOG"],
            "listOfOrphanBlog":["Alternativ Blog"],
-            "articleReferences":{ "https://link.de": [ {  "title": "BLOG","blog": "BLOG", "category": "Keine","markdownDE": "* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","version":1},
-                                                  { "blog": "Alternativ Blog", "category": "Keine","markdownDE": "* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","version":1}],"count":2},
+            "articleReferences":{
+              "count":1,
+              "https://link.de": [ {"version":1,"blog":"Alternativ Blog","markdownDE":"* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","category":"Keine"}]},
+
 
             "categories":[ { "DE": "-- noch keine Kategorie --","EN": "-- no category yet --","ES": "-- no category yet --"},
                           {  "DE": "Bild","EN": "Picture","ES": "Picture"},

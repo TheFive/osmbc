@@ -1,3 +1,5 @@
+"use strict";
+
 var should  = require('should');
 
 var helpRoutes = require('../routes/help.js');

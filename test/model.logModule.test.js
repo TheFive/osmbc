@@ -1,10 +1,11 @@
+"use strict";
+
 var should = require('should');
 var async  = require('async');
 var testutil = require('./testutil.js');
 var logModule = require('../model/logModule.js');
 
-/* jshint undef: true, unused: true */
-/* globals context */
+
 
 describe('model/changes',function() {
   context('Change Constructor',function(){

@@ -1,3 +1,5 @@
+"use strict";
+
 var path          = require('path');
 var config        = require('../config.js');
 var should        = require('should');

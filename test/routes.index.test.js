@@ -1,3 +1,5 @@
+"use strict";
+
 var should  = require('should');
 var sinon   = require('sinon');
 var async   = require('async');
@@ -11,7 +13,7 @@ describe('routes/index',function(){
   before(function(bddone){
     config.initialise();
     testutil.clearDB(bddone);
-  })
+  });
   describe('renderHome',function(){
     it('should call the right Page',function(bddone){
       var res = {rendervar:{}};
@@ -25,13 +27,13 @@ describe('routes/index',function(){
           indexRoutes.renderHome(req,res,next);
         }
 
-        ],function check(err) {
+        ],function check() {
           should(res.render.called).be.true();
           should(next.called).be.false();
           should(res.render.firstCall.calledWith("index")).be.true();
           bddone();
         }
-      )
-    })
-  })
-})
+      );
+    });
+  });
+});
