@@ -324,7 +324,7 @@ function renderBlogPreview(req, res, next) {
 function createBlog(req, res, next) {
   debug('router.get /create');
 
-  blogModule.createNewBlog(req.user.displayName,function(err) {
+  blogModule.createNewBlog(req.user,function(err) {
     if (err) return next(err);
     res.redirect(config.getValue('htmlroot')+'/blog/list?status=open');
     //res.render('bloglist',{blogs:blogs,user:req.user});
