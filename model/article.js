@@ -219,7 +219,7 @@ Article.prototype.getPreview = function getPreview(style,user) {
   var md;
   if (options.overview) { // just generate the overview text
     debug("options overview is set");
-    if (this.author && !this.author[markdownLANG] && this.author.collection) text = "["+this.author.collection+"] ";
+    if (this.author  && this.author.collection) text = "["+this.author.collection+"] ";
     text += this.displayTitle(90);
     textright = this.displayTitle(90);
     if (this.author &&  this.author[markdownLANG]) text += " ["+this.author[markdownLANG]+"] ";
