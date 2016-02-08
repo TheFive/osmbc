@@ -44,7 +44,8 @@
     "request": "^2.69.0",
     "serve-favicon": "~2.3.0",
     "session-file-store": "0.0.24",
-    "should": "^8.2.1"
+    "should": "^8.2.1",
+    "twit": "^2.2.2"
   },
   "devDependencies": {
     "mocha-jshint": "^2.3.0",
