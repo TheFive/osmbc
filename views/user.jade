@@ -5,7 +5,7 @@ mixin labeledInput(label,name,value,explanation)
   div.form-group
     label.control-label.col-sm-2(for="#{name}")=label
     div.col-sm-4
-      input.form-control(name="#{name}",value = "#{value}")
+      input.form-control(name="#{name}",id="#{name}",value = "#{value}")
     div.col-sm-6.text-muted
       |#{explanation}
 mixin labeledSelect(label,name,value,values,displayValues,explanation)
@@ -54,6 +54,7 @@ block content
                 |Waiting for validation of EMail 
               span.bg-info=usershown.emailInvalidation
           div.col-sm-6
+            button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
           
 
       +labeledInput("WNAuthor","WNAuthor",usershown.WNAuthor,"WP user for the Wochennotiz Blog blog.openstreetmap.de")
@@ -76,18 +77,18 @@ block content
                      ["full","read","denied"],
                      ["full","read (not implemented yet)","denied"],
                      "Define Users Access to OSMBC")
-      +labeledSelect("Mail All Comments",
-                     "mailAllComment",
-                     usershown.mailAllComment,
-                     ["true","false"],
-                     ["on","off"],
-                     "Send a mail for every change of a comment.")
       +labeledSelect("Mail a new Collection",
                      "mailNewCollection",
                      usershown.mailNewCollection,
                      ["true","false"],
                      ["on","off"],
                      "Send a mail for every new Collect.")
+      +labeledSelect("Mail All Comments",
+                     "mailAllComment",
+                     usershown.mailAllComment,
+                     ["true","false"],
+                     ["on","off"],
+                     "Send a mail for every change of a comment.")
 
     
       - var langlistWithUser = langlist.concat(usershown.OSMUser)

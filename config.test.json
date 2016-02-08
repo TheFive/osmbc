@@ -8,6 +8,12 @@
     "password" : "thefive",
     "connectstr" : "psql://test:test@localhost:5432/testdb"
   },
+   "twitter":{
+    "consumer_key": "dummy",
+    "consumer_secret": "dummy",
+    "access_token": "dummy",
+    "access_token_secret": "dummy"
+    },
   "languages":["DE","EN","ES"],
   "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
   "OPENSTREETMAP_CONSUMER_KEY" : "######",

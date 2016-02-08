@@ -67,26 +67,43 @@ function dropTable(cb) {
   pgMap.dropTable('usert',cb);
 }
 
-User.prototype.validateEmail = function validateEmail(validationCode,callback) {
+User.prototype.validateEmail = function validateEmail(user,validationCode,callback) {
   debug('validateEmail');
+  should(typeof(user)).eql("object");
+  should(typeof(validationCode)).eql("string");
+  should(typeof(callback)).eql("function");
   var self = this;
   var err;
+  if (self.OSMUser !== user.OSMUser) {
+    debug("User is wrong");
+    err = new Error("Wrong User: expected >"+self.OSMUser+"< given >"+user.OSMUser+"<");
+    return callback(err);
+  }
   if (!self.emailInvalidation) {
+    debug("nothing in validation");
     err = new Error("No Validation pending for user >"+self.OSMUser+"<");
-    console.dir(self);
     return callback(err);
   }
   if (validationCode !== self.emailValidationKey) {
+    debug("Validation Code is wrong");
     err = new Error("Wrong Validation Code for EMail for user >"+self.OSMUser+"<");
-    console.log("Given Key:"+validationCode);
-    console.log("Expected :"+self.emailValidationKey);
-    console.dir(self);
-    return callback(err);
+    messageCenter.global.sendInfo({oid:self.id,user:user.OSMUser,table:"usert",property:"email",from:null,to:"Validation Failed"},function(){
+      return callback(err);
+    });
+    return;
   }
+  debug("Email Validation OK saving User");
+  var oldmail = self.email;
   self.email = self.emailInvalidation;
   delete self.emailInvalidation;
   delete self.emailValidationKey;
-  self.save(callback);
+  self.save(function logit(err){
+    if (err) return callback(err);
+    messageCenter.global.sendInfo({oid:self.id,user:user.OSMUser,table:"usert",property:"email",from:oldmail,to:self.email},function(){
+      return callback(err);
+    });
+
+  });
 };
 
 
@@ -100,19 +117,26 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
   delete self.lock;
   var sendWelcomeEmail = false;
 
-  if (data.email !== self.email) {
-    if (data.email && data.email !== "" && !emailValidator.validate(data.email)) {
-      var error = new Error("Invalid Email Adress: "+data.email);
-      return callback(error);
-    }
-    if (data.email !== "") {
-      data.emailInvalidation = data.email;
+  if (data.email && data.email !== self.email) {
+    if (data.email !=="resend") {
+      if (!emailValidator.validate(data.email)) {
+        var error = new Error("Invalid Email Adress: "+data.email);
+        return callback(error);
+      }
+      if (data.email !== "") {
+        // put email to validation email, and generate a key.
+        data.emailInvalidation = data.email;
+        data.emailValidationKey = random.generate();
+        delete data.email;
+      }
+    } else {
+      // resend case.
       delete data.email;
     }
 
    
-    data.emailValidationKey = random.generate();
-    if (emailValidator.validate(data.emailInvalidation)) sendWelcomeEmail = true;
+    sendWelcomeEmail = true;
+
   }
 
 
@@ -122,7 +146,8 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
 
     // The Value to be set, is the same then in the object itself
     // so do nothing
-    if (value == self[key]) return cb_eachOf();
+    if (value === self[key]) return cb_eachOf();
+    if (JSON.stringify(value)===JSON.stringify(self[key])) return cb_eachOf();
     if (typeof(self[key])==='undefined' && value === '') return cb_eachOf();
 
     
@@ -153,11 +178,15 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
     self.save(function (err) {
       // Inform Mail Receiver Module, that there could be a change
       if (err) return callback(err);
+      // tell mail receiver to update the information about the users
       mailReceiver.updateUser(self);
-      var m = new mailReceiver.MailReceiver(self);
       if (sendWelcomeEmail) {
-        m.sendWelcomeMail(user,callback);
-      } else return callback();
+        var m = new mailReceiver.MailReceiver(self);
+        // do not wait for mail to go out. 
+        // mail is logged in outgoing mail list
+        m.sendWelcomeMail(user,function (){});
+      } 
+      return callback();
     });
   });
 };

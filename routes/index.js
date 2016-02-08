@@ -26,8 +26,12 @@ function renderHome(req,res,next) {
 
 function languageSwitcher(req,res) {
   debug('languageSwitcher');
-  var lang = req.query.lang;
-  var lang2 = req.query.lang2;
+  var lang = req.session.language;
+  var lang2 = req.session.language2;
+
+  if (req.query.lang) lang = req.query.lang;
+  if (req.query.lang2) lang2 = req.query.lang2;
+
   if (lang2 === lang) lang2 = "none";
 
   if (config.getLanguages().indexOf(lang)>=0) {

@@ -250,15 +250,24 @@ describe('model/blog', function() {
           var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
           var expectedText = 'BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value name WN251 status open startDate 1970-01-02T00:00:00.000Z endDate 1970-01-08T00:00:00.000Z';
 
+          //result is not sorted, so have a preview, which argument is the right one.
+
+          var i1=0;
+          var i2=1;
+          if (mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0].to=="user2@mail.bc") {
+            i1=1;
+            i2=0;
+          }
+
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);
-          should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+          should(mailReceiver.for_test_only.transporter.sendMail.getCall(i1).args[0]).eql(
             {from:"noreply@gmail.com",
             to:"user1@mail.bc",
             subject:"WN251 was created",
             html:expectedMail,
             text:expectedText});
-          should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
+          should(mailReceiver.for_test_only.transporter.sendMail.getCall(i2).args[0]).eql(
             {from:"noreply@gmail.com",
             to:"user2@mail.bc",
             subject:"WN251 was created",
