@@ -18,6 +18,7 @@ var messageCenter  = require("../notification/messageCenter.js");
 var settingsModule = require("../model/settings.js");
 var blogModule     = require("../model/blog.js");
 var pgMap          = require("../model/pgMap.js");
+var twitter        = require('../model/twitter.js');
 
 var categoryTranslation = require("../data/categoryTranslation.js");
 var calenderTranslation = require("../data/calenderTranslation.js");
@@ -409,8 +410,16 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
         } 
         cb();           
       });
+    },
+    function expandTwitterUrl(cb){
+      debug('expandTwitterUrl');
+      if (!util.isURL(data.collection)) return cb();
+      twitter.expandTwitterUrl(data.collection,function(err,result){
+        if (err) return cb(err);
+        data.collection = result;
+        cb();
+      });
     }
-
   ],function(err){
     if (err) return callback(err);
     should.exist(self.id);
