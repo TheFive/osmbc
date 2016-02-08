@@ -223,8 +223,10 @@ Article.prototype.getPreview = function getPreview(style,user) {
     if (this.author  && this.author.collection) text = "["+this.author.collection+"] ";
     text += this.displayTitle(90);
     textright = this.displayTitle(90);
-    if (this.author &&  this.author[markdownLANG]) text += " ["+this.author[markdownLANG]+"] ";
-    if (this.author && this.author[markdownTRANS]) textright += " ["+this.author[markdownTRANS]+"] ";
+    
+    // It is in discussion wether this makes sense or not.
+    //if (this.author &&  this.author[markdownLANG]) text += " ["+this.author[markdownLANG]+"] ";
+    //if (this.author && this.author[markdownTRANS]) textright += " ["+this.author[markdownTRANS]+"] ";
   } else { // generate the full text
     if (typeof(this[markdownLANG])!=='undefined' && this[markdownLANG]!=='') {
       md = this[markdownLANG];
