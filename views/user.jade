@@ -77,18 +77,18 @@ block content
                      ["full","read","denied"],
                      ["full","read (not implemented yet)","denied"],
                      "Define Users Access to OSMBC")
-      +labeledSelect("Mail All Comments",
-                     "mailAllComment",
-                     usershown.mailAllComment,
-                     ["true","false"],
-                     ["on","off"],
-                     "Send a mail for every change of a comment.")
       +labeledSelect("Mail a new Collection",
                      "mailNewCollection",
                      usershown.mailNewCollection,
                      ["true","false"],
                      ["on","off"],
                      "Send a mail for every new Collect.")
+      +labeledSelect("Mail All Comments",
+                     "mailAllComment",
+                     usershown.mailAllComment,
+                     ["true","false"],
+                     ["on","off"],
+                     "Send a mail for every change of a comment.")
 
     
       - var langlistWithUser = langlist.concat(usershown.OSMUser)
