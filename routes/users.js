@@ -1,15 +1,22 @@
 "use strict";
 
-var express = require('express');
-var should = require('should');
-var async = require('async');
-var userModule = require('../model/user.js');
+var should   = require('should');
+var async    = require('async');
 var debug = require('debug')('OSMBC:routes:users');
-var router = express.Router();
+
+
+var express    = require('express');
+var router     = express.Router();
+var request = require('request');
+
+
+var config = require('../config.js');
+
+var userModule = require('../model/user.js');
 var logModule = require('../model/logModule.js');
 var settingsModule = require('../model/settings.js');
-var config = require('../config.js');
-var request = require('request');
+
+
 
 
 function renderList(req,res,next) {  
@@ -37,13 +44,12 @@ function renderList(req,res,next) {
                                 users:users});      
     }
   );
-
 }
 
 
 
 function renderUserId(req, res, next) {
-  debug('router.get');
+  debug('renderUserId');
   var id = req.params.user_id;
   should.exist(id);
   var params = {};
@@ -65,11 +71,10 @@ function renderUserId(req, res, next) {
         debug('findAndLoaduser_CB');
         if (err) return cb(err);
         user = result;
-        if (! user || typeof(user.id) == 'undefined') return next(new Error("User ID not Found"));
+        if (! user || typeof(user.id) == 'undefined') return cb(new Error("User ID not Found"));
         if (req.query.validation) {
-          user.validateEmail(req.query.validation,function (err){
-            if (err) next(err);
-            console.dir("Success redirectding to "+res.rendervar.layout.htmlroot+"/user/"+user.id);
+          user.validateEmail(req.user,req.query.validation,function (err){
+            if (err) return cb(err);
             res.redirect(res.rendervar.layout.htmlroot+"/usert/"+user.id);
             return cb();
           });
@@ -165,9 +170,9 @@ router.get('/create',createUser);
 router.get('/:user_id',renderUserId);
 router.post('/:user_id', postUserId);
 
-module.exports.createUser = createUser;
-module.exports.postUserId = postUserId;
+module.exports.createUser   = createUser;
+module.exports.postUserId   = postUserId;
 module.exports.renderUserId = renderUserId;
-module.exports.renderList = renderList;
+module.exports.renderList   = renderList;
 
 module.exports.router = router;

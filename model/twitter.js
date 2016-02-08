@@ -5,7 +5,6 @@ var config = require('../config.js');
 var request = require('request');
 var async = require('async');
 var debug = require('debug')('OSMBC:model:twitter');
-var fs = require("fs");
 
 
     
@@ -41,16 +40,14 @@ function expandTwitterUrl(url,callback) {
   var id = url.substring(url.indexOf("/status/")+8,99);
   client.get("/statuses/show/"+id,function(err,result) {
     debug("client.get");
+    //fs.writeFileSync("TwitterStatus-"+id+".json",JSON.stringify(result,null,2));
     // not working, ignore error
-    console.log(err);   
+  
     if (err) return callback(null,url);
     if (!result) return callback(null,url);
 
     var collection = url + "\n\nTweet by "+result.user.name+"\n";
-    collection += result.text.substring(0,result.text.length-24)+"\n";
-    collection += "(Retweets: "+result.retweet_count +" Favs: "+result.favorite_count+")\n";
-
-
+    collection += result.text+"\n";
 
 
     async.eachSeries(result.entities.urls,function(item,cb){
@@ -61,6 +58,9 @@ function expandTwitterUrl(url,callback) {
       });
     }, function finalFunction(err){
       if (err) return callback(err);
+      collection = collection.replace(/.https:\/\/t\.co\/........../i,"");
+      collection += "(Retweets: "+result.retweet_count +" Favs: "+result.favorite_count+")\n";
+
       return callback(null,collection);
     });
   });

@@ -433,7 +433,10 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
     }
     async.series(
       [function logIt (cb) {
-        messageCenter.global.updateArticle(user,self,data,cb);
+        var oa = create(self);
+        // do not wait on email;
+        messageCenter.global.updateArticle(user,oa,data,function(){});
+        cb();
       },
       function putValues (cb) {
         for (k in data) {
