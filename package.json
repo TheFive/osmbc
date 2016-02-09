@@ -28,10 +28,8 @@
     "markdown-it-sup": "^1.0.0",
     "mdfigcaption": "^0.1.1",
     "mocha": "^2.4.5",
-    "mocha-jshint": "^2.3.1",
     "moment": "^2.11.2",
     "morgan": "~1.6.1",
-    "nock": "^7.1.0",
     "node-jsdom": "^3.1.5",
     "node-schedule": "^0.6.0",
     "nodemailer": "^2.1.0",
@@ -48,8 +46,8 @@
     "twit": "^2.2.2"
   },
   "devDependencies": {
-    "mocha-jshint": "^2.3.0",
-    "nock": "^7.0.2",
+   "mocha-jshint": "^2.3.1",
+    "nock": "^7.1.0",
     "sinon": "^1.17.3",
     "zombie": "^4.2"
   }
