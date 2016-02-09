@@ -4,6 +4,7 @@ var debug     = require('debug')('OSMBC:notification:messageCenter');
 var async     = require('async');
 var should    = require('should');
 var logModule = require('../model/logModule.js');
+var SlackReceiver = require('../notification/slackReceiver.js');
 
 
 
@@ -151,6 +152,7 @@ LogModuleReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(use
 var messageCenter = new MessageCenter();
 
 messageCenter.registerReceiver(new LogModuleReceiver());
+messageCenter.registerReceiver(new SlackReceiver());
 
 
 module.exports.global = messageCenter;
