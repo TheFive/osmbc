@@ -109,17 +109,17 @@ describe('views/article', function() {
   });
   describe('Scripting Functions in Edit Mode',function() {
     before(function(done) {
-      this.timeout(12000);
+      this.timeout(15000);
       browser.visit('/article/'+articleId+'?edit=true&style=OVERVIEW', function(err){
  //     browser.visit('/article/'+articleId, function(err){
         if (err) console.dir(err);
+        setTimeout(done,2000);
         done();
       });
     });
 
     describe('onchangeCollection',function(){
       it('should show the links from collection field under the field', function(bddone2){
-        setTimeout(function(){
           var file =  path.resolve(__dirname,'data', "util.data.json");
           var data = JSON.parse(fs.readFileSync(file));
           for (var i=0;i<data.isURLArray.length;i++) {
@@ -131,7 +131,6 @@ describe('views/article', function() {
             should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="'+linkUrl+'" target="_blank">'+linkUrl+'</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u='+linkUrl+'" target="_blank"> \nDE</a><br>\n</p>');  
           }
           bddone2();          
-        },2000);
       });
       it('should show multiple links from collection field under the field', function(bddone){
       
