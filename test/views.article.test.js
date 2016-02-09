@@ -38,7 +38,10 @@ describe('views/article', function() {
   describe("Scripting Functions",function() {
     before(function(done) {
       this.timeout(6000);
-      browser.visit('/article/'+articleId, done);
+      browser.visit('/article/'+articleId, function(err){
+        if (err) return done(err);
+        setTimeout(done,500);
+      });
     });
     it('should have converted collection correct',function(){
       //browser.assert.attribute("namefortest","innerHTML",'Link1: <a href="http://www.test.dä/holla and other">http://www.test.dä/holla</a> and other');
