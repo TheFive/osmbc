@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.7.3](https://github.com/TheFive/osmbc/tree/0.7.3) (2016-02-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.2b...0.7.3)
+
+**Implemented enhancements:**
+
+- Load Tweets with Twitter API and display them with full contained links. [\#4](https://github.com/TheFive/osmbc/issues/4)
+
+## [0.7.2b](https://github.com/TheFive/osmbc/tree/0.7.2b) (2016-02-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.2...0.7.2b)
+
+**Implemented enhancements:**
+
+- Show number of unedited & uncategorised articles in a blog [\#46](https://github.com/TheFive/osmbc/issues/46)
+- Some Statistics per Blog [\#39](https://github.com/TheFive/osmbc/issues/39)
+
 ## [0.7.2](https://github.com/TheFive/osmbc/tree/0.7.2) (2016-02-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.1a...0.7.2)
 
