@@ -34,5 +34,5 @@ before_script:
 
 
 script:
-  - DEBUG=OSMBC* NODE_ENV=test mocha
+  - npm test
 
