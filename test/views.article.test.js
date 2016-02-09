@@ -112,7 +112,7 @@ describe('views/article', function() {
       this.timeout(15000);
       browser.visit('/article/'+articleId+'?edit=true&style=OVERVIEW', function(err){
  //     browser.visit('/article/'+articleId, function(err){
-        if (err) console.dir(err);
+        if (err) return done(err);
         setTimeout(function(){done();},2000);
       });
     });
