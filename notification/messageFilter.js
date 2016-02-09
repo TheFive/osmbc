@@ -70,4 +70,48 @@ UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user
   this.receiver.sendLanguageStatus(user,blog,lang,status,cb);
 };
 
+function BlogStatusFilter() {
+  debug("BlogStatusFilter");
+}
+
+
+BlogStatusFilter.prototype.updateArticle = function ucfUpdateArticle(user,article,change,cb) {
+  debug('BlogStatusFilter.prototype.updateArticle');
+  this.receiver.updateArticle(user,article,change,cb);
+};
+
+BlogStatusFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
+  debug('BlogStatusFilter.prototype.updateBlog');
+  this.receiver.updateBlog(user,blog,change,cb);
+};
+
+
+BlogStatusFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,cb) {
+  debug('BlogStatusFilter.prototype.sendLanguageStatus');
+  this.receiver.sendLanguageStatus(user,blog,lang,status,cb);
+};
+
+function ArticleCollectFilter() {
+  debug("ArticleCollectFilter");
+}
+
+ArticleCollectFilter.prototype.updateArticle = function ucfUpdateArticle(user,article,change,cb) {
+  debug('ArticleCollectFilter.prototype.updateArticle');
+  return cb();
+};
+
+ArticleCollectFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
+  debug('ArticleCollectFilter.prototype.updateBlog');
+  return cb();
+};
+
+
+ArticleCollectFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,cb) {
+  debug('ArticleCollectFilter.prototype.sendLanguageStatus');
+  return cb();
+};
+
 module.exports.UserConfigFilter = UserConfigFilter;
+module.exports.ArticleCollectFilter = ArticleCollectFilter;
+module.exports.BlogStatusFilter = BlogStatusFilter;
+
