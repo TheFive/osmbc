@@ -113,8 +113,7 @@ describe('views/article', function() {
       browser.visit('/article/'+articleId+'?edit=true&style=OVERVIEW', function(err){
  //     browser.visit('/article/'+articleId, function(err){
         if (err) console.dir(err);
-        setTimeout(done,2000);
-        done();
+        setTimeout(function(){done();},2000);
       });
     });
 
