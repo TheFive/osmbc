@@ -73,13 +73,15 @@ exports.clearDB = function clearDB(done) {
       // delete session table and create it new
       pg.connect(config.pgstring,function (err,client,pgdone) {
         should.not.exist(err);
-        var query = client.query('DROP TABLE IF EXISTS session CASCADE;CREATE TABLE "session" ( \
+        var query = client.query('DROP TABLE IF EXISTS session CASCADE;\
+          CREATE TABLE "session" ( \
             "sid" varchar NOT NULL COLLATE "default", \
             "sess" json NOT NULL, \
             "expire" timestamp(6) NOT NULL \
           ) \
           WITH (OIDS=FALSE); \
-          ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;');
+          ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;\
+          ALTER TABLE "session" OWNER TO test;');
           query.on("end",function(){
             pgdone();
             done(null);
