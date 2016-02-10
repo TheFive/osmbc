@@ -4,8 +4,9 @@ var debug     = require('debug')('OSMBC:notification:messageCenter');
 var async     = require('async');
 var should    = require('should');
 var logModule = require('../model/logModule.js');
+var config   = require("../config.js");
 var SlackReceiver = require('../notification/slackReceiver.js');
-
+var messageFilter = require('../notification/messageFilter.js');
 
 
 
@@ -151,8 +152,11 @@ LogModuleReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(use
 
 var messageCenter = new MessageCenter();
 
+var slack = config.getValue("slack");
+
 messageCenter.registerReceiver(new LogModuleReceiver());
-messageCenter.registerReceiver(new SlackReceiver());
+messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.wn.blog,"#osmbcslacktest")));
+messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.wn.article,"#osmbcslacktest")));
 
 
 module.exports.global = messageCenter;

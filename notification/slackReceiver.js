@@ -2,17 +2,22 @@
 
 
 var config = require("../config.js");
+var should = require("should");
 var debug = require('debug')("OSMBC:notification:slackreceiver");
 
 config.initialise();
 
 
 var Slack = require('node-slack');
-var slack = new Slack(config.getValue("slack",{}).webhookurl);
 
 
-function SlackReceiver() {
+
+function SlackReceiver(webhook,channel) {
   debug("MailReceiver::MailReceiver");
+  this.slack = new Slack(webhook);
+  this.channel = channel;
+  debug("Channel: %s",channel);
+  debug("Webhook: %s",webhook);
 }
 
 SlackReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callback) {
@@ -23,8 +28,7 @@ SlackReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callb
 SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,callback) {
   debug("SlackReceiver::sendLanguageStatus");
 
-  var self = this;
-
+ 
 
   var subject = blog.name +"("+lang+") has been reviewed by user "+user.OSMUser +" ("+status+")";
   if (status === "startreview") {
@@ -33,9 +37,9 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,bl
   if (status === "markexported") {
     subject = blog.name + "("+lang+") is exported to WordPress";
   }
-  slack.send({
+  this.slack.send({
     text:subject,
-    channel: "#osmbcslacktest",
+    channel: this.channel,
     username: "osmbcbot"
   });
   return callback();
@@ -47,36 +51,27 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user,article,chan
   should(typeof(change)).eql("object");
  
 
-  var newArticle = articleModule.create();
-  var k;
-  for (k in article) {
-    newArticle[k] = article[k];
-    if (change[k]) newArticle[k] = change[k];
-  }
-  for (k in change) {
-    newArticle[k] = change[k];
-  }
-
 
   var subject;
   var logblog = article.blog;
   if (change.blog) logblog = change.blog;
 
   if (!article.collection && change.collection) {
-     subject = logblog + " added collection";
+     subject = logblog + " added collection "+change.title;
   }
   if (article.collection && change.collection) {
-     subject = logblog + " changed collection";
+     subject = logblog + " changed collection "+(change.title)?change.title:article.title;
   }
   if (!article.comment && change.comment) {
-     subject = logblog + " added comment";
+     subject = logblog + " added comment "+(change.title)?change.title:article.title;;
   }
   if (article.comment && change.comment) {
-     subject = logblog + " changed comment";
+     subject = logblog + " changed comment "+(change.title)?change.title:article.title;;
   }
-  slack.send({
+  debug("Sending subject "+subject);
+  this.slack.send({
     text:subject,
-    channel: "#osmbcslacktest",
+    channel: this.channel,
     username: "osmbcbot"
   });
   return callback();
@@ -88,33 +83,24 @@ SlackReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callba
   debug("SlackReceiver::updateBlog");
 
 
-  var newBlog = blogModule.create();
-  var k;
-  for (k in blog) {
-    newBlog[k] = blog[k];
-    if (change[k]) newBlog[k] = change[k];
-  }
-  for (k in change) {
-    newBlog[k] = change[k];
-  }
 
 
   var subject;
   var blogName = blog.name;
   if (change.name) blogName = change.name;
-  var blogName = "<https://thefive.sabic.uberspace.de/"+blogName+"|"+blogName+">";
+  blogName = "<https://thefive.sabic.uberspace.de/"+blogName+"|"+blogName+">";
  
   if (!blog.name && change.name) {
      subject = blogName + " was created";
   } else  {
      subject = blogName + " changed status";
   }
-  console.log("Send to slack: "+subject);
-  slack.send({
+
+  this.slack.send({
     text:subject,
-    channel: "#osmbcslacktest",
+    channel: this.channel,
     username: "osmbcbot"
-  }); 
+  });
   return callback();
 };
 
