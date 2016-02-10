@@ -697,7 +697,10 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
           if (m==="no translation") {
             self._countNoTranslateMarkdown[l] +=1;
           } else {
-            if (!m || m ==="" || c ==="-- no category yet --") self._countUneditedMarkdown[l] +=1;
+            if (!m || m ==="" || c ==="-- no category yet --") {
+              self._countUneditedMarkdown[l] +=1;
+              console.dir(self.name+" "+l+" "+result[j].name+" "+m);
+            }
           }
         }
       }
