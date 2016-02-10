@@ -702,7 +702,6 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
             }
           }
         }
-        console.dir(self);
       }
     }
     return callback();
