@@ -696,9 +696,9 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
           var m = result[j]["markdown"+l];
           if (m==="no translation") {
             self._countNoTranslateMarkdown[l] +=1;
-            continue;
+          } else {
+            if (!m || m ==="" || c ==="-- no category yet --") self._countUneditedMarkdown[l] +=1;
           }
-          if (!m || m ==="" || c ==="-- no category yet --") self._countUneditedMarkdown[l] +=1;
         }
       }
     }
