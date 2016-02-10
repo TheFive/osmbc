@@ -368,7 +368,6 @@ function postBlogId(req, res, next) {
                    status:req.body.status,
                    markdownImage:req.body.markdownImage,
                    categories:categories};
-    console.log(req.user);
     blog.setAndSave(req.user,changes,function(err) {
       if (err) {
         return next(err);
