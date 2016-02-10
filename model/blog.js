@@ -89,7 +89,7 @@ function create (proto) {
 Blog.prototype.setAndSave = function setAndSave(user,data,callback) {
   debug("setAndSave");
   debug('user %s',user);
-  should(typeof("user")).eql("string");
+  should(typeof(user)).eql("object");
   var self = this;
   delete self.lock;
   articleModule.removeOpenBlogCache(); 
