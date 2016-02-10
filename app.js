@@ -280,6 +280,7 @@ app.use(htmlRoot + '/tool',checkAuthentification, tool);
 
 // error handlers
 
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   debug('app.use Error Handler');
@@ -289,10 +290,12 @@ app.use(function(req, res, next) {
 });
 
 
+
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res) { 
+  debug("Set development error hander");
+  app.use(function(err, req, res,next) { 
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
     res.render('error', {
@@ -300,12 +303,14 @@ if (app.get('env') === 'development') {
       error: err,
       layout:{htmlroot:htmlRoot}
     });
+    if (next); // do nothing but use the next variable
   });
 }
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res) {
+app.use(function(err, req, res,next) {
+  debug("Set production error hander");
   debug('app.use status function');
   debug(JSON.stringify(err));
   res.status(err.status || 500);
@@ -314,6 +319,7 @@ app.use(function(err, req, res) {
     error: {},
     layout:{htmlroot:htmlRoot}
   });
+  if (next); // do nothing but use the next variable
 });
 
 // Initialise Mail Module with all users
