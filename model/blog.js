@@ -273,7 +273,7 @@ function createNewBlog(user, proto,callback,noArticle) {
         }
       }
     }
-    debug("Maximaler Name %s",name);
+    debug("Maximum Blog Name in DB: %s",name);
     var wnId = name.substring(2,99);
     var newWnId = parseInt(wnId) +1;
     var newName = "WN"+newWnId;
@@ -310,6 +310,7 @@ function createNewBlog(user, proto,callback,noArticle) {
         if (err) return callback(err);
         blog.save(function feedback(err,savedblog){
           if (err) return callback(err);
+          emptyBlog.id = savedblog.id;
           messageCenter.global.updateBlog(user,emptyBlog,change,function(err){
             if (err) return callback(err);
             return callback(null,savedblog);
