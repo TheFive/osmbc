@@ -33,7 +33,12 @@ function createNewUser (proto,callback) {
   }
   if (proto) should.not.exist(proto.id);
   var user = create(proto);
-  user.save(callback);
+
+  user.save(function updateUser(err,result){
+     if (err) return callback(err,result);
+     mailReceiver.updateUser(result);
+     callback(null,result);
+  });
 }
 
 
@@ -98,6 +103,7 @@ User.prototype.validateEmail = function validateEmail(user,validationCode,callba
   delete self.emailInvalidation;
   delete self.emailValidationKey;
   self.save(function logit(err){
+    mailReceiver.updateUser(self);
     if (err) return callback(err);
     messageCenter.global.sendInfo({oid:self.id,user:user.OSMUser,table:"usert",property:"email",from:oldmail,to:self.email},function(){
       return callback(err);

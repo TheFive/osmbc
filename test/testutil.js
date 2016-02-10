@@ -68,7 +68,26 @@ exports.clearDB = function clearDB(done) {
     function(done) {logModule.dropTable(done);},
     function(done) {logModule.createTable(done);},
     function(done) {userModule.dropTable(done);},
-    function(done) {userModule.createTable(done);}
+    function(done) {userModule.createTable(done);},
+    function(done) {
+      // delete session table and create it new
+      pg.connect(config.pgstring,function (err,client,pgdone) {
+        should.not.exist(err);
+        var query = client.query('DROP TABLE IF EXISTS session CASCADE;\
+          CREATE TABLE "session" ( \
+            "sid" varchar NOT NULL COLLATE "default", \
+            "sess" json NOT NULL, \
+            "expire" timestamp(6) NOT NULL \
+          ) \
+          WITH (OIDS=FALSE); \
+          ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;\
+          ALTER TABLE "session" OWNER TO test;');
+          query.on("end",function(){
+            pgdone();
+            done(null);
+          });
+      });
+    }
   ],function(err) {
     if (err) console.dir(err);
     should.not.exist(err);

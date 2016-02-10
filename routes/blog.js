@@ -91,7 +91,7 @@ function renderBlogId(req, res, next) {
         {
           clearParams = true;
           var changes = {status:req.query.setStatus};
-          blog.setAndSave(user.displayName,changes,function(err) {
+          blog.setAndSave(user,changes,function(err) {
             return callback(err);
           });
         } else return callback();
@@ -368,8 +368,7 @@ function postBlogId(req, res, next) {
                    status:req.body.status,
                    markdownImage:req.body.markdownImage,
                    categories:categories};
-
-    blog.setAndSave(req.user.displayName,changes,function(err) {
+    blog.setAndSave(req.user,changes,function(err) {
       if (err) {
         return next(err);
       }

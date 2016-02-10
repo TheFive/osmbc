@@ -38,7 +38,10 @@ describe('views/article', function() {
   describe("Scripting Functions",function() {
     before(function(done) {
       this.timeout(6000);
-      browser.visit('/article/'+articleId, done);
+      browser.visit('/article/'+articleId, function(err){
+        if (err) return done(err);
+        setTimeout(done,500);
+      });
     });
     it('should have converted collection correct',function(){
       //browser.assert.attribute("namefortest","innerHTML",'Link1: <a href="http://www.test.dä/holla and other">http://www.test.dä/holla</a> and other');
@@ -106,38 +109,41 @@ describe('views/article', function() {
   });
   describe('Scripting Functions in Edit Mode',function() {
     before(function(done) {
-      this.timeout(12000);
-      browser.visit('/article/'+articleId+'?edit=true&style=overviewDE', function(err){
+      this.timeout(15000);
+      browser.visit('/article/'+articleId+'?edit=true&style=OVERVIEW', function(err){
  //     browser.visit('/article/'+articleId, function(err){
-        if (err) console.dir(err);
-        done();
+        if (err) return done(err);
+        setTimeout(function(){done();},2000);
       });
     });
 
     describe('onchangeCollection',function(){
-      it('should show the links from collection field under the field', function(){
-        var file =  path.resolve(__dirname,'data', "util.data.json");
-        var data = JSON.parse(fs.readFileSync(file));
-        for (var i=0;i<data.isURLArray.length;i++) {
-          var link = data.isURLArray[i];
-          var linkUrl = data.isURLArrayEncoded[i];
-        
-          browser.document.getElementById('collection').value=link;
-          browser.evaluate('onchangeCollection()');
-          should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="'+linkUrl+'" target="_blank">'+linkUrl+'</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u='+linkUrl+'" target="_blank"> \nDE</a><br>\n</p>');
-        }
+      it('should show the links from collection field under the field', function(bddone2){
+          var file =  path.resolve(__dirname,'data', "util.data.json");
+          var data = JSON.parse(fs.readFileSync(file));
+          for (var i=0;i<data.isURLArray.length;i++) {
+            var link = data.isURLArray[i];
+            var linkUrl = data.isURLArrayEncoded[i];
+          
+            browser.document.getElementById('collection').value=link;
+            browser.evaluate('onchangeCollection()');
+            should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="'+linkUrl+'" target="_blank">'+linkUrl+'</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u='+linkUrl+'" target="_blank"> \nDE</a><br>\n</p>');  
+          }
+          bddone2();          
       });
-      it('should show multiple links from collection field under the field', function(){
+      it('should show multiple links from collection field under the field', function(bddone){
       
         browser.document.getElementById('collection').value="Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: http://www.openstreetmap.org/user/Severák/diary/37681";
         browser.evaluate('onchangeCollection()');
         should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank"> \nDE</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank"> \nDE</a><br>\n</p>');
+        bddone();
       });
-      it('should show multiple links from collection only separated by carrige return', function(){
+      it('should show multiple links from collection only separated by carrige return', function(bddone){
       
         browser.document.getElementById('collection').value="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681";
         browser.evaluate('onchangeCollection()');
         should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank"> \nDE</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank"> \nDE</a><br>\n</p>');
+        bddone();
       });
     });
   });
