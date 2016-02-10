@@ -699,7 +699,7 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
           } else {
             if (!m || m ==="" || c ==="-- no category yet --") {
               self._countUneditedMarkdown[l] +=1;
-              console.dir(self.name+" "+l+" "+result[j].name+" "+m);
+              console.dir(self.name+" "+l+" "+result[j].title+" "+m+" "+ self._countUneditedMarkdown[l]);
             }
           }
         }
