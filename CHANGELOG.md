@@ -1,9 +1,20 @@
 # Change Log
 
+## [0.7.4](https://github.com/TheFive/osmbc/tree/0.7.4) (2016-02-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3d...0.7.4)
+
+**Fixed bugs:**
+
+- Validated users does not receive any mail. [\#314](https://github.com/TheFive/osmbc/issues/314)
+- email on status switch is buggy [\#311](https://github.com/TheFive/osmbc/issues/311)
+
+## [0.7.3d](https://github.com/TheFive/osmbc/tree/0.7.3d) (2016-02-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3c...0.7.3d)
+
 ## [0.7.3c](https://github.com/TheFive/osmbc/tree/0.7.3c) (2016-02-11)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3b...0.7.3c)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - Blog Charts are not recalculated and frozen. [\#312](https://github.com/TheFive/osmbc/issues/312)
 
@@ -62,6 +73,7 @@
 
 **Implemented enhancements:**
 
+- please add the emailaddress [\#299](https://github.com/TheFive/osmbc/issues/299)
 - Display editor\(s\) of markdown in article previews [\#293](https://github.com/TheFive/osmbc/issues/293)
 
 **Fixed bugs:**
@@ -70,7 +82,6 @@
 
 **Closed issues:**
 
-- please add the emailaddress [\#299](https://github.com/TheFive/osmbc/issues/299)
 - Enable "strict mode" in all js files & jshint, [\#224](https://github.com/TheFive/osmbc/issues/224)
 
 ## [0.7.0a](https://github.com/TheFive/osmbc/tree/0.7.0a) (2016-02-06)
@@ -925,17 +936,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
