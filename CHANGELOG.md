@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.7.3c](https://github.com/TheFive/osmbc/tree/0.7.3c) (2016-02-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3b...0.7.3c)
+
+**Closed issues:**
+
+- Blog Charts are not recalculated and frozen. [\#312](https://github.com/TheFive/osmbc/issues/312)
+
 ## [0.7.3b](https://github.com/TheFive/osmbc/tree/0.7.3b) (2016-02-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3a...0.7.3b)
 
