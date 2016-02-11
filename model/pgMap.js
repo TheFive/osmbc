@@ -84,6 +84,12 @@ module.exports.save = function(callback) {
   var self = this;
   var table = self.getTable();
 
+  // clean propertys with "_"
+
+  for (var k in self) {
+    if (k.substring(0,1)=="_") delete self[k];
+  }
+
   // first check, wether ID is known or not
   if (self.id === 0) {
     // we have to create the object
