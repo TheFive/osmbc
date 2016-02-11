@@ -140,23 +140,23 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
   for (k in change) {
     newArticle[k] = change[k];
   }
-
+ 
 
   var subject;
   var logblog = article.blog;
   if (change.blog) logblog = change.blog;
 
   if (!article.collection && change.collection) {
-     subject = logblog + " added collection";
+     subject = logblog + " added: "+newArticle.title;
   }
   if (article.collection && change.collection) {
-     subject = logblog + " changed collection";
+     subject = logblog + " changed: "+newArticle.title;
   }
   if (!article.comment && change.comment) {
-     subject = logblog + " added comment";
+     subject = logblog + " comment: "+newArticle.title;
   }
   if (article.comment && change.comment) {
-     subject = logblog + " changed comment";
+     subject = logblog + " comment: "+newArticle.title;
   }
 
 
@@ -204,7 +204,7 @@ MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callbac
   if (!blog.name && change.name) {
      subject = blogName + " was created";
   } else  {
-     subject = blogName + " changed status";
+     subject = blogName + " changed status to "+newBlog.status;
   }
  
 
