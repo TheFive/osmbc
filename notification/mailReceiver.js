@@ -273,10 +273,7 @@ function initialise(userList) {
   userReceiverMap = {};
   for (var i=0;i<userList.length;i++) {
     var u = userList[i];
-    if (u.access !== "full") continue;
-    if (!u.email) return;
-    if (u.email === "") return;
-    userReceiverMap[u.OSMUser] = new messageFilter.UserConfigFilter(u,new MailReceiver(u));
+    updateUser(u);
   }
 }
 
@@ -288,6 +285,7 @@ function updateUser(user) {
   if (user.access !== "full") return;
   if (!user.email) return;
   if (user.email === "") return;
+    console.log("User "+user.OSMUser+" will receive some mail");
   userReceiverMap[user.OSMUser] = new messageFilter.UserConfigFilter(user,new MailReceiver(user));
 }
 
