@@ -1,5 +1,47 @@
 # Change Log
 
+## [0.7.3c](https://github.com/TheFive/osmbc/tree/0.7.3c) (2016-02-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3b...0.7.3c)
+
+**Closed issues:**
+
+- Blog Charts are not recalculated and frozen. [\#312](https://github.com/TheFive/osmbc/issues/312)
+
+## [0.7.3b](https://github.com/TheFive/osmbc/tree/0.7.3b) (2016-02-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3a...0.7.3b)
+
+**Implemented enhancements:**
+
+- Sort maillog by timesstamp. [\#313](https://github.com/TheFive/osmbc/issues/313)
+
+**Fixed bugs:**
+
+- Renaming & saving a blog results in crash. [\#310](https://github.com/TheFive/osmbc/issues/310)
+- Blog History is written now for autocreate, but with ID -1. [\#309](https://github.com/TheFive/osmbc/issues/309)
+- Error Handler layout looks broken. Jade files are not used. [\#305](https://github.com/TheFive/osmbc/issues/305)
+
+## [0.7.3a](https://github.com/TheFive/osmbc/tree/0.7.3a) (2016-02-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3...0.7.3a)
+
+**Merged pull requests:**
+
+- Flags Mexico/Austria and welcome message [\#307](https://github.com/TheFive/osmbc/pull/307) ([fredao](https://github.com/fredao))
+
+## [0.7.3](https://github.com/TheFive/osmbc/tree/0.7.3) (2016-02-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.2b...0.7.3)
+
+**Implemented enhancements:**
+
+- Load Tweets with Twitter API and display them with full contained links. [\#4](https://github.com/TheFive/osmbc/issues/4)
+
+## [0.7.2b](https://github.com/TheFive/osmbc/tree/0.7.2b) (2016-02-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.2...0.7.2b)
+
+**Implemented enhancements:**
+
+- Show number of unedited & uncategorised articles in a blog [\#46](https://github.com/TheFive/osmbc/issues/46)
+- Some Statistics per Blog [\#39](https://github.com/TheFive/osmbc/issues/39)
+
 ## [0.7.2](https://github.com/TheFive/osmbc/tree/0.7.2) (2016-02-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.1a...0.7.2)
 
@@ -883,17 +925,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)

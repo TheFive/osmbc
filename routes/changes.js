@@ -36,7 +36,7 @@ function generateHTMLDiff(one,other) {
 function renderOutgoingMailLog(req,res,next) {
   debug('renderOutgoingMailLog');
   var d = req.params.date;
-  logModule.find("select id, data from changes where data->>'table' = 'mail' and substring(data->>'timestamp' from 1 for "+ d.length+") ='"+d+"'",function (err,result){
+  logModule.find("select id, data from changes where data->>'table' = 'mail' and substring(data->>'timestamp' from 1 for "+ d.length+") ='"+d+"' order by data->>'timestamp' desc",function (err,result){
     debug("logModule.find");
     if (err) return next(err);
     res.render("maillog",{maillog:result,layout:res.rendervar.layout});

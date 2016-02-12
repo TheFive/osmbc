@@ -140,23 +140,23 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
   for (k in change) {
     newArticle[k] = change[k];
   }
-
+ 
 
   var subject;
   var logblog = article.blog;
   if (change.blog) logblog = change.blog;
 
   if (!article.collection && change.collection) {
-     subject = logblog + " added collection";
+     subject = logblog + " added: "+newArticle.title;
   }
   if (article.collection && change.collection) {
-     subject = logblog + " changed collection";
+     subject = logblog + " changed: "+newArticle.title;
   }
   if (!article.comment && change.comment) {
-     subject = logblog + " added comment";
+     subject = logblog + " comment: "+newArticle.title;
   }
   if (article.comment && change.comment) {
-     subject = logblog + " changed comment";
+     subject = logblog + " comment: "+newArticle.title;
   }
 
 
@@ -204,7 +204,7 @@ MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callbac
   if (!blog.name && change.name) {
      subject = blogName + " was created";
   } else  {
-     subject = blogName + " changed status";
+     subject = blogName + " changed status to "+newBlog.status;
   }
  
 
@@ -273,10 +273,7 @@ function initialise(userList) {
   userReceiverMap = {};
   for (var i=0;i<userList.length;i++) {
     var u = userList[i];
-    if (u.access !== "full") continue;
-    if (!u.email) return;
-    if (u.email === "") return;
-    userReceiverMap[u.OSMUser] = new messageFilter.UserConfigFilter(u,new MailReceiver(u));
+    updateUser(u);
   }
 }
 
@@ -288,6 +285,7 @@ function updateUser(user) {
   if (user.access !== "full") return;
   if (!user.email) return;
   if (user.email === "") return;
+    console.log("User "+user.OSMUser+" will receive some mail");
   userReceiverMap[user.OSMUser] = new messageFilter.UserConfigFilter(user,new MailReceiver(user));
 }
 

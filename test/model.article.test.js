@@ -248,23 +248,26 @@ describe('model/article', function() {
                                    {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
                                    {OSMUser:"User5",                     access:"full",mailAllComment:"true"}]},bddone);
       });
-      it('should send out mail, when collecting article.',function (bddone){
+      it('should send out mail, when collecting article',function (bddone){
         articleModule.createNewArticle(function(err,article){
-          article.setAndSave({OSMUser:"testuser"},{blog:"WN789",collection:"newtext"},function(err) {
-            should.not.exist(err);
-            should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
-            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p>';
-            should(result.html).eql(expectedMail);
-            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
-              {from:"noreply@gmail.com",
-              to:"user1@mail.bc",
-              subject:"WN789 added collection",
-              html:expectedMail,
-              text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext"});
+          article.setAndSave({OSMUser:"testuser"},{blog:"WN789",collection:"newtext",title:"Test Title"},function(err) {
+            setTimeout(function (){
+              should.not.exist(err);
+              should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
+              var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+              var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">Test Title</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p><h3>title was added</h3><p>Test Title</p>';
+              should(result.html).eql(expectedMail);
+              should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+                {from:"noreply@gmail.com",
+                to:"user1@mail.bc",
+                subject:"WN789 added: Test Title",
+                html:expectedMail,
+                text:"CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
 
 
-            bddone();
+              bddone();
+
+            },500);
           });
         });
       });
@@ -281,7 +284,7 @@ describe('model/article', function() {
             should(result).eql(
               {from:"noreply@gmail.com",
               to:"user2@mail.bc",
-              subject:"WN789 added comment",
+              subject:"WN789 comment: undefined",
               html:expectedMail,
               text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
 
@@ -291,7 +294,7 @@ describe('model/article', function() {
             should(result).eql(
               {from:"noreply@gmail.com",
               to:"user3@mail.bc",
-              subject:"WN789 added comment",
+              subject:"WN789 comment: undefined",
               html:expectedMail,
               text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
 
@@ -318,7 +321,7 @@ describe('model/article', function() {
               should(result).eql(
                 {from:"noreply@gmail.com",
                 to:"user2@mail.bc",
-                subject:"WN789 added comment",
+                subject:"WN789 comment: undefined",
                 html:expectedMail,
                 text:expectedText});
               // Second Mail Check
@@ -330,7 +333,7 @@ describe('model/article', function() {
               should(result).eql(
                 {from:"noreply@gmail.com",
                 to:"user2@mail.bc",
-                subject:"WN789 changed comment",
+                subject:"WN789 comment: undefined",
                 html:expectedMail,
                 text:expectedText});
 
@@ -345,7 +348,7 @@ describe('model/article', function() {
               should(result).eql(
                 {from:"noreply@gmail.com",
                 to:"user3@mail.bc",
-                subject:"WN789 changed comment",
+                subject:"WN789 comment: undefined",
                 html:expectedMail,
                 text:expectedText});
 

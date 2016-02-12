@@ -43,6 +43,12 @@ UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user,articl
 UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
   debug('UserConfigFilter.prototype.updateBlog');
   var sendMail = false;
+  var wnList = [];
+
+  // send out status change if User is interested in review comments.
+  if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange;
+  if (wnList.length>0) sendMail = true;
+
 
   // check Collection
   if (this.user.mailBlogStatusChange == "true") {
