@@ -713,6 +713,12 @@ describe('model/article', function() {
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
       bddone();
     });
+    it('should generate a preview (no markdown) with a comment and open status case insensitive test',function (bddone) {
+      var article = articleModule.create({collection:"small collection",comment:"Hallo @en",commentStatus:"open"});
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
+      bddone();
+    });
     it('should generate a preview with a comment and open status and reference for all user',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo @all",commentStatus:"open"});
       var result = article.getPreview("fullDE","TheFive");
