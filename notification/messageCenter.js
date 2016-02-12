@@ -155,8 +155,8 @@ var messageCenter = new MessageCenter();
 var slack = config.getValue("slack");
 
 messageCenter.registerReceiver(new LogModuleReceiver());
-messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.wn.blog,"#osmbcslacktest")));
-messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.wn.article,"#osmbcslacktest")));
+messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.wn.blog,"#osmbcblog")));
+messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.wn.article,"#osmbcarticle")));
 
 
 module.exports.global = messageCenter;
