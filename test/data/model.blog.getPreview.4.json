@@ -5,5 +5,5 @@
               "categoryEN":"not exist"}],
   "testBlogName":"BLOG",
   "style":"fullEN",
-  "testBlogResultHtml":"<p>2/2/2015-3/3/2015</p><!--         place picture here              --><h2> Blog Missing Cat: not exist</h2>\n<p> Please use [edit blog detail] to enter category</p>\n<p> Or edit The Articles  <a href=\"/article/1\">1</span></a> "     
+  "testBlogResultHtml":"<p>02/02/2015-03/03/2015</p><!--         place picture here              --><h2> Blog Missing Cat: not exist</h2>\n<p> Please use [edit blog detail] to enter category</p>\n<p> Or edit The Articles  <a href=\"/article/1\">1</span></a> "     
 }

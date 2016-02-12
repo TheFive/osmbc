@@ -211,7 +211,7 @@ describe('model/user', function() {
               should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
                 {from:"noreply@gmail.com",
                 to:"WelcomeMe@newemail.org",
-                subject:"Welcome to OSMBC",
+                subject:"[TESTBC] Welcome to OSMBC",
                 html:expectedMail,
                 text:expectedText});
 

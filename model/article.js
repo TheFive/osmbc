@@ -149,10 +149,10 @@ Article.prototype.getPreview = function getPreview(style,user) {
   if (options.edit && options.comment && this.comment) {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
       var commentColour = "blue";
-      if (this.comment.indexOf("@"+user)>=0) commentColour = "red";
-      if (this.comment.indexOf("@"+options.left_lang)>=0) commentColour = "orange";
-      if (this.comment.indexOf("@"+options.right_lang)>=0) commentColour = "orange";
-      if (this.comment.indexOf("@all")>=0) commentColour = "orange";
+      if (this.comment.search(new RegExp("@"+user,"i"))>=0) commentColour = "red";
+      if (this.comment.search(new RegExp("@"+options.left_lang,"i"))>=0) commentColour = "orange";
+      if (this.comment.search(new RegExp("@"+options.right_lang,"i"))>=0) commentColour = "orange";
+      if (this.comment.search(new RegExp("@all","i"))>=0) commentColour = "orange";
       liON = '<li id="'+pageLink+'" style=" border-left-style: solid; border-color: '+commentColour+';">\n';
     }
   }
