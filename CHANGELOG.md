@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.7.5](https://github.com/TheFive/osmbc/tree/0.7.5) (2016-02-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.4...0.7.5)
+
+**Closed issues:**
+
+- Use full screenwidth with bootstrap [\#324](https://github.com/TheFive/osmbc/issues/324)
+- Blog - date [\#322](https://github.com/TheFive/osmbc/issues/322)
+- Display OSMUser in outgoing mail log. [\#319](https://github.com/TheFive/osmbc/issues/319)
+- Start mail subject with \[OSMBC\] [\#318](https://github.com/TheFive/osmbc/issues/318)
+- Make Test on Username / language case insensitive. [\#317](https://github.com/TheFive/osmbc/issues/317)
+
 ## [0.7.4](https://github.com/TheFive/osmbc/tree/0.7.4) (2016-02-11)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3d...0.7.4)
 
@@ -936,17 +947,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
