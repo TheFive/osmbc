@@ -41,10 +41,11 @@ var layout = {
 
 
 
-function sendMailWithLog(mailOptions,callback) {
+function sendMailWithLog(user,mailOptions,callback) {
   transporter.sendMail(mailOptions,function logMail(error,info){
     debug("logMail");
     var logObject = {
+      user:user.OSMUser,
       table:"mail",
       to:mailOptions.to,
       subject:mailOptions.subject,
@@ -87,7 +88,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
     };
      
     // send mail with defined transport object 
-    sendMailWithLog(mailOptions,callback);
+    sendMailWithLog(self.user,mailOptions,callback);
   }); 
 };
 
@@ -120,7 +121,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blo
     };
      
     // send mail with defined transport object 
-    sendMailWithLog(mailOptions,callback);
+    sendMailWithLog(self.user,mailOptions,callback);
   });
 };
 
@@ -176,7 +177,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
     };
      
     // send mail with defined transport object 
-    sendMailWithLog(mailOptions,callback);
+    sendMailWithLog(self.user,mailOptions,callback);
   });
 };
 
@@ -224,7 +225,7 @@ MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callbac
     };
      
     // send mail with defined transport object 
-    sendMailWithLog(mailOptions,callback);
+    sendMailWithLog(self.user,mailOptions,callback);
   });
 };
 var userReceiverMap = {};
@@ -285,7 +286,6 @@ function updateUser(user) {
   if (user.access !== "full") return;
   if (!user.email) return;
   if (user.email === "") return;
-    console.log("User "+user.OSMUser+" will receive some mail");
   userReceiverMap[user.OSMUser] = new messageFilter.UserConfigFilter(user,new MailReceiver(user));
 }
 

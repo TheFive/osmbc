@@ -8,6 +8,7 @@ block content
       table
         thead
           tr 
+            th user
             th address
             th subject
             th timestamp
@@ -16,6 +17,7 @@ block content
           if (maillog)
             each mail in maillog
               tr
+                td=mail.user
                 td=mail.to
                 td=mail.subject
                 td=mail.timestamp
