@@ -82,13 +82,13 @@ block content
                      usershown.mailNewCollection,
                      ["true","false"],
                      ["on","off"],
-                     "Send a mail for every new Collect.")
+                     "Send a mail for every new Collect. If you are interested in new Articles, you should send this to ON.")
       +labeledSelect("Mail All Comments",
                      "mailAllComment",
                      usershown.mailAllComment,
                      ["true","false"],
                      ["on","off"],
-                     "Send a mail for every change of a comment.")
+                     "Send a mail for every change of a comment. I recommend to use OFF, but sometimes you may be interested in anything written in comments, than - and only then - you should use ON")
 
     
       - var langlistWithUser = langlist.concat(usershown.OSMUser)
@@ -98,13 +98,13 @@ block content
                      usershown.mailComment,
                      langlistWithUser,
                      langlistWithUser,
-                     "Please check comments you are interested in.")
+                     "Please check comments you are interested in. Recommendation is as minimum to enable your user, so that you receive via mail that someone is mentioning you in a comment.")
       +labeledMultiSelect("Mail Status Change",
                      "mailBlogLanguageStatusChange",
                      usershown.mailBlogLanguageStatusChange,
                      langlist,
                      langlist,
-                     "Please choose your languagues of your interest for status information")
+                     "Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.")
 
  
 
