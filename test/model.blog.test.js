@@ -268,17 +268,17 @@ describe('model/blog', function() {
           should(result.text).eql(expectedText);
           should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
             {from:"noreply@gmail.com",
-            subject:"WN251 was created",
+            subject:"[TESTBC] WN251 was created",
             html:expectedMail,
             text:expectedText});
           should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
             {from:"noreply@gmail.com",
-            subject:"WN251 was created",
+            subject:"[TESTBC] WN251 was created",
             html:expectedMail,
             text:expectedText});
           should(mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0]).eql(
             {from:"noreply@gmail.com",
-            subject:"WN251 was created",
+            subject:"[TESTBC] WN251 was created",
             html:expectedMail,
             text:expectedText});
           bddone();
@@ -309,17 +309,17 @@ describe('model/blog', function() {
             delete call.getCall(2).args[0].to;
            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
-              subject:"WN251 changed status to edit",
+              subject:"[TESTBC] WN251 changed status to edit",
               html:expectedMail,
               text:expectedText});
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
               {from:"noreply@gmail.com",
-              subject:"WN251 changed status to edit",
+              subject:"[TESTBC] WN251 changed status to edit",
               html:expectedMail,
               text:expectedText});
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0]).eql(
               {from:"noreply@gmail.com",
-              subject:"WN251 changed status to edit",
+              subject:"[TESTBC] WN251 changed status to edit",
               html:expectedMail,
               text:expectedText});
             bddone();
@@ -343,7 +343,7 @@ describe('model/blog', function() {
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
                 to:"user3@mail.bc",
-                subject:"blog(ES) has been reviewed by user testuser",
+                subject:"[TESTBC] blog(ES) has been reviewed by user testuser",
                 html:expectedMail,
                 text:expectedText});
             bddone();
@@ -368,7 +368,7 @@ describe('model/blog', function() {
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
                 to:"user3@mail.bc",
-                subject:"blog(ES) is exported to WordPress",
+                subject:"[TESTBC] blog(ES) is exported to WordPress",
                 html:expectedMail,
                 text:expectedText});
             bddone();
@@ -392,7 +392,7 @@ describe('model/blog', function() {
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
                 to:"user3@mail.bc",
-                subject:"blog(ES) is exported to WordPress",
+                subject:"[TESTBC] blog(ES) is exported to WordPress",
                 html:expectedMail,
                 text:expectedText});
             bddone();

@@ -42,6 +42,9 @@ var layout = {
 
 
 function sendMailWithLog(user,mailOptions,callback) {
+  debug("sendMailWithLog");
+  var appName = config.getValue("AppName");
+  if (appName)   mailOptions.subject = "["+appName+"] "+mailOptions.subject;
   transporter.sendMail(mailOptions,function logMail(error,info){
     debug("logMail");
     var logObject = {
@@ -105,6 +108,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blo
   if (status === "markexported") {
     subject = blog.name + "("+lang+") is exported to WordPress";
   }
+
   var data = {user:user,blog:blog,status:status,lang:lang,layout:layout};
 
   infomailInfo.render(data, function infomailRenderBlog(err, results) {

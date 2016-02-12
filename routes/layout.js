@@ -109,6 +109,7 @@ function prepareRenderLayout(req,res,next) {
                       listOfHelpBlog:result.listOfHelpBlog,
                       moment:moment,
                       util:util,
+                      appName:config.getValue("AppName"),
                       bootstrap:bootstrap,
                       osmbc_version:version.osmbc_version,
                       style:style
