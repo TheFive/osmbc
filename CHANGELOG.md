@@ -1,9 +1,31 @@
 # Change Log
 
+## [0.7.5](https://github.com/TheFive/osmbc/tree/0.7.5) (2016-02-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.4...0.7.5)
+
+**Closed issues:**
+
+- Use full screenwidth with bootstrap [\#324](https://github.com/TheFive/osmbc/issues/324)
+- Blog - date [\#322](https://github.com/TheFive/osmbc/issues/322)
+- Display OSMUser in outgoing mail log. [\#319](https://github.com/TheFive/osmbc/issues/319)
+- Start mail subject with \[OSMBC\] [\#318](https://github.com/TheFive/osmbc/issues/318)
+- Make Test on Username / language case insensitive. [\#317](https://github.com/TheFive/osmbc/issues/317)
+
+## [0.7.4](https://github.com/TheFive/osmbc/tree/0.7.4) (2016-02-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3d...0.7.4)
+
+**Fixed bugs:**
+
+- Validated users does not receive any mail. [\#314](https://github.com/TheFive/osmbc/issues/314)
+- email on status switch is buggy [\#311](https://github.com/TheFive/osmbc/issues/311)
+
+## [0.7.3d](https://github.com/TheFive/osmbc/tree/0.7.3d) (2016-02-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3c...0.7.3d)
+
 ## [0.7.3c](https://github.com/TheFive/osmbc/tree/0.7.3c) (2016-02-11)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3b...0.7.3c)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - Blog Charts are not recalculated and frozen. [\#312](https://github.com/TheFive/osmbc/issues/312)
 
@@ -62,6 +84,7 @@
 
 **Implemented enhancements:**
 
+- please add the emailaddress [\#299](https://github.com/TheFive/osmbc/issues/299)
 - Display editor\(s\) of markdown in article previews [\#293](https://github.com/TheFive/osmbc/issues/293)
 
 **Fixed bugs:**
@@ -70,7 +93,6 @@
 
 **Closed issues:**
 
-- please add the emailaddress [\#299](https://github.com/TheFive/osmbc/issues/299)
 - Enable "strict mode" in all js files & jshint, [\#224](https://github.com/TheFive/osmbc/issues/224)
 
 ## [0.7.0a](https://github.com/TheFive/osmbc/tree/0.7.0a) (2016-02-06)
