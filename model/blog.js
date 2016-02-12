@@ -530,7 +530,7 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
         // not in edit mode.
         if (!options.markdown) {
           if (self.startDate && self.endDate) {
-            preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'</p>\n';
+            preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('L') +"-"+moment(self.endDate).locale(options.left_lang).format('L') +'</p>\n';
           }
           if (!options.edit) {
            // if (!imageHTML) preview += "<!--         place picture here              -->\n"   
@@ -540,7 +540,7 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
         else {
           preview = "";
           if (self.startDate && self.endDate) {
-            preview += moment(self.startDate).locale(options.left_lang).format('l') +"-"+moment(self.endDate).locale(options.left_lang).format('l') +'\n\n';
+            preview += moment(self.startDate).locale(options.left_lang).format('L') +"-"+moment(self.endDate).locale(options.left_lang).format('L') +'\n\n';
           }
         }
           

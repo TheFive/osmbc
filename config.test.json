@@ -14,6 +14,7 @@
     "access_token": "dummy",
     "access_token_secret": "dummy"
     },
+  "AppName":"TESTBC",
   "languages":["DE","EN","ES"],
   "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
   "OPENSTREETMAP_CONSUMER_KEY" : "######",

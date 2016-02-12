@@ -260,7 +260,7 @@ describe('model/article', function() {
               should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
                 {from:"noreply@gmail.com",
                 to:"user1@mail.bc",
-                subject:"WN789 added: Test Title",
+                subject:"[TESTBC] WN789 added: Test Title",
                 html:expectedMail,
                 text:"CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
 
@@ -284,7 +284,7 @@ describe('model/article', function() {
             should(result).eql(
               {from:"noreply@gmail.com",
               to:"user2@mail.bc",
-              subject:"WN789 comment: undefined",
+              subject:"[TESTBC] WN789 comment: undefined",
               html:expectedMail,
               text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
 
@@ -294,7 +294,7 @@ describe('model/article', function() {
             should(result).eql(
               {from:"noreply@gmail.com",
               to:"user3@mail.bc",
-              subject:"WN789 comment: undefined",
+              subject:"[TESTBC] WN789 comment: undefined",
               html:expectedMail,
               text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
 
@@ -321,7 +321,7 @@ describe('model/article', function() {
               should(result).eql(
                 {from:"noreply@gmail.com",
                 to:"user2@mail.bc",
-                subject:"WN789 comment: undefined",
+                subject:"[TESTBC] WN789 comment: undefined",
                 html:expectedMail,
                 text:expectedText});
               // Second Mail Check
@@ -333,7 +333,7 @@ describe('model/article', function() {
               should(result).eql(
                 {from:"noreply@gmail.com",
                 to:"user2@mail.bc",
-                subject:"WN789 comment: undefined",
+                subject:"[TESTBC] WN789 comment: undefined",
                 html:expectedMail,
                 text:expectedText});
 
@@ -348,7 +348,7 @@ describe('model/article', function() {
               should(result).eql(
                 {from:"noreply@gmail.com",
                 to:"user3@mail.bc",
-                subject:"WN789 comment: undefined",
+                subject:"[TESTBC] WN789 comment: undefined",
                 html:expectedMail,
                 text:expectedText});
 
@@ -709,6 +709,12 @@ describe('model/article', function() {
     });
     it('should generate a preview (no markdown) with a comment and open status',function (bddone) {
       var article = articleModule.create({collection:"small collection",comment:"Hallo @EN",commentStatus:"open"});
+      var result = article.getPreview("fullDE","TheFive");
+      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
+      bddone();
+    });
+    it('should generate a preview (no markdown) with a comment and open status case insensitive test',function (bddone) {
+      var article = articleModule.create({collection:"small collection",comment:"Hallo @en",commentStatus:"open"});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
       bddone();
