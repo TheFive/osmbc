@@ -41,6 +41,12 @@ MessageCenter.prototype.sendLanguageStatus = function(user,blog,lang,status,call
     element.sendLanguageStatus(user,blog,lang,status,cb);
   },function final(err) {callback(err);});
 };
+MessageCenter.prototype.sendCloseStatus = function(user,blog,lang,status,callback) {
+  debug("MessageCenter.prototype.sendCloseStatus");
+  async.each(this.receiverList,function sendIt(element,cb){
+    element.sendCloseStatus(user,blog,lang,status,cb);
+  },function final(err) {callback(err);});
+};
 
 MessageCenter.prototype.registerReceiver = function(receiver) {
   debug('MessageCenter::registerReceiver');
@@ -146,7 +152,22 @@ LogModuleReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(use
     to:status,
     timestamp:timestamp},cb);
 };
-
+LogModuleReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,cb) {
+  debug("LogModuleReceiver.prototype.sendCloseStatus");
+  should.exist(blog.id);
+  should(blog.id).not.equal(0);
+  should(typeof(user)).eql("object");
+  should.exist(user.OSMUser);
+  var timestamp = new Date();
+  logModule.log({oid:blog.id,
+    blog:blog.name,
+    user:user.OSMUser,
+    table:"blog",
+    property:"close"+lang,
+    from:"",
+    to:status,
+    timestamp:timestamp},cb);
+};
 
 
 

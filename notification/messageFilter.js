@@ -79,6 +79,20 @@ UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user
   this.receiver.sendLanguageStatus(user,blog,lang,status,cb);
 };
 
+UserConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,cb) {
+  debug('UserConfigFilter.prototype.sendCloseStatus');
+  var wnList = [];
+  var sendMail = false;
+  if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange;
+  for (var i=0;i<wnList.length;i++) {
+    var l = wnList[i];
+    if (l === lang) sendMail = true;
+  }
+  if (!sendMail) return cb();
+  debug("Send out mail");
+  this.receiver.sendCloseStatus(user,blog,lang,status,cb);
+};
+
 function BlogStatusFilter(receiver) {
   debug("BlogStatusFilter");
   this.receiver = receiver;
@@ -103,6 +117,10 @@ BlogStatusFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,chan
 BlogStatusFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,cb) {
   debug('BlogStatusFilter.prototype.sendLanguageStatus');
   this.receiver.sendLanguageStatus(user,blog,lang,status,cb);
+};
+BlogStatusFilter.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,cb) {
+  debug('BlogStatusFilter.prototype.sendLanguageStatus');
+  this.receiver.sendCloseStatus(user,blog,lang,status,cb);
 };
 
 function ArticleCollectFilter(receiver) {
@@ -129,6 +147,10 @@ ArticleCollectFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,
 
 ArticleCollectFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,cb) {
   debug('ArticleCollectFilter.prototype.sendLanguageStatus');
+  return cb();
+};
+ArticleCollectFilter.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,cb) {
+  debug('ArticleCollectFilter.prototype.sendCloseStatus');
   return cb();
 };
 

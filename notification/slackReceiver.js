@@ -50,6 +50,23 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,bl
   return callback();
 };
 
+SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,callback) {
+  debug("SlackReceiver::sendCloseStatus");
+
+ 
+
+  var subject = blog.name +"("+lang+") has been closed by user "+user.OSMUser;
+  if (status === "false") {
+    subject = blog.name +"("+lang+") has been reopened by user "+user.OSMUser;
+  }
+  this.slack.send({
+    text:subject,
+    channel: this.channel,
+    username: "osmbcbot"
+  });
+  return callback();
+};
+
 SlackReceiver.prototype.updateArticle = function updateArticle(user,article,change,callback) {
   debug("SlackReceiver::updateArticle");
 
