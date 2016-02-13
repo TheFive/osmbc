@@ -26,10 +26,10 @@ var infomail = new EmailTemplate(infoMailtemplateDir);
 var infoMailBlogtemplateDir = path.join(__dirname, '..','email', 'infomailBlog');
 var infomailBlog = new EmailTemplate(infoMailBlogtemplateDir);
 
-var infoMailReviewtemplateDir = path.join(__dirname, '..','email', 'infomailInfo');
+var infoMailReviewtemplateDir = path.join(__dirname, '..','email', 'infomailReview');
 var infomailReview = new EmailTemplate(infoMailReviewtemplateDir);
 
-var infoMailClosetemplateDir = path.join(__dirname, '..','email', 'infomailInfo');
+var infoMailClosetemplateDir = path.join(__dirname, '..','email', 'infomailClose');
 var infomailClose = new EmailTemplate(infoMailClosetemplateDir);
 
 var welcomeMailtemplateDir = path.join(__dirname, '..','email', 'welcome');
