@@ -116,7 +116,9 @@ describe('model/user', function() {
     beforeEach(function (bddone) {
       oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
       mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
-      testutil.clearDB(bddone);
+      testutil.importData({clear:true,
+                            user:[{OSMUser:"WelcomeMe",email:"none"},
+                                  {OSMUser:"InviteYou",email:"invite@mail.org"}]},bddone);
     }) ;
     afterEach(function (bddone){
       mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
@@ -186,6 +188,15 @@ describe('model/user', function() {
         });
       });
     }); 
+    it('should fail when change email by another user',function (bddone){
+      userModule.findOne({OSMUser:"WelcomeMe"},function(err,user){
+        // First set a new EMail Adress for the WecomeMe user, by InviteYou.
+        user.setAndSave("InviteYou",{email:"WelcomeMe@newemail.org"}, function (err){
+          should(err).eql(new Error("EMail adress can only be changed by the user himself."));
+          bddone();
+        });
+      });
+    });
 
     describe('trigger welcome email',function() {
       beforeEach(function (bddone){
@@ -196,15 +207,15 @@ describe('model/user', function() {
       it('should send out an email when changing email',function (bddone){
         userModule.findOne({OSMUser:"WelcomeMe"},function(err,user){
           // First set a new EMail Adress for the WecomeMe user, by InviteYou.
-          user.setAndSave("InviteYou",{email:"WelcomeMe@newemail.org"}, function (err){
+          user.setAndSave("WelcomeMe",{email:"WelcomeMe@newemail.org"}, function (err){
             should.not.exist(err);
             setTimeout(function (){
               should(typeof(mailReceiver.for_test_only.transporter.sendMail)).eql("function");
               should(mailReceiver.for_test_only.transporter.sendMail.called).be.True();
               var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
               var code = user.emailValidationKey;
-              var expectedMail = "<h2>Welcome </h2><p>InviteYou has invited you to OSMBC. (May be he just changed your EMail adress in OSMBC)\nYou can login to OSMBC with your OpenStreetMap credentials via OAuth.</p><p><a href=\"https://testosm.bc/osmbc.html\">OSMBC</a> is the tool for the international weeklyOSM and the German Wochennotiz Team to collaborate writing and translating the weekly news.\nSomeone has invited you to join. You can login with your OpenStreetMap credentials, and the above link.</p><p>If you would like to use this email address for OSMBC click on this link: <a href=\"https://testosm.bc/usert/1?validation="+code+"\">Link To Click On.</a></p><p>If you would like to check your User Settings go to<a href=\"https://testosm.bc/usert/1\">User Settings </a>.</p><p>Thanks for supporting weeklyOSM & Wochennotiz.</p><p>Have fun with OSMBC. </p><p>Christoph (TheFive).</p>";
-              var expectedText = 'WELCOME\nInviteYou has invited you to OSMBC. (May be he just changed your EMail adress in\nOSMBC) You can login to OSMBC with your OpenStreetMap credentials via OAuth.\n\nOSMBC [https://testosm.bc/osmbc.html] is the tool for the international weeklyOSM and the German Wochennotiz Team to\ncollaborate writing and translating the weekly news. Someone has invited you to\njoin. You can login with your OpenStreetMap credentials, and the above link.\n\nIf you would like to use this email address for OSMBC click on this link: Link To Click On.\n[https://testosm.bc/usert/1?validation='+code+']\n\nIf you would like to check your User Settings go to User Settings [https://testosm.bc/usert/1] .\n\nThanks for supporting weeklyOSM & Wochennotiz.\n\nHave fun with OSMBC.\n\nChristoph (TheFive).';
+              var expectedMail = '<h2>Welcome </h2><p>You have entered your email adress in OSMBC.</p><p>If you would like to use this email address for OSMBC click on this link: <a href="https://testosm.bc/usert/1?validation='+code+'">LINK TO VALIDATE YOUR EMAIL</a>. This will lead you to your user settings.</p><p>If you would like to check your User Settings without accepting the new email go to <a href="https://testosm.bc/usert/1">User Settings </a>.</p><p>OSMBC has a wide range of email settings, read the description carefully, not to overfill your mail box.</p><p>Thanks for supporting weeklyOSM & Wochennotiz.</p><p>Have fun with OSMBC. </p><p>Christoph (TheFive).</p>';
+              var expectedText = 'WELCOME\nYou have entered your email adress in OSMBC.\n\nIf you would like to use this email address for OSMBC click on this link: LINK TO VALIDATE YOUR EMAIL\n[https://testosm.bc/usert/1?validation='+code+'] . This will lead you to your user settings.\n\nIf you would like to check your User Settings without accepting the new email go\nto User Settings [https://testosm.bc/usert/1] .\n\nOSMBC has a wide range of email settings, read the description carefully, not to\noverfill your mail box.\n\nThanks for supporting weeklyOSM & Wochennotiz.\n\nHave fun with OSMBC.\n\nChristoph (TheFive).';
 
               should(result.html).eql(expectedMail);
               should(result.text).eql(expectedText);
