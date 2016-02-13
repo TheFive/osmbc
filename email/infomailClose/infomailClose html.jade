@@ -2,12 +2,17 @@ h2
   if status
     | Blog #{blog.name} was closed for #{lang}.
   else
-    | #{user.OSMUser} has reopend blog #{blog.name} for #{lang}
+    | Blog #{blog.name} was reopened for #{lang}.
 
 p
-  | Blog 
-  a(href="#{layout.url}#{layout.htmlroot}/blog/#{blog.name}") #{(blog.name)?blog.name:"MISSING NAME"}
-  |  was changed by #{user.OSMUser}
+  if status
+    | Blog 
+    a(href="#{layout.url}#{layout.htmlroot}/blog/#{blog.name}") #{(blog.name)?blog.name:"MISSING NAME"}
+    |(#{lang}) was closed by #{user.OSMUser}.
+  else
+    | Blog 
+    a(href="#{layout.url}#{layout.htmlroot}/blog/#{blog.name}") #{(blog.name)?blog.name:"MISSING NAME"}
+    |(#{lang}) was reopened by #{user.OSMUser}.
 
 
 

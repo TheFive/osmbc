@@ -131,11 +131,11 @@ describe('model/blog', function() {
           },
           function (cb2) {
             should(newBlog.isEditable("DE")).be.False();
-            newBlog.closeBlog("DE","Test",true,cb2);},
+            newBlog.closeBlog("DE",{OSMUser:"Test"},true,cb2);},
           function (cb1) {
             should(newBlog.isEditable("DE")).be.False();
             blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});},
-          function (cb3) {newBlog.closeBlog("DE","Test",false,cb3);},
+          function (cb3) {newBlog.closeBlog("DE",{OSMUser:"Test"},false,cb3);},
           function (cb1) {
             blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});}
         ],function final(err){
@@ -165,7 +165,7 @@ describe('model/blog', function() {
           function (cb1) {
             should(newBlog.isEditable("EN")).be.False();
             blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});},
-          function (cb3) {newBlog.closeBlog("EN","Test",false,cb3);},
+          function (cb3) {newBlog.closeBlog("EN",{OSMUser:"Test"},false,cb3);},
           function (cb1) {
             blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});}
         ],function final(err){
@@ -384,14 +384,14 @@ describe('model/blog', function() {
             should.not.exist(err);
             should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-            var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to exported.</p>';
-            var expectedText = 'BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to exported.';
+            var expectedMail = '<h2>Blog blog was closed for ES.</h2><p>Blog <a href=\"https://testosm.bc/blog/blog\">blog</a>(ES) was closed by testuser.</p>';
+            var expectedText = 'BLOG BLOG WAS CLOSED FOR ES.\nBlog blog [https://testosm.bc/blog/blog] (ES) was closed by testuser.';
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
             should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
                 to:"user3@mail.bc",
-                subject:"[TESTBC] blog(ES) is exported to WordPress",
+                subject:"[TESTBC] blog(ES) has been closed by user testuser",
                 html:expectedMail,
                 text:expectedText});
             bddone();
@@ -411,7 +411,7 @@ describe('model/blog', function() {
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
-        newBlog.closeBlog("DE","user",true,function(err) {
+        newBlog.closeBlog("DE",{OSMUser:"user"},true,function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog",id,function(err,result){
             should.not.exist(err);
@@ -424,16 +424,17 @@ describe('model/blog', function() {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(5);
-              delete result[0].id;
-              var t0 = result[0].timestamp;
-              var now = new Date();
-              var t0diff = ((new Date(t0)).getTime()-now.getTime());
-        
-              // The Value for comparison should be small, but not to small
-              // for the test machine.
-              should(t0diff).be.below(10);
-              delete result[0].timestamp;
-        
+              for (var i=0;i<5;i++){
+                delete result[i].id;
+                var t0 = result[i].timestamp;
+                var now = new Date();
+                var t0diff = ((new Date(t0)).getTime()-now.getTime());
+
+                // The Value for comparison should be small, but not to small
+                // for the test machine.
+                should(t0diff).be.below(10);
+                delete result[i].timestamp;
+              }
               should(result).containEql(logModule.create({oid:id,blog:"Title",user:"user",table:"blog",property:"closeDE",to:true}));
               bddone();
             });

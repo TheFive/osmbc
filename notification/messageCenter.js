@@ -164,7 +164,6 @@ LogModuleReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog
     user:user.OSMUser,
     table:"blog",
     property:"close"+lang,
-    from:"",
     to:status,
     timestamp:timestamp},cb);
 };
