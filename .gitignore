@@ -1,4 +1,5 @@
 node_modules
 public/bootstrap
 sessions
-.idea
+workspace.xml
+tasks.xml
