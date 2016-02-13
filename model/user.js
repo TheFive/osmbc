@@ -123,8 +123,8 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
   delete self.lock;
   var sendWelcomeEmail = false;
 
-  if (data.email && data.email.trim()!="" && data.email !== self.email) {
-    if (self.OSMUser !== user) return callback(new Error("EMail adress can only be changed by the user himself."))
+  if (data.email && data.email.trim()!=="" && data.email !== self.email) {
+    if (self.OSMUser !== user) return callback(new Error("EMail adress can only be changed by the user himself."));
     if (data.email !=="resend") {
       if (!emailValidator.validate(data.email)) {
         var error = new Error("Invalid Email Adress: "+data.email);
