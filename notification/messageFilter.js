@@ -85,6 +85,10 @@ function BlogStatusFilter(receiver) {
 }
 
 
+BlogStatusFilter.prototype.sendInfo = function(object,callback) {
+  debug('BlogStatusFilter.prototype.sendInfo');
+  return callback();
+};
 BlogStatusFilter.prototype.updateArticle = function ucfUpdateArticle(user,article,change,cb) {
   debug('BlogStatusFilter.prototype.updateArticle');
   return cb();
@@ -105,6 +109,11 @@ function ArticleCollectFilter(receiver) {
   debug("ArticleCollectFilter");
   this.receiver = receiver;
 }
+
+ArticleCollectFilter.prototype.sendInfo = function(object,callback) {
+  debug('ArticleCollectFilter.prototype.sendInfo');
+  return callback();
+};
 
 ArticleCollectFilter.prototype.updateArticle = function ucfUpdateArticle(user,article,change,cb) {
   debug('ArticleCollectFilter.prototype.updateArticle');

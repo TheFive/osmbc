@@ -399,6 +399,30 @@ describe('model/blog', function() {
           });
         });
       });
+      it('should send out mail when blog is closed',function (bddone){
+        blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
+          should.not.exist(err);
+          // reset sinon spy:
+          mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+          blog.closeBlog("ES",{OSMUser:"testuser"},"true",function(err){
+            should.not.exist(err);
+
+            should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to exported.</p>';
+            var expectedText = 'BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to exported.';
+            should(result.html).eql(expectedMail);
+            should(result.text).eql(expectedText);
+            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+              {from:"noreply@gmail.com",
+                to:"user3@mail.bc",
+                subject:"[TESTBC] blog(ES) is exported to WordPress",
+                html:expectedMail,
+                text:expectedText});
+            bddone();
+          });
+        });
+      });
     });
   });
   describe('closeBlog',function() {

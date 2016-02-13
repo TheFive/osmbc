@@ -20,6 +20,11 @@ function SlackReceiver(webhook,channel) {
   debug("Webhook: %s",webhook);
 }
 
+
+SlackReceiver.prototype.sendInfo = function(object,callback) {
+  debug("SlackReceiver::sendWelcomeMail");
+  return callback();
+};
 SlackReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callback) {
   debug("SlackReceiver::sendWelcomeMail");
   return callback();
@@ -63,10 +68,10 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user,article,chan
      subject = logblog + " changed collection "+(change.title)?change.title:article.title;
   }
   if (!article.comment && change.comment) {
-     subject = logblog + " added comment "+(change.title)?change.title:article.title;;
+     subject = logblog + " added comment "+(change.title)?change.title:article.title;
   }
   if (article.comment && change.comment) {
-     subject = logblog + " changed comment "+(change.title)?change.title:article.title;;
+     subject = logblog + " changed comment "+(change.title)?change.title:article.title;
   }
   debug("Sending subject "+subject);
   this.slack.send({
