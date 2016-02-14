@@ -45,6 +45,15 @@ MessageCenter.prototype.registerReceiver = function(receiver) {
   this.receiverList.push(receiver);
 };
 
+MessageCenter.prototype.addComment = function addComment(user,self,text,cb){
+  debug('MessageCenter.prototype.addComment');
+  return cb();
+};
+MessageCenter.prototype.editComment = function addComment(user,self,index,text,cb){
+  debug('MessageCenter.prototype.addComment');
+  return cb();
+};
+
 
 
 function LogModuleReceiver() {}

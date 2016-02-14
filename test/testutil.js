@@ -188,11 +188,27 @@ exports.checkData = function checkData(data,callback) {
         });
       } else cb2();
     },
-    function importAllArticles(cb3) {
-      debug('importAllArticles');
+    function checkAllArticles(cb3) {
+      debug('checkAllArticles');
       if (typeof(data.article)!='undefined') {  
-        should(false).be.True(); 
-        cb3();
+        async.each(data.article,function checkOneArticle(d,cb){
+          var commentList = d.commentList;
+          delete d.commentList;
+          articleModule.findOne(d,function(err,result){
+            should.not.exist(err);
+            should.exist(result,"NOT Found: "+JSON.stringify(d));
+            should(result.commentList).eql(commentList);
+            cb();
+          });
+        },function(err) {
+          should.not.exist(err);
+          articleModule.find({},function(err,result){
+            should.not.exist(err);
+            should.exist(result);
+            should(result.length).eql(data.article.length);
+            cb3();
+          });
+        });
       } else cb3();
     },
     function importAllChanges(cb4) {

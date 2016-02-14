@@ -836,4 +836,110 @@ describe('model/article', function() {
       });
     });
   });
+  describe("comments",function(){
+    var clock;
+    before(function (bddone){
+      this.clock = sinon.useFakeTimers();
+      clock = this.clock;
+
+      bddone();
+    }); 
+    after(function(bddone){
+      this.clock.restore();
+      bddone();
+    });
+    it('should add a comment',function(bddone){
+    
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+            clear:true,
+            article:[{blog:"WN1",collection:"something",title:"test"}]};
+      var dataAfter = { 
+            article:[{blog:"WN1",collection:"something",title:"test",id:'1',version:2,
+                      commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"}]}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.addComment({OSMUser:"Test"},"a comment",cb);
+        });
+      };        
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should add a second comment',function(bddone){
+    
+      var timestamp = new Date();
+      var timestampIso = new Date().toISOString();
+      var dataBefore = {
+            clear:true,
+            article:[{blog:"WN1",collection:"something",title:"test",
+                     commentList:[{user:"Test",timestamp:timestamp,text:"a comment"}]}]};
+      var dataAfter = { 
+            article:[{blog:"WN1",collection:"something",title:"test",
+                      commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"},
+                                   {user:"Test2",timestamp:timestampIso,text:"a second comment"}]}
+                    ]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          article.addComment({OSMUser:"Test2"},"a second comment",cb);
+        });
+      };        
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should add edit a comment',function(bddone){
+    
+      var timestamp = new Date();
+      var timestamp2 = new Date();
+      timestamp2.setTime(timestamp2.getTime()+200);
+      var dataBefore = {
+            clear:true,
+            article:[{blog:"WN1",collection:"something",title:"test",
+                     commentList:[{user:"Test",timestamp:timestamp,text:"a comment"}]}]};
+      var dataAfter = { 
+            article:[{blog:"WN1",collection:"something",title:"test",
+                      commentList:[{user:"Test",
+                                    timestamp:timestamp.toISOString(),
+                                    editstamp:timestamp2.toISOString(),
+                                    text:"a changed comment"}]}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          clock.tick(200);
+
+          should.not.exist(err);
+          article.editComment({OSMUser:"Test"},0,"a changed comment",cb);
+        });
+      };        
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should allow only user wrote a comment to edit a comment',function(bddone){
+    
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+            clear:true,
+            article:[{blog:"WN1",collection:"something",title:"test",
+                     commentList:[{user:"Test",timestamp:timestamp,text:"a comment"}]}]};
+      var dataAfter = { 
+            article:[{blog:"WN1",collection:"something",title:"test",
+                      commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"}]}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          clock.tick();
+
+          should.not.exist(err);
+          article.editComment({OSMUser:"Test2"},0,"a changed comment",function (err){
+            should(err).eql(new Error("Only Writer is allowed to change a commment"));
+            return cb();
+          });
+        });
+      };        
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+  });
 });

@@ -652,6 +652,61 @@ Article.prototype.getCategory = function getCategory(lang) {
 };
 
 
+Article.prototype.addComment = function addComment(user,text,callback) {
+  debug('Article.prototype.addComment');
+  should(typeof(user)).eql('object');
+  should(typeof(text)).eql('string');
+  should(typeof(callback)).eql('function');
+  var self = this;
+
+  if (!self.commentList) self.commentList = [];
+  var commentObject = {user:user.OSMUser,timestamp:new Date(),text:text};
+  self.commentList.push(commentObject);
+  async.series([
+    function sendit(cb) {
+      debug('sendit');
+      messageCenter.global.addComment(user,self,text,cb);
+    }
+    ],function finalFunction(err){
+      debug('finalFunction');
+      if (err) return callback(err);
+      self.save(callback);
+    }
+  );
+};
+
+
+Article.prototype.editComment = function editComment(user,index,text,callback) {
+  debug('Article.prototype.addComment');
+  should(typeof(user)).eql('object');
+  should(typeof(text)).eql('string');
+  should(typeof(callback)).eql('function');
+  var self = this;
+
+  if (!self.commentList) self.commentList = [];
+  should(index).within(0,self.commentList.length-1);
+  if (user.OSMUser!==self.commentList[index].user) {
+    return callback(new Error("Only Writer is allowed to change a commment"));
+  }
+  async.series([
+    function sendit(cb) {
+      debug('sendit');
+      messageCenter.global.editComment(user,self,index,text,cb);
+    },
+    function setValues(cb){
+      var commentObject = self.commentList[index];
+      commentObject.editstamp = new Date();
+      commentObject.text = text;
+      cb();
+    }
+    ],function finalFunction(err){
+      debug('finalFunction');
+      if (err) return callback(err);
+      self.save(callback);
+    }
+  );
+};
+
 // Calculate a Title with a maximal length for Article
 // The properties are tried in this order
 // a) Title

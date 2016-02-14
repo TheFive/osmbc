@@ -10,6 +10,7 @@ var sinon  = require('sinon');
 var testutil = require('./testutil.js');
 
 var logModule     = require('../model/logModule.js');
+var articleModule     = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var mailReceiver  = require('../notification/mailReceiver.js'); 
 
