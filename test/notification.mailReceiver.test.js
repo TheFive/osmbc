@@ -1,8 +1,5 @@
 "use strict";
-// Article createNewArticle
-// create article with prototyp
-// create Article without prototyp
-// create article with ID (non existing in db, existing in DB)
+
 
 
 var should = require('should');
@@ -13,6 +10,7 @@ var testutil = require('./testutil.js');
 
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
+var userModule    = require('../model/user.js');
 
 var mailReceiver  = require('../notification/mailReceiver.js');
 
@@ -36,7 +34,8 @@ describe('notification/mailReceiver', function() {
     beforeEach(function (bddone){
       oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
       mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
-      testutil.importData({user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailNewCollection:"true"},
+      testutil.importData({clear:true,
+                           user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailNewCollection:"true"},
                                  {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailAllComment:"true"},
                                  {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailComment:["DE","User3"]},
                                  {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
@@ -152,5 +151,243 @@ describe('notification/mailReceiver', function() {
         });
       });
     });
-  }); 
+  });
+  describe('blogs',function() {
+    var oldtransporter;
+    afterEach(function (bddone){
+      mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+      this.clock.restore();
+      bddone();
+    });
+
+    beforeEach(function (bddone){
+      this.clock = sinon.useFakeTimers();
+      oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
+      mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+      testutil.importData({clear:true,
+        user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailBlogStatusChange:"true"},
+          {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailBlogStatusChange:"true"},
+          {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailBlogLanguageStatusChange:["EN","ES"]},
+          {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
+          {OSMUser:"User5",                     access:"full",mailBlogStatusChange:"true"}]},bddone);
+    });
+    it('should send out mail when creating a blog',function (bddone){
+      blogModule.createNewBlog({OSMUser:"testuser"},function(err){
+        should.not.exist(err);
+        var call = mailReceiver.for_test_only.transporter.sendMail;
+        should(call.calledThrice).be.True();
+        var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+        var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
+        var expectedText = 'BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value name WN251 status open startDate 1970-01-02T00:00:00.000Z endDate 1970-01-08T00:00:00.000Z';
+
+        //result is not sorted, so have a preview, which argument is the right one.
+        var mailList = {};
+        mailList[call.getCall(0).args[0].to]="-";
+        mailList[call.getCall(1).args[0].to]="-";
+        mailList[call.getCall(2).args[0].to]="-";
+        should(mailList).eql({"user1@mail.bc":"-","user2@mail.bc":"-","user3@mail.bc":"-"});
+        delete call.getCall(0).args[0].to;
+        delete call.getCall(1).args[0].to;
+        delete call.getCall(2).args[0].to;
+
+
+
+
+        should(result.html).eql(expectedMail);
+        should(result.text).eql(expectedText);
+        should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+          {from:"noreply@gmail.com",
+            subject:"[TESTBC] WN251 was created",
+            html:expectedMail,
+            text:expectedText});
+        should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
+          {from:"noreply@gmail.com",
+            subject:"[TESTBC] WN251 was created",
+            html:expectedMail,
+            text:expectedText});
+        should(mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0]).eql(
+          {from:"noreply@gmail.com",
+            subject:"[TESTBC] WN251 was created",
+            html:expectedMail,
+            text:expectedText});
+        bddone();
+      });
+    });
+    it('should send out mail when change blog status',function (bddone){
+      blogModule.createNewBlog({OSMUser:"testuser"},function(err,blog){
+        should.not.exist(err);
+        // reset sinon spy:
+        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+        blog.setAndSave({OSMUser:"testuser"},{status:"edit"},function(err){
+          should.not.exist(err);
+          var call = mailReceiver.for_test_only.transporter.sendMail;
+          should(call.calledThrice).be.True();
+          var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+          var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>status</td><td>edit</td></tr></table>';
+          var expectedText ='BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value status edit';
+          should(result.html).eql(expectedMail);
+          should(result.text).eql(expectedText);
+          //result is not sorted, so have a preview, which argument is the right one.
+          var mailList = {};
+          mailList[call.getCall(0).args[0].to]="-";
+          mailList[call.getCall(1).args[0].to]="-";
+          mailList[call.getCall(2).args[0].to]="-";
+          should(mailList).eql({"user1@mail.bc":"-","user2@mail.bc":"-","user3@mail.bc":"-"});
+          delete call.getCall(0).args[0].to;
+          delete call.getCall(1).args[0].to;
+          delete call.getCall(2).args[0].to;
+          should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+            {from:"noreply@gmail.com",
+              subject:"[TESTBC] WN251 changed status to edit",
+              html:expectedMail,
+              text:expectedText});
+          should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
+            {from:"noreply@gmail.com",
+              subject:"[TESTBC] WN251 changed status to edit",
+              html:expectedMail,
+              text:expectedText});
+          should(mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0]).eql(
+            {from:"noreply@gmail.com",
+              subject:"[TESTBC] WN251 changed status to edit",
+              html:expectedMail,
+              text:expectedText});
+          bddone();
+        });
+      });
+    });
+    it('should send out mail when review status is set',function (bddone){
+      blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
+        should.not.exist(err);
+        // reset sinon spy:
+        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+        blog.setReviewComment("ES",{OSMUser:"testuser"},"I have reviewed",function(err){
+          should.not.exist(err);
+
+          should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
+          var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+          var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to I have reviewed</p>';
+          var expectedText = 'BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to I have reviewed';
+          should(result.html).eql(expectedMail);
+          should(result.text).eql(expectedText);
+          should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+            {from:"noreply@gmail.com",
+              to:"user3@mail.bc",
+              subject:"[TESTBC] blog(ES) has been reviewed by user testuser",
+              html:expectedMail,
+              text:expectedText});
+          bddone();
+        });
+      });
+    });
+    it('should send out mail when review is marked as exported',function (bddone){
+      blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
+        should.not.exist(err);
+        // reset sinon spy:
+        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+        blog.setReviewComment("ES",{OSMUser:"testuser"},"markexported",function(err){
+          should.not.exist(err);
+
+          should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
+          var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+          var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to exported.</p>';
+          var expectedText = 'BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to exported.';
+
+          should(result.html).eql(expectedMail);
+          should(result.text).eql(expectedText);
+          should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+            {from:"noreply@gmail.com",
+              to:"user3@mail.bc",
+              subject:"[TESTBC] blog(ES) is exported to WordPress",
+              html:expectedMail,
+              text:expectedText});
+          bddone();
+        });
+      });
+    });
+    it('should send out mail when blog is closed',function (bddone){
+      blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
+        should.not.exist(err);
+        // reset sinon spy:
+        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+        blog.closeBlog("ES",{OSMUser:"testuser"},"true",function(err){
+          should.not.exist(err);
+          should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
+          var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+          var expectedMail = '<h2>Blog blog was closed for ES.</h2><p>Blog <a href=\"https://testosm.bc/blog/blog\">blog</a>(ES) was closed by testuser.</p>';
+          var expectedText = 'BLOG BLOG WAS CLOSED FOR ES.\nBlog blog [https://testosm.bc/blog/blog] (ES) was closed by testuser.';
+          should(result.html).eql(expectedMail);
+          should(result.text).eql(expectedText);
+          should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+            {from:"noreply@gmail.com",
+              to:"user3@mail.bc",
+              subject:"[TESTBC] blog(ES) has been closed by user testuser",
+              html:expectedMail,
+              text:expectedText});
+          bddone();
+        });
+      });
+    });
+  });
+  describe('users',function() {
+    var oldtransporter;
+    beforeEach(function (bddone) {
+      oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
+      mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+      testutil.importData({clear:true,
+        user:[{OSMUser:"WelcomeMe",email:"none"},
+          {OSMUser:"InviteYou",email:"invite@mail.org"}]},bddone);
+    }) ;
+    afterEach(function (bddone){
+      mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+      bddone();
+    });
+    it('should send out an email when changing email',function (bddone){
+      mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
+
+      userModule.findOne({OSMUser:"WelcomeMe"},function(err,user){
+        // First set a new EMail Adress for the WecomeMe user, by InviteYou.
+        user.setAndSave("WelcomeMe",{email:"WelcomeMe@newemail.org"}, function (err){
+          should.not.exist(err);
+          setTimeout(function (){
+            should(typeof(mailReceiver.for_test_only.transporter.sendMail)).eql("function");
+            should(mailReceiver.for_test_only.transporter.sendMail.called).be.True();
+            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+            var code = user.emailValidationKey;
+            var expectedMail = '<h2>Welcome </h2><p>You have entered your email adress in OSMBC.</p><p>If you would like to use this email address for OSMBC click on this link: <a href="https://testosm.bc/usert/1?validation='+code+'">LINK TO VALIDATE YOUR EMAIL</a>. This will lead you to your user settings.</p><p>If you would like to check your User Settings without accepting the new email go to <a href="https://testosm.bc/usert/1">User Settings </a>.</p><p>OSMBC has a wide range of email settings, read the description carefully, not to overfill your mail box.</p><p>Thanks for supporting weeklyOSM & Wochennotiz.</p><p>Have fun with OSMBC. </p><p>Christoph (TheFive).</p>';
+            var expectedText = 'WELCOME\nYou have entered your email adress in OSMBC.\n\nIf you would like to use this email address for OSMBC click on this link: LINK TO VALIDATE YOUR EMAIL\n[https://testosm.bc/usert/1?validation='+code+'] . This will lead you to your user settings.\n\nIf you would like to check your User Settings without accepting the new email go\nto User Settings [https://testosm.bc/usert/1] .\n\nOSMBC has a wide range of email settings, read the description carefully, not to\noverfill your mail box.\n\nThanks for supporting weeklyOSM & Wochennotiz.\n\nHave fun with OSMBC.\n\nChristoph (TheFive).';
+
+            should(result.html).eql(expectedMail);
+            should(result.text).eql(expectedText);
+            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
+              {from:"noreply@gmail.com",
+                to:"WelcomeMe@newemail.org",
+                subject:"[TESTBC] Welcome to OSMBC",
+                html:expectedMail,
+                text:expectedText});
+
+            // Email is send out, now check email Verification first with wrong code
+            user.validateEmail({OSMUser:"WelcomeMe"},"wrong code",function(err){
+              should(err).eql(new Error("Wrong Validation Code for EMail for user >WelcomeMe<"));
+
+              user.validateEmail({OSMUser:"Not Me"},code,function(err){
+                should(err).eql(new Error("Wrong User: expected >WelcomeMe< given >Not Me<"));
+                // and now with correct code
+                user.validateEmail({OSMUser:"WelcomeMe"},code,function(err){
+                  should.not.exist(err);
+                  should(user.email).eql("WelcomeMe@newemail.org");
+                  should.not.exist(user.emailValidationKey);
+                  bddone();
+                });
+
+              });
+
+            });
+          },500);
+
+        });
+      });
+    });
+  });
+
+
 });

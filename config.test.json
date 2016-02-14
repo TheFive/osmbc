@@ -15,8 +15,8 @@
     "access_token_secret": "dummy"
     },
     "slack" :{
-      "wn":{"blog":"not defined",
-             "article":"not defined"}
+      "wn":{"blog":"https://hooks.slack.com/services/blogKey",
+             "article":"https://hooks.slack.com/services/articleKey"}
       },
  
   "AppName":"TESTBC",

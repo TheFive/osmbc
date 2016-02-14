@@ -1,6 +1,6 @@
 "use strict";
 
-var debug     = require('debug')('OSMBC:notification:messageCenter');
+var debug     = require('debug')('OSMBC:notification:LogModuleReceiver');
 var async     = require('async');
 var should    = require('should');
 var logModule = require('../model/logModule.js');
