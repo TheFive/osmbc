@@ -61,10 +61,10 @@ var languagesWithoutDE = config.getLanguages().filter(function(lang){return lang
 
 
 messageCenter.registerReceiver(new LogModuleReceiver());
-messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.wn.blog,"#osmbcblog"),["DE"]));
-messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.weekly.blog,"#osmbcblog"),languagesWithoutDE));
-messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.wn.article,"#osmbcarticle")));
-messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.weekly.article,"#osmbcarticle")));
+messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.wn.blog,slack.wn.blogchannel),["DE"]));
+messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.weekly.blog,slack.weekly.blogchannel),languagesWithoutDE));
+messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.wn.article,slack.wn.articlechannel)));
+messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.weekly.article,slack.weekly.articlechannel)));
 
 
 module.exports.global = messageCenter;
