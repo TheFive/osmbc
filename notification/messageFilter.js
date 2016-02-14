@@ -1,6 +1,7 @@
 "use strict";
 
 var debug = require('debug')('OSMBC:notification:messageFilter');
+var config = require("../config.js");
   
 
 
@@ -93,9 +94,12 @@ UserConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user,blog,
   this.receiver.sendCloseStatus(user,blog,lang,status,cb);
 };
 
-function BlogStatusFilter(receiver) {
+function BlogStatusFilter(receiver,languages) {
   debug("BlogStatusFilter");
   this.receiver = receiver;
+  if (!languages) languages = config.getLanguages();
+  this.languages = languages;
+
 }
 
 
@@ -116,11 +120,15 @@ BlogStatusFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,chan
 
 BlogStatusFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,cb) {
   debug('BlogStatusFilter.prototype.sendLanguageStatus');
-  this.receiver.sendLanguageStatus(user,blog,lang,status,cb);
+  if (this.languages.indexOf(lang)>=0) {
+    this.receiver.sendLanguageStatus(user,blog,lang,status,cb);
+  } else return cb();
 };
 BlogStatusFilter.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,cb) {
   debug('BlogStatusFilter.prototype.sendLanguageStatus');
-  this.receiver.sendCloseStatus(user,blog,lang,status,cb);
+  if (this.languages.indexOf(lang)>=0) {
+    this.receiver.sendCloseStatus(user,blog,lang,status,cb);
+  } else return cb();
 };
 
 function ArticleCollectFilter(receiver) {

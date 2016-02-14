@@ -7,6 +7,7 @@
 
 var async  = require('async');
 var should = require('should');
+var nock   = require('nock');
 var debug  = require('debug')('OSMBC:test:article.test');
 
 
@@ -25,9 +26,20 @@ var blogModule    = require('../model/blog.js');
 
 describe('model/article', function() {
   var testUser = {displayName:"user",OSMUser:"user"};
+  var slackNock;
   before(function (bddone) {
+   //nock all slack messages
+   slackNock = nock('https://hooks.slack.com/')
+                .post(/\/services\/.*/) 
+                .times(999) 
+                .reply(200,"ok");
+
     testutil.clearDB(bddone);
   }); 
+  after(function (bddone){
+    nock.cleanAll();
+    bddone();
+  });
   context('Article Constructor',function(){
     it('should create an Article object',function(){
       var article = articleModule.create({oid:"Test"});

@@ -4,6 +4,7 @@ var async  = require('async');
 var should = require('should');
 var path   = require('path');
 var fs     = require('fs');
+var nock   = require('nock');
 
 var testutil = require('./testutil.js');
 
@@ -14,7 +15,16 @@ var blogModule    = require('../model/blog.js');
 describe('model/blog', function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
+    nock('https://hooks.slack.com/')
+            .post(/\/services\/.*/) 
+            .times(999) 
+            .reply(200,"ok");
+
     process.env.TZ = 'Europe/Amsterdam';
+  });
+  after(function (bddone){
+    nock.cleanAll();
+    bddone();
   });
 
   describe('createNewBlog',function() {

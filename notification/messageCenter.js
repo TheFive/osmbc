@@ -57,10 +57,14 @@ MessageCenter.prototype.registerReceiver = function(receiver) {
 var messageCenter = new MessageCenter();
 
 var slack = config.getValue("slack");
+var languagesWithoutDE = config.getLanguages().filter(function(lang){return lang!=="DE";});
+
 
 messageCenter.registerReceiver(new LogModuleReceiver());
-messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.wn.blog,"#osmbcblog")));
+messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.wn.blog,"#osmbcblog"),["DE"]));
+messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.weekly.blog,"#osmbcblog"),languagesWithoutDE));
 messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.wn.article,"#osmbcarticle")));
+messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.weekly.article,"#osmbcarticle")));
 
 
 module.exports.global = messageCenter;

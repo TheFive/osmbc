@@ -4,6 +4,7 @@
 
 var should = require('should');
 var sinon  = require('sinon');
+var nock   = require('nock');
 
 
 var testutil = require('./testutil.js');
@@ -23,7 +24,17 @@ var mailReceiver  = require('../notification/mailReceiver.js');
 describe('notification/mailReceiver', function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
+    nock('https://hooks.slack.com/')
+            .post(/\/services\/.*/) 
+            .times(999) 
+            .reply(200,"ok");
   }); 
+
+  after(function (bddone){
+    nock.cleanAll();
+    bddone();
+  });
+
   describe('articles',function() {
     var oldtransporter;
     afterEach(function (bddone){

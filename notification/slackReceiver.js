@@ -35,7 +35,7 @@ function articleNameSlack(article,change) {
 
 
 SlackReceiver.prototype.sendInfo = function(object,callback) {
-  debug("SlackReceiver::sendWelcomeMail");
+  debug("SlackReceiver::sendInfo");
   return callback();
 };
 SlackReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callback) {

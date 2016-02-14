@@ -3,7 +3,6 @@
 
 
 var should = require('should');
-var sinon  = require('sinon');
 
 
 var testutil = require('./testutil.js');
@@ -12,7 +11,6 @@ var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 
 
-var mailReceiver  = require('../notification/slackReceiver.js');
 
 var nock = require('nock');
 
@@ -67,7 +65,13 @@ describe('notification/slackReceiver', function() {
   });
   describe('blogs',function() {
     it('should slack message when creating a blog',function (bddone){
-      var slack = nock('https://hooks.slack.com/')
+      var slack1 = nock('https://hooks.slack.com/')
+                .post('/services/blogKeyWeekly',checkPostJson(
+                  {"text":"<https://testosm.bc/blog/WN251|WN251> was created\n",
+                  "username":"osmbcbot",
+                  "channel":"#osmbcblog"}))
+                .reply(200,"ok");
+      var slack2 = nock('https://hooks.slack.com/')
                 .post('/services/blogKey',checkPostJson(
                   {"text":"<https://testosm.bc/blog/WN251|WN251> was created\n",
                   "username":"osmbcbot",
@@ -75,31 +79,45 @@ describe('notification/slackReceiver', function() {
                 .reply(200,"ok");
       blogModule.createNewBlog({OSMUser:"testuser"},function(err){
         should.not.exist(err);
-        should(slack.isDone()).is.True();
+        should(slack1.isDone()).is.True();
+        should(slack2.isDone()).is.True();
 
         bddone();
       });
     });
     it('should slack message, when change blog status',function (bddone){
-      var slack1 = nock('https://hooks.slack.com/')
+      var slack1a = nock('https://hooks.slack.com/')
                 .post('/services/blogKey',checkPostJson(
                   {"text":"<https://testosm.bc/blog/WN251|WN251> was created\n",
                   "username":"osmbcbot",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
+      var slack1b = nock('https://hooks.slack.com/')
+                .post('/services/blogKeyWeekly',checkPostJson(
+                  {"text":"<https://testosm.bc/blog/WN251|WN251> was created\n",
+                  "username":"osmbcbot",
+                  "channel":"#osmbcblog"}))
+                .reply(200,"ok");
       blogModule.createNewBlog({OSMUser:"testuser"},function(err,blog){
-        var slack2 = nock('https://hooks.slack.com/')
+        var slack2a = nock('https://hooks.slack.com/')
                   .post('/services/blogKey',checkPostJson(
                     {"text":"<https://testosm.bc/blog/WN251|WN251> changed status to edit\n",
                     "username":"osmbcbot",
                     "channel":"#osmbcblog"}))
                   .reply(200,"ok");
+        var slack2b = nock('https://hooks.slack.com/')
+                  .post('/services/blogKeyWeekly',checkPostJson(
+                    {"text":"<https://testosm.bc/blog/WN251|WN251> changed status to edit\n",
+                    "username":"osmbcbot",
+                    "channel":"#osmbcblog"}))
+                  .reply(200,"ok");
         should.not.exist(err);
-        // reset sinon spy:
         blog.setAndSave({OSMUser:"testuser"},{status:"edit"},function(err){
           should.not.exist(err);
-          should(slack1.isDone()).is.True();
-          should(slack2.isDone()).is.True();
+          should(slack1a.isDone()).is.True();
+          should(slack1b.isDone()).is.True();
+          should(slack2a.isDone()).is.True();
+          should(slack2b.isDone()).is.True();
 
      
           bddone();
@@ -107,14 +125,26 @@ describe('notification/slackReceiver', function() {
       });
     });
     it('should slack message, when review status is set',function (bddone){
-      var slack1 = nock('https://hooks.slack.com/')
+      var slack1a = nock('https://hooks.slack.com/')
                 .post('/services/blogKey',checkPostJson(
                   {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
                   "username":"osmbcbot",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
+      var slack1b = nock('https://hooks.slack.com/')
+                .post('/services/blogKeyWeekly',checkPostJson(
+                  {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
+                  "username":"osmbcbot",
+                  "channel":"#osmbcblog"}))
+                .reply(200,"ok");
       blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
-        var slack2 = nock('https://hooks.slack.com/')
+        var slack2a = nock('https://hooks.slack.com/')
+                  .post('/services/blogKeyWeekly',checkPostJson(
+                    {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been reviewed by testuser (I have reviewed)",
+                    "username":"osmbcbot",
+                    "channel":"#osmbcblog"}))
+                  .reply(200,"ok");
+        var slack2b = nock('https://hooks.slack.com/')
                   .post('/services/blogKey',checkPostJson(
                     {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been reviewed by testuser (I have reviewed)",
                     "username":"osmbcbot",
@@ -123,8 +153,11 @@ describe('notification/slackReceiver', function() {
         should.not.exist(err);
         blog.setReviewComment("ES",{OSMUser:"testuser"},"I have reviewed",function(err){
           should.not.exist(err);
-          should(slack1.isDone()).is.True();
-          should(slack2.isDone()).is.True();
+          should(slack1a.isDone()).is.True();
+          should(slack1b.isDone()).is.True();
+          should(slack2a.isDone()).is.True();
+          should(slack2b.isDone()).is.False();
+          nock.cleanAll();
 
      
           bddone();
@@ -132,25 +165,39 @@ describe('notification/slackReceiver', function() {
       });
     });
     it('should slack message, when review is marked as exported',function (bddone){
-      var slack1 = nock('https://hooks.slack.com/')
+      var slack1a = nock('https://hooks.slack.com/')
                 .post('/services/blogKey',checkPostJson(
                   {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
                   "username":"osmbcbot",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
+      var slack1b = nock('https://hooks.slack.com/')
+                .post('/services/blogKeyWeekly',checkPostJson(
+                  {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
+                  "username":"osmbcbot",
+                  "channel":"#osmbcblog"}))
+                .reply(200,"ok");
       blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
-        var slack2 = nock('https://hooks.slack.com/')
+        var slack2a = nock('https://hooks.slack.com/')
                   .post('/services/blogKey',checkPostJson(
-                    {"text":"<https://testosm.bc/blog/blog|blog>(ES) is exported to WordPress",
+                    {"text":"<https://testosm.bc/blog/blog|blog>(DE) is exported to WordPress",
+                    "username":"osmbcbot",
+                    "channel":"#osmbcblog"}))
+                  .reply(200,"ok");
+        var slack2b = nock('https://hooks.slack.com/')
+                  .post('/services/blogKeyWeekly',checkPostJson(
+                    {"text":"<https://testosm.bc/blog/blog|blog>(DE) is exported to WordPress",
                     "username":"osmbcbot",
                     "channel":"#osmbcblog"}))
                   .reply(200,"ok");
         should.not.exist(err);
-        // reset sinon spy:
-        blog.setReviewComment("ES",{OSMUser:"testuser"},"markexported",function(err){
+        blog.setReviewComment("DE",{OSMUser:"testuser"},"markexported",function(err){
           should.not.exist(err);
-          should(slack1.isDone()).is.True();
-          should(slack2.isDone()).is.True();
+          should(slack1a.isDone()).is.True();
+          should(slack1b.isDone()).is.True();
+          should(slack2a.isDone()).is.True();
+          should(slack2b.isDone()).is.False();
+          nock.cleanAll();
 
    
           bddone();
@@ -158,25 +205,39 @@ describe('notification/slackReceiver', function() {
       });
     });
     it('should slack message, when blog is closed',function (bddone){
-      var slack1 = nock('https://hooks.slack.com/')
+      var slack1a = nock('https://hooks.slack.com/')
                 .post('/services/blogKey',checkPostJson(
                   {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
                   "username":"osmbcbot",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
+      var slack1b = nock('https://hooks.slack.com/')
+                .post('/services/blogKeyWeekly',checkPostJson(
+                  {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
+                  "username":"osmbcbot",
+                  "channel":"#osmbcblog"}))
+                .reply(200,"ok");
       blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
-        var slack2 = nock('https://hooks.slack.com/')
+        var slack2a = nock('https://hooks.slack.com/')
                   .post('/services/blogKey',checkPostJson(
                     {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been closed by testuser",
                     "username":"osmbcbot",
                     "channel":"#osmbcblog"}))
                   .reply(200,"ok");
+        var slack2b = nock('https://hooks.slack.com/')
+                  .post('/services/blogKeyWeekly',checkPostJson(
+                    {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been closed by testuser",
+                    "username":"osmbcbot",
+                    "channel":"#osmbcblog"}))
+                  .reply(200,"ok");
         should.not.exist(err);
-        // reset sinon spy:
         blog.closeBlog("ES",{OSMUser:"testuser"},"true",function(err){
           should.not.exist(err);
-          should(slack1.isDone()).is.True();
-          should(slack2.isDone()).is.True();
+          should(slack1a.isDone()).is.True();
+          should(slack1b.isDone()).is.True();
+          should(slack2a.isDone()).is.False();
+          should(slack2b.isDone()).is.True();
+          nock.cleanAll();
 
           bddone();
         });

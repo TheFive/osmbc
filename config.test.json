@@ -16,7 +16,9 @@
     },
     "slack" :{
       "wn":{"blog":"https://hooks.slack.com/services/blogKey",
-             "article":"https://hooks.slack.com/services/articleKey"}
+             "article":"https://hooks.slack.com/services/articleKey"},
+      "weekly":{"blog":"https://hooks.slack.com/services/blogKeyWeekly",
+             "article":"https://hooks.slack.com/services/articleKeyWeekly"}
       },
  
   "AppName":"TESTBC",
