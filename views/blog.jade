@@ -66,7 +66,7 @@ block content
                     input(type="text",class="form-control",name ="reviewComment",id="reviewComment" placeholder="Please Type your Review here") 
 
                   .col-sm-6
-                    button.btn.btn-large.btn-primary(id="submitbutton" type="submit",onclick="document.getElementById('submitbutton').disabled=true;document.getElementById('review').submit();") Review#{left_lang} 
+                    button.btn.btn-large.btn-primary(id="reviewButton" type="submit",onclick="document.getElementById('reviewButton').disabled=true;document.getElementById('review').submit();") Review#{left_lang} 
                     if (blog["exported"+left_lang])
                       button.btn.btn-large.btn-primary(id="closebutton" type = "button" onclick ="document.getElementById('closebutton').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?closeLang&style=#{style}';") Close #{blog.name}(#{left_lang})
                     else
