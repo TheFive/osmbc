@@ -49,9 +49,9 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,bl
   var subject = blogNameSlack(blog.name);
 
   if (status === "startreview") {
-    subject += "("+lang+") review has been started";
+    subject += "("+lang+") review has been started by "+user.OSMUser;
   } else if (status === "markexported") {
-    subject += "("+lang+") is exported to WordPress";
+    subject += "("+lang+") is exported to WordPress by "+user.OSMUser;
   } else {
     subject += "("+lang+") has been reviewed by "+user.OSMUser +" ("+status+")";
   }
@@ -105,6 +105,7 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user,article,chan
   if (article.comment && change.comment) {
      text += articleTitle + " changed comment"+"\n";
   }
+  if (text !== "") text = user.displayName + "\n"+text;
   debug("Sending subject "+text);
   this.slack.send({
     text:text,
