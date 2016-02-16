@@ -35,7 +35,7 @@ describe('notification/slackReceiver', function() {
     it('should slack message, when collecting article',function (bddone){
       var slack = nock('https://hooks.slack.com/')
                 .post('/services/articleKey',checkPostJson(
-                  {"text":"<https://testosm.bc/blog/1|Test Title> added to <https://testosm.bc/blog/WN789|WN789>\n",
+                  {"text":"testuser\n<https://testosm.bc/blog/1|Test Title> added to <https://testosm.bc/blog/WN789|WN789>\n",
                   "username":"osmbcbot",
                   "channel":"#osmbcarticle"}))  
                 .reply(200,"ok");
@@ -47,10 +47,10 @@ describe('notification/slackReceiver', function() {
         });
       });
     });
-    it('should slack message, when adding comment.',function (bddone){
+    it('should slack message, when adding comment',function (bddone){
       var slack = nock('https://hooks.slack.com/')
                 .post('/services/articleKey',checkPostJson(
-                  {"text":"<https://testosm.bc/blog/1|Test Title> added comment\n",
+                  {"text":"testuser\m<https://testosm.bc/blog/1|Test Title> added comment\n",
                   "username":"osmbcbot",
                   "channel":"#osmbcarticle"}))
                 .reply(200,"ok");
