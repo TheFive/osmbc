@@ -11,7 +11,7 @@ module.exports = {
   "brasil":"http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg",
   "poland":"http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg",
   "taiwan":"http://blog.openstreetmap.de/wp-uploads//2016/01/tw.svg",
-  "switzerland":"http://blog.openstreetmap.de/wp-uploads//2016/01/ch.svg",
+  "switzerland":"http://blog.openstreetmap.de/wp-uploads//2016/02/ch.svg",
   "schweiz":"http://blog.openstreetmap.de/wp-uploads//2016/01/ch.svg",
   "italia":"http://blog.openstreetmap.de/wp-uploads//2016/01/it.svg",
   "italy":"http://blog.openstreetmap.de/wp-uploads//2016/01/it.svg",
