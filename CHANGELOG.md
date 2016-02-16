@@ -1,11 +1,11 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5...HEAD)
+## [0.7.5a](https://github.com/TheFive/osmbc/tree/0.7.5a) (2016-02-16)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5...0.7.5a)
 
 **Merged pull requests:**
 
+- Flag Finland [\#331](https://github.com/TheFive/osmbc/pull/331) ([fredao](https://github.com/fredao))
 - Saint Luis flag [\#323](https://github.com/TheFive/osmbc/pull/323) ([fredao](https://github.com/fredao))
 
 ## [0.7.5](https://github.com/TheFive/osmbc/tree/0.7.5) (2016-02-12)
