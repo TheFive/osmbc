@@ -55,10 +55,12 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,bl
   } else {
     subject += "("+lang+") has been reviewed by "+user.OSMUser +" ("+status+")";
   }
+  var username = "osmbcbot("+user.displayName+")";
+
   this.slack.send({
     text:subject,
     channel: this.channel,
-    username: "osmbcbot"
+    username: username
   },callback);
 };
 
@@ -72,10 +74,11 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lan
   } else {
     subject += "("+lang+") has been closed by "+user.OSMUser;
   }
+  var username = "osmbcbot("+user.displayName+")";
   this.slack.send({
     text:subject,
     channel: this.channel,
-    username: "osmbcbot"
+    username: username
   },callback);
 };
 
@@ -105,12 +108,14 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user,article,chan
   if (article.comment && change.comment) {
      text += articleTitle + " changed comment"+"\n";
   }
-  if (text !== "") text = user.displayName + "\n"+text;
+  if (text !== "") text = user.OSMUser + "\n"+text;
   debug("Sending subject "+text);
+  var username = "osmbcbot("+user.displayName+")";
+
   this.slack.send({
     text:text,
     channel: this.channel,
-    username: "osmbcbot"
+    username: username
   },callback);
 };
 
@@ -129,11 +134,12 @@ SlackReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callba
   } else if (blog.status !== change.status) {
      subject += " changed status to "+change.status+"\n";
   }
+  var username = "osmbcbot("+user.displayName+")";
 
   this.slack.send({
     text:subject,
     channel: this.channel,
-    username: "osmbcbot"
+    username:username
   },callback);
 };
 
