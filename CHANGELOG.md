@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.7.5b](https://github.com/TheFive/osmbc/tree/0.7.5b) (2016-02-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5a...0.7.5b)
+
+**Merged pull requests:**
+
+- Haiti [\#333](https://github.com/TheFive/osmbc/pull/333) ([fredao](https://github.com/fredao))
+
 ## [0.7.5a](https://github.com/TheFive/osmbc/tree/0.7.5a) (2016-02-16)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5...0.7.5a)
 
@@ -955,17 +962,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
