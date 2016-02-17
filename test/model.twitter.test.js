@@ -5,7 +5,7 @@ var config = require('../config.js');
 var path = require('path');
 var fs = require('fs');
 var sinon = require('sinon');
-var nock = require('nock');
+//var nock = require('nock');
 var should = require('should');
 
 
@@ -37,9 +37,9 @@ describe("model/twitter",function() {
     });
   });
   it('should expand a twitter collection url with url in tweet',function (bddone){
-    nock('http://bit.ly')
-      .intercept("/1Ghc7dI","HEAD")
-      .reply(200,"OK",{urltest:"http://discoverspatial.com/courses/qgis-for-beginners"});
+   // nock('http://bit.ly')
+   //   .intercept("/1Ghc7dI","HEAD")
+   //   .reply(200,undefined,{href:"http://discoverspatial.com/courses/qgis-for-beginners"});
 
     twitter.expandTwitterUrl("https://twitter.com/mangomap/status/695426961548574722",function(err,result){
       should.not.exist(err);
