@@ -5,6 +5,7 @@ var config = require('../config.js');
 var path = require('path');
 var fs = require('fs');
 var sinon = require('sinon');
+var nock = require('nock');
 var should = require('should');
 
 
@@ -36,13 +37,17 @@ describe("model/twitter",function() {
     });
   });
   it('should expand a twitter collection url with url in tweet',function (bddone){
+    nock('http://bit.ly')
+      .intercept("/1Ghc7dI","HEAD")
+      .reply(200,"OK",{urltest:"http://discoverspatial.com/courses/qgis-for-beginners"});
+
     twitter.expandTwitterUrl("https://twitter.com/mangomap/status/695426961548574722",function(err,result){
       should.not.exist(err);
       should(result).eql("https://twitter.com/mangomap/status/695426961548574722\n\nTweet by MangoMap\nHave you enrolled in our #QGIS for Beginners course on @discoverspatial? It's free! http://discoverspatial.com/courses/qgis-for-beginners\n(Retweets: 10 Favs: 5)\n");
       bddone();
     });
   });
-  it('should expand a twitter collection url with no',function (bddone){
+  it('should expand a twitter collection url with no twitter reference',function (bddone){
     twitter.expandTwitterUrl("https://twitter.com/OSMBuildings/status/669252548600139776",function(err,result){
       should.not.exist(err);
       should(result).eql("https://twitter.com/OSMBuildings/status/669252548600139776\n\nTweet by OSM Buildings\nJust saw the ArcGIS city viewer at #ddj meetup. How many working hours were spent for that slow thing?\n(Retweets: 2 Favs: 3)\n");

@@ -49,13 +49,13 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,bl
   var subject = blogNameSlack(blog.name);
 
   if (status === "startreview") {
-    subject += "("+lang+") review has been started by "+user.OSMUser;
+    subject += "("+lang+") review has been started";
   } else if (status === "markexported") {
-    subject += "("+lang+") is exported to WordPress by "+user.OSMUser;
+    subject += "("+lang+") is exported to WordPress";
   } else {
-    subject += "("+lang+") has been reviewed by "+user.OSMUser +" ("+status+")";
+    subject += "("+lang+") has been reviewed: "+status;
   }
-  var username = "osmbcbot("+user.displayName+")";
+  var username = "osmbcbot("+user.OSMUser+")";
 
   this.slack.send({
     text:subject,
@@ -70,11 +70,11 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lan
   var subject = blogNameSlack(blog.name);
  
   if (status === "false") {
-    subject +="("+lang+") has been reopened by "+user.OSMUser;
+    subject +="("+lang+") has been reopened";
   } else {
-    subject += "("+lang+") has been closed by "+user.OSMUser;
+    subject += "("+lang+") has been closed";
   }
-  var username = "osmbcbot("+user.displayName+")";
+  var username = "osmbcbot("+user.OSMUser+")";
   this.slack.send({
     text:subject,
     channel: this.channel,
@@ -110,7 +110,7 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user,article,chan
   }
   if (text !== "") text = user.OSMUser + "\n"+text;
   debug("Sending subject "+text);
-  var username = "osmbcbot("+user.displayName+")";
+  var username = "osmbcbot("+user.OSMUser+")";
 
   this.slack.send({
     text:text,
@@ -134,7 +134,7 @@ SlackReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callba
   } else if (blog.status !== change.status) {
      subject += " changed status to "+change.status+"\n";
   }
-  var username = "osmbcbot("+user.displayName+")";
+  var username = "osmbcbot("+user.OSMUser+")";
 
   this.slack.send({
     text:subject,
