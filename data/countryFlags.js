@@ -32,6 +32,7 @@ module.exports = {
   "india":"http://blog.openstreetmap.de/wp-uploads//2016/01/in.svg",
   "saint lucia":"http://blog.openstreetmap.de/wp-uploads//2016/02/lc.svg", 
   "finland":"http://blog.openstreetmap.de/wp-uploads//2016/02/fi.svg",
+  "haiti":"http://blog.openstreetmap.de/wp-uploads//2016/02/ht.svg",
   "mexico":"http://blog.openstreetmap.de/wp-uploads//2016/02/mx.svg",
   "colombia":"http://blog.openstreetmap.de/wp-uploads//2016/02/co.svg"
 
