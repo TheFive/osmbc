@@ -214,7 +214,9 @@ function createTable(cb) {
   var createView = "drop index if exists changes_table_oid_idx; \
                 create index changes_table_oid_idx on changes((data->>'table'),(data->>'oid')); \
                 drop index if exists changes_id_idx; \
-                CREATE INDEX changes_id_idx ON changes USING btree (id);";
+                CREATE INDEX changes_id_idx ON changes USING btree (id);\
+                DROP INDEX if exists changes_blog_to_idx; \
+                CREATE INDEX changes_blog_to_idx ON changes USING btree ((data ->> 'blog'::text) , (data ->> 'to'::text));";
   pgMap.createTable('changes',createString,createView,cb);
 }
 
