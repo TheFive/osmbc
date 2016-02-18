@@ -1,5 +1,25 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.6...HEAD)
+
+**Implemented enhancements:**
+
+- Slack Integration [\#18](https://github.com/TheFive/osmbc/issues/18)
+
+**Fixed bugs:**
+
+- Double click on ReviewComment results in two slack messages but one mail. [\#327](https://github.com/TheFive/osmbc/issues/327)
+- Double click on review comment results in two slack messages [\#325](https://github.com/TheFive/osmbc/issues/325)
+
+**Merged pull requests:**
+
+- Italy Flag customized dimensions [\#334](https://github.com/TheFive/osmbc/pull/334) ([fredao](https://github.com/fredao))
+
+## [0.7.6](https://github.com/TheFive/osmbc/tree/0.7.6) (2016-02-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5d...0.7.6)
+
 ## [0.7.5d](https://github.com/TheFive/osmbc/tree/0.7.5d) (2016-02-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5c...0.7.5d)
 
