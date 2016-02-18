@@ -1,5 +1,8 @@
 # Change Log
 
+## [0.7.5c](https://github.com/TheFive/osmbc/tree/0.7.5c) (2016-02-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5b...0.7.5c)
+
 ## [0.7.5b](https://github.com/TheFive/osmbc/tree/0.7.5b) (2016-02-17)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5a...0.7.5b)
 
@@ -9,6 +12,10 @@
 
 ## [0.7.5a](https://github.com/TheFive/osmbc/tree/0.7.5a) (2016-02-16)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5...0.7.5a)
+
+**Implemented enhancements:**
+
+- More privacy for emails, only user himself can change email, email can be removed by space. [\#329](https://github.com/TheFive/osmbc/issues/329)
 
 **Merged pull requests:**
 
