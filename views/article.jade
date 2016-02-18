@@ -335,6 +335,24 @@ block content
               |(Comment is #{article.commentStatus})
               :verbatim
               |<pre>!{article.comment} </pre>
+        if (article.commentList)
+          each comment in article.commentList
+            .row
+              .col-md-1
+                |#{comment.user}
+                |#{layout.moment(comment.timestamp)}
+                |#{layout.moment(comment.editstamp)}
+              .col-md-10
+                |#{comment.text}
+        .row
+          .col-md-1
+          .col-md-10
+            form(name="AddComment",id="AddComment", action="#{layout.htmlroot}/article/#{article.id}/addComment", method="post")
+              textarea.form-control(name="comment" id="comment" rows=7)
+              button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('AddComment').submit();") Comment
+
+
+
     .row
       if articleReferences.count >= 1
         h2
