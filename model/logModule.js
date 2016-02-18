@@ -99,8 +99,13 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
   debug("htmlDiffText");
   var from = "";
   var to = "";
+
   if (this.from) from = String(this.from);
   if (this.to) to = String(this.to);
+
+  if (from.length>300 || to.length > 300) {
+    return "Temporary disabled long text compare";
+  }
 
   // first check on only spaces
   var diff = jsdiff.diffChars(from,to);
