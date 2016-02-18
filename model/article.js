@@ -609,7 +609,7 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(callback) {
   var articleReferences = {};
   articleReferences.count = 0;
 
-  if (this.categoryEN === 'Upcoming Events') {
+  if ((this.categoryEN === 'Upcoming Events')||(this.categoryEN === 'Releases')) {
     return callback(null,articleReferences);
   }
 
