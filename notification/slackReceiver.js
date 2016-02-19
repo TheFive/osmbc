@@ -108,7 +108,6 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user,article,chan
   if (article.comment && change.comment) {
      text += articleTitle + " changed comment"+"\n";
   }
-  if (text !== "") text = user.OSMUser + "\n"+text;
   debug("Sending subject "+text);
   var username = "osmbcbot("+user.OSMUser+")";
 
