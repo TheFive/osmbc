@@ -1,14 +1,12 @@
 "use strict";
-// Article createNewArticle
-// create article with prototyp
-// create Article without prototyp
-// create article with ID (non existing in db, existing in DB)
+
 
 
 var async  = require('async');
 var should = require('should');
 var nock   = require('nock');
 var debug  = require('debug')('OSMBC:test:article.test');
+var sinon  = require('sinon');
 
 
 var testutil = require('./testutil.js');
