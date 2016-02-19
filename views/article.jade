@@ -329,33 +329,50 @@ block content
           
       .row
          if (article.comment && article.comment!="")
-          .col-md-1
-            |Comment 
-          .col-md-10 
-              |(Comment is #{article.commentStatus})
-              :verbatim
-              |<pre>!{article.comment} </pre>
+          .col-md-12
+            h3
+              |Comments (old)
+            |(Comment is #{article.commentStatus})
+            :verbatim
+            |<pre>!{article.comment} </pre>
         if (article.commentList)
-          each comment in article.commentList
+          h3
+            | Comments
+          each comment,i in article.commentList
             .row
-              .col-md-1
-                |#{comment.user}
-                |#{layout.moment(comment.timestamp)}
-                |#{layout.moment(comment.editstamp)}
-              .col-md-10
-                |#{comment.text}
+              .col-md-12
+                p
+                  span=i+") "
+                  b=comment.user
+                  span=" "
+                  span=layout.moment(comment.timestamp).fromNow()
+                  span=" "
+                  i="edit: "+layout.moment(comment.editstap).fromNow()
+                  if layout.user.OSMUser === comment.user && params.editComment!=i
+                    a(href="#{layout.htmlroot}/article/#{article.id}?editComment=#{i}")
+                      span=" "
+                      span.glyphicon.glyphicon-pencil
+
+            .row
+              .col-md-12
+                if params.editComment == i && layout.user.OSMUser === comment.user
+                  form(name="EditComment",id="EditComment", action="#{layout.htmlroot}/article/#{article.id}/EditComment/#{i}", method="post")
+                    textarea.form-control(name="comment" id="editComment" rows=7)=comment.text
+                    button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('EditComment').submit();") Update
+                else
+                  p=comment.text
         .row
-          .col-md-1
-          .col-md-10
-            form(name="AddComment",id="AddComment", action="#{layout.htmlroot}/article/#{article.id}/addComment", method="post")
-              textarea.form-control(name="comment" id="comment" rows=7)
-              button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('AddComment').submit();") Comment
+          .col-md-12
+            if (!params.editComment)
+              form(name="AddComment",id="AddComment", action="#{layout.htmlroot}/article/#{article.id}/addComment", method="post")
+                textarea.form-control(name="comment" id="comment" rows=7)
+                button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('AddComment').submit();") Comment
 
 
 
     .row
       if articleReferences.count >= 1
-        h2
+        h3
           |Links used in other Post
         div
           table.table.table-striped.table-responsive
@@ -390,7 +407,7 @@ block content
 
     .row.hidden-xs
       if changes
-        h2
+        h3
           |History
         div
           table.table.table-striped.table-responsive

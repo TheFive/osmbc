@@ -68,6 +68,7 @@ function renderArticleId(req,res,next) {
     params.edit = req.query.edit;
     params.left_lang = s.left_lang;
     params.right_lang = s.right_lang;
+    params.editComment = req.query.editComment;
 
 
  
@@ -200,9 +201,7 @@ function searchAndCreate(req,res,next) {
                            foundArticles:result});
   });
 }
- // Generate Compile Error
 
- //Funktino kaputt Collect geht nicht.
 
 function postArticle(req, res, next) {
   debug('postArticle');
@@ -266,6 +265,91 @@ function postArticle(req, res, next) {
           return;
         }
         res.redirect(returnToUrl);    
+      });
+    }
+  );
+}
+
+function postNewComment(req, res, next) {
+  debug('postNewComment');
+
+  var id = req.params.article_id;
+
+ 
+
+  var article = null;
+  var comment = req.body.comment;
+  var returnToUrl;
+
+  async.parallel([
+      function searchArticle(cb) {
+        debug('postNewComment->searchArticle');
+        if (typeof(id)=='undefined') return cb(); 
+        articleModule.findById(id,function(err,result) {
+          debug('postNewComment->searchArticle->findById');
+          if (err) return cb(err);
+          if (!result) return cb(new Error("Article ID does not exist"));
+          article = result;
+          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
+          if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
+          cb();
+        });
+      }
+    ],
+    function setValues(err) {
+      debug('postNewComment->setValues');
+      if (err) {return next(err);}
+      should.exist(article);
+      article.addComment(req.user,comment,function(err) {
+       debug('postNewComment->setValues->addComment');
+        if (err ) {
+          next(err);
+          return;
+        }
+        res.redirect(returnToUrl);    
+      });
+    }
+  );
+}
+
+function postEditComment(req, res, next) {
+  debug('postEditComment');
+
+  var id = req.params.article_id;
+  var number = req.params.number;
+
+
+
+  var article = null;
+  var comment = req.body.comment;
+  var returnToUrl;
+
+  async.parallel([
+      function searchArticle(cb) {
+        debug('postNewComment->searchArticle');
+        if (typeof(id)=='undefined') return cb();
+        articleModule.findById(id,function(err,result) {
+          debug('postNewComment->searchArticle->findById');
+          if (err) return cb(err);
+          if (!result) return cb(new Error("Article ID does not exist"));
+          article = result;
+          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
+          if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
+          cb();
+        });
+      }
+    ],
+    function setValues(err) {
+      debug('postNewComment->setValues');
+      if (err) {return next(err);}
+      should.exist(article);
+      article.editComment(req.user,number,comment,function(err) {
+        debug('postNewComment->setValues->addComment');
+        if (err ) {
+          next(err);
+          return;
+        }
+        res.redirect(returnToUrl);
       });
     }
   );
@@ -424,6 +508,8 @@ exports.postArticle = postArticle;
 exports.createArticle = createArticle;
 exports.searchAndCreate = searchAndCreate;
 exports.searchArticles = searchArticles;
+exports.postNewComment = postNewComment;
+exports.postEditComment = postEditComment;
 
 
 // And configure router to use render Functions
@@ -434,6 +520,9 @@ router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
 
 router.get('/:article_id', exports.renderArticleId );
+
+router.post('/:article_id/addComment', exports.postNewComment);
+router.post('/:article_id/editComment/:number', exports.postEditComment);
 router.post('/:article_id', exports.postArticle);
 
 
