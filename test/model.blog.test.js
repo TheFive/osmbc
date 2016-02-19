@@ -9,7 +9,6 @@ var nock   = require('nock');
 var testutil = require('./testutil.js');
 
 var logModule     = require('../model/logModule.js');
-var articleModule     = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 
 
