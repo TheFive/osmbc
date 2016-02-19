@@ -2,6 +2,7 @@
 
 var async = require('async');
 var sinon = require('sinon');
+var nock  = require('nock');
 var should = require('should');
 
 var testutil = require('../test/testutil.js');
@@ -15,6 +16,17 @@ var blogRouter = require('../routes/blog.js');
 describe('routes/blog',function() {
   beforeEach(function(bddone){
     testutil.clearDB(bddone);
+  });
+  before(function(bddone){
+    nock('https://hooks.slack.com/')
+            .post(/\/services\/.*/) 
+            .times(999) 
+            .reply(200,"ok");
+    bddone();
+  });
+  after(function(bddone){
+    nock.cleanAll();
+    bddone();
   });
 
   describe('renderBlogPreview',function() {

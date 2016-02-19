@@ -3,6 +3,7 @@
 var async = require('async');
 var path = require('path'); 
 var fs = require('fs');
+var nock = require('nock');
 var should = require('should');
 var testutil = require('./testutil.js');
 var userModule = require("../model/user.js");
@@ -19,6 +20,10 @@ describe('views/article', function() {
   var browser;
   var articleId;
   before(function(bddone) {
+    nock('https://hooks.slack.com/')
+            .post(/\/services\/.*/) 
+            .times(999) 
+            .reply(200,"ok");
     async.series([
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
@@ -33,6 +38,13 @@ describe('views/article', function() {
       
     });
   });
+
+ 
+  after(function(bddone){
+    nock.cleanAll();
+    bddone();
+  });
+
 
 
   describe("Scripting Functions",function() {

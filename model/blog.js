@@ -190,8 +190,10 @@ Blog.prototype.setReviewComment = function setReviewComment(lang,user,data,callb
 
 Blog.prototype.closeBlog = function closeBlog(lang,user,status,callback) {
   debug("closeBlog");
+  should(typeof(user)).eql('object');
   var self=this;
   var closeField = "close"+lang;
+
   if (self[closeField] == status) return callback();
   async.series([
     function checkID(cb) {
@@ -204,7 +206,7 @@ Blog.prototype.closeBlog = function closeBlog(lang,user,status,callback) {
     should(self.id).not.equal(0);
     async.series ( [
         function logEntry(callback) {
-           messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:closeField,from:self[closeField],to:status},callback);
+           messageCenter.global.sendCloseStatus(user,self,lang,status,callback);
         },
         function setCloseField(callback) {
           self[closeField] = status;

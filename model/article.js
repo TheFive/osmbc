@@ -609,6 +609,10 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(callback) {
   var articleReferences = {};
   articleReferences.count = 0;
 
+  if ((this.categoryEN === 'Upcoming Events')||(this.categoryEN === 'Releases')) {
+    return callback(null,articleReferences);
+  }
+
   // For each link, search in DB on usage
   async.each(usedLinks,
     function forEachUsedLink(item,cb) {

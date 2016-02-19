@@ -111,7 +111,7 @@ function renderBlogId(req, res, next) {
           clearParams = true;
           var status = true;
           if (req.query.status && req.query.status == "false") status = false;
-          blog.closeBlog(options.left_lang,user.displayName,status,function(err) {
+          blog.closeBlog(options.left_lang,user,status,function(err) {
             return callback(err);
           });
         } else return callback();
