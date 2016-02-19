@@ -2,3 +2,4 @@ node_modules
 public/bootstrap
 sessions
 workspace.xml
+tasks.xml

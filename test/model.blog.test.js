@@ -4,26 +4,28 @@ var async  = require('async');
 var should = require('should');
 var path   = require('path');
 var fs     = require('fs');
-var sinon  = require('sinon');
-
+var nock   = require('nock');
 
 var testutil = require('./testutil.js');
 
 var logModule     = require('../model/logModule.js');
 var articleModule     = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
-var mailReceiver  = require('../notification/mailReceiver.js'); 
-
-
-
-
-
 
 
 describe('model/blog', function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
+    nock('https://hooks.slack.com/')
+            .post(/\/services\/.*/) 
+            .times(999) 
+            .reply(200,"ok");
+
     process.env.TZ = 'Europe/Amsterdam';
+  });
+  after(function (bddone){
+    nock.cleanAll();
+    bddone();
   });
 
   describe('createNewBlog',function() {
@@ -132,11 +134,11 @@ describe('model/blog', function() {
           },
           function (cb2) {
             should(newBlog.isEditable("DE")).be.False();
-            newBlog.closeBlog("DE","Test",true,cb2);},
+            newBlog.closeBlog("DE",{OSMUser:"Test"},true,cb2);},
           function (cb1) {
             should(newBlog.isEditable("DE")).be.False();
             blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});},
-          function (cb3) {newBlog.closeBlog("DE","Test",false,cb3);},
+          function (cb3) {newBlog.closeBlog("DE",{OSMUser:"Test"},false,cb3);},
           function (cb1) {
             blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});}
         ],function final(err){
@@ -166,7 +168,7 @@ describe('model/blog', function() {
           function (cb1) {
             should(newBlog.isEditable("EN")).be.False();
             blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});},
-          function (cb3) {newBlog.closeBlog("EN","Test",false,cb3);},
+          function (cb3) {newBlog.closeBlog("EN",{OSMUser:"Test"},false,cb3);},
           function (cb1) {
             blogModule.findOne({name:"test"},function(err,result){newBlog = result;cb1(err);});}
         ],function final(err){
@@ -224,183 +226,6 @@ describe('model/blog', function() {
         });
       });
     });
-    describe('trigger info email',function() {
-      var oldtransporter;
-      afterEach(function (bddone){
-        mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
-        this.clock.restore();
-        bddone();
-      });
-
-      beforeEach(function (bddone){
-        this.clock = sinon.useFakeTimers();
-        oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
-        mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
-        testutil.importData({clear:true,
-                             user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailBlogStatusChange:"true"},
-                                   {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailBlogStatusChange:"true"},
-                                   {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailBlogLanguageStatusChange:["EN","ES"]},
-                                   {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
-                                   {OSMUser:"User5",                     access:"full",mailBlogStatusChange:"true"}]},bddone);
-      });
-      it('should send out mail when creating a blog',function (bddone){
-        blogModule.createNewBlog({OSMUser:"testuser"},function(err){
-          should.not.exist(err);
-          var call = mailReceiver.for_test_only.transporter.sendMail;
-          should(call.calledThrice).be.True();
-          var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-          var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
-          var expectedText = 'BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value name WN251 status open startDate 1970-01-02T00:00:00.000Z endDate 1970-01-08T00:00:00.000Z';
-
-          //result is not sorted, so have a preview, which argument is the right one.
-          var mailList = {};
-          mailList[call.getCall(0).args[0].to]="-";
-          mailList[call.getCall(1).args[0].to]="-";
-          mailList[call.getCall(2).args[0].to]="-";
-          should(mailList).eql({"user1@mail.bc":"-","user2@mail.bc":"-","user3@mail.bc":"-"});
-          delete call.getCall(0).args[0].to;
-          delete call.getCall(1).args[0].to;
-          delete call.getCall(2).args[0].to;
-
-  
-
-
-          should(result.html).eql(expectedMail);
-          should(result.text).eql(expectedText);
-          should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
-            {from:"noreply@gmail.com",
-            subject:"[TESTBC] WN251 was created",
-            html:expectedMail,
-            text:expectedText});
-          should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
-            {from:"noreply@gmail.com",
-            subject:"[TESTBC] WN251 was created",
-            html:expectedMail,
-            text:expectedText});
-          should(mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0]).eql(
-            {from:"noreply@gmail.com",
-            subject:"[TESTBC] WN251 was created",
-            html:expectedMail,
-            text:expectedText});
-          bddone();
-        });
-      });
-      it('should send out mail when change blog status',function (bddone){
-        blogModule.createNewBlog({OSMUser:"testuser"},function(err,blog){
-          should.not.exist(err);
-          // reset sinon spy:
-          mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
-          blog.setAndSave({OSMUser:"testuser"},{status:"edit"},function(err){
-            should.not.exist(err);
-            var call = mailReceiver.for_test_only.transporter.sendMail;
-            should(call.calledThrice).be.True();
-            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-            var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>status</td><td>edit</td></tr></table>';
-            var expectedText ='BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value status edit';
-            should(result.html).eql(expectedMail);
-            should(result.text).eql(expectedText);
-           //result is not sorted, so have a preview, which argument is the right one.
-            var mailList = {};
-            mailList[call.getCall(0).args[0].to]="-";
-            mailList[call.getCall(1).args[0].to]="-";
-            mailList[call.getCall(2).args[0].to]="-";
-            should(mailList).eql({"user1@mail.bc":"-","user2@mail.bc":"-","user3@mail.bc":"-"});
-            delete call.getCall(0).args[0].to;
-            delete call.getCall(1).args[0].to;
-            delete call.getCall(2).args[0].to;
-           should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
-              {from:"noreply@gmail.com",
-              subject:"[TESTBC] WN251 changed status to edit",
-              html:expectedMail,
-              text:expectedText});
-            should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
-              {from:"noreply@gmail.com",
-              subject:"[TESTBC] WN251 changed status to edit",
-              html:expectedMail,
-              text:expectedText});
-            should(mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0]).eql(
-              {from:"noreply@gmail.com",
-              subject:"[TESTBC] WN251 changed status to edit",
-              html:expectedMail,
-              text:expectedText});
-            bddone();
-          });
-        });
-      });
-      it('should send out mail when review status is set',function (bddone){
-        blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
-          should.not.exist(err);
-          // reset sinon spy:
-          mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
-          blog.setReviewComment("ES",{OSMUser:"testuser"},"I have reviewed",function(err){
-            should.not.exist(err);
-
-            should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
-            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-            var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to I have reviewed</p>';
-            var expectedText = 'BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to I have reviewed';
-            should(result.html).eql(expectedMail);
-            should(result.text).eql(expectedText);
-            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
-              {from:"noreply@gmail.com",
-                to:"user3@mail.bc",
-                subject:"[TESTBC] blog(ES) has been reviewed by user testuser",
-                html:expectedMail,
-                text:expectedText});
-            bddone();
-          });
-        });
-      });
-      it('should send out mail when review is marked as exported',function (bddone){
-        blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
-          should.not.exist(err);
-          // reset sinon spy:
-          mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
-          blog.setReviewComment("ES",{OSMUser:"testuser"},"markexported",function(err){
-            should.not.exist(err);
-
-            should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
-            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-            var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to exported.</p>';
-            var expectedText = 'BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to exported.';
-
-            should(result.html).eql(expectedMail);
-            should(result.text).eql(expectedText);
-            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
-              {from:"noreply@gmail.com",
-                to:"user3@mail.bc",
-                subject:"[TESTBC] blog(ES) is exported to WordPress",
-                html:expectedMail,
-                text:expectedText});
-            bddone();
-          });
-        });
-      });
-      it('should send out mail when review is marked as exported',function (bddone){
-        blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
-          should.not.exist(err);
-          // reset sinon spy:
-          mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
-          blog.setReviewComment("ES",{OSMUser:"testuser"},"markexported",function(err){
-            should.not.exist(err);
-
-            should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
-            var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-            var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to exported.</p>';
-            var expectedText = 'BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to exported.';
-            should(result.html).eql(expectedMail);
-            should(result.text).eql(expectedText);
-            should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
-              {from:"noreply@gmail.com",
-                to:"user3@mail.bc",
-                subject:"[TESTBC] blog(ES) is exported to WordPress",
-                html:expectedMail,
-                text:expectedText});
-            bddone();
-          });
-        });
-      });
-    });
   });
   describe('closeBlog',function() {
     before(function (bddone) {
@@ -413,7 +238,7 @@ describe('model/blog', function() {
         should.not.exist(err);
         should.exist(newBlog);
         var id =newBlog.id;
-        newBlog.closeBlog("DE","user",true,function(err) {
+        newBlog.closeBlog("DE",{OSMUser:"user"},true,function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog",id,function(err,result){
             should.not.exist(err);
@@ -426,16 +251,17 @@ describe('model/blog', function() {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(5);
-              delete result[0].id;
-              var t0 = result[0].timestamp;
-              var now = new Date();
-              var t0diff = ((new Date(t0)).getTime()-now.getTime());
-        
-              // The Value for comparison should be small, but not to small
-              // for the test machine.
-              should(t0diff).be.below(10);
-              delete result[0].timestamp;
-        
+              for (var i=0;i<5;i++){
+                delete result[i].id;
+                var t0 = result[i].timestamp;
+                var now = new Date();
+                var t0diff = ((new Date(t0)).getTime()-now.getTime());
+
+                // The Value for comparison should be small, but not to small
+                // for the test machine.
+                should(t0diff).be.below(10);
+                delete result[i].timestamp;
+              }
               should(result).containEql(logModule.create({oid:id,blog:"Title",user:"user",table:"blog",property:"closeDE",to:true}));
               bddone();
             });

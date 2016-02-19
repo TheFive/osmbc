@@ -1,6 +1,7 @@
 "use strict";
 
 var debug = require('debug')('OSMBC:notification:messageFilter');
+var config = require("../config.js");
   
 
 
@@ -79,4 +80,89 @@ UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user
   this.receiver.sendLanguageStatus(user,blog,lang,status,cb);
 };
 
+UserConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,cb) {
+  debug('UserConfigFilter.prototype.sendCloseStatus');
+  var wnList = [];
+  var sendMail = false;
+  if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange;
+  for (var i=0;i<wnList.length;i++) {
+    var l = wnList[i];
+    if (l === lang) sendMail = true;
+  }
+  if (!sendMail) return cb();
+  debug("Send out mail");
+  this.receiver.sendCloseStatus(user,blog,lang,status,cb);
+};
+
+function BlogStatusFilter(receiver,languages) {
+  debug("BlogStatusFilter");
+  this.receiver = receiver;
+  if (!languages) languages = config.getLanguages();
+  this.languages = languages;
+
+}
+
+
+BlogStatusFilter.prototype.sendInfo = function(object,callback) {
+  debug('BlogStatusFilter.prototype.sendInfo');
+  return callback();
+};
+BlogStatusFilter.prototype.updateArticle = function ucfUpdateArticle(user,article,change,cb) {
+  debug('BlogStatusFilter.prototype.updateArticle');
+  return cb();
+};
+
+BlogStatusFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
+  debug('BlogStatusFilter.prototype.updateBlog');
+  this.receiver.updateBlog(user,blog,change,cb);
+};
+
+
+BlogStatusFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,cb) {
+  debug('BlogStatusFilter.prototype.sendLanguageStatus');
+  if (this.languages.indexOf(lang)>=0) {
+    this.receiver.sendLanguageStatus(user,blog,lang,status,cb);
+  } else return cb();
+};
+BlogStatusFilter.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,cb) {
+  debug('BlogStatusFilter.prototype.sendLanguageStatus');
+  if (this.languages.indexOf(lang)>=0) {
+    this.receiver.sendCloseStatus(user,blog,lang,status,cb);
+  } else return cb();
+};
+
+function ArticleCollectFilter(receiver) {
+  debug("ArticleCollectFilter");
+  this.receiver = receiver;
+}
+
+ArticleCollectFilter.prototype.sendInfo = function(object,callback) {
+  debug('ArticleCollectFilter.prototype.sendInfo');
+  return callback();
+};
+
+ArticleCollectFilter.prototype.updateArticle = function ucfUpdateArticle(user,article,change,cb) {
+  debug('ArticleCollectFilter.prototype.updateArticle');
+  if (change.collection && change.collection == article.collection) return cb();
+  this.receiver.updateArticle(user,article,change,cb);
+};
+
+ArticleCollectFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
+  debug('ArticleCollectFilter.prototype.updateBlog');
+  return cb();
+};
+
+
+ArticleCollectFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,cb) {
+  debug('ArticleCollectFilter.prototype.sendLanguageStatus');
+  return cb();
+};
+ArticleCollectFilter.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,cb) {
+  debug('ArticleCollectFilter.prototype.sendCloseStatus');
+  return cb();
+};
+
 module.exports.UserConfigFilter = UserConfigFilter;
+module.exports.ArticleCollectFilter = ArticleCollectFilter;
+module.exports.BlogStatusFilter = BlogStatusFilter;
+

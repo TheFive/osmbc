@@ -14,6 +14,17 @@
     "access_token": "dummy",
     "access_token_secret": "dummy"
     },
+    "slack" :{
+      "wn":{"blog":"https://hooks.slack.com/services/blogKey",
+            "blogchannel":"#osmbcblog",
+             "article":"https://hooks.slack.com/services/articleKey",
+             "articlechannel":"#osmbcarticle"},
+      "weekly":{"blog":"https://hooks.slack.com/services/blogKeyWeekly",
+             "blogchannel":"#osmbcblog",
+             "article":"https://hooks.slack.com/services/articleKeyWeekly",
+             "articlechannel":"#osmbcarticle"}
+      },
+ 
   "AppName":"TESTBC",
   "languages":["DE","EN","ES"],
   "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",

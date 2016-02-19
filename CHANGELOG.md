@@ -1,5 +1,30 @@
 # Change Log
 
+## [0.7.5d](https://github.com/TheFive/osmbc/tree/0.7.5d) (2016-02-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5c...0.7.5d)
+
+## [0.7.5c](https://github.com/TheFive/osmbc/tree/0.7.5c) (2016-02-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5b...0.7.5c)
+
+## [0.7.5b](https://github.com/TheFive/osmbc/tree/0.7.5b) (2016-02-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5a...0.7.5b)
+
+**Merged pull requests:**
+
+- Haiti [\#333](https://github.com/TheFive/osmbc/pull/333) ([fredao](https://github.com/fredao))
+
+## [0.7.5a](https://github.com/TheFive/osmbc/tree/0.7.5a) (2016-02-16)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5...0.7.5a)
+
+**Implemented enhancements:**
+
+- More privacy for emails, only user himself can change email, email can be removed by space. [\#329](https://github.com/TheFive/osmbc/issues/329)
+
+**Merged pull requests:**
+
+- Flag Finland [\#331](https://github.com/TheFive/osmbc/pull/331) ([fredao](https://github.com/fredao))
+- Saint Luis flag [\#323](https://github.com/TheFive/osmbc/pull/323) ([fredao](https://github.com/fredao))
+
 ## [0.7.5](https://github.com/TheFive/osmbc/tree/0.7.5) (2016-02-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.4...0.7.5)
 

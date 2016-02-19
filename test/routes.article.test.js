@@ -4,6 +4,7 @@ var sinon = require('sinon');
 var should = require('should');
 var async  = require('async');
 var path   = require('path');
+var nock   = require('nock');
 var fs     = require('fs');
 
 var articleModule = require('../model/article.js');
@@ -14,9 +15,18 @@ var testutil = require('./testutil.js');
 
 
 describe('router/article',function() {
+ 
+  after(function (bddone){
+    nock.cleanAll();
+    bddone();
+  });
   
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
+    nock('https://hooks.slack.com/')
+            .post(/\/services\/.*/) 
+            .times(999) 
+            .reply(200,"ok");
     testutil.clearDB(bddone);
   }); 
   describe('renderArticleId',function() {

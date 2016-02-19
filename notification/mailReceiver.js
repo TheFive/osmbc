@@ -26,8 +26,11 @@ var infomail = new EmailTemplate(infoMailtemplateDir);
 var infoMailBlogtemplateDir = path.join(__dirname, '..','email', 'infomailBlog');
 var infomailBlog = new EmailTemplate(infoMailBlogtemplateDir);
 
-var infoMailInfotemplateDir = path.join(__dirname, '..','email', 'infomailInfo');
-var infomailInfo = new EmailTemplate(infoMailInfotemplateDir);
+var infoMailReviewtemplateDir = path.join(__dirname, '..','email', 'infomailReview');
+var infomailReview = new EmailTemplate(infoMailReviewtemplateDir);
+
+var infoMailClosetemplateDir = path.join(__dirname, '..','email', 'infomailClose');
+var infomailClose = new EmailTemplate(infoMailClosetemplateDir);
 
 var welcomeMailtemplateDir = path.join(__dirname, '..','email', 'welcome');
 var welcomemail = new EmailTemplate(welcomeMailtemplateDir);
@@ -43,10 +46,11 @@ var layout = {
 
 function sendMailWithLog(user,mailOptions,callback) {
   debug("sendMailWithLog");
+
   var appName = config.getValue("AppName");
   if (appName)   mailOptions.subject = "["+appName+"] "+mailOptions.subject;
   transporter.sendMail(mailOptions,function logMail(error,info){
-    debug("logMail");
+    debug("logMail Error %s response %s",error,info.response);
     var logObject = {
       user:user.OSMUser,
       table:"mail",
@@ -56,6 +60,8 @@ function sendMailWithLog(user,mailOptions,callback) {
       error:error,
       response:(info)?info.response:"no response"
     };
+
+
     if (error) {
       logModule.log(logObject,function cb(){
         return callback();
@@ -66,19 +72,20 @@ function sendMailWithLog(user,mailOptions,callback) {
   });
 }
 function MailReceiver(user) {
-  debug("MailReceiver::MailReceiver");
+  debug("MailReceiver");
   this.user = user;
 }
 
 MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callback) {
-  debug("MailReceiver::sendWelcomeMail");
+  debug("MailReceiver.prototype.sendWelcomeMail");
 
 
   var self = this;
   var data = {user:this.user,inviter:inviter,layout:layout};
 
-  welcomemail.render(data, function (err, results) {
-    if (err) return console.dir(err);
+  welcomemail.render(data, function welcomemail_render (err, results) {
+    debug("welcomemail_render");
+    if (err) return callback(err);
     //console.dir(self.user);
     results.text = htmlToText.fromString(results.html); 
 
@@ -96,7 +103,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
 };
 
 MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,callback) {
-  debug("MailReceiver::sendLanguageStatus");
+  debug("MailReceiver.prototype.sendLanguageStatus");
 
   var self = this;
 
@@ -111,9 +118,40 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blo
 
   var data = {user:user,blog:blog,status:status,lang:lang,layout:layout};
 
-  infomailInfo.render(data, function infomailRenderBlog(err, results) {
+  infomailReview.render(data, function infomailRenderBlog(err, results) {
     debug('infomailRenderInfo');
-    if (err) return console.dir(err);
+    if (err) return callback(err);
+    results.text = htmlToText.fromString(results.html); 
+
+    var mailOptions = {
+        from: config.getValue("EmailSender"), // sender address 
+        to: self.user.email, // list of receivers 
+        subject: subject, // Subject line 
+        text: results.text,
+        html: results.html
+    };
+     
+    // send mail with defined transport object 
+    sendMailWithLog(self.user,mailOptions,callback);
+  });
+};
+
+MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,callback) {
+  debug("MailReceiver.prototype.sendCloseStatus");
+
+  var self = this;
+
+
+  var subject = blog.name +"("+lang+") has been closed by user "+user.OSMUser;
+  if (status === "false") {
+    subject = blog.name +"("+lang+") has been reopened by "+user.OSMUser;
+  }
+
+  var data = {user:user,blog:blog,status:status,lang:lang,layout:layout};
+
+  infomailClose.render(data, function infomailRenderClose(err, results) {
+    debug('infomailRenderClose');
+    if (err) return callback(err);
     results.text = htmlToText.fromString(results.html); 
 
     var mailOptions = {
@@ -130,7 +168,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blo
 };
 
 MailReceiver.prototype.updateArticle = function updateArticle(user,article,change,callback) {
-  debug("MailReceiver::updateArticle");
+  debug("MailReceiver.prototype.updateArticle");
 
   should(typeof(change)).eql("object");
  
@@ -169,7 +207,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
 
   infomail.render(data, function infomailRender(err, results) {
     debug('infomailRender');
-    if (err) return console.dir(err);
+    if (err) return callback(err);
     results.text = htmlToText.fromString(results.html); 
 
     var mailOptions = {
@@ -187,7 +225,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
 
 
 MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callback) {
-  debug("MailReceiver::updateBlog");
+  debug("MailReceiver.prototype.updateBlog");
 
 
   var self = this;
@@ -217,7 +255,7 @@ MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callbac
 
   infomailBlog.render(data, function infomailRenderBlog(err, results) {
     debug('infomailRenderBlog');
-    if (err) return console.dir(err);
+    if (err) return callback(err);
     results.text = htmlToText.fromString(results.html); 
 
     var mailOptions = {
@@ -236,13 +274,22 @@ var userReceiverMap = {};
 
 
 function MailUserReceiver() {
-  debug('MailUserReceiver::MailUserReceiver');
+  debug('MailUserReceiver');
 }
 
 MailUserReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,callback) {
   debug('MailUserReceiver.prototype.sendLanguageStatus');
   async.forEachOf(userReceiverMap,function(value,key,cb) {
     value.sendLanguageStatus(user,blog,lang,status,cb);
+  },function(err) {
+    return callback(err);
+  });
+};
+
+MailUserReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,callback) {
+  debug('MailUserReceiver.prototype.sendCloseStatus');
+  async.forEachOf(userReceiverMap,function(value,key,cb) {
+    value.sendCloseStatus(user,blog,lang,status,cb);
   },function(err) {
     return callback(err);
   });
