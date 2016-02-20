@@ -68,7 +68,8 @@ function renderArticleId(req,res,next) {
     params.edit = req.query.edit;
     params.left_lang = s.left_lang;
     params.right_lang = s.right_lang;
-    params.editComment = req.query.editComment;
+    params.editComment = null;
+    if (req.query.editComment) params.editComment = req.query.editComment;
 
 
  
