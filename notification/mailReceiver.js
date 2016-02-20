@@ -382,6 +382,24 @@ MailUserReceiver.prototype.updateArticle = function murUpdateArticle(user,articl
     return callback(err);
   });
 };
+MailUserReceiver.prototype.addComment = function addComment(user,article,comment,callback) {
+  debug('MailUserReceiver.prototype.addComment');
+  async.forEachOf(userReceiverMap,function(value,key,cb) {
+    debug('forEachOf'+key);
+    value.addComment(user,article,comment,cb);
+  },function(err) {
+    return callback(err);
+  });
+};
+MailUserReceiver.prototype.editComment = function editComment(user,article,index,comment,callback) {
+  debug('MailUserReceiver.prototype.editComment');
+  async.forEachOf(userReceiverMap,function(value,key,cb) {
+    debug('forEachOf'+key);
+    value.editComment(user,article,index,comment,cb);
+  },function(err) {
+    return callback(err);
+  });
+};
 MailUserReceiver.prototype.updateBlog = function murUpdateBlog(user,blog,change,callback) {
   debug('MailUserReceiver.prototype.updateBlog');
   async.forEachOf(userReceiverMap,function(value,key,cb) {
