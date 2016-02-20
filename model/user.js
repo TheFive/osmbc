@@ -150,16 +150,20 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
     sendWelcomeEmail = true;
 
   }
-  if (data.OSMUser) {
-    find({OSMUser:data.OSMUser},function(err,result){
-      if (err) return callback(err);
-      if (result && result.length) {
-        return callback(new Error("User >"+data.OSMUser+"< already exists."));
+  async.series([
+    function checkUserName(cb){
+      if (data.OSMUser && data.OSMUser !== self.OSMUser) {
+        find({OSMUser:data.OSMUser},function(err,result) {
+          if (err) return callback(err);
+          if (result && result.length) {
+            return cb(new Error("User >" + data.OSMUser + "< already exists."));
+          } else return cb();
+        });
       }
-
-
-
-
+      else return cb();
+    }
+  ],function finalFunction(err) {
+      if (err) return callback(err);
       async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
         // There is no Value for the key, so do nothing
         if (typeof(value)=='undefined') return cb_eachOf();
@@ -176,21 +180,21 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
 
 
         async.series ( [
-            function(cb) {
-              // do not log validation key in logfile
-              var toValue = value;
-              // Hide Validation Key not to show to all users
-              if (key === "emailValidationKey") return cb();
+          function(cb) {
+            // do not log validation key in logfile
+            var toValue = value;
+            // Hide Validation Key not to show to all users
+            if (key === "emailValidationKey") return cb();
 
-              messageCenter.global.sendInfo({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:toValue},cb);
-            },
-            function(cb) {
-              self[key] = value;
-              cb();
-            }
-          ],function(err){
-            cb_eachOf(err);
-          });
+            messageCenter.global.sendInfo({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:toValue},cb);
+          },
+          function(cb) {
+            self[key] = value;
+            cb();
+          }
+        ],function(err){
+          cb_eachOf(err);
+        });
 
       },function setAndSaveFinalCB(err) {
         debug('setAndSaveFinalCB');
@@ -210,8 +214,8 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
         });
       });
     });
-  }
 };
+
 
 
 User.prototype.getNotificationStatus = function getNotificationStatus(channel, type) {
