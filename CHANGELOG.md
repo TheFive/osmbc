@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.7.7b](https://github.com/TheFive/osmbc/tree/0.7.7b) (2016-02-20)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7a...0.7.7b)
+
+**Fixed bugs:**
+
+- Article Links in slack are directing to blog not to article, which does not work. [\#341](https://github.com/TheFive/osmbc/issues/341)
+
 ## [0.7.7a](https://github.com/TheFive/osmbc/tree/0.7.7a) (2016-02-20)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7...0.7.7a)
 
@@ -1002,17 +1009,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
