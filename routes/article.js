@@ -292,7 +292,6 @@ function postNewComment(req, res, next) {
           if (!result) return cb(new Error("Article ID does not exist"));
           article = result;
           returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
-          if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
           cb();
         });
       }
@@ -335,7 +334,6 @@ function postEditComment(req, res, next) {
           if (!result) return cb(new Error("Article ID does not exist"));
           article = result;
           returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
-          if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
           cb();
         });
       }

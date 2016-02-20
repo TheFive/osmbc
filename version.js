@@ -1,3 +1,3 @@
 "use strict";
 
-exports.osmbc_version = "0.7.6";
+exports.osmbc_version = "0.7.7";

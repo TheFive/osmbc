@@ -223,6 +223,84 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
   });
 };
 
+MailReceiver.prototype.addComment = function addComment(user,article,text,callback) {
+  debug("MailReceiver.prototype.addComment");
+
+  should(typeof(change)).eql("object");
+
+
+  var self = this;
+  var newArticle = articleModule.create();
+  var k;
+  for (k in article) {
+    newArticle[k] = article[k];
+  }
+  newArticle.comment = text;
+
+  var logblog = article.blog;
+  var subject = logblog + " comment: "+newArticle.title;
+
+
+  var data = {user:this.user,changeby:user,article:article,newArticle:newArticle,layout:layout,logblog:logblog};
+
+  infomail.render(data, function infomailRender(err, results) {
+    debug('infomailRender');
+    if (err) return callback(err);
+    results.text = htmlToText.fromString(results.html);
+
+    var mailOptions = {
+      from: config.getValue("EmailSender"), // sender address
+      to: self.user.email, // list of receivers
+      subject: subject, // Subject line
+      text: results.text,
+      html: results.html
+    };
+
+    // send mail with defined transport object
+    sendMailWithLog(self.user,mailOptions,callback);
+  });
+};
+
+MailReceiver.prototype.updateComment = function updateComment(user,article,index,text,callback) {
+  debug("MailReceiver.prototype.addComment");
+
+  should(typeof(change)).eql("object");
+
+
+  var self = this;
+  var newArticle = articleModule.create();
+  var oldArticle = articleModule.create();
+  var k;
+  for (k in article) {
+    newArticle[k] = article[k];
+    oldArticle[k] = article[k];
+  }
+  newArticle.comment = text;
+  oldArticle.comment = article.commentList[index];
+
+  var logblog = article.blog;
+  var subject = logblog + " comment: "+newArticle.title;
+
+
+  var data = {user:this.user,changeby:user,article:oldArticle,newArticle:newArticle,layout:layout,logblog:logblog};
+
+  infomail.render(data, function infomailRender(err, results) {
+    debug('infomailRender');
+    if (err) return callback(err);
+    results.text = htmlToText.fromString(results.html);
+
+    var mailOptions = {
+      from: config.getValue("EmailSender"), // sender address
+      to: self.user.email, // list of receivers
+      subject: subject, // Subject line
+      text: results.text,
+      html: results.html
+    };
+
+    // send mail with defined transport object
+    sendMailWithLog(self.user,mailOptions,callback);
+  });
+};
 
 MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callback) {
   debug("MailReceiver.prototype.updateBlog");
