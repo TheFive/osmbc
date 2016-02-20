@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.7.7a](https://github.com/TheFive/osmbc/tree/0.7.7a) (2016-02-20)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7...0.7.7a)
+
+**Merged pull requests:**
+
+- only one line for italy - not italia [\#340](https://github.com/TheFive/osmbc/pull/340) ([fredao](https://github.com/fredao))
+
 ## [0.7.7](https://github.com/TheFive/osmbc/tree/0.7.7) (2016-02-20)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.6...0.7.7)
 
