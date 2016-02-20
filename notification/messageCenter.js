@@ -2,6 +2,7 @@
 
 var debug     = require('debug')('OSMBC:notification:messageCenter');
 var async     = require('async');
+var should    = require('should');
 var config   = require("../config.js");
 var SlackReceiver = require('../notification/slackReceiver.js');
 var messageFilter = require('../notification/messageFilter.js');
@@ -57,15 +58,62 @@ MessageCenter.prototype.registerReceiver = function(receiver) {
 var messageCenter = new MessageCenter();
 
 var slack = config.getValue("slack");
-var languagesWithoutDE = config.getLanguages().filter(function(lang){return lang!=="DE";});
+
+// first configure the blogs
+var blogSlack = slack.blog;
+var languages = config.getLanguages();
+
+function notLanguage(lang) {
+  return lang!==k;
+}
+
+if (blogSlack) {
+  for (var k in blogSlack) {
+    if (k === "default") continue;
+    var languages = languages.filter(notLanguage);
+    var blogConfig = blogSlack[k];
+    should.exist(blogConfig.hook);
+    should.exist(blogConfig.channel);
+    messageCenter.registerReceiver(
+      new messageFilter.BlogStatusFilter(
+        new SlackReceiver("Blog "+k, blogConfig.hook, blogConfig.channel),
+        [k])
+    );
+  }
+  if (blogSlack.default) {
+    k = blogSlack.default;
+    should.exist(k.hook);
+    should.exist(k.channel);
+    messageCenter.registerReceiver(
+      new messageFilter.BlogStatusFilter(
+        new SlackReceiver("Blog default", k.hook, k.channel),
+        languages)
+    );
+  }
+}
+
+// and then the article
+var articleSlack = slack.article;
+
+if (articleSlack) {
+  for (var k in articleSlack) {
+    var articleConfig = articleSlack[k];
+    should.exist(articleConfig.hook);
+    should.exist(articleConfig.channel);
+    messageCenter.registerReceiver(
+      new messageFilter.ArticleCollectFilter(
+        new SlackReceiver("Article "+k,articleConfig.hook,articleConfig.channel)
+      )
+    );
+  }
+}
 
 
+
+
+
+// register the Logging Receiver
 messageCenter.registerReceiver(new LogModuleReceiver());
-messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.wn.blog,slack.wn.blogchannel),["DE"]));
-messageCenter.registerReceiver(new messageFilter.BlogStatusFilter(new SlackReceiver(slack.weekly.blog,slack.weekly.blogchannel),languagesWithoutDE));
-messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.wn.article,slack.wn.articlechannel)));
-messageCenter.registerReceiver(new messageFilter.ArticleCollectFilter(new SlackReceiver(slack.weekly.article,slack.weekly.articlechannel)));
-
 
 module.exports.global = messageCenter;
 module.exports.Class = MessageCenter;
