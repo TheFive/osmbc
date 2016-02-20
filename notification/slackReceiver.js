@@ -7,16 +7,23 @@ var debug = require('debug')("OSMBC:notification:slackReceiver");
 
 config.initialise();
 
+var botName = config.getValue("AppName").toLowerCase();
+
 
 var Slack = require('node-slack');
 
 var osmbcUrl = config.getValue('url')+config.getValue('htmlroot');
 
 
-function SlackReceiver(webhook,channel) {
+function SlackReceiver(name,webhook,channel) {
   debug("MailReceiver::MailReceiver");
+  should(typeof(name)).eql("string");
+  should(typeof(webhook)).eql("string");
+  should((channel.substring(0,1)==="#")||(channel.substring(0,1)==="l")).be.True();
+  this.name = name;
   this.slack = new Slack(webhook);
   this.channel = channel;
+  debug("Name: %s",name);
   debug("Channel: %s",channel);
   debug("Webhook: %s",webhook);
 }
@@ -35,16 +42,16 @@ function articleNameSlack(article,change) {
 
 
 SlackReceiver.prototype.sendInfo = function(object,callback) {
-  debug("SlackReceiver::sendInfo");
+  debug("SlackReceiver::sendInfo %s",this.name);
   return callback();
 };
 SlackReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callback) {
-  debug("SlackReceiver::sendWelcomeMail");
+  debug("SlackReceiver::sendWelcomeMail %s",this.name);
   return callback();
 };
 
 SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,callback) {
-  debug("SlackReceiver::sendLanguageStatus");
+  debug("SlackReceiver::sendLanguageStatus %s",this.name);
 
   var subject = blogNameSlack(blog.name);
 
@@ -55,7 +62,7 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,bl
   } else {
     subject += "("+lang+") has been reviewed: "+status;
   }
-  var username = "osmbcbot("+user.OSMUser+")";
+  var username = botName + "("+user.OSMUser+")";
 
   this.slack.send({
     text:subject,
@@ -65,7 +72,7 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,bl
 };
 
 SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,callback) {
-  debug("SlackReceiver::sendCloseStatus");
+  debug("SlackReceiver::sendCloseStatus %s",this.name);
 
   var subject = blogNameSlack(blog.name);
  
@@ -74,7 +81,7 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lan
   } else {
     subject += "("+lang+") has been closed";
   }
-  var username = "osmbcbot("+user.OSMUser+")";
+  var username = botName + "("+user.OSMUser+")";
   this.slack.send({
     text:subject,
     channel: this.channel,
@@ -83,7 +90,7 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lan
 };
 
 SlackReceiver.prototype.updateArticle = function updateArticle(user,article,change,callback) {
-  debug("SlackReceiver::updateArticle");
+  debug("SlackReceiver::updateArticle %s",this.name);
 
   should(typeof(change)).eql("object");
 
@@ -109,7 +116,7 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user,article,chan
      text += articleTitle + " changed comment"+"\n";
   }
   debug("Sending subject "+text);
-  var username = "osmbcbot("+user.OSMUser+")";
+  var username = botName + "("+user.OSMUser+")";
 
   this.slack.send({
     text:text,
@@ -120,7 +127,7 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user,article,chan
 
 
 SlackReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callback) {
-  debug("SlackReceiver::updateBlog");
+  debug("SlackReceiver::updateBlog %s",this.name);
 
 
 
@@ -133,7 +140,7 @@ SlackReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callba
   } else if (blog.status !== change.status) {
      subject += " changed status to "+change.status+"\n";
   }
-  var username = "osmbcbot("+user.OSMUser+")";
+  var username = botName + "("+user.OSMUser+")";
 
   this.slack.send({
     text:subject,

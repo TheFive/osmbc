@@ -44,10 +44,20 @@ describe('model/user', function() {
     });
     it('should create no New User with ID',function(bddone){
       (function() {
-        userModule.createNewUser({id:2,name:"me again"},function (){
+        userModule.createNewUser({id:2,OSMUser:"me again"},function (){
         });
       }).should.throw();
       bddone();
+    });
+    it('should create no New User with existing name',function(bddone){
+      userModule.createNewUser({OSMUser:"TestUser"},function (err){
+        should.not.exist(err);
+        userModule.createNewUser({OSMUser:"TestUser"},function(err){
+          should.exist(err);
+          should(err.message).eql("User >TestUser< already exists.");
+          bddone();
+        });
+      });
     });
   });
   describe('findFunctions',function() {
