@@ -200,14 +200,13 @@ describe('model/user', function() {
     }); 
     it('should fail when change email by another user',function (bddone){
       userModule.findOne({OSMUser:"WelcomeMe"},function(err,user){
-        // First set a new EMail Adress for the WecomeMe user, by InviteYou.
+        // First set a new EMail Address for the WelcomeMe user, by InviteYou.
         user.setAndSave("InviteYou",{email:"WelcomeMe@newemail.org"}, function (err){
-          should(err).eql(new Error("EMail adress can only be changed by the user himself."));
+          should(err).eql(new Error("EMail address can only be changed by the user himself."));
           bddone();
         });
       });
     });
-
   });
 });
 

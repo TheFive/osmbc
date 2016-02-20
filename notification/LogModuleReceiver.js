@@ -138,7 +138,7 @@ LogModuleReceiver.prototype.editComment = function editComment(user,article,inde
     from:article.commentList[index],
     to:text,
     timestamp:timestamp},callback);
-}
+};
 
 LogModuleReceiver.prototype.addComment = function addComment(user,article,text,callback){
   debug("LogModuleReceiver.prototype.addComment");
@@ -155,6 +155,6 @@ LogModuleReceiver.prototype.addComment = function addComment(user,article,text,c
     from:"",
     to:text,
     timestamp:timestamp},callback);
-}
+};
 
 module.exports = LogModuleReceiver;
