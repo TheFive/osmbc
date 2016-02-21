@@ -53,6 +53,19 @@ MessageCenter.prototype.registerReceiver = function(receiver) {
   this.receiverList.push(receiver);
 };
 
+MessageCenter.prototype.addComment = function addComment(user,article,text,callback){
+  debug('MessageCenter.prototype.addComment');
+  async.each(this.receiverList,function sendIt(element,cb){
+    element.addComment(user,article,text,cb);
+  },function final(err) {callback(err);});
+};
+MessageCenter.prototype.editComment = function editComment(user,article,index,text,callback){
+  debug('MessageCenter.prototype.addComment');
+  async.each(this.receiverList,function sendIt(element,cb){
+    element.editComment(user,article,index,text,cb);
+  },function final(err) {callback(err);});
+};
+
 
 
 var messageCenter = new MessageCenter();

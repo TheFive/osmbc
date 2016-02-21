@@ -44,6 +44,46 @@ UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user,articl
   this.receiver.updateArticle(user,article,change,cb);
 };
 
+UserConfigFilter.prototype.addComment = function ucfAddComment(user,article,comment,cb) {
+  debug('UserConfigFilter.prototype.addComment');
+  var sendMail = false;
+
+  // check Collection
+  if (this.user.mailAllComment == "true") {
+    sendMail = true;
+  }
+  var userList = [];
+  if (this.user.mailComment) userList = this.user.mailComment;
+  for (var i=0;i<userList.length;i++) {
+    if (comment.search(new RegExp("@"+userList[i],"i"))>=0) {
+      sendMail = true;
+      debug("Mail send because comment for @"+userList[i]);
+    }
+  }
+  if (!sendMail) return cb();
+  this.receiver.addComment(user,article,comment,cb);
+};
+
+UserConfigFilter.prototype.editComment = function ucfEditComment(user,article,index,comment,cb) {
+  debug('UserConfigFilter.prototype.addComment');
+  var sendMail = false;
+
+  // check Collection
+  if (this.user.mailAllComment == "true") {
+    sendMail = true;
+  }
+  var userList = [];
+  if (this.user.mailComment) userList = this.user.mailComment;
+  for (var i=0;i<userList.length;i++) {
+    if (comment.search(new RegExp("@"+userList[i],"i"))>=0) {
+      sendMail = true;
+      debug("Mail send because comment for @"+userList[i]);
+    }
+  }
+  if (!sendMail) return cb();
+  this.receiver.editComment(user,article,index,comment,cb);
+};
+
 UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
   debug('UserConfigFilter.prototype.updateBlog');
   var sendMail = false;
@@ -111,6 +151,18 @@ BlogStatusFilter.prototype.updateArticle = function ucfUpdateArticle(user,articl
   debug('BlogStatusFilter.prototype.updateArticle');
   return cb();
 };
+BlogStatusFilter.prototype.addComment = function addComment(user,article,comment,cb) {
+  debug('BlogStatusFilter.prototype.addComment');
+  return cb();
+};
+BlogStatusFilter.prototype.editComment = function editComment(user,article,index,comment,cb) {
+  debug('BlogStatusFilter.prototype.editComment');
+  return cb();
+};
+BlogStatusFilter.prototype.updateArticle = function ucfUpdateArticle(user,article,change,cb) {
+  debug('BlogStatusFilter.prototype.updateArticle');
+  return cb();
+};
 
 BlogStatusFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
   debug('BlogStatusFilter.prototype.updateBlog');
@@ -150,6 +202,14 @@ ArticleCollectFilter.prototype.updateArticle = function ucfUpdateArticle(user,ar
 ArticleCollectFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
   debug('ArticleCollectFilter.prototype.updateBlog');
   return cb();
+};
+ArticleCollectFilter.prototype.addComment = function addComment(user,article,comment,cb) {
+  debug('ArticleCollectFilter.prototype.addComment');
+  this.receiver.addComment(user,article,comment,cb);
+};
+ArticleCollectFilter.prototype.editComment = function editComment(user,article,index,comment,cb) {
+  debug('ArticleCollectFilter.prototype.editComment');
+  this.receiver.editComment(user,article,index,comment,cb);
 };
 
 

@@ -220,10 +220,9 @@ block content
         .row
           .col-md-1
             |Comment <br>
-          .col-md-11  
-            textarea.form-control(
-              name="comment" id="comment"
-              rows=7) #{article.comment}
+          .col-md-11
+            :verbatim
+            <pre>!{article.comment} </pre>
         .row
           .col-md-1
           .col-md-5
@@ -326,18 +325,43 @@ block content
               .panel-body(id="previewRIGHT")
                   :verbatim
                     !{article["textHtml"+params.right_lang]}
-          
-      .row
-         if (article.comment && article.comment!="")
-          .col-md-1
-            |Comment 
-          .col-md-10 
-              |(Comment is #{article.commentStatus})
-              :verbatim
-              |<pre>!{article.comment} </pre>
+
+
+  .row
+    if (article.commentList)
+      h3="Comments ("+article.commentStatus+")"
+      each comment,i in article.commentList
+        .row
+          .col-md-12
+            b=comment.user
+            span=" "
+            span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+            if (comment.editstamp)
+              span=" "
+              i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
+            if layout.user.OSMUser === comment.user && params.editComment != i
+              a(href="#{layout.htmlroot}/article/#{article.id}?editComment=#{i}")
+                span=" "
+                span.glyphicon.glyphicon-pencil
+
+            if params.editComment == i && layout.user.OSMUser === comment.user
+              form(name="EditComment",id="EditComment", action="#{layout.htmlroot}/article/#{article.id}/EditComment/#{i}", method="post")
+                textarea.form-control(name="comment" id="editComment" rows=7)=comment.text
+                button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('EditComment').submit();") Update
+                button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}';") Cancel
+            else
+              p=comment.text
     .row
+      .col-md-12
+        if (!params.editComment)
+          form(name="AddComment",id="AddComment", action="#{layout.htmlroot}/article/#{article.id}/addComment", method="post")
+            textarea.form-control(name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
+            button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('AddComment').submit();") Add Comment
+            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}';") Cancel
+
+  .row
       if articleReferences.count >= 1
-        h2
+        h3
           |Links used in other Post
         div
           table.table.table-striped.table-responsive
@@ -372,7 +396,7 @@ block content
 
     .row.hidden-xs
       if changes
-        h2
+        h3
           |History
         div
           table.table.table-striped.table-responsive
@@ -425,7 +449,7 @@ block scripts
     
 
     function init() {
-
+   
       markdownLEFT = document.getElementById("markdownLEFT");
       if (markdownLEFT) {
         markdownLEFT.onchange = onleaveLEFT;
@@ -433,7 +457,8 @@ block scripts
         markdownLEFT.onpaste = pasteLEFT;
         markdownLEFT.ondrop = pasteLEFT;
         markdownLEFT.onleave = onleaveLEFT;
-      }
+        onchangeLEFT();
+     }
       markdownRIGHT = document.getElementById("markdownRIGHT");
       if (markdownRIGHT) {
         markdownRIGHT.onchange = onleaveRIGHT;
@@ -441,7 +466,8 @@ block scripts
         markdownRIGHT.onpaste = pasteRIGHT;
         markdownRIGHT.ondrop = pasteRIGHT;
         markdownRIGHT.onleave = onleaveRIGHT;
-      }
+        onchangeRIGHT();
+     }
       if (document.getElementById("text_left")) {
          noTranslationText = document.getElementById("text_left").innerHTML;  
         } else if (document.getElementById("text_right")) {
@@ -461,17 +487,31 @@ block scripts
       if (comm) {
         comm.onchange = onchangeComment;
         comm.onkeyup = onchangeComment;
-        }
-      onchangeComment();
-      onchangeLEFT();
-      onchangeRIGHT();
+        onchangeComment();
+      }
 
       categoryDisplay = document.getElementById("categoryDisplay");
       categoryEN = document.getElementById("categoryEN");
-      categoryEN.onchange = onchangeCategory;
-      onchangeCategory();
-
-
+      if (categoryEN) {
+        categoryEN.onchange = onchangeCategory;
+        onchangeCategory();
+       
+        }
+ 
+      addComment = document.getElementById("AddComment");
+      if (addComment) {
+        f = onChangeField("AddComment");
+        addComment.onchange=f;
+        addComment.onkeyup = f;
+        f();
+      }
+      editComment = document.getElementById("EditComment");
+      if (editComment) {
+        f = onChangeField("EditComment");
+        editComment.onchange = f;
+        editComment.onkeyup = f;
+        f();
+      }
     }
 
     function onleaveLEFT() {
@@ -641,29 +681,29 @@ block scripts
          textLeft.innerHTML = noTranslationText;
         }
       }
-    function onchangeRIGHT() {
-      //console.log("onchangeRight");
-      var mdEN = document.getElementById("markdownRIGHT").value;
-      previewRIGHT = document.getElementById("previewRIGHT");
-      textRight = document.getElementById("text_right");
-      textLeft = document.getElementById("text_left");
-      //console.log("beforeFit");
-      checkForTable("markdownRIGHT");
-      FitToContent("markdownRIGHT");
-      //console.log("AfterFit");
-      previewRIGHT.innerHTML = convert(mdEN);
-      var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
-      if (longLink>=0) {
-        textRight.innerHTML = "Please shorten ["+mdEN.substring(longLink+1,longLink+40)+"...]"
-        textRight.style.backgroundColor ="#FDC6CD";
-        //previewRIGHT.style.backgroundColor="#FDC6CD";
-        
-      }
-      else {
-         textRight.style.backgroundColor ="";
-         textRight.innerHTML = noTranslationText;
-         //previewRIGHT.style.backgroundColor="";
-         
+      function onchangeRIGHT() {
+        //console.log("onchangeRight");
+        var mdEN = document.getElementById("markdownRIGHT").value;
+        previewRIGHT = document.getElementById("previewRIGHT");
+        textRight = document.getElementById("text_right");
+        textLeft = document.getElementById("text_left");
+        //console.log("beforeFit");
+        checkForTable("markdownRIGHT");
+        FitToContent("markdownRIGHT");
+        //console.log("AfterFit");
+        previewRIGHT.innerHTML = convert(mdEN);
+        var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
+        if (longLink>=0) {
+          textRight.innerHTML = "Please shorten ["+mdEN.substring(longLink+1,longLink+40)+"...]"
+          textRight.style.backgroundColor ="#FDC6CD";
+          //previewRIGHT.style.backgroundColor="#FDC6CD";
+          
+        }
+        else {
+           textRight.style.backgroundColor ="";
+           textRight.innerHTML = noTranslationText;
+           //previewRIGHT.style.backgroundColor="";
+           
          }
       }
       function generateGoogleTranslateLink(link,lang) {
@@ -709,11 +749,14 @@ block scripts
         src = "![("+id+")]("+src+")";
         clip(src);
         alert(id+ " flag is copied to clipboard");
-        
-
-               }
+      }
       function onchangeComment() {
         FitToContent("comment");
+      }
+      function onChangeField(field) {
+        return function () {
+          FitToContent(field);
+        }
       }
 
       function FitToContent(id, maxHeight)
@@ -755,6 +798,9 @@ block scripts
            categoryDisplay.innerHTML = placeholder[c];    
           }
       }
+
+
+
    
 
 

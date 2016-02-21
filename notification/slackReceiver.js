@@ -19,7 +19,10 @@ function SlackReceiver(name,webhook,channel) {
   debug("MailReceiver::MailReceiver");
   should(typeof(name)).eql("string");
   should(typeof(webhook)).eql("string");
-  should((channel.substring(0,1)==="#")||(channel.substring(0,1)==="l")).be.True();
+  // If privat channels should be adressed to,
+  // please change condition to
+  // (channel.substring(0,1)==="#")||(channel.substring(0,1)==="@")
+  should((channel.substring(0,1)==="#")).be.True();
   this.name = name;
   this.slack = new Slack(webhook);
   this.channel = channel;
@@ -125,6 +128,41 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user,article,chan
   },callback);
 };
 
+
+SlackReceiver.prototype.addComment = function addComment(user,article,comment,callback) {
+  debug("SlackReceiver::addComment %s",this.name);
+
+
+
+  var articleTitle = articleNameSlack(article,article.title);
+
+  var text=articleTitle + " added comment:"+"\n"+comment;
+
+  var username = botName + "("+user.OSMUser+")";
+
+  this.slack.send({
+    text:text,
+    channel: this.channel,
+    username: username
+  },callback);
+};
+
+SlackReceiver.prototype.editComment = function editComment(user,article,index,comment,callback) {
+  debug("SlackReceiver.prototype.editComment");
+
+
+  var articleTitle = articleNameSlack(article,article.title);
+
+  var text=articleTitle + " changed comment:"+"\n"+comment;
+
+  var username = botName + "("+user.OSMUser+")";
+
+  this.slack.send({
+    text:text,
+    channel: this.channel,
+    username: username
+  },callback);
+};
 
 SlackReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callback) {
   debug("SlackReceiver::updateBlog %s",this.name);
