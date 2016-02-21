@@ -30,10 +30,6 @@
       "wn":{
         "hook":"https://hooks.slack.com/services/articleKey",
         "channel":"#osmbcarticle"
-      },
-      "weekly": {
-        "hook": "https://hooks.slack.com/services/articleKeyWeekly",
-        "channel": "#osmbcarticle"
       }
     }
   },

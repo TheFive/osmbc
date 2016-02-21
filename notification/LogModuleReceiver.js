@@ -123,5 +123,38 @@ LogModuleReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog
     timestamp:timestamp},cb);
 };
 
+LogModuleReceiver.prototype.editComment = function editComment(user,article,index,text,callback){
+  debug("LogModuleReceiver.prototype.editComment");
+  should.exist(article.id);
+  should(article.id).not.equal(0);
+  should(typeof(user)).eql("object");
+  should.exist(user.OSMUser);
+  var timestamp = new Date();
+  logModule.log({oid:article.id,
+    blog:article.blog,
+    user:user.OSMUser,
+    table:"article",
+    property:"comment"+index,
+    from:article.commentList[index].text,
+    to:text,
+    timestamp:timestamp},callback);
+};
+
+LogModuleReceiver.prototype.addComment = function addComment(user,article,text,callback){
+  debug("LogModuleReceiver.prototype.addComment");
+  should.exist(article.id);
+  should(article.id).not.equal(0);
+  should(typeof(user)).eql("object");
+  should.exist(user.OSMUser);
+  var timestamp = new Date();
+  logModule.log({oid:article.id,
+    blog:article.blog,
+    user:user.OSMUser,
+    table:"article",
+    property:"comment"+article.commentList.length,
+    from:"",
+    to:text,
+    timestamp:timestamp},callback);
+};
 
 module.exports = LogModuleReceiver;

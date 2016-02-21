@@ -47,6 +47,12 @@ var layout = {
 function sendMailWithLog(user,mailOptions,callback) {
   debug("sendMailWithLog");
 
+  // for development Reasons, filter Mail Address
+  var allowedMailAddresses = config.getValue("AllowedMailAddresses");
+  if (allowedMailAddresses) {
+    if (allowedMailAddresses.indexOf(mailOptions.to)<0) return callback();
+  }
+
   var appName = config.getValue("AppName");
   if (appName)   mailOptions.subject = "["+appName+"] "+mailOptions.subject;
   transporter.sendMail(mailOptions,function logMail(error,info){
@@ -223,6 +229,84 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
   });
 };
 
+MailReceiver.prototype.addComment = function addComment(user,article,text,callback) {
+  debug("MailReceiver.prototype.addComment");
+
+  should(typeof(text)).eql("string");
+
+
+  var self = this;
+  var newArticle = articleModule.create();
+  var k;
+  for (k in article) {
+    newArticle[k] = article[k];
+  }
+  newArticle.comment = text;
+
+  var logblog = article.blog;
+  var subject = logblog + " comment: "+newArticle.title;
+
+
+  var data = {user:this.user,changeby:user,article:article,newArticle:newArticle,layout:layout,logblog:logblog};
+
+  infomail.render(data, function infomailRender(err, results) {
+    debug('infomailRender');
+    if (err) return callback(err);
+    results.text = htmlToText.fromString(results.html);
+
+    var mailOptions = {
+      from: config.getValue("EmailSender"), // sender address
+      to: self.user.email, // list of receivers
+      subject: subject, // Subject line
+      text: results.text,
+      html: results.html
+    };
+
+    // send mail with defined transport object
+    sendMailWithLog(self.user,mailOptions,callback);
+  });
+};
+
+MailReceiver.prototype.editComment = function editComment(user,article,index,text,callback) {
+  debug("MailReceiver.prototype.addComment");
+
+  should(typeof(text)).eql("string");
+
+
+  var self = this;
+  var newArticle = articleModule.create();
+  var oldArticle = articleModule.create();
+  var k;
+  for (k in article) {
+    newArticle[k] = article[k];
+    oldArticle[k] = article[k];
+  }
+  newArticle.comment = text;
+  oldArticle.comment = article.commentList[index];
+
+  var logblog = article.blog;
+  var subject = logblog + " comment: "+newArticle.title;
+
+
+  var data = {user:this.user,changeby:user,article:oldArticle,newArticle:newArticle,layout:layout,logblog:logblog};
+
+  infomail.render(data, function infomailRender(err, results) {
+    debug('infomailRender');
+    if (err) return callback(err);
+    results.text = htmlToText.fromString(results.html);
+
+    var mailOptions = {
+      from: config.getValue("EmailSender"), // sender address
+      to: self.user.email, // list of receivers
+      subject: subject, // Subject line
+      text: results.text,
+      html: results.html
+    };
+
+    // send mail with defined transport object
+    sendMailWithLog(self.user,mailOptions,callback);
+  });
+};
 
 MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callback) {
   debug("MailReceiver.prototype.updateBlog");
@@ -304,6 +388,24 @@ MailUserReceiver.prototype.updateArticle = function murUpdateArticle(user,articl
     return callback(err);
   });
 };
+MailUserReceiver.prototype.addComment = function addComment(user,article,comment,callback) {
+  debug('MailUserReceiver.prototype.addComment');
+  async.forEachOf(userReceiverMap,function(value,key,cb) {
+    debug('forEachOf'+key);
+    value.addComment(user,article,comment,cb);
+  },function(err) {
+    return callback(err);
+  });
+};
+MailUserReceiver.prototype.editComment = function editComment(user,article,index,comment,callback) {
+  debug('MailUserReceiver.prototype.editComment');
+  async.forEachOf(userReceiverMap,function(value,key,cb) {
+    debug('forEachOf'+key);
+    value.editComment(user,article,index,comment,cb);
+  },function(err) {
+    return callback(err);
+  });
+};
 MailUserReceiver.prototype.updateBlog = function murUpdateBlog(user,blog,change,callback) {
   debug('MailUserReceiver.prototype.updateBlog');
   async.forEachOf(userReceiverMap,function(value,key,cb) {
@@ -329,6 +431,7 @@ function initialise(userList) {
   }
 }
 
+if (messageCenter.global)
 messageCenter.global.registerReceiver(new MailUserReceiver());
 
 function updateUser(user) {

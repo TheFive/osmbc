@@ -145,14 +145,21 @@ Article.prototype.getPreview = function getPreview(style,user) {
 
   var liON = '<li id="'+pageLink+'">\n';
   var liOFF = '</li>';
+  var comment = "";
+  if (this.comment) comment += this.comment;
+  if (this.commentList) {
+    for (var i=0;i<this.commentList.length;i++) {
+      comment += " "+ this.commentList[i].text;
+    }
+  }
 
-  if (options.edit && options.comment && this.comment) {
+  if (options.edit && options.comment && comment !== "") {
     if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
       var commentColour = "blue";
-      if (this.comment.search(new RegExp("@"+user,"i"))>=0) commentColour = "red";
-      if (this.comment.search(new RegExp("@"+options.left_lang,"i"))>=0) commentColour = "orange";
-      if (this.comment.search(new RegExp("@"+options.right_lang,"i"))>=0) commentColour = "orange";
-      if (this.comment.search(new RegExp("@all","i"))>=0) commentColour = "orange";
+      if (comment.search(new RegExp("@"+user,"i"))>=0) commentColour = "red";
+      if (comment.search(new RegExp("@"+options.left_lang,"i"))>=0) commentColour = "orange";
+      if (comment.search(new RegExp("@"+options.right_lang,"i"))>=0) commentColour = "orange";
+      if (comment.search(new RegExp("@all","i"))>=0) commentColour = "orange";
       liON = '<li id="'+pageLink+'" style=" border-left-style: solid; border-color: '+commentColour+';">\n';
     }
   }
@@ -655,6 +662,77 @@ Article.prototype.getCategory = function getCategory(lang) {
   return result;
 };
 
+
+Article.prototype.addComment = function addComment(user,text,callback) {
+  debug('Article.prototype.addComment');
+  should(typeof(user)).eql('object');
+  should(typeof(text)).eql('string');
+  should(typeof(callback)).eql('function');
+  var self = this;
+
+  if (!self.commentList) self.commentList = [];
+  var commentObject = {user:user.OSMUser,timestamp:new Date(),text:text};
+  self.commentList.push(commentObject);
+  async.series([
+    function sendit(cb) {
+      debug('sendit');
+      messageCenter.global.addComment(user,self,text,cb);
+    },function searchStatus(cb) {
+      if (text.indexOf("#solved")>= 0) {
+        self.commentStatus = "solved";
+      }
+      if (text.indexOf("#open") >= 0) {
+        self.commentStatus = "open";
+      }
+      cb();
+    }
+    ],function finalFunction(err){
+      debug('finalFunction');
+      if (err) return callback(err);
+      self.save(callback);
+    }
+  );
+};
+
+
+Article.prototype.editComment = function editComment(user,index,text,callback) {
+  debug('Article.prototype.addComment');
+  should(typeof(user)).eql('object');
+  should(typeof(text)).eql('string');
+  should(typeof(callback)).eql('function');
+  var self = this;
+
+  if (!self.commentList) self.commentList = [];
+  should(index).within(0,self.commentList.length-1);
+  if (user.OSMUser!==self.commentList[index].user) {
+    return callback(new Error("Only Writer is allowed to change a commment"));
+  }
+  async.series([
+    function sendit(cb) {
+      debug('sendit');
+      messageCenter.global.editComment(user,self,index,text,cb);
+    },
+    function setValues(cb){
+      var commentObject = self.commentList[index];
+      commentObject.editstamp = new Date();
+      commentObject.text = text;
+      cb();
+    },function searchStatus(cb) {
+      if (text.indexOf("#solved")>= 0) {
+        self.commentStatus = "solved";
+      }
+      if (text.indexOf("#open") >= 0) {
+        self.commentStatus = "open";
+      }
+      cb();
+    }
+    ],function finalFunction(err){
+      debug('finalFunction');
+      if (err) return callback(err);
+      self.save(callback);
+    }
+  );
+};
 
 // Calculate a Title with a maximal length for Article
 // The properties are tried in this order
