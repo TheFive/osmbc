@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.8.0b](https://github.com/TheFive/osmbc/tree/0.8.0b) (2016-02-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0a...0.8.0b)
+
+**Implemented enhancements:**
+
+- Disable comments from log history in article view. [\#344](https://github.com/TheFive/osmbc/issues/344)
+
+**Fixed bugs:**
+
+- Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
+
+## [0.8.0a](https://github.com/TheFive/osmbc/tree/0.8.0a) (2016-02-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0...0.8.0a)
+
 ## [0.8.0](https://github.com/TheFive/osmbc/tree/0.8.0) (2016-02-21)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7b...0.8.0)
 
@@ -1017,17 +1031,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
