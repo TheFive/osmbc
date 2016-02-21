@@ -203,13 +203,13 @@ ArticleCollectFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,
   debug('ArticleCollectFilter.prototype.updateBlog');
   return cb();
 };
-ArticleCollectFilter.prototype.addComment = function addComment(user,blog,comment,cb) {
+ArticleCollectFilter.prototype.addComment = function addComment(user,article,comment,cb) {
   debug('ArticleCollectFilter.prototype.addComment');
-  return cb();
+  this.receiver.addComment(user,article,comment,cb);
 };
-ArticleCollectFilter.prototype.editComment = function editComment(user,blog,index,comment,cb) {
+ArticleCollectFilter.prototype.editComment = function editComment(user,article,index,comment,cb) {
   debug('ArticleCollectFilter.prototype.editComment');
-  return cb();
+  this.receiver.editComment(user,article,index,comment,cb);
 };
 
 

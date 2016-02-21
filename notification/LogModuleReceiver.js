@@ -135,7 +135,7 @@ LogModuleReceiver.prototype.editComment = function editComment(user,article,inde
     user:user.OSMUser,
     table:"article",
     property:"comment"+index,
-    from:article.commentList[index],
+    from:article.commentList[index].text,
     to:text,
     timestamp:timestamp},callback);
 };

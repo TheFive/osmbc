@@ -211,10 +211,24 @@ exports.checkData = function checkData(data,callback) {
         });
       } else cb3();
     },
-    function importAllChanges(cb4) {
-      debug('importAllChanges');
-      if (typeof(data.change)!='undefined') {  
-        should(false).be.True(); 
+    function checkAllChanges(cb4) {
+      debug('checkAllChanges');
+      if (typeof(data.change)!='undefined') {
+        async.each(data.change,function checkOneChange(d,cb){
+          logModule.find(d,function(err,result){
+            should.not.exist(err);
+            should( result && result.length>0).be.True();
+            cb();
+          });
+        },function(err) {
+          should.not.exist(err);
+          logModule.find({},function(err,result){
+            should.not.exist(err);
+            should.exist(result);
+            should(result.length).eql(data.change.length);
+            cb4();
+          });
+        });
       } else cb4();
     }
 

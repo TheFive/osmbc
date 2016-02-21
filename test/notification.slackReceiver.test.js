@@ -47,18 +47,61 @@ describe('notification/slackReceiver', function() {
         });
       });
     });
-    it('should slack message, when adding comment',function (bddone){
+    it('should slack message, when adding comment (Old Format)',function (bddone){
       var slack = nock('https://hooks.slack.com/')
-                .post('/services/articleKey',checkPostJson(
-                  {"text":"<https://testosm.bc/article/1|Test Title> added comment\n",
-                  "username":"testbc(testuser)",
-                  "channel":"#osmbcarticle"}))
-                .reply(200,"ok");
+        .post('/services/articleKey',checkPostJson(
+          {"text":"<https://testosm.bc/article/1|Test Title> added comment\n",
+            "username":"testbc(testuser)",
+            "channel":"#osmbcarticle"}))
+        .reply(200,"ok");
       articleModule.createNewArticle(function(err,article){
         article.setAndSave({OSMUser:"testuser"},{blog:"WN789",title:"Test Title",comment:"Information for @User3"},function(err) {
           should.not.exist(err);
           should(slack.isDone()).is.True();
           bddone();
+        });
+      });
+    });
+    it('should slack message, when adding comment',function (bddone){
+      var slack = nock('https://hooks.slack.com/')
+        .post('/services/articleKey',checkPostJson(
+          {"text":"<https://testosm.bc/article/1|Test Title> added comment:\nInformation for @User3",
+            "username":"testbc(testuser)",
+            "channel":"#osmbcarticle"}))
+        .reply(200,"ok");
+      articleModule.createNewArticle({blog:"WN789",title:"Test Title"},function(err,article){
+        should.not.exist(err);
+        article.addComment({OSMUser:"testuser"},"Information for @User3",function(err) {
+          should.not.exist(err);
+          should(slack.isDone()).is.True();
+          bddone();
+        });
+      });
+    });
+    it('should slack message, when changing comment',function (bddone){
+      var slack = nock('https://hooks.slack.com/')
+        .post('/services/articleKey',checkPostJson(
+          {"text":"<https://testosm.bc/article/1|Test Title> added comment:\nInformation for @User3",
+            "username":"testbc(testuser)",
+            "channel":"#osmbcarticle"}))
+        .reply(200,"ok");
+      articleModule.createNewArticle({blog:"WN789",title:"Test Title"},function(err,article){
+        should.not.exist(err);
+        article.addComment({OSMUser:"testuser"},"Information for @User3",function(err) {
+          should.not.exist(err);
+          var slack2 = nock('https://hooks.slack.com/')
+            .post('/services/articleKey',checkPostJson(
+              {"text":"<https://testosm.bc/article/1|Test Title> changed comment:\nInformation for all",
+                "username":"testbc(testuser)",
+                "channel":"#osmbcarticle"}))
+            .reply(200,"ok");
+          article.editComment({OSMUser:"testuser"},0,"Information for all",function(err){
+            should.not.exist(err);
+            should(slack.isDone()).is.True();
+            should(slack2.isDone()).is.True();
+            bddone();
+          });
+
         });
       });
     });

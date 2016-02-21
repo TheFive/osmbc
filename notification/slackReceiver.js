@@ -130,6 +130,7 @@ SlackReceiver.prototype.addComment = function addComment(user,article,comment,ca
   debug("SlackReceiver::addComment %s",this.name);
 
 
+
   var articleTitle = articleNameSlack(article,article.title);
 
   var text=articleTitle + " added comment:"+"\n"+comment;
@@ -143,9 +144,21 @@ SlackReceiver.prototype.addComment = function addComment(user,article,comment,ca
   },callback);
 };
 
-SlackReceiver.prototype.editComment = function editComment(user,article,index,text,callback) {
+SlackReceiver.prototype.editComment = function editComment(user,article,index,comment,callback) {
   debug("SlackReceiver.prototype.editComment");
-  return callback();
+
+
+  var articleTitle = articleNameSlack(article,article.title);
+
+  var text=articleTitle + " changed comment:"+"\n"+comment;
+
+  var username = botName + "("+user.OSMUser+")";
+
+  this.slack.send({
+    text:text,
+    channel: this.channel,
+    username: username
+  },callback);
 };
 
 SlackReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callback) {
