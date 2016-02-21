@@ -25,6 +25,7 @@ var logModule     = require('../model/logModule.js');
 var userModule     = require('../model/user.js');
 
 var mailReceiver   = require('../notification/mailReceiver.js');
+var messageCenter  = require('../notification/messageCenter.js');
 
 
 
@@ -58,6 +59,7 @@ exports.getJsonWithId = function getJsonWithId(table,id,cb) {
 
 exports.clearDB = function clearDB(done) {
   should(config.env).equal("test");
+  should.exist(messageCenter.global);
   mailReceiver.initialise([]);
   async.series([
     function(done) {config.initialise(done);},

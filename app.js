@@ -32,11 +32,13 @@ var layout     = require('./routes/layout').router;
 var userModule = require('./model/user.js');
 
 var mailReceiver = require('./notification/mailReceiver.js');
+var messageCenter = require('./notification/messageCenter.js');
 
 
 
 // Initialise config Module
 config.initialise();
+messageCenter.initialise();
 var htmlRoot = config.getValue("htmlroot");
 console.log("Express Routes set to: SERVER"+htmlRoot);
 

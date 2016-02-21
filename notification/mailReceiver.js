@@ -421,18 +421,23 @@ MailUserReceiver.prototype.sendInfo = function sendInfo(data,cb) {
   return cb();
 };
 
+var registered = false;
 
 function initialise(userList) {
   debug('initialise');
+  messageCenter.initialise();
   userReceiverMap = {};
   for (var i=0;i<userList.length;i++) {
     var u = userList[i];
     updateUser(u);
   }
+  should.exist(messageCenter.global);
+  if (!registered) {
+    messageCenter.global.registerReceiver(new MailUserReceiver());
+    registered = true;
+  }
 }
 
-if (messageCenter.global)
-messageCenter.global.registerReceiver(new MailUserReceiver());
 
 function updateUser(user) {
   debug('updateUser');

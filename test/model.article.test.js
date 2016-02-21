@@ -14,6 +14,9 @@ var testutil = require('./testutil.js');
 var articleModule = require('../model/article.js');
 var logModule     = require('../model/logModule.js');
 var blogModule    = require('../model/blog.js');
+var messageCenter = require('../notification/messageCenter.js');
+
+
 
 
 
@@ -31,6 +34,7 @@ describe('model/article', function() {
                 .post(/\/services\/.*/) 
                 .times(999) 
                 .reply(200,"ok");
+    messageCenter.initialise();
 
     testutil.clearDB(bddone);
   }); 
