@@ -19,9 +19,7 @@ function convertComment(article,changes){
 
   article.commentList = [];
   if (!article.comment) return;
-  console.log("----------- "+article.title+"----------------");
-  console.log(article.id);
-
+ 
 
   for (var i=0;i<changes.length;i++) {
     var from = "";
@@ -54,9 +52,6 @@ function convertComment(article,changes){
       }
     }
   }
-  console.log(article.comment);
-  console.log(article.commentList);
-
 }
 
 var blogs = {};
