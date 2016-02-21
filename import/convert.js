@@ -1,3 +1,4 @@
+"use strict";
 
 var articleModule = require('../model/article.js');
 var userModule = require('../model/user.js');
@@ -7,9 +8,56 @@ var config= require('../config.js');
 var async = require('async');
 var ProgressBar = require('progress');
 var pgMap     = require('../model/pgMap.js');
+var jsdiff = require('diff');
 
 
 config.initialise();
+
+
+
+function convertComment(article,changes){
+
+  article.commentList = [];
+  if (!article.comment) return;
+  console.log("----------- "+article.title+"----------------");
+  console.log(article.id);
+
+
+  for (var i=0;i<changes.length;i++) {
+    var from = "";
+    var to = "";
+
+    var change = changes[i];
+
+    if (change.from) from = String(change.from);
+    if (change.to) to = String(change.to);
+
+
+
+    // first check on only spaces
+    var diff = jsdiff.diffChars(from,to);
+
+  
+    diff.forEach(function(part){
+      if (part.added) {
+          article.commentList.push(
+            {timestamp:change.timestamp,
+              user:change.user,
+              text:"inserted: "+part.value});
+      }
+      if (part.removed) { // part deleted
+        article.commentList.push(
+          {timestamp:change.timestamp,
+            user:change.user,
+            text:"removed: "+part.value});
+
+      }
+    });
+  }
+  console.log(article.comment);
+  console.log(article.commentList);
+
+}
 
 var blogs = {};
 var articlesMap = {};
@@ -30,9 +78,17 @@ async.series([
           var save=false;
 
           // place convert code here
+
+          logModule.find({table:"article",oid:item.id,property:"comment"},{column:"timestamp",desc:false},function(err,logs){
+            if (err) return cb(err);
+
+              convertComment(item,logs);
+              if (item.commentList.length>0) save = true;
+
+            progress.tick();
+            if (save) item.save(cb); else cb();
+          });
       
-          progress.tick();
-          if (save) item.save(cb); else cb();
         },function (){done();});
       }
     });},
@@ -99,26 +155,7 @@ async.series([
 
           // place convert code here
 
-          // check for objects i log history.
-          if (typeof(item.user)=='object') {
-            console.log("Found defect User in log");
-            item.user = item.user.displayName;
-            save = true;
-          }
 
-          // try to set the blog field for the log
-          if (item.table == "article" && item.oid) {
-            if (articlesMap[item.oid]) {
-              item.blog = articlesMap[item.oid].blog;
-              save = true;
-            }
-          }
-          if (item.property=="blog") {
-                item.blog = item.to;
-                save = true;
-          }   
-        
-       
         
          
 
