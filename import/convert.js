@@ -37,8 +37,8 @@ function convertComment(article,changes){
     // first check on only spaces
     var diff = jsdiff.diffChars(from,to);
 
-  
-    diff.forEach(function(part){
+    for (var k=0;k<diff.length;k++ ) {
+      var part = diff[k];
       if (part.added) {
           article.commentList.push(
             {timestamp:change.timestamp,
@@ -52,7 +52,7 @@ function convertComment(article,changes){
             text:"removed: "+part.value});
 
       }
-    });
+    }
   }
   console.log(article.comment);
   console.log(article.commentList);

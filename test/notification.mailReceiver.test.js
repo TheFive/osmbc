@@ -75,7 +75,7 @@ describe('notification/mailReceiver', function() {
         });
       });
     });
-    it('should send out mail, when adding comment.',function (bddone){
+    it('should send out mail, when adding comment. (old Format)',function (bddone){
       articleModule.createNewArticle(function(err,article){
         article.setAndSave({OSMUser:"testuser"},{blog:"WN789",comment:"Information for @User3"},function(err) {
           should.not.exist(err);
