@@ -19,7 +19,10 @@ function SlackReceiver(name,webhook,channel) {
   debug("MailReceiver::MailReceiver");
   should(typeof(name)).eql("string");
   should(typeof(webhook)).eql("string");
-  should((channel.substring(0,1)==="#")||(channel.substring(0,1)==="l")).be.True();
+  // If privat channels should be adressed to,
+  // please change condition to
+  // (channel.substring(0,1)==="#")||(channel.substring(0,1)==="@")
+  should((channel.substring(0,1)==="#")).be.True();
   this.name = name;
   this.slack = new Slack(webhook);
   this.channel = channel;
