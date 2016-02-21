@@ -449,7 +449,11 @@ block scripts
     
 
     function init() {
-   
+      if (document.getElementById("text_left")) {
+        noTranslationText = document.getElementById("text_left").innerHTML;
+      } else if (document.getElementById("text_right")) {
+        noTranslationText = document.getElementById("text_right").innerHTML;
+      }
       markdownLEFT = document.getElementById("markdownLEFT");
       if (markdownLEFT) {
         markdownLEFT.onchange = onleaveLEFT;
@@ -468,11 +472,7 @@ block scripts
         markdownRIGHT.onleave = onleaveRIGHT;
         onchangeRIGHT();
      }
-      if (document.getElementById("text_left")) {
-         noTranslationText = document.getElementById("text_left").innerHTML;  
-        } else if (document.getElementById("text_right")) {
-         noTranslationText = document.getElementById("text_right").innerHTML;  
-        }
+
       
      
       coll = document.getElementById("collection");
