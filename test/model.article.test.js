@@ -1,14 +1,12 @@
 "use strict";
-// Article createNewArticle
-// create article with prototyp
-// create Article without prototyp
-// create article with ID (non existing in db, existing in DB)
+
 
 
 var async  = require('async');
 var should = require('should');
 var nock   = require('nock');
 var debug  = require('debug')('OSMBC:test:article.test');
+var sinon  = require('sinon');
 
 
 var testutil = require('./testutil.js');
@@ -572,67 +570,67 @@ describe('model/article', function() {
       bddone();
     });
     it('should generate a preview with a comment and no status',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo"});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}]});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and open status',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and open status checking Marktext',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview (no markdown) with a comment and open status',function (bddone) {
-      var article = articleModule.create({collection:"small collection",comment:"Hallo @EN",commentStatus:"open"});
+      var article = articleModule.create({collection:"small collection",commentList:[{text:"Hallo @EN"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
       bddone();
     });
     it('should generate a preview (no markdown) with a comment and open status case insensitive test',function (bddone) {
-      var article = articleModule.create({collection:"small collection",comment:"Hallo @en",commentStatus:"open"});
+      var article = articleModule.create({collection:"small collection",commentList:[{text:"Hallo @en"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
       bddone();
     });
     it('should generate a preview with a comment and open status and reference for all user',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo @all",commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo @all"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: orange;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and open status and reference for a specific user',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo @user",commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo @user"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","user");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: red;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and open status and reference for a specific language',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo @DE",commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"simpel text"},{text:"Hallo @DE"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","user");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: orange;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and solved status',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",comment:"Hallo",commentStatus:"solved"});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"solved"}],commentStatus:"solved"});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview Github Error #102 in german',function (bddone) {
-      var article = articleModule.create({markdownDE:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
+      var article = articleModule.create({markdownDE:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",commentList:[{text:"Hallo"}],commentStatus:"solved"});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0">\n<p>Howto place an issue in OSMBC?</p>\n<ol>\n<li>open OSMBC,</li>\n<li>click Collect,</li>\n<li>choose a category from the pop up window</li>\n<li>write a Titel: example: Lidar,</li>\n<li>write at text or put a link</li>\n<li>click OK\n--- reday ---</li>\n</ol>\n<p>If you like to write the news directly, do as follows:</p>\n<ol>\n<li>click Edit</li>\n<li>write your news in English (you can see it in</li>\n<li>click OK and ...\n... that\'s it.</li>\n</ol>\n <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</li>');
       bddone();
     });
     it('should generate a preview Github Error #102 in english',function (bddone) {
-      var article = articleModule.create({markdownEN:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",comment:"Hallo",commentStatus:"solved"});
+      var article = articleModule.create({markdownEN:"Howto place an issue in OSMBC? \n\n1. open OSMBC, \n1. click Collect,\n1. choose a category from the pop up window\n1. write a Titel: example: Lidar,\n1. write at text or put a link\n1. click OK\n--- reday --- \n\nIf you like to write the news directly, do as follows:\n\n1. click Edit\n2. write your news in English (you can see it in \n3. click OK and ...\n... that's it.",commentList:[{text:"Hallo"}],commentStatus:"solved"});
       var result = article.getPreview("fullEN","TheFive");
       should(result).equal('<li id="undefined_0">\n<p>Howto place an issue in OSMBC?</p>\n<ol>\n<li>open OSMBC,</li>\n<li>click Collect,</li>\n<li>choose a category from the pop up window</li>\n<li>write a Titel: example: Lidar,</li>\n<li>write at text or put a link</li>\n<li>click OK\n--- reday ---</li>\n</ol>\n<p>If you like to write the news directly, do as follows:</p>\n<ol>\n<li>click Edit</li>\n<li>write your news in English (you can see it in</li>\n<li>click OK and ...\n... that\'s it.</li>\n</ol>\n <a href="/article/0?style=fullEN"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullEN&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</li>');
       bddone();
@@ -716,6 +714,115 @@ describe('model/article', function() {
         should(result[2].blog).equal("3");
         bddone();
       });
+    });
+  });
+  describe("comments",function(){
+    var clock;
+    before(function (bddone){
+      this.clock = sinon.useFakeTimers();
+      clock = this.clock;
+
+      bddone();
+    }); 
+    after(function(bddone){
+      this.clock.restore();
+      bddone();
+    });
+    it('should add a comment',function(bddone){
+    
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+            clear:true,
+            article:[{blog:"WN1",collection:"something",title:"test"}]};
+      var dataAfter = { 
+            article:[{blog:"WN1",collection:"something",title:"test",id:'1',version:2,
+                      commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"}]}],
+            change:[{blog:"WN1",oid:1,table:"article",from:"",to:"a comment",user:"Test",timestamp:timestampIso}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.addComment({OSMUser:"Test"},"a comment",cb);
+        });
+      };        
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should add a second comment',function(bddone){
+    
+      var timestamp = new Date();
+      var timestampIso = new Date().toISOString();
+      var dataBefore = {
+            clear:true,
+            article:[{blog:"WN1",collection:"something",title:"test",
+                     commentList:[{user:"Test",timestamp:timestamp,text:"a comment"}]}]};
+      var dataAfter = { 
+            article:[{blog:"WN1",collection:"something",title:"test",
+                      commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"},
+                                   {user:"Test2",timestamp:timestampIso,text:"a second comment"}]}
+                    ],
+            change:[{blog:"WN1",oid:1,table:"article",from:"",to:"a second comment",user:"Test2",timestamp:timestampIso}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          article.addComment({OSMUser:"Test2"},"a second comment",cb);
+        });
+      };        
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should edit a comment',function(bddone){
+    
+      var timestamp = new Date();
+      var timestamp2 = new Date();
+      timestamp2.setTime(timestamp2.getTime()+200);
+      var dataBefore = {
+            clear:true,
+            article:[{blog:"WN1",collection:"something",title:"test",
+                     commentList:[{user:"Test",timestamp:timestamp,text:"a comment"}]}]};
+      var dataAfter = { 
+            article:[{blog:"WN1",collection:"something",title:"test",
+                      commentList:[{user:"Test",
+                                    timestamp:timestamp.toISOString(),
+                                    editstamp:timestamp2.toISOString(),
+                                    text:"a changed comment"}]}],
+            change:[{blog:"WN1",oid:1,table:"article",property:"comment0",from:"a comment",to:"a changed comment",user:"Test",timestamp:timestamp2.toISOString()}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          clock.tick(200);
+
+          should.not.exist(err);
+          article.editComment({OSMUser:"Test"},0,"a changed comment",cb);
+        });
+      };        
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should allow only user wrote a comment to edit a comment',function(bddone){
+    
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+            clear:true,
+            article:[{blog:"WN1",collection:"something",title:"test",
+                     commentList:[{user:"Test",timestamp:timestamp,text:"a comment"}]}]};
+      var dataAfter = { 
+            article:[{blog:"WN1",collection:"something",title:"test",
+                      commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"}]}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          clock.tick();
+
+          should.not.exist(err);
+          article.editComment({OSMUser:"Test2"},0,"a changed comment",function (err){
+            should(err).eql(new Error("Only Writer is allowed to change a commment"));
+            return cb();
+          });
+        });
+      };        
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
     });
   });
 });
