@@ -33,11 +33,16 @@ function createNewUser (proto,callback) {
   }
   if (proto) should.not.exist(proto.id);
   var user = create(proto);
-
-  user.save(function updateUser(err,result){
-     if (err) return callback(err,result);
-     mailReceiver.updateUser(result);
-     callback(null,result);
+  find({OSMUser:user.OSMUser},function (err,result){
+    if (err) return callback(err);
+    if (result && result.length>0) {
+      return callback(new Error("User >"+user.OSMUser+"< already exists."));
+    }
+    user.save(function updateUser(err,result){
+      if (err) return callback(err,result);
+      mailReceiver.updateUser(result);
+      callback(null,result);
+    });
   });
 }
 
@@ -124,10 +129,10 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
   var sendWelcomeEmail = false;
 
   if (data.email && data.email.trim()!=="" && data.email !== self.email) {
-    if (self.OSMUser !== user) return callback(new Error("EMail adress can only be changed by the user himself."));
+    if (self.OSMUser !== user) return callback(new Error("EMail address can only be changed by the user himself."));
     if (data.email !=="resend") {
       if (!emailValidator.validate(data.email)) {
-        var error = new Error("Invalid Email Adress: "+data.email);
+        var error = new Error("Invalid Email Address: "+data.email);
         return callback(error);
       }
       if (data.email !== "") {
@@ -145,58 +150,72 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
     sendWelcomeEmail = true;
 
   }
-
-
-  async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
-    // There is no Value for the key, so do nothing
-    if (typeof(value)=='undefined') return cb_eachOf();
-
-    // The Value to be set, is the same then in the object itself
-    // so do nothing
-    if (value === self[key]) return cb_eachOf();
-    if (JSON.stringify(value)===JSON.stringify(self[key])) return cb_eachOf();
-    if (typeof(self[key])==='undefined' && value === '') return cb_eachOf();
-
-    
-    debug("Set Key %s to value >>%s<<",key,value);
-    debug("Old Value Was >>%s<<",self[key]);
-
-
-    async.series ( [
-        function(cb) {
-          // do not log validation key in logfile
-          var toValue = value;
-          // Hide Validation Key not to show to all users
-          if (key === "emailValidationKey") return cb();
-
-          messageCenter.global.sendInfo({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:toValue},cb);
-        },
-        function(cb) {
-          self[key] = value;
-          cb();
-        }
-      ],function(err){
-        cb_eachOf(err);
-      });
-
-  },function setAndSaveFinalCB(err) {
-    debug('setAndSaveFinalCB');
-    if (err) return callback(err);
-    self.save(function (err) {
-      // Inform Mail Receiver Module, that there could be a change
+  async.series([
+    function checkUserName(cb){
+      if (data.OSMUser && data.OSMUser !== self.OSMUser) {
+        find({OSMUser:data.OSMUser},function(err,result) {
+          if (err) return callback(err);
+          if (result && result.length) {
+            return cb(new Error("User >" + data.OSMUser + "< already exists."));
+          } else return cb();
+        });
+      }
+      else return cb();
+    }
+  ],function finalFunction(err) {
       if (err) return callback(err);
-      // tell mail receiver to update the information about the users
-      mailReceiver.updateUser(self);
-      if (sendWelcomeEmail) {
-        var m = new mailReceiver.MailReceiver(self);
-        // do not wait for mail to go out. 
-        // mail is logged in outgoing mail list
-        m.sendWelcomeMail(user,function (){});
-      } 
-      return callback();
+      async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
+        // There is no Value for the key, so do nothing
+        if (typeof(value)=='undefined') return cb_eachOf();
+
+        // The Value to be set, is the same then in the object itself
+        // so do nothing
+        if (value === self[key]) return cb_eachOf();
+        if (JSON.stringify(value)===JSON.stringify(self[key])) return cb_eachOf();
+        if (typeof(self[key])==='undefined' && value === '') return cb_eachOf();
+
+
+        debug("Set Key %s to value >>%s<<",key,value);
+        debug("Old Value Was >>%s<<",self[key]);
+
+
+        async.series ( [
+          function(cb) {
+            // do not log validation key in logfile
+            var toValue = value;
+            // Hide Validation Key not to show to all users
+            if (key === "emailValidationKey") return cb();
+
+            messageCenter.global.sendInfo({oid:self.id,user:user,table:"usert",property:key,from:self[key],to:toValue},cb);
+          },
+          function(cb) {
+            self[key] = value;
+            cb();
+          }
+        ],function(err){
+          cb_eachOf(err);
+        });
+
+      },function setAndSaveFinalCB(err) {
+        debug('setAndSaveFinalCB');
+        if (err) return callback(err);
+        self.save(function (err) {
+          // Inform Mail Receiver Module, that there could be a change
+          if (err) return callback(err);
+          // tell mail receiver to update the information about the users
+          mailReceiver.updateUser(self);
+          if (sendWelcomeEmail) {
+            var m = new mailReceiver.MailReceiver(self);
+            // do not wait for mail to go out.
+            // mail is logged in outgoing mail list
+            m.sendWelcomeMail(user,function (){});
+          }
+          return callback();
+        });
+      });
     });
-  });
 };
+
 
 
 User.prototype.getNotificationStatus = function getNotificationStatus(channel, type) {

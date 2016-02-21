@@ -79,6 +79,7 @@ describe('model/changes',function() {
       var change = new logModule.Class({to:"This is The origin text with [markup](www.google.de)",from:"This is The origin text with [markup] (www.go ogle.de)"});
       should(change.htmlDiffText(40)).eql('<span class="osmbc-deleted">Only spaces removed</span>');
     });
+
     it('should find find changes in long text',function(){
       var markdownDE = fs.readFileSync(path.resolve(__dirname,"data","model.longmarkdownDE.txt"),"UTF8");
       var markdownDE2 = fs.readFileSync(path.resolve(__dirname,"data","model.longmarkdownDE2.txt"),"UTF8");
