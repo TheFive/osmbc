@@ -6,9 +6,9 @@
              {"blog":"BLOG","title":"BLOG","markdownDE":"* Dies ist ein grosser Testartikel, mit Verweis auf [link](https://link.de)","category":"Keine"},
              {"blog":"Alternativ Blog","markdownDE":"* Dies ist ein grosser Testartikel. mit Verweis auf [link](https://link.de)","category":"Keine"}],
   
-  "change":[{"oid":{"table":"article","title":"BLOG"},"table":"article","timestamp": "2015-08-26T17:11:50.654Z","from":"notitle","to":"test","field":"title"},
-            {"oid":{"table":"article","title":"BLOG"},"table":"article","timestamp": "2015-08-26T17:11:51.654Z","from":"test","to":"blog","field":"title"},
-            {"oid":{"table":"article","category":"Mapping"},"table":"article","timestamp": "2015-08-26T17:11:45.654Z","from":"test","to":"test","field":"title"}],
+  "change":[{"oid":{"table":"article","title":"BLOG"},"table":"article","timestamp": "2015-08-26T17:11:50.654Z","from":"notitle","to":"test","property":"title"},
+            {"oid":{"table":"article","title":"BLOG"},"table":"article","timestamp": "2015-08-26T17:11:51.654Z","from":"test","to":"blog","property":"title"},
+            {"oid":{"table":"article","category":"Mapping"},"table":"article","timestamp": "2015-08-26T17:11:45.654Z","from":"test","to":"test","property":"title"}],
 
 
   "testArticleTitle":"BLOG",
@@ -16,10 +16,10 @@
 
   "result":{"articleText":"<ul><li id=\"blog_blog\">\n<p>Dies ist ein grosser Testartikel, mit Verweis auf <a href=\"https://link.de\">link</a></p>\n\n</li></ul>",
           "params":{"edit":null,"left_lang":"EN","right_lang":"--","style":"overviewEN","editComment":null},
-         "changes": [ {"field": "title","from": "test", "oid": "1","table": "article",
+         "changes": [ {"property": "title","from": "test", "oid": "1","table": "article",
           "timestamp": "2015-08-26T17:11:51.654Z",
           "to": "blog"
-       },{"field": "title","from": "notitle", "oid": "1","table": "article",
+       },{"property": "title","from": "notitle", "oid": "1","table": "article",
           "timestamp": "2015-08-26T17:11:50.654Z",
           "to": "test"
        }
