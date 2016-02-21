@@ -15,10 +15,12 @@ var userModule    = require('../model/user.js');
 
 var mailReceiver  = require('../notification/mailReceiver.js');
 
+var messageCenter = require('../notification/messageCenter.js');
 
 
 
 
+messageCenter.initialise();
 
 
 describe('notification/mailReceiver', function() {
@@ -57,6 +59,7 @@ describe('notification/mailReceiver', function() {
         article.setAndSave({OSMUser:"testuser"},{blog:"WN789",collection:"newtext",title:"Test Title"},function(err) {
           setTimeout(function (){
             should.not.exist(err);
+            should(mailReceiver.for_test_only.transporter.sendMail.callCount).eql(1);
             should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
             var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">Test Title</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p><h3>title was added</h3><p>Test Title</p>';
