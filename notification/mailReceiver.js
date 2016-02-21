@@ -47,6 +47,12 @@ var layout = {
 function sendMailWithLog(user,mailOptions,callback) {
   debug("sendMailWithLog");
 
+  // for development Reasons, filter Mail Address
+  var allowedMailAddresses = config.getValue("AllowedMailAddresses");
+  if (allowedMailAddresses) {
+    if (allowedMailAddresses.indexOf(mailOptions.to)<0) return callback();
+  }
+
   var appName = config.getValue("AppName");
   if (appName)   mailOptions.subject = "["+appName+"] "+mailOptions.subject;
   transporter.sendMail(mailOptions,function logMail(error,info){
@@ -425,6 +431,7 @@ function initialise(userList) {
   }
 }
 
+if (messageCenter.global)
 messageCenter.global.registerReceiver(new MailUserReceiver());
 
 function updateUser(user) {

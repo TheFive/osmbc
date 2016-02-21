@@ -325,22 +325,11 @@ block content
               .panel-body(id="previewRIGHT")
                   :verbatim
                     !{article["textHtml"+params.right_lang]}
-          
-      .row
-        if ((article.comment && article.comment!="") || (article.commentList && article.commentList.length>0))
-          p= "(Comment is "+article.commentStatus+") (use Edit to change Status)"
-      .row
-         if (article.comment && article.comment!="")
-          .col-md-12
-            h3
-              |Comments (old)
-            :verbatim
-            |<pre>!{article.comment} </pre>
 
 
   .row
     if (article.commentList)
-      h3="Comments"
+      h3="Comments ("+article.commentStatus+")"
       each comment,i in article.commentList
         .row
           .col-md-12
@@ -369,6 +358,7 @@ block content
             textarea.form-control(name="comment" id="comment" rows=7)
             button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('AddComment').submit();") Add Comment
             button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}';") Cancel
+            span.small.text-muted Use #solved and #open in text to solve or reopen a comment.
 
   .row
       if articleReferences.count >= 1
