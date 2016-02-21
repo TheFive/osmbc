@@ -374,12 +374,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   should(typeof(data)).equal('object');
   should(typeof(callback)).equal('function');
   listOfOrphanBlog = null;
-  // trim all markdown Values
-  for (var k in data) {
-    if (k.substring(0,8)== "markdown" && data[k]) {
-      data[k]=data[k].trim();
-    }
-  }
+
   var self = this;
   delete self.lock;
 
@@ -439,6 +434,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
     for (var k in data) {
       if (data[k] === self[k]) delete data[k];
       if (data[k] === '' && typeof(self[k])=='undefined') delete data[k];
+      if (data[k]) data[k] = data[k].trim();
     }
     async.series(
       [function logIt (cb) {
@@ -449,7 +445,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
       },
       function putValues (cb) {
         for (k in data) {
-          if (data[k]) self[k]=data[k];
+          if (typeof(data[k])!=='undefined') self[k]=data[k];
         }
         cb();
       }], 
