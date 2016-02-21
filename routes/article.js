@@ -99,7 +99,7 @@ function renderArticleId(req,res,next) {
       function (callback) {
         debug('renderArticleId->changes');
 
-        logModule.find({oid:id,table:"article"},{column:"timestamp",desc :true},function(err,result) {
+        logModule.find(" where data->>'oid' ='"+id+"' and data->>'table' = 'article' and data->>'property' not like 'comment%' ",{column:"timestamp",desc :true},function(err,result) {
           debug('renderArticleId->findLog');
 
           callback(err,result);
@@ -124,6 +124,7 @@ function renderArticleId(req,res,next) {
       }},
         function (err,result) {
           debug('renderArticleId->finalFunction');
+          if (err) return next(err);
 
 
           var languages = config.getLanguages();
