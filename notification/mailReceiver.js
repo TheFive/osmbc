@@ -226,7 +226,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
 MailReceiver.prototype.addComment = function addComment(user,article,text,callback) {
   debug("MailReceiver.prototype.addComment");
 
-  should(typeof(change)).eql("object");
+  should(typeof(text)).eql("string");
 
 
   var self = this;
@@ -261,10 +261,10 @@ MailReceiver.prototype.addComment = function addComment(user,article,text,callba
   });
 };
 
-MailReceiver.prototype.updateComment = function updateComment(user,article,index,text,callback) {
+MailReceiver.prototype.editComment = function editComment(user,article,index,text,callback) {
   debug("MailReceiver.prototype.addComment");
 
-  should(typeof(change)).eql("object");
+  should(typeof(text)).eql("string");
 
 
   var self = this;

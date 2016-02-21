@@ -737,7 +737,8 @@ describe('model/article', function() {
             article:[{blog:"WN1",collection:"something",title:"test"}]};
       var dataAfter = { 
             article:[{blog:"WN1",collection:"something",title:"test",id:'1',version:2,
-                      commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"}]}]};
+                      commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"}]}],
+            change:[{blog:"WN1",oid:1,table:"article",from:"",to:"a comment",user:"Test",timestamp:timestampIso}]};
       var testFunction = function testFunction(cb) {
         articleModule.findById(1,function(err,article){
           should.not.exist(err);
@@ -760,7 +761,8 @@ describe('model/article', function() {
             article:[{blog:"WN1",collection:"something",title:"test",
                       commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"},
                                    {user:"Test2",timestamp:timestampIso,text:"a second comment"}]}
-                    ]};
+                    ],
+            change:[{blog:"WN1",oid:1,table:"article",from:"",to:"a second comment",user:"Test2",timestamp:timestampIso}]};
       var testFunction = function testFunction(cb) {
         articleModule.findById(1,function(err,article){
           should.not.exist(err);
@@ -770,7 +772,7 @@ describe('model/article', function() {
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
 
     });
-    it('should add edit a comment',function(bddone){
+    it('should edit a comment',function(bddone){
     
       var timestamp = new Date();
       var timestamp2 = new Date();
@@ -784,7 +786,8 @@ describe('model/article', function() {
                       commentList:[{user:"Test",
                                     timestamp:timestamp.toISOString(),
                                     editstamp:timestamp2.toISOString(),
-                                    text:"a changed comment"}]}]};
+                                    text:"a changed comment"}]}],
+            change:[{blog:"WN1",oid:1,table:"article",property:"comment0",from:"a comment",to:"a changed comment",user:"Test",timestamp:timestamp2.toISOString()}]};
       var testFunction = function testFunction(cb) {
         articleModule.findById(1,function(err,article){
           clock.tick(200);
