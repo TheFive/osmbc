@@ -253,13 +253,13 @@ module.exports = {
      },
      "--unpublished--": {
           "EN": "--unpublished--",
-          "DE": "--unpublished--",
+          "DE": "--unveröffentlicht--",
           "ES": "--unpublished--",
           "FR": "--unpublished--",
           "CZ": "--unpublished--",
           "PT": "--não publicado--",
           "RU": "--не опубликовано--",
-          "JP": "--unpublished--",
+          "JP": "--未発表--",
           "ID": "--unpublished--",
           "TR": "--unpublished--"
      }
