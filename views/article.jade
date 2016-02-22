@@ -140,7 +140,7 @@ block content
               else
                 span.label.label-default
                   |#{lang}
-               
+
         .row
           .col-md-1
             |Collection <br>
@@ -265,17 +265,24 @@ block content
           h3
             |#{article.title}
         .col-md-3
-          each lang in layout.languages
-            if (article["markdown"+lang])
-              if (article["markdown"+lang]!=="no translation") 
-                span.label.label-success
+          p
+            - open = false
+            each lang in layout.languages
+              if (article["markdown"+lang])
+                if (article["markdown"+lang]!=="no translation")
+                  span.label.label-success
+                    |#{lang}
+                else
+                  span.label.label-danger
+                    |#{lang}
+              else
+                span.label.label-default
                   |#{lang}
-              else    
-                span.label.label-danger
-                  |#{lang}
-            else
-              span.label.label-default
-                |#{lang}
+                - open = true;
+          if open
+            p
+              span.label.label-default="put no translation to unedited"
+
 
       .row
         .col-md-1
