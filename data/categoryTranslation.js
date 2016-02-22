@@ -247,7 +247,7 @@ module.exports = {
           "CZ": "blížící se akce",
           "PT": "Próximos eventos",
           "RU": "Предстоящие события",
-          "JP": "Upcoming Events",
+          "JP": "今後のイベント",
           "ID": "Upcoming Events",
           "TR": "Gelecek etkinlikler"
      },
