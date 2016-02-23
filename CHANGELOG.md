@@ -1,5 +1,34 @@
 # Change Log
 
+## [0.8.0b](https://github.com/TheFive/osmbc/tree/0.8.0b) (2016-02-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0a...0.8.0b)
+
+**Implemented enhancements:**
+
+- Disable comments from log history in article view. [\#344](https://github.com/TheFive/osmbc/issues/344)
+
+**Fixed bugs:**
+
+- Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
+
+## [0.8.0a](https://github.com/TheFive/osmbc/tree/0.8.0a) (2016-02-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0...0.8.0a)
+
+## [0.8.0](https://github.com/TheFive/osmbc/tree/0.8.0) (2016-02-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7b...0.8.0)
+
+**Implemented enhancements:**
+
+- Create an own textfield for every comment in an article. [\#304](https://github.com/TheFive/osmbc/issues/304)
+
+## [0.7.7b](https://github.com/TheFive/osmbc/tree/0.7.7b) (2016-02-20)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7a...0.7.7b)
+
+**Fixed bugs:**
+
+- Article Links in slack are directing to blog not to article, which does not work. [\#341](https://github.com/TheFive/osmbc/issues/341)
+- Ensure uniqueness of OSMUser in usert table [\#96](https://github.com/TheFive/osmbc/issues/96)
+
 ## [0.7.7a](https://github.com/TheFive/osmbc/tree/0.7.7a) (2016-02-20)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7...0.7.7a)
 
