@@ -281,7 +281,9 @@ block content
                 - open = true;
           if open
             p
-              span.label.label-default="put no translation to unedited"
+              button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}&notranslation=true';") notranslation to rest
+
+
 
 
       .row

@@ -730,6 +730,19 @@ Article.prototype.editComment = function editComment(user,index,text,callback) {
   );
 };
 
+Article.prototype.addNotranslate = function addNotranslate(user,callback) {
+  debug('Article.prototype.addNotranslate');
+  var self = this;
+  var change = {};
+  for (var i=0;i<config.getLanguages().length;i++) {
+    var lang = config.getLanguages()[i];
+    if ((typeof(self["markdown"+lang])==="undefined")||(self["markdown"+lang]==="")) {
+      change["markdown"+lang]="no translation";
+    }
+  }
+  return self.setAndSave(user,change,callback);
+};
+
 // Calculate a Title with a maximal length for Article
 // The properties are tried in this order
 // a) Title
