@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.8.0c](https://github.com/TheFive/osmbc/tree/0.8.0c) (2016-02-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0b...0.8.0c)
+
+**Merged pull requests:**
+
+- extended version of drag and drop [\#349](https://github.com/TheFive/osmbc/pull/349) ([fredao](https://github.com/fredao))
+- Japan flag customized [\#347](https://github.com/TheFive/osmbc/pull/347) ([fredao](https://github.com/fredao))
+
 ## [0.8.0b](https://github.com/TheFive/osmbc/tree/0.8.0b) (2016-02-21)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0a...0.8.0b)
 
