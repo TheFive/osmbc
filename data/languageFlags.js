@@ -1,3 +1,4 @@
+"use strict";
 
 module.exports = {
   "Japanisch":"http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg",

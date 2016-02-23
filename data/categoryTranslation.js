@@ -1,4 +1,4 @@
-
+"use strict";
 module.exports = {
      "-- no category yet --": {
           "EN": "-- no category yet --",
