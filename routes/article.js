@@ -70,6 +70,7 @@ function renderArticleId(req,res,next) {
     params.right_lang = s.right_lang;
     params.editComment = null;
     if (req.query.editComment) params.editComment = req.query.editComment;
+    if (req.query.notranslation) params.notranslation = req.query.notranslation;
 
 
  
@@ -121,10 +122,24 @@ function renderArticleId(req,res,next) {
         } else { 
           return callback();
         }
+      },
+        notranslate:
+          function (callback){
+            debug('renderArticleId->notranslate');
+
+            if (params.notranslation==='true') {
+              article.addNotranslate(req.user,function (err) {
+                if (err) return callback(err);
+                var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
+                if (params.style) returnToUrl = returnToUrl+"?style="+params.style;
+                callback(null,returnToUrl);
+              });
+            } else return callback();
       }},
         function (err,result) {
           debug('renderArticleId->finalFunction');
           if (err) return next(err);
+          if (result.notranslate) return res.redirect(result.notranslate);
 
 
           var languages = config.getLanguages();

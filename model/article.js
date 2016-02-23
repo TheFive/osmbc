@@ -374,12 +374,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   should(typeof(data)).equal('object');
   should(typeof(callback)).equal('function');
   listOfOrphanBlog = null;
-  // trim all markdown Values
-  for (var k in data) {
-    if (k.substring(0,8)== "markdown" && data[k]) {
-      data[k]=data[k].trim();
-    }
-  }
+
   var self = this;
   delete self.lock;
 
@@ -439,6 +434,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
     for (var k in data) {
       if (data[k] === self[k]) delete data[k];
       if (data[k] === '' && typeof(self[k])=='undefined') delete data[k];
+      if (data[k]) data[k] = data[k].trim();
     }
     async.series(
       [function logIt (cb) {
@@ -449,7 +445,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
       },
       function putValues (cb) {
         for (k in data) {
-          if (data[k]) self[k]=data[k];
+          if (typeof(data[k])!=='undefined') self[k]=data[k];
         }
         cb();
       }], 
@@ -732,6 +728,19 @@ Article.prototype.editComment = function editComment(user,index,text,callback) {
       self.save(callback);
     }
   );
+};
+
+Article.prototype.addNotranslate = function addNotranslate(user,callback) {
+  debug('Article.prototype.addNotranslate');
+  var self = this;
+  var change = {};
+  for (var i=0;i<config.getLanguages().length;i++) {
+    var lang = config.getLanguages()[i];
+    if ((typeof(self["markdown"+lang])==="undefined")||(self["markdown"+lang]==="")) {
+      change["markdown"+lang]="no translation";
+    }
+  }
+  return self.setAndSave(user,change,callback);
 };
 
 // Calculate a Title with a maximal length for Article
