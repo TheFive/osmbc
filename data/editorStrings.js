@@ -1,3 +1,5 @@
+"use strict";
+
 var weeklyDesign = '<p align="right"><i>##text##</i></p>';
 var wnDesign = weeklyDesign;
 
