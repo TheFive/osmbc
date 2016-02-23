@@ -1,11 +1,18 @@
 # Change Log
 
+## [0.8.1](https://github.com/TheFive/osmbc/tree/0.8.1) (2016-02-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0c...0.8.1)
+
 ## [0.8.0c](https://github.com/TheFive/osmbc/tree/0.8.0c) (2016-02-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0b...0.8.0c)
 
+**Fixed bugs:**
+
+- once a textbox in Markdown is set to any content \(normally: no translation\)  it not possible to clean it up [\#342](https://github.com/TheFive/osmbc/issues/342)
+
 **Merged pull requests:**
 
-- extended version of drag and drop [\#349](https://github.com/TheFive/osmbc/pull/349) ([fredao](https://github.com/fredao))
+- extended version of drag and drop help [\#349](https://github.com/TheFive/osmbc/pull/349) ([fredao](https://github.com/fredao))
 - Japan flag customized [\#347](https://github.com/TheFive/osmbc/pull/347) ([fredao](https://github.com/fredao))
 
 ## [0.8.0b](https://github.com/TheFive/osmbc/tree/0.8.0b) (2016-02-21)
