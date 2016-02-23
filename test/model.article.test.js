@@ -206,6 +206,33 @@ describe('model/article', function() {
         });
       });
     });
+    it('should delete markdown with spaces', function (bddone){
+      var newArticle;
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        var id =result.id;
+        var empty;
+        var changeValues = {};
+        changeValues.markdownDE = " ";
+        changeValues.blog = empty;
+        changeValues.version = "1";
+        newArticle.setAndSave(testUser,changeValues,function(err) {
+          should.not.exist(err);
+          testutil.getJsonWithId("article",id,function(err,result){
+            should.not.exist(err);
+            delete result._meta;
+            should(result).eql({id:id,markdownDE:"",blog:"TEST",version:2});
+            logModule.find({},{column:"property"},function (err,result){
+              should.not.exist(err);
+              should.exist(result);
+              should(result.length).equal(1);
+              bddone();
+            });
+          });
+        });
+      });
+    });
     it('should report a conflict, if version number differs', function (bddone){
       // Generate an article for test
       var newArticle;
