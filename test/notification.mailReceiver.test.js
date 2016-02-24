@@ -52,7 +52,8 @@ describe('notification/mailReceiver', function() {
                                  {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailAllComment:"true"},
                                  {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailComment:["DE","User3"]},
                                  {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
-                                 {OSMUser:"User5",                     access:"full",mailAllComment:"true"}]},bddone);
+                                 {OSMUser:"User5",                     access:"full",mailAllComment:"true"},
+                                 {OSMUser:"User6",                     access:"full",mailBlogStatusChange:"true"}]},bddone);
     });
     it('should send out mail, when collecting article',function (bddone){
       articleModule.createNewArticle(function(err,article){
@@ -271,7 +272,8 @@ describe('notification/mailReceiver', function() {
       blogModule.createNewBlog({OSMUser:"testuser"},function(err){
         should.not.exist(err);
         var call = mailReceiver.for_test_only.transporter.sendMail;
-        should(call.calledThrice).be.True();
+
+        should(call.calledTwice).be.True();
         var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
         var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
         var expectedText = 'BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value name WN251 status open startDate 1970-01-02T00:00:00.000Z endDate 1970-01-08T00:00:00.000Z';
@@ -280,11 +282,9 @@ describe('notification/mailReceiver', function() {
         var mailList = {};
         mailList[call.getCall(0).args[0].to]="-";
         mailList[call.getCall(1).args[0].to]="-";
-        mailList[call.getCall(2).args[0].to]="-";
-        should(mailList).eql({"user1@mail.bc":"-","user2@mail.bc":"-","user3@mail.bc":"-"});
+        should(mailList).eql({"user1@mail.bc":"-","user2@mail.bc":"-"});
         delete call.getCall(0).args[0].to;
         delete call.getCall(1).args[0].to;
-        delete call.getCall(2).args[0].to;
 
 
 
@@ -301,11 +301,6 @@ describe('notification/mailReceiver', function() {
             subject:"[TESTBC] WN251 was created",
             html:expectedMail,
             text:expectedText});
-        should(mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0]).eql(
-          {from:"noreply@gmail.com",
-            subject:"[TESTBC] WN251 was created",
-            html:expectedMail,
-            text:expectedText});
         bddone();
       });
     });
@@ -317,7 +312,7 @@ describe('notification/mailReceiver', function() {
         blog.setAndSave({OSMUser:"testuser"},{status:"edit"},function(err){
           should.not.exist(err);
           var call = mailReceiver.for_test_only.transporter.sendMail;
-          should(call.calledThrice).be.True();
+          should(call.calledTwice).be.True();
           var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
           var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>status</td><td>edit</td></tr></table>';
           var expectedText ='BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value status edit';
@@ -327,22 +322,15 @@ describe('notification/mailReceiver', function() {
           var mailList = {};
           mailList[call.getCall(0).args[0].to]="-";
           mailList[call.getCall(1).args[0].to]="-";
-          mailList[call.getCall(2).args[0].to]="-";
-          should(mailList).eql({"user1@mail.bc":"-","user2@mail.bc":"-","user3@mail.bc":"-"});
+          should(mailList).eql({"user1@mail.bc":"-","user2@mail.bc":"-"});
           delete call.getCall(0).args[0].to;
           delete call.getCall(1).args[0].to;
-          delete call.getCall(2).args[0].to;
           should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
             {from:"noreply@gmail.com",
               subject:"[TESTBC] WN251 changed status to edit",
               html:expectedMail,
               text:expectedText});
           should(mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0]).eql(
-            {from:"noreply@gmail.com",
-              subject:"[TESTBC] WN251 changed status to edit",
-              html:expectedMail,
-              text:expectedText});
-          should(mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0]).eql(
             {from:"noreply@gmail.com",
               subject:"[TESTBC] WN251 changed status to edit",
               html:expectedMail,

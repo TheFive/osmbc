@@ -110,6 +110,12 @@ function postUserId(req, res, next) {
                  mailBlogLanguageStatusChange:req.body.mailBlogLanguageStatusChange,
                  email:req.body.email,
                  access:req.body.access};
+  if (typeof(changes.mailComment)==="string") {
+    changes.mailComment = [changes.mailComment];
+  }
+  if (typeof(changes.mailComment)==="string") {
+    changes.mailBlogLanguageStatusChange = [changes.mailBlogLanguageStatusChange];
+  }
   async.series([
     function getPublicAuthor(cb) {
       if (!changes.WNAuthor) return cb();

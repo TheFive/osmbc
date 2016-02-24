@@ -52,7 +52,8 @@ UserConfigFilter.prototype.addComment = function ucfAddComment(user,article,comm
   var userList = [];
   if (this.user.mailComment) userList = this.user.mailComment;
   for (var i=0;i<userList.length;i++) {
-    if (comment.search(new RegExp("@"+userList[i],"i"))>=0) {
+
+    if (comment.search(new RegExp("@"+userList[i]+"\\b","i"))>=0) {
       sendMail = true;
       debug("Mail send because comment for @"+userList[i]);
     }
@@ -72,7 +73,7 @@ UserConfigFilter.prototype.editComment = function ucfEditComment(user,article,in
   var userList = [];
   if (this.user.mailComment) userList = this.user.mailComment;
   for (var i=0;i<userList.length;i++) {
-    if (comment.search(new RegExp("@"+userList[i],"i"))>=0) {
+    if (comment.search(new RegExp("@"+userList[i]+"\\b","i"))>=0) {
       sendMail = true;
       debug("Mail send because comment for @"+userList[i]);
     }
@@ -84,16 +85,11 @@ UserConfigFilter.prototype.editComment = function ucfEditComment(user,article,in
 UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
   debug('UserConfigFilter.prototype.updateBlog');
   var sendMail = false;
-  var wnList = [];
-
-  // send out status change if User is interested in review comments.
-  if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange;
-  if (wnList.length>0) sendMail = true;
 
 
   // check Collection
   if (this.user.mailBlogStatusChange == "true") {
-    if (change.status && change.status != blog.status) {
+    if (change.status && change.status != blog.status && change.status != "closed") {
       sendMail = true;
     }
   }
