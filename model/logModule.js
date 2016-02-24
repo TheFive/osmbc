@@ -103,7 +103,7 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
   if (this.from) from = String(this.from);
   if (this.to) to = String(this.to);
 
-  if (from.length>1000 || to.length > 1000) {
+  if (from.length>2000 || to.length > 2000) {
     return "Temporary disabled long text compare";
   }
 
