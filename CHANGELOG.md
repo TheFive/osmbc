@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.8.2](https://github.com/TheFive/osmbc/tree/0.8.2) (2016-02-24)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.1...0.8.2)
+
+**Fixed bugs:**
+
+- do not add empty comment [\#350](https://github.com/TheFive/osmbc/issues/350)
+- Flags Drag and Drop doesn't work anymore [\#348](https://github.com/TheFive/osmbc/issues/348)
+
 ## [0.8.1](https://github.com/TheFive/osmbc/tree/0.8.1) (2016-02-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0c...0.8.1)
 
