@@ -52,7 +52,8 @@ UserConfigFilter.prototype.addComment = function ucfAddComment(user,article,comm
   var userList = [];
   if (this.user.mailComment) userList = this.user.mailComment;
   for (var i=0;i<userList.length;i++) {
-    if (comment.search(new RegExp("@"+userList[i],"i"))>=0) {
+
+    if (comment.search(new RegExp("@"+userList[i]+"\\b","i"))>=0) {
       sendMail = true;
       debug("Mail send because comment for @"+userList[i]);
     }
@@ -72,7 +73,7 @@ UserConfigFilter.prototype.editComment = function ucfEditComment(user,article,in
   var userList = [];
   if (this.user.mailComment) userList = this.user.mailComment;
   for (var i=0;i<userList.length;i++) {
-    if (comment.search(new RegExp("@"+userList[i],"i"))>=0) {
+    if (comment.search(new RegExp("@"+userList[i]+"\\b","i"))>=0) {
       sendMail = true;
       debug("Mail send because comment for @"+userList[i]);
     }
