@@ -664,6 +664,9 @@ Article.prototype.addComment = function addComment(user,text,callback) {
   should(typeof(user)).eql('object');
   should(typeof(text)).eql('string');
   should(typeof(callback)).eql('function');
+
+  // check on empty comment
+  if (text.trim() === "") return callback(new Error("Empty Comment Added"));
   var self = this;
 
   if (!self.commentList) self.commentList = [];
@@ -696,6 +699,7 @@ Article.prototype.editComment = function editComment(user,index,text,callback) {
   should(typeof(user)).eql('object');
   should(typeof(text)).eql('string');
   should(typeof(callback)).eql('function');
+  if (text.trim() === "") return callback(new Error("Empty Comment Added"));
   var self = this;
 
   if (!self.commentList) self.commentList = [];
