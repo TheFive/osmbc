@@ -99,7 +99,7 @@ block content
                 .col-md-10
                   p(id="categoryDisplay" style={color:'Gray'})
                 .col-md-2
-                    input(type="submit", class="btn btn-primary",value="OK")
+                    input(type="submit", id="OK",class="btn btn-primary",value="OK")
                     a(href="#{layout.htmlroot}/article/searchandcreate?edit=false" class="btn btn-default" role="button") Cancel
 
             
@@ -107,13 +107,13 @@ block content
             .col-md-1
               | Title <br>
             .col-md-11
-              textarea.form-control(name="title",rows=1)
+              textarea.form-control(id = "title",name="title",placeholder="please enter a title",rows=1)
                  
           .row
             .col-md-1
               | Collection <br>
             .col-md-11
-              textarea.form-control(name="collection",rows=7) #{search}
+              textarea.form-control(name="collection",rows=7,placeholder="put your link or info here") #{search}
 
 block scripts                
   script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
@@ -130,6 +130,11 @@ block scripts
       categoryDisplay = document.getElementById("categoryDisplay");
       categoryEN = document.getElementById("categoryEN");
       categoryEN.onchange = onchangeCategory;
+      okButton = document.getElementById("OK");
+      title = document.getElementById("title");
+      title.onchange = onchangeTitle;
+      title.onkeyup = onchangeTitle;
+      onchangeTitle();
       onchangeCategory();
     }
 
@@ -138,6 +143,12 @@ block scripts
       if (placeholder[c]) {
          categoryDisplay.innerHTML = placeholder[c];    
         }
+    }
+
+    function onchangeTitle() {
+      var t = title.value;
+      okButton.disabled=true;
+      if (t.length>5) okButton.disabled=false;
     }
    
  
