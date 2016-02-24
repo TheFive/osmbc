@@ -113,7 +113,7 @@ function postUserId(req, res, next) {
   if (typeof(changes.mailComment)==="string") {
     changes.mailComment = [changes.mailComment];
   }
-  if (typeof(changes.mailComment)==="string") {
+  if (typeof(changes.mailBlogLanguageStatusChange)==="string") {
     changes.mailBlogLanguageStatusChange = [changes.mailBlogLanguageStatusChange];
   }
   async.series([

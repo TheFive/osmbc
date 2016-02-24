@@ -1,5 +1,21 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.3...HEAD)
+
+**Closed issues:**
+
+- Check emal sending on new comment style [\#353](https://github.com/TheFive/osmbc/issues/353)
+- Don't send messages if a blog will be totally closed [\#352](https://github.com/TheFive/osmbc/issues/352)
+
+## [0.8.3](https://github.com/TheFive/osmbc/tree/0.8.3) (2016-02-24)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.2...0.8.3)
+
+**Implemented enhancements:**
+
+- Title Field mandatory for collection [\#346](https://github.com/TheFive/osmbc/issues/346)
+
 ## [0.8.2](https://github.com/TheFive/osmbc/tree/0.8.2) (2016-02-24)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.1...0.8.2)
 
