@@ -780,6 +780,28 @@ describe('model/article', function() {
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
 
     });
+    it('should not add a empty comment',function(bddone){
+
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test"}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test"}],
+        change:[]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.addComment({OSMUser:""},"",function checkErr(err){
+            should.exist(err);
+            should(err).eql(new Error("Empty Comment Added"));
+            cb();
+          });
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
     it('should add a second comment',function(bddone){
     
       var timestamp = new Date();
@@ -827,6 +849,37 @@ describe('model/article', function() {
           article.editComment({OSMUser:"Test"},0,"a changed comment",cb);
         });
       };        
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should not edit a comment with blank',function(bddone){
+
+      var timestamp = new Date();
+      var timestamp2 = new Date();
+      timestamp2.setTime(timestamp2.getTime()+200);
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test",
+          commentList:[{user:"Test",timestamp:timestamp,text:"a comment"}]}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",
+          commentList:[{user:"Test",
+            timestamp:timestamp.toISOString(),
+            text:"a comment"}]}],
+        change:[]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          clock.tick(200);
+
+          should.not.exist(err);
+          article.editComment({OSMUser:"Test"},0," ",function checkErr(err){
+            should.exist(err);
+            should(err).eql(new Error("Empty Comment Added"));
+            cb();
+          }
+          );
+        });
+      };
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
 
     });
