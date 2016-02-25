@@ -428,61 +428,77 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
 };
 
 
-exports.createTable = function(table,createString,createView,cb) {
-  debug('createTable');
-  should(typeof(table)).equal('string');
-  should(typeof(createString)).equal('string');
-  should(typeof(createView)).equal('string');
+exports.createTables = function(pgObject,options,callback) {
+  debug('createTable %s',pgObject.table);
+  should(typeof(pg)).equal('object');
+  should(typeof(options)).equal('object');
 
   pg.connect(config.pgstring,function(err,client,pgdone) {
     if (err) {
-      cb(err);
+      callback(err);
       pgdone();
       return;
     }
-    client.query(createString,function(err) {
-      if (err) {
-        pgdone();
-        cb(err);
-        return;
+    async.series([
+      function tabledrop(cb) {
+        if (options.dropTable) {
+          if (options.verbose) console.log("Drop Table "+pgObject.table);
+          var dropString = "DROP TABLE IF EXISTS "+pgObject.table+ " CASCADE";
+          client.query(dropString,cb);
+        } else return cb();
+      },
+      function tablecreation(cb) {
+        if (options.createTable) {
+          if (options.verbose) console.log("Create Table "+pgObject.table);
+          if (options.verbose) console.log("Query: "+pgObject.createString);
+          client.query(pgObject.createString,cb);
+        } else return cb();
+      },
+      function indexdrop(cb) {
+        if (options.dropIndex) {
+          async.forEachOf(pgObject.indexDefinition,function(sql,index,eachofcb){
+            if (options.verbose) console.log("Drop Index "+index);
+            var dropIndex = "DROP INDEX if exists "+index+";";
+            client.query(dropIndex,eachofcb);
+          },function finalFunction(err){return cb(err);});
+        } else return cb();
+      },
+      function indexcreation(cb) {
+        if (options.createIndex) {
+          async.forEachOf(pgObject.indexDefinition,function(sql,index,eachofcb){
+            if (options.verbose) console.log("Create Index "+index);
+            client.query(sql,eachofcb);
+          },function finalFunction(err){return cb(err);});
+        } else return cb();
+      },
+      function viewsdrop(cb) {
+        if (options.dropView) {
+          async.forEachOf(pgObject.viewDefinition,function(sql,view,eachofcb){
+            var dropIndex = "DROP VIEW if exists "+view+";";
+            if (options.verbose) console.log("Drop View "+view);
+            client.query(dropIndex,eachofcb);
+          },function finalFunction(err){return cb(err);});
+        } else return cb();
+      },
+      function viewscreation(cb) {
+        if (options.createView) {
+          async.forEachOf(pgObject.viewDefinition,function(sql,view,eachofcb){
+            if (options.verbose) console.log("Create View "+view);
+            client.query(sql,eachofcb);
+          },function finalFunction(err){return cb(err);});
+        } else return cb();
       }
-      debug('%s Table Created',table);
-      if (createView!=='') {
-        client.query(createView,function(err){
-          debug('%s Index Created',table);
-          cb(err);
-          pgdone();
-        });
-      } else {
-        // No Index to be defined, close Function correct
-        cb(err);
-        pgdone();
+    ],function finalFunction(err){
+      if (options.verbose) {
+        if (err) console.dir(err);
+        console.log("Ready.");
       }
+      pgdone();
+      return callback(err);
     });
   });
 }; 
 
-exports.dropTable = function dropTable(table,cb) {
-  debug('dropTable');
-
-  pg.connect(config.pgstring,function(err,client,pgdone) {
-    debug('exports.dropTable->connected');
-    if (err) {
-      cb(err);
-      pgdone();
-      return;
-    }
-    var dropString = "DROP TABLE IF EXISTS "+table+ " CASCADE";
-  
-    var query = client.query(dropString);
-    query.on('error',function(err){
-      debug("%s Table Dropped",table);
-      cb(err);
-      pgdone();
-    });
-    query.on('end',function(){cb(null);pgdone();});
-  });
-};
 
 
 

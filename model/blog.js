@@ -748,18 +748,21 @@ Blog.prototype.getCategories = function getCategories() {
 
 
 
-function createTable(cb) {
-  debug('createTable');
-  var createString = 'CREATE TABLE blog (  id bigserial NOT NULL,  data json,  \
-                  CONSTRAINT blog_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
-  var createView = "CREATE INDEX blog_id_idx ON blog USING btree (id);";
-  pgMap.createTable('blog',createString,createView,cb);
-}
+var pgObject = {};
 
-function dropTable(cb) {
-  debug('dropTable');
-  pgMap.dropTable('blog',cb);
-}
+pgObject.createString = 'CREATE TABLE blog (  id bigserial NOT NULL,  data json,  \
+                  CONSTRAINT blog_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
+
+pgObject.indexDefinition = {
+  "blog_id_idx":"CREATE INDEX blog_id_idx ON blog USING btree (id);"
+};
+
+pgObject.viewDefinition = {};
+pgObject.table="blog";
+
+module.exports.pg = pgObject;
+
+
 
 Blog.prototype.isEditable = function isEditable(lang) {
   debug("isEditabe");
@@ -829,9 +832,3 @@ module.exports.autoCloseBlog = autoCloseBlog;
 // Find Functions
 
 
-
-// Create Tables in Prostgres with all indices and views
-module.exports.createTable = createTable;
-
-// Delete table in Postgres
-module.exports.dropTable = dropTable;
