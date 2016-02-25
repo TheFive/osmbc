@@ -62,6 +62,7 @@ exports.getJsonWithId = function getJsonWithId(table,id,cb) {
 exports.clearDB = function clearDB(done) {
   should(config.env).equal("test");
   should.exist(messageCenter.global);
+
   mailReceiver.initialise([]);
   var pgOptions = {dropTable:true,createTable:true,dropIndex:true,createIndex:true,dropView:true,createView:true};
   async.series([
