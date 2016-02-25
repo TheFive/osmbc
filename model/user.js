@@ -64,18 +64,15 @@ function findOne(obj1,obj2,callback) {
   pgMap.findOne({table:"usert",create:create},obj1,obj2,callback);
 }
 
-function createTable(cb) {
-  debug('createTable');
-  var createString = 'CREATE TABLE usert (  id bigserial NOT NULL,  data json,  \
-                  CONSTRAINT user_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
-  var createView="";
-  pgMap.createTable('usert',createString,createView,cb);
-}
 
-function dropTable(cb) {
-  debug('dropTable');
-  pgMap.dropTable('usert',cb);
-}
+
+var pgObject= {};
+pgObject.createString = 'CREATE TABLE usert (  id bigserial NOT NULL,  data json,  \
+                  CONSTRAINT user_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
+pgObject.indexDefinition={};
+pgObject.viewDefinition = {};
+pgObject.table="usert";
+module.exports.pg = pgObject;
 
 User.prototype.validateEmail = function validateEmail(user,validationCode,callback) {
   debug('validateEmail');
@@ -237,10 +234,7 @@ module.exports.createNewUser = createNewUser;
 
 // save stores the current object to database
 User.prototype.save = pgMap.save; // Create Tables and Views
-module.exports.createTable = createTable;
 
-// Drop Table (and views)
-module.exports.dropTable = dropTable;
 
 module.exports.create= create;
 module.exports.find = find;

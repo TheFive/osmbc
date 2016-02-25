@@ -19,10 +19,12 @@ var config = require('../config.js');
 
 var app = require('../app.js');
 
+var pgMap = require('../model/pgMap.js');
 var blogModule    = require('../model/blog.js');
 var articleModule = require('../model/article.js');
 var logModule     = require('../model/logModule.js');
 var userModule     = require('../model/user.js');
+var session   = require('../model/session.js');
 
 var mailReceiver   = require('../notification/mailReceiver.js');
 var messageCenter  = require('../notification/messageCenter.js');
@@ -61,35 +63,15 @@ exports.clearDB = function clearDB(done) {
   should(config.env).equal("test");
   should.exist(messageCenter.global);
   mailReceiver.initialise([]);
+  var pgOptions = {dropTable:true,createTable:true,dropIndex:true,createIndex:true,dropView:true,createView:true};
   async.series([
     function(done) {config.initialise(done);},
-    function(done) {blogModule.dropTable(done);},
-    function(done) {blogModule.createTable(done);},
-    function(done) {articleModule.dropTable(done);},
-    function(done) {articleModule.createTable(done);},
-    function(done) {logModule.dropTable(done);},
-    function(done) {logModule.createTable(done);},
-    function(done) {userModule.dropTable(done);},
-    function(done) {userModule.createTable(done);},
-    function(done) {
-      // delete session table and create it new
-      pg.connect(config.pgstring,function (err,client,pgdone) {
-        should.not.exist(err);
-        var query = client.query('DROP TABLE IF EXISTS session CASCADE;\
-          CREATE TABLE "session" ( \
-            "sid" varchar NOT NULL COLLATE "default", \
-            "sess" json NOT NULL, \
-            "expire" timestamp(6) NOT NULL \
-          ) \
-          WITH (OIDS=FALSE); \
-          ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;\
-          ALTER TABLE "session" OWNER TO test;');
-          query.on("end",function(){
-            pgdone();
-            done(null);
-          });
-      });
-    }
+    function(done) {pgMap.createTables(blogModule.pg,pgOptions,done);},
+    function(done) {pgMap.createTables(articleModule.pg,pgOptions,done);},
+    function(done) {pgMap.createTables(logModule.pg,pgOptions,done);},
+    function(done) {pgMap.createTables(userModule.pg,pgOptions,done);},
+    function(done) {pgMap.createTables(session.pg,pgOptions,done);},
+
   ],function(err) {
     if (err) console.dir(err);
     should.not.exist(err);
