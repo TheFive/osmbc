@@ -9,6 +9,7 @@
   "dependencies": {
     "async": "^1.5.2",
     "body-parser": "~1.14.2",
+    "commander": "^2.9.0",
     "connect-pg-simple": "^3.1.0",
     "cookie-parser": "~1.4.1",
     "debug": "~2.2.0",
@@ -47,7 +48,7 @@
     "twit": "^2.2.2"
   },
   "devDependencies": {
-   "mocha-jshint": "^2.3.1",
+    "mocha-jshint": "^2.3.1",
     "nock": "^7.1.0",
     "sinon": "^1.17.3",
     "zombie": "^4.2"
