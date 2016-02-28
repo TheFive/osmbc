@@ -1,0 +1,62 @@
+extends layout
+
+
+block content
+  h1
+    | History
+  row
+      table.table
+        thead
+          tr
+            - date ="";
+            - if (params.date)  date = "/"+date;
+            form(action='#{layout.htmlroot}/changes/log#{date}',method='get',id='form')
+              td
+                input.col-sm-12(type='text',id='user',name='user',placeholder='user',value=params.user)
+              td
+                input.col-sm-12(type='text',id='blog',name='blog',placeholder='blog',value=params.blog)
+              td
+                input.col-sm-12(type='text',id='table',name='table',placeholder='table',value=params.table)
+              td
+                input.col-sm-12(type='text',id='property',name='property',placeholder='property' value=params.property)
+              td
+                input.col-sm-12(type='text',id='date',name='date',placeholder='date' value=params.date  )
+              td
+                input(type='submit',class='btn btn-default')
+
+      table.table
+        thead
+          tr
+            th user
+            th blog
+            th table
+            th property
+            th from
+            th to
+            th when
+
+
+        tbody
+          if (history)
+            each change in history
+              tr
+                td=change.user
+                td=change.blog
+                td=change.table
+                td=change.property
+                if change.from
+                  td=(JSON.stringify(change.from)).substring(0,50)
+                else
+                  td=""
+                if change.to
+                  td=(JSON.stringify(change.to)).substring(0,50)
+                else
+                  td=""
+                td=layout.moment(change.timestamp).locale(layout.user.language).format("L")
+
+
+
+          
+
+
+  
