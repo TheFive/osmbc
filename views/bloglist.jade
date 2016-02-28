@@ -30,15 +30,14 @@ block content
                 td
                   a(href='#{layout.htmlroot}/blog/' + blog.name) #{blog.name} 
                 td= blog.status
-                - var allclosed=true
                 for lang in layout.languages
                   td
                     if blog["close"+lang]
                       - labeltype = "label-success"
                       - urlblog = layout.htmlroot+"/blog/"+blog.name+"?style=fullfinal"+lang
+
                     else 
                       if lang!="PT"
-                        - allclosed = false
                       if blog["reviewComment"+lang]
                         - labeltype = "label-primary"
                         - urlblog =  layout.htmlroot+"/blog/"+blog.name+"?style=fullfinal"+lang
@@ -52,13 +51,12 @@ block content
                         |#{blogNumber(blog,lang)}
                     a(href="#{urlblog}")
                       span.label(class="#{labeltype}")
-                       |#{blogCount(blog,lang)} 
+                       |#{blogCount(blog,lang)}
+                    if blog._timeToClose[lang]
+                      bold.span=" (+"+blog._timeToClose[lang]+"d)"
 
                 td
-                  if allclosed
-                    a(href="#{layout.htmlroot}/blog/#{blog.name}?setStatus=closed") Close Blog
-                  else
-                    | -
+                  a(href="#{layout.htmlroot}/blog/#{blog.name}?setStatus=closed") Close Blog
   row
     p
       | Click on any label to edit the articles or view the blog.
@@ -81,6 +79,7 @@ block content
       span.label.label-danger
         | total
       |  Open Blog
+    p=" (+3d): The number in brackets shows the blog closing for that language in days"
     p
       | More bloglists
     p
