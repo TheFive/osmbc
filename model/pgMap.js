@@ -14,7 +14,7 @@ function generateQuery(table,obj,order) {
   var whereClause = "";
 
   if (typeof(obj)=='string') {
-    whereClause = obj;
+    whereClause = " "+ obj;
 
     // if there is a select statement, expect and id and data, and take it.
     if (obj.substring(0,6)==="select") {
