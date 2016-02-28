@@ -46,34 +46,34 @@ function renderOutgoingMailLog(req,res,next) {
 
 function renderHistoryLog(req,res,next) {
   debug('renderHistoryLog');
-  var date = req.params.date;
+  var date = req.query.date;
   var user = req.query.user;
   var table = req.query.table;
   var blog = req.query.blog;
   var property = req.query.property;
 
-  var params={date:date,user:user,table:table,blog:blog,property:property}
+  var params={date:date,user:user,table:table,blog:blog,property:property};
 
 
   var sql = "";
   if (date) {
-    if (sql != "") sql += " and ";
+    if (sql !== "") sql += " and ";
     sql += " (substring(data->>'timestamp' from 1 for "+ date.length+") ='"+date+"') ";
   }
   if (user) {
-    if (sql != "") sql += " and ";
+    if (sql !== "") sql += " and ";
     sql += " (data->>'user' = '"+ user+"') ";
   }
   if (table) {
-    if (sql != "") sql += " and ";
+    if (sql !== "") sql += " and ";
     sql += " (data->>'table' = '"+ table+"') ";
   }
   if (blog) {
-    if (sql != "") sql += " and ";
+    if (sql !== "") sql += " and ";
     sql += " (data->>'blog' = '"+ blog+"') ";
   }
   if (property) {
-    if (sql != "") sql += " and ";
+    if (sql !== "") sql += " and ";
     sql += " (data->>'property' = '"+ property+"') ";
   }
   if (sql) sql = " where "+sql;
@@ -104,7 +104,6 @@ router.get('/:change_id',renderChangeId);
 
 router.get('/mail/:date',renderOutgoingMailLog);
 
-router.get('/log/:date',renderHistoryLog);
 router.get('/log',renderHistoryLog);
 
 module.exports.renderChangeId = renderChangeId;

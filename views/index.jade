@@ -42,12 +42,11 @@ block content
                   | #{openBlog.name}
     .col-md-8.hidden-xs
       if changes
-        h4
+        h4="Last Changes "
           - var d = new Date();
           - d= d.toISOString();
           - d= d.substring(0,7);
-          | Last Changes
-          a(href="#{layout.htmlroot}/changes/log/"+d) (more)
+          a(href="#{layout.htmlroot}/changes/log?date="+d)  (more)
         div
           table.table.table-striped.table-condensed.table-responsive
             thead
