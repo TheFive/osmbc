@@ -570,34 +570,34 @@ function displayTitleEN(maxlength) {
 }*/
 
 
-function createTable(cb) {
-  debug('createTable');
-  var createString = 'CREATE TABLE article (  id bigserial NOT NULL,  data json,  \
+var pgObject = {};
+
+pgObject.table = "article";
+pgObject.createString = 'CREATE TABLE article (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT article_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
-  var createView = "CREATE OR REPLACE VIEW \"OpenBlogWithArticle\" AS \
+pgObject.indexDefinition = {
+  "article_blog_idx":"CREATE INDEX article_blog_idx ON article USING btree (((data ->> 'blog'::text)))",
+  "article_text_idx":"CREATE INDEX article_text_idx ON article USING gin  \
+                      (to_tsvector('german'::regconfig,   \
+                          ((((COALESCE((data ->> 'title'::text), ''::text) || ' '::text) ||  \
+                            COALESCE((data ->> 'collection'::text), ''::text)) || ' '::text) || \
+                            COALESCE((data ->> 'markdownDE'::text), ''::text))))",
+  "article_texten_idx":"CREATE INDEX article_texten_idx ON article USING gin \
+                (to_tsvector('english'::regconfig, \
+                  ((COALESCE((data ->> 'collection'::text), ''::text) || ' '::text) || \
+                  COALESCE((data ->> 'markdownEN'::text), ''::text))))"
+
+};
+pgObject.viewDefinition = {
+  "OpenBlogWithArticle":"CREATE VIEW \"OpenBlogWithArticle\" AS \
              SELECT DISTINCT article.data ->> 'blog'::text AS name \
                FROM article \
                  LEFT JOIN blog ON (article.data ->> 'blog'::text) = (blog.data ->> 'name'::text) \
               WHERE blog.data IS NULL \
-              ORDER BY article.data ->> 'blog'::text; \
-              create index on article((data->>'blog')); \
-              CREATE INDEX article_id_idx ON article USING btree (id); \
-              CREATE INDEX article_text_idx ON article USING gin  \
-                      (to_tsvector('german'::regconfig,   \
-                          (COALESCE(data ->> 'title'::text, ''::text) || ' '||  \
-                            COALESCE(data ->> 'collection'::text, ''::text)) || ' ' || \
-                            COALESCE(data ->> 'markdownDE'::text, ''::text))); \
-              CREATE INDEX article_texten_idx ON article USING gin \
-                (to_tsvector('english'::regconfig, \
-                  COALESCE(data ->> 'collection'::text, ''::text) ||' ' || \
-                  COALESCE(data ->> 'markdownEN'::text, ''::text)));";
-  pgMap.createTable('article',createString,createView,cb);
-}
+              ORDER BY article.data ->> 'blog'::text;"
+};
+module.exports.pg = pgObject;
 
-function dropTable(cb) {
-  debug('dropTable');
-  pgMap.dropTable('article',cb);
-}
 
 // calculateUsedLinks(callback)
 // Async function to search for each Link in the article in the database
@@ -820,11 +820,6 @@ module.exports.findOne = findOne;
 // that does not have a "finished" Blog in database
 module.exports.getListOfOrphanBlog = getListOfOrphanBlog;
 
-// Create Tables and Views
-module.exports.createTable = createTable;
-
-// Drop Table (and views)
-module.exports.dropTable = dropTable;
 
 // Internal function to reset OpenBlogCash
 // has to be called, when a blog is changed
