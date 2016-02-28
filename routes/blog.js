@@ -243,7 +243,10 @@ function renderBlogList(req, res, next) {
               });},
         count:["blogs",function(callback,result) {
                   async.each(result.blogs,function(item,cb){
-                    item.countUneditedMarkdown(cb);
+                    async.parallel([
+                      item.countUneditedMarkdown.bind(item),
+                      item.calculateTimeToclose.bind(item)
+                    ],function finalFunction(err){return cb(err);});
                   },function(err){
                     callback(err);
                   }); }]

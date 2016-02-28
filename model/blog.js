@@ -665,6 +665,25 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
     });
 };
 
+Blog.prototype.calculateTimeToclose = function calculateTimeToClose(callback) {
+  debug('Blog.prototype.calculateTimeToclose');
+  if (this._timeToClose) return callback();
+  var self = this;
+  self._timeToClose={};
+  logModule.find(" where data->>'blog' ='"+self.name+"' and data->>'property' like 'close%'",function(err,result){
+    if (err) return callback(err);
+    if (!result) return callback();
+    var endDate = moment(self.endDate);
+    for (var i=0;i<result.length;i++) {
+      var lang = (result[i].property).substring(5,7);
+      var time = moment(result[i].timestamp);
+      var timeToClose = time.diff(endDate,"days");
+      if (!self._timeToClose[lang] || timeToClose > self._timeToClose[lang]) self._timeToClose[lang]=timeToClose;
+    }
+    return callback();
+  });
+};
+
 Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) {
   debug('countUneditedMarkdown');
   // allready done, nothing to do.
