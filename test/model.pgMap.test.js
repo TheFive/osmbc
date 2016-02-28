@@ -21,8 +21,13 @@ function create(proto){
 var testModule = {table:"TestTable",create:create};
 
 
-var testTableCreateString =  'CREATE TABLE testtable (  id bigserial NOT NULL , data json,  \
+var testTableObject = {};
+testTableObject.createString =  'CREATE TABLE testtable (  id bigserial NOT NULL , data json,  \
                   CONSTRAINT testtable_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
+testTableObject.indexDefinition = {};
+testTableObject.viewDefinition = {};
+testTableObject.table = "testtable";
+
 
 describe('model/pgMap',function(){
   before(function(bddone){
@@ -33,10 +38,15 @@ describe('model/pgMap',function(){
       // local store connect String
       var connectString = config.pgstring;
       config.pgstring = "This wont work";
-      var createString = 'CREATE TABLE test (  id bigserial NOT NULL,  data json,  \
-                  CONSTRAINT test_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
+      var pgObject = {};
 
-      pgMap.createTable("Test",createString,"",function(err,result){
+      pgObject.createString = 'CREATE TABLE test (  id bigserial NOT NULL,  data json,  \
+                  CONSTRAINT test_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
+      pgObject.indexDefinition={};
+      pgObject.viewDefinition={};
+      pgObject.table = "test";
+
+      pgMap.createTables(pgObject,{createTable:true,dropTable:true},function(err,result){
         should.not.exist(result);
         should.exist(err);
         config.pgstring = connectString;
@@ -44,35 +54,18 @@ describe('model/pgMap',function(){
       });
     });
     it('should return an error, if problems with Create String',function(bddone){
-      // local store connect String
-      var createString = 'CREATE TABLE test (  id bigserial NOT NULL  data json,  \
-                  CONSTRAINT test_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
+      var pgObject = {};
 
-      pgMap.createTable("Test",createString,"",function(err,result){
+      pgObject.createString = 'CREATE TABLE test (  id bigserial NOT NULL  data json,  \
+                  CONSTRAINT test_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
+      pgObject.indexDefinition={};
+      pgObject.viewDefinition={};
+      pgObject.table = "test";
+
+      pgMap.createTables(pgObject,{createTable:true,dropTable:true},function(err,result){
         should.not.exist(result);
         should.exist(err);
         should(err.code).eql('42601'); // pg Syntax Error Code
-        bddone();
-      });
-    });
-  });
-  describe('dropTable',function() {
-    it('should return an error, if problems with Database',function(bddone){
-      // local store connect String
-      var connectString = config.pgstring;
-      config.pgstring = "This wont work";
-      pgMap.dropTable("Test",function(err,result){
-        should.not.exist(result);
-        should.exist(err);
-        config.pgstring = connectString;
-        bddone();
-      });
-    });
-    it('should return an error, if problems with deletion String',function(bddone){
-      // local store connect String
-      pgMap.dropTable("Test & me",function(err,result){
-        should.not.exist(result);
-        should.exist(err);
         bddone();
       });
     });
@@ -105,8 +98,7 @@ describe('model/pgMap',function(){
     describe('find',function(){
       beforeEach(function(bddone){
         async.series([
-          function(cb){pgMap.dropTable("testtable",cb);},
-          function(cb){pgMap.createTable("testtable",testTableCreateString,"",cb);},
+          function(cb){pgMap.createTables(testTableObject,{createTable:true,dropTable:true},cb);},
           function(cb){
             var to = new TestTable({id:0,name:''});
             to.save = pgMap.save;
