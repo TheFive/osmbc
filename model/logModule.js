@@ -215,7 +215,6 @@ pgObject.createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data js
                   CONSTRAINT changes_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
 pgObject.indexDefinition = {
   "changes_table_oid_idx":"CREATE INDEX changes_table_oid_idx ON changes USING btree (((data ->> 'table'::text)), ((data ->> 'oid'::text)))",
-  "changes_pkey":"CREATE UNIQUE INDEX changes_pkey ON changes USING btree (id)",
   "changes_blog_to_idx":"CREATE INDEX changes_blog_to_idx ON changes USING btree (((data ->> 'blog'::text)), ((data ->> 'to'::text)))"
 };
 

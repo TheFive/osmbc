@@ -16,7 +16,7 @@ var should = require('should');
 
 var program = require('commander');
 
-require('colors')
+require('colors');
 var jsdiff = require('diff');
 
 function coloredDiffLog(one,other) {
@@ -33,7 +33,7 @@ function coloredDiffLog(one,other) {
       part.removed ? 'red' : 'grey';
     process.stderr.write(part.value[color]);
   });
-  console.log()
+  console.log();
 }
 
 program
@@ -73,17 +73,18 @@ var pgOptions = {
 };
 
 function analyseTable(pgObject,pgOptions,callback) {
+  
   // first copy all expected indexes
   var expected = {};
   var foundOK = {};
   var foundNOK = {};
   var foundUnnecessary = {};
-  var database = {}
+  var database = {};
   for (var k in pgObject.indexDefinition) {
     expected[k]=pgObject.indexDefinition[k];
   }
   pg.connect(config.pgstring,function(err,client,pgdone){
-    var sql = "select indexname,indexdef from pg_indexes where tablename ='"+pgObject.table+"';";
+    var sql = "select indexname,indexdef from pg_indexes where tablename ='"+pgObject.table+"' and indexname not in (select conname from pg_constraint);";
     var query = client.query(sql);
     query.on("err",function(err){
       pgdone();
@@ -110,27 +111,28 @@ function analyseTable(pgObject,pgOptions,callback) {
     });
     query.on("end",function(){
       pgdone();
+      var k;
       if (pgOptions.verbose) {
         console.log("");
         console.log("");
         console.log("Checking Table",pgObject.table);
         console.log(" Found indexes OK");
-        for (var k in foundOK) {
+        for (k in foundOK) {
           console.log("  "+k);
         }
         console.log(" Found indexes Need Update");
-        for (var k in foundNOK) {
+        for (k in foundNOK) {
 
-          console.log("  "+k+" Difference:")
+          console.log("  "+k+" Difference:");
           coloredDiffLog(foundNOK[k],database[k]);
         }
         console.log(" Missing indexes");
-        for (var k in expected) {
+        for (k in expected) {
           console.log("  "+k);
           coloredDiffLog(expected[k],"");
         }
         console.log(" Unnecessary indexes");
-        for (var k in foundUnnecessary) {
+        for (k in foundUnnecessary) {
           console.log("  "+k);
           coloredDiffLog("",foundUnnecessary[k]);
         }
