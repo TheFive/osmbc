@@ -428,10 +428,11 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
 };
 
 
-exports.createTables = function(pgObject,options,callback) {
+exports.createTables = function(pgObject,options,analyse,callback) {
   debug('createTable %s',pgObject.table);
   should(typeof(pg)).equal('object');
   should(typeof(options)).equal('object');
+  should(typeof(analyse)).equal('object');
 
   pg.connect(config.pgstring,function(err,client,pgdone) {
     if (err) {
@@ -455,17 +456,37 @@ exports.createTables = function(pgObject,options,callback) {
         } else return cb();
       },
       function indexdrop(cb) {
+        var toBeDropped = [];
+        var k;
         if (options.dropIndex) {
-          async.forEachOf(pgObject.indexDefinition,function(sql,index,eachofcb){
-            if (options.verbose) console.log("Drop Index "+index);
-            var dropIndex = "DROP INDEX if exists "+index+";";
-            client.query(dropIndex,eachofcb);
-          },function finalFunction(err){return cb(err);});
-        } else return cb();
+          for (k in pgObject.indexDefinition) {
+            toBeDropped.push(k);
+          }
+        }
+        if (options.updateIndex) {
+          for (k in analyse.foundNOK) {
+            if (toBeDropped.indexOf(k)<0) toBeDropped.push(k);
+          }
+          for (k in analyse.foundUnnecessary) {
+            if (toBeDropped.indexOf(k)<0) toBeDropped.push(k);
+          }
+        }
+        async.each(toBeDropped,function(index,eachofcb){
+          if (options.verbose) console.log("Drop Index "+index);
+          var dropIndex = "DROP INDEX if exists "+index+";";
+          client.query(dropIndex,eachofcb);
+        },function finalFunction(err){return cb(err);});
       },
       function indexcreation(cb) {
-        if (options.createIndex) {
+        if (options.verbose) console.log("Creating Indexes for "+pgObject.table);
+        if (options.createIndex || options.updateIndex) {
           async.forEachOf(pgObject.indexDefinition,function(sql,index,eachofcb){
+            var createIt = false;
+            if (options.createIndex) createIt = true;
+            if (analyse.foundNOK[index]) createIt = true;
+            if (analyse.expected[index]) createIt = true;
+
+            if (!createIt) return eachofcb();
             if (options.verbose) console.log("Create Index "+index);
             client.query(sql,eachofcb);
           },function finalFunction(err){return cb(err);});
@@ -491,7 +512,6 @@ exports.createTables = function(pgObject,options,callback) {
     ],function finalFunction(err){
       if (options.verbose) {
         if (err) console.dir(err);
-        console.log("Ready.");
       }
       pgdone();
       return callback(err);

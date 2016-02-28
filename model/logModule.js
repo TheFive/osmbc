@@ -214,9 +214,9 @@ var pgObject={};
 pgObject.createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT changes_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
 pgObject.indexDefinition = {
-  "changes_table_oid_idx":"create index changes_table_oid_idx on changes((data->>'table'),(data->>'oid'));",
-  "changes_id_idx":"CREATE INDEX changes_id_idx ON changes USING btree (id);",
-  "changes_blog_to_idx":"CREATE INDEX changes_blog_to_idx ON changes USING btree ((data ->> 'blog'::text) , (data ->> 'to'::text));"
+  "changes_table_oid_idx":"CREATE INDEX changes_table_oid_idx ON changes USING btree (((data ->> 'table'::text)), ((data ->> 'oid'::text)))",
+  "changes_pkey":"CREATE UNIQUE INDEX changes_pkey ON changes USING btree (id)",
+  "changes_blog_to_idx":"CREATE INDEX changes_blog_to_idx ON changes USING btree (((data ->> 'blog'::text)), ((data ->> 'to'::text)))"
 };
 
 pgObject.viewDefinition = {};
