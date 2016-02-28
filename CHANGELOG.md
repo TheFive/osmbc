@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.8.5](https://github.com/TheFive/osmbc/tree/0.8.5) (2016-02-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.4...0.8.5)
+
+**Implemented enhancements:**
+
+- Calculate number of days between collection deadline & closing date. [\#356](https://github.com/TheFive/osmbc/issues/356)
+- Separate HTML Links in article JSON in database to optimize query. [\#337](https://github.com/TheFive/osmbc/issues/337)
+- Some Statistics Global [\#40](https://github.com/TheFive/osmbc/issues/40)
+
+**Fixed bugs:**
+
+- Used Links does not make any sense in Upcoming Events & Software Releases [\#336](https://github.com/TheFive/osmbc/issues/336)
+
 ## [0.8.4](https://github.com/TheFive/osmbc/tree/0.8.4) (2016-02-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.3...0.8.4)
 
