@@ -56,7 +56,10 @@ block content
                       bold.span=" (+"+blog._timeToClose[lang]+"d)"
 
                 td
-                  a(href="#{layout.htmlroot}/blog/#{blog.name}?setStatus=closed") Close Blog
+                  if blog.status != "closed"
+                    a(href="#{layout.htmlroot}/blog/#{blog.name}?setStatus=closed") Close Blog
+                  else
+                    |-
   row
     p
       | Click on any label to edit the articles or view the blog.
