@@ -576,17 +576,17 @@ pgObject.table = "article";
 pgObject.createString = 'CREATE TABLE article (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT article_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
 pgObject.indexDefinition = {
-  "article_blog_idx":"create index article_blog_idx on article((data->>'blog'));",
-  "article_id_idx":"CREATE INDEX article_id_idx ON article USING btree (id);",
+  "article_blog_idx":"CREATE INDEX article_blog_idx ON article USING btree (((data ->> 'blog'::text)))",
+  "article_pkey":"CREATE UNIQUE INDEX article_pkey ON article USING btree (id)",
   "article_text_idx":"CREATE INDEX article_text_idx ON article USING gin  \
                       (to_tsvector('german'::regconfig,   \
-                          (COALESCE(data ->> 'title'::text, ''::text) || ' '||  \
-                            COALESCE(data ->> 'collection'::text, ''::text)) || ' ' || \
-                            COALESCE(data ->> 'markdownDE'::text, ''::text)));",
+                          ((((COALESCE((data ->> 'title'::text), ''::text) || ' '::text) ||  \
+                            COALESCE((data ->> 'collection'::text), ''::text)) || ' '::text) || \
+                            COALESCE((data ->> 'markdownDE'::text), ''::text))))",
   "article_texten_idx":"CREATE INDEX article_texten_idx ON article USING gin \
                 (to_tsvector('english'::regconfig, \
-                  COALESCE(data ->> 'collection'::text, ''::text) ||' ' || \
-                  COALESCE(data ->> 'markdownEN'::text, ''::text)));"
+                  ((COALESCE((data ->> 'collection'::text), ''::text) || ' '::text) || \
+                  COALESCE((data ->> 'markdownEN'::text), ''::text))))"
 
 };
 pgObject.viewDefinition = {
