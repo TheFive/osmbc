@@ -577,7 +577,6 @@ pgObject.createString = 'CREATE TABLE article (  id bigserial NOT NULL,  data js
                   CONSTRAINT article_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
 pgObject.indexDefinition = {
   "article_blog_idx":"CREATE INDEX article_blog_idx ON article USING btree (((data ->> 'blog'::text)))",
-  "article_pkey":"CREATE UNIQUE INDEX article_pkey ON article USING btree (id)",
   "article_text_idx":"CREATE INDEX article_text_idx ON article USING gin  \
                       (to_tsvector('german'::regconfig,   \
                           ((((COALESCE((data ->> 'title'::text), ''::text) || ' '::text) ||  \

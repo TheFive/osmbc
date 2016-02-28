@@ -432,6 +432,10 @@ exports.createTables = function(pgObject,options,analyse,callback) {
   debug('createTable %s',pgObject.table);
   should(typeof(pg)).equal('object');
   should(typeof(options)).equal('object');
+  if (typeof(analyse)==="function") {
+    callback = analyse;
+    analyse = {foundNOK:{},expected:{}};
+  }
   should(typeof(analyse)).equal('object');
 
   pg.connect(config.pgstring,function(err,client,pgdone) {

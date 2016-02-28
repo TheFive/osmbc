@@ -754,7 +754,7 @@ pgObject.createString = 'CREATE TABLE blog (  id bigserial NOT NULL,  data json,
                   CONSTRAINT blog_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
 
 pgObject.indexDefinition = {
-  "blog_pkey":"CREATE UNIQUE INDEX blog_pkey ON blog USING btree (id)"
+
 };
 
 pgObject.viewDefinition = {};
