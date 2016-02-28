@@ -210,31 +210,24 @@ function countLogsForBlog(blog,callback) {
   });
 }
 
-
-
-function createTable(cb) {
-  debug('createTable');
-  var createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data json,  \
+var pgObject={};
+pgObject.createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT changes_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
-  var createView = "drop index if exists changes_table_oid_idx; \
-                create index changes_table_oid_idx on changes((data->>'table'),(data->>'oid')); \
-                drop index if exists changes_id_idx; \
-                CREATE INDEX changes_id_idx ON changes USING btree (id);\
-                DROP INDEX if exists changes_blog_to_idx; \
-                CREATE INDEX changes_blog_to_idx ON changes USING btree ((data ->> 'blog'::text) , (data ->> 'to'::text));";
-  pgMap.createTable('changes',createString,createView,cb);
-}
+pgObject.indexDefinition = {
+  "changes_table_oid_idx":"CREATE INDEX changes_table_oid_idx ON changes USING btree (((data ->> 'table'::text)), ((data ->> 'oid'::text)))",
+  "changes_blog_to_idx":"CREATE INDEX changes_blog_to_idx ON changes USING btree (((data ->> 'blog'::text)), ((data ->> 'to'::text)))"
+};
 
-function dropTable(cb) {
-  debug('dropTable');
-  pgMap.dropTable('changes',cb);
-}
+pgObject.viewDefinition = {};
+
+pgObject.table = "changes";
+
+module.exports.pg = pgObject;
+
 
 
 
 module.exports.table = "changes";
 module.exports.countLogsForBlog = countLogsForBlog;
-module.exports.createTable = createTable;
-module.exports.dropTable = dropTable;
 module.exports.create = create;
 module.exports.Class = Change;
