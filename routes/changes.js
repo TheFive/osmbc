@@ -56,31 +56,34 @@ function renderHistoryLog(req,res,next) {
 
 
   var sql = "";
-  if (date) {
-    if (sql !== "") sql += " and ";
-    sql += " (substring(data->>'timestamp' from 1 for "+ date.length+") ='"+date+"') ";
-  }
-  if (user) {
-    if (sql !== "") sql += " and ";
-    sql += " (data->>'user' like '"+ user+"') ";
-  }
-  if (table) {
-    if (sql !== "") sql += " and ";
-    sql += " (data->>'table' like '"+ table+"') ";
-  }
-  if (blog) {
-    if (sql !== "") sql += " and ";
-    sql += " (data->>'blog' like '"+ blog+"') ";
-  }
-  if (property) {
-    if (sql !== "") sql += " and ";
-    sql += " (data->>'property' like '"+ property+"') ";
-  }
-  if (sql) sql = " where "+sql + " and data->>'table' != 'mail' ";
-  else sql = " where  data->>'table' != 'mail' ";
+  var sqlParams = [];
+  // User
+  if (!date) date = "";
+
+  sql += " (substring(data->>'timestamp' from 1 for $1) =$2) ";
+  sqlParams.push(date.length);
+  sqlParams.push(date);
+
+  if (!user) user = '%';
+  sql += " and (data->>'user' like $3) ";
+  sqlParams.push(user);
+
+  if (!table) table = '%';
+  sql += " and (data->>'table' like $4) ";
+  sqlParams.push(table);
+
+  if (!blog) blog = '%';
+  sql += " and (data->>'blog' like $5) ";
+  sqlParams.push(blog);
+
+  if (!property) property = '%';
+  sql += " and (data->>'property' like $6) ";
+  sqlParams.push(property);
+
+  sql = " where "+sql + " and data->>'table' != 'mail' ";
   sql = "select id,data from changes "+sql+" order by data->>'timestamp' desc limit 500;";
-  console.log(sql);
-  logModule.find(sql,function (err,result){
+
+  logModule.find({sql:sql,params:sqlParams},function (err,result){
     debug("logModule.find");
     if (err) return next(err);
     res.render("history",{history:result,layout:res.rendervar.layout,params:params});
