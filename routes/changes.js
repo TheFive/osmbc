@@ -62,21 +62,22 @@ function renderHistoryLog(req,res,next) {
   }
   if (user) {
     if (sql !== "") sql += " and ";
-    sql += " (data->>'user' = '"+ user+"') ";
+    sql += " (data->>'user' like '"+ user+"') ";
   }
   if (table) {
     if (sql !== "") sql += " and ";
-    sql += " (data->>'table' = '"+ table+"') ";
+    sql += " (data->>'table' like '"+ table+"') ";
   }
   if (blog) {
     if (sql !== "") sql += " and ";
-    sql += " (data->>'blog' = '"+ blog+"') ";
+    sql += " (data->>'blog' like '"+ blog+"') ";
   }
   if (property) {
     if (sql !== "") sql += " and ";
-    sql += " (data->>'property' = '"+ property+"') ";
+    sql += " (data->>'property' like '"+ property+"') ";
   }
-  if (sql) sql = " where "+sql;
+  if (sql) sql = " where "+sql + " and data->>'table' != 'mail' ";
+  else sql = " where  data->>'table' != 'mail' ";
   sql = "select id,data from changes "+sql+" order by data->>'timestamp' desc limit 500;";
   console.log(sql);
   logModule.find(sql,function (err,result){
