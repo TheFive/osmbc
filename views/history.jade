@@ -23,16 +23,22 @@ block content
                 input.col-sm-12(type='text',id='date',name='date',placeholder='date' value=params.date  )
               td
                 input(type='submit',class='btn btn-default')
-
+      p
+        |only displaying changes
+        span.osmbc-inserted
+          |  inserted text
+        span.osmbc-deleted
+          |  removed text
+        |  use the % sql like notation e.g. WN29% for all WN starting with 29
       table.table
         thead
           tr
+            th=""
             th user
             th blog
             th table
             th property
-            th from
-            th to
+            th what
             th when
 
 
@@ -40,18 +46,16 @@ block content
           if (history)
             each change in history
               tr
+                td
+                  a(href='#{layout.htmlroot}/changes/' + change.id)
+                    span.glyphicon.glyphicon-info-sign
                 td=change.user
                 td=change.blog
                 td=change.table
                 td=change.property
-                if change.from
-                  td=(JSON.stringify(change.from)).substring(0,50)
-                else
-                  td=""
-                if change.to
-                  td=(JSON.stringify(change.to)).substring(0,50)
-                else
-                  td=""
+                td
+                  :verbatim
+                    !{change.htmlDiffText(60)}
                 td=layout.moment(change.timestamp).locale(layout.user.language).format("L")
 
 
