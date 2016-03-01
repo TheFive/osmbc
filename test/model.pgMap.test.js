@@ -133,7 +133,7 @@ describe('model/pgMap',function(){
           bddone();
         });      
       });
-      it('should create a valid SQL for emty string queries',function(bddone){
+      it('should create a valid SQL for empty string queries',function(bddone){
         pgMap.find(testModule,{name:""},function(err,result){
           should.not.exist(err);
           should(result.length).equal(2);
@@ -158,7 +158,7 @@ describe('model/pgMap',function(){
         });
       });
       it('should find on element with != ""',function(bddone) {
-        pgMap.find(testModule,{name:"!=",},function(err,result){
+        pgMap.find(testModule,{name:"!="},function(err,result){
           should.not.exist(err);
           should(result.length).equal(2);
           should(result[0].name).equal("Hallo");
@@ -170,6 +170,13 @@ describe('model/pgMap',function(){
         pgMap.find(testModule,function(err,result){
           should.not.exist(err);
           should(result.length).equal(4);
+          bddone();
+        });
+      });
+      it('should work with params',function(bddone){
+        pgMap.find(testModule,{sql:"where data->>'name'=$1 and data->>'value' = $2",params:["Hallo",4]},function(err,result){
+          should.not.exist(err);
+          should(result.length).equal(1);
           bddone();
         });
       });

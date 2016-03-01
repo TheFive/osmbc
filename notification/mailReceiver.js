@@ -44,18 +44,12 @@ var layout = {
 
 
 
+
+
 function sendMailWithLog(user,mailOptions,callback) {
   debug("sendMailWithLog");
 
-  // for development Reasons, filter Mail Address
-  var allowedMailAddresses = config.getValue("AllowedMailAddresses");
-  if (allowedMailAddresses) {
-    if (allowedMailAddresses.indexOf(mailOptions.to)<0) return callback();
-  }
-
-  var appName = config.getValue("AppName");
-  if (appName)   mailOptions.subject = "["+appName+"] "+mailOptions.subject;
-  transporter.sendMail(mailOptions,function logMail(error,info){
+  function logMail(error,info){
     debug("logMail Error %s response %s",error,info.response);
     var logObject = {
       user:user.OSMUser,
@@ -75,8 +69,18 @@ function sendMailWithLog(user,mailOptions,callback) {
     } else {
       logModule.log(logObject,callback);
     }
-  });
+  }
+  // for development Reasons, filter Mail Address
+  var allowedMailAddresses = config.getValue("AllowedMailAddresses");
+  if (allowedMailAddresses) {
+    if (allowedMailAddresses.indexOf(mailOptions.to)<0) return logMail(null,{response:"Blocked by "+config.getValue("AppName")});
+  }
+
+  var appName = config.getValue("AppName");
+  if (appName)   mailOptions.subject = "["+appName+"] "+mailOptions.subject;
+  transporter.sendMail(mailOptions,logMail);
 }
+
 function MailReceiver(user) {
   debug("MailReceiver");
   this.user = user;

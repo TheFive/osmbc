@@ -34,13 +34,8 @@ function getListOfOrphanBlog(callback) {
   if (listOfOrphanBlog) return callback(null,listOfOrphanBlog);
 
   pg.connect(config.pgstring, function(err, client, pgdone) {
-    if (err) {
-      console.log("Connection Error");
-      console.dir(err);
+    if (err) return callback(err);
 
-      pgdone();
-      return (callback(err));
-    }
     listOfOrphanBlog = [];
     var query = client.query('select name from "OpenBlogWithArticle" order by name');
     debug("reading list of open blog");
@@ -170,6 +165,10 @@ Article.prototype.getPreview = function getPreview(style,user) {
   if (this.categoryEN == "Upcoming Events") {
     liON = '<p>';
     liOFF = '</p>\n'+calenderTranslation.footer[options.left_lang];
+  }
+  if (this.categoryEN == "Releases") {
+    liON = '<p>';
+    liOFF = '</p>';
   }
 
   if (options.edit) {

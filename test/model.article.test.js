@@ -666,7 +666,17 @@ describe('model/article', function() {
       should(result).equal('<li id="undefined_0">\n<p>Howto place an issue in OSMBC?</p>\n<ol>\n<li>open OSMBC,</li>\n<li>click Collect,</li>\n<li>choose a category from the pop up window</li>\n<li>write a Titel: example: Lidar,</li>\n<li>write at text or put a link</li>\n<li>click OK\n--- reday ---</li>\n</ol>\n<p>If you like to write the news directly, do as follows:</p>\n<ol>\n<li>click Edit</li>\n<li>write your news in English (you can see it in</li>\n<li>click OK and ...\n... that\'s it.</li>\n</ol>\n <a href="/article/0?style=fullEN"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullEN&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</li>');
       bddone();
     });
+    it('should generate a preview for a picture',function (bddone) {
+      var article = articleModule.create({markdownEN:"![Alternative Text](https://osmbc.com/picture.jpg =300x200)\n\nSome caption text allowing superscript [^[1]^](#WN271_wetterabhängige_Karte)",
+                                          categoryEN:"Picture",commentList:[{text:"Hallo"}],commentStatus:"solved"});
+      var result = article.getPreview("fullEN","TheFive");
+      should(result).equal('<div style="width: 310px" class="wp-caption alignnone"> \n<p class="wp-caption-text"><img src="https://osmbc.com/picture.jpg" alt="Alternative Text" width="300" height="200"></p>\n<p class="wp-caption-text">Some caption text allowing superscript <a href="#WN271_wetterabh%C3%A4ngige_Karte"><sup>[1]</sup></a> <a href="/article/0?style=fullEN"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullEN&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</div>\n');
+      bddone();
+    });
   });
+
+
+
 
   describe('calculateUsedLinks',function() {
     var idToFindLater;

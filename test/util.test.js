@@ -24,6 +24,12 @@ describe('util',function() {
       should(util.shorten("Extreme Test",1)).equal("E...");
       bddone();
     });
+    it('should shorten objects and other non strings',function(bddone){
+      should(util.shorten({name:"Hallo"})).equal('{"name":"Hallo"}');
+      should(util.shorten(null)).equal('');
+      should(util.shorten(true)).equal('true');
+      bddone();
+    });
   });
   describe('isURL', function() {
     var file =  path.resolve(__dirname,'data', "util.data.json");
