@@ -76,11 +76,11 @@ block content
         .col-md-2
           | Period 
         .col-md-3
-          .panel.panel-default
-            .panel-body #{layout.moment(blog.startDate).locale(layout.user.language).format("l")}
+          p
+            |#{layout.moment(blog.startDate).tz("Europe/Berlin").locale(layout.user.language).format("LLLL z")}
         .col-md-3
-          .panel.panel-default
-            .panel-body #{layout.moment(blog.endDate).locale(layout.user.language).format("l")}
+          p
+            | #{layout.moment(blog.endDate).tz("Europe/Berlin").locale(layout.user.language).format("LLLL z")}
       .row
         .col-md-2
           | Status 
