@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-  "japan":"http://blog.openstreetmap.de/wp-uploads//2016/02/jp.svgen.s",
+  "japan":"http://blog.openstreetmap.de/wp-uploads//2016/02/jp.svg",
   "france":"http://blog.openstreetmap.de/wp-uploads//2016/02/fr.svg",
   "spain":"http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg",
   "czech republic":"http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg",
