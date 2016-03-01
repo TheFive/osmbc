@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.8.7](https://github.com/TheFive/osmbc/tree/0.8.7) (2016-03-01)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.6...0.8.7)
+
+**Closed issues:**
+
+- Category Releases should not have a bullet point [\#360](https://github.com/TheFive/osmbc/issues/360)
+- Log blocking of send out mail in development version. [\#358](https://github.com/TheFive/osmbc/issues/358)
+- Avoid possibility of SQL Injection \(e.g. History\) [\#357](https://github.com/TheFive/osmbc/issues/357)
+
+**Merged pull requests:**
+
+- bolivia and uk adjusted size [\#359](https://github.com/TheFive/osmbc/pull/359) ([fredao](https://github.com/fredao))
+
 ## [0.8.6](https://github.com/TheFive/osmbc/tree/0.8.6) (2016-02-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.5...0.8.6)
 
