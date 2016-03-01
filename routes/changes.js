@@ -56,6 +56,7 @@ function renderHistoryLog(req,res,next) {
 
 
   var sql = "";
+
   var sqlParams = [];
   // User
   if (!date) date = "";
@@ -81,6 +82,7 @@ function renderHistoryLog(req,res,next) {
   sqlParams.push(property);
 
   sql = " where "+sql + " and data->>'table' != 'mail' ";
+
   sql = "select id,data from changes "+sql+" order by data->>'timestamp' desc limit 500;";
 
   logModule.find({sql:sql,params:sqlParams},function (err,result){
