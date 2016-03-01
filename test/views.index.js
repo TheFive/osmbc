@@ -27,7 +27,7 @@ describe('views/index', function() {
       bddone(err);
     });
   });
-  
+
 
   describe("Homepage",function() {
     // load the contact page
@@ -39,6 +39,18 @@ describe('views/index', function() {
     it('should find welcome text on Homepage' ,function() {
       browser.assert.success();
       browser.assert.text('h2', 'Welcome to OSM BCOSM BC');
+    });
+  });
+  describe("Not Defined Page",function() {
+    // load the contact page
+    before(function(done) {
+      this.timeout(6000);
+      browser.visit('/notdefined.html', function(){done();});
+    });
+
+    it('should throw an error message' ,function() {
+      browser.assert.status(404);
+      browser.assert.text('h1', 'Not Found');
     });
   });
 });
