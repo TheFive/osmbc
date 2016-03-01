@@ -166,6 +166,10 @@ Article.prototype.getPreview = function getPreview(style,user) {
     liON = '<p>';
     liOFF = '</p>\n'+calenderTranslation.footer[options.left_lang];
   }
+  if (this.categoryEN == "Releases") {
+    liON = '<p>';
+    liOFF = '</p>';
+  }
 
   if (options.edit) {
 
