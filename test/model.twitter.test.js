@@ -58,6 +58,20 @@ describe("model/twitter",function() {
       bddone();
     });
   });
+  it('should not expand non twitter collections',function (bddone){
+    twitter.expandTwitterUrl("https://www.openstreetmap.de/halloliloe",function(err,result){
+      should.not.exist(err);
+      should(result).eql("https://www.openstreetmap.de/halloliloe");
+      bddone();
+    });
+  });
+  it('should not expand a twitter collections without status',function (bddone){
+    twitter.expandTwitterUrl("https://twitter.com/OSMBuildings/669252548600139776",function(err,result){
+      should.not.exist(err);
+      should(result).eql("https://twitter.com/OSMBuildings/669252548600139776");
+      bddone();
+    });
+  });
 });
 
 
