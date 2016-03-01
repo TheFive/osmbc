@@ -4,7 +4,7 @@
 
 var should = require('should');
 
-var messageFilter = require('../notification/messagefilter.js');
+var messageFilter = require('../notification/messageFilter.js');
 var UserConfigFilter = messageFilter.UserConfigFilter;
 
 

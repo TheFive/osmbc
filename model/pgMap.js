@@ -13,13 +13,15 @@ function generateQuery(table,obj,order) {
 
   var whereClause = "";
 
-  if (typeof(obj)=='string') {
-    whereClause = " "+ obj;
+  var paramWhere = obj;
+  if (obj && typeof(obj) == "object" && obj.sql) paramWhere = obj.sql;
+  if (typeof(paramWhere)=='string') {
+    whereClause = " "+ paramWhere;
 
     // if there is a select statement, expect and id and data, and take it.
-    if (obj.substring(0,6)==="select") {
-      debug(obj);
-      return obj;
+    if (paramWhere.substring(0,6)==="select") {
+      debug(paramWhere);
+      return paramWhere;
     }
   } else {
     if (obj) {
@@ -237,7 +239,15 @@ module.exports.find = function find(module,obj,order,callback) {
 
     var startTime = new Date().getTime();
 
-    var query = client.query(sqlQuery);
+    var query;
+
+    if (obj && obj.params) {
+      query = client.query(sqlQuery,obj.params);
+      console.dir(sqlQuery);
+      console.dir(obj.params);
+    }
+    else query = client.query(sqlQuery);
+
     query.on('row',function findRowFunction(row) {
       debug('findRowFunction');
       var r = module.create();

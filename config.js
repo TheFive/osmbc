@@ -54,7 +54,7 @@ exports.getLanguages = function() {
 
 
 
-exports.initialise = function(callback) {
+exports.initialise = function initialise(callback) {
   debug("initialise");
   if (configurationInitialised) {
     if (callback) callback();
@@ -78,22 +78,16 @@ exports.initialise = function(callback) {
 
 
 exports.getConfiguration = function() {
-    if (typeof(configuration)=='undefined')
-    {
-    	exports.initialise();
-    }
+  exports.initialise();
 	return configuration;
 };
 exports.getValue = function(key,defValue) {
-    if (typeof(configuration)=='undefined')
-    {
-    	exports.initialise();
-    }
-    var result = defValue;
-    if (typeof(configuration[key]) != 'undefined') {
-    	result = configuration[key];
-    }
-    return result;
+  exports.initialise();
+  var result = defValue;
+  if (typeof(configuration[key]) != 'undefined') {
+    result = configuration[key];
+  }
+  return result;
 };
 
 
@@ -103,17 +97,11 @@ exports.getValue = function(key,defValue) {
 
 
 exports.getServerPort = function() {
-  if (typeof(configuration)=='undefined')
-  {
-    exports.initialise();
-  }
+  exports.initialise();
 	return configuration.serverport;
 };
 exports.getCallbackUrl = function() {
-  if (typeof(configuration)=='undefined')
-  {
-    exports.initialise();
-  }
+  exports.initialise();
   return configuration.callbackUrl;
 };
 
