@@ -55,37 +55,21 @@ function renderHistoryLog(req,res,next) {
   var params={date:date,user:user,table:table,blog:blog,property:property};
 
 
-  var sql = "";
+  var search={};
+  if (date) search.timestamp = date+"%";
+  if (user) search.user = user;
+  if (table) {
+    search.table = table;
+  } else {
+    search.table = "IN ('usert','article','blog')";
+  }
 
-  var sqlParams = [];
-  // User
-  if (!date) date = "";
+  if (blog) search.blog = blog;
 
-  sql += " (substring(data->>'timestamp' from 1 for $1) =$2) ";
-  sqlParams.push(date.length);
-  sqlParams.push(date);
+  if (property) search.property = property;
 
-  if (!user) user = '%';
-  sql += " and (data->>'user' like $3) ";
-  sqlParams.push(user);
 
-  if (!table) table = '%';
-  sql += " and (data->>'table' like $4) ";
-  sqlParams.push(table);
-
-  if (!blog) blog = '%';
-  sql += " and (data->>'blog' like $5) ";
-  sqlParams.push(blog);
-
-  if (!property) property = '%';
-  sql += " and (data->>'property' like $6) ";
-  sqlParams.push(property);
-
-  sql = " where "+sql + " and data->>'table' != 'mail' ";
-
-  sql = "select id,data from changes "+sql+" order by data->>'timestamp' desc limit 500;";
-
-  logModule.find({sql:sql,params:sqlParams},function (err,result){
+  logModule.find(search,{column:"timestamp",desc:true,limit:500},function (err,result){
     debug("logModule.find");
     if (err) return next(err);
     res.render("history",{history:result,layout:res.rendervar.layout,params:params});
