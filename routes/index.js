@@ -44,14 +44,8 @@ function languageSwitcher(req,res) {
   res.redirect(req.get('referer'));
 }
 
-function renderReleaseNotes(req,res) { 
-  debug('renderReleaseNotes');
-  var level = req.query.level;
-  should.exist(res.rendervar.layout);
-  res.render('release_notes',{level:level,
-                              layout:res.rendervar.layout});  
-}
-function renderHelp(req,res) { 
+
+function renderHelp(req,res) {
   debug('help');
   should.exist(res.rendervar.layout);
   var title = req.params.title;
@@ -62,7 +56,6 @@ function renderHelp(req,res) {
 router.get('/', renderHome);
 router.get('/osmbc.html', renderHome);
 router.get('/osmbc', renderHome);
-router.get('/release_notes.html', renderReleaseNotes);
 router.get('/help/:title', renderHelp);
 router.get('/language',languageSwitcher);
 
