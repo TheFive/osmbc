@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.8.8](https://github.com/TheFive/osmbc/tree/0.8.8) (2016-03-02)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.7...0.8.8)
+
+**Implemented enhancements:**
+
+- Change calculation of blog dates in createblog from javascript date object to moment.js [\#355](https://github.com/TheFive/osmbc/issues/355)
+
+**Closed issues:**
+
+- New history list does not display usert table changes. [\#361](https://github.com/TheFive/osmbc/issues/361)
+
 ## [0.8.7](https://github.com/TheFive/osmbc/tree/0.8.7) (2016-03-01)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.6...0.8.7)
 
