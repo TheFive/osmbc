@@ -38,10 +38,12 @@ function generateQuery(table,obj,order) {
             op = "in";
             value = value.substring(2,999999);
           }
+          if (value.indexOf('%')>=0) op = "like";
           if (op != "in") {
             // escape the Apostroph
             value = value.replace("'","''");
-          }             
+          }
+
         }
 
         var n = "data->>'"+k+"'"+op+"'"+value+"'"; 
