@@ -2,7 +2,7 @@
 
 var express  = require('express');
 var async    = require('async');
-var moment   = require('moment');
+var moment   = require('moment-timezone');
 var router   = express.Router();
 var debug    = require('debug')('OSMBC:routes:layout');
 
