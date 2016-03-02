@@ -180,6 +180,15 @@ describe('model/pgMap',function(){
           bddone();
         });
       });
+      it('should use like',function(bddone){
+        pgMap.find(testModule,{name:"Ha%"},function(err,result){
+          should.not.exist(err);
+          should(result.length).equal(2);
+          should(result[0].name).equal("Hallo");
+          should(result[1].name).equal("Hallo");
+          bddone();
+        });
+      });
     });
   });
   describe('remove',function(){
