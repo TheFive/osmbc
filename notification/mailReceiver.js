@@ -448,7 +448,7 @@ function updateUser(user) {
   delete userReceiverMap[user.OSMUser];
   if (user.access !== "full") return;
   if (!user.email) return;
-  if (user.email === "") return;
+  if (user.email.trim() === "") return;
   userReceiverMap[user.OSMUser] = new messageFilter.UserConfigFilter(user,new MailReceiver(user));
 }
 
