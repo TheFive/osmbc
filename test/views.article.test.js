@@ -159,4 +159,26 @@ describe('views/article', function() {
       });
     });
   });
+  describe('QueryParameter',function(){
+    it('should set markdown to notranslation',function(bddone){
+      this.timeout(10000);
+      articleModule.findById(articleId,function(err,article){
+        article.markdownDE="Text";
+        article.markdownEN="";
+        article.markdownES="";
+        article.save(function(err){
+          should.not.exist(err);
+          browser.visit("/article/"+articleId+"?notranslation=true",function(err){
+            should.not.exist(err);
+            articleModule.findById(articleId,function(err,article){
+              should(article.markdownDE).eql("Text");
+              should(article.markdownEN).eql("no translation");
+              should(article.markdownES).eql("no translation");
+              bddone();
+            });
+          });
+        });
+      });
+    });
+  });
 });
