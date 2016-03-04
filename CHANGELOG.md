@@ -1,5 +1,22 @@
 # Change Log
 
+## [0.8.9](https://github.com/TheFive/osmbc/tree/0.8.9) (2016-03-04)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.8...0.8.9)
+
+**Implemented enhancements:**
+
+- Do not search for WN Author, if not changed. [\#367](https://github.com/TheFive/osmbc/issues/367)
+- Show reference to history in userlist. [\#365](https://github.com/TheFive/osmbc/issues/365)
+
+**Fixed bugs:**
+
+- Disallow change of OSMUser once a user has logged in. [\#363](https://github.com/TheFive/osmbc/issues/363)
+- putting a space to an email results in sendMail error. [\#362](https://github.com/TheFive/osmbc/issues/362)
+
+**Merged pull requests:**
+
+- new Flag Chile - some more videos in Youtube [\#364](https://github.com/TheFive/osmbc/pull/364) ([fredao](https://github.com/fredao))
+
 ## [0.8.8](https://github.com/TheFive/osmbc/tree/0.8.8) (2016-03-02)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.7...0.8.8)
 
@@ -49,13 +66,13 @@
 
 **Implemented enhancements:**
 
+- Don't send messages if a blog will be totally closed [\#352](https://github.com/TheFive/osmbc/issues/352)
 - proposal: a button to fill in all the other languages with "no translation" would be fine [\#315](https://github.com/TheFive/osmbc/issues/315)
 - Better CreateDB script for install purposes [\#66](https://github.com/TheFive/osmbc/issues/66)
 
 **Closed issues:**
 
 - Check emal sending on new comment style [\#353](https://github.com/TheFive/osmbc/issues/353)
-- Don't send messages if a blog will be totally closed [\#352](https://github.com/TheFive/osmbc/issues/352)
 
 ## [0.8.3](https://github.com/TheFive/osmbc/tree/0.8.3) (2016-02-24)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.2...0.8.3)
@@ -351,11 +368,8 @@
 
 **Implemented enhancements:**
 
-- Add links to WN and Weekly Wiki. [\#278](https://github.com/TheFive/osmbc/issues/278)
-
-**Closed issues:**
-
 - new category "Software Releases" [\#279](https://github.com/TheFive/osmbc/issues/279)
+- Add links to WN and Weekly Wiki. [\#278](https://github.com/TheFive/osmbc/issues/278)
 
 ## [0.6.5c](https://github.com/TheFive/osmbc/tree/0.6.5c) (2016-01-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5b...0.6.5c)
@@ -465,11 +479,8 @@
 
 **Fixed bugs:**
 
-- Error storing session object. [\#151](https://github.com/TheFive/osmbc/issues/151)
-
-**Closed issues:**
-
 - Fix the width for the Status Flow Chart [\#240](https://github.com/TheFive/osmbc/issues/240)
+- Error storing session object. [\#151](https://github.com/TheFive/osmbc/issues/151)
 
 **Merged pull requests:**
 
@@ -795,14 +806,14 @@
 ## [0.3.7](https://github.com/TheFive/osmbc/tree/0.3.7) (2015-11-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6e...0.3.7)
 
-**Fixed bugs:**
-
-- Not every pasting should be a hyperlink [\#143](https://github.com/TheFive/osmbc/issues/143)
-
-**Closed issues:**
+**Implemented enhancements:**
 
 - Prevent or give warning when a user wants to edit a blog with Status "Review" [\#156](https://github.com/TheFive/osmbc/issues/156)
 - Need a better display of blogs that are in EDIT status [\#155](https://github.com/TheFive/osmbc/issues/155)
+
+**Fixed bugs:**
+
+- Not every pasting should be a hyperlink [\#143](https://github.com/TheFive/osmbc/issues/143)
 
 ## [0.3.6e](https://github.com/TheFive/osmbc/tree/0.3.6e) (2015-11-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6d...0.3.6e)
