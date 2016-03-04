@@ -21,6 +21,14 @@ block content
             td
               | Email
             th
+              | Collection
+            th
+              | AllComment
+            th
+              | Comment
+            th
+              | Status
+            th
               | Language
             th
               | access
@@ -47,6 +55,19 @@ block content
                   span.glyphicon.glyphicon-ok
                 else if user.emailInvalidation
                   span.glyphicon.glyphicon-question-sign
+              td
+                if user.mailNewCollection && user.email
+                  span.glyphicon.glyphicon-ok
+                else
+                  p=" "
+              td
+                if user.mailAllComment && user.email
+                  span.glyphicon.glyphicon-ok
+                else
+                  p=" "
+              td= (user.email)?user.mailComment:""
+              td= (user.email)?user.mailBlogLanguageStatusChange:""
+
 
 
               td= user.language
