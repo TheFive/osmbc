@@ -127,7 +127,7 @@ describe('model/user', function() {
       oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
       mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
       testutil.importData({clear:true,
-                            user:[{OSMUser:"WelcomeMe",email:"none"},
+                            user:[{OSMUser:"WelcomeMe",email:"none",lastAccess:(new Date()).toISOString()},
                                   {OSMUser:"InviteYou",email:"invite@mail.org"}]},bddone);
     }) ;
     afterEach(function (bddone){
@@ -203,6 +203,15 @@ describe('model/user', function() {
         // First set a new EMail Address for the WelcomeMe user, by InviteYou.
         user.setAndSave("InviteYou",{email:"WelcomeMe@newemail.org"}, function (err){
           should(err).eql(new Error("EMail address can only be changed by the user himself."));
+          bddone();
+        });
+      });
+    });
+    it('should fail when username is changed and user once logged in',function (bddone){
+      userModule.findOne({OSMUser:"WelcomeMe"},function(err,user){
+        // First set a new EMail Address for the WelcomeMe user, by InviteYou.
+        user.setAndSave("InviteYou",{OSMUser:"NameChange"}, function (err){
+          should(err).eql(new Error(">"+user.OSMUser+"< allready has logged in, change in name not possible."));
           bddone();
         });
       });

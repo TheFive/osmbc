@@ -118,6 +118,7 @@ function postUserId(req, res, next) {
   }
   async.series([
     function getPublicAuthor(cb) {
+      debug("getPublicAuthor");
       if (!changes.WNAuthor) return cb();
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
       request('https://blog.openstreetmap.de/blog/author/'+changes.WNAuthor, function(error,response,body) {
@@ -138,7 +139,9 @@ function postUserId(req, res, next) {
       });
 
     }, function findUser(cb) {
+      debug("findUser");
         userModule.findById(id,function(err,user) {
+          debug("findById");
           if (typeof(user.id) == 'undefined') return next();
          
          
@@ -149,6 +152,7 @@ function postUserId(req, res, next) {
             }
           }
           user.setAndSave(req.user.displayName,changes,function(err) {
+            debug("setAndSaveCB");
             cb(err);
           });
         });      
