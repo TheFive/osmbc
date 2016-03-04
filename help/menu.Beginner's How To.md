@@ -14,3 +14,9 @@ The different Status are explained [here](https://wiki.openstreetmap.org/w/image
 * Video [How To write in OSMBC a Markdown with Drag and Drop - short version](https://youtu.be/Dp90jM6s9Tc)
 * Video [How To write in OSMBC a Markdown with Drag and Drop - extended version](https://youtu.be/zBYe-XHDJ98)
 
+## Some more Help on Youtube
+* Video [From OSMBC to WordPress](https://www.youtube.com/watch?v=EmFOXWhry2A)
+* Video [Publish an article in only one language](https://www.youtube.com/watch?v=nmi91HLUhDY)
+* Video [Write an article in OSMBC](https://www.youtube.com/watch?v=np-gkdpNLlw) (German)
+* Video [Quick edit in OSMBC](https://www.youtube.com/watch?v=f8qQLNYFbY0)
+
