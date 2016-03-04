@@ -668,9 +668,16 @@ describe('model/article', function() {
     });
     it('should generate a preview for a picture',function (bddone) {
       var article = articleModule.create({markdownEN:"![Alternative Text](https://osmbc.com/picture.jpg =300x200)\n\nSome caption text allowing superscript [^[1]^](#WN271_wetterabhängige_Karte)",
-                                          categoryEN:"Picture",commentList:[{text:"Hallo"}],commentStatus:"solved"});
+        categoryEN:"Picture",commentList:[{text:"Hallo"}],commentStatus:"solved"});
       var result = article.getPreview("fullEN","TheFive");
       should(result).equal('<div style="width: 310px" class="wp-caption alignnone"> \n<p class="wp-caption-text"><img src="https://osmbc.com/picture.jpg" alt="Alternative Text" width="300" height="200"></p>\n<p class="wp-caption-text">Some caption text allowing superscript <a href="#WN271_wetterabh%C3%A4ngige_Karte"><sup>[1]</sup></a> <a href="/article/0?style=fullEN"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullEN&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</div>\n');
+      bddone();
+    });
+    it('should generate a preview for a translation',function (bddone) {
+      var article = articleModule.create({markdownEN:"We will tell you something about maps.",markdownDE:"Wir erzählen euch was über Karten.",
+        categoryEN:"Maps",commentList:[{text:"Hallo"}],commentStatus:"solved"});
+      var result = article.getPreview("translateEN","TheFive");
+      should(result).equal('<li id=\"undefined_0\">\n<p>Wir erzählen euch was über Karten. <a href=\"/article/0?style=translateEN\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> <a href=\"/article/0?style=translateEN&edit=true\"><span class=\"glyphicon glyphicon-edit\"></span></a></p>\n\n</li>');
       bddone();
     });
   });

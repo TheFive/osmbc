@@ -256,54 +256,46 @@ describe('routes/blog',function() {
         });
       });
     });
-/*    it('should render a blog for edit',function(bddone) {
-      blogModule.createNewBlog({name:"WN333",startDate:"2015-12-12T00:00:00",endDate:"2015-12-13T00:00:00"},function(err,blog) {
+    it('should render a blog for TRANSLATION',function(bddone) {
+      blogModule.createNewBlog({OSMUser:"test"},{name:"WN333",startDate:"2015-12-12T00:00:00",endDate:"2015-12-13T00:00:00"},function(err,blog) {
         should.not.exist(err);
         should(blog.id).not.equal(0);
         var newId = "WN333";
         var req = {};
         req.params = {};
         req.params.blog_id = newId;
-        req.query = {};
+        req.query = {style:"TRANSLATE"};
         req.user = {};
         req.session = {articleReturnTo:"returnToUrlXX"};
 
         var res = {rendervar:{layout:"calculated layout"}};
+        var next;
 
         async.series([
           function(callback) {
-            res.render = sinon.spy(callback)
+            res.render = sinon.spy(callback);
             next = sinon.spy(callback);
             blogRouter.renderBlogId(req,res,next);
           }],
           function(result) {
-            should(result).equal('blog');
+            should(result).eql("blog");
             should(next.called).be.False();
 
-           //layout
-                           
-                           //changes:changes,
-                           //articles:articles,
-                           //style:style,
-                           //left_lang:options.left_lang,
-                           //right_lang:options.right_lang,
-                           //categories:blog.getCategories()});
             should(res.render.called).be.True();
             var call = res.render.firstCall;
             var v = call.args[1];
 
             should(v.blog.id).equal(blog.id);
             should(v.layout).equal("calculated layout");
-            should(v.main_text).equal("<p>12.12.2015-13.12.2015</p>\n<!--         place picture here              -->\n");
+            should(v.main_text).equal("<p>12.12.2015-13.12.2015</p>\n<!--         place picture here              -->\n<ul>\n<div style=\"width: ##width##px\" class=\"wp-caption alignnone\"> \n<mark>No Title <a href=\"/article/2?style=TRANSLATE\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> <a href=\"/article/2?style=TRANSLATE&edit=true\"><span class=\"glyphicon glyphicon-edit\"></span></a>\n</mark></div>\n</ul>\n<h2 id=\"wn333_wochenvorschau\">Wochenvorschau</h2>\n<ul>\n<p><mark>No Title <a href=\"/article/1?style=TRANSLATE\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> <a href=\"/article/1?style=TRANSLATE&edit=true\"><span class=\"glyphicon glyphicon-edit\"></span></a>\n</mark></p>\n<p>Hinweis:<br />\nWer seinen Termin hier in der Liste sehen möchte, <a href=\"https://wiki.openstreetmap.org/wiki/Template:Calendar\">trage</a> ihn in den <a href=\"https://wiki.openstreetmap.org/wiki/Current_events\">Kalender</a> ein. Nur Termine, die dort stehen, werden in die Wochennotiz übernommen.</p></ul>\n");
 
-            console.dir(v.changes);
-   
+
       
             bddone();            
           }
-        )
-      })
-    })  */     
+        );
+      });
+    });
   });
  /*describe('Render Blog ID File Based',function() {
     beforeEach(function (bddone) {

@@ -35,15 +35,24 @@ mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
             input(type="checkbox" name="#{name}" value="#{v}") 
             |#{displayValues[i]}
     div.col-sm-6.text-muted=explanation
-     
-
+mixin labeledText(label,name,value,explanation)
+    - if (!value) value =""
+    div.form-group
+        label.control-label.col-sm-2(for="#{name}")=label
+        div.col-sm-4
+            input.form-control(name="#{name}",id="#{name}",value = "#{value}" readonly)
+        div.col-sm-6.text-muted
+            | #{explanation}
 
 block content
   h1
     |Edit OSMBC User
   form(name="input", action="#{layout.htmlroot}/usert/#{usershown.id}", method="post")
     div.form-horizontal(role="form")
-      +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
+      if (usershown.lastAccess)
+        +labeledText("OSMUser","OSMUser",usershown.OSMUser,"User allready logged in, namechange not possible.")
+      else
+        +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
       +labeledInput("EMail","email",usershown.email,"This mail is used for information about changes. To delete the email just submit a space for this field.")
 
       if (usershown.emailInvalidation)
