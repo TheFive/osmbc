@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.9...HEAD)
+
+**Implemented enhancements:**
+
+- Show Symbols for mailconfiguration in userlist. [\#366](https://github.com/TheFive/osmbc/issues/366)
+
 ## [0.8.9](https://github.com/TheFive/osmbc/tree/0.8.9) (2016-03-04)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.8...0.8.9)
 
