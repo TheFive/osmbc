@@ -17,7 +17,17 @@ block content
             th
               | WNAuthor
             th
+              | OSMBC
+            td
               | Email
+            th
+              | Collection
+            th
+              | AllComment
+            th
+              | Comment
+            th
+              | Status
             th
               | Language
             th
@@ -39,10 +49,25 @@ block content
                 if user.WNAuthor
                  a(href='https://blog.openstreetmap.de/blog/author/#{user.WNAuthor}') #{(user.WNPublicAuthor)?user.WNPublicAuthor:user.WNAuthor}
               td
+                a(href='#{layout.htmlroot}/changes/log?user=#{user.OSMUser}') logs
+              td
                 if user.email
                   span.glyphicon.glyphicon-ok
                 else if user.emailInvalidation
                   span.glyphicon.glyphicon-question-sign
+              td
+                if user.mailNewCollection && user.email
+                  span.glyphicon.glyphicon-ok
+                else
+                  p=" "
+              td
+                if user.mailAllComment && user.email
+                  span.glyphicon.glyphicon-ok
+                else
+                  p=" "
+              td= (user.email)?user.mailComment:""
+              td= (user.email)?user.mailBlogLanguageStatusChange:""
+
 
 
               td= user.language

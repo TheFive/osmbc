@@ -116,9 +116,21 @@ function postUserId(req, res, next) {
   if (typeof(changes.mailBlogLanguageStatusChange)==="string") {
     changes.mailBlogLanguageStatusChange = [changes.mailBlogLanguageStatusChange];
   }
+  var user;
   async.series([
+    function findUser(cb) {
+      debug("findUser");
+      userModule.findById(id,function(err,result) {
+        user = result;
+        debug("findById");
+        if (typeof(user.id) == 'undefined') return cb(new Error("User Not Found"));
+        return cb();
+      });
+    },
     function getPublicAuthor(cb) {
+      debug("getPublicAuthor");
       if (!changes.WNAuthor) return cb();
+      if (changes.WNAuthor === user.WNAuthor) return cb();
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
       request('https://blog.openstreetmap.de/blog/author/'+changes.WNAuthor, function(error,response,body) {
         changes.WNPublicAuthor = "Not Found"; 
@@ -137,21 +149,11 @@ function postUserId(req, res, next) {
             
       });
 
-    }, function findUser(cb) {
-        userModule.findById(id,function(err,user) {
-          if (typeof(user.id) == 'undefined') return next();
-         
-         
-          for (var i =0;i<15;i++) {
-            if (req.body["blogSetting"+i]) {
-              changes["blogSetting"+i] = req.body["blogSetting"+i];
-              changes["blogLanguages"+i] = req.body["blogLanguages"+i];
-            }
-          }
-          user.setAndSave(req.user.displayName,changes,function(err) {
-            cb(err);
-          });
-        });      
+    }, function saveUser(cb) {
+      user.setAndSave(req.user.displayName,changes,function(err) {
+        debug("setAndSaveCB");
+        cb(err);
+      });
     }
 
     ],function(err){

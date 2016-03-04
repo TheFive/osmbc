@@ -125,6 +125,7 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
   delete self.lock;
   var sendWelcomeEmail = false;
 
+  // check and react on Mail Change
   if (data.email && data.email.trim()!=="" && data.email !== self.email) {
     if (self.OSMUser !== user) return callback(new Error("EMail address can only be changed by the user himself."));
     if (data.email !=="resend") {
@@ -146,6 +147,11 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
    
     sendWelcomeEmail = true;
 
+  }
+
+  // Check Change of OSMUser Name.
+  if (data.OSMUser !== self.OSMUser) {
+    if (self.lastAccess) return callback(new Error(">"+self.OSMUser+"< allready has logged in, change in name not possible."));
   }
   async.series([
     function checkUserName(cb){
