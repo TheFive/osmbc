@@ -17,6 +17,8 @@ block content
             th
               | WNAuthor
             th
+              | OSMBC
+            td
               | Email
             th
               | Language
@@ -38,6 +40,8 @@ block content
               td
                 if user.WNAuthor
                  a(href='https://blog.openstreetmap.de/blog/author/#{user.WNAuthor}') #{(user.WNPublicAuthor)?user.WNPublicAuthor:user.WNAuthor}
+              td
+                a(href='#{layout.htmlroot}/changes/log?user=#{user.OSMUser}') logs
               td
                 if user.email
                   span.glyphicon.glyphicon-ok
