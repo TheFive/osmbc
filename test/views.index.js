@@ -89,6 +89,7 @@ describe('views/index', function() {
         should.not.exist(err);
         should.not.exist(err);
         browser.reload(function(err) {
+          should.not.exist(err);
           browser.assert.success();
           var html = browser.html();
           var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang2">ES');

@@ -57,7 +57,7 @@ describe('notification/mailReceiver', function() {
     });
     it('should send out mail, when collecting article',function (bddone){
       articleModule.createNewArticle(function(err,article){
-        article.setAndSave({OSMUser:"testuser"},{blog:"WN789",collection:"newtext",title:"Test Title"},function(err) {
+        article.setAndSave({OSMUser:"testuser"},{version:1,blog:"WN789",collection:"newtext",title:"Test Title"},function(err) {
           setTimeout(function (){
             should.not.exist(err);
             should(mailReceiver.for_test_only.transporter.sendMail.callCount).eql(1);
@@ -81,7 +81,7 @@ describe('notification/mailReceiver', function() {
     });
     it('should send out mail, when adding comment. (old Format)',function (bddone){
       articleModule.createNewArticle(function(err,article){
-        article.setAndSave({OSMUser:"testuser"},{blog:"WN789",comment:"Information for @User3"},function(err) {
+        article.setAndSave({OSMUser:"testuser"},{version:1,blog:"WN789",comment:"Information for @User3"},function(err) {
           should.not.exist(err);
           should(mailReceiver.for_test_only.transporter.sendMail.calledTwice).be.True();
 
@@ -114,9 +114,9 @@ describe('notification/mailReceiver', function() {
     it('should send out mail, when changing comment (old format)',function (bddone){
       articleModule.createNewArticle(function(err,article){
         should.not.exist(err);
-        article.setAndSave({OSMUser:"testuser"},{blog:"WN789",comment:"Information for none"},function(err) {
+        article.setAndSave({OSMUser:"testuser"},{version:1,blog:"WN789",comment:"Information for none"},function(err) {
           should.not.exist(err);
-          article.setAndSave({OSMUser:"testuser"},{comment:"Information for none and for @User3"},function(err) {
+          article.setAndSave({OSMUser:"testuser"},{version:2,comment:"Information for none and for @User3"},function(err) {
             should.not.exist(err);
             should(mailReceiver.for_test_only.transporter.sendMail.calledThrice).be.True();
 

@@ -50,7 +50,7 @@ block content
   form(name="input", action="#{layout.htmlroot}/usert/#{usershown.id}", method="post")
     div.form-horizontal(role="form")
       if (usershown.lastAccess)
-        +labeledText("OSMUser","OSMUser",usershown.OSMUser,"User allready logged in, namechange not possible.")
+        +labeledText("OSMUser","OSMUser",usershown.OSMUser,"User already logged in, namechange not possible.")
       else
         +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
       +labeledInput("EMail","email",usershown.email,"This mail is used for information about changes. To delete the email just submit a space for this field.")

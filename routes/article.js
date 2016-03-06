@@ -328,6 +328,48 @@ function postNewComment(req, res, next) {
   );
 }
 
+
+function postSetMarkdown(req, res, next) {
+  debug('postSetMarkdown');
+
+  var id = req.params.article_id;
+  var lang = req.params.lang;
+
+
+
+  var article = null;
+  var markdown = req.body.markdown;
+  var oldMarkdown = req.body.oldMarkdown;
+
+  async.parallel([
+      function searchArticle(cb) {
+        debug('postNewComment->searchArticle');
+        if (typeof(id)=='undefined') return cb();
+        articleModule.findById(id,function(err,result) {
+          debug('postNewComment->searchArticle->findById');
+          if (err) return cb(err);
+          if (!result) return cb(new Error("Article ID does not exist"));
+          article = result;
+          cb();
+        });
+      }
+    ],
+    function setValues(err) {
+      debug('postNewComment->setValues');
+      if (err) {return next(err);}
+      should.exist(article);
+      var change = {};
+      change["markdown"+lang]=markdown;
+      change.old = {};
+      change.old["markdown"+lang]=oldMarkdown;
+      article.setAndSave(req.user,change,function(err){
+        if (err) return next(err);
+        var returnToUrl = config.getValue('htmlroot')+"/blog/"+article.blog+"/previewNEdit?lang="+lang;
+        res.redirect(returnToUrl);
+      });
+    }
+  );
+}
 function postEditComment(req, res, next) {
   debug('postEditComment');
 
@@ -515,6 +557,7 @@ function renderList(req,res,next) {
 // Export Render Functions for testing purposes
 exports.renderArticleId = renderArticleId;
 exports.renderList = renderList;
+exports.postSetMarkdown = postSetMarkdown;
 
 // postArticle is called, by a post from the createArticle
 // view or the /:article_id view, and decides
@@ -537,6 +580,7 @@ router.post('/create', exports.postArticle);
 router.get('/:article_id', exports.renderArticleId );
 
 router.post('/:article_id/addComment', exports.postNewComment);
+router.post('/:article_id/setMarkdown/:lang', exports.postSetMarkdown);
 router.post('/:article_id/editComment/:number', exports.postEditComment);
 router.post('/:article_id', exports.postArticle);
 
