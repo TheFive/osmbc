@@ -334,7 +334,7 @@ function renderBlogPreviewAndEdit(req, res, next) {
     if (err) return next(err);
     should.exist(blog);
 
-    var lang = req.query.lang;
+    var lang = req.session.language;
     if (typeof(lang)=='undefined') lang = "DE";
 
 
