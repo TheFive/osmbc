@@ -19,23 +19,60 @@ block content
   for c in categories
     if (articles[c.EN])
       .row
-        .col-md-1
         .col-md-12
           :verbatim
             !{renderer.categoryTitle(lang,c)}
       for a in articles[c.EN]
-        .row
-          .col-md-1
-            button.glyphicon.glyphicon-pencil(onclick="document.getElementById('div#{a.id}').classList.toggle('hidden');")
-          .col-md-11
-            div.hidden(id="div#{a.id}")
-              form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
-                textarea.form-control(name="markdown" id="markdown"+a.id rows=7 ) #{a["markdown"+lang]}
-                textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
+        if a["markdown"+lang]!=="no translation"
+          .row
+            .col-md-12
+              div.hidden(id="div#{a.id}")
+                form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
+                  textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(#{a.id});") #{a["markdown"+lang]}
+                  textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
 
-                button.btn.btn-small.btn-primary(type = "button" onclick ="if (document.getElementById('markdown'+#{a.id}).value.trim()==='') return;window.onbeforeunload=null; document.getElementById('EditArticle'+#{a.id}).submit();") Save
-                button.btn.btn-small.btn-default(type = "button" onclick ="window.location.reload();") Cancel
-            div(onclick="document.getElementById('div#{a.id}').classList.toggle('hidden');")
-              :verbatim
-                !{renderer.article(lang,a)}
+                //  button.btn.btn-small.btn-primary(type = "button" onclick ="if (document.getElementById('markdown'+#{a.id}).value.trim()==='') return; document.getElementById('EditArticle'+#{a.id}).submit();") Save
+                  button.btn.btn-small.btn-default(type = "button" onclick ="window.location.reload();") Cancel
+              div(onclick="document.getElementById('div#{a.id}').classList.toggle('hidden');return false;")
+                ul
+                  :verbatim
+                    !{renderer.article(lang,a)}
+
+block scripts
+  script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
+  script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
+  script.
+
+    window.onload = function() {
+      if (typeof(Storage)!=="undefined") {
+        if (window.sessionStorage.blogUrl !== window.location.href) return;
+        var x = window.sessionStorage.blogX;
+        var y = window.sessionStorage.blogY;
+        window.scrollTo(x,y);
+      }
+    }
+
+
+    window.onbeforeunload = function(event) {
+      // store the scroll Position in the local Store
+      s = {x:window.scrollX,y:window.scrollY};
+      console.log("Check local storage");
+      if (typeof(Storage)!=="undefined") {
+        console.log("Storing data");
+        window.sessionStorage.blogUrl = window.location.href;
+        window.sessionStorage.blogX = s.x;
+        window.sessionStorage.blogY = s.y;
+      }
+    };
+
+    function onLeaveText(id) {
+      console.log("on change called");
+      var oldValue = document.getElementById("oldMarkdown"+id).value;
+      var newValue = document.getElementById("markdown"+id).value;
+      if (oldValue === newValue) return;
+      document.getElementById('EditArticle'+id).submit();
+    }
+
+
+
 

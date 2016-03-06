@@ -344,7 +344,7 @@ function renderBlogPreviewAndEdit(req, res, next) {
     async.auto({
         dataCollect:function(callback) {
           debug("converter function");
-          blog.getPreviewData(lang,function(err,result) {
+          blog.getPreviewData({lang:lang},function(err,result) {
             return callback(err,result);
           });
         }
