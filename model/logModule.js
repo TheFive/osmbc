@@ -159,9 +159,6 @@ function countLogsForBlog(blog,callback) {
  
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) {
-      console.log("Connection Error");
-      console.dir(err);
-
       pgdone();
       return (callback(err));
     }

@@ -1,3 +1,5 @@
+"use strict";
+
 var request = require("request");
 var toMarkdown = require('to-markdown');
 var htmlparser = require("htmlparser2");
@@ -137,7 +139,7 @@ function importBlog(nr,callback) {
   
   blogModule.findOne({name:blogName},function (err,b) { 
   if (b) {
-    console.log(blogName+" allready exists");
+    console.log(blogName+" already exists");
     return callback();
   }
 

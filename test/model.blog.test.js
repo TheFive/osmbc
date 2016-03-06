@@ -431,7 +431,7 @@ describe('model/blog', function() {
 
             try {
               // try to read file content,
-              // if it fails, use the allready defined value
+              // if it fails, use the already defined value
               var file =  path.resolve(__dirname,'data', htmlResult);
               htmlResult =  fs.readFileSync(file,"utf-8");
             }
@@ -515,5 +515,35 @@ describe('model/blog', function() {
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
 
     }); 
+  });
+  describe('calculations',function(){
+
+    it('should calculate Time To Close',function(bddone){
+      var time = (new Date()).toISOString();
+      var time2 = new Date();
+      time2.setDate(time2.getDate()+3);
+      time2 = time2.toISOString();
+      var dataBefore = {blog:[
+        {name:"WN1",status:"open",startDate:"2015-01-01",endDate:time},
+        {name:"WN2",status:"edit",startDate:"2015-01-01",endDate:"2016-01-01"},
+        {name:"WN3",status:"finished",startDate:"2015-01-01",endDate:"2016-01-01"}],
+      change:[
+        {oid:1,blog:"WN1",property:"closeDE",timestamp:time},
+        {oid:1,blog:"WN1",property:"closeEN",timestamp:time2}
+      ]};
+      var dataAfter = {};
+      var testFunction = function testFunction(cb) {
+        blogModule.findById(1,function(err,blog){
+          should.not.exist(err);
+          blog.calculateTimeToClose(function(err){
+            should.not.exist(err);
+            should(blog._timeToClose).eql({DE:0,EN:3});
+            cb();
+          });
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+    });
+
   });
 });

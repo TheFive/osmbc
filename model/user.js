@@ -151,7 +151,7 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
 
   // Check Change of OSMUser Name.
   if (data.OSMUser !== self.OSMUser) {
-    if (self.lastAccess) return callback(new Error(">"+self.OSMUser+"< allready has logged in, change in name not possible."));
+    if (self.lastAccess) return callback(new Error(">"+self.OSMUser+"< already has logged in, change in name not possible."));
   }
   async.series([
     function checkUserName(cb){

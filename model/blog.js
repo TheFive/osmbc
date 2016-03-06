@@ -3,7 +3,6 @@
 
 var async    = require('async');
 var config   = require('../config.js');
-var util     = require('../util.js');
 var markdown = require('markdown-it')()
           .use(require('markdown-it-sup'))
           .use(require('markdown-it-imsize'), { autofill: true });
@@ -26,6 +25,8 @@ var schedule            = require('node-schedule');
 var pgMap = require('./pgMap.js');
 var debug = require('debug')('OSMBC:model:blog');
 
+var MarkdownRenderer = require('../render/BlogRenderer.js').MarkdownRenderer;
+var HtmlRenderer = require('../render/BlogRenderer.js').HtmlRenderer;
 
 
 
@@ -420,6 +421,7 @@ function convertLogsToTeamString(logs,lang,users) {
 
 }
 
+
 Blog.prototype.createTeamString = function createTeamString(lang,callback) {
   debug('createTeamString');
   should(typeof(lang)).eql("string");
@@ -463,7 +465,8 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
     user = "--";
   }
   should.exist(user);
-
+  var renderer = new HtmlRenderer(self);
+  if (options.markdown) renderer = new MarkdownRenderer(self);
 
   var articles = {};
   var preview = "";
@@ -525,26 +528,9 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
       //articleModule.find({blog:self.name},{column:"title"},function(err,result)
       var result = articleList;
       {
-        
 
-        // in case of a normal blog, generate the start and end time
-        // for a help blog, use the Name of the Blog
-        // not in edit mode.
-        if (!options.markdown) {
-          if (self.startDate && self.endDate) {
-            preview += "<p>"+moment(self.startDate).locale(options.left_lang).format('L') +"-"+moment(self.endDate).locale(options.left_lang).format('L') +'</p>\n';
-          }
-          if (!options.edit) {
-           // if (!imageHTML) preview += "<!--         place picture here              -->\n"   
-           // else preview += '<div class="wp-caption aligncenter">'+imageHTML+'</div>';        
-          }
-        }
-        else {
-          preview = "";
-          if (self.startDate && self.endDate) {
-            preview += moment(self.startDate).locale(options.left_lang).format('L') +"-"+moment(self.endDate).locale(options.left_lang).format('L') +'\n\n';
-          }
-        }
+
+        preview += renderer.subtitle(options.left_lang);
           
         // Put every article in an array for the category
         if (result) {
@@ -565,13 +551,6 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
         for (i=0;i<clist.length;i++) {
           var category = clist[i].EN;
 
-          var categoryRIGHT = "";
-          var categoryLEFT = clist[i][options.left_lang];
-          if (bilingual) {
-            categoryRIGHT = clist[i][options.right_lang];
-          }
-
-         
           // ignore any "unpublished" category not in edit mode
           if (!(options.edit) && category =="--unpublished--") continue;
 
@@ -589,29 +568,24 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
 
               htmlForCategory += articleMarkdown;
             }
-            var header ='';
+            var header = renderer.categoryTitle(options.left_lang,clist[i]);
             if (category!="Picture") {
-              header = '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n';
               if (bilingual) {
               header = '<div class="row"><div class = "col-md-6">' +
-                       '<h2 id="'+util.linkify(self.name+'_'+categoryLEFT)+'">'+categoryLEFT+'</h2>\n' +
+                       renderer.categoryTitle(options.left_lang,clist[i]) +
                        '</div><div class = "col-md-6">' +
-                       '<h2 id="'+util.linkify(self.name+'_'+categoryRIGHT)+'">'+categoryRIGHT+'</h2>\n' +
+                       renderer.categoryTitle(options.right_lang,clist[i]) +
                        '</div></div>';
               }
               //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
             } else {
-              header = "<!--         place picture here              -->\n" ;
               if (bilingual) {
                 header = '<div class="row"><div class = "col-md-6">' +
                          '</div><div class = "col-md-6">' +
                          '</div></div>';
-                htmlForCategory = header + '\n'+htmlForCategory+'\n';                 
               }
             }
-            if (options.markdown) header = "## "+categoryLEFT;
 
-            
             if (options.markdown) {
               htmlForCategory = header + "\n\n"+htmlForCategory;
             } else {
@@ -665,8 +639,73 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
     });
 };
 
-Blog.prototype.calculateTimeToclose = function calculateTimeToClose(callback) {
-  debug('Blog.prototype.calculateTimeToclose');
+// Generate Articles and Category for rendering a preview by a JADE Template
+Blog.prototype.getPreviewData = function getPreviewData(lang,callback) {
+  debug('getPreviewData');
+  var self = this;
+
+
+  var articles = {};
+  var teamString;
+
+  var futureArticles;
+
+  var articleList = null;
+
+  async.series([
+    function readFuture(cb) {
+      debug('readFuture');
+      articleModule.find({blog:"Future"},{column:"title"},function(err,result){
+        if (err) return cb(err);
+        if (result) futureArticles = result;
+        return cb();
+      });
+    },
+    function readArticles(cb) {
+      debug('readArticles');
+      articleModule.find({blog:self.name},{column:"title"},function(err,result){
+        if (err) return cb(err);
+        articleList = result;
+        return cb();
+      });
+    },
+    function organiseArticles(cb) {
+      debug('organiseArticles');
+
+      var i; // often used iterator, declared here because there is no block scope in JS.
+      for (i=0;i<articleList.length;i++) {
+        var r=articleList[i];
+        if (typeof(articles[r.categoryEN]) == 'undefined') {
+          articles[r.categoryEN] = [];
+        }
+        articles[r.categoryEN].push(r);
+      }
+      cb(null);
+    },
+    function createTeam(cb) {
+      debug('createTeam');
+      if (lang) {
+        self.createTeamString(lang, function (err, result) {
+          if (err) return cb(err);
+          teamString = result;
+          return cb();
+        });
+      } else return cb();
+    }
+
+  ],function finalFunction(err){
+    debug("finalFunction");
+
+    if (err) return callback(err);
+    var result = {};
+    result.teamString = teamString;
+    result.articles = articles;
+    callback(null, result);
+  });
+};
+
+Blog.prototype.calculateTimeToClose = function calculateTimeToClose(callback) {
+  debug('Blog.prototype.calculateTimeToClose');
   if (this._timeToClose) return callback();
   var self = this;
   self._timeToClose={};
@@ -686,7 +725,7 @@ Blog.prototype.calculateTimeToclose = function calculateTimeToClose(callback) {
 
 Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) {
   debug('countUneditedMarkdown');
-  // allready done, nothing to do.
+  // already done, nothing to do.
   if (this._countUneditedMarkdown) return callback();
   var self = this;
 
@@ -695,10 +734,8 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
   self._countNoTranslateMarkdown = {};
 
   articleModule.find({blog:this.name},function (err,result) {
-    if (err) {
-      console.log("Error during count Module");
-      console.dir(err);
-    }
+    if (err) return callback(err);
+
     for (var i=0;i<config.getLanguages().length;i++) {
       var l = config.getLanguages()[i];
       if (!result) {

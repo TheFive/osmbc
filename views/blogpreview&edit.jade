@@ -1,0 +1,41 @@
+extends layout
+
+
+
+
+block content
+  .row
+    .col-md-8
+      h1= "Preview & Edit " + blog.name
+    .col-md-4
+      div.btn-group(role="group" class="pull-right")
+        button.btn.btn-default(onclick ="location.href='#{returnToUrl}';") Back To Normal
+        button.btn.btn-default(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}/preview?download=true&lang=#{lang}';") Download
+
+  .row
+    .col-md-12
+      :verbatim
+        !{renderer.subtitle(lang)}
+  for c in categories
+    if (articles[c.EN])
+      .row
+        .col-md-1
+        .col-md-12
+          :verbatim
+            !{renderer.categoryTitle(lang,c)}
+      for a in articles[c.EN]
+        .row
+          .col-md-1
+            button.glyphicon.glyphicon-pencil(onclick="document.getElementById('div#{a.id}').classList.toggle('hidden');")
+          .col-md-11
+            div.hidden(id="div#{a.id}")
+              form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
+                textarea.form-control(name="markdown" id="markdown"+a.id rows=7 ) #{a["markdown"+lang]}
+                textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
+
+                button.btn.btn-small.btn-primary(type = "button" onclick ="if (document.getElementById('markdown'+#{a.id}).value.trim()==='') return;window.onbeforeunload=null; document.getElementById('EditArticle'+#{a.id}).submit();") Save
+                button.btn.btn-small.btn-default(type = "button" onclick ="window.location.reload();") Cancel
+            div(onclick="document.getElementById('div#{a.id}').classList.toggle('hidden');")
+              :verbatim
+                !{renderer.article(lang,a)}
+
