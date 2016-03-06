@@ -25,6 +25,7 @@
     "image-size": "^0.4.0",
     "istanbul": "^0.4.2",
     "jade": "~1.11.0",
+    "jstransformer-verbatim": "^1.0.0",
     "markdown-it": "^5.1.0",
     "markdown-it-imsize": "^2.0.1",
     "markdown-it-sup": "^1.0.0",

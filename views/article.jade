@@ -586,10 +586,10 @@ block scripts
         if (isURL(afterSnip.trim())) {
           afterSnip = afterSnip.trim();
        
-          var allreadyMarkdowned = false;
-          if (tb!="" && tb.charAt(tb.length-1)=="(") allreadyMarkdowned= true;
-          if (ta!="" && tb.charAt(0)==")") allreadyMarkdowned= true;
-          if (!allreadyMarkdowned) {
+          var alreadyMarkdowned = false;
+          if (tb!="" && tb.charAt(tb.length-1)=="(") alreadyMarkdowned= true;
+          if (ta!="" && tb.charAt(0)==")") alreadyMarkdowned= true;
+          if (!alreadyMarkdowned) {
             var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
             var c ;
             if (beforeSnip == "") {

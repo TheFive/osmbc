@@ -8,6 +8,8 @@ var should = require('should');
 var testutil = require('../test/testutil.js');
 var blogModule = require('../model/blog.js');
 
+require('jstransformer-verbatim');
+
 var blogRouter = require('../routes/blog.js');
 
 

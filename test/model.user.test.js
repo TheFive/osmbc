@@ -211,7 +211,7 @@ describe('model/user', function() {
       userModule.findOne({OSMUser:"WelcomeMe"},function(err,user){
         // First set a new EMail Address for the WelcomeMe user, by InviteYou.
         user.setAndSave("InviteYou",{OSMUser:"NameChange"}, function (err){
-          should(err).eql(new Error(">"+user.OSMUser+"< allready has logged in, change in name not possible."));
+          should(err).eql(new Error(">"+user.OSMUser+"< already has logged in, change in name not possible."));
           bddone();
         });
       });

@@ -380,10 +380,18 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
 
   debug("Version of Article %s",self.version);
   debug("Version of dataset %s",data.version);
-
-  if (self.version && data.version && self.version != parseInt(data.version)) {
-    var error = new Error("Version Number Differs");
-    return callback(error);
+  if (data.version) {
+    if (self.version != parseInt(data.version)) {
+      var error = new Error("Version Number Differs");
+      return callback(error);
+    }
+  } else { // no version is given, check all fields for old field
+    for (var k in data) {
+      if (k==="old") continue;
+      if (! data.old || !data.old[k]) return callback(new Error("No Version and no History Value given"));
+      if (self[k]!==data.old[k]) return callback(new Error("Field "+k+" already changed in DB"));
+    }
+    delete data.old;
   }
 
   // check to set the commentStatus to open
@@ -736,7 +744,7 @@ Article.prototype.editComment = function editComment(user,index,text,callback) {
 Article.prototype.addNotranslate = function addNotranslate(user,callback) {
   debug('Article.prototype.addNotranslate');
   var self = this;
-  var change = {};
+  var change = {version:self.version};
   for (var i=0;i<config.getLanguages().length;i++) {
     var lang = config.getLanguages()[i];
     if ((typeof(self["markdown"+lang])==="undefined")||(self["markdown"+lang]==="")) {
