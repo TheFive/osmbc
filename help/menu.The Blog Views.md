@@ -39,6 +39,10 @@ that direct opens the article editor, so that you can quickly fix any error.
 
 It is not recommended to use this view in bilingual mode.
 
+## Review
+
+The Review is close to the full final view (some margins may differ), but it allows to edit an article in the view itself. To open the editor,
+just click on an article. To save your changes, leave the editor, e.g. by clicking on the article again.
 
 ## The languages
 
