@@ -34,7 +34,7 @@ block content
 
                 //  button.btn.btn-small.btn-primary(type = "button" onclick ="if (document.getElementById('markdown'+#{a.id}).value.trim()==='') return; document.getElementById('EditArticle'+#{a.id}).submit();") Save
                   button.btn.btn-small.btn-default(type = "button" onclick ="window.location.reload();") Cancel
-              div(onclick="document.getElementById('div#{a.id}').classList.toggle('hidden');return false;")
+              div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');} openEditor.classList.toggle('hidden');return false;")
                 ul
                   :verbatim
                     !{renderer.article(lang,a)}
@@ -43,8 +43,9 @@ block scripts
   script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
   script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
   script.
-
+    var openEditor = null;
     window.onload = function() {
+      
       if (typeof(Storage)!=="undefined") {
         if (window.sessionStorage.blogUrl !== window.location.href) return;
         var x = window.sessionStorage.blogX;
