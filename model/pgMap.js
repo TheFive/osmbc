@@ -229,8 +229,6 @@ module.exports.find = function find(module,obj,order,callback) {
   pg.connect(config.pgstring, function find_pgConnect(err, client, pgdone) {
     debug('find_pgConnect');
     if (err) {
-      console.log("Connection Error");
-      console.dir(err);
       pgdone();
       return (callback(err));
     }
@@ -288,9 +286,6 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
 
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) {
-      console.log("Connection Error");
-      console.dir(err);
-
       pgdone();
       return (callback(err));
     }
@@ -367,9 +362,6 @@ module.exports.findById = function findById(id,module,callback) {
 
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) {
-      console.log("Connection Error");
-      console.dir(err);
-
       pgdone();
       return (callback(err));
     }

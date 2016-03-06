@@ -271,6 +271,57 @@ describe('model/article', function() {
         });
       });
     });
+    it('should report a conflict, no version or olddata is given', function (bddone){
+      // Generate an article for test
+      var newArticle;
+      debug('Create a new Article');
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        newArticle.setAndSave({OSMUser:"test"},{markdownDE:"Hallo"},function(err){
+          should(err.message).eql("No Version and no History Value given");
+          bddone();
+        });
+      });
+    });
+    it('should set a Value with comparing history Value', function (bddone){
+      // Generate an article for test
+      var newArticle;
+      debug('Create a new Article');
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        newArticle.setAndSave({OSMUser:"test"},{markdownDE:"Hallo",old:{markdownDE:"markdown"}},function(err){
+          should.not.exist(err);
+          articleModule.findById(newArticle.id,function(err,result){
+            should.not.exist(err);
+            should(result).eql({markdownDE:"Hallo",version:2,blog:"TEST",id:newArticle.id});
+            bddone();
+          });
+        });
+      });
+    });
+    it('should report error when old value wrong', function (bddone){
+      // Generate an article for test
+      var newArticle;
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        articleModule.findById(newArticle.id,function(err,result) {
+          should.not.exist(err);
+          result.setAndSave({OSMUser: "test"}, {markdownDE: "test", version: 1}, function (err) {
+            should.not.exist(err);
+            articleModule.findById(newArticle.id,function(err,result) {
+              should.not.exist(err);
+              result.setAndSave({OSMUser:"test"},{markdownDE:"Hallo",old:{markdownDE:"markdown"}},function(err) {
+                should(err.message).eql("Field markdownDE already changed in DB");
+                bddone();
+              });
+            });
+          });
+        });
+      });
+    });
   });
   describe('findFunctions',function() {
     var idToFindLater;

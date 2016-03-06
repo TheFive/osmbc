@@ -66,44 +66,51 @@ describe('views/index', function() {
   });
   describe("LanguageSetter",function() {
     it('should set the language' ,function(bddone) {
-      this.timeout(10000);
+      this.timeout(12000);
       browser.referer="/osmbc";
       browser.visit('/language?lang=EN', function(err){
         should.not.exist(err);
-        browser.assert.success();
-        var html = browser.html();
-        var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang">EN');
-        console.log(found);
-        should(found>=0).be.True();
-        bddone();
+        browser.reload(function(err){
+          should.not.exist(err);
+          browser.assert.success();
+          var html = browser.html();
+          var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang">EN');
+          should(found >= 0).be.True();
+          bddone();
+        });
       });
     });
     it('should set the second language' ,function(bddone) {
-      this.timeout(10000);
+      this.timeout(12000);
       browser.referer="/osmbc";
       browser.visit('/language?lang2=ES', function(err){
         should.not.exist(err);
-        browser.assert.success();
-        var html = browser.html();
-        var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang2">ES');
-        console.log(found);
-        should(found>=0).be.True();
-        bddone();
+        should.not.exist(err);
+        browser.reload(function(err) {
+          should.not.exist(err);
+          browser.assert.success();
+          var html = browser.html();
+          var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang2">ES');
+          should(found >= 0).be.True();
+          bddone();
+        });
       });
     });
     it('should set the second language to -- if both equal' ,function(bddone) {
-      this.timeout(10000);
+      this.timeout(12000);
       browser.referer="/osmbc";
       browser.visit('/language?lang=ES', function(err) {
         should.not.exist(err);
         browser.visit('/language?lang2=ES', function (err) {
           should.not.exist(err);
-          browser.assert.success();
-          var html = browser.html();
-          var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang2">--');
-          console.log(found);
-          should(found >= 0).be.True();
-          bddone();
+          browser.reload(function(err) {
+            should.not.exist(err);
+            browser.assert.success();
+            var html = browser.html();
+            var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang2">--');
+            should(found >= 0).be.True();
+            bddone();
+          });
         });
       });
     });

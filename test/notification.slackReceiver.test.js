@@ -44,7 +44,7 @@ describe('notification/slackReceiver', function() {
             "channel":"#osmbcarticle"}))
         .reply(200,"ok");
       articleModule.createNewArticle(function(err,article){
-        article.setAndSave({OSMUser:"testuser"},{blog:"WN789",collection:"newtext",title:"Test Title"},function(err) {
+        article.setAndSave({OSMUser:"testuser"},{version:1,blog:"WN789",collection:"newtext",title:"Test Title"},function(err) {
           should.not.exist(err);
           should(slack.isDone()).is.True();
           bddone();
@@ -59,7 +59,7 @@ describe('notification/slackReceiver', function() {
             "channel":"#osmbcarticle"}))
         .reply(200,"ok");
       articleModule.createNewArticle(function(err,article){
-        article.setAndSave({OSMUser:"testuser"},{blog:"WN789",collection:"newtext",title:"Test Title"},function(err) {
+        article.setAndSave({OSMUser:"testuser"},{version:1,blog:"WN789",collection:"newtext",title:"Test Title"},function(err) {
           should.not.exist(err);
           should(slack.isDone()).is.True();
           slack = nock('https://hooks.slack.com/')
@@ -68,7 +68,7 @@ describe('notification/slackReceiver', function() {
                 "username":"testbc(testuser)",
                 "channel":"#osmbcarticle"}))
             .reply(200,"ok");
-          article.setAndSave({OSMUser:"testuser"},{collection:"New Text was to short"},function(err){
+          article.setAndSave({OSMUser:"testuser"},{version:2,collection:"New Text was to short"},function(err){
             should.not.exist(err);
             should(slack.isDone()).is.True();
             bddone();
@@ -84,7 +84,7 @@ describe('notification/slackReceiver', function() {
             "channel":"#osmbcarticle"}))
         .reply(200,"ok");
       articleModule.createNewArticle(function(err,article){
-        article.setAndSave({OSMUser:"testuser"},{blog:"WN789",title:"Test Title",comment:"Information for @User3"},function(err) {
+        article.setAndSave({OSMUser:"testuser"},{version:1,blog:"WN789",title:"Test Title",comment:"Information for @User3"},function(err) {
           should.not.exist(err);
           should(slack.isDone()).is.True();
           bddone();
