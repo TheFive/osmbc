@@ -93,7 +93,6 @@ describe('views/index', function() {
           browser.assert.success();
           var html = browser.html();
           var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang2">ES');
-          console.log(found);
           should(found >= 0).be.True();
           bddone();
         });
@@ -111,7 +110,6 @@ describe('views/index', function() {
             browser.assert.success();
             var html = browser.html();
             var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang2">--');
-            console.log(found);
             should(found >= 0).be.True();
             bddone();
           });

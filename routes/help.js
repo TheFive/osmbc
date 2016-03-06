@@ -24,7 +24,10 @@ function initToken() {
 function generateHelpText(filename) {
   debug("generateHelpText");
   initToken();
-  var result = fs.readFileSync(path.resolve(__dirname,'..','help', filename),'UTF8');
+
+  var helpdir = "help";
+  if (filename === "CHANGELOG.md") helpdir = "";
+  var result = fs.readFileSync(path.resolve(__dirname,'..',helpdir, filename),'UTF8');
   for (var t in token) {
     while (result.indexOf(t)>=0) {
       result = result.replace(t,token[t]);
