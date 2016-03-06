@@ -11,6 +11,7 @@ var help     = require('../routes/help.js');
 
 
 var blogModule    = require('../model/blog.js');
+var blogRenderer  = require('../render/BlogRenderer.js');
 var logModule     = require('../model/logModule.js');
 var settingsModule = require('../model/settings.js');
 
@@ -245,7 +246,7 @@ function renderBlogList(req, res, next) {
                   async.each(result.blogs,function(item,cb){
                     async.parallel([
                       item.countUneditedMarkdown.bind(item),
-                      item.calculateTimeToclose.bind(item)
+                      item.calculateTimeToClose.bind(item)
                     ],function finalFunction(err){return cb(err);});
                   },function(err){
                     callback(err);
@@ -324,6 +325,47 @@ function renderBlogPreview(req, res, next) {
   });
 }
 
+function renderBlogPreviewAndEdit(req, res, next) {
+  debug('renderBlogPreviewAndEdit');
+
+  var id = req.params.blog_id;
+
+  findBlogByRouteId(id,function(err,blog) {
+    if (err) return next(err);
+    should.exist(blog);
+
+    var lang = req.session.language;
+    if (typeof(lang)=='undefined') lang = "DE";
+
+
+
+
+
+    async.auto({
+        dataCollect:function(callback) {
+          debug("converter function");
+          blog.getPreviewData({lang:lang},function(err,result) {
+            return callback(err,result);
+          });
+        }
+      },
+      function(err,result) {
+        debug("final function");
+        should.exist(res.rendervar);
+        var renderer = new blogRenderer.HtmlRenderer(blog);
+
+        res.render('blogpreview&edit',{layout:res.rendervar.layout,
+            blog:blog,
+            articles:result.dataCollect.articles,
+            teamString:result.teamString,
+            lang:lang,
+            renderer:renderer,
+            categories:blog.getCategories()});
+        }
+      );
+  });
+}
+
 function createBlog(req, res, next) {
   debug('router.get /create');
 
@@ -387,6 +429,7 @@ router.get('/create', createBlog);
 router.get('/list', renderBlogList);
 router.get('/:blog_id', renderBlogId);
 router.get('/:blog_id/stat', renderBlogStat);
+router.get('/:blog_id/previewNEdit',renderBlogPreviewAndEdit);
 router.get('/:blog_id/:format', renderBlogPreview);
 router.get('/:blog_id/preview_:blogname_:downloadtime', renderBlogPreview);
 //router.post('/edit/:blog_id',postBlogId);

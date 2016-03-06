@@ -215,9 +215,9 @@ NODE_ENV=???? node createdb.js
 
 Where `???` is the configuration that you want to use (e.g. `development` or `test`).
 Use createdb.js with the --verbose option, to see the differences between the expected db structure & the real db structure.
-(For now there is a more detailled analyses of the indexes, no analyses for the rest).
+(For now there is a more detailed analyses of the indexes, no analyses for the rest).
 To create the full database run it with the option --createTable --createIndex --createView, this expects an empty database.
-If there are allready tables and views you can drop them with --dropTable --dropIndex and --dropView. Please make sure to have a 
+If there are already tables and views you can drop them with --dropTable --dropIndex and --dropView. Please make sure to have a 
 backup of your productive data, before doing that.
 
 To update to the acutal set of indexes just user --updateIndex. (--updateNAME option is for now only available for indexes).
