@@ -468,11 +468,116 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
   var renderer = new HtmlRenderer(self);
   if (options.markdown) renderer = new MarkdownRenderer(self);
 
-  var articles = {};
-  var preview = "";
-  var teamString  = "";
+  self.getPreviewData({createTeam:options.fullfinal,lang:options.left_lang},function(err,result) {
+    if (err) return callback(err);
+    should.exist(result);
 
-  var bilingual = options.bilingual;
+
+    var articles = result.articles;
+    var teamString = result.teamString;
+    var futureArticles = result.futureArticles;
+
+
+    var preview = "";
+
+    var bilingual = options.bilingual;
+
+
+
+
+    var i, j; // often used iterator, declared here because there is no block scope in JS.
+
+
+    preview += renderer.subtitle(options.left_lang);
+
+    var clist = self.getCategories();
+
+
+    // Generate the blog result along the categories
+    for (i = 0; i < clist.length; i++) {
+      var category = clist[i].EN;
+
+      // ignore any "unpublished" category not in edit mode
+      if (!(options.edit) && category == "--unpublished--") continue;
+
+
+      // If the category exists, generate HTML for it
+      if (typeof(articles[category]) != 'undefined') {
+        debug('Generating HTML for category %s', category);
+        var htmlForCategory = '';
+
+        for (j = 0; j < articles[category].length; j++) {
+          var row = articles[category][j];
+
+          var articleMarkdown = row.getPreview(style, user);
+          if (options.markdown) articleMarkdown = "* " + row["markdown" + options.left_lang] + "\n\n";
+
+          htmlForCategory += articleMarkdown;
+        }
+        var header = renderer.categoryTitle(options.left_lang, clist[i]);
+        if (category != "Picture") {
+          if (bilingual) {
+            header = '<div class="row"><div class = "col-md-6">' +
+              renderer.categoryTitle(options.left_lang, clist[i]) +
+              '</div><div class = "col-md-6">' +
+              renderer.categoryTitle(options.right_lang, clist[i]) +
+              '</div></div>';
+          }
+          //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
+        } else {
+          if (bilingual) {
+            header = '<div class="row"><div class = "col-md-6">' +
+              '</div><div class = "col-md-6">' +
+              '</div></div>';
+          }
+        }
+
+        if (options.markdown) {
+          htmlForCategory = header + "\n\n" + htmlForCategory;
+        } else {
+          htmlForCategory = header + '<ul>\n' + htmlForCategory + '</ul>\n';
+        }
+
+        preview += htmlForCategory;
+        delete articles[category];
+      }
+    }
+    delete articles["--unpublished--"];
+    for (var k in articles) {
+      preview += "<h2> Blog Missing Cat: " + k + "</h2>\n";
+      preview += "<p> Please use [edit blog detail] to enter category</p>\n";
+      preview += "<p> Or edit The Articles ";
+      for (i = 0; i < articles[k].length; i++) {
+        preview += ' <a href="' + config.getValue('htmlroot') + '/article/' + articles[k][i].id + '">' + articles[k][i].id + '</a> ';
+      }
+      preview += "</p>\n";
+    }
+    if (futureArticles && !options.fullfinal && futureArticles.length > 0) {
+      preview += "<h3>Articles waiting in Future Blog</h3>\n<ul>";
+      for (i = 0; i < futureArticles.length; i++) {
+        preview += '<li><a href="' + config.getValue('htmlroot') + '/article/' + futureArticles[i].id + '">' + futureArticles[i].title + '</a></li>';
+      }
+      preview += "</ul>";
+    }
+    result = {};
+    result.preview = preview + teamString;
+    result.articles = articles;
+    callback(null, result);
+  });
+};
+
+// Generate Articles and Category for rendering a preview by a JADE Template
+Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
+  debug('getPreviewData');
+  should(typeof(options)).eql("object");
+  should(typeof(callback)).eql("function");
+  var lang = options.lang;
+  var self = this;
+
+
+  var articles = {};
+  var teamString = "";
+
   var futureArticles;
 
   var articleList = null;
@@ -488,19 +593,19 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
     },
     function readArticlesWithCollector(cb) {
       debug('readArticlesWithCollector');
-      articleModule.find({blog:self.name},{column:"title"},function(err,result){
-        async.each(result,function(item,each_cb){
-          logModule.find({table:"article",oid:item.id},{column:"timestamp",desc:true},function(err,result){
+      articleModule.find({blog: self.name}, {column: "title"}, function (err, result) {
+        async.each(result, function (item, each_cb) {
+          logModule.find({table: "article", oid: item.id}, {column: "timestamp", desc: true}, function (err, result) {
             if (err) return each_cb(err);
-            if (result && result.length>0) {
+            if (result && result.length > 0) {
               var list = {};
-              for (var i =0;i<result.length;i++) {
-                var r= result[i];
-                if (!list[r.property]) list[r.property]={};
-                list[r.property][r.user]="-";
+              for (var i = 0; i < result.length; i++) {
+                var r = result[i];
+                if (!list[r.property]) list[r.property] = {};
+                list[r.property][r.user] = "-";
               }
               item.author = {};
-             
+
               for (var p in list) {
                 item.author[p] = "";
                 var sep = "";
@@ -510,163 +615,13 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
                 }
               }
             }
-            return each_cb(); 
+            return each_cb();
           });
-        },function finalFunction(err){
+        }, function finalFunction(err) {
           if (err) return cb(err);
           articleList = result;
           return cb();
         });
-      });
-    },
-    function readArticles(cb) {
-
-       var i,j; // often used iterator, declared here because there is no block scope in JS.
-         // (check let...)
-
-      debug('readArticles');
-      //articleModule.find({blog:self.name},{column:"title"},function(err,result)
-      var result = articleList;
-      {
-
-
-        preview += renderer.subtitle(options.left_lang);
-          
-        // Put every article in an array for the category
-        if (result) {
-          for (i=0;i<result.length;i++ ) {
-            var r = result[i];
-            if (!options.edit && r["markdown"+options.left_lang]=="no translation") continue;
-            if (typeof(articles[r.categoryEN]) == 'undefined') {
-              articles[r.categoryEN] = [];
-            }
-            articles[r.categoryEN].push(r);
-          }
-        }
-        var clist = self.getCategories();
-
-        
-        
-        // Generate the blog result along the categories
-        for (i=0;i<clist.length;i++) {
-          var category = clist[i].EN;
-
-          // ignore any "unpublished" category not in edit mode
-          if (!(options.edit) && category =="--unpublished--") continue;
-
-       
-          // If the category exists, generate HTML for it
-          if (typeof(articles[category])!='undefined') {
-            debug('Generating HTML for category %s',category);
-            var htmlForCategory = '';
-
-            for ( j=0;j<articles[category].length;j++) {
-              var row = articles[category][j];
-
-              var articleMarkdown = row.getPreview(style,user);
-              if (options.markdown) articleMarkdown = "* " + row["markdown"+options.left_lang]+"\n\n";
-
-              htmlForCategory += articleMarkdown;
-            }
-            var header = renderer.categoryTitle(options.left_lang,clist[i]);
-            if (category!="Picture") {
-              if (bilingual) {
-              header = '<div class="row"><div class = "col-md-6">' +
-                       renderer.categoryTitle(options.left_lang,clist[i]) +
-                       '</div><div class = "col-md-6">' +
-                       renderer.categoryTitle(options.right_lang,clist[i]) +
-                       '</div></div>';
-              }
-              //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
-            } else {
-              if (bilingual) {
-                header = '<div class="row"><div class = "col-md-6">' +
-                         '</div><div class = "col-md-6">' +
-                         '</div></div>';
-              }
-            }
-
-            if (options.markdown) {
-              htmlForCategory = header + "\n\n"+htmlForCategory;
-            } else {
-              htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n';
-            }
-
-            preview += htmlForCategory;
-            delete articles[category];
-          }
-        }
-        delete articles["--unpublished--"];
-        for (var k in articles) {
-          preview += "<h2> Blog Missing Cat: "+k+"</h2>\n";
-          preview += "<p> Please use [edit blog detail] to enter category</p>\n";
-          preview += "<p> Or edit The Articles ";
-          for (i=0;i<articles[k].length;i++) {
-            preview += ' <a href="'+config.getValue('htmlroot')+'/article/'+articles[k][i].id+'">'+articles[k][i].id+'</a> ';
-          }
-          preview += "</p>\n";
-        }
-        if (futureArticles && !options.fullfinal && futureArticles.length>0) {
-          preview += "<h3>Articles waiting in Future Blog</h3>\n<ul>";
-          for (i = 0;i<futureArticles.length;i++) {
-            preview += '<li><a href="'+config.getValue('htmlroot')+'/article/'+futureArticles[i].id+'">'+futureArticles[i].title+'</a></li>';
-          }
-          preview += "</ul>";
-        }
-        cb(null);
-      }//);
-    },
-    function createTeam(cb) {
-      debug('createTeam');
-      if (options.fullfinal) {
-        self.createTeamString(options.left_lang,function (err,result){
-          if (err) return cb(err);
-          teamString = result;
-          return cb(null);
-        });      
-      }
-      else return cb(null);
-    }
-
-    ],function finalFunction(err){
-      debug("finalFunction");
-    
-      if (err) return callback(err);
-      var result = {};
-      result.preview = preview+teamString;
-      result.articles = articles;
-      callback(null, result);      
-    });
-};
-
-// Generate Articles and Category for rendering a preview by a JADE Template
-Blog.prototype.getPreviewData = function getPreviewData(lang,callback) {
-  debug('getPreviewData');
-  var self = this;
-
-
-  var articles = {};
-  var teamString;
-
-  var futureArticles;
-
-  var articleList = null;
-
-  async.series([
-    function readFuture(cb) {
-      debug('readFuture');
-      articleModule.find({blog:"Future"},{column:"title"},function(err,result){
-        if (err) return cb(err);
-        if (result) futureArticles = result;
-        return cb();
-      });
-    },
-    function readArticles(cb) {
-      debug('readArticles');
-      articleModule.find({blog:self.name},{column:"title"},function(err,result){
-        if (err) return cb(err);
-        articleList = result;
-        return cb();
       });
     },
     function organiseArticles(cb) {
@@ -684,7 +639,7 @@ Blog.prototype.getPreviewData = function getPreviewData(lang,callback) {
     },
     function createTeam(cb) {
       debug('createTeam');
-      if (lang) {
+      if (options.createTeam && lang) {
         self.createTeamString(lang, function (err, result) {
           if (err) return cb(err);
           teamString = result;
@@ -700,6 +655,7 @@ Blog.prototype.getPreviewData = function getPreviewData(lang,callback) {
     var result = {};
     result.teamString = teamString;
     result.articles = articles;
+    result.futureArticles = futureArticles;
     callback(null, result);
   });
 };

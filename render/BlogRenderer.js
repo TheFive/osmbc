@@ -43,11 +43,11 @@ MarkdownRenderer.prototype.subtitle = function markdownSubtitle(lang) {
 HtmlRenderer.prototype.categoryTitle = function htmlCatTitle(lang,category) {
   debug('HtmlRenderer.prototype.categoryTitle');
   if (category.EN === "Picture") return "<!--         place picture here              -->\n" ;
-  return '<h2 id="'+util.linkify(this.blog.name+'_'+category[lang])+'">'+category[lang]+'</h2>\n'
+  return '<h2 id="'+util.linkify(this.blog.name+'_'+category[lang])+'">'+category[lang]+'</h2>\n';
 };
 MarkdownRenderer.prototype.categoryTitle = function markdownCatTitle(lang,category) {
   debug('MarkdownRenderer.prototype.categoryTitle');
-  return header = "## "+category[lang];
+  return  "## "+category[lang];
 };
 
 HtmlRenderer.prototype.article = function htmlArticle(lang,article) {
