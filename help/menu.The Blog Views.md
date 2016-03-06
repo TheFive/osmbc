@@ -42,7 +42,8 @@ It is not recommended to use this view in bilingual mode.
 ## Review
 
 The Review is close to the full final view (some margins may differ), but it allows to edit an article in the view itself. To open the editor,
-just click on an article. To save your changes, leave the editor, e.g. by clicking on the article again.
+just click on an article. To save your changes, leave the editor, e.g. by clicking on the article again. As the click prevents using the hyperlink,
+you have to use the right mouseclick to open a hyperlink and test its correctness.
 
 ## The languages
 
