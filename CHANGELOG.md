@@ -7,6 +7,7 @@
 
 - Display, that a new version is used until changelog is visited. [\#368](https://github.com/TheFive/osmbc/issues/368)
 - Show Symbols for mailconfiguration in userlist. [\#366](https://github.com/TheFive/osmbc/issues/366)
+- Add a markdown editor in the fullFinal view to easy correct typos while proofreading the complete blog [\#216](https://github.com/TheFive/osmbc/issues/216)
 
 ## [0.8.9](https://github.com/TheFive/osmbc/tree/0.8.9) (2016-03-04)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.8...0.8.9)
