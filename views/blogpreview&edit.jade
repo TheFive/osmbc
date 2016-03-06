@@ -5,12 +5,13 @@ extends layout
 
 block content
   .row
+    p.bg-info="This is the new review view. Just click on an article to edit the markdown editor, do your corrections and leave the editor, e.gl by clicking on the article again."
+  .row
     .col-md-8
       h1= "Preview & Edit " + blog.name
     .col-md-4
       div.btn-group(role="group" class="pull-right")
         button.btn.btn-default(onclick ="location.href='#{returnToUrl}';") Back To Normal
-        button.btn.btn-default(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}/preview?download=true&lang=#{lang}';") Download
 
   .row
     .col-md-12
