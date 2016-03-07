@@ -140,7 +140,7 @@ function ensureAuthenticated(req, res, next) {
           var lastStore = new Date(result[0].lastAccess);
           if (!result[0].lastAccess || (date.getTime()-lastStore.getTime()) > 1000*60*2) {
             result[0].lastAccess = new Date();
-            result[0].save(function(err) {console.log(err);});            
+            result[0].save(function(err,u) {req.user.version = u.version;});
           }
           if (!req.session.language) req.session.language = result[0].language;
           debug("User accepted");

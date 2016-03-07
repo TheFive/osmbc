@@ -51,7 +51,7 @@ function renderHelp(req,res) {
   var text = help.getText("menu."+title+".md");
   res.render('help',{layout:res.rendervar.layout,text:text});
 }
-function renderChangelog(req,res) {
+function renderChangelog(req,res,next) {
   debug('renderChangelog');
   should.exist(res.rendervar.layout);
   var text = help.getText("CHANGELOG.md");
