@@ -20,3 +20,6 @@ The different Status are explained [here](https://wiki.openstreetmap.org/w/image
 * Video [Write an article in OSMBC](https://www.youtube.com/watch?v=np-gkdpNLlw) (German)
 * Video [Quick edit in OSMBC](https://www.youtube.com/watch?v=f8qQLNYFbY0)
 
+## Review in OSMBC
+* Video [Review in OSMBC](https://www.youtube.com/watch?v=ye4U0XMq0lQ) Attention: Subtitle in EN and DE
+
