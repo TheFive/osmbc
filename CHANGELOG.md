@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.2](https://github.com/TheFive/osmbc/tree/1.0.2) (2016-03-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.1...1.0.2)
+
+**Merged pull requests:**
+
+- typo [\#373](https://github.com/TheFive/osmbc/pull/373) ([fredao](https://github.com/fredao))
+
 ## [1.0.1](https://github.com/TheFive/osmbc/tree/1.0.1) (2016-03-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.0...1.0.1)
 
