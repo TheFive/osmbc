@@ -41,7 +41,7 @@ describe('views/user', function() {
       }
     ],function(err){
       should.not.exist(err);
-      browser.assert.text('input[readonly="readonly"]');
+      browser.assert.text('input[readonly="readonly"][name="OSMUser"]');
       bddone();
     });
   });
