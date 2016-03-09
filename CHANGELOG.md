@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.0.1](https://github.com/TheFive/osmbc/tree/1.0.1) (2016-03-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.0...1.0.1)
+
+**Fixed bugs:**
+
+- Collect is not possible in 1.0.0 due to internal version and history check. [\#370](https://github.com/TheFive/osmbc/issues/370)
+
+**Merged pull requests:**
+
+- new Tab Review [\#369](https://github.com/TheFive/osmbc/pull/369) ([fredao](https://github.com/fredao))
+
 ## [1.0.0](https://github.com/TheFive/osmbc/tree/1.0.0) (2016-03-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.9...1.0.0)
 
