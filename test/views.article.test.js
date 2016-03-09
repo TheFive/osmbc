@@ -198,7 +198,7 @@ describe('views/article', function() {
                   should.not.exist(err);
                   should.exist(result);
                   should(result.length).eql(1);
-                  should(result[0].collection).eql("searchfor")
+                  should(result[0].collection).eql("searchfor");
                   bddone();
                 });
               });
