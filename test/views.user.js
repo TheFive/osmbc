@@ -38,12 +38,6 @@ describe('views/user', function() {
       },
       function visitUser (cb) {
         browser.visit('/usert/1', cb);
-      },
-      function changeUser (cb) {
-        return cb();
-        browser
-          .fill('OSMUser', "test")
-          .pressButton('OK',cb);
       }
     ],function(err){
       should.not.exist(err);
