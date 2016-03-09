@@ -43,6 +43,6 @@ describe('views/user', function() {
       should.not.exist(err);
       browser.assert.text('input[readonly="readonly"]');
       bddone();
-    })
+    });
   });
 });
