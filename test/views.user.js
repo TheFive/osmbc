@@ -63,7 +63,6 @@ describe('views/user', function() {
           .pressButton("OK",cb);
       }
     ],function(err){
-      console.log(browser.html());
       should.not.exist(err);
       userModule.findById(2,function(err,result) {
         should.not.exist(err);
