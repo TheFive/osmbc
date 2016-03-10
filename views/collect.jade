@@ -19,7 +19,7 @@ block content
               p.text-muted(align="center") Please check your link for duplicates before   collecting.
 
           .col-sm-2
-            button.btn.btn-large.btn-primary(type="submit") Search
+            button.btn.btn-large.btn-primary(name="SearchNow" type="submit") Search
 
 
   .row
@@ -51,7 +51,7 @@ block content
               td.hidden-xs=article.categoryEN 
               td.hidden-xs
                 :verbatim
-                !{article.getPreview(layout.language)}
+                  !{article.getPreview(layout.language)}
            
       else
         p

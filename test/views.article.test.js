@@ -159,7 +159,7 @@ describe('views/article', function() {
       });
     });
   });
-  describe('QueryParameter',function(){
+  describe('QueryParameters',function(){
     it('should set markdown to notranslation',function(bddone){
       this.timeout(10000);
       articleModule.findById(articleId,function(err,article){
@@ -178,6 +178,31 @@ describe('views/article', function() {
             });
           });
         });
+      });
+    });
+  });
+  describe('Collect',function(){
+    it('should search and store collected article',function(bddone){
+      this.timeout(10000);
+      browser.visit("/article/create",function(err){
+        should.not.exist(err);
+        browser
+          .fill("search","searchfor")
+          .pressButton("SearchNow",function(err){
+            should.not.exist(err);
+            browser
+              .fill("title","Test Title for Article")
+              .pressButton("OK",function(err){
+                should.not.exist(err);
+                articleModule.find({title:"Test Title for Article"},function(err,result){
+                  should.not.exist(err);
+                  should.exist(result);
+                  should(result.length).eql(1);
+                  should(result[0].collection).eql("searchfor");
+                  bddone();
+                });
+              });
+          });
       });
     });
   });
