@@ -60,17 +60,10 @@ block content
         if (reviewCommentsLeft)
           .row
             .col-md-12
-               form.form-horizontal(id="review" name="review", action="#{layout.htmlroot}/blog/#{blog.name}", method="get")
-                .form-group
-                  .col-sm-6
-                    input(type="text",class="form-control",name ="reviewComment",id="reviewComment" placeholder="Please Type your Review here") 
-
-                  .col-sm-6
-                    button.btn.btn-large.btn-primary(id="reviewButton" type="submit",onclick="document.getElementById('reviewButton').disabled=true;document.getElementById('review').submit();") Review#{left_lang} 
-                    if (blog["exported"+left_lang])
-                      button.btn.btn-large.btn-primary(id="closebutton" type = "button" onclick ="document.getElementById('closebutton').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?closeLang&style=#{style}';") Close #{blog.name}(#{left_lang})
-                    else
-                      button.btn.btn-large.btn-primary(id="didexport" type = "button" onclick ="document.getElementById('didexport').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=markexported&style=#{style}';") Did Export (#{left_lang})
+              if (blog["exported"+left_lang])
+                button.btn.btn-large.btn-warning(id="closebutton" type = "button" onclick ="document.getElementById('closebutton').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?closeLang&style=#{style}';") Close #{blog.name}(#{left_lang})
+              else
+                button.btn.btn-large.btn-warning(id="didexport" type = "button" onclick ="document.getElementById('didexport').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=markexported&style=#{style}';") Did Export (#{left_lang})
 
           if (blog["exported"+left_lang])
             .row
@@ -84,28 +77,41 @@ block content
   .row
     .col-md-6
       - reviewCommentsLeft = blog["reviewComment"+left_lang];
-        if (reviewCommentsLeft && reviewCommentsLeft.length>0)
-          h3
-            | Review #{left_lang}
-          table.table.table-condensed.table-responsive
-            tbody
-            each comment in reviewCommentsLeft
-              tr
-                td=comment.user
-                td=comment.text
-                td=layout.moment(comment.timestamp).fromNow()
+        if reviewCommentsLeft
+          .panel.panel-default
+            .panel-heading
+              h3.panel-title
+                | Review #{left_lang}
+            table.table.table-condensed.table-responsive
+              tbody
+              each comment in reviewCommentsLeft
+                tr
+                  td=comment.user
+                  td=comment.text
+                  td=layout.moment(comment.timestamp).fromNow()
+            .panel-body
+              .form-group
+                form.form-horizontal(id="review" name="review", action="#{layout.htmlroot}/blog/#{blog.name}", method="get")
+                  .col-md-10
+                    input(type="text",class="form-control",name ="reviewComment",id="reviewComment" placeholder="Please Type your Review here")
+                  .col-md-2
+                    button.btn.btn-large.btn-primary(id="reviewButton" type="submit",onclick="document.getElementById('reviewButton').disabled=true;document.getElementById('review').submit();") Review#{left_lang}
+
     .col-md-6
       - reviewCommentsRight = blog["reviewComment"+right_lang];
-        if (reviewCommentsRight && reviewCommentsRight.length>0)
-          h3
-            | Review #{right_lang}
-          table.table.table-condensed.table-responsive
-            tbody
-            each comment in reviewCommentsRight
-              tr
-                td=comment.user
-                td=comment.text
-                td=layout.moment(comment.timestamp).fromNow()
+
+        if reviewCommentsRight
+          .panel.panel-default
+            .panel-heading
+              h3.panel-title
+                | Review #{right_lang}
+            table.table.table-condensed.table-responsive
+              tbody
+              each comment in reviewCommentsRight
+                tr
+                  td=comment.user
+                  td=comment.text
+                  td=layout.moment(comment.timestamp).fromNow()
   
   .row
     .col-md-12
@@ -140,30 +146,10 @@ block content
             for lang in layout.languages
               li
                 a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{lang}") Export #{lang}
-        li.dropdown
-          a.btn.btn-xs.dropdown-toggle.osmbc-lang(href='#', style="color:white", data-toggle='dropdown')
-            |#{layout.language} 
-            span.caret
-          ul.dropdown-menu(role='menu')
-            each l in layout.languages
-              li
-                a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
-        li.dropdown.hidden-xs
-          a.btn.btn-xs.dropdown-toggle.osmbc-lang2(href='#',style="color:white", data-toggle='dropdown')
-            |#{(layout.language2)?layout.language2:"--"} 
-            span.caret
-          ul.dropdown-menu(role='menu')
-            li 
-              a(href='#{layout.htmlroot}/language?lang2=none') none
-            each l in layout.languages
-              li
-                a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
 
-           
 
-    
-        
-             
+
+
   .row
       :verbatim
         <br><br> 

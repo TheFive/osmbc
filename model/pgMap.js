@@ -88,7 +88,7 @@ module.exports.save = function(callback) {
   var self = this;
   var table = self.getTable();
 
-  // clean propertys with "_"
+  // clean property's with "_"
 
   for (var k in self) {
     if (k.substring(0,1)=="_") delete self[k];
