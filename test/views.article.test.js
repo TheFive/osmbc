@@ -206,4 +206,41 @@ describe('views/article', function() {
       });
     });
   });
+  describe('comments',function(){
+    it('should add and change a comment of an article',function(bddone){
+      this.timeout(10000);
+      browser.visit("/article/1",function(err){
+        should.not.exist(err);
+        browser
+          .fill("comment","Add a test comment")
+          .pressButton("AddComment",function(err){
+            should.not.exist(err);
+            articleModule.findById(1,function (err, article){
+              should.not.exist(err);
+              should(article.commentList.length).eql(1);
+              should(article.commentList[0].text).eql("Add a test comment");
+              should(article.commentList[0].user).eql("TheFive");
+
+              browser.click('a[id="EditComment0"]',function(err) {
+                should.not.exist(err);
+                browser
+                  .fill("comment", "And Change It")
+                  .pressButton("update", function (err) {
+                    should.not.exist(err);
+                    articleModule.findById(1, function (err, article) {
+                      should.not.exist(err);
+                      should(article.commentList.length).eql(1);
+                      should(article.commentList[0].text).eql("And Change It");
+                      should(article.commentList[0].user).eql("TheFive");
+                      bddone();
+                    });
+                  });
+              });
+
+            });
+
+          });
+      });
+    });
+  });
 });
