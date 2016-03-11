@@ -19,11 +19,17 @@ var blogModule = require("../model/blog.js");
 describe('views/article', function() {
   var browser;
   var articleId;
-  before(function(bddone) {
+  before(function(bddone){
     nock('https://hooks.slack.com/')
-            .post(/\/services\/.*/) 
-            .times(999) 
-            .reply(200,"ok");
+      .post(/\/services\/.*/)
+      .times(999)
+      .reply(200,"ok");
+    testutil.startBrowser(function(err,result){
+      browser=result;
+      bddone();});
+
+  });
+  beforeEach(function(bddone) {
     async.series([
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
@@ -31,8 +37,7 @@ describe('views/article', function() {
       function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"Link1: http://www.test.dä/holla and other"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
-      }); },
-      function createBrowser(cb) {testutil.startBrowser(function(err,result){browser=result;cb();});}
+      }); }
     ], function(err) {
       bddone(err);
       
@@ -48,7 +53,7 @@ describe('views/article', function() {
 
 
   describe("Scripting Functions",function() {
-    before(function(done) {
+    beforeEach(function(done) {
       this.timeout(6000);
       browser.visit('/article/'+articleId, function(err){
         if (err) return done(err);
@@ -206,9 +211,9 @@ describe('views/article', function() {
       });
     });
   });
-  describe('comments',function(){
+  describe('Comments',function(){
     it('should add and change a comment of an article',function(bddone){
-      this.timeout(10000);
+      this.timeout(15000);
       browser.visit("/article/1",function(err){
         should.not.exist(err);
         browser
