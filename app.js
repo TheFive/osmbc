@@ -27,6 +27,7 @@ var article    = require('./routes/article').router;
 var changes    = require('./routes/changes').router;
 var blog       = require('./routes/blog').router;
 var tool       = require('./routes/tool').router;
+var calender   = require('./routes/tool').publicRouter;
 var layout     = require('./routes/layout').router;
 
 var userModule = require('./model/user.js');
@@ -261,6 +262,9 @@ app.get(htmlRoot + '/logout', function(req, res){
   res.redirect('/');
 });
 
+// first register the unsecured path
+
+app.use(htmlRoot,calender );
 
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
