@@ -91,7 +91,8 @@ function generateCCLicense(license,lang,author){
   debug("generateCCLicense");
   if (!license || license === "") license = "CC0";
   if (!lang || lang === "") lang = "EN";
-  if (!author) author = "";  
+  if (!author) author = "";
+  if (typeof(licenses[license])=="undefined") license = "CC0";
   var text = licenses[license][lang];
   if (typeof(text)=="undefined") text = licenses[license].EN;
   return text.replace("##author##",author);
@@ -109,7 +110,7 @@ function renderPictureTool(req,res) {
   var sessionData = req.session.pictureTool;
   
   if (sessionData) {
-    pictureLanguage = sessionData.pictureLanguage;
+    if (sessionData.pictureLanguage) pictureLanguage = sessionData.pictureLanguage;
     pictureURL = sessionData.pictureURL;
     if (!pictureURL) pictureURL ="";
     pictureMarkup = sessionData.pictureMarkup;
@@ -117,6 +118,7 @@ function renderPictureTool(req,res) {
     pictureLicense = sessionData.pictureLicense;
     pictureAuthor = sessionData.pictureAuthor;
   }
+  console.log(sessionData);
 
   var warning =[];
 
