@@ -299,7 +299,7 @@ function createNewBlog(user, proto,callback,noArticle) {
     var emptyBlog = exports.create();
     emptyBlog.id = -1;
 
-    async.parallel([
+    async.series([
       function createCalendar(cb) {
         if (noArticle) return cb();
         articleModule.createNewArticle({blog:blog.name,categoryEN:"Upcoming Events"},cb);
