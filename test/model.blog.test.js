@@ -428,26 +428,35 @@ describe('model/blog', function() {
             should.not.exist(err);
 
             var htmlResult = data.testBlogResultHtml;
+            var markdown = false;
 
             try {
               // try to read file content,
               // if it fails, use the already defined value
               var file =  path.resolve(__dirname,'data', htmlResult);
               htmlResult =  fs.readFileSync(file,"utf-8");
+              if (file.indexOf(".md")>=0) markdown = true;
             }
             catch (err) {/* ignore the error */}
-            var result = testutil.domcompare(html,htmlResult);
+
+            if (markdown) {
+              should(html).eql(htmlResult);
+            } else
+            {
+              var result = testutil.domcompare(html,htmlResult);
 
 
 
-            if (result.getDifferences().length>0) {
-              console.log("---------Result:----------");
-              console.log(html);
-              console.log("---------expected Result:----------");
-              console.log(htmlResult);
+              if (result.getDifferences().length>0) {
+                console.log("---------Result:----------");
+                console.log(html);
+                console.log("---------expected Result:----------");
+                console.log(htmlResult);
 
-              should.not.exist(result.getDifferences());
+                should.not.exist(result.getDifferences());
+              }
             }
+
             bddone();
           }
         );   
