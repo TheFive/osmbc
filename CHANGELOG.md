@@ -1,5 +1,18 @@
 # Change Log
 
+## [1.0.4](https://github.com/TheFive/osmbc/tree/1.0.4) (2016-03-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.3...1.0.4)
+
+**Implemented enhancements:**
+
+- Generate a public part of OSMBC displaying parsed calender with errors. [\#379](https://github.com/TheFive/osmbc/issues/379)
+- Remove language chooser for calender tool and replace it by main language. [\#378](https://github.com/TheFive/osmbc/issues/378)
+- make date & duration for calender tool configurable. [\#377](https://github.com/TheFive/osmbc/issues/377)
+
+**Fixed bugs:**
+
+- Allow entering an email address for an invite to OSMBC, default the mail options pragmatic. [\#374](https://github.com/TheFive/osmbc/issues/374)
+
 ## [1.0.3](https://github.com/TheFive/osmbc/tree/1.0.3) (2016-03-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.2...1.0.3)
 
@@ -275,7 +288,6 @@
 **Implemented enhancements:**
 
 - new blog should start with two standard categories [\#248](https://github.com/TheFive/osmbc/issues/248)
-- Remember scoll position of last blog view. [\#244](https://github.com/TheFive/osmbc/issues/244)
 
 ## [0.7.1a](https://github.com/TheFive/osmbc/tree/0.7.1a) (2016-02-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.1...0.7.1a)
@@ -480,20 +492,8 @@
 ## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.7...0.5.8)
 
-**Implemented enhancements:**
-
-- hide the Close WNxxx for new articles button [\#245](https://github.com/TheFive/osmbc/issues/245)
-
-**Merged pull requests:**
-
-- PT in data/editorStrings.js [\#243](https://github.com/TheFive/osmbc/pull/243) ([alexandre-mbm](https://github.com/alexandre-mbm))
-
 ## [0.5.7](https://github.com/TheFive/osmbc/tree/0.5.7) (2016-01-01)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.6...0.5.7)
-
-**Implemented enhancements:**
-
-- Better display on mobile devices. [\#241](https://github.com/TheFive/osmbc/issues/241)
 
 ## [0.5.6](https://github.com/TheFive/osmbc/tree/0.5.6) (2015-12-31)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.5...0.5.6)
@@ -715,13 +715,13 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
-
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
