@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports= {
   "CC0":{"EN":"",DE:""},
   "CC3":{"EN":"Picture by ##author## under [CC-BY-SA 3.0](https://creativecommons.org/licenses/by/3.0/)",

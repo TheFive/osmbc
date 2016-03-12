@@ -56,6 +56,8 @@ function renderCalenderAsMarkdown(req,res,next) {
     duration = sessionData.duration;
   }
 
+  if (!moment(date).isValid()) date = "";
+
   parseEvent.calenderToMarkdown({lang:req.session.language,countryFlags:enableCountryFlags,duration:duration,date:date},function(err,result,errors){
     if (err) return next(err);
     res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
@@ -75,8 +77,10 @@ function postCalenderAsMarkdown(req,res,next) {
   var duration = req.body.duration;
   var lang = moment.locale();
   moment.locale(req.session.language);
-  var date = moment(req.body.date,"L");
+
+  var date = moment(req.body.date,"L").toISOString();
   moment.locale(lang);
+
   req.session.calenderTool = {disablePrettify:disablePrettify,
                               date:date,
                               duration:duration,
@@ -118,7 +122,6 @@ function renderPictureTool(req,res) {
     pictureLicense = sessionData.pictureLicense;
     pictureAuthor = sessionData.pictureAuthor;
   }
-  console.log(sessionData);
 
   var warning =[];
 
@@ -197,7 +200,7 @@ function renderPictureTool(req,res) {
   request.end();
 
 }
-function postPictureTool(req,res) { 
+function postPictureTool(req,res,next) {
   debug('postPictureTool');
 
   var pictureLanguage = req.body.pictureLanguage;
@@ -214,7 +217,10 @@ function postPictureTool(req,res) {
                               pictureAuthor:pictureAuthor,
                               
                               pictureAText:pictureAText};
-  res.redirect(config.getValue('htmlroot')+"/tool/picturetool");
+  req.session.save(function(err){
+    if (err) return next(err);
+    res.redirect(config.getValue('htmlroot')+"/tool/picturetool");
+  });
 }
 
 
