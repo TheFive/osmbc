@@ -13,7 +13,7 @@ block content
     | You can copy the markdown to an article (or copy the HTML direct to WP).
   form(name="input", action="#{layout.htmlroot}/tool/calender2markdown", method="post")
     .row
-      .col-md-3
+      .col-md-2
         .checkbox 
          label
           if (!disablePrettify)
@@ -22,28 +22,36 @@ block content
             input(type='checkbox', id='disable',name="disablePrettify" value='true' checked)
 
           | Disable Prettify Table  
-      .col-md-3
-        .checkbox 
+      .col-md-2
+        .checkbox
          label
           if (!enableCountryFlags)
             input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='true')
           else
             input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='true' checked)
 
-          | enable Country Flags 
+          | enable Country Flags
+      .col-md-2
+          label
+          - var pd = new Date();
+          - pd.setDate(pd.getDate()-3)
+          - if (date && date==="null") date =""
+          - if (date && date!=="") date = layout.moment(date).locale(layout.language).format("L")
+          input(id='date',name="date", value=date, placeholder=layout.moment(pd).locale(layout.language).format("L"))
+      .col-md-3
+        label
+
+        input(id='duration',name="duration" value=duration placeholder='24')
+
+
       .col-md-1
-        select(id="calenderLanguage",name="calenderLanguage").form-control
-          option(value="#{calenderLanguage}" selected) #{calenderLanguage}
-          each l in layout.languages
-            option(value="#{l}") #{l}
-      .col-md-1
-       input(type="submit", class="btn btn-primary",value="OK")
+       input(name="OK" type="submit", class="btn btn-primary",value="OK")
   
        
 
   h3
     | Markdown, please edit
-  textarea(id="markdown" rows=25 cols=500 style="font-family:monospace")
+  textarea(id="markdown" name="markdown" rows=25 cols=500 style="font-family:monospace")
     |#{calenderAsMarkdown}
   if (errors)
     h3
@@ -52,10 +60,7 @@ block content
   h3 
    | Preview
   p(id="preview")
-  h3
-    | HTML to copy
-  textarea(id="html" rows=20 cols=500 style="font-family:monospace")
-  
+
 
 block scripts                
   script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
@@ -75,14 +80,14 @@ block scripts
     }
 
   
-   
+
     function convert(text) {
       converter = new window.markdownit();
       // convert md to html
       text = converter.render(text);
       // skip <ul> and </ul> at start and end
-      
-      
+
+
       return text;
 
     }
@@ -143,10 +148,8 @@ block scripts
     function onchange() {
       var md = document.getElementById("markdown").value;
       preview = document.getElementById("preview");
-      html = document.getElementById("html");
       var t = convert(md);
       preview.innerHTML = t;
-      html.value = t;
       if (!document.getElementById("disable").checked) {
           setTimeout(function() {
             var st = document.getElementById("markdown").selectionStart;

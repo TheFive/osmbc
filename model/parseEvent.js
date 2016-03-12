@@ -207,11 +207,12 @@ function calenderToMarkdown(option,cb) {
   var date = new Date();
   date.setDate(date.getDate()-3);
   var duration = 24;
-  if (option.date) {
-    date = option.date;
+  if (option.date && option.date!=="" && option.date!=="null") {
+    date = new Date(option.date);
+    console.log(option.date+" "+date);
   }
-  if (option.duration) {
-    duration = option.duration;
+  if (option.duration && option.duration.trim()!=="") {
+    duration = parseInt(option.duration);
   }
   var lang = option.lang;
   var enableCountryFlags = option.countryFlags;
