@@ -18,57 +18,20 @@ block content
     | If the picture is under a license, please put it in. CC0 and CC3 are with reference to their license and allow a markdown reference to the author.
 
   form(name="input", action="#{layout.htmlroot}/tool/picturetool", method="post")
-    .row
-      .col-md-2
-        p
-          |Language
-      .col-md-5
-        select(id="pictureLanguage",name="pictureLanguage").form-control
-          option(value="#{pictureLanguage}" selected) #{pictureLanguage}
-          each l in layout.languages
-            option(value="#{l}") #{l}
-    .row
-      .col-md-2
-        p
-          | Alternative Text
-      .col-md-9
-        textarea(id="pictureAText" name="pictureAText" rows=1 cols=100 style="font-family:monospace")
-          |#{pictureAText}
-    .row
-      .col-md-2
-        p 
-        |Picture URL
-      .col-md-9
-        textarea(id="pictureURL" name="pictureURL" rows=1 cols=100 style="font-family:monospace")
-          |#{pictureURL}
-    .row
-      .col-md-2
-        p
-          |Subtitle Markup
-      .col-md-9
-        textarea(id="pictureMarkup" name="pictureMarkup" rows=1 cols=100 style="font-family:monospace")
-          |#{pictureMarkup}
+    div.form-horizontal(role="form")
+      - sizeLabel =2
+      - sizeInput = 6
+      - sizeExplanation = 4
+      - licenseLangs = ["DE","EN"]
+      - licensesList = ["CC0","CC3","OSMMAP"]
+      +labeledSelect("Language","pictureLanguage",pictureLanguage,licenseLangs,licenseLangs,"Choose Language for License Reference")
+      +labeledInput("Alternative Text","pictureAText",pictureAText,"Alt Text used for browsers without picture display")
+      +labeledInput("Picture URL","pictureURL",pictureURL,"URL of the picture for the blog.")
+      +labeledInput("Subtitle Markup","pictureMarkup",pictureMarkup,"Markup for the subtitle of the picture.")
+      +labeledSelect("License","pictureLicense",pictureLicense,licensesList,licensesList,"Under which license is the picture published ?")
+      +labeledInput("Picture Author (MD)","pictureAuthor",pictureAuthor,"Markdown text for the author name.")
+      input(type="submit", class="btn btn-primary",value="OK")
 
-      .col-md-1
-       input(type="submit", class="btn btn-primary",value="OK")
-    .row
-      .col-md-2
-        p
-          |License
-      .col-md-5
-        select(id="pictureLicense",name="pictureLicense").form-control
-          option(value="#{pictureLicense}" selected) #{pictureLicense}
-          - for (l in licenses)
-            option(value="#{l}") #{l}
-    .row
-      .col-md-2
-        p
-          |Picture Author (MD)
-      .col-md-5
-       textarea(id="pictureAuthor" name="pictureAuthor" rows=1 cols=100 style="font-family:monospace")
-          |#{pictureAuthor}
-  
-       
 
   h3
     | Markdown, for Copy
@@ -77,7 +40,7 @@ block content
   h3
     | Preview
     :verbatim
-    !{preview}
+      !{preview}
  
 
 block scripts                

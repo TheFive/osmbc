@@ -10,7 +10,7 @@ var articleModule = require("../model/article.js");
 
 
 
-
+var maxTimer = 10000;
 
 
 describe('views/user', function() {
@@ -32,7 +32,7 @@ describe('views/user', function() {
 
 
   it('should not change username, if user logged in' ,function(bddone) {
-    this.timeout(6000);
+    this.timeout(maxTimer);
     async.series([
       function createUser(cb) {
         userModule.createNewUser({OSMUser:"test",lastAccess:(new Date()).toISOString()},cb);
@@ -47,7 +47,7 @@ describe('views/user', function() {
     });
   });
   it('should save userdata and calculate WN User' ,function(bddone) {
-    this.timeout(6000);
+    this.timeout(maxTimer);
     nock('https://blog.openstreetmap.de')
       .get("/blog/author/WNAuthor")
       .reply(200,'<meta charset="UTF-8" /> \n<title>WNPublic | OSMBlog</title>\n');
@@ -75,7 +75,7 @@ describe('views/user', function() {
   });
 
   it('should not validate a usermail if wrong user logged in' ,function(bddone) {
-    this.timeout(6000);
+    this.timeout(maxTimer);
     async.series([
       function createUser(cb) {
         userModule.createNewUser({OSMUser:"TestValidate",emailInvalidation:"test@test.org",emailValidationKey:"123456789"},cb);
@@ -91,7 +91,7 @@ describe('views/user', function() {
     });
   });
   it('should validate a usermail if correct user logged in' ,function(bddone) {
-    this.timeout(6000);
+    this.timeout(maxTimer);
 
     async.series([
       function createUser(cb) {
