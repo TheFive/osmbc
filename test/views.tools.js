@@ -43,7 +43,7 @@ describe('views/tools', function() {
       },
       function fillValues(cb) {
         browser
-          .fill("date","2016-01-03")
+          .fill("date","03/10/2016")
           .fill("duration","24")
           .pressButton("OK",cb);
       },
@@ -68,5 +68,32 @@ describe('views/tools', function() {
       });
     });
   });
+  it('should use picture tool' ,function(bddone) {
+    this.timeout(20000);
+    var fileName = path.join(__dirname,'/data/picture.jpg');
+    nock('https://blog.openstreetmap.org')
+      .get('/picture.jpg')
+      .times(2)
+      .replyWithFile(200,fileName);
 
+    async.series([
+      function visitCalender (cb) {
+        browser.visit('/tool/picturetool', cb);
+      },
+      function fillValues(cb) {
+        browser
+          .select("pictureLanguage","EN")
+          .fill("pictureAText","AltText")
+          .fill("pictureURL","https://blog.openstreetmap.org/picture.jpg")
+          .fill("pictureMarkup","test")
+          .select("pictureLicense","CC3")
+          .fill("pictureAuthor","test")
+          .pressButton("OK",cb);
+      }
+    ],function(err){
+      should.not.exist(err);
+      should(browser.evaluate("document.getElementById('markdown').value")).eql("![AltText](https://blog.openstreetmap.org/picture.jpg =800x800)\ntest | Picture by test under [CC-BY-SA 3.0](https://creativecommons.org/licenses/by/3.0/)");
+      bddone();
+    });
+  });
 });
