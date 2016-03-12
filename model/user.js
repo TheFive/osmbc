@@ -38,6 +38,12 @@ function createNewUser (proto,callback) {
     if (result && result.length>0) {
       return callback(new Error("User >"+user.OSMUser+"< already exists."));
     }
+    // set some defaults for the user
+    if (!proto) user.mailNewCollection="false";
+    if (!proto) user.mailAllComment = "false";
+    if (!proto) user.mailComment=[];
+    if (!proto) user.mailBlogLanguageStatusChange=[];
+    // save data
     user.save(function updateUser(err,result){
       if (err) return callback(err,result);
       mailReceiver.updateUser(result);
@@ -127,7 +133,7 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
 
   // check and react on Mail Change
   if (data.email && data.email.trim()!=="" && data.email !== self.email) {
-    if (self.OSMUser !== user) return callback(new Error("EMail address can only be changed by the user himself."));
+    if (self.OSMUser !== user && self.hasLoggedIn()) return callback(new Error("EMail address can only be changed by the user himself, after he has logged in."));
     if (data.email !=="resend") {
       if (!emailValidator.validate(data.email)) {
         var error = new Error("Invalid Email Address: "+data.email);
@@ -151,7 +157,7 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
 
   // Check Change of OSMUser Name.
   if (data.OSMUser !== self.OSMUser) {
-    if (self.lastAccess) return callback(new Error(">"+self.OSMUser+"< already has logged in, change in name not possible."));
+    if (self.hasLoggedIn()) return callback(new Error(">"+self.OSMUser+"< already has logged in, change in name not possible."));
   }
   async.series([
     function checkUserName(cb){
@@ -219,6 +225,12 @@ User.prototype.setAndSave = function setAndSave(user,data,callback) {
     });
 };
 
+
+User.prototype.hasLoggedIn = function hasLoggedIn() {
+  debug('User.prototype.hasLoggedIn');
+  if (this.lastAccess) return true;
+  return false;
+};
 
 
 User.prototype.getNotificationStatus = function getNotificationStatus(channel, type) {
