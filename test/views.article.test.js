@@ -12,7 +12,7 @@ var blogModule = require("../model/blog.js");
 
 
 
-
+var maxTimer = 10000;
 
 
 
@@ -54,7 +54,7 @@ describe('views/article', function() {
 
   describe("Scripting Functions",function() {
     beforeEach(function(done) {
-      this.timeout(6000);
+      this.timeout(maxTimer);
       browser.visit('/article/'+articleId, function(err){
         if (err) return done(err);
         setTimeout(done,500);
@@ -126,7 +126,7 @@ describe('views/article', function() {
   });
   describe('Scripting Functions in Edit Mode',function() {
     before(function(done) {
-      this.timeout(15000);
+      this.timeout(maxTimer*3);
       browser.visit('/article/'+articleId+'?edit=true&style=OVERVIEW', function(err){
  //     browser.visit('/article/'+articleId, function(err){
         if (err) return done(err);
@@ -166,7 +166,7 @@ describe('views/article', function() {
   });
   describe('QueryParameters',function(){
     it('should set markdown to notranslation',function(bddone){
-      this.timeout(10000);
+      this.timeout(maxTimer);
       articleModule.findById(articleId,function(err,article){
         article.markdownDE="Text";
         article.markdownEN="";
@@ -188,7 +188,7 @@ describe('views/article', function() {
   });
   describe('Collect',function(){
     it('should search and store collected article',function(bddone){
-      this.timeout(10000);
+      this.timeout(maxTimer);
       browser.visit("/article/create",function(err){
         should.not.exist(err);
         browser
@@ -213,7 +213,7 @@ describe('views/article', function() {
   });
   describe('Comments',function(){
     it('should add and change a comment of an article',function(bddone){
-      this.timeout(15000);
+      this.timeout(maxTimer*2);
       browser.visit("/article/1",function(err){
         should.not.exist(err);
         browser
