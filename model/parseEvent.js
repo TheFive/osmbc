@@ -1,6 +1,7 @@
 "use strict";
 
 var debug   = require("debug")("OSMBC:model:parseEvent");
+var should  = require('should');
 var moment  = require("moment");
 var request = require("request");
 var markdown = require('markdown-it')();
@@ -200,14 +201,18 @@ function ll(length) {
 }
 
 
-function calenderToMarkdown(option,date,duration,cb) {
+function calenderToMarkdown(option,cb) {
   debug('calenderToMarkdown');
-  if (typeof(date)=='function') {
-    cb = date;
-    date = new Date();
-    date.setDate(date.getDate()-3);
-    duration = 24;
-  } 
+  should(typeof(cb)).eql("function");
+  var date = new Date();
+  date.setDate(date.getDate()-3);
+  var duration = 24;
+  if (option.date) {
+    date = option.date;
+  }
+  if (option.duration) {
+    duration = option.duration;
+  }
   var lang = option.lang;
   var enableCountryFlags = option.countryFlags;
 

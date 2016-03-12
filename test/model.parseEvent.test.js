@@ -201,6 +201,7 @@ describe('model/parseEvent',function() {
     });
   });
   describe('calenderToMarkdown',function(){
+
     before(function(){
       var fileName = path.join(__dirname,'/data/calenderData.wiki');
  
@@ -208,9 +209,10 @@ describe('model/parseEvent',function() {
                 .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
               
                 .replyWithFile(200,fileName);
+
     });
     it('should load date form wiki and generate a Markdown String',function(bddone){
-      parseEvent.calenderToMarkdown({lang:"DE"},new Date("11/28/2015"),14,function(err,result){
+      parseEvent.calenderToMarkdown({lang:"DE",date:new Date("11/28/2015"),duration:14},function(err,result){
         var excpeted = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
         should(result).equal(excpeted);
          bddone();
