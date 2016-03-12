@@ -3,10 +3,15 @@
 var debug = require('debug')('OSMBC:routes:tool');
 var express = require('express');
 var router = express.Router();
+var publicRouter = express.Router();
 var config = require('../config.js');
 var url = require('url');
 var http = require('http');
 var https = require('https');
+var moment= require('moment');
+var markdown = require("markdown-it")()
+  .use(require("markdown-it-sup"))
+  .use(require("markdown-it-imsize"), { autofill: true });
 
 var parseEvent = require('../model/parseEvent.js');
 
@@ -18,42 +23,68 @@ var sizeOf = require('image-size');
 
 
 
+function renderPublicCalender(req,res,next) {
+  debug('renderPublicCalender');
+  var htmlRoot = config.getValue("htmlroot");
+  var bootstrap = config.getValue("bootstrap");
+
+  var layout = {bootstrap:bootstrap,htmlRoot:htmlRoot};
+
+  parseEvent.calenderToMarkdown({lang:"EN",countryFlags:true,duration:'100'},function(err,result,errors){
+    if (err) return next(err);
+    var preview = markdown.render(result);
+    preview = preview.replace('<table>','<table class="table">');
+    res.render('calenderPublic.jade',{calenderAsMarkdown:result,
+      errors:errors,preview:preview,layout:layout});
+
+  });
+}
 
 function renderCalenderAsMarkdown(req,res,next) {
   debug('renderCalenderAsMarkdown');
 
   var disablePrettify = false;
-  var calenderLanguage = "DE";
   var enableCountryFlags = false;
+  var date="";
+  var duration="";
   var sessionData = req.session.calenderTool;
+
   if (sessionData) {
     disablePrettify = sessionData.disablePrettify;
-    calenderLanguage = sessionData.calenderLanguage;
     enableCountryFlags = sessionData.enableCountryFlags;
+    date = sessionData.date;
+    duration = sessionData.duration;
   }
 
-
-  parseEvent.calenderToMarkdown({lang:calenderLanguage,countryFlags:enableCountryFlags},function(err,result,errors){
+  parseEvent.calenderToMarkdown({lang:req.session.language,countryFlags:enableCountryFlags,duration:duration,date:date},function(err,result,errors){
     if (err) return next(err);
     res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
                                 disablePrettify:disablePrettify,
-                                calenderLanguage:calenderLanguage,
                                 enableCountryFlags:enableCountryFlags,
+                                date:date,
+                                duration:duration,
                                 errors:errors,
                                 layout:res.rendervar.layout});  
 
   });
 }
-function postCalenderAsMarkdown(req,res) { 
+function postCalenderAsMarkdown(req,res,next) {
   debug('postCalenderAsMarkdown');
-  console.dir(req.body);
   var disablePrettify = (req.body.disablePrettify=="true");
-  var calenderLanguage = req.body.calenderLanguage;
   var enableCountryFlags = req.body.enableCountryFlags;
+  var duration = req.body.duration;
+  var lang = moment.locale();
+  moment.locale(req.session.language);
+  var date = moment(req.body.date,"L");
+  moment.locale(lang);
   req.session.calenderTool = {disablePrettify:disablePrettify,
-                              calenderLanguage:calenderLanguage,
+                              date:date,
+                              duration:duration,
                               enableCountryFlags:enableCountryFlags};
-  res.redirect(config.getValue('htmlroot')+"/tool/calender2markdown");
+  req.session.save(function(err){
+    if (err) return next(err);
+    res.redirect(config.getValue('htmlroot')+"/tool/calender2markdown");
+  });
 }
 
 function generateCCLicense(license,lang,author){
@@ -61,8 +92,6 @@ function generateCCLicense(license,lang,author){
   if (!license || license === "") license = "CC0";
   if (!lang || lang === "") lang = "EN";
   if (!author) author = "";  
-  console.log(license);
-  console.dir(licenses);
   var text = licenses[license][lang];
   if (typeof(text)=="undefined") text = licenses[license].EN;
   return text.replace("##author##",author);
@@ -99,13 +128,10 @@ function renderPictureTool(req,res) {
 
   var chunks = [];
   var request = p.get(options,function (req){
-    console.log("http.get");
     req.on('data', function (chunk) {
-      console.log("data");
       chunks.push(chunk);
     });
     req.on('end', function() {
-      console.log("end");
       var buffer = Buffer.concat(chunks);
       var sizeX = 100;
       var sizeY = 100;
@@ -151,7 +177,6 @@ function renderPictureTool(req,res) {
 
 
   request.on('error',function() {
-    console.log("error");
     warning.push(">"+pictureURL+"< pictureURL not found");
    
     res.render('pictureTool',{genMarkup:"picture not found",
@@ -196,5 +221,6 @@ router.post('/calender2markdown', postCalenderAsMarkdown);
 router.get('/picturetool', renderPictureTool);
 router.post('/picturetool', postPictureTool);
 
-
+publicRouter.get("/calender/preview",renderPublicCalender);
 module.exports.router = router;
+module.exports.publicRouter = publicRouter;
