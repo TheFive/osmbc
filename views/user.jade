@@ -7,7 +7,7 @@ block content
     |Edit OSMBC User
   form(name="input", action="#{layout.htmlroot}/usert/#{usershown.id}", method="post")
     div.form-horizontal(role="form")
-      if (usershown.lastAccess)
+      if (usershown.hasLoggedIn())
         +labeledText("OSMUser","OSMUser",usershown.OSMUser,"User already logged in, namechange not possible.")
       else
         +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
