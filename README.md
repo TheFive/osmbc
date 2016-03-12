@@ -35,10 +35,10 @@ Master:   | develop:
 [![codecov.io](https://codecov.io/github/TheFive/osmbc/coverage.svg?branch=master)](https://codecov.io/github/TheFive/osmbc?branch=master) | [![codecov.io](https://codecov.io/github/TheFive/osmbc/coverage.svg?branch=develop)](https://codecov.io/github/TheFive/osmbc?branch=develop)
 
 Timeline for code coverage on development branch:
-![codecov.io](http://codecov.io/github/TheFive/osmbc/branch.svg?branch=develop)
+![codecov.io](http://codecov.io/github/TheFive/osmbc/branch.svg?branch=develop&agg=month)
 
 Timeline for code coverage on master branch:
-![codecov.io](http://codecov.io/github/TheFive/osmbc/branch.svg?branch=master)
+![codecov.io](http://codecov.io/github/TheFive/osmbc/branch.svg?branch=master&agg=month)
 
 
 ## Tooling
