@@ -23,8 +23,8 @@ var sizeOf = require('image-size');
 
 
 
-function renderPublicCalender(req,res,next) {
-  debug('renderPublicCalender');
+function renderPublicCalendar(req,res,next) {
+  debug('renderPublicCalendar');
   var htmlRoot = config.getValue("htmlroot");
   var bootstrap = config.getValue("bootstrap");
 
@@ -229,6 +229,6 @@ router.post('/calender2markdown', postCalenderAsMarkdown);
 router.get('/picturetool', renderPictureTool);
 router.post('/picturetool', postPictureTool);
 
-publicRouter.get("/calender/preview",renderPublicCalender);
+publicRouter.get("/calendar/preview",renderPublicCalendar);
 module.exports.router = router;
 module.exports.publicRouter = publicRouter;
