@@ -228,6 +228,13 @@ Article.prototype.getPreview = function getPreview(style,user) {
     debug("options overview is set");
     if (this.author  && this.author.collection) text = "["+this.author.collection+"] ";
     text += this.displayTitle(90);
+    if (this.categoryEN==="--unpublished--") {
+      var reason = "No Reason given";
+      if (this.unpublishReason) reason = this.unpublishReason;
+      text += "<p>"+reason;
+      if (this.unpublishReference) text += " ("+this.unpublishReference+")";
+      text +="</p>";
+    }
     textright = this.displayTitle(90);
     
     // It is in discussion wether this makes sense or not.
@@ -260,6 +267,12 @@ Article.prototype.getPreview = function getPreview(style,user) {
     } else {
       if (this.author && this.author.collection) text = "["+this.author.collection+"] ";
       text += this.displayTitle(90);
+      if (this.categoryEN==="--unpublished--") {
+        var reason = "No Reason given";
+        if (this.unpublishReason) reason = this.unpublishReason;
+        text += "<br>"+reason;
+        if (this.unpublishReference) text += " ("+this.unpublishReference+")";
+      }
     }    
     if (typeof(this[markdownTRANS])!=='undefined' && this[markdownTRANS]!=='') {
       md = this[markdownTRANS];
@@ -397,6 +410,13 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   // check to set the commentStatus to open
   if (data.comment && !self.commentStatus) {
     data.commentStatus = "open";
+  }
+
+  if (data.categoryEN==="--unpublished--" || data.blog==="Trash") {
+    if (  (!data.unpublishReason || data.unpublishReason.trim() ==="")
+        &&(!self.unpublishReason || self.unpublishReason.trim() ==="")) {
+      return callback(new Error("Missing reason for unpublishing article."))
+    }
   }
 
 
