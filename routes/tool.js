@@ -30,7 +30,7 @@ function renderPublicCalendar(req,res,next) {
 
   var layout = {bootstrap:bootstrap,htmlRoot:htmlRoot};
 
-  parseEvent.calenderToMarkdown({lang:"EN",countryFlags:true,duration:'100'},function(err,result,errors){
+  parseEvent.calenderToMarkdown({lang:"EN",countryFlags:true,duration:'200'},function(err,result,errors){
     if (err) return next(err);
     var preview = markdown.render(result);
     preview = preview.replace('<table>','<table class="table">');
