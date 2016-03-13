@@ -18,12 +18,19 @@ html(lang='en')
 block content
   h1
     | Preview for Weekly / Wochennotiz Calendar Support Tool
-  p
-    | This is a preview from the Tool, the WeeklyOSM & Wochennotiz team is using to publish
-    | the calender on a weekly basis.
-    | If you would like to support the team, please control the information here and
-    | correct the information in the wiki.
-
+  p="This is a calendar preview from the tool OSMBC, the "
+    a(href="https://weeklyosm.eu") WeeklyOSM
+    span=" and "
+    a(href="https://blog.openstreetmap.de") Wochennotiz
+    |  team is using to publish
+    | the news and the calender on a weekly basis.
+    | If you would like to support the team while entering your events, please control the information here and
+    | correct the information in the
+    a(href="http://wiki.openstreetmap.org/wiki/Current_events")  wiki
+    |.
+  p="You can find more information about OSMBC on "
+    a(href="https://github.com/TheFive/osmbc") Github
+    span="."
 
   if (errors)
     h2
