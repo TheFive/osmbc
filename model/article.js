@@ -268,9 +268,9 @@ Article.prototype.getPreview = function getPreview(style,user) {
       if (this.author && this.author.collection) text = "["+this.author.collection+"] ";
       text += this.displayTitle(90);
       if (this.categoryEN==="--unpublished--") {
-        var reason = "No Reason given";
-        if (this.unpublishReason) reason = this.unpublishReason;
-        text += "<br>"+reason;
+        var reason2 = "No Reason given";
+        if (this.unpublishReason) reason2 = this.unpublishReason;
+        text += "<br>"+reason2;
         if (this.unpublishReference) text += " ("+this.unpublishReference+")";
       }
     }    
@@ -413,9 +413,9 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   }
 
   if (data.categoryEN==="--unpublished--" || data.blog==="Trash") {
-    if (  (!data.unpublishReason || data.unpublishReason.trim() ==="")
-        &&(!self.unpublishReason || self.unpublishReason.trim() ==="")) {
-      return callback(new Error("Missing reason for unpublishing article."))
+    if (  (!data.unpublishReason || data.unpublishReason.trim() ==="") &&
+          (!self.unpublishReason || self.unpublishReason.trim() ==="")) {
+      return callback(new Error("Missing reason for unpublishing article."));
     }
   }
 
