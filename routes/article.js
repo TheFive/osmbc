@@ -234,7 +234,9 @@ function postArticle(req, res, next) {
                  categoryEN:req.body.categoryEN,
                  version:req.body.version,
                  title:req.body.title,
-                 commentStatus:req.body.commentStatus};
+                 commentStatus:req.body.commentStatus,
+                 unpublishReason:req.body.unpublishReason,
+                 unpublishReference:req.body.unpublishReference};
 
   var languages = config.getLanguages();
   for (var i=0;i<languages.length;i++){
