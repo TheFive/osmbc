@@ -7,7 +7,7 @@ html(lang='en')
     meta(name='description', content='')
     meta(name='author', content='')
     link(rel='icon', href='/favicon.ico')
-    title OSMBC
+    title OSMBC Calendar Preview
     // Bootstrap core CSS
     link(href='#{layout.bootstrap}/css/bootstrap.min.css', rel='stylesheet')
     // HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries
@@ -16,32 +16,33 @@ html(lang='en')
       script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
 
 block content
-  h1
-    | Preview for Weekly / Wochennotiz Calendar Support Tool
-  p="This is a calendar preview from the OSMBC, the tool used by the "
-    a(href="https://weeklyosm.eu") WeeklyOSM
-    span=" and "
-    a(href="https://blog.openstreetmap.de") Wochennotiz
-    |  team to publish
-    | the news and the calender on a weekly basis.
-    | If you would like to support the team while entering your events, please control the information here and
-    | correct the information in the
-    a(href="http://wiki.openstreetmap.org/wiki/Current_events")  wiki
-    |.
-  p="You can find more information about OSMBC on "
-    a(href="https://github.com/TheFive/osmbc") Github
-    span="."
+  .container
+    h1
+      | Current OpenStreetMap Events
+    p="This is a calendar preview from OSMBC, the tool used by the "
+      a(href="https://weeklyosm.eu") WeeklyOSM
+      span=" and "
+      a(href="https://blog.openstreetmap.de") Wochennotiz
+      |  team to publish
+      | the news and the calender of OpenStreetMap on a weekly basis.
+      | If you would like to support the team while entering your events, please control the information here and
+      | correct the information in the
+      a(href="http://wiki.openstreetmap.org/wiki/Current_events")  wiki
+      |.
+    p="You can find more information about OSMBC on "
+      a(href="https://github.com/TheFive/osmbc") Github
+      span="."
 
-  if (errors)
+    if (errors)
+      h2
+        |Error during convert
+      p="Please check @ wiki.openstreetmap.org"
+      pre(cols=200)=errors
     h2
-      |Error during convert
-    p="Please check @ wiki.openstreetmap.org"
-    pre(cols=200)=errors
-  h2
-   | Parsed Calendar
-  p
-    :verbatim
-      !{preview}
+     | Parsed Calendar
+    p
+      :verbatim
+        !{preview}
 
 
 
