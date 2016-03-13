@@ -469,6 +469,8 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
   if (options.markdown) renderer = new MarkdownRenderer(self);
 
   self.getPreviewData({createTeam:options.fullfinal,
+                       disableNotranslation:options.fullfinal,
+
                        lang:options.left_lang,
                        collectors:true},function(err,result) {
     if (err) return callback(err);
@@ -637,6 +639,9 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
       var i; // often used iterator, declared here because there is no block scope in JS.
       for (i=0;i<articleList.length;i++) {
         var r=articleList[i];
+
+        // remove no translation article, if wanted
+        if (options.disableNotranslation && r["markdown"+options.lang]==="no translation") continue;
         if (typeof(articles[r.categoryEN]) == 'undefined') {
           articles[r.categoryEN] = [];
         }

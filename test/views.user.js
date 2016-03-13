@@ -39,6 +39,9 @@ describe('views/user', function() {
       },
       function visitUser (cb) {
         browser.visit('/usert/1', cb);
+      },
+      function waitALittle(cb) {
+        browser.wait(10,cb);
       }
     ],function(err){
       should.not.exist(err);

@@ -123,6 +123,18 @@ block content
             h2
               |#{article.getCategory(params.right_lang)}
 
+        .row.hidden(id="unpublishReasonRow")
+          .col-md-1
+            | Unpublish Reason
+          .col-md-5
+            select(id="unpublishReason",name="unpublishReason").form-control
+              for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
+                if (reason == article.unpublishReason)
+                  option(value="#{reason}" selected ) #{reason}
+                else
+                  option(value="#{reason}" ) #{reason}
+          .col-md-5
+            textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1) #{article.unpublishReference}
         .row
           .col-md-1
             |Title <br>
@@ -492,6 +504,11 @@ block scripts
         }
       onchangeCollection();
 
+      if (document.getElementById("blog")){
+        document.getElementById("blog").onchange = showHideUnpublishReason;
+      };
+      showHideUnpublishReason();
+
       comm = document.getElementById("comment");
       if (comm) {
         comm.onchange = onchangeComment;
@@ -806,7 +823,21 @@ block scripts
         if (placeholder[c]) {
            categoryDisplay.innerHTML = placeholder[c];    
           }
+        showHideUnpublishReason();
       }
+      function showHideUnpublishReason() {
+        var c = categoryEN.value;
+        var b = blog.value;
+        var hidden = true;
+        if (c==="--unpublished--") hidden = false;
+        if (b==="Trash") hidden = false;
+        var unpublishReasonRow = document.getElementById("unpublishReasonRow");
+        if (hidden) unpublishReasonRow.classList.add("hidden");
+          else unpublishReasonRow.classList.remove("hidden");
+
+      }
+
+
 
 
 
