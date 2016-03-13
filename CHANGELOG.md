@@ -1,5 +1,20 @@
 # Change Log
 
+## [1.0.5](https://github.com/TheFive/osmbc/tree/1.0.5) (2016-03-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.4...1.0.5)
+
+**Implemented enhancements:**
+
+- Tagging unpublished/trashed posts [\#371](https://github.com/TheFive/osmbc/issues/371)
+
+**Fixed bugs:**
+
+- it looks like some? \(or all?\) "no translation" are not eliminated during export [\#380](https://github.com/TheFive/osmbc/issues/380)
+
+**Merged pull requests:**
+
+- Flags: Guyana, Argentina, Wales, Scotland, UK [\#381](https://github.com/TheFive/osmbc/pull/381) ([fredao](https://github.com/fredao))
+
 ## [1.0.4](https://github.com/TheFive/osmbc/tree/1.0.4) (2016-03-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.3...1.0.4)
 
@@ -141,6 +156,7 @@
 
 **Fixed bugs:**
 
+- Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
 - once a textbox in Markdown is set to any content \(normally: no translation\)  it not possible to clean it up [\#342](https://github.com/TheFive/osmbc/issues/342)
 
 **Merged pull requests:**
@@ -154,10 +170,6 @@
 **Implemented enhancements:**
 
 - Disable comments from log history in article view. [\#344](https://github.com/TheFive/osmbc/issues/344)
-
-**Fixed bugs:**
-
-- Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
 
 ## [0.8.0a](https://github.com/TheFive/osmbc/tree/0.8.0a) (2016-02-21)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0...0.8.0a)
@@ -284,10 +296,6 @@
 
 ## [0.7.2](https://github.com/TheFive/osmbc/tree/0.7.2) (2016-02-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.1a...0.7.2)
-
-**Implemented enhancements:**
-
-- new blog should start with two standard categories [\#248](https://github.com/TheFive/osmbc/issues/248)
 
 ## [0.7.1a](https://github.com/TheFive/osmbc/tree/0.7.1a) (2016-02-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.1...0.7.1a)
@@ -468,7 +476,6 @@
 **Implemented enhancements:**
 
 - Use jsdiff in word mode to display differences on main page. [\#253](https://github.com/TheFive/osmbc/issues/253)
-- blog difference in shown date and blog date [\#249](https://github.com/TheFive/osmbc/issues/249)
 
 **Fixed bugs:**
 
@@ -483,11 +490,6 @@
 
 ## [0.5.8a](https://github.com/TheFive/osmbc/tree/0.5.8a) (2016-01-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8...0.5.8a)
-
-**Fixed bugs:**
-
-- blog difference in shown date and blog date [\#250](https://github.com/TheFive/osmbc/issues/250)
-- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
 
 ## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.7...0.5.8)
