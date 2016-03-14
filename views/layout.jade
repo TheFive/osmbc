@@ -130,6 +130,18 @@ html(lang='en')
                             a(href="#{layout.htmlroot}/article/list?blog=#{blog}") #{blog}
                     li
                       a(href='#{layout.htmlroot}/article/list?blog=') No Blog
+                  li.divider
+                  li.dropdown-header OutgoingMail
+                    li
+                      - var d = new Date();
+                      - d= d.toISOString();
+                      - d= d.substring(0,10);
+                      a(href="#{layout.htmlroot + '/changes/mail/' + d}") Mail Log Today
+                    li
+                      - var d = new Date();
+                      - d= d.toISOString();
+                      - d= d.substring(0,13);
+                      a(href="#{layout.htmlroot + '/changes/mail/' + d}") Mail Log This Hour
 
               li.dropdown.hidden-xs
                 a.dropdown-toggle(href='#', data-toggle='dropdown')
@@ -163,17 +175,6 @@ html(lang='en')
                   li.dropdown-header Action
                   li
                     a(href="#{layout.htmlroot}/blog/create") Create Blog
-                  li.dropdown-header OutgoingMail
-                  li
-                    - var d = new Date();
-                    - d= d.toISOString();
-                    - d= d.substring(0,10);
-                    a(href="#{layout.htmlroot+'/changes/mail/'+d}") Mail Log Today
-                  li
-                    - var d = new Date();
-                    - d= d.toISOString();
-                    - d= d.substring(0,13);
-                    a(href="#{layout.htmlroot + '/changes/mail/' + d}") Mail Log This Hour
 
             ul.nav.navbar-nav.navbar-right
               li.dropdown 
