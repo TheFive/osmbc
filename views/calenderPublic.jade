@@ -25,15 +25,21 @@ block content
       a(href="https://blog.openstreetmap.de") Wochennotiz
       |  team to publish
       | the news and the calender of OpenStreetMap on a weekly basis.
-      | This list show the next 200 days.
+      | This list shows the next 200 days.
     p
-      | If you would like to support the team while entering your events, please control the information here and
-      | correct the information in the
+      | If you would like to see your events in WeeklyOSM or Wochennotiz, please control the information here and
+      | correct it in the
       a(href="http://wiki.openstreetmap.org/wiki/Current_events")  wiki
       |.
+    p
+      | To display Town and country the following information is expected.
+    pre
+      | {{cal|social}} || {{dm|DATE}} || Description with Wiki or HTML Link, TOWN, COUNTRY {{SmallFlag|flag}}
+    p
+      | Please use Comma as separator. Town and country can be a wiki reference or plain text.
     p="You can find more information about OSMBC on "
       a(href="https://github.com/TheFive/osmbc") Github
-      span="."
+      span=". Please put your bug reports and improvements there. If you interested in the 'rudimentary' parser, contact the Author."
 
     if (errors)
       h2
