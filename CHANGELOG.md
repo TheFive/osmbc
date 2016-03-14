@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.6](https://github.com/TheFive/osmbc/tree/1.0.6) (2016-03-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.5...1.0.6)
+
+**Merged pull requests:**
+
+- Guideline to record the calendar dates in an appropriate way updated [\#383](https://github.com/TheFive/osmbc/pull/383) ([fredao](https://github.com/fredao))
+
 ## [1.0.5](https://github.com/TheFive/osmbc/tree/1.0.5) (2016-03-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.4...1.0.5)
 
@@ -156,7 +163,6 @@
 
 **Fixed bugs:**
 
-- Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
 - once a textbox in Markdown is set to any content \(normally: no translation\)  it not possible to clean it up [\#342](https://github.com/TheFive/osmbc/issues/342)
 
 **Merged pull requests:**
@@ -170,6 +176,10 @@
 **Implemented enhancements:**
 
 - Disable comments from log history in article view. [\#344](https://github.com/TheFive/osmbc/issues/344)
+
+**Fixed bugs:**
+
+- Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
 
 ## [0.8.0a](https://github.com/TheFive/osmbc/tree/0.8.0a) (2016-02-21)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0...0.8.0a)
