@@ -104,7 +104,7 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
   if (this.to) to = String(this.to);
 
   if (from.length>2000 || to.length > 2000) {
-    return "Temporary disabled long text compare";
+    return "Disabled for texts longer than 2000 chars.";
   }
 
   // first check on only spaces
