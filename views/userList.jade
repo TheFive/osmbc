@@ -9,8 +9,7 @@ block content
     div
       table.table.table-striped.table-responsive
         - var params="?";
-        - for (k in query) params+=k+"="+query[k];
-        - if (params !== "?") params+="&";
+        - for (k in query) params+=k+"="+query[k]+"&";
         thead
           tr 
             th
