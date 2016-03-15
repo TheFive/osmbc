@@ -85,7 +85,7 @@ describe('model/changes',function() {
       var markdownDE2 = fs.readFileSync(path.resolve(__dirname,"data","model.longmarkdownDE2.txt"),"UTF8");
 
       var change = new logModule.Class({to:markdownDE,from:markdownDE2});
-      should(change.htmlDiffText(40)).eql('Temporary disabled long text compare');
+      should(change.htmlDiffText(40)).eql('Disabled for texts longer than 2000 chars.');
     });
   });
 });

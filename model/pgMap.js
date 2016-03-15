@@ -528,5 +528,28 @@ exports.createTables = function(pgObject,options,analyse,callback) {
 }; 
 
 
+module.exports.count = function count(sql,callback) {
+  debug('count');
+  pg.connect(config.pgstring,function(err,client,pgdone){
+    if (err) return callback(err);
+
+    var startTime = new Date().getTime();
+    var result;
+    var query = client.query(sql);
+    query.on('row',function(row) {
+      result = {};
+      for (var k in row) {
+        result[k]=row[k];
+      }
+    });
+    query.on('end',function () {
+      pgdone();
+      var endTime = new Date().getTime();
+      debug("SQL: ["+ (endTime - startTime)/1000 +"]"+ sql);
+      callback(null,result);
+    });
+  });
+};
+
 
 

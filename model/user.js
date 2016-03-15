@@ -52,6 +52,16 @@ function createNewUser (proto,callback) {
   });
 }
 
+User.prototype.calculateChanges = function calculateChanges(callback) {
+  debug('User.prototype.calculateChanges');
+  var self=this;
+  if (self._countChanges) return;
+  pgMap.count("select count(*) as count from changes where data->>'user'='"+this.OSMUser+"'",function(err,result){
+    if (err) return callback(err);
+    self._countChanges = result.count;
+    return callback();
+  });
+};
 
 
 User.prototype.remove = pgMap.remove;

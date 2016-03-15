@@ -32,15 +32,19 @@ function renderList(req,res,next) {
   async.parallel([
       function(callback) {
         userModule.find(query,sort,function(err,result) {
+          if (err) return callback(err);
           users = result;
-          callback();
+          async.each(users,function (item,eachcb){
+            item.calculateChanges(eachcb);
+          },function(err){
+            return callback(err);
+          });
         });
       }
-
     ],function(error) { 
         if (error) return next(error);
         should.exist(res.rendervar);
-        res.render('userList',{layout:res.rendervar.layout,
+        res.render('userList',{layout:res.rendervar.layout,query:query,
                                 users:users});      
     }
   );
