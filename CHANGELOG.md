@@ -1,5 +1,22 @@
 # Change Log
 
+## [1.0.7](https://github.com/TheFive/osmbc/tree/1.0.7) (2016-03-15)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.6...1.0.7)
+
+**Implemented enhancements:**
+
+- Enable some sorting for user list. [\#388](https://github.com/TheFive/osmbc/issues/388)
+- Display number of change count in user list. [\#387](https://github.com/TheFive/osmbc/issues/387)
+- Simplify menu, move mail lists to list. [\#386](https://github.com/TheFive/osmbc/issues/386)
+
+**Fixed bugs:**
+
+- OSMBC takes long time for text differences [\#335](https://github.com/TheFive/osmbc/issues/335)
+
+**Closed issues:**
+
+- Simplify menu, remove blog stati lists from list menu. [\#385](https://github.com/TheFive/osmbc/issues/385)
+
 ## [1.0.6](https://github.com/TheFive/osmbc/tree/1.0.6) (2016-03-14)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.5...1.0.6)
 
@@ -469,34 +486,14 @@
 ## [0.6.0](https://github.com/TheFive/osmbc/tree/0.6.0) (2016-01-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.9a...0.6.0)
 
-**Implemented enhancements:**
-
-- More flexible language switch by putting switching to navbar. [\#258](https://github.com/TheFive/osmbc/issues/258)
-
 ## [0.5.9a](https://github.com/TheFive/osmbc/tree/0.5.9a) (2016-01-09)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.9...0.5.9a)
-
-**Fixed bugs:**
-
-- typo: Any thng which is interesting in OSM and worth sharing [\#255](https://github.com/TheFive/osmbc/issues/255)
 
 ## [0.5.9](https://github.com/TheFive/osmbc/tree/0.5.9) (2016-01-09)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8b...0.5.9)
 
-**Implemented enhancements:**
-
-- Use jsdiff in word mode to display differences on main page. [\#253](https://github.com/TheFive/osmbc/issues/253)
-
-**Fixed bugs:**
-
-- Collection does not separate links [\#254](https://github.com/TheFive/osmbc/issues/254)
-
 ## [0.5.8b](https://github.com/TheFive/osmbc/tree/0.5.8b) (2016-01-08)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8a...0.5.8b)
-
-**Fixed bugs:**
-
-- links with non standard characters are not identified in full in article screen [\#252](https://github.com/TheFive/osmbc/issues/252)
 
 ## [0.5.8a](https://github.com/TheFive/osmbc/tree/0.5.8a) (2016-01-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8...0.5.8a)
