@@ -8,17 +8,20 @@ block content
   row
     div
       table.table.table-striped.table-responsive
+        - var params="?";
+        - for (k in query) params+=k+"="+query[k];
+        - if (params !== "?") params+="&";
         thead
           tr 
             th
-              | Name
+              a(href="#{layout.htmlroot}/usert/list"+params+"sort=OSMUser") Name
             th 
               | OSM
             th
-              | WNAuthor
+              a(id="sortWNAuthor" href="#{layout.htmlroot}/usert/list"+params+"sort=WNAuthor") WNAuthor
             th
-              | OSMBC
-            td
+              | OSMBC Changes
+            th
               | Email
             th
               | Collection
@@ -29,11 +32,11 @@ block content
             th
               | Status
             th
-              | Language
+              a(href="#{layout.htmlroot}/usert/list"+params+"sort=language") Language
             th
               | access
             th
-              | lastAccess
+              a(href="#{layout.htmlroot}/usert/list"+params+"sort=lastAccess&desc=true") lastAccess
 
         tbody
           each user in users
@@ -49,7 +52,7 @@ block content
                 if user.WNAuthor
                  a(href='https://blog.openstreetmap.de/blog/author/#{user.WNAuthor}') #{(user.WNPublicAuthor)?user.WNPublicAuthor:user.WNAuthor}
               td
-                a(href='#{layout.htmlroot}/changes/log?user=#{user.OSMUser}') logs
+                a(href='#{layout.htmlroot}/changes/log?user=#{user.OSMUser}') (#{user._countChanges})
               td
                 if user.email
                   span.glyphicon.glyphicon-ok

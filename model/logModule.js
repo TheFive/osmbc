@@ -104,7 +104,7 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars){
   if (this.to) to = String(this.to);
 
   if (from.length>2000 || to.length > 2000) {
-    return "Temporary disabled long text compare";
+    return "Disabled for texts longer than 2000 chars.";
   }
 
   // first check on only spaces
@@ -212,7 +212,8 @@ pgObject.createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data js
                   CONSTRAINT changes_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
 pgObject.indexDefinition = {
   "changes_table_oid_idx":"CREATE INDEX changes_table_oid_idx ON changes USING btree (((data ->> 'table'::text)), ((data ->> 'oid'::text)))",
-  "changes_blog_to_idx":"CREATE INDEX changes_blog_to_idx ON changes USING btree (((data ->> 'blog'::text)), ((data ->> 'to'::text)))"
+  "changes_blog_to_idx":"CREATE INDEX changes_blog_to_idx ON changes USING btree (((data ->> 'blog'::text)), ((data ->> 'to'::text)))",
+  "changes_user_to_idx":"CREATE INDEX changes_user_to_idx ON changes USING btree (((data ->> 'user'::text)))"
 };
 
 pgObject.viewDefinition = {};

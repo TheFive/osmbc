@@ -121,4 +121,26 @@ describe('views/user', function() {
       });
     });
   });
-});
+  it('should display & sort userlist' ,function(bddone) {
+    this.timeout(maxTimer);
+
+    async.series([
+      function createUser1(cb) {userModule.createNewUser({OSMUser:"Test1",access:"full",WNAuthor:"b"},cb); },
+      function createUser2(cb) {userModule.createNewUser({OSMUser:"Test2",access:"full",WNAuthor:"a"},cb); },
+      function createUser2(cb) {userModule.createNewUser({OSMUser:"Test3",access:"denied"},cb); },
+      function visitUser (cb) {
+        browser.visit('/usert/list?access=full', cb);
+      },
+      function clickOnWNAuthor(cb) {
+        browser.click('a[id="sortWNAuthor"]',cb);
+      }
+    ],function(err){
+
+      should.not.exist(err);
+      var r = browser.html();
+      r = r.substring(r.indexOf("<table"), r.indexOf("</table"));
+      should(r).eql('<table class=\"table table-striped table-responsive\"><thead><tr> <th><a href=\"/usert/list?access=full&amp;sort=OSMUser\">Name</a></th><th> \nOSM</th><th><a id=\"sortWNAuthor\" href=\"/usert/list?access=full&amp;sort=WNAuthor\">WNAuthor</a></th><th>OSMBC Changes</th><th>Email</th><th>Collection</th><th>AllComment</th><th>Comment</th><th>Status</th><th><a href=\"/usert/list?access=full&amp;sort=language\">Language</a></th><th>access</th><th><a href=\"/usert/list?access=full&amp;sort=lastAccess&amp;desc=true\">lastAccess</a></th></tr></thead><tbody><tr><td><a href=\"/usert/3\">Test2</a></td><td><a href=\"http://www.openstreetmap.org/user/Test2\">[OSM]</a></td><td><a href=\"https://blog.openstreetmap.de/blog/author/a\">a</a></td><td><a href=\"/changes/log?user=Test2\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>Never</td></tr><tr><td><a href=\"/usert/2\">Test1</a></td><td><a href=\"http://www.openstreetmap.org/user/Test1\">[OSM]</a></td><td><a href=\"https://blog.openstreetmap.de/blog/author/b\">b</a></td><td><a href=\"/changes/log?user=Test1\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>Never</td></tr><tr><td><a href=\"/usert/1\">TheFive</a></td><td><a href=\"http://www.openstreetmap.org/user/TheFive\">[OSM]</a></td><td></td><td><a href=\"/changes/log?user=TheFive\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>a few seconds ago</td></tr></tbody>');
+      bddone();
+
+    });
+  });});
