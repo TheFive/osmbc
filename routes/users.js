@@ -28,7 +28,7 @@ function renderList(req,res,next) {
   if (req.query.sort) sort.column = req.query.sort;
   if (req.query.desc) sort.desc = true; 
   if (req.query.lastAccess) query.lastAccess = req.query.lastAccess;
-  
+
   async.parallel([
       function(callback) {
         userModule.find(query,sort,function(err,result) {
