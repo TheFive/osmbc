@@ -28,7 +28,7 @@ function renderList(req,res,next) {
   if (req.query.sort) sort.column = req.query.sort;
   if (req.query.desc) sort.desc = true; 
   if (req.query.lastAccess) query.lastAccess = req.query.lastAccess;
-
+  
   async.parallel([
       function(callback) {
         userModule.find(query,sort,function(err,result) {
@@ -44,7 +44,7 @@ function renderList(req,res,next) {
     ],function(error) { 
         if (error) return next(error);
         should.exist(res.rendervar);
-        res.render('userList',{layout:res.rendervar.layout,
+        res.render('userList',{layout:res.rendervar.layout,query:query,
                                 users:users});      
     }
   );
