@@ -23,8 +23,9 @@ var pgMap = require('../model/pgMap.js');
 var blogModule    = require('../model/blog.js');
 var articleModule = require('../model/article.js');
 var logModule     = require('../model/logModule.js');
-var userModule     = require('../model/user.js');
-var session   = require('../model/session.js');
+var userModule    = require('../model/user.js');
+var session       = require('../model/session.js');
+var configModule  = require('../model/config.js');
 
 var mailReceiver   = require('../notification/mailReceiver.js');
 var messageCenter  = require('../notification/messageCenter.js');
@@ -72,6 +73,7 @@ exports.clearDB = function clearDB(done) {
     function(done) {pgMap.createTables(logModule.pg,pgOptions,done);},
     function(done) {pgMap.createTables(userModule.pg,pgOptions,done);},
     function(done) {pgMap.createTables(session.pg,pgOptions,done);},
+    function(done) {pgMap.createTables(configModule.pg,pgOptions,done);},
 
   ],function(err) {
     if (err) console.dir(err);
