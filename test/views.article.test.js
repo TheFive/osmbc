@@ -57,7 +57,7 @@ describe('views/article', function() {
       this.timeout(maxTimer);
       browser.visit('/article/'+articleId, function(err){
         if (err) return done(err);
-        browser.wait(500,done);
+        browser.wait(1000,done);
       });
     });
     it('should have converted collection correct',function(){

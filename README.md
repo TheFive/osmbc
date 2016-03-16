@@ -59,9 +59,16 @@ More info in the [Installation Guide](Install_Guide.md).
 
 I am happy to do any bugfixes for the system. But please make sure, that your error report here in Git fullfills the following rules
 
-a) The error message occurs in the productive system, if you are working on the development version, please put the info in the bug report, to avoid unneccessary work (see section development version above).
-b) The error message occured in the current version, so it can can be reproduced on the day, the error message has given. (than i do not need any version number, otherwise please include the version number of OSMBC)
-c) Please describe shortly what you have done, to produce the error
-d) please describe shortly, what the result of your action was, and what result you have expected
-e) Pictures and Hyperlinks can support c) and d) but does not replace them
-f) "is not working" or "is broken" obvious does not fullfill c) and d)
+a) The error message occurs in the productive system, if you are working on the development version, please put the info in the bug report, to avoid unnecessary work (see section development version above).
+
+b) The error message occurs in the current version, so it can can be reproduced on the day, the error message has given. (than you do not need to put any version number to your request, otherwise please include the version number of OSMBC).
+
+c) Please describe shortly what you have done, to produce the error.
+
+d) Please describe shortly, what the result of your action was, and what result you have expected.
+
+e) Pictures and Hyperlinks can support c) and d) but does not replace them.
+
+f) "is not working" or "is broken" obvious does not fullfill c) and d).
+
+The rules does support the developer to come quicker to the point. Sometimes you are using other ways in OSMBC to come to your result and the way coming to a result is importand for bugfixing.
