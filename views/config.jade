@@ -1,0 +1,70 @@
+extends layout
+
+
+
+block content
+  h1
+    |Edit Configuration
+  form(name="input", action="#{layout.htmlroot}/config/#{config.id}", method="post")
+    div.form-horizontal(role="form")
+      - sizeLabel = 1
+      - sizeInput = 9
+      - sizeExplanation = 2
+      +labeledText("name","name",config.name,"Name can not be changes")
+      div.form-group
+        label.control-label(class="col-sm-#{sizeLabel}" for="yaml")="yaml"
+        div(class="col-sm-#{sizeInput}")
+          textarea.form-control(name="yaml",id="yaml", rows=7) #{config.yaml}
+        div.text-muted(class="col-sm-#{sizeExplanation}")=text
+
+
+
+
+      form-group
+        div.col-sm-offset-1.col-sm-11
+          input(name="OK" type="submit", class="btn btn-primary",value="OK")
+
+    
+
+    
+      
+    
+
+   
+  .row
+    if changes
+      h2
+        | History
+      div
+        table.table.table-striped.table-responsive
+          thead
+            tr 
+              th
+               | id
+              th
+               | user
+              th
+               | what
+              th
+               | change
+
+              th
+               | when
+           tbody
+            each change, i in changes
+              tr
+                td
+                  a(href='#{layout.htmlroot}/changes/' + change.id) #{change.id} 
+                td= change.user
+                td= change.property
+                td
+                  :verbatim
+                    !{change.htmlDiffText()}
+
+                td= layout.moment(change.timestamp).fromNow() 
+                
+
+
+
+
+

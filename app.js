@@ -29,6 +29,7 @@ var blog       = require('./routes/blog').router;
 var tool       = require('./routes/tool').router;
 var calender   = require('./routes/tool').publicRouter;
 var layout     = require('./routes/layout').router;
+var configRouter     = require('./routes/config').router;
 
 var userModule = require('./model/user.js');
 
@@ -275,6 +276,7 @@ app.use(htmlRoot + '/article',checkAuthentification, article);
 app.use(htmlRoot + '/changes',checkAuthentification, changes);
 app.use(htmlRoot + '/blog',checkAuthentification, blog);
 app.use(htmlRoot + '/tool',checkAuthentification, tool);
+app.use(htmlRoot + '/config',checkAuthentification, configRouter);
 
 
 // Simple route middleware to ensure user is authenticated.

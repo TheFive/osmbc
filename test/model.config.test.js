@@ -3,8 +3,6 @@
 var async  = require('async');
 var should = require('should');
 
-var sinon  = require('sinon');
-
 var testutil = require('./testutil.js');
 
 var configModule = require('../model/config.js');

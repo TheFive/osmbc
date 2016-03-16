@@ -60,6 +60,13 @@ function findOne(obj1,obj2,callback) {
   pgMap.findOne({table:"config",create:create},obj1,obj2,callback);
 }
 
+function getConfig(text,callback) {
+  debug('getConfig');
+  findOne({name:text},function(err,result){
+    if (!result) return callback(null,{});
+    return callback(null,result.json);
+  });
+}
 
 
 var pgObject= {};
@@ -138,6 +145,7 @@ module.exports.create= create;
 module.exports.find = find;
 module.exports.findById = findById;
 module.exports.findOne = findOne;
+module.exports.getConfig = getConfig;
 
 Config.prototype.getTable = function getTable() {
   return "config";

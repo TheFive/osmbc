@@ -5,8 +5,8 @@ var should  = require('should');
 var moment  = require("moment");
 var request = require("request");
 var markdown = require('markdown-it')();
+var configModule = require('../model/config.js');
 var ct = require('../data/calenderTranslation.js');
-var countryFlags = require('../data/countryFlags.js');
 
 
 
@@ -201,7 +201,7 @@ function ll(length) {
 }
 
 
-function calenderToMarkdown(option,cb) {
+function calenderToMarkdown2(countryFlags,option,cb) {
   debug('calenderToMarkdown');
   should(typeof(cb)).eql("function");
   var date = new Date();
@@ -315,6 +315,19 @@ function calenderToMarkdown(option,cb) {
     }
     cb(null,result,errors);
   });
+}
+
+function calenderToMarkdown(options,cb) {
+  var calendarFlags = {};
+  configModule.getConfig("calendarflags",function(err,result){
+    console.dir("test");
+    console.dir(err);
+    console.dir(result);
+    if (err) return cb(err);
+    calendarFlags = result;
+    console.dir(calendarFlags);
+    calenderToMarkdown2(calendarFlags,options,cb);
+  })
 }
 
 function calenderToHtml(date,callback) {

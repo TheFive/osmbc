@@ -166,6 +166,7 @@ function clearDB(options,callback) {
     function(done) {ct(articleModule.pg,pgOptions,done);},
     function(done) {ct(logModule.pg,pgOptions,done);},
     function(done) {ct(userModule.pg,pgOptions,done);},
+    function(done) {ct(configModule.pg,pgOptions,done);},
     function(done) {ct(session.pg,pgOptions,done);},
 
   ],function(err) {
