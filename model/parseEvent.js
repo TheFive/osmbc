@@ -6,7 +6,6 @@ var moment  = require("moment");
 var request = require("request");
 var markdown = require('markdown-it')();
 var configModule = require('../model/config.js');
-var ct = require('../data/calenderTranslation.js');
 
 
 
@@ -201,7 +200,7 @@ function ll(length) {
 }
 
 
-function calenderToMarkdown2(countryFlags,option,cb) {
+function calenderToMarkdown2(countryFlags,ct,option,cb) {
   debug('calenderToMarkdown');
   should(typeof(cb)).eql("function");
   var date = new Date();
@@ -322,7 +321,11 @@ function calenderToMarkdown(options,cb) {
   configModule.getConfig("calendarflags",function(err,result){
     if (err) return cb(err);
     calendarFlags = result;
-    calenderToMarkdown2(calendarFlags,options,cb);
+    configModule.getConfig("calendartranslation",function(err,result){
+      if (err) return cb(err);
+      var ct = result;
+      calenderToMarkdown2(calendarFlags,ct,options,cb);
+    });
   });
 }
 

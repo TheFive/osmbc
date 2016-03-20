@@ -58,7 +58,7 @@ Config.prototype.getJSON = function getJSON() {
       return  yaml.safeLoad(this.yaml);
     }
     catch(err) {
-      return "YAML convert error for "+this.name;
+      return "YAML convert error for "+this.name + " " + err;
     }
   }
 };
@@ -139,6 +139,7 @@ function defaultConfig(text,callback) {
     case "formulation_tipDE":
       proto =  {type: "text", name: text,yaml:data};
       break;
+    case "calendartranslation":
     case "categorydescription":
     case "calendarflags":
       proto = {type:"yaml",name:text,yaml:data};
