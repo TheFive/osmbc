@@ -103,6 +103,7 @@ describe('router/article',function() {
             ],
             function (err) {
               should.not.exist(err);
+              console.dir(next);
               should(next.called).be.false();
 
               var call = res.render.firstCall;

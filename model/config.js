@@ -5,6 +5,9 @@ var debug    = require('debug')('OSMBC:model:user');
 var should   = require('should');
 var async    = require('async');
 var yaml  = require('js-yaml');
+var fs    = require('fs');
+var path  = require('path');
+var config = require('../config.js');
 var messageCenter = require('../notification/messageCenter.js');
 
 function Config (proto)
@@ -47,6 +50,19 @@ function createNewConfig (proto,callback) {
 
 Config.prototype.remove = pgMap.remove;
 
+Config.prototype.getJSON = function getJSON() {
+  // try to convert YAML if necessary
+  if (this.json) return this.json;
+  if (this.type == "yaml") {
+    try {
+      return  yaml.safeLoad(this.yaml);
+    }
+    catch(err) {
+      return "YAML convert error for "+this.name;
+    }
+  }
+};
+
 function find(obj,ord,callback) {
 	debug("find");
   pgMap.find({table:"config",create:create},obj,ord,callback);
@@ -62,16 +78,70 @@ function findOne(obj1,obj2,callback) {
 }
 
 
+function readPlaceholder(callback) {
+  debug("readPlaceholder");
+  var placeholder = {};
+  placeholder.markdown = {};
+  async.series([
+    function placeholderDE(callback) {
+      getConfig("formulation_tipDE",function(err,result){
+        if (err) return callback(err);
+        placeholder.markdown.DE = result;
+        callback();
+      });
+    },
+    function placeholderDE(callback) {
+      getConfig("formulation_tipEN",function(err,result){
+        if (err) return callback(err);
+        placeholder.markdown.EN = result;
+        callback();
+      });
+    },
+    function categories(callback) {
+      getConfig("categorydescription",function(err,result){
+        if (err) return callback(err);
+        placeholder.categories = result;
+        callback();
+      });
+    }],
+    function final(err) {
+      if (err) return callback(err);
+      for (var i=0;i<config.getLanguages();i++) {
+        var lang = config.getLanguages()[i];
+        if (!(placeholder.markdown[lang])) {
+          placeholder.markdown[lang]=placeholder.markdown.EN;
+        }
+      }
+
+      return callback(null,placeholder);
+
+  });
+}
+
+function readDefaultData(text) {
+  debug("readDefaultData");
+  try {
+    var data = fs.readFileSync(path.resolve(__dirname,"..","data",text+".yaml"),"UTF8");
+
+    return data;
+  } catch (err) {
+    // File not found, return nothing
+    return "";
+  }
+}
+
 function defaultConfig(text,callback) {
   debug("defaultConfig");
   var proto= {};
+  var data = readDefaultData(text);
   switch (text) {
     case "formulation_tipEN":
     case "formulation_tipDE":
-      proto =  {type: "text", name: text};
+      proto =  {type: "text", name: text,yaml:data};
       break;
+    case "categorydescription":
     case "calendarflags":
-      proto = {type:"yaml",name:text};
+      proto = {type:"yaml",name:text,yaml:data};
       break;
     default:
       return callback(new Error("Undefined Configuration >"+text+"<, could not create"));
@@ -93,12 +163,12 @@ function getConfig(text,callback) {
     if (err) return callback(err);
     if (!result) return callback(new Error("Config >"+text+"< not found"));
     if (result.type == "yaml") {
-      return callback(null,result.json);
+      return callback(null,result.getJSON());
     }
     if (result.type == "text") {
-      return callback(null.result.yaml);
+      return callback(null,result.yaml);
     }
-    return callback(new Error("undefined config type, programm error"));
+    return callback(new Error("undefined config type >"+text+"<, program error"));
 
   });
 
@@ -193,6 +263,7 @@ module.exports.findById = findById;
 module.exports.findOne = findOne;
 module.exports.getConfig = getConfig;
 module.exports.getConfigObject = getConfigObject;
+module.exports.readPlaceholder = readPlaceholder;
 
 Config.prototype.getTable = function getTable() {
   return "config";

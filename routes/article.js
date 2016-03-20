@@ -6,8 +6,6 @@ var router   = express.Router();
 var should   = require('should');
 var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
-var path     = require('path');
-var fs       = require('fs');
 
 var config        = require('../config.js');
 
@@ -17,11 +15,9 @@ var settingsModule= require('../model/settings.js');
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
+var configModule  = require('../model/config.js');
 
 
-var placeholder = {
-  
-};
 
 
 
@@ -31,15 +27,7 @@ function renderArticleId(req,res,next) {
   // Get the ID and the article to display
   var id = req.params.article_id;
 
-  var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
-  var placeholder =  JSON.parse(fs.readFileSync(file));
-  for (var i=0;i<config.getLanguages();i++) {
-    var lang = config.getLanguages()[i];
-    if (!(placeholder.markdown[lang])) {
-      placeholder.markdown[lang]=placeholder.markdown.EN;
-    }
-  }
-    
+
 
 
 
@@ -76,6 +64,7 @@ function renderArticleId(req,res,next) {
  
 
     async.auto({
+      placeholder:configModule.readPlaceholder,
       // Find usage of Links in other articles
       articleReferences:article.calculateUsedLinks.bind(article),
       // Find the assoziated blog for this article
@@ -143,7 +132,7 @@ function renderArticleId(req,res,next) {
 
 
           var languages = config.getLanguages();
-          for (i=0;i<languages.length;i++) {
+          for (var i=0;i<languages.length;i++) {
             var lang = languages[i];
             if (typeof(article["markdown"+lang])!='undefined') {
               article["textHtml"+lang]="<ul>"+article.getPreview(lang)+"</ul>";
@@ -180,7 +169,7 @@ function renderArticleId(req,res,next) {
             res.render('article',{layout:res.rendervar.layout,
                                   article:article,
                                   params:params,
-                                  placeholder:placeholder,
+                                  placeholder:result.placeholder,
                                   blog:result.blog,
                                   changes:result.changes,
                                   articleReferences:result.articleReferences,
@@ -197,8 +186,6 @@ function renderArticleId(req,res,next) {
 function searchAndCreate(req,res,next) {
   debug('searchAndCreate');
   var search = req.query.search;
-  var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
-  var placeholder =  JSON.parse(fs.readFileSync(file));
   if (req.query.edit && req.query.edit=="false") {
     var returnToUrl = config.getValue('htmlroot')+"/osmbc.html";
     if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
@@ -206,16 +193,20 @@ function searchAndCreate(req,res,next) {
     return;
   }
   if (!search || typeof(search)=='undefined') search = "";
-  articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
-    debug('searchAndCreate->fullTextSearch');
+  configModule.readPlaceholder(function(err,placeholder){
     if (err) return next(err);
-    should.exist(res.rendervar);
-    res.render("collect",{layout:res.rendervar.layout,
-                           search:search,
-                           placeholder:placeholder,
-                           showCollect:true,
-                           categories:blogModule.getCategories(),
-                           foundArticles:result});
+    console.dir(placeholder);
+    articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
+      debug('searchAndCreate->fullTextSearch');
+      if (err) return next(err);
+      should.exist(res.rendervar);
+      res.render("collect",{layout:res.rendervar.layout,
+                             search:search,
+                             placeholder:placeholder,
+                             showCollect:true,
+                             categories:blogModule.getCategories(),
+                             foundArticles:result});
+    });
   });
 }
 
@@ -417,9 +408,9 @@ function postEditComment(req, res, next) {
 
 function createArticle(req, res, next) {
   debug('createArticle');
-  var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
-  var placeholder =  JSON.parse(fs.readFileSync(file));
 
+
+  var placeholder;
   var proto = {};
   if (typeof(req.query.blog) != 'undefined' ) {
     proto.blog = req.query.blog;
@@ -429,6 +420,13 @@ function createArticle(req, res, next) {
   }
 
   async.series([
+      function placeholderDE(callback) {
+        configModule.readPlaceholder(function(err,result){
+          if (err) return callback(err);
+          placeholder = result;
+          callback();
+        });
+      },
     function calculateWN(callback) {
       debug('createArticle->calculatenWN');
       // Blog Name is defined, so nothing to calculate
@@ -486,7 +484,7 @@ function searchArticles(req, res, next) {
       res.render("collect",{layout:res.rendervar.layout,
                             search:search,
                             foundArticles:result,
-                            placeholder:placeholder,
+                            placeholder:{},
                             showCollect:false,
                             categories:blogModule.getCategories()});
     }
