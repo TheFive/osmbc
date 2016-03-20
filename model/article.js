@@ -17,11 +17,11 @@ var util      = require("../util.js");
 var messageCenter  = require("../notification/messageCenter.js");
 var settingsModule = require("../model/settings.js");
 var blogModule     = require("../model/blog.js");
+var configModule   = require('../model/config.js');
 var pgMap          = require("../model/pgMap.js");
 var twitter        = require('../model/twitter.js');
 
 var categoryTranslation = require("../data/categoryTranslation.js");
-var calenderTranslation = require("../data/calenderTranslation.js");
 var languageFlags       = require("../data/languageFlags.js");
 
 
@@ -98,11 +98,13 @@ function createNewArticle (proto,callback) {
 //Article.prototype.getPreview = getPreview;
 //Article.prototype.getCategory = getCategory;
 
+var calenderTranslation = configModule.calendarTranslation;
 
 Article.prototype.getPreview = function getPreview(style,user) {
   debug("getPreview");
   should.exist(style);
   var options = style;
+
 
   if (typeof(style) == "string") {
     options = settingsModule.getSettings(style);

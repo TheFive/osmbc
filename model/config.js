@@ -265,6 +265,11 @@ module.exports.findOne = findOne;
 module.exports.getConfig = getConfig;
 module.exports.getConfigObject = getConfigObject;
 module.exports.readPlaceholder = readPlaceholder;
+module.exports.calendarTranslation = null;
+
+module.exports.initCalendarTranslation = function(callback) {
+  module.exports.calendarTranslation = getConfig("calendartranslation",callback);
+};
 
 Config.prototype.getTable = function getTable() {
   return "config";
