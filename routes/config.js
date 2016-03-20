@@ -7,8 +7,6 @@ var debug    = require('debug')('OSMBC:routes:config');
 
 var express    = require('express');
 var router     = express.Router();
-var request = require('request');
-var yaml  = require('js-yaml');
 
 
 var config = require('../config.js');
@@ -53,10 +51,9 @@ function renderConfigName(req, res, next) {
   async.series([
     function findConfig(cb) {
       debug('findAndCreateConfig');
-      configModule.find({name:name},function(err,result){
+      configModule.getConfigObject(name,function(err,result){
         if (err) return cb(err);
-        if (result.length==0) return cb();
-        config = result[0];
+        config = result;
         return cb();
       });
     },
@@ -93,7 +90,7 @@ function renderConfigName(req, res, next) {
 function postConfigId(req, res, next) {
   debug('postUserId');
   var id = req.params.id;
-  var changes = {yaml:req.body.yaml};
+  var changes = {yaml:req.body.yaml,type:req.body.type,name:req.body.name};
   var configData;
   async.series([
     function findUser(cb) {
@@ -101,19 +98,11 @@ function postConfigId(req, res, next) {
       configModule.findById(id,function(err,result) {
         debug("findById");
         configData = result;
-        try {
-          configData.json = yaml.safeLoad(changes.yaml);
-          console.dir(changes.yaml);
-          console.dir(configData.json);
-        }
-        catch(err) {
-          return cb(err);
-        }
         if (typeof(configData.id) == 'undefined') return cb(new Error("Config Not Found"));
         return cb();
       });
     },
-    function saveUser(cb) {
+    function saveConfig(cb) {
       configData.setAndSave(req.user.displayName,changes,function(err) {
         debug("setAndSaveCB");
         cb(err);

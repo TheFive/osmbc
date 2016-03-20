@@ -320,14 +320,10 @@ function calenderToMarkdown2(countryFlags,option,cb) {
 function calenderToMarkdown(options,cb) {
   var calendarFlags = {};
   configModule.getConfig("calendarflags",function(err,result){
-    console.dir("test");
-    console.dir(err);
-    console.dir(result);
     if (err) return cb(err);
     calendarFlags = result;
-    console.dir(calendarFlags);
     calenderToMarkdown2(calendarFlags,options,cb);
-  })
+  });
 }
 
 function calenderToHtml(date,callback) {

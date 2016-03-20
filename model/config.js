@@ -4,6 +4,7 @@ var pgMap    = require('./pgMap.js');
 var debug    = require('debug')('OSMBC:model:user');
 var should   = require('should');
 var async    = require('async');
+var yaml  = require('js-yaml');
 var messageCenter = require('../notification/messageCenter.js');
 
 function Config (proto)
@@ -60,12 +61,47 @@ function findOne(obj1,obj2,callback) {
   pgMap.findOne({table:"config",create:create},obj1,obj2,callback);
 }
 
-function getConfig(text,callback) {
+
+function defaultConfig(text,callback) {
+  debug("defaultConfig");
+  var proto= {};
+  switch (text) {
+    case "formulation_tipEN":
+    case "formulation_tipDE":
+      proto =  {type: "text", name: text};
+      break;
+    case "calendarflags":
+      proto = {type:"yaml",name:text};
+      break;
+    default:
+      return callback(new Error("Undefined Configuration >"+text+"<, could not create"));
+  }
+  createNewConfig(proto,callback);
+}
+
+
+function getConfigObject(text,callback) {
   debug('getConfig');
   findOne({name:text},function(err,result){
-    if (!result) return callback(null,{});
-    return callback(null,result.json);
+    if (!result) return defaultConfig(text,callback);
+    return callback(null,result);
   });
+}
+function getConfig(text,callback) {
+  debug('getConfig');
+  getConfigObject(text,function(err,result){
+    if (err) return callback(err);
+    if (!result) return callback(new Error("Config >"+text+"< not found"));
+    if (result.type == "yaml") {
+      return callback(null,result.json);
+    }
+    if (result.type == "text") {
+      return callback(null.result.yaml);
+    }
+    return callback(new Error("undefined config type, programm error"));
+
+  });
+
 }
 
 
@@ -87,6 +123,16 @@ Config.prototype.setAndSave = function setAndSave(user,data,callback) {
   should(typeof(data)).equal('object');
   should(typeof(callback)).equal('function');
   var self = this;
+
+  // try to convert YAML if necessary
+  if (self.type == "yaml") {
+    try {
+      self.json = yaml.safeLoad(data.yaml);
+    }
+    catch(err) {
+      return callback(err);
+    }
+  }
 
   async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
     // There is no Value for the key, so do nothing
@@ -146,6 +192,7 @@ module.exports.find = find;
 module.exports.findById = findById;
 module.exports.findOne = findOne;
 module.exports.getConfig = getConfig;
+module.exports.getConfigObject = getConfigObject;
 
 Config.prototype.getTable = function getTable() {
   return "config";

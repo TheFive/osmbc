@@ -10,7 +10,8 @@ block content
       - sizeLabel = 1
       - sizeInput = 9
       - sizeExplanation = 2
-      +labeledText("name","name",config.name,"Name can not be changes")
+      +labeledText("name","name",config.name,"Name can not be changed.")
+      +labeledInput("type","type",config.type,"Type can not be changed.")
       div.form-group
         label.control-label(class="col-sm-#{sizeLabel}" for="yaml")="yaml"
         div(class="col-sm-#{sizeInput}")
