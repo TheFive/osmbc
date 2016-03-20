@@ -140,7 +140,7 @@ function ensureAuthenticated(req, res, next) {
           // save last access, ignore save callback
           var date = new Date();
           var lastStore = new Date(result[0].lastAccess);
-          if (!result[0].lastAccess || (date.getTime()-lastStore.getTime()) > 1000*60*2) {
+          if (!result[0].lastAccess || (date.getTime()-lastStore.getTime()) > 1000*60) {
             result[0].lastAccess = new Date();
             result[0].save(function(err,u) {req.user.version = u.version;});
           }

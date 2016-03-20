@@ -115,7 +115,8 @@ function prepareRenderLayout(req,res,next) {
                       appName:config.getValue("AppName"),
                       bootstrap:bootstrap,
                       osmbc_version:version.osmbc_version,
-                      style:style
+                      style:style,
+                      title:config.getValue("AppName")
                     };
       next();
     }

@@ -3,37 +3,49 @@
 var should = require('should');
 var debug = require('debug')('OSMBC:routes:index');
 var express = require('express');
+var async = require('async');
 var router = express.Router();
 var help = require('../routes/help.js');
 var config = require('../config.js');
 var logModule = require('../model/logModule.js');
+var userModule = require('../model/user.js');
 
 /* GET home page. */
 
 function renderHome(req,res,next) {
   debug('renderHome');
   should.exist(res.rendervar.layout);
+  var date = new Date();
+  date.setTime(date.getTime()-1000*60*10);
 
-  logModule.find({table:"IN('blog','article')"},{column:"id",desc :true,limit:20},function(err,result) {
+  async.auto({
+    "historie":logModule.find.bind(logModule,{table:"IN('blog','article')"},{column:"id",desc :true,limit:20}),
+      "activeUser":userModule.find.bind(userModule,{lastAccess:">"+date.toISOString()},{column:"lastAccess",desc :true})
+  },function(err,result) {
     if (err) return next(err);
 
     res.render('index', { title: config.getValue("AppName") ,
       layout:res.rendervar.layout,
-      changes:result});
-  });
+      activeUserList:result.activeUser,
+      changes:result.historie});
+    }
+  )
 }
 
 function renderAdminHome(req,res,next) {
   debug('renderHome');
   should.exist(res.rendervar.layout);
+  async.auto({
+    "historie":logModule.find.bind(logModule,{table:"IN('usert','config')"},{column:"id",desc :true,limit:20})
+    },function(err,result) {
+      if (err) return next(err);
 
-  logModule.find({table:"IN('usert','config')"},{column:"id",desc :true,limit:20},function(err,result) {
-    if (err) return next(err);
+      res.render('adminindex', { title: config.getValue("AppName") ,
+        layout:res.rendervar.layout,
 
-    res.render('adminindex', { title: config.getValue("AppName") ,
-      layout:res.rendervar.layout,
-      changes:result});
-  });
+        changes:result.historie});
+    }
+  )
 }
 
 function languageSwitcher(req,res) {

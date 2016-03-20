@@ -33,10 +33,14 @@ function generateQuery(table,obj,order) {
           if (value.substring(0,2)=="!=") {
             op = "!=";
             value = value.substring(2,9999);
-          }   
+          }
           if (value.substring(0,2) == "IN") {
             op = "in";
             value = value.substring(2,999999);
+          }
+          if (value.substring(0,1) == ">") {
+            op = ">";
+            value = value.substring(1,999999);
           }
           if (value.indexOf('%')>=0) op = "like";
           if (op != "in") {
