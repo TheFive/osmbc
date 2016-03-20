@@ -14,12 +14,25 @@ function renderHome(req,res,next) {
   debug('renderHome');
   should.exist(res.rendervar.layout);
 
-  logModule.find({table:"IN('blog','article','usert')"},{column:"id",desc :true,limit:20},function(err,result) {
+  logModule.find({table:"IN('blog','article')"},{column:"id",desc :true,limit:20},function(err,result) {
     if (err) return next(err);
-  
-    res.render('index', { title: 'OSMBC' , 
-                          layout:res.rendervar.layout,
-                          changes:result});  
+
+    res.render('index', { title: config.getValue("AppName") ,
+      layout:res.rendervar.layout,
+      changes:result});
+  });
+}
+
+function renderAdminHome(req,res,next) {
+  debug('renderHome');
+  should.exist(res.rendervar.layout);
+
+  logModule.find({table:"IN('usert','config')"},{column:"id",desc :true,limit:20},function(err,result) {
+    if (err) return next(err);
+
+    res.render('adminindex', { title: config.getValue("AppName") ,
+      layout:res.rendervar.layout,
+      changes:result});
   });
 }
 
@@ -65,6 +78,7 @@ function renderChangelog(req,res,next) {
 router.get('/', renderHome);
 router.get('/osmbc.html', renderHome);
 router.get('/osmbc', renderHome);
+router.get('/osmbc/admin',renderAdminHome);
 router.get('/help/:title', renderHelp);
 router.get('/changelog', renderChangelog);
 router.get('/language',languageSwitcher);

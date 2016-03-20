@@ -130,38 +130,8 @@ html(lang='en')
                             a(href="#{layout.htmlroot}/article/list?blog=#{blog}") #{blog}
                     li
                       a(href='#{layout.htmlroot}/article/list?blog=') No Blog
-                  li.divider
-                  li.dropdown-header OutgoingMail
-                    li
-                      - var d = new Date();
-                      - d= d.toISOString();
-                      - d= d.substring(0,10);
-                      a(href="#{layout.htmlroot + '/changes/mail/' + d}") Mail Log Today
-                    li
-                      - var d = new Date();
-                      - d= d.toISOString();
-                      - d= d.substring(0,13);
-                      a(href="#{layout.htmlroot + '/changes/mail/' + d}") Mail Log This Hour
 
-              li.dropdown.hidden-xs
-                a.dropdown-toggle(href='#', data-toggle='dropdown')
-                  | User 
-                  span.caret
-                ul.dropdown-menu(role='menu')
-                  li.dropdown-header List
-                  li
-                    a(href="#{layout.htmlroot}/usert/create") Create
-                  li
-                    a(href="#{layout.htmlroot}/usert/list?access=full") List Active      
-                  li
-                    a(href="#{layout.htmlroot}/usert/list?access=denied") List Denied      
-                  li
-                    a(href="#{layout.htmlroot}/usert/list") List All      
-                  li
-                    a(href="#{layout.htmlroot}/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
-                  li.divider
-                  li
-                    a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
+
               li.dropdown.hidden-xs
                 a.dropdown-toggle(href='#', data-toggle='dropdown')
                   | Tool 
@@ -172,9 +142,10 @@ html(lang='en')
                     a(href="#{layout.htmlroot}/tool/calender2markdown") OSM Calender2Markdown
                   li
                     a(href="#{layout.htmlroot}/tool/picturetool") Picture Tool
-                  li.dropdown-header Action
-                  li
-                    a(href="#{layout.htmlroot}/blog/create") Create Blog
+                  li.divider
+                  li.dropdown-header About The Team
+                    li
+                      a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
 
             ul.nav.navbar-nav.navbar-right
               li.dropdown 

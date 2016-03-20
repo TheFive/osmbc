@@ -1,0 +1,142 @@
+
+
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(name='description', content='')
+    meta(name='author', content='')
+    link(rel='icon', href='/favicon.ico')
+    title OSMBC
+    // Bootstrap core CSS
+    link(href='#{layout.bootstrap}/css/bootstrap.min.css', rel='stylesheet')
+    // HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries
+    //if lt IE 9
+      script(src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js')
+      script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
+  body
+
+      // Fixed navbar
+      .navbar.navbar-default.navbar-fixed-top(role='navigation')
+        .container-fluid
+          .navbar-header.pull-left
+            if layout.osmbc_version === layout.user.lastChangeLogView
+              a.navbar-brand(href='#{layout.htmlroot}/osmbc.html') #{layout.appName}
+            else
+              a.navbar-brand.bg-success(href='#{layout.htmlroot}/changelog') Whats New?
+          .navbar-header
+            button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+              span.sr-only Toggle navigation
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+          .navbar-collapse.collapse
+            ul.nav.navbar-nav.navbar-left
+              li.dropdown
+                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                  | Lists 
+                  span.caret
+                ul.dropdown-menu(role='menu')
+                  li.dropdown-header OutgoingMail
+                    li
+                      - var d = new Date();
+                      - d= d.toISOString();
+                      - d= d.substring(0,10);
+                      a(href="#{layout.htmlroot + '/changes/mail/' + d}") Mail Log Today
+                    li
+                      - var d = new Date();
+                      - d= d.toISOString();
+                      - d= d.substring(0,13);
+                      a(href="#{layout.htmlroot + '/changes/mail/' + d}") Mail Log This Hour
+
+              li.dropdown.hidden-xs
+                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                  | User 
+                  span.caret
+                ul.dropdown-menu(role='menu')
+                  li.dropdown-header List
+                  li
+                    a(href="#{layout.htmlroot}/usert/create") Create
+                  li
+                    a(href="#{layout.htmlroot}/usert/list?access=full") List Active      
+                  li
+                    a(href="#{layout.htmlroot}/usert/list?access=denied") List Denied      
+                  li
+                    a(href="#{layout.htmlroot}/usert/list") List All      
+                  li
+                    a(href="#{layout.htmlroot}/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
+                  li.divider
+                  li
+                    a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
+              li.dropdown.hidden-xs
+                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                  | Tool 
+                  span.caret
+                ul.dropdown-menu(role='menu')
+                  li.dropdown-header Action
+                  li
+                    a(href="#{layout.htmlroot}/blog/create") Create Blog
+
+            ul.nav.navbar-nav.navbar-right
+              li.dropdown 
+                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                  | Help 
+                  span.caret
+                ul.dropdown-menu(role='menu')
+                  li
+                    a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md") Version #{layout.osmbc_version} 
+                  li.divider
+                  li
+                    a(href="#{layout.htmlroot}/help/OSMBC") OSMBC   
+                  li
+                    a(href="#{layout.htmlroot}/help/How To Integrate A Picture") How To Integrate A Picture   
+                  li
+                    a(href="#{layout.htmlroot}/help/Notification") Using OSMBC Notifications   
+                  li
+                    a(href="#{layout.htmlroot}/help/The Blog Views") The Blog Views
+                  li
+                    a(href="#{layout.htmlroot}/help/Beginner's How To") Beginner's How To                    
+                  li
+                    a(href="#{layout.htmlroot}/help/Categories") Which Category to use ?   
+                  li.divider
+                  li
+                    a(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
+                  li
+                    a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
+
+              if layout.user
+                  li 
+                    a(href='#{layout.htmlroot}/usert/#{layout.user.id}') #{layout.user.displayName}
+                else
+                  li  
+                    a(href='./') Anonymous
+          // /.nav-collapse
+    
+
+      .container-fluid
+          
+          p
+           block content
+          p
+            
+      // /container
+      
+      // Bootstrap core JavaScript
+      // ==================================================
+      // Placed at the end of the document so the pages load faster
+      link(rel='stylesheet', href='#{layout.bootstrap}/css/bootstrap.min.css')
+      script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
+      script(src='#{layout.bootstrap}/js/bootstrap.min.js')
+
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='#{layout.htmlroot}/stylesheets/#{layout.style}')
+  body
+    
+block scripts
+
+
