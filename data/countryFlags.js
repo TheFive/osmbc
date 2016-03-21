@@ -38,6 +38,8 @@ module.exports = {
   "finland":"http://blog.openstreetmap.de/wp-uploads//2016/02/fi.svg",
   "haiti":"http://blog.openstreetmap.de/wp-uploads//2016/02/ht.svg",
   "mexico":"http://blog.openstreetmap.de/wp-uploads//2016/02/mx.svg",
+  "brazil":"http://blog.openstreetmap.de/wp-uploads//2016/03/br.svg",
+  "brasil":"http://blog.openstreetmap.de/wp-uploads//2016/03/br.svg",
   "colombia":"http://blog.openstreetmap.de/wp-uploads//2016/02/co.svg"
 
 };
