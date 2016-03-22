@@ -40,7 +40,6 @@ var messageCenter = require('./notification/messageCenter.js');
 
 // Initialise config Module
 config.initialise();
-messageCenter.initialise();
 var htmlRoot = config.getValue("htmlroot");
 console.log("Express Routes set to: SERVER"+htmlRoot);
 
@@ -330,16 +329,7 @@ app.use(function(err, req, res,next) {
   if (next); // do nothing but use the next variable
 });
 
-// Initialise Mail Module with all users
 
-userModule.find({access:"full"},function initUsers(err,result) {
-  if (err) {
-    console.log("Error during Mail Receiver Initialising");
-    console.dir(err);
-    return;
-  }
-  mailReceiver.initialise(result);
-});
 
 
 module.exports = app;

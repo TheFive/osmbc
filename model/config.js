@@ -1,7 +1,7 @@
 "use strict";
 
 var pgMap    = require('./pgMap.js');
-var debug    = require('debug')('OSMBC:model:user');
+var debug    = require('debug')('OSMBC:model:config');
 var should   = require('should');
 var async    = require('async');
 var yaml  = require('js-yaml');
@@ -34,12 +34,19 @@ function createNewConfig (proto,callback) {
   if (proto) should.not.exist(proto.id);
   var config = create(proto);
   find({name:config.name},function (err,result) {
+    console.log("Create "+config.name);
+    console.dir(result);
     if (err) return callback(err);
     if (result && result.length > 0) {
       return callback(new Error("Config >" + config.name + "< already exists."));
     }
     // save data
+    console.log("Before Save");
+    console.dir(config);
     config.save(function saveConfig(err, result) {
+      console.log("After Save");
+      console.dir(err);
+      console.dir(result);
       if (err) return callback(err, result);
       callback(null, result);
     });
@@ -147,6 +154,7 @@ function defaultConfig(text,callback) {
     default:
       return callback(new Error("Undefined Configuration >"+text+"<, could not create"));
   }
+  console.log("create config "+text);
   createNewConfig(proto,callback);
 }
 
@@ -160,7 +168,9 @@ function getConfigObject(text,callback) {
 }
 function getConfig(text,callback) {
   debug('getConfig');
+  console.log("get Config 1 "+text);
   getConfigObject(text,function(err,result){
+    console.log("get Config 2 "+text);
     if (err) return callback(err);
     if (!result) return callback(new Error("Config >"+text+"< not found"));
     if (result.type == "yaml") {
@@ -255,21 +265,61 @@ module.exports.createNewConfig = createNewConfig;
 
 
 // save stores the current object to database
-Config.prototype.save = pgMap.save; // Create Tables and Views
+Config.prototype.save = function saveConfig(callback) {
+  debug('Config.prototype.save');
+  console.log("Save__ "+this.name);
+  pgMap.save(this,function didit(err,result){
+    if (err) return callback(err);
+    console.dir(result);
+    delete configMap[result.name];
+    initConfigElement(result.name,callback);
+  });
+};
+
+
+function initConfigElement(name,callback) {
+  debug('initConfigElement');
+  if (configMap[name]) return callback();
+  console.dir("Initialise: "+name);
+  getConfig(name,function(err,result){
+    console.dir("done "+name);
+    if (err) return callback(err);
+    configMap[name] = result;
+    return callback(null,result);
+  });
+}
+
+
+var configMap = null;
+function initialise(callback) {
+  debug("initialise");
+  if (configMap) return callback();
+  configMap = {};
+  async.parallel([
+      initConfigElement.bind(null,"formulation_tipEN"),
+      initConfigElement.bind(null,"formulation_tipDE"),
+      initConfigElement.bind(null,"calendartranslation"),
+      initConfigElement.bind(null,"categorydescription"),
+      initConfigElement.bind(null,"calendarflags")
+  ],
+    function final(err){
+      console.log("Config Module initialised");
+      return callback(err);
+  });
+}
 
 
 module.exports.create= create;
 module.exports.find = find;
 module.exports.findById = findById;
 module.exports.findOne = findOne;
-module.exports.getConfig = getConfig;
+module.exports.getConfig = function(text) {
+  return configMap[text];
+};
 module.exports.getConfigObject = getConfigObject;
 module.exports.readPlaceholder = readPlaceholder;
-module.exports.calendarTranslation = null;
+module.exports.initialise = initialise;
 
-module.exports.initCalendarTranslation = function(callback) {
-  module.exports.calendarTranslation = getConfig("calendartranslation",callback);
-};
 
 Config.prototype.getTable = function getTable() {
   return "config";

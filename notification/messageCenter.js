@@ -69,10 +69,13 @@ MessageCenter.prototype.editComment = function editComment(user,article,index,te
 
 module.exports.global = null;
 
-function initialise()
+function initialise(callback)
 {
   debug("initialise");
-  if (module.exports.global) return;
+  if (module.exports.global) {
+    if (callback) return callback();
+    return;
+  };
   var messageCenter = new MessageCenter();
   module.exports.global = messageCenter;
 
@@ -128,6 +131,9 @@ function initialise()
     }
   }
   messageCenter.registerReceiver(new LogModuleReceiver());
+
+  console.log("Message Center initialised.");
+  if (callback) return callback();
 }
 
 
