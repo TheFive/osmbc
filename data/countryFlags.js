@@ -8,7 +8,6 @@ module.exports = {
   "russia":"http://blog.openstreetmap.de/wp-uploads//2016/01/ru.svg",
   "romania":"http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg", 
   "netherland":"http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg", 
-  "brasil":"http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg",
   "poland":"http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg",
   "taiwan":"http://blog.openstreetmap.de/wp-uploads//2016/01/tw.svg",
   "switzerland":"http://blog.openstreetmap.de/wp-uploads//2016/02/ch.svg",
@@ -38,6 +37,8 @@ module.exports = {
   "finland":"http://blog.openstreetmap.de/wp-uploads//2016/02/fi.svg",
   "haiti":"http://blog.openstreetmap.de/wp-uploads//2016/02/ht.svg",
   "mexico":"http://blog.openstreetmap.de/wp-uploads//2016/02/mx.svg",
+  "brazil":"http://blog.openstreetmap.de/wp-uploads//2016/03/br.svg",
+  "brasil":"http://blog.openstreetmap.de/wp-uploads//2016/03/br.svg",
   "colombia":"http://blog.openstreetmap.de/wp-uploads//2016/02/co.svg"
 
 };
