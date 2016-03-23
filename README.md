@@ -20,6 +20,10 @@ The system is active used since Wochennotiz 272 in September 2015.
 The running instance for the editors is: https://thefive.sabic.uberspace.de/osmbc.html  
 For tests, use the development instance: http://thefive.sabic.uberspace.de/devosmbc/osmbc.html
 
+### Development Version
+
+The development version is used, to let the team test new features without affecting the productive system. If there are no now features, the developement version is not updated, so please ask me for an update to the actual branch, if any problem occurs.
+
 ## Next Steps & Progress
 
 [![Stories in Ready](https://badge.waffle.io/TheFive/osmbc.png?label=ready&title=Ready)](https://waffle.io/TheFive/osmbc)
@@ -68,3 +72,4 @@ I am happy to do any bug fixes for the system. But please make sure, that your e
 6. "is not working" or "is broken" obvious does not full fill 3. and 3. .
 
 The rules does support the developer to come quicker to the point. Sometimes you are using other ways in OSMBC to come to your result and the way coming to a result is important for bug fixing.
+
