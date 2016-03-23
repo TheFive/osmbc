@@ -33,8 +33,6 @@ var configRouter     = require('./routes/config').router;
 
 var userModule = require('./model/user.js');
 
-var mailReceiver = require('./notification/mailReceiver.js');
-var messageCenter = require('./notification/messageCenter.js');
 
 
 

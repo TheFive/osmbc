@@ -5,7 +5,7 @@ extends layout
 block content
   h1
     |Edit Configuration
-  form(name="input", action="#{layout.htmlroot}/config/#{config.id}", method="post")
+  form(name="input", action="#{layout.htmlroot}/config/#{config.name}", method="post")
     div.form-horizontal(role="form")
       - sizeLabel = 1
       - sizeInput = 9

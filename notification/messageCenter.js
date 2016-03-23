@@ -75,7 +75,7 @@ function initialise(callback)
   if (module.exports.global) {
     if (callback) return callback();
     return;
-  };
+  }
   var messageCenter = new MessageCenter();
   module.exports.global = messageCenter;
 

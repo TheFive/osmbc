@@ -89,13 +89,13 @@ function renderConfigName(req, res, next) {
 
 function postConfigId(req, res, next) {
   debug('postUserId');
-  var id = req.params.id;
+  var name = req.params.name;
   var changes = {yaml:req.body.yaml,type:req.body.type,name:req.body.name};
   var configData;
   async.series([
     function findUser(cb) {
       debug("findConfig");
-      configModule.findById(id,function(err,result) {
+      configModule.getConfigObject(name,function(err,result) {
         debug("findById");
         configData = result;
         if (typeof(configData.id) == 'undefined') return cb(new Error("Config Not Found"));
@@ -120,7 +120,7 @@ function postConfigId(req, res, next) {
 
 router.get('/list',renderList);
 router.get('/:name',renderConfigName);
-router.post('/:id', postConfigId);
+router.post('/:name', postConfigId);
 
 
 module.exports.router = router;

@@ -21,13 +21,10 @@ describe('model/config', function() {
     it('should createNewConfig with prototype',function(bddone) {
       configModule.createNewConfig({name:"name",yaml:"yaml text"},function (err,result){
         should.not.exist(err);
-        var id = result.id;
-        testutil.getJsonWithId("config",id,function(err,result){
-          should.not.exist(err);
-          should(result.name).equal('name');
-          should(result.yaml).equal('yaml text');
-          bddone();
-        });
+        should.not.exist(err);
+        should(result.name).equal('name');
+        should(result.yaml).equal('yaml text');
+        bddone();
       });
     });
     it('should createNewUser without prototype',function(bddone) {

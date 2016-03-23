@@ -27,29 +27,21 @@ function create (proto) {
 
 function createNewConfig (proto,callback) {
   debug("createNewConfig");
-  if (typeof(proto)=='function') {
-    callback = proto;
-    proto = null;
-  }
+  should(typeof(proto)).eql("object");
+
   if (proto) should.not.exist(proto.id);
   var config = create(proto);
+  if (typeof(configMap[config.name])!="undefined") {
+    // Configuration already exists
+    return callback(new Error("Config >" + config.name + "< already exists."));
+  }
   find({name:config.name},function (err,result) {
-    console.log("Create "+config.name);
-    console.dir(result);
     if (err) return callback(err);
     if (result && result.length > 0) {
       return callback(new Error("Config >" + config.name + "< already exists."));
     }
-    // save data
-    console.log("Before Save");
-    console.dir(config);
-    config.save(function saveConfig(err, result) {
-      console.log("After Save");
-      console.dir(err);
-      console.dir(result);
-      if (err) return callback(err, result);
-      callback(null, result);
-    });
+    configMap[config.name] =
+    callback(null,config);
   });
 }
 
@@ -154,7 +146,6 @@ function defaultConfig(text,callback) {
     default:
       return callback(new Error("Undefined Configuration >"+text+"<, could not create"));
   }
-  console.log("create config "+text);
   createNewConfig(proto,callback);
 }
 
@@ -166,13 +157,25 @@ function getConfigObject(text,callback) {
     return callback(null,result);
   });
 }
+
+function actualiseConfigMap(obj) {
+  if (obj.type == "yaml") {
+    return obj.getJSON();
+  }
+  if (obj.type == "text") {
+    return result.yaml;
+  }
+  return null;
+
+}
+
 function getConfig(text,callback) {
   debug('getConfig');
-  console.log("get Config 1 "+text);
   getConfigObject(text,function(err,result){
-    console.log("get Config 2 "+text);
     if (err) return callback(err);
     if (!result) return callback(new Error("Config >"+text+"< not found"));
+
+
     if (result.type == "yaml") {
       return callback(null,result.getJSON());
     }
@@ -231,6 +234,10 @@ Config.prototype.setAndSave = function setAndSave(user,data,callback) {
 
 
     async.series ( [
+      function calculateID(cb) {
+        if (self.id !== 0) return cb();
+        self.save(cb);
+      },
       function(cb) {
         // do not log validation key in logfile
         var toValue = value;
@@ -263,14 +270,14 @@ Config.prototype.setAndSave = function setAndSave(user,data,callback) {
 // Prototype is not allowed to have an id
 module.exports.createNewConfig = createNewConfig;
 
+Config.prototype._internalSave = pgMap.save;
+
 
 // save stores the current object to database
 Config.prototype.save = function saveConfig(callback) {
   debug('Config.prototype.save');
-  console.log("Save__ "+this.name);
-  pgMap.save(this,function didit(err,result){
+  this._internalSave(function didit(err,result){
     if (err) return callback(err);
-    console.dir(result);
     delete configMap[result.name];
     initConfigElement(result.name,callback);
   });
@@ -280,9 +287,7 @@ Config.prototype.save = function saveConfig(callback) {
 function initConfigElement(name,callback) {
   debug('initConfigElement');
   if (configMap[name]) return callback();
-  console.dir("Initialise: "+name);
   getConfig(name,function(err,result){
-    console.dir("done "+name);
     if (err) return callback(err);
     configMap[name] = result;
     return callback(null,result);
@@ -303,7 +308,6 @@ function initialise(callback) {
       initConfigElement.bind(null,"calendarflags")
   ],
     function final(err){
-      console.log("Config Module initialised");
       return callback(err);
   });
 }

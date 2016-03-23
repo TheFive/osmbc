@@ -19,7 +19,6 @@ var logModule           = require('../model/logModule.js');
 var messageCenter       = require('../notification/messageCenter.js');
 var userModule          = require('../model/user.js');
 var categoryTranslation = require('../data/categoryTranslation.js');
-var configModule = require("../model/config.js");
 var editorStrings       = require('../data/editorStrings.js');
 var schedule            = require('node-schedule');
 
@@ -588,7 +587,6 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
   var articleList = null;
 
   async.series([
-    configModule.getCalendarTranslation,
     function readFuture(cb) {
       debug('readFuture');
       articleModule.find({blog:"Future"},{column:"title"},function(err,result){
