@@ -1,4 +1,4 @@
-extends layout
+extends adminlayout
 
 
 
@@ -11,11 +11,11 @@ block content
       - sizeInput = 9
       - sizeExplanation = 2
       +labeledText("name","name",config.name,"Name can not be changed.")
-      +labeledInput("type","type",config.type,"Type can not be changed.")
+      +labeledText("type","type",config.type,"Type can not be changed.")
       div.form-group
         label.control-label(class="col-sm-#{sizeLabel}" for="yaml")="yaml"
         div(class="col-sm-#{sizeInput}")
-          textarea.form-control(name="yaml",id="yaml", rows=7) #{config.yaml}
+          textarea.form-control(name="yaml",id="yaml", rows=14) #{config.yaml}
         div.text-muted(class="col-sm-#{sizeExplanation}")=text
 
 
@@ -28,7 +28,8 @@ block content
     
 
     
-      
+  p
+    block showContentOfConfig
     
 
    

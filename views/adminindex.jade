@@ -3,16 +3,19 @@ extends adminlayout
 block content
   .row
     .col-md-4
+      h1="Configuration"
+      h2="Calendar"
+      p
+        a(href="#{layout.htmlroot}/config/calendartranslation")  Calendar Translation Texts
+      p
+        a(href="#{layout.htmlroot}/config/calendarflags")  Flags for calendar
+      h2="Editor Info"
       p
         a(href="#{layout.htmlroot}/config/formulation_tipDE")  Formulation Hint for DE
       p
         a(href="#{layout.htmlroot}/config/formulation_tipEN")  Formulation Hint for EN
       p
-        a(href="#{layout.htmlroot}/config/calendartranslation")  Calendar Translation Texts
-      p
         a(href="#{layout.htmlroot}/config/categorydescription")  Descriptions for Categories
-      p
-        a(href="#{layout.htmlroot}/config/calendarflags")  Flags for calendar
 
     .col-md-8.hidden-xs
       if changes

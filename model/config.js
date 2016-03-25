@@ -164,6 +164,8 @@ Config.prototype.setAndSave = function setAndSave(user,data,callback) {
   var self = this;
 
   // try to convert YAML if necessary
+
+
   if (self.type == "yaml") {
     try {
       self.json = yaml.safeLoad(data.yaml);

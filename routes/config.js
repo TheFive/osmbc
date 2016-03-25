@@ -57,14 +57,6 @@ function renderConfigName(req, res, next) {
         return cb();
       });
     },
-    function createConfig(cb) {
-      if (config) return cb();
-      configModule.createNewConfig({name:name},function(err,result){
-        if (err) return cb(err);
-        config = result;
-        config.save(cb);
-      });
-    },
     function findAndLoadChanges(cb) {
       debug('findAndLoadChanges');
       logModule.find({table:"config",oid:config.id},{column:"timestamp",desc:true},function findAndLoadChanges_CB(err,result){
@@ -79,7 +71,12 @@ function renderConfigName(req, res, next) {
       debug('finalRenderCB');
       if (err) return next(err);
       should.exist(res.rendervar);
-      res.render('config',{config:config,
+      var jadeFile = 'config';
+      if (name == "calendarflags") jadeFile = name;
+      if (name == "categorydescription") jadeFile = name;
+
+      console.dir(config);
+      res.render(jadeFile,{config:config,
                         changes:changes,
                         params:params,
                         layout:res.rendervar.layout});
