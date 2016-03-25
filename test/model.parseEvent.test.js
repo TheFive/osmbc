@@ -7,12 +7,14 @@ var path = require('path');
 var fs = require('fs');
 var sinon = require('sinon');
 
+var configModule = require("../model/config.js");
+
 
 describe('model/parseEvent',function() {
   var clock;
   before(function(bddone){
     clock = sinon.useFakeTimers(new Date("2015-12-06").getTime());
-    bddone();
+    configModule.initialise(bddone);
   });
   after(function(bddone){
     clock.restore();

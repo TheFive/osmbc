@@ -54,6 +54,15 @@ exports.getJsonWithId = function getJsonWithId(table,id,cb) {
   });
 };
 
+// findJson can be used to select a id,data structure from postgres
+// without using the model source, and is intended to used in
+// mocha tests.
+function internCreate() {return {};}
+exports.findJSON = function findJSON(table,obj,cb) {
+  debug('findJSON');
+  pgMap.findOne({table:table,create:internCreate},obj,cb);
+};
+
 // This function is used to clean up the tables in the test module
 // and create them new
 // the order of the creatTable is important (as views are created)
@@ -78,7 +87,8 @@ exports.clearDB = function clearDB(done) {
   ],function(err) {
     if (err) console.dir(err);
     should.not.exist(err);
-    done();
+    configModule.initialiseConfigMap();
+    configModule.initialise(done);
   });  
 };
 

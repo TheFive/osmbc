@@ -98,12 +98,12 @@ function createNewArticle (proto,callback) {
 //Article.prototype.getPreview = getPreview;
 //Article.prototype.getCategory = getCategory;
 
-var calenderTranslation = configModule.calendarTranslation;
 
 Article.prototype.getPreview = function getPreview(style,user) {
   debug("getPreview");
   should.exist(style);
   var options = style;
+  var calenderTranslation = configModule.getConfig("calendartranslation");
 
 
   if (typeof(style) == "string") {

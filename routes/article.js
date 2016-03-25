@@ -62,9 +62,8 @@ function renderArticleId(req,res,next) {
 
 
  
-
+    var placeholder = configModule.getPlaceholder();
     async.auto({
-      placeholder:configModule.readPlaceholder,
       // Find usage of Links in other articles
       articleReferences:article.calculateUsedLinks.bind(article),
       // Find the assoziated blog for this article
@@ -169,7 +168,7 @@ function renderArticleId(req,res,next) {
             res.render('article',{layout:res.rendervar.layout,
                                   article:article,
                                   params:params,
-                                  placeholder:result.placeholder,
+                                  placeholder:placeholder,
                                   blog:result.blog,
                                   changes:result.changes,
                                   articleReferences:result.articleReferences,
@@ -193,20 +192,18 @@ function searchAndCreate(req,res,next) {
     return;
   }
   if (!search || typeof(search)=='undefined') search = "";
-  configModule.readPlaceholder(function(err,placeholder){
+  var placeholder = configModule.getPlaceholder();
+
+  articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
+    debug('searchAndCreate->fullTextSearch');
     if (err) return next(err);
-    console.dir(placeholder);
-    articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
-      debug('searchAndCreate->fullTextSearch');
-      if (err) return next(err);
-      should.exist(res.rendervar);
-      res.render("collect",{layout:res.rendervar.layout,
-                             search:search,
-                             placeholder:placeholder,
-                             showCollect:true,
-                             categories:blogModule.getCategories(),
-                             foundArticles:result});
-    });
+    should.exist(res.rendervar);
+    res.render("collect",{layout:res.rendervar.layout,
+                           search:search,
+                           placeholder:placeholder,
+                           showCollect:true,
+                           categories:blogModule.getCategories(),
+                           foundArticles:result});
   });
 }
 
@@ -410,7 +407,7 @@ function createArticle(req, res, next) {
   debug('createArticle');
 
 
-  var placeholder;
+  var placeholder = configModule.getPlaceholder();
   var proto = {};
   if (typeof(req.query.blog) != 'undefined' ) {
     proto.blog = req.query.blog;
@@ -420,13 +417,6 @@ function createArticle(req, res, next) {
   }
 
   async.series([
-      function placeholderDE(callback) {
-        configModule.readPlaceholder(function(err,result){
-          if (err) return callback(err);
-          placeholder = result;
-          callback();
-        });
-      },
     function calculateWN(callback) {
       debug('createArticle->calculatenWN');
       // Blog Name is defined, so nothing to calculate

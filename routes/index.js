@@ -29,7 +29,7 @@ function renderHome(req,res,next) {
       activeUserList:result.activeUser,
       changes:result.historie});
     }
-  )
+  );
 }
 
 function renderAdminHome(req,res,next) {
@@ -45,7 +45,7 @@ function renderAdminHome(req,res,next) {
 
         changes:result.historie});
     }
-  )
+  );
 }
 
 function languageSwitcher(req,res) {

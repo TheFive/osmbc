@@ -317,16 +317,10 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
 }
 
 function calenderToMarkdown(options,cb) {
-  var calendarFlags = {};
-  configModule.getConfig("calendarflags",function(err,result){
-    if (err) return cb(err);
-    calendarFlags = result;
-    configModule.getConfig("calendartranslation",function(err,result){
-      if (err) return cb(err);
-      var ct = result;
-      calenderToMarkdown2(calendarFlags,ct,options,cb);
-    });
-  });
+
+  var calendarFlags = configModule.getConfig("calendarflags");
+  var ct =  configModule.getConfig("calendartranslation");
+  calenderToMarkdown2(calendarFlags,ct,options,cb);
 }
 
 function calenderToHtml(date,callback) {

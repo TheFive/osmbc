@@ -8,7 +8,6 @@ var nock   = require('nock');
 var fs     = require('fs');
 
 var articleModule = require('../model/article.js');
-
 var articleRouter = require('../routes/article.js');
 
 var testutil = require('./testutil.js');
