@@ -199,7 +199,7 @@ module.exports = {
           "CZ": "Programming",
           "PT": "Desenvolvimento",
           "RU": "Программирование",                 
-          "JP": "ソフトウェア",
+          "JP": "プログラミング",
           "ID": "Software",
           "TR": "Programlama"
      },
