@@ -12,7 +12,6 @@ var pgMap    = require('../model/pgMap.js');
 var config   = require('../config.js');
 
 var messageCenter = require('../notification/messageCenter.js');
-var blogModule = require('../model/blog.js');
 
 function Config (proto)
 {
@@ -185,12 +184,7 @@ var checkAndRepair = {
 
   "categorytranslation": function(c) {
     var ct = c.getJSON();
-    if (!ct) ct = {};
-    for (let i = 0; i < blogModule.getCategories().length;i++) {
-      let cat = blogModule.getCategories()[i];
-      if (!ct[cat]) ct[cat] = {EN:cat};
-    }
-    console.dir(ct);
+    if (!ct) ct = [];
     c.json = ct;
   },
   "editorstrings":function (c) {

@@ -71,6 +71,7 @@ exports.findJSON = function findJSON(table,obj,cb) {
 
 exports.clearDB = function clearDB(done) {
   should(config.env).equal("test");
+  messageCenter.initialise();
   should.exist(messageCenter.global);
 
   mailReceiver.initialise([]);

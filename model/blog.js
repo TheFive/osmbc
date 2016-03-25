@@ -29,29 +29,6 @@ var HtmlRenderer = require('../render/BlogRenderer.js').HtmlRenderer;
 
 
 
-module.exports.categories = [
-  {DE:"-- noch keine Kategorie --", EN:"-- no category yet --"},
-  {DE:"Bild",EN:"Picture"},
-  {DE:"[Aktuelle Kategorie]",EN:"[Actual Category]"},
-  {DE:"In eigener Sache",EN:"About us"},
-  {DE:"Wochenaufruf",EN:"Weekly exerciseEN:"},
-  {DE:"Mapping",EN:"Mapping"},
-  {DE:"Community",EN:"Community"},
-  {DE:"Importe",EN:"Imports"},
-  {DE:"OpenStreetMap Foundation",EN:"OpenStreetMap Foundation"},
-  {DE:"Veranstaltungen",EN:"Events"},
-  {DE:"Humanitarian OSM",EN:"Humanitarian OSM"},
-  {DE:"Karten",EN:"Maps"},
-  {DE:"switch2OSM",EN:"switch2OSM"},
-  {DE:"Open-Data",EN:"Open Data"},
-  {DE:"Lizenzen",EN:"Licences"},
-  {DE:"Programme",EN:"Software"},
-  {DE:"Programmierung",EN:"Programming"},
-  {DE:"Releases",EN:"Releases"},
-  {DE:"Kennst Du schon …",EN:"Did you know …"},
-  {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
-  {DE:"Wochenvorschau" ,EN:"Upcoming Events"},
-  {DE:"--unpublished--" ,EN:"--unpublished--"}];
 
 
 
@@ -60,7 +37,7 @@ function Blog(proto)
 {
   debug("Blog");
   this.id = 0;
-  this.categories = module.exports.categories;
+  this.categories = configModule.getConfig("categorytranslation");
   if (proto) {
     for (var k in proto) {
       this[k] = proto[k];
@@ -755,8 +732,7 @@ function translateCategories(cat) {
 
 
 function getGlobalCategories() {
-  translateCategories(exports.categories);
-  return module.exports.categories;
+  return configModule.getConfig("categorytranslation");
 }
 
 Blog.prototype.getCategories = function getCategories() {
