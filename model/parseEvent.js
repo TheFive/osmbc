@@ -319,7 +319,14 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
 function calenderToMarkdown(options,cb) {
 
   var calendarFlags = configModule.getConfig("calendarflags");
+  if (!calendarFlags) calendarFlags = {};
   var ct =  configModule.getConfig("calendartranslation");
+  if (!ct) ct = {};
+  if (!ct.town) ct.town = {};
+  if (!ct.title) ct.title = {};
+  if (!ct.date) ct.date = {};
+  if (!ct.country) ct.country = {};
+
   calenderToMarkdown2(calendarFlags,ct,options,cb);
 }
 

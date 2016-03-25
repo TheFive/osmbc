@@ -100,6 +100,8 @@ function generateCCLicense(license,lang,author){
   if (typeof(licenses[license])=="undefined") license = "CC0";
   var text = licenses[license][lang];
   if (typeof(text)=="undefined") text = licenses[license].EN;
+  if (typeof(text)=="undefined") text = "";
+
   return text.replace("##author##",author);
 } 
 

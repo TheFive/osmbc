@@ -11,5 +11,8 @@ block showContentOfConfig
           li="Some Demo Text"
 
         p
-          :verbatim
-            !{config.json[lang].replace("##team##","Person1, Person2, Person3")}
+          if (config.json[lang])
+            :verbatim
+              !{config.json[lang].replace("##team##","Person1, Person2, Person3")}
+          else
+            | No String for language #{lang}

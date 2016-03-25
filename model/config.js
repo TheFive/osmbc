@@ -12,6 +12,7 @@ var pgMap    = require('../model/pgMap.js');
 var config   = require('../config.js');
 
 var messageCenter = require('../notification/messageCenter.js');
+var blogModule = require('../model/blog.js');
 
 function Config (proto)
 {
@@ -69,7 +70,7 @@ Config.prototype.getJSON = function getJSON() {
 
 Config.prototype.getValue = function getValue() {
   debug("Config.prototype.getValue");
-  if (this.type == "text") return this.yaml;
+  if (this.type == "text") return this.text;
   if (this.type == "yaml") return this.getJSON();
   return "Unknown Type";
 };
@@ -89,55 +90,35 @@ function findOne(obj1,obj2,callback) {
 
 function readDefaultData(text) {
   debug("readDefaultData");
+  var data = {};
   try {
-    var data = fs.readFileSync(path.resolve(__dirname,"..","data",text+".yaml"),"UTF8");
-
+    data.yaml = fs.readFileSync(path.resolve(__dirname,"..","data",text+".yaml"),"UTF8");
+    data.type = "yaml";
+    data.name = text;
     return data;
   } catch (err) {
     // File not found, return nothing
-    return "";
+    // try txt next
   }
+  try {
+    data.text = fs.readFileSync(path.resolve(__dirname,"..","data",text+".txt"),"UTF8");
+    data.type = "text";
+    data.name = text;
+    return data;
+  } catch (err) {
+    // File not found, return nothing
+    // try txt next
+  }
+  return data;
 }
 
 
 
 function defaultConfigObject(text,callback) {
   debug("defaultConfigObject");
-  var proto= {};
   var data = readDefaultData(text);
-  switch (text) {
-    case "formulation_tipEN":
-      proto = {type:"text",name:text,yaml:data};
-      break;
-    case "formulation_tipDE":
-      proto =  {type: "text", name: text,yaml:data};
-      break;
-    case "categorytranslation":
-      proto = {type:"yaml",name:text,yaml:data};
-      break;
-    case "calendartranslation":
-      proto = {type:"yaml",name:text,yaml:data};
-      break;
-    case "languageflags":
-      proto = {type:"yaml",name:text,yaml:data};
-      break;
-    case "categorydescription":
-      proto = {type:"yaml",name:text,yaml:data};
-      break;
-    case "calendarflags":
-      proto = {type:"yaml",name:text,yaml:data};
-      break;
-    case "editorstrings":
-      proto = {type:"yaml",name:text,yaml:data};
-      break;
-    case "licenses":
-      proto = {type:"yaml",name:text,yaml:data};
-      break;
-    default:
-      return callback(new Error("Undefined Configuration >"+text+"<, could not create"));
-  }
-  should.exist(proto.type);
-  createNewConfig(proto,callback);
+  should.exist(data.type);
+  createNewConfig(data,callback);
 }
 
 
@@ -167,7 +148,57 @@ pgObject.table="config";
 module.exports.pg = pgObject;
 
 
+var checkAndRepair = {
+  "formulation_tipEN": function () {},
+  "formulation_tipDE": function () {},
+  "calendartranslation": function (c) {
+    var ct = c.getJSON();
+    if (!ct) ct = {};
+    if (!ct.town) ct.town = {};
+    if (!ct.title) ct.title = {};
+    if (!ct.date) ct.date = {};
+    if (!ct.country) ct.country = {};
+    if (!ct.footer) ct.footer = {};
+    c.json = ct;
+  },
+  "categorydescription": function(c) {
+    var cd = c.getJSON();
+    if (!cd) cd = {};
+    c.json = cd;
+  },
+  "languageflags": function(c) {
+    var lf = c.getJSON();
+    if (!lf) lf = {};
+    c.json = lf;
+  },
+  "calendarflags":function(c) {
+    var cf = c.getJSON();
+    if (!cf) cf = {};
+    c.json = cf;
+  },
+  "licenses":function(c) {
+    var l = c.getJSON();
+    if (!l) l={};
+    if (!l.CC0) l.CC0 = "";
+    c.json = l;
+  },
 
+  "categorytranslation": function(c) {
+    var ct = c.getJSON();
+    if (!ct) ct = {};
+    for (let i = 0; i < blogModule.getCategories().length;i++) {
+      let cat = blogModule.getCategories()[i];
+      if (!ct[cat]) ct[cat] = {EN:cat};
+    }
+    console.dir(ct);
+    c.json = ct;
+  },
+  "editorstrings":function (c) {
+    var es = c.getJSON();
+    if (!es) es = {};
+    c.json = es;
+  }
+};
 
 
 Config.prototype.setAndSave = function setAndSave(user,data,callback) {
@@ -179,15 +210,8 @@ Config.prototype.setAndSave = function setAndSave(user,data,callback) {
 
   // try to convert YAML if necessary
 
+  delete self.json;
 
-  if (self.type == "yaml") {
-    try {
-      self.json = yaml.safeLoad(data.yaml);
-    }
-    catch(err) {
-      return callback(err);
-    }
-  }
 
   async.forEachOf(data,function setAndSaveEachOf(value,key,cb_eachOf){
     // There is no Value for the key, so do nothing
@@ -226,6 +250,7 @@ Config.prototype.setAndSave = function setAndSave(user,data,callback) {
   },function setAndSaveFinalCB(err) {
     debug('setAndSaveFinalCB');
     if (err) return callback(err);
+    checkAndRepair[self.name](self);
     actualiseConfigMap(self);
     self.save(callback);
   });

@@ -9,7 +9,9 @@
 "Events": "Announcements, reports about an event"
 "Humanitarian OSM": "Information about HOT & Missing maps"
 "Maps": "Changes on osm.org and osm.de maps, osm based special maps, no 08/15 map!"
-"#switch2OSM": "Information about well known websites or traffic rich websites, a good new rendering style, (commercial sites) companies having own (big geo) data, more features for displaying maps are offered"
+"#switch2OSM": >
+  Information about well known websites or traffic rich websites, a good new rendering style,
+  (commercial sites) companies having own (big geo) data, more features for displaying maps are offered
 "Open Data": "Information about open data"
 "Licences": "Information about juridicial topics"
 "Software": "Programs for non programmers (without OSM editors)"

@@ -91,7 +91,7 @@ function renderConfigName(req, res, next) {
 function postConfigId(req, res, next) {
   debug('postUserId');
   var name = req.params.name;
-  var changes = {yaml:req.body.yaml,type:req.body.type,name:req.body.name};
+  var changes = {yaml:req.body.yaml,type:req.body.type,name:req.body.name,text:req.body.text};
   var configData;
   async.series([
     function findUser(cb) {

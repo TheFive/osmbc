@@ -416,7 +416,8 @@ function convertLogsToTeamString(logs,lang,users) {
   }
 
   var editorStrings = configModule.getConfig("editorstrings");
-  return editorStrings[lang].replace("##team##",editorsString);
+  if (editorStrings[lang]) return editorStrings[lang].replace("##team##",editorsString);
+  return "";
 
 }
 

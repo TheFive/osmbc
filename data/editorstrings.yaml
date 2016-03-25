@@ -1,10 +1,39 @@
-DE: '<p align="right"><i>Diese Wochennotiz wurde erstellt von ##team##.</i></p>'
-EN: '<p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">produced</a> by ##team##.</i></p>'
-ES: '<p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">produced</a> by ##team##.</i></p>'
-FR: '<p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">produced</a> by ##team##.</i></p>'
-CZ: '<p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">produced</a> by ##team##.</i></p>'
-PT: '<p align="right"><i>Este semanário foi <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">produzido</a> por ##team##.</i></p>'
-RU: '<p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">produced</a> by ##team##.</i></p>'
-JP: '<p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">produced</a> by ##team##.</i></p>'
-ID: '<p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">produced</a> by ##team##.</i></p>'
-TR: '<p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">produced</a> by ##team##.</i></p>'
+DE: >
+  <p align="right"><i>Diese Wochennotiz wurde erstellt von ##team##.</i></p>
+
+EN: >
+  <p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">
+  produced</a> by ##team##.</i></p>
+
+ES: >
+  <p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">
+  produced</a> by ##team##.</i></p>
+
+FR: >
+  <p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">
+  produced</a> by ##team##.</i></p>
+
+CZ: >
+  <p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">
+  produced</a> by ##team##.</i></p>
+
+PT: >
+  <p align="right"><i>Este semanário foi <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">
+  produzido</a> por ##team##.</i></p>
+
+RU: >
+  <p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">
+  produced</a> by ##team##.</i></p>
+
+JP: >
+  <p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">
+  produced</a> by ##team##.</i></p>
+
+ID: >
+  <p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">
+  produced</a> by ##team##.</i></p>
+
+TR: >
+  <p align="right"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\">
+  produced</a> by ##team##.</i></p>
+
