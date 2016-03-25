@@ -21,9 +21,6 @@ var configModule   = require('../model/config.js');
 var pgMap          = require("../model/pgMap.js");
 var twitter        = require('../model/twitter.js');
 
-var categoryTranslation = require("../data/categoryTranslation.js");
-var languageFlags       = require("../data/languageFlags.js");
-
 
 
 var listOfOrphanBlog = null;
@@ -539,6 +536,7 @@ function findUserEditFieldsArticles(blog,user,field,callback) {
 Article.prototype.calculateLinks = function calculateLinks() {
   debug("calculateLinks");
   var links = [];
+  var languageFlags = configModule.getConfig("languageflags");
 
   var listOfField = ["collection"];
   for (var i= 0;i<config.getLanguages().length;i++) {
@@ -681,6 +679,7 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(callback) {
 Article.prototype.getCategory = function getCategory(lang) {
   debug("getCategory");
   var result = this.categoryEN;
+  var categoryTranslation = configModule.getConfig("categorytranslation");
   if (categoryTranslation[result] && categoryTranslation[result][lang]) {
     result = categoryTranslation[result][lang];
   }

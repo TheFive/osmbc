@@ -99,6 +99,8 @@ function readDefaultData(text) {
   }
 }
 
+
+
 function defaultConfigObject(text,callback) {
   debug("defaultConfigObject");
   var proto= {};
@@ -110,13 +112,25 @@ function defaultConfigObject(text,callback) {
     case "formulation_tipDE":
       proto =  {type: "text", name: text,yaml:data};
       break;
+    case "categorytranslation":
+      proto = {type:"yaml",name:text,yaml:data};
+      break;
     case "calendartranslation":
+      proto = {type:"yaml",name:text,yaml:data};
+      break;
+    case "languageflags":
       proto = {type:"yaml",name:text,yaml:data};
       break;
     case "categorydescription":
       proto = {type:"yaml",name:text,yaml:data};
       break;
     case "calendarflags":
+      proto = {type:"yaml",name:text,yaml:data};
+      break;
+    case "editorstrings":
+      proto = {type:"yaml",name:text,yaml:data};
+      break;
+    case "licenses":
       proto = {type:"yaml",name:text,yaml:data};
       break;
     default:
@@ -265,7 +279,11 @@ function initialise(callback) {
       initConfigElement.bind(null,"formulation_tipDE"),
       initConfigElement.bind(null,"calendartranslation"),
       initConfigElement.bind(null,"categorydescription"),
-      initConfigElement.bind(null,"calendarflags")
+      initConfigElement.bind(null,"languageflags"),
+      initConfigElement.bind(null,"calendarflags"),
+      initConfigElement.bind(null,"licenses"),
+      initConfigElement.bind(null,"categorytranslation"),
+      initConfigElement.bind(null,"editorstrings")
   ],
     function final(err){
       debug("finalFunction initialise");

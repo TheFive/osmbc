@@ -9,7 +9,6 @@ var debug    = require('debug')('OSMBC:routes:article');
 
 var config        = require('../config.js');
 
-var languageFlags = require('../data/languageFlags.js');
 
 var settingsModule= require('../model/settings.js');
 var articleModule = require('../model/article.js');
@@ -27,6 +26,7 @@ function renderArticleId(req,res,next) {
   // Get the ID and the article to display
   var id = req.params.article_id;
 
+  var languageFlags = configModule.getConfig("languageflags");
 
 
 

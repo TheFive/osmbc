@@ -15,11 +15,10 @@ var moment   = require('moment');
 
 var articleModule       = require('../model/article.js');
 var settingsModule      = require('../model/settings.js');
+var configModule        = require('../model/config.js');
 var logModule           = require('../model/logModule.js');
 var messageCenter       = require('../notification/messageCenter.js');
 var userModule          = require('../model/user.js');
-var categoryTranslation = require('../data/categoryTranslation.js');
-var editorStrings       = require('../data/editorStrings.js');
 var schedule            = require('node-schedule');
 
 var pgMap = require('./pgMap.js');
@@ -416,7 +415,7 @@ function convertLogsToTeamString(logs,lang,users) {
     editorsString += ", "+editors[i2];
   }
 
- 
+  var editorStrings = configModule.getConfig("editorstrings");
   return editorStrings[lang].replace("##team##",editorsString);
 
 }
@@ -738,6 +737,7 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
 function translateCategories(cat) {
   debug('translateCategories');
   var languages = config.getLanguages();
+  var categoryTranslation = configModule.getConfig("categorytranslation");
   for (var i = 0 ;i< cat.length;i++) {
     for (var l =0 ;l <languages.length;l++) {
       var lang = languages[l];
@@ -752,9 +752,9 @@ function translateCategories(cat) {
   }  
 }
 
-translateCategories(exports.categories);
 
 function getGlobalCategories() {
+  translateCategories(exports.categories);
   return module.exports.categories;
 }
 

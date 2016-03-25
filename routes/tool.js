@@ -16,8 +16,8 @@ var markdown = require("markdown-it")()
 var parseEvent = require('../model/parseEvent.js');
 
 var articleModule = require('../model/article.js');
+var configModule = require('../model/config.js');
 
-var licenses = require("../data/licenses.js");
 
 var sizeOf = require('image-size');
 
@@ -93,6 +93,7 @@ function postCalenderAsMarkdown(req,res,next) {
 
 function generateCCLicense(license,lang,author){
   debug("generateCCLicense");
+  var licenses = configModule.getConfig("licenses");
   if (!license || license === "") license = "CC0";
   if (!lang || lang === "") lang = "EN";
   if (!author) author = "";
@@ -165,6 +166,8 @@ function renderPictureTool(req,res) {
       article["markdown"+pictureLanguage]=genMarkup;
       article.categoryEN = "Picture";
       var preview = article.getPreview(pictureLanguage);
+      var licenses = configModule.getConfig("licenses");
+
       res.render('pictureTool',{warning:warning,
                                 genMarkup:genMarkup,
                                 licenses:licenses,
@@ -183,7 +186,8 @@ function renderPictureTool(req,res) {
 
   request.on('error',function() {
     warning.push(">"+pictureURL+"< pictureURL not found");
-   
+    var licenses = configModule.getConfig("licenses");
+
     res.render('pictureTool',{genMarkup:"picture not found",
                               warning:warning,
                               preview:"<p> Error,please try again</p>",

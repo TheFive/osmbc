@@ -1,0 +1,15 @@
+extends config
+
+block showContentOfConfig
+  - lang = layout.language
+  if config.json
+    .row
+      .col-md-3
+      .col-md-6
+        h2="Blog"
+        ul
+          li="Some Demo Text"
+
+        p
+          :verbatim
+            !{config.json[lang].replace("##team##","Person1, Person2, Person3")}
