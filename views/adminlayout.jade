@@ -106,6 +106,14 @@ block all
                     li
                       a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
 
+                li.dropdown
+                  a.btn.dropdown-toggle.osmbc-lang(href='#', style="color:white", data-toggle='dropdown')
+                    | #{layout.language}
+                    span.caret
+                  ul.dropdown-menu(role='menu')
+                    each l in layout.languages
+                      li
+                        a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
                 if layout.user
                     li
                       a(href='#{layout.htmlroot}/usert/#{layout.user.id}') #{layout.user.displayName}

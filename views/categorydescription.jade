@@ -1,7 +1,7 @@
 extends config
 
 block showContentOfConfig
-  h2= "Category Preview"
+  h2= "Translation Preview"
   if config.json
     table.table.table-striped.table-responsive
       thead
@@ -13,5 +13,6 @@ block showContentOfConfig
             tr
               td=key
               td.text-muted=value
+
 
 

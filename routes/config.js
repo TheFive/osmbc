@@ -74,6 +74,7 @@ function renderConfigName(req, res, next) {
       var jadeFile = 'config';
       if (name == "calendarflags") jadeFile = name;
       if (name == "categorydescription") jadeFile = name;
+      if (name == "calendartranslation") jadeFile = name;
 
       console.dir(config);
       res.render(jadeFile,{config:config,
