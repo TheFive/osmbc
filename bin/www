@@ -39,10 +39,10 @@ var server = http.createServer(app);
 function initialiseServer() {
   debug('initialiseServer');
   async.auto({
-    blogModule:startBlogTimer,
+    configModule:configModule.initialise,
+    blogModule:["configModule",startBlogTimer],
     messageCenter:messageCenter.initialise,
-    startMailReceiver:startMailReceiver,
-    configModule:configModule.initialise
+    startMailReceiver:startMailReceiver
 
 },
     function(err){

@@ -37,7 +37,9 @@ function Blog(proto)
 {
   debug("Blog");
   this.id = 0;
-  this.categories = configModule.getConfig("categorytranslation");
+  if (! proto || (proto && !proto.categories)) {
+    this.categories = configModule.getConfig("categorytranslation");
+  }
   if (proto) {
     for (var k in proto) {
       this[k] = proto[k];
