@@ -40,7 +40,7 @@ program
   .option('--dropTable','Drop Table before Creation','')
   .option('--dropIndex','Drop Index before Creation','')
   .option('--dropView','Drop View before Creation','')
-  .option('--createTable','Create all tables','')
+  .option('--createTable [table]','Create a specific table')
   .option('--createView','Create all Views','')
   .option('--createIndex','Create all Index','')
   .option('--verbose','verbose option','')

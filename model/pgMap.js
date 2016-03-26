@@ -461,7 +461,7 @@ exports.createTables = function(pgObject,options,analyse,callback) {
         } else return cb();
       },
       function tablecreation(cb) {
-        if (options.createTable) {
+        if (options.createTable && options.createTable == pgObject.table) {
           if (options.verbose) console.log("Create Table "+pgObject.table);
           if (options.verbose) console.log("Query: "+pgObject.createString);
           client.query(pgObject.createString,cb);
