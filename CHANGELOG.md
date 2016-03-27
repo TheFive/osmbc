@@ -1,5 +1,20 @@
 # Change Log
 
+## [1.1.0](https://github.com/TheFive/osmbc/tree/1.1.0) (2016-03-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7b...1.1.0)
+
+**Implemented enhancements:**
+
+- undocumented JSON Api for calendar parser [\#395](https://github.com/TheFive/osmbc/issues/395)
+
+**Fixed bugs:**
+
+- User \[\[\]\] wiki syntax in full for calender parser for town / country [\#394](https://github.com/TheFive/osmbc/issues/394)
+
+**Merged pull requests:**
+
+- Programming adjusted in Japanese [\#393](https://github.com/TheFive/osmbc/pull/393) ([fredao](https://github.com/fredao))
+
 ## [1.0.7b](https://github.com/TheFive/osmbc/tree/1.0.7b) (2016-03-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7a...1.0.7b)
 
@@ -484,7 +499,6 @@
 **Fixed bugs:**
 
 - Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
-- Add list to ALL users not only denied and full. [\#263](https://github.com/TheFive/osmbc/issues/263)
 
 **Closed issues:**
 
@@ -734,13 +748,13 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
-
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
