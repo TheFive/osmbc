@@ -358,7 +358,7 @@ function calenderToJSON(option,cb) {
       var line = body.substring(0,point);
       body = body.substring(point+1,999999999);
       point = body.indexOf("\n");
-      let result = parseLine(line);
+      var result = parseLine(line);
 
       if (typeof(result)=="string") {
         if (!errors) errors = "\n\nUnrecognized\n";
