@@ -114,8 +114,8 @@ describe('model/parseEvent',function() {
       should(result).deepEqual({type:"social",
                               
                                 desc:"[[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]]",
-                                town:"Düsseldorf",
-                                country:"Germany",
+                                town:"[[Düsseldorf]]",
+                                country:"[[Germany]]",
                                 countryflag:"Germany"
                               });
     });
@@ -127,8 +127,8 @@ describe('model/parseEvent',function() {
       should(result).deepEqual({type:"social",
                                
                                 desc:"Stammtisch",
-                                town:"Düsseldorf",
-                                country:"Germany",
+                                town:"[[Düsseldorf]]",
+                                country:"[[Germany]]",
                                 countryflag:"Germany"
                               });
     });
@@ -146,8 +146,8 @@ describe('model/parseEvent',function() {
       delete result.endDate;
       should(result).deepEqual({type:"social",
                                 desc:"Stammtisch",
-                                town:"Düsseldorf",
-                                country:"Germany",
+                                town:"[[Düsseldorf]]",
+                                country:"[[Germany]]",
                                 countryflag:"Germany"
                               });
     });
@@ -159,8 +159,8 @@ describe('model/parseEvent',function() {
       should(result).deepEqual({type:"social",
                               
                                 desc:"[https://www.link.de/sublink Tolle Veranstaltung]",
-                                town:"Düsseldorf",
-                                country:"Germany",
+                                town:"[[Düsseldorf]]",
+                                country:"[[Germany]]",
                                 countryflag:"Germany"
                               });
     });
@@ -173,8 +173,8 @@ describe('model/parseEvent',function() {
       should(result).deepEqual({type:"conference",
                                 
                                 desc:"<big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>",
-                                town:"Bonn",
-                                country:"Germany",
+                                town:"[[Bonn]]",
+                                country:"[[Germany]]",
                                 countryflag:"Germany"
                               });
     });
@@ -194,11 +194,24 @@ describe('model/parseEvent',function() {
       delete result.startDate;
       delete result.endDate;
       should(result).deepEqual("| {{cal|social}} || {{dm|Dec 3}} || [[Wien/Stammtisch|53. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Wien|Wien Wappen.svg}} {{SmallFlag|Austria}}"/*{type:"social",
-                                desc:"[[Wien/Stammtisch|53. Wiener Stammtisch]]",
-                                country:"Austria",
-                                countryflag:"Austria",
-                                wappenflag:"Wien|Wien Wappen.svg",
-                              }*/);
+       desc:"[[Wien/Stammtisch|53. Wiener Stammtisch]]",
+       country:"Austria",
+       countryflag:"Austria",
+       wappenflag:"Wien|Wien Wappen.svg",
+       }*/);
+    });
+    it('should return values with name and link in wiki different',function() {
+      var result = parseEvent.parseLine("| {{cal|pizza}} || {{dm|Apr 22|Apr 24}} || [http://spaceapps.cl International Space Apps Challenge], [[Santiago,_Chile|Santiago]], [[Chile]] {{SmallFlag|Chile}} {{SmallFlag|Santiago,_Chile|Escudo_de_Santiago_(Chile).svg}} ");
+      should.exist(result);
+      delete result.startDate;
+      delete result.endDate;
+      should(result).deepEqual({
+        "country": "[[Chile]]",
+        "countryflag": "Chile}} {{SmallFlag|Santiago,_Chile|Escudo_de_Santiago_(Chile).svg",
+        "desc": "[http://spaceapps.cl International Space Apps Challenge]",
+        "town": "[[Santiago,_Chile|Santiago]]",
+        "type": "pizza"
+      });
     });
   });
   describe('calenderToMarkdown',function(){
@@ -217,6 +230,26 @@ describe('model/parseEvent',function() {
         var excpeted = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
         should(result).equal(excpeted);
          bddone();
+      });
+    });
+  });
+  describe('calenderToJSON',function(){
+
+    before(function(){
+      var fileName = path.join(__dirname,'/data/calenderData.wiki');
+
+      nock('https://wiki.openstreetmap.org')
+        .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
+
+        .replyWithFile(200,fileName);
+
+    });
+    it('should Do an API call and resturn JSON',function(bddone){
+      parseEvent.calenderToJSON({},function(err,result){
+        var converted=JSON.parse(JSON.stringify(result));
+        var expected = JSON.parse(fs.readFileSync(path.join(__dirname,'/data/calendar.json'),"utf8"));
+        should(converted).eql(expected);
+        bddone();
       });
     });
   });

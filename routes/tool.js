@@ -1,6 +1,7 @@
 "use strict";
 
 var debug = require('debug')('OSMBC:routes:tool');
+var fs = require('fs');
 var express = require('express');
 var router = express.Router();
 var publicRouter = express.Router();
@@ -9,6 +10,8 @@ var url = require('url');
 var http = require('http');
 var https = require('https');
 var moment= require('moment');
+var emailValidator = require('email-validator');
+
 var markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
   .use(require("markdown-it-imsize"), { autofill: true });
@@ -37,6 +40,21 @@ function renderPublicCalendar(req,res,next) {
     res.render('calenderPublic.jade',{calenderAsMarkdown:result,
       errors:errors,preview:preview,layout:layout});
 
+  });
+}
+
+function renderJSONCalendar(req,res,next) {
+  debug('renderPublicCalendar');
+  var email = req.query.email;
+  if (!emailValidator.validate(email)) {
+    return next(new Error("Please add your email to query. Thanks TheFive. "+email+" looks invalid."));
+  }
+  fs.appendFileSync("Calendarusage.log",email+" "+new Date()+"\n");
+
+  parseEvent.calenderToJSON({},function(err,result){
+    if (err) return next(err);
+
+    res.json(result);
   });
 }
 
@@ -230,5 +248,6 @@ router.get('/picturetool', renderPictureTool);
 router.post('/picturetool', postPictureTool);
 
 publicRouter.get("/calendar/preview",renderPublicCalendar);
+publicRouter.get("/calendar/json",renderJSONCalendar);
 module.exports.router = router;
 module.exports.publicRouter = publicRouter;
