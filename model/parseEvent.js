@@ -15,11 +15,14 @@ var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&title
 
 
 var regexList = [ {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *\[\[(.*)\]\] *, *\[\[(.*)\]\] *\{\{SmallFlag\|(.*)\}\}/gi,
-                   keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"]},
+                   keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"],
+                   convert:[            "%s",                  "%s",                  "%s",         "[[%s]]",       "[[%s]]","%s"]},
                    {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *, *\[\[(.*)\]\] *\{\{SmallFlag\|(.*)\}\}/gi,
-                   keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"]},
+                   keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"],
+                     convert:[            "%s",                  "%s",                  "%s",         "%s",       "[[%s]]","%s"]},
                    {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\}/gi,
-                   keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"]} //,
+                   keys:[               "type",                "date",              "desc",         "town",       "country","countryflag"],
+                     convert:[            "%s",                  "%s",                  "%s",         "%s",       "%s","%s"]} //,
                  //  {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\} *\{\{SmallFlag\|(.*)\}\}/gi,
                  //  keys:[               "type",                "date",              "desc",       "country","wappenflag","countryflag"]},
                  //  {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\}/gi,
@@ -98,14 +101,13 @@ function parseLine(string) {
       for (var j=0;j<regexList[i].keys.length;j++){
         var value = results[j+1].trim();
         var list  = regexList[i].keys;
+        var convert = regexList[i].convert;
         if (list[j] == "date") {
           r.startDate = parseStartDate(value);
           r.endDate = parseEndDate(value);
 
-        } else if ( (list[j]== "town"||list[j]=="country") && value.substring(0,2)=="[[") {
-          r[list[j]]=value.substring(2,value.length-2);
-        } else {
-          r[list[j]]=value;
+        }  else {
+          r[list[j]]=convert[j].replace("%s",value);
         }
       }
       return r;
@@ -128,8 +130,9 @@ exports.parseLine = parseLine;
 
 
 
-function parseWikiInfo(description) {
+function parseWikiInfo(description,options) {
   debug('parseWikiInfo %s',description);
+  if (!options) options = {};
   var result = "";
   var end,next,desc,split;
   var title,link;
@@ -153,7 +156,12 @@ function parseWikiInfo(description) {
         link = "https://wiki.openstreetmap.org/wiki/"+desc.substring(0,split);
       }
       while (link.indexOf(" ")>=0) link = link.replace(" ","%20");
-      result += "["+title+"]("+link+")";
+      if (options.dontLinkify) {
+        result += title;
+      } else {
+        result += "["+title+"]("+link+")";
+      }
+
     } else {   
       next = description.indexOf("[");
       end = description.indexOf("]");
@@ -177,7 +185,12 @@ function parseWikiInfo(description) {
       } 
       if(link) {
         while (link.indexOf(" ")>=0) link = link.replace(" ","%20");
-        result += "["+title+"]("+link+")"; 
+        if (options.dontLinkify) {
+          result += title;
+        }
+        else {
+          result += "["+title+"]("+link+")";
+        }
       } else result += title;
     } 
   }
@@ -261,6 +274,8 @@ function calenderToMarkdown(option,cb) {
         if (result.endDate >= from && result.startDate <= to) {
           events.push(result);
           result.markdown = parseWikiInfo(result.desc);
+          result.town = parseWikiInfo(result.town,{dontLinkify:true});
+          result.country = parseWikiInfo(result.country,{dontLinkify:true});
         }
       }
     }
@@ -317,6 +332,72 @@ function calenderToMarkdown(option,cb) {
   });
 }
 
+
+function calenderToJSON(option,cb) {
+  debug('calenderToJSON');
+  should(typeof(cb)).eql("function");
+
+  request(wikiEventPage, function(error, response, body) {
+    var json = JSON.parse(body);
+    //body = (json.query.pages[2567].revisions[0]["*"]);
+    body = json.query.pages;
+    for (var k in body) {
+      body = body[k];
+      break;
+    }
+    body = body.revisions[0]['*'];
+
+    var point = body.indexOf("\n");
+
+    var events = [];
+    var errors = "";
+
+
+    while (point>= 0) {
+
+      var line = body.substring(0,point);
+      body = body.substring(point+1,999999999);
+      point = body.indexOf("\n");
+      let result = parseLine(line);
+
+      if (typeof(result)=="string") {
+        if (!errors) errors = "\n\nUnrecognized\n";
+        errors +=result+"\n";
+        result = null;
+      }
+
+
+
+      if (result) {
+          events.push(result);
+          result.markdown = parseWikiInfo(result.desc);
+          result.text = parseWikiInfo(result.desc,{dontLinkify:true});
+          result.town_md = parseWikiInfo(result.town,{dontLinkify:false});
+          result.town = parseWikiInfo(result.town,{dontLinkify:true});
+          result.country_md = parseWikiInfo(result.country,{dontLinkify:false});
+          result.country = parseWikiInfo(result.country,{dontLinkify:true});
+
+          result.html = markdown.renderInline(result.markdown);
+          result.town_html = markdown.renderInline(result.town_md);
+          result.country_html = markdown.renderInline(result.country_md);
+      }
+    }
+
+    var returnJSON =
+    {
+      "version": "0.1",
+      "generator": "TheFive Wiki Calendar Parser",
+      "time":new Date(),
+
+      "copyright": "The data is taken from http://wiki.openstreetmap.org/wiki/Template:Calendar and follows its license rules.",
+      "events":events,
+      "errors":errors
+    };
+
+    cb(null,returnJSON);
+  });
+}
+
 function calenderToHtml(date,callback) {
   debug('calenderToHtml');
   if (typeof(date)=='function') {
@@ -337,6 +418,7 @@ function calenderToHtml(date,callback) {
    in the form |town|description|date|country|*/
 exports.calenderToMarkdown = calenderToMarkdown;
 exports.calenderToHtml = calenderToHtml;
+exports.calenderToJSON = calenderToJSON;
 
 /* parseWikiInfo convertes a string in wikimarkup to markup.
    only links like [[]] [] are converted to [](),
