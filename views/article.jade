@@ -350,7 +350,7 @@ block content
 
   .row
     if (article.commentList)
-      h3="Comments ("+article.commentStatus+")"
+      h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
       each comment,i in article.commentList
         .row
           .col-md-12
