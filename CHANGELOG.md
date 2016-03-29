@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.1](https://github.com/TheFive/osmbc/tree/1.1.1) (2016-03-29)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.1.0...1.1.1)
+
+**Fixed bugs:**
+
+- Comment status is undefined [\#397](https://github.com/TheFive/osmbc/issues/397)
+
 ## [1.1.0](https://github.com/TheFive/osmbc/tree/1.1.0) (2016-03-27)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7b...1.1.0)
 
@@ -9,7 +16,7 @@
 
 **Fixed bugs:**
 
-- User \[\[\]\] wiki syntax in full for calender parser for town / country [\#394](https://github.com/TheFive/osmbc/issues/394)
+- Use \[\[\]\] wiki syntax in full for calender parser for town / country [\#394](https://github.com/TheFive/osmbc/issues/394)
 
 **Merged pull requests:**
 
@@ -499,10 +506,6 @@
 **Fixed bugs:**
 
 - Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
-
-**Closed issues:**
-
-- Add Link to google Skill Matrix in OSMBC. [\#264](https://github.com/TheFive/osmbc/issues/264)
 
 ## [0.6.1](https://github.com/TheFive/osmbc/tree/0.6.1) (2016-01-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.0...0.6.1)
