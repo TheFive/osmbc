@@ -16,6 +16,8 @@ var blogModule    = require('../model/blog.js');
 var htmlRoot = config.getValue("htmlroot");
 var bootstrap = config.getValue("bootstrap");
 
+
+
 function prepareRenderLayout(req,res,next) {
   debug('prepareRenderLayout');
 
@@ -115,7 +117,8 @@ function prepareRenderLayout(req,res,next) {
                       appName:config.getValue("AppName"),
                       bootstrap:bootstrap,
                       osmbc_version:version.osmbc_version,
-                      style:style
+                      style:style,
+                      md_render:util.md_render
                     };
       next();
     }

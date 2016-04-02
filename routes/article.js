@@ -18,6 +18,7 @@ var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
 
+require('jstransformer')(require('jstransformer-markdown-it'));
 
 var placeholder = {
   

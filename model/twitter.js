@@ -46,7 +46,7 @@ function expandTwitterUrl(url,callback) {
     if (err) return callback(null,url);
     if (!result) return callback(null,url);
 
-    var collection = url + "\n\nTweet by "+result.user.name+"\n";
+    var collection = url + "\n\n\nTweet by **"+result.user.name+"**\n";
     collection += result.text+"\n";
 
 
@@ -59,7 +59,7 @@ function expandTwitterUrl(url,callback) {
     }, function finalFunction(err){
       if (err) return callback(err);
       collection = collection.replace(/.https:\/\/t\.co\/........../i,"");
-      collection += "(Retweets: "+result.retweet_count +" Favs: "+result.favorite_count+")\n";
+      collection += "(Retweets: **"+result.retweet_count +"** Favs: **"+result.favorite_count+"**)\n";
 
       return callback(null,collection);
     });
