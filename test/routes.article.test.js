@@ -8,6 +8,7 @@ var nock   = require('nock');
 var fs     = require('fs');
 
 var articleModule = require('../model/article.js');
+var userModule = require('../model/user.js');
 
 var articleRouter = require('../routes/article.js');
 
@@ -15,6 +16,7 @@ var testutil = require('./testutil.js');
 
 
 describe('router/article',function() {
+  var user = null;
  
   after(function (bddone){
     nock.cleanAll();
@@ -27,7 +29,16 @@ describe('router/article',function() {
             .post(/\/services\/.*/) 
             .times(999) 
             .reply(200,"ok");
-    testutil.clearDB(bddone);
+    async.series([
+      testutil.clearDB,
+      function cu(cb) {
+        userModule.createNewUser({OSMUser:"TestUser",displayName:"TestUser"},function (err,result){
+          if (err) cb(err);
+          user = result;
+          cb();
+        });
+      }
+    ],bddone);
   }); 
   describe('renderArticleId',function() {
     it('should call next if article not exist',function(bddone) {
@@ -73,7 +84,7 @@ describe('router/article',function() {
           var req = {};
           req.params ={};
           req.query = {};
-          req.user = "TestUser";
+          req.user = user;
           req.session = {};
           var next;
           res.render = null;
@@ -163,7 +174,7 @@ describe('router/article',function() {
           req.params ={};
           req.query = {};
           req.session = {};
-          req.user = "TestUser";
+          req.user = user;
           var next;
           res.render = null;
           res.rendervar = {layout:"TEMP"};
@@ -229,7 +240,7 @@ describe('router/article',function() {
         var req = {};
         req.params = {};
         req.params.article_id = newId;
-        req.user = {displayName:"test"};
+        req.user = user;
         req.body = {};
         var res = {};
         var next;
@@ -268,7 +279,7 @@ describe('router/article',function() {
                    categoryEN:"CATEGORYEN",
                    version:"1",
                    title:"TITLE"};
-        req.user = {displayName:"TESTUSER"};
+        req.user = user;
         req.session = {};
         var res = {};
         var next;
@@ -357,7 +368,7 @@ describe('router/article',function() {
           var req = {};
           req.params ={};
           req.query = {search:data.search};
-          req.user = "TestUser";
+          req.user = user;
           var next;
           res.render = null;
           res.rendervar = {layout:"TEMP"};

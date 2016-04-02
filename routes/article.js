@@ -60,10 +60,10 @@ function renderArticleId(req,res,next) {
     // Params is used for indicating EditMode
     var params = {};
     var style = req.query.style;
-    if (!style) if (req.session.lastStyle) style = req.session.lastStyle;
+    if (!style && req.session.lastStyle) style = req.session.lastStyle;
     if (!style) style = req.user.blogSetting0 + req.user.blogLanguages0;
     if (!style) style = "overviewEN";
-    var s = settingsModule.getSettings(style,req.session.language,req.session.language2);
+    var s = settingsModule.getSettings(style,req.user.getMainLang(),req.user.getSecondLang());
     if (style) params.style = style;
     params.edit = req.query.edit;
     params.left_lang = s.left_lang;
@@ -527,7 +527,7 @@ function renderList(req,res,next) {
         if (!myArticles) return callback();
 
   
-        articleModule.findEmptyUserCollectedArticles(req.session.language,req.user.displayName,function(err,result) {
+        articleModule.findEmptyUserCollectedArticles(req.user.getMainLang(),req.user.displayName,function(err,result) {
           debug('renderList->findMyArticles->find');
           articles = result;
           callback();

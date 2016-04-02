@@ -148,11 +148,15 @@ module.exports.save = function(callback) {
                 versionsEqual = true;
               }
             });
+            query.on('error',function(err){
+              debug("error %s",err);
+              return cb(err);
+            });
             query.on('end',function(){
               debug("end");
               var err = null;
               var endTime = new Date().getTime();
-              debug("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
+              debug("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck "+versionsEqual+")");
               if (!versionsEqual) {
                 debug('send error');
                 err = new Error("Version Number Differs");
@@ -161,9 +165,10 @@ module.exports.save = function(callback) {
             });
         }
         ],
-        function(err) {
+        function finalFunction(err) {
+          debug("final Function save");
           if (err) {
-            debug('Foreward Error');
+            debug('Forward Error');
             pgdone();
             return callback(err);
           }

@@ -23,10 +23,10 @@ function renderHome(req,res,next) {
   });
 }
 
-function languageSwitcher(req,res) {
+function languageSwitcher(req,res,next) {
   debug('languageSwitcher');
-  var lang = req.session.language;
-  var lang2 = req.session.language2;
+  var lang = req.user.getMainLang();
+  var lang2 = req.user.getSecondLang();
 
   if (req.query.lang) lang = req.query.lang;
   if (req.query.lang2) lang2 = req.query.lang2;
@@ -34,13 +34,17 @@ function languageSwitcher(req,res) {
   if (lang2 === lang) lang2 = "none";
 
   if (config.getLanguages().indexOf(lang)>=0) {
-    req.session.language = lang;
+    req.user.mainLang = lang;
   }
   if (config.getLanguages().indexOf(lang2)>=0) {
-    req.session.language2 = lang2;
+    req.user.secondLang = lang2;
   }
-  if (lang2==="none") {req.session.language2=null;}
-  res.redirect(req.get('referer'));
+  if (lang2==="none") {req.user.secondLang=null;}
+  req.user.save(function finalLanguageSwitcher(err){
+    if (err) return next(err);
+    var referer = req.get('referer');
+    if (referer) res.redirect(referer); else res.end("changed");
+  });
 }
 
 

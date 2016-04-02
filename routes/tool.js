@@ -76,7 +76,7 @@ function renderCalenderAsMarkdown(req,res,next) {
 
   if (!moment(date).isValid()) date = "";
 
-  parseEvent.calenderToMarkdown({lang:req.session.language,countryFlags:enableCountryFlags,duration:duration,date:date},function(err,result,errors){
+  parseEvent.calenderToMarkdown({lang:req.user.getMainLang(),countryFlags:enableCountryFlags,duration:duration,date:date},function(err,result,errors){
     if (err) return next(err);
     res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
                                 disablePrettify:disablePrettify,
@@ -94,7 +94,7 @@ function postCalenderAsMarkdown(req,res,next) {
   var enableCountryFlags = req.body.enableCountryFlags;
   var duration = req.body.duration;
   var lang = moment.locale();
-  moment.locale(req.session.language);
+  moment.locale(req.user.getMainLang());
 
   var date = moment(req.body.date,"L").toISOString();
   moment.locale(lang);
