@@ -1,8 +1,12 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [1.2.1](https://github.com/TheFive/osmbc/tree/1.2.1) (2016-04-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.0...1.2.1)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.0...HEAD)
+**Implemented enhancements:**
+
+- Display only the first 15 results of a search. Show rest on demand. [\#409](https://github.com/TheFive/osmbc/issues/409)
+- Parse \<big\> statement in calendar. [\#407](https://github.com/TheFive/osmbc/issues/407)
 
 **Fixed bugs:**
 
@@ -504,10 +508,6 @@
 **Implemented enhancements:**
 
 - would it be possible to have the number of "all" articles in that blog? [\#275](https://github.com/TheFive/osmbc/issues/275)
-
-**Fixed bugs:**
-
-- WNAuthor: change unwanted [\#273](https://github.com/TheFive/osmbc/issues/273)
 
 ## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.3a...0.6.4)
