@@ -19,7 +19,7 @@ describe('views/tools', function() {
     async.series([
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
-      function createBrowser(cb) {testutil.startBrowser(function(err,result){browser=result;cb();});}
+      function createBrowser(cb) {testutil.startBrowser("TheFive",function(err,result){browser=result;cb();});}
     ], function(err) {
       bddone(err);
     });
@@ -38,6 +38,12 @@ describe('views/tools', function() {
     this.timeout(20000);
 
     async.series([
+      function setLanguage (cb) {
+        browser.visit('/osmbc.html', cb);
+      },
+      function setLanguage (cb) {
+        browser.visit('/language?lang=EN', cb);
+      },
       function visitCalender (cb) {
         browser.visit('/tool/calender2markdown', cb);
       },

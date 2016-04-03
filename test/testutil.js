@@ -75,7 +75,7 @@ exports.clearDB = function clearDB(done) {
   should.exist(messageCenter.global);
 
   mailReceiver.initialise([]);
-  var pgOptions = {dropTable:true,createTable:true,dropIndex:true,createIndex:true,dropView:true,createView:true};
+  var pgOptions = {dropTables:true,createTables:true,dropIndex:true,createIndex:true,dropView:true,createView:true};
   async.series([
     function(done) {config.initialise(done);},
     function(done) {pgMap.createTables(blogModule.pg,pgOptions,done);},
@@ -275,15 +275,21 @@ exports.generateTests = function generateTests(datadir,fileregex,createTestFunct
 
 var browser = null;
 var server;
-exports.startBrowser = function startBrowser(callback) {
+exports.startBrowser = function startBrowser(userString,callback) {
   debug('startBrowser');
+  should(typeof(userString)).eql("string");
   if (browser) return callback(null,browser);
-  server = http.createServer(app).listen(config.getServerPort());
+  userModule.findOne({OSMUser:userString},function(err,user){
+    should.exist(user);
+    user.displayName = userString;
+    server = http.createServer(app).listen(config.getServerPort());
     // initialize the browser using the same port as the test application
-  browser = new Browser({ site: 'http://localhost:'+config.getServerPort() });
-  passportStub.install(app);
-  passportStub.login({displayName:"TheFive"});
-  callback(null,browser); 
+    browser = new Browser({ site: 'http://localhost:'+config.getServerPort() });
+    passportStub.install(app);
+    passportStub.login(user);
+    callback(null,browser);
+
+  });
  };
 
 

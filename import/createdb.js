@@ -37,9 +37,11 @@ function coloredDiffLog(one,other) {
 }
 
 program
-  .option('--dropTable','Drop Table before Creation','')
+  .option('--dropTable [table]','Drop specific table before creation','')
+  .option('--dropTables','Drop Tables before Creation','')
   .option('--dropIndex','Drop Index before Creation','')
   .option('--dropView','Drop View before Creation','')
+  .option('--createTables ','Create all tables')
   .option('--createTable [table]','Create a specific table')
   .option('--createView','Create all Views','')
   .option('--createIndex','Create all Index','')
@@ -61,10 +63,12 @@ if (program.dropTable && process.env.NODE_ENV==="production") {
 }
 
 var pgOptions = {
+  dropTables:program.dropTables,
   dropTable:program.dropTable,
   dropIndex:program.dropIndex,
   dropView:program.dropView,
   createTable:program.createTable,
+  createTables:program.createTables,
   createView:program.createView,
   createIndex:program.createIndex,
   verbose:program.verbose,

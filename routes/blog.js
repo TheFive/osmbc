@@ -60,7 +60,7 @@ function renderBlogId(req, res, next) {
     style = req.query.style;
     req.session.lastStyle = style;
   }
-  var options = settingsModule.getSettings(style,req.session.language,req.session.language2);
+  var options = settingsModule.getSettings(style,req.user.getMainLang(),req.user.getSecondLang());
 
 
   var user = req.user;
@@ -334,7 +334,7 @@ function renderBlogPreviewAndEdit(req, res, next) {
     if (err) return next(err);
     should.exist(blog);
 
-    var lang = req.session.language;
+    var lang = req.user.getMainLang();
     if (typeof(lang)=='undefined') lang = "DE";
 
 

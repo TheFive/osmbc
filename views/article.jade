@@ -300,11 +300,14 @@ block content
 
       .row
         .col-md-1
-          |Collection <br>
+          |Collection
         .col-md-10
           if (article.collection)
-            :verbatim
-            |<pre>!{article.collection.replace(/(https?:\/\/[^\[\] \n\r]*)/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
+            p
+              :verbatim
+                !{layout.md_render(article.collection)}
+              //:verbatim
+              //|<pre>!{article.collection.replace(/(https?:\/\/[^\[\] \n\r]*)/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
       .row 
         .col-md-1
         - var lbg;
@@ -350,7 +353,7 @@ block content
 
   .row
     if (article.commentList)
-      h3="Comments ("+article.commentStatus+")"
+      h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
       each comment,i in article.commentList
         .row
           .col-md-12
@@ -371,7 +374,10 @@ block content
                 button.btn.btn-large.btn-primary(name = "update" type = "button" onclick ="if (document.getElementById('editComment').value.trim()==='') return;window.onbeforeunload=null; document.getElementById('EditCommentForm').submit();") Update
                 button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}';") Cancel
             else
-              p=comment.text
+              p
+                :verbatim
+                 !{layout.md_render(comment.text)}
+
     .row
       .col-md-12
         if (!params.editComment)

@@ -1,6 +1,7 @@
 "use strict";
 
 var debug = require('debug')('OSMBC:routes:tool');
+var fs = require('fs');
 var express = require('express');
 var router = express.Router();
 var publicRouter = express.Router();
@@ -9,6 +10,8 @@ var url = require('url');
 var http = require('http');
 var https = require('https');
 var moment= require('moment');
+var emailValidator = require('email-validator');
+
 var markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
   .use(require("markdown-it-imsize"), { autofill: true });
@@ -40,6 +43,21 @@ function renderPublicCalendar(req,res,next) {
   });
 }
 
+function renderJSONCalendar(req,res,next) {
+  debug('renderPublicCalendar');
+  var email = req.query.email;
+  if (!emailValidator.validate(email)) {
+    return next(new Error("Please add your email to query. Thanks TheFive. "+email+" looks invalid."));
+  }
+  fs.appendFileSync("Calendarusage.log",email+" "+new Date()+"\n");
+
+  parseEvent.calenderToJSON({},function(err,result){
+    if (err) return next(err);
+
+    res.json(result);
+  });
+}
+
 function renderCalenderAsMarkdown(req,res,next) {
   debug('renderCalenderAsMarkdown');
 
@@ -58,7 +76,7 @@ function renderCalenderAsMarkdown(req,res,next) {
 
   if (!moment(date).isValid()) date = "";
 
-  parseEvent.calenderToMarkdown({lang:req.session.language,countryFlags:enableCountryFlags,duration:duration,date:date},function(err,result,errors){
+  parseEvent.calenderToMarkdown({lang:req.user.getMainLang(),countryFlags:enableCountryFlags,duration:duration,date:date},function(err,result,errors){
     if (err) return next(err);
     res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
                                 disablePrettify:disablePrettify,
@@ -76,7 +94,7 @@ function postCalenderAsMarkdown(req,res,next) {
   var enableCountryFlags = req.body.enableCountryFlags;
   var duration = req.body.duration;
   var lang = moment.locale();
-  moment.locale(req.session.language);
+  moment.locale(req.user.getMainLang());
 
   var date = moment(req.body.date,"L").toISOString();
   moment.locale(lang);
@@ -236,5 +254,6 @@ router.get('/picturetool', renderPictureTool);
 router.post('/picturetool', postPictureTool);
 
 publicRouter.get("/calendar/preview",renderPublicCalendar);
+publicRouter.get("/calendar/json",renderJSONCalendar);
 module.exports.router = router;
 module.exports.publicRouter = publicRouter;

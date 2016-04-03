@@ -152,11 +152,15 @@ module.exports.save = function(callback) {
                 versionsEqual = true;
               }
             });
+            query.on('error',function(err){
+              debug("error %s",err);
+              return cb(err);
+            });
             query.on('end',function(){
               debug("end");
               var err = null;
               var endTime = new Date().getTime();
-              debug("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck");
+              debug("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck "+versionsEqual+")");
               if (!versionsEqual) {
                 debug('send error');
                 err = new Error("Version Number Differs");
@@ -165,9 +169,10 @@ module.exports.save = function(callback) {
             });
         }
         ],
-        function(err) {
+        function finalFunction(err) {
+          debug("final Function save");
           if (err) {
-            debug('Foreward Error');
+            debug('Forward Error');
             pgdone();
             return callback(err);
           }
@@ -446,7 +451,8 @@ exports.createTables = function(pgObject,options,analyse,callback) {
   }
   should(typeof(analyse)).equal('object');
 
-  pg.connect(config.pgstring,function(err,client,pgdone) {
+  pg.connect(config.pgstring,function pgconnected(err,client,pgdone) {
+    debug("pgconnected");
     if (err) {
       callback(err);
       pgdone();
@@ -454,20 +460,23 @@ exports.createTables = function(pgObject,options,analyse,callback) {
     }
     async.series([
       function tabledrop(cb) {
-        if (options.dropTable) {
+        debug("tabledrop");
+        if (options.dropTables || (options.dropTable && options.dropTable == pgObject.table)) {
           if (options.verbose) console.log("Drop Table "+pgObject.table);
           var dropString = "DROP TABLE IF EXISTS "+pgObject.table+ " CASCADE";
           client.query(dropString,cb);
         } else return cb();
       },
       function tablecreation(cb) {
-        if (options.createTable && options.createTable == pgObject.table) {
+        debug("tablecreation");
+        if (options.createTables || (options.createTable && options.createTable == pgObject.table) ) {
           if (options.verbose) console.log("Create Table "+pgObject.table);
           if (options.verbose) console.log("Query: "+pgObject.createString);
           client.query(pgObject.createString,cb);
         } else return cb();
       },
       function indexdrop(cb) {
+        debug("indexdrop");
         var toBeDropped = [];
         var k;
         if (options.dropIndex) {
@@ -483,13 +492,17 @@ exports.createTables = function(pgObject,options,analyse,callback) {
             if (toBeDropped.indexOf(k)<0) toBeDropped.push(k);
           }
         }
-        async.each(toBeDropped,function(index,eachofcb){
+        async.each(toBeDropped,function ftoBeDropped(index,eachofcb){
+          debug("ftoBeDropped");
           if (options.verbose) console.log("Drop Index "+index);
           var dropIndex = "DROP INDEX if exists "+index+";";
           client.query(dropIndex,eachofcb);
-        },function finalFunction(err){return cb(err);});
+        },function finalFunction(err){
+          debug("finalFunction");
+          return cb(err);});
       },
       function indexcreation(cb) {
+        debug("indexcreation");
         if (options.verbose) console.log("Creating Indexes for "+pgObject.table);
         if (options.createIndex || options.updateIndex) {
           async.forEachOf(pgObject.indexDefinition,function(sql,index,eachofcb){
@@ -505,6 +518,7 @@ exports.createTables = function(pgObject,options,analyse,callback) {
         } else return cb();
       },
       function viewsdrop(cb) {
+        debug("viewsdrop");
         if (options.dropView) {
           async.forEachOf(pgObject.viewDefinition,function(sql,view,eachofcb){
             var dropIndex = "DROP VIEW if exists "+view+";";
@@ -514,6 +528,7 @@ exports.createTables = function(pgObject,options,analyse,callback) {
         } else return cb();
       },
       function viewscreation(cb) {
+        debug("viewscreation");
         if (options.createView) {
           async.forEachOf(pgObject.viewDefinition,function(sql,view,eachofcb){
             if (options.verbose) console.log("Create View "+view);

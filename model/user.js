@@ -250,7 +250,18 @@ User.prototype.getNotificationStatus = function getNotificationStatus(channel, t
   return this.notification[channel][type];
 };
 
+User.prototype.getMainLang = function getMainLang() {
+  debug("User.prototype.getMainLang");
+  if (this.mainLang) return this.mainLang;
+  if (this.language) return this.language;
+  return "EN";
+};
 
+User.prototype.getSecondLang = function getSecondLang() {
+  debug("User.prototype.getMainLang");
+  if (this.secondLang) return this.secondLang;
+  return null;
+};
 
 // Creates an User object and stores it to database
 // can use a prototype to initialise data

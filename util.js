@@ -1,6 +1,8 @@
 "use strict";
 
 var debug = require ('debug')('OSMBC:util');
+var markdown = require('markdown-it')({breaks:true});
+
 
 
 
@@ -26,6 +28,22 @@ function linkify(string) {
   return result;
 }
 
+
+function md_render(text) {
+
+  // search a free standing link and make a markdown link from it.
+  text = text.replace(/\s(https?:\/\/[^\[\]\(\)\s]*)\s/gi, ' [$1]($1) ');
+  text = text.replace(/^(https?:\/\/[^\[\]\(\)\s]*)\s/gi, '[$1]($1) ');
+  text = text.replace(/\s(https?:\/\/[^\[\]\(\)\s]*$)/gi, ' [$1]($1)');
+  text = text.replace(/^(https?:\/\/[^\[\]\(\)\s]*$)/gi, '[$1]($1)');
+  text = markdown.render(text);
+  while (text.search('<a href=')>=0) {
+    text = text.replace('<a href=','<a target="_blank" href=');
+  }
+
+  return text;
+}
+
 var isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
                  
 //var isUrlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
@@ -40,3 +58,6 @@ function isURL(t) {
 exports.shorten = shorten;
 exports.isURL = isURL;
 exports.linkify = linkify;
+
+// Convert MD to HTML, and mark all http(s) links as hyperlinks.
+exports.md_render = md_render;

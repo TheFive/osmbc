@@ -1,5 +1,34 @@
 # Change Log
 
+## [1.1.0](https://github.com/TheFive/osmbc/tree/1.1.0) (2016-03-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7b...1.1.0)
+
+**Implemented enhancements:**
+
+- undocumented JSON Api for calendar parser [\#395](https://github.com/TheFive/osmbc/issues/395)
+
+**Fixed bugs:**
+
+- User \[\[\]\] wiki syntax in full for calender parser for town / country [\#394](https://github.com/TheFive/osmbc/issues/394)
+
+**Merged pull requests:**
+
+- Programming adjusted in Japanese [\#393](https://github.com/TheFive/osmbc/pull/393) ([fredao](https://github.com/fredao))
+
+## [1.0.7b](https://github.com/TheFive/osmbc/tree/1.0.7b) (2016-03-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7a...1.0.7b)
+
+**Merged pull requests:**
+
+- Brasilian Flag added [\#392](https://github.com/TheFive/osmbc/pull/392) ([fredao](https://github.com/fredao))
+
+## [1.0.7a](https://github.com/TheFive/osmbc/tree/1.0.7a) (2016-03-15)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7...1.0.7a)
+
+**Fixed bugs:**
+
+- Sort doesn't work [\#389](https://github.com/TheFive/osmbc/issues/389)
+
 ## [1.0.7](https://github.com/TheFive/osmbc/tree/1.0.7) (2016-03-15)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.6...1.0.7)
 
@@ -357,10 +386,6 @@
 - Show a progress bar for each blog with translated, edited and open articles. [\#295](https://github.com/TheFive/osmbc/issues/295)
 - automated mail to contributors, when new collection is added, ore something other was changed. [\#270](https://github.com/TheFive/osmbc/issues/270)
 
-**Fixed bugs:**
-
-- Add creation of blog to the log history. [\#260](https://github.com/TheFive/osmbc/issues/260)
-
 ## [0.6.9c](https://github.com/TheFive/osmbc/tree/0.6.9c) (2016-02-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9b...0.6.9c)
 
@@ -474,7 +499,6 @@
 **Fixed bugs:**
 
 - Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
-- Add list to ALL users not only denied and full. [\#263](https://github.com/TheFive/osmbc/issues/263)
 
 **Closed issues:**
 
