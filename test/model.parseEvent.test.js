@@ -81,6 +81,10 @@ describe('model/parseEvent',function() {
       should(parseEvent.parseWikiInfo('You find on [[irc]] the Event [https://test.test/test Text for Link]'))
         .equal('You find on [irc](https://wiki.openstreetmap.org/wiki/irc) the Event [Text for Link](https://test.test/test)');
     });
+    it('should parse <big> events </big>',function(){
+      should(parseEvent.parseWikiInfo('You find on [[irc]] the Event <big>[https://test.test/test Text for Link]</big>'))
+        .equal('You find on [irc](https://wiki.openstreetmap.org/wiki/irc) the Event [Text for Link](https://test.test/test)');
+    });
 
 
   });
