@@ -61,8 +61,6 @@ function renderArticleId(req,res,next) {
     var params = {};
     var style = req.query.style;
     if (!style && req.session.lastStyle) style = req.session.lastStyle;
-    if (!style) style = req.user.blogSetting0 + req.user.blogLanguages0;
-    if (!style) style = "overviewEN";
     var s = settingsModule.getSettings(style,req.user.getMainLang(),req.user.getSecondLang());
     if (style) params.style = style;
     params.edit = req.query.edit;
