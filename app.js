@@ -143,7 +143,6 @@ function ensureAuthenticated(req, res, next) {
             result[0].lastAccess = new Date();
             result[0].save(function(err,u) {req.user.version = u.version;});
           }
-          if (!req.session.language) req.session.language = result[0].language;
           debug("User accepted");
           return next();
         }

@@ -42,9 +42,10 @@ function nextDate(string) {
   var now = new Date();
   now.setDate(now.getDate()-50);
   var result = new Date(string);
+  result = new Date(Date.UTC(result.getYear(),result.getMonth(),result.getDate()));
 
   while (result.getTime() <= now.getTime()) {
-    result = new Date(result.getFullYear()+1,result.getMonth(),result.getDate());
+    result = new Date(Date.UTC(result.getFullYear()+1,result.getMonth(),result.getDate()));
   }
   return result;
 }

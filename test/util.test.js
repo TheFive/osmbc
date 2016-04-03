@@ -56,4 +56,18 @@ describe('util',function() {
       should(util.linkify("#WN271_Titel Des Artikels")).equal("#wn271_titel_des_artikels");
     });
   });
+  describe('md_render',function() {
+    it("should convert a simple link",function() {
+      var r = util.md_render("http://www.google.de/hallo");
+      should(r).eql('<p><a target="_blank" href="http://www.google.de/hallo">http://www.google.de/hallo</a></p>\n');
+    });
+    it("should convert a simple link at the end",function() {
+      var r = util.md_render("*italic* http://www.google.de/hallo");
+      should(r).eql("<p><em>italic</em> <a target=\"_blank\" href=\"http://www.google.de/hallo\">http://www.google.de/hallo</a></p>\n");
+    });
+    it("should convert a simple link at the start and ignore a MD LInk",function() {
+      var r = util.md_render("http://www.google.de/hallo is a synonym for [this](https://www.google.de/hallo2)");
+      should(r).eql('<p><a target="_blank" href="http://www.google.de/hallo">http://www.google.de/hallo</a> is a synonym for <a target="_blank" href="https://www.google.de/hallo2">this</a></p>\n');
+    });
+  });
 });

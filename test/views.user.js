@@ -24,7 +24,7 @@ describe('views/user', function() {
         if (article) articleId = article.id;
         cb(err);
       }); },     
-      function createBrowser(cb) {testutil.startBrowser(function(err,result){browser=result;cb();});}
+      function createBrowser(cb) {testutil.startBrowser("TheFive",function(err,result){browser=result;cb();});}
     ], function(err) {
       bddone(err);
     });

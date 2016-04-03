@@ -16,6 +16,8 @@ var blogModule    = require('../model/blog.js');
 var htmlRoot = config.getValue("htmlroot");
 var bootstrap = config.getValue("bootstrap");
 
+
+
 function prepareRenderLayout(req,res,next) {
   debug('prepareRenderLayout');
 
@@ -30,8 +32,6 @@ function prepareRenderLayout(req,res,next) {
   if (req.query.tempstyleOff == 'false') delete req.session.tempstyle;
   if (!req.session.tempstyle && config.getValue("style")) style = config.getValue("style");
 
-  // default the main language to EN
-  if (!req.session.language) req.session.language="EN";
 
 
   var languages = [];
@@ -70,7 +70,7 @@ function prepareRenderLayout(req,res,next) {
         if (err) return callback(err);
         var list = [];
         for (var i=0;i<result.length;i++) {
-          if (!(result[i]["reviewComment"+req.session.language])) {
+          if (!(result[i]["reviewComment"+req.user.getMainLang()])) {
             list.push(result[i]);
           }
         }
@@ -85,8 +85,8 @@ function prepareRenderLayout(req,res,next) {
         if (err) return callback(err);
         var list = [];
         for (var i=0;i<result.length;i++) {
-          if ((result[i]["reviewComment"+req.session.language]) &&
-              !(result[i]["close"+req.session.language])) {
+          if ((result[i]["reviewComment"+req.user.getMainLang()]) &&
+              !(result[i]["close"+req.user.getMainLang()])) {
             list.push(result[i]);
           }
         }
@@ -104,8 +104,8 @@ function prepareRenderLayout(req,res,next) {
                       listOfOrphanBlog:result.listOfOrphanBlog,
                       htmlroot: htmlRoot,
                       languages:languages,
-                      language:req.session.language,
-                      language2:req.session.language2,
+                      language:req.user.getMainLang(),
+                      language2:req.user.getSecondLang(),
                       listOfOpenBlog:result.listOfOpenBlog,
                       listOfEditBlog:result.listOfEditBlog,
                       listOfReviewBlog:result.listOfReviewBlog,
@@ -115,7 +115,8 @@ function prepareRenderLayout(req,res,next) {
                       appName:config.getValue("AppName"),
                       bootstrap:bootstrap,
                       osmbc_version:version.osmbc_version,
-                      style:style
+                      style:style,
+                      md_render:util.md_render
                     };
       next();
     }
