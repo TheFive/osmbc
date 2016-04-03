@@ -247,6 +247,7 @@ describe('model/parseEvent',function() {
     it('should Do an API call and resturn JSON',function(bddone){
       parseEvent.calenderToJSON({},function(err,result){
         var converted=JSON.parse(JSON.stringify(result));
+        console.log(JSON.stringify(result,undefined,2));
         var expected = JSON.parse(fs.readFileSync(path.join(__dirname,'/data/calendar.json'),"utf8"));
         should(converted).eql(expected);
         bddone();
