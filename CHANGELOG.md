@@ -1,5 +1,18 @@
 # Change Log
 
+## [1.2.0](https://github.com/TheFive/osmbc/tree/1.2.0) (2016-04-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.1.1...1.2.0)
+
+**Implemented enhancements:**
+
+- Allow markdown in comments. [\#406](https://github.com/TheFive/osmbc/issues/406)
+- Allow markdown in collection. [\#405](https://github.com/TheFive/osmbc/issues/405)
+
+**Fixed bugs:**
+
+- In New article only english possible [\#403](https://github.com/TheFive/osmbc/issues/403)
+- keep language settings [\#401](https://github.com/TheFive/osmbc/issues/401)
+
 ## [1.1.1](https://github.com/TheFive/osmbc/tree/1.1.1) (2016-03-29)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.1.0...1.1.1)
 
@@ -391,7 +404,6 @@
 - Generate Text EMails as alternative to html. [\#297](https://github.com/TheFive/osmbc/issues/297)
 - Build an easier way to configure personal settings \(eg. via user name in navbar\) [\#296](https://github.com/TheFive/osmbc/issues/296)
 - Show a progress bar for each blog with translated, edited and open articles. [\#295](https://github.com/TheFive/osmbc/issues/295)
-- automated mail to contributors, when new collection is added, ore something other was changed. [\#270](https://github.com/TheFive/osmbc/issues/270)
 
 ## [0.6.9c](https://github.com/TheFive/osmbc/tree/0.6.9c) (2016-02-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9b...0.6.9c)
@@ -493,19 +505,11 @@
 ## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.3a...0.6.4)
 
-**Implemented enhancements:**
-
-- Upcomming events should have country flags. [\#267](https://github.com/TheFive/osmbc/issues/267)
-
 ## [0.6.3a](https://github.com/TheFive/osmbc/tree/0.6.3a) (2016-01-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.2...0.6.3a)
 
 ## [0.6.2](https://github.com/TheFive/osmbc/tree/0.6.2) (2016-01-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.1...0.6.2)
-
-**Fixed bugs:**
-
-- Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
 
 ## [0.6.1](https://github.com/TheFive/osmbc/tree/0.6.1) (2016-01-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.0...0.6.1)
