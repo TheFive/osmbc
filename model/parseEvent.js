@@ -195,6 +195,12 @@ function parseWikiInfo(description,options) {
       } else result += title;
     } 
   }
+  while (result.search("<big>")>=0) {
+    result = result.replace("<big>","");
+  }
+  while (result.search("</big>")>=0) {
+    result = result.replace("</big>","");
+  }
   return result.trim();
 }
 

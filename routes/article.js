@@ -198,6 +198,8 @@ function searchAndCreate(req,res,next) {
   var search = req.query.search;
   var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
   var placeholder =  JSON.parse(fs.readFileSync(file));
+  var show = req.query.show;
+  if (!show) show = "15";
   if (req.query.edit && req.query.edit=="false") {
     var returnToUrl = config.getValue('htmlroot')+"/osmbc.html";
     if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
@@ -213,6 +215,7 @@ function searchAndCreate(req,res,next) {
                            search:search,
                            placeholder:placeholder,
                            showCollect:true,
+                           show:show,
                            categories:blogModule.getCategories(),
                            foundArticles:result});
   });
@@ -461,6 +464,9 @@ function createArticle(req, res, next) {
 function searchArticles(req, res, next) {
   debug('search');
   var search = req.query.search;
+  var show = req.query.show;
+  if (!show) show = "15";
+
   if (!search || typeof(search)=='undefined') search = "";
   var result = null;
  
@@ -484,6 +490,7 @@ function searchArticles(req, res, next) {
       should.exist(res.rendervar);
       res.render("collect",{layout:res.rendervar.layout,
                             search:search,
+                            show:show,
                             foundArticles:result,
                             placeholder:placeholder,
                             showCollect:false,
