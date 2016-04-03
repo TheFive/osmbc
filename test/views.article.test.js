@@ -19,15 +19,11 @@ var maxTimer = 10000;
 describe('views/article', function() {
   var browser;
   var articleId;
-  before(function(bddone){
+  before(function(){
     nock('https://hooks.slack.com/')
       .post(/\/services\/.*/)
       .times(999)
       .reply(200,"ok");
-    testutil.startBrowser(function(err,result){
-      browser=result;
-      bddone();});
-
   });
   beforeEach(function(bddone) {
     async.series([
@@ -37,7 +33,11 @@ describe('views/article', function() {
       function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"Link1: http://www.test.dä/holla and other"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
-      }); }
+      }); },
+      function startBrowser(cb) {testutil.startBrowser("TheFive",function(err,result){
+        browser=result;
+        cb(err);
+      });}
     ], function(err) {
       bddone(err);
       

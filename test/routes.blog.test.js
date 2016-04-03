@@ -7,6 +7,7 @@ var should = require('should');
 
 var testutil = require('../test/testutil.js');
 var blogModule = require('../model/blog.js');
+var userModule = require('../model/user.js');
 
 require('jstransformer-verbatim');
 
@@ -16,9 +17,18 @@ var blogRouter = require('../routes/blog.js');
 
 
 describe('routes/blog',function() {
+  var user = null;
   beforeEach(function(bddone){
-    testutil.clearDB(bddone);
-  });
+    async.series([
+      testutil.clearDB,
+      function cu(cb) {
+        userModule.createNewUser({OSMUser:"TestUser",displayName:"TestUser"},function (err,result){
+          if (err) cb(err);
+          user = result;
+          cb();
+        });
+      }
+    ],bddone);  });
   before(function(bddone){
     nock('https://hooks.slack.com/')
             .post(/\/services\/.*/) 
@@ -171,7 +181,7 @@ describe('routes/blog',function() {
         req.params = {};
         req.params.blog_id = newId;
         req.session = {};
-        req.user = {};
+        req.user = user;
         req.query = {};
 
         var res = {};
@@ -201,7 +211,7 @@ describe('routes/blog',function() {
         req.params = {};
         req.params.blog_id = newId;
         req.session = {};
-        req.user = {};
+        req.user = user;
         req.query = {};
         var res = {};
         var next;
@@ -234,7 +244,7 @@ describe('routes/blog',function() {
           req.params.blog_id = newId;
           req.session = {};
           req.query = {};
-          req.user = {};
+          req.user = user;
           var res = {};
           var next;
 
@@ -267,7 +277,8 @@ describe('routes/blog',function() {
         req.params = {};
         req.params.blog_id = newId;
         req.query = {style:"TRANSLATE"};
-        req.user = {};
+        req.user = user;
+        req.user.mainLang = "DE";
         req.session = {articleReturnTo:"returnToUrlXX"};
 
         var res = {rendervar:{layout:"calculated layout"}};
