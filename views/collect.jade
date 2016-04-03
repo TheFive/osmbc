@@ -23,11 +23,16 @@ block content
 
 
   .row
-    if (foundArticles) 
+    if (foundArticles)
+      - if (show === "all") show = foundArticles.length;
+      - show = parseInt(show);
+
       if (foundArticles.length>0)
         p
           a(style={color:'Gray'}) 
-            | #{foundArticles.length} articles found.
+            | Display #{show} of #{foundArticles.length} articles.
+          if (show < foundArticles.length)
+            a(href="#{action}?search=#{search}&show=all&edit=#{showCollect}")   Show All
         table.table.table-striped.table-condensed.table-responsive
           thead
             tr 
@@ -41,17 +46,18 @@ block content
                 |Preview (#{layout.language})
           tbody
        
-      
-          each  article in foundArticles
-            tr
-              td
-                a(href="#{layout.htmlroot}/blog/#{article.blog}") #{article.blog}
-              td
-                a(href="#{layout.htmlroot}/article/#{article.id}") #{(article.title)?article.title:"No Title"}
-              td.hidden-xs=article.categoryEN 
-              td.hidden-xs
-                :verbatim
-                  !{article.getPreview(layout.language)}
+          each  article,count in foundArticles
+            if (count < show)
+              tr
+                td
+                  a(href="#{layout.htmlroot}/blog/#{article.blog}") #{article.blog}
+                td
+                  a(href="#{layout.htmlroot}/article/#{article.id}") #{(article.title)?article.title:"No Title"}
+                td.hidden-xs=article.categoryEN
+                td.hidden-xs
+                  :verbatim
+                    !{article.getPreview(layout.language)}
+
            
       else
         p
