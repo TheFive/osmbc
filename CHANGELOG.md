@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.2](https://github.com/TheFive/osmbc/tree/1.2.2) (2016-04-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.1...1.2.2)
+
+**Implemented enhancements:**
+
+- Add a small link to http://wortliga.de/textanalyse/ for DE [\#410](https://github.com/TheFive/osmbc/issues/410)
+
 ## [1.2.1](https://github.com/TheFive/osmbc/tree/1.2.1) (2016-04-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.0...1.2.1)
 
@@ -492,10 +499,6 @@
 
 - add Colombia & Bolivia country flags. [\#277](https://github.com/TheFive/osmbc/issues/277)
 
-**Fixed bugs:**
-
-- is it possible to to \*not export\* the Blog Missing Cat: --unpublished-- [\#276](https://github.com/TheFive/osmbc/issues/276)
-
 ## [0.6.5b](https://github.com/TheFive/osmbc/tree/0.6.5b) (2016-01-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.5b)
 
@@ -504,10 +507,6 @@
 
 ## [0.6.5](https://github.com/TheFive/osmbc/tree/0.6.5) (2016-01-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.4...0.6.5)
-
-**Implemented enhancements:**
-
-- would it be possible to have the number of "all" articles in that blog? [\#275](https://github.com/TheFive/osmbc/issues/275)
 
 ## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.3a...0.6.4)
