@@ -231,25 +231,6 @@ block content
                 .panel-body(id="previewRIGHT")
                   :verbatim
                     !{article["textHtml"+params.right_lang]}
-        .row
-          .col-md-1
-            |Comment <br>
-          .col-md-11
-            :verbatim
-            <pre>!{article.comment} </pre>
-        .row
-          .col-md-1
-          .col-md-5
-            if (article.comment && article.comment!="")
-              select(id="commentStatus",name="commentStatus").form-control
-                each status in ["open","solved"]
-                  if article.commentStatus
-                    if status == article.commentStatus
-                      option(value="#{status}" selected ) #{status}
-                    else
-                      option(value="#{status}"  ) #{status}
-                  else
-                      option(value="#{status}"  ) #{status}
 
 
     else
@@ -343,9 +324,7 @@ block content
       .row
         if article.categoryEN != "Picture"
           .col-md-1
-            p="Preview"
-            if params.left_lang === "DE" 
-              a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');console.log(taf);console.log(taform);taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (extern)
+            | Preview
 
 
           +leftcolumn 
@@ -361,6 +340,13 @@ block content
               .panel-body(id="previewRIGHT")
                   :verbatim
                     !{article["textHtml"+params.right_lang]}
+  .row
+    .col-md-1
+    +leftcolumn
+      if params.left_lang === "DE"
+        a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');console.log(taf);console.log(taform);taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufgruf einer externen Seite)
+
+
 
   form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
     input.form-control(type="hidden" name = "text" id ="textanalysefield")
