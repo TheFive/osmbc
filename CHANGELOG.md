@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.2.2a](https://github.com/TheFive/osmbc/tree/1.2.2a) (2016-04-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2...1.2.2a)
+
 ## [1.2.2](https://github.com/TheFive/osmbc/tree/1.2.2) (2016-04-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.1...1.2.2)
 
