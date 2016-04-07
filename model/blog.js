@@ -691,8 +691,9 @@ Blog.prototype.calculateTimeToClose = function calculateTimeToClose(callback) {
   });
 };
 
-Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) {
+Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
   debug('countUneditedMarkdown');
+  should.exist(user);
   // already done, nothing to do.
   if (this._countUneditedMarkdown) return callback();
   var self = this;
@@ -700,6 +701,10 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
   self._countUneditedMarkdown = {};
   self._countExpectedMarkdown = {};
   self._countNoTranslateMarkdown = {};
+
+  self._userMention = [];
+  self._langMention = [];
+  var lang = user.language;
 
   articleModule.find({blog:this.name},function (err,result) {
     if (err) return callback(err);
@@ -712,10 +717,11 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
         self._countNoTranslateMarkdown[l] = 99;
       }
       else {
+        var j;
         self._countUneditedMarkdown[l]=0;
         self._countExpectedMarkdown[l]=0;
         self._countNoTranslateMarkdown[l] = 0;
-        for (var j=0;j<result.length;j++) {
+        for (j=0;j<result.length;j++) {
           var c = result[j].categoryEN;
           if ( c == "--unpublished--") continue;
           self._countExpectedMarkdown[l] +=1;
@@ -726,6 +732,14 @@ Blog.prototype.countUneditedMarkdown = function countUneditedMarkdown(callback) 
             if (!m || m ==="" || c ==="-- no category yet --") {
               self._countUneditedMarkdown[l] +=1;
             }
+          }
+        }
+        if (result.commentList) {
+          for (j=0;j<result.commentList.length;j++) {
+            var comment = result.commentList[j].text;
+            if (comment.search(new RegExp("@"+user,"i"))>=0) self._userMention.push(self);
+            if (  (comment.search(new RegExp("@"+lang,"i"))>=0) ||
+                (comment.search(new RegExp("@all","i"))>=0)) self._langMention.push(self);
           }
         }
       }

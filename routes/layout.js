@@ -60,7 +60,7 @@ function prepareRenderLayout(req,res,next) {
           list.push(result[i]);
         }
         async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
+          item.calculateDerived(req.user,cb);
         },function(err){callback(err,list);});
       });
     },
@@ -75,7 +75,7 @@ function prepareRenderLayout(req,res,next) {
           }
         }
         async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
+          item.calculateDerived(req.user,cb);
         },function(err){callback(err,list);});
       });
     },
@@ -91,7 +91,7 @@ function prepareRenderLayout(req,res,next) {
           }
         }
         async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
+          item.calculateDerived(req.user,cb);
         },function(err){callback(err,list);});
       });
     }
