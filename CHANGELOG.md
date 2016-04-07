@@ -1,5 +1,44 @@
 # Change Log
 
+## [1.2.2](https://github.com/TheFive/osmbc/tree/1.2.2) (2016-04-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.1...1.2.2)
+
+**Implemented enhancements:**
+
+- Add a small link to http://wortliga.de/textanalyse/ for DE [\#410](https://github.com/TheFive/osmbc/issues/410)
+
+## [1.2.1](https://github.com/TheFive/osmbc/tree/1.2.1) (2016-04-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.0...1.2.1)
+
+**Implemented enhancements:**
+
+- Display only the first 15 results of a search. Show rest on demand. [\#409](https://github.com/TheFive/osmbc/issues/409)
+- Parse \<big\> statement in calendar. [\#407](https://github.com/TheFive/osmbc/issues/407)
+
+**Fixed bugs:**
+
+- Links in comments are not clickable. [\#398](https://github.com/TheFive/osmbc/issues/398)
+
+## [1.2.0](https://github.com/TheFive/osmbc/tree/1.2.0) (2016-04-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.1.1...1.2.0)
+
+**Implemented enhancements:**
+
+- Allow markdown in comments. [\#406](https://github.com/TheFive/osmbc/issues/406)
+- Allow markdown in collection. [\#405](https://github.com/TheFive/osmbc/issues/405)
+
+**Fixed bugs:**
+
+- In New article only english possible [\#403](https://github.com/TheFive/osmbc/issues/403)
+- keep language settings [\#401](https://github.com/TheFive/osmbc/issues/401)
+
+## [1.1.1](https://github.com/TheFive/osmbc/tree/1.1.1) (2016-03-29)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.1.0...1.1.1)
+
+**Fixed bugs:**
+
+- Comment status is undefined [\#397](https://github.com/TheFive/osmbc/issues/397)
+
 ## [1.1.0](https://github.com/TheFive/osmbc/tree/1.1.0) (2016-03-27)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7b...1.1.0)
 
@@ -9,7 +48,7 @@
 
 **Fixed bugs:**
 
-- User \[\[\]\] wiki syntax in full for calender parser for town / country [\#394](https://github.com/TheFive/osmbc/issues/394)
+- Use \[\[\]\] wiki syntax in full for calender parser for town / country [\#394](https://github.com/TheFive/osmbc/issues/394)
 
 **Merged pull requests:**
 
@@ -384,7 +423,6 @@
 - Generate Text EMails as alternative to html. [\#297](https://github.com/TheFive/osmbc/issues/297)
 - Build an easier way to configure personal settings \(eg. via user name in navbar\) [\#296](https://github.com/TheFive/osmbc/issues/296)
 - Show a progress bar for each blog with translated, edited and open articles. [\#295](https://github.com/TheFive/osmbc/issues/295)
-- automated mail to contributors, when new collection is added, ore something other was changed. [\#270](https://github.com/TheFive/osmbc/issues/270)
 
 ## [0.6.9c](https://github.com/TheFive/osmbc/tree/0.6.9c) (2016-02-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9b...0.6.9c)
@@ -461,10 +499,6 @@
 
 - add Colombia & Bolivia country flags. [\#277](https://github.com/TheFive/osmbc/issues/277)
 
-**Fixed bugs:**
-
-- is it possible to to \*not export\* the Blog Missing Cat: --unpublished-- [\#276](https://github.com/TheFive/osmbc/issues/276)
-
 ## [0.6.5b](https://github.com/TheFive/osmbc/tree/0.6.5b) (2016-01-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.5b)
 
@@ -474,35 +508,14 @@
 ## [0.6.5](https://github.com/TheFive/osmbc/tree/0.6.5) (2016-01-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.4...0.6.5)
 
-**Implemented enhancements:**
-
-- would it be possible to have the number of "all" articles in that blog? [\#275](https://github.com/TheFive/osmbc/issues/275)
-- view Message from the category future after the current [\#271](https://github.com/TheFive/osmbc/issues/271)
-
-**Fixed bugs:**
-
-- WNAuthor: change unwanted [\#273](https://github.com/TheFive/osmbc/issues/273)
-
 ## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.3a...0.6.4)
-
-**Implemented enhancements:**
-
-- Upcomming events should have country flags. [\#267](https://github.com/TheFive/osmbc/issues/267)
 
 ## [0.6.3a](https://github.com/TheFive/osmbc/tree/0.6.3a) (2016-01-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.2...0.6.3a)
 
 ## [0.6.2](https://github.com/TheFive/osmbc/tree/0.6.2) (2016-01-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.1...0.6.2)
-
-**Fixed bugs:**
-
-- Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
-
-**Closed issues:**
-
-- Add Link to google Skill Matrix in OSMBC. [\#264](https://github.com/TheFive/osmbc/issues/264)
 
 ## [0.6.1](https://github.com/TheFive/osmbc/tree/0.6.1) (2016-01-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.0...0.6.1)
