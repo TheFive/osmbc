@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.2.3](https://github.com/TheFive/osmbc/tree/1.2.3) (2016-04-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2a...1.2.3)
+
+**Implemented enhancements:**
+
+- Button to collect an article only for users language [\#414](https://github.com/TheFive/osmbc/issues/414)
+- Blog view mobile reduction [\#412](https://github.com/TheFive/osmbc/issues/412)
+
 ## [1.2.2a](https://github.com/TheFive/osmbc/tree/1.2.2a) (2016-04-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2...1.2.2a)
 
@@ -493,14 +501,9 @@
 **Implemented enhancements:**
 
 - new category "Software Releases" [\#279](https://github.com/TheFive/osmbc/issues/279)
-- Add links to WN and Weekly Wiki. [\#278](https://github.com/TheFive/osmbc/issues/278)
 
 ## [0.6.5c](https://github.com/TheFive/osmbc/tree/0.6.5c) (2016-01-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5b...0.6.5c)
-
-**Implemented enhancements:**
-
-- add Colombia & Bolivia country flags. [\#277](https://github.com/TheFive/osmbc/issues/277)
 
 ## [0.6.5b](https://github.com/TheFive/osmbc/tree/0.6.5b) (2016-01-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.5b)
