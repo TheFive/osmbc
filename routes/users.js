@@ -168,6 +168,12 @@ function postUserId(req, res, next) {
 
 }
 
+function inbox (req,res,next) {
+  debug("inbox");
+  req.session.articleReturnTo = req.originalUrl;
+  res.render("inbox",{layout:res.rendervar.layout});
+}
+
 function createUser(req, res, next) {
   debug('createUser');
   var proto = {};
@@ -177,6 +183,7 @@ function createUser(req, res, next) {
   });
 }
 
+router.get('/inbox',inbox);
 router.get('/list',renderList);
 router.get('/create',createUser);
 router.get('/:user_id',renderUserId);

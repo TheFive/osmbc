@@ -734,12 +734,23 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
             }
           }
         }
-        if (result.commentList) {
-          for (j=0;j<result.commentList.length;j++) {
-            var comment = result.commentList[j].text;
-            if (comment.search(new RegExp("@"+user,"i"))>=0) self._userMention.push(self);
-            if (  (comment.search(new RegExp("@"+lang,"i"))>=0) ||
-                (comment.search(new RegExp("@all","i"))>=0)) self._langMention.push(self);
+      }
+    }
+    for (i=0;result && i<result.length;i++) {
+      if (result[i].commentList) {
+        if (result[i].commentStatus === "solved") continue;
+        for (j=0;j<result[i].commentList.length;j++) {
+          var comment = result[i].commentList[j].text;
+
+          if (comment.search(new RegExp("@"+user.OSMUser,"i"))>=0) {
+            self._userMention.push(result[i]);
+            break;
+          }
+          if (  (comment.search(new RegExp("@"+lang,"i"))>=0) ||
+            (comment.search(new RegExp("@all","i"))>=0) ||
+            (comment.search(new RegExp("@all","i"))>=0)) {
+            self._langMention.push(result[i]);
+            break;
           }
         }
       }

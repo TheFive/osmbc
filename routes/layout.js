@@ -38,7 +38,8 @@ function prepareRenderLayout(req,res,next) {
   if (config.getLanguages()) languages = config.getLanguages();
 
  
-
+  var userMentions = 0;
+  var langMentions = 0;
   // Used for display changes
 
   // Params is used for indicating Edit
@@ -60,8 +61,15 @@ function prepareRenderLayout(req,res,next) {
           list.push(result[i]);
         }
         async.each(list,function(item,cb){
-          item.calculateDerived(req.user,cb);
-        },function(err){callback(err,list);});
+          item.calculateDerived(req.user,function(err){
+            if (err) cb(err);
+            userMentions += item._userMention.length;
+            langMentions += item._langMention.length;
+            cb();
+          });
+        },function(err){
+          callback(err,list);
+        });
       });
     },
     listOfEditBlog:
@@ -75,7 +83,13 @@ function prepareRenderLayout(req,res,next) {
           }
         }
         async.each(list,function(item,cb){
-          item.calculateDerived(req.user,cb);
+          item.calculateDerived(req.user,function(err){
+            if (err) cb(err);
+            userMentions += item._userMention.length;
+            langMentions += item._langMention.length;
+            cb();
+
+          });
         },function(err){callback(err,list);});
       });
     },
@@ -91,7 +105,12 @@ function prepareRenderLayout(req,res,next) {
           }
         }
         async.each(list,function(item,cb){
-          item.calculateDerived(req.user,cb);
+          item.calculateDerived(req.user,function (err){
+            if (err) cb(err);
+            userMentions += item._userMention.length;
+            langMentions += item._langMention.length;
+            cb();
+          });
         },function(err){callback(err,list);});
       });
     }
@@ -104,6 +123,8 @@ function prepareRenderLayout(req,res,next) {
                       listOfOrphanBlog:result.listOfOrphanBlog,
                       htmlroot: htmlRoot,
                       languages:languages,
+                      userMentions:userMentions,
+                      langMentions:langMentions,
                       language:req.user.getMainLang(),
                       language2:req.user.getSecondLang(),
                       listOfOpenBlog:result.listOfOpenBlog,
