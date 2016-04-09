@@ -242,6 +242,7 @@ describe('router/article',function() {
         req.params.article_id = newId;
         req.user = user;
         req.body = {};
+        req.query = {};
         var res = {};
         var next;
 
@@ -268,6 +269,7 @@ describe('router/article',function() {
         should(article.id).not.equal(0);
         var req = {};
         req.params = {};
+        req.query = {};
         req.params.article_id = article.id;
         req.body = {markdownDE:"MARKDOWNDE",
                    markdownEN:"MARKDOWNEN",

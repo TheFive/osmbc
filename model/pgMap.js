@@ -248,8 +248,6 @@ module.exports.find = function find(module,obj,order,callback) {
 
     if (obj && obj.params) {
       query = client.query(sqlQuery,obj.params);
-      console.dir(sqlQuery);
-      console.dir(obj.params);
     }
     else query = client.query(sqlQuery);
 

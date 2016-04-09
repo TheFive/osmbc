@@ -64,7 +64,7 @@ block content
           a(style={color:'Gray'}) 
             | No Articles found for search '#{search}'
       if (showCollect)
-        form(name="input", action="#{layout.htmlroot}/article/create", method="post")  
+        form(name="input",id="input" action="#{layout.htmlroot}/article/create", method="post")
           h2 
             | Create Article 
           .row
@@ -102,11 +102,12 @@ block content
 
             .col-md-6
               .row
-                .col-md-10
+                .col-md-7
                   p(id="categoryDisplay" style={color:'Gray'})
-                .col-md-2
-                    input(type="submit", id="OK",class="btn btn-primary",value="OK")
-                    a(href="#{layout.htmlroot}/article/searchandcreate?edit=false" class="btn btn-default" role="button") Cancel
+                .col-md-5
+                  input.btn.btn-large.btn-primary(type="submit", id="OK",value="OK")
+                  a(href="#{layout.htmlroot}/article/searchandcreate?edit=false" class="btn btn-default" role="button") Cancel
+                  button.btn.btn-large.btn-info(id="OKLang",name="OKLang", onclick ="window.onbeforeunload=null; document.getElementById('input').action = '#{layout.htmlroot}/article/create?notranslation=true';document.getElementById('input').submit();") OK (only #{layout.user.language})
 
             
           .row
@@ -137,6 +138,7 @@ block scripts
       categoryEN = document.getElementById("categoryEN");
       categoryEN.onchange = onchangeCategory;
       okButton = document.getElementById("OK");
+      okButtonlang = document.getElementById("OKLang");
       title = document.getElementById("title");
       title.onchange = onchangeTitle;
       title.onkeyup = onchangeTitle;
@@ -153,8 +155,12 @@ block scripts
 
     function onchangeTitle() {
       var t = title.value;
-      okButton.disabled=true;
-      if (t.length>5) okButton.disabled=false;
+      okButton.disabled = true;
+      okButtonlang.disabled = true;
+      if (t.length>5) {
+        okButton.disabled=false;
+        okButtonlang.disabled=false;
+      }
     }
    
  
