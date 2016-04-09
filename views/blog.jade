@@ -1,10 +1,10 @@
 extends layout
 
-mixin navbutton(userstyle,style)
+mixin navbutton(userstyle,style,addClass)
   if (userstyle==style) 
-    li.active:  a(href="#{layout.htmlroot}/blog/#{blog.name}?style=#{userstyle}") #{userstyle}
+    li.active(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?style=#{userstyle}") #{userstyle}
   else
-    li:  a(href="#{layout.htmlroot}/blog/#{blog.name}?style=#{userstyle}") #{userstyle}
+    li(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?style=#{userstyle}") #{userstyle}
   
 
 
@@ -121,13 +121,10 @@ block content
   .row
     .col-md-12
       ul.nav.nav-tabs
-        +navbutton("OVERVIEW",style)
-        div.hidden-xs
-          +navbutton("TRANSLATION",style)
-        div.hidden-xs
-          +navbutton("FULL",style)
-        div.hidden-xs
-          +navbutton("FULLFINAL",style)
+        +navbutton("OVERVIEW",style,"")
+        +navbutton("TRANSLATION",style,"hidden-xs")
+        +navbutton("FULL",style,"hidden-xs")
+        +navbutton("FULLFINAL",style,"hidden-xs")
         li:  a(href="#{layout.htmlroot}/blog/#{blog.name}/previewNEdit") Review
 
         //
