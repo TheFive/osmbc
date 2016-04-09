@@ -23,20 +23,21 @@ block content
       div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
       div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
       div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
-  if (right_lang!= "--")
-    .row
-      - unedited = blog._countUneditedMarkdown[right_lang];
-      - notranslate = blog._countNoTranslateMarkdown[right_lang];
-      - total = blog._countExpectedMarkdown[right_lang];
-      - ready = (total-unedited - notranslate)
-      - if (total == 0) total = 1
-      .col-md-1
-        div.label.label-info.osmbc-lang2(style="color:white")=right_lang
-      .col-md-11
-       div.progress(style="margin-bottom:10px")
-        div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
-        div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
-        div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
+  div.hidden-xs
+    if (right_lang!= "--")
+      .row
+        - unedited = blog._countUneditedMarkdown[right_lang];
+        - notranslate = blog._countNoTranslateMarkdown[right_lang];
+        - total = blog._countExpectedMarkdown[right_lang];
+        - ready = (total-unedited - notranslate)
+        - if (total == 0) total = 1
+        .col-md-1
+          div.label.label-info.osmbc-lang2(style="color:white")=right_lang
+        .col-md-11
+         div.progress(style="margin-bottom:10px")
+          div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
+          div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
+          div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
 
 
   .row
@@ -49,10 +50,14 @@ block content
           | #{blog.name}
       else if left_lang == "DE"
         h2
-          | Wochennotiz #{blog.name} (#{status})
+          span.hidden-xs="Wochennotiz "
+          |#{blog.name}
+          span.hidden-xs=" ("+status+")"
       else
         h2
-          | Weekly #{blog.name} (#{status})
+          span.hidden-xs="Weekly "
+          span=blog.name
+          span.hidden-xs=" ("+status+")"
       
     .col-md-6
       if !(blog["close"+left_lang])    
@@ -117,9 +122,12 @@ block content
     .col-md-12
       ul.nav.nav-tabs
         +navbutton("OVERVIEW",style)
-        +navbutton("TRANSLATION",style)
-        +navbutton("FULL",style)
-        +navbutton("FULLFINAL",style)
+        div.hidden-xs
+          +navbutton("TRANSLATION",style)
+        div.hidden-xs
+          +navbutton("FULL",style)
+        div.hidden-xs
+          +navbutton("FULLFINAL",style)
         li:  a(href="#{layout.htmlroot}/blog/#{blog.name}/previewNEdit") Review
 
         //
@@ -130,16 +138,16 @@ block content
               +navbutton(style0,style)
             - v++ 
       
-        li
+        li.hidden-xs
           a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{left_lang}") 
             span.glyphicon.glyphicon-export
             | #{left_lang}
         if (right_lang != "--")
-          li
+          li.hidden-xs
             a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{right_lang}") 
               span.glyphicon.glyphicon-export
               | #{right_lang}
-        li.dropdown
+        li.dropdown.hidden-xs
           a.dropdown-toggle(href='#', data-toggle='dropdown')
             span.glyphicon.glyphicon-export
           ul.dropdown-menu(role='menu')
