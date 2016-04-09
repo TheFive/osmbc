@@ -226,6 +226,7 @@ function postArticle(req, res, next) {
   debug('postArticle');
 
   var id = req.params.article_id;
+  var noTranslation = req.query.notranslation;
 
  
 
@@ -280,6 +281,17 @@ function postArticle(req, res, next) {
       debug('postArticle->setValues');
       if (err) {return next(err);}
       should.exist(article);
+      if (noTranslation === "true") {
+        var languages = config.getLanguages();
+        for (var i=0;i<languages.length;i++){
+          var lang = languages[i];
+          if (changes["markdown"+lang]) continue;
+          if (article["markdown"+lang] && article["markdown"+lang].trim()==="") continue;
+          if (lang === req.user.language) continue;
+          changes["markdown"+lang] = "no translation";
+        }
+      }
+
       article.setAndSave(req.user,changes,function(err) {
        debug('postArticle->setValues->setAndSave');
         if (err ) {

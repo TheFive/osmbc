@@ -58,9 +58,9 @@ block scripts
     window.onbeforeunload = function(event) {
       // store the scroll Position in the local Store
       s = {x:window.scrollX,y:window.scrollY};
-      console.log("Check local storage");
+
       if (typeof(Storage)!=="undefined") {
-        console.log("Storing data");
+
         window.sessionStorage.blogUrl = window.location.href;
         window.sessionStorage.blogX = s.x;
         window.sessionStorage.blogY = s.y;
@@ -68,7 +68,7 @@ block scripts
     };
 
     function onLeaveText(id) {
-      console.log("on change called");
+
       var oldValue = document.getElementById("oldMarkdown"+id).value;
       var newValue = document.getElementById("markdown"+id).value;
       if (oldValue === newValue) return;
