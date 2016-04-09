@@ -367,9 +367,13 @@ block content
 
   .row
     if (article.commentList)
+      - upToComment = article.commentRead[layout.user.OSMName]
+      - if (!upToComment) upToComment = -1;
       h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
       each comment,i in article.commentList
         .row
+          if upToComment === i-1
+            div.vertical-line
           .col-md-12
             b=comment.user
             span=" "
