@@ -17,6 +17,16 @@ var htmlRoot = config.getValue("htmlroot");
 var bootstrap = config.getValue("bootstrap");
 
 
+function calculateUnreadMessages(list) {
+  var result = 0;
+  for (let k=0;k<list.length;k++) {
+    let a = list[k];
+    if (a.commentRead && a.commentRead[req.user.OSMUser]>= a.commentList.length-1) continue;
+    result +=1;
+  }
+  return result;
+}
+
 
 function prepareRenderLayout(req,res,next) {
   debug('prepareRenderLayout');
@@ -63,8 +73,8 @@ function prepareRenderLayout(req,res,next) {
         async.each(list,function(item,cb){
           item.calculateDerived(req.user,function(err){
             if (err) cb(err);
-            userMentions += item._userMention.length;
-            langMentions += item._langMention.length;
+            userMentions += calculateUnreadMessages(item._userMention);
+            langMentions += calculateUnreadMessages(item._langMention);
             cb();
           });
         },function(err){
@@ -85,8 +95,8 @@ function prepareRenderLayout(req,res,next) {
         async.each(list,function(item,cb){
           item.calculateDerived(req.user,function(err){
             if (err) cb(err);
-            userMentions += item._userMention.length;
-            langMentions += item._langMention.length;
+            userMentions += calculateUnreadMessages(item._userMention);
+            langMentions += calculateUnreadMessages(item._langMention);
             cb();
 
           });
@@ -107,16 +117,8 @@ function prepareRenderLayout(req,res,next) {
         async.each(list,function(item,cb){
           item.calculateDerived(req.user,function (err){
             if (err) cb(err);
-            for (let k=0;k<item._userMention.length;k++) {
-              let a = item._userMention[k];
-              if (a.commentRead && a.commentRead[req.user.OSMUser]>= a.commentList.length-1) continue;
-              userMentions +=1;
-            }
-            for (let k=0;k<item._langMention.length;k++) {
-              let a = item._langMention[k];
-              if (a.commentRead && a.commentRead[req.user.OSMUser]>= a.commentList.length-1) continue;
-              langMentions +=1;
-            }
+            userMentions += calculateUnreadMessages(item._userMention);
+            langMentions += calculateUnreadMessages(item._langMention);
             cb();
           });
         },function(err){callback(err,list);});
