@@ -920,7 +920,35 @@ describe('model/article', function() {
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
 
     });
-    it('should not edit a comment with blank',function(bddone){
+    it('should mark a comment as read',function(bddone){
+
+      var timestamp = new Date();
+      var timestamp2 = new Date();
+      timestamp2.setTime(timestamp2.getTime()+200);
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test",
+          commentList:[{user:"Test",timestamp:timestamp,text:"a comment"},{user:"Test",timestamp:timestamp,text:"a second comment"}]}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",
+          commentList:[{user:"Test",
+            timestamp:timestamp.toISOString(),
+            text:"a comment"},{user:"Test",
+            timestamp:timestamp.toISOString(),
+            text:"a second comment"}],
+          commentRead:{Test:1}}],
+        };
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          clock.tick(200);
+
+          should.not.exist(err);
+          article.markCommentRead({OSMUser:"Test"},1,cb);
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });    it('should not edit a comment with blank',function(bddone){
 
       var timestamp = new Date();
       var timestamp2 = new Date();

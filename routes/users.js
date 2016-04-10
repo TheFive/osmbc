@@ -168,7 +168,7 @@ function postUserId(req, res, next) {
 
 }
 
-function inbox (req,res,next) {
+function inbox (req,res) {
   debug("inbox");
   req.session.articleReturnTo = req.originalUrl;
   res.render("inbox",{layout:res.rendervar.layout});

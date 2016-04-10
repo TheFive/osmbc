@@ -705,11 +705,12 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
   self._userMention = [];
   self._langMention = [];
   var lang = user.language;
+  var i,j;
 
   articleModule.find({blog:this.name},function (err,result) {
     if (err) return callback(err);
 
-    for (var i=0;i<config.getLanguages().length;i++) {
+    for (i=0;i<config.getLanguages().length;i++) {
       var l = config.getLanguages()[i];
       if (!result) {
         self._countUneditedMarkdown[l]=99;
@@ -717,7 +718,6 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
         self._countNoTranslateMarkdown[l] = 99;
       }
       else {
-        var j;
         self._countUneditedMarkdown[l]=0;
         self._countExpectedMarkdown[l]=0;
         self._countNoTranslateMarkdown[l] = 0;

@@ -417,6 +417,47 @@ function postEditComment(req, res, next) {
   );
 }
 
+function markCommentRead(req, res, next) {
+  debug('markCommentRead');
+
+  var id = req.params.article_id;
+  var number = req.query.index;
+
+
+
+  var article = null;
+  var returnToUrl;
+
+  async.parallel([
+      function searchArticle(cb) {
+        debug('markCommentRead->searchArticle');
+        if (typeof(id)=='undefined') return cb();
+        articleModule.findById(id,function(err,result) {
+          debug('markCommentRead->searchArticle->findById');
+          if (err) return cb(err);
+          if (!result) return cb(new Error("Article ID does not exist"));
+          article = result;
+          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
+          cb();
+        });
+      }
+    ],
+    function setValues(err) {
+      debug('markCommentRead->setValues');
+      if (err) {return next(err);}
+      should.exist(article);
+      article.markCommentRead(req.user,number,function(err) {
+        debug('markCommentRead->markCommentRead');
+        if (err ) {
+          next(err);
+          return;
+        }
+        res.redirect(returnToUrl);
+      });
+    }
+  );
+}
+
 function createArticle(req, res, next) {
   debug('createArticle');
   var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
@@ -577,7 +618,7 @@ exports.searchAndCreate = searchAndCreate;
 exports.searchArticles = searchArticles;
 exports.postNewComment = postNewComment;
 exports.postEditComment = postEditComment;
-
+exports.markCommentRead = markCommentRead;
 
 // And configure router to use render Functions
 router.get('/list', exports.renderList);
@@ -587,6 +628,7 @@ router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
 
 router.get('/:article_id', exports.renderArticleId );
+router.get('/:article_id/markCommentRead', exports.markCommentRead );
 
 router.post('/:article_id/addComment', exports.postNewComment);
 router.post('/:article_id/setMarkdown/:lang', exports.postSetMarkdown);

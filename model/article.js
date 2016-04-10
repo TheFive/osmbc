@@ -761,6 +761,30 @@ Article.prototype.editComment = function editComment(user,index,text,callback) {
   );
 };
 
+/*
+Store the number of comments, a user has read.
+-1 is indicating, nothing is read. (same as a non existing value).
+The Value has to be between -1 and the length of the comment list -1.
+*/
+Article.prototype.markCommentRead = function markCommentRead(user,index,callback) {
+  debug('Article.prototype.markCommentRead');
+  should(typeof(user)).eql('object');
+  should(typeof(callback)).eql('function');
+  var self = this;
+
+  // nothing to read, ignore request.
+  if (!self.commentList) return callback();
+
+  // Do not mark more comments then necessary as read
+  if (index >= self.commentList.length) index = self.commentList.length-1;
+
+  should(index).within(-1,self.commentList.length-1);
+
+  if (!self.commentRead) self.commentRead = {};
+  self.commentRead[user.OSMUser]= index;
+  self.save(callback);
+};
+
 Article.prototype.addNotranslate = function addNotranslate(user,callback) {
   debug('Article.prototype.addNotranslate');
   var self = this;
