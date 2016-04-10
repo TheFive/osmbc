@@ -652,13 +652,13 @@ describe('model/article', function() {
       bddone();
     });
     it('should generate a preview with a comment and no status',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}]});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}],commentRead:{TheFive:0}});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and open status',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}],commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}],commentStatus:"open",commentRead:{TheFive:0}});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
@@ -666,23 +666,23 @@ describe('model/article', function() {
     it('should generate a preview with a comment and open status checking Marktext',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","TheFive");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
+      should(result).equal('<li id=\"undefined_0\" style=\" border-left-style: solid; border-color: blue;\">\n<span class=\"glyphicon glyphicon-envelope\"></span><p>small markdown <a href=\"/article/0?style=fullDE\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> <a href=\"/article/0?style=fullDE&edit=true\"><span class=\"glyphicon glyphicon-edit\"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview (no markdown) with a comment and open status',function (bddone) {
-      var article = articleModule.create({collection:"small collection",commentList:[{text:"Hallo @EN"}],commentStatus:"open"});
+      var article = articleModule.create({collection:"small collection",commentList:[{text:"Hallo @EN"}],commentStatus:"open",commentRead:{TheFive:0}});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
       bddone();
     });
     it('should generate a preview (no markdown) with a comment and open status case insensitive test',function (bddone) {
-      var article = articleModule.create({collection:"small collection",commentList:[{text:"Hallo @en"}],commentStatus:"open"});
+      var article = articleModule.create({collection:"small collection",commentList:[{text:"Hallo @en"}],commentStatus:"open",commentRead:{PaulFromMars:0}});
       var result = article.getPreview("fullDE","TheFive");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
+      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<span class=\"glyphicon glyphicon-envelope\"></span><mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
       bddone();
     });
     it('should generate a preview with a comment and open status and reference for all user',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo @all"}],commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo @all"}],commentStatus:"open",commentRead:{TheFive:0}});
       var result = article.getPreview("fullDE","TheFive");
       should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: orange;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
@@ -690,13 +690,13 @@ describe('model/article', function() {
     it('should generate a preview with a comment and open status and reference for a specific user',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo @user"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","user");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: red;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
+      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: red;">\n<span class=\"glyphicon glyphicon-envelope\"></span><p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and open status and reference for a specific language',function (bddone) {
-      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"simpel text"},{text:"Hallo @DE"}],commentStatus:"open"});
+      var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"simpel text"},{text:"Hallo @DE"},{text:"dudeldü"}],commentStatus:"open",commentRead:{user:0}});
       var result = article.getPreview("fullDE","user");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: orange;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
+      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: orange;">\n<span class=\"glyphicon glyphicon-envelope\"></span><p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and solved status',function (bddone) {
@@ -836,7 +836,8 @@ describe('model/article', function() {
             article:[{blog:"WN1",collection:"something",title:"test"}]};
       var dataAfter = { 
             article:[{blog:"WN1",collection:"something",title:"test",id:'1',version:2,
-                      commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"}]}],
+                      commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"}],
+                      commentRead:{Test:0}}],
             change:[{blog:"WN1",oid:1,table:"article",from:"",to:"a comment",user:"Test",timestamp:timestampIso}]};
       var testFunction = function testFunction(cb) {
         articleModule.findById(1,function(err,article){
@@ -877,11 +878,13 @@ describe('model/article', function() {
       var dataBefore = {
             clear:true,
             article:[{blog:"WN1",collection:"something",title:"test",
-                     commentList:[{user:"Test",timestamp:timestamp,text:"a comment"}]}]};
+                     commentList:[{user:"Test",timestamp:timestamp,text:"a comment"}],
+                     commentRead:{Test:0}}]};
       var dataAfter = { 
             article:[{blog:"WN1",collection:"something",title:"test",
                       commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"},
-                                   {user:"Test2",timestamp:timestampIso,text:"a second comment"}]}
+                                   {user:"Test2",timestamp:timestampIso,text:"a second comment"}],
+                      commentRead:{Test:0,Test2:1}}
                     ],
             change:[{blog:"WN1",oid:1,table:"article",from:"",to:"a second comment",user:"Test2",timestamp:timestampIso}]};
       var testFunction = function testFunction(cb) {
@@ -920,7 +923,35 @@ describe('model/article', function() {
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
 
     });
-    it('should not edit a comment with blank',function(bddone){
+    it('should mark a comment as read',function(bddone){
+
+      var timestamp = new Date();
+      var timestamp2 = new Date();
+      timestamp2.setTime(timestamp2.getTime()+200);
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test",
+          commentList:[{user:"Test",timestamp:timestamp,text:"a comment"},{user:"Test",timestamp:timestamp,text:"a second comment"}]}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",
+          commentList:[{user:"Test",
+            timestamp:timestamp.toISOString(),
+            text:"a comment"},{user:"Test",
+            timestamp:timestamp.toISOString(),
+            text:"a second comment"}],
+          commentRead:{Test:1}}],
+        };
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          clock.tick(200);
+
+          should.not.exist(err);
+          article.markCommentRead({OSMUser:"Test"},1,cb);
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });    it('should not edit a comment with blank',function(bddone){
 
       var timestamp = new Date();
       var timestamp2 = new Date();

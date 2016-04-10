@@ -353,11 +353,19 @@ block content
 
   .row
     if (article.commentList)
+
+      - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
+      - if (!upToComment) upToComment = -1;
       h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
       each comment,i in article.commentList
         .row
           .col-md-12
-            b=comment.user
+            b
+              if (i > upToComment)
+                a(href="#{layout.htmlroot}/article/#{article.id}/markCommentRead?index=#{i}")
+                  span.glyphicon.glyphicon-envelope
+                span=" "
+              span=comment.user
             span=" "
             span.text-muted.small=layout.moment(comment.timestamp).fromNow()
             if (comment.editstamp)
