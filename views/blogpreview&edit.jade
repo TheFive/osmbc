@@ -27,6 +27,11 @@ block content
         if a["markdown"+lang]!=="no translation"
           .row
             .col-md-12
+              div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
+                ul
+                  :verbatim
+                    !{renderer.article(lang,a)}
+
               div.hidden(id="div#{a.id}")
                 form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
                   textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(#{a.id});") #{a["markdown"+lang]}
@@ -34,10 +39,6 @@ block content
 
                 //  button.btn.btn-small.btn-primary(type = "button" onclick ="if (document.getElementById('markdown'+#{a.id}).value.trim()==='') return; document.getElementById('EditArticle'+#{a.id}).submit();") Save
                   button.btn.btn-small.btn-default(type = "button" onclick ="window.location.reload();") Cancel
-              div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');} openEditor.classList.toggle('hidden');return false;")
-                ul
-                  :verbatim
-                    !{renderer.article(lang,a)}
 
 block scripts
   script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
