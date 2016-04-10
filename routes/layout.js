@@ -107,8 +107,16 @@ function prepareRenderLayout(req,res,next) {
         async.each(list,function(item,cb){
           item.calculateDerived(req.user,function (err){
             if (err) cb(err);
-            userMentions += item._userMention.length;
-            langMentions += item._langMention.length;
+            for (let k=0;k<item._userMention.length;k++) {
+              let a = item._userMention[k];
+              if (a.commentRead && a.commentRead[req.user.OSMUser]>= a.commentList.length-1) continue;
+              userMentions +=1;
+            }
+            for (let k=0;k<item._langMention.length;k++) {
+              let a = item._langMention[k];
+              if (a.commentRead && a.commentRead[req.user.OSMUser]>= a.commentList.length-1) continue;
+              langMentions +=1;
+            }
             cb();
           });
         },function(err){callback(err,list);});

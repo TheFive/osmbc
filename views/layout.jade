@@ -77,7 +77,10 @@ html(lang='en')
             ul.nav.navbar-nav.pull-left
 
               li
-                a(href='#{layout.htmlroot}/usert/inbox') Inbox(#{layout.userMentions},#{layout.langMentions})
+                a(href='#{layout.htmlroot}/usert/inbox')="Inbox "
+                  span.badge(style="background-color:red")=layout.userMentions
+                  span.badge(style="background-color:orange")=layout.langMentions
+
 
           .navbar-header
             button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')

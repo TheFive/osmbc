@@ -5,7 +5,7 @@ extends layout
 
 block content
   .row
-    p.bg-info="This is your new Inbox, all comments addressed to you, are shown."
+    p.bg-info="This is your new inbox. All comments with mentions are shown here. Use the envelope in the article view to mark a comment as read."
 
   - var bloglist = [];
   - bloglist = bloglist.concat(layout.listOfOpenBlog)
@@ -13,21 +13,21 @@ block content
   - bloglist = bloglist.concat(layout.listOfReviewBlog)
 
   .row
-    h3= "Inbox Direct Mention: " + layout.user.OSMUser
+    h4= "Inbox Direct Mention:"
 
   for blog in bloglist
     if blog._userMention.length>0
-      h4=blog.name +
+      h5=blog.name
       ul
         for article in blog._userMention
             :verbatim
               !{article.getPreview("overview")}
   .row
-    h3= "Inbox Indirect Mention: " + layout.user.OSMUser
+    h4= "Inbox Indirect Mention:"
 
   for blog in bloglist
     if blog._langMention.length > 0
-      h4=blog.name
+      h5=blog.name
       ul
         for article in blog._langMention
           :verbatim

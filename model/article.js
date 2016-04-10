@@ -142,9 +142,15 @@ Article.prototype.getPreview = function getPreview(style,user) {
   var liOFF = '</li>';
   var comment = "";
   if (this.comment) comment += this.comment;
+  var unreadGlyp = "";
   if (this.commentList) {
     for (var i=0;i<this.commentList.length;i++) {
       comment += " "+ this.commentList[i].text;
+    }
+
+    if (!this.commentRead || typeof(this.commentRead[user]) == "undefined" ||this.commentRead[user]<this.commentList.length-1) {
+      console.log("setting envelope");
+      unreadGlyp = '<span class="glyphicon glyphicon-envelope"></span>';
     }
   }
 
@@ -156,6 +162,7 @@ Article.prototype.getPreview = function getPreview(style,user) {
       if (comment.search(new RegExp("@"+options.right_lang,"i"))>=0) commentColour = "orange";
       if (comment.search(new RegExp("@all","i"))>=0) commentColour = "orange";
       liON = '<li id="'+pageLink+'" style=" border-left-style: solid; border-color: '+commentColour+';">\n';
+      liON += unreadGlyp;
     }
   }
   if (this.categoryEN == "Picture") {
@@ -699,6 +706,8 @@ Article.prototype.addComment = function addComment(user,text,callback) {
   if (!self.commentList) self.commentList = [];
   var commentObject = {user:user.OSMUser,timestamp:new Date(),text:text};
   self.commentList.push(commentObject);
+  if (!self.commentRead) self.commentRead = {};
+  self.commentRead[user.OSMUser] = self.commentList.length-1;
   async.series([
     function sendit(cb) {
       debug('sendit');
