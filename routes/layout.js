@@ -17,11 +17,11 @@ var htmlRoot = config.getValue("htmlroot");
 var bootstrap = config.getValue("bootstrap");
 
 
-function calculateUnreadMessages(list) {
+function calculateUnreadMessages(list,user) {
   var result = 0;
   for (let k=0;k<list.length;k++) {
     let a = list[k];
-    if (a.commentRead && a.commentRead[req.user.OSMUser]>= a.commentList.length-1) continue;
+    if (a.commentRead && a.commentRead[user]>= a.commentList.length-1) continue;
     result +=1;
   }
   return result;
@@ -73,8 +73,8 @@ function prepareRenderLayout(req,res,next) {
         async.each(list,function(item,cb){
           item.calculateDerived(req.user,function(err){
             if (err) cb(err);
-            userMentions += calculateUnreadMessages(item._userMention);
-            langMentions += calculateUnreadMessages(item._langMention);
+            userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
+            langMentions += calculateUnreadMessages(item._langMention,req.user.OSMUser);
             cb();
           });
         },function(err){
@@ -95,8 +95,8 @@ function prepareRenderLayout(req,res,next) {
         async.each(list,function(item,cb){
           item.calculateDerived(req.user,function(err){
             if (err) cb(err);
-            userMentions += calculateUnreadMessages(item._userMention);
-            langMentions += calculateUnreadMessages(item._langMention);
+            userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
+            langMentions += calculateUnreadMessages(item._langMention,req.user.OSMUser);
             cb();
 
           });
@@ -117,8 +117,8 @@ function prepareRenderLayout(req,res,next) {
         async.each(list,function(item,cb){
           item.calculateDerived(req.user,function (err){
             if (err) cb(err);
-            userMentions += calculateUnreadMessages(item._userMention);
-            langMentions += calculateUnreadMessages(item._langMention);
+            userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
+            langMentions += calculateUnreadMessages(item._langMention,req.user.OSMUser);
             cb();
           });
         },function(err){callback(err,list);});
