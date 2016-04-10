@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.4](https://github.com/TheFive/osmbc/tree/1.4) (2016-04-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.3.0a...1.4)
+
+**Implemented enhancements:**
+
+- Indicate collector and authors in review mode [\#418](https://github.com/TheFive/osmbc/issues/418)
+- Change position of textfield while in review mode [\#416](https://github.com/TheFive/osmbc/issues/416)
+- show open comments only when done by other persons [\#415](https://github.com/TheFive/osmbc/issues/415)
+- User Inbox view for all open blogs [\#411](https://github.com/TheFive/osmbc/issues/411)
+- Display all articles where the editor is mentioned in its comments on OSMBC Homepage [\#402](https://github.com/TheFive/osmbc/issues/402)
+
+## [1.3.0a](https://github.com/TheFive/osmbc/tree/1.3.0a) (2016-04-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.3...1.3.0a)
+
 ## [1.2.3](https://github.com/TheFive/osmbc/tree/1.2.3) (2016-04-09)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2a...1.2.3)
 
@@ -468,7 +482,6 @@
 **Closed issues:**
 
 - Document Source of Blog Creation. [\#284](https://github.com/TheFive/osmbc/issues/284)
-- Base calculation of new WN Number on non trash blogs startin with WN [\#281](https://github.com/TheFive/osmbc/issues/281)
 
 **Merged pull requests:**
 
@@ -480,27 +493,11 @@
 ## [0.6.8](https://github.com/TheFive/osmbc/tree/0.6.8) (2016-01-26)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7...0.6.8)
 
-**Fixed bugs:**
-
-- Changing a language after set a blog to review sets the new blog to review too. [\#282](https://github.com/TheFive/osmbc/issues/282)
-
-**Closed issues:**
-
-- Display name of all collectors in Blog Preview. [\#283](https://github.com/TheFive/osmbc/issues/283)
-
 ## [0.6.7](https://github.com/TheFive/osmbc/tree/0.6.7) (2016-01-26)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.6...0.6.7)
 
-**Closed issues:**
-
-- Add a Trash for blogs [\#280](https://github.com/TheFive/osmbc/issues/280)
-
 ## [0.6.6](https://github.com/TheFive/osmbc/tree/0.6.6) (2016-01-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5c...0.6.6)
-
-**Implemented enhancements:**
-
-- new category "Software Releases" [\#279](https://github.com/TheFive/osmbc/issues/279)
 
 ## [0.6.5c](https://github.com/TheFive/osmbc/tree/0.6.5c) (2016-01-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5b...0.6.5c)
@@ -767,13 +764,13 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
-
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
