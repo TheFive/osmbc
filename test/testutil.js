@@ -178,11 +178,14 @@ exports.checkData = function checkData(data,callback) {
       if (typeof(data.article)!='undefined') {  
         async.each(data.article,function checkOneArticle(d,cb){
           var commentList = d.commentList;
+          var commentRead = d.commentRead;
           delete d.commentList;
+          delete d.commentRead;
           articleModule.findOne(d,function(err,result){
             should.not.exist(err);
             should.exist(result,"NOT Found: "+JSON.stringify(d));
             should(result.commentList).eql(commentList);
+            should(result.commentRead).eql(commentRead);
             cb();
           });
         },function(err) {

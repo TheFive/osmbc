@@ -38,7 +38,8 @@ function prepareRenderLayout(req,res,next) {
   if (config.getLanguages()) languages = config.getLanguages();
 
  
-
+  var userMentions = 0;
+  var langMentions = 0;
   // Used for display changes
 
   // Params is used for indicating Edit
@@ -60,8 +61,15 @@ function prepareRenderLayout(req,res,next) {
           list.push(result[i]);
         }
         async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
-        },function(err){callback(err,list);});
+          item.calculateDerived(req.user,function(err){
+            if (err) cb(err);
+            userMentions += item._userMention.length;
+            langMentions += item._langMention.length;
+            cb();
+          });
+        },function(err){
+          callback(err,list);
+        });
       });
     },
     listOfEditBlog:
@@ -75,7 +83,13 @@ function prepareRenderLayout(req,res,next) {
           }
         }
         async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
+          item.calculateDerived(req.user,function(err){
+            if (err) cb(err);
+            userMentions += item._userMention.length;
+            langMentions += item._langMention.length;
+            cb();
+
+          });
         },function(err){callback(err,list);});
       });
     },
@@ -91,7 +105,20 @@ function prepareRenderLayout(req,res,next) {
           }
         }
         async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
+          item.calculateDerived(req.user,function (err){
+            if (err) cb(err);
+            for (let k=0;k<item._userMention.length;k++) {
+              let a = item._userMention[k];
+              if (a.commentRead && a.commentRead[req.user.OSMUser]>= a.commentList.length-1) continue;
+              userMentions +=1;
+            }
+            for (let k=0;k<item._langMention.length;k++) {
+              let a = item._langMention[k];
+              if (a.commentRead && a.commentRead[req.user.OSMUser]>= a.commentList.length-1) continue;
+              langMentions +=1;
+            }
+            cb();
+          });
         },function(err){callback(err,list);});
       });
     }
@@ -104,6 +131,8 @@ function prepareRenderLayout(req,res,next) {
                       listOfOrphanBlog:result.listOfOrphanBlog,
                       htmlroot: htmlRoot,
                       languages:languages,
+                      userMentions:userMentions,
+                      langMentions:langMentions,
                       language:req.user.getMainLang(),
                       language2:req.user.getSecondLang(),
                       listOfOpenBlog:result.listOfOpenBlog,
