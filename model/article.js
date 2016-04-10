@@ -147,7 +147,6 @@ Article.prototype.getPreview = function getPreview(style,user) {
     for (var i=0;i<this.commentList.length;i++) {
       comment += " "+ this.commentList[i].text;
     }
-
     if (!this.commentRead || typeof(this.commentRead[user]) == "undefined" ||this.commentRead[user]<this.commentList.length-1) {
       console.log("setting envelope");
       unreadGlyp = '<span class="glyphicon glyphicon-envelope"></span>';
