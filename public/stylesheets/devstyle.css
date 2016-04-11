@@ -58,3 +58,10 @@ margin: 0;
 .osmbc-inserted {
   color:  #3366ff;
 }
+
+.small-margin {
+  margin-top: 1px;
+  margin-bottom: 1px;
+  margin-right: 1px;
+  margin-left: 1px;
+}
