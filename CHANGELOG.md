@@ -1,5 +1,18 @@
 # Change Log
 
+## [1.4.1](https://github.com/TheFive/osmbc/tree/1.4.1) (2016-04-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.0b...1.4.1)
+
+**Implemented enhancements:**
+
+- Indicate and display comments in review mode [\#417](https://github.com/TheFive/osmbc/issues/417)
+
+## [1.4.0b](https://github.com/TheFive/osmbc/tree/1.4.0b) (2016-04-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.0a...1.4.0b)
+
+## [1.4.0a](https://github.com/TheFive/osmbc/tree/1.4.0a) (2016-04-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.4...1.4.0a)
+
 ## [1.4](https://github.com/TheFive/osmbc/tree/1.4) (2016-04-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.3.0a...1.4)
 
@@ -478,10 +491,6 @@
 
 ## [0.6.9](https://github.com/TheFive/osmbc/tree/0.6.9) (2016-01-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7a...0.6.9)
-
-**Closed issues:**
-
-- Document Source of Blog Creation. [\#284](https://github.com/TheFive/osmbc/issues/284)
 
 **Merged pull requests:**
 
