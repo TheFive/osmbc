@@ -654,49 +654,49 @@ describe('model/article', function() {
     it('should generate a preview with a comment and no status',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}],commentRead:{TheFive:0}});
       var result = article.getPreview("fullDE","TheFive");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
+      should(result).equal('<li id="undefined_0"><span class="glyphicon glyphicon-comment" style="color: blue"></span>\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and open status',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}],commentStatus:"open",commentRead:{TheFive:0}});
       var result = article.getPreview("fullDE","TheFive");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
+      should(result).equal('<li id="undefined_0"><span class="glyphicon glyphicon-comment" style="color: blue"></span>\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and open status checking Marktext',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","TheFive");
-      should(result).equal('<li id=\"undefined_0\" style=\" border-left-style: solid; border-color: blue;\">\n<span class=\"glyphicon glyphicon-envelope\"></span><p>small markdown <a href=\"/article/0?style=fullDE\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> <a href=\"/article/0?style=fullDE&edit=true\"><span class=\"glyphicon glyphicon-edit\"></span></a></p>\n\n</li>');
+      should(result).equal('<li id=\"undefined_0\"><span class="glyphicon glyphicon-comment" style="color: blue"></span>\n<span class=\"glyphicon glyphicon-envelope\"></span><p>small markdown <a href=\"/article/0?style=fullDE\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> <a href=\"/article/0?style=fullDE&edit=true\"><span class=\"glyphicon glyphicon-edit\"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview (no markdown) with a comment and open status',function (bddone) {
       var article = articleModule.create({collection:"small collection",commentList:[{text:"Hallo @EN"}],commentStatus:"open",commentRead:{TheFive:0}});
       var result = article.getPreview("fullDE","TheFive");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
+      should(result).equal('<li id="undefined_0"><span class="glyphicon glyphicon-comment" style="color: blue"></span>\n<mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
       bddone();
     });
     it('should generate a preview (no markdown) with a comment and open status case insensitive test',function (bddone) {
       var article = articleModule.create({collection:"small collection",commentList:[{text:"Hallo @en"}],commentStatus:"open",commentRead:{PaulFromMars:0}});
       var result = article.getPreview("fullDE","TheFive");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: blue;">\n<span class=\"glyphicon glyphicon-envelope\"></span><mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
+      should(result).equal('<li id="undefined_0"><span class="glyphicon glyphicon-comment" style="color: blue"></span>\n<span class=\"glyphicon glyphicon-envelope\"></span><mark>small collection <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a>\n</mark></li>');
       bddone();
     });
     it('should generate a preview with a comment and open status and reference for all user',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo @all"}],commentStatus:"open",commentRead:{TheFive:0}});
       var result = article.getPreview("fullDE","TheFive");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: orange;">\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
+      should(result).equal('<li id="undefined_0"><span class="glyphicon glyphicon-comment" style="color: orange"></span>\n<p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and open status and reference for a specific user',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"Hallo @user"}],commentStatus:"open"});
       var result = article.getPreview("fullDE","user");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: red;">\n<span class=\"glyphicon glyphicon-envelope\"></span><p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
+      should(result).equal('<li id="undefined_0"><span class="glyphicon glyphicon-comment" style="color: red"></span>\n<span class=\"glyphicon glyphicon-envelope\"></span><p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and open status and reference for a specific language',function (bddone) {
       var article = articleModule.create({markdownDE:"small markdown",commentList:[{text:"simpel text"},{text:"Hallo @DE"},{text:"dudeldü"}],commentStatus:"open",commentRead:{user:0}});
       var result = article.getPreview("fullDE","user");
-      should(result).equal('<li id="undefined_0" style=" border-left-style: solid; border-color: orange;">\n<span class=\"glyphicon glyphicon-envelope\"></span><p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
+      should(result).equal('<li id="undefined_0"><span class="glyphicon glyphicon-comment" style="color: orange"></span>\n<span class=\"glyphicon glyphicon-envelope\"></span><p>small markdown <a href="/article/0?style=fullDE"><span class="glyphicon glyphicon-eye-open"></span></a> <a href="/article/0?style=fullDE&edit=true"><span class="glyphicon glyphicon-edit"></span></a></p>\n\n</li>');
       bddone();
     });
     it('should generate a preview with a comment and solved status',function (bddone) {
