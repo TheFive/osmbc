@@ -98,10 +98,10 @@ Article.prototype.getCommentMention = function getCommentMention(user,lang1,lang
     }
   }
   if (!comment) return null;
-  if (comment.search(new RegExp("@"+user,"i"))>=0) return "user";
-  if (lang1 && comment.search(new RegExp("@"+lang1,"i"))>=0) return "language";
-  if (lang2 && comment.search(new RegExp("@"+lang2,"i"))>=0) return "language";
-  if (comment.search(new RegExp("@all","i"))>=0) return "language";
+  if (comment.search(new RegExp("@"+user+" ","i"))>=0) return "user";
+  if (lang1 && comment.search(new RegExp("@"+lang1+" ","i"))>=0) return "language";
+  if (lang2 && comment.search(new RegExp("@"+lang2+" ","i"))>=0) return "language";
+  if (comment.search(new RegExp("@all ","i"))>=0) return "language";
   if (this.comment || (this.commentList && this.commentList.length>0)) return "other";
   return null;
 };
