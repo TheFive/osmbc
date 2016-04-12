@@ -20,6 +20,8 @@
             {"blog":"BLOG","user":"USER1","property":"collection","to":"value2"},
             {"blog":"BLOG","user":"USER1","property":"collection","to":"value3"},
             {"blog":"BLOG","user":"USER2","property":"markdownDE","to":"value"},
+            {"blog":"BLOG","user":"USERX","property":"markdownDE","to":"no translation"},
+            {"blog":"BLOG","user":"USERX","property":"markdownDE","to":"no translation"},
             {"blog":"BLOG","user":"USER2","property":"markdownDE","to":"value"},
             {"blog":"BLOG","user":"USER2","property":"markdownDE","to":"value"},
             {"blog":"BLOG","user":"USER3","property":"collection","to":"value"},

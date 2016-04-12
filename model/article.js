@@ -833,6 +833,15 @@ Article.prototype.addNotranslate = function addNotranslate(user,callback) {
   return self.setAndSave(user,change,callback);
 };
 
+
+
+function isMarkdown(text) {
+  debug('isMarkdonw');
+  if (typeof(text)!=="string") return false;
+  if (text.trim() === "") return false;
+  if (text === "no translation") return false;
+  return true;
+}
 // Calculate a Title with a maximal length for Article
 // The properties are tried in this order
 // a) Title
@@ -915,3 +924,5 @@ module.exports.removeOpenBlogCache = function() {
 };
 
 module.exports.Class = Article;
+
+module.exports.isMarkdown = isMarkdown;
