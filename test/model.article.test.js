@@ -55,9 +55,9 @@ describe('model/article', function() {
       var article = articleModule.create({markdown:"test"});
       article.commentList = [];
       article.commentList.push({user:"User",timestamp:new Date(),text:comment1});
-      article.commentList.push({user:"User",timestamp:new Date(),text:comment2});
+      if(comment2) article.commentList.push({user:"User",timestamp:new Date(),text:comment2});
       return article;
-    };
+    }
     it('should select language in correct case',function(){
       let a= createArticleWithComment("@DE should to something","Comment for @ES");
       should(a.getCommentMention("User","DE")).eql("language");
@@ -86,6 +86,11 @@ describe('model/article', function() {
       should(a.getCommentMention("User","ES")).eql("other");
 
     });
+    it('should not select language if user is at the end',function(){
+      let a= createArticleWithComment("should to something @user");
+      should(a.getCommentMention("user","DE")).eql("user");
+
+    }); //Hallo @user
   });
   describe('createNewArticle',function() {
     it('should createNewArticle with prototype',function(bddone) {

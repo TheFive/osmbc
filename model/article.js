@@ -95,7 +95,7 @@ Article.prototype.getCommentMention = function getCommentMention(user,lang1,lang
     }
   }
   if (!comment) return null;
-  if (comment.search(new RegExp("@"+user+" ","i"))>=0) return "user";
+  if (comment.search(new RegExp("@"+user+"\\b","i"))>=0) return "user";
 
   if (lang1 && comment.search(new RegExp("@"+lang1+"\\b","i"))>=0) return "language";
   if (lang2 && comment.search(new RegExp("@"+lang2+"\\b","i"))>=0) return "language";
