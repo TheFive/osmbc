@@ -183,7 +183,8 @@ block content
               |#{params.right_lang}
         .row
           .col-md-1
-            |Markdown 
+            p="Markdown"
+
           +leftcolumn
             if blog && !blog.isEditable(params.left_lang)
               .panel.panel-default
@@ -196,7 +197,8 @@ block content
               textarea.form-control(id="markdownLEFT" placeholder = "#{p}" spellcheck = "true" lang="#{params.left_lang}" name = "markdown#{params.left_lang}" rows = 6) #{article["markdown"+params.left_lang]}
               div(id="text_left")
                 |'no translation' or '-' to specify no translation wanted.
- 
+
+
           +rightcolumn
             if blog && !blog.isEditable(params.right_lang)
               .panel.panel-default
@@ -229,27 +231,8 @@ block content
                 .panel-body(id="previewRIGHT")
                   :verbatim
                     !{article["textHtml"+params.right_lang]}
-        .row
-          .col-md-1
-            |Comment <br>
-          .col-md-11
-            :verbatim
-            <pre>!{article.comment} </pre>
-        .row
-          .col-md-1
-          .col-md-5
-            if (article.comment && article.comment!="")
-              select(id="commentStatus",name="commentStatus").form-control
-                each status in ["open","solved"]
-                  if article.commentStatus
-                    if status == article.commentStatus
-                      option(value="#{status}" selected ) #{status}
-                    else
-                      option(value="#{status}"  ) #{status}
-                  else
-                      option(value="#{status}"  ) #{status}
 
-          
+
     else
      .row
         .col-md-1
@@ -331,33 +314,58 @@ block content
           +leftcolumn 
               .panel.panel-default
                 .panel-body #{article["markdown"+params.left_lang]}
+
+
+
+
           +rightcolumn
               .panel.panel-default
                 .panel-body #{article["markdown"+params.right_lang]}
       .row
         if article.categoryEN != "Picture"
           .col-md-1
-            |Preview
+            | Preview
+
 
           +leftcolumn 
             .panel.panel-default
               .panel-body(id="previewLEFT")
+                div
                   :verbatim
                     !{article["textHtml"+params.left_lang]}
-          +rightcolumn 
+
+
+          +rightcolumn
             .panel.panel-default
               .panel-body(id="previewRIGHT")
                   :verbatim
                     !{article["textHtml"+params.right_lang]}
+  .row
+    .col-md-1
+    +leftcolumn
+      if params.left_lang === "DE"
+        a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');console.log(taf);console.log(taform);taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufgruf einer externen Seite)
 
+
+
+  form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
+    input.form-control(type="hidden" name = "text" id ="textanalysefield")
 
   .row
     if (article.commentList)
+
+      - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
+      - if (!upToComment) upToComment = -1;
       h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
       each comment,i in article.commentList
         .row
           .col-md-12
-            b=comment.user
+            b
+              if (i > upToComment)
+                a(href="#{layout.htmlroot}/article/#{article.id}/markCommentRead?index=#{i}")
+                  span.glyphicon.glyphicon-envelope
+                span=" "
+              span=comment.user
             span=" "
             span.text-muted.small=layout.moment(comment.timestamp).fromNow()
             if (comment.editstamp)
@@ -712,7 +720,9 @@ block scripts
          textLeft.style.backgroundColor ="";
          textLeft.innerHTML = noTranslationText;
         }
-      }
+
+
+    }
       function onchangeRIGHT() {
         //console.log("onchangeRight");
         var mdEN = document.getElementById("markdownRIGHT").value;

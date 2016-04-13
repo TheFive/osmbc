@@ -184,6 +184,8 @@ function renderArticleId(req,res,next) {
 function searchAndCreate(req,res,next) {
   debug('searchAndCreate');
   var search = req.query.search;
+  var show = req.query.show;
+  if (!show) show = "15";
   if (req.query.edit && req.query.edit=="false") {
     var returnToUrl = config.getValue('htmlroot')+"/osmbc.html";
     if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
@@ -201,6 +203,7 @@ function searchAndCreate(req,res,next) {
                            search:search,
                            placeholder:placeholder,
                            showCollect:true,
+                           show:show,
                            categories:blogModule.getCategories(),
                            foundArticles:result});
   });
@@ -211,6 +214,7 @@ function postArticle(req, res, next) {
   debug('postArticle');
 
   var id = req.params.article_id;
+  var noTranslation = req.query.notranslation;
 
  
 
@@ -265,6 +269,17 @@ function postArticle(req, res, next) {
       debug('postArticle->setValues');
       if (err) {return next(err);}
       should.exist(article);
+      if (noTranslation === "true") {
+        var languages = config.getLanguages();
+        for (var i=0;i<languages.length;i++){
+          var lang = languages[i];
+          if (changes["markdown"+lang]) continue;
+          if (article["markdown"+lang] && article["markdown"+lang].trim()==="") continue;
+          if (lang === req.user.language) continue;
+          changes["markdown"+lang] = "no translation";
+        }
+      }
+
       article.setAndSave(req.user,changes,function(err) {
        debug('postArticle->setValues->setAndSave');
         if (err ) {
@@ -402,6 +417,47 @@ function postEditComment(req, res, next) {
   );
 }
 
+function markCommentRead(req, res, next) {
+  debug('markCommentRead');
+
+  var id = req.params.article_id;
+  var number = req.query.index;
+
+
+
+  var article = null;
+  var returnToUrl;
+
+  async.parallel([
+      function searchArticle(cb) {
+        debug('markCommentRead->searchArticle');
+        if (typeof(id)=='undefined') return cb();
+        articleModule.findById(id,function(err,result) {
+          debug('markCommentRead->searchArticle->findById');
+          if (err) return cb(err);
+          if (!result) return cb(new Error("Article ID does not exist"));
+          article = result;
+          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
+          cb();
+        });
+      }
+    ],
+    function setValues(err) {
+      debug('markCommentRead->setValues');
+      if (err) {return next(err);}
+      should.exist(article);
+      article.markCommentRead(req.user,number,function(err) {
+        debug('markCommentRead->markCommentRead');
+        if (err ) {
+          next(err);
+          return;
+        }
+        res.redirect(returnToUrl);
+      });
+    }
+  );
+}
+
 function createArticle(req, res, next) {
   debug('createArticle');
 
@@ -449,6 +505,9 @@ function createArticle(req, res, next) {
 function searchArticles(req, res, next) {
   debug('search');
   var search = req.query.search;
+  var show = req.query.show;
+  if (!show) show = "15";
+
   if (!search || typeof(search)=='undefined') search = "";
   var result = null;
  
@@ -472,6 +531,7 @@ function searchArticles(req, res, next) {
       should.exist(res.rendervar);
       res.render("collect",{layout:res.rendervar.layout,
                             search:search,
+                            show:show,
                             foundArticles:result,
                             placeholder:{},
                             showCollect:false,
@@ -558,7 +618,7 @@ exports.searchAndCreate = searchAndCreate;
 exports.searchArticles = searchArticles;
 exports.postNewComment = postNewComment;
 exports.postEditComment = postEditComment;
-
+exports.markCommentRead = markCommentRead;
 
 // And configure router to use render Functions
 router.get('/list', exports.renderList);
@@ -568,6 +628,7 @@ router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
 
 router.get('/:article_id', exports.renderArticleId );
+router.get('/:article_id/markCommentRead', exports.markCommentRead );
 
 router.post('/:article_id/addComment', exports.postNewComment);
 router.post('/:article_id/setMarkdown/:lang', exports.postSetMarkdown);

@@ -83,6 +83,10 @@ describe('model/parseEvent',function() {
       should(parseEvent.parseWikiInfo('You find on [[irc]] the Event [https://test.test/test Text for Link]'))
         .equal('You find on [irc](https://wiki.openstreetmap.org/wiki/irc) the Event [Text for Link](https://test.test/test)');
     });
+    it('should parse <big> events </big>',function(){
+      should(parseEvent.parseWikiInfo('You find on [[irc]] the Event <big>[https://test.test/test Text for Link]</big>'))
+        .equal('You find on [irc](https://wiki.openstreetmap.org/wiki/irc) the Event [Text for Link](https://test.test/test)');
+    });
 
 
   });
@@ -250,7 +254,6 @@ describe('model/parseEvent',function() {
     it('should Do an API call and resturn JSON',function(bddone){
       parseEvent.calenderToJSON({},function(err,result){
         var converted=JSON.parse(JSON.stringify(result));
-        console.log(JSON.stringify(result,undefined,2));
         var expected = JSON.parse(fs.readFileSync(path.join(__dirname,'/data/calendar.json'),"utf8"));
         should(converted).eql(expected);
         bddone();

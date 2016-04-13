@@ -10,13 +10,16 @@ var moment   = require('moment');
 var help     = require('../routes/help.js');
 
 
-var blogModule    = require('../model/blog.js');
-var blogRenderer  = require('../render/BlogRenderer.js');
-var logModule     = require('../model/logModule.js');
+var blogModule     = require('../model/blog.js');
+var blogRenderer   = require('../render/BlogRenderer.js');
+var logModule      = require('../model/logModule.js');
 var settingsModule = require('../model/settings.js');
 
-function findBlogByRouteId(id,callback) {
+function findBlogByRouteId(id,user,callback) {
   var blog;
+  should(typeof(user)).eql('object');
+  should(typeof(callback)).eql('function');
+
   async.series([
   function findID(cb) {
     blogModule.findById(id,function(err,r) {
@@ -36,7 +39,7 @@ function findBlogByRouteId(id,callback) {
     });
   },
   function countItems(cb) {
-    if (blog) return blog.countUneditedMarkdown(cb);
+    if (blog) return blog.calculateDerived(user,cb);
     return cb();
   }], function(err) {
     if (err) return callback(err);
@@ -68,7 +71,7 @@ function renderBlogId(req, res, next) {
 
 
 
-  findBlogByRouteId(id,function(err,blog) {
+  findBlogByRouteId(id,req.user,function(err,blog) {
     if (err) return next(err);
     should.exist(blog);
     id = blog.id;
@@ -168,7 +171,7 @@ function renderBlogId(req, res, next) {
 
   var id = req.params.blog_id;
  
-  findBlogByRouteId(id,function(err,blog) {
+  findBlogByRouteId(id,req.user,function(err,blog) {
     if (err) return next(err);
     should.exist(blog);
     id = blog.id;
@@ -245,7 +248,7 @@ function renderBlogList(req, res, next) {
         count:["blogs",function(callback,result) {
                   async.each(result.blogs,function(item,cb){
                     async.parallel([
-                      item.countUneditedMarkdown.bind(item),
+                      item.calculateDerived.bind(item,req.user),
                       item.calculateTimeToClose.bind(item)
                     ],function finalFunction(err){return cb(err);});
                   },function(err){
@@ -265,7 +268,7 @@ function renderBlogPreview(req, res, next) {
  
   var id = req.params.blog_id;
 
-  findBlogByRouteId(id,function(err,blog) {
+  findBlogByRouteId(id,req.user,function(err,blog) {
     if (err) return next(err);
     should.exist(blog);
 
@@ -330,7 +333,7 @@ function renderBlogPreviewAndEdit(req, res, next) {
 
   var id = req.params.blog_id;
 
-  findBlogByRouteId(id,function(err,blog) {
+  findBlogByRouteId(id,req.user,function(err,blog) {
     if (err) return next(err);
     should.exist(blog);
 
@@ -344,7 +347,7 @@ function renderBlogPreviewAndEdit(req, res, next) {
     async.auto({
         dataCollect:function(callback) {
           debug("converter function");
-          blog.getPreviewData({lang:lang},function(err,result) {
+          blog.getPreviewData({lang:lang,collectors:true},function(err,result) {
             return callback(err,result);
           });
         }
@@ -384,7 +387,7 @@ function editBlogId(req,res,next) {
   if (params.edit && params.edit=="false") {
      res.redirect(config.getValue('htmlroot')+"/blog/edit/"+id);  
   }
-  findBlogByRouteId(id,function(err,blog) {
+  findBlogByRouteId(id,req.user,function(err,blog) {
     if (err) return next(err);
     should.exist(blog);
     should.exist(res.rendervar);
@@ -398,7 +401,7 @@ function editBlogId(req,res,next) {
 function postBlogId(req, res, next) {
   debug('postBlogId');
   var id = req.params.blog_id;
-  findBlogByRouteId(id,function(err,blog) {
+  findBlogByRouteId(id,req.user,function(err,blog) {
     if (err) return next(err);
     should.exist(blog);
     var categories;

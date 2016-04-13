@@ -17,6 +17,16 @@ var htmlRoot = config.getValue("htmlroot");
 var bootstrap = config.getValue("bootstrap");
 
 
+function calculateUnreadMessages(list,user) {
+  var result = 0;
+  for (let k=0;k<list.length;k++) {
+    let a = list[k];
+    if (a.commentRead && a.commentRead[user]>= a.commentList.length-1) continue;
+    result +=1;
+  }
+  return result;
+}
+
 
 function prepareRenderLayout(req,res,next) {
   debug('prepareRenderLayout');
@@ -38,7 +48,8 @@ function prepareRenderLayout(req,res,next) {
   if (config.getLanguages()) languages = config.getLanguages();
 
  
-
+  var userMentions = 0;
+  var langMentions = 0;
   // Used for display changes
 
   // Params is used for indicating Edit
@@ -60,8 +71,15 @@ function prepareRenderLayout(req,res,next) {
           list.push(result[i]);
         }
         async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
-        },function(err){callback(err,list);});
+          item.calculateDerived(req.user,function(err){
+            if (err) cb(err);
+            userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
+            langMentions += calculateUnreadMessages(item._langMention,req.user.OSMUser);
+            cb();
+          });
+        },function(err){
+          callback(err,list);
+        });
       });
     },
     listOfEditBlog:
@@ -75,7 +93,13 @@ function prepareRenderLayout(req,res,next) {
           }
         }
         async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
+          item.calculateDerived(req.user,function(err){
+            if (err) cb(err);
+            userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
+            langMentions += calculateUnreadMessages(item._langMention,req.user.OSMUser);
+            cb();
+
+          });
         },function(err){callback(err,list);});
       });
     },
@@ -91,7 +115,12 @@ function prepareRenderLayout(req,res,next) {
           }
         }
         async.each(list,function(item,cb){
-          item.countUneditedMarkdown(cb);
+          item.calculateDerived(req.user,function (err){
+            if (err) cb(err);
+            userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
+            langMentions += calculateUnreadMessages(item._langMention,req.user.OSMUser);
+            cb();
+          });
         },function(err){callback(err,list);});
       });
     }
@@ -104,6 +133,8 @@ function prepareRenderLayout(req,res,next) {
                       listOfOrphanBlog:result.listOfOrphanBlog,
                       htmlroot: htmlRoot,
                       languages:languages,
+                      userMentions:userMentions,
+                      langMentions:langMentions,
                       language:req.user.getMainLang(),
                       language2:req.user.getSecondLang(),
                       listOfOpenBlog:result.listOfOpenBlog,

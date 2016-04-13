@@ -20,38 +20,46 @@ block all
         script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
     body
 
-        // Fixed navbar
-        .navbar.navbar-default.navbar-fixed-top(role='navigation')
-          .container-fluid
-            .navbar-header.pull-left
-              if layout.osmbc_version === layout.user.lastChangeLogView
-                a.navbar-brand(href='#{layout.htmlroot}/osmbc.html') #{layout.appName}
-              else
-                a.navbar-brand.bg-success(href='#{layout.htmlroot}/changelog') Whats New?
-              ul.nav.navbar-nav.pull-left
-                li
-                  a(href='#{layout.htmlroot}/article/create') Collect
-            .navbar-header
-              button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')
-                span.sr-only Toggle navigation
-                span.icon-bar
-                span.icon-bar
-                span.icon-bar
-            .navbar-collapse.collapse
-              - function blogNumber(blog,language) {return ((blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[language]:"?") }
-              - function blogCount(blog,language) {return ((blog && blog._countExpectedMarkdown)?blog._countExpectedMarkdown[language]:"?") }
+
+      // Fixed navbar
+      .navbar.navbar-default.navbar-fixed-top(role='navigation')
+        .container-fluid
+          .navbar-header.pull-left
+            if layout.osmbc_version === layout.user.lastChangeLogView
+              a.navbar-brand(href='#{layout.htmlroot}/osmbc.html') #{layout.appName}
+            else
+              a.navbar-brand.bg-success(href='#{layout.htmlroot}/changelog') Whats New?
+            ul.nav.navbar-nav.pull-left
+              li
+                a(href='#{layout.htmlroot}/article/create') Collect
+            ul.nav.navbar-nav.pull-left
+
+              li
+                a(href='#{layout.htmlroot}/usert/inbox')="Inbox "
+                  span.badge(style="background-color:red")=layout.userMentions
+                  span.badge(style="background-color:orange")=layout.langMentions
+
+
+          .navbar-header
+            button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+              span.sr-only Toggle navigation
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+          .navbar-collapse.collapse
+            - function blogNumber(blog,language) {return ((blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[language]:"?") }
+            - function blogCount(blog,language) {return ((blog && blog._countExpectedMarkdown)?blog._countExpectedMarkdown[language]:"?") }
 
               ul.nav.navbar-nav.navbar-left
-                if (layout.listOfOpenBlog && layout.listOfOpenBlog.length>0)
+                if (layout.listOfOpenBlog && layout.listOfOpenBlog.length > 0)
                   li
                     a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')
-                      |#{layout.listOfOpenBlog[0].name}
+                      | #{layout.listOfOpenBlog[0].name}
                       span.badge.osmbc-lang
-                        |#{blogNumber(layout.listOfOpenBlog[0],layout.language)}
+                        | #{blogNumber(layout.listOfOpenBlog[0], layout.language)}
                       if layout.language2
                         span.badge.osmbc-lang2.hidden-xs
-                          |#{blogNumber(layout.listOfOpenBlog[0],layout.language2)}
-
+                          | #{blogNumber(layout.listOfOpenBlog[0], layout.language2)
                 if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
                   li
                     a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].name}')

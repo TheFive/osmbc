@@ -50,6 +50,7 @@ describe('routes/blog',function() {
         var req = {};
         req.params = {};
         req.params.blog_id = newId;
+        req.user = {};
 
         var res = {};
         var next;
@@ -76,6 +77,7 @@ describe('routes/blog',function() {
         var newId = "WN332";
         var req = {};
         req.params = {};
+        req.user = {};
         req.params.blog_id = newId;
         var res = {};
         var next;
@@ -106,6 +108,7 @@ describe('routes/blog',function() {
           var req = {};
           req.params = {};
           req.params.blog_id = newId;
+          req.user = {};
           var res = {};
           var next;
 
@@ -138,6 +141,7 @@ describe('routes/blog',function() {
         req.params = {};
         req.params.blog_id = newId;
         req.query = {};
+        req.user = {};
         req.session = {articleReturnTo:"returnToUrlXX"};
         var next;
         var res = {rendervar:{layout:"calculated layout"}};

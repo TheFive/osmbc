@@ -1,0 +1,34 @@
+extends layout
+
+
+
+
+block content
+  .row
+    p.bg-info="This is your new inbox. All comments with mentions are shown here. Use the envelope in the article view to mark a comment as read."
+
+  - var bloglist = [];
+  - bloglist = bloglist.concat(layout.listOfOpenBlog)
+  - bloglist = bloglist.concat(layout.listOfEditBlog)
+  - bloglist = bloglist.concat(layout.listOfReviewBlog)
+
+  .row
+    h4= "Inbox Direct Mention:"
+
+  for blog in bloglist
+    if blog._userMention.length>0
+      h5=blog.name
+      ul
+        for article in blog._userMention
+            :verbatim
+              !{article.getPreview("overview",layout.user.OSMUser)}
+  .row
+    h4= "Inbox Indirect Mention:"
+
+  for blog in bloglist
+    if blog._langMention.length > 0
+      h5=blog.name
+      ul
+        for article in blog._langMention
+          :verbatim
+            !{article.getPreview("overview",layout.user.OSMUser)}

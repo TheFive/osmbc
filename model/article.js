@@ -78,7 +78,40 @@ function createNewArticle (proto,callback) {
   article.save(callback);
 }
 
+// return mention in comments of article
+// user == User is mentioned
+// language == lang1 or lang2 or all is mentioned
+// other == there is a comment, but no mentioning
+// null There is no comment.
 
+Article.prototype.getCommentMention = function getCommentMention(user,lang1,lang2) {
+  debug('Article.prototype.getCommentMention');
+
+  if (this.commentStatus === "solved") return null;
+  var comment = this.comment;
+  if (this.commentList) {
+    for (var i = 0; i < this.commentList.length; i++) {
+      comment += " " + this.commentList[i].text;
+    }
+  }
+  if (!comment) return null;
+  if (comment.search(new RegExp("@"+user+" ","i"))>=0) return "user";
+
+  if (lang1 && comment.search(new RegExp("@"+lang1+"\\b","i"))>=0) return "language";
+  if (lang2 && comment.search(new RegExp("@"+lang2+"\\b","i"))>=0) return "language";
+  if (comment.search(new RegExp("@all\\b","i"))>=0) return "language";
+  if (this.comment || (this.commentList && this.commentList.length>0)) return "other";
+  return null;
+};
+
+Article.prototype.getCommentRead = function getCommentRead(user) {
+  debug('Article.prototype.getCommentUnread');
+  if (!this.commentList) return false;
+  if (!this.commentRead) return false;
+  if (typeof(this.commentRead[user]) == "undefined") return false;
+  if (this.commentRead[user]<this.commentList.length-1) return false;
+  return true;
+};
 
 
 
@@ -141,20 +174,21 @@ Article.prototype.getPreview = function getPreview(style,user) {
   var liOFF = '</li>';
   var comment = "";
   if (this.comment) comment += this.comment;
-  if (this.commentList) {
-    for (var i=0;i<this.commentList.length;i++) {
-      comment += " "+ this.commentList[i].text;
-    }
-  }
+  var unreadGlyp = "";
+  if (!this.getCommentRead(user)) unreadGlyp = '<span class="glyphicon glyphicon-envelope"></span>';
 
-  if (options.edit && options.comment && comment !== "") {
-    if (!(typeof(this.commentStatus)=="string" && this.commentStatus=="solved")) {
-      var commentColour = "blue";
-      if (comment.search(new RegExp("@"+user,"i"))>=0) commentColour = "red";
-      if (comment.search(new RegExp("@"+options.left_lang,"i"))>=0) commentColour = "orange";
-      if (comment.search(new RegExp("@"+options.right_lang,"i"))>=0) commentColour = "orange";
-      if (comment.search(new RegExp("@all","i"))>=0) commentColour = "orange";
-      liON = '<li id="'+pageLink+'" style=" border-left-style: solid; border-color: '+commentColour+';">\n';
+
+  if (options.edit && options.comment) {
+    var commentType = self.getCommentMention(user,options.left_lang,options.right_lang);
+    var commentColour = null;
+    switch (commentType) {
+      case "user":commentColour = "red";break;
+      case "language":commentColour = "orange";break;
+      case "other":commentColour = "blue";break;
+    }
+    if (commentColour) {
+      liON = '<li id="'+pageLink+'"><span class="glyphicon glyphicon-comment" style="color: '+commentColour+'"></span>\n';
+      liON += unreadGlyp;
     }
   }
   if (this.categoryEN == "Picture") {
@@ -700,6 +734,8 @@ Article.prototype.addComment = function addComment(user,text,callback) {
   if (!self.commentList) self.commentList = [];
   var commentObject = {user:user.OSMUser,timestamp:new Date(),text:text};
   self.commentList.push(commentObject);
+  if (!self.commentRead) self.commentRead = {};
+  self.commentRead[user.OSMUser] = self.commentList.length-1;
   async.series([
     function sendit(cb) {
       debug('sendit');
@@ -762,6 +798,30 @@ Article.prototype.editComment = function editComment(user,index,text,callback) {
   );
 };
 
+/*
+Store the number of comments, a user has read.
+-1 is indicating, nothing is read. (same as a non existing value).
+The Value has to be between -1 and the length of the comment list -1.
+*/
+Article.prototype.markCommentRead = function markCommentRead(user,index,callback) {
+  debug('Article.prototype.markCommentRead');
+  should(typeof(user)).eql('object');
+  should(typeof(callback)).eql('function');
+  var self = this;
+
+  // nothing to read, ignore request.
+  if (!self.commentList) return callback();
+
+  // Do not mark more comments then necessary as read
+  if (index >= self.commentList.length) index = self.commentList.length-1;
+
+  should(index).within(-1,self.commentList.length-1);
+
+  if (!self.commentRead) self.commentRead = {};
+  self.commentRead[user.OSMUser]= index;
+  self.save(callback);
+};
+
 Article.prototype.addNotranslate = function addNotranslate(user,callback) {
   debug('Article.prototype.addNotranslate');
   var self = this;
@@ -775,6 +835,15 @@ Article.prototype.addNotranslate = function addNotranslate(user,callback) {
   return self.setAndSave(user,change,callback);
 };
 
+
+
+function isMarkdown(text) {
+  debug('isMarkdonw');
+  if (typeof(text)!=="string") return false;
+  if (text.trim() === "") return false;
+  if (text === "no translation") return false;
+  return true;
+}
 // Calculate a Title with a maximal length for Article
 // The properties are tried in this order
 // a) Title
@@ -857,3 +926,5 @@ module.exports.removeOpenBlogCache = function() {
 };
 
 module.exports.Class = Article;
+
+module.exports.isMarkdown = isMarkdown;

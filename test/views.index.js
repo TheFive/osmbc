@@ -69,7 +69,6 @@ describe('views/index', function() {
       this.timeout(12000);
       browser.referer="/osmbc";
       browser.visit('/language?lang=EN', function(err){
-        console.log(browser.html());
         should.not.exist(err);
         browser.reload(function(err){
           should.not.exist(err);

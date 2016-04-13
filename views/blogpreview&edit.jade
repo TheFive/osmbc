@@ -14,30 +14,87 @@ block content
         button.btn.btn-default(onclick ="location.href='#{returnToUrl}';") Back To Normal
 
   .row
-    .col-md-12
+    .col-md-1
+    .col-md-11
       :verbatim
         !{renderer.subtitle(lang)}
   for c in categories
     if (articles[c.EN])
       .row
-        .col-md-12
+        .col-md-1
+        .col-md-11
           :verbatim
             !{renderer.categoryTitle(lang,c)}
       for a in articles[c.EN]
         if a["markdown"+lang]!=="no translation"
           .row
-            .col-md-12
+            .col-md-1
+              - numCol = 0;
+              - if (a.author && a.author.collection) numCol = a.author.collection.split(",").length;
+              - numEd = 0;
+              - if (a.author && a.author["markdown"+lang]) numEd = a.author["markdown"+lang].split(",").length;
+              span.label.label-info.small-margin=numCol
+              span.label.label-success.small-margin=numEd
+              - mention = a.getCommentMention(layout.user.OSMUser,layout.user.language)
+              if mention == "other"
+                span.glyphicon.glyphicon-comment.small-margin(style="color:blue")
+              if mention == "user"
+                span.glyphicon.glyphicon-comment.small-margin(style="color:red")
+              if mention == "language"
+                span.glyphicon.glyphicon-comment.small-margin(style="color:orange")
+              //if mention && !a.getCommentRead(layout.user.OSMUser)
+                //span.glyphicon.glyphicon-envelope.small-margin
+
+
+              a(href="#{layout.htmlroot}/article/#{a.id}" target="_blank")
+                span.glyphicon.glyphicon-open.small-margin
+
+
+            .col-md-11
+              div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
+                ul
+                  :verbatim
+                    !{renderer.article(lang,a)}
+
               div.hidden(id="div#{a.id}")
                 form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
                   textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(#{a.id});") #{a["markdown"+lang]}
                   textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
+                p
+                  if a.author && a.author.collection
+                    span="Collected: ["
+                    for author in a.author.collection
+                      span=author
+                    span="] "
+                  if a.author && a.author["markdown"+lang]
+                    span="Edited: ["
+                    for author in a.author["markdown"+lang]
+                      span=author
+                    span="] "
+  .row
+    h2="Symbol Legend"
+    p
+      span.label.label-info.small-margin="X"
+      span=" = number of collectors "
+    p
+      span.label.label-success.small-margin="X"
+      span=" = number of editors in shown language"
+    p
+      span.glyphicon.glyphicon-comment.small-margin(style="color:blue")
+      span=" = there is a comment in the article"
+    p
+      span.glyphicon.glyphicon-comment.small-margin(style="color:red")
+      span=" = there is a comment with personal mention in the article"
+    p
+      span.glyphicon.glyphicon-comment.small-margin(style="color:orange")
+      span=" = there is a comment with language mention in the article"
+    p
+      a(href="#" target="_blank")
+        span.glyphicon.glyphicon-open.small-margin
+      span=" open the article in a new tab"
 
-                //  button.btn.btn-small.btn-primary(type = "button" onclick ="if (document.getElementById('markdown'+#{a.id}).value.trim()==='') return; document.getElementById('EditArticle'+#{a.id}).submit();") Save
-                  button.btn.btn-small.btn-default(type = "button" onclick ="window.location.reload();") Cancel
-              div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');} openEditor.classList.toggle('hidden');return false;")
-                ul
-                  :verbatim
-                    !{renderer.article(lang,a)}
+
+
 
 block scripts
   script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
@@ -58,9 +115,9 @@ block scripts
     window.onbeforeunload = function(event) {
       // store the scroll Position in the local Store
       s = {x:window.scrollX,y:window.scrollY};
-      console.log("Check local storage");
+
       if (typeof(Storage)!=="undefined") {
-        console.log("Storing data");
+
         window.sessionStorage.blogUrl = window.location.href;
         window.sessionStorage.blogX = s.x;
         window.sessionStorage.blogY = s.y;
@@ -68,7 +125,7 @@ block scripts
     };
 
     function onLeaveText(id) {
-      console.log("on change called");
+
       var oldValue = document.getElementById("oldMarkdown"+id).value;
       var newValue = document.getElementById("markdown"+id).value;
       if (oldValue === newValue) return;

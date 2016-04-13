@@ -28,7 +28,7 @@ describe('views/article', function() {
   beforeEach(function(bddone) {
     async.series([
       testutil.clearDB,
-      function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
+      function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full",language:"DE"},cb); },
       function createBlog(cb) {blogModule.createNewBlog({OSMUser:"test"},{name:'blog'},cb);},
       function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"Link1: http://www.test.dä/holla and other"},function(err,article){
         if (article) articleId = article.id;
@@ -144,7 +144,7 @@ describe('views/article', function() {
           
             browser.document.getElementById('collection').value=link;
             browser.evaluate('onchangeCollection()');
-            should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="'+linkUrl+'" target="_blank">'+linkUrl+'</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nEN&amp;u='+linkUrl+'" target="_blank"> \nEN</a><br>\n</p>');
+            should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="'+linkUrl+'" target="_blank">'+linkUrl+'</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u='+linkUrl+'" target="_blank"> \nDE</a><br>\n</p>');
           }
           bddone2();          
       });
@@ -152,14 +152,14 @@ describe('views/article', function() {
       
         browser.document.getElementById('collection').value="Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: http://www.openstreetmap.org/user/Severák/diary/37681";
         browser.evaluate('onchangeCollection()');
-        should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nEN&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank"> \nEN</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nEN&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank"> \nEN</a><br>\n</p>');
+        should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank"> \nDE</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank"> \nDE</a><br>\n</p>');
         bddone();
       });
       it('should show multiple links from collection only separated by carrige return', function(bddone){
       
         browser.document.getElementById('collection').value="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681";
         browser.evaluate('onchangeCollection()');
-        should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nEN&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank"> \nEN</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nEN&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank"> \nEN</a><br>\n</p>');
+        should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank"> \nDE</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl= \nDE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank"> \nDE</a><br>\n</p>');
         bddone();
       });
     });
@@ -204,6 +204,38 @@ describe('views/article', function() {
                   should.exist(result);
                   should(result.length).eql(1);
                   should(result[0].collection).eql("searchfor");
+                  bddone();
+                });
+              });
+          });
+      });
+    });
+    it('should search and store collected article for one language',function(bddone){
+      this.timeout(maxTimer);
+      browser.visit("/article/create",function(err){
+        should.not.exist(err);
+        browser
+          .fill("search","searchfor")
+          .pressButton("SearchNow",function(err){
+            should.not.exist(err);
+            browser
+              .fill("title","Test Title for Article")
+              .click("button[id=OKLang]",function(err){
+                should.not.exist(err);
+                articleModule.find({title:"Test Title for Article"},function(err,result){
+                  should.not.exist(err);
+                  should.exist(result);
+                  // workaround, as zombie.js calles the submit two times
+                  //should(result.length).eql(1);
+                  should(result.length).eql(2);
+                  // so both post should be correct.
+                  for (var i=0;i<2;i++) {
+                    var article = result[i];
+                    should(article.collection).eql("searchfor");
+                    should.not.exist(article.markdownDE);
+                    should(article.markdownEN).eql("no translation");
+                    should(article.markdownES).eql("no translation");
+                  }
                   bddone();
                 });
               });
