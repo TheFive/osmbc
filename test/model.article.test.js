@@ -50,6 +50,43 @@ describe('model/article', function() {
       should(article instanceof articleModule.Class).be.True();
     });
   });
+  describe('getCommentMention',function() {
+    function createArticleWithComment(comment1,comment2){
+      var article = articleModule.create({markdown:"test"});
+      article.commentList = [];
+      article.commentList.push({user:"User",timestamp:new Date(),text:comment1});
+      article.commentList.push({user:"User",timestamp:new Date(),text:comment2});
+      return article;
+    };
+    it('should select language in correct case',function(){
+      let a= createArticleWithComment("@DE should to something","Comment for @ES");
+      should(a.getCommentMention("User","DE")).eql("language");
+      should(a.getCommentMention("User","ES")).eql("language");
+      should(a.getCommentMention("User","AT","ES")).eql("language");
+      should(a.getCommentMention("User","AT","DE")).eql("language");
+    });
+    it('should select language in different case',function(){
+      let a= createArticleWithComment("should to something @de","Comment for @es or What");
+      should(a.getCommentMention("User","DE")).eql("language");
+      should(a.getCommentMention("User","ES")).eql("language");
+      should(a.getCommentMention("User","AT","ES")).eql("language");
+      should(a.getCommentMention("User","AT","DE")).eql("language");
+    });
+    it('should select user in different case',function(){
+      let a= createArticleWithComment("should to something @user","Comment for @es or What");
+      should(a.getCommentMention("User","DE")).eql("user");
+      should(a.getCommentMention("User","ES")).eql("user");
+      should(a.getCommentMention("User","AT","ES")).eql("user");
+      should(a.getCommentMention("User","AT","DE")).eql("user");
+
+    });
+    it('should not select language if its part of user name',function(){
+      let a= createArticleWithComment("should to something @escadoni","Test more");
+      should(a.getCommentMention("escadoni","ES")).eql("user");
+      should(a.getCommentMention("User","ES")).eql("other");
+
+    });
+  });
   describe('createNewArticle',function() {
     it('should createNewArticle with prototype',function(bddone) {
       articleModule.createNewArticle({blog:"test",markdownDE:"**"},function (err,result){
