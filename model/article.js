@@ -731,6 +731,7 @@ Article.prototype.addComment = function addComment(user,text,callback) {
   var self = this;
 
   if (!self.commentList) self.commentList = [];
+  self.commentStatus = "open";
   var commentObject = {user:user.OSMUser,timestamp:new Date(),text:text};
   self.commentList.push(commentObject);
   if (!self.commentRead) self.commentRead = {};

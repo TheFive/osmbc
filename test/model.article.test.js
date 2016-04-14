@@ -874,6 +874,7 @@ describe('model/article', function() {
       var dataAfter = { 
             article:[{blog:"WN1",collection:"something",title:"test",id:'1',version:2,
                       commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"}],
+                      commentStatus:"open",
                       commentRead:{Test:0}}],
             change:[{blog:"WN1",oid:1,table:"article",from:"",to:"a comment",user:"Test",timestamp:timestampIso}]};
       var testFunction = function testFunction(cb) {
