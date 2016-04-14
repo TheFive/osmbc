@@ -107,7 +107,7 @@ block content
                 .col-md-5
                   input.btn.btn-large.btn-primary(type="submit", id="OK",value="OK")
                   a(href="#{layout.htmlroot}/article/searchandcreate?edit=false" class="btn btn-default" role="button") Cancel
-                  button.btn.btn-large.btn-info(id="OKLang",name="OKLang", onclick ="window.onbeforeunload=null; document.getElementById('input').action = '#{layout.htmlroot}/article/create?notranslation=true';document.getElementById('input').submit();") OK (only #{layout.user.language})
+                  button.btn.btn-large.btn-info(id="OKLang",name="OKLang", onclick ="window.onbeforeunload=null; document.getElementById('input').action = '#{layout.htmlroot}/article/create?notranslation=true';document.getElementById('input').submit();") OK (only #{layout.user.mainLang})
 
             
           .row

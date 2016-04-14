@@ -287,7 +287,7 @@ function postArticle(req, res, next) {
           var lang = languages[i];
           if (changes["markdown"+lang]) continue;
           if (article["markdown"+lang] && article["markdown"+lang].trim()==="") continue;
-          if (lang === req.user.language) continue;
+          if (lang === req.user.mainLang) continue;
           changes["markdown"+lang] = "no translation";
         }
       }
