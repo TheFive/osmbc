@@ -57,7 +57,7 @@ describe('model/article', function() {
       article.commentList.push({user:"User",timestamp:new Date(),text:comment1});
       article.commentList.push({user:"User",timestamp:new Date(),text:comment2});
       return article;
-    };
+    }
     it('should select language in correct case',function(){
       let a= createArticleWithComment("@DE should to something","Comment for @ES");
       should(a.getCommentMention("User","DE")).eql("language");
