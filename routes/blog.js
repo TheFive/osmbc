@@ -313,6 +313,7 @@ function renderBlogPreview(req, res, next) {
           return;
         } else {
           should.exist(res.rendervar);
+
          
           res.render('blogpreview',{layout:res.rendervar.layout,
                              blog:blog,
@@ -357,11 +358,22 @@ function renderBlogPreviewAndEdit(req, res, next) {
         should.exist(res.rendervar);
         var renderer = new blogRenderer.HtmlRenderer(blog);
 
+        /* res.render('blog',{layout:res.rendervar.layout,
+         main_text:main_text,
+         blog:blog,
+         changes:changes,
+         articles:articles,
+         style:style,
+         left_lang:options.left_lang,(--)
+         right_lang:options.right_lang, (--)
+         */
         res.render('blogpreview&edit',{layout:res.rendervar.layout,
             blog:blog,
             articles:result.dataCollect.articles,
             teamString:result.teamString,
             lang:lang,
+            left_lang:req.user.getMainLang(),
+            right_lang:req.user.getSecondLang(),
             renderer:renderer,
             categories:blog.getCategories()});
         }
