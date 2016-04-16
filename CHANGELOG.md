@@ -1,5 +1,17 @@
 # Change Log
 
+## [1.5.0](https://github.com/TheFive/osmbc/tree/1.5.0) (2016-04-16)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.2...1.5.0)
+
+**Implemented enhancements:**
+
+- Change to translation feature in collect to main language displayed. [\#428](https://github.com/TheFive/osmbc/issues/428)
+- Put configuration data into database. [\#382](https://github.com/TheFive/osmbc/issues/382)
+
+**Fixed bugs:**
+
+- @de is part of @derFred, so all @derFred comments are @DE Comments. [\#422](https://github.com/TheFive/osmbc/issues/422)
+
 ## [1.4.2](https://github.com/TheFive/osmbc/tree/1.4.2) (2016-04-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.1...1.4.2)
 
@@ -101,6 +113,10 @@
 
 ## [1.0.7b](https://github.com/TheFive/osmbc/tree/1.0.7b) (2016-03-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7a...1.0.7b)
+
+**Implemented enhancements:**
+
+- Separate admin from edit functions in user interface, Cleanup of editor view. [\#391](https://github.com/TheFive/osmbc/issues/391)
 
 **Merged pull requests:**
 
@@ -479,22 +495,8 @@
 ## [0.6.9b](https://github.com/TheFive/osmbc/tree/0.6.9b) (2016-01-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9a...0.6.9b)
 
-**Fixed bugs:**
-
-- If a comment is changed, the change is displayed character wise in the email. [\#290](https://github.com/TheFive/osmbc/issues/290)
-- Check on valid email address before sending out Welcome Email. [\#289](https://github.com/TheFive/osmbc/issues/289)
-
-**Merged pull requests:**
-
-- German flag - last change [\#288](https://github.com/TheFive/osmbc/pull/288) ([fredao](https://github.com/fredao))
-
 ## [0.6.9a](https://github.com/TheFive/osmbc/tree/0.6.9a) (2016-01-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9...0.6.9a)
-
-**Merged pull requests:**
-
-- geänderte Flaggen: Taiwan, Österreich, Deutschland [\#287](https://github.com/TheFive/osmbc/pull/287) ([fredao](https://github.com/fredao))
-- Hi theFive - hier kommen die neuen Flaggen [\#286](https://github.com/TheFive/osmbc/pull/286) ([fredao](https://github.com/fredao))
 
 ## [0.6.9](https://github.com/TheFive/osmbc/tree/0.6.9) (2016-01-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7a...0.6.9)
