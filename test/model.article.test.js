@@ -90,7 +90,7 @@ describe('model/article', function() {
       let a= createArticleWithComment("should to something @user");
       should(a.getCommentMention("user","DE")).eql("user");
 
-    }); 
+    });
   });
   describe('createNewArticle',function() {
     it('should createNewArticle with prototype',function(bddone) {

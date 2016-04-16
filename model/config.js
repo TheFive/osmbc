@@ -62,7 +62,7 @@ Config.prototype.getJSON = function getJSON() {
       return  yaml.safeLoad(this.yaml);
     }
     catch(err) {
-      return "YAML convert error for "+this.name + " " + err;
+      return {"Error":"YAML convert error for "+this.name + " " + err};
     }
   }
 };

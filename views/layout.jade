@@ -20,7 +20,6 @@ block all
         script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
     body
 
-
       // Fixed navbar
       .navbar.navbar-default.navbar-fixed-top(role='navigation')
         .container-fluid
@@ -38,147 +37,149 @@ block all
                 a(href='#{layout.htmlroot}/usert/inbox')="Inbox "
                   span.badge(style="background-color:red")=layout.userMentions
                   span.badge(style="background-color:orange")=layout.langMentions
-            .navbar-header
-              button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')
-                span.sr-only Toggle navigation
-                span.icon-bar
-                span.icon-bar
-                span.icon-bar
-            .navbar-collapse.collapse
-              - function blogNumber(blog,language) {return ((blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[language]:"?") }
-              - function blogCount(blog,language) {return ((blog && blog._countExpectedMarkdown)?blog._countExpectedMarkdown[language]:"?") }
 
-          ul.nav.navbar-nav.navbar-left
-            if (layout.listOfOpenBlog && layout.listOfOpenBlog.length > 0)
-              li
-                a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')
-                  | #{layout.listOfOpenBlog[0].name}
-                  span.badge.osmbc-lang
-                    | #{blogNumber(layout.listOfOpenBlog[0], layout.language)}
-                  if layout.language2
-                    span.badge.osmbc-lang2.hidden-xs
-                      | #{blogNumber(layout.listOfOpenBlog[0], layout.language2)}
 
-            if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
-              li
-                a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].name}')
-                  |#{layout.listOfEditBlog[0].name}
-                  span.badge.osmbc-lang
-                    |#{blogNumber(layout.listOfEditBlog[0],layout.language)}
-                  if layout.language2
-                    span.badge.osmbc-lang2
-                      |#{blogNumber(layout.listOfEditBlog[0],layout.language2)}
-            if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
-              li
-                a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].name}')
-                  |#{layout.listOfReviewBlog[0].name}
-                  span.badge.osmbc-lang
-                    |#{blogNumber(layout.listOfReviewBlog[0],layout.language)}
-                  if layout.language2
-                    span.badge.osmbc-lang2
-                      |#{blogNumber(layout.listOfReviewBlog[0],layout.language2)}
-            li.dropdown
-              a.dropdown-toggle(href='#', data-toggle='dropdown')
-                | Lists
-                span.caret
-              ul.dropdown-menu(role='menu')
-                li.dropdown-header Articles
+          .navbar-header
+            button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+              span.sr-only Toggle navigation
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+          .navbar-collapse.collapse
+            - function blogNumber(blog,language) {return ((blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[language]:"?") }
+            - function blogCount(blog,language) {return ((blog && blog._countExpectedMarkdown)?blog._countExpectedMarkdown[language]:"?") }
+
+            ul.nav.navbar-nav.navbar-left
+              if (layout.listOfOpenBlog && layout.listOfOpenBlog.length > 0)
                 li
-                  a(href='#{layout.htmlroot}/article/search') Search
-                  a(href='#{layout.htmlroot}/article/list?myArticles=true') My Collections
-                li.dropdown-header Orphaned Article
-                  if (layout.listOfOrphanBlog)
-                    for blog in layout.listOfOrphanBlog
-                      if blog
-                        li
-                          a(href="#{layout.htmlroot}/article/list?blog=#{blog}") #{blog}
-                  li
-                    a(href='#{layout.htmlroot}/article/list?blog=') No Blog
+                  a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')
+                    | #{layout.listOfOpenBlog[0].name}
+                    span.badge.osmbc-lang
+                      | #{blogNumber(layout.listOfOpenBlog[0], layout.language)}
+                    if layout.language2
+                      span.badge.osmbc-lang2.hidden-xs
+                        | #{blogNumber(layout.listOfOpenBlog[0], layout.language2)}
 
-
-            li.dropdown.hidden-xs
-              a.dropdown-toggle(href='#', data-toggle='dropdown')
-                | Tool
-                span.caret
-              ul.dropdown-menu(role='menu')
-                li.dropdown-header Markdown Helper
+              if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
                 li
-                  a(href="#{layout.htmlroot}/tool/calender2markdown") OSM Calender2Markdown
+                  a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].name}')
+                    |#{layout.listOfEditBlog[0].name}
+                    span.badge.osmbc-lang
+                      |#{blogNumber(layout.listOfEditBlog[0],layout.language)}
+                    if layout.language2
+                      span.badge.osmbc-lang2
+                        |#{blogNumber(layout.listOfEditBlog[0],layout.language2)}
+              if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
                 li
-                  a(href="#{layout.htmlroot}/tool/picturetool") Picture Tool
-                li.divider
-                li.dropdown-header About The Team
-                  li
-                    a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
-
-            ul.nav.navbar-nav.navbar-right
+                  a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].name}')
+                    |#{layout.listOfReviewBlog[0].name}
+                    span.badge.osmbc-lang
+                      |#{blogNumber(layout.listOfReviewBlog[0],layout.language)}
+                    if layout.language2
+                      span.badge.osmbc-lang2
+                        |#{blogNumber(layout.listOfReviewBlog[0],layout.language2)}
               li.dropdown
                 a.dropdown-toggle(href='#', data-toggle='dropdown')
-                  | Help
+                  | Lists
                   span.caret
                 ul.dropdown-menu(role='menu')
+                  li.dropdown-header Articles
                   li
-                    a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md") Version #{layout.osmbc_version}
-                  li.divider
-                  li
-                    a(href="#{layout.htmlroot}/help/OSMBC") OSMBC
-                  li
-                    a(href="#{layout.htmlroot}/help/How To Integrate A Picture") How To Integrate A Picture
-                  li
-                    a(href="#{layout.htmlroot}/help/Notification") Using OSMBC Notifications
-                  li
-                    a(href="#{layout.htmlroot}/help/The Blog Views") The Blog Views
-                  li
-                    a(href="#{layout.htmlroot}/help/Beginner's How To") Beginner's How To
-                  li
-                    a(href="#{layout.htmlroot}/help/Categories") Which Category to use ?
-                  li.divider
-                  li
-                    a(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
-                  li
-                    a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
-
-              li.dropdown
-                a.btn.dropdown-toggle.osmbc-lang(href='#', style="color:white", data-toggle='dropdown')
-                  |#{layout.language}
-                  span.caret
-                ul.dropdown-menu(role='menu')
-                  each l in layout.languages
+                    a(href='#{layout.htmlroot}/article/search') Search
+                    a(href='#{layout.htmlroot}/article/list?myArticles=true') My Collections
+                  li.dropdown-header Orphaned Article
+                    if (layout.listOfOrphanBlog)
+                      for blog in layout.listOfOrphanBlog
+                        if blog
+                          li
+                            a(href="#{layout.htmlroot}/article/list?blog=#{blog}") #{blog}
                     li
-                      a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
+                      a(href='#{layout.htmlroot}/article/list?blog=') No Blog
+
+
               li.dropdown.hidden-xs
-                a.btn.dropdown-toggle.osmbc-lang2(href='#',style="color:white", data-toggle='dropdown')
-                  |#{(layout.language2)?layout.language2:"--"}
+                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                  | Tool
                   span.caret
                 ul.dropdown-menu(role='menu')
+                  li.dropdown-header Markdown Helper
                   li
-                    a(href='#{layout.htmlroot}/language?lang2=none') none
-                  each l in layout.languages
+                    a(href="#{layout.htmlroot}/tool/calender2markdown") OSM Calender2Markdown
+                  li
+                    a(href="#{layout.htmlroot}/tool/picturetool") Picture Tool
+                  li.divider
+                  li.dropdown-header About The Team
                     li
-                      a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
-              if layout.user
-                  li
-                    a(href='#{layout.htmlroot}/usert/#{layout.user.id}') #{layout.user.displayName}
-                else
-                  li
-                    a(href='./') Anonymous
-          // /.nav-collapse
+                      a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
+
+            ul.nav.navbar-nav.navbar-right
+                li.dropdown
+                  a.dropdown-toggle(href='#', data-toggle='dropdown')
+                    | Help
+                    span.caret
+                  ul.dropdown-menu(role='menu')
+                    li
+                      a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md") Version #{layout.osmbc_version}
+                    li.divider
+                    li
+                      a(href="#{layout.htmlroot}/help/OSMBC") OSMBC
+                    li
+                      a(href="#{layout.htmlroot}/help/How To Integrate A Picture") How To Integrate A Picture
+                    li
+                      a(href="#{layout.htmlroot}/help/Notification") Using OSMBC Notifications
+                    li
+                      a(href="#{layout.htmlroot}/help/The Blog Views") The Blog Views
+                    li
+                      a(href="#{layout.htmlroot}/help/Beginner's How To") Beginner's How To
+                    li
+                      a(href="#{layout.htmlroot}/help/Categories") Which Category to use ?
+                    li.divider
+                    li
+                      a(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
+                    li
+                      a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
+
+                li.dropdown
+                  a.btn.dropdown-toggle.osmbc-lang(href='#', style="color:white", data-toggle='dropdown')
+                    |#{layout.language}
+                    span.caret
+                  ul.dropdown-menu(role='menu')
+                    each l in layout.languages
+                      li
+                        a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
+                li.dropdown.hidden-xs
+                  a.btn.dropdown-toggle.osmbc-lang2(href='#',style="color:white", data-toggle='dropdown')
+                    |#{(layout.language2)?layout.language2:"--"}
+                    span.caret
+                  ul.dropdown-menu(role='menu')
+                    li
+                      a(href='#{layout.htmlroot}/language?lang2=none') none
+                    each l in layout.languages
+                      li
+                        a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
+                if layout.user
+                    li
+                      a(href='#{layout.htmlroot}/usert/#{layout.user.id}') #{layout.user.displayName}
+                  else
+                    li
+                      a(href='./') Anonymous
+            // /.nav-collapse
 
 
-        .container-fluid
+      .container-fluid
 
-            p
-             block content
-            p
+          p
+           block content
+          p
 
-        // /container
+      // /container
 
-        // Bootstrap core JavaScript
-        // ==================================================
-        // Placed at the end of the document so the pages load faster
-        link(rel='stylesheet', href='#{layout.bootstrap}/css/bootstrap.min.css')
-        script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
-        script(src='#{layout.bootstrap}/js/bootstrap.min.js')
+      // Bootstrap core JavaScript
+      // ==================================================
+      // Placed at the end of the document so the pages load faster
+      link(rel='stylesheet', href='#{layout.bootstrap}/css/bootstrap.min.css')
+      script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
+      script(src='#{layout.bootstrap}/js/bootstrap.min.js')
 
   doctype html
   html
