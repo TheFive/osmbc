@@ -1,22 +1,22 @@
 "use strict";
 
-var config = require('../config.js');
-var async  = require('async');
-
-
-var pg = require('pg');
-var pgMap = require('../model/pgMap.js');
-
-var blogModule = require('../model/blog.js');
-var articleModule = require('../model/article.js');
-var logModule = require('../model/logModule.js');
-var userModule = require('../model/user.js');
-var session = require('../model/session.js');
-var should = require('should');
-
+var async   = require('async');
+var should  = require('should');
+var pg      = require('pg');
 var program = require('commander');
-
 require('colors');
+
+
+var config        = require('../config.js');
+var pgMap         = require('../model/pgMap.js');
+var blogModule    = require('../model/blog.js');
+var articleModule = require('../model/article.js');
+var logModule     = require('../model/logModule.js');
+var userModule    = require('../model/user.js');
+var configModule  = require('../model/config.js');
+var session       = require('../model/session.js');
+
+
 var jsdiff = require('diff');
 
 function coloredDiffLog(one,other) {
@@ -37,10 +37,12 @@ function coloredDiffLog(one,other) {
 }
 
 program
-  .option('--dropTable','Drop Table before Creation','')
+  .option('--dropTable [table]','Drop specific table before creation','')
+  .option('--dropTables','Drop Tables before Creation','')
   .option('--dropIndex','Drop Index before Creation','')
   .option('--dropView','Drop View before Creation','')
-  .option('--createTable','Create all tables','')
+  .option('--createTables ','Create all tables')
+  .option('--createTable [table]','Create a specific table')
   .option('--createView','Create all Views','')
   .option('--createIndex','Create all Index','')
   .option('--verbose','verbose option','')
@@ -61,10 +63,12 @@ if (program.dropTable && process.env.NODE_ENV==="production") {
 }
 
 var pgOptions = {
+  dropTables:program.dropTables,
   dropTable:program.dropTable,
   dropIndex:program.dropIndex,
   dropView:program.dropView,
   createTable:program.createTable,
+  createTables:program.createTables,
   createView:program.createView,
   createIndex:program.createIndex,
   verbose:program.verbose,
@@ -166,6 +170,7 @@ function clearDB(options,callback) {
     function(done) {ct(articleModule.pg,pgOptions,done);},
     function(done) {ct(logModule.pg,pgOptions,done);},
     function(done) {ct(userModule.pg,pgOptions,done);},
+    function(done) {ct(configModule.pg,pgOptions,done);},
     function(done) {ct(session.pg,pgOptions,done);},
 
   ],function(err) {

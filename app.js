@@ -29,17 +29,15 @@ var blog       = require('./routes/blog').router;
 var tool       = require('./routes/tool').router;
 var calender   = require('./routes/tool').publicRouter;
 var layout     = require('./routes/layout').router;
+var configRouter     = require('./routes/config').router;
 
 var userModule = require('./model/user.js');
 
-var mailReceiver = require('./notification/mailReceiver.js');
-var messageCenter = require('./notification/messageCenter.js');
 
 
 
 // Initialise config Module
 config.initialise();
-messageCenter.initialise();
 var htmlRoot = config.getValue("htmlroot");
 console.log("Express Routes set to: SERVER"+htmlRoot);
 
@@ -139,7 +137,7 @@ function ensureAuthenticated(req, res, next) {
           // save last access, ignore save callback
           var date = new Date();
           var lastStore = new Date(result[0].lastAccess);
-          if (!result[0].lastAccess || (date.getTime()-lastStore.getTime()) > 1000*60*2) {
+          if (!result[0].lastAccess || (date.getTime()-lastStore.getTime()) > 1000*60) {
             result[0].lastAccess = new Date();
             result[0].save(function(err,u) {req.user.version = u.version;});
           }
@@ -274,6 +272,7 @@ app.use(htmlRoot + '/article',checkAuthentification, article);
 app.use(htmlRoot + '/changes',checkAuthentification, changes);
 app.use(htmlRoot + '/blog',checkAuthentification, blog);
 app.use(htmlRoot + '/tool',checkAuthentification, tool);
+app.use(htmlRoot + '/config',checkAuthentification, configRouter);
 
 
 // Simple route middleware to ensure user is authenticated.
@@ -327,16 +326,7 @@ app.use(function(err, req, res,next) {
   if (next); // do nothing but use the next variable
 });
 
-// Initialise Mail Module with all users
 
-userModule.find({access:"full"},function initUsers(err,result) {
-  if (err) {
-    console.log("Error during Mail Receiver Initialising");
-    console.dir(err);
-    return;
-  }
-  mailReceiver.initialise(result);
-});
 
 
 module.exports = app;

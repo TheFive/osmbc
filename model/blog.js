@@ -15,11 +15,10 @@ var moment   = require('moment');
 
 var articleModule       = require('../model/article.js');
 var settingsModule      = require('../model/settings.js');
+var configModule        = require('../model/config.js');
 var logModule           = require('../model/logModule.js');
 var messageCenter       = require('../notification/messageCenter.js');
 var userModule          = require('../model/user.js');
-var categoryTranslation = require('../data/categoryTranslation.js');
-var editorStrings       = require('../data/editorStrings.js');
 var schedule            = require('node-schedule');
 
 var pgMap = require('./pgMap.js');
@@ -30,29 +29,6 @@ var HtmlRenderer = require('../render/BlogRenderer.js').HtmlRenderer;
 
 
 
-module.exports.categories = [
-  {DE:"-- noch keine Kategorie --", EN:"-- no category yet --"},
-  {DE:"Bild",EN:"Picture"},
-  {DE:"[Aktuelle Kategorie]",EN:"[Actual Category]"},
-  {DE:"In eigener Sache",EN:"About us"},
-  {DE:"Wochenaufruf",EN:"Weekly exerciseEN:"},
-  {DE:"Mapping",EN:"Mapping"},
-  {DE:"Community",EN:"Community"},
-  {DE:"Importe",EN:"Imports"},
-  {DE:"OpenStreetMap Foundation",EN:"OpenStreetMap Foundation"},
-  {DE:"Veranstaltungen",EN:"Events"},
-  {DE:"Humanitarian OSM",EN:"Humanitarian OSM"},
-  {DE:"Karten",EN:"Maps"},
-  {DE:"switch2OSM",EN:"switch2OSM"},
-  {DE:"Open-Data",EN:"Open Data"},
-  {DE:"Lizenzen",EN:"Licences"},
-  {DE:"Programme",EN:"Software"},
-  {DE:"Programmierung",EN:"Programming"},
-  {DE:"Releases",EN:"Releases"},
-  {DE:"Kennst Du schon …",EN:"Did you know …"},
-  {DE:"Weitere Themen mit Geo-Bezug",EN:'Other “geo” things'},
-  {DE:"Wochenvorschau" ,EN:"Upcoming Events"},
-  {DE:"--unpublished--" ,EN:"--unpublished--"}];
 
 
 
@@ -61,7 +37,9 @@ function Blog(proto)
 {
   debug("Blog");
   this.id = 0;
-  this.categories = module.exports.categories;
+  if (! proto || (proto && !proto.categories)) {
+    this.categories = configModule.getConfig("categorytranslation");
+  }
   if (proto) {
     for (var k in proto) {
       this[k] = proto[k];
@@ -416,8 +394,9 @@ function convertLogsToTeamString(logs,lang,users) {
     editorsString += ", "+editors[i2];
   }
 
- 
-  return editorStrings[lang].replace("##team##",editorsString);
+  var editorStrings = configModule.getConfig("editorstrings");
+  if (editorStrings[lang]) return editorStrings[lang].replace("##team##",editorsString);
+  return "";
 
 }
 
@@ -763,6 +742,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
 function translateCategories(cat) {
   debug('translateCategories');
   var languages = config.getLanguages();
+  var categoryTranslation = configModule.getConfig("categorytranslation");
   for (var i = 0 ;i< cat.length;i++) {
     for (var l =0 ;l <languages.length;l++) {
       var lang = languages[l];
@@ -777,10 +757,9 @@ function translateCategories(cat) {
   }  
 }
 
-translateCategories(exports.categories);
 
 function getGlobalCategories() {
-  return module.exports.categories;
+  return configModule.getConfig("categorytranslation");
 }
 
 Blog.prototype.getCategories = function getCategories() {

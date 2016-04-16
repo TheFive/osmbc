@@ -33,48 +33,9 @@ function generateHTMLDiff(one,other) {
 }
 
 
-function renderOutgoingMailLog(req,res,next) {
-  debug('renderOutgoingMailLog');
-  var d = req.params.date;
-  logModule.find("select id, data from changes where data->>'table' = 'mail' and substring(data->>'timestamp' from 1 for "+ d.length+") ='"+d+"' order by data->>'timestamp' desc",function (err,result){
-    debug("logModule.find");
-    if (err) return next(err);
-    res.render("maillog",{maillog:result,layout:res.rendervar.layout});
-  });
-}
 
 
-function renderHistoryLog(req,res,next) {
-  debug('renderHistoryLog');
-  var date = req.query.date;
-  var user = req.query.user;
-  var table = req.query.table;
-  var blog = req.query.blog;
-  var property = req.query.property;
 
-  var params={date:date,user:user,table:table,blog:blog,property:property};
-
-
-  var search={};
-  if (date) search.timestamp = date+"%";
-  if (user) search.user = user;
-  if (table) {
-    search.table = table;
-  } else {
-    search.table = "IN ('usert','article','blog')";
-  }
-
-  if (blog) search.blog = blog;
-
-  if (property) search.property = property;
-
-
-  logModule.find(search,{column:"timestamp",desc:true,limit:500},function (err,result){
-    debug("logModule.find");
-    if (err) return next(err);
-    res.render("history",{history:result,layout:res.rendervar.layout,params:params});
-  });
-}
 
 /* GET users listing. */
 function renderChangeId(req, res, next) {
@@ -92,9 +53,6 @@ function renderChangeId(req, res, next) {
 
 router.get('/:change_id',renderChangeId);
 
-router.get('/mail/:date',renderOutgoingMailLog);
-
-router.get('/log',renderHistoryLog);
 
 module.exports.renderChangeId = renderChangeId;
 module.exports.router = router;
