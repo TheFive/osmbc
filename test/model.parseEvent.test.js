@@ -7,12 +7,14 @@ var path = require('path');
 var fs = require('fs');
 var sinon = require('sinon');
 
+var configModule = require("../model/config.js");
+
 
 describe('model/parseEvent',function() {
   var clock;
   before(function(bddone){
     clock = sinon.useFakeTimers(new Date("2015-12-06").getTime());
-    bddone();
+    configModule.initialise(bddone);
   });
   after(function(bddone){
     clock.restore();
@@ -231,8 +233,9 @@ describe('model/parseEvent',function() {
     });
     it('should load date form wiki and generate a Markdown String',function(bddone){
       parseEvent.calenderToMarkdown({lang:"DE",date:new Date("11/28/2015"),duration:"14"},function(err,result){
-        var excpeted = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
-        should(result).equal(excpeted);
+        should.not.exist(err);
+        var expected = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
+        should(result).equal(expected);
          bddone();
       });
     });

@@ -161,7 +161,7 @@ describe('routes/blog',function() {
             var v = call.args[1];
 
 
-            should(v.preview).equal('<p>12.12.2015-13.12.2015</p>\n<p align="right"><i>Diese Wochennotiz wurde erstellt von .</i></p>');
+            should(v.preview).equal('<p>12.12.2015-13.12.2015</p>\n<p align="right"><i>Diese Wochennotiz wurde erstellt von .</i></p>\n');
             should(v.blog.id).equal(blog.id);
             should(v.layout).equal("calculated layout");
             //should(v.articles.length).equal(0);
@@ -304,7 +304,7 @@ describe('routes/blog',function() {
 
             should(v.blog.id).equal(blog.id);
             should(v.layout).equal("calculated layout");
-            should(v.main_text).equal("<p>12.12.2015-13.12.2015</p>\n<!--         place picture here              -->\n<ul>\n<div style=\"width: ##width##px\" class=\"wp-caption alignnone\"> \n<mark>No Title <a href=\"/article/2?style=TRANSLATE\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> <a href=\"/article/2?style=TRANSLATE&edit=true\"><span class=\"glyphicon glyphicon-edit\"></span></a>\n</mark></div>\n</ul>\n<h2 id=\"wn333_wochenvorschau\">Wochenvorschau</h2>\n<ul>\n<p><mark>No Title <a href=\"/article/1?style=TRANSLATE\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> <a href=\"/article/1?style=TRANSLATE&edit=true\"><span class=\"glyphicon glyphicon-edit\"></span></a>\n</mark></p>\n<p>Hinweis:<br />\nWer seinen Termin hier in der Liste sehen möchte, <a href=\"https://wiki.openstreetmap.org/wiki/Template:Calendar\">trage</a> ihn in den <a href=\"https://wiki.openstreetmap.org/wiki/Current_events\">Kalender</a> ein. Nur Termine, die dort stehen, werden in die Wochennotiz übernommen.</p></ul>\n");
+            should(v.main_text).equal("<p>12.12.2015-13.12.2015</p>\n<!--         place picture here              -->\n<ul>\n<div style=\"width: ##width##px\" class=\"wp-caption alignnone\"> \n<mark>No Title <a href=\"/article/2?style=TRANSLATE\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> <a href=\"/article/2?style=TRANSLATE&edit=true\"><span class=\"glyphicon glyphicon-edit\"></span></a>\n</mark></div>\n</ul>\n<h2 id=\"wn333_wochenvorschau\">Wochenvorschau</h2>\n<ul>\n<p><mark>No Title <a href=\"/article/1?style=TRANSLATE\"><span class=\"glyphicon glyphicon-eye-open\"></span></a> <a href=\"/article/1?style=TRANSLATE&edit=true\"><span class=\"glyphicon glyphicon-edit\"></span></a>\n</mark></p>\n<p>Hinweis:<br />Wer seinen Termin hier in der Liste sehen möchte, <a href=\"https://wiki.openstreetmap.org/wiki/Template:Calendar\">trage</a> ihn in den <a href=\"https://wiki.openstreetmap.org/wiki/Current_events\">Kalender</a> ein. Nur Termine, die dort stehen, werden in die Wochennotiz übernommen.</p>\n</ul>\n");
 
 
       

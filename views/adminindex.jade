@@ -1,0 +1,83 @@
+extends adminlayout
+
+block content
+  .row
+    .col-md-4
+      h1="Configuration"
+      h2="Calendar"
+      p
+        a(href="#{layout.htmlroot}/config/calendartranslation")  Calendar Translation Texts
+      p
+        a(href="#{layout.htmlroot}/config/calendarflags")  Flags for calendar
+      h2="Editor Info"
+      p
+        a(href="#{layout.htmlroot}/config/formulation_tipDE")  Formulation Hint for DE
+      p
+        a(href="#{layout.htmlroot}/config/formulation_tipEN")  Formulation Hint for EN
+      p
+        a(href="#{layout.htmlroot}/config/categorydescription")  Descriptions for Categories
+      p
+        a(href="#{layout.htmlroot}/config/languageflags") Language Flags for German Blog
+      h2="Pictures"
+      p
+        a(href="#{layout.htmlroot}/config/licenses") Picture Licensing
+      h2="Blog"
+      p
+        a(href="#{layout.htmlroot}/config/editorstrings") Author Documentation
+      p
+        a(href="#{layout.htmlroot}/config/categorytranslation") Category Translation
+
+    .col-md-8.hidden-xs
+      if changes
+        h4="Last Changes "
+          - var d = new Date();
+          - d= d.toISOString();
+          - d= d.substring(0,7);
+          a(href="#{layout.htmlroot}/changes/log?date="+d)  (more)
+        div
+          table.table.table-striped.table-condensed.table-responsive
+            thead
+              tr 
+                th
+                 | 
+                th
+                 | blog
+                th
+                 | user
+                th
+                 | table
+                th
+                 | what
+                th
+                 | Change
+                th
+                 | when
+            tbody
+              each change, i in changes
+                tr
+                  td
+                    a(href='#{layout.htmlroot}/changes/' + change.id) 
+                      span.glyphicon.glyphicon-info-sign
+                  td= change.blog
+                  td= change.user
+                  td= change.table
+                  td= change.property
+                  td
+                    :verbatim
+                      !{change.htmlDiffText(40)}
+                  td= layout.moment(change.timestamp).fromNow()
+        div
+          p
+            |only displaying changes 
+            span.osmbc-inserted
+              |inserted text 
+            span.osmbc-deleted
+              |removed text
+
+  .row
+    .col-md-8
+    .col-md-4
+      if layout.style!="style.css"
+        a(href="#{layout.htmlroot}/osmbc.html?tempstyleOff=true") Switch Development Color off for this session.
+
+  div.footer

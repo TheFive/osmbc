@@ -55,7 +55,7 @@ describe('model/article', function() {
       var article = articleModule.create({markdown:"test"});
       article.commentList = [];
       article.commentList.push({user:"User",timestamp:new Date(),text:comment1});
-      article.commentList.push({user:"User",timestamp:new Date(),text:comment2});
+      if(comment2) article.commentList.push({user:"User",timestamp:new Date(),text:comment2});
       return article;
     }
     it('should select language in correct case',function(){
@@ -84,6 +84,11 @@ describe('model/article', function() {
       let a= createArticleWithComment("should to something @escadoni","Test more");
       should(a.getCommentMention("escadoni","ES")).eql("user");
       should(a.getCommentMention("User","ES")).eql("other");
+
+    });
+    it('should not select language if user is at the end',function(){
+      let a= createArticleWithComment("should to something @user");
+      should(a.getCommentMention("user","DE")).eql("user");
 
     });
   });

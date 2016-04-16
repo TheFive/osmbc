@@ -1,0 +1,5 @@
+1. Nicht Passiv, sondern Aktiv formulieren
+Beispiel: OpenCage Data veröffentlicht ein Interview mit David Overton, dem Macher hinter der Stoffkarten produzierenden Firma Splashmaps. (via Twitter)
+2. Personen/Unternehmen sind Nachrichten! Deshalb ... möglichst immer mit einer Person/Unternehmen beginnen!
+3. Eine komplexe Meldung lieber in zwei Sätze aufteilen, statt mit Nebensätzen zu arbeiten.
+4. Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008)

@@ -9,5 +9,5 @@
   "testBlogName":"BLOG",
   "style":"overview",
   "testBlogResultMarkdownDE":"## Mapping\n* Dies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.\n",
-  "testBlogResultHtml":"<p>02.02.2015-03.03.2015</p>\n<h2 id=\"blog_mapping\">Mapping</h2>\n<ul>\n<li id=\"blog_1\">\nNo Title <a href=\"/article/1?style=overview\">View</a> <a href=\"/article/1?style=overview&edit=true\">Edit</a>\n</li></ul>\n<h2 id=\"blog_--unpublished--\">--unpublished--</h2>\n<ul>\n<li id=\"blog_unused\">\n<mark>unused<p>Trash (Ref) <a href=\"/article/2?style=overview\">View</a> <a href=\"/article/2?style=overview&edit=true\">Create</a></p>\n</mark></li></ul>"
+  "testBlogResultHtml":"<p>02.02.2015-03.03.2015</p>\n<h2 id=\"blog_mapping\">Mapping</h2>\n<ul>\n<li id=\"blog_1\">\nNo Title <a href=\"/article/1?style=overview\">View</a> <a href=\"/article/1?style=overview&edit=true\">Edit</a>\n</li></ul>\n<h2 id=\"blog_--unveröffentlicht--\">--unveröffentlicht--</h2>\n<ul>\n<li id=\"blog_unused\">\n<mark>unused<p>Trash (Ref) <a href=\"/article/2?style=overview\">View</a> <a href=\"/article/2?style=overview&edit=true\">Create</a></p>\n</mark></li></ul>"
 }

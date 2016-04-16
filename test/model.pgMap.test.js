@@ -46,7 +46,7 @@ describe('model/pgMap',function(){
       pgObject.viewDefinition={};
       pgObject.table = "test";
 
-      pgMap.createTables(pgObject,{createTable:true,dropTable:true},function(err,result){
+      pgMap.createTables(pgObject,{createTables:true,dropTables:true},function(err,result){
         should.not.exist(result);
         should.exist(err);
         config.pgstring = connectString;
@@ -62,7 +62,7 @@ describe('model/pgMap',function(){
       pgObject.viewDefinition={};
       pgObject.table = "test";
 
-      pgMap.createTables(pgObject,{createTable:true,dropTable:true},function(err,result){
+      pgMap.createTables(pgObject,{createTables:true,dropTables:true},function(err,result){
         should.not.exist(result);
         should.exist(err);
         should(err.code).eql('42601'); // pg Syntax Error Code
@@ -98,7 +98,7 @@ describe('model/pgMap',function(){
     describe('find',function(){
       beforeEach(function(bddone){
         async.series([
-          function(cb){pgMap.createTables(testTableObject,{createTable:true,dropTable:true},cb);},
+          function(cb){pgMap.createTables(testTableObject,{createTables:true,dropTables:true},cb);},
           function(cb){
             var to = new TestTable({id:0,name:''});
             to.save = pgMap.save;

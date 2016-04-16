@@ -8,8 +8,10 @@ articleModule.find({},function(err,result){
   if (!result) return console.log("Nothing found");
   fs.writeFileSync("article.json","[");
   for (let i=0;i<result.length;i++) {
-    let s=JSON.stringify(result[i]);
-    if (i>0) fs.appendFileSync("article.json",",");
+    let a=result[i];
+    delete a._meta;
+    let s=JSON.stringify(a,null,2);
+    if (i>0) fs.appendFileSync("article.json",",\n");
     fs.appendFileSync("article.json",s);
   }
   fs.appendFileSync("article.json","]");

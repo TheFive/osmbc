@@ -1,0 +1,18 @@
+extends config
+
+block showContentOfConfig
+  h2= "Translation Preview"
+  if config.json
+    table.table.table-striped.table-responsive
+      thead
+        tr
+          th="Category"
+          th="Help Text"
+        tbody
+          each value,key in config.json
+            tr
+              td=key
+              td.text-muted=value
+
+
+

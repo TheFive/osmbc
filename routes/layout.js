@@ -147,6 +147,7 @@ function prepareRenderLayout(req,res,next) {
                       bootstrap:bootstrap,
                       osmbc_version:version.osmbc_version,
                       style:style,
+                      title:config.getValue("AppName"),
                       md_render:util.md_render
                     };
       next();

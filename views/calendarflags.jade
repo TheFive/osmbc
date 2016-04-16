@@ -1,0 +1,9 @@
+extends config
+
+block showContentOfConfig
+  h2= "Flag Preview"
+  if config.json
+      for val,key in config.json
+        | #{key}
+        img(src="#{val}", class="img-thumbnail" ,width = 30)
+

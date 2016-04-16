@@ -1,0 +1,16 @@
+extends config
+
+block showContentOfConfig
+  - lang = layout.language
+  if config.json
+    - lang = layout.language
+    table.table.table-striped.table-responsive
+      thead
+        tr
+          th="Category"
+          th="Translated Category"
+        tbody
+          each value,key in config.json
+            tr
+              td=key
+              td=value[lang]

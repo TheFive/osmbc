@@ -6,23 +6,18 @@ var router   = express.Router();
 var should   = require('should');
 var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
-var path     = require('path');
-var fs       = require('fs');
 
 var config        = require('../config.js');
 
-var languageFlags = require('../data/languageFlags.js');
 
 var settingsModule= require('../model/settings.js');
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
+var configModule  = require('../model/config.js');
 
 require('jstransformer')(require('jstransformer-markdown-it'));
 
-var placeholder = {
-  
-};
 
 
 
@@ -32,15 +27,8 @@ function renderArticleId(req,res,next) {
   // Get the ID and the article to display
   var id = req.params.article_id;
 
-  var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
-  var placeholder =  JSON.parse(fs.readFileSync(file));
-  for (var i=0;i<config.getLanguages();i++) {
-    var lang = config.getLanguages()[i];
-    if (!(placeholder.markdown[lang])) {
-      placeholder.markdown[lang]=placeholder.markdown.EN;
-    }
-  }
-    
+  var languageFlags = configModule.getConfig("languageflags");
+
 
 
 
@@ -73,7 +61,7 @@ function renderArticleId(req,res,next) {
 
 
  
-
+    var placeholder = configModule.getPlaceholder();
     async.auto({
       // Find usage of Links in other articles
       articleReferences:article.calculateUsedLinks.bind(article),
@@ -142,7 +130,7 @@ function renderArticleId(req,res,next) {
 
 
           var languages = config.getLanguages();
-          for (i=0;i<languages.length;i++) {
+          for (var i=0;i<languages.length;i++) {
             var lang = languages[i];
             if (typeof(article["markdown"+lang])!='undefined') {
               article["textHtml"+lang]="<ul>"+article.getPreview(lang)+"</ul>";
@@ -196,8 +184,6 @@ function renderArticleId(req,res,next) {
 function searchAndCreate(req,res,next) {
   debug('searchAndCreate');
   var search = req.query.search;
-  var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
-  var placeholder =  JSON.parse(fs.readFileSync(file));
   var show = req.query.show;
   if (!show) show = "15";
   if (req.query.edit && req.query.edit=="false") {
@@ -207,6 +193,8 @@ function searchAndCreate(req,res,next) {
     return;
   }
   if (!search || typeof(search)=='undefined') search = "";
+  var placeholder = configModule.getPlaceholder();
+
   articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
     debug('searchAndCreate->fullTextSearch');
     if (err) return next(err);
@@ -472,9 +460,9 @@ function markCommentRead(req, res, next) {
 
 function createArticle(req, res, next) {
   debug('createArticle');
-  var file =  path.resolve(__dirname,'..','data', "article.placeholder.json");
-  var placeholder =  JSON.parse(fs.readFileSync(file));
 
+
+  var placeholder = configModule.getPlaceholder();
   var proto = {};
   if (typeof(req.query.blog) != 'undefined' ) {
     proto.blog = req.query.blog;
@@ -545,7 +533,7 @@ function searchArticles(req, res, next) {
                             search:search,
                             show:show,
                             foundArticles:result,
-                            placeholder:placeholder,
+                            placeholder:{},
                             showCollect:false,
                             categories:blogModule.getCategories()});
     }
