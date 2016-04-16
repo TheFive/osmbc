@@ -1,5 +1,25 @@
 # Change Log
 
+## [1.4.2](https://github.com/TheFive/osmbc/tree/1.4.2) (2016-04-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.1...1.4.2)
+
+**Fixed bugs:**
+
+- Blog Statistic wrong. do not count "no translation" [\#421](https://github.com/TheFive/osmbc/issues/421)
+
+## [1.4.1](https://github.com/TheFive/osmbc/tree/1.4.1) (2016-04-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.0b...1.4.1)
+
+**Implemented enhancements:**
+
+- Indicate and display comments in review mode [\#417](https://github.com/TheFive/osmbc/issues/417)
+
+## [1.4.0b](https://github.com/TheFive/osmbc/tree/1.4.0b) (2016-04-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.0a...1.4.0b)
+
+## [1.4.0a](https://github.com/TheFive/osmbc/tree/1.4.0a) (2016-04-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.4...1.4.0a)
+
 ## [1.4](https://github.com/TheFive/osmbc/tree/1.4) (2016-04-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.3.0a...1.4)
 
@@ -479,14 +499,6 @@
 ## [0.6.9](https://github.com/TheFive/osmbc/tree/0.6.9) (2016-01-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7a...0.6.9)
 
-**Closed issues:**
-
-- Document Source of Blog Creation. [\#284](https://github.com/TheFive/osmbc/issues/284)
-
-**Merged pull requests:**
-
-- new countryFlags.js [\#285](https://github.com/TheFive/osmbc/pull/285) ([fredao](https://github.com/fredao))
-
 ## [0.6.7a](https://github.com/TheFive/osmbc/tree/0.6.7a) (2016-01-27)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.8...0.6.7a)
 
@@ -764,13 +776,13 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
-
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
