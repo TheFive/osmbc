@@ -28,7 +28,7 @@ describe('views/article', function() {
   beforeEach(function(bddone) {
     async.series([
       testutil.clearDB,
-      function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full",language:"DE"},cb); },
+      function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full",language:"DE",mainLang:"DE"},cb); },
       function createBlog(cb) {blogModule.createNewBlog({OSMUser:"test"},{name:'blog'},cb);},
       function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"Link1: http://www.test.dä/holla and other"},function(err,article){
         if (article) articleId = article.id;

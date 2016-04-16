@@ -50,6 +50,48 @@ describe('model/article', function() {
       should(article instanceof articleModule.Class).be.True();
     });
   });
+  describe('getCommentMention',function() {
+    function createArticleWithComment(comment1,comment2){
+      var article = articleModule.create({markdown:"test"});
+      article.commentList = [];
+      article.commentList.push({user:"User",timestamp:new Date(),text:comment1});
+      if(comment2) article.commentList.push({user:"User",timestamp:new Date(),text:comment2});
+      return article;
+    }
+    it('should select language in correct case',function(){
+      let a= createArticleWithComment("@DE should to something","Comment for @ES");
+      should(a.getCommentMention("User","DE")).eql("language");
+      should(a.getCommentMention("User","ES")).eql("language");
+      should(a.getCommentMention("User","AT","ES")).eql("language");
+      should(a.getCommentMention("User","AT","DE")).eql("language");
+    });
+    it('should select language in different case',function(){
+      let a= createArticleWithComment("should to something @de","Comment for @es or What");
+      should(a.getCommentMention("User","DE")).eql("language");
+      should(a.getCommentMention("User","ES")).eql("language");
+      should(a.getCommentMention("User","AT","ES")).eql("language");
+      should(a.getCommentMention("User","AT","DE")).eql("language");
+    });
+    it('should select user in different case',function(){
+      let a= createArticleWithComment("should to something @user","Comment for @es or What");
+      should(a.getCommentMention("User","DE")).eql("user");
+      should(a.getCommentMention("User","ES")).eql("user");
+      should(a.getCommentMention("User","AT","ES")).eql("user");
+      should(a.getCommentMention("User","AT","DE")).eql("user");
+
+    });
+    it('should not select language if its part of user name',function(){
+      let a= createArticleWithComment("should to something @escadoni","Test more");
+      should(a.getCommentMention("escadoni","ES")).eql("user");
+      should(a.getCommentMention("User","ES")).eql("other");
+
+    });
+    it('should not select language if user is at the end',function(){
+      let a= createArticleWithComment("should to something @user");
+      should(a.getCommentMention("user","DE")).eql("user");
+
+    });
+  });
   describe('createNewArticle',function() {
     it('should createNewArticle with prototype',function(bddone) {
       articleModule.createNewArticle({blog:"test",markdownDE:"**"},function (err,result){
@@ -837,6 +879,7 @@ describe('model/article', function() {
       var dataAfter = { 
             article:[{blog:"WN1",collection:"something",title:"test",id:'1',version:2,
                       commentList:[{user:"Test",timestamp:timestampIso,text:"a comment"}],
+                      commentStatus:"open",
                       commentRead:{Test:0}}],
             change:[{blog:"WN1",oid:1,table:"article",from:"",to:"a comment",user:"Test",timestamp:timestampIso}]};
       var testFunction = function testFunction(cb) {

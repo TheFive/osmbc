@@ -17,12 +17,9 @@ var util      = require("../util.js");
 var messageCenter  = require("../notification/messageCenter.js");
 var settingsModule = require("../model/settings.js");
 var blogModule     = require("../model/blog.js");
+var configModule   = require('../model/config.js');
 var pgMap          = require("../model/pgMap.js");
 var twitter        = require('../model/twitter.js');
-
-var categoryTranslation = require("../data/categoryTranslation.js");
-var calenderTranslation = require("../data/calenderTranslation.js");
-var languageFlags       = require("../data/languageFlags.js");
 
 
 
@@ -98,10 +95,11 @@ Article.prototype.getCommentMention = function getCommentMention(user,lang1,lang
     }
   }
   if (!comment) return null;
-  if (comment.search(new RegExp("@"+user,"i"))>=0) return "user";
-  if (lang1 && comment.search(new RegExp("@"+lang1,"i"))>=0) return "language";
-  if (lang2 && comment.search(new RegExp("@"+lang2,"i"))>=0) return "language";
-  if (comment.search(new RegExp("@all","i"))>=0) return "language";
+  if (comment.search(new RegExp("@"+user+"\\b","i"))>=0) return "user";
+
+  if (lang1 && comment.search(new RegExp("@"+lang1+"\\b","i"))>=0) return "language";
+  if (lang2 && comment.search(new RegExp("@"+lang2+"\\b","i"))>=0) return "language";
+  if (comment.search(new RegExp("@all\\b","i"))>=0) return "language";
   if (this.comment || (this.commentList && this.commentList.length>0)) return "other";
   return null;
 };
@@ -135,6 +133,8 @@ Article.prototype.getPreview = function getPreview(style,user) {
   debug("getPreview");
   should.exist(style);
   var options = style;
+  var calenderTranslation = configModule.getConfig("calendartranslation");
+
 
   if (typeof(style) == "string") {
     options = settingsModule.getSettings(style);
@@ -570,6 +570,7 @@ function findUserEditFieldsArticles(blog,user,field,callback) {
 Article.prototype.calculateLinks = function calculateLinks() {
   debug("calculateLinks");
   var links = [];
+  var languageFlags = configModule.getConfig("languageflags");
 
   var listOfField = ["collection"];
   for (var i= 0;i<config.getLanguages().length;i++) {
@@ -712,6 +713,7 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(callback) {
 Article.prototype.getCategory = function getCategory(lang) {
   debug("getCategory");
   var result = this.categoryEN;
+  var categoryTranslation = configModule.getConfig("categorytranslation");
   if (categoryTranslation[result] && categoryTranslation[result][lang]) {
     result = categoryTranslation[result][lang];
   }
@@ -730,6 +732,7 @@ Article.prototype.addComment = function addComment(user,text,callback) {
   var self = this;
 
   if (!self.commentList) self.commentList = [];
+  self.commentStatus = "open";
   var commentObject = {user:user.OSMUser,timestamp:new Date(),text:text};
   self.commentList.push(commentObject);
   if (!self.commentRead) self.commentRead = {};
