@@ -35,8 +35,12 @@ block all
 
               li
                 a(href='#{layout.htmlroot}/usert/inbox')="Inbox "
-                  span.badge(style="background-color:red")=layout.userMentions
-                  span.badge(style="background-color:orange")=layout.langMentions
+                  if (layout.userMentions>0)
+                    span.badge.osmbcbadge-user=layout.userMentions
+                  if (layout.mainLangMentions>0)
+                    span.badge.osmbcbadge-lang=layout.mainLangMentions
+                  if (layout.secondLangMentions>0)
+                    span.badge.osmbcbadge-lang2=layout.secondLangMentions
 
 
           .navbar-header
@@ -54,29 +58,29 @@ block all
                 li
                   a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')
                     | #{layout.listOfOpenBlog[0].name}
-                    span.badge.osmbc-lang
+                    span.badge.osmbcbadge-lang
                       | #{blogNumber(layout.listOfOpenBlog[0], layout.language)}
                     if layout.language2
-                      span.badge.osmbc-lang2.hidden-xs
+                      span.badge.osmbcbadge-lang2.hidden-xs
                         | #{blogNumber(layout.listOfOpenBlog[0], layout.language2)}
 
               if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
                 li
                   a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].name}')
                     |#{layout.listOfEditBlog[0].name}
-                    span.badge.osmbc-lang
+                    span.badge.osmbcbadge-lang
                       |#{blogNumber(layout.listOfEditBlog[0],layout.language)}
                     if layout.language2
-                      span.badge.osmbc-lang2
+                      span.badge.osmbcbadge-lang2
                         |#{blogNumber(layout.listOfEditBlog[0],layout.language2)}
               if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
                 li
                   a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].name}')
                     |#{layout.listOfReviewBlog[0].name}
-                    span.badge.osmbc-lang
+                    span.badge.osmbcbadge-lang
                       |#{blogNumber(layout.listOfReviewBlog[0],layout.language)}
                     if layout.language2
-                      span.badge.osmbc-lang2
+                      span.badge.osmbcbadge-lang2
                         |#{blogNumber(layout.listOfReviewBlog[0],layout.language2)}
               li.dropdown
                 a.dropdown-toggle(href='#', data-toggle='dropdown')
@@ -140,23 +144,25 @@ block all
                       a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
 
                 li.dropdown
-                  a.btn.dropdown-toggle.osmbc-lang(href='#', style="color:white", data-toggle='dropdown')
+                  a.btn.dropdown-toggle.osmbcbadge-lang(href='#', style="color:white", data-toggle='dropdown')
                     |#{layout.language}
                     span.caret
                   ul.dropdown-menu(role='menu')
                     each l in layout.languages
-                      li
-                        a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
+                      if layout.usedLanguages[l]
+                        li
+                          a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
                 li.dropdown.hidden-xs
-                  a.btn.dropdown-toggle.osmbc-lang2(href='#',style="color:white", data-toggle='dropdown')
+                  a.btn.dropdown-toggle.osmbcbadge-lang2(href='#',style="color:white", data-toggle='dropdown')
                     |#{(layout.language2)?layout.language2:"--"}
                     span.caret
                   ul.dropdown-menu(role='menu')
                     li
                       a(href='#{layout.htmlroot}/language?lang2=none') none
                     each l in layout.languages
-                      li
-                        a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
+                      if layout.usedLanguages[l]
+                        li
+                          a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
                 if layout.user
                     li
                       a(href='#{layout.htmlroot}/usert/#{layout.user.id}') #{layout.user.displayName}

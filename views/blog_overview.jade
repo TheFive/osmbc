@@ -1,0 +1,139 @@
+extends blogheader
+
+
+
+
+block blogcontent
+
+  - showNumbers = (layout.user.getOption("overview","showNumbers")=="true")
+  - showMail    = (layout.user.getOption("overview","showMail")=="true")
+  - showCollector = (layout.user.getOption("overview","showCollector")=="true")
+  - showEditor = (layout.user.getOption("overview","showEditor")=="true")
+  - showLanguages = (layout.user.getOption("overview","showLanguages")=="true")
+
+  table
+    tr
+      td
+      td
+        :verbatim
+          <br><br>
+          !{renderer.subtitle(lang)}
+    for c in categories
+      if (articles[c.EN])
+        tr
+          td
+          td
+            :verbatim
+              !{renderer.categoryTitle(lang,c)}
+        for a in articles[c.EN]
+            tr
+              td
+                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail})
+
+
+              td
+                div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
+                  div(class=(a["markdown"+lang])?"":"mark")
+                    ul.no-margin
+                      :verbatim
+                        !{renderer.articleTitle(lang,a)}
+              td
+                if (showCollector && a.author && a.author.collection)
+                  each b in a.author.collection.split(",")
+                    if (b !== layout.user.OSMUser)
+                      span.label.osmbclabel-collect.small-margin=b
+                    else
+                      span.label.osmbclabel-user.small-margin=b
+                if (showEditor && a.author && a.author["markdown"+lang])
+                  each b in a.author["markdown"+lang].split(",")
+                    if (b !== layout.user.OSMUser)
+                      span.label.osmbclabel-markdown.small-margin=b
+                    else
+                      span.label.osmbclabel-user.small-margin=b
+
+              td
+                if (showLanguages)
+                  +languageDisplay(a)
+
+            tr
+              td
+              td
+                div.hidden(id="div#{a.id}")
+                  form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
+                    textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(#{a.id});") #{a["markdown"+lang]}
+                    textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
+                  p
+                    if a.author && a.author.collection
+                      span="Collected: ["
+                      for author in a.author.collection
+                        span=author
+                      span="] "
+                    if a.author && a.author["markdown"+lang]
+                      span="Edited: ["
+                      for author in a.author["markdown"+lang]
+                        span=author
+                      span="] "
+  .row
+    h2="Options"
+
+    mixin option(variable,name,userdesc)
+      if variable
+        span.glyphicon.glyphicon-check(onclick='location.href="#{layout.htmlroot}/userconfig?view=overview&option=#{name}&value=false";')
+      else
+        span.glyphicon.glyphicon-unchecked(onclick='location.href="#{layout.htmlroot}/userconfig?view=overview&option=#{name}&value=true";')
+      span=userdesc
+
+    p
+      +option(showNumbers,"showNumbers"," show editor numbers, ")
+      +option(showMail,"showMail"," show mail, ")
+      +option(showCollector,"showCollector"," show collector, " )
+      +option(showEditor,"showEditor"," show editor , ")
+      +option(showLanguages,"showLanguages"," show languages")
+
+
+
+.row
+    +articleIconLegend
+
+
+
+
+block scripts
+  script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
+  script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
+  script.
+    var openEditor = null;
+    window.onload = function() {
+      
+      if (typeof(Storage)!=="undefined") {
+        if (window.sessionStorage.blogUrl !== window.location.href) return;
+        var x = window.sessionStorage.blogX;
+        var y = window.sessionStorage.blogY;
+        window.scrollTo(x,y);
+      }
+    }
+
+
+    window.onbeforeunload = function(event) {
+      // store the scroll Position in the local Store
+      s = {x:window.scrollX,y:window.scrollY};
+
+      if (typeof(Storage)!=="undefined") {
+
+        window.sessionStorage.blogUrl = window.location.href;
+        window.sessionStorage.blogX = s.x;
+        window.sessionStorage.blogY = s.y;
+      }
+    };
+
+    function onLeaveText(id) {
+
+      var oldValue = document.getElementById("oldMarkdown"+id).value;
+      var newValue = document.getElementById("markdown"+id).value;
+      if (oldValue === newValue) return;
+      document.getElementById('EditArticle'+id).submit();
+    }
+
+
+
+

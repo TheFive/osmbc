@@ -1,11 +1,40 @@
 extends layout
 
-mixin navbutton(userstyle,style,addClass)
+mixin navbutton(userstyle,style,p,addClass)
   if (userstyle==style) 
-    li.active(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?style=#{userstyle}") #{userstyle}
+    li.active(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
   else
-    li(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?style=#{userstyle}") #{userstyle}
+    li(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
   
+
+mixin articleIconLegend(view)
+  h2="Symbol Legend"
+  p
+    span.label.osmbclabel-collect.small-margin="X"
+    span=" = number of collectors "
+  p
+    span.label.osmbclabel-collect.small-margin="username"
+    span=" = collector of article "
+  p
+    span.label.osmbclabel-markdown.small-margin="X"
+    span=" = number of editors in shown language"
+  p
+    span.label.osmbclabel-markdown.small-margin="username"
+    span=" = Editor of article"
+  p
+    span.glyphicon.glyphicon-comment.small-margin(style="color:blue")
+    span=" = there is a comment in the article"
+  p
+    span.glyphicon.glyphicon-comment.small-margin(style="color:red")
+    span=" = there is a comment with personal mention in the article"
+  p
+    span.glyphicon.glyphicon-comment.small-margin(style="color:orange")
+    span=" = there is a comment with language mention in the article"
+  p
+    a(href="#" target="_blank")
+      span.glyphicon.glyphicon-open.small-margin
+    span=" open the article in a new tab"
+
 
 
 block content
@@ -17,12 +46,12 @@ block content
     - if (total == 0) total = 1
   .row
     .col-md-1
-      div.label.label-info.osmbc-lang(style="color:white")=left_lang
+      div.label.osmbclabel-lang=left_lang
     .col-md-11
      div.progress(style="margin-bottom:2px")
-      div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
-      div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
-      div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
+      div.progress-bar.osmbclabel-markdown(style="width:#{parseInt(100*ready/total)}%")=ready
+      div.progress-bar.osmbclabel-no-markdown(style="width:#{parseInt(100*unedited/total)}%")=unedited
+      div.progress-bar.osmbclabel-no-translation(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
   div.hidden-xs
     if (right_lang!= "--" && right_lang != null)
       .row
@@ -32,15 +61,18 @@ block content
         - ready = (total-unedited - notranslate)
         - if (total == 0) total = 1
         .col-md-1
-          div.label.label-info.osmbc-lang2(style="color:white")=right_lang
+          div.label.label-info.osmbclabel-lang2=right_lang
         .col-md-11
          div.progress(style="margin-bottom:10px")
-          div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
-          div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
-          div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
+          div.progress-bar.osmbclabel-markdown(style="width:#{parseInt(100*ready/total)}%")=ready
+          div.progress-bar.osmbclabel-no-markdown(style="width:#{parseInt(100*unedited/total)}%")=unedited
+          div.progress-bar.osmbclabel-no-translation(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
 
 
   .row
+    - columnLeftSize = "col-md-6"
+    - columnRightSize = "col-md-6"
+    - if (right_lang== "--" || right_lang == null)  {ColumnLeftSize = "col-md-12";columnRightSize = "hidden";}
     .col-md-6
       - status = blog.status
       - if (blog["reviewComment"+left_lang]) status = "Review "+left_lang;
@@ -80,7 +112,7 @@ block content
             button.btn.btn-large.btn-primary(id="readyreview" onclick ="document.getElementById('readyreview').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=startreview&&style=#{style}';") Set #{blog.name}(#{left_lang}) ready for review
 
   .row
-    .col-md-6
+    div(class=columnLeftSize)
       - reviewCommentsLeft = blog["reviewComment"+left_lang];
         if reviewCommentsLeft
           .panel.panel-default
@@ -102,7 +134,7 @@ block content
                   .col-md-2
                     button.btn.btn-large.btn-primary(id="reviewButton" type="submit",onclick="document.getElementById('reviewButton').disabled=true;document.getElementById('review').submit();") Review#{left_lang}
 
-    .col-md-6
+    div(class=columnRightSize)
       - reviewCommentsRight = blog["reviewComment"+right_lang];
 
         if reviewCommentsRight
@@ -121,11 +153,13 @@ block content
   .row
     .col-md-12
       ul.nav.nav-tabs
-        +navbutton("OVERVIEW",style,"")
-        +navbutton("TRANSLATION",style,"hidden-xs")
-        +navbutton("FULL",style,"hidden-xs")
-        +navbutton("FULLFINAL",style,"hidden-xs")
-        li:  a(href="#{layout.htmlroot}/blog/#{blog.name}/previewNEdit") Review
+        +navbutton("OVERVIEW",style,"style","")
+        +navbutton("Overview",style,"tab","")
+        +navbutton("TRANSLATION",style,"style","hidden-xs")
+        +navbutton("FULL",style,"style","hidden-xs")
+        +navbutton("Full",style,"tab","hidden-xs")
+        +navbutton("FULLFINAL",style,"style","hidden-xs")
+        +navbutton("Review",style,"tab","hidden-xs")
 
         //
           - v = 0

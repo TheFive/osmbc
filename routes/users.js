@@ -15,6 +15,7 @@ var config = require('../config.js');
 var userModule = require('../model/user.js');
 var logModule = require('../model/logModule.js');
 var settingsModule = require('../model/settings.js');
+var blogRenderer = require('../render/BlogRenderer.js');
 
 
 
@@ -170,8 +171,9 @@ function postUserId(req, res, next) {
 
 function inbox (req,res) {
   debug("inbox");
+  var renderer = new blogRenderer.HtmlRenderer(null);
   req.session.articleReturnTo = req.originalUrl;
-  res.render("inbox",{layout:res.rendervar.layout});
+  res.render("inbox",{layout:res.rendervar.layout,renderer:renderer});
 }
 
 function createUser(req, res, next) {

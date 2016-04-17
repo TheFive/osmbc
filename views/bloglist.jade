@@ -16,7 +16,8 @@ block content
             th name
             th status
             for lang in layout.languages
-              th= lang
+              if layout.usedLanguages[lang]
+                th= lang
             th service
          tbody
           - var onlyhelp = true
@@ -31,29 +32,30 @@ block content
                   a(href='#{layout.htmlroot}/blog/' + blog.name) #{blog.name} 
                 td= blog.status
                 for lang in layout.languages
-                  td
-                    if blog["close"+lang]
-                      - labeltype = "label-success"
-                      - urlblog = layout.htmlroot+"/blog/"+blog.name+"?style=fullfinal"+lang
+                  if layout.usedLanguages[lang]
+                    td
+                      if blog["close"+lang]
+                        - labeltype = "label-success"
+                        - urlblog = layout.htmlroot+"/blog/"+blog.name+"?style=fullfinal"+lang
 
-                    else 
-                      if lang!="PT"
-                      if blog["reviewComment"+lang]
-                        - labeltype = "label-primary"
-                        - urlblog =  layout.htmlroot+"/blog/"+blog.name+"?style=fullfinal"+lang
+                      else
+                        if lang!="PT"
+                        if blog["reviewComment"+lang]
+                          - labeltype = "label-primary"
+                          - urlblog =  layout.htmlroot+"/blog/"+blog.name+"?style=fullfinal"+lang
 
-                      else 
-                        - labeltype = "label-danger"
-                        - urlblog = layout.htmlroot+"/article/list?markdown"+lang+"=&category=!=--unpublished--&blog="+blog.name
-                       
-                    a(href="#{urlblog}")
-                      span.label.label-default
-                        |#{blogNumber(blog,lang)}
-                    a(href="#{urlblog}")
-                      span.label(class="#{labeltype}")
-                       |#{blogCount(blog,lang)}
-                    if blog._timeToClose[lang]
-                      bold.span=" (+"+blog._timeToClose[lang]+"d)"
+                        else
+                          - labeltype = "label-danger"
+                          - urlblog = layout.htmlroot+"/article/list?markdown"+lang+"=&category=!=--unpublished--&blog="+blog.name
+
+                      a(href="#{urlblog}")
+                        span.label.label-default
+                          |#{blogNumber(blog,lang)}
+                      a(href="#{urlblog}")
+                        span.label(class="#{labeltype}")
+                         |#{blogCount(blog,lang)}
+                      if blog._timeToClose[lang]
+                        bold.span=" (+"+blog._timeToClose[lang]+"d)"
 
                 td
                   if blog.status != "closed"

@@ -72,6 +72,22 @@ function languageSwitcher(req,res,next) {
   });
 }
 
+function setUserConfig(req,res,next) {
+  debug('setUserConfig');
+
+  var user = req.user;
+  if (!req.query.view) return next(new Error("missing view in option"));
+  if (!req.query.option) return next(new Error("missing option in option"));
+  if (!req.query.value) return next(new Error("missing value in option"));
+
+  user.setOption(req.query.view,req.query.option,req.query.value);
+
+  req.user.save(function finalLanguageSwitcher(err){
+    if (err) return next(err);
+    var referer = req.get('referer');
+    if (referer) res.redirect(referer); else res.end("changed");
+  });
+}
 
 function renderHelp(req,res) {
   debug('help');
@@ -98,6 +114,7 @@ router.get('/osmbc/admin',renderAdminHome);
 router.get('/help/:title', renderHelp);
 router.get('/changelog', renderChangelog);
 router.get('/language',languageSwitcher);
+router.get('/userconfig',setUserConfig);
 
 
 

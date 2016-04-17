@@ -54,16 +54,33 @@ function renderBlogId(req, res, next) {
   req.session.articleReturnTo = req.originalUrl;
 
   var id = req.params.blog_id;
- 
-  var style = 'OVERVIEW';
 
-  if (req.session.lastStyle) style = req.session.lastStyle;
+  var tab = req.query.tab;
+  var style = req.query.style;
 
-  if (req.query.style ) {
-    style = req.query.style;
-    req.session.lastStyle = style;
+  if (!tab && !style) {
+    tab = req.session.lasttab;
+    style = req.session.laststyle;
+  }
+  if (!tab && !style) {
+    tab = "Overview";
+  }
+  req.session.laststyle = style;
+  req.session.lasttab = tab;
+
+
+  if (tab) {
+
+    if (tab==="Overview") return renderBlogTab(req,res,next);
+    if (tab==="Review") return renderBlogTab(req,res,next);
+    if (tab==="Full") return renderBlogTab(req,res,next);
+
   }
   var options = settingsModule.getSettings(style,req.user.getMainLang(),req.user.getSecondLang());
+
+
+
+
 
 
   var user = req.user;
@@ -265,12 +282,14 @@ function renderBlogList(req, res, next) {
 
 function renderBlogPreview(req, res, next) {
   debug('renderBlogPreview');
- 
+  req.session.articleReturnTo = req.originalUrl;
+
   var id = req.params.blog_id;
 
   findBlogByRouteId(id,req.user,function(err,blog) {
     if (err) return next(err);
     should.exist(blog);
+
 
     var lang = req.query.lang;
     if (typeof(lang)=='undefined') lang = "DE";
@@ -321,6 +340,8 @@ function renderBlogPreview(req, res, next) {
                              preview:result.converter.preview,
                              markdown: markdown,
                              lang:lang,
+                             left_lang:req.user.left_lang,
+                             right_lang:req.user.right_lang,
                              returnToUrl:returnToUrl,
                              categories:blog.getCategories()});
         }
@@ -329,10 +350,16 @@ function renderBlogPreview(req, res, next) {
   });
 }
 
-function renderBlogPreviewAndEdit(req, res, next) {
+function renderBlogTab(req, res, next) {
   debug('renderBlogPreviewAndEdit');
 
   var id = req.params.blog_id;
+  var tab = req.query.tab;
+
+
+  if (!tab) req.session.lasttab
+  if (!tab) tab = "Overview";
+
 
   findBlogByRouteId(id,req.user,function(err,blog) {
     if (err) return next(err);
@@ -358,20 +385,13 @@ function renderBlogPreviewAndEdit(req, res, next) {
         should.exist(res.rendervar);
         var renderer = new blogRenderer.HtmlRenderer(blog);
 
-        /* res.render('blog',{layout:res.rendervar.layout,
-         main_text:main_text,
-         blog:blog,
-         changes:changes,
-         articles:articles,
-         style:style,
-         left_lang:options.left_lang,(--)
-         right_lang:options.right_lang, (--)
-         */
-        res.render('blogpreview&edit',{layout:res.rendervar.layout,
+
+        res.render('blog_'+tab.toLowerCase(),{layout:res.rendervar.layout,
             blog:blog,
             articles:result.dataCollect.articles,
             teamString:result.teamString,
             lang:lang,
+            tab:tab,
             left_lang:req.user.getMainLang(),
             right_lang:req.user.getSecondLang(),
             renderer:renderer,
@@ -444,8 +464,8 @@ router.get('/create', createBlog);
 router.get('/list', renderBlogList);
 router.get('/:blog_id', renderBlogId);
 router.get('/:blog_id/stat', renderBlogStat);
-router.get('/:blog_id/previewNEdit',renderBlogPreviewAndEdit);
-router.get('/:blog_id/:format', renderBlogPreview);
+router.get('/:blog_id/previewNEdit',renderBlogTab);
+router.get('/:blog_id/:tab', renderBlogPreview);
 router.get('/:blog_id/preview_:blogname_:downloadtime', renderBlogPreview);
 //router.post('/edit/:blog_id',postBlogId);
 

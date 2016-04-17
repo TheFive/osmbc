@@ -682,8 +682,12 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
   self._countNoTranslateMarkdown = {};
 
   self._userMention = [];
-  self._langMention = [];
-  var lang = user.language;
+  self._mainLangMention = [];
+  self._secondLangMention = [];
+
+  self._usedLanguages = {};
+  var mainLang = user.mainLang;
+  var secondLang = user.secondLang;
   var i,j;
 
   articleModule.find({blog:this.name},function (err,result) {
@@ -712,6 +716,8 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
               self._countUneditedMarkdown[l] +=1;
             }
           }
+          // check, wether language is used in blog
+          if (m && m!=="no translation") self._usedLanguages[l]=true;
         }
       }
     }
@@ -725,10 +731,16 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
             self._userMention.push(result[i]);
             break;
           }
-          if (  (comment.search(new RegExp("@"+lang,"i"))>=0) ||
+          if (  (comment.search(new RegExp("@"+mainLang,"i"))>=0) ||
             (comment.search(new RegExp("@all","i"))>=0) ||
             (comment.search(new RegExp("@all","i"))>=0)) {
-            self._langMention.push(result[i]);
+            self._mainLangMention.push(result[i]);
+            break;
+          }
+          if (  (comment.search(new RegExp("@"+secondLang,"i"))>=0) ||
+            (comment.search(new RegExp("@all","i"))>=0) ||
+            (comment.search(new RegExp("@all","i"))>=0)) {
+            self._secondLangMention.push(result[i]);
             break;
           }
         }

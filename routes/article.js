@@ -369,8 +369,9 @@ function postSetMarkdown(req, res, next) {
       change.old["markdown"+lang]=oldMarkdown;
       article.setAndSave(req.user,change,function(err){
         if (err) return next(err);
-        var returnToUrl = config.getValue('htmlroot')+"/blog/"+article.blog+"/previewNEdit";
-        res.redirect(returnToUrl);
+        //var returnToUrl = config.getValue('htmlroot')+"/blog/"+article.blog+"/previewNEdit";
+        let referer=req.header('Referer') || '/';
+        res.redirect(referer);
       });
     }
   );

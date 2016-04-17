@@ -22,29 +22,12 @@ block blogcontent
         if a["markdown"+lang]!=="no translation"
           .row
             .col-md-1
-              - numCol = 0;
-              - if (a.author && a.author.collection) numCol = a.author.collection.split(",").length;
-              - numEd = 0;
-              - if (a.author && a.author["markdown"+lang]) numEd = a.author["markdown"+lang].split(",").length;
-              span.label.label-info.small-margin=numCol
-              span.label.label-success.small-margin=numEd
-              - mention = a.getCommentMention(layout.user.OSMUser,layout.user.language)
-              if mention == "other"
-                span.glyphicon.glyphicon-comment.small-margin(style="color:blue")
-              if mention == "user"
-                span.glyphicon.glyphicon-comment.small-margin(style="color:red")
-              if mention == "language"
-                span.glyphicon.glyphicon-comment.small-margin(style="color:orange")
-              //if mention && !a.getCommentRead(layout.user.OSMUser)
-                //span.glyphicon.glyphicon-envelope.small-margin
-
-
-              a(href="#{layout.htmlroot}/article/#{a.id}" target="_blank")
-                span.glyphicon.glyphicon-open.small-margin
+              +articleIcons(a)
 
 
             .col-md-11
               div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
+
                 ul
                   :verbatim
                     !{renderer.article(lang,a)}
@@ -65,26 +48,7 @@ block blogcontent
                       span=author
                     span="] "
   .row
-    h2="Symbol Legend"
-    p
-      span.label.label-info.small-margin="X"
-      span=" = number of collectors "
-    p
-      span.label.label-success.small-margin="X"
-      span=" = number of editors in shown language"
-    p
-      span.glyphicon.glyphicon-comment.small-margin(style="color:blue")
-      span=" = there is a comment in the article"
-    p
-      span.glyphicon.glyphicon-comment.small-margin(style="color:red")
-      span=" = there is a comment with personal mention in the article"
-    p
-      span.glyphicon.glyphicon-comment.small-margin(style="color:orange")
-      span=" = there is a comment with language mention in the article"
-    p
-      a(href="#" target="_blank")
-        span.glyphicon.glyphicon-open.small-margin
-      span=" open the article in a new tab"
+    +articleIconLegend
 
 
 
