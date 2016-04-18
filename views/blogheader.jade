@@ -92,7 +92,7 @@ block content
           span.hidden-xs=" ("+status+")"
       
     .col-md-6
-      if !(blog["close"+left_lang])    
+      if !(blog["close"+left_lang])
         - reviewCommentsLeft = blog["reviewComment"+left_lang];
         if (reviewCommentsLeft)
           .row
@@ -118,21 +118,21 @@ block content
           .panel.panel-default
             .panel-heading
               h3.panel-title
-                | Review #{left_lang}
-            table.table.table-condensed.table-responsive
-              tbody
-              each comment in reviewCommentsLeft
-                tr
-                  td=comment.user
-                  td=comment.text
-                  td=layout.moment(comment.timestamp).fromNow()
+                | Review #{left_lang)
             .panel-body
+              each comment in reviewCommentsLeft
+                p
+                  b.span=comment.user
+                  span=" "
+                  i.span=layout.moment(comment.timestamp).fromNow()
+                p=comment.text
               .form-group
-                form.form-horizontal(id="review" name="review", action="#{layout.htmlroot}/blog/#{blog.name}", method="get")
-                  .col-md-10
-                    input(type="text",class="form-control",name ="reviewComment",id="reviewComment" placeholder="Please Type your Review here")
-                  .col-md-2
-                    button.btn.btn-large.btn-primary(id="reviewButton" type="submit",onclick="document.getElementById('reviewButton').disabled=true;document.getElementById('review').submit();") Review#{left_lang}
+                if (!blog["close"+left_lang])
+                  form.form-horizontal(id="review" name="review", action="#{layout.htmlroot}/blog/#{blog.name}", method="get")
+                    .col-md-10
+                      input(type="text",class="form-control",name ="reviewComment",id="reviewComment" placeholder="Please Type your Review here")
+                    .col-md-2
+                      button.btn.btn-large.btn-primary(id="reviewButton" type="submit",onclick="document.getElementById('reviewButton').disabled=true;document.getElementById('review').submit();") Review#{left_lang}
 
     div(class=columnRightSize)
       - reviewCommentsRight = blog["reviewComment"+right_lang];
@@ -142,13 +142,15 @@ block content
             .panel-heading
               h3.panel-title
                 | Review #{right_lang}
-            table.table.table-condensed.table-responsive
-              tbody
+            .panel-body
               each comment in reviewCommentsRight
-                tr
-                  td=comment.user
-                  td=comment.text
-                  td=layout.moment(comment.timestamp).fromNow()
+                p
+                  b.span=comment.user
+                  span=" "
+                  i.span=layout.moment(comment.timestamp).fromNow()
+                p=comment.text
+             
+
   
   .row
     .col-md-12
