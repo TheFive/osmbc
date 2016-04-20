@@ -10,6 +10,19 @@ block blogcontent
   - showCollector = (layout.user.getOption("overview","showCollector")=="true")
   - showEditor = (layout.user.getOption("overview","showEditor")=="true")
   - showLanguages = (layout.user.getOption("overview","showLanguages")=="true")
+  - disableOwnCollection = (layout.user.getOption("overview","disableOwnCollection")=="true")
+  - disableOtherCollection = (layout.user.getOption("overview","disableOtherCollection")=="true")
+  - disableWritten = (layout.user.getOption("overview","disableWritten")=="true")
+
+  if disableOwnCollection
+    p.text-info
+      | Collections of #{layout.user.OSMUser} are disabled
+  if disableOtherCollection
+    p.text-info
+      | Collections not done by #{layout.user.OSMUser} are disabled
+  if disableWritten
+    p.text-info
+      | Written markdown is disabled
 
   table
     tr
@@ -26,6 +39,11 @@ block blogcontent
             :verbatim
               !{renderer.categoryTitle(lang,c)}
         for a in articles[c.EN]
+          - enable = true;
+          - if (disableWritten  && a["markdown"+lang]) enable = false;
+          - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
+          - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
+          if enable
             tr
               td
                 +articleIcons(a,{showNumbers:showNumbers,showMail:showMail})
@@ -88,7 +106,10 @@ block blogcontent
       +option(showMail,"showMail"," show mail, ")
       +option(showCollector,"showCollector"," show collector, " )
       +option(showEditor,"showEditor"," show editor , ")
-      +option(showLanguages,"showLanguages"," show languages")
+      +option(showLanguages,"showLanguages"," show languages, ")
+      +option(disableWritten,"disableWritten"," disable written articles, ")
+      +option(disableOwnCollection,"disableOwnCollection"," disable own collections, ")
+      +option(disableOtherCollection,"disableOtherCollection"," disable other collections")
 
 
 
