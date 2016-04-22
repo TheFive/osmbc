@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.6.0](https://github.com/TheFive/osmbc/tree/1.6.0) (2016-04-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.5.0...1.6.0)
+
+**Implemented enhancements:**
+
+- Switch User Lang in inbox to main lang, switch color of comments glyphicon to support this. [\#429](https://github.com/TheFive/osmbc/issues/429)
+- Hide languages, that have no markdown for all open / edit blogs for user with other languages. [\#423](https://github.com/TheFive/osmbc/issues/423)
+
 ## [1.5.0](https://github.com/TheFive/osmbc/tree/1.5.0) (2016-04-16)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.2...1.5.0)
 
@@ -466,7 +474,6 @@
 **Implemented enhancements:**
 
 - please add the emailaddress [\#299](https://github.com/TheFive/osmbc/issues/299)
-- Display editor\(s\) of markdown in article previews [\#293](https://github.com/TheFive/osmbc/issues/293)
 
 **Fixed bugs:**
 
@@ -483,14 +490,9 @@
 - Generate an outgoing mail log for debugging purposes. [\#298](https://github.com/TheFive/osmbc/issues/298)
 - Generate Text EMails as alternative to html. [\#297](https://github.com/TheFive/osmbc/issues/297)
 - Build an easier way to configure personal settings \(eg. via user name in navbar\) [\#296](https://github.com/TheFive/osmbc/issues/296)
-- Show a progress bar for each blog with translated, edited and open articles. [\#295](https://github.com/TheFive/osmbc/issues/295)
 
 ## [0.6.9c](https://github.com/TheFive/osmbc/tree/0.6.9c) (2016-02-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9b...0.6.9c)
-
-**Merged pull requests:**
-
-- bitte nur den letzten nehmen ... [\#294](https://github.com/TheFive/osmbc/pull/294) ([fredao](https://github.com/fredao))
 
 ## [0.6.9b](https://github.com/TheFive/osmbc/tree/0.6.9b) (2016-01-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9a...0.6.9b)
