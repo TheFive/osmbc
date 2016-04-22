@@ -105,13 +105,11 @@ block scripts
     };
 
     function onLeaveText(column,id) {
-      console.log("leave text"+column+id);
 
       var oldValue = document.getElementById(column+"oldMarkdown"+id).value;
       var newValue = document.getElementById(column+"markdown"+id).value;
       if (oldValue === newValue) return;
       form = document.getElementById(column + 'EditArticle' + id);
-      console.log(form);
       form.submit();
     }
 

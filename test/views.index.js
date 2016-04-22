@@ -83,7 +83,6 @@ describe('views/index', function() {
           should.not.exist(err);
           browser.assert.success();
           var html = browser.html();
-          console.log(html);
           var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN');
           should(found >= 0).be.True();
           bddone();
