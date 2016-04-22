@@ -293,7 +293,9 @@ function createNewBlog(user, proto,callback,noArticle) {
           if (err) return callback(err);
           emptyBlog.id = savedblog.id;
           messageCenter.global.updateBlog(user,emptyBlog,change,function(err){
-            if (err) return callback(err);
+            if (err) {
+              return callback(err);
+            }
             return callback(null,savedblog);
           });
         });

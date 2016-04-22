@@ -78,7 +78,7 @@ mixin articleIcons(a,options)
             - shown=true
         if !shown
           span.glyphicon.glyphicon-comment.small-margin(style="color:grey")
-        if a.getCommentRead(layout.user.OSMUser)
+        if !a.getCommentRead(layout.user.OSMUser)
           span.glyphicon.glyphicon-envelope.small-margin
     a(href="#{layout.htmlroot}/article/#{a.id}")
         span.glyphicon.glyphicon-open.small-margin

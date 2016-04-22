@@ -1,6 +1,33 @@
 extends layout
 
-
+mixin displayArticle(article,lang)
+  .panel.panel-default
+    .panel-heading
+      ul
+        :verbatim
+          !{renderer.articleTitle(lang,article)}
+    if (article.commentList)
+      .panel-body
+        - upToComment = null
+        - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
+        - if (!upToComment) upToComment = -1;
+        each comment,i in article.commentList
+          .row
+            .col-md-12
+              b
+                if (i > upToComment)
+                  a(href="#{layout.htmlroot}/article/#{article.id}/markCommentRead?index=#{i}")
+                    span.glyphicon.glyphicon-envelope
+                  span=" "
+                span=comment.user
+              span=" "
+              span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+              if (comment.editstamp)
+                span=" "
+                i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
+              p
+                :verbatim
+                !{layout.md_render(comment.text)}
 
 
 block content
@@ -15,52 +42,47 @@ block content
   .row
     .col-md-1
     .col-md-11
-      h4= "Inbox Direct Mention:"
+      h2= "Inbox Direct Mention:"
 
   for blog in bloglist
     if blog._userMention.length>0
       .row
         .col-md-1
         .col-md-11
-          h5=blog.name
+          h3=blog.name
         for article in blog._userMention
           .row
             .col-md-1
-              +articleIcons(article)
+              +articleIcons(article,{showMail:true})
             .col-md-11
-              ul
-                :verbatim
-                  !{renderer.articleTitle(left_lang,article)}
+              +displayArticle(article,left_lang)
 
   .row
     .col-md-1
     .col-md-11
-      h4= "Inbox Indirect Mention:"
+      h2= "Inbox Indirect Mention:"
 
   for blog in bloglist
     if blog._mainLangMention.length > 0
       .row
         .col-md-1
         .col-md-11
-          h5=blog.name
+          h3=blog.name
         for article in blog._mainLangMention
           .row
             .col-md-1
-              +articleIcons(article)
+              +articleIcons(article,{showMail:true})
             .col-md-11
-              ul
-                :verbatim
-                  !{renderer.articleTitle(left_lang,article)}
+              +displayArticle(article,left_lang)
+
     if blog._secondLangMention.length > 0
       .row
         .col-md-1
         .col-md-11
-          h5=blog.name
+          h3=blog.name
         for article in blog._secondLangMention
           .row
             .col-md-1
-              +articleIcons(article)
+              +articleIcons(article,{showMail:true})
             .col-md-11
-              ul
-                :verbatim
-                  !{renderer.articleTitle(left_lang,article)}
+              +displayArticle(article,left_lang)

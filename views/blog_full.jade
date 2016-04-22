@@ -25,7 +25,7 @@ block blogcontent
       for a in articles[c.EN]
           .row
             .col-md-1
-              +articleIcons(a)
+              +articleIcons(a,{showNumbers:true,showMail:true})
             .col-md-11
               .row
                 div(class=columnLeftSize)

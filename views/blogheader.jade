@@ -72,7 +72,7 @@ block content
   .row
     - columnLeftSize = "col-md-6"
     - columnRightSize = "col-md-6"
-    - if (right_lang== "--" || right_lang == null)  {ColumnLeftSize = "col-md-12";columnRightSize = "hidden";}
+    - if (right_lang== "--" || right_lang == null)  {columnLeftSize = "col-md-12";columnRightSize = "hidden";}
     .col-md-6
       - status = blog.status
       - if (blog["reviewComment"+left_lang]) status = "Review "+left_lang;
@@ -155,12 +155,12 @@ block content
   .row
     .col-md-12
       ul.nav.nav-tabs
-        +navbutton("OVERVIEW",style,"style","")
+        //+navbutton("OVERVIEW",style,"style","")
         +navbutton("Overview",style,"tab","")
-        +navbutton("TRANSLATION",style,"style","hidden-xs")
-        +navbutton("FULL",style,"style","hidden-xs")
+        //+navbutton("TRANSLATION",style,"style","hidden-xs")
+        //+navbutton("FULL",style,"style","hidden-xs")
         +navbutton("Full",style,"tab","hidden-xs")
-        +navbutton("FULLFINAL",style,"style","hidden-xs")
+        //+navbutton("FULLFINAL",style,"style","hidden-xs")
         +navbutton("Review",style,"tab","hidden-xs")
 
         //
@@ -175,7 +175,7 @@ block content
           a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{left_lang}") 
             span.glyphicon.glyphicon-export
             | #{left_lang}
-        if (right_lang != "--")
+        if (right_lang != "--" && right_lang != null)
           li.hidden-xs
             a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{right_lang}") 
               span.glyphicon.glyphicon-export
@@ -185,8 +185,9 @@ block content
             span.glyphicon.glyphicon-export
           ul.dropdown-menu(role='menu')
             for lang in layout.languages
-              li
-                a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{lang}") Export #{lang}
+              if layout.usedLanguages[lang]
+                li
+                  a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{lang}") Export #{lang}
 
 
 

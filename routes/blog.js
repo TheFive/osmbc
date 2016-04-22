@@ -301,7 +301,7 @@ function renderBlogPreview(req, res, next) {
     if (blog.status == "help") {
       returnToUrl = res.rendervar.layout.htmlroot + "/blog/"+blog.id;
     }
-   
+
 
 
 
@@ -357,7 +357,7 @@ function renderBlogTab(req, res, next) {
   var tab = req.query.tab;
 
 
-  if (!tab) req.session.lasttab
+  if (!tab) tab = req.session.lasttab;
   if (!tab) tab = "Overview";
 
 
