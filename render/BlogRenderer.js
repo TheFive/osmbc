@@ -59,6 +59,15 @@ MarkdownRenderer.prototype.article = function markdownArticle(lang,article) {
   return "* "+article["markdown"+lang];
 };
 
+HtmlRenderer.prototype.articleTitle = function htmlArticle(lang,article) {
+  debug('HtmlRenderer.prototype.article');
+  return "<li>"+article.displayTitle(999)+"</li>";
+};
+MarkdownRenderer.prototype.articleTitle = function markdownArticle(lang,article) {
+  debug('MarkdownRenderer.prototype.article');
+  return "* "+article.displayTitle(999);
+};
+
 
 module.exports.MarkdownRenderer = MarkdownRenderer;
 module.exports.HtmlRenderer = HtmlRenderer;

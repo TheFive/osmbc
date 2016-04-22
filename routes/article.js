@@ -369,8 +369,9 @@ function postSetMarkdown(req, res, next) {
       change.old["markdown"+lang]=oldMarkdown;
       article.setAndSave(req.user,change,function(err){
         if (err) return next(err);
-        var returnToUrl = config.getValue('htmlroot')+"/blog/"+article.blog+"/previewNEdit";
-        res.redirect(returnToUrl);
+        //var returnToUrl = config.getValue('htmlroot')+"/blog/"+article.blog+"/previewNEdit";
+        let referer=req.header('Referer') || '/';
+        res.redirect(referer);
       });
     }
   );
@@ -426,7 +427,7 @@ function markCommentRead(req, res, next) {
 
 
   var article = null;
-  var returnToUrl;
+
 
   async.parallel([
       function searchArticle(cb) {
@@ -437,7 +438,6 @@ function markCommentRead(req, res, next) {
           if (err) return cb(err);
           if (!result) return cb(new Error("Article ID does not exist"));
           article = result;
-          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
           cb();
         });
       }
@@ -452,6 +452,8 @@ function markCommentRead(req, res, next) {
           next(err);
           return;
         }
+        let returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
+        returnToUrl =req.header('Referer') || returnToUrl;
         res.redirect(returnToUrl);
       });
     }

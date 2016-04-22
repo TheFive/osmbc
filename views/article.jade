@@ -141,17 +141,7 @@ block content
           .col-md-7
             textarea.form-control(name="title",rows=1) #{article.title}
           .col-md-3
-            each lang in layout.languages
-              if (article["markdown"+lang])
-                if (article["markdown"+lang]!=="no translation") 
-                  span.label.label-success
-                    |#{lang}
-                else    
-                  span.label.label-danger
-                    |#{lang}
-              else
-                span.label.label-default
-                  |#{lang}
+            +languageDisplay(article)
 
         .row
           .col-md-1
@@ -263,17 +253,18 @@ block content
           p
             - open = false
             each lang in layout.languages
-              if (article["markdown"+lang])
-                if (article["markdown"+lang]!=="no translation")
-                  span.label.label-success
-                    |#{lang}
+              if layout.usedLanguages[lang]
+                if (article["markdown"+lang])
+                  if (article["markdown"+lang]!=="no translation")
+                    span.label.osmbc-markdown
+                      |#{lang}
+                  else
+                    span.label.osmbc-no-translation
+                      |#{lang}
                 else
-                  span.label.label-danger
+                  span.label.osmbc-no-markdown
                     |#{lang}
-              else
-                span.label.label-default
-                  |#{lang}
-                - open = true;
+                  - open = true;
           if open
             p
               button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}&notranslation=true';") notranslation to rest
