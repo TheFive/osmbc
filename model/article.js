@@ -104,6 +104,23 @@ Article.prototype.getCommentMention = function getCommentMention(user,lang1,lang
   return null;
 };
 
+Article.prototype.isMentioned = function isMentioned(what,includeAll) {
+  debug('Article.prototype.isMentioned');
+  if (typeof(includeAll)==="undefined") includeAll = false;
+
+  if (this.commentStatus === "solved") return null;
+  var comment = this.comment;
+  if (this.commentList) {
+    for (var i = 0; i < this.commentList.length; i++) {
+      comment += " " + this.commentList[i].text;
+    }
+  }
+  if (!comment) return null;
+  if (comment.search(new RegExp("@"+what+"\\b","i"))>=0) return true;
+  if (includeAll && comment.search(new RegExp("@all\\b","i"))>=0) return true;
+  return false;
+};
+
 Article.prototype.getCommentRead = function getCommentRead(user) {
   debug('Article.prototype.getCommentUnread');
   if (!this.commentList) return false;

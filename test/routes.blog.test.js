@@ -49,6 +49,7 @@ describe('routes/blog',function() {
         var newId = blog.id +1;
         var req = {};
         req.params = {};
+        req.session = {};
         req.params.blog_id = newId;
         req.user = {};
 
@@ -78,6 +79,7 @@ describe('routes/blog',function() {
         var req = {};
         req.params = {};
         req.user = {};
+        req.session = {};
         req.params.blog_id = newId;
         var res = {};
         var next;
@@ -109,6 +111,7 @@ describe('routes/blog',function() {
           req.params = {};
           req.params.blog_id = newId;
           req.user = {};
+          req.session = {};
           var res = {};
           var next;
 
@@ -142,7 +145,9 @@ describe('routes/blog',function() {
         req.params.blog_id = newId;
         req.query = {};
         req.user = {};
-        req.session = {articleReturnTo:"returnToUrlXX"};
+        req.session = {};
+        req.originalUrl = "returnToUrlXX";
+
         var next;
         var res = {rendervar:{layout:"calculated layout"}};
 
@@ -159,6 +164,7 @@ describe('routes/blog',function() {
             should(res.render.called).be.True();
             var call = res.render.firstCall;
             var v = call.args[1];
+
 
 
             should(v.preview).equal('<p>12.12.2015-13.12.2015</p>\n<p align="right"><i>Diese Wochennotiz wurde erstellt von .</i></p>\n');

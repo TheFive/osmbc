@@ -175,7 +175,6 @@ function getSettings(string,language,language2) {
     result.style=string;
     return result;
   }
-  console.log(">>> aölsdkjfaölsdkfjöalsdkfj");
   return null;
 }
 

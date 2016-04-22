@@ -1,0 +1,286 @@
+extends layout
+
+mixin navbutton(userstyle,style,p,addClass)
+  if (userstyle==style) 
+    li.active(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
+  else
+    li(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
+  
+
+mixin articleIconLegend(view)
+  h2="Symbol Legend"
+  p
+    span.label.osmbclabel-collect.small-margin="X"
+    span=" = number of collectors "
+  p
+    span.label.osmbclabel-collect.small-margin="username"
+    span=" = collector of article "
+  p
+    span.label.osmbclabel-markdown.small-margin="X"
+    span=" = number of editors in shown language"
+  p
+    span.label.osmbclabel-markdown.small-margin="username"
+    span=" = Editor of article"
+  p
+    span.glyphicon.glyphicon-comment.small-margin(style="color:blue")
+    span=" = there is a comment in the article"
+  p
+    span.glyphicon.glyphicon-comment.small-margin(style="color:red")
+    span=" = there is a comment with personal mention in the article"
+  p
+    span.glyphicon.glyphicon-comment.small-margin(style="color:orange")
+    span=" = there is a comment with language mention in the article"
+  p
+    a(href="#" target="_blank")
+      span.glyphicon.glyphicon-open.small-margin
+    span=" open the article in a new tab"
+
+
+
+block content
+  .row 
+    - unedited = blog._countUneditedMarkdown[left_lang];
+    - notranslate = blog._countNoTranslateMarkdown[left_lang];
+    - total = blog._countExpectedMarkdown[left_lang] 
+    - ready = (total-unedited - notranslate)
+    - if (total == 0) total = 1
+  .row
+    .col-md-1
+      div.label.osmbclabel-lang=left_lang
+    .col-md-11
+     div.progress(style="margin-bottom:2px")
+      div.progress-bar.osmbclabel-markdown(style="width:#{parseInt(100*ready/total)}%")=ready
+      div.progress-bar.osmbclabel-no-markdown(style="width:#{parseInt(100*unedited/total)}%")=unedited
+      div.progress-bar.osmbclabel-no-translation(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
+  div.hidden-xs
+    if (right_lang!= "--" && right_lang != null)
+      .row
+        - unedited = blog._countUneditedMarkdown[right_lang];
+        - notranslate = blog._countNoTranslateMarkdown[right_lang];
+        - total = blog._countExpectedMarkdown[right_lang];
+        - ready = (total-unedited - notranslate)
+        - if (total == 0) total = 1
+        .col-md-1
+          div.label.label-info.osmbclabel-lang2=right_lang
+        .col-md-11
+         div.progress(style="margin-bottom:10px")
+          div.progress-bar.osmbclabel-markdown(style="width:#{parseInt(100*ready/total)}%")=ready
+          div.progress-bar.osmbclabel-no-markdown(style="width:#{parseInt(100*unedited/total)}%")=unedited
+          div.progress-bar.osmbclabel-no-translation(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
+
+
+  .row
+    - columnLeftSize = "col-md-6"
+    - columnRightSize = "col-md-6"
+    - if (right_lang== "--" || right_lang == null)  {columnLeftSize = "col-md-12";columnRightSize = "hidden";}
+    .col-md-6
+      - status = blog.status
+      - if (blog["reviewComment"+left_lang]) status = "Review "+left_lang;
+      - if (blog["close"+left_lang]) status = "Close "+left_lang;
+      if blog.status == "help"
+        h2
+          | #{blog.name}
+      else if left_lang == "DE"
+        h2
+          span.hidden-xs="Wochennotiz "
+          |#{blog.name}
+          span.hidden-xs=" ("+status+")"
+      else
+        h2
+          span.hidden-xs="Weekly "
+          span=blog.name
+          span.hidden-xs=" ("+status+")"
+      
+    .col-md-6
+      if !(blog["close"+left_lang])
+        - reviewCommentsLeft = blog["reviewComment"+left_lang];
+        if (reviewCommentsLeft)
+          .row
+            .col-md-12
+              if (blog["exported"+left_lang])
+                button.btn.btn-large.btn-warning(id="closebutton" type = "button" onclick ="document.getElementById('closebutton').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?closeLang&style=#{style}';") Close #{blog.name}(#{left_lang})
+              else
+                button.btn.btn-large.btn-warning(id="didexport" type = "button" onclick ="document.getElementById('didexport').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=markexported&style=#{style}';") Did Export (#{left_lang})
+
+          if (blog["exported"+left_lang])
+            .row
+              .alert.bg-danger.text-center.bold
+                | <strong>Blog is exported, please do the last Review in WordPress</strong>
+      
+        else
+          if blog.status != "open"
+            button.btn.btn-large.btn-primary(id="readyreview" onclick ="document.getElementById('readyreview').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=startreview&&style=#{style}';") Set #{blog.name}(#{left_lang}) ready for review
+
+  .row
+    div(class=columnLeftSize)
+      - reviewCommentsLeft = blog["reviewComment"+left_lang];
+        if reviewCommentsLeft
+          .panel.panel-default
+            .panel-heading
+              h3.panel-title
+                | Review #{left_lang)
+            .panel-body
+              each comment in reviewCommentsLeft
+                p
+                  b.span=comment.user
+                  span=" "
+                  i.span=layout.moment(comment.timestamp).fromNow()
+                p=comment.text
+              .form-group
+                if (!blog["close"+left_lang])
+                  form.form-horizontal(id="review" name="review", action="#{layout.htmlroot}/blog/#{blog.name}", method="get")
+                    .col-md-10
+                      input(type="text",class="form-control",name ="reviewComment",id="reviewComment" placeholder="Please Type your Review here")
+                    .col-md-2
+                      button.btn.btn-large.btn-primary(id="reviewButton" type="submit",onclick="document.getElementById('reviewButton').disabled=true;document.getElementById('review').submit();") Review#{left_lang}
+
+    div(class=columnRightSize)
+      - reviewCommentsRight = blog["reviewComment"+right_lang];
+
+        if reviewCommentsRight
+          .panel.panel-default
+            .panel-heading
+              h3.panel-title
+                | Review #{right_lang}
+            .panel-body
+              each comment in reviewCommentsRight
+                p
+                  b.span=comment.user
+                  span=" "
+                  i.span=layout.moment(comment.timestamp).fromNow()
+                p=comment.text
+             
+
+  
+  .row
+    .col-md-12
+      ul.nav.nav-tabs
+        //+navbutton("OVERVIEW",style,"style","")
+        +navbutton("Overview",style,"tab","")
+        //+navbutton("TRANSLATION",style,"style","hidden-xs")
+        //+navbutton("FULL",style,"style","hidden-xs")
+        +navbutton("Full",style,"tab","hidden-xs")
+        //+navbutton("FULLFINAL",style,"style","hidden-xs")
+        +navbutton("Review",style,"tab","hidden-xs")
+
+        //
+          - v = 0
+          while layout.user["blogSetting"+v]
+            if layout.user["blogSetting"+v]!="-"
+              - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
+              +navbutton(style0,style)
+            - v++ 
+      
+        li.hidden-xs
+          a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{left_lang}") 
+            span.glyphicon.glyphicon-export
+            | #{left_lang}
+        if (right_lang != "--" && right_lang != null)
+          li.hidden-xs
+            a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{right_lang}") 
+              span.glyphicon.glyphicon-export
+              | #{right_lang}
+        li.dropdown.hidden-xs
+          a.dropdown-toggle(href='#', data-toggle='dropdown')
+            span.glyphicon.glyphicon-export
+          ul.dropdown-menu(role='menu')
+            for lang in layout.languages
+              if layout.usedLanguages[lang]
+                li
+                  a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{lang}") Export #{lang}
+
+
+
+
+  block blogcontent
+  .row
+    .col-md-9
+    .col-md-1
+      p
+        a(href="#{layout.htmlroot}/blog/#{blog.name}/stat") [Statistic]
+
+    .col-md-2
+      p
+        a(href="#{layout.htmlroot}/blog/edit/#{blog.name}") [Edit Blog Detail]
+
+
+
+
+  .row.hidden-xs
+    if changes
+      div
+        table.table.table-striped
+          thead
+            tr
+              th 
+              th
+               | user
+              th
+               |  what
+              th
+               | change
+              th
+               | when
+           tbody
+            each change, i in changes
+              tr
+                td
+                  a(href='#{layout.htmlroot}/changes/' + change.id) 
+                    span.glyphicon.glyphicon-info-sign 
+                td= change.user
+                td= change.property
+                td 
+                    :verbatim
+                      !{change.htmlDiffText(100)}
+                td= layout.moment(change.timestamp).fromNow() 
+
+      div
+        p
+          |only displaying changes 
+          span.osmbc-inserted
+            |inserted text 
+          span.osmbc-deleted
+            |removed text
+
+
+block scripts                
+  script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
+  script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
+  script.
+    reviewButton = document.getElementById("reviewButton");
+    reviewComment = document.getElementById("reviewComment");
+    if (reviewComment) reviewComment.onchange = onchange;
+    if (reviewComment) reviewComment.onkeyup = onchange;
+
+    if (reviewButton) reviewButton.disabled = true;
+    
+    function onchange() {
+      
+      reviewButton.disabled = (review.comment == "");
+    }
+  
+    window.onload = function() {
+      if (typeof(Storage)!=="undefined") {
+        if (window.sessionStorage.blogUrl !== window.location.href) return;
+        var x = window.sessionStorage.blogX;
+        var y = window.sessionStorage.blogY;
+        window.scrollTo(x,y);
+      }
+    }
+
+ 
+    window.onbeforeunload = function(event) {
+        // store the scroll Position in the local Store
+        s = {x:window.scrollX,y:window.scrollY};
+
+        if (typeof(Storage)!=="undefined") {
+
+          window.sessionStorage.blogUrl = window.location.href;
+          window.sessionStorage.blogX = s.x;
+          window.sessionStorage.blogY = s.y;
+        }
+      };    
+   
+
+
+

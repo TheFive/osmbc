@@ -3,9 +3,11 @@
 var async = require('async');
 var testutil = require('./testutil.js');
 var should  = require('should');
+var nock = require('nock');
 
 var userModule = require("../model/user.js");
 var articleModule = require("../model/article.js");
+var blogModule = require("../model/blog.js");
 
 
 
@@ -16,13 +18,20 @@ describe('views/index', function() {
   var browser;
   var articleId;
   before(function(bddone) {
+    nock('https://hooks.slack.com/')
+      .post(/\/services\/.*/)
+      .times(999)
+      .reply(200,"ok");
     async.series([
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
-      function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test"},function(err,article){
+      function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test",markdownEN:"test"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
-      }); },     
+      }); },
+      function createBlog(cb) {blogModule.createNewBlog({blog:"blog",status:"edit"},function(err){
+        cb(err);
+      }); },
       function createBrowser(cb) {testutil.startBrowser("TheFive",function(err,result){browser=result;cb();});}
     ], function(err) {
       bddone(err);
@@ -74,7 +83,7 @@ describe('views/index', function() {
           should.not.exist(err);
           browser.assert.success();
           var html = browser.html();
-          var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang">EN');
+          var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN');
           should(found >= 0).be.True();
           bddone();
         });
@@ -90,7 +99,7 @@ describe('views/index', function() {
           should.not.exist(err);
           browser.assert.success();
           var html = browser.html();
-          var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang2">ES');
+          var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">ES');
           should(found >= 0).be.True();
           bddone();
         });
@@ -107,7 +116,7 @@ describe('views/index', function() {
             should.not.exist(err);
             browser.assert.success();
             var html = browser.html();
-            var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-lang2">--');
+            var found = html.indexOf('<a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--');
             should(found >= 0).be.True();
             bddone();
           });

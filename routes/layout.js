@@ -49,7 +49,11 @@ function prepareRenderLayout(req,res,next) {
 
  
   var userMentions = 0;
-  var langMentions = 0;
+  var mainLangMentions = 0;
+  var secondLangMentions = 0;
+  var usedLanguages = {};
+  usedLanguages[req.user.language]=true;
+
   // Used for display changes
 
   // Params is used for indicating Edit
@@ -74,7 +78,9 @@ function prepareRenderLayout(req,res,next) {
           item.calculateDerived(req.user,function(err){
             if (err) cb(err);
             userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
-            langMentions += calculateUnreadMessages(item._langMention,req.user.OSMUser);
+            mainLangMentions += calculateUnreadMessages(item._mainLangMention,req.user.OSMUser);
+            secondLangMentions += calculateUnreadMessages(item._secondLangMention,req.user.OSMUser);
+            for (let k in item._usedLanguages) usedLanguages[k]=true;
             cb();
           });
         },function(err){
@@ -96,7 +102,9 @@ function prepareRenderLayout(req,res,next) {
           item.calculateDerived(req.user,function(err){
             if (err) cb(err);
             userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
-            langMentions += calculateUnreadMessages(item._langMention,req.user.OSMUser);
+            mainLangMentions += calculateUnreadMessages(item._mainLangMention,req.user.OSMUser);
+            secondLangMentions += calculateUnreadMessages(item._secondLangMention,req.user.OSMUser);
+            for (let k in item._usedLanguages) usedLanguages[k]=true;
             cb();
 
           });
@@ -118,7 +126,9 @@ function prepareRenderLayout(req,res,next) {
           item.calculateDerived(req.user,function (err){
             if (err) cb(err);
             userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
-            langMentions += calculateUnreadMessages(item._langMention,req.user.OSMUser);
+            mainLangMentions += calculateUnreadMessages(item._mainLangMention,req.user.OSMUser);
+            secondLangMentions += calculateUnreadMessages(item._secondLangMention,req.user.OSMUser);
+            for (let k in item._usedLanguages) usedLanguages[k]=true;
             cb();
           });
         },function(err){callback(err,list);});
@@ -134,7 +144,8 @@ function prepareRenderLayout(req,res,next) {
                       htmlroot: htmlRoot,
                       languages:languages,
                       userMentions:userMentions,
-                      langMentions:langMentions,
+                      mainLangMentions:mainLangMentions,
+                      secondLangMentions:secondLangMentions,
                       language:req.user.getMainLang(),
                       language2:req.user.getSecondLang(),
                       listOfOpenBlog:result.listOfOpenBlog,
@@ -143,6 +154,7 @@ function prepareRenderLayout(req,res,next) {
                       listOfHelpBlog:result.listOfHelpBlog,
                       moment:moment,
                       util:util,
+                      usedLanguages:usedLanguages,
                       appName:config.getValue("AppName"),
                       bootstrap:bootstrap,
                       osmbc_version:version.osmbc_version,
