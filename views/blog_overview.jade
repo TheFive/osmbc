@@ -82,15 +82,20 @@ block blogcontent
                     textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
                   p
                     if a.author && a.author.collection
-                      span="Collected: ["
-                      for author in a.author.collection
-                        span=author
-                      span="] "
+                      span="Collected: "
+                      each collector in a.author.collection.split(",")
+                        if (collector != layout.user.OSMUser)
+                          span.label.osmbclabel-collect.small-margin=collector
+                        else
+                          span.label.osmbclabel-user.small-margin=collector
                     if a.author && a.author["markdown"+lang]
-                      span="Edited: ["
-                      for author in a.author["markdown"+lang]
-                        span=author
-                      span="] "
+                      span=" Edited: "
+                      each author in a.author["markdown"+lang].split(",")
+                        if (author != layout.user.OSMUser)
+                          span.label.osmbclabel-markdown.small-margin=author
+                        else
+                          span.label.osmbclabel-user.small-margin=author
+
   .row
     h2="Options"
 
@@ -113,7 +118,7 @@ block blogcontent
 
 
 
-.row
+  .row
     +articleIconLegend
 
 

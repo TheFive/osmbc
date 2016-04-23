@@ -39,13 +39,14 @@ block content
   - bloglist = bloglist.concat(layout.listOfEditBlog)
   - bloglist = bloglist.concat(layout.listOfReviewBlog)
 
+
   .row
     .col-md-1
     .col-md-11
       h2= "Inbox Direct Mention:"
 
   for blog in bloglist
-    if blog._userMention.length>0
+    if blog._userMention && blog._userMention.length>0
       .row
         .col-md-1
         .col-md-11
@@ -63,7 +64,7 @@ block content
       h2= "Inbox Indirect Mention:"
 
   for blog in bloglist
-    if blog._mainLangMention.length > 0
+    if blog._mainLangMention && blog._mainLangMention.length > 0
       .row
         .col-md-1
         .col-md-11
@@ -75,7 +76,7 @@ block content
             .col-md-11
               +displayArticle(article,left_lang)
 
-    if blog._secondLangMention.length > 0
+    if blog._secondLangMention && blog._secondLangMention.length > 0
       .row
         .col-md-1
         .col-md-11

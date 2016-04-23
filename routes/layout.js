@@ -88,45 +88,53 @@ function prepareRenderLayout(req,res,next) {
         });
       });
     },
-    listOfEditBlog:
-    function (callback) {
-      blogModule.find({status:"edit"},function(err,result) {
+    editBlog:function (callback) {
+      blogModule.find({status:"edit"},function(err,list) {
         if (err) return callback(err);
+        async.each(list,function(item,cb){
+          item.calculateDerived(req.user,cb);
+        },function(err){callback(err,list);});
+      });
+    },
+    listOfEditBlog:["editBlog",
+      function (callback,param) {
         var list = [];
-        for (var i=0;i<result.length;i++) {
-          if (!(result[i]["reviewComment"+req.user.getMainLang()])) {
-            list.push(result[i]);
+        for (let i=0;i<param.editBlog.length;i++) {
+          if (!(param.editBlog[i]["reviewComment"+req.user.getMainLang()])) {
+            list.push(param.editBlog[i]);
           }
         }
-        async.each(result,function(item,cb){
-          item.calculateDerived(req.user,function(err){
-            if (err) cb(err);
+        for (let i=0; i<list.length;i++) {
+          let item = list[i];
+          userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
+          mainLangMentions += calculateUnreadMessages(item._mainLangMention,req.user.OSMUser);
+          secondLangMentions += calculateUnreadMessages(item._secondLangMention,req.user.OSMUser);
+          for (let k in item._usedLanguages) usedLanguages[k]=true;
+        }
+
+        callback(null,list);
+    }],
+    listOfReviewBlog:["editBlog",
+        function (callback,param) {
+          var list = [];
+          for (let i=0;i<param.editBlog.length;i++) {
+            if ((param.editBlog[i]["reviewComment"+req.user.getMainLang()]) &&
+              !(param.editBlog[i]["close"+req.user.getMainLang()])) {
+              list.push(param.editBlog[i]);
+            }
+          }
+          for (let i=0; i<list.length;i++) {
+            let item = list[i];
             userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
             mainLangMentions += calculateUnreadMessages(item._mainLangMention,req.user.OSMUser);
             secondLangMentions += calculateUnreadMessages(item._secondLangMention,req.user.OSMUser);
             for (let k in item._usedLanguages) usedLanguages[k]=true;
-            cb();
-
-          });
-        },function(err){callback(err,list);});
-      });
-    },
-    listOfReviewBlog:
-    function (callback) {
-      blogModule.find({status:"edit"},function(err,result) {
-        if (err) return callback(err);
-        var list = [];
-        for (var i=0;i<result.length;i++) {
-          if ((result[i]["reviewComment"+req.user.getMainLang()]) &&
-              !(result[i]["close"+req.user.getMainLang()])) {
-            list.push(result[i]);
           }
-        }
-       callback(err,list);
-      });
-    }
-  },
-  
+
+          callback(null,list);
+        }]
+    },
+
     function (err,result) {
       if (err) return next(err);
       if (!(res.rendervar) || typeof(res.rendervar)=='undefined') res.rendervar = {};
