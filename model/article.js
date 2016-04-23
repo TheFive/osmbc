@@ -451,8 +451,10 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
   } else { // no version is given, check all fields for old field
     for (var k in data) {
       if (k==="old") continue;
-      if (! data.old || !data.old[k]) return callback(new Error("No Version and no History Value given"));
-      if (self[k]!==data.old[k]) return callback(new Error("Field "+k+" already changed in DB"));
+      if (! data.old || typeof(data.old[k])=="undefined") return callback(new Error("No Version and no History Value given"));
+
+      if (self[k] && self[k]!=data.old[k]) return callback(new Error("Field "+k+" already changed in DB"));
+      if (typeof(self[k])=="undefined" && data.old[k]!="") return callback(new Error("Field "+k+" already changed in DB"));
     }
     delete data.old;
   }
