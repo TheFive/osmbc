@@ -346,6 +346,7 @@ function postSetMarkdown(req, res, next) {
   var markdown = req.body.markdown;
   var oldMarkdown = req.body.oldMarkdown;
 
+
   async.parallel([
       function searchArticle(cb) {
         debug('postNewComment->searchArticle');
