@@ -4,6 +4,7 @@ var pg     = require('pg');
 var should = require('should');
 var async  = require('async');
 var debug  = require('debug')('OSMBC:model:pgMap');
+var sqldebug  = require('debug')('OSMBC:model:sql');
 
 var config = require('../config.js');
 var util = require('../util.js');
@@ -82,7 +83,7 @@ function generateQuery(table,obj,order) {
     }
   }
   var query = "select id,data from "+table+whereClause+orderby;
-  debug(query);
+  sqldebug(query);
   return query;
 }
 
@@ -111,7 +112,7 @@ module.exports.save = function(callback) {
         return (callback(err));
       }
       var sqlquery = "insert into "+table+"(data) values ($1) returning id";
-      debug("Query %s",sqlquery);
+      sqldebug("Query %s",sqlquery);
       var startTime = new Date().getTime();
       var query = client.query(sqlquery, [self]);
       query.on('row',function(row) {
@@ -121,7 +122,7 @@ module.exports.save = function(callback) {
       query.on('end',function () {
 
         var endTime = new Date().getTime();
-        debug("SQL: ["+ (endTime - startTime)/1000 +"] insert to "+ table);
+        sqldebug("SQL: ["+ (endTime - startTime)/1000 +"] insert to "+ table);
         
         pgdone();
         return callback(null,self);
@@ -160,7 +161,7 @@ module.exports.save = function(callback) {
               debug("end");
               var err = null;
               var endTime = new Date().getTime();
-              debug("SQL: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck "+versionsEqual+")");
+              sqldebug("SQL get Version: ["+ (endTime - startTime)/1000 +"]("+table+" versionCheck "+versionsEqual+")");
               if (!versionsEqual) {
                 debug('send error');
                 err = new Error("Version Number Differs");
@@ -272,7 +273,7 @@ module.exports.find = function find(module,obj,order,callback) {
     query.on('end',function findEndFunction() {   
       debug('findEndFunction');
       var endTime = new Date().getTime();
-      debug("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
+      sqldebug("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
       pgdone();
       callback(null,result);
     });
@@ -350,7 +351,7 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
       debug("query.on end");
       pgdone();
       var endTime = new Date().getTime();
-      debug("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
+      sqldebug("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
       return callback(null,result);
     });
     query.on('error',function (err) {  
@@ -432,7 +433,7 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
     query.on('end',function () {
       pgdone();
       var endTime = new Date().getTime();
-      debug("SQL: ["+ (endTime - startTime)/1000 +"]"+ sqlQuery);
+      sqldebug("SQL: ["+ (endTime - startTime)/1000 +"]"+ sqlQuery);
       callback(null,result);      
     });
   });
@@ -562,7 +563,7 @@ module.exports.count = function count(sql,callback) {
     query.on('end',function () {
       pgdone();
       var endTime = new Date().getTime();
-      debug("SQL: ["+ (endTime - startTime)/1000 +"]"+ sql);
+      sqldebug("SQL: ["+ (endTime - startTime)/1000 +"]"+ sql);
       callback(null,result);
     });
   });
