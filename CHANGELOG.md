@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.6.1](https://github.com/TheFive/osmbc/tree/1.6.1) (2016-04-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.0...1.6.1)
+
 ## [1.6.0](https://github.com/TheFive/osmbc/tree/1.6.0) (2016-04-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.5.0...1.6.0)
 
