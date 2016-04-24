@@ -15,13 +15,13 @@ block blogcontent
   - disableWritten = (layout.user.getOption("overview","disableWritten")=="true")
 
   if disableOwnCollection
-    p.text-info
+    p.bg-danger
       | Collections of #{layout.user.OSMUser} are disabled
   if disableOtherCollection
-    p.text-info
+    p.bg-danger
       | Collections not done by #{layout.user.OSMUser} are disabled
   if disableWritten
-    p.text-info
+    p.bg-danger
       | Written markdown is disabled
 
   table
