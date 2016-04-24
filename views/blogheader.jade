@@ -35,6 +35,13 @@ mixin articleIconLegend(view)
       span.glyphicon.glyphicon-open.small-margin
     span=" open the article in a new tab"
 
+mixin userConfigOption(view,option,variable,userdesc)
+  if variable
+    span.glyphicon.glyphicon-check(onclick='location.href="#{layout.htmlroot}/userconfig?view=#{view}&option=#{option}&value=false";')
+  else
+    span.glyphicon.glyphicon-unchecked(onclick='location.href="#{layout.htmlroot}/userconfig?view=#{view}&option=#{option}&value=true";')
+  span=userdesc
+
 
 
 block content
@@ -156,12 +163,12 @@ block content
     .col-md-12
       ul.nav.nav-tabs
         //+navbutton("OVERVIEW",style,"style","")
-        +navbutton("Overview",style,"tab","")
+        +navbutton("Overview",tab,"tab","")
         //+navbutton("TRANSLATION",style,"style","hidden-xs")
         //+navbutton("FULL",style,"style","hidden-xs")
-        +navbutton("Full",style,"tab","hidden-xs")
+        +navbutton("Full",tab,"tab","hidden-xs")
         //+navbutton("FULLFINAL",style,"style","hidden-xs")
-        +navbutton("Review",style,"tab","hidden-xs")
+        +navbutton("Review",tab,"tab","hidden-xs")
 
         //
           - v = 0
