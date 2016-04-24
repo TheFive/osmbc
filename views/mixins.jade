@@ -54,6 +54,9 @@ mixin languageDisplay(article)
           else
               span.label.osmbclabel-no-translation=lang
       else
+        if (article.collection)
+          span.label.osmbclabel-collect=lang
+        else
           span.label.osmbclabel-no-markdown=lang
 
 mixin articleIcons(a,options)
