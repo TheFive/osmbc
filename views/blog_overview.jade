@@ -99,22 +99,16 @@ block blogcontent
   .row
     h2="Options"
 
-    mixin option(variable,name,userdesc)
-      if variable
-        span.glyphicon.glyphicon-check(onclick='location.href="#{layout.htmlroot}/userconfig?view=overview&option=#{name}&value=false";')
-      else
-        span.glyphicon.glyphicon-unchecked(onclick='location.href="#{layout.htmlroot}/userconfig?view=overview&option=#{name}&value=true";')
-      span=userdesc
 
     p
-      +option(showNumbers,"showNumbers"," show editor numbers, ")
-      +option(showMail,"showMail"," show mail, ")
-      +option(showCollector,"showCollector"," show collector, " )
-      +option(showEditor,"showEditor"," show editor , ")
-      +option(showLanguages,"showLanguages"," show languages, ")
-      +option(disableWritten,"disableWritten"," disable written articles, ")
-      +option(disableOwnCollection,"disableOwnCollection"," disable own collections, ")
-      +option(disableOtherCollection,"disableOtherCollection"," disable other collections")
+      +userConfigOption("overview","showNumbers",showNumbers," show editor numbers, ")
+      +userConfigOption("overview","showMail",showMail," show mail, ")
+      +userConfigOption("overview","showCollector",showCollector," show collector, " )
+      +userConfigOption("overview","showEditor",showEditor," show editor , ")
+      +userConfigOption("overview","showLanguages",showLanguages," show languages, ")
+      +userConfigOption("overview","disableWritten",disableWritten," disable written articles, ")
+      +userConfigOption("overview","disableOwnCollection",disableOwnCollection," disable own collections, ")
+      +userConfigOption("overview","disableOtherCollection",disableOtherCollection," disable other collections")
 
 
 

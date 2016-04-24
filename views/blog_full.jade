@@ -3,17 +3,44 @@ extends blogheader
 
 block blogcontent
 
+  - showNumbers = (layout.user.getOption("full","showNumbers")=="true")
+  - showMail    = (layout.user.getOption("full","showMail")=="true")
+  - showCollector = (layout.user.getOption("full","showCollector")=="true")
+  - showEditor = (layout.user.getOption("full","showEditor")=="true")
+  - showLanguages = (layout.user.getOption("full","showLanguages")=="true")
+  - disableOwnCollection = (layout.user.getOption("full","disableOwnCollection")=="true")
+  - disableOtherCollection = (layout.user.getOption("full","disableOtherCollection")=="true")
+  - disableWritten = (layout.user.getOption("full","disableWritten")=="true")
+
+  - firstColSize = "col-md-1"
+  - secondColSize = "col-md-11"
+
+  if showLanguages || showEditor || showCollector
+    - firstColSize = "col-md-2"
+    - secondColSize = "col-md-10"
+
+
+  if disableOwnCollection
+    p.bg-danger
+      | Collections of #{layout.user.OSMUser} are disabled
+  if disableOtherCollection
+    p.bg-danger
+      | Collections not done by #{layout.user.OSMUser} are disabled
+  if disableWritten
+    p.bg-danger
+      | Written markdown is disabled
+
   .row
-    .col-md-1
-    .col-md-11
+    div(class=firstColSize)
+    div(class=secondColSize)
       :verbatim
         <br><br>
         !{renderer.subtitle(left_lang)}
   for c in categories
     if (articles[c.EN])
       .row
-        .col-md-1
-        .col-md-11
+        div(class=firstColSize)
+        div(class=secondColSize)
           .row
             div(class=columnLeftSize)
               :verbatim
@@ -23,10 +50,33 @@ block blogcontent
                 !{renderer.categoryTitle(right_lang,c)}
 
       for a in articles[c.EN]
+        - enable = true;
+        - if (disableWritten  && a["markdown"+lang]) enable = false;
+        - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
+        - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
+        if enable
           .row
-            .col-md-1
-              +articleIcons(a,{showNumbers:true,showMail:true})
-            .col-md-11
+            div(class=firstColSize)
+              div
+                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail})
+              div
+                if (showCollector && a.author && a.author.collection)
+                  each b in a.author.collection.split(",")
+                    if (b !== layout.user.OSMUser)
+                      span.label.osmbclabel-collect.small-margin=b
+                    else
+                      span.label.osmbclabel-user.small-margin=b
+                if (showEditor && a.author && a.author["markdown" + lang])
+                  each b in a.author["markdown"+lang].split(",")
+                    if (b !== layout.user.OSMUser)
+                      span.label.osmbclabel-markdown.small-margin=b
+                    else
+                      span.label.osmbclabel-user.small-margin=b
+              div
+                if (showLanguages)
+                  +languageDisplay(a)
+
+            div(class=secondColSize)
               .row
                 div(class=columnLeftSize)
                   div(onclick="if (!openEditor) {openEditor = document.getElementById('ldiv#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
@@ -79,6 +129,20 @@ block blogcontent
                               span.label.osmbclabel-markdown.small-margin=author
                             else
                               span.label.osmbclabel-user.small-margin=author
+  .row
+    h2="Options"
+
+
+    p
+      +userConfigOption("full","showNumbers",showNumbers," show editor numbers, ")
+      +userConfigOption("full","showMail",showMail," show mail, ")
+      +userConfigOption("full","showCollector",showCollector," show collector, " )
+      +userConfigOption("full","showEditor",showEditor," show editor , ")
+      +userConfigOption("full","showLanguages",showLanguages," show languages, ")
+      +userConfigOption("full","disableWritten",disableWritten," disable written articles, ")
+      +userConfigOption("full","disableOwnCollection",disableOwnCollection," disable own collections, ")
+      +userConfigOption("full","disableOtherCollection",disableOtherCollection," disable other collections")
+
   +articleIconLegend
 
 

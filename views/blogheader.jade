@@ -35,6 +35,13 @@ mixin articleIconLegend(view)
       span.glyphicon.glyphicon-open.small-margin
     span=" open the article in a new tab"
 
+mixin userConfigOption(view,option,variable,userdesc)
+  if variable
+    span.glyphicon.glyphicon-check(onclick='location.href="#{layout.htmlroot}/userconfig?view=#{view}&option=#{option}&value=false";')
+  else
+    span.glyphicon.glyphicon-unchecked(onclick='location.href="#{layout.htmlroot}/userconfig?view=#{view}&option=#{option}&value=true";')
+  span=userdesc
+
 
 
 block content
