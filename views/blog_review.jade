@@ -5,27 +5,56 @@ extends blogheader
 
 block blogcontent
 
+  - showNumbers = (layout.user.getOption("review","showNumbers")=="true")
+  - showMail    = (layout.user.getOption("review","showMail")=="true")
+  - showCollector = (layout.user.getOption("review","showCollector")=="true")
+  - showEditor = (layout.user.getOption("review","showEditor")=="true")
+  - showLanguages = (layout.user.getOption("review","showLanguages")=="true")
+
+  - firstColSize = "col-md-1"
+  - secondColSize = "col-md-11"
+
+  if showLanguages || showEditor || showCollector
+    - firstColSize = "col-md-2"
+    - secondColSize = "col-md-10"
+
   .row
-    .col-md-1
-    .col-md-11
+    div(class=firstColSize)
+    div(class=secondColSize)
       :verbatim
         <br><br>
         !{renderer.subtitle(lang)}
   for c in categories
     if (articles[c.EN])
       .row
-        .col-md-1
-        .col-md-11
+        div(class=firstColSize)
+        div(class=secondColSize)
           :verbatim
             !{renderer.categoryTitle(lang,c)}
       for a in articles[c.EN]
         if a["markdown"+lang]!=="no translation"
           .row
-            .col-md-1
-              +articleIcons(a,{showNumbers:true,showMail:true})
+            div(class=firstColSize)
+              div
+                +articleIcons(a,{showNumbers: showNumbers, showMail: showMail})
+              div
+                if (showCollector && a.author && a.author.collection)
+                  each b in a.author.collection.split(",")
+                    if (b !== layout.user.OSMUser)
+                      span.label.osmbclabel-collect.small-margin=b
+                    else
+                      span.label.osmbclabel-user.small-margin=b
+                if (showEditor && a.author && a.author["markdown" + lang])
+                  each b in a.author["markdown"+lang].split(",")
+                    if (b !== layout.user.OSMUser)
+                      span.label.osmbclabel-markdown.small-margin=b
+                    else
+                      span.label.osmbclabel-user.small-margin=b
+              div
+                if (showLanguages)
+                  +languageDisplay(a)
 
-
-            .col-md-11
+            div(class=secondColSize)
               div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
 
                 ul
@@ -51,6 +80,18 @@ block blogcontent
                         span.label.osmbclabel-markdown.small-margin=author
                       else
                         span.label.osmbclabel-user.small-margin=author
+
+  .row
+    h2="Options"
+
+
+    p
+      +userConfigOption("review","showNumbers",showNumbers," show editor numbers, ")
+      +userConfigOption("review","showMail",showMail," show mail, ")
+      +userConfigOption("review","showCollector",showCollector," show collector, " )
+      +userConfigOption("review","showEditor",showEditor," show editor , ")
+      +userConfigOption("review","showLanguages",showLanguages," show languages")
+
   .row
     +articleIconLegend
 
