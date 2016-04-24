@@ -1,5 +1,14 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.1...HEAD)
+
+**Implemented enhancements:**
+
+- More Options for Review View [\#435](https://github.com/TheFive/osmbc/issues/435)
+- More Options for Full View. [\#434](https://github.com/TheFive/osmbc/issues/434)
+
 ## [1.6.1](https://github.com/TheFive/osmbc/tree/1.6.1) (2016-04-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.0...1.6.1)
 
@@ -491,8 +500,6 @@
 **Implemented enhancements:**
 
 - Generate an outgoing mail log for debugging purposes. [\#298](https://github.com/TheFive/osmbc/issues/298)
-- Generate Text EMails as alternative to html. [\#297](https://github.com/TheFive/osmbc/issues/297)
-- Build an easier way to configure personal settings \(eg. via user name in navbar\) [\#296](https://github.com/TheFive/osmbc/issues/296)
 
 ## [0.6.9c](https://github.com/TheFive/osmbc/tree/0.6.9c) (2016-02-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9b...0.6.9c)
