@@ -626,7 +626,19 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
         if (typeof(articles[r.categoryEN]) == 'undefined') {
           articles[r.categoryEN] = [];
         }
-        articles[r.categoryEN].push(r);
+        let inserted = false;
+        for (let p=0;p<articles[r.categoryEN].length;p++){
+          if (articles[r.categoryEN][p].predecessorId === r.id) {
+            articles[r.categoryEN][p].splice(p,0,r);
+            inserted = true;
+            break;
+          } else if (articles[r.categoryEN][p].id === r.predecessorId) {
+            articles[r.categoryEN][p].splice(p+1,0,r);
+            inserted=true;
+            break;
+          }
+        }
+        if (!inserted) articles[r.categoryEN].push(r);
       }
       cb(null);
     },
