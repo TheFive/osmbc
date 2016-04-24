@@ -1,6 +1,5 @@
 # Change Log
 
-
 ## [1.6.2](https://github.com/TheFive/osmbc/tree/1.6.2) (2016-04-24)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.1...1.6.2)
 
@@ -8,6 +7,11 @@
 
 - More Options for Review View [\#435](https://github.com/TheFive/osmbc/issues/435)
 - More Options for Full View. [\#434](https://github.com/TheFive/osmbc/issues/434)
+- Create a blog view only showing untranslated / unedited articles. [\#303](https://github.com/TheFive/osmbc/issues/303)
+
+**Fixed bugs:**
+
+- Redirect to article after login [\#328](https://github.com/TheFive/osmbc/issues/328)
 
 ## [1.6.1](https://github.com/TheFive/osmbc/tree/1.6.1) (2016-04-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.0...1.6.1)
@@ -483,23 +487,11 @@
 ## [0.7.1](https://github.com/TheFive/osmbc/tree/0.7.1) (2016-02-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.0a...0.7.1)
 
-**Implemented enhancements:**
-
-- please add the emailaddress [\#299](https://github.com/TheFive/osmbc/issues/299)
-
-**Fixed bugs:**
-
-- Disable the possibility to have a DE / DE view. [\#300](https://github.com/TheFive/osmbc/issues/300)
-
 ## [0.7.0a](https://github.com/TheFive/osmbc/tree/0.7.0a) (2016-02-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.0...0.7.0a)
 
 ## [0.7.0](https://github.com/TheFive/osmbc/tree/0.7.0) (2016-02-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9c...0.7.0)
-
-**Implemented enhancements:**
-
-- Generate an outgoing mail log for debugging purposes. [\#298](https://github.com/TheFive/osmbc/issues/298)
 
 ## [0.6.9c](https://github.com/TheFive/osmbc/tree/0.6.9c) (2016-02-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9b...0.6.9c)
