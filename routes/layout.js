@@ -92,7 +92,11 @@ function prepareRenderLayout(req,res,next) {
       blogModule.find({status:"edit"},function(err,list) {
         if (err) return callback(err);
         async.each(list,function(item,cb){
-          item.calculateDerived(req.user,cb);
+          item.calculateDerived(req.user,function(err){
+            if (err) return cb(err);
+            for (let k in item._usedLanguages) usedLanguages[k]=true;
+            cb();
+          });
         },function(err){callback(err,list);});
       });
     },
@@ -109,7 +113,6 @@ function prepareRenderLayout(req,res,next) {
           userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
           mainLangMentions += calculateUnreadMessages(item._mainLangMention,req.user.OSMUser);
           secondLangMentions += calculateUnreadMessages(item._secondLangMention,req.user.OSMUser);
-          for (let k in item._usedLanguages) usedLanguages[k]=true;
         }
 
         callback(null,list);
@@ -128,7 +131,6 @@ function prepareRenderLayout(req,res,next) {
             userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
             mainLangMentions += calculateUnreadMessages(item._mainLangMention,req.user.OSMUser);
             secondLangMentions += calculateUnreadMessages(item._secondLangMention,req.user.OSMUser);
-            for (let k in item._usedLanguages) usedLanguages[k]=true;
           }
 
           callback(null,list);
