@@ -37,6 +37,8 @@ mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
                         input(type="checkbox" name="#{name}" value="#{v}")
                         |#{displayValues[i]}
         div.text-muted(class="col-sm-#{sizeExplanation}")=explanation
+
+
 mixin labeledText(label,name,value,explanation)
     - if (!value) value =""
     div.form-group
@@ -45,8 +47,12 @@ mixin labeledText(label,name,value,explanation)
             input.form-control(name="#{name}",id="#{name}",value = "#{value}" readonly)
         div.text-muted(class="col-sm-#{sizeExplanation}")=explanation
 
-mixin languageDisplay(article)
-  each lang in layout.languages
+
+
+mixin languageDisplay(article,options)
+  - langList = layout.languages
+  - if (options && options.short) langList = [layout.language,(layout.language2)?layout.language2:"--"]
+  each lang in langList
     if layout.usedLanguages[lang]
       if (article["markdown" + lang])
           if (article["markdown" + lang] !== "no translation")
@@ -58,6 +64,8 @@ mixin languageDisplay(article)
           span.label.osmbclabel-collect=lang
         else
           span.label.osmbclabel-no-markdown=lang
+
+
 
 mixin articleIcons(a,options)
     - numCol = 0;
