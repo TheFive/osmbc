@@ -389,6 +389,7 @@ function renderBlogTab(req, res, next) {
         res.render('blog_'+tab.toLowerCase(),{layout:res.rendervar.layout,
             blog:blog,
             articles:result.dataCollect.articles,
+            futureArticles:result.dataCollect.futureArticles,
             teamString:result.teamString,
             lang:lang,
             tab:tab,

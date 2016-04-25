@@ -101,6 +101,44 @@ block blogcontent
                           span.label.osmbclabel-markdown.small-margin=author
                         else
                           span.label.osmbclabel-user.small-margin=author
+    if futureArticles
+      tr
+        td
+        td
+        td
+          h1="Future Articles"
+      each a in futureArticles
+        tr
+          td
+            +articleIcons(a,{showNumbers: showNumbers, showMail: showMail})
+          td
+            if showVisibleLanguages
+              +languageDisplay(a,{short: true})
+
+
+          td
+            ul.no-margin
+              :verbatim
+                !{renderer.articleTitle(lang,a)}
+          td
+            if (showCollector && a.author && a.author.collection)
+              each b in a.author.collection.split(",")
+                if (b !== layout.user.OSMUser)
+                  span.label.osmbclabel-collect.small-margin=b
+                else
+                  span.label.osmbclabel-user.small-margin=b
+            if (showEditor && a.author && a.author["markdown" + lang])
+              each b in a.author["markdown"+lang].split(",")
+                if (b !== layout.user.OSMUser)
+                  span.label.osmbclabel-markdown.small-margin=b
+                else
+                  span.label.osmbclabel-user.small-margin=b
+
+          td
+            if (showLanguages)
+              +languageDisplay(a)
+
+
 
   .row
     h2="Options"

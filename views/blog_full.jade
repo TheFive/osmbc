@@ -129,6 +129,42 @@ block blogcontent
                               span.label.osmbclabel-markdown.small-margin=author
                             else
                               span.label.osmbclabel-user.small-margin=author
+
+  if futureArticles
+    .row
+      div(class=firstColSize)
+      div(class=secondColSize)
+        h2="Future Articles"
+    each a in futureArticles
+      .row
+        div(class=firstColSize)
+          div
+            +articleIcons(a,{showNumbers: showNumbers, showMail: showMail})
+          div
+            if (showCollector && a.author && a.author.collection)
+              each b in a.author.collection.split(",")
+                if (b !== layout.user.OSMUser)
+                  span.label.osmbclabel-collect.small-margin=b
+                else
+                  span.label.osmbclabel-user.small-margin=b
+            if (showEditor && a.author && a.author["markdown" + lang])
+              each b in a.author["markdown"+lang].split(",")
+                if (b !== layout.user.OSMUser)
+                  span.label.osmbclabel-markdown.small-margin=b
+                else
+                  span.label.osmbclabel-user.small-margin=b
+          div
+            if (showLanguages)
+              +languageDisplay(a)
+
+        div(class=secondColSize)
+          .row
+            div(class=columnLeftSize)
+              ul
+                :verbatim
+                  !{renderer.article(left_lang,a)}
+
+
   .row
     h2="Options"
 
