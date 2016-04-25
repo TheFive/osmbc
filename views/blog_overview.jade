@@ -10,6 +10,7 @@ block blogcontent
   - showCollector = (layout.user.getOption("overview","showCollector")=="true")
   - showEditor = (layout.user.getOption("overview","showEditor")=="true")
   - showLanguages = (layout.user.getOption("overview","showLanguages")=="true")
+  - showVisibleLanguages = (layout.user.getOption("overview","showVisibleLanguages")=="true")
   - disableOwnCollection = (layout.user.getOption("overview","disableOwnCollection")=="true")
   - disableOtherCollection = (layout.user.getOption("overview","disableOtherCollection")=="true")
   - disableWritten = (layout.user.getOption("overview","disableWritten")=="true")
@@ -28,12 +29,14 @@ block blogcontent
     tr
       td
       td
+      td
         :verbatim
           <br><br>
           !{renderer.subtitle(lang)}
     for c in categories
       if (articles[c.EN])
         tr
+          td
           td
           td
             :verbatim
@@ -47,6 +50,9 @@ block blogcontent
             tr
               td
                 +articleIcons(a,{showNumbers:showNumbers,showMail:showMail})
+              td
+                if showVisibleLanguages
+                  +languageDisplay(a,{short:true})
 
 
               td
@@ -103,6 +109,7 @@ block blogcontent
     p
       +userConfigOption("overview","showNumbers",showNumbers," show editor numbers, ")
       +userConfigOption("overview","showMail",showMail," show mail, ")
+      +userConfigOption("overview","showVisibleLanguages",showVisibleLanguages," show languages(short), " )
       +userConfigOption("overview","showCollector",showCollector," show collector, " )
       +userConfigOption("overview","showEditor",showEditor," show editor , ")
       +userConfigOption("overview","showLanguages",showLanguages," show languages, ")
