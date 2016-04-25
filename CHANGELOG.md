@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.6.4](https://github.com/TheFive/osmbc/tree/1.6.4) (2016-04-25)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.3...1.6.4)
+
+**Fixed bugs:**
+
+- Future articles are missing in overview and full mode. [\#437](https://github.com/TheFive/osmbc/issues/437)
+
 ## [1.6.3](https://github.com/TheFive/osmbc/tree/1.6.3) (2016-04-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.2...1.6.3)
 
