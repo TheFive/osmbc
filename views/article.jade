@@ -34,24 +34,6 @@ mixin rightcolumn
 
 block content
   p
-    if article.lock && (article.lock.user != layout.user.displayName)
-      .alert.alert-dismissable.alert-danger
-        button.close( type="button", data-dismiss="alert" ) ×
-        |#{article.lock.user} edits since #{layout.moment(article.lock.timestamp).fromNow()} Version #{article.version}
-    if info
-      if info.message
-        if info.status == 'error'
-          .alert.alert-dismissable.alert-danger
-            button.close( type="button", data-dismiss="alert" ) ×
-            |#{info.message}
-        if info.status == 'message'
-          .alert.alert-dismissable.alert-success
-            button.close( type="button", data-dismiss="alert" ) ×
-            |#{info.message}
-  
-
-
-          
     if (params.edit && !( blog && blog.status=="closed") )
       form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
         .row
@@ -122,6 +104,23 @@ block content
           +rightcolumn
             h2
               |#{article.getCategory(params.right_lang)}
+        .row
+          .col-md-1
+            | Predesessor
+          +leftcolumn
+            select(id="predessesor",name="predessesorId").form-control
+              if !article.predessesorId
+                option(value="" selected) None
+              else
+                option(value="") None
+              for a in articleCategories
+                if (a.id == article.predessesorId)
+                  option(value=a.id selected )=a.title
+                else
+                  option(value="a.id" )=a.title
+          +rightcolumn
+            h2
+              | #{article.getCategory(params.right_lang)}
 
         .row.hidden(id="unpublishReasonRow")
           .col-md-1
@@ -224,7 +223,7 @@ block content
 
 
     else
-     .row
+      .row
         .col-md-1
           |Blog <br>
         +leftcolumn

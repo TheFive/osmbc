@@ -110,6 +110,14 @@ function renderArticleId(req,res,next) {
           return callback();
         }
       },
+      articleForSort:
+      function articleForSort(callback){
+        debug('renderArticleId->articleForSort');
+        articleModule.find({blog:article.blog,categoryEN:article.categoryEN},function(err,result){
+          if (err) return callback(err);
+          callback(null,result);
+        });
+      },
         notranslate:
           function (callback){
             debug('renderArticleId->notranslate');
@@ -168,6 +176,7 @@ function renderArticleId(req,res,next) {
                                   article:article,
                                   params:params,
                                   placeholder:placeholder,
+                                  articleCategories:result.articleForSort,
                                   blog:result.blog,
                                   changes:result.changes,
                                   articleReferences:result.articleReferences,
