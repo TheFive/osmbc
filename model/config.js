@@ -62,7 +62,7 @@ Config.prototype.getJSON = function getJSON() {
       return  yaml.safeLoad(this.yaml);
     }
     catch(err) {
-      return {"Error":"YAML convert error for "+this.name + " " + err};
+      return {error:"YAML convert error for: "+this.name + " " ,errorMessage: err};
     }
   }
 };
@@ -245,6 +245,9 @@ Config.prototype.setAndSave = function setAndSave(user,data,callback) {
     debug('setAndSaveFinalCB');
     if (err) return callback(err);
     checkAndRepair[self.name](self);
+    if (self.json && self.json.error) {
+      return callback(new Error(self.json.errorMessage));
+    }
     actualiseConfigMap(self);
     self.save(callback);
   });
