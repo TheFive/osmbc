@@ -681,7 +681,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
       }
       for (let c in articles) {
         let r = sortArticles(articles[c]);
-        //articles[c]=r;
+        articles[c]=r;
       }
       cb(null);
     },

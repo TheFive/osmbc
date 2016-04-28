@@ -124,9 +124,6 @@ block content
                     option(value=a.id disabled)=a.title+"("+d.title+")"
                   else
                     option(value=a.id )=a.title
-          +rightcolumn
-            h2
-              | #{article.getCategory(params.right_lang)}
 
         .row.hidden(id="unpublishReasonRow")
           .col-md-1
@@ -164,11 +161,11 @@ block content
         .row 
           .col-md-1
           - var lbg;
-          - if (params.left_lang===layout.language) lbg = "osmbc-lang";
-          - if (params.left_lang===layout.language2) lbg = "osmbc-lang2";
+          - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
+          - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
           - var rbg;
-          - if (params.right_lang===layout.language) rbg = "osmbc-lang";
-          - if (params.right_lang===layout.language2) rbg = "osmbc-lang2";
+          - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
+          - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
 
           +leftcolumn
             span.label.label-default(id="left_lang" class="#{lbg}") 
@@ -249,6 +246,19 @@ block content
           h4
             |#{article.getCategory(params.right_lang)}
       .row
+        - pdname = "not in category"
+        for a in articleCategories
+          if (a.id == article.predecessorId)
+            - pdname = a.title
+
+
+        .col-md-1
+            | Predecessor
+
+        .col-md-7
+          h4=pdname
+
+      .row
         .col-md-1
           |Title <br>
         .col-md-7
@@ -273,12 +283,6 @@ block content
           if open
             p
               button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}&notranslation=true';") notranslation to rest
-      .row
-        .col-md-1
-          | Predecessor <br>
-        .col-md-7
-          h3
-            | #{article.predecessorId}
 
 
 

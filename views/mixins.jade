@@ -85,12 +85,11 @@ mixin articleIcons(a,options)
           span.glyphicon.glyphicon-envelope.small-margin
     a(href="#{layout.htmlroot}/article/#{a.id}")
       span.glyphicon.glyphicon-open.small-margin
-    if a.predecessorId
-      if (a.predecessorId != 0)
-        a(href="#{layout.htmlroot}/article/#{a.predecessorId}")
-          span.glyphicon.glyphicon-link.small-margin
+    if a.predecessorId && options.predecessorId
+      if (a.predecessorId == options.predecessorId)
+        span.glyphicon.glyphicon-pushpin.small-margin
       else
-        span.glyphicon.glyphicon-link.small-margin
+        span.glyphicon.glyphicon-stop.small-margin.text-warning
 
 
 block all
