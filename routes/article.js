@@ -231,6 +231,7 @@ function postArticle(req, res, next) {
   var changes = {blog:req.body.blog,
                  collection:req.body.collection,
                  comment:req.body.comment,
+                 predecessorId:req.body.predecessorId,
                  categoryEN:req.body.categoryEN,
                  version:req.body.version,
                  title:req.body.title,

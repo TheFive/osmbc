@@ -555,4 +555,31 @@ describe('model/blog', function() {
     });
 
   });
+  describe('sortArticles',function() {
+    it('should not sort without predecessors',function(){
+      let input = [{id:1},{id:4},{id:3}];
+      let result =blogModule.sortArticles(input);
+      should(result).eql(input);
+    });
+    it('should sort with predecessors',function(){
+      let input = [{id:1},{id:4},{id:3,predecessorId:1}];
+      let result =blogModule.sortArticles(input);
+      should(result).eql([{id:1},{id:3,predecessorId:1},{id:4}]);
+    });
+    it('should place 0 first',function(){
+      let input = [{id:1},{id:4},{id:3,predecessorId:0}];
+      let result =blogModule.sortArticles(input);
+      should(result).eql([{id:3,predecessorId:0},{id:1},{id:4}]);
+    });
+    it('should sort a longer array',function(){
+      let input = [{id:1},{id:4},{id:3,predecessorId:0},{id:5,predecessorId:8},{id:8,predecessorId:9},{id:9,predecessorId:5}];
+      let result =blogModule.sortArticles(input);
+      should(result).eql([{id:3,predecessorId:0},{id:1},{id:4},{id:9,predecessorId:5},{id:8,predecessorId:9},{id:5,predecessorId:8}]);
+    });
+    it('should sort a longer array based real data',function(){
+      let input = [{id:11244,predecessorId:11201},{id:11205,predecessorId:11209},{id:11201,predecessorId:11205},{id:11209},{id:11231},{id:11206},{id:11200}];
+      let result =blogModule.sortArticles(input);
+      should(result).eql([{id:11209},{id:11205,predecessorId:11209},{id:11201,predecessorId:11205},{id:11244,predecessorId:11201},{id:11231},{id:11206},{id:11200}]);
+    });
+  });
 });

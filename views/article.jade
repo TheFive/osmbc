@@ -106,18 +106,24 @@ block content
               |#{article.getCategory(params.right_lang)}
         .row
           .col-md-1
-            | Predesessor
+            | Predecessor
           +leftcolumn
-            select(id="predessesor",name="predessesorId").form-control
-              if !article.predessesorId
+            select(id="predecessor",name="predecessorId").form-control
+              if !article.predecessorId
                 option(value="" selected) None
               else
                 option(value="") None
               for a in articleCategories
-                if (a.id == article.predessesorId)
+                if (a.id == article.predecessorId)
                   option(value=a.id selected )=a.title
                 else
-                  option(value="a.id" )=a.title
+                  - d= null;
+                  for b in articleCategories
+                    - if (b.predecessorId == a.predecessorId) {d=b;}
+                  if disabled
+                    option(value=a.id disabled)=a.title+"("+d.title+")"
+                  else
+                    option(value=a.id )=a.title
           +rightcolumn
             h2
               | #{article.getCategory(params.right_lang)}
@@ -267,6 +273,12 @@ block content
           if open
             p
               button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}&notranslation=true';") notranslation to rest
+      .row
+        .col-md-1
+          | Predecessor <br>
+        .col-md-7
+          h3
+            | #{article.predecessorId}
 
 
 
