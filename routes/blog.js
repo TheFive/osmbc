@@ -369,7 +369,7 @@ function renderBlogTab(req, res, next) {
     if (typeof(lang)=='undefined') lang = "DE";
 
 
-
+   let clearParams=false;
 
 
     async.auto({
@@ -378,11 +378,30 @@ function renderBlogTab(req, res, next) {
           blog.getPreviewData({lang:lang,collectors:true},function(err,result) {
             return callback(err,result);
           });
+        },
+        review: function (callback) {
+          if (typeof(req.query.reviewComment)!='undefined')
+          {
+            clearParams = true;
+            blog.setReviewComment(lang,req.user,req.query.reviewComment,function(err) {
+              return callback(err);
+            });
+          } else return callback();
         }
+
+
       },
       function(err,result) {
         debug("final function");
         should.exist(res.rendervar);
+        if (clearParams) {
+          var url = config.getValue('htmlroot')+"/blog/"+blog.name;
+          var styleParam = "";
+          if (req.param.style) styleParam = "?style="+styleParam;
+          res.redirect(url+styleParam);
+          return;
+        }
+
         var renderer = new blogRenderer.HtmlRenderer(blog);
 
 

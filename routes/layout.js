@@ -136,7 +136,7 @@ function prepareRenderLayout(req,res,next) {
           callback(null,list);
         }]
     },
-  
+
     function (err,result) {
       if (err) return next(err);
       if (!(res.rendervar) || typeof(res.rendervar)=='undefined') res.rendervar = {};
