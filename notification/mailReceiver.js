@@ -153,7 +153,7 @@ MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang
 
 
   var subject = blog.name +"("+lang+") has been closed by user "+user.OSMUser;
-  if (status === "false") {
+  if (status === false) {
     subject = blog.name +"("+lang+") has been reopened by "+user.OSMUser;
   }
 
