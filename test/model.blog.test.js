@@ -561,6 +561,11 @@ describe('model/blog', function() {
       let result =blogModule.sortArticles(input);
       should(result).eql([{id:1},{id:4},{id:3}]);
     });
+    it('should not sort without predecessors but with title',function(){
+      let input = [{id:1,title:"2"},{id:4,title:"1"},{id:3,title:"3"}];
+      let result =blogModule.sortArticles(input);
+      should(result).eql([{id:4,title:"1"},{id:1,title:"1"},{id:3,title:"3"}]);
+    });
     it('should sort with predecessors',function(){
       let input = [{id:1},{id:4},{id:3,predecessorId:1}];
       let result =blogModule.sortArticles(input);
