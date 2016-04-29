@@ -79,7 +79,7 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lan
 
   var subject = blogNameSlack(blog.name);
  
-  if (status === false) {
+  if (status === "false") {
     subject +="("+lang+") has been reopened";
   } else {
     subject += "("+lang+") has been closed";
