@@ -34,6 +34,7 @@ block blogcontent
           <br><br>
           !{renderer.subtitle(lang)}
     for c in categories
+      - predecessorId = "0"
       if (articles[c.EN])
         tr
           td
@@ -49,10 +50,12 @@ block blogcontent
           if enable
             tr
               td
-                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail})
+                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
+                - predecessorId = a.id
               td
                 if showVisibleLanguages
                   +languageDisplay(a,{short:true})
+                  
 
 
               td

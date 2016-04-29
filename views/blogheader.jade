@@ -34,6 +34,14 @@ mixin articleIconLegend(view)
     a(href="#" target="_blank")
       span.glyphicon.glyphicon-open.small-margin
     span=" open the article in a new tab"
+  p
+    span.glyphicon.glyphicon-pushpin.small-margin
+    span=" this article is successfully linked to predecessor"
+  p
+    span.glyphicon.glyphicon-stop.small-margin.text-warning
+    span=" this article contains a non working predecessor link."
+
+
 
 mixin userConfigOption(view,option,variable,userdesc)
   if variable
