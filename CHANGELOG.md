@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.7.0](https://github.com/TheFive/osmbc/tree/1.7.0) (2016-04-29)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.4a...1.7.0)
+
+**Closed issues:**
+
+- Check, what is written to Slack if you reopen a blog in a language. [\#438](https://github.com/TheFive/osmbc/issues/438)
+
+## [1.6.4a](https://github.com/TheFive/osmbc/tree/1.6.4a) (2016-04-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.4...1.6.4a)
+
+**Closed issues:**
+
+- YAML parse error is not shown to user when saving configuration. [\#431](https://github.com/TheFive/osmbc/issues/431)
+
 ## [1.6.4](https://github.com/TheFive/osmbc/tree/1.6.4) (2016-04-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.3...1.6.4)
 
@@ -21,7 +35,6 @@
 
 - More Options for Review View [\#435](https://github.com/TheFive/osmbc/issues/435)
 - More Options for Full View. [\#434](https://github.com/TheFive/osmbc/issues/434)
-- Create a blog view only showing untranslated / unedited articles. [\#303](https://github.com/TheFive/osmbc/issues/303)
 
 **Fixed bugs:**
 
@@ -370,10 +383,6 @@
 
 ## [0.8.0](https://github.com/TheFive/osmbc/tree/0.8.0) (2016-02-21)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7b...0.8.0)
-
-**Implemented enhancements:**
-
-- Create an own textfield for every comment in an article. [\#304](https://github.com/TheFive/osmbc/issues/304)
 
 ## [0.7.7b](https://github.com/TheFive/osmbc/tree/0.7.7b) (2016-02-20)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7a...0.7.7b)
