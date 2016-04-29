@@ -86,7 +86,6 @@ mixin articleIcons(a,options)
     a(href="#{layout.htmlroot}/article/#{a.id}")
       span.glyphicon.glyphicon-open.small-margin
     if a.predecessorId
-      - console.log(a.predecessorId+" "+options.predecessorId)
       if (a.predecessorId === options.predecessorId)
         span.glyphicon.glyphicon-pushpin.small-margin
       else

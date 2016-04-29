@@ -353,7 +353,7 @@ block content
     .col-md-1
     +leftcolumn
       if params.left_lang === "DE"
-        a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');console.log(taf);console.log(taform);taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufgruf einer externen Seite)
+        a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufgruf einer externen Seite)
 
 
 
@@ -733,15 +733,16 @@ block scripts
 
     }
       function onchangeRIGHT() {
-        //console.log("onchangeRight");
         var mdEN = document.getElementById("markdownRIGHT").value;
         previewRIGHT = document.getElementById("previewRIGHT");
         textRight = document.getElementById("text_right");
         textLeft = document.getElementById("text_left");
-        //console.log("beforeFit");
+
+
         checkForTable("markdownRIGHT");
         FitToContent("markdownRIGHT");
-        //console.log("AfterFit");
+
+
         previewRIGHT.innerHTML = convert(mdEN);
         var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
         if (longLink>=0) {
@@ -773,8 +774,7 @@ block scripts
         var result = "";
 
         while( (linkList = regexToken.exec(cl)) != null ) {
-            //console.log("linkList"+JSON.stringify(linkList));
-         
+
             result += '<a href="'+linkList[0]+'" target="_blank">'+linkList[0]+'</a>\n';
             leftLang=document.getElementById("left_lang").innerHTML;
             rightLang=document.getElementById("right_lang").innerHTML;
@@ -784,12 +784,12 @@ block scripts
             }
             result +="<br>\n";
        
-            //console.log(result);
+
         }
         result = '<p>'+result+'</p>';
         FitToContent("collection");
  
-        //console.log(result);
+
         if (linkArea) linkArea.innerHTML = result;
       }
 
