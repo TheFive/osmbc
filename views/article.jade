@@ -38,7 +38,7 @@ block content
       form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
         .row
           .col-md-1
-            |Blog <br>
+            p="Blog"
           .col-md-5
             select(id="blog",name="blog").form-control
               option(value="Future") Future
@@ -82,11 +82,10 @@ block content
           .col-md-5
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
-             p(id="categoryDisplay" style={color:'Gray'})
+
 
           .col-md-1
             button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
-            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}';") Cancel
 
 
         .row
@@ -100,11 +99,12 @@ block content
                 if (category.EN == article.categoryEN)
                   option(value="#{category.EN}" selected ) #{option} 
                 else
-                  option(value="#{category.EN}" ) #{option} 
+                  option(value="#{category.EN}" ) #{option}
           +rightcolumn
-            h2
-              |#{article.getCategory(params.right_lang)}
-        .row
+            p(id="categoryDisplay" style={color: 'Gray'})
+          .col-md-1
+            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}';") Cancel
+          .row
           .col-md-1
             | Predecessor
           +leftcolumn
@@ -232,23 +232,19 @@ block content
     else
       .row
         .col-md-1
-          |Blog <br>
+          p="Blog"
         +leftcolumn
-          h2
-            |#{article.blog}
+          p=article.blog
         +rightcolumn
-          h2
+          p
         .col-md-1
           a(href="#{layout.htmlroot}/article/#{article.id}?edit=true&style=#{params.style}" class="btn btn-primary" role="button") Edit
       .row
         .col-md-1
-          |Category <br>
+          p="Category"
         +leftcolumn
-          h4
-            |#{article.getCategory(params.left_lang)}
-        +rightcolumn
-          h4
-            |#{article.getCategory(params.right_lang)}
+          p=article.getCategory(params.left_lang)
+
       .row
         - pdname = "not in category"
         if article.predecessorId == 0
@@ -259,17 +255,16 @@ block content
 
 
         .col-md-1
-            | Predecessor
+            p="Predecessor"
 
         .col-md-7
-          h4=pdname
+          p=pdname
 
       .row
         .col-md-1
-          |Title <br>
+          p="Title"
         .col-md-7
-          h3
-            |#{article.title}
+          p=article.title
         .col-md-3
           p
             - open = false
