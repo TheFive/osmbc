@@ -92,7 +92,12 @@ mixin articleIcons(a,options)
         if !a.getCommentRead(layout.user.OSMUser)
           span.glyphicon.glyphicon-envelope.small-margin
     a(href="#{layout.htmlroot}/article/#{a.id}")
-        span.glyphicon.glyphicon-open.small-margin
+      span.glyphicon.glyphicon-open.small-margin
+    if a.predecessorId
+      if (a.predecessorId === options.predecessorId)
+        span.glyphicon.glyphicon-pushpin.small-margin
+      else
+        span.glyphicon.glyphicon-stop.small-margin.text-warning
 
 
 block all

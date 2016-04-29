@@ -551,6 +551,59 @@ Blog.prototype.getPreview = function getPreview(style,user,callback) {
   });
 };
 
+/* Sort a list of articles with predecessorId Help
+Input: array or articles
+Output: Array of articles, that has the same order than input
+but respecting the predecessorId requirenment.
+If several articles have the same predecessorId the result is undefined
+Output: an array of articles.
+ */
+function sortArticles(listOfArticles) {
+  debug('sortArticles');
+  var result = [];
+  var laterUse = [];
+  listOfArticles.sort(function(a,b){
+    return ((a.title)? a.title:"").localeCompare((b.title)? b.title:"");});
+  for (let p=0;p<listOfArticles.length;p++) {
+    if (listOfArticles[p].predecessorId) {
+      laterUse.push(listOfArticles[p].id);
+    }
+  }
+  while (listOfArticles.length>0 ) {
+
+
+    let searchfor = "0";
+    if (result.length>0) searchfor = result[result.length-1].id;
+    let found = false;
+    for (let p=0;p<listOfArticles.length;p++) {
+      if (listOfArticles[p].predecessorId===searchfor) {
+        let a = listOfArticles[p];
+        listOfArticles.splice(p,1);
+        result.push(a);
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      for (let p=0;p<listOfArticles.length;p++) {
+        if (laterUse.indexOf(listOfArticles[p].id)<0) {
+          let a = listOfArticles[p];
+          listOfArticles.splice(p,1);
+          result.push(a);
+          found = true;
+          break;
+        }
+      }
+    }
+    if (!found) {
+      let a = listOfArticles[0];
+      listOfArticles.splice(0,1);
+      result.push(a);
+    }
+
+  }
+  return result;
+}
 // Generate Articles and Category for rendering a preview by a JADE Template
 Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
   debug('getPreviewData');
@@ -627,6 +680,10 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
           articles[r.categoryEN] = [];
         }
         articles[r.categoryEN].push(r);
+      }
+      for (let c in articles) {
+        let r = sortArticles(articles[c]);
+        articles[c]=r;
       }
       cb(null);
     },
@@ -871,6 +928,7 @@ module.exports.create= create;
 module.exports.createNewBlog = createNewBlog;
 
 module.exports.autoCloseBlog = autoCloseBlog;
-// Find Functions
 
+// sort article
+module.exports.sortArticles =sortArticles;
 

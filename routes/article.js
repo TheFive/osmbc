@@ -110,6 +110,14 @@ function renderArticleId(req,res,next) {
           return callback();
         }
       },
+      articleForSort:
+      function articleForSort(callback){
+        debug('renderArticleId->articleForSort');
+        articleModule.find({blog:article.blog,categoryEN:article.categoryEN},function(err,result){
+          if (err) return callback(err);
+          callback(null,result);
+        });
+      },
         notranslate:
           function (callback){
             debug('renderArticleId->notranslate');
@@ -168,6 +176,7 @@ function renderArticleId(req,res,next) {
                                   article:article,
                                   params:params,
                                   placeholder:placeholder,
+                                  articleCategories:result.articleForSort,
                                   blog:result.blog,
                                   changes:result.changes,
                                   articleReferences:result.articleReferences,
@@ -222,6 +231,7 @@ function postArticle(req, res, next) {
   var changes = {blog:req.body.blog,
                  collection:req.body.collection,
                  comment:req.body.comment,
+                 predecessorId:req.body.predecessorId,
                  categoryEN:req.body.categoryEN,
                  version:req.body.version,
                  title:req.body.title,

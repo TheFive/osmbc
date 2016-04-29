@@ -34,29 +34,11 @@ mixin rightcolumn
 
 block content
   p
-    if article.lock && (article.lock.user != layout.user.displayName)
-      .alert.alert-dismissable.alert-danger
-        button.close( type="button", data-dismiss="alert" ) ×
-        |#{article.lock.user} edits since #{layout.moment(article.lock.timestamp).fromNow()} Version #{article.version}
-    if info
-      if info.message
-        if info.status == 'error'
-          .alert.alert-dismissable.alert-danger
-            button.close( type="button", data-dismiss="alert" ) ×
-            |#{info.message}
-        if info.status == 'message'
-          .alert.alert-dismissable.alert-success
-            button.close( type="button", data-dismiss="alert" ) ×
-            |#{info.message}
-  
-
-
-          
     if (params.edit && !( blog && blog.status=="closed") )
       form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
         .row
           .col-md-1
-            |Blog <br>
+            p="Blog"
           .col-md-5
             select(id="blog",name="blog").form-control
               option(value="Future") Future
@@ -100,16 +82,15 @@ block content
           .col-md-5
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
-             p(id="categoryDisplay" style={color:'Gray'})
+
 
           .col-md-1
             button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
-            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}';") Cancel
 
 
         .row
           .col-md-1
-            |Category <br>
+            p="Category"
           +leftcolumn
             select(id="categoryEN",name="categoryEN").form-control
               for category in categories
@@ -118,14 +99,39 @@ block content
                 if (category.EN == article.categoryEN)
                   option(value="#{category.EN}" selected ) #{option} 
                 else
-                  option(value="#{category.EN}" ) #{option} 
+                  option(value="#{category.EN}" ) #{option}
           +rightcolumn
-            h2
-              |#{article.getCategory(params.right_lang)}
+            p(id="categoryDisplay" style={color: 'Gray'})
+          .col-md-1
+            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}';") Cancel
+          .row
+          .col-md-1
+            p="Predecessor"
+          +leftcolumn
+            select(id="predecessor",name="predecessorId").form-control
+              if typeof(article.predecessorId)=="undefined"
+                option(value="" selected) None
+              else
+                option(value="") None
+              if article.predecessorId == 0
+                option(value="0" selected) First
+              else
+                option(value="") First
+              for a in articleCategories
+                if (a.id == article.predecessorId)
+                  option(value=a.id selected )=a.title
+                else
+                  - d= null;
+                  for b in articleCategories
+                    - if (b.predecessorId == a.predecessorId) {d=b;}
+                  if disabled
+                    option(value=a.id disabled)=a.title+"("+d.title+")"
+                  else
+                    option(value=a.id )=a.title
 
         .row.hidden(id="unpublishReasonRow")
           .col-md-1
-            | Unpublish Reason
+            p="Unpublish Reason"
           .col-md-5
             select(id="unpublishReason",name="unpublishReason").form-control
               for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
@@ -137,7 +143,7 @@ block content
             textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1) #{article.unpublishReference}
         .row
           .col-md-1
-            |Title <br>
+            p="Title"
           .col-md-7
             textarea.form-control(name="title",rows=1) #{article.title}
           .col-md-3
@@ -145,7 +151,7 @@ block content
 
         .row
           .col-md-1
-            |Collection <br>
+            p="Collection"
           .col-md-10
             textarea.form-control(id="collection" name="collection" rows=2) #{article.collection}
         .row
@@ -159,11 +165,11 @@ block content
         .row 
           .col-md-1
           - var lbg;
-          - if (params.left_lang===layout.language) lbg = "osmbc-lang";
-          - if (params.left_lang===layout.language2) lbg = "osmbc-lang2";
+          - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
+          - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
           - var rbg;
-          - if (params.right_lang===layout.language) rbg = "osmbc-lang";
-          - if (params.right_lang===layout.language2) rbg = "osmbc-lang2";
+          - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
+          - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
 
           +leftcolumn
             span.label.label-default(id="left_lang" class="#{lbg}") 
@@ -211,7 +217,7 @@ block content
         .row
           if article.categoryEN != "Picture"
             .col-md-1
-              |Preview
+              p="Preview"
             +leftcolumn
               .panel.panel-default.panel-body(id="previewLEFT")
                   :verbatim
@@ -224,31 +230,43 @@ block content
 
 
     else
-     .row
+      .row
         .col-md-1
-          |Blog <br>
+          p="Blog"
         +leftcolumn
-          h2
-            |#{article.blog}
+          p=article.blog
         +rightcolumn
-          h2
+          p
         .col-md-1
           a(href="#{layout.htmlroot}/article/#{article.id}?edit=true&style=#{params.style}" class="btn btn-primary" role="button") Edit
       .row
         .col-md-1
-          |Category <br>
+          p="Category"
         +leftcolumn
-          h4
-            |#{article.getCategory(params.left_lang)}
-        +rightcolumn
-          h4
-            |#{article.getCategory(params.right_lang)}
+          p=article.getCategory(params.left_lang)
+
+      .row
+        - pdname = "None"
+        if article.predecessorId
+          - pdname = "not in category"
+        if article.predecessorId == 0
+          - pdname = "First"
+        for a in articleCategories
+          if (a.id == article.predecessorId)
+            - pdname = a.title
+
+
+        .col-md-1
+            p="Predecessor"
+
+        .col-md-7
+          p=pdname
+
       .row
         .col-md-1
-          |Title <br>
+          p="Title"
         .col-md-7
-          h3
-            |#{article.title}
+          p=article.title
         .col-md-3
           p
             - open = false
@@ -274,7 +292,7 @@ block content
 
       .row
         .col-md-1
-          |Collection
+          p="Collection"
         .col-md-10
           if (article.collection)
             p
@@ -301,7 +319,7 @@ block content
       if (false)
         .row
           .col-md-1
-              |Markdown<br>
+            p="Markdown"
           +leftcolumn 
               .panel.panel-default
                 .panel-body #{article["markdown"+params.left_lang]}
@@ -315,7 +333,7 @@ block content
       .row
         if article.categoryEN != "Picture"
           .col-md-1
-            | Preview
+            p="Preview"
 
 
           +leftcolumn 
@@ -335,7 +353,7 @@ block content
     .col-md-1
     +leftcolumn
       if params.left_lang === "DE"
-        a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');console.log(taf);console.log(taform);taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufgruf einer externen Seite)
+        a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufgruf einer externen Seite)
 
 
 
@@ -715,15 +733,16 @@ block scripts
 
     }
       function onchangeRIGHT() {
-        //console.log("onchangeRight");
         var mdEN = document.getElementById("markdownRIGHT").value;
         previewRIGHT = document.getElementById("previewRIGHT");
         textRight = document.getElementById("text_right");
         textLeft = document.getElementById("text_left");
-        //console.log("beforeFit");
+
+
         checkForTable("markdownRIGHT");
         FitToContent("markdownRIGHT");
-        //console.log("AfterFit");
+
+
         previewRIGHT.innerHTML = convert(mdEN);
         var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
         if (longLink>=0) {
@@ -755,8 +774,7 @@ block scripts
         var result = "";
 
         while( (linkList = regexToken.exec(cl)) != null ) {
-            //console.log("linkList"+JSON.stringify(linkList));
-         
+
             result += '<a href="'+linkList[0]+'" target="_blank">'+linkList[0]+'</a>\n';
             leftLang=document.getElementById("left_lang").innerHTML;
             rightLang=document.getElementById("right_lang").innerHTML;
@@ -766,12 +784,12 @@ block scripts
             }
             result +="<br>\n";
        
-            //console.log(result);
+
         }
         result = '<p>'+result+'</p>';
         FitToContent("collection");
  
-        //console.log(result);
+
         if (linkArea) linkArea.innerHTML = result;
       }
 
