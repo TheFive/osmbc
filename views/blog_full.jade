@@ -37,7 +37,9 @@ block blogcontent
         <br><br>
         !{renderer.subtitle(left_lang)}
   for c in categories
+
     if (articles[c.EN])
+      - predecessorId = "0"
       .row
         div(class=firstColSize)
         div(class=secondColSize)
@@ -58,7 +60,8 @@ block blogcontent
           .row
             div(class=firstColSize)
               div
-                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail})
+                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
+                - predecessorId = a.id
               div
                 if (showCollector && a.author && a.author.collection)
                   each b in a.author.collection.split(",")

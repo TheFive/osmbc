@@ -562,6 +562,8 @@ function sortArticles(listOfArticles) {
   debug('sortArticles');
   var result = [];
   var laterUse = [];
+  listOfArticles.sort(function(a,b){
+    return ((a.title)? a.title:"").localeCompare((b.title)? b.title:"");});
   for (let p=0;p<listOfArticles.length;p++) {
     if (listOfArticles[p].predecessorId) {
       laterUse.push(listOfArticles[p].id);
@@ -570,7 +572,7 @@ function sortArticles(listOfArticles) {
   while (listOfArticles.length>0 ) {
 
 
-    let searchfor = 0;
+    let searchfor = "0";
     if (result.length>0) searchfor = result[result.length-1].id;
     let found = false;
     for (let p=0;p<listOfArticles.length;p++) {

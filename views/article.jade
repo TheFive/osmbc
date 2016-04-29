@@ -109,10 +109,14 @@ block content
             | Predecessor
           +leftcolumn
             select(id="predecessor",name="predecessorId").form-control
-              if !article.predecessorId
+              if typeof(article.predecessorId)=="undefined"
                 option(value="" selected) None
               else
                 option(value="") None
+              if article.predecessorId == 0
+                option(value="0" selected) First
+              else
+                option(value="") First
               for a in articleCategories
                 if (a.id == article.predecessorId)
                   option(value=a.id selected )=a.title
@@ -247,6 +251,8 @@ block content
             |#{article.getCategory(params.right_lang)}
       .row
         - pdname = "not in category"
+        if article.predecessorId == 0
+          - pdname = "First"
         for a in articleCategories
           if (a.id == article.predecessorId)
             - pdname = a.title
