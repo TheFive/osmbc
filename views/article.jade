@@ -90,7 +90,7 @@ block content
 
         .row
           .col-md-1
-            |Category <br>
+            p="Category"
           +leftcolumn
             select(id="categoryEN",name="categoryEN").form-control
               for category in categories
@@ -106,7 +106,7 @@ block content
             button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}';") Cancel
           .row
           .col-md-1
-            | Predecessor
+            p="Predecessor"
           +leftcolumn
             select(id="predecessor",name="predecessorId").form-control
               if typeof(article.predecessorId)=="undefined"
@@ -131,7 +131,7 @@ block content
 
         .row.hidden(id="unpublishReasonRow")
           .col-md-1
-            | Unpublish Reason
+            p="Unpublish Reason"
           .col-md-5
             select(id="unpublishReason",name="unpublishReason").form-control
               for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
@@ -143,7 +143,7 @@ block content
             textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1) #{article.unpublishReference}
         .row
           .col-md-1
-            |Title <br>
+            p="Title"
           .col-md-7
             textarea.form-control(name="title",rows=1) #{article.title}
           .col-md-3
@@ -151,7 +151,7 @@ block content
 
         .row
           .col-md-1
-            |Collection <br>
+            p="Collection"
           .col-md-10
             textarea.form-control(id="collection" name="collection" rows=2) #{article.collection}
         .row
@@ -217,7 +217,7 @@ block content
         .row
           if article.categoryEN != "Picture"
             .col-md-1
-              |Preview
+              p="Preview"
             +leftcolumn
               .panel.panel-default.panel-body(id="previewLEFT")
                   :verbatim
@@ -246,7 +246,9 @@ block content
           p=article.getCategory(params.left_lang)
 
       .row
-        - pdname = "not in category"
+        - pdname = "None"
+        if article.predecessorId
+          - pdname = "not in category"
         if article.predecessorId == 0
           - pdname = "First"
         for a in articleCategories
@@ -290,7 +292,7 @@ block content
 
       .row
         .col-md-1
-          |Collection
+          p="Collection"
         .col-md-10
           if (article.collection)
             p
@@ -317,7 +319,7 @@ block content
       if (false)
         .row
           .col-md-1
-              |Markdown<br>
+            p="Markdown"
           +leftcolumn 
               .panel.panel-default
                 .panel-body #{article["markdown"+params.left_lang]}
@@ -331,7 +333,7 @@ block content
       .row
         if article.categoryEN != "Picture"
           .col-md-1
-            | Preview
+            p="Preview"
 
 
           +leftcolumn 
