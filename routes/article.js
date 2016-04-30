@@ -617,7 +617,7 @@ function renderList(req,res,next) {
   );
 }
 
-function postSlackCreate(req,res) {
+function postSlackCreate(req,res,next) {
   debug('postSlackCreate');
   console.log("called");
   var reply = slack.respond(req.body,function(hook) {
