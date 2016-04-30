@@ -624,13 +624,18 @@ function postSlackCreate(req,res,next) {
   var reply = slack.respond(req.body,function(hook) {
     console.log("try an answer");
     console.dir(hook)
-    if (hook.user_name=="slackbot") return {};
+    if (hook.user_name=="slackbot") {
+      console.log("Dont talk to bots.");
+      return {};
+    }
     if (util.isUrl(hook.text)) {
+      console.log("Try an url answer");
       return {
         text: 'Will search for this url in future, ' + hook.user_name,
         username: 'Bot'
       };
     };
+    console.log("Be Friendly");
     return {
       text: 'No Url No Fun' + hook.user_name,
       username: 'Bot'
