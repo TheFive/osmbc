@@ -7,6 +7,7 @@ var slackrouter = express.Router();
 var should   = require('should');
 var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
+var util = require('../util.js');
 
 var config        = require('../config.js');
 
@@ -618,33 +619,6 @@ function renderList(req,res,next) {
   );
 }
 
-function postSlackCreate(req,res,next) {
-  debug('postSlackCreate');
-  console.log("called");
-  var reply = slack.respond(req.body,function(hook) {
-    console.log("try an answer");
-    console.dir(hook)
-    if (hook.user_name=="slackbot") {
-      console.log("Dont talk to bots.");
-      return {};
-    }
-    if (util.isUrl(hook.text)) {
-      console.log("Try an url answer");
-      return {
-        text: 'Will search for this url in future, ' + hook.user_name,
-        username: 'Bot'
-      };
-    };
-    console.log("Be Friendly");
-    return {
-      text: 'No Url No Fun' + hook.user_name,
-      username: 'Bot'
-    };
-
-  });
-
-  res.json(reply);
-}
 
 
 // Export Render Functions for testing purposes
@@ -662,7 +636,6 @@ exports.searchArticles = searchArticles;
 exports.postNewComment = postNewComment;
 exports.postEditComment = postEditComment;
 exports.markCommentRead = markCommentRead;
-exports.postSlackCreate = postSlackCreate;
 
 // And configure router to use render Functions
 router.get('/list', exports.renderList);
@@ -670,7 +643,6 @@ router.get('/create',exports.createArticle);
 router.get('/searchandcreate',exports.searchAndCreate);
 router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
-slackrouter.post('/create', exports.postSlackCreate);
 
 router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/markCommentRead', exports.markCommentRead );

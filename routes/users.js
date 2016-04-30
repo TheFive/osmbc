@@ -106,6 +106,7 @@ function postUserId(req, res, next) {
   debug('postUserId');
   var id = req.params.user_id;
   var changes = {OSMUser:req.body.OSMUser,
+                 SlackUser:req.body.SlackUser,
                  WNAuthor:req.body.WNAuthor,
                  WeeklyAuthor:req.body.WeeklyAuthor,
                  language:req.body.language,
