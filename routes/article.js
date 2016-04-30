@@ -19,7 +19,7 @@ var configModule  = require('../model/config.js');
 
 require('jstransformer')(require('jstransformer-markdown-it'));
 
-var slack = new node_slack(config.getValue("outgoingslack"));
+var slack = new node_slack(config.getValue("slack").article.wn.hook);
 
 
 function renderArticleId(req,res,next) {
