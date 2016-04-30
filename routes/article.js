@@ -619,8 +619,9 @@ function renderList(req,res,next) {
 
 function postSlackCreate(req,res) {
   debug('postSlackCreate');
+  console.log("called");
   var reply = slack.respond(req.body,function(hook) {
-
+   console.log("try an answer");
     return {
       text: 'Good point, ' + hook.user_name,
       username: 'Bot'
