@@ -616,6 +616,19 @@ function renderList(req,res,next) {
   );
 }
 
+function postSlackCreate(req,res) {
+  var reply = slack.respond(req.body,function(hook) {
+
+    return {
+      text: 'Good point, ' + hook.user_name,
+      username: 'Bot'
+    };
+
+  });
+
+  res.json(reply);
+}
+
 
 // Export Render Functions for testing purposes
 exports.renderArticleId = renderArticleId;
@@ -632,6 +645,7 @@ exports.searchArticles = searchArticles;
 exports.postNewComment = postNewComment;
 exports.postEditComment = postEditComment;
 exports.markCommentRead = markCommentRead;
+exports.postSlackCreate = postSlackCreate;
 
 // And configure router to use render Functions
 router.get('/list', exports.renderList);
@@ -639,6 +653,7 @@ router.get('/create',exports.createArticle);
 router.get('/searchandcreate',exports.searchAndCreate);
 router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
+router.post('/slackcreate', exports.postSlackCreate);
 
 router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
