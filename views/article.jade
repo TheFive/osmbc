@@ -104,19 +104,19 @@ block content
             p(id="categoryDisplay" style={color: 'Gray'})
           .col-md-1
             button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}';") Cancel
-          .row
+        .row
           .col-md-1
             p="Predecessor"
           +leftcolumn
             select(id="predecessor",name="predecessorId").form-control
-              if typeof(article.predecessorId)=="undefined"
+              if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
                 option(value="" selected) None
               else
                 option(value="") None
-              if article.predecessorId == 0
+              if article.predecessorId === "0"
                 option(value="0" selected) First
               else
-                option(value="") First
+                option(value="0") First
               for a in articleCategories
                 if (a.id == article.predecessorId)
                   option(value=a.id selected )=a.title
@@ -128,6 +128,8 @@ block content
                     option(value=a.id disabled)=a.title+"("+d.title+")"
                   else
                     option(value=a.id )=a.title
+          .col-md-1
+            p="'"+article.predecessorId+"'"
 
         .row.hidden(id="unpublishReasonRow")
           .col-md-1
@@ -247,9 +249,9 @@ block content
 
       .row
         - pdname = "None"
-        if article.predecessorId
+        if article.predecessorId && article.predecessorId != ""
           - pdname = "not in category"
-        if article.predecessorId == 0
+        if article.predecessorId == "0"
           - pdname = "First"
         for a in articleCategories
           if (a.id == article.predecessorId)
