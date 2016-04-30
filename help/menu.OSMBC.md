@@ -8,7 +8,11 @@ The article has the following properties:
 
 * **title** 
   Used internally for display purposes only
-
+  
+* **predecessor**
+  An article title from the same category that must be the predecessor of 
+  this article.
+  
 * **collection**
   Free text (english / german) to describe the idea, or the collect the html link
 
@@ -27,6 +31,7 @@ The article has the following properties:
 * **categoryEN** 
   Reference to the category in the blog in english
   (categories can be redefined per blog)
+  
 
 ## Typical Use Cases
 ### Login
@@ -115,3 +120,10 @@ So if you would like to have a in page link to an article, you can do that by a 
 
 Every OSMBC User can add users and change properties of every user. To allow an OSM User access to OSM,
 he need full access and the OSM Username must be exactly used in OSMBC.
+
+### Sort Articles
+
+OSMBC Articles are sorted by the title. Additional it is possible to enter a predecessor for an article,
+this overwrites the title sort and ensures, that the article is shown direct after the predecessor.
+If the predecessor is a "no translation" article, it is used as predecessor in any view, that is displaying
+this "no translation" article, but ignored in any view, that skips the "no translation" (e.g. the final view).
