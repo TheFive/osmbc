@@ -622,7 +622,9 @@ function postSlackCreate(req,res,next) {
   debug('postSlackCreate');
   console.log("called");
   var reply = slack.respond(req.body,function(hook) {
-   console.log("try an answer");
+    console.log("try an answer");
+    console.dir(hook)
+    if (hook.user_name=="slackbot") return {};
     return {
       text: 'Good point, ' + hook.user_name,
       username: 'Bot'
