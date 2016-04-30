@@ -9,6 +9,7 @@ var debug    = require('debug')('OSMBC:routes:article');
 
 var config        = require('../config.js');
 
+var node_slack = require('node-slack');
 
 var settingsModule= require('../model/settings.js');
 var articleModule = require('../model/article.js');
@@ -18,7 +19,7 @@ var configModule  = require('../model/config.js');
 
 require('jstransformer')(require('jstransformer-markdown-it'));
 
-
+var slack = new node_slack(config.getValue("outgoingslack"));
 
 
 function renderArticleId(req,res,next) {
@@ -617,6 +618,7 @@ function renderList(req,res,next) {
 }
 
 function postSlackCreate(req,res) {
+  debug('postSlackCreate');
   var reply = slack.respond(req.body,function(hook) {
 
     return {
