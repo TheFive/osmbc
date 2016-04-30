@@ -625,8 +625,14 @@ function postSlackCreate(req,res,next) {
     console.log("try an answer");
     console.dir(hook)
     if (hook.user_name=="slackbot") return {};
+    if (util.isUrl(hook.text)) {
+      return {
+        text: 'Will search for this url in future, ' + hook.user_name,
+        username: 'Bot'
+      };
+    };
     return {
-      text: 'Good point, ' + hook.user_name,
+      text: 'No Url No Fun' + hook.user_name,
       username: 'Bot'
     };
 
