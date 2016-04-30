@@ -263,6 +263,7 @@ app.get(htmlRoot + '/logout', function(req, res){
 // first register the unsecured path
 
 app.use(htmlRoot,calender );
+app.use(htmlRoot + '/slack', slackrouter);
 
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
@@ -270,7 +271,6 @@ app.use(htmlRoot + '/',ensureAuthenticated,layout);
 app.use(htmlRoot + '/',checkAuthentification,index);
 app.use(htmlRoot + '/usert',checkAuthentification, users);
 app.use(htmlRoot + '/article',checkAuthentification, article);
-app.use(htmlRoot + '/slack', slackrouter);
 app.use(htmlRoot + '/changes',checkAuthentification, changes);
 app.use(htmlRoot + '/blog',checkAuthentification, blog);
 app.use(htmlRoot + '/tool',checkAuthentification, tool);
