@@ -3,6 +3,7 @@
 var express  = require('express');
 var async    = require('async');
 var router   = express.Router();
+var slackrouter = express.Router();
 var should   = require('should');
 var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
@@ -656,7 +657,7 @@ router.get('/create',exports.createArticle);
 router.get('/searchandcreate',exports.searchAndCreate);
 router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
-router.post('/slackcreate', exports.postSlackCreate);
+slackrouter.post('/create', exports.postSlackCreate);
 
 router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
@@ -669,5 +670,6 @@ router.post('/:article_id', exports.postArticle);
 
 
 module.exports.router = router;
+module.exports.slackrouter = slackrouter;
 
 
