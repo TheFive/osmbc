@@ -26,6 +26,7 @@
     "istanbul": "^0.4.3",
     "jade": "~1.11.0",
     "js-yaml": "^3.5.4",
+    "jstransformer": "0.0.4",
     "jstransformer-verbatim": "^1.0.0",
     "markdown-it": "^5.1.0",
     "markdown-it-imsize": "^2.0.1",
