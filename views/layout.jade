@@ -54,6 +54,15 @@ block all
             - function blogCount(blog,language) {return ((blog && blog._countExpectedMarkdown)?blog._countExpectedMarkdown[language]:"?") }
 
             ul.nav.navbar-nav.navbar-left
+              if blogNumber(layout.tbc,layout.language)>0
+                li
+                  a(href='#{layout.htmlroot}/blog/TBC')
+                    | #{layout.tbc.name}
+                    span.badge.osmbcbadge-lang
+                      | #{blogNumber(layout.tbc, layout.language)}
+                    if layout.language2
+                      span.badge.osmbcbadge-lang2.hidden-xs
+                        | #{blogNumber(layout.tbc, layout.language2)}
               if (layout.listOfOpenBlog && layout.listOfOpenBlog.length > 0)
                 li
                   a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')

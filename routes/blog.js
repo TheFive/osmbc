@@ -21,13 +21,19 @@ function findBlogByRouteId(id,user,callback) {
   should(typeof(callback)).eql('function');
 
   async.series([
-  function findID(cb) {
-    blogModule.findById(id,function(err,r) {
-      if (err) return cb(err);
-      if (r) blog= r;
+    function CheckTBC(cb) {
+      if (id === "TBC") {
+        blog = blogModule.getTBC();
+      }
       return cb();
-    });
-  },
+    },
+    function findID(cb) {
+      blogModule.findById(id,function(err,r) {
+        if (err) return cb(err);
+        if (r) blog= r;
+        return cb();
+      });
+    },
   function findByName(cb) {
     if (blog) return cb();
     blogModule.find({name:id},function(err,r) {

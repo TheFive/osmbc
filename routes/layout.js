@@ -66,6 +66,13 @@ function prepareRenderLayout(req,res,next) {
         callback(err,result);
       });
     },
+    tbc:function (callback) {
+      let blog = blogModule.getTBC();
+      blog.calculateDerived(req.user,function(err){
+        if (err) return callback(err);
+        callback(null,blog);
+      });
+    },
     listOfOpenBlog:
     function (callback) {
       blogModule.find({status:"open"},function(err,result) {
@@ -76,7 +83,7 @@ function prepareRenderLayout(req,res,next) {
         }
         async.each(list,function(item,cb){
           item.calculateDerived(req.user,function(err){
-            if (err) cb(err);
+            if (err) return cb(err);
             userMentions += calculateUnreadMessages(item._userMention,req.user.OSMUser);
             mainLangMentions += calculateUnreadMessages(item._mainLangMention,req.user.OSMUser);
             secondLangMentions += calculateUnreadMessages(item._secondLangMention,req.user.OSMUser);
@@ -153,6 +160,7 @@ function prepareRenderLayout(req,res,next) {
                       listOfEditBlog:result.listOfEditBlog,
                       listOfReviewBlog:result.listOfReviewBlog,
                       listOfHelpBlog:result.listOfHelpBlog,
+                      tbc:result.tbc,
                       moment:moment,
                       util:util,
                       usedLanguages:usedLanguages,
