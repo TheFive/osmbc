@@ -45,7 +45,7 @@ block content
           p
             for user,i in activeUserList
               if (i>0)
-                span ", "
+                span=", "
               span.text=user.OSMUser +" "
               span.text-muted=layout.moment(user.lastAccess).fromNow()
         .row
