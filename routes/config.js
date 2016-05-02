@@ -78,6 +78,7 @@ function renderConfigName(req, res, next) {
       if (name == "calendartranslation") jadeFile = name;
       if (name == "editorstrings") jadeFile = name;
       if (name == "categorytranslation") jadeFile = name;
+      if (name == "automatictranslatetext") jadeFile = name;
 
       console.dir(config);
       res.render(jadeFile,{config:config,

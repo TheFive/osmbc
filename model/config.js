@@ -170,6 +170,11 @@ var checkAndRepair = {
     if (!lf) lf = {};
     c.json = lf;
   },
+  "automatictranslatetext":function(c) {
+    var lf = c.getJSON();
+    if (!lf) lf = {};
+    c.json = lf;
+  },
   "calendarflags":function(c) {
     var cf = c.getJSON();
     if (!cf) cf = {};
@@ -305,7 +310,8 @@ function initialise(callback) {
       initConfigElement.bind(null,"calendarflags"),
       initConfigElement.bind(null,"licenses"),
       initConfigElement.bind(null,"categorytranslation"),
-      initConfigElement.bind(null,"editorstrings")
+      initConfigElement.bind(null,"editorstrings"),
+      initConfigElement.bind(null,"automatictranslatetext")
   ],
     function final(err){
       debug("finalFunction initialise");
