@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.7.1](https://github.com/TheFive/osmbc/tree/1.7.1) (2016-05-02)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.0b...1.7.1)
+
+**Implemented enhancements:**
+
+- Allow drag & drop for german flags. [\#442](https://github.com/TheFive/osmbc/issues/442)
+- the existing links those we can drag to Markdown should generate the complete \*Text\* including the link itself [\#292](https://github.com/TheFive/osmbc/issues/292)
+
+## [1.7.0b](https://github.com/TheFive/osmbc/tree/1.7.0b) (2016-04-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.0...1.7.0b)
+
 ## [1.7.0](https://github.com/TheFive/osmbc/tree/1.7.0) (2016-04-29)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.4a...1.7.0)
 
@@ -306,11 +317,14 @@
 ## [0.8.7](https://github.com/TheFive/osmbc/tree/0.8.7) (2016-03-01)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.6...0.8.7)
 
+**Fixed bugs:**
+
+- Avoid possibility of SQL Injection \(e.g. History\) [\#357](https://github.com/TheFive/osmbc/issues/357)
+
 **Closed issues:**
 
 - Category Releases should not have a bullet point [\#360](https://github.com/TheFive/osmbc/issues/360)
 - Log blocking of send out mail in development version. [\#358](https://github.com/TheFive/osmbc/issues/358)
-- Avoid possibility of SQL Injection \(e.g. History\) [\#357](https://github.com/TheFive/osmbc/issues/357)
 
 **Merged pull requests:**
 
