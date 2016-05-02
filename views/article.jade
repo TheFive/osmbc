@@ -174,11 +174,9 @@ block content
           - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
 
           +leftcolumn
-            span.label.label-default(id="left_lang" class="#{lbg}") 
-              |#{params.left_lang}
+            span.label.label-default(id="left_lang" class="#{lbg}")=params.left_lang
           +rightcolumn
-            span.label.label-default(id="right_lang" class="#{rbg}" )
-              |#{params.right_lang}
+            span.label.label-default(id="right_lang" class="#{rbg}")=params.right_lang
         .row
           .col-md-1
             p="Markdown"
@@ -213,7 +211,7 @@ block content
 
             if ((params.left_lang=="DE") || (params.right_lang=="DE"))
               - for (lang in languageFlags)
-                img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)")
+                img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
           
 
         .row
@@ -482,6 +480,8 @@ block content
 block scripts                
   script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
   script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
+  script(src="#{layout.htmlroot}/javascripts/to-markdown.js" )
+
 
   script.
     window.onload = init;
@@ -519,7 +519,7 @@ block scripts
         onchangeRIGHT();
      }
 
-      
+
      
       coll = document.getElementById("collection");
       if (coll) {
@@ -761,7 +761,20 @@ block scripts
          }
       }
       function generateGoogleTranslateLink(link,lang) {
-        return '<a href="https://translate.google.de/translate?sl=auto&tl='+lang+'&u='+link+'" target="_blank">'+lang+'</a>';
+        var gtl = "https://translate.google.de/translate?sl=auto&tl="+lang+"&u="+link;
+
+
+        var gtlMarkdown = "";
+        if (lang == "DE") gtlMarkdown = "(automatische [Übersetzung](" + gtl + "))";
+        else              gtlMarkdown = "(automatic [translation](" + gtl + "))";
+
+        var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
+       
+        return '<a href="'+gtl+'" target="_blank" ondragstart="'+dragstartFunction+'" >'+lang+'</a>';
+      }
+
+      function dragstart(event,text) {
+        event.dataTransfer.setData("TEXT", text);
       }
       function onchangeCollection() {
         var clfield = document.getElementById("collection");
@@ -777,7 +790,7 @@ block scripts
 
         while( (linkList = regexToken.exec(cl)) != null ) {
 
-            result += '<a href="'+linkList[0]+'" target="_blank">'+linkList[0]+'</a>\n';
+            result += '<a href="'+linkList[0]+'" target="_blank" >'+linkList[0]+'</a>\n';
             leftLang=document.getElementById("left_lang").innerHTML;
             rightLang=document.getElementById("right_lang").innerHTML;
             result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
@@ -802,6 +815,13 @@ block scripts
         src = "![("+id+")]("+src+")";
         clip(src);
         alert(id+ " flag is copied to clipboard");
+      }
+
+      function ondragstartflag (event,id) {
+        image = document.getElementById(id);
+        src = image.src;
+        src = "![(" + id + ")](" + src + ")";
+        event.dataTransfer.setData("TEXT", src);
       }
       function onchangeComment() {
         FitToContent("comment");
