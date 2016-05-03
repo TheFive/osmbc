@@ -174,6 +174,7 @@ function renderArticleId(req,res,next) {
             res.end(result);return;*/
             res.render('article',{layout:res.rendervar.layout,
                                   article:article,
+                                  googleTranslateText:configModule.getConfig("automatictranslatetext"),
                                   params:params,
                                   placeholder:placeholder,
                                   articleCategories:result.articleForSort,
