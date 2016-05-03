@@ -9,6 +9,7 @@ var debug    = require('debug')('OSMBC:routes:layout');
 var util          = require('../util.js');
 var config        = require('../config.js');
 var version = require('../version.js');
+var markdown = require('markdown-it')();
 
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
@@ -144,6 +145,7 @@ function prepareRenderLayout(req,res,next) {
                       listOfOrphanBlog:result.listOfOrphanBlog,
                       htmlroot: htmlRoot,
                       languages:languages,
+                      markdown:markdown,
                       userMentions:userMentions,
                       mainLangMentions:mainLangMentions,
                       secondLangMentions:secondLangMentions,

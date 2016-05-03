@@ -766,11 +766,11 @@ block scripts
         var gtl = "https://translate.google.de/translate?sl=auto&tl="+lang+"&u="+link;
 
 
-        var gtlMarkdown = "(automatic [translation]";
-        if (googleTranslateText[lang]) gtlMarkdown ="("+googleTranslateText[lang];
+        var gtlMarkdown = "(automatic [translation](##link##))";
+        if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
 
 
-        gtlMarkdown = gtlMarkdown+"(" + gtl + "))";
+        gtlMarkdown = gtlMarkdown.replace("##link##",gtl);
 
         var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
 
