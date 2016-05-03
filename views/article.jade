@@ -486,6 +486,8 @@ block scripts
   script.
     window.onload = init;
 
+    googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
+
     if ('#{params.edit}'=='true'  && !("#{(blog)?blog.status:"open"}"=="closed")) {
         window.onbeforeunload = function(event) {
           event.returnValue = "Please use Cancel or OK to remove lock information.";
@@ -764,9 +766,11 @@ block scripts
         var gtl = "https://translate.google.de/translate?sl=auto&tl="+lang+"&u="+link;
 
 
-        var gtlMarkdown = "";
-        if (lang == "DE") gtlMarkdown = "(automatische [Übersetzung](" + gtl + "))";
-        else              gtlMarkdown = "(automatic [translation](" + gtl + "))";
+        var gtlMarkdown = "(automatic [translation]";
+        if (googleTranslateText[lang]) gtlMarkdown ="("+googleTranslateText[lang];
+
+
+        gtlMarkdown = gtlMarkdown+"(" + gtl + "))";
 
         var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
 
