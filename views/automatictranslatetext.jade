@@ -9,9 +9,15 @@ block showContentOfConfig
         tr
           th="Language"
           th="Markdown Link"
+          th="Preview"
       tbody
         each lang in layout.languages
+          - cell = config.json[lang].replace("##link##","https://www.google.de)")
           tr
+
             td=lang
-            td="("+config.json[lang]+"https://www.google.de/translatelink)"
+            td=cell
+            td
+              :verbatim
+                !{layout.markdown.render(cell)}
 
