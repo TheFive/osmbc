@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.7.1a](https://github.com/TheFive/osmbc/tree/1.7.1a) (2016-05-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.1...1.7.1a)
+
+**Fixed bugs:**
+
+- Automatische Übersetzung Texte are not shown in article editor. [\#443](https://github.com/TheFive/osmbc/issues/443)
+
 ## [1.7.1](https://github.com/TheFive/osmbc/tree/1.7.1) (2016-05-02)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.0b...1.7.1)
 
