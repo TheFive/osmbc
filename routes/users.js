@@ -56,6 +56,7 @@ function renderList(req,res,next) {
 function renderUserId(req, res, next) {
   debug('renderUserId');
   var id = req.params.user_id;
+  if (id === "self") id = req.user.id;
   should.exist(id);
   var params = {};
   var user;
@@ -186,6 +187,8 @@ function createUser(req, res, next) {
     res.redirect(config.getValue('htmlroot')+'/usert/'+user.id+"?edit=true");
   });
 }
+
+
 
 router.get('/inbox',inbox);
 router.get('/list',renderList);

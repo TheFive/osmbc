@@ -29,7 +29,9 @@
     "article":{
       "wn":{
         "hook":"https://hooks.slack.com/services/articleKey",
-        "channel":"#osmbcarticle"
+        "channel":"#osmbcarticle",
+        "token":"testtoken"
+
       }
     }
   },

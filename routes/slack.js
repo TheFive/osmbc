@@ -5,7 +5,7 @@ var async    = require('async');
 var router   = express.Router();
 var should   = require('should');
 var markdown = require('markdown-it')();
-var debug    = require('debug')('OSMBC:routes:article');
+var debug    = require('debug')('OSMBC:routes:slack');
 var util = require('../util.js');
 
 var config        = require('../config.js');
@@ -35,8 +35,8 @@ function ensureAuthentificated(req,res,next) {
     token = config.getValue("slack").article[slackTeam].token;
   }
   if (req.body.token !== token) {
-    console.log("wrong slack token");
-    return next(new Error("Wrong Slack Token"));
+    res.status(401).send("Authorisation forbidden");
+    return;
   }
   // to not answer to bots
 
@@ -44,19 +44,34 @@ function ensureAuthentificated(req,res,next) {
     res.json({});
     return;
   }
-  console.log("search user");
-  userModule.findOne({SlackUser:req.body.user_name},function(err,user){
+  userModule.find({SlackUser:req.body.user_name},function(err,user){
     if (err) {
       console.log(err);
       return next(err);
     }
-    if (!user) {
-      console.log("User Unknown");
-      return next(new Error("User unknown"));
+    var obj = {};
+
+    obj.token = req.body.token;
+    obj.team_id = req.body.team_id;
+    obj.channel_id = req.body.channel_id;
+    obj.channel_name = req.body.channel_name;
+    obj.timestamp = new Date(req.body.timestamp);
+    obj.user_id = req.body.user_id;
+    obj.user_name = req.body.user_name;
+    obj.username = botName;
+
+    if (user.length==0) {
+      obj.text = "<@"+obj.user_id+"> I never heard from you. Please enter your Slack Name in <"+osmbcUrl+"/usert/self|OSMBC>";
+      res.json(obj);
+      return;
     }
-    console.log("User Found:")
-    console.log(req.user);
-    req.user = user;
+    if (user.length>1) {
+      obj.text = "<@"+obj.user_id+"> is registered more than once in <"+osmbcUrl+"/usert/self|OSMBC>";
+      res.json(obj);
+      return;
+    }
+
+    req.user = user[0];
     return next();
   });
 }
@@ -93,8 +108,8 @@ function getUrlFromSlack(req,callback) {
   let title=extractTextWithoutUrl(text);
 
 
-  if (url != "" && util.isURL(url)) {
-    console.log(url +" is an url");
+  if (url && url != "" && util.isURL(url)) {
+    console.log(text +" is an url");
     if (req.user.slackMode =="interactive") {
         articleModule.fullTextSearch(text, {column: "blog", desc: true}, function (err, result) {
           if (err) return callback(err);
@@ -130,7 +145,7 @@ function getUrlFromSlack(req,callback) {
         return callback(null);
       }
     } else {
-      console.log(url +" is not an url");
+      console.log(text +" is not an url");
       return callback();
     }
 }
@@ -247,8 +262,9 @@ function postSlackCreate(req,res,next) {
           console.log(result[0].name+" Blogs found")
           slackCommunicationStatus[req.body.user_name].blog = result[0].name;
           console.dir(slackCommunicationStatus);
-          return cb(null);
+          return cb();
         }
+        else return cb()
       });
     },
     new:function(cb) {
@@ -322,7 +338,7 @@ function postSlackCreate(req,res,next) {
         }
       }
     }
-    if (text!=="") obj.text = " <@"+obj.user_id+"> "+text;
+    if (text!=="") obj.text = "<@"+obj.user_id+"> "+text;
     else obj.text ="";
     obj.username = botName;
     console.log("Result");
