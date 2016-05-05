@@ -1,0 +1,69 @@
+"use strict";
+
+var config = require('../config.js');
+var cheerio = require('cheerio');
+var request = require('request');
+var async = require('async');
+var debug = require('debug')('OSMBC:model:htmltitle');
+
+function linkFrom(url,page) {
+  if (url.substring(0,page.length+7)==("http://"+page)) return true;
+  if (url.substring(0,page.length+8)==("https://"+page)) return true;
+  return false;
+}
+
+
+function retrieveForum(body,url) {
+  if (linkFrom(url,"forum.openstreetmap.org")) {
+    let c = cheerio.load(body);
+    let title = c("title").text().replace(" / OpenStreetMap Forum","");
+    return title;
+  }
+  return null;
+}
+
+function retrieveTwitter(body,url) {
+  if (linkFrom(url,"twitter.com")) {
+    let c = cheerio.load(body);
+    let title = c('meta[property="og:description"]').attr("content");
+    return title;
+  }
+  return null;
+}
+
+function retrieveTitle(body) {
+  let c = cheerio.load(body);
+  let title = c('title').text();
+  return title;
+}
+function retrieveDescription(body) {
+  let c = cheerio.load(body);
+  let title = c('meta[property="og:description"]').attr("content");
+  if (typeof(title)=="undefined") title = null;
+  return title;
+}
+
+var converterList = [retrieveForum,retrieveTwitter,retrieveDescription,retrieveTitle];
+
+
+function getTitle(url,callback) {
+  debug("getTitle");
+  request( { method: "GET", url: url, followAllRedirects: true },
+    function (error, response,body) {
+      if (error) return callback(null,"Page not Found");
+      let r = null;
+      for (let i=0;i<converterList.length;i++) {
+        r = converterList[i](body,url);
+        if (r) break;
+      }
+      return callback(null,r);
+    }
+  );
+}
+
+
+module.exports.getTitle = getTitle;
+
+module.exports.fortestonly = {};
+module.exports.fortestonly.linkFrom = linkFrom;
+

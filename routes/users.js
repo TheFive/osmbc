@@ -56,7 +56,7 @@ function renderList(req,res,next) {
 function renderUserId(req, res, next) {
   debug('renderUserId');
   var id = req.params.user_id;
-  if (id === "self") id = req.user.id;
+  if (id === "self") res.redirect(res.rendervar.layout.htmlroot+"/usert/"+req.user.id);
   should.exist(id);
   var params = {};
   var user;
@@ -77,7 +77,7 @@ function renderUserId(req, res, next) {
         debug('findAndLoaduser_CB');
         if (err) return cb(err);
         user = result;
-        if (! user || typeof(user.id) == 'undefined') return cb(new Error("User ID not Found"));
+        if (! user || typeof(user.id) == 'undefined') return cb(new Error("User ID >"+id+"< not Found"));
         if (req.query.validation) {
           user.validateEmail(req.user,req.query.validation,function (err){
             if (err) return cb(err);
