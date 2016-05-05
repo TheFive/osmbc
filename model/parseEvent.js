@@ -39,7 +39,13 @@ function nextDate(string) {
   //debug('nextDate');
   if (!string) return null;
   var now = new Date();
+  if (exports.fortestonly && exports.fortestonly.currentdate) {
+    now = new Date(exports.fortestonly.currentdate);
+
+  }
+
   now.setDate(now.getDate()-50);
+
   var result = new Date(string);
   result = new Date(Date.UTC(result.getYear(),result.getMonth(),result.getDate()));
 
@@ -446,5 +452,6 @@ exports.parseWikiInfo = parseWikiInfo;
 
 
 
-
+exports.fortestonly = {};
+exports.fortestonly.currentdate = null;
 
