@@ -156,10 +156,17 @@ describe('views/article', function() {
         bddone();
       });
       it('should show multiple links from collection only separated by carrige return', function(bddone){
-      
+
         browser.document.getElementById('collection').value="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681";
         browser.evaluate('onchangeCollection()');
         should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.de/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE))\');">DE</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.de/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681))\');">DE</a><br>\n</p>');
+        bddone();
+      });
+      it('should ignore brackets in a link (e.g. Markdown)', function(bddone){
+
+        browser.document.getElementById('collection').value="Some collection [link](https://www.openstreetmap.org/a_brilliant_map) in Markdown";
+        browser.evaluate('onchangeCollection()');
+        should(browser.document.getElementById('linkArea').innerHTML).equal('<p><a href="https://www.openstreetmap.org/a_brilliant_map" target="_blank">https://www.openstreetmap.org/a_brilliant_map</a>\n <a href="https://translate.google.de/translate?sl=auto&amp;tl=DE&amp;u=https://www.openstreetmap.org/a_brilliant_map" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.de/translate?sl=auto&amp;tl=DE&amp;u=https://www.openstreetmap.org/a_brilliant_map))\');">DE</a><br>\n</p>');
         bddone();
       });
     });

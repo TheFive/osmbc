@@ -6,7 +6,9 @@ var nock = require("nock");
 var should  = require('should');
 var path = require('path');
 
+
 var userModule = require("../model/user.js");
+var parseEvent = require('../model/parseEvent.js');
 
 
 
@@ -26,16 +28,22 @@ describe('views/tools', function() {
   });
   before(function(){
     var fileName = path.join(__dirname,'/data/calenderData.wiki');
+    parseEvent.fortestonly.currentdate = new Date('2016-02-05');
 
     nock('https://wiki.openstreetmap.org')
      .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
      .times(2)
      .replyWithFile(200,fileName);
   });
+  after(function(){
+    parseEvent.fortestonly.currentdate = null;
+  });
+
 
 
   it('should open calender tool' ,function(bddone) {
     this.timeout(20000);
+   
 
     async.series([
       function setLanguage (cb) {
