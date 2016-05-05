@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.7.3](https://github.com/TheFive/osmbc/tree/1.7.3) (2016-05-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.2a...1.7.3)
+
+**Closed issues:**
+
+- Suggest Title from html meta or og:description tag. [\#445](https://github.com/TheFive/osmbc/issues/445)
+
 ## [1.7.2a](https://github.com/TheFive/osmbc/tree/1.7.2a) (2016-05-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.2...1.7.2a)
 
