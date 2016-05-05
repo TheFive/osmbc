@@ -291,13 +291,14 @@ function postSlackCreate(req,res,next) {
       }
       else cb(null,"");
     }],
-    checkAllExist:["title","yes","new","checkblog",function(cb){
+    checkAllExist:["title","yes","new","checkblog",function(cb,result){
       debug("checkAllExist");
       console.log("STATUS after parsing.");
       console.dir(slackCommunicationStatus);
 
       if (slackCommunicationStatus[req.body.user_name].waitOnYes) return cb();
       if (slackCommunicationStatus[req.body.user_name].waitOnTitle) return cb();
+      if (result.yes) return cb();
       if (undefined(slackCommunicationStatus[req.body.user_name].url)) {
         return cb(null,"Please start with an url");
       }
