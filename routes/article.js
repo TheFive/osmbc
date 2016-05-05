@@ -7,6 +7,8 @@ var should   = require('should');
 var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
 
+
+var util     = require("../util.js");
 var config        = require('../config.js');
 
 
@@ -15,6 +17,7 @@ var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
 var configModule  = require('../model/config.js');
+var htmltitle  = require('../model/htmltitle.js');
 
 require('jstransformer')(require('jstransformer-markdown-it'));
 
@@ -196,26 +199,43 @@ function searchAndCreate(req,res,next) {
   var search = req.query.search;
   var show = req.query.show;
   if (!show) show = "15";
-  if (req.query.edit && req.query.edit=="false") {
-    var returnToUrl = config.getValue('htmlroot')+"/osmbc.html";
+  if (req.query.edit && req.query.edit == "false") {
+    var returnToUrl = config.getValue('htmlroot') + "/osmbc.html";
     if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
-    res.redirect(returnToUrl);    
+    res.redirect(returnToUrl);
     return;
   }
-  if (!search || typeof(search)=='undefined') search = "";
+  if (!search || typeof(search) == 'undefined') search = "";
   var placeholder = configModule.getPlaceholder();
 
-  articleModule.fullTextSearch(search,{column:"blog",desc:true},function(err,result){
-    debug('searchAndCreate->fullTextSearch');
+  let title;
+  async.series([
+    function generateTitle(cb) {
+      if (util.isURL(search)) {
+        htmltitle.getTitle(search, function (err, titleCalc) {
+          if (err) cb(err);
+          title = titleCalc;
+          return cb();
+        });
+      } else return cb();
+    }
+  ], function (err) {
     if (err) return next(err);
-    should.exist(res.rendervar);
-    res.render("collect",{layout:res.rendervar.layout,
-                           search:search,
-                           placeholder:placeholder,
-                           showCollect:true,
-                           show:show,
-                           categories:blogModule.getCategories(),
-                           foundArticles:result});
+    articleModule.fullTextSearch(search, {column: "blog", desc: true}, function (err, result) {
+      debug('searchAndCreate->fullTextSearch');
+      if (err) return next(err);
+      should.exist(res.rendervar);
+      res.render("collect", {
+        layout: res.rendervar.layout,
+        search: search,
+        placeholder: placeholder,
+        showCollect: true,
+        show: show,
+        title: title,
+        categories: blogModule.getCategories(),
+        foundArticles: result
+      });
+    });
   });
 }
 
