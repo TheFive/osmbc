@@ -148,7 +148,8 @@ exports.importData = function importData(data,callback) {
 
     ],function(err) {
       debug("importData->final");
-      callback(err,data);});
+      callback(err,data);
+  });
 };
 
 exports.checkData = function checkData(data,callback) {

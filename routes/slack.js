@@ -13,6 +13,7 @@ var config        = require('../config.js');
 var node_slack = require('node-slack');
 
 var userModule     = require('../model/user.js');
+var htmltitle     = require('../model/htmltitle.js');
 var articleModule     = require('../model/article.js');
 var blogModule     = require('../model/blog.js');
 
@@ -158,7 +159,7 @@ function getYesFromSlack(req,callback) {
   req.body.handled = true;
   if (text.toUpperCase()=="YES") {
     slackCommunicationStatus[user_name].waitOnYes = false;
-    slackCommunicationStatus[user_name].waitOnTitle = true;
+    //slackCommunicationStatus[user_name].waitOnTitle = true;
     slackCommunicationStatus[user_name].timestamp = new Date();
     return callback(null,"Please enter a title for the collection:");
   } else {
@@ -211,8 +212,55 @@ function undefined(value) {
   if (value != "") return false;
   return true;
 }
-function postSlackCreate(req,res,next) {
-  debug('postSlackCreate');
+
+function postSlackCreateUseTBC(req,res,next) {
+  debug("postSlackCreateUseTBC");
+  if (!req.user.slackMode === "useTBC") return next();
+
+  var obj = {};
+
+  obj.token = req.body.token;
+  obj.team_id = req.body.team_id;
+  obj.channel_id = req.body.channel_id;
+  obj.channel_name = req.body.channel_name;
+  obj.timestamp = new Date(req.body.timestamp);
+  obj.user_id = req.body.user_id;
+  obj.user_name = req.body.user_name;
+  obj.text = req.body.text;
+  obj.username = botName;
+
+  let url=searchUrlInSlack(obj.text);
+  let title=extractTextWithoutUrl(obj.text);
+  let blog = "TBC";
+
+
+  async.series([function calcTitle(cb){
+    if (typeof(title)=="undefined" || title == "") {
+      htmltitle.getTitle(url,function (err,t){
+        if (err) return cb(err);
+        title = t;
+        return cb();
+      });
+    } else return cb();
+  }],function createArticle(err){
+    let changes = {title:title,
+      collection:url,
+      categoryEN:"-- no category yet --",
+      blog:blog};
+    articleModule.createNewArticle(function(err,result){
+      if (err) return callback(err);
+      changes.version = result.version;
+      result.setAndSave(req.user,changes,function(err){
+        if (err) return callback(err);
+        obj.text = articleNameSlack(result)+" created.\n";
+        res.json(obj);
+      });
+    });
+  });
+}
+
+function postSlackCreateInteractive(req,res,next) {
+  debug('postSlackCreateInteractive');
 
   // prepare answer, should be done by node-slack have to find better module
 
@@ -249,7 +297,6 @@ function postSlackCreate(req,res,next) {
       if (req.user.slackMode === "useTBC") {
         console.log("Slack Mode is not interactive");
         slackCommunicationStatus[req.body.user_name].blog = "TBC";
-        slackCommunicationStatus[req.body.user_name].title = "Collected via Slack";
 
         return cb();
       }
@@ -257,14 +304,16 @@ function postSlackCreate(req,res,next) {
       blogModule.find({status:"open"},function(err,result) {
 
         if (err) return callback(err);
-        console.log(result.length+" Blogs found")
         if (result.length > 0) {
           console.log(result[0].name+" Blogs found")
           slackCommunicationStatus[req.body.user_name].blog = result[0].name;
           console.dir(slackCommunicationStatus);
           return cb();
         }
-        else return cb()
+        else {
+          slackCommunicationStatus[req.body.user_name].blog = "TBC";
+          return cb();
+        }
       });
     },
     new:function(cb) {
@@ -288,9 +337,9 @@ function postSlackCreate(req,res,next) {
       if (req.body.handled) return cb();
       if (currentstatus.waitOnTitle) {
         getTitleFromSlack(req,cb);
+      } else return cb();
       }
-      else cb(null,"");
-    }],
+    ],
     checkAllExist:["title","yes","new","checkblog",function(cb,result){
       debug("checkAllExist");
       console.log("STATUS after parsing.");
@@ -350,7 +399,8 @@ function postSlackCreate(req,res,next) {
 }
 
 
-router.post('/create/:team', ensureAuthentificated,postSlackCreate);
+router.post('/create/:team', ensureAuthentificated,postSlackCreateUseTBC);
+router.post('/create/:team', ensureAuthentificated,postSlackCreateInteractive);
 
 
 

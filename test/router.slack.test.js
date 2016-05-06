@@ -14,6 +14,7 @@ var app       = require('../app.js');
 var slackRouter = require('../routes/slack.js');
 var articleModule = require('../model/article.js');
 var logModule = require('../model/logModule.js');
+var blogModule = require('../model/blog.js');
 
 
 describe('router/slack',function(){
@@ -31,18 +32,19 @@ describe('router/slack',function(){
     };
     request(opts, function (err, res, body) {
       should.not.exist(err);
+
+      should(res.statusCode).eql(200);
       should(res.body.token).eql("testtoken");
       should(res.body.user_id).eql(user_id);
       should(res.body.user_name).eql(user_name);
       should(res.body.username).eql("testbc");
       should(res.body.text).eql(answer);
-
-      should(res.statusCode).eql(200);
       cb()
     })
   }
   function findArticle(a,cb) {
     articleModule.find(a,function(err,result){
+      //console.dir(result);
       should.not.exist(err);
       should.exist(result);
       should(result.length).eql(1);
@@ -51,7 +53,7 @@ describe('router/slack',function(){
   }
   function findLog(l,cb) {
     logModule.find(l,function(err,logs){
-      console.dir(logs);
+
       should.not.exist(err);
       should.exist(logs);
       should(logs.length).eql(1);
@@ -83,7 +85,8 @@ describe('router/slack',function(){
         clear: true,
         user: [{OSMUser: "TestInteractive", SlackUser: "TestSlackInteractive", slackMode: "interactive"},
           {OSMUser: "ExistsTwice1", SlackUser: "ExistsTwice", slackMode: "interactive"},
-          {OSMUser: "ExistsTwice2", SlackUser: "ExistsTwice", slackMode: "interactive"}],
+          {OSMUser: "ExistsTwice2", SlackUser: "ExistsTwice", slackMode: "interactive"},
+          {OSMUser: "TestUseTBC", SlackUser: "TestSlackUseTBC", slackMode: "useTBC"}],
         blog:[{name:"blog",status:"open"}]
       })
     ], bddone);
@@ -156,6 +159,32 @@ describe('router/slack',function(){
         findLog.bind(null,{table:"article",user:"TestInteractive",property:"collection",to:"https://www.osmbc.org/article"})
         ],bddone);
     });
+    it("should extract title and create an article",function(bddone){
+      user_id = "33";
+      user_name = "TestSlackInteractive";
+      async.series([
+        talk.bind(null,"We are talking about OSMBC <https://www.osmbc.org/article>","<@33> <https://testosm.bc/article/1|We are talking about OSMBC> created.\n"),
+        findArticle.bind(null,{title:"We are talking about OSMBC",collection:"https://www.osmbc.org/article",blog:"blog"}),
+        findLog.bind(null,{table:"article",user:"TestInteractive",property:"collection",to:"https://www.osmbc.org/article"})
+      ],bddone);
+    });
+    it("should extract title and create an article with NO Blog",function(bddone){
+
+      user_id = "33";
+      user_name = "TestSlackInteractive";
+      async.series([
+        function changeBlog(cb) {
+          blogModule.findOne({name:"blog"},function(err,blog) {
+            should.not.exist(err);
+            blog.status = "edit";
+            blog.save(cb);
+          });
+        },
+        talk.bind(null,"We are talking about OSMBC <https://www.osmbc.org/article>","<@33> <https://testosm.bc/article/1|We are talking about OSMBC> created.\n"),
+        findArticle.bind(null,{title:"We are talking about OSMBC",collection:"https://www.osmbc.org/article",blog:"TBC"}),
+        findLog.bind(null,{table:"article",user:"TestInteractive",property:"collection",to:"https://www.osmbc.org/article"})
+      ],bddone);
+    });
     it("should ask because dublette  and create an article",function(bddone){
       user_id = "33";
       user_name = "TestSlackInteractive";
@@ -183,6 +212,18 @@ describe('router/slack',function(){
       ],bddone);
     });
 
+  });
+  describe("useTBC Mode",function(){
+    it("should store an URL",function(bddone) {
+      user_name = "TestSlackUseTBC";
+      user_id = "55";
+      async.series([
+        talk.bind(null,"<http://forum.openstreetmap.org/viewtopic.php?id=53173>", "<https://testosm.bc/article/1|Internationale Admingrenzen 2016 / users: Germany> created.\n"),
+
+        // search for the already exists article, that only should exist ONCE
+        findArticle.bind(null,{title:"Internationale Admingrenzen 2016 / users: Germany",collection:"http://forum.openstreetmap.org/viewtopic.php?id=53173",blog:"TBC"})
+      ],bddone);
+    });
   });
 });
 
