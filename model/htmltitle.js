@@ -24,6 +24,8 @@ function retrieveTwitter(body,url) {
   if (linkFrom(url,"twitter.com")) {
     let c = cheerio.load(body);
     let title = c('meta[property="og:description"]').attr("content");
+    //
+    title=title.replace(/(https?:\/\/[^[\] \n\r"”“]*)/gi, '<..>');
     return title;
   }
   return null;
