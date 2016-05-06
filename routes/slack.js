@@ -111,44 +111,36 @@ function getUrlFromSlack(req,callback) {
 
   if (url && url != "" && util.isURL(url)) {
     console.log(text +" is an url");
-    if (req.user.slackMode =="interactive") {
-        articleModule.fullTextSearch(text, {column: "blog", desc: true}, function (err, result) {
-          if (err) return callback(err);
-          if (result.length > 0) {
-            let answer = "Found: " + result.length + ((result.length == 1) ? " article" : " articles") + "\n";
-            for (let i = 0; i < Math.min(result.length, 3); i++) {
-              answer += result[i].blog + " " + articleNameSlack(result[i]) + "\n";
-            }
-            if (result.length > 3) answer += "and more\n";
-            answer += "\nPlease enter yes to proceed.";
-            slackCommunicationStatus[user_name].timestamp = new Date();
-            slackCommunicationStatus[user_name].url = url;
-            slackCommunicationStatus[user_name].waitOnYes = true;
-            slackCommunicationStatus[user_name].title = title;
-            req.body.handled = true;
-            return callback(null, answer);
-          } else {
-            slackCommunicationStatus[user_name].timestamp = new Date();
-            slackCommunicationStatus[user_name].url = url;
-            slackCommunicationStatus[user_name].waitOnYes = false;
-            slackCommunicationStatus[user_name].title = title;
-            req.body.handled = true;
-            return callback(null);
-          }
-        });
-      }
-      else { // mode is useTBC !!
+    articleModule.fullTextSearch(text, {column: "blog", desc: true}, function (err, result) {
+      if (err) return callback(err);
+      console.log("Dublette Search "+JSON.stringify(result));
+      if (result.length > 0) {
+        let answer = "Found: " + result.length + ((result.length == 1) ? " article" : " articles") + "\n";
+        for (let i = 0; i < Math.min(result.length, 3); i++) {
+          answer += result[i].blog + " " + articleNameSlack(result[i]) + "\n";
+        }
+        if (result.length > 3) answer += "and more\n";
+        answer += "\nPlease enter yes to proceed.";
+        slackCommunicationStatus[user_name].timestamp = new Date();
+        slackCommunicationStatus[user_name].url = url;
+        slackCommunicationStatus[user_name].waitOnYes = true;
+        slackCommunicationStatus[user_name].title = title;
+        req.body.handled = true;
+        return callback(null, answer);
+      } else {
         slackCommunicationStatus[user_name].timestamp = new Date();
         slackCommunicationStatus[user_name].url = url;
         slackCommunicationStatus[user_name].waitOnYes = false;
-        if (title !="") slackCommunicationStatus[user_name].title = title;
+        slackCommunicationStatus[user_name].title = title;
         req.body.handled = true;
         return callback(null);
       }
-    } else {
-      console.log(text +" is not an url");
-      return callback();
-    }
+    });
+  }
+  else {
+    console.log(text +" is not an url");
+    return callback();
+  }
 }
 
 
@@ -194,7 +186,7 @@ function createArticle(req,callback) {
                   collection:slackCommunicationStatus[user_name].url,
                   categoryEN:"-- no category yet --",
                   blog:slackCommunicationStatus[user_name].blog};
-  slackCommunicationStatus[user_name] = {};
+  delete slackCommunicationStatus[user_name];
   articleModule.createNewArticle(function(err,result){
     if (err) return callback(err);
     changes.version = result.version;
@@ -215,7 +207,7 @@ function undefined(value) {
 
 function postSlackCreateUseTBC(req,res,next) {
   debug("postSlackCreateUseTBC");
-  if (!req.user.slackMode === "useTBC") return next();
+  if (!(req.user.slackMode === "useTBC")) return next();
 
   var obj = {};
 
@@ -275,16 +267,20 @@ function postSlackCreateInteractive(req,res,next) {
   obj.user_name = req.body.user_name;
   obj.text = req.body.text;
 
+  req.body.handled = false;
+
   let currentstatus = slackCommunicationStatus[req.body.user_name];
   if (typeof(currentstatus)=="undefined") {
-    slackCommunicationStatus[req.body.user_name] = {};
+    slackCommunicationStatus[req.body.user_name] = {timestamp:new Date()};
     currentstatus = slackCommunicationStatus[req.body.user_name];
   }
   if (typeof(currentstatus)=="object") {
-    /*if ((currentstatus.timestamp -new Date())<120*1000) {
-      delete slackCommunicationStatus[req.body.user_name];
+    if ((new Date().getTime() - currentstatus.timestamp.getTime())>=4*60*1000) {
+
+
+      slackCommunicationStatus[req.body.user_name] = {timestamp:new Date()};
       currentstatus = slackCommunicationStatus[req.body.user_name];
-    }*/
+    }
   }
   console.log("Received Message:")
   console.log(req.body.text);
@@ -318,8 +314,9 @@ function postSlackCreateInteractive(req,res,next) {
     },
     new:function(cb) {
       debug("new");
+      console.log("handled: "+req.body.handled);
       if (req.body.handled) return cb();
-      if (typeof(currentstatus.url)=="undefined") {
+      if (typeof(slackCommunicationStatus[req.body.user_name].url)=="undefined") {
         getUrlFromSlack(req,cb);
       }
       else cb(null,"");
@@ -352,7 +349,7 @@ function postSlackCreateInteractive(req,res,next) {
         return cb(null,"Please start with an url");
       }
       if (undefined(slackCommunicationStatus[req.body.user_name].blog)) {
-        slackCommunicationStatus[req.body.user_name] = {};
+        slackCommunicationStatus[req.body.user_name] = {timestamp: new Date()};
         return cb(null,"No open blog found, please use <"+osmbcUrl+"/index.html|OSMBC>")
       }
       if (undefined(slackCommunicationStatus[req.body.user_name].title)) {
@@ -368,7 +365,8 @@ function postSlackCreateInteractive(req,res,next) {
           &&(!undefined(slackCommunicationStatus[req.body.user_name].blog)
           &&(!slackCommunicationStatus[req.body.user_name].waitOnYes)))
        {
-        createArticle(req,cb);
+
+         createArticle(req,cb);
       }
       else cb(null,"");
     }]
@@ -412,6 +410,7 @@ module.exports.fortestonly = {};
 module.exports.fortestonly.searchUrlInSlack = searchUrlInSlack;
 module.exports.fortestonly.extractTextWithoutUrl = extractTextWithoutUrl;
 module.exports.fortestonly.undefined = undefined;
+module.exports.fortestonly.slackCommunicationStatus = slackCommunicationStatus;
 
 
 

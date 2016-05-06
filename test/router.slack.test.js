@@ -33,6 +33,8 @@ describe('router/slack',function(){
     request(opts, function (err, res, body) {
       should.not.exist(err);
 
+      console.log(body);
+
       should(res.statusCode).eql(200);
       should(res.body.token).eql("testtoken");
       should(res.body.user_id).eql(user_id);
@@ -186,6 +188,7 @@ describe('router/slack',function(){
       ],bddone);
     });
     it("should ask because dublette  and create an article",function(bddone){
+      should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);
       user_id = "33";
       user_name = "TestSlackInteractive";
       async.series([
@@ -199,6 +202,7 @@ describe('router/slack',function(){
       ],bddone);
     });
     it("should ask for dublette and cancel creation",function(bddone){
+      should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);
       user_id = "33";
       user_name = "TestSlackInteractive";
       async.series([
