@@ -149,7 +149,11 @@ describe('router/slack',function(){
     it("should ask for a Url if not given",function(bddone) {
       user_name = "TestSlackInteractive";
       user_id = "55";
-      talk("Hello OSMBC Bot", "<@55> Please start with an url\n", bddone);
+      talk("Hello OSMBC Bot", "<@55> Please start with an url\n", function(err){
+        if (err) return bddone(err);
+        should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);
+        bddone();
+      });
     });
     it("should ask for a title and create an article",function(bddone){
       user_id = "33";
@@ -157,6 +161,7 @@ describe('router/slack',function(){
       async.series([
         talk.bind(null,"<https://www.osmbc.org/article>","<@33> Please enter a title:\n"),
         talk.bind(null,"An article title","<@33> <https://testosm.bc/article/1|An article title> created.\n"),
+        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
         findArticle.bind(null,{title:"An article title",collection:"https://www.osmbc.org/article",blog:"blog"}),
         findLog.bind(null,{table:"article",user:"TestInteractive",property:"collection",to:"https://www.osmbc.org/article"})
         ],bddone);
@@ -166,6 +171,7 @@ describe('router/slack',function(){
       user_name = "TestSlackInteractive";
       async.series([
         talk.bind(null,"We are talking about OSMBC <https://www.osmbc.org/article>","<@33> <https://testosm.bc/article/1|We are talking about OSMBC> created.\n"),
+        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
         findArticle.bind(null,{title:"We are talking about OSMBC",collection:"https://www.osmbc.org/article",blog:"blog"}),
         findLog.bind(null,{table:"article",user:"TestInteractive",property:"collection",to:"https://www.osmbc.org/article"})
       ],bddone);
@@ -183,6 +189,7 @@ describe('router/slack',function(){
           });
         },
         talk.bind(null,"We are talking about OSMBC <https://www.osmbc.org/article>","<@33> <https://testosm.bc/article/1|We are talking about OSMBC> created.\n"),
+        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
         findArticle.bind(null,{title:"We are talking about OSMBC",collection:"https://www.osmbc.org/article",blog:"TBC"}),
         findLog.bind(null,{table:"article",user:"TestInteractive",property:"collection",to:"https://www.osmbc.org/article"})
       ],bddone);
@@ -198,6 +205,7 @@ describe('router/slack',function(){
         talk.bind(null,"<https://linkExists.org/already>","<@33> Found: 1 article\ntest-blog <https://testosm.bc/article/1|Article Exists>\n\nPlease enter yes to proceed.\n"),
         talk.bind(null,"Yes","<@33> Please enter a title for the collection:\n"),
         talk.bind(null,"Another title","<@33> <https://testosm.bc/article/2|Another title> created.\n"),
+        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
         findArticle.bind(null,{title:"Another title",collection:"https://linkExists.org/already",blog:"blog"})
       ],bddone);
     });
@@ -211,6 +219,7 @@ describe('router/slack',function(){
         },
         talk.bind(null,"<https://linkExists.org/already>","<@33> Found: 1 article\ntest-blog <https://testosm.bc/article/1|Article Exists>\n\nPlease enter yes to proceed.\n"),
         talk.bind(null,"No","<@33> You have cancelled your collection.\n"),
+        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
         // search for the already exists article, that only should exist ONCE
         findArticle.bind(null,{collection:"https://linkExists.org/already"})
       ],bddone);
@@ -223,6 +232,7 @@ describe('router/slack',function(){
       user_id = "55";
       async.series([
         talk.bind(null,"<http://forum.openstreetmap.org/viewtopic.php?id=53173>", "<https://testosm.bc/article/1|Internationale Admingrenzen 2016 / users: Germany> created.\n"),
+        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
 
         // search for the already exists article, that only should exist ONCE
         findArticle.bind(null,{title:"Internationale Admingrenzen 2016 / users: Germany",collection:"http://forum.openstreetmap.org/viewtopic.php?id=53173",blog:"TBC"})

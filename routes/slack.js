@@ -155,7 +155,7 @@ function getYesFromSlack(req,callback) {
     slackCommunicationStatus[user_name].timestamp = new Date();
     return callback(null,"Please enter a title for the collection:");
   } else {
-    slackCommunicationStatus[user_name] ={};
+    delete slackCommunicationStatus[user_name];
     return callback(null,"You have cancelled your collection.");
   }
 }
@@ -172,7 +172,7 @@ function getTitleFromSlack(req,callback) {
     return callback();
 
   } else {
-    slackCommunicationStatus[user_name] = {};
+    delete slackCommunicationStatus[user_name];
     req.body.handled = true;
     return callback(null,"Sorry, title to long or to short.");
   }
@@ -341,6 +341,7 @@ function postSlackCreateInteractive(req,res,next) {
       debug("checkAllExist");
       console.log("STATUS after parsing.");
       console.dir(slackCommunicationStatus);
+      if (!slackCommunicationStatus[req.body.user_name]) return cb();
 
       if (slackCommunicationStatus[req.body.user_name].waitOnYes) return cb();
       if (slackCommunicationStatus[req.body.user_name].waitOnTitle) return cb();
