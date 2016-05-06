@@ -6,5 +6,7 @@
     "http://forum.openstreetmap.org":
       {"/viewtopic.php?id=54487":"OSMForumBridgesOffWay.html"},
     "https://twitter.com":
-      {"/WeeklyOSM/status/726026930479370241":"WeeklyNewOnTwitter.html"}
+      {"/WeeklyOSM/status/726026930479370241":"WeeklyNewOnTwitter.html"},
+    "http://www.openstreetmap.org":
+      {"/user/phuonglinh9/diary/38568":"OSMBlogpage.html"}
 }

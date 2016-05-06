@@ -20,6 +20,15 @@ function retrieveForum(body,url) {
   return null;
 }
 
+function retrieveOsmBlog(body,url) {
+  if (linkFrom(url,"www.openstreetmap.org")) {
+    let c = cheerio.load(body);
+    let title = c("title").text().replace("OpenStreetMap | ","");
+    return title;
+  }
+  return null;
+}
+
 function retrieveTwitter(body,url) {
   if (linkFrom(url,"twitter.com")) {
     let c = cheerio.load(body);
@@ -43,7 +52,7 @@ function retrieveDescription(body) {
   return title;
 }
 
-var converterList = [retrieveForum,retrieveTwitter,retrieveDescription,retrieveTitle];
+var converterList = [retrieveForum,retrieveTwitter,retrieveOsmBlog,retrieveDescription,retrieveTitle];
 
 
 function getTitle(url,callback) {

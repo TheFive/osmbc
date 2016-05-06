@@ -58,6 +58,13 @@ describe("model/htmltitle",function() {
       bddone();
     });
   });
+  it('should get title from OSMBlog',function(bddone){
+    htmltitle.getTitle("http://www.openstreetmap.org/user/phuonglinh9/diary/38568",function(err,result){
+      should.not.exist(err);
+      should(result).eql('Blog von phuonglinh9 | Xin chào các bạn');
+      bddone();
+    });
+  })
 });
 
 
