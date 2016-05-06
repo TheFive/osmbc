@@ -1,5 +1,23 @@
 # Change Log
 
+## [1.7.3](https://github.com/TheFive/osmbc/tree/1.7.3) (2016-05-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.2a...1.7.3)
+
+**Closed issues:**
+
+- Suggest Title from html meta or og:description tag. [\#445](https://github.com/TheFive/osmbc/issues/445)
+
+## [1.7.2a](https://github.com/TheFive/osmbc/tree/1.7.2a) (2016-05-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.2...1.7.2a)
+
+**Fixed bugs:**
+
+- Url extractor in collection takes brackets into account [\#444](https://github.com/TheFive/osmbc/issues/444)
+- Whos Online on home page is displaying quotation marks [\#439](https://github.com/TheFive/osmbc/issues/439)
+
+## [1.7.2](https://github.com/TheFive/osmbc/tree/1.7.2) (2016-05-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.1a...1.7.2)
+
 ## [1.7.1a](https://github.com/TheFive/osmbc/tree/1.7.1a) (2016-05-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.1...1.7.1a)
 

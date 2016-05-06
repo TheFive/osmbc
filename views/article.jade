@@ -763,7 +763,9 @@ block scripts
          }
       }
       function generateGoogleTranslateLink(link,lang) {
-        var gtl = "https://translate.google.de/translate?sl=auto&tl="+lang+"&u="+link;
+        var googlelang = lang;
+        if (lang === "JP") googlelang = "JA";
+        var gtl = "https://translate.google.de/translate?sl=auto&tl="+googlelang+"&u="+link;
 
 
         var gtlMarkdown = "(automatic [translation](##link##))";
