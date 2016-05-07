@@ -50,7 +50,7 @@ function sendMailWithLog(user,mailOptions,callback) {
   debug("sendMailWithLog");
 
   function logMail(error,info){
-    debug("logMail Error %s response %s",error,info.response);
+    debug("logMail Error response");
     var logObject = {
       user:user.OSMUser,
       table:"mail",
