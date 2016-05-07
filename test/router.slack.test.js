@@ -57,10 +57,7 @@ describe('router/slack',function(){
 
       should.not.exist(err);
       if (logs.length!==1) {
-        logModule.find({},function(err,logs){
-          console.log(logs);
-          should(l).eql("NOT FOUND IN LOGS");
-        });
+        should(l).eql("NOT FOUND IN LOGS");
       }
       cb();
     });
@@ -154,8 +151,8 @@ describe('router/slack',function(){
 
         // search for the already exists article, that only should exist ONCE
         findArticle.bind(null,{title:"This text comes with a title",collection:"http://forum.openstreetmap.org/viewtopic.php?id=53173",blog:"TBC"}),
-        findLog.bind(null,{table:"article",user:"TestSlackUseTBC",property:"collection",to:"http://forum.openstreetmap.org/viewtopic.php?id=53173"}),
-        findLog.bind(null,{table:"article",user:"TestSlackUseTBC",property:"title",to:"This text comes with a title"})
+        findLog.bind(null,{table:"article",user:"TestUseTBC",property:"collection",to:"http://forum.openstreetmap.org/viewtopic.php?id=53173"}),
+        findLog.bind(null,{table:"article",user:"TestUseTBC",property:"title",to:"This text comes with a title"})
       ],bddone);
     });
   });

@@ -117,7 +117,7 @@ describe('router/user',function() {
           }],
           function(err) {
             should.exist(err);
-            should(err.message).eql("User ID not Found");
+            should(err.message).eql("User ID >"+newId+"< Not Found");
             should(next.called).be.true();
             should(res.render.called).be.false();
             bddone();            
