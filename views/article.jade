@@ -104,19 +104,19 @@ block content
             p(id="categoryDisplay" style={color: 'Gray'})
           .col-md-1
             button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}';") Cancel
-          .row
+        .row
           .col-md-1
             p="Predecessor"
           +leftcolumn
             select(id="predecessor",name="predecessorId").form-control
-              if typeof(article.predecessorId)=="undefined"
+              if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
                 option(value="" selected) None
               else
                 option(value="") None
-              if article.predecessorId == 0
+              if article.predecessorId === "0"
                 option(value="0" selected) First
               else
-                option(value="") First
+                option(value="0") First
               for a in articleCategories
                 if (a.id == article.predecessorId)
                   option(value=a.id selected )=a.title
@@ -128,6 +128,8 @@ block content
                     option(value=a.id disabled)=a.title+"("+d.title+")"
                   else
                     option(value=a.id )=a.title
+          .col-md-1
+            p="'"+article.predecessorId+"'"
 
         .row.hidden(id="unpublishReasonRow")
           .col-md-1
@@ -172,11 +174,9 @@ block content
           - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
 
           +leftcolumn
-            span.label.label-default(id="left_lang" class="#{lbg}") 
-              |#{params.left_lang}
+            span.label.label-default(id="left_lang" class="#{lbg}")=params.left_lang
           +rightcolumn
-            span.label.label-default(id="right_lang" class="#{rbg}" )
-              |#{params.right_lang}
+            span.label.label-default(id="right_lang" class="#{rbg}")=params.right_lang
         .row
           .col-md-1
             p="Markdown"
@@ -211,7 +211,7 @@ block content
 
             if ((params.left_lang=="DE") || (params.right_lang=="DE"))
               - for (lang in languageFlags)
-                img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)")
+                img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
           
 
         .row
@@ -247,9 +247,9 @@ block content
 
       .row
         - pdname = "None"
-        if article.predecessorId
+        if article.predecessorId && article.predecessorId != ""
           - pdname = "not in category"
-        if article.predecessorId == 0
+        if article.predecessorId == "0"
           - pdname = "First"
         for a in articleCategories
           if (a.id == article.predecessorId)
@@ -481,8 +481,12 @@ block scripts
   script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
   script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
 
+
+
   script.
     window.onload = init;
+
+    googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
 
     if ('#{params.edit}'=='true'  && !("#{(blog)?blog.status:"open"}"=="closed")) {
         window.onbeforeunload = function(event) {
@@ -517,7 +521,7 @@ block scripts
         onchangeRIGHT();
      }
 
-      
+
      
       coll = document.getElementById("collection");
       if (coll) {
@@ -759,7 +763,24 @@ block scripts
          }
       }
       function generateGoogleTranslateLink(link,lang) {
-        return '<a href="https://translate.google.de/translate?sl=auto&tl='+lang+'&u='+link+'" target="_blank">'+lang+'</a>';
+        var googlelang = lang;
+        if (lang === "JP") googlelang = "JA";
+        var gtl = "https://translate.google.de/translate?sl=auto&tl="+googlelang+"&u="+link;
+
+
+        var gtlMarkdown = "(automatic [translation](##link##))";
+        if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
+
+
+        gtlMarkdown = gtlMarkdown.replace("##link##",gtl);
+
+        var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
+
+        return '<a href="'+gtl+'" target="_blank" ondragstart="'+dragstartFunction+'" >'+lang+'</a>';
+      }
+
+      function dragstart(event,text) {
+        event.dataTransfer.setData("TEXT", text);
       }
       function onchangeCollection() {
         var clfield = document.getElementById("collection");
@@ -768,14 +789,14 @@ block scripts
         var linkArea = document.getElementById("linkArea");
 
        // regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
-        regexToken = /(https?:\/\/[^\[\] \n\r]*)/g
+        regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g
         var linkList;
        
         var result = "";
 
         while( (linkList = regexToken.exec(cl)) != null ) {
 
-            result += '<a href="'+linkList[0]+'" target="_blank">'+linkList[0]+'</a>\n';
+            result += '<a href="'+linkList[0]+'" target="_blank" >'+linkList[0]+'</a>\n';
             leftLang=document.getElementById("left_lang").innerHTML;
             rightLang=document.getElementById("right_lang").innerHTML;
             result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
@@ -800,6 +821,13 @@ block scripts
         src = "![("+id+")]("+src+")";
         clip(src);
         alert(id+ " flag is copied to clipboard");
+      }
+
+      function ondragstartflag (event,id) {
+        image = document.getElementById(id);
+        src = image.src;
+        src = "![(" + id + ")](" + src + ")";
+        event.dataTransfer.setData("TEXT", src);
       }
       function onchangeComment() {
         FitToContent("comment");

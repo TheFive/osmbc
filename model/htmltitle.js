@@ -1,9 +1,10 @@
 "use strict";
 
-var config = require('../config.js');
+var config  = require('../config.js');
 var cheerio = require('cheerio');
 var request = require('request');
-var async = require('async');
+var async   = require('async');
+
 var debug = require('debug')('OSMBC:model:htmltitle');
 
 function linkFrom(url,page) {
@@ -22,10 +23,21 @@ function retrieveForum(body,url) {
   return null;
 }
 
+function retrieveOsmBlog(body,url) {
+  if (linkFrom(url,"www.openstreetmap.org")) {
+    let c = cheerio.load(body);
+    let title = c("title").text().replace("OpenStreetMap | ","");
+    return title;
+  }
+  return null;
+}
+
 function retrieveTwitter(body,url) {
   if (linkFrom(url,"twitter.com")) {
     let c = cheerio.load(body);
     let title = c('meta[property="og:description"]').attr("content");
+    //
+    title=title.replace(/(https?:\/\/[^[\] \n\r"”“]*)/gi, '<..>');
     return title;
   }
   return null;
@@ -43,7 +55,7 @@ function retrieveDescription(body) {
   return title;
 }
 
-var converterList = [retrieveForum,retrieveTwitter,retrieveDescription,retrieveTitle];
+var converterList = [retrieveForum,retrieveTwitter,retrieveOsmBlog,retrieveDescription,retrieveTitle];
 
 
 function getTitle(url,callback) {

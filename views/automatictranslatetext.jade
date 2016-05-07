@@ -1,0 +1,23 @@
+extends config
+
+block showContentOfConfig
+  h2= "Translation Links Preview"
+  - lang = layout.language
+  if config.json
+    table.table.table-striped.table-responsive
+      thead
+        tr
+          th="Language"
+          th="Markdown Link"
+          th="Preview"
+      tbody
+        each lang in layout.languages
+          - cell = config.json[lang].replace("##link##","https://www.google.de")
+          tr
+
+            td=lang
+            td=cell
+            td
+              :verbatim
+                !{layout.markdown.render(cell)}
+

@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "async": "^1.5.2",
-    "body-parser": "~1.14.2",
+    "body-parser": "^1.15.0",
     "cheerio": "^0.20.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
@@ -25,8 +25,10 @@
     "htmlparser2": "^3.9.0",
     "image-size": "^0.4.0",
     "istanbul": "^0.4.3",
-    "jade": "~1.11.0",
+    "jade": "^1.11.0",
     "js-yaml": "^3.5.4",
+    "jstransformer": "0.0.4",
+    "jstransformer-markdown-it": "^0.2.3",
     "jstransformer-verbatim": "^1.0.0",
     "markdown-it": "^5.1.0",
     "markdown-it-imsize": "^2.0.1",
@@ -36,7 +38,6 @@
     "moment": "^2.12.0",
     "moment-timezone": "^0.5.3",
     "morgan": "~1.6.1",
-    "nock": "^7.7.3",
     "node-jsdom": "^3.1.5",
     "node-schedule": "^0.6.0",
     "node-slack": "0.0.7",
@@ -55,8 +56,8 @@
   },
   "devDependencies": {
     "mocha-jshint": "^2.3.1",
-    "nock": "^7.1.0",
     "sinon": "^1.17.3",
+    "nock": "^8.0.0",
     "zombie": "^4.2"
   }
 }

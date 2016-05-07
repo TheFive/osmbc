@@ -4,6 +4,7 @@ var pg     = require('pg');
 var should = require('should');
 var async  = require('async');
 var path   = require('path');
+var nock   = require('nock');
 var fs     = require('fs');
 var compare = require('dom-compare').compare;
 var groupingreporter = require('dom-compare').GroupingReporter;
@@ -309,6 +310,22 @@ exports.startBrowser = function startBrowser(userString,callback) {
   });
 
  };
+
+exports.nockHtmlPages = function nockHtmlPages() {
+  debug('nockHtmlPages');
+  var file =  path.resolve(__dirname,'NockedPages', "NockedPages.json");
+  var nocks =  JSON.parse(fs.readFileSync(file));
+  for (let site in nocks) {
+    for (let page in nocks[site]) {
+      nock(site)
+        .get(page)
+        .replyWithFile(200, path.resolve(__dirname,"NockedPages",nocks[site][page]));
+    }
+  }
+}
+exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
+  nock.cleanAll();
+}
 
 
 
