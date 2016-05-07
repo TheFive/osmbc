@@ -4,7 +4,8 @@ extends layout
 
 
 block content
-  h1="TBC (To be Collected)"
+  h1="TBC"
+    span.hidden-xs="(To be Collected)"
   p="Find here the article you have created by external integration (e.g. via Slack). Please check them on doublet and assign them to the correct blog."
   p="You can disable the collection of others at the end."
   - showNumbers = false;
@@ -27,59 +28,43 @@ block content
     p.bg-danger
       | Written markdown is disabled
 
-  table
-    tr
-      td
-      td
-      td
-    for c in categories
-      - predecessorId = "0"
-      if (articles[c.EN])
-        tr
-          td
-          td
-          td
-            :verbatim
-              !{renderer.categoryTitle(lang,c)}
-        for a in articles[c.EN]
-          - enable = true;
-          - if (disableWritten  && a["markdown"+lang]) enable = false;
-          - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
-          - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
-          if enable
-            tr
-              td
-                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
-                - predecessorId = a.id
-              td
-                if showVisibleLanguages
-                  +languageDisplay(a,{short:true})
-                  
 
+  for c in categories
+    - predecessorId = "0"
+    if (articles[c.EN])
+      .row
+        .col-md-1
+        .col-md-6
+          :verbatim
+            !{renderer.categoryTitle(lang,c)}
+      for a in articles[c.EN]
+        - enable = true;
+        - if (disableWritten  && a["markdown"+lang]) enable = false;
+        - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
+        - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
+        if enable
+          .row
+            .col-md-1
+              +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
 
-              td
-                div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
-                  div(class=(a["markdown"+lang])?"":"mark")
-                    ul.no-margin
-                      :verbatim
-                        !{renderer.articleTitle(lang,a)}
-              td
-                if (showCollector && a.author && a.author.collection)
-                  each b in a.author.collection.split(",")
-                    if (b !== layout.user.OSMUser)
-                      span.label.osmbclabel-collect.small-margin=b
-                    else
-                      span.label.osmbclabel-user.small-margin=b
-                if (showEditor && a.author && a.author["markdown"+lang])
-                  each b in a.author["markdown"+lang].split(",")
-                    if (b !== layout.user.OSMUser)
-                      span.label.osmbclabel-markdown.small-margin=b
-                    else
-                      span.label.osmbclabel-user.small-margin=b
+            .col-md-6
+              ul.no-margin
+                :verbatim
+                  !{renderer.articleTitle(lang,a)}
+            .col-md-5
+              if (showCollector && a.author && a.author.collection)
+                each b in a.author.collection.split(",")
+                  if (b !== layout.user.OSMUser)
+                    span.label.osmbclabel-collect.small-margin=b
+                  else
+                    span.label.osmbclabel-user.small-margin=b
+              if (showEditor && a.author && a.author["markdown"+lang])
+                each b in a.author["markdown"+lang].split(",")
+                  if (b !== layout.user.OSMUser)
+                    span.label.osmbclabel-markdown.small-margin=b
+                  else
+                    span.label.osmbclabel-user.small-margin=b
 
-              td
-                if (showLanguages)
-                  +languageDisplay(a)
 
 
 
