@@ -1,5 +1,18 @@
 # Change Log
 
+## [1.8.0](https://github.com/TheFive/osmbc/tree/1.8.0) (2016-05-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.3b...1.8.0)
+
+**Implemented enhancements:**
+
+- Create a Webhook to read information from slack for collection. [\#175](https://github.com/TheFive/osmbc/issues/175)
+
+## [1.7.3b](https://github.com/TheFive/osmbc/tree/1.7.3b) (2016-05-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.2.a...1.7.3b)
+
+## [1.7.2.a](https://github.com/TheFive/osmbc/tree/1.7.2.a) (2016-05-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.3...1.7.2.a)
+
 ## [1.7.3](https://github.com/TheFive/osmbc/tree/1.7.3) (2016-05-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.2a...1.7.3)
 
@@ -1443,17 +1456,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
