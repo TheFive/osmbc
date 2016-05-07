@@ -1,9 +1,7 @@
 "use strict";
 
-var config  = require('../config.js');
 var cheerio = require('cheerio');
 var request = require('request');
-var async   = require('async');
 
 var debug = require('debug')('OSMBC:model:htmltitle');
 

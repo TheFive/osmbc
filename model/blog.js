@@ -915,7 +915,7 @@ module.exports.getTBC = function() {
   debug("getTBC");
   let blog = create({name:"TBC",version:-1,status:"Action List"});
   return blog;
-}
+};
 
 
 Blog.prototype.save = pgMap.save;

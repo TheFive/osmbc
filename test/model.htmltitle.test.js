@@ -1,28 +1,12 @@
 "use strict";
 
-<<<<<<< HEAD
-var config = require('../config.js');
-var path = require('path');
-var fs = require('fs');
-var sinon = require('sinon');
-var nock = require('nock');
 var should = require('should');
-
-=======
-
-var should = require('should');
-
 
 var testutil = require('./testutil.js');
->>>>>>> develop
 var htmltitle = require('../model/htmltitle.js');
 
 
 describe("model/htmltitle",function() {
-<<<<<<< HEAD
-  describe("linkFrom",function(){
-    let linkFrom = htmltitle.fortestonly.linkFrom
-=======
   before(function(){
     testutil.nockHtmlPages();
   });
@@ -31,7 +15,6 @@ describe("model/htmltitle",function() {
   });
   describe("linkFrom",function(){
     let linkFrom = htmltitle.fortestonly.linkFrom;
->>>>>>> develop
     it("should recognize http sources",function(){
       should(linkFrom("http://twitter.com/irgendwas","twitter.com")).be.True();
       should(linkFrom("http://forum.openstreetmap.org/viewtopic.php?id=54487","forum.openstreetmap.org")).be.True();
@@ -79,7 +62,7 @@ describe("model/htmltitle",function() {
       should(result).eql('Blog von phuonglinh9 | Xin chào các bạn');
       bddone();
     });
-  })
+  });
 });
 
 

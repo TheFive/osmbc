@@ -322,10 +322,10 @@ exports.nockHtmlPages = function nockHtmlPages() {
         .replyWithFile(200, path.resolve(__dirname,"NockedPages",nocks[site][page]));
     }
   }
-}
+};
 exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
   nock.cleanAll();
-}
+};
 
 
 

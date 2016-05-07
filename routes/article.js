@@ -13,7 +13,6 @@ var util = require('../util.js');
 var util     = require("../util.js");
 var config        = require('../config.js');
 
-var node_slack = require('node-slack');
 
 var settingsModule= require('../model/settings.js');
 var articleModule = require('../model/article.js');
@@ -24,7 +23,6 @@ var htmltitle  = require('../model/htmltitle.js');
 
 require('jstransformer')(require('jstransformer-markdown-it'));
 
-var slack = new node_slack(config.getValue("slack").article.wn.hook);
 
 
 function renderArticleId(req,res,next) {
