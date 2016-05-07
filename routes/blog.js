@@ -74,6 +74,7 @@ function renderBlogId(req, res, next) {
   req.session.laststyle = style;
   req.session.lasttab = tab;
 
+  if (id === "TBC") return renderBlogTab(req,res,next);
 
   if (tab) {
 
@@ -366,6 +367,7 @@ function renderBlogTab(req, res, next) {
   if (!tab) tab = req.session.lasttab;
   if (!tab) tab = "Overview";
 
+  if (id === "TBC") tab = "TBC";
 
   findBlogByRouteId(id,req.user,function(err,blog) {
     if (err) return next(err);

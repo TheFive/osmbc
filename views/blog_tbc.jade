@@ -1,0 +1,163 @@
+extends layout
+
+
+
+
+block blogcontent
+
+  - showNumbers = false;
+  - showMail    = false;
+  - showCollector =true;
+  - showEditor = false;
+  - showLanguages = false;
+  - showVisibleLanguages = false;
+  - disableOwnCollection = false
+  - disableOtherCollection = (layout.user.getOption("tbc","disableOtherCollection")=="true")
+  - disableWritten = false;
+
+  if disableOwnCollection
+    p.bg-danger
+      | Collections of #{layout.user.OSMUser} are disabled
+  if disableOtherCollection
+    p.bg-danger
+      | Collections not done by #{layout.user.OSMUser} are disabled
+  if disableWritten
+    p.bg-danger
+      | Written markdown is disabled
+
+  table
+    tr
+      td
+      td
+      td
+        :verbatim
+          <br><br>
+          !{renderer.subtitle(lang)}
+    for c in categories
+      - predecessorId = "0"
+      if (articles[c.EN])
+        tr
+          td
+          td
+          td
+            :verbatim
+              !{renderer.categoryTitle(lang,c)}
+        for a in articles[c.EN]
+          - enable = true;
+          - if (disableWritten  && a["markdown"+lang]) enable = false;
+          - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
+          - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
+          if enable
+            tr
+              td
+                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
+                - predecessorId = a.id
+              td
+                if showVisibleLanguages
+                  +languageDisplay(a,{short:true})
+                  
+
+
+              td
+                div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
+                  div(class=(a["markdown"+lang])?"":"mark")
+                    ul.no-margin
+                      :verbatim
+                        !{renderer.articleTitle(lang,a)}
+              td
+                if (showCollector && a.author && a.author.collection)
+                  each b in a.author.collection.split(",")
+                    if (b !== layout.user.OSMUser)
+                      span.label.osmbclabel-collect.small-margin=b
+                    else
+                      span.label.osmbclabel-user.small-margin=b
+                if (showEditor && a.author && a.author["markdown"+lang])
+                  each b in a.author["markdown"+lang].split(",")
+                    if (b !== layout.user.OSMUser)
+                      span.label.osmbclabel-markdown.small-margin=b
+                    else
+                      span.label.osmbclabel-user.small-margin=b
+
+              td
+                if (showLanguages)
+                  +languageDisplay(a)
+
+            tr
+              td
+              td
+                div.hidden(id="div#{a.id}")
+                  form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
+                    textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(#{a.id});") #{a["markdown"+lang]}
+                    textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
+                  p
+                    if a.author && a.author.collection
+                      span="Collected: "
+                      each collector in a.author.collection.split(",")
+                        if (collector != layout.user.OSMUser)
+                          span.label.osmbclabel-collect.small-margin=collector
+                        else
+                          span.label.osmbclabel-user.small-margin=collector
+                    if a.author && a.author["markdown"+lang]
+                      span=" Edited: "
+                      each author in a.author["markdown"+lang].split(",")
+                        if (author != layout.user.OSMUser)
+                          span.label.osmbclabel-markdown.small-margin=author
+                        else
+                          span.label.osmbclabel-user.small-margin=author
+
+
+
+  .row
+    h2="Options"
+
+
+    p
+      +userConfigOption("overview","disableOtherCollection",disableOtherCollection," disable other collections")
+
+
+
+  .row
+    +articleIconLegend
+
+
+
+
+block scripts
+  script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
+  script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
+  script.
+    var openEditor = null;
+    window.onload = function() {
+      
+      if (typeof(Storage)!=="undefined") {
+        if (window.sessionStorage.blogUrl !== window.location.href) return;
+        var x = window.sessionStorage.blogX;
+        var y = window.sessionStorage.blogY;
+        window.scrollTo(x,y);
+      }
+    }
+
+
+    window.onbeforeunload = function(event) {
+      // store the scroll Position in the local Store
+      s = {x:window.scrollX,y:window.scrollY};
+
+      if (typeof(Storage)!=="undefined") {
+
+        window.sessionStorage.blogUrl = window.location.href;
+        window.sessionStorage.blogX = s.x;
+        window.sessionStorage.blogY = s.y;
+      }
+    };
+
+    function onLeaveText(id) {
+
+      var oldValue = document.getElementById("oldMarkdown"+id).value;
+      var newValue = document.getElementById("markdown"+id).value;
+      if (oldValue === newValue) return;
+      document.getElementById('EditArticle'+id).submit();
+    }
+
+
+
+
