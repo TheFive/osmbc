@@ -91,7 +91,7 @@ mixin articleIcons(a,options)
         span.glyphicon.glyphicon-comment.small-margin(style="color:grey")
       if !a.getCommentRead(layout.user.OSMUser)
         span.glyphicon.glyphicon-envelope.small-margin
-  a(href="#{layout.htmlroot}/article/#{a.id}")
+  a(href="#{layout.htmlroot}/article/#{a.id}?edit=true")
     span.glyphicon.glyphicon-open.small-margin
   if a.predecessorId
     if (a.predecessorId === options.predecessorId)
