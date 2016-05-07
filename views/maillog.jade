@@ -21,7 +21,11 @@ block content
                 td=mail.to
                 td=mail.subject
                 td=mail.timestamp
-                td=mail.response
+                td
+                  if mail.response=="no response"
+                    mail.error
+                  else
+                    mail.response
              
 
           
