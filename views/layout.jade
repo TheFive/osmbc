@@ -59,8 +59,7 @@ block all
                   a(href='#{layout.htmlroot}/blog/TBC')
                     | #{layout.tbc.name}
                     if (layout.tbc._tbcOwnArticleNumber >0)
-                      span.badge.osmbcbadge-user
-                        | #{layout.tbc._tbcOwnArticleNumber)}
+                      span.badge.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
               if (layout.listOfOpenBlog && layout.listOfOpenBlog.length > 0)
                 li
                   a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')

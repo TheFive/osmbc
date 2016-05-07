@@ -786,8 +786,8 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
     }
     for (i=0;result && i<result.length;i++) {
       if (self.name ==="TBC") {
-      
-        if (result[i].firstCollector === user.OSMName) {
+
+        if (result[i].firstCollector === user.OSMUser) {
           self._tbcOwnArticleNumber += 1;
         }
 
