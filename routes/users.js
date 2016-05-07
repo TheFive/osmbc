@@ -77,7 +77,7 @@ function renderUserId(req, res, next) {
         debug('findAndLoaduser_CB');
         if (err) return cb(err);
         user = result;
-        if (! user || typeof(user.id) == 'undefined') return cb(new Error("User ID >"+id+"< not Found"));
+        if (! user || typeof(user.id) == 'undefined') return cb(new Error("User ID >"+id+"< Not Found"));
         if (req.query.validation) {
           user.validateEmail(req.user,req.query.validation,function (err){
             if (err) return cb(err);
@@ -107,6 +107,7 @@ function postUserId(req, res, next) {
   debug('postUserId');
   var id = req.params.user_id;
   var changes = {OSMUser:req.body.OSMUser,
+                 SlackUser:req.body.SlackUser,
                  WNAuthor:req.body.WNAuthor,
                  WeeklyAuthor:req.body.WeeklyAuthor,
                  language:req.body.language,
@@ -129,7 +130,7 @@ function postUserId(req, res, next) {
       userModule.findById(id,function(err,result) {
         user = result;
         debug("findById");
-        if (typeof(user.id) == 'undefined') return cb(new Error("User Not Found"));
+        if (typeof(user.id) == 'undefined') return cb(new Error("User ID >"+id+"< Not Found"));
         return cb();
       });
     },
@@ -185,6 +186,8 @@ function createUser(req, res, next) {
     res.redirect(config.getValue('htmlroot')+'/usert/'+user.id+"?edit=true");
   });
 }
+
+
 
 router.get('/inbox',inbox);
 router.get('/list',renderList);

@@ -19,20 +19,28 @@ block all
         script(src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js')
         script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
     body
+      - function blogNumber(blog,language) {return ((blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[language]:"?") }
+      - function blogCount(blog,language) {return ((blog && blog._countExpectedMarkdown)?blog._countExpectedMarkdown[language]:"?") }
+
 
       // Fixed navbar
       .navbar.navbar-default.navbar-fixed-top(role='navigation')
         .container-fluid
           .navbar-header.pull-left
             if layout.osmbc_version === layout.user.lastChangeLogView
-              a.navbar-brand(href='#{layout.htmlroot}/osmbc.html') #{layout.appName}
+              a.navbar-brand(href='#{layout.htmlroot}/osmbc.html').hidden-xs #{layout.appName}
             else
-              a.navbar-brand.bg-success(href='#{layout.htmlroot}/changelog') Whats New?
+              a.navbar-brand.bg-success(href='#{layout.htmlroot}/changelog').hidden-xs Whats New?
             ul.nav.navbar-nav.pull-left
               li
                 a(href='#{layout.htmlroot}/article/create') Collect
+            if blogNumber(layout.tbc, layout.language) > 0
+              ul.nav.navbar-nav.pull-left
+                li
+                  a(href='#{layout.htmlroot}/blog/TBC')=layout.tbc.name
+                    if (layout.tbc._tbcOwnArticleNumber > 0)
+                      span.badge.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
             ul.nav.navbar-nav.pull-left
-
               li
                 a(href='#{layout.htmlroot}/usert/inbox')="Inbox "
                   if (layout.userMentions>0)
@@ -43,6 +51,8 @@ block all
                     span.badge.osmbcbadge-lang2=layout.secondLangMentions
 
 
+
+
           .navbar-header
             button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')
               span.sr-only Toggle navigation
@@ -50,8 +60,6 @@ block all
               span.icon-bar
               span.icon-bar
           .navbar-collapse.collapse
-            - function blogNumber(blog,language) {return ((blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[language]:"?") }
-            - function blogCount(blog,language) {return ((blog && blog._countExpectedMarkdown)?blog._countExpectedMarkdown[language]:"?") }
 
             ul.nav.navbar-nav.navbar-left
               if (layout.listOfOpenBlog && layout.listOfOpenBlog.length > 0)
@@ -135,6 +143,8 @@ block all
                       a(href="#{layout.htmlroot}/help/The Blog Views") The Blog Views
                     li
                       a(href="#{layout.htmlroot}/help/Beginner's How To") Beginner's How To
+                    li
+                      a(href="#{layout.htmlroot}/help/Slack Integration") Slack Integration
                     li
                       a(href="#{layout.htmlroot}/help/Categories") Which Category to use ?
                     li.divider

@@ -68,36 +68,88 @@ mixin languageDisplay(article,options)
 
 
 mixin articleIcons(a,options)
-    - numCol = 0;
-    - if (a.author && a.author.collection) numCol = a.author.collection.split(",").length;
-    - numEd = 0;
-    - if (a.author && a.author["markdown"+lang]) numEd = a.author["markdown"+lang].split(",").length;
-    if (a.author && options.showNumbers)
-      span.label.osmbclabel-collect.small-margin=numCol
-      span.label.osmbclabel-markdown.small-margin=numEd
-    if options.showMail
-      if a.getCommentMention()
-        - shown = false
-        if a.isMentioned(layout.user.OSMUser)
-            span.glyphicon.glyphicon-comment.small-margin.osmbccolor-user
-            - shown=true
-        if a.isMentioned(layout.user.getMainLang())
-            span.glyphicon.glyphicon-comment.small-margin.osmbccolor-lang
-            - shown=true
-        if layout.user.getSecondLang() && a.isMentioned(layout.user.getSecondLang())
-            span.glyphicon.glyphicon-comment.small-margin.osmbccolor-lang2
-            - shown=true
-        if !shown
-          span.glyphicon.glyphicon-comment.small-margin(style="color:grey")
-        if !a.getCommentRead(layout.user.OSMUser)
-          span.glyphicon.glyphicon-envelope.small-margin
-    a(href="#{layout.htmlroot}/article/#{a.id}")
+  - numCol = 0;
+  - if (a.author && a.author.collection) numCol = a.author.collection.split(",").length;
+  - numEd = 0;
+  - if (a.author && a.author["markdown"+lang]) numEd = a.author["markdown"+lang].split(",").length;
+  if (a.author && options.showNumbers)
+    span.label.osmbclabel-collect.small-margin=numCol
+    span.label.osmbclabel-markdown.small-margin=numEd
+  if options.showMail
+    if a.getCommentMention()
+      - shown = false
+      if a.isMentioned(layout.user.OSMUser)
+          span.glyphicon.glyphicon-comment.small-margin.osmbccolor-user
+          - shown=true
+      if a.isMentioned(layout.user.getMainLang())
+          span.glyphicon.glyphicon-comment.small-margin.osmbccolor-lang
+          - shown=true
+      if layout.user.getSecondLang() && a.isMentioned(layout.user.getSecondLang())
+          span.glyphicon.glyphicon-comment.small-margin.osmbccolor-lang2
+          - shown=true
+      if !shown
+        span.glyphicon.glyphicon-comment.small-margin(style="color:grey")
+      if !a.getCommentRead(layout.user.OSMUser)
+        span.glyphicon.glyphicon-envelope.small-margin
+  a(href="#{layout.htmlroot}/article/#{a.id}?edit=true")
+    span.glyphicon.glyphicon-open.small-margin
+  if a.predecessorId
+    if (a.predecessorId === options.predecessorId)
+      span.glyphicon.glyphicon-pushpin.small-margin
+    else
+      span.glyphicon.glyphicon-stop.small-margin.text-warning
+
+
+mixin navbutton(userstyle,style,p,addClass)
+  if (userstyle == style)
+    li.active(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
+  else
+    li(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
+
+
+mixin articleIconLegend(view)
+  h2="Symbol Legend"
+  p
+    span.label.osmbclabel-collect.small-margin="X"
+    span=" = number of collectors "
+  p
+    span.label.osmbclabel-collect.small-margin="username"
+    span=" = collector of article "
+  p
+    span.label.osmbclabel-markdown.small-margin="X"
+    span=" = number of editors in shown language"
+  p
+    span.label.osmbclabel-markdown.small-margin="username"
+    span=" = Editor of article"
+  p
+    span.glyphicon.glyphicon-comment.small-margin(style="color:blue")
+    span=" = there is a comment in the article"
+  p
+    span.glyphicon.glyphicon-comment.small-margin(style="color:red")
+    span=" = there is a comment with personal mention in the article"
+  p
+    span.glyphicon.glyphicon-comment.small-margin(style="color:orange")
+    span=" = there is a comment with language mention in the article"
+  p
+    a(href="#" target="_blank")
       span.glyphicon.glyphicon-open.small-margin
-    if a.predecessorId
-      if (a.predecessorId === options.predecessorId)
-        span.glyphicon.glyphicon-pushpin.small-margin
-      else
-        span.glyphicon.glyphicon-stop.small-margin.text-warning
+    span=" open the article in a new tab"
+  p
+    span.glyphicon.glyphicon-pushpin.small-margin
+    span=" this article is successfully linked to predecessor"
+  p
+    span.glyphicon.glyphicon-stop.small-margin.text-warning
+    span=" this article contains a non working predecessor link."
+
+
+
+mixin userConfigOption(view,option,variable,userdesc)
+  if variable
+    span.glyphicon.glyphicon-check(onclick='location.href="#{layout.htmlroot}/userconfig?view=#{view}&option=#{option}&value=false";')
+  else
+    span.glyphicon.glyphicon-unchecked(onclick='location.href="#{layout.htmlroot}/userconfig?view=#{view}&option=#{option}&value=true";')
+  span=userdesc
+
 
 
 block all

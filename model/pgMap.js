@@ -98,7 +98,9 @@ module.exports.save = function(callback) {
   for (var k in self) {
     if (k.substring(0,1)=="_") delete self[k];
   }
-
+  if (self.id === -1) {
+    return callback(new Error("Virtual Object can not be saved"));
+  }
   // first check, wether ID is known or not
   if (self.id === 0) {
     // we have to create the object

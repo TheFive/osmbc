@@ -2,10 +2,17 @@
 
 var should = require('should');
 
+var testutil = require('./testutil.js');
 var htmltitle = require('../model/htmltitle.js');
 
 
 describe("model/htmltitle",function() {
+  before(function(){
+    testutil.nockHtmlPages();
+  });
+  after(function(){
+    testutil.nockHtmlPagesClear();
+  });
   describe("linkFrom",function(){
     let linkFrom = htmltitle.fortestonly.linkFrom;
     it("should recognize http sources",function(){
@@ -31,7 +38,7 @@ describe("model/htmltitle",function() {
   it('should get title from twitter',function(bddone){
     htmltitle.getTitle("https://twitter.com/WeeklyOSM/status/726026930479370241",function(err,result){
       should.not.exist(err);
-      should(result).eql('“The weekly issue #301 now available in *English* the news from the #openstreetmap #osm world https://t.co/RImR8Bb4T5”');
+      should(result).eql('“The weekly issue #301 now available in *English* the news from the #openstreetmap #osm world <..>”');
       bddone();
     });
   });
@@ -46,6 +53,13 @@ describe("model/htmltitle",function() {
     htmltitle.getTitle("https://www.mediawiki.org/wiki/Maps/Conversation_about_interactive_map_use",function(err,result){
       should.not.exist(err);
       should(result).eql('Maps/Conversation about interactive map use - MediaWiki');
+      bddone();
+    });
+  });
+  it('should get title from OSMBlog',function(bddone){
+    htmltitle.getTitle("http://www.openstreetmap.org/user/phuonglinh9/diary/38568",function(err,result){
+      should.not.exist(err);
+      should(result).eql('Blog von phuonglinh9 | Xin chào các bạn');
       bddone();
     });
   });
