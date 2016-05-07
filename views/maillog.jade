@@ -23,9 +23,9 @@ block content
                 td=mail.timestamp
                 td
                   if mail.response=="no response"
-                    span=mail.error
+                    span=JSON.stringify(mail.error)
                   else
-                    span=JSON.stringify(mail.response)
+                    span=mail.response
              
 
           
