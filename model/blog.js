@@ -786,11 +786,11 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
     }
     for (i=0;result && i<result.length;i++) {
       if (self.name ==="TBC") {
-        if (result[i].import && result[i].import.collector) {
-          if (result[i].import.collector === user.OSMName) {
-            self._tbcOwnArticleNumber += 1;
-          }
+      
+        if (result[i].firstCollector === user.OSMName) {
+          self._tbcOwnArticleNumber += 1;
         }
+
       }
       if (result[i].commentList) {
         if (result[i].commentStatus === "solved") continue;

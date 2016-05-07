@@ -131,12 +131,13 @@ function postSlackCreateUseTBC(req,res,next) {
     if (err) return next(err);
     let changes = {title:title,
       collection:url,
+      firstCollector:req.user.OSMUser,
       categoryEN:"-- no category yet --",
       blog:blog};
     articleModule.createNewArticle(function(err,result){
       if (err) return next(err);
       changes.version = result.version;
-      result.import = {collector:req.user.OSMUser};
+
       result.setAndSave(req.user,changes,function(err){
         if (err) return next(err);
         obj.text = articleNameSlack(result)+" created.\n";
