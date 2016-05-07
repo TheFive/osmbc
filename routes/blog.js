@@ -387,6 +387,18 @@ function renderBlogTab(req, res, next) {
               return callback(err);
             });
           } else return callback();
+        },
+        setStatus: function (callback) {
+          if (typeof(req.query.setStatus)!='undefined')
+          {
+            clearParams = true;
+            var changes = {status:req.query.setStatus};
+            blog.setAndSave(req.user,changes,function(err) {
+              if (err) return callback(err);
+              let referer=req.header('Referer') || '/';
+              res.redirect(referer);
+            });
+          } else return callback();
         }
 
 
