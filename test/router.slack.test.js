@@ -14,7 +14,6 @@ var app       = require('../app.js');
 var slackRouter = require('../routes/slack.js');
 var articleModule = require('../model/article.js');
 var logModule = require('../model/logModule.js');
-var blogModule = require('../model/blog.js');
 
 
 describe('router/slack',function(){
@@ -41,8 +40,8 @@ describe('router/slack',function(){
       should(res.body.user_name).eql(user_name);
       should(res.body.username).eql("testbc");
       should(res.body.text).eql(answer);
-      cb()
-    })
+      cb();
+    });
   }
   function findArticle(a,cb) {
     articleModule.find(a,function(err,result){
@@ -57,8 +56,12 @@ describe('router/slack',function(){
     logModule.find(l,function(err,logs){
 
       should.not.exist(err);
-      should.exist(logs);
-      should(logs.length).eql(1);
+      if (logs.length!==1) {
+        logModule.find({},function(err,logs){
+          console.log(logs);
+          should(l).eql("NOT FOUND IN LOGS");
+        });
+      }
       cb();
     });
   }
@@ -111,29 +114,16 @@ describe('router/slack',function(){
       should(s("<https://www.google.de> only text after")).eql(" only text after");
     });
   });
-  describe("function undefined()",function(){
-    it('should work for different values',function(){
-      let u = slackRouter.fortestonly.undefined;
-      var a;
-      var obj={};
-      should(u(null)).be.True();
-      should(u(a)).be.True();
-      should(u("")).be.True();
-      should(u("text before <https://www.google.de> after")).be.False();
-      should(u({a:1})).be.True();
-      should(u(obj.prop)).be.True();
-    });
-  });
   describe("unauthorised access",function() {
     it("should ignore request with wrong API Key", function (bddone) {
       var opts = {url: link, method: 'post'};
-      request(opts, function (err, res, body) {
+      request(opts, function (err, res) {
         should.not.exist(err);
         should(res.statusCode).eql(401);
         // if server returns an actual error
-        bddone()
-      })
-    })
+        bddone();
+      });
+    });
     it("should ignore request without known user", function (bddone) {
       user_name = "NotThere";
       user_id = "33";
@@ -145,97 +135,27 @@ describe('router/slack',function(){
       talk("Hello Boy", "<@33> is registered more than once in <https://testosm.bc/usert/self|OSMBC>", bddone);
     });
   });
-  describe("interactive mode",function(){
-    it("should ask for a Url if not given",function(bddone) {
-      user_name = "TestSlackInteractive";
-      user_id = "55";
-      talk("Hello OSMBC Bot", "<@55> Please start with an url\n", function(err){
-        if (err) return bddone(err);
-        should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);
-        bddone();
-      });
-    });
-    it("should ask for a title and create an article",function(bddone){
-      user_id = "33";
-      user_name = "TestSlackInteractive";
-      async.series([
-        talk.bind(null,"<https://www.osmbc.org/article>","<@33> Please enter a title:\n"),
-        talk.bind(null,"An article title","<@33> <https://testosm.bc/article/1|An article title> created.\n"),
-        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
-        findArticle.bind(null,{title:"An article title",collection:"https://www.osmbc.org/article",blog:"blog"}),
-        findLog.bind(null,{table:"article",user:"TestInteractive",property:"collection",to:"https://www.osmbc.org/article"})
-        ],bddone);
-    });
-    it("should extract title and create an article",function(bddone){
-      user_id = "33";
-      user_name = "TestSlackInteractive";
-      async.series([
-        talk.bind(null,"We are talking about OSMBC <https://www.osmbc.org/article>","<@33> <https://testosm.bc/article/1|We are talking about OSMBC> created.\n"),
-        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
-        findArticle.bind(null,{title:"We are talking about OSMBC",collection:"https://www.osmbc.org/article",blog:"blog"}),
-        findLog.bind(null,{table:"article",user:"TestInteractive",property:"collection",to:"https://www.osmbc.org/article"})
-      ],bddone);
-    });
-    it("should extract title and create an article with NO Blog",function(bddone){
-
-      user_id = "33";
-      user_name = "TestSlackInteractive";
-      async.series([
-        function changeBlog(cb) {
-          blogModule.findOne({name:"blog"},function(err,blog) {
-            should.not.exist(err);
-            blog.status = "edit";
-            blog.save(cb);
-          });
-        },
-        talk.bind(null,"We are talking about OSMBC <https://www.osmbc.org/article>","<@33> <https://testosm.bc/article/1|We are talking about OSMBC> created.\n"),
-        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
-        findArticle.bind(null,{title:"We are talking about OSMBC",collection:"https://www.osmbc.org/article",blog:"TBC"}),
-        findLog.bind(null,{table:"article",user:"TestInteractive",property:"collection",to:"https://www.osmbc.org/article"})
-      ],bddone);
-    });
-    it("should ask because dublette  and create an article",function(bddone){
-      should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);
-      user_id = "33";
-      user_name = "TestSlackInteractive";
-      async.series([
-        function (cb) {
-          articleModule.createNewArticle({title:"Article Exists",collection:"https://linkExists.org/already",blog:"test-blog"},cb);
-        },
-        talk.bind(null,"<https://linkExists.org/already>","<@33> Found: 1 article\ntest-blog <https://testosm.bc/article/1|Article Exists>\n\nPlease enter yes to proceed.\n"),
-        talk.bind(null,"Yes","<@33> Please enter a title for the collection:\n"),
-        talk.bind(null,"Another title","<@33> <https://testosm.bc/article/2|Another title> created.\n"),
-        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
-        findArticle.bind(null,{title:"Another title",collection:"https://linkExists.org/already",blog:"blog"})
-      ],bddone);
-    });
-    it("should ask for dublette and cancel creation",function(bddone){
-      should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);
-      user_id = "33";
-      user_name = "TestSlackInteractive";
-      async.series([
-        function (cb) {
-          articleModule.createNewArticle({title:"Article Exists",collection:"https://linkExists.org/already",blog:"test-blog"},cb);
-        },
-        talk.bind(null,"<https://linkExists.org/already>","<@33> Found: 1 article\ntest-blog <https://testosm.bc/article/1|Article Exists>\n\nPlease enter yes to proceed.\n"),
-        talk.bind(null,"No","<@33> You have cancelled your collection.\n"),
-        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
-        // search for the already exists article, that only should exist ONCE
-        findArticle.bind(null,{collection:"https://linkExists.org/already"})
-      ],bddone);
-    });
-
-  });
   describe("useTBC Mode",function(){
     it("should store an URL",function(bddone) {
       user_name = "TestSlackUseTBC";
       user_id = "55";
       async.series([
         talk.bind(null,"<http://forum.openstreetmap.org/viewtopic.php?id=53173>", "<https://testosm.bc/article/1|Internationale Admingrenzen 2016 / users: Germany> created.\n"),
-        function(cb) {should.not.exist(slackRouter.fortestonly.slackCommunicationStatus["TestSlackInteractive"]);cb()},
 
         // search for the already exists article, that only should exist ONCE
         findArticle.bind(null,{title:"Internationale Admingrenzen 2016 / users: Germany",collection:"http://forum.openstreetmap.org/viewtopic.php?id=53173",blog:"TBC"})
+      ],bddone);
+    });
+    it("should store an URL",function(bddone) {
+      user_name = "TestSlackUseTBC";
+      user_id = "55";
+      async.series([
+        talk.bind(null,"This text comes with a title <http://forum.openstreetmap.org/viewtopic.php?id=53173>", "<https://testosm.bc/article/1|This text comes with a title> created.\n"),
+
+        // search for the already exists article, that only should exist ONCE
+        findArticle.bind(null,{title:"This text comes with a title",collection:"http://forum.openstreetmap.org/viewtopic.php?id=53173",blog:"TBC"}),
+        findLog.bind(null,{table:"article",user:"TestSlackUseTBC",property:"collection",to:"http://forum.openstreetmap.org/viewtopic.php?id=53173"}),
+        findLog.bind(null,{table:"article",user:"TestSlackUseTBC",property:"title",to:"This text comes with a title"})
       ],bddone);
     });
   });
