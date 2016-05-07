@@ -3,8 +3,10 @@ extends layout
 
 
 
-block blogcontent
-
+block content
+  h1="TBC (To be Collected)"
+  p="Find here the article you have created by external integration (e.g. via Slack). Please check them on doublet and assign them to the correct blog."
+  p="You can disable the collection of others at the end."
   - showNumbers = false;
   - showMail    = false;
   - showCollector =true;
@@ -30,9 +32,6 @@ block blogcontent
       td
       td
       td
-        :verbatim
-          <br><br>
-          !{renderer.subtitle(lang)}
     for c in categories
       - predecessorId = "0"
       if (articles[c.EN])
@@ -82,28 +81,7 @@ block blogcontent
                 if (showLanguages)
                   +languageDisplay(a)
 
-            tr
-              td
-              td
-                div.hidden(id="div#{a.id}")
-                  form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
-                    textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(#{a.id});") #{a["markdown"+lang]}
-                    textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
-                  p
-                    if a.author && a.author.collection
-                      span="Collected: "
-                      each collector in a.author.collection.split(",")
-                        if (collector != layout.user.OSMUser)
-                          span.label.osmbclabel-collect.small-margin=collector
-                        else
-                          span.label.osmbclabel-user.small-margin=collector
-                    if a.author && a.author["markdown"+lang]
-                      span=" Edited: "
-                      each author in a.author["markdown"+lang].split(",")
-                        if (author != layout.user.OSMUser)
-                          span.label.osmbclabel-markdown.small-margin=author
-                        else
-                          span.label.osmbclabel-user.small-margin=author
+
 
 
 
@@ -112,12 +90,10 @@ block blogcontent
 
 
     p
-      +userConfigOption("overview","disableOtherCollection",disableOtherCollection," disable other collections")
+      +userConfigOption("tbc","disableOtherCollection",disableOtherCollection," disable other collections")
 
 
 
-  .row
-    +articleIconLegend
 
 
 

@@ -744,43 +744,54 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
   self._mainLangMention = [];
   self._secondLangMention = [];
 
+  self._tbcOwnArticleNumber = 0;
+
   self._usedLanguages = {};
   var mainLang = user.mainLang;
   var secondLang = user.secondLang;
   var i,j;
 
-  articleModule.find({blog:this.name},function (err,result) {
+  articleModule.find({blog:self.name},function (err,result) {
     if (err) return callback(err);
+
 
     for (i=0;i<config.getLanguages().length;i++) {
       var l = config.getLanguages()[i];
       if (!result) {
-        self._countUneditedMarkdown[l]=99;
-        self._countExpectedMarkdown[l]=99;
+        self._countUneditedMarkdown[l] = 99;
+        self._countExpectedMarkdown[l] = 99;
         self._countNoTranslateMarkdown[l] = 99;
       }
       else {
-        self._countUneditedMarkdown[l]=0;
-        self._countExpectedMarkdown[l]=0;
+        self._countUneditedMarkdown[l] = 0;
+        self._countExpectedMarkdown[l] = 0;
         self._countNoTranslateMarkdown[l] = 0;
-        for (j=0;j<result.length;j++) {
+        for (j = 0; j < result.length; j++) {
           var c = result[j].categoryEN;
-          if ( c == "--unpublished--") continue;
-          self._countExpectedMarkdown[l] +=1;
-          var m = result[j]["markdown"+l];
-          if (m==="no translation") {
-            self._countNoTranslateMarkdown[l] +=1;
+          if (c == "--unpublished--") continue;
+          self._countExpectedMarkdown[l] += 1;
+          var m = result[j]["markdown" + l];
+          if (m === "no translation") {
+            self._countNoTranslateMarkdown[l] += 1;
           } else {
-            if (!m || m ==="" || c ==="-- no category yet --") {
-              self._countUneditedMarkdown[l] +=1;
+            if (!m || m === "" || c === "-- no category yet --") {
+              self._countUneditedMarkdown[l] += 1;
             }
           }
           // check, wether language is used in blog
-          if (m && m!=="no translation") self._usedLanguages[l]=true;
+          if (m && m !== "no translation") self._usedLanguages[l] = true;
         }
       }
+
     }
     for (i=0;result && i<result.length;i++) {
+      if (self.name ==="TBC") {
+        if (result[i].import && result[i].import.collector) {
+          if (result[i].import.collector === user.OSMName) {
+            self._tbcOwnArticleNumber += 1;
+          }
+        }
+      }
       if (result[i].commentList) {
         if (result[i].commentStatus === "solved") continue;
         for (j=0;j<result[i].commentList.length;j++) {
