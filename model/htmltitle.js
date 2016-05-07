@@ -2,6 +2,7 @@
 
 var cheerio = require('cheerio');
 var request = require('request');
+
 var debug = require('debug')('OSMBC:model:htmltitle');
 
 function linkFrom(url,page) {

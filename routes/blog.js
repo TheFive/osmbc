@@ -21,13 +21,19 @@ function findBlogByRouteId(id,user,callback) {
   should(typeof(callback)).eql('function');
 
   async.series([
-  function findID(cb) {
-    blogModule.findById(id,function(err,r) {
-      if (err) return cb(err);
-      if (r) blog= r;
+    function CheckTBC(cb) {
+      if (id === "TBC") {
+        blog = blogModule.getTBC();
+      }
       return cb();
-    });
-  },
+    },
+    function findID(cb) {
+      blogModule.findById(id,function(err,r) {
+        if (err) return cb(err);
+        if (r) blog= r;
+        return cb();
+      });
+    },
   function findByName(cb) {
     if (blog) return cb();
     blogModule.find({name:id},function(err,r) {
@@ -68,6 +74,7 @@ function renderBlogId(req, res, next) {
   req.session.laststyle = style;
   req.session.lasttab = tab;
 
+  if (id === "TBC") return renderBlogTab(req,res,next);
 
   if (tab) {
 
@@ -360,6 +367,7 @@ function renderBlogTab(req, res, next) {
   if (!tab) tab = req.session.lasttab;
   if (!tab) tab = "Overview";
 
+  if (id === "TBC") tab = "TBC";
 
   findBlogByRouteId(id,req.user,function(err,blog) {
     if (err) return next(err);

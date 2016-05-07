@@ -3,9 +3,11 @@
 var express  = require('express');
 var async    = require('async');
 var router   = express.Router();
+var slackrouter = express.Router();
 var should   = require('should');
 var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
+var util = require('../util.js');
 
 
 var util     = require("../util.js");
@@ -20,7 +22,6 @@ var configModule  = require('../model/config.js');
 var htmltitle  = require('../model/htmltitle.js');
 
 require('jstransformer')(require('jstransformer-markdown-it'));
-
 
 
 
@@ -638,6 +639,7 @@ function renderList(req,res,next) {
 }
 
 
+
 // Export Render Functions for testing purposes
 exports.renderArticleId = renderArticleId;
 exports.renderList = renderList;
@@ -672,5 +674,6 @@ router.post('/:article_id', exports.postArticle);
 
 
 module.exports.router = router;
+module.exports.slackrouter = slackrouter;
 
 

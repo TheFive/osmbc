@@ -1,8 +1,6 @@
 "use strict";
 
-
 var should = require('should');
-
 
 var testutil = require('./testutil.js');
 var htmltitle = require('../model/htmltitle.js');
@@ -64,7 +62,7 @@ describe("model/htmltitle",function() {
       should(result).eql('Blog von phuonglinh9 | Xin chào các bạn');
       bddone();
     });
-  })
+  });
 });
 
 

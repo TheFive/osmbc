@@ -24,6 +24,7 @@ var config     = require('./config.js');
 var index      = require('./routes/index').router;
 var users      = require('./routes/users').router;
 var article    = require('./routes/article').router;
+var slackrouter    = require('./routes/slack').router;
 var changes    = require('./routes/changes').router;
 var blog       = require('./routes/blog').router;
 var tool       = require('./routes/tool').router;
@@ -262,6 +263,7 @@ app.get(htmlRoot + '/logout', function(req, res){
 // first register the unsecured path
 
 app.use(htmlRoot,calender );
+app.use(htmlRoot + '/slack', slackrouter);
 
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
@@ -311,6 +313,23 @@ if (app.get('env') === 'development') {
   });
 }
 
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'test') {
+  debug("Set test error hander");
+  app.use(function(err, req, res,next) {
+    debug('app.use Error Handler for Debug');
+    res.status(err.status || 500);
+    console.log(err);
+    res.render('error', {
+      message: err.message,
+      error: err,
+      layout:{htmlroot:htmlRoot}
+    });
+    if (next); // do nothing but use the next variable
+  });
+}
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res,next) {

@@ -149,7 +149,8 @@ exports.importData = function importData(data,callback) {
 
     ],function(err) {
       debug("importData->final");
-      callback(err,data);});
+      callback(err,data);
+  });
 };
 
 exports.checkData = function checkData(data,callback) {
@@ -321,10 +322,10 @@ exports.nockHtmlPages = function nockHtmlPages() {
         .replyWithFile(200, path.resolve(__dirname,"NockedPages",nocks[site][page]));
     }
   }
-}
+};
 exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
   nock.cleanAll();
-}
+};
 
 
 

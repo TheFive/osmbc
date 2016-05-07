@@ -45,7 +45,7 @@ block content
               if (layout.listOfOpenBlog)  
                 - var displayed = false;
                 for blog in layout.listOfOpenBlog 
-                  if blog.name == article.blog         
+                  if blog.name == article.blog
                     option(value="#{blog.name}" selected) #{blog.name}
                     - displayed = true;
                   else
