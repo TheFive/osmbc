@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.8.1](https://github.com/TheFive/osmbc/tree/1.8.1) (2016-05-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.0a...1.8.1)
+
+**Implemented enhancements:**
+
+- browser collect button plugin [\#419](https://github.com/TheFive/osmbc/issues/419)
+
+**Fixed bugs:**
+
+- Error Handling for broken SMTP Handler is bad. [\#441](https://github.com/TheFive/osmbc/issues/441)
+
+## [1.8.0a](https://github.com/TheFive/osmbc/tree/1.8.0a) (2016-05-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.0...1.8.0a)
+
 ## [1.8.0](https://github.com/TheFive/osmbc/tree/1.8.0) (2016-05-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.3b...1.8.0)
 
