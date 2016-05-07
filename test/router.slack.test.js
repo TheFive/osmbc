@@ -155,6 +155,13 @@ describe('router/slack',function(){
         findLog.bind(null,{table:"article",user:"TestUseTBC",property:"title",to:"This text comes with a title"})
       ],bddone);
     });
+    it("should store only store urls",function(bddone) {
+      user_name = "TestSlackUseTBC";
+      user_id = "55";
+      async.series([
+        talk.bind(null,"Text without a title", "<@55> Please enter an url.")
+     ],bddone);
+    });
   });
 });
 
