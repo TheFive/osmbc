@@ -79,11 +79,14 @@ block content
               if (!displayed)
                 option(value="#{article.blog}" selected) #{article.blog}
               
-          .col-md-5
+          .col-md-4
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
 
-
+          .col-md-1
+            if articleReferences.count >= 1
+              a(href="#doublettes")
+                div.button.btn.btn-large.btn-danger=articleReferences.count+" doub."
           .col-md-1
             button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
 
@@ -233,10 +236,13 @@ block content
       .row
         .col-md-1
           p="Blog"
-        +leftcolumn
+        .col-md-5
           p=article.blog
-        +rightcolumn
-          p
+        .col-md-4
+        .col-md-1
+          if articleReferences.count >= 1
+            a(href="#doublettes")
+              div.button.btn.btn-large.btn-danger=articleReferences.count+" doub."
         .col-md-1
           a(href="#{layout.htmlroot}/article/#{article.id}?edit=true&style=#{params.style}" class="btn btn-primary" role="button") Edit
       .row
@@ -403,7 +409,7 @@ block content
             button.btn.btn-large.btn-primary(name= "AddComment" type = "button" onclick ="if (document.getElementById('comment').value.trim()==='') return;window.onbeforeunload=null; document.getElementById('AddComment').submit();") Add Comment
             button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}';") Cancel
 
-  .row
+  #doublettes.row
       if articleReferences.count >= 1
         h3
           |Links used in other Post
