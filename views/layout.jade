@@ -35,11 +35,13 @@ block all
               li
                 a(href='#{layout.htmlroot}/article/create') Collect
               if blogNumber(layout.tbc, layout.language) > 0
-                li
-                  a(href='#{layout.htmlroot}/blog/TBC')
-                    | #{layout.tbc.name}
-                    if (layout.tbc._tbcOwnArticleNumber > 0)
-                      span.badge.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
+                ul.nav.navbar-nav.pull-left
+                  li
+                    a(href='#{layout.htmlroot}/blog/TBC')
+                      | #{layout.tbc.name}
+                      if (layout.tbc._tbcOwnArticleNumber > 0)
+                        span.badge.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
+            ul.nav.navbar-nav.pull-left
               li
                 a(href='#{layout.htmlroot}/usert/inbox')="Inbox "
                   if (layout.userMentions>0)
