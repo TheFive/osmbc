@@ -66,6 +66,8 @@ function getTitle(url,callback) {
         r = converterList[i](body,url);
         if (r) break;
       }
+      // remove all linebreaks
+      r = r.replace(/(\r\n|\n|\r)/gm," ");
       return callback(null,r);
     }
   );
