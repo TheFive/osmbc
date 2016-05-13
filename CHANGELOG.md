@@ -1,11 +1,17 @@
 # Change Log
 
+## [1.8.1b](https://github.com/TheFive/osmbc/tree/1.8.1b) (2016-05-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1a...1.8.1b)
+
+**Fixed bugs:**
+
+- Number of Doublet in article view wrong. [\#454](https://github.com/TheFive/osmbc/issues/454)
+
+## [1.8.1a](https://github.com/TheFive/osmbc/tree/1.8.1a) (2016-05-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1...1.8.1a)
+
 ## [1.8.1](https://github.com/TheFive/osmbc/tree/1.8.1) (2016-05-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.0a...1.8.1)
-
-**Implemented enhancements:**
-
-- browser collect button plugin [\#419](https://github.com/TheFive/osmbc/issues/419)
 
 **Fixed bugs:**
 
