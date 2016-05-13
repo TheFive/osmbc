@@ -6,6 +6,11 @@ var path = require('path');
 var fs     = require('fs');
 
 describe('util',function() {
+  var data;
+  before(function(){
+    var file =  path.resolve(__dirname,'data', "util.data.json");
+    data = JSON.parse(fs.readFileSync(file));
+  });
   describe('shorten', function () {
     it('should return empty string for undefined',function(bddone) {
       should(util.shorten()).equal("");
@@ -32,8 +37,6 @@ describe('util',function() {
     });
   });
   describe('isURL', function() {
-    var file =  path.resolve(__dirname,'data', "util.data.json");
-    var data = JSON.parse(fs.readFileSync(file));
     it('should recognise some urls',function() {
       for (var i=0;i<data.isURLArray.length;i++) {
         should(util.isURL(data.isURLArray[i])).is.True();
@@ -49,6 +52,38 @@ describe('util',function() {
     });
     it('should return false for markdown', function() {
       should((util.isURL('On October 8th, 2015 [Locus](http://www.locusmap.eu/) version [3.13.1](http://www.locusmap.eu/news-version-3-13.0/) was released.'))).is.False();
+    });
+    it('should return false for complex google url', function() {
+      should((util.isURL('https://www.google.de/maps/place/Fehlerbereich,+01067+Dresden/@51.0515917,13.7388822,19z/data=!3m1!4b1!4m2!3m1!1s0x4709cf67e58aaa97:0xf782605d9ac23f2c'))).is.True();
+    });
+  });
+  describe("getAllUrl",function(){
+    it("should return an empty array for different strings",function(){
+      should(util.getAllURL("")).eql([]);
+      should(util.getAllURL("Some Text")).eql([]);
+    });
+    it("should return one url for a 'collection'",function(){
+      for (var i=0;i<data.isURLArray.length;i++) {
+        let url = data.isURLArray[i];
+        should(util.getAllURL(url)).eql([url]);
+        should(util.getAllURL(url+"\n ")).eql([url]);
+        should(util.getAllURL(" \n"+url)).eql([url]);
+      }
+    });
+    it("should return several url for a 'collection'",function(){
+      for (var i=0;i<data.isURLArray.length-1;i++) {
+        let url1 = data.isURLArray[i];
+        let url2 = data.isURLArray[i+1];
+        should(util.getAllURL(url1+" "+url2)).eql([url1,url2]);
+        should(util.getAllURL(url1+"\n "+url2)).eql([url1,url2]);
+        should(util.getAllURL("  "+url1+" \n"+url2)).eql([url1,url2]);
+      }
+    });
+    it("should return several url for a 'markdown'",function(){
+      should(util.getAllURL('* Wer schon immer mal einen ["Fehlerbereich"]( https://www.google.de/maps/place/Fehlerbereich,+01067+Dresden/@51.0515917,13.7388822,19z/data=!3m1!4b1!4m2!3m1!1s0x4709cf67e58aaa97:0xf782605d9ac23f2c) besuchen wollte, kann sich von Google Maps dahin leiten lassen. Wer sich von Google Maps zum [Brecon Beacons National Park](http://www.openstreetmap.org/#map=10/51.8031/-3.5170) in Wales hat führen lassen, ist an einem Ort südlich des Londoner Hyde Parks gelandet, wie die BBC [berichtet](http://www.bbc.com/news/uk-wales-mid-wales-34410736).'))
+        .eql(["https://www.google.de/maps/place/Fehlerbereich,+01067+Dresden/@51.0515917,13.7388822,19z/data=!3m1!4b1!4m2!3m1!1s0x4709cf67e58aaa97:0xf782605d9ac23f2c",
+              "http://www.openstreetmap.org/#map=10/51.8031/-3.5170",
+              "http://www.bbc.com/news/uk-wales-mid-wales-34410736"]);
     });
   });
   describe("linkify",function() {
