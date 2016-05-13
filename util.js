@@ -44,8 +44,12 @@ function md_render(text) {
   return text;
 }
 
-var isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
-                 
+var isUrlRegex =      /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+var getAllUrlRegex = /(https?:\/\/[^\[\] \n\r()]*)/g;
+
+//var getAllUrlRegex  = /(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+
+//var getAllUrlRegex  = /(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
 //var isUrlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
 
 function isURL(t) {
@@ -53,10 +57,16 @@ function isURL(t) {
   return isUrlRegex;
 }
 
+function getAllURL(t) {
+  let r =t.match(getAllUrlRegex);
+  if (r===null) return [];
+  return r;
+}
 // shorten shorten a string up to maxlength
 // default is 30. If a string is shortenend, "..." is appendet
 exports.shorten = shorten;
 exports.isURL = isURL;
+exports.getAllURL = getAllURL;
 exports.linkify = linkify;
 
 // Convert MD to HTML, and mark all http(s) links as hyperlinks.
