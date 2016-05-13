@@ -430,7 +430,7 @@ block content
                     if (articleItem.id != article.id) && (index <5)
                       tr
                         td
-                          a(href='#{link}') #{link}
+                          a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
                         td
                           a(href='#{layout.htmlroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
                         td= articleItem.blog

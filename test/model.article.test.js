@@ -531,10 +531,8 @@ describe('model/article', function() {
       link = article.calculateLinks();
       should(link).eql(["http://forum.openstreetmap.org/thisIsALink?id=200",
                          "http://bing.de/subpage/relation",
-                         "ftp://test.de",
                          "https://forum.openstreetmap.org/thisIsALink?id=200",
-                         "https://bing.de/subpage/relation",
-                         "ftp://test.de"
+                         "https://bing.de/subpage/relation"
                          ]);
 
     });

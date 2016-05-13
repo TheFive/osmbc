@@ -454,7 +454,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
       if (! data.old || typeof(data.old[k])=="undefined") return callback(new Error("No Version and no History Value given"));
 
       if (self[k] && self[k]!=data.old[k]) return callback(new Error("Field "+k+" already changed in DB"));
-      if (typeof(self[k])=="undefined" && data.old[k]!="") return callback(new Error("Field "+k+" already changed in DB"));
+      if (typeof(self[k])=="undefined" && data.old[k]!=="") return callback(new Error("Field "+k+" already changed in DB"));
     }
     delete data.old;
   }
@@ -597,15 +597,19 @@ Article.prototype.calculateLinks = function calculateLinks() {
   }
   for (i=0;i<listOfField.length;i++) {
     if (typeof(this[listOfField[i]])!='undefined') {
-      var res = this[listOfField[i]].match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
-      var add = true;
-      for (var k in languageFlags) {
-        if (res == languageFlags[k]) {
-          add = false;
-          break;
+      var res = util.getAllURL(this[listOfField[i]]);
+      //var res = this[listOfField[i]].match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
+      for (let respoint=0;respoint<res.length;respoint++) {
+        var add = true;
+        for (var k in languageFlags) {
+          if (res[respoint] == languageFlags[k]) {
+            add = false;
+            break;
+          }
         }
+        if (links.indexOf(res[respoint])>=0) add = false;
+        if (add && res[respoint]) links = links.concat(res[respoint]);
       }
-      if (add && res) links = links.concat(res);
     }    
   }
   return links;
