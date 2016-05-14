@@ -1,7 +1,15 @@
 # Change Log
 
-## [1.8.3](https://github.com/TheFive/osmbc/tree/1.8.3) (2016-05-14)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1b...1.8.3)
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.2...HEAD)
+
+**Implemented enhancements:**
+
+- Filter to disable all markdown that are newer in the left column than on the right column. [\#457](https://github.com/TheFive/osmbc/issues/457)
+
+## [1.8.2](https://github.com/TheFive/osmbc/tree/1.8.2) (2016-05-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1b...1.8.2)
 
 **Implemented enhancements:**
 
@@ -193,6 +201,9 @@
 
 ## [1.2.2a](https://github.com/TheFive/osmbc/tree/1.2.2a) (2016-04-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2...1.2.2a)
+
+## [1.2.2](https://github.com/TheFive/osmbc/tree/1.2.2) (2016-04-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2...1.2.2)
 
 ## [1.2.2](https://github.com/TheFive/osmbc/tree/1.2.2) (2016-04-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.1...1.2.2)
