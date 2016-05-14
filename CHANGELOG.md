@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.8.3](https://github.com/TheFive/osmbc/tree/1.8.3) (2016-05-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1b...1.8.3)
+
+**Implemented enhancements:**
+
+- Inbox: would it be possible to see only the new issues? [\#456](https://github.com/TheFive/osmbc/issues/456)
+- enable colors for the people in the blog views. [\#455](https://github.com/TheFive/osmbc/issues/455)
+
 ## [1.8.1b](https://github.com/TheFive/osmbc/tree/1.8.1b) (2016-05-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1a...1.8.1b)
 
@@ -9,6 +17,10 @@
 
 ## [1.8.1a](https://github.com/TheFive/osmbc/tree/1.8.1a) (2016-05-09)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1...1.8.1a)
+
+**Fixed bugs:**
+
+- Remove any linebreaks in titlegenerator. They lead to broken links. [\#450](https://github.com/TheFive/osmbc/issues/450)
 
 ## [1.8.1](https://github.com/TheFive/osmbc/tree/1.8.1) (2016-05-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.0a...1.8.1)
