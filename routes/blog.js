@@ -14,6 +14,7 @@ var blogModule     = require('../model/blog.js');
 var blogRenderer   = require('../render/BlogRenderer.js');
 var logModule      = require('../model/logModule.js');
 var settingsModule = require('../model/settings.js');
+var userModule     = require('../model/user.js');
 
 function findBlogByRouteId(id,user,callback) {
   var blog;
@@ -387,6 +388,17 @@ function renderBlogTab(req, res, next) {
             return callback(err,result);
           });
         },
+        userMap:function(callback){
+          debug("userColors");
+          let userMap = {};
+          userModule.find({},function(err,userlist){
+            if (err) return callback(err);
+            for (let i=0;i<userlist.length;i++) {
+              userMap[userlist[i].OSMUser]=userlist[i];
+            }
+            return callback(null,userMap);
+          });
+        },
         review: function (callback) {
           if (typeof(req.query.reviewComment)!='undefined')
           {
@@ -430,6 +442,7 @@ function renderBlogTab(req, res, next) {
             articles:result.dataCollect.articles,
             futureArticles:result.dataCollect.futureArticles,
             teamString:result.teamString,
+            userMap:result.userMap,
             lang:lang,
             tab:tab,
             left_lang:req.user.getMainLang(),

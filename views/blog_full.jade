@@ -11,6 +11,7 @@ block blogcontent
   - disableOwnCollection = (layout.user.getOption("full","disableOwnCollection")=="true")
   - disableOtherCollection = (layout.user.getOption("full","disableOtherCollection")=="true")
   - disableWritten = (layout.user.getOption("full","disableWritten")=="true")
+  - showColoredUser = (layout.user.getOption("full","showColoredUser")=="true")
 
   - firstColSize = "col-md-1"
   - secondColSize = "col-md-11"
@@ -65,16 +66,11 @@ block blogcontent
               div
                 if (showCollector && a.author && a.author.collection)
                   each b in a.author.collection.split(",")
-                    if (b !== layout.user.OSMUser)
-                      span.label.osmbclabel-collect.small-margin=b
-                    else
-                      span.label.osmbclabel-user.small-margin=b
+                    +userLabel(b,"osmbclabel-collect")
                 if (showEditor && a.author && a.author["markdown" + lang])
                   each b in a.author["markdown"+lang].split(",")
-                    if (b !== layout.user.OSMUser)
-                      span.label.osmbclabel-markdown.small-margin=b
-                    else
-                      span.label.osmbclabel-user.small-margin=b
+                    +userLabel(b,"osmbclabel-markdown")
+
               div
                 if (showLanguages)
                   +languageDisplay(a)
@@ -95,17 +91,13 @@ block blogcontent
                       if a.author && a.author.collection
                         span="Collected: "
                         each collector in a.author.collection.split(",")
-                          if (collector != layout.user.OSMUser)
-                            span.label.osmbclabel-collect.small-margin=collector
-                          else
-                            span.label.osmbclabel-user.small-margin=collector
+                          +userLabel(collector,"osmbclabel-collect")
+
                       if a.author && a.author["markdown" + left_lang]
                         span=" Edited: "
                         each author in a.author["markdown"+left_lang].split(",")
-                          if (author != layout.user.OSMUser)
-                            span.label.osmbclabel-markdown.small-margin=author
-                          else
-                            span.label.osmbclabel-user.small-margin=author
+                          +userLabel(author,"osmbclabel-markdown")
+
                 div(class=columnRightSize)
                   if right_lang
                     div(onclick="if (!openEditor) {openEditor = document.getElementById('rdiv#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
@@ -121,17 +113,13 @@ block blogcontent
                         if a.author && a.author.collection
                           span="Collected: "
                           each collector in a.author.collection.split(",")
-                            if (collector != layout.user.OSMUser)
-                              span.label.osmbclabel-collect.small-margin=collector
-                            else
-                              span.label.osmbclabel-user.small-margin=collector
+                            +userLabel(collector,"osmbclabel-collect")
+
                         if a.author && a.author["markdown" + right_lang]
                           span=" Edited: "
                           each author in a.author["markdown"+right_lang].split(",")
-                            if (author != layout.user.OSMUser)
-                              span.label.osmbclabel-markdown.small-margin=author
-                            else
-                              span.label.osmbclabel-user.small-margin=author
+                            +userLabel(author,"osmbclabel-markdown")
+
 
   if futureArticles
     .row
@@ -146,16 +134,11 @@ block blogcontent
           div
             if (showCollector && a.author && a.author.collection)
               each b in a.author.collection.split(",")
-                if (b !== layout.user.OSMUser)
-                  span.label.osmbclabel-collect.small-margin=b
-                else
-                  span.label.osmbclabel-user.small-margin=b
+                +userLabel(b,"osmbclabel-collect")
             if (showEditor && a.author && a.author["markdown" + lang])
               each b in a.author["markdown"+lang].split(",")
-                if (b !== layout.user.OSMUser)
-                  span.label.osmbclabel-markdown.small-margin=b
-                else
-                  span.label.osmbclabel-user.small-margin=b
+                +userLabel(collector,"osmbclabel-markdown")
+
           div
             if (showLanguages)
               +languageDisplay(a)
@@ -171,16 +154,38 @@ block blogcontent
   .row
     h2="Options"
 
+    .row
+      .col-md-1
+        p="Left Col.: "
+      .col-md-11
+        +userConfigOption("full","showNumbers",showNumbers," show editor numbers, ")
+        +userConfigOption("full","showMail",showMail," show mail, ")
+        +userConfigOption("full","showCollector",showCollector," show collector, " )
+        +userConfigOption("full","showEditor",showEditor," show editor , ")
+        +userConfigOption("full","showLanguages",showLanguages," show languages")
+    .row
+      .col-md-1
+        p="Add Options:"
+      .col-md-11
+        +userConfigOption("full","showColoredUser",showColoredUser," show colored users")
+
+    .row
+      .col-md-1
+        p="Filter: "
+      .col-md-11
+        +userConfigOption("full","disableWritten",disableWritten," disable written articles, ")
+        +userConfigOption("full","disableOwnCollection",disableOwnCollection," disable own collections, ")
+        +userConfigOption("full","disableOtherCollection",disableOtherCollection," disable other collections")
 
     p
-      +userConfigOption("full","showNumbers",showNumbers," show editor numbers, ")
-      +userConfigOption("full","showMail",showMail," show mail, ")
-      +userConfigOption("full","showCollector",showCollector," show collector, " )
-      +userConfigOption("full","showEditor",showEditor," show editor , ")
-      +userConfigOption("full","showLanguages",showLanguages," show languages, ")
-      +userConfigOption("full","disableWritten",disableWritten," disable written articles, ")
-      +userConfigOption("full","disableOwnCollection",disableOwnCollection," disable own collections, ")
-      +userConfigOption("full","disableOtherCollection",disableOtherCollection," disable other collections")
+
+
+
+
+
+
+
+
 
   +articleIconLegend
 

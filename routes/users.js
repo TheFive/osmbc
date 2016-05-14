@@ -110,6 +110,7 @@ function postUserId(req, res, next) {
                  SlackUser:req.body.SlackUser,
                  WNAuthor:req.body.WNAuthor,
                  WeeklyAuthor:req.body.WeeklyAuthor,
+                 color:req.body.color,
                  language:req.body.language,
                  mailAllComment:req.body.mailAllComment,
                  mailNewCollection:req.body.mailNewCollection,
@@ -117,6 +118,7 @@ function postUserId(req, res, next) {
                  mailBlogLanguageStatusChange:req.body.mailBlogLanguageStatusChange,
                  email:req.body.email,
                  access:req.body.access};
+  console.log(changes);
   if (typeof(changes.mailComment)==="string") {
     changes.mailComment = [changes.mailComment];
   }
