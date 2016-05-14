@@ -12,6 +12,7 @@ block blogcontent
   - disableOtherCollection = (layout.user.getOption("full","disableOtherCollection")=="true")
   - disableWritten = (layout.user.getOption("full","disableWritten")=="true")
   - showColoredUser = (layout.user.getOption("full","showColoredUser")=="true")
+  - disableNewerMarkdown = (layout.user.getOption("full","disableNewerMarkdown")=="true")
 
   - firstColSize = "col-md-1"
   - secondColSize = "col-md-11"
@@ -57,6 +58,7 @@ block blogcontent
         - if (disableWritten  && a["markdown"+lang]) enable = false;
         - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
         - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
+        - if (disableNewerMarkdown && a._lastChange["markdown"+left_lang] && a._lastChange["markdown"+right_lang] && (a._lastChange["markdown"+left_lang] >= a._lastChange["markdown"+right_lang])) enable = false;
         if enable
           .row
             div(class=firstColSize)
@@ -97,6 +99,8 @@ block blogcontent
                         span=" Edited: "
                         each author in a.author["markdown"+left_lang].split(",")
                           +userLabel(author,"osmbclabel-markdown")
+                      if a._lastChange && a._lastChange["markdown" + left_lang]
+                        span=" Time: " + layout.moment(a._lastChange["markdown" + left_lang]).fromNow()
 
                 div(class=columnRightSize)
                   if right_lang
@@ -119,6 +123,8 @@ block blogcontent
                           span=" Edited: "
                           each author in a.author["markdown"+right_lang].split(",")
                             +userLabel(author,"osmbclabel-markdown")
+                        if a._lastChange && a._lastChange["markdown" + right_lang]
+                          span=" Time: " + layout.moment(a._lastChange["markdown" + right_lang]).fromNow()
 
 
   if futureArticles
@@ -174,6 +180,7 @@ block blogcontent
         p="Filter: "
       .col-md-11
         +userConfigOption("full","disableWritten",disableWritten," disable written articles, ")
+        +userConfigOption("full","disableNewerMarkdown",disableNewerMarkdown," disable more actual edits, ")
         +userConfigOption("full","disableOwnCollection",disableOwnCollection," disable own collections, ")
         +userConfigOption("full","disableOtherCollection",disableOtherCollection," disable other collections")
 

@@ -14,6 +14,7 @@ block blogcontent
   - disableOwnCollection = (layout.user.getOption("overview","disableOwnCollection")=="true")
   - disableOtherCollection = (layout.user.getOption("overview","disableOtherCollection")=="true")
   - disableWritten = (layout.user.getOption("overview","disableWritten")=="true")
+  - disableNewerMarkdown = (layout.user.getOption("overview","disableNewerMarkdown")=="true")
 
   if disableOwnCollection
     p.bg-danger
@@ -47,6 +48,7 @@ block blogcontent
           - if (disableWritten  && a["markdown"+lang]) enable = false;
           - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
           - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
+          - if (disableNewerMarkdown && a._lastChange["markdown"+left_lang] && a._lastChange["markdown"+right_lang] && (a._lastChange["markdown"+left_lang] >= a._lastChange["markdown"+right_lang])) enable = false;
           if enable
             tr
               td
@@ -93,6 +95,9 @@ block blogcontent
                       span=" Edited: "
                       each author in a.author["markdown"+lang].split(",")
                         +userLabel(author,"osmbclabel-markdown")
+                    if a._lastChange && a._lastChange["markdown" + lang]
+                      span=" Time: "+layout.moment(a._lastChange["markdown" + lang]).fromNow()
+
 
     if futureArticles
       tr
@@ -157,6 +162,7 @@ block blogcontent
         p="Filter: "
       .col-md-11
         +userConfigOption("overview","disableWritten",disableWritten," disable written articles, ")
+        +userConfigOption("overview","disableNewerMarkdown",disableNewerMarkdown," disable more actual edits, ")
         +userConfigOption("overview","disableOwnCollection",disableOwnCollection," disable own collections, ")
         +userConfigOption("overview","disableOtherCollection",disableOtherCollection," disable other collections")
 
