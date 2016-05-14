@@ -1,36 +1,44 @@
 extends layout
 
+
 mixin displayArticle(article,lang)
-  .panel.panel-default
-    .panel-heading
-      ul
-        :verbatim
-          !{renderer.articleTitle(lang,article)}
-    if (article.commentList)
-      .panel-body
-        - upToComment = null
-        - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
-        - if (!upToComment) upToComment = -1;
-        each comment,i in article.commentList
-          .row
-            .col-md-12
-              b
-                if (i > upToComment)
-                  a(href="#{layout.htmlroot}/article/#{article.id}/markCommentRead?index=#{i}")
-                    span.glyphicon.glyphicon-envelope
-                  span=" "
-                span=comment.user
-              span=" "
-              span.text-muted.small=layout.moment(comment.timestamp).fromNow()
-              if (comment.editstamp)
-                span=" "
-                i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
-              p
-                :verbatim
-                !{layout.md_render(comment.text)}
+  - upToComment = null
+  - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
+  - if (!upToComment) upToComment = -1;
+  if ((upToComment < article.commentList.length - 1) || showRead)
+    .row
+      .col-md-1
+        +articleIcons(article,{showMail: true})
+      .col-md-11
+        .panel.panel-default
+          .panel-heading
+            ul
+              :verbatim
+                !{renderer.articleTitle(lang,article)}
+          if (article.commentList)
+            .panel-body
+                each comment,i in article.commentList
+                  if (showRead || (i > upToComment))
+                    .row
+                      .col-md-12
+                        b
+                          if (i > upToComment)
+                            a(href="#{layout.htmlroot}/article/#{article.id}/markCommentRead?index=#{i}")
+                              span.glyphicon.glyphicon-envelope
+                            span=" "
+                          span=comment.user
+                        span=" "
+                        span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+                        if (comment.editstamp)
+                          span=" "
+                          i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
+                        p
+                          :verbatim
+                          !{layout.md_render(comment.text)}
 
 
 block content
+  - showRead = (layout.user.getOption("inbox","showRead")=="true")
   .row
     p.bg-info="This is your new inbox. All comments with mentions are shown here. Use the envelope in the article view to mark a comment as read."
 
@@ -52,11 +60,7 @@ block content
         .col-md-11
           h3=blog.name
         for article in blog._userMention
-          .row
-            .col-md-1
-              +articleIcons(article,{showMail:true})
-            .col-md-11
-              +displayArticle(article,left_lang)
+          +displayArticle(article,left_lang)
 
   .row
     .col-md-1
@@ -70,10 +74,6 @@ block content
         .col-md-11
           h3=blog.name
         for article in blog._mainLangMention
-          .row
-            .col-md-1
-              +articleIcons(article,{showMail:true})
-            .col-md-11
               +displayArticle(article,left_lang)
 
     if blog._secondLangMention && blog._secondLangMention.length > 0
@@ -82,8 +82,8 @@ block content
         .col-md-11
           h3=blog.name
         for article in blog._secondLangMention
-          .row
-            .col-md-1
-              +articleIcons(article,{showMail:true})
-            .col-md-11
               +displayArticle(article,left_lang)
+
+  .row
+    h2="Options"
+    +userConfigOption("inbox","showRead",showRead," show read messages")
