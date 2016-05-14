@@ -638,12 +638,20 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
               if (err) return each_cb(err);
               if (result && result.length > 0) {
                 var list = {};
+                item._lastChange = {};
                 for (var i = 0; i < result.length; i++) {
                   var r = result[i];
-                  if (!list[r.property]) list[r.property] = {};
-                  list[r.property][r.user] = "-";
+                  let prop = r.property;
+                  if (!list[prop]) list[prop] = {};
+                  list[prop][r.user] = "-";
+                  if (typeof(item._lastChange[prop])=="undefined") {
+                    item._lastChange[prop]= r.timestamp;
+                  } else if (r.timestamp > item._lastChange[prop]) {
+                    item._lastChange[prop]= r.timestamp;
+                  }
                 }
                 item.author = {};
+
 
                 for (var p in list) {
                   item.author[p] = "";
