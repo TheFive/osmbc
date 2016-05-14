@@ -73,6 +73,19 @@ block content
                      langlist,
                      "Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.")
       +labeledInput("SlackUser","SlackUser",usershown.SlackUser,"Username in the slack for using the collect feature.")
+      div.form-group
+        label.control-label.col-sm-2(for="Color")="Color"
+        div(class="col-sm-4")
+          div.input-group(style="width: 100%;")
+            input.form-control(name="color",id="color}",value = "#{usershown.color}")
+            span.input-group-addon(style="background-color:#{usershown.color};width: 50px;")
+        div.text-muted(class="col-sm-6")
+          p
+            span="Color for colored lists in OSMBC. Use a html colorpicker to define. ("
+            a(href="http://www.w3schools.com/colors/colors_picker.asp")="Color Picker"
+            span=","
+            a(href="http://www.w3schools.com/colors/colors_names.asp")="Color Names"
+            span=")"
 
 
 
