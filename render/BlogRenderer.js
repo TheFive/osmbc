@@ -3,9 +3,17 @@
 var debug = require('debug')('OSMBC:render:BlogRenderer');
 var moment = require('moment');
 var util = require('../util.js');
+var configModule = require('../model/config.js');
+var config = require('../config.js');
 
+var should = require('should');
+
+var markdown = require("markdown-it")()
+  .use(require("markdown-it-sup"))
+  .use(require("markdown-it-imsize"), { autofill: true });
 
 function HtmlRenderer(blog) {
+
   this.blog = blog;
 }
 
@@ -25,6 +33,7 @@ MarkdownRenderer.prototype.title = function markdownTitle(lang) {
 HtmlRenderer.prototype.subtitle = function htmlSubtitle(lang) {
   debug("HtmlRenderer.prototype.subtitle %s",lang);
   var blog = this.blog;
+  should(config.getLanguages()).containEql(lang);
   if (blog.startDate && blog.endDate) {
     return  "<p>"+moment(blog.startDate).locale(lang).format('L') +"-"+moment(blog.endDate).locale(lang).format('L') +'</p>\n';
   }
@@ -50,11 +59,84 @@ MarkdownRenderer.prototype.categoryTitle = function markdownCatTitle(lang,catego
   return  "## "+category[lang];
 };
 
-HtmlRenderer.prototype.article = function htmlArticle(lang,article) {
+HtmlRenderer.prototype.renderArticle = function htmlArticle(lang,article) {
   debug('HtmlRenderer.prototype.article');
-  return article.getPreview(lang);
+
+  var calenderTranslation = configModule.getConfig("calendartranslation");
+
+
+
+  var md = article["markdown"+lang];
+
+
+  var blogRef = article.blog;
+  if (!blogRef) blogRef = "undefined";
+  var titleRef = article.title;
+  if (!titleRef) titleRef = article.id;
+  var pageLink = util.linkify(blogRef+'_'+titleRef);
+
+
+
+
+  var liON = '<li id="'+pageLink+'">\n';
+  var liOFF = '</li>';
+
+
+  if (article.categoryEN == "Picture") {
+    liON = '<div style="width: ##width##px" class="wp-caption alignnone"> \n';
+    liOFF = '</div>\n';
+  }
+  if (article.categoryEN == "Upcoming Events") {
+    liON = '<p>';
+    liOFF = '</p>\n'+calenderTranslation.footer[lang];
+  }
+  if (article.categoryEN == "Releases") {
+    liON = '<p>';
+    liOFF = '</p>';
+  }
+
+
+
+
+  // Generate Text for display
+  var text ='';
+
+  if (typeof(md)!=='undefined' && md!=='') {
+
+
+
+    // Does the markdown text starts with '* ', so ignore it
+    if (md.substring(0,2)=='* ') {md = md.substring(2,99999);}
+    // Return an list Element for the blog article
+    text = markdown.render(md);
+
+
+    if (liON.indexOf("##width##")>=0) {
+      // it is a picture, try to calculate the size.
+      var width = parseInt(text.substring(text.indexOf('width="')+7))+10;
+
+      liON = liON.replace("##width##",width);
+    }
+    if (article.categoryEN == "Picture" ) {
+      text = text.replace("<p>",'<p class="wp-caption-text">');
+      text = text.replace("<p>",'<p class="wp-caption-text">');
+    }
+
+  } else {
+    if (article.author && article.author.collection) text = "[" + article.author.collection + "] ";
+    text += article.displayTitle(90);
+  }
+  if (article.categoryEN==="--unpublished--") {
+    var reason2 = "No Reason given";
+    if (article.unpublishReason) reason2 = this.unpublishReason;
+    text += "<br>"+reason2;
+    if (this.unpublishReference) text += " ("+this.unpublishReference+")";
+  }
+
+  return liON + text + '\n' + liOFF;
 };
-MarkdownRenderer.prototype.article = function markdownArticle(lang,article) {
+
+MarkdownRenderer.prototype.renderArticle = function markdownArticle(lang,article) {
   debug('MarkdownRenderer.prototype.article');
   return "* "+article["markdown"+lang];
 };
@@ -68,6 +150,109 @@ MarkdownRenderer.prototype.articleTitle = function markdownArticle(lang,article)
   return "* "+article.displayTitle(999);
 };
 
+HtmlRenderer.prototype.renderBlog = function htmlBlog(lang,articleData) {
+  debug('htmlBlog');
+
+  var articles = articleData.articles;
+  var teamString = articleData.teamString;
+  var preview = "";
+  var blog = this.blog;
+  var i, j; // often used iterator, declared here because there is no block scope in JS.
+  preview += this.subtitle(lang);
+  var clist = blog.getCategories();
+
+
+  // Generate the blog result along the categories
+  for (i = 0; i < clist.length; i++) {
+    var category = clist[i].EN;
+
+    // ignore any "unpublished" category not in edit mode
+    if (category == "--unpublished--") continue;
+
+
+    // If the category exists, generate HTML for it
+    if (typeof(articles[category]) != 'undefined') {
+      debug('Generating HTML for category %s', category);
+      var htmlForCategory = '';
+
+      for (j = 0; j < articles[category].length; j++) {
+        var row = articles[category][j];
+
+        var articleMarkdown = this.renderArticle(lang,row);
+
+        htmlForCategory += articleMarkdown;
+      }
+      var header = this.categoryTitle(lang, clist[i]);
+
+
+      htmlForCategory = header + '<ul>\n' + htmlForCategory + '</ul>\n';
+
+
+      preview += htmlForCategory;
+      delete articles[category];
+    }
+  }
+
+  delete articles["--unpublished--"];
+  for (var k in articles) {
+    preview += "<h2> Blog Missing Cat: " + k + "</h2>\n";
+    preview += "<p> Please use [edit blog detail] to enter category</p>\n";
+    preview += "<p> Or edit The Articles ";
+    for (i = 0; i < articles[k].length; i++) {
+      preview += ' <a href="' + config.getValue('htmlroot') + '/article/' + articles[k][i].id + '">' + articles[k][i].id + '</a> ';
+    }
+    preview += "</p>\n";
+  }
+
+  return preview + teamString;
+};
+
+
+MarkdownRenderer.prototype.renderBlog = function markdownBlog(lang,articleData) {
+
+  var articles = articleData.articles;
+  var preview = "";
+  var blog = this.blog;
+  var i, j; // often used iterator, declared here because there is no block scope in JS.
+  preview += this.subtitle(lang);
+  var clist = blog.getCategories();
+
+
+  // Generate the blog result along the categories
+  for (i = 0; i < clist.length; i++) {
+    var category = clist[i].EN;
+
+    // ignore any "unpublished" category not in edit mode
+    if (category == "--unpublished--") continue;
+
+
+    // If the category exists, generate HTML for it
+    if (typeof(articles[category]) != 'undefined') {
+      debug('Generating HTML for category %s', category);
+      var htmlForCategory = '';
+
+      for (j = 0; j < articles[category].length; j++) {
+        var row = articles[category][j];
+
+        var articleMarkdown = this.renderArticle(lang,row);
+
+        htmlForCategory += articleMarkdown+ '\n\n';
+      }
+      var header = this.categoryTitle(lang, clist[i]);
+
+
+      htmlForCategory = header + '\n\n' + htmlForCategory;
+
+
+      preview += htmlForCategory;
+      delete articles[category];
+    }
+  }
+
+
+
+  return preview ;
+};
 
 module.exports.MarkdownRenderer = MarkdownRenderer;
 module.exports.HtmlRenderer = HtmlRenderer;

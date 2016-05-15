@@ -13,8 +13,8 @@ var util = require('../util.js');
 var util     = require("../util.js");
 var config        = require('../config.js');
 
+var BlogRenderer = require('../render/BlogRenderer.js');
 
-var settingsModule= require('../model/settings.js');
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
@@ -52,13 +52,9 @@ function renderArticleId(req,res,next) {
 
     // Params is used for indicating EditMode
     var params = {};
-    var style = req.query.style;
-    if (!style && req.session.lastStyle) style = req.session.lastStyle;
-    var s = settingsModule.getSettings(style,req.user.getMainLang(),req.user.getSecondLang());
-    if (style) params.style = style;
     params.edit = req.query.edit;
-    params.left_lang = s.left_lang;
-    params.right_lang = s.right_lang;
+    params.left_lang = req.user.getMainLang();
+    params.right_lang = req.user.getSecondLang();
     params.editComment = null;
     if (req.query.editComment) params.editComment = req.query.editComment;
     if (req.query.notranslation) params.notranslation = req.query.notranslation;
@@ -139,13 +135,15 @@ function renderArticleId(req,res,next) {
           debug('renderArticleId->finalFunction');
           if (err) return next(err);
           if (result.notranslate) return res.redirect(result.notranslate);
+          let renderer = new BlogRenderer.HtmlRenderer();
+
 
 
           var languages = config.getLanguages();
           for (var i=0;i<languages.length;i++) {
             var lang = languages[i];
             if (typeof(article["markdown"+lang])!='undefined') {
-              article["textHtml"+lang]="<ul>"+article.getPreview(lang)+"</ul>";
+              article["textHtml"+lang]="<ul>"+renderer.renderArticle(lang,article)+"</ul>";
             }
           }
           if (typeof(article.comment)!='undefined') {

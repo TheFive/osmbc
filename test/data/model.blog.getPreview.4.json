@@ -1,9 +1,0 @@
-{
-  "blog":[{"name":"BLOG","startDate":"2015-02-02","endDate":"2015-03-03"}],
-  "article":[{"blog":"BLOG",
-              "markdownEN":"* This is a small test article.",
-              "categoryEN":"not exist"}],
-  "testBlogName":"BLOG",
-  "style":"fullEN",
-  "testBlogResultHtml":"<p>02/02/2015-03/03/2015</p><!--         place picture here              --><h2> Blog Missing Cat: not exist</h2>\n<p> Please use [edit blog detail] to enter category</p>\n<p> Or edit The Articles  <a href=\"/article/1\">1</span></a> "     
-}

@@ -9,11 +9,11 @@ var config   = require('../config.js');
 var moment   = require('moment');
 var help     = require('../routes/help.js');
 
+var BlogRenderer   = require('../render/BlogRenderer.js');
 
 var blogModule     = require('../model/blog.js');
 var blogRenderer   = require('../render/BlogRenderer.js');
 var logModule      = require('../model/logModule.js');
-var settingsModule = require('../model/settings.js');
 var userModule     = require('../model/user.js');
 
 function findBlogByRouteId(id,user,callback) {
@@ -84,110 +84,7 @@ function renderBlogId(req, res, next) {
     if (tab==="Full") return renderBlogTab(req,res,next);
 
   }
-  var options = settingsModule.getSettings(style,req.user.getMainLang(),req.user.getSecondLang());
-
-
-
-
-
-
-  var user = req.user;
-
-
-
-
-  findBlogByRouteId(id,req.user,function(err,blog) {
-    if (err) return next(err);
-    should.exist(blog);
-    id = blog.id;
-
-    var changes = [];
-    var articles = {};
-    var main_text;
-    var clearParams = false;
-
-    async.series([
-      function (callback) {
-        blog.getPreview(options,user,function(err,result) {
-          if (err) return callback(err);
-          main_text = result.preview;
-          articles = result.articles;
-          callback();
-        });
-      },
-      function (callback) {
-        if (typeof(req.query.setStatus)!='undefined')
-        {
-          clearParams = true;
-          var changes = {status:req.query.setStatus};
-          blog.setAndSave(user,changes,function(err) {
-            return callback(err);
-          });
-        } else return callback();
-      },
-      function (callback) {
-        if (typeof(req.query.reviewComment)!='undefined')
-        {
-          clearParams = true;
-          blog.setReviewComment(options.left_lang,user,req.query.reviewComment,function(err) {
-            return callback(err);
-          });
-        } else return callback();
-      },
-      function (callback) {
-        if (typeof(req.query.closeLang)!='undefined')
-        {
-          clearParams = true;
-          var status = true;
-          if (req.query.status && req.query.status == "false") status = false;
-          blog.closeBlog(options.left_lang,user,status,function(err) {
-            return callback(err);
-          });
-        } else return callback();
-      },
- 
- /*    function (callback) {
-        articleModule.find({blog:blog.name},function(err,result){
-          for (var i=0;i<result.length;i++ ) {
-            var r = result[i];
-            if (typeof(articles[r.category]) == 'undefined') {
-            articles[r.category] = [];
-            }
-            articles[r.category].push(r);
-          }
-          callback();
-        })
-      },*/
-      function (callback) {
-        logModule.find({oid:id,table:"blog"},{column:"timestamp",desc :true},function(err,result) {
-          if (err) return callback(err);
-          changes = result;
-
-          callback();
-        });
-      }],
-      function (err) {
-        should.exist(res.rendervar);
-        if (clearParams) {
-          var url = config.getValue('htmlroot')+"/blog/"+blog.name;
-          var styleParam = "";
-          if (req.param.style) styleParam = "?style="+styleParam;
-          res.redirect(url+styleParam);
-          return;
-        }
-        if (err) return next(err);
-        res.render('blog',{layout:res.rendervar.layout,
-                           main_text:main_text,
-                           blog:blog,
-                           changes:changes,
-                           articles:articles,
-                           style:style,
-                           left_lang:options.left_lang,
-                           right_lang:options.right_lang,
-                           categories:blog.getCategories()});
-      }
-    );
-  });
+  return next(new Error("This Function is no longer Supported"));
 }
  
 
@@ -300,15 +197,12 @@ function renderBlogPreview(req, res, next) {
 
 
     var lang = req.query.lang;
+    var asMarkdown = (req.query.markdown==="true");
     if (typeof(lang)=='undefined') lang = "DE";
-    var options = settingsModule.getSettings(lang);
-    var markdown = options.markdown;
+
 
     var returnToUrl = req.session.articleReturnTo;
 
-    if (blog.status == "help") {
-      returnToUrl = res.rendervar.layout.htmlroot + "/blog/"+blog.id;
-    }
 
 
 
@@ -317,8 +211,11 @@ function renderBlogPreview(req, res, next) {
     async.auto({ 
         converter:function(callback) {
                       debug("converter function");
-                      blog.getPreview(lang,function(err,result) {
-                        
+                      blog.getPreviewData({lang:lang,createTeam:true},function(err,data) {
+
+                        let renderer=new BlogRenderer.HtmlRenderer(blog);
+                        if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
+                        let result = renderer.renderBlog(lang,data);
                         return callback(err,result);
                       });
                   }
@@ -328,7 +225,7 @@ function renderBlogPreview(req, res, next) {
         if (req.query.download=="true") {
           
           
-          if (markdown) {
+          if (asMarkdown) {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
             res.setHeader('Content-type', "text");
             res.end(result.converter.preview,"UTF8");
@@ -344,12 +241,9 @@ function renderBlogPreview(req, res, next) {
          
           res.render('blogpreview',{layout:res.rendervar.layout,
                              blog:blog,
-                             articles:result.converter.articles,
-                             preview:result.converter.preview,
-                             markdown: markdown,
+                             asMarkdown:asMarkdown,
+                             preview:result.converter,
                              lang:lang,
-                             left_lang:req.user.left_lang,
-                             right_lang:req.user.right_lang,
                              returnToUrl:returnToUrl,
                              categories:blog.getCategories()});
         }
@@ -417,6 +311,17 @@ function renderBlogTab(req, res, next) {
               if (err) return callback(err);
               let referer=req.header('Referer') || '/';
               res.redirect(referer);
+            });
+          } else return callback();
+        },
+        closeLang: function (callback) {
+          if (typeof(req.query.closeLang)!='undefined')
+          {
+            clearParams = true;
+            var status = true;
+            if (req.query.status && req.query.status == "false") status = false;
+            blog.closeBlog(lang,req.user,status,function(err) {
+              return callback(err);
             });
           } else return callback();
         }
