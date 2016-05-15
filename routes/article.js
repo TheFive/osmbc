@@ -223,11 +223,13 @@ function searchAndCreate(req,res,next) {
     articleModule.fullTextSearch(search, {column: "blog", desc: true}, function (err, result) {
       debug('searchAndCreate->fullTextSearch');
       if (err) return next(err);
+      let renderer = new BlogRenderer.HtmlRenderer(null);
       should.exist(res.rendervar);
       res.render("collect", {
         layout: res.rendervar.layout,
         search: search,
         placeholder: placeholder,
+        renderer:renderer,
         showCollect: true,
         show: show,
         title: title,

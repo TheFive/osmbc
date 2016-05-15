@@ -26,7 +26,7 @@ block content
       div.progress-bar.osmbclabel-no-markdown(style="width:#{parseInt(100*unedited/total)}%")=unedited
       div.progress-bar.osmbclabel-no-translation(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
   div.hidden-xs
-    if (right_lang != null)
+    if (right_lang!= "--" && right_lang != null)
       .row
         - unedited = blog._countUneditedMarkdown[right_lang];
         - notranslate = blog._countNoTranslateMarkdown[right_lang];
@@ -45,7 +45,7 @@ block content
   .row
     - columnLeftSize = "col-md-6"
     - columnRightSize = "col-md-6"
-    - if ( || right_lang == null)  {columnLeftSize = "col-md-12";columnRightSize = "hidden";}
+    - if (right_lang== "--" || right_lang == null)  {columnLeftSize = "col-md-12";columnRightSize = "hidden";}
     .col-md-6
       - status = blog.status
       - if (blog["reviewComment"+left_lang]) status = "Review "+left_lang;
@@ -148,7 +148,7 @@ block content
           a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{left_lang}") 
             span.glyphicon.glyphicon-export
             | #{left_lang}
-        if (  right_lang != null)
+        if (right_lang != "--" && right_lang != null)
           li.hidden-xs
             a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{right_lang}") 
               span.glyphicon.glyphicon-export

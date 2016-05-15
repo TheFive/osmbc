@@ -17,18 +17,21 @@ var logModule      = require('../model/logModule.js');
 var userModule     = require('../model/user.js');
 
 function findBlogByRouteId(id,user,callback) {
+  debug("findBlogByRouteId");
   var blog;
   should(typeof(user)).eql('object');
   should(typeof(callback)).eql('function');
 
   async.series([
     function CheckTBC(cb) {
+      debug("findBlogByRouteId->CheckTBC");
       if (id === "TBC") {
         blog = blogModule.getTBC();
       }
       return cb();
     },
     function findID(cb) {
+      debug("findBlogByRouteId->findID");
       blogModule.findById(id,function(err,r) {
         if (err) return cb(err);
         if (r) blog= r;
@@ -36,6 +39,7 @@ function findBlogByRouteId(id,user,callback) {
       });
     },
   function findByName(cb) {
+    debug("findBlogByRouteId->findByName");
     if (blog) return cb();
     blogModule.find({name:id},function(err,r) {
       if (err) return cb(err);
@@ -46,9 +50,11 @@ function findBlogByRouteId(id,user,callback) {
     });
   },
   function countItems(cb) {
+    debug("findBlogByRouteId->countItems");
     if (blog) return blog.calculateDerived(user,cb);
     return cb();
   }], function(err) {
+    debug("findBlogByRouteId->final function");
     if (err) return callback(err);
     if (!blog) return callback(new Error("Blog >"+id+"< not found"));
     callback(null,blog);
@@ -57,7 +63,7 @@ function findBlogByRouteId(id,user,callback) {
 
 /* GET users listing. */
 function renderBlogId(req, res, next) {
-  debug('router.get /:blog_id');
+  debug('renderBlogId');
   req.session.articleReturnTo = req.originalUrl;
 
   var id = req.params.blog_id;
@@ -88,7 +94,7 @@ function renderBlogId(req, res, next) {
 }
  
 
- function renderBlogStat(req, res, next) {
+function renderBlogStat(req, res, next) {
   debug('renderBlogStat');
 
   var id = req.params.blog_id;
@@ -149,7 +155,7 @@ function renderBlogId(req, res, next) {
 
 
 function renderBlogList(req, res, next) {
-  debug('router.get /list');
+  debug('renderBlogList');
   var status = req.query.status;
   var query = {};
   var additionalText;
@@ -221,7 +227,8 @@ function renderBlogPreview(req, res, next) {
                   }
       },
       function(err,result) {
-        debug("final function");
+        debug("renderBlogPreview->final function");
+        console.log("Start Rendering1");
         if (req.query.download=="true") {
           
           
@@ -237,6 +244,8 @@ function renderBlogPreview(req, res, next) {
           return;
         } else {
           should.exist(res.rendervar);
+
+          console.log("Start Rendering2");
 
          
           res.render('blogpreview',{layout:res.rendervar.layout,
@@ -329,7 +338,7 @@ function renderBlogTab(req, res, next) {
 
       },
       function(err,result) {
-        debug("final function");
+        debug("renderBlogTab->final function");
         should.exist(res.rendervar);
         if (clearParams) {
           var url = config.getValue('htmlroot')+"/blog/"+blog.name;
@@ -341,6 +350,7 @@ function renderBlogTab(req, res, next) {
 
         var renderer = new blogRenderer.HtmlRenderer(blog);
 
+        console.log("Rendering: "+'blog_'+tab.toLowerCase());
 
         res.render('blog_'+tab.toLowerCase(),{layout:res.rendervar.layout,
             blog:blog,
@@ -360,7 +370,7 @@ function renderBlogTab(req, res, next) {
 }
 
 function createBlog(req, res, next) {
-  debug('router.get /create');
+  debug('createBlog');
 
   blogModule.createNewBlog(req.user,function(err) {
     if (err) return next(err);
