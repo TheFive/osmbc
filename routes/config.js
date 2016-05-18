@@ -17,28 +17,6 @@ var logModule = require('../model/logModule.js');
 
 
 
-function renderList(req,res,next) {  
-  debug('renderList');
-  var users;
-  var query = {};
-  var sort = {column:"name"};
-
-  async.parallel([
-      function(callback) {
-        configModule.find(query,sort,function(err,result) {
-          if (err) return callback(err);
-          users = result;
-        });
-      }
-    ],function(error) { 
-        if (error) return next(error);
-        should.exist(res.rendervar);
-        res.render('configList',{layout:res.rendervar.layout,query:query,
-                                users:users});      
-    }
-  );
-}
-
 
 
 function renderConfigName(req, res, next) {
@@ -121,7 +99,6 @@ function postConfigId(req, res, next) {
 }
 
 
-router.get('/list',renderList);
 router.get('/:name',renderConfigName);
 router.post('/:name', postConfigId);
 
