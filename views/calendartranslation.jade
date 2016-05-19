@@ -4,7 +4,7 @@ block showContentOfConfig
   h2= "Calendar Preview"
   - lang = layout.language
   if config.json
-    table.table.table-striped.table-responsive
+    table#resulttable.table.table-striped.table-responsive
       thead
         tr
           th=config.json.town[lang]

@@ -1,11 +1,37 @@
 # Change Log
 
-## [1.8.1](https://github.com/TheFive/osmbc/tree/1.8.1) (2016-05-07)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.0a...1.8.1)
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.2...HEAD)
 
 **Implemented enhancements:**
 
-- browser collect button plugin [\#419](https://github.com/TheFive/osmbc/issues/419)
+- Filter to disable all markdown that are newer in the left column than on the right column. [\#457](https://github.com/TheFive/osmbc/issues/457)
+
+## [1.8.2](https://github.com/TheFive/osmbc/tree/1.8.2) (2016-05-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1b...1.8.2)
+
+**Implemented enhancements:**
+
+- Inbox: would it be possible to see only the new issues? [\#456](https://github.com/TheFive/osmbc/issues/456)
+- enable colors for the people in the blog views. [\#455](https://github.com/TheFive/osmbc/issues/455)
+
+## [1.8.1b](https://github.com/TheFive/osmbc/tree/1.8.1b) (2016-05-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1a...1.8.1b)
+
+**Fixed bugs:**
+
+- Number of Doublet in article view wrong. [\#454](https://github.com/TheFive/osmbc/issues/454)
+
+## [1.8.1a](https://github.com/TheFive/osmbc/tree/1.8.1a) (2016-05-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1...1.8.1a)
+
+**Fixed bugs:**
+
+- Remove any linebreaks in titlegenerator. They lead to broken links. [\#450](https://github.com/TheFive/osmbc/issues/450)
+
+## [1.8.1](https://github.com/TheFive/osmbc/tree/1.8.1) (2016-05-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.0a...1.8.1)
 
 **Fixed bugs:**
 
@@ -175,6 +201,9 @@
 
 ## [1.2.2a](https://github.com/TheFive/osmbc/tree/1.2.2a) (2016-04-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2...1.2.2a)
+
+## [1.2.2](https://github.com/TheFive/osmbc/tree/1.2.2) (2016-04-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2...1.2.2)
 
 ## [1.2.2](https://github.com/TheFive/osmbc/tree/1.2.2) (2016-04-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.1...1.2.2)

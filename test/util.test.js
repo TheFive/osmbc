@@ -36,6 +36,18 @@ describe('util',function() {
       bddone();
     });
   });
+  describe('toPGString',function(){
+    it('should keep things unchanged',function(){
+      should(util.toPGString("This is a string")).eql("This is a string");
+      should(util.toPGString("https://thisisanurl.org/hallo/do")).eql("https://thisisanurl.org/hallo/do");
+    });
+    it('should escape \' with \'',function(){
+      should(util.toPGString("This is a 'string")).eql("This is a ''string");
+    });
+    it('should double escape \' with \'',function(){
+      should(util.toPGString("This is a 'string",2)).eql("This is a ''''string");
+    });
+  });
   describe('isURL', function() {
     it('should recognise some urls',function() {
       for (var i=0;i<data.isURLArray.length;i++) {
