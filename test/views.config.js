@@ -2,11 +2,9 @@
 
 var async = require('async');
 var testutil = require('./testutil.js');
-var nock = require("nock");
 var should  = require('should');
 
 var userModule = require("../model/user.js");
-var articleModule = require("../model/article.js");
 
 
 
@@ -50,6 +48,7 @@ describe('views/config', function() {
         browser.wait(1000,cb);
       }
     ],function(err){
+      should.not.exist(err);
       browser.assert.status(500);
       //should.not.exist(err);
       //browser.assert.text('table#resulttable',"WhereWWhenCountryMunichOpenStreetMap Default Meeting2015-12-15Germany");
