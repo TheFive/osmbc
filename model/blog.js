@@ -280,11 +280,11 @@ function createNewBlog(user, proto,callback,noArticle) {
     async.series([
       function createCalendar(cb) {
         if (noArticle) return cb();
-        articleModule.createNewArticle({blog:blog.name,categoryEN:"Upcoming Events"},cb);
+        articleModule.createNewArticle({blog:blog.name,categoryEN:"Upcoming Events",title:blog.name+" Upcoming Events"},cb);
       },
       function createCalendar(cb) {
         if (noArticle) return cb();
-        articleModule.createNewArticle({blog:blog.name,categoryEN:"Picture"},cb);
+        articleModule.createNewArticle({blog:blog.name,categoryEN:"Picture",title:blog.name+" Picture"},cb);
       }
       ],
       function finalFunction(err) {
