@@ -818,11 +818,14 @@ describe('model/article', function() {
     before(function (bddone) {
       // Initialise some Test Data for the find functions
       async.series([
+
+
         testutil.clearDB,
         function c1(cb) {articleModule.createNewArticle({blog:"1",markdownDE:"test1",collection:"Try this link https://www.test.at/link ?",category:"catA"},cb);},
-        function c1(cb) {articleModule.createNewArticle({blog:"2",markdownEN:"See more special [here](https://www.test.at/link)",collection:"col1",category:"catA"},cb);},
-        function c2(cb) {articleModule.createNewArticle({blog:"3",markdownDE:"test2",collection:"http://www.test.at/link",category:"catB"},cb);},
-        function c3(cb) {articleModule.createNewArticle({blog:"4",markdownDE:"test3",collection:"https://simple.link/where",category:"catA"},
+        function c2(cb) {articleModule.createNewArticle({blog:"5",markdownDE:"[test](http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842)",collection:"text",category:"catA"},cb);},
+        function c3(cb) {articleModule.createNewArticle({blog:"2",markdownEN:"See more special [here](https://www.test.at/link)",collection:"col1",category:"catA"},cb);},
+        function c4(cb) {articleModule.createNewArticle({blog:"3",markdownDE:"test2",collection:"http://www.test.at/link",category:"catB"},cb);},
+        function c5(cb) {articleModule.createNewArticle({blog:"4",markdownDE:"test3",collection:"https://simple.link/where",category:"catA"},
                          function(err,result){
                           should.not.exist(err);
                           idToFindLater = result.id;
@@ -851,6 +854,14 @@ describe('model/article', function() {
         should(result[0].blog).equal("1");
         should(result[1].blog).equal("2");
         should(result[2].blog).equal("3");
+        bddone();
+      });
+    });
+    it('should search links with apostroph in it',function(bddone){
+      articleModule.fullTextSearch("http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842",{column:"blog"},function(err,result) {
+        should.not.exist(err);
+        should.exist(result);
+        should(result.length).equal(1);
         bddone();
       });
     });

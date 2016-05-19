@@ -19,6 +19,19 @@ function shorten(string,maxlength) {
   return newstring.substring(0,maxlength)+"...";
 }
 
+function toPGString(string,count) {
+  let result = "";
+  if (!count) count = 1;
+  for (let i=0;i<string.length;i++) {
+    let c = string.substring(i,i+1);
+    if ( (c == "'") && (count === 1)) c = "''";
+    if ( (c == "'") && (count === 2)) c = "''''";
+    //if (c= "\\") c= "\\\\";
+    result += c;
+  }
+  return result;
+}
+
 function linkify(string) {
   debug('linkify');
   var result = string.toLowerCase();
@@ -66,6 +79,7 @@ function getAllURL(t) {
 // default is 30. If a string is shortenend, "..." is appendet
 exports.shorten = shorten;
 exports.isURL = isURL;
+exports.toPGString = toPGString;
 exports.getAllURL = getAllURL;
 exports.linkify = linkify;
 

@@ -323,12 +323,13 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
       if (search.substring(0,6)=="https:") {
         http2Url = "http:"+search.substring(6,9999);
       }
-      search = "''"+http1Url+"'' | ''("+http1Url+")'' ";
-      if (http2Url) search += "| ''"+http2Url+"'' | ''("+http1Url+")'' ";
+      search = "''"+util.toPGString(http1Url,2)+"'' | ''("+util.toPGString(http1Url,2)+")'' ";
+      if (http2Url) search += "| ''"+util.toPGString(http2Url,2)+"'' | ''("+util.toPGString(http1Url,2)+")'' ";
       germanVector = "@@ to_tsquery('german', '"+search+"')";
       englishVector = "@@ to_tsquery('english', '"+search+"')";
     }
-   
+    console.log(germanVector);
+
     var sqlQuery =  "select id, data from article \
                           where to_tsvector('german', coalesce(data->>'title','')::text || ' '|| \
                                                       coalesce(data->>'collection','')  || ' '|| \
