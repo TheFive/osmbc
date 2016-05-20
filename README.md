@@ -32,7 +32,7 @@ For tests, use the development instance: http://thefive.sabic.uberspace.de/devos
 Master:   | develop:
 ----------|----------------------
 [![Build Status](https://travis-ci.org/TheFive/osmbc.svg?branch=master)](https://travis-ci.org/TheFive/osmbc) | [![Build Status](https://travis-ci.org/TheFive/osmbc.svg?branch=develop)](https://travis-ci.org/TheFive/osmbc)
-[![codecov.io](https://codecov.io/github/TheFive/osmbc/coverage.svg?branch=master)](https://codecov.io/github/TheFive/osmbc?branch=master) | [![codecov.io](https://codecov.io/github/TheFive/osmbc/coverage.svg?branch=develop)](https://codecov.io/github/TheFive/osmbc?branch=develop)
+[![codecov.io](https://codecov.io/github/TheFive/osmbc/coverage.svg?branch=master)](https://codecov.io/github/TheFive/osmbc/branch/master) | [![codecov.io](https://codecov.io/github/TheFive/osmbc/coverage.svg?branch=develop)](https://codecov.io/github/TheFive/osmbc/branch/develop)
 
 Timeline for code coverage on development branch:
 (Every dot is a month)
@@ -68,7 +68,3 @@ I am happy to do any bug fixes for the system. But please make sure, that your e
 6. "is not working" or "is broken" obvious does not full fill 3. and 3. .
 
 The rules does support the developer to come quicker to the point. Sometimes you are using other ways in OSMBC to come to your result and the way coming to a result is important for bug fixing.
-<<<<<<< HEAD
-=======
-
->>>>>>> develop
