@@ -72,11 +72,13 @@ describe('router/slack',function(){
       .post(/\/services\/.*/)
       .times(999)
       .reply(200,"ok");
+    testutil.nockHtmlPages();
 
     process.env.TZ = 'Europe/Amsterdam';
   });
   after(function(){
     server.close();
+    testutil.nockHtmlPagesClear();
     nock.cleanAll();
   });
   beforeEach(function (bddone) {

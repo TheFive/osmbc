@@ -21,8 +21,9 @@ describe('views/tools', function() {
     async.series([
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
-      function createBrowser(cb) {testutil.startBrowser("TheFive",function(err,result){browser=result;cb();});}
+      testutil.startServer.bind(null,"TheFive")
     ], function(err) {
+      browser = testutil.getBrowser();
       bddone(err);
     });
   });
@@ -37,6 +38,9 @@ describe('views/tools', function() {
   });
   after(function(){
     parseEvent.fortestonly.currentdate = null;
+  });
+  afterEach(function(){
+    testutil.stopServer();
   });
 
 

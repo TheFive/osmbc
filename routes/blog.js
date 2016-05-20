@@ -326,11 +326,12 @@ function renderBlogPreview(req, res, next) {
       function(err,result) {
         debug("final function");
         if (req.query.download=="true") {
-          
-          
+
+
           if (markdown) {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
             res.setHeader('Content-type', "text");
+
             res.end(result.converter.preview,"UTF8");
           } else {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".html");
