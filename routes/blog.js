@@ -360,7 +360,7 @@ function renderBlogPreview(req, res, next) {
 }
 
 function renderBlogTab(req, res, next) {
-  debug('renderBlogPreviewAndEdit');
+  debug('renderBlogTab');
 
   var id = req.params.blog_id;
   var tab = req.query.tab;
