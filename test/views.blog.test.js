@@ -74,5 +74,26 @@ describe('views/blog', function() {
         }
       ],bddone);
     });
+    it('should generate preview as markdown',function(bddone){
+
+      async.series([
+
+        function(cb){
+          var opts = {
+            url: baseLink+"/blog/"+data.blogName+"/preview?lang=markdownDE&download=true", method: 'get'
+          };
+          request(opts, function (err, res, body) {
+            should.not.exist(err);
+            console.dir(body);
+            should(res.statusCode).eql(200);
+            let file =  path.resolve(__dirname,'data', "views.blog.export.1.md");
+            let expectation =  fs.readFileSync(file,"UTF8");
+
+            should(body).eql(expectation);
+            cb();
+          });
+        }
+      ],bddone);
+    });
   });
 });
