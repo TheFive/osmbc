@@ -217,7 +217,7 @@ function renderBlogPreview(req, res, next) {
     async.auto({ 
         converter:function(callback) {
                       debug("converter function");
-                      blog.getPreviewData({lang:lang,createTeam:true},function(err,data) {
+                      blog.getPreviewData({lang:lang,createTeam:true,disableNotranslation:true},function(err,data) {
 
                         let renderer=new BlogRenderer.HtmlRenderer(blog);
                         if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
@@ -234,11 +234,11 @@ function renderBlogPreview(req, res, next) {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
             res.setHeader('Content-type', "text");
 
-            res.end(result.converter.preview,"UTF8");
+            res.end(result.converter,"UTF8");
           } else {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".html");
             res.setHeader('Content-type', "text/html");
-            res.end(result.converter.preview,"UTF8");            
+            res.end(result.converter,"UTF8");
           }
           return;
         } else {
@@ -261,7 +261,7 @@ function renderBlogPreview(req, res, next) {
 }
 
 function renderBlogTab(req, res, next) {
-  debug('renderBlogPreviewAndEdit');
+  debug('renderBlogTab');
 
   var id = req.params.blog_id;
   var tab = req.query.tab;

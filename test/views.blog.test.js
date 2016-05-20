@@ -80,7 +80,7 @@ describe('views/blog', function() {
 
         function(cb){
           var opts = {
-            url: baseLink+"/blog/"+data.blogName+"/preview?lang=markdownDE&download=true", method: 'get'
+            url: baseLink+"/blog/"+data.blogName+"/preview?lang=DE&markdown=true&download=true", method: 'get'
           };
           request(opts, function (err, res, body) {
             should.not.exist(err);
