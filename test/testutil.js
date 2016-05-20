@@ -279,26 +279,40 @@ exports.generateTests = function generateTests(datadir,fileregex,createTestFunct
  };
 
 var browser = null;
-var server;
-exports.startBrowser = function startBrowser(userString,callback) {
-  debug('startBrowser');
-  should(typeof(userString)).eql("string");
-  if (browser) return callback(null,browser);
+var server = null;
+
+
+exports.startServer = function startServer(userString,callback) {
+  debug('startServer');
+  should.not.exist(server,"Server is allready started.");
+  server = http.createServer(app).listen(config.getServerPort());
+  if (userString === null) return;
   userModule.findOne({OSMUser:userString},function(err,user){
+    if (err) return callback(err);
     should.exist(user);
     user.displayName = userString;
-    server = http.createServer(app).listen(config.getServerPort());
     // initialize the browser using the same port as the test application
-    browser = new Browser({ site: 'http://localhost:'+config.getServerPort() });
     passportStub.install(app);
     passportStub.login(user);
-    callback(null,browser);
-
+    callback();
   });
- };
+};
+
+exports.stopServer = function stopServer() {
+  debug('stopServer');
+  should.exist(server,"Server was not started, could not stop.");
+  server.close();
+  server = null;
+};
+
+exports.getBrowser = function getBrowser() {
+  if (!browser)  browser = new Browser({ site: 'http://localhost:'+config.getServerPort() });
+  return browser;
+};
 
 
- exports.doATest = function doATest(dataBefore,test,dataAfter,callback) {
+
+exports.doATest = function doATest(dataBefore,test,dataAfter,callback) {
   async.series([
     exports.clearDB,
     exports.importData.bind(this,dataBefore),

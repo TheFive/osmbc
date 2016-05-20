@@ -230,11 +230,10 @@ function renderBlogPreview(req, res, next) {
         debug("renderBlogPreview->final function");
         console.log("Start Rendering1");
         if (req.query.download=="true") {
-          
-          
           if (asMarkdown) {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
             res.setHeader('Content-type', "text");
+
             res.end(result.converter.preview,"UTF8");
           } else {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".html");

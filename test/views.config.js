@@ -18,10 +18,14 @@ describe('views/config', function() {
     async.series([
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full","language":"DE"},cb); },
-      function createBrowser(cb) {testutil.startBrowser("TheFive",function(err,result){browser=result;cb();});}
+      testutil.startServer.bind(null,"TheFive")
     ], function(err) {
+      browser = testutil.getBrowser();
       bddone(err);
     });
+  });
+  afterEach(function(){
+    testutil.stopServer();
   });
 
 

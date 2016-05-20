@@ -36,16 +36,16 @@ describe('views/article', function() {
         if (article) articleId = article.id;
         cb(err);
       }); },
-      function startBrowser(cb) {testutil.startBrowser("TheFive",function(err,result){
-        browser=result;
-        cb(err);
-      });}
+      testutil.startServer.bind(null,"TheFive")
     ], function(err) {
+      browser = testutil.getBrowser();
       bddone(err);
       
     });
   });
-
+  afterEach(function(){
+    testutil.stopServer();
+  });
  
   after(function(bddone){
     nock.cleanAll();
@@ -127,7 +127,7 @@ describe('views/article', function() {
     });
   });
   describe('Scripting Functions in Edit Mode',function() {
-    before(function(done) {
+    beforeEach(function(done) {
       this.timeout(maxTimer*3);
       browser.visit('/article/'+articleId+'?edit=true&style=OVERVIEW', function(err){
  //     browser.visit('/article/'+articleId, function(err){

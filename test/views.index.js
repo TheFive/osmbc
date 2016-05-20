@@ -25,17 +25,21 @@ describe('views/index', function() {
     async.series([
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
+      testutil.startServer.bind(null,"TheFive"),
       function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test",markdownEN:"test"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
       }); },
       function createBlog(cb) {blogModule.createNewBlog({blog:"blog",status:"edit"},function(err){
         cb(err);
-      }); },
-      function createBrowser(cb) {testutil.startBrowser("TheFive",function(err,result){browser=result;cb();});}
+      }); }
     ], function(err) {
+      browser=testutil.getBrowser();
       bddone(err);
     });
+  });
+  after(function(){
+    testutil.stopServer();
   });
 
 

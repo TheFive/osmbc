@@ -23,11 +23,15 @@ describe('views/user', function() {
       function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
-      }); },     
-      function createBrowser(cb) {testutil.startBrowser("TheFive",function(err,result){browser=result;cb();});}
+      }); },
+      testutil.startServer.bind(null,"TheFive"),
     ], function(err) {
+      browser = testutil.getBrowser();
       bddone(err);
     });
+  });
+  afterEach(function(){
+    testutil.stopServer();
   });
 
 
