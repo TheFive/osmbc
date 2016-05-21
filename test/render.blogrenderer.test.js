@@ -41,7 +41,7 @@ describe('render/blogrenderer', function() {
     it('should generate a preview when no markdown is specified (no Edit Link)',function (bddone) {
       var article = articleModule.create({title:"Test Title"});
       var result = renderer.renderArticle("DE",article);
-      should(result).equal('<li id="undefined_test_title">\nTest Title\n</li>');
+      should(result).equal('<li id="undefined_0">\nTest Title\n</li>');
       bddone();
     });
     it('should generate a preview when no markdown2 is specified (no Edit Link)',function (bddone) {
