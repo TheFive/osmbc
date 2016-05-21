@@ -1,8 +1,14 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [1.8.3a](https://github.com/TheFive/osmbc/tree/1.8.3a) (2016-05-19)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.3...1.8.3a)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.2...HEAD)
+**Fixed bugs:**
+
+- Search for links with ' failed [\#458](https://github.com/TheFive/osmbc/issues/458)
+
+## [1.8.3](https://github.com/TheFive/osmbc/tree/1.8.3) (2016-05-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.2...1.8.3)
 
 **Implemented enhancements:**
 
@@ -201,9 +207,6 @@
 
 ## [1.2.2a](https://github.com/TheFive/osmbc/tree/1.2.2a) (2016-04-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2...1.2.2a)
-
-## [1.2.2](https://github.com/TheFive/osmbc/tree/1.2.2) (2016-04-06)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2...1.2.2)
 
 ## [1.2.2](https://github.com/TheFive/osmbc/tree/1.2.2) (2016-04-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.1...1.2.2)
