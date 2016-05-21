@@ -653,7 +653,6 @@ describe('model/article', function() {
     });
   });
 
-
   describe('calculateUsedLinks',function() {
     var idToFindLater;
     before(function (bddone) {

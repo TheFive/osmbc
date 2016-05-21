@@ -71,8 +71,7 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang,article) {
 
   var blogRef = article.blog;
   if (!blogRef) blogRef = "undefined";
-  var titleRef = article.title;
-  if (!titleRef) titleRef = article.id;
+  var titleRef = article.id;
   var pageLink = util.linkify(blogRef+'_'+titleRef);
 
 
