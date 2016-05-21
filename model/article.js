@@ -180,8 +180,7 @@ Article.prototype.getPreview = function getPreview(style,user) {
   var editLink = '';
   var blogRef = this.blog;
   if (!blogRef) blogRef = "undefined";
-  var titleRef = this.title;
-  if (!titleRef) titleRef = this.id;
+  var titleRef = this.id;
   var pageLink = util.linkify(blogRef+'_'+titleRef);
   
  
