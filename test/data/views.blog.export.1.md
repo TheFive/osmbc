@@ -12,3 +12,6 @@
 
 * Die Diskussion um die vorgesehenen [Änderungen im Kartenstil](http://bl.ocks.org/pnorman/raw/c61d6b11193081910866/#12.00/51.9293/4.4866) nehmen auf der talk Mailingliste [kein Ende](https://lists.openstreetmap.org/pipermail/talk/2015-August/073857.html). Auch im deutschen Forum sind die Änderungen ein [Thema](http://forum.openstreetmap.org/viewtopic.php?pid=524613#p524613).
 
+## Wochenvorschau
+
+* This should be a markdown table\n\n
