@@ -11,6 +11,7 @@ var fs = require('fs');
 var config = require('../config.js');
 
 var configModule = require('../model/config.js');
+var blogModule   = require('../model/blog.js');
 
 
 
@@ -91,6 +92,79 @@ describe('views/blog', function() {
 
             should(body).eql(expectation);
             cb();
+          });
+        }
+      ],bddone);
+    });
+  });
+  describe('status Functions',function(){
+    beforeEach(function(bddone) {
+      baseLink = 'http://localhost:' + config.getServerPort() + config.getValue("htmlroot");
+      nock('https://hooks.slack.com/')
+        .post(/\/services\/.*/)
+        .times(999)
+        .reply(200,"ok");
+
+      process.env.TZ = 'Europe/Amsterdam';
+      async.series([
+        testutil.importData.bind(null,{clear:true,blog:[{name:"blog"}],user:[{OSMUser:"TheFive",access:"full",mainLang:"DE"}]}),
+        testutil.startServer.bind(null,"TheFive"),
+        configModule.initialise
+      ],bddone);
+
+
+    });
+    afterEach(function(){
+      nock.cleanAll();
+      testutil.stopServer();
+    });
+    it('should close a blog',function(bddone){
+
+      async.series([
+
+        function(cb){
+          var opts = {
+            url: baseLink+"/blog/blog?setStatus=closed",
+            method: 'get',
+            headers:{
+              Referer: baseLink+"/blog/blog"
+            }
+          };
+          request(opts, function (err, res, body) {
+            should.not.exist(err);
+            console.dir(body);
+            should(res.statusCode).eql(200);
+            blogModule.findOne({name:"blog"},function(err,blog){
+              should.not.exist(err);
+              should(blog.status).eql("closed");
+              cb();
+            });
+          });
+        }
+      ],bddone);
+    });
+    it('should start a review',function(bddone){
+
+      async.series([
+
+        function(cb){
+          var opts = {
+            url: baseLink+"/blog/blog?reviewComment=startreview",
+            method: 'get',
+            headers:{
+              Referer: baseLink+"/blog/blog"
+            }
+          };
+          request(opts, function (err, res) {
+            should.not.exist(err);
+            should(res.statusCode).eql(200);
+            blogModule.findOne({name:"blog"},function(err,blog){
+              should.not.exist(err);
+              should(blog.reviewCommentDE).eql([]);
+              // in test mode review is done in WP in DE Language, so the export is set too
+              should(blog.exportedDE).be.True();
+              cb();
+            });
           });
         }
       ],bddone);

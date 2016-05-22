@@ -61,38 +61,7 @@ function findBlogByRouteId(id,user,callback) {
   });
 }
 
-/* GET users listing. */
-function renderBlogId(req, res, next) {
-  debug('renderBlogId');
-  req.session.articleReturnTo = req.originalUrl;
 
-  var id = req.params.blog_id;
-
-  var tab = req.query.tab;
-  var style = req.query.style;
-
-  if (!tab && !style) {
-    tab = req.session.lasttab;
-    style = req.session.laststyle;
-  }
-  if (!tab && !style) {
-    tab = "Overview";
-  }
-  req.session.laststyle = style;
-  req.session.lasttab = tab;
-
-  if (id === "TBC") return renderBlogTab(req,res,next);
-
-  if (tab) {
-
-    if (tab==="Overview") return renderBlogTab(req,res,next);
-    if (tab==="Review") return renderBlogTab(req,res,next);
-    if (tab==="Full") return renderBlogTab(req,res,next);
-
-  }
-  return next(new Error("This Function is no longer Supported"));
-}
- 
 
 function renderBlogStat(req, res, next) {
   debug('renderBlogStat');
@@ -429,10 +398,10 @@ router.get ('/edit/:blog_id',editBlogId);
 router.post('/edit/:blog_id',postBlogId);
 router.get('/create', createBlog);
 router.get('/list', renderBlogList);
-router.get('/:blog_id', renderBlogId);
+router.get('/:blog_id', renderBlogTab);
 router.get('/:blog_id/stat', renderBlogStat);
-router.get('/:blog_id/previewNEdit',renderBlogTab);
-router.get('/:blog_id/:tab', renderBlogPreview);
+router.get('/:blog_id/preview', renderBlogPreview);
+router.get('/:blog_id/:tab', renderBlogTab);
 router.get('/:blog_id/preview_:blogname_:downloadtime', renderBlogPreview);
 //router.post('/edit/:blog_id',postBlogId);
 
@@ -441,6 +410,6 @@ module.exports.router = router;
 
 // the following modules are exported for test reasons
 module.exports.renderBlogPreview = renderBlogPreview;
-module.exports.renderBlogId = renderBlogId;
+module.exports.renderBlogTab = renderBlogTab;
 
 

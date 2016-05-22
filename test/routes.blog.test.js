@@ -181,7 +181,7 @@ describe('routes/blog',function() {
       },true); // do not create additional articles
     });
   });
-  describe('renderBlogId',function() {
+  describe('renderBlogTab',function() {
     it('should call next if blog id not exist',function(bddone) {
       blogModule.createNewBlog({OSMUser:"test"},{title:"WN333"},function(err,blog) {
         should.not.exist(err);
@@ -201,7 +201,7 @@ describe('routes/blog',function() {
           function(callback) {
             res.render = sinon.spy(callback);
             next = sinon.spy(callback);
-            blogRouter.renderBlogId(req,res,next);
+            blogRouter.renderBlogTab(req,res,next);
           }],
           function(err) {
             should.exist(err);
@@ -230,7 +230,7 @@ describe('routes/blog',function() {
           function(callback) {
             res.render = sinon.spy(callback);
             next = sinon.spy(callback);
-            blogRouter.renderBlogId(req,res,next);
+            blogRouter.renderBlogTab(req,res,next);
           }],
           function(err) {
             should.exist(err);
@@ -262,7 +262,7 @@ describe('routes/blog',function() {
             function(callback) {
               res.render = sinon.spy(callback);
               next = sinon.spy(callback);
-              blogRouter.renderBlogId(req,res,next);
+              blogRouter.renderBlogTab(req,res,next);
             }],
             function(err) {
               should.exist(err);

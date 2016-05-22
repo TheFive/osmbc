@@ -130,6 +130,7 @@ Article.prototype.getCommentRead = function getCommentRead(user) {
 
 
 
+
 Article.prototype.doLock = function doLock(user,callback) {
   debug('doLock');
   var self = this;
