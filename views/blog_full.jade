@@ -58,7 +58,7 @@ block blogcontent
         - if (disableWritten  && a["markdown"+lang]) enable = false;
         - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
         - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
-        - if (disableNewerMarkdown && a._lastChange["markdown"+left_lang] && a._lastChange["markdown"+right_lang] && (a._lastChange["markdown"+left_lang] >= a._lastChange["markdown"+right_lang])) enable = false;
+        - if (disableNewerMarkdown && a._lastChange && a._lastChange["markdown"+left_lang] && a._lastChange["markdown"+right_lang] && (a._lastChange["markdown"+left_lang] >= a._lastChange["markdown"+right_lang])) enable = false;
         - if (disableNewerMarkdown && a["markdown"+left_lang] && !a["markdown"+right_lang]) enable = false;
         if enable
           .row
@@ -85,7 +85,7 @@ block blogcontent
                     div(class=(a["markdown" + lang]) ? "" : "mark")
                       ul
                         :verbatim
-                          !{renderer.article(left_lang,a)}
+                          !{renderer.renderArticle(left_lang,a)}
                   div.hidden(id="ldiv#{a.id}")
                     form(name="lEditArticle",id="lEditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{left_lang}", method="post")
                       textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange="onLeaveText('l',#{a.id});") #{a["markdown" + left_lang]}
@@ -109,7 +109,7 @@ block blogcontent
                       div(class=(a["markdown" + lang]) ? "" : "mark")
                         ul
                           :verbatim
-                            !{renderer.article(right_lang,a)}
+                            !{renderer.renderArticle(right_lang,a)}
                     div.hidden(id="rdiv#{a.id}")
                       form(name="rEditArticle",id="rEditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{right_lang}", method="post")
                         textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 onchange="onLeaveText('r',#{a.id});") #{a["markdown" + right_lang]}
@@ -155,7 +155,7 @@ block blogcontent
             div(class=columnLeftSize)
               ul
                 :verbatim
-                  !{renderer.article(left_lang,a)}
+                  !{renderer.renderArticle(left_lang,a)}
 
 
   .row
