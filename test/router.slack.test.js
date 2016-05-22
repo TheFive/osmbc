@@ -29,10 +29,9 @@ describe('router/slack',function(){
       url: link, method: 'post',
       json: {token: "testtoken", user_name: user_name, user_id: user_id, text: query}
     };
-    request(opts, function (err, res, body) {
+    request(opts, function (err, res) {
       should.not.exist(err);
 
-      console.log(body);
 
       should(res.statusCode).eql(200);
       should(res.body.token).eql("testtoken");
