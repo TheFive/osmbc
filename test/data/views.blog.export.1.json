@@ -1,0 +1,50 @@
+{
+  "clear":true,
+  "blog":[{"name":"BLOG","startDate":"2015-02-02","endDate":"2015-02-05"}],
+  "article":[{"blog":"BLOG",
+              "markdownDE":"* [Frederik](https://www.openstreetmap.org/user/woodpeck) [ruft](https://lists.openstreetmap.org/pipermail/osmf-talk/2015-August/003366.html) dazu auf, sich über ein grösseres Engagement in der [Foundation](https://wiki.osmfoundation.org/wiki/Main_Page) (Board Membership) Gedanken zu machen.",
+              "categoryEN":"OpenStreetMap Foundation",
+              "title":"3. Frederik macht was"},
+             {"blog":"BLOG",
+              "markdownDE":"* Paul Norman veröffentlicht das [Protokoll](http://wiki.osmfoundation.org/wiki/Board/Minutes/2015-07-20) der ersten öffentlichen OSMF Board Sitzung. Themen waren Mitarbeiterbefragung, das corporate membership Programm, die nächste Vollversammlung und Unterstützung im Admin Bereich. Dem Protokoll angehängt ist die Audio Aufzeichnung des Meetings.",
+              "categoryEN":"OpenStreetMap Foundation",
+              "title":"1. Paul Norman macht auch was"},
+            {"blog":"BLOG",
+              "markdownDE":"no translation",
+              "categoryEN":"OpenStreetMap Foundation",
+              "title":"2. Paul Norman macht auch was"},
+            {"blog":"BLOG",
+              "markdownDE":"Mehr text, mit Vorgänger",
+              "categoryEN":"OpenStreetMap Foundation",
+              "title":"2. Story between 1 and 3",
+              "predecessorId":1},
+            {"blog":"BLOG",
+              "title":"Title",
+              "markdownDE":"Die Diskussion um die vorgesehenen [Änderungen im Kartenstil](http://bl.ocks.org/pnorman/raw/c61d6b11193081910866/#12.00/51.9293/4.4866) nehmen auf der talk Mailingliste [kein Ende](https://lists.openstreetmap.org/pipermail/talk/2015-August/073857.html). Auch im deutschen Forum sind die Änderungen ein [Thema](http://forum.openstreetmap.org/viewtopic.php?pid=524613#p524613).",
+              "categoryEN":"Maps"
+              },
+            {"blog":"BLOG",
+              "title":"Picture",
+              "markdownDE":"This should be a markdown table",
+              "categoryEN":"Upcoming Events"
+            }
+          ],
+  "change":[{"blog":"BLOG","user":"USER1","property":"collection","to":"value"},
+            {"blog":"BLOG","user":"USER1","property":"collection","to":"value2"},
+            {"blog":"BLOG","user":"USER1","property":"collection","to":"value3"},
+            {"blog":"BLOG","user":"USER2","property":"markdownDE","to":"value"},
+            {"blog":"BLOG","user":"USERX","property":"markdownDE","to":"no translation"},
+            {"blog":"BLOG","user":"USERX","property":"markdownDE","to":"no translation"},
+            {"blog":"BLOG","user":"USER2","property":"markdownDE","to":"value"},
+            {"blog":"BLOG","user":"USER2","property":"markdownDE","to":"value"},
+            {"blog":"BLOG","user":"USER3","property":"collection","to":"value"},
+            {"blog":"BLOG","user":"USER4","property":"collection","to":"value"},
+            {"blog":"BLOG","user":"USER5","property":"collection","to":"value"}],
+  "user":[{"OSMUser":"USER1","WNAuthor":"user_1","WNPublicAuthor":"PaulTemple","access":"full"}],
+  "blogName":"BLOG",
+  "testBlogResultHtml":"model.blog.preview.2.html"
+}
+
+
+
+

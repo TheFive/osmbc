@@ -2,7 +2,7 @@ extends layout
 
 
 mixin leftcolumn
-  if (params.right_lang =="--")
+  if (params.right_lang === null)
     .col-md-10
       if block
         block
@@ -16,7 +16,7 @@ mixin leftcolumn
         p No Content provided
 
 mixin rightcolumn
-  if (params.right_lang !="--")
+  if (params.right_lang === null)
     .col-md-5.hidden-xs
       if block
         block
@@ -98,7 +98,7 @@ block content
             select(id="categoryEN",name="categoryEN").form-control
               for category in categories
                 - option = category[params.left_lang]
-                - if (params.right_lang != "--") option += " / "+category[params.right_lang]
+                - if (params.right_lang !== null) option += " / "+category[params.right_lang]
                 if (category.EN == article.categoryEN)
                   option(value="#{category.EN}" selected ) #{option} 
                 else
@@ -301,7 +301,7 @@ block content
           p="Collection"
         .col-md-10
           if (article.collection)
-            p
+            #collection
               :verbatim
                 !{layout.md_render(article.collection)}
               //:verbatim
@@ -806,7 +806,8 @@ block scripts
             leftLang=document.getElementById("left_lang").innerHTML;
             rightLang=document.getElementById("right_lang").innerHTML;
             result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
-            if (rightLang != "--") {
+
+            if (rightLang !== "--" && rightLang !== "") {
               result += " "+generateGoogleTranslateLink(linkList[0],rightLang);
             }
             result +="<br>\n";

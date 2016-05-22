@@ -14,7 +14,6 @@ var config = require('../config.js');
 
 var userModule = require('../model/user.js');
 var logModule = require('../model/logModule.js');
-var settingsModule = require('../model/settings.js');
 var blogRenderer = require('../render/BlogRenderer.js');
 
 
@@ -96,8 +95,6 @@ function renderUserId(req, res, next) {
                         changes:changes,
                         params:params,
                         langlist: config.getLanguages(),
-                        settings:settingsModule.listSettings,
-                        languages:settingsModule.listLanguages,
                         layout:res.rendervar.layout});
     }
   ) ;

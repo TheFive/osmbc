@@ -4,6 +4,7 @@ var async = require('async');
 var path = require('path'); 
 var fs = require('fs');
 var nock = require('nock');
+var cheerio = require('cheerio');
 var should = require('should');
 var testutil = require('./testutil.js');
 var userModule = require("../model/user.js");
@@ -30,20 +31,21 @@ describe('views/article', function() {
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full",language:"DE",mainLang:"DE"},cb); },
       function createBlog(cb) {blogModule.createNewBlog({OSMUser:"test"},{name:'blog'},cb);},
+      function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"http://www.test.dä/holla",markdownDE:"[Text](http://www.test.dä/holla) lorem ipsum dolores."},cb);},
       function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"Link1: http://www.test.dä/holla and other"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
       }); },
-      function startBrowser(cb) {testutil.startBrowser("TheFive",function(err,result){
-        browser=result;
-        cb(err);
-      });}
+      testutil.startServer.bind(null,"TheFive")
     ], function(err) {
+      browser = testutil.getBrowser();
       bddone(err);
       
     });
   });
-
+  afterEach(function(){
+    testutil.stopServer();
+  });
  
   after(function(bddone){
     nock.cleanAll();
@@ -61,7 +63,7 @@ describe('views/article', function() {
       });
     });
     it('should have converted collection correct',function(){
-      //browser.assert.attribute("namefortest","innerHTML",'Link1: <a href="http://www.test.dä/holla and other">http://www.test.dä/holla</a> and other');
+      browser.assert.text('#collection','Link1: http://www.test.dä/holla and other');
     });
     it('should isURL work on page' ,function() {
       var file =  path.resolve(__dirname,'data', "util.data.json");
@@ -125,7 +127,7 @@ describe('views/article', function() {
     });
   });
   describe('Scripting Functions in Edit Mode',function() {
-    before(function(done) {
+    beforeEach(function(done) {
       this.timeout(maxTimer*3);
       browser.visit('/article/'+articleId+'?edit=true&style=OVERVIEW', function(err){
  //     browser.visit('/article/'+articleId, function(err){
@@ -214,6 +216,24 @@ describe('views/article', function() {
                   bddone();
                 });
               });
+          });
+      });
+    });
+    it('should search and find existing article',function(bddone){
+      this.timeout(maxTimer);
+      browser.visit("/article/create",function(err){
+        should.not.exist(err);
+        browser
+          .fill("search","http://www.test.dä/holla")
+          .pressButton("SearchNow",function(err){
+            should.not.exist(err);
+            let c = cheerio.load(browser.html());
+            let t = c("li:contains('and other')").text();
+            should(t).eql("\nLink1: http://www.test.dä/holla and other\n");
+            t = c("li:contains('dolores')").text();
+            should(t).eql("\nText lorem ipsum dolores.\n\n");
+
+            bddone();
           });
       });
     });

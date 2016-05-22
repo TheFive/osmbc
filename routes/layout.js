@@ -146,7 +146,11 @@ function prepareRenderLayout(req,res,next) {
     },
 
     function (err,result) {
-      if (err) return next(err);
+      if (err) {
+        debug(JSON.stringify(err));
+        return next(err);
+      }
+
       if (!(res.rendervar) || typeof(res.rendervar)=='undefined') res.rendervar = {};
       res.rendervar.layout = {user:req.user,
                       listOfOrphanBlog:result.listOfOrphanBlog,

@@ -6,7 +6,7 @@
              {"blog":"BLOG","user":"TESTER","property":"collection","to":"testvalue3"},
              {"blog":"BLOG","user":"TESTER","property":"collection","to":"testvalue4"}],
   "testBlogName":"BLOG",
-  "style":"DE",
+  "lang":"DE",
   "testBlogResultMarkdownDE":"## Mapping\n* Dies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.\n",
   "testBlogResultHtml":"<p>02.02.2015-03.03.2015<h2 id=\"blog_mapping\">Mapping</h2>\n<ul><li id=\"blog_1\">\n<p>Dies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.</p>\n</li></ul><p align=\"right\"><i>Diese Wochennotiz wurde erstellt von TESTER.</i></p>"
 }

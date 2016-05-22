@@ -48,7 +48,7 @@ block blogcontent
           - if (disableWritten  && a["markdown"+lang]) enable = false;
           - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
           - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
-          - if (disableNewerMarkdown && a._lastChange["markdown"+left_lang] && a._lastChange["markdown"+right_lang] && (a._lastChange["markdown"+left_lang] >= a._lastChange["markdown"+right_lang])) enable = false;
+          - if (disableNewerMarkdown && a._lastChange && a._lastChange["markdown"+left_lang] && a._lastChange["markdown"+right_lang] && (a._lastChange["markdown"+left_lang] >= a._lastChange["markdown"+right_lang])) enable = false;
           - if (disableNewerMarkdown && a["markdown"+left_lang] && !a["markdown"+right_lang]) enable = false;
           if enable
             tr

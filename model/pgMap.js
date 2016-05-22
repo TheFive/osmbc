@@ -328,7 +328,6 @@ module.exports.fullTextSearch = function fullTextSearch(module,search,order,call
       germanVector = "@@ to_tsquery('german', '"+search+"')";
       englishVector = "@@ to_tsquery('english', '"+search+"')";
     }
-    console.log(germanVector);
 
     var sqlQuery =  "select id, data from article \
                           where to_tsvector('german', coalesce(data->>'title','')::text || ' '|| \

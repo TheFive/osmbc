@@ -17,28 +17,6 @@ var logModule = require('../model/logModule.js');
 
 
 
-function renderList(req,res,next) {  
-  debug('renderList');
-  var users;
-  var query = {};
-  var sort = {column:"name"};
-
-  async.parallel([
-      function(callback) {
-        configModule.find(query,sort,function(err,result) {
-          if (err) return callback(err);
-          users = result;
-        });
-      }
-    ],function(error) { 
-        if (error) return next(error);
-        should.exist(res.rendervar);
-        res.render('configList',{layout:res.rendervar.layout,query:query,
-                                users:users});      
-    }
-  );
-}
-
 
 
 function renderConfigName(req, res, next) {
@@ -54,6 +32,8 @@ function renderConfigName(req, res, next) {
       configModule.getConfigObject(name,function(err,result){
         if (err) return cb(err);
         config = result;
+        // JSON is not initially saved, so create it by getting it.
+        config.json = config.getJSON();
         return cb();
       });
     },
@@ -80,7 +60,6 @@ function renderConfigName(req, res, next) {
       if (name == "categorytranslation") jadeFile = name;
       if (name == "automatictranslatetext") jadeFile = name;
 
-      console.dir(config);
       res.render(jadeFile,{config:config,
                         changes:changes,
                         params:params,
@@ -120,7 +99,6 @@ function postConfigId(req, res, next) {
 }
 
 
-router.get('/list',renderList);
 router.get('/:name',renderConfigName);
 router.post('/:name', postConfigId);
 

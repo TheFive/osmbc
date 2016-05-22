@@ -4,7 +4,8 @@
     "http://mapoftheweek.blogspot.ch":
        {"/2016/04/mapping-playgrounds.html":"MapOfTheWeekBlogspot.html"},
     "http://forum.openstreetmap.org":
-      {"/viewtopic.php?id=54487":"OSMForumBridgesOffWay.html"},
+      {"/viewtopic.php?id=54487":"OSMForumBridgesOffWay.html",
+        "/viewtopic.php?id=53173":"InternationaleAdminGrenzen.html"},
     "https://twitter.com":
       {"/WeeklyOSM/status/726026930479370241":"WeeklyNewOnTwitter.html"},
     "http://www.openstreetmap.org":
