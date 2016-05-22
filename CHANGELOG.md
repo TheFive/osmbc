@@ -1,11 +1,15 @@
 # Change Log
 
+## [1.8.4](https://github.com/TheFive/osmbc/tree/1.8.4) (2016-05-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.3b...1.8.4)
+
 ## [1.8.3b](https://github.com/TheFive/osmbc/tree/1.8.3b) (2016-05-21)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.3a...1.8.3b)
 
 **Implemented enhancements:**
 
 - change anchor in generated html to article id. [\#462](https://github.com/TheFive/osmbc/issues/462)
+- Name upcoming Events && Picture Article when created. [\#459](https://github.com/TheFive/osmbc/issues/459)
 
 ## [1.8.3a](https://github.com/TheFive/osmbc/tree/1.8.3a) (2016-05-19)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.3...1.8.3a)
