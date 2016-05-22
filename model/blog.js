@@ -14,7 +14,6 @@ var should   = require('should');
 var moment   = require('moment');
 
 var articleModule       = require('../model/article.js');
-var settingsModule      = require('../model/settings.js');
 var configModule        = require('../model/config.js');
 var logModule           = require('../model/logModule.js');
 var messageCenter       = require('../notification/messageCenter.js');
@@ -24,8 +23,6 @@ var schedule            = require('node-schedule');
 var pgMap = require('./pgMap.js');
 var debug = require('debug')('OSMBC:model:blog');
 
-var MarkdownRenderer = require('../render/BlogRenderer.js').MarkdownRenderer;
-var HtmlRenderer = require('../render/BlogRenderer.js').HtmlRenderer;
 
 
 
@@ -430,127 +427,7 @@ Blog.prototype.createTeamString = function createTeamString(lang,callback) {
   });
 };
 
-// result of preview is html code to display the blog.
-Blog.prototype.getPreview = function getPreview(style,user,callback) {
-  debug('getPreview');
-  should(false).be.True();
-  var self = this;
-  
 
-  var options = style;
-  // first check the parameter
-  if (typeof(style) ==="string") {
-    options = settingsModule.getSettings(style);
-  }
-  if (typeof(user)=="function") {
-    callback = user;
-    user = "--";
-  }
-  should.exist(user);
-  var renderer = new HtmlRenderer(self);
-  if (options.markdown) renderer = new MarkdownRenderer(self);
-
-  self.getPreviewData({createTeam:options.fullfinal,
-                       disableNotranslation:options.fullfinal,
-
-                       lang:options.left_lang,
-                       collectors:true},function(err,result) {
-    if (err) return callback(err);
-    should.exist(result);
-
-
-    var articles = result.articles;
-    var teamString = result.teamString;
-    var futureArticles = result.futureArticles;
-
-
-    var preview = "";
-
-    var bilingual = options.bilingual;
-
-
-
-
-    var i, j; // often used iterator, declared here because there is no block scope in JS.
-
-
-    preview += renderer.subtitle(options.left_lang);
-
-    var clist = self.getCategories();
-
-
-    // Generate the blog result along the categories
-    for (i = 0; i < clist.length; i++) {
-      var category = clist[i].EN;
-
-      // ignore any "unpublished" category not in edit mode
-      if (!(options.edit) && category == "--unpublished--") continue;
-
-
-      // If the category exists, generate HTML for it
-      if (typeof(articles[category]) != 'undefined') {
-        debug('Generating HTML for category %s', category);
-        var htmlForCategory = '';
-
-        for (j = 0; j < articles[category].length; j++) {
-          var row = articles[category][j];
-
-          var articleMarkdown = row.getPreview(style, user);
-          if (options.markdown) articleMarkdown = "* " + row["markdown" + options.left_lang] + "\n\n";
-
-          htmlForCategory += articleMarkdown;
-        }
-        var header = renderer.categoryTitle(options.left_lang, clist[i]);
-        if (category != "Picture") {
-          if (bilingual) {
-            header = '<div class="row"><div class = "col-md-6">' +
-              renderer.categoryTitle(options.left_lang, clist[i]) +
-              '</div><div class = "col-md-6">' +
-              renderer.categoryTitle(options.right_lang, clist[i]) +
-              '</div></div>';
-          }
-          //htmlForCategory = header + '<ul>\n'+htmlForCategory+'</ul>\n'
-        } else {
-          if (bilingual) {
-            header = '<div class="row"><div class = "col-md-6">' +
-              '</div><div class = "col-md-6">' +
-              '</div></div>';
-          }
-        }
-
-        if (options.markdown) {
-          htmlForCategory = header + "\n\n" + htmlForCategory;
-        } else {
-          htmlForCategory = header + '<ul>\n' + htmlForCategory + '</ul>\n';
-        }
-
-        preview += htmlForCategory;
-        delete articles[category];
-      }
-    }
-    delete articles["--unpublished--"];
-    for (var k in articles) {
-      preview += "<h2> Blog Missing Cat: " + k + "</h2>\n";
-      preview += "<p> Please use [edit blog detail] to enter category</p>\n";
-      preview += "<p> Or edit The Articles ";
-      for (i = 0; i < articles[k].length; i++) {
-        preview += ' <a href="' + config.getValue('htmlroot') + '/article/' + articles[k][i].id + '">' + articles[k][i].id + '</a> ';
-      }
-      preview += "</p>\n";
-    }
-    if (futureArticles && !options.fullfinal && futureArticles.length > 0) {
-      preview += "<h3>Articles waiting in Future Blog</h3>\n<ul>";
-      for (i = 0; i < futureArticles.length; i++) {
-        preview += '<li><a href="' + config.getValue('htmlroot') + '/article/' + futureArticles[i].id + '">' + futureArticles[i].title + '</a></li>';
-      }
-      preview += "</ul>";
-    }
-    result = {};
-    result.preview = preview + teamString;
-    result.articles = articles;
-    callback(null, result);
-  });
-};
 
 /* Sort a list of articles with predecessorId Help
 Input: array or articles
