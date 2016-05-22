@@ -53,7 +53,6 @@ describe('views/blog', function() {
           };
           request(opts, function (err, res, body) {
             should.not.exist(err);
-            console.dir(body);
             should(res.statusCode).eql(200);
             let file =  path.resolve(__dirname,'data', "views.blog.export.1.html");
             let expectation =  fs.readFileSync(file,"UTF8");
@@ -85,7 +84,6 @@ describe('views/blog', function() {
           };
           request(opts, function (err, res, body) {
             should.not.exist(err);
-            console.dir(body);
             should(res.statusCode).eql(200);
             let file =  path.resolve(__dirname,'data', "views.blog.export.1.md");
             let expectation =  fs.readFileSync(file,"UTF8");
@@ -130,9 +128,8 @@ describe('views/blog', function() {
               Referer: baseLink+"/blog/blog"
             }
           };
-          request(opts, function (err, res, body) {
+          request(opts, function (err, res) {
             should.not.exist(err);
-            console.dir(body);
             should(res.statusCode).eql(200);
             blogModule.findOne({name:"blog"},function(err,blog){
               should.not.exist(err);
