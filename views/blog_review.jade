@@ -58,7 +58,7 @@ block blogcontent
 
                 ul
                   :verbatim
-                    !{renderer.article(lang,a)}
+                    !{renderer.renderArticle(lang,a)}
 
               div.hidden(id="div#{a.id}")
                 form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
