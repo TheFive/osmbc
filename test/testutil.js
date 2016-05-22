@@ -289,7 +289,7 @@ exports.startServer = function startServer(userString,callback) {
   if (userString === null) return;
   userModule.findOne({OSMUser:userString},function(err,user){
     if (err) return callback(err);
-    should.exist(user);
+    if (user === null) user = {};
     user.displayName = userString;
     // initialize the browser using the same port as the test application
     passportStub.install(app);

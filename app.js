@@ -17,7 +17,7 @@ var session      = require('express-session');
 
 var pg = require('pg');
 
-var debug        = require('debug')('OSMBC:app');
+var should        = require('should');
 
 var config     = require('./config.js');
 
@@ -147,9 +147,7 @@ function ensureAuthenticated(req, res, next) {
         }
       }
       debug("User Not Found %s(found)",result.length);
-      if (result.length > 1) {
-        err = new Error('OSM User >'+req.user.displayName+'< exists multiple times');
-      }
+      should(result.length).lessThan(2);
       if (result.length == 1) {
         err = new Error('OSM User >'+req.user.displayName+'< has no access rights');
       }
