@@ -14,4 +14,5 @@
 
 ## Wochenvorschau
 
-* This should be a markdown table\n\n
+* This should be a markdown table
+
