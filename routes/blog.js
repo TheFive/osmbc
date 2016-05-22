@@ -174,6 +174,7 @@ function renderBlogPreview(req, res, next) {
     var lang = req.query.lang;
     var asMarkdown = (req.query.markdown==="true");
     if (typeof(lang)=='undefined') lang = "DE";
+    if (config.getLanguages().indexOf(lang)<0) lang = "DE";
 
 
     var returnToUrl = req.session.articleReturnTo;
