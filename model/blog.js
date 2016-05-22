@@ -433,6 +433,7 @@ Blog.prototype.createTeamString = function createTeamString(lang,callback) {
 // result of preview is html code to display the blog.
 Blog.prototype.getPreview = function getPreview(style,user,callback) {
   debug('getPreview');
+  should(false).be.True();
   var self = this;
   
 

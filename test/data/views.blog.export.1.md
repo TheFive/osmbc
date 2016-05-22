@@ -4,8 +4,6 @@
 
 * * Paul Norman veröffentlicht das [Protokoll](http://wiki.osmfoundation.org/wiki/Board/Minutes/2015-07-20) der ersten öffentlichen OSMF Board Sitzung. Themen waren Mitarbeiterbefragung, das corporate membership Programm, die nächste Vollversammlung und Unterstützung im Admin Bereich. Dem Protokoll angehängt ist die Audio Aufzeichnung des Meetings.
 
-* no translation
-
 * * [Frederik](https://www.openstreetmap.org/user/woodpeck) [ruft](https://lists.openstreetmap.org/pipermail/osmf-talk/2015-August/003366.html) dazu auf, sich über ein grösseres Engagement in der [Foundation](https://wiki.osmfoundation.org/wiki/Main_Page) (Board Membership) Gedanken zu machen.
 
 * Mehr text, mit Vorgänger

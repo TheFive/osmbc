@@ -9,26 +9,29 @@ var config   = require('../config.js');
 var moment   = require('moment');
 var help     = require('../routes/help.js');
 
+var BlogRenderer   = require('../render/BlogRenderer.js');
 
 var blogModule     = require('../model/blog.js');
 var blogRenderer   = require('../render/BlogRenderer.js');
 var logModule      = require('../model/logModule.js');
-var settingsModule = require('../model/settings.js');
 var userModule     = require('../model/user.js');
 
 function findBlogByRouteId(id,user,callback) {
+  debug("findBlogByRouteId");
   var blog;
   should(typeof(user)).eql('object');
   should(typeof(callback)).eql('function');
 
   async.series([
     function CheckTBC(cb) {
+      debug("findBlogByRouteId->CheckTBC");
       if (id === "TBC") {
         blog = blogModule.getTBC();
       }
       return cb();
     },
     function findID(cb) {
+      debug("findBlogByRouteId->findID");
       blogModule.findById(id,function(err,r) {
         if (err) return cb(err);
         if (r) blog= r;
@@ -36,6 +39,7 @@ function findBlogByRouteId(id,user,callback) {
       });
     },
   function findByName(cb) {
+    debug("findBlogByRouteId->findByName");
     if (blog) return cb();
     blogModule.find({name:id},function(err,r) {
       if (err) return cb(err);
@@ -46,9 +50,11 @@ function findBlogByRouteId(id,user,callback) {
     });
   },
   function countItems(cb) {
+    debug("findBlogByRouteId->countItems");
     if (blog) return blog.calculateDerived(user,cb);
     return cb();
   }], function(err) {
+    debug("findBlogByRouteId->final function");
     if (err) return callback(err);
     if (!blog) return callback(new Error("Blog >"+id+"< not found"));
     callback(null,blog);
@@ -56,7 +62,8 @@ function findBlogByRouteId(id,user,callback) {
 }
 
 
- function renderBlogStat(req, res, next) {
+
+function renderBlogStat(req, res, next) {
   debug('renderBlogStat');
 
   var id = req.params.blog_id;
@@ -117,7 +124,7 @@ function findBlogByRouteId(id,user,callback) {
 
 
 function renderBlogList(req, res, next) {
-  debug('router.get /list');
+  debug('renderBlogList');
   var status = req.query.status;
   var query = {};
   var additionalText;
@@ -165,15 +172,13 @@ function renderBlogPreview(req, res, next) {
 
 
     var lang = req.query.lang;
+    var asMarkdown = (req.query.markdown==="true");
     if (typeof(lang)=='undefined') lang = "DE";
-    var options = settingsModule.getSettings(lang);
-    var markdown = options.markdown;
+    if (config.getLanguages().indexOf(lang)<0) lang = "DE";
+
 
     var returnToUrl = req.session.articleReturnTo;
 
-    if (blog.status == "help") {
-      returnToUrl = res.rendervar.layout.htmlroot + "/blog/"+blog.id;
-    }
 
 
 
@@ -182,40 +187,41 @@ function renderBlogPreview(req, res, next) {
     async.auto({ 
         converter:function(callback) {
                       debug("converter function");
-                      blog.getPreview(lang,function(err,result) {
-                        
+                      blog.getPreviewData({lang:lang,createTeam:true,disableNotranslation:true},function(err,data) {
+
+                        let renderer=new BlogRenderer.HtmlRenderer(blog);
+                        if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
+                        let result = renderer.renderBlog(lang,data);
                         return callback(err,result);
                       });
                   }
       },
       function(err,result) {
-        debug("final function");
+        debug("renderBlogPreview->final function");
+        console.log("Start Rendering1");
         if (req.query.download=="true") {
-
-
-          if (markdown) {
+          if (asMarkdown) {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
             res.setHeader('Content-type', "text");
 
-            res.end(result.converter.preview,"UTF8");
+            res.end(result.converter,"UTF8");
           } else {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".html");
             res.setHeader('Content-type', "text/html");
-            res.end(result.converter.preview,"UTF8");            
+            res.end(result.converter,"UTF8");
           }
           return;
         } else {
           should.exist(res.rendervar);
 
+          console.log("Start Rendering2");
+
          
           res.render('blogpreview',{layout:res.rendervar.layout,
                              blog:blog,
-                             articles:result.converter.articles,
-                             preview:result.converter.preview,
-                             markdown: markdown,
+                             asMarkdown:asMarkdown,
+                             preview:result.converter,
                              lang:lang,
-                             left_lang:req.user.left_lang,
-                             right_lang:req.user.right_lang,
                              returnToUrl:returnToUrl,
                              categories:blog.getCategories()});
         }
@@ -285,12 +291,23 @@ function renderBlogTab(req, res, next) {
               res.redirect(referer);
             });
           } else return callback();
+        },
+        closeLang: function (callback) {
+          if (typeof(req.query.closeLang)!='undefined')
+          {
+            clearParams = true;
+            var status = true;
+            if (req.query.status && req.query.status == "false") status = false;
+            blog.closeBlog(lang,req.user,status,function(err) {
+              return callback(err);
+            });
+          } else return callback();
         }
 
 
       },
       function(err,result) {
-        debug("final function");
+        debug("renderBlogTab->final function");
         should.exist(res.rendervar);
         if (clearParams) {
           var url = config.getValue('htmlroot')+"/blog/"+blog.name;
@@ -302,6 +319,7 @@ function renderBlogTab(req, res, next) {
 
         var renderer = new blogRenderer.HtmlRenderer(blog);
 
+        console.log("Rendering: "+'blog_'+tab.toLowerCase());
 
         res.render('blog_'+tab.toLowerCase(),{layout:res.rendervar.layout,
             blog:blog,
@@ -321,7 +339,7 @@ function renderBlogTab(req, res, next) {
 }
 
 function createBlog(req, res, next) {
-  debug('router.get /create');
+  debug('createBlog');
 
   blogModule.createNewBlog(req.user,function(err) {
     if (err) return next(err);

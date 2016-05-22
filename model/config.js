@@ -55,8 +55,11 @@ function createNewConfig (proto,callback) {
 Config.prototype.remove = pgMap.remove;
 
 Config.prototype.getJSON = function getJSON() {
+  debug("Config.prototype.getJSON");
   // try to convert YAML if necessary
-  if (this.json) return this.json;
+  if (this.json) {
+    return this.json;
+  }
   if (this.type == "yaml") {
     try {
       return  yaml.safeLoad(this.yaml);

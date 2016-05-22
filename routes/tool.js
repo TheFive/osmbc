@@ -11,6 +11,7 @@ var http = require('http');
 var https = require('https');
 var moment= require('moment');
 var emailValidator = require('email-validator');
+var BlogRenderer = require('../render/BlogRenderer.js');
 
 var markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
@@ -185,7 +186,8 @@ function renderPictureTool(req,res) {
       var article = articleModule.create();
       article["markdown"+pictureLanguage]=genMarkup;
       article.categoryEN = "Picture";
-      var preview = article.getPreview(pictureLanguage);
+      let renderer = new BlogRenderer.HtmlRenderer(null);
+      var preview = renderer.renderArticle(pictureLanguage,article);
       var licenses = configModule.getConfig("licenses");
 
       res.render('pictureTool',{warning:warning,

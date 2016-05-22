@@ -190,7 +190,9 @@ for (var k in languages) {
   listLanguages.push(k);
 }
 
+/*
 exports.getSettings = getSettings;
 exports.listSettings = listSettings;
 exports.listLanguages = listLanguages;
 
+*/

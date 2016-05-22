@@ -2,8 +2,6 @@
 
 var async  = require('async');
 var should = require('should');
-var path   = require('path');
-var fs     = require('fs');
 var nock   = require('nock');
 
 var testutil = require('./testutil.js');
@@ -388,82 +386,7 @@ describe('model/blog', function() {
     });
   });
  
-  describe('getPreview',function() {
-    beforeEach(function (bddone) {
-      testutil.clearDB(bddone);
-    });
-    function doATest(filename) {
-     
-      it('should handle testfile '+filename,function (bddone) {
-        var file =  path.resolve(__dirname,'data', filename);
-        var data =  JSON.parse(fs.readFileSync(file));
-       
-        var blog;
-        var html;
-        var articles;
 
-        async.series([
-          function(done) {
-            testutil.importData(data,done);
-          },
-          function(done) {
-            blogModule.findOne({name:data.testBlogName},function(err,result) {
-              should.not.exist(err);
-              blog = result;
-              should.exist(blog);
-              done();
-            }) ;        
-          } ,
-          function(done) {
-            blog.getPreview(data.style,"user",function(err,result){
-              should.not.exist(err);
-              html = result.preview;
-              articles = result.articles;
-              done();
-            });
-          }
-
-          ],
-          function (err) {
-            should.not.exist(err);
-
-            var htmlResult = data.testBlogResultHtml;
-            var markdown = false;
-
-            try {
-              // try to read file content,
-              // if it fails, use the already defined value
-              var file =  path.resolve(__dirname,'data', htmlResult);
-              htmlResult =  fs.readFileSync(file,"utf-8");
-              if (file.indexOf(".md")>=0) markdown = true;
-            }
-            catch (err) {/* ignore the error */}
-
-            if (markdown) {
-              should(html).eql(htmlResult);
-            } else
-            {
-              var result = testutil.domcompare(html,htmlResult);
-
-
-
-              if (result.getDifferences().length>0) {
-                console.log("---------Result:----------");
-                console.log(html);
-                console.log("---------expected Result:----------");
-                console.log(htmlResult);
-
-                should.not.exist(result.getDifferences());
-              }
-            }
-
-            bddone();
-          }
-        );   
-      });
-    }
-    testutil.generateTests("data",/^model.blog.getPreview.+json/,doATest);
-  });  
   describe('autoCloseBlog',function(){
 
     it('should close a blog and create a new',function(bddone){

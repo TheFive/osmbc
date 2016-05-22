@@ -7,7 +7,7 @@ block content
   row
     .col-md-8
       if (blog.status != "help")
-        if (markdown)
+        if (asMarkdown)
           h1= "Markdown "+blog.name
         else
           h1= "Preview " + blog.name
@@ -18,7 +18,7 @@ block content
 
   row
     .col-md-12
-      if (markdown)
+      if (asMarkdown)
         pre
           | #{preview}
       else
@@ -27,10 +27,13 @@ block content
   row
     .col-md-9
     .col-md-3
-      if (!markdown)
+      if (asMarkdown)
         p
-          a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?&lang=markdown#{lang}") #{blog.name} as markdown
-      
+          a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{lang}") #{blog.name} as html
+      else
+        p
+          a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{lang}&markdown=true") #{blog.name} as markdown
+
 
 
 

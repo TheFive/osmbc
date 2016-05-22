@@ -56,7 +56,7 @@ block content
                 td.hidden-xs=article.categoryEN
                 td.hidden-xs
                   :verbatim
-                    !{article.getPreview(layout.language)}
+                    !{renderer.renderArticle(layout.language,article)}
 
            
       else
