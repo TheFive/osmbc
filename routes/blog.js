@@ -240,6 +240,8 @@ function renderBlogTab(req, res, next) {
   if (!tab) tab = req.session.lasttab;
   if (!tab) tab = "Overview";
 
+  req.session.lasttab = tab;
+  
   if (id === "TBC") tab = "TBC";
 
   findBlogByRouteId(id,req.user,function(err,blog) {
