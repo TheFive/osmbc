@@ -16,7 +16,7 @@ mixin leftcolumn
         p No Content provided
 
 mixin rightcolumn
-  if (params.right_lang === null)
+  if (params.right_lang !== null)
     .col-md-5.hidden-xs
       if block
         block
