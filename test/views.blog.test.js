@@ -171,12 +171,13 @@ describe('views/blog', function() {
   describe('browser tests',function(){
     var browser;
     before(function(bddone) {
+      this.timeout(6000);
       nock('https://hooks.slack.com/')
         .post(/\/services\/.*/)
         .times(999)
         .reply(200,"ok");
       async.series([
-        testutil.importData.bind(null,JSON.parse(fs.readFileSync(path.join(__dirname,"data","DataWN280.json"),"UTF8"))),
+        testutil.importData.bind(null,JSON.parse(fs.readFileSync(path.join(__dirname,"data","DataWN290.json"),"UTF8"))),
         function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
         testutil.startServer.bind(null,"TheFive")
       ], function(err) {
@@ -187,16 +188,33 @@ describe('views/blog', function() {
     after(function(){
       testutil.stopServer();
     });
-    describe("Admin Homepage",function() {
-      it('should show it' ,function(bddone) {
+    describe("Blog Display",function() {
+      it('should show Overview' ,function(bddone) {
         this.timeout(6000);
         async.series([
-          browser.visit.bind(browser,"/blog/WN280"),
-          browser.assert.expectHtml.bind(browser,"blog_wn280_overview.html"),
-          browser.visit.bind(browser,"/blog/WN280?tab=full"),
-          browser.assert.expectHtml.bind(browser,"blog_wn280_full.html"),
-          browser.visit.bind(browser,"/blog/WN280?tab=review"),
-          browser.assert.expectHtml.bind(browser,"blog_wn280_review.html")
+          browser.visit.bind(browser,"/blog/WN290"),
+          browser.assert.expectHtml.bind(browser,"blog_wn290_overview.html")
+        ],bddone);
+      });
+      it('should show Full View' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/WN290?tab=full"),
+          browser.assert.expectHtml.bind(browser,"blog_wn290_full.html")
+        ],bddone);
+      });
+      it('should show Review View' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/WN290?tab=review"),
+          browser.assert.expectHtml.bind(browser,"blog_wn290_review.html"),
+        ],bddone);
+      });
+      it('should show Statistic View' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/WN290/stat"),
+          browser.assert.expectHtml.bind(browser,"blog_wn290_stat.html")
         ],bddone);
       });
     });
