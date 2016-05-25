@@ -75,7 +75,7 @@ describe('notification/mailReceiver', function() {
 
             bddone();
 
-          },500);
+          },900);
         });
       });
     });
