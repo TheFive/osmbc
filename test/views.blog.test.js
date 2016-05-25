@@ -12,6 +12,7 @@ var config = require('../config.js');
 
 var configModule = require('../model/config.js');
 var blogModule   = require('../model/blog.js');
+var userModule   = require('../model/user.js');
 
 
 
@@ -165,6 +166,39 @@ describe('views/blog', function() {
           });
         }
       ],bddone);
+    });
+  });
+  describe('browser tests',function(){
+    var browser;
+    before(function(bddone) {
+      nock('https://hooks.slack.com/')
+        .post(/\/services\/.*/)
+        .times(999)
+        .reply(200,"ok");
+      async.series([
+        testutil.importData.bind(null,JSON.parse(fs.readFileSync(path.join(__dirname,"data","DataWN280.json"),"UTF8"))),
+        function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
+        testutil.startServer.bind(null,"TheFive")
+      ], function(err) {
+        browser=testutil.getBrowser();
+        bddone(err);
+      });
+    });
+    after(function(){
+      testutil.stopServer();
+    });
+    describe("Admin Homepage",function() {
+      it('should show it' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/WN280"),
+          browser.assert.expectHtml.bind(browser,"blog_wn280_overview.html"),
+          browser.visit.bind(browser,"/blog/WN280?tab=full"),
+          browser.assert.expectHtml.bind(browser,"blog_wn280_full.html"),
+          browser.visit.bind(browser,"/blog/WN280?tab=review"),
+          browser.assert.expectHtml.bind(browser,"blog_wn280_review.html")
+        ],bddone);
+      });
     });
   });
 });

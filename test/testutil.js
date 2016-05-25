@@ -100,8 +100,10 @@ exports.clearDB = function clearDB(done) {
 // in Callback Postgres Error and the JSON Data Object
 // e.g. to store Test Results, is returned
 
+
 exports.importData = function importData(data,callback) {
   debug('importData');
+  var idReference = {blog:{},article:{},user:{}};
 
   async.series([
     function clearDB(cb0) {
@@ -114,8 +116,11 @@ exports.importData = function importData(data,callback) {
       debug('importAllUsers');
       if (typeof(data.user)!='undefined') {  
         async.eachSeries(data.user,function importOneUser(d,cb){
+          let id = d.id;
+          delete d.id;
           userModule.createNewUser(d,function up(err,user){
             if (err) return cb(err);
+            if (typeof(id)!=="undefined") idReference.user[id]=user.id;
             mailReceiver.updateUser(user);
             return cb();
           });
@@ -124,17 +129,30 @@ exports.importData = function importData(data,callback) {
     },
     function importAllBlogs(cb2) {
       debug('importAllBlogs');
-      if (typeof(data.blog)!='undefined') {  
+      if (typeof(data.blog)!='undefined') {
         async.eachSeries(data.blog,function importOneBlog(d,cb){
-          blogModule.createNewBlog({displayName:"test"},d,cb,true);
+          let id = d.id;
+          delete d.id;
+          blogModule.createNewBlog({displayName:"test"},d,function(err,blog){
+            if (err) return cb(err);
+            if (typeof(id)!=="undefined") idReference.blog[id]=blog.id;
+            cb();
+          },true);
         },cb2);
       } else cb2();
     },
     function importAllArticles(cb3) {
       debug('importAllArticles');
-      if (typeof(data.article)!='undefined') {  
+      if (typeof(data.article)!='undefined') {
+
         async.eachSeries(data.article,function importOneArticle(d,cb){
-          articleModule.createNewArticle(d,cb);
+          let id = d.id;
+          delete d.id;
+          articleModule.createNewArticle(d,function(err,article){
+            if (err) return cb(err);
+            if (typeof(id)!=="undefined") idReference.article[id]=article.id;
+            cb();
+          });
         },cb3);
       } else cb3();
     },
@@ -142,6 +160,11 @@ exports.importData = function importData(data,callback) {
       debug('importAllChanges');
       if (typeof(data.change)!='undefined') {  
         async.eachSeries(data.change,function importOneChange(d,cb){
+          let id;
+          if (d.table == "article") id = idReference.article[d.oid];
+          if (d.table == "blog") id = idReference.blog[d.oid];
+          if (d.table == "user") id = idReference.user[d.oid];
+          d.oid = id;
           logModule.log(d,function waitShort() {setTimeout(cb,10);});
         },cb4);
       } else cb4();
@@ -359,7 +382,7 @@ Browser.Assert.prototype.expectHtml = function expectHtml(name,cb) {
     // everything is fine, delete any existing actual file
     try {
       fs.unlinkSync(actualFile);
-    } catch (err){};
+    } catch (err){}
 
     return cb();
   }
@@ -368,5 +391,5 @@ Browser.Assert.prototype.expectHtml = function expectHtml(name,cb) {
   fs.writeFileSync(actualFile,string,"UTF8");
   should(string).eql(expected);
   return cb();
-}
+};
 
