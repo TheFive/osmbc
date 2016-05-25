@@ -342,4 +342,31 @@ exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
 };
 
 
+// extend the Browser Assert API
+
+
+Browser.Assert.prototype.expectHtml = function expectHtml(name,cb) {
+  let expected = "not read yet";
+  let expectedFile = path.join(__dirname,"screens",name);
+  let actualFile   = path.join(__dirname,"screens","actual_"+name);
+  let string = this.html();
+  try {
+    expected = fs.readFileSync(expectedFile,"UTF8");
+  } catch(err) {
+    console.log(err);
+  }
+  if (string === expected) {
+    // everything is fine, delete any existing actual file
+    try {
+      fs.unlinkSync(actualFile);
+    } catch (err){};
+
+    return cb();
+  }
+  // there is a difference, so create the actual data as file
+  // do easier fix the test.
+  fs.writeFileSync(actualFile,string,"UTF8");
+  should(string).eql(expected);
+  return cb();
+}
 

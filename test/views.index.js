@@ -55,6 +55,15 @@ describe('views/index', function() {
         });
       });
     });
+    describe("Admin Homepage",function() {
+      it('should show it' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/osmbc/admin"),
+          browser.assert.expectHtml.bind(browser,"admin_home.html")
+        ],bddone);
+      });
+    });
     describe("Not Defined Page",function() {
 
       it('should throw an error message' ,function(bddone) {
