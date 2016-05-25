@@ -289,25 +289,25 @@ describe('model/article', function() {
         articleModule.findById(id,function testSetAndSaveFindByIDCB(err,result){
           var alternativeArticle = result;
 
-          debug('save New Article with blogname TESTNEW');
-
           newArticle.setAndSave({displayName:"TEST"},{version:"1",blog:"TESTNEW"},function(err){
             should.not.exist(err);
-            debug('save alternative Article with blogname TESTNEW');
             alternativeArticle.setAndSave({displayName:"TEST"},{version:"1",blog:"TESTALTERNATIVE"},function(err){
               //debug(err);
               //should.exist(err);
               should(err).eql(Error("Version Number Differs"));
-              debug('Count log Entries');
-              logModule.find({},function(err,result) {
-                should.not.exist(err);
-                should(result.length).equal(2);
-                articleModule.findById(id,function(err,result){
+              // wait a little bit before
+              // as logging looks not to be synchronous.
+              setTimeout(function(){
+                logModule.find({},function(err,result) {
                   should.not.exist(err);
-                  should(result.blog).equal("TESTNEW");
-                  bddone();
+                  should(result.length).equal(2);
+                  articleModule.findById(id,function(err,result){
+                    should.not.exist(err);
+                    should(result.blog).equal("TESTNEW");
+                    bddone();
+                  });
                 });
-              });
+              },500);
             });
           });
         });
