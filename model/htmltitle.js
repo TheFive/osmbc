@@ -46,14 +46,17 @@ function retrieveTitle(body) {
   let title = c('title').text();
   return title;
 }
+
+// Team wished only to grap title, not description.
+/*
 function retrieveDescription(body) {
   let c = cheerio.load(body);
   let title = c('meta[property="og:description"]').attr("content");
   if (typeof(title)=="undefined") title = null;
   return title;
-}
+}*/
 
-var converterList = [retrieveForum,retrieveTwitter,retrieveOsmBlog,retrieveDescription,retrieveTitle];
+var converterList = [retrieveForum,retrieveTwitter,retrieveOsmBlog,retrieveTitle];
 
 
 function getTitle(url,callback) {
