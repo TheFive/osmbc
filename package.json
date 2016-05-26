@@ -37,7 +37,7 @@
     "mocha": "^2.4.5",
     "mockdate": "^1.0.4",
     "moment": "^2.12.0",
-    "moment-timezone": "^0.5.3",
+    "moment-timezone": "^0.5.4",
     "morgan": "~1.6.1",
     "node-jsdom": "^3.1.5",
     "node-schedule": "^0.6.0",

@@ -1909,8 +1909,8 @@
   ],
   "name": "WN290",
   "status": "edit",
-  "startDate": "2016-02-02T23:59:00.000Z",
-  "endDate": "2016-02-08T23:59:00.000",
+  "startDate": "2016-02-02T22:59:00.000Z",
+  "endDate":   "2016-02-08T22:59:00.000Z",
   "version": 35,
   "reviewCommentEN": [
     {
