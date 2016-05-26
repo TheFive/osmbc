@@ -174,6 +174,7 @@ describe('views/blog', function() {
     var browser;
     before(function(bddone) {
       this.timeout(6000);
+      process.env.TZ = 'Europe/Amsterdam';
       mockdate.set(new Date("2016-05-25T19:00"));
       nock('https://hooks.slack.com/')
         .post(/\/services\/.*/)
@@ -181,7 +182,7 @@ describe('views/blog', function() {
         .reply(200,"ok");
       async.series([
         testutil.importData.bind(null,JSON.parse(fs.readFileSync(path.join(__dirname,"data","DataWN290.json"),"UTF8"))),
-        function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
+        function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full",mainLang:"DE",secondLang:"EN"},cb); },
         testutil.startServer.bind(null,"TheFive")
       ], function(err) {
         browser=testutil.getBrowser();
@@ -219,6 +220,13 @@ describe('views/blog', function() {
         async.series([
           browser.visit.bind(browser,"/blog/WN290/stat"),
           browser.assert.expectHtml.bind(browser,"blog_wn290_stat.html")
+        ],bddone);
+      });
+      it('should show the Blog List' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/list"),
+          browser.assert.expectHtml.bind(browser,"blog_list.html")
         ],bddone);
       });
     });
