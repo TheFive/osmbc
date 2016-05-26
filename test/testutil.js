@@ -389,7 +389,7 @@ Browser.Assert.prototype.expectHtml = function expectHtml(name,cb) {
   // there is a difference, so create the actual data as file
   // do easier fix the test.
   fs.writeFileSync(actualFile,string,"UTF8");
-  should(string).eql(expected);
+  should(string).eql(expected,"HTML differs.");
   return cb();
 };
 

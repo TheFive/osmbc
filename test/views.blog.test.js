@@ -7,6 +7,7 @@ var should  = require('should');
 var request   = require('request');
 var path = require('path');
 var fs = require('fs');
+var mockdate = require('mockdate');
 
 var config = require('../config.js');
 
@@ -21,6 +22,7 @@ var userModule   = require('../model/user.js');
 describe('views/blog', function() {
   let baseLink;
   var data;
+
   describe('export',function(){
     before(function(bddone) {
       var file =  path.resolve(__dirname,'data', "views.blog.export.1.json");
@@ -172,6 +174,7 @@ describe('views/blog', function() {
     var browser;
     before(function(bddone) {
       this.timeout(6000);
+      mockdate.set(new Date("2016-05-25T19:00"));
       nock('https://hooks.slack.com/')
         .post(/\/services\/.*/)
         .times(999)
@@ -186,6 +189,7 @@ describe('views/blog', function() {
       });
     });
     after(function(){
+      mockdate.reset();
       testutil.stopServer();
     });
     describe("Blog Display",function() {

@@ -9,6 +9,7 @@ var userModule = require("../model/user.js");
 var articleModule = require("../model/article.js");
 var blogModule = require("../model/blog.js");
 
+var mockdate = require('mockdate');
 
 
 
@@ -19,6 +20,7 @@ describe('views/index', function() {
     var browser;
     var articleId;
     before(function(bddone) {
+      mockdate.set(new Date("2016-05-25T20:00"));
       nock('https://hooks.slack.com/')
         .post(/\/services\/.*/)
         .times(999)
@@ -40,6 +42,7 @@ describe('views/index', function() {
       });
     });
     after(function(){
+      mockdate.reset();
       testutil.stopServer();
     });
 

@@ -38,11 +38,11 @@ block content
     for lang in languages
       - field.push("markdown"+lang)
       - field.push("reviewComment"+lang)
-      - userlist = {};
+      - userlist = [];
     for v in field
       - for (u in logs[v])
-        -   userlist[u]=true;
-
+        -   if (userlist.indexOf(u)<0) userlist.push(u)
+    - userlist.sort()
     table.table.table-striped
       thead
         tr

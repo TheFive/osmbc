@@ -35,6 +35,7 @@
     "markdown-it-sup": "^1.0.0",
     "mdfigcaption": "^0.1.1",
     "mocha": "^2.4.5",
+    "mockdate": "^1.0.4",
     "moment": "^2.12.0",
     "moment-timezone": "^0.5.3",
     "morgan": "~1.6.1",
