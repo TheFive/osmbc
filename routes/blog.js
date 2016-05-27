@@ -198,7 +198,6 @@ function renderBlogPreview(req, res, next) {
       },
       function(err,result) {
         debug("renderBlogPreview->final function");
-        console.log("Start Rendering1");
         if (req.query.download=="true") {
           if (asMarkdown) {
             res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
@@ -213,10 +212,6 @@ function renderBlogPreview(req, res, next) {
           return;
         } else {
           should.exist(res.rendervar);
-
-          console.log("Start Rendering2");
-
-         
           res.render('blogpreview',{layout:res.rendervar.layout,
                              blog:blog,
                              asMarkdown:asMarkdown,
@@ -320,8 +315,6 @@ function renderBlogTab(req, res, next) {
         }
 
         var renderer = new blogRenderer.HtmlRenderer(blog);
-
-        console.log("Rendering: "+'blog_'+tab.toLowerCase());
 
         res.render('blog_'+tab.toLowerCase(),{layout:res.rendervar.layout,
             blog:blog,
