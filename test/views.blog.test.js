@@ -239,6 +239,13 @@ describe('views/blog', function() {
           browser.assert.expectHtml.bind(browser,"blog_wn290_stat.html")
         ],bddone);
       });
+      it('should show edit View' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/edit/WN290"),
+          browser.assert.expectHtml.bind(browser,"blog_wn290_edit.html")
+        ],bddone);
+      });
       it('should show the Blog List' ,function(bddone) {
         this.timeout(6000);
         async.series([

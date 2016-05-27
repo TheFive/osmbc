@@ -11,6 +11,9 @@ var blogModule = require("../model/blog.js");
 
 var mockdate = require('mockdate');
 
+var pg = require('pg');
+var config = require('../config.js');
+
 
 
 
@@ -187,5 +190,54 @@ describe('views/index', function() {
         bddone();
       });
     });  });
+  describe.skip("With Cookie",function(){
+    var browser;
+    before(function(bddone) {
+      mockdate.set(new Date("2016-05-25T20:00"));
+      nock('https://hooks.slack.com/')
+        .post(/\/services\/.*/)
+        .times(999)
+        .reply(200,"ok");
+      async.series([
+        testutil.clearDB,
+        function createSession(cb) {
+          pg.connect(config.pgstring,function pgconnected(err,client,pgdone) {
+            if (err) return pgdone(err);
+            let sessionObject = {
+              cookie:{originalMaxAge:31536000000,
+                expires:"2017-05-26T15:39:44.562Z",
+                httpOnly:true,
+                path:"/"},
+                returnTo:"/osmbc/osmbc.html",
+                "passport":{user:"TheFive"}};
+            client.query("insert into session values('s%3AU4MjOXbUtOgFm8jKTbhBGQQwF9Ovp3qX.ElY38TGggyzWZQc88ECI7GmqbgRoPDhcV%2B0Ms4y3ZjK',$1,'2017-12-24T23:59z') ",[sessionObject],function(err){
+              pgdone();
+              cb(err);
+            });
+          });
+        },
+        testutil.startServer.bind(null,null)
+      ], function(err) {
+        browser=testutil.getBrowser();
+        bddone(err);
+      });
+    });
+    after(function(){
+      mockdate.reset();
+      testutil.stopServer();
+    });
+    it('should do something',function(bddone){
+      console.log("start test"+ browser.site);
+      browser.setCookie({name:"connect.sid",domain: "localhost",value:"s%3AU4MjOXbUtOgFm8jKTbhBGQQwF9Ovp3qX.ElY38TGggyzWZQc88ECI7GmqbgRoPDhcV%2B0Ms4y3ZjK"});
+      browser.visit("/osmbc.html",function(err){
+        console.log(browser.location.hostname);
+        console.log("page read");
+        console.log(browser.html());
+        browser.assert.status(200);
+        bddone(err);
+      });
+    });
+
+  });
 
 });

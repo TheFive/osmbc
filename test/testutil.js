@@ -309,7 +309,10 @@ exports.startServer = function startServer(userString,callback) {
   debug('startServer');
   should.not.exist(server,"Server is allready started.");
   server = http.createServer(app).listen(config.getServerPort());
-  if (userString === null) return;
+  if (userString === null) {
+    if (callback) return callback();
+    return;
+  }
   userModule.findOne({OSMUser:userString},function(err,user){
     if (err) return callback(err);
     if (user === null) user = {};
