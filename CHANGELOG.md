@@ -1,5 +1,32 @@
 # Change Log
 
+## [1.8.4g](https://github.com/TheFive/osmbc/tree/1.8.4g) (2016-05-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4f...1.8.4g)
+
+**Implemented enhancements:**
+
+- Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
+
+## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+
+**Fixed bugs:**
+
+- Last view mode in blog is not correct restored. [\#464](https://github.com/TheFive/osmbc/issues/464)
+- Since Update only one editor window is shown  [\#463](https://github.com/TheFive/osmbc/issues/463)
+
+## [1.8.4b](https://github.com/TheFive/osmbc/tree/1.8.4b) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4a...1.8.4b)
+
+## [1.8.4a](https://github.com/TheFive/osmbc/tree/1.8.4a) (2016-05-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4...1.8.4a)
+
 ## [1.8.4](https://github.com/TheFive/osmbc/tree/1.8.4) (2016-05-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.3b...1.8.4)
 
