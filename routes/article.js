@@ -16,6 +16,7 @@ var config        = require('../config.js');
 var BlogRenderer = require('../render/BlogRenderer.js');
 
 var articleModule = require('../model/article.js');
+var twitter = require('../model/twitter.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
 var configModule  = require('../model/config.js');
@@ -208,6 +209,7 @@ function searchAndCreate(req,res,next) {
   var placeholder = configModule.getPlaceholder();
 
   let title;
+  let collection = search;
   async.series([
     function generateTitle(cb) {
       if (util.isURL(search)) {
@@ -217,6 +219,14 @@ function searchAndCreate(req,res,next) {
           return cb();
         });
       } else return cb();
+    },
+    function generateCollection(cb) {
+      twitter.expandTwitterUrl(collection,function(err,result){
+        if (err) return cb(err);
+        collection = result;
+        cb();
+      });
+
     }
   ], function (err) {
     if (err) return next(err);
@@ -233,6 +243,7 @@ function searchAndCreate(req,res,next) {
         showCollect: true,
         show: show,
         title: title,
+        collection:collection,
         categories: blogModule.getCategories(),
         foundArticles: result
       });
