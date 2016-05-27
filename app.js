@@ -93,21 +93,6 @@ passport.use(new OpenStreetMapStrategy({
 ));
 
 
-/*passport.use(new Strategy(
-  function(username, password, cb) {
-    debug('Strategy')
-    var user = {};
-     user.displayName = "TheFive"
-      console.log(username," ",password);
-      if (username =="TheFive") {
-        console.log("User OK");
-        return cb(null,user);
-      }
-
-    
-      return cb(null, false);
-    })
-  );*/
 
 function checkAuthentification(req,res,next) {
   debug('checkAuthentification');

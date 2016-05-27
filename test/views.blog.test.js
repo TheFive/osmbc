@@ -225,6 +225,21 @@ describe('views/blog', function() {
           browser.assert.expectHtml.bind(browser,"blog_wn290_full.html")
         ],bddone);
       });
+      it('should show Full View and close language' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/WN290?tab=full"),
+          browser.pressButton.bind(browser,'#closebutton'),
+          function(cb) {
+            blogModule.find({name:"WN290"},function(err,blog){
+              should.not.exist(err);
+              should(blog.length).eql(1);
+              should(blog[0].closeDE).be.True();
+              cb();
+            });
+          }
+        ],bddone);
+      });
       it('should show Review View' ,function(bddone) {
         this.timeout(6000);
         async.series([
@@ -249,7 +264,7 @@ describe('views/blog', function() {
       it('should show the Blog List' ,function(bddone) {
         this.timeout(6000);
         async.series([
-          browser.visit.bind(browser,"/blog/list"),
+          browser.visit.bind(browser,"/blog/list?status=edit"),
           browser.assert.expectHtml.bind(browser,"blog_list.html")
         ],bddone);
       });
