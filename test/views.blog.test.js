@@ -172,7 +172,7 @@ describe('views/blog', function() {
   });
   describe('browser tests',function(){
     var browser;
-    before(function(bddone) {
+    beforeEach(function(bddone) {
       this.timeout(6000);
       process.env.TZ = 'Europe/Amsterdam';
       mockdate.set(new Date("2016-05-25T19:00"));
@@ -189,16 +189,33 @@ describe('views/blog', function() {
         bddone(err);
       });
     });
-    after(function(){
+    afterEach(function(){
       mockdate.reset();
       testutil.stopServer();
     });
     describe("Blog Display",function() {
-      it('should show Overview' ,function(bddone) {
-        this.timeout(6000);
+      it('should show Overview with some configurations' ,function(bddone) {
+        this.timeout(20000);
         async.series([
           browser.visit.bind(browser,"/blog/WN290"),
-          browser.assert.expectHtml.bind(browser,"blog_wn290_overview.html")
+          browser.assert.expectHtml.bind(browser,"blog_wn290_overview.html"),
+          browser.click.bind(browser,'span[name="choose_showNumbers"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showMail"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showVisibleLanguages"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showCollector"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showEditor"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showColoredUser"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showLanguages"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.visit.bind(browser,"/blog/WN290"),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.assert.expectHtml.bind(browser,"blog_wn290_overview_withglab.html")
         ],bddone);
       });
       it('should show Full View' ,function(bddone) {
