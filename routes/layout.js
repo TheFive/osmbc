@@ -38,10 +38,11 @@ function prepareRenderLayout(req,res,next) {
   // Variables for rendering purposes
 
   // ListOfOrphanBlog is used to show all orphanedBlog to assign an article to
-  var style = "style.css";
+  var style = "/stylesheets/style.css";
   if (req.query.tempstyleOff == 'true') req.session.tempstyle=true;
   if (req.query.tempstyleOff == 'false') delete req.session.tempstyle;
   if (!req.session.tempstyle && config.getValue("style")) style = config.getValue("style");
+
 
 
 

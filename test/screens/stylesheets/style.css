@@ -1,0 +1,141 @@
+body {
+  padding: 15px;
+  padding-top: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+li {
+  margin: 2px;
+}
+a {
+  color: #00B7FF;
+}
+
+mark {
+  background-color: #FFF8C6;  /* Salmon Chiffon */
+}
+
+.wp-caption {
+border: 1px solid #ddd;
+text-align: center;
+background-color: #f3f3f3;
+padding-top: 4px;
+margin: 10px;
+-moz-border-radius: 3px;
+-khtml-border-radius: 3px;
+-webkit-border-radius: 3px;
+border-radius: 3px;
+}
+.wp-caption img {
+margin: 0;
+padding: 0;
+border: 0 none;
+}
+
+
+.wp-caption p.wp-caption-text {
+  color: #888;
+  font-size: 12px;
+  margin: 5px;
+}
+pre-code {
+    word-wrap: normal;
+    white-space: pre;
+}
+
+
+table {
+  border: 1px solid #e7e7e7;
+  margin: 0 -1px 24px 0;
+  text-align: left;
+  width: 100%;
+}
+
+
+
+.osmbcbadge-lang {
+  background-color: #d7d711;
+  color:white;
+}
+.osmbclabel-lang {
+  background-color: #d7d711;
+  color:white;
+}
+
+.osmbccolor-lang {
+  color: #d7d711;
+}
+
+.osmbcbadge-lang2 {
+  background-color:  #5a5af2;
+  color:white;
+}
+.osmbclabel-lang2 {
+  background-color:  #5a5af2;
+  color:white;
+}
+
+.osmbcbadge-user {
+  background-color:  red;
+  color:white;
+}
+
+.osmbccolor-lang2 {
+  color:  #5a5af2;
+}
+
+.osmbc-deleted-inverted {
+  background-color: #ff0000;
+  color: white;
+}
+
+.osmbc-inserted-inverted {
+  background-color:  #3366ff;
+  color: white;
+}
+.osmbc-deleted {
+  color: #ff0000;
+}
+
+.osmbc-inserted {
+  color:  #3366ff;
+}
+
+.osmbclabel-no-markdown {
+  color: white;
+  background-color: lightgrey;
+}
+.osmbclabel-markdown {
+  color: white;
+  background-color: #5cb85c;
+}
+.osmbclabel-collect {
+  color: white;
+  background-color: lightblue;
+}
+.osmbclabel-no-translation {
+  color: white;
+  background-color: grey;
+}
+.osmbclabel-user {
+  color:white;
+  background-color:red;
+}
+
+.osmbccolor-user {
+  color:red;
+}
+
+.small-margin {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 1px;
+  margin-left: 1px;
+}
+
+.no-margin {
+  margin-top: 0px;
+  margin-bottom: 0px !important;
+  margin-right: 0px;
+  margin-left: 0px;
+}
