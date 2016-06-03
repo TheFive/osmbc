@@ -119,9 +119,16 @@ function postUserId(req, res, next) {
   if (typeof(changes.mailComment)==="string") {
     changes.mailComment = [changes.mailComment];
   }
+  if (typeof(changes.mailComment)==="undefined") {
+    changes.mailComment = [];
+  }
   if (typeof(changes.mailBlogLanguageStatusChange)==="string") {
     changes.mailBlogLanguageStatusChange = [changes.mailBlogLanguageStatusChange];
   }
+  if (typeof(changes.mailBlogLanguageStatusChange)==="undefined") {
+    changes.mailBlogLanguageStatusChange = [];
+  }
+  console.log(changes);
   var user;
   async.series([
     function findUser(cb) {
