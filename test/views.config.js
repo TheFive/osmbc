@@ -39,7 +39,7 @@ describe('views/config', function() {
         browser.wait(10,cb);
       },
       function checkFirstValues(cb) {
-        browser.assert.text('table#resulttable',"WoWasWannLandMunichOpenStreetMap Default Meeting2015-12-15Germany");
+        browser.assert.text('table#resulttable',"Wo Was Wann Land Munich OpenStreetMap Default Meeting 2015-12-15 Germany");
         cb();
       },
       function saveValue(cb) {
@@ -71,7 +71,7 @@ describe('views/config', function() {
         browser.wait(10,cb);
       },
       function checkFirstValues(cb) {
-        browser.assert.text('table#resulttable',"WoWasWannLandMunichOpenStreetMap Default Meeting2015-12-15Germany");
+        browser.assert.text('table#resulttable',"Wo Was Wann Land Munich OpenStreetMap Default Meeting 2015-12-15 Germany");
         cb();
       },
       function saveValue(cb) {
@@ -86,7 +86,7 @@ describe('views/config', function() {
     ],function(err){
       browser.assert.success();
       should.not.exist(err);
-      browser.assert.text('table#resulttable',"WWWAWNNLLMunichOpenStreetMap Default Meeting2015-12-15Germany");
+      browser.assert.text('table#resulttable',"WW WA WNN LL Munich OpenStreetMap Default Meeting 2015-12-15 Germany");
       //console.log("HTML:"+browser.html());
 
       bddone();
