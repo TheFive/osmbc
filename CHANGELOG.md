@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.4h](https://github.com/TheFive/osmbc/tree/1.8.4h) (2016-06-04)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4g...1.8.4h)
+
+**Fixed bugs:**
+
+- It is not possible to set Mail Status Change to no language in user settings. [\#468](https://github.com/TheFive/osmbc/issues/468)
+
 ## [1.8.4g](https://github.com/TheFive/osmbc/tree/1.8.4g) (2016-05-27)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4f...1.8.4g)
 
