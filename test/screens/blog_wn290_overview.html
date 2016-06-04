@@ -1,0 +1,2788 @@
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+    <title>TESTBC</title>
+    <!-- Bootstrap core CSS-->
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries-->
+    <!--if lt IE 9
+    script(src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js')
+    script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
+    -->
+  </head>
+  <body style="">
+    <!-- Fixed navbar-->
+    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header pull-left"><a href="/changelog" class="navbar-brand bg-success hidden-xs">Whats New?</a>
+          <ul class="nav navbar-nav pull-left">
+            <li><a href="/article/create">Collect</a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-left">
+            <li><a href="/usert/inbox">Inbox <span class="badge osmbcbadge-lang">1</span></a></li>
+          </ul>
+        </div>
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li><a href="/blog/WN290">WN290<span class="badge osmbcbadge-lang">0</span><span class="badge osmbcbadge-lang2">0</span></a></li>
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Articles</li>
+                <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Collections</a></li>
+                <li class="dropdown-header">Orphaned Article
+                  </li><li><a href="/article/list?blog=">No Blog</a></li>
+                
+              </ul>
+            </li>
+            <li class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Markdown Helper</li>
+                <li><a href="/tool/calender2markdown">OSM Calender2Markdown</a></li>
+                <li><a href="/tool/picturetool">Picture Tool</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">About The Team
+                  </li><li><a href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a></li>
+                
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
+                <li class="divider"></li>
+                <li><a href="/help/OSMBC">OSMBC</a></li>
+                <li><a href="/help/How To Integrate A Picture">How To Integrate A Picture</a></li>
+                <li><a href="/help/Notification">Using OSMBC Notifications</a></li>
+                <li><a href="/help/The Blog Views">The Blog Views</a></li>
+                <li><a href="/help/Beginner's How To">Beginner's How To</a></li>
+                <li><a href="/help/Slack Integration">Slack Integration</a></li>
+                <li><a href="/help/Categories">Which Category to use ?</a></li>
+                <li class="divider"></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotitz in OSM Wiki</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">DE<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="/language?lang=DE">DE</a></li>
+                <li><a href="/language?lang=EN">EN</a></li>
+                <li><a href="/language?lang=ES">ES</a></li>
+              </ul>
+            </li>
+            <li class="dropdown hidden-xs"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">EN<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="/language?lang2=none">none</a></li>
+                <li><a href="/language?lang2=DE">DE</a></li>
+                <li><a href="/language?lang2=EN">EN</a></li>
+                <li><a href="/language?lang2=ES">ES</a></li>
+              </ul>
+            </li>
+            <li><a href="/usert/1">TheFive</a></li>
+          </ul>
+          <!-- /.nav-collapse-->
+          
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <p>
+        </p><div class="row"> 
+        </div>
+        <div class="row">
+          <div class="col-md-1">
+            <div class="label osmbclabel-lang">DE</div>
+          </div>
+          <div class="col-md-11">
+            <div style="margin-bottom:2px" class="progress">
+              <div style="width:95%" class="progress-bar osmbclabel-markdown">60</div>
+              <div style="width:0%" class="progress-bar osmbclabel-no-markdown">0</div>
+              <div style="width:4%" class="progress-bar osmbclabel-no-translation">3</div>
+            </div>
+          </div>
+        </div>
+        <div class="hidden-xs">
+          <div class="row">
+            <div class="col-md-1">
+              <div class="label label-info osmbclabel-lang2">EN</div>
+            </div>
+            <div class="col-md-11">
+              <div style="margin-bottom:10px" class="progress">
+                <div style="width:79%" class="progress-bar osmbclabel-markdown">50</div>
+                <div style="width:0%" class="progress-bar osmbclabel-no-markdown">0</div>
+                <div style="width:20%" class="progress-bar osmbclabel-no-translation">13</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <h2><span class="hidden-xs">Wochennotiz </span>WN290<span class="hidden-xs"> (Review DE)</span></h2>
+          </div>
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-12">
+                <button id="closebutton" type="button" onclick="document.getElementById('closebutton').disabled=true;location.href='/blog/WN290?closeLang&amp;style=undefined';" class="btn btn-large btn-warning">Close WN290(DE)</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="alert bg-danger text-center bold"><strong>Blog is exported, please do the last Review in WordPress</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Review DE</h3>
+              </div>
+              <div class="panel-body">
+                <p><b class="span">wambacher</b><span> </span><i class="span">3 months ago</i></p>
+                <p>bin durch. some spelling errors</p>
+                <p><b class="span">derFred</b><span> </span><i class="span">3 months ago</i></p>
+                <p>only mailtest</p>
+                <p><b class="span">Peda</b><span> </span><i class="span">3 months ago</i></p>
+                <p>Kleinigkeiten</p>
+                <p><b class="span">Nakaner</b><span> </span><i class="span">3 months ago</i></p>
+                <p>Rechtschreibung und Zeichensetzung, Tippfehler</p>
+                <p><b class="span">TheFive</b><span> </span><i class="span">3 months ago</i></p>
+                <p>Review ignorieren, trigger mail und save (TEST)</p>
+                <p><b class="span">Nakaner</b><span> </span><i class="span">3 months ago</i></p>
+                <p>Linkprüfung in WP Kategorien WA bis HOT; wertenden Satz aus 1. HOT-Meldung entfernt, Mapzen-Routing nach Programme verschoben (Karten passt nicht)</p>
+                <div class="form-group">
+                  <form id="review" name="review" action="/blog/WN290" method="get" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="reviewComment" id="reviewComment" placeholder="Please Type your Review here" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButton" type="submit" onclick="document.getElementById('reviewButton').disabled=true;document.getElementById('review').submit();" class="btn btn-large btn-primary">ReviewDE</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Review EN</h3>
+              </div>
+              <div class="panel-body">
+                <p><b class="span">bogzab</b><span> </span><i class="span">4 months ago</i></p>
+                <p>Reviwed by Bogus Zaba 10-02-16. Minor typos and edits done. Graphic needs a caption.</p>
+                <p><b class="span">elpbatista</b><span> </span><i class="span">3 months ago</i></p>
+                <p>elpbatista</p>
+                <p><b class="span">derFred</b><span> </span><i class="span">3 months ago</i></p>
+                <p>errata: elpbatista made the review of the Spanish 290</p>
+                <p><b class="span">jinalfoflia</b><span> </span><i class="span">3 months ago</i></p>
+                <p>Reviewed English version #290</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <ul class="nav nav-tabs">
+              <!--+navbutton("OVERVIEW",style,"style","")-->
+              <li class="active"><a href="/blog/WN290?tab=Overview">Overview</a></li>
+              <!--+navbutton("TRANSLATION",style,"style","hidden-xs")-->
+              <!--+navbutton("FULL",style,"style","hidden-xs")-->
+              <li class="hidden-xs"><a href="/blog/WN290?tab=Full">Full</a></li>
+              <!--+navbutton("FULLFINAL",style,"style","hidden-xs")-->
+              <li class="hidden-xs"><a href="/blog/WN290?tab=Review">Review</a></li>
+              <!--
+              - v = 0
+              while layout.user["blogSetting"+v]
+                if layout.user["blogSetting"+v]!="-"
+                  - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
+                  +navbutton(style0,style)
+                - v++ 
+              
+              -->
+              <li class="hidden-xs"><a href="/blog/WN290/preview?lang=DE"> <span class="glyphicon glyphicon-export"></span>DE</a></li>
+              <li class="hidden-xs"><a href="/blog/WN290/preview?lang=EN"> <span class="glyphicon glyphicon-export"></span>EN</a></li>
+              <li class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="glyphicon glyphicon-export"></span></a>
+                <ul role="menu" class="dropdown-menu">
+                  <li><a href="/blog/WN290/preview?lang=DE">Export DE</a></li>
+                  <li><a href="/blog/WN290/preview?lang=EN">Export EN</a></li>
+                  <li><a href="/blog/WN290/preview?lang=ES">Export ES</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <table>
+          <tbody><tr>
+            <td></td>
+            <td></td>
+            <td>
+<br><br>
+<p>02.02.2016-08.02.2016</p>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<!--         place picture here              -->
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/17"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div17');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>bild290</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div17" class="hidden">
+                <form name="EditArticle" id="EditArticle17" action="/article/17/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown17" rows="7" onchange="onLeaveText(17);" class="form-control">![Logo](http://blog.openstreetmap.de/wp-uploads//2016/02/290_tortuOSMity_DE2.png)
+Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigkeit) | additional Info []()</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown17" rows="7" class="hidden form-control">![Logo](http://blog.openstreetmap.de/wp-uploads//2016/02/290_tortuOSMity_DE2.png)
+Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigkeit) | additional Info []()</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">derFred</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_wochenaufruf">Wochenaufruf</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/47"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div47');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Wochenaufgabe Straßennamen (Neuauflage)</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div47" class="hidden">
+                <form name="EditArticle" id="EditArticle47" action="/article/47/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown47" rows="7" onchange="onLeaveText(47);" class="form-control">Eine neue [Wochenaufgabe](http://blog.openstreetmap.de/blog/2016/02/wochenaufgabe-strassennamen-neuauflage/) wurde gestartet: Es geht um das Vervollständigen von "straßenlosen Hausnummern". Gern auch zum Ausweiten auf die Schweiz und Österreich.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown47" rows="7" class="hidden form-control">Eine neue [Wochenaufgabe](http://blog.openstreetmap.de/blog/2016/02/wochenaufgabe-strassennamen-neuauflage/) wurde gestartet: Es geht um das Vervollständigen von "straßenlosen Hausnummern". Gern auch zum Ausweiten auf die Schweiz und Österreich.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">stephan75</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">stephan75</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_mapping">Mapping</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/12"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div12');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Eigene Edits ändern = Mechanical edit?</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div12" class="hidden">
+                <form name="EditArticle" id="EditArticle12" action="/article/12/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown12" rows="7" onchange="onLeaveText(12);" class="form-control">Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&amp;Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown12" rows="7" class="hidden form-control">Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&amp;Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Nakaner</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">Peda</span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/24"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div24');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>jeden Tag...</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div24" class="hidden">
+                <form name="EditArticle" id="EditArticle24" action="/article/24/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown24" rows="7" onchange="onLeaveText(24);" class="form-control">Ben Spaulding [resümiert](http://www.gisdoctor.com/site/2016/02/04/openstreetmap-me-mapping-everyday-january-almost/) über seinen Mappingvorsatz für Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown24" rows="7" class="hidden form-control">Ben Spaulding [resümiert](http://www.gisdoctor.com/site/2016/02/04/openstreetmap-me-mapping-everyday-january-almost/) über seinen Mappingvorsatz für Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">mgehling</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/41"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div41');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Ladenketten How to tag</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div41" class="hidden">
+                <form name="EditArticle" id="EditArticle41" action="/article/41/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown41" rows="7" onchange="onLeaveText(41);" class="form-control">Eine neue Seite im Wiki möchte ein einheitliches Schema für Unternehmensketten zunächst in D/A/CH [anbieten](https://wiki.openstreetmap.org/wiki/DE:Ladenketten). Die Seite befindet sich noch im Aufbau und wird [im Forum](http://forum.openstreetmap.org/viewtopic.php?id=53553) und auf der Diskussionsseite besprochen. Um offene [Beteiligung](http://forum.openstreetmap.org/viewtopic.php?pid=575860#p575860) wird gebeten.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown41" rows="7" class="hidden form-control">Eine neue Seite im Wiki möchte ein einheitliches Schema für Unternehmensketten zunächst in D/A/CH [anbieten](https://wiki.openstreetmap.org/wiki/DE:Ladenketten). Die Seite befindet sich noch im Aufbau und wird [im Forum](http://forum.openstreetmap.org/viewtopic.php?id=53553) und auf der Diskussionsseite besprochen. Um offene [Beteiligung](http://forum.openstreetmap.org/viewtopic.php?pid=575860#p575860) wird gebeten.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Rogehm</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">Rogehm</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/13"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div13');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Mapping in Marocco ... </li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div13" class="hidden">
+                <form name="EditArticle" id="EditArticle13" action="/article/13/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown13" rows="7" onchange="onLeaveText(13);" class="form-control">In der Stadt Chefchaouen in Marokko hat die Zusammenarbeit von Stadtverwaltung, jungen Enthusiasten und der OSM Community zu einem [bemerkenswerten Ergebnis](https://twitter.com/OsmMaroc/status/689054778840748033) geführt. Das Projekt ist hier ausführlich [beschrieben](http://openstreetmap.ma/projet.php). (automatische [Übersetzung](https://translate.google.de/translate?sl=auto&amp;tl=%20DE&amp;u=http://openstreetmap.ma/projet.php)).</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown13" rows="7" class="hidden form-control">In der Stadt Chefchaouen in Marokko hat die Zusammenarbeit von Stadtverwaltung, jungen Enthusiasten und der OSM Community zu einem [bemerkenswerten Ergebnis](https://twitter.com/OsmMaroc/status/689054778840748033) geführt. Das Projekt ist hier ausführlich [beschrieben](http://openstreetmap.ma/projet.php). (automatische [Übersetzung](https://translate.google.de/translate?sl=auto&amp;tl=%20DE&amp;u=http://openstreetmap.ma/projet.php)).</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">derFred</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/19"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div19');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Pull Request für Overpass seit Monaten unbearbeitet  - Mapping in US Botschaft Philippinen 2. Teil</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div19" class="hidden">
+                <form name="EditArticle" id="EditArticle19" action="/article/19/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown19" rows="7" onchange="onLeaveText(19);" class="form-control">Zum Mapathon in der amerikanischen Botschaft in Manila (wir berichteten) erstellte User GOwin einige [Auswertung](http://www.openstreetmap.org/user/GOwin/diary/37829). Er benutzte u.a. ein [neues Feature -Multiple user support for user, uid-](https://github.com/drolbr/Overpass-API/pull/225) zum Finden von Newbies, das auf der Overpass-API-DEV-Instanz zum Testen bereit steht.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown19" rows="7" class="hidden form-control">Zum Mapathon in der amerikanischen Botschaft in Manila (wir berichteten) erstellte User GOwin einige [Auswertung](http://www.openstreetmap.org/user/GOwin/diary/37829). Er benutzte u.a. ein [neues Feature -Multiple user support for user, uid-](https://github.com/drolbr/Overpass-API/pull/225) zum Finden von Newbies, das auf der Overpass-API-DEV-Instanz zum Testen bereit steht.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span class="label small-margin osmbclabel-collect">Peda</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">mgehling</span><span class="label small-margin osmbclabel-markdown">derFred</span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/22"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div22');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Qualitätssicherung: Hausnummernauswertung mit neuer Funktion</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div22" class="hidden">
+                <form name="EditArticle" id="EditArticle22" action="/article/22/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown22" rows="7" onchange="onLeaveText(22);" class="form-control">Dietmar Seifert hat die Hausnummernauswertung um eine neue Funktion ergänzt: Die Distanz zwischen den in OSM vorhandenen Hausnummern und deren offiziellen Koordinaten – sofern gespendet – wird in einer Liste und auf einer Karte angezeigt. Diese und weitere Verbesserungen erläutert er in [seinem Blog](https://www.openstreetmap.org/user/okilimu/diary/37891).</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown22" rows="7" class="hidden form-control">Dietmar Seifert hat die Hausnummernauswertung um eine neue Funktion ergänzt: Die Distanz zwischen den in OSM vorhandenen Hausnummern und deren offiziellen Koordinaten – sofern gespendet – wird in einer Liste und auf einer Karte angezeigt. Diese und weitere Verbesserungen erläutert er in [seinem Blog](https://www.openstreetmap.org/user/okilimu/diary/37891).</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">malenki</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">malenki</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/26"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div26');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Re-tagging quadrant routes in Pennsylvania, USA from `ref` -&gt; `ref:penndot`</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div26" class="hidden">
+                <form name="EditArticle" id="EditArticle26" action="/article/26/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown26" rows="7" onchange="onLeaveText(26);" class="form-control">no translation</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown26" rows="7" class="hidden form-control">no translation</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">jinalfoflia</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/5"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div5');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>UK 2016 Q1 Mapping Marathon</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div5" class="hidden">
+                <form name="EditArticle" id="EditArticle5" action="/article/5/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown5" rows="7" onchange="onLeaveText(5);" class="form-control">Chris Hill aus Kingston upon Hull [macht einige](http://chris-osm.blogspot.de/2016/02/schools.html) kritische Anmerkungen [zum Verfahren](http://resultmaps.neis-one.org/osm-changesets?comment=OSMschool#6/53.508/-3.560) beim UK 2016 Q1 Mapping Marathon.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown5" rows="7" class="hidden form-control">Chris Hill aus Kingston upon Hull [macht einige](http://chris-osm.blogspot.de/2016/02/schools.html) kritische Anmerkungen [zum Verfahren](http://resultmaps.neis-one.org/osm-changesets?comment=OSMschool#6/53.508/-3.560) beim UK 2016 Q1 Mapping Marathon.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">jinalfoflia</span><span class="label small-margin osmbclabel-collect">derFred</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">stephan75</span><span class="label small-margin osmbclabel-markdown">derFred</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_community">Community</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/8"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div8');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Belgian Mapper of the Month: ponci4520</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div8" class="hidden">
+                <form name="EditArticle" id="EditArticle8" action="/article/8/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown8" rows="7" onchange="onLeaveText(8);" class="form-control">Der belgische Mapper der Monats ist [Stefan (ponci4520)](http://www.openstreetmap.org/user/escada/diary/37882)</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown8" rows="7" class="hidden form-control">Der belgische Mapper der Monats ist [Stefan (ponci4520)](http://www.openstreetmap.org/user/escada/diary/37882)</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">escada</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/57"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div57');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Digitale Selbstverteidigung -- benutze OpenStreetMap für mehr Privacy</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div57" class="hidden">
+                <form name="EditArticle" id="EditArticle57" action="/article/57/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown57" rows="7" onchange="onLeaveText(57);" class="form-control">Der Verein digitalcourage empfiehlt zur [digitalen Selbstverteidigung](https://digitalcourage.de/digitale-selbstverteidigung) unter anderem statt mit Google Maps lieber mit OpenStreetMap [seinen Weg zu finden](https://digitalcourage.de/digitale-selbstverteidigung/wege-finden-ohne-google-maps-openstreetmap).</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown57" rows="7" class="hidden form-control">Der Verein digitalcourage empfiehlt zur [digitalen Selbstverteidigung](https://digitalcourage.de/digitale-selbstverteidigung) unter anderem statt mit Google Maps lieber mit OpenStreetMap [seinen Weg zu finden](https://digitalcourage.de/digitale-selbstverteidigung/wege-finden-ohne-google-maps-openstreetmap).</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Peda</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 3 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/9"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div9');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>JOSM got a new server sponsored by Hetzner</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div9" class="hidden">
+                <form name="EditArticle" id="EditArticle9" action="/article/9/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown9" rows="7" onchange="onLeaveText(9);" class="form-control">Hetzner hat den JOSM-Entwicklern einen neuen, noch leistungsfähigeren Server [spendiert](https://lists.openstreetmap.org/pipermail/josm-dev/2016-February/007633.html). Der Umzug vom alten auf den neuen Server erfolgt in Kürze.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown9" rows="7" class="hidden form-control">Hetzner hat den JOSM-Entwicklern einen neuen, noch leistungsfähigeren Server [spendiert](https://lists.openstreetmap.org/pipermail/josm-dev/2016-February/007633.html). Der Umzug vom alten auf den neuen Server erfolgt in Kürze.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Peda</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/14"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div14');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Mapzen: Station Relations</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div14" class="hidden">
+                <form name="EditArticle" id="EditArticle14" action="/article/14/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown14" rows="7" onchange="onLeaveText(14);" class="form-control">Matt Amos [schreibt](https://mapzen.com/blog/station-relations) im Mapzen-Blog über Versuche, die Relevanz von Bahnhöfen aus Routenrelationen und Stop-Area-Relationen abzuleiten.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown14" rows="7" class="hidden form-control">Matt Amos [schreibt](https://mapzen.com/blog/station-relations) im Mapzen-Blog über Versuche, die Relevanz von Bahnhöfen aus Routenrelationen und Stop-Area-Relationen abzuleiten.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Nakaner</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/28"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div28');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Mapzen's 	Geraldine Sarmiento shows how different lines styles makes different maps</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div28" class="hidden">
+                <form name="EditArticle" id="EditArticle28" action="/article/28/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown28" rows="7" onchange="onLeaveText(28);" class="form-control">[Geraldine Sarmiento](https://mobile.twitter.com/sensescape) beschreibt im [Mapzen-Blog](https://mapzen.com/blog/lines) wie unterschiedliche Linienstile zu vielfältigen Kartendarstellungen führen können.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown28" rows="7" class="hidden form-control">[Geraldine Sarmiento](https://mobile.twitter.com/sensescape) beschreibt im [Mapzen-Blog](https://mapzen.com/blog/lines) wie unterschiedliche Linienstile zu vielfältigen Kartendarstellungen führen können.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">escada</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">stephan75</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/33"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div33');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Marc Zoutendijk analyses the activity of new mappers in The Netherlands. The result seems to be similar to previous studies of Pascal Neis.</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div33" class="hidden">
+                <form name="EditArticle" id="EditArticle33" action="/article/33/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown33" rows="7" onchange="onLeaveText(33);" class="form-control">Benutzer marczoutendijk [veröffentlicht](http://www.openstreetmap.org/user/marczoutendijk/diary/37902) einige sehr interessante Statistiken zum Verhalten holländischer Mapper.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown33" rows="7" class="hidden form-control">Benutzer marczoutendijk [veröffentlicht](http://www.openstreetmap.org/user/marczoutendijk/diary/37902) einige sehr interessante Statistiken zum Verhalten holländischer Mapper.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">escada</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/30"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div30');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Support wanted: Linking OSM and Wikidata for World Heritage, Man and the Biosphere</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div30" class="hidden">
+                <form name="EditArticle" id="EditArticle30" action="/article/30/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown30" rows="7" onchange="onLeaveText(30);" class="form-control">John importiert derzeit Daten der UNESCO (z.B. das Welterbe, Geoparks, Reservate,...) nach Wikidata und würde diese gerne mit OpenStreetMap verbinden. Er [sucht](http://forum.openstreetmap.org/viewtopic.php?id=53546)  für sein
+ Vorhaben noch Unterstützer, die beim Import nach OSM helfen.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown30" rows="7" class="hidden form-control">John importiert derzeit Daten der UNESCO (z.B. das Welterbe, Geoparks, Reservate,...) nach Wikidata und würde diese gerne mit OpenStreetMap verbinden. Er [sucht](http://forum.openstreetmap.org/viewtopic.php?id=53546)  für sein
+ Vorhaben noch Unterstützer, die beim Import nach OSM helfen.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">stephan75</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/10"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div10');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>The website of OpenStreetMap Mali is now online</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div10" class="hidden">
+                <form name="EditArticle" id="EditArticle10" action="/article/10/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown10" rows="7" onchange="onLeaveText(10);" class="form-control">Vor kurzem ist die Webseite von OpenStreetMap in Mali [online gegangen](http://openstreetmapmali.org/).</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown10" rows="7" class="hidden form-control">Vor kurzem ist die Webseite von OpenStreetMap in Mali [online gegangen](http://openstreetmapmali.org/).</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">escada</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_importe">Importe</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/37"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div37');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>[Imports] Bulk Import of Address Range in GTHA from Metrolinx</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div37" class="hidden">
+                <form name="EditArticle" id="EditArticle37" action="/article/37/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown37" rows="7" onchange="onLeaveText(37);" class="form-control">Metrolinx, ein ÖPNV-Unternehmen im Großraum Toronto, hat [versucht](https://lists.openstreetmap.org/pipermail/imports/2016-February/004285.html), Adressdaten von StatCan zu importieren. Der Import wurde wegen fehlender Diskussion auf der Imports-Mailingliste revertiert. In der anschließenden Diskussion stellte sich heraus, dass die Lizenz [inkompatibel ist](https://lists.openstreetmap.org/pipermail/imports/2016-February/004302.html).</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown37" rows="7" class="hidden form-control">Metrolinx, ein ÖPNV-Unternehmen im Großraum Toronto, hat [versucht](https://lists.openstreetmap.org/pipermail/imports/2016-February/004285.html), Adressdaten von StatCan zu importieren. Der Import wurde wegen fehlender Diskussion auf der Imports-Mailingliste revertiert. In der anschließenden Diskussion stellte sich heraus, dass die Lizenz [inkompatibel ist](https://lists.openstreetmap.org/pipermail/imports/2016-February/004302.html).</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Nakaner</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_veranstaltungen">Veranstaltungen</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/29"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div29');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>https://twitter.com/OpenStreetMapMX/status/695395692995457025
+
+Tweet by OpenStreetMapMX
+Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autónoma del Estado de México Campus Toluca
+(Retweets: 7 Favs: 5)
+</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div29" class="hidden">
+                <form name="EditArticle" id="EditArticle29" action="/article/29/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown29" rows="7" onchange="onLeaveText(29);" class="form-control">no translation</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown29" rows="7" class="hidden form-control">no translation</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span class="label small-margin osmbclabel-user">TheFive</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/64"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div64');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>[OSM-talk-be] Mapping Party: infrastructure for the homeless</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div64" class="hidden">
+                <form name="EditArticle" id="EditArticle64" action="/article/64/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown64" rows="7" onchange="onLeaveText(64);" class="form-control">Joost Schouppe [informiert](https://lists.openstreetmap.org/pipermail/talk-be/2016-February/008395.html) über einer Mappingparty am 27. Februar in Brüssel im Rahmen derer Infrastruktur für Obdachlose erfasst werden soll.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown64" rows="7" class="hidden form-control">Joost Schouppe [informiert](https://lists.openstreetmap.org/pipermail/talk-be/2016-February/008395.html) über einer Mappingparty am 27. Februar in Brüssel im Rahmen derer Infrastruktur für Obdachlose erfasst werden soll.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Nakaner</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/63"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div63');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>[OSM-talk-be] SOTM in Brussels - status</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div63" class="hidden">
+                <form name="EditArticle" id="EditArticle63" action="/article/63/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown63" rows="7" onchange="onLeaveText(63);" class="form-control">Ben Abelhausen [berichtet](https://lists.openstreetmap.org/pipermail/talk-be/2016-February/008396.html) auf der belgischen Mailingliste (auf Englisch) über den Fortschritt der Organisation der State of the Map in Brüssel (23. bis 25. September). Derzeit ist man u.a. auf der Suche nach Orten für die Abendveranstaltung und einer Firma zur Aufnahme/Streaming der Vorträge.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown63" rows="7" class="hidden form-control">Ben Abelhausen [berichtet](https://lists.openstreetmap.org/pipermail/talk-be/2016-February/008396.html) auf der belgischen Mailingliste (auf Englisch) über den Fortschritt der Organisation der State of the Map in Brüssel (23. bis 25. September). Derzeit ist man u.a. auf der Suche nach Orten für die Abendveranstaltung und einer Firma zur Aufnahme/Streaming der Vorträge.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Nakaner</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/58"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div58');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Operation Sprinter am 13. Februar 2016</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div58" class="hidden">
+                <form name="EditArticle" id="EditArticle58" action="/article/58/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown58" rows="7" onchange="onLeaveText(58);" class="form-control">Mit der [Operation Sprinter](https://wiki.openstreetmap.org/wiki/Eisenbahn/Sprinter) gibt es am 13. Februar 2016 eine Mappingparty zur Erfassung von Eisenbahninfrastruktur in Frankfurt am Main.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown58" rows="7" class="hidden form-control">Mit der [Operation Sprinter](https://wiki.openstreetmap.org/wiki/Eisenbahn/Sprinter) gibt es am 13. Februar 2016 eine Mappingparty zur Erfassung von Eisenbahninfrastruktur in Frankfurt am Main.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">mgehling</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/11"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div11');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>SotM FR 2016 </li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div11" class="hidden">
+                <form name="EditArticle" id="EditArticle11" action="/article/11/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown11" rows="7" onchange="onLeaveText(11);" class="form-control">Frankreich wird vom 20. bis 22. Mai eine SOTM-FR [ausrichten](http://openstreetmap.fr/sotmfr2016).</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown11" rows="7" class="hidden form-control">Frankreich wird vom 20. bis 22. Mai eine SOTM-FR [ausrichten](http://openstreetmap.fr/sotmfr2016).</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_humanitarian_osm">Humanitarian OSM</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/39"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div39');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Busfahrpläne in Nicaragua</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div39" class="hidden">
+                <form name="EditArticle" id="EditArticle39" action="/article/39/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown39" rows="7" onchange="onLeaveText(39);" class="form-control">HOT kann [Menschen begeistern](https://hotosm.org/updates/2016-02-04_passengers_created_the_public_transportation_map_of_managua). Mehr als 150 Fahrgäste erarbeiteten mit Hilfe der OSM einen Buslinienplan in Mangua, Nicaragua. Durch Unterstützung von Spendern konnten dort 40.000 Buslinienkarten gedruckt werden. (automatische [Übersetzung](https://hotosm.org/updates/2016-02-04_passengers_created_the_public_transportation_map_of_managua))</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown39" rows="7" class="hidden form-control">HOT kann [Menschen begeistern](https://hotosm.org/updates/2016-02-04_passengers_created_the_public_transportation_map_of_managua). Mehr als 150 Fahrgäste erarbeiteten mit Hilfe der OSM einen Buslinienplan in Mangua, Nicaragua. Durch Unterstützung von Spendern konnten dort 40.000 Buslinienkarten gedruckt werden. (automatische [Übersetzung](https://hotosm.org/updates/2016-02-04_passengers_created_the_public_transportation_map_of_managua))</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span class="label small-margin osmbclabel-collect">Rogehm</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">derFred</span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">Rogehm</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/44"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div44');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>HOT Newsletter</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div44" class="hidden">
+                <form name="EditArticle" id="EditArticle44" action="/article/44/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown44" rows="7" onchange="onLeaveText(44);" class="form-control">HOT veröffentlicht einen zweimonatlichen [Newsletter](https://hotosm.org/newsletter/subscription).</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown44" rows="7" class="hidden form-control">HOT veröffentlicht einen zweimonatlichen [Newsletter](https://hotosm.org/newsletter/subscription).</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Katja Ulbert</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Katja Ulbert</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/45"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div45');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>HOT Tasking Manager footprints</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div45" class="hidden">
+                <form name="EditArticle" id="EditArticle45" action="/article/45/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown45" rows="7" onchange="onLeaveText(45);" class="form-control">Pratik hat mit [HOT-Task-Map](https://github.com/pratikyadav/HOT-Task-Map) einen Kartengenerator veröffentlicht, der alle Taskmanager mit ihrem jeweiligen Wirkungsbereich [anzeigt](http://pratikyadav.github.io/HOT-Task-Map/#3/22.76/-25.84).</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown45" rows="7" class="hidden form-control">Pratik hat mit [HOT-Task-Map](https://github.com/pratikyadav/HOT-Task-Map) einen Kartengenerator veröffentlicht, der alle Taskmanager mit ihrem jeweiligen Wirkungsbereich [anzeigt](http://pratikyadav.github.io/HOT-Task-Map/#3/22.76/-25.84).</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">jinalfoflia</span><span class="label small-margin osmbclabel-collect">Katja Ulbert</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span class="label small-margin osmbclabel-markdown">Katja Ulbert</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/46"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div46');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Missing Maps/MSF UK develops micro-mapping app</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div46" class="hidden">
+                <form name="EditArticle" id="EditArticle46" action="/article/46/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown46" rows="7" onchange="onLeaveText(46);" class="form-control">Missing Maps/MSF UK [suchen](https://www.facebook.com/MissingMapsProject/posts/1008547102540358?pnref=story) Freiwillige, die sie bei der Entwicklung einer Mikromapping-App unterstützen.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown46" rows="7" class="hidden form-control">Missing Maps/MSF UK [suchen](https://www.facebook.com/MissingMapsProject/posts/1008547102540358?pnref=story) Freiwillige, die sie bei der Entwicklung einer Mikromapping-App unterstützen.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Katja Ulbert</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span class="label small-margin osmbclabel-markdown">Katja Ulbert</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_karten">Karten</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/32"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div32');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Free South-East Asia OpenStreetMap for Garmin</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div32" class="hidden">
+                <form name="EditArticle" id="EditArticle32" action="/article/32/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown32" rows="7" onchange="onLeaveText(32);" class="form-control">Speziell für den Südostasiatischen Raum gibt es [Basecamp-/Garmin-](http://nightrider.info/map/)Karten mit eigenen POI-Icons und frischem Update.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown32" rows="7" class="hidden form-control">Speziell für den Südostasiatischen Raum gibt es [Basecamp-/Garmin-](http://nightrider.info/map/)Karten mit eigenen POI-Icons und frischem Update.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Rogehm</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span class="label small-margin osmbclabel-markdown">Rogehm</span><span> Time: 3 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/27"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div27');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>improved navigation instructions from Mapzen, also on openstreetmap.org</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div27" class="hidden">
+                <form name="EditArticle" id="EditArticle27" action="/article/27/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown27" rows="7" onchange="onLeaveText(27);" class="form-control">Mapzen hat die Erstellung ihrer Routinganweisungen [stark überarbeitet](https://mapzen.com/blog/narrative-shape-up), so dass diese nun besser lesbar sind und überflüssige Informationen entfernt werden. Dies betrifft auch direkt die Navigation auf der Hauptseite.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown27" rows="7" class="hidden form-control">Mapzen hat die Erstellung ihrer Routinganweisungen [stark überarbeitet](https://mapzen.com/blog/narrative-shape-up), so dass diese nun besser lesbar sind und überflüssige Informationen entfernt werden. Dies betrifft auch direkt die Navigation auf der Hauptseite.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">stephan75</span><span class="label small-margin osmbclabel-collect">escada</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">stephan75</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/35"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div35');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Kurvigkeit</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div35" class="hidden">
+                <form name="EditArticle" id="EditArticle35" action="/article/35/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown35" rows="7" onchange="onLeaveText(35);" class="form-control">[1] Martin Raifer hat mit tortuOSMity einen Kartengenerator [veröffentlicht](https://github.com/tyrasd/tortuosmity), der die Kurvigkeit von Straßen auf einer Karte [darstellt](https://tyrasd.github.io/tortuosmity).</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown35" rows="7" class="hidden form-control">[1] Martin Raifer hat mit tortuOSMity einen Kartengenerator [veröffentlicht](https://github.com/tyrasd/tortuosmity), der die Kurvigkeit von Straßen auf einer Karte [darstellt](https://tyrasd.github.io/tortuosmity).</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Peda</span><span class="label small-margin osmbclabel-collect">derFred</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">derFred</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/38"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div38');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Leserzuschrift – SW-Karte Berlin Neukölln</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div38" class="hidden">
+                <form name="EditArticle" id="EditArticle38" action="/article/38/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown38" rows="7" onchange="onLeaveText(38);" class="form-control">Die Zeitschrift "Kiez und Kneipe – Lokalblatt und Wirtschaftszeitung" aus Berlin-Neukölln verwendet OSM [(PDF, letzte Seite)](http://www.kuk-nk.de/wp-content/pdf-archiv/kuk-nk_2016-01.pdf). Um die fehlende Attributierung kümmert sich schon jemand.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown38" rows="7" class="hidden form-control">Die Zeitschrift "Kiez und Kneipe – Lokalblatt und Wirtschaftszeitung" aus Berlin-Neukölln verwendet OSM [(PDF, letzte Seite)](http://www.kuk-nk.de/wp-content/pdf-archiv/kuk-nk_2016-01.pdf). Um die fehlende Attributierung kümmert sich schon jemand.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">malenki</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/59"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div59');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Map for old Garmin</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div59" class="hidden">
+                <form name="EditArticle" id="EditArticle59" action="/article/59/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown59" rows="7" onchange="onLeaveText(59);" class="form-control">Mapper utack hatte Probleme, die verfügbaren OSM-basierten Karten auf seinem alten Garmin nüvi 205t zum Laufen zu bringen. Deshalb wandelte er die OSM-Daten selbst ins Garmin-Format, hat eine funktionierende Karte und schrieb einen kurzen, zielführenden [Blogeintrag](https://www.openstreetmap.org/user/utack/diary/37915) darüber.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown59" rows="7" class="hidden form-control">Mapper utack hatte Probleme, die verfügbaren OSM-basierten Karten auf seinem alten Garmin nüvi 205t zum Laufen zu bringen. Deshalb wandelte er die OSM-Daten selbst ins Garmin-Format, hat eine funktionierende Karte und schrieb einen kurzen, zielführenden [Blogeintrag](https://www.openstreetmap.org/user/utack/diary/37915) darüber.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">malenki</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">malenki</span><span> Time: 3 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/42"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div42');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>OpenMeatMap</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div42" class="hidden">
+                <form name="EditArticle" id="EditArticle42" action="/article/42/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown42" rows="7" onchange="onLeaveText(42);" class="form-control">[OpenMeatMap](http://www.elmapadelasado.com.ar/)? - Das Konzept stammt von dem Journalisten [Miguel Graziano](https://twitter.com/NoPublicable) und wurde von [mapache oder Mapa Ché ;-)](https://twitter.com/infomapache) realisiert. [#ElMapaDelAsado](http://www.elmapadelasado.com.ar/) zeigt die Fleischpreise, die von jedermann in die Karte eingetragen werden können. Miguel Graziano zur Wochennotiz: "Die Karte wurde mit der Absicht geboren, um auf Preiserhöhungen und sinkende Kaufkraft zu reagieren."</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown42" rows="7" class="hidden form-control">[OpenMeatMap](http://www.elmapadelasado.com.ar/)? - Das Konzept stammt von dem Journalisten [Miguel Graziano](https://twitter.com/NoPublicable) und wurde von [mapache oder Mapa Ché ;-)](https://twitter.com/infomapache) realisiert. [#ElMapaDelAsado](http://www.elmapadelasado.com.ar/) zeigt die Fleischpreise, die von jedermann in die Karte eingetragen werden können. Miguel Graziano zur Wochennotiz: "Die Karte wurde mit der Absicht geboren, um auf Preiserhöhungen und sinkende Kaufkraft zu reagieren."</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">derFred</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_switch2osm">switch2OSM</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/15"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div15');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Gulp: DB schreibt OSM-Server aus</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div15" class="hidden">
+                <form name="EditArticle" id="EditArticle15" action="/article/15/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown15" rows="7" onchange="onLeaveText(15);" class="form-control">Die Deutsche Bahn (es ist unklar welche Tochtergesellschaft genau) sucht einen Auftragnehmer für das Projekt "Entwicklung eines OSM-Servers", in Rahmen dessen ein Server konzipiert und entwickelt werden solle, "über welchen Daten von OSM als Dienst bereitgestellt werden können". Die Ausschreibung fand sich auf der Website von [Gulp](https://www.gulp.de/gulp2/projekte/390576), ist mittlerweile aber offline.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown15" rows="7" class="hidden form-control">Die Deutsche Bahn (es ist unklar welche Tochtergesellschaft genau) sucht einen Auftragnehmer für das Projekt "Entwicklung eines OSM-Servers", in Rahmen dessen ein Server konzipiert und entwickelt werden solle, "über welchen Daten von OSM als Dienst bereitgestellt werden können". Die Ausschreibung fand sich auf der Website von [Gulp](https://www.gulp.de/gulp2/projekte/390576), ist mittlerweile aber offline.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">mgehling</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 3 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_open-data">Open-Data</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/62"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div62');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>E-learn Weblog of Willem van Valkenburg - Blogging about Open Data ...</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div62" class="hidden">
+                <form name="EditArticle" id="EditArticle62" action="/article/62/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown62" rows="7" onchange="onLeaveText(62);" class="form-control">Willem [berichtet](http://www.e-learn.nl/2016/02/08/open-data-and-maps) über einen interessanten Vortrag rund um Open-Data und OpenStreetMap.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown62" rows="7" class="hidden form-control">Willem [berichtet](http://www.e-learn.nl/2016/02/08/open-data-and-maps) über einen interessanten Vortrag rund um Open-Data und OpenStreetMap.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Rogehm</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/60"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div60');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Karte der Open Data - Angebote in NRW</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div60" class="hidden">
+                <form name="EditArticle" id="EditArticle60" action="/article/60/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown60" rows="7" onchange="onLeaveText(60);" class="form-control">Damian Paderta stellt eine [Übersichtskarte](http://data.paderta.com/OpenData-NRW-Map/) über alle aktuellen [Open-Data-Angebote](http://codeforbonn.de/) der Kommunen in Nordrhein-Westfalen vor.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown60" rows="7" class="hidden form-control">Damian Paderta stellt eine [Übersichtskarte](http://data.paderta.com/OpenData-NRW-Map/) über alle aktuellen [Open-Data-Angebote](http://codeforbonn.de/) der Kommunen in Nordrhein-Westfalen vor.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Rogehm</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Rogehm</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/16"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div16');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Ottawa</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div16" class="hidden">
+                <form name="EditArticle" id="EditArticle16" action="/article/16/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown16" rows="7" onchange="onLeaveText(16);" class="form-control">Ottawa [veröffentlicht](http://data.ottawa.ca/dataset/sledding-hills) erlaubte Schlittenberge als Open-Data auf einer OpenStreetMap-Karte. (via [@rps333](https://twitter.com/rps333/status/694626145350848513))</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown16" rows="7" class="hidden form-control">Ottawa [veröffentlicht](http://data.ottawa.ca/dataset/sledding-hills) erlaubte Schlittenberge als Open-Data auf einer OpenStreetMap-Karte. (via [@rps333](https://twitter.com/rps333/status/694626145350848513))</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Peda</span><span class="label small-margin osmbclabel-collect">stephan75</span><span class="label small-margin osmbclabel-collect">derFred</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/23"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div23');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Weg frei für Open Data  Südtirol</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div23" class="hidden">
+                <form name="EditArticle" id="EditArticle23" action="/article/23/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown23" rows="7" onchange="onLeaveText(23);" class="form-control">User geow macht darauf [aufmerksam](http://forum.openstreetmap.org/viewtopic.php?id=53539), dass öffentliche Daten in Südtirol (It.) unter der Lizenz CC0 [freigegeben](http://www.provinz.bz.it/news/de/news.asp?news_action=4&amp;news_article_id=532160) wurden und über die Plattform [Open Data Südtirol](http://daten.buergernetz.bz.it/de/) erreichbar sind.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown23" rows="7" class="hidden form-control">User geow macht darauf [aufmerksam](http://forum.openstreetmap.org/viewtopic.php?id=53539), dass öffentliche Daten in Südtirol (It.) unter der Lizenz CC0 [freigegeben](http://www.provinz.bz.it/news/de/news.asp?news_action=4&amp;news_article_id=532160) wurden und über die Plattform [Open Data Südtirol](http://daten.buergernetz.bz.it/de/) erreichbar sind.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Rogehm</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">Rogehm</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_lizenzen">Lizenzen</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/65"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div65');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>[OSM-legal-talk] share-alike on generalized data?</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div65" class="hidden">
+                <form name="EditArticle" id="EditArticle65" action="/article/65/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown65" rows="7" onchange="onLeaveText(65);" class="form-control">Wie ist die ODbL für generalisierte OSM-Daten zu verstehen? Tobias Wendorff [fragt](https://lists.openstreetmap.org/pipermail/legal-talk/2016-February/008372.html) auf der Legal-Talk-Liste nach.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown65" rows="7" class="hidden form-control">Wie ist die ODbL für generalisierte OSM-Daten zu verstehen? Tobias Wendorff [fragt](https://lists.openstreetmap.org/pipermail/legal-talk/2016-February/008372.html) auf der Legal-Talk-Liste nach.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Nakaner</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/7"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div7');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>How to use the OpenStreetMap world map correctly?</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div7" class="hidden">
+                <form name="EditArticle" id="EditArticle7" action="/article/7/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown7" rows="7" onchange="onLeaveText(7);" class="form-control">iRights.info [beschreibt](https://irights.info/artikel/openstreetmap-die-freie-weltkarte-richtig-nutzen/25046) in einem ausführlichen Artikel, wie man OpenStreetMap-Daten benutzt und wie man sie korrekt attribuiert.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown7" rows="7" class="hidden form-control">iRights.info [beschreibt](https://irights.info/artikel/openstreetmap-die-freie-weltkarte-richtig-nutzen/25046) in einem ausführlichen Artikel, wie man OpenStreetMap-Daten benutzt und wie man sie korrekt attribuiert.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Peda</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_programme">Programme</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/50"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div50');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Cycle North app</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div50" class="hidden">
+                <form name="EditArticle" id="EditArticle50" action="/article/50/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown50" rows="7" onchange="onLeaveText(50);" class="form-control">CycleStreets hat eine neue App [veröffentlicht](http://www.cyclestreets.net/blog/2016/02/06/cycle-north-staffs-app/), mit vielen hilfreichen Features speziell für Fahrradfahrer.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown50" rows="7" class="hidden form-control">CycleStreets hat eine neue App [veröffentlicht](http://www.cyclestreets.net/blog/2016/02/06/cycle-north-staffs-app/), mit vielen hilfreichen Features speziell für Fahrradfahrer.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Ziltoidium</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/1"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div1');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>OpenStreetMap POI finder</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div1" class="hidden">
+                <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" class="form-control">Benutzer [ruthmaben](http://www.openstreetmap.org/user/ruthmaben) [berichtet](http://www.openstreetmap.org/user/ruthmaben/diary/37865) über ein Tool namens POI Finder, das sie mitentwickelt hat. Das Tool zeigt alle POI im Umkreis eines Kilometers um einen beliebigen Punkt oder um eine Strecke zwischen mehreren beliebigen Punkten [auf einer Karte](http://oini.github.io/poi-finder/). Die Suche erfolgt über die Overpass API und funktioniert weltweit. Nachteil: Derzeit werden nur Nodes berücksichtigt, keine geschlossenen Ways wie Gebäude, die Informationen beinhalten. Der Source Code findet sich auf [Github](https://github.com/oini/poi-buffer).</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown1" rows="7" class="hidden form-control">Benutzer [ruthmaben](http://www.openstreetmap.org/user/ruthmaben) [berichtet](http://www.openstreetmap.org/user/ruthmaben/diary/37865) über ein Tool namens POI Finder, das sie mitentwickelt hat. Das Tool zeigt alle POI im Umkreis eines Kilometers um einen beliebigen Punkt oder um eine Strecke zwischen mehreren beliebigen Punkten [auf einer Karte](http://oini.github.io/poi-finder/). Die Suche erfolgt über die Overpass API und funktioniert weltweit. Nachteil: Derzeit werden nur Nodes berücksichtigt, keine geschlossenen Ways wie Gebäude, die Informationen beinhalten. Der Source Code findet sich auf [Github](https://github.com/oini/poi-buffer).</textarea>
+                </form>
+                <p><span> Edited: </span><span class="label small-margin osmbclabel-markdown">malenki</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_programmierung">Programmierung</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/49"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div49');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>MapStyle von lyrk veröffentlicht</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div49" class="hidden">
+                <form name="EditArticle" id="EditArticle49" action="/article/49/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown49" rows="7" onchange="onLeaveText(49);" class="form-control">Der Lyrk-Kartenstil, der z.B. auf der [Unterkunftskarte](http://unterkunftskarte.de/) verwendet wird, wurde als freie Software [veröffentlicht](https://github.com/lyrk/lyrk-mapstyle). (via [@DailyLyrk](https://twitter.com/DailyLyrk/status/696006457448407040))</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown49" rows="7" class="hidden form-control">Der Lyrk-Kartenstil, der z.B. auf der [Unterkunftskarte](http://unterkunftskarte.de/) verwendet wird, wurde als freie Software [veröffentlicht](https://github.com/lyrk/lyrk-mapstyle). (via [@DailyLyrk](https://twitter.com/DailyLyrk/status/696006457448407040))</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">mgehling</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/40"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div40');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>new binary format to store OSM data</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div40" class="hidden">
+                <form name="EditArticle" id="EditArticle40" action="/article/40/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown40" rows="7" onchange="onLeaveText(40);" class="form-control">Andrew Byrd [berichtet](http://conveyal.com/blog/2016/02/06/vex-format-part-two) von den Fortschritten beim OSM-Datenformat VEX, das gegenüber PBF einige Vorteile bieten soll.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown40" rows="7" class="hidden form-control">Andrew Byrd [berichtet](http://conveyal.com/blog/2016/02/06/vex-format-part-two) von den Fortschritten beim OSM-Datenformat VEX, das gegenüber PBF einige Vorteile bieten soll.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Peda</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/61"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div61');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Osiris indoor mapping server</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div61" class="hidden">
+                <form name="EditArticle" id="EditArticle61" action="/article/61/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown61" rows="7" onchange="onLeaveText(61);" class="form-control">[Osiris](http://forum.openstreetmap.org/viewtopic.php?id=53581) ist ein neu veröffentlichter Open-Source-Server für OSM-basierte Indoor-Karten.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown61" rows="7" class="hidden form-control">[Osiris](http://forum.openstreetmap.org/viewtopic.php?id=53581) ist ein neu veröffentlichter Open-Source-Server für OSM-basierte Indoor-Karten.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">stephan75</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span class="label small-margin osmbclabel-markdown">stephan75</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_releases">Releases</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/56"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div56');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>releases 290</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div56" class="hidden">
+                <form name="EditArticle" id="EditArticle56" action="/article/56/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown56" rows="7" onchange="onLeaveText(56);" class="form-control">| Software|Version|Release Datum| Änderungen|
+| ------ | ----------- |----|----|
+|[libosmium](http://osmcode.org/libosmium/)|[2.6.0](https://github.com/osmcode/libosmium/blob/master/CHANGELOG.md)|3.2.2016|Erweiterungen, Verbesserungen und Fixes|
+|[Locus Map Free](http://www.locusmap.eu/)|[3.15.3](http://www.locusmap.eu/news-version-3-15-3)|3.2.2016|Bugs beseitigt|
+|[OpenLayers](http://openlayers.org/)|[3.13.1](https://github.com/openlayers/ol3/releases/tag/v3.13.1)|3.2.2016|zwei Patches der Vorversion|
+|[PyOsmium](http://osmcode.org/pyosmium/)|[2.6.0](https://github.com/osmcode/pyosmium/releases)|3.2.2016|neues Produkt|
+|[Geobuf](https://github.com/mapbox/geobuf)|[2.0.0](https://github.com/mapbox/geobuf/releases)|5.2.2016|TopoJSON-Support entfernt, einigeFfixes|
+|[Mapillary for iOs](http://www.mapillary.com/map)|[4.1.3](https://itunes.apple.com/us/app/mapillary/id757286802)|5.2.2016|Support Französisch, 3 neue Kameras, ++, Fixes|
+|[Maps.me](http://maps.me)|[5.6.1](https://github.com/mapsme/omim/releases/tag/android-release-561)|5.2.2016|Fehler beseitigt|
+|[Atlas](http://wiki.openstreetmap.org/wiki/Atlas_(navigation_application))|[1.2.1](http://groups.google.com/group/atlas-app)|7.2.2016|Nachtmodus, Update Map- und Routing Engine, w. Verbesserungen|
+|[Graphhopper](https://graphhopper.com/)|[0.6](https://graphhopper.com/blog/2016/02/08/releasing-graphhopper-0-6/)|8.2.2016|Viele kleinere Modifikationen, Alternative Routen|</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown56" rows="7" class="hidden form-control">| Software|Version|Release Datum| Änderungen|
+| ------ | ----------- |----|----|
+|[libosmium](http://osmcode.org/libosmium/)|[2.6.0](https://github.com/osmcode/libosmium/blob/master/CHANGELOG.md)|3.2.2016|Erweiterungen, Verbesserungen und Fixes|
+|[Locus Map Free](http://www.locusmap.eu/)|[3.15.3](http://www.locusmap.eu/news-version-3-15-3)|3.2.2016|Bugs beseitigt|
+|[OpenLayers](http://openlayers.org/)|[3.13.1](https://github.com/openlayers/ol3/releases/tag/v3.13.1)|3.2.2016|zwei Patches der Vorversion|
+|[PyOsmium](http://osmcode.org/pyosmium/)|[2.6.0](https://github.com/osmcode/pyosmium/releases)|3.2.2016|neues Produkt|
+|[Geobuf](https://github.com/mapbox/geobuf)|[2.0.0](https://github.com/mapbox/geobuf/releases)|5.2.2016|TopoJSON-Support entfernt, einigeFfixes|
+|[Mapillary for iOs](http://www.mapillary.com/map)|[4.1.3](https://itunes.apple.com/us/app/mapillary/id757286802)|5.2.2016|Support Französisch, 3 neue Kameras, ++, Fixes|
+|[Maps.me](http://maps.me)|[5.6.1](https://github.com/mapsme/omim/releases/tag/android-release-561)|5.2.2016|Fehler beseitigt|
+|[Atlas](http://wiki.openstreetmap.org/wiki/Atlas_(navigation_application))|[1.2.1](http://groups.google.com/group/atlas-app)|7.2.2016|Nachtmodus, Update Map- und Routing Engine, w. Verbesserungen|
+|[Graphhopper](https://graphhopper.com/)|[0.6](https://graphhopper.com/blog/2016/02/08/releasing-graphhopper-0-6/)|8.2.2016|Viele kleinere Modifikationen, Alternative Routen|</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">wambacher</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">stephan75</span><span class="label small-margin osmbclabel-markdown">wambacher</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_kennst_du_schon_…">Kennst Du schon …</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/34"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div34');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>CERN APP </li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div34" class="hidden">
+                <form name="EditArticle" id="EditArticle34" action="/article/34/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown34" rows="7" onchange="onLeaveText(34);" class="form-control">... die CERN-App für [Android](https://play.google.com/store/apps/details?id=ch.cern.www&amp;hl=de) und [iOS](https://itunes.apple.com/de/app/cernmap/id1018661571?l=en&amp;mt=8) von  [Adrian Alan Pol](https://github.com/AdrianAlan/cern-maps), [Andrea Giardini](https://twitter.com/giardiniandrea) and [Maciek Muszkowski](http://profiles.web.cern.ch/720132)? Die App ist absolut nutzlos für OttilieNormaluser,  aber hervorragend für Mitarbeiter und Besucher des CERN.  [Humorvoll](http://www.weeklyosm.eu/wp-content/uploads/2016/02/cern_humor.png) (zumindest die Android App) enthält sie alle notwendigen Informationen inklusive einer beispielhaft attribuierten Karte und sie wurde als OpenSource auf [Github](https://github.com/AdrianAlan/cern-maps) verfügbar gemacht.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown34" rows="7" class="hidden form-control">... die CERN-App für [Android](https://play.google.com/store/apps/details?id=ch.cern.www&amp;hl=de) und [iOS](https://itunes.apple.com/de/app/cernmap/id1018661571?l=en&amp;mt=8) von  [Adrian Alan Pol](https://github.com/AdrianAlan/cern-maps), [Andrea Giardini](https://twitter.com/giardiniandrea) and [Maciek Muszkowski](http://profiles.web.cern.ch/720132)? Die App ist absolut nutzlos für OttilieNormaluser,  aber hervorragend für Mitarbeiter und Besucher des CERN.  [Humorvoll](http://www.weeklyosm.eu/wp-content/uploads/2016/02/cern_humor.png) (zumindest die Android App) enthält sie alle notwendigen Informationen inklusive einer beispielhaft attribuierten Karte und sie wurde als OpenSource auf [Github](https://github.com/AdrianAlan/cern-maps) verfügbar gemacht.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span class="label small-margin osmbclabel-collect">Ziltoidium</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">derFred</span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/31"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div31');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Eric Rodenbeck: My 5 Favorite Maps</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div31" class="hidden">
+                <form name="EditArticle" id="EditArticle31" action="/article/31/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown31" rows="7" onchange="onLeaveText(31);" class="form-control">... die [5 Lieblingsmaps](http://www.citylab.com/design/2016/02/my-favorite-maps-stamen-designs-eric-rodenbeck/431613/) von [Stamen](https://en.wikipedia.org/wiki/Stamen_Design)-Gründer und -Chefdesigner Eric Rodenbeck?</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown31" rows="7" class="hidden form-control">... die [5 Lieblingsmaps](http://www.citylab.com/design/2016/02/my-favorite-maps-stamen-designs-eric-rodenbeck/431613/) von [Stamen](https://en.wikipedia.org/wiki/Stamen_Design)-Gründer und -Chefdesigner Eric Rodenbeck?</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span class="label small-margin osmbclabel-collect">Rogehm</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span class="label small-margin osmbclabel-markdown">derFred</span><span class="label small-margin osmbclabel-markdown">Rogehm</span><span> Time: 3 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/6"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div6');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>French site that offers data sets for OSM data (per "category") in France.</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div6" class="hidden">
+                <form name="EditArticle" id="EditArticle6" action="/article/6/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown6" rows="7" onchange="onLeaveText(6);" class="form-control">no translation</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown6" rows="7" class="hidden form-control">no translation</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">escada</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/43"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div43');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Geo-locate your videos on a map to tell a story</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div43" class="hidden">
+                <form name="EditArticle" id="EditArticle43" action="/article/43/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown43" rows="7" onchange="onLeaveText(43);" class="form-control">... Sanjay Bhangars [maps-gl-srt](https://github.com/batpad/maps-gl-srt)-Projekt, das es erlaubt, Videos auf einer Karte [anzuzeigen](http://batpad.github.io/maps-gl-srt/)? (via [@arunasank](https://twitter.com/arunasank/status/693010153285783552))</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown43" rows="7" class="hidden form-control">... Sanjay Bhangars [maps-gl-srt](https://github.com/batpad/maps-gl-srt)-Projekt, das es erlaubt, Videos auf einer Karte [anzuzeigen](http://batpad.github.io/maps-gl-srt/)? (via [@arunasank](https://twitter.com/arunasank/status/693010153285783552))</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Ziltoidium</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/36"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div36');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>openstreetmap.cz</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div36" class="hidden">
+                <form name="EditArticle" id="EditArticle36" action="/article/36/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown36" rows="7" onchange="onLeaveText(36);" class="form-control">… [openstreetmap.cz](http://openstreetmap.cz/), eine Seite, die mehr als bloß eine Karte ist? ![(Tschechisch)](http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg)</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown36" rows="7" class="hidden form-control">… [openstreetmap.cz](http://openstreetmap.cz/), eine Seite, die mehr als bloß eine Karte ist? ![(Tschechisch)](http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg)</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/21"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div21');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Sammlung von Zitaten - Wie kartografisches Denken unser Weltbild formt</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div21" class="hidden">
+                <form name="EditArticle" id="EditArticle21" action="/article/21/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown21" rows="7" onchange="onLeaveText(21);" class="form-control">... deinen persönlichen Standpunkt zum kartografischen Denken?  [Einige Zitate](http://www.deutschlandradiokultur.de/ihre-route-wird-neu-berechnet-wie-kartografisches-denken.976.de.html?dram:article_id=324913) zum "Nachdenken"</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown21" rows="7" class="hidden form-control">... deinen persönlichen Standpunkt zum kartografischen Denken?  [Einige Zitate](http://www.deutschlandradiokultur.de/ihre-route-wird-neu-berechnet-wie-kartografisches-denken.976.de.html?dram:article_id=324913) zum "Nachdenken"</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Rogehm</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">Rogehm</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/2"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div2');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>tagfinder</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div2" class="hidden">
+                <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown2" rows="7" onchange="onLeaveText(2);" class="form-control">... die Seite [TagFinder](http://tagfinder.herokuapp.com/search?query=Kino&amp;lang=en) für eine übergreifende semantische Suche nach OpenStreetMap-Tags und -Begriffen?</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown2" rows="7" class="hidden form-control">... die Seite [TagFinder](http://tagfinder.herokuapp.com/search?query=Kino&amp;lang=en) für eine übergreifende semantische Suche nach OpenStreetMap-Tags und -Begriffen?</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_weitere_themen_mit_geo-bezug">Weitere Themen mit Geo-Bezug</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/4"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div4');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>http://www.nytimes.com/2016/01/31/business/fake-online-locksmiths-may-be-out-to-pick-your-pocket-too.html
+
+(read down for the use of Google Mapmapker as a vector for fake sites appearing legitimate; obviously OSM can suffer from exactly the same problem)</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div4" class="hidden">
+                <form name="EditArticle" id="EditArticle4" action="/article/4/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown4" rows="7" onchange="onLeaveText(4);" class="form-control">Die New York Times‎ [berichtet](http://www.nytimes.com/2016/01/31/business/fake-online-locksmiths-may-be-out-to-pick-your-pocket-too.html) über Betrüger, die Google Mapmaker verwenden um Fake-Seiten echt aussehen zu lassen. Ein Szenario, dass auch OSM ereilen könnte. (automatische [Übersetzung](https://translate.google.de/translate?sl=auto&amp;tl=%20DE&amp;u=http://www.nytimes.com/2016/01/31/business/fake-online-locksmiths-may-be-out-to-pick-your-pocket-too.html))</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown4" rows="7" class="hidden form-control">Die New York Times‎ [berichtet](http://www.nytimes.com/2016/01/31/business/fake-online-locksmiths-may-be-out-to-pick-your-pocket-too.html) über Betrüger, die Google Mapmaker verwenden um Fake-Seiten echt aussehen zu lassen. Ein Szenario, dass auch OSM ereilen könnte. (automatische [Übersetzung](https://translate.google.de/translate?sl=auto&amp;tl=%20DE&amp;u=http://www.nytimes.com/2016/01/31/business/fake-online-locksmiths-may-be-out-to-pick-your-pocket-too.html))</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">SomeoneElse</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">derFred</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/54"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div54');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>AG Potsdam: Unterlassungsanspruch bei Überflug eines Grundstücks mit Kameradrohne</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div54" class="hidden">
+                <form name="EditArticle" id="EditArticle54" action="/article/54/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown54" rows="7" onchange="onLeaveText(54);" class="form-control">Ein Grundstückseigentümer hat einen Drohnenpiloten abgemahnt, weil dieser dessen Grundstück überflogen hat. Das Amtsgericht Potsdam [entschied](http://www.heise.de/newsticker/meldung/Gericht-Unterlassungsanspruch-bei-Ueberflug-eines-Grundstuecks-mit-Kameradrohne-3096315.html) zugunsten des Grundstückseigentümers.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown54" rows="7" class="hidden form-control">Ein Grundstückseigentümer hat einen Drohnenpiloten abgemahnt, weil dieser dessen Grundstück überflogen hat. Das Amtsgericht Potsdam [entschied](http://www.heise.de/newsticker/meldung/Gericht-Unterlassungsanspruch-bei-Ueberflug-eines-Grundstuecks-mit-Kameradrohne-3096315.html) zugunsten des Grundstückseigentümers.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Nakaner</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Nakaner</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/3"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div3');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Erklärung, wie Satelliten Farben "sehen"</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div3" class="hidden">
+                <form name="EditArticle" id="EditArticle3" action="/article/3/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown3" rows="7" onchange="onLeaveText(3);" class="form-control">Christoph [erklärt](http://blog.imagico.de/wie-satelliten-farben-sehen/) in seinem Blog, wie verschiedene Satelliten auf unterschiedliche Wellenlängen des Lichts reagieren</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown3" rows="7" class="hidden form-control">Christoph [erklärt](http://blog.imagico.de/wie-satelliten-farben-sehen/) in seinem Blog, wie verschiedene Satelliten auf unterschiedliche Wellenlängen des Lichts reagieren</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span class="label small-margin osmbclabel-collect">Peda</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">wambacher</span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/48"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div48');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>geo quiz</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div48" class="hidden">
+                <form name="EditArticle" id="EditArticle48" action="/article/48/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown48" rows="7" onchange="onLeaveText(48);" class="form-control">Die Süddeutsche [veröffentlicht](http://gfx.sueddeutsche.de/reise/2016-erkennen-sie-deutschland/) ein kleines Deutschlandquiz, das für einen Mapper natürlich ein Kinderspiel darstellt ;-)</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown48" rows="7" class="hidden form-control">Die Süddeutsche [veröffentlicht](http://gfx.sueddeutsche.de/reise/2016-erkennen-sie-deutschland/) ein kleines Deutschlandquiz, das für einen Mapper natürlich ein Kinderspiel darstellt ;-)</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">mgehling</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/53"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div53');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>norviz.com</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div53" class="hidden">
+                <form name="EditArticle" id="EditArticle53" action="/article/53/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown53" rows="7" onchange="onLeaveText(53);" class="form-control">Als neu gegründete Firma projeziert [Norviz](http://norviz.com/) Grafiken auf physische Landschaftsmodelle.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown53" rows="7" class="hidden form-control">Als neu gegründete Firma projeziert [Norviz](http://norviz.com/) Grafiken auf physische Landschaftsmodelle.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Ziltoidium</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">stephan75</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/25"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div25');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>QGIS - A Beginner's Guide</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div25" class="hidden">
+                <form name="EditArticle" id="EditArticle25" action="/article/25/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown25" rows="7" onchange="onLeaveText(25);" class="form-control">Die Firma [MangoMap](http://www.mangomap.com/) hat ein [Video-Tutorial](http://discoverspatial.com/courses/qgis-for-beginners) für den Einstieg in [QGIS](http://qgis.org/de/site/) veröffentlicht.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown25" rows="7" class="hidden form-control">Die Firma [MangoMap](http://www.mangomap.com/) hat ein [Video-Tutorial](http://discoverspatial.com/courses/qgis-for-beginners) für den Einstieg in [QGIS](http://qgis.org/de/site/) veröffentlicht.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">mgehling</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">stephan75</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/51"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div51');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Visualisierung der Flüchtlingskrise</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div51" class="hidden">
+                <form name="EditArticle" id="EditArticle51" action="/article/51/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown51" rows="7" onchange="onLeaveText(51);" class="form-control">i100 [zeigt](http://i100.independent.co.uk/article/as-numbers-surge-on-the-turkish-border-this-is-an-astonishing-visualisation-of-the-worlds-refugee-crisis--Zy19M6pB_e) mit verschiedenen Visualisierungen recht eindrucksvoll die Flüchtlingsbewegungen nach Europa.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown51" rows="7" class="hidden form-control">i100 [zeigt](http://i100.independent.co.uk/article/as-numbers-surge-on-the-turkish-border-this-is-an-astonishing-visualisation-of-the-worlds-refugee-crisis--Zy19M6pB_e) mit verschiedenen Visualisierungen recht eindrucksvoll die Flüchtlingsbewegungen nach Europa.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Ziltoidium</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/20"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div20');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Wohn- &amp; Mobilitätskostenrechner f. Oberbayern &amp; Tirol mit OSM</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div20" class="hidden">
+                <form name="EditArticle" id="EditArticle20" action="/article/20/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown20" rows="7" onchange="onLeaveText(20);" class="form-control">Der [NaWo](http://wowohnen.eu/)-Rechner, ein gemeinsames [Projekt](http://www.inar.de/wo-wohnt-sichs-am-guenstigsten-der-wohn-und-mobilitaetskostenrechner-von-mvv-und-spacenet-hilft/) der Uni Innsbruck, der MVV und dem Salzburger Forschungsstudio iSPACE, hat das Ziel, privaten Haushalten in Tirol und Oberbayern mittels Ermittlung der Mobilitätskosten zur Wohnortentscheidung zu helfen. Fuß- und Fahrradläufige Entfernungen wurden mit OpenstreetMap-Daten ermittelt.</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown20" rows="7" class="hidden form-control">Der [NaWo](http://wowohnen.eu/)-Rechner, ein gemeinsames [Projekt](http://www.inar.de/wo-wohnt-sichs-am-guenstigsten-der-wohn-und-mobilitaetskostenrechner-von-mvv-und-spacenet-hilft/) der Uni Innsbruck, der MVV und dem Salzburger Forschungsstudio iSPACE, hat das Ziel, privaten Haushalten in Tirol und Oberbayern mittels Ermittlung der Mobilitätskosten zur Wohnortentscheidung zu helfen. Fuß- und Fahrradläufige Entfernungen wurden mit OpenstreetMap-Daten ermittelt.</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Rogehm</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span class="label small-margin osmbclabel-markdown">Rogehm</span><span> Time: 3 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_wochenvorschau">Wochenvorschau</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/18"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div18');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>UE290</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div18" class="hidden">
+                <form name="EditArticle" id="EditArticle18" action="/article/18/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown18" rows="7" onchange="onLeaveText(18);" class="form-control">|Wo            |Was                                                                                                                                                                                                                   |Wann                 |Land                                                                     |
+|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|-------------------------------------------------------------------------|
+|Wien          |[54. Wiener Stammtisch](https://wiki.openstreetmap.org/wiki/Wien/Stammtisch)                                                                                                                                          |11.02.2016           |![österreich](http://blog.openstreetmap.de/wp-uploads//2016/02/at.svg)   |
+|Berlin        |[92. Berlin-Brandenburg Stammtisch](https://wiki.openstreetmap.org/wiki/Berlin/Stammtisch)                                                                                                                            |12.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Berlin        |[Missing Maps Mapathon](http://www.meetup.com/de-DE/Missing-Maps-Berlin/events/228253979/)                                                                                                                            |13.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Lüneburg      |[Mappertreffen Lüneburg](https://wiki.openstreetmap.org/wiki/Lüneburg/Mappertreffen)                                                                                                                                  |16.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Bonn          |[Bonner Stammtisch](https://wiki.openstreetmap.org/wiki/Bonn/Stammtisch)                                                                                                                                              |16.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Karlsruhe     |[Stammtisch](https://wiki.openstreetmap.org/wiki/Karlsruhe#Nächstes%20Treffen)                                                                                                                                        |17.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Freiberg      |[Stammtisch Freiberg](https://wiki.openstreetmap.org/wiki/Stammtisch_Freiberg#N.C3.A4chster_Termin)                                                                                                                   |18.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Bremen        |[Bremer Mappertreffen](https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen)                                                                                                                                    |22.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Graz          |[Stammtisch](https://wiki.openstreetmap.org/wiki/Graz/Stammtisch)                                                                                                                                                     |22.02.2016           |![austria](http://blog.openstreetmap.de/wp-uploads//2016/01/at.svg)      |
+|Urspring      |[Stammtisch Ulmer Alb](https://wiki.openstreetmap.org/wiki/UlmerAlb)                                                                                                                                                  |23.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Düsseldorf    |[Stammtisch](https://wiki.openstreetmap.org/wiki/Düsseldorf/Stammtisch)                                                                                                                                               |24.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Karlsruhe     |[Hack Weekend](https://wiki.openstreetmap.org/wiki/Karlsruhe%20Hack%20Weekend%20February%202016)                                                                                                                      |27.02.2016-28.02.2016|![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |</textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown18" rows="7" class="hidden form-control">|Wo            |Was                                                                                                                                                                                                                   |Wann                 |Land                                                                     |
+|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|-------------------------------------------------------------------------|
+|Wien          |[54. Wiener Stammtisch](https://wiki.openstreetmap.org/wiki/Wien/Stammtisch)                                                                                                                                          |11.02.2016           |![österreich](http://blog.openstreetmap.de/wp-uploads//2016/02/at.svg)   |
+|Berlin        |[92. Berlin-Brandenburg Stammtisch](https://wiki.openstreetmap.org/wiki/Berlin/Stammtisch)                                                                                                                            |12.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Berlin        |[Missing Maps Mapathon](http://www.meetup.com/de-DE/Missing-Maps-Berlin/events/228253979/)                                                                                                                            |13.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Lüneburg      |[Mappertreffen Lüneburg](https://wiki.openstreetmap.org/wiki/Lüneburg/Mappertreffen)                                                                                                                                  |16.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Bonn          |[Bonner Stammtisch](https://wiki.openstreetmap.org/wiki/Bonn/Stammtisch)                                                                                                                                              |16.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Karlsruhe     |[Stammtisch](https://wiki.openstreetmap.org/wiki/Karlsruhe#Nächstes%20Treffen)                                                                                                                                        |17.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Freiberg      |[Stammtisch Freiberg](https://wiki.openstreetmap.org/wiki/Stammtisch_Freiberg#N.C3.A4chster_Termin)                                                                                                                   |18.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Bremen        |[Bremer Mappertreffen](https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen)                                                                                                                                    |22.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Graz          |[Stammtisch](https://wiki.openstreetmap.org/wiki/Graz/Stammtisch)                                                                                                                                                     |22.02.2016           |![austria](http://blog.openstreetmap.de/wp-uploads//2016/01/at.svg)      |
+|Urspring      |[Stammtisch Ulmer Alb](https://wiki.openstreetmap.org/wiki/UlmerAlb)                                                                                                                                                  |23.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Düsseldorf    |[Stammtisch](https://wiki.openstreetmap.org/wiki/Düsseldorf/Stammtisch)                                                                                                                                               |24.02.2016           |![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |
+|Karlsruhe     |[Hack Weekend](https://wiki.openstreetmap.org/wiki/Karlsruhe%20Hack%20Weekend%20February%202016)                                                                                                                      |27.02.2016-28.02.2016|![germany](http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg)      |</textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">derFred</span><span> Edited: </span><span class="label small-margin osmbclabel-markdown">Peda</span><span> Time: 4 months ago</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+<h2 id="wn290_--unpublished--">--unpublished--</h2>
+
+
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/55"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div55');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div class="mark">
+                  <ul class="no-margin">
+<li>openweathermap</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div55" class="hidden">
+                <form name="EditArticle" id="EditArticle55" action="/article/55/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown55" rows="7" onchange="onLeaveText(55);" class="form-control"></textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown55" rows="7" class="hidden form-control"></textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Ziltoidium</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/52"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div52');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div class="mark">
+                  <ul class="no-margin">
+<li>Segeltörn</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div id="div52" class="hidden">
+                <form name="EditArticle" id="EditArticle52" action="/article/52/setMarkdown/DE" method="post">
+                  <textarea name="markdown" id="markdown52" rows="7" onchange="onLeaveText(52);" class="form-control"></textarea>
+                  <textarea name="oldMarkdown" id="oldMarkdown52" rows="7" class="hidden form-control"></textarea>
+                </form>
+                <p><span>Collected: </span><span class="label small-margin osmbclabel-collect">Ziltoidium</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <h1>Future Articles</h1>
+            </td>
+          </tr>
+        </tbody></table>
+        <div class="row">
+          <h2>Options</h2>
+          <div class="row">
+            <div class="col-md-1">
+              <p>Left Col.: </p>
+            </div>
+            <div class="col-md-11"><span style="white-space: nowrap"><span name="choose_showNumbers" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showNumbers&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show editor numbers, </span></span><span style="white-space: nowrap"><span name="choose_showMail" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showMail&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show mail, </span></span><span style="white-space: nowrap"><span name="choose_showVisibleLanguages" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVisibleLanguages&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show languages(short)</span></span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1">
+              <p>Right Col.:</p>
+            </div>
+            <div class="col-md-11"><span style="white-space: nowrap"><span name="choose_showCollector" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showCollector&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show collector, </span></span><span style="white-space: nowrap"><span name="choose_showEditor" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showEditor&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show editor , </span></span><span style="white-space: nowrap"><span name="choose_showColoredUser" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showColoredUser&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show users colored, </span></span><span style="white-space: nowrap"><span name="choose_showLanguages" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showLanguages&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show languages</span></span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1">
+              <p>Filter: </p>
+            </div>
+            <div class="col-md-11"><span style="white-space: nowrap"><span name="choose_disableWritten" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableWritten&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> disable written articles, </span></span><span style="white-space: nowrap"><span name="choose_disableNewerMarkdown" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableNewerMarkdown&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> disable more actual edits, </span></span><span style="white-space: nowrap"><span name="choose_disableOwnCollection" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableOwnCollection&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> disable own collections, </span></span><span style="white-space: nowrap"><span name="choose_disableOtherCollection" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableOtherCollection&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> disable other collections</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <h2>Symbol Legend</h2>
+          <p><span class="label osmbclabel-collect small-margin">X</span><span> = number of collectors </span></p>
+          <p><span class="label osmbclabel-collect small-margin">username</span><span> = collector of article </span></p>
+          <p><span class="label osmbclabel-markdown small-margin">X</span><span> = number of editors in shown language</span></p>
+          <p><span class="label osmbclabel-markdown small-margin">username</span><span> = Editor of article</span></p>
+          <p><span style="color:blue" class="glyphicon glyphicon-comment small-margin"></span><span> = there is a comment in the article</span></p>
+          <p><span style="color:red" class="glyphicon glyphicon-comment small-margin"></span><span> = there is a comment with personal mention in the article</span></p>
+          <p><span style="color:orange" class="glyphicon glyphicon-comment small-margin"></span><span> = there is a comment with language mention in the article</span></p>
+          <p><a href="#" target="_blank"><span class="glyphicon glyphicon-open small-margin"></span></a><span> open the article in a new tab</span></p>
+          <p><span class="glyphicon glyphicon-pushpin small-margin"></span><span> this article is successfully linked to predecessor</span></p>
+          <p><span class="glyphicon glyphicon-stop small-margin text-warning"></span><span> this article contains a non working predecessor link.</span></p>
+          <h2>Filter Explanation</h2>
+          <h4>Disable Written Articles</h4>
+          <p>
+            This filter disables all articles, that have already a text in the main (=left) language.
+            Use this filter to come quick to the articles, that needs to be written to be published.
+          </p>
+          <h4>Disable More Actual Edits</h4>
+          <p>
+            This filter disables all articles, where the markdown on the left hand is newer than the markdown on the right hand.
+            Use this, to check wether there are relevant changes in the markdown on the right column during translation.
+          </p>
+          <h4>Disable Own Collections</h4>
+          <p>Use this to disable all collections, where you have contributed to.</p>
+          <h4>Disable Other Collections</h4>
+          <p>
+            This can be used to focus on your own collections, so that you can easily add your
+            Ideas from collection process.
+          </p>
+        </div>
+        <div class="row">
+          <div class="col-md-9"></div>
+          <div class="col-md-1">
+            <p><a href="/blog/WN290/stat">[Statistic]</a></p>
+          </div>
+          <div class="col-md-2">
+            <p><a href="/blog/edit/WN290">[Edit Blog Detail]</a></p>
+          </div>
+        </div>
+        <div class="row hidden-xs">
+        </div>
+      <p></p>
+      <p></p>
+    </div>
+    <!-- /container-->
+    <!-- Bootstrap core JavaScript-->
+    <!-- ==================================================-->
+    <!-- Placed at the end of the document so the pages load faster-->
+    <!--link(rel='stylesheet', href='#{layout.bootstrap}/css/bootstrap.min.css')-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  
+
+
+  
+    <title></title>
+    <link rel="stylesheet" href="stylesheets/style.css">
+  
+  
+
+<script src="https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js"></script>
+<script src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js"></script>
+<script>
+  var openEditor = null;
+  window.onload = function() {
+    
+    if (typeof(Storage)!=="undefined") {
+      if (window.sessionStorage.blogUrl !== window.location.href) return;
+      var x = window.sessionStorage.blogX;
+      var y = window.sessionStorage.blogY;
+      window.scrollTo(x,y);
+    }
+  }
+  
+  
+  window.onbeforeunload = function(event) {
+    // store the scroll Position in the local Store
+    s = {x:window.scrollX,y:window.scrollY};
+  
+    if (typeof(Storage)!=="undefined") {
+  
+      window.sessionStorage.blogUrl = window.location.href;
+      window.sessionStorage.blogX = s.x;
+      window.sessionStorage.blogY = s.y;
+    }
+  };
+  
+  function onLeaveText(id) {
+  
+    var oldValue = document.getElementById("oldMarkdown"+id).value;
+    var newValue = document.getElementById("markdown"+id).value;
+    if (oldValue === newValue) return;
+    document.getElementById('EditArticle'+id).submit();
+  }
+</script></body></html>

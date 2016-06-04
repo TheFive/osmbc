@@ -115,12 +115,18 @@ function postUserId(req, res, next) {
                  mailBlogLanguageStatusChange:req.body.mailBlogLanguageStatusChange,
                  email:req.body.email,
                  access:req.body.access};
-  console.log(changes);
+
   if (typeof(changes.mailComment)==="string") {
     changes.mailComment = [changes.mailComment];
   }
+  if (typeof(changes.mailComment)==="undefined") {
+    changes.mailComment = [];
+  }
   if (typeof(changes.mailBlogLanguageStatusChange)==="string") {
     changes.mailBlogLanguageStatusChange = [changes.mailBlogLanguageStatusChange];
+  }
+  if (typeof(changes.mailBlogLanguageStatusChange)==="undefined") {
+    changes.mailBlogLanguageStatusChange = [];
   }
   var user;
   async.series([

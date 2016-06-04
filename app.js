@@ -93,21 +93,6 @@ passport.use(new OpenStreetMapStrategy({
 ));
 
 
-/*passport.use(new Strategy(
-  function(username, password, cb) {
-    debug('Strategy')
-    var user = {};
-     user.displayName = "TheFive"
-      console.log(username," ",password);
-      if (username =="TheFive") {
-        console.log("User OK");
-        return cb(null,user);
-      }
-
-    
-      return cb(null, false);
-    })
-  );*/
 
 function checkAuthentification(req,res,next) {
   debug('checkAuthentification');
@@ -299,6 +284,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   debug("Set development error hander");
+  app.locals.pretty = true;
   app.use(function(err, req, res,next) { 
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
@@ -316,6 +302,7 @@ if (app.get('env') === 'development') {
 // will print stacktrace
 if (app.get('env') === 'test') {
   debug("Set test error hander");
+  app.locals.pretty = true;
   app.use(function(err, req, res,next) {
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
@@ -342,7 +329,6 @@ app.use(function(err, req, res,next) {
   });
   if (next); // do nothing but use the next variable
 });
-
 
 
 

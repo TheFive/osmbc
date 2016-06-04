@@ -276,7 +276,7 @@ describe('notification/mailReceiver', function() {
         should(call.calledTwice).be.True();
         var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
         var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
-        var expectedText = 'BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value name WN251 status open startDate 1970-01-02T00:00:00.000Z endDate 1970-01-08T00:00:00.000Z';
+        var expectedText = 'BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value name WN251 status open startDate 1970-01-02T00:00:00.000Z endDate \n1970-01-08T00:00:00.000Z';
 
         //result is not sorted, so have a preview, which argument is the right one.
         var mailList = {};
@@ -438,7 +438,7 @@ describe('notification/mailReceiver', function() {
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
             var code = user.emailValidationKey;
             var expectedMail = '<h2>Welcome </h2><p>You have entered your email adress in OSMBC.</p><p>If you would like to use this email address for OSMBC click on this link: <a href="https://testosm.bc/usert/1?validation='+code+'">LINK TO VALIDATE YOUR EMAIL</a>. This will lead you to your user settings.</p><p>If you would like to check your User Settings without accepting the new email go to <a href="https://testosm.bc/usert/1">User Settings </a>.</p><p>OSMBC has a wide range of email settings, read the description carefully, not to overfill your mail box.</p><p>Thanks for supporting weeklyOSM & Wochennotiz.</p><p>Have fun with OSMBC. </p><p>Christoph (TheFive).</p>';
-            var expectedText = 'WELCOME\nYou have entered your email adress in OSMBC.\n\nIf you would like to use this email address for OSMBC click on this link: LINK TO VALIDATE YOUR EMAIL\n[https://testosm.bc/usert/1?validation='+code+'] . This will lead you to your user settings.\n\nIf you would like to check your User Settings without accepting the new email go\nto User Settings [https://testosm.bc/usert/1] .\n\nOSMBC has a wide range of email settings, read the description carefully, not to\noverfill your mail box.\n\nThanks for supporting weeklyOSM & Wochennotiz.\n\nHave fun with OSMBC.\n\nChristoph (TheFive).';
+            var expectedText = 'WELCOME\nYou have entered your email adress in OSMBC.\n\nIf you would like to use this email address for OSMBC click on this link: LINK\nTO VALIDATE YOUR EMAIL\n[https://testosm.bc/usert/1?validation='+code+'] . This\nwill lead you to your user settings.\n\nIf you would like to check your User Settings without accepting the new email go\nto User Settings [https://testosm.bc/usert/1] .\n\nOSMBC has a wide range of email settings, read the description carefully, not to\noverfill your mail box.\n\nThanks for supporting weeklyOSM & Wochennotiz.\n\nHave fun with OSMBC.\n\nChristoph (TheFive).';
 
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);

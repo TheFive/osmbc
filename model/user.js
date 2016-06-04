@@ -269,7 +269,7 @@ User.prototype.setOption = function setOption(view,option,value) {
   if (!this.option) this.option = {};
   if (!this.option[view]) this.option[view] = {};
   this.option[view][option] = value;
-}
+};
 
 
 var defaultOption = {};
@@ -279,7 +279,7 @@ User.prototype.getOption = function getOption(view,option) {
   if (this.option && this.option[view] && this.option[view][option]) return this.option[view][option];
   if (defaultOption && defaultOption[view] && defaultOption[view][option]) return defaultOption[view][option];
   return null;
-}
+};
 // Creates an User object and stores it to database
 // can use a prototype to initialise data
 // Parameter: Prototype (optional)

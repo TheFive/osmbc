@@ -4,7 +4,7 @@ extends layout
 mixin userLabel(user,style)
   if (user == layout.user.OSMUser)
     - style = "osmbclabel-user"
-  if showColoredUser
+  if showColoredUser && userMap[user]
     span.label.small-margin(class=style,style="background-color:#{userMap[user].color}")=user
   else
     span.label.small-margin(class=style)=user

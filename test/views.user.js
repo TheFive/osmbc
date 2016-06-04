@@ -76,6 +76,72 @@ describe('views/user', function() {
         should(result.OSMUser).eql("TestUser");
         should(result.WNAuthor).eql("WNAuthor");
         should(result.WNPublicAuthor).eql("WNPublic");
+        should(result.mailComment).eql([]);
+        should(result.mailBlogLanguageStatusChange).eql([]);
+        bddone();
+      });
+    });
+  });
+  it('should save single Options for Mail & Blog Notifications' ,function(bddone) {
+    this.timeout(maxTimer);
+    nock('https://blog.openstreetmap.de')
+      .get("/blog/author/WNAuthor")
+      .reply(200,'<meta charset="UTF-8" /> \n<title>WNPublic | OSMBlog</title>\n');
+    async.series([
+      function visitUser (cb) {
+        browser.visit('/usert/create', cb);
+      },
+      function fillForm (cb) {
+        browser.evaluate("document.getElementById('mailComment_DE').checked = true");
+        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
+        browser
+          .fill("OSMUser","TestUser")
+          .fill("EMail","")
+          .fill("WNAuthor","WNAuthor")
+          .pressButton("OK",cb);
+      }
+    ],function(err){
+      should.not.exist(err);
+      userModule.findById(2,function(err,result) {
+        should.not.exist(err);
+        should(result.OSMUser).eql("TestUser");
+        should(result.WNAuthor).eql("WNAuthor");
+        should(result.WNPublicAuthor).eql("WNPublic");
+        should(result.mailComment).eql(["DE"]);
+        should(result.mailBlogLanguageStatusChange).eql(["DE"]);
+        bddone();
+      });
+    });
+  });
+  it('should save two Options for Mail & Blog Notifications' ,function(bddone) {
+    this.timeout(maxTimer);
+    nock('https://blog.openstreetmap.de')
+      .get("/blog/author/WNAuthor")
+      .reply(200,'<meta charset="UTF-8" /> \n<title>WNPublic | OSMBlog</title>\n');
+    async.series([
+      function visitUser (cb) {
+        browser.visit('/usert/create', cb);
+      },
+      function fillForm (cb) {
+        browser.evaluate("document.getElementById('mailComment_DE').checked = true");
+        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
+        browser.evaluate("document.getElementById('mailComment_EN').checked = true");
+        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_EN').checked = true");
+        browser
+          .fill("OSMUser","TestUser")
+          .fill("EMail","")
+          .fill("WNAuthor","WNAuthor")
+          .pressButton("OK",cb);
+      }
+    ],function(err){
+      should.not.exist(err);
+      userModule.findById(2,function(err,result) {
+        should.not.exist(err);
+        should(result.OSMUser).eql("TestUser");
+        should(result.WNAuthor).eql("WNAuthor");
+        should(result.WNPublicAuthor).eql("WNPublic");
+        should(result.mailComment).eql(["DE","EN"]);
+        should(result.mailBlogLanguageStatusChange).eql(["DE","EN"]);
         bddone();
       });
     });
@@ -143,8 +209,9 @@ describe('views/user', function() {
       should.not.exist(err);
       var r = browser.html();
       r = r.substring(r.indexOf("<table"), r.indexOf("</table"));
-      should(r).eql('<table class=\"table table-striped table-responsive\"><thead><tr><th>color</th><th><a href=\"/usert/list?access=full&amp;sort=OSMUser\">Name</a></th><th>OSM</th><th><a id=\"sortWNAuthor\" href=\"/usert/list?access=full&amp;sort=WNAuthor\">WNAuthor</a></th><th>OSMBC Changes</th><th>Email</th><th>Collection</th><th>AllComment</th><th>Comment</th><th>Status</th><th><a href=\"/usert/list?access=full&amp;sort=language\">Language</a></th><th>access</th><th><a href=\"/usert/list?access=full&amp;sort=lastAccess&amp;desc=true\">lastAccess</a></th></tr></thead><tbody><tr><td><span style=\"background-color:blue\" class=\"label osmbclabel-collect\">Test2</span></td><td><a href=\"/usert/3\">Test2</a></td><td><a href=\"http://www.openstreetmap.org/user/Test2\">[OSM]</a></td><td><a href=\"https://blog.openstreetmap.de/blog/author/a\">a</a></td><td><a href=\"/changes/log?user=Test2\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>Never</td></tr><tr><td><span style=\"background-color:green\" class=\"label osmbclabel-collect\">Test1</span></td><td><a href=\"/usert/2\">Test1</a></td><td><a href=\"http://www.openstreetmap.org/user/Test1\">[OSM]</a></td><td><a href=\"https://blog.openstreetmap.de/blog/author/b\">b</a></td><td><a href=\"/changes/log?user=Test1\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>Never</td></tr><tr><td><span style=\"background-color:undefined\" class=\"label osmbclabel-collect\">TheFive</span></td><td><a href=\"/usert/1\">TheFive</a></td><td><a href=\"http://www.openstreetmap.org/user/TheFive\">[OSM]</a></td><td></td><td><a href=\"/changes/log?user=TheFive\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>a few seconds ago</td></tr></tbody>');
+      testutil.domcompare(r,'<table class=\"table table-striped table-responsive\"><thead><tr><th>color</th><th><a href=\"/usert/list?access=full&amp;sort=OSMUser\">Name</a></th><th>OSM</th><th><a id=\"sortWNAuthor\" href=\"/usert/list?access=full&amp;sort=WNAuthor\">WNAuthor</a></th><th>OSMBC Changes</th><th>Email</th><th>Collection</th><th>AllComment</th><th>Comment</th><th>Status</th><th><a href=\"/usert/list?access=full&amp;sort=language\">Language</a></th><th>access</th><th><a href=\"/usert/list?access=full&amp;sort=lastAccess&amp;desc=true\">lastAccess</a></th></tr></thead><tbody><tr><td><span style=\"background-color:blue\" class=\"label osmbclabel-collect\">Test2</span></td><td><a href=\"/usert/3\">Test2</a></td><td><a href=\"http://www.openstreetmap.org/user/Test2\">[OSM]</a></td><td><a href=\"https://blog.openstreetmap.de/blog/author/a\">a</a></td><td><a href=\"/changes/log?user=Test2\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>Never</td></tr><tr><td><span style=\"background-color:green\" class=\"label osmbclabel-collect\">Test1</span></td><td><a href=\"/usert/2\">Test1</a></td><td><a href=\"http://www.openstreetmap.org/user/Test1\">[OSM]</a></td><td><a href=\"https://blog.openstreetmap.de/blog/author/b\">b</a></td><td><a href=\"/changes/log?user=Test1\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>Never</td></tr><tr><td><span style=\"background-color:undefined\" class=\"label osmbclabel-collect\">TheFive</span></td><td><a href=\"/usert/1\">TheFive</a></td><td><a href=\"http://www.openstreetmap.org/user/TheFive\">[OSM]</a></td><td></td><td><a href=\"/changes/log?user=TheFive\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>a few seconds ago</td></tr></tbody>');
       bddone();
 
     });
-  });});
+  });
+});

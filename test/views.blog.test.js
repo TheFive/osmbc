@@ -7,11 +7,13 @@ var should  = require('should');
 var request   = require('request');
 var path = require('path');
 var fs = require('fs');
+var mockdate = require('mockdate');
 
 var config = require('../config.js');
 
 var configModule = require('../model/config.js');
 var blogModule   = require('../model/blog.js');
+var userModule   = require('../model/user.js');
 
 
 
@@ -20,6 +22,7 @@ var blogModule   = require('../model/blog.js');
 describe('views/blog', function() {
   let baseLink;
   var data;
+
   describe('export',function(){
     before(function(bddone) {
       var file =  path.resolve(__dirname,'data', "views.blog.export.1.json");
@@ -165,6 +168,106 @@ describe('views/blog', function() {
           });
         }
       ],bddone);
+    });
+  });
+  describe('browser tests',function(){
+    var browser;
+    beforeEach(function(bddone) {
+      this.timeout(6000);
+      process.env.TZ = 'Europe/Amsterdam';
+      mockdate.set(new Date("2016-05-25T19:00"));
+      nock('https://hooks.slack.com/')
+        .post(/\/services\/.*/)
+        .times(999)
+        .reply(200,"ok");
+      async.series([
+        testutil.importData.bind(null,JSON.parse(fs.readFileSync(path.join(__dirname,"data","DataWN290.json"),"UTF8"))),
+        function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full",mainLang:"DE",secondLang:"EN"},cb); },
+        testutil.startServer.bind(null,"TheFive")
+      ], function(err) {
+        browser=testutil.getBrowser();
+        bddone(err);
+      });
+    });
+    afterEach(function(){
+      mockdate.reset();
+      testutil.stopServer();
+    });
+    describe("Blog Display",function() {
+      it('should show Overview with some configurations' ,function(bddone) {
+        this.timeout(40000);
+        async.series([
+          browser.visit.bind(browser,"/blog/WN290"),
+          browser.assert.expectHtml.bind(browser,"blog_wn290_overview.html"),
+          browser.click.bind(browser,'span[name="choose_showNumbers"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showMail"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showVisibleLanguages"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showCollector"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showEditor"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showColoredUser"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.click.bind(browser,'span[name="choose_showLanguages"]'),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.visit.bind(browser,"/blog/WN290"),
+          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
+          browser.assert.expectHtml.bind(browser,"blog_wn290_overview_withglab.html")
+        ],bddone);
+      });
+      it('should show Full View' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/WN290?tab=full"),
+          browser.assert.expectHtml.bind(browser,"blog_wn290_full.html")
+        ],bddone);
+      });
+      it('should show Full View and close language' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/WN290?tab=full"),
+          browser.pressButton.bind(browser,'#closebutton'),
+          function(cb) {
+            blogModule.find({name:"WN290"},function(err,blog){
+              should.not.exist(err);
+              should(blog.length).eql(1);
+              should(blog[0].closeDE).be.True();
+              cb();
+            });
+          }
+        ],bddone);
+      });
+      it('should show Review View' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/WN290?tab=review"),
+          browser.assert.expectHtml.bind(browser,"blog_wn290_review.html"),
+        ],bddone);
+      });
+      it('should show Statistic View' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/WN290/stat"),
+          browser.assert.expectHtml.bind(browser,"blog_wn290_stat.html")
+        ],bddone);
+      });
+      it('should show edit View' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/edit/WN290"),
+          browser.assert.expectHtml.bind(browser,"blog_wn290_edit.html")
+        ],bddone);
+      });
+      it('should show the Blog List' ,function(bddone) {
+        this.timeout(6000);
+        async.series([
+          browser.visit.bind(browser,"/blog/list?status=edit"),
+          browser.assert.expectHtml.bind(browser,"blog_list.html")
+        ],bddone);
+      });
     });
   });
 });
