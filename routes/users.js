@@ -115,7 +115,7 @@ function postUserId(req, res, next) {
                  mailBlogLanguageStatusChange:req.body.mailBlogLanguageStatusChange,
                  email:req.body.email,
                  access:req.body.access};
-  console.log(changes);
+
   if (typeof(changes.mailComment)==="string") {
     changes.mailComment = [changes.mailComment];
   }
@@ -128,7 +128,6 @@ function postUserId(req, res, next) {
   if (typeof(changes.mailBlogLanguageStatusChange)==="undefined") {
     changes.mailBlogLanguageStatusChange = [];
   }
-  console.log(changes);
   var user;
   async.series([
     function findUser(cb) {

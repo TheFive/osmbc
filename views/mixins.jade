@@ -30,11 +30,11 @@ mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
             each v,i in values
                 if (value.indexOf(v)>=0)
                     label.checkbox-inline
-                        input(type="checkbox" value="#{v}" name="#{name}" checked="checked")
+                        input(type="checkbox" value="#{v}" name="#{name}" id="#{name}_#{v}" checked="checked")
                         |#{displayValues[i]}
                 else
                     label.checkbox-inline
-                        input(type="checkbox" name="#{name}" value="#{v}")
+                        input(type="checkbox" name="#{name}" id="#{name}_#{v}" value="#{v}")
                         |#{displayValues[i]}
         div.text-muted(class="col-sm-#{sizeExplanation}")=explanation
 

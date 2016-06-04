@@ -76,6 +76,72 @@ describe('views/user', function() {
         should(result.OSMUser).eql("TestUser");
         should(result.WNAuthor).eql("WNAuthor");
         should(result.WNPublicAuthor).eql("WNPublic");
+        should(result.mailComment).eql([]);
+        should(result.mailBlogLanguageStatusChange).eql([]);
+        bddone();
+      });
+    });
+  });
+  it('should save single Options for Mail & Blog Notifications' ,function(bddone) {
+    this.timeout(maxTimer);
+    nock('https://blog.openstreetmap.de')
+      .get("/blog/author/WNAuthor")
+      .reply(200,'<meta charset="UTF-8" /> \n<title>WNPublic | OSMBlog</title>\n');
+    async.series([
+      function visitUser (cb) {
+        browser.visit('/usert/create', cb);
+      },
+      function fillForm (cb) {
+        browser.evaluate("document.getElementById('mailComment_DE').checked = true");
+        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
+        browser
+          .fill("OSMUser","TestUser")
+          .fill("EMail","")
+          .fill("WNAuthor","WNAuthor")
+          .pressButton("OK",cb);
+      }
+    ],function(err){
+      should.not.exist(err);
+      userModule.findById(2,function(err,result) {
+        should.not.exist(err);
+        should(result.OSMUser).eql("TestUser");
+        should(result.WNAuthor).eql("WNAuthor");
+        should(result.WNPublicAuthor).eql("WNPublic");
+        should(result.mailComment).eql(["DE"]);
+        should(result.mailBlogLanguageStatusChange).eql(["DE"]);
+        bddone();
+      });
+    });
+  });
+  it('should save two Options for Mail & Blog Notifications' ,function(bddone) {
+    this.timeout(maxTimer);
+    nock('https://blog.openstreetmap.de')
+      .get("/blog/author/WNAuthor")
+      .reply(200,'<meta charset="UTF-8" /> \n<title>WNPublic | OSMBlog</title>\n');
+    async.series([
+      function visitUser (cb) {
+        browser.visit('/usert/create', cb);
+      },
+      function fillForm (cb) {
+        browser.evaluate("document.getElementById('mailComment_DE').checked = true");
+        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
+        browser.evaluate("document.getElementById('mailComment_EN').checked = true");
+        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_EN').checked = true");
+        browser
+          .fill("OSMUser","TestUser")
+          .fill("EMail","")
+          .fill("WNAuthor","WNAuthor")
+          .pressButton("OK",cb);
+      }
+    ],function(err){
+      should.not.exist(err);
+      userModule.findById(2,function(err,result) {
+        should.not.exist(err);
+        should(result.OSMUser).eql("TestUser");
+        should(result.WNAuthor).eql("WNAuthor");
+        should(result.WNPublicAuthor).eql("WNPublic");
+        should(result.mailComment).eql(["DE","EN"]);
+        should(result.mailBlogLanguageStatusChange).eql(["DE","EN"]);
         bddone();
       });
     });
@@ -147,4 +213,5 @@ describe('views/user', function() {
       bddone();
 
     });
-  });});
+  });
+});
