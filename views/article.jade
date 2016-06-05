@@ -360,6 +360,14 @@ block content
     +leftcolumn
       if params.left_lang === "DE"
         a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufgruf einer externen Seite)
+        span=" "
+      if (!article["markdown"+params.left_lang]  &&  article["markdown"+params.right_lang])
+        a(href="#" onClick ="javascript: window.open('https://translate.google.com/##{params.right_lang.toLowerCase()}/#{params.left_lang.toLowerCase()}/'+document.getElementById(\"previewRIGHT\").innerText,'_blank');") Google Translate #{params.right_lang} -> #{params.left_lang}
+
+    +rightcolumn
+      if (!article["markdown" + params.right_lang] && article["markdown" + params.left_lang])
+        a(href="#" onClick ="javascript: window.open('https://translate.google.com/##{params.left_lang.toLowerCase()}/#{params.right_lang.toLowerCase()}/'+document.getElementById(\"previewLEFT\").innerText,'_blank');") Google Translate #{params.left_lang} -> #{params.right_lang}
+
 
 
 
@@ -771,7 +779,7 @@ block scripts
       function generateGoogleTranslateLink(link,lang) {
         var googlelang = lang;
         if (lang === "JP") googlelang = "JA";
-        var gtl = "https://translate.google.de/translate?sl=auto&tl="+googlelang+"&u="+link;
+        var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
 
 
         var gtlMarkdown = "(automatic [translation](##link##))";
