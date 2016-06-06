@@ -39,6 +39,7 @@ block content
       - field.push("markdown"+lang)
       - field.push("reviewComment"+lang)
       - userlist = [];
+
     for v in field
       - for (u in logs[v])
         -   if (userlist.indexOf(u)<0) userlist.push(u)
@@ -48,14 +49,14 @@ block content
         tr
           th
             
-          - for (u in userlist)
+          each u in userlist
             th=u
       tbody
         
         for v in field
           tr
             th=v
-            -for (u in userlist)
+            each u in userlist
               if logs[v]
                 td
                   a(href="#{layout.htmlroot}/article/list?blog=#{blog.name}&user=#{u}&property=#{v}") #{logs[v][u]}
