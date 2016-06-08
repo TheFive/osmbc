@@ -358,15 +358,15 @@ block content
   .row
     .col-md-1
     +leftcolumn
-      if params.left_lang === "DE"
+      if params.left_lang === "DE" && article["markdown"+params.left_lang]
         a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufgruf einer externen Seite)
         span=" "
-      if (params.right_lang && !article["markdown"+params.left_lang]  &&  article["markdown"+params.right_lang])
-        a(href="#" onClick ="javascript: window.open('https://translate.google.com/##{params.right_lang.toLowerCase()}/#{params.left_lang.toLowerCase()}/'+document.getElementById(\"previewRIGHT\").innerText,'_blank');") Google Translate #{params.right_lang} -> #{params.left_lang}
+      if (params.edit && params.right_lang && !article["markdown"+params.left_lang]  &&  article["markdown"+params.right_lang])
+        a(href="#" onClick ="javascript: window.open('https://translate.google.com/##{params.right_lang.toLowerCase()}/#{params.left_lang.toLowerCase()}/'+document.getElementById(\"markdownRIGHT\").value,'_blank');") Google Translate #{params.right_lang} -> #{params.left_lang}
 
     +rightcolumn
-      if (params.right_lang && !article["markdown" + params.right_lang] && article["markdown" + params.left_lang])
-        a(href="#" onClick ="javascript: window.open('https://translate.google.com/##{params.left_lang.toLowerCase()}/#{params.right_lang.toLowerCase()}/'+document.getElementById(\"previewLEFT\").innerText,'_blank');") Google Translate #{params.left_lang} -> #{params.right_lang}
+      if (params.edit && params.right_lang && !article["markdown" + params.right_lang] && article["markdown" + params.left_lang])
+        a(href="#" onClick ="javascript: window.open('https://translate.google.com/##{params.left_lang.toLowerCase()}/#{params.right_lang.toLowerCase()}/'+document.getElementById(\"markdownLEFT\").value,'_blank');") Google Translate #{params.left_lang} -> #{params.right_lang}
 
 
 
@@ -677,15 +677,13 @@ block scripts
         if (r) {
           mf.value =r.text;
           mf.selectionStart = mf.selectionEnd = r.pos;
-
-          onchangeLEFT();
         }
+        mf.value = (mf.value).replace(/] \(/g,"](");
+        onchangeLEFT();
       },1);
 
     }
     function pasteRIGHT() {
-     
-     
       var mf = document.getElementById("markdownRIGHT");
       //var textBefore = mf.value;
       var before = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
@@ -699,8 +697,9 @@ block scripts
         if (r) {
           mf.value =r.text;
           mf.selectionStart = mf.selectionEnd = r.pos;
-         onchangeRIGHT();
         }
+        mf.value = (mf.value).replace(/] \(/g,"](");
+        onchangeRIGHT();
       },1);
 
     }

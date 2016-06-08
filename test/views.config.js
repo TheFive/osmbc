@@ -9,7 +9,7 @@ var userModule = require("../model/user.js");
 
 
 
-var maxTimer = 10000;
+var maxTimer = 12000;
 
 
 describe('views/config', function() {
