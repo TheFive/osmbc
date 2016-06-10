@@ -648,6 +648,21 @@ function renderList(req,res,next) {
   );
 }
 
+var Browser = require("zombie");
+
+function translate(req,res,next) {
+  debug("translate");
+  let fromLang = req.params.fromLang;
+  let toLang = req.params.toLang;
+  let text = req.params.text;
+  let link = "#"+fromLang+"/"+toLang+"/"+text;
+  let browser = new Browser({site:"https://translate.google.com/"});
+
+  browser.visit(link, function (err) {
+    if (err) return next(err);
+    res.end(browser.query("#result_box").textContent);
+  });
+}
 
 
 // Export Render Functions for testing purposes
@@ -672,9 +687,11 @@ router.get('/create',exports.createArticle);
 router.get('/searchandcreate',exports.searchAndCreate);
 router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
+router.get('/translate/:fromLang/:toLang/:text',translate);
 
 router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
+
 
 router.post('/:article_id/addComment', exports.postNewComment);
 router.post('/:article_id/setMarkdown/:lang', exports.postSetMarkdown);
