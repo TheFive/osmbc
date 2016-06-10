@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.6](https://github.com/TheFive/osmbc/tree/1.8.6) (2016-06-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.5b...1.8.6)
+
+**Implemented enhancements:**
+
+- Retrieve translation from google translate. [\#476](https://github.com/TheFive/osmbc/issues/476)
+
 ## [1.8.5b](https://github.com/TheFive/osmbc/tree/1.8.5b) (2016-06-08)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.5a...1.8.5b)
 
