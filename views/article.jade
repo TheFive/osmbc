@@ -593,7 +593,7 @@ block scripts
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase():'--'}";
       var originalText = document.getElementById("markdownLEFT").value;
-      jQuery.get("#{layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang+"/"+originalText, function(data) {
+      jQuery.get("#{layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang+"/"+encodeURIComponent(originalText), function(data) {
         data = data.replace(/] \(/g,"](");
         document.getElementById("translateWait").classList.add("hidden");
         document.getElementById("markdownRIGHT").value = data;
