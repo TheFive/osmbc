@@ -1,2 +1,2 @@
-test/NockedPages linguist-documentation
-test/screens linguist-documentation
+test/NockedPages linguist-documentation=true
+test/screens linguist-documentation=true
