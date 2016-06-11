@@ -1,4 +1,8 @@
+I have trouble generating this changelog automatic, so please use the [github release](https://github.com/TheFive/osmbc/releases) until this is solved.
+
+
 # Change Log
+
 
 ## [1.8.6](https://github.com/TheFive/osmbc/tree/1.8.6) (2016-06-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.5b...1.8.6)
