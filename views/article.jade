@@ -368,6 +368,9 @@ block content
         button#translateWait.btn.btn-small.btn-warning.hidden
           span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
           span=" Please Wait"
+        button#translateError.btn.btn-small.btn-error.hidden
+          span="Error occured"
+        button#copyLink.btn.btn-small.btn-primary(onClick ="javascript: window.copyText();") Copy #{params.left_lang} -> #{params.right_lang}
 
 
 
@@ -580,10 +583,12 @@ block scripts
         f();
       }
       window.translate = translate;
+      window.copyText = copyText;
     }
 
     function translate() {
       document.getElementById("translateLink").classList.add("hidden");
+      document.getElementById("copyLink").classList.add("hidden");
       document.getElementById("translateWait").classList.remove("hidden");
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase():'--'}";
@@ -593,7 +598,16 @@ block scripts
         document.getElementById("translateWait").classList.add("hidden");
         document.getElementById("markdownRIGHT").value = data;
         onchangeRIGHT();
+      }).fail(function(){
+        document.getElementById("translateWait").classList.add("hidden");
+        document.getElementById("translateError").classList.remove("hidden");
       });
+    }
+    function copyText() {
+      document.getElementById("translateLink").classList.add("hidden");
+      document.getElementById("copyLink").classList.add("hidden");
+      document.getElementById("markdownRIGHT").value = document.getElementById("markdownLEFT").value ;
+      onchangeRIGHT();
     }
 
     function onleaveLEFT() {
