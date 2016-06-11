@@ -654,7 +654,7 @@ function translate(req,res,next) {
   debug("translate");
   let fromLang = req.params.fromLang;
   let toLang = req.params.toLang;
-  let text = req.params.text;
+  let text = req.body.text;
   let link = "#"+fromLang+"/"+toLang+"/"+text;
   let browser = new Browser({site:"https://translate.google.com/"});
 
@@ -687,7 +687,7 @@ router.get('/create',exports.createArticle);
 router.get('/searchandcreate',exports.searchAndCreate);
 router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
-router.get('/translate/:fromLang/:toLang/:text',translate);
+router.post('/translate/:fromLang/:toLang',translate);
 
 router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
