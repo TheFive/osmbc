@@ -154,6 +154,20 @@ describe('render/blogrenderer', function() {
       should(result).equal('<li id=\"undefined_0\">\n<p>Wir erzählen euch was über Karten.</p>\n\n</li>');
       bddone();
     });
+    it('should generate an article for Upcoming Events',function (bddone) {
+      var article = articleModule.create({markdownEN:"This is a table",markdownDE:"Eine Tabelle",
+        categoryEN:"Upcoming Events"});
+      var result = renderer.renderArticle("DE",article);
+      should(result).equal('<p><p>Eine Tabelle</p>\n\n</p>\n<p>Hinweis:<br />Wer seinen Termin hier in der Liste sehen möchte, <a href=\"https://wiki.openstreetmap.org/wiki/Template:Calendar\">trage</a> ihn in den <a href=\"https://wiki.openstreetmap.org/wiki/Current_events\">Kalender</a> ein. Nur Termine, die dort stehen, werden in die Wochennotiz übernommen.</p>\n');
+      bddone();
+    });
+    it('should generate an article for Long Term Dates',function (bddone) {
+      var article = articleModule.create({markdownEN:"This is a table",markdownDE:"Eine Tabelle",
+        categoryEN:"Long Term Dates"});
+      var result = renderer.renderArticle("DE",article);
+      should(result).equal('<p><p>Eine Tabelle</p>\n\n</p>');
+      bddone();
+    });
   });
 
   describe('renderBlog',function() {
