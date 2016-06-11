@@ -598,7 +598,8 @@ block scripts
         document.getElementById("translateWait").classList.add("hidden");
         document.getElementById("markdownRIGHT").value = data;
         onchangeRIGHT();
-      }).fail(function(){
+      }).fail(function(err){
+        console.log(err);
         document.getElementById("translateWait").classList.add("hidden");
         document.getElementById("translateError").classList.remove("hidden");
       });
