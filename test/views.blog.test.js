@@ -255,7 +255,7 @@ describe('views/blog', function() {
         ],bddone);
       });
       it('should show edit View' ,function(bddone) {
-        this.timeout(6000);
+        this.timeout(7000);
         async.series([
           browser.visit.bind(browser,"/blog/edit/WN290"),
           browser.assert.expectHtml.bind(browser,"blog_wn290_edit.html")

@@ -106,7 +106,7 @@ block content
           +rightcolumn
             p(id="categoryDisplay" style={color: 'Gray'})
           .col-md-1
-            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false&style=#{params.style}';") Cancel
+            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") Cancel
         .row
           .col-md-1
             p="Predecessor"
@@ -244,7 +244,7 @@ block content
             a(href="#doublettes")
               div.button.btn.btn-large.btn-danger=articleReferences.count+" doub."
         .col-md-1
-          a(href="#{layout.htmlroot}/article/#{article.id}?edit=true&style=#{params.style}" class="btn btn-primary" role="button") Edit
+          a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
       .row
         .col-md-1
           p="Category"
@@ -291,7 +291,7 @@ block content
                   - open = true;
           if open
             p
-              button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}&notranslation=true';") notranslation to rest
+              button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?notranslation=true';") notranslation to rest
 
 
 
@@ -406,7 +406,7 @@ block content
               form(name="EditComment",id="EditCommentForm", action="#{layout.htmlroot}/article/#{article.id}/EditComment/#{i}", method="post")
                 textarea.form-control(name="comment" id="editComment" rows=7)=comment.text
                 button.btn.btn-large.btn-primary(name = "update" type = "button" onclick ="if (document.getElementById('editComment').value.trim()==='') return;window.onbeforeunload=null; document.getElementById('EditCommentForm').submit();") Update
-                button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}';") Cancel
+                button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}';") Cancel
             else
               p
                 :verbatim
@@ -418,7 +418,7 @@ block content
           form(name="AddComment",id="AddComment", action="#{layout.htmlroot}/article/#{article.id}/addComment", method="post")
             textarea.form-control(name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
             button.btn.btn-large.btn-primary(name= "AddComment" type = "button" onclick ="if (document.getElementById('comment').value.trim()==='') return;window.onbeforeunload=null; document.getElementById('AddComment').submit();") Add Comment
-            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?style=#{params.style}';") Cancel
+            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}';") Cancel
 
   #doublettes.row
       if articleReferences.count >= 1
@@ -593,7 +593,6 @@ block scripts
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase():'--'}";
       var originalText = document.getElementById("markdownLEFT").value;
-      console.log("#{layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang+"/"+encodeURIComponent(originalText));
       jQuery.post("#{layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang,{text:originalText}, function(data) {
         data = data.replace(/] \(/g,"](");
         document.getElementById("translateWait").classList.add("hidden");
@@ -917,6 +916,8 @@ block scripts
     
 
       function onchangeCategory() {
+        var categoryEN = document.getElementById("categoryEN");
+        if (!categoryEN) return;
         var c = categoryEN.value;
         if (placeholder[c]) {
            categoryDisplay.innerHTML = placeholder[c];    
@@ -924,8 +925,10 @@ block scripts
         showHideUnpublishReason();
       }
       function showHideUnpublishReason() {
-        var c = categoryEN.value;
-        var b = blog.value;
+        var categoryEN = document.getElementById("categoryEN");
+        if (!categoryEN) return;
+        var c = document.getElementById("categoryEN").value;
+        var b = document.getElementById("blog").value;
         var hidden = true;
         if (c==="--unpublished--") hidden = false;
         if (b==="Trash") hidden = false;
