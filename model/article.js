@@ -450,7 +450,11 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(callback) {
         if (err) return cb(err);
         if (result) {
           for (var i=result.length-1;i>=0;i--){
-            if (result[i].id == self.id) {
+            let dropIt = false;
+            if (result[i].id == self.id) dropIt = true;
+            if (result[i].blog == "Trash") dropIt = true;
+            if (result[i].categoryEN == "--unpublished--") dropIt = true;
+            if (dropIt) {
               result.splice(i,1);
             }
           }

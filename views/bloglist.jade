@@ -36,13 +36,13 @@ block content
                     td
                       if blog["close"+lang]
                         - labeltype = "label-success"
-                        - urlblog = layout.htmlroot+"/blog/"+blog.name+"?style=fullfinal"+lang
+                        - urlblog = layout.htmlroot+"/blog/"+blog.name
 
                       else
                         if lang!="PT"
                         if blog["reviewComment"+lang]
                           - labeltype = "label-primary"
-                          - urlblog =  layout.htmlroot+"/blog/"+blog.name+"?style=fullfinal"+lang
+                          - urlblog =  layout.htmlroot+"/blog/"+blog.name
 
                         else
                           - labeltype = "label-danger"
