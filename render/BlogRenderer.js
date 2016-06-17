@@ -128,9 +128,9 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang,article) {
   }
   if (article.categoryEN==="--unpublished--") {
     var reason2 = "No Reason given";
-    if (article.unpublishReason) reason2 = this.unpublishReason;
+    if (article.unpublishReason) reason2 = article.unpublishReason;
     text += "<br>"+reason2;
-    if (this.unpublishReference) text += " ("+this.unpublishReference+")";
+    if (article.unpublishReference) text += " ("+article.unpublishReference+")";
   }
 
   return liON + text + '\n' + liOFF;
@@ -143,7 +143,14 @@ MarkdownRenderer.prototype.renderArticle = function markdownArticle(lang,article
 
 HtmlRenderer.prototype.articleTitle = function htmlArticle(lang,article) {
   debug('HtmlRenderer.prototype.article');
-  return "<li>"+article.displayTitle(999)+"</li>";
+  var text = article.displayTitle(999);
+  if (article.categoryEN==="--unpublished--") {
+    var reason2 = "No Reason given";
+    if (article.unpublishReason) reason2 = article.unpublishReason;
+    text += "<br>"+reason2;
+    if (article.unpublishReference) text += " ("+article.unpublishReference+")";
+  }
+  return "<li>"+text+"</li>";
 };
 MarkdownRenderer.prototype.articleTitle = function markdownArticle(lang,article) {
   debug('MarkdownRenderer.prototype.article');
