@@ -233,13 +233,20 @@ function renderBlogPreview(req, res,next) {
   );
 }
 
-function setReviewComment(req,res) {
+function setReviewComment(req,res,next) {
   debug('setReviewComment');
 
-  var lang = req.params.lang;
-  let t = res;
-  return lang + t;
+  var lang = req.body.lang;
+  var user = req.user;
+  var data = req.body.text;
 
+
+  if (!req.blog) return next();
+  req.blog.setReviewComment(lang,user,data,function(err){
+    if (err) return next(err);
+    let referer=req.header('Referer') || '/';
+    res.redirect(referer);
+  });
 }
 
 function renderBlogTab(req, res,next) {
@@ -285,10 +292,7 @@ function renderBlogTab(req, res,next) {
       review: function (callback) {
         if (typeof(req.query.reviewComment)!='undefined')
         {
-          clearParams = true;
-          blog.setReviewComment(lang,req.user,req.query.reviewComment,function(err) {
-            return callback(err);
-          });
+          return callback(new Error("?reviewComment= parameter is not supported any longer"));
         } else return callback();
       },
       setStatus: function (callback) {
@@ -401,11 +405,10 @@ function postBlogId(req, res, next) {
 
 
 router.param("blog_id",findBlogId);
-
-router.get ('/edit/:blog_id',editBlogId);
-router.post('/edit/:blog_id',postBlogId);
-router.post(':blog_id/setReviewComment/:lang');
-router.post(':blog_id/setReviewComment/:lang');
+router.route('/edit/:blog_id')
+  .get(editBlogId)
+  .post(postBlogId);
+router.post('/:blog_id/setReviewComment',setReviewComment);
 
 
 router.get('/create', createBlog);

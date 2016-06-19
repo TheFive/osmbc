@@ -149,15 +149,16 @@ describe('views/blog', function() {
 
         function(cb){
           var opts = {
-            url: baseLink+"/blog/blog?reviewComment=startreview",
-            method: 'get',
+            url: baseLink+"/blog/blog/setReviewComment",
+            form:{lang:"DE",text:"startreview"},
             headers:{
               Referer: baseLink+"/blog/blog"
             }
           };
-          request(opts, function (err, res) {
+          request.post(opts, function (err, res,body) {
             should.not.exist(err);
-            should(res.statusCode).eql(200);
+            should(res.statusCode).eql(302);
+            
             blogModule.findOne({name:"blog"},function(err,blog){
               should.not.exist(err);
               should(blog.reviewCommentDE).eql([]);

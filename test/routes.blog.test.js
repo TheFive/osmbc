@@ -6,6 +6,7 @@ var nock  = require('nock');
 var should = require('should');
 var request = require('request');
 var config = require('../config');
+var jade = require("jade");
 
 
 var testutil = require('../test/testutil.js');
@@ -22,7 +23,10 @@ var blogRouter = require('../routes/blog.js');
 describe('routes/blog',function() {
   var user = null;
   var baseLink;
+  var jadeSpy;
   beforeEach(function(bddone){
+
+
     async.series([
       testutil.clearDB,
       function cu(cb) {
@@ -34,6 +38,8 @@ describe('routes/blog',function() {
       }
     ],bddone);  });
   before(function(bddone){
+    jadeSpy = sinon.spy(jade,"__express");
+
     nock('https://hooks.slack.com/')
             .post(/\/services\/.*/) 
             .times(999) 
@@ -42,94 +48,73 @@ describe('routes/blog',function() {
     testutil.startServer("TestUser",bddone);
   });
   after(function(bddone){
+    jade.__express.restore();
     nock.cleanAll();
     testutil.stopServer();
     bddone();
   });
 
   describe('renderBlogPreview',function() {
-    it('should call next if blog id not exist',function(bddone) {
-      blogModule.createNewBlog({OSMUser:"test"},{title:"WN333"},function(err,blog) {
+    it('should call next if blog id not exist', function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"}, {title: "WN333"}, function (err, blog) {
         should.not.exist(err);
         should(blog.id).not.equal(0);
-        var newId = blog.id +1;
-        request.get(baseLink+"/blog/"+newId+"/preview/lang=DE", function (err, res, body) {
+        var newId = blog.id + 1;
+        request.get(baseLink + "/blog/" + newId + "/preview?lang=DE", function (err, res) {
           should(res.statusCode).eql(404);
           bddone();
 
         });
       });
     });
-    it('should call next if blog name not exist',function(bddone) {
-      blogModule.createNewBlog({OSMUser:"test"},{title:"WN333"},function(err,blog) {
+    it('should call next if blog name not exist', function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"}, {title: "WN333"}, function (err, blog) {
         should.not.exist(err);
         should(blog.id).not.equal(0);
         var newId = "WN332";
-        request.get(baseLink+"/blog/"+newId+"/preview/lang=DE", function (err, res, body) {
+        request.get(baseLink + "/blog/" + newId + "/preview?lang=DE", function (err, res,) {
           should(res.statusCode).eql(404);
           bddone();
         });
       });
     });
-    it('should call next if blog exists twice',function(bddone) {
-      blogModule.createNewBlog({OSMUser:"test"},{name:"WN333"},function(err,blog) {
+    it('should call next if blog exists twice', function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"}, function (err, blog) {
         should.not.exist(err);
-        blogModule.createNewBlog({OSMUser:"test"},{name:"WN333"},function(err,blog2) {
+        blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"}, function (err, blog2) {
           should.not.exist(err);
           should.exist(blog2);
           should(blog.id).not.equal(0);
-          request.get(baseLink+"/blog/WN333/preview/lang=DE", function (err, res, body) {
-            should(res.statusCode).eql(404);
+          request.get(baseLink + "/blog/WN333/preview?lang=DE", function (err, res) {
+            should(res.statusCode).eql(500);
             bddone();
           });
         });
       });
     });
-    it('should render a blog Preview',function(bddone) {
-      blogModule.createNewBlog({OSMUser:"test"},{name:"WN333",startDate:"2015-12-12T00:00:00",endDate:"2015-12-13T00:00:00"},function(err,blog) {
+    it('should render a blog Preview', function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"}, {
+        name: "WN333",
+        startDate: "2015-12-12T00:00:00",
+        endDate: "2015-12-13T00:00:00"
+      }, function (err, blog) {
         should.not.exist(err);
+        should.exist(blog);
         should(blog.id).not.equal(0);
-        var newId = "WN333";
-        var req = {};
-        req.params = {};
-        req.params.blog_id = newId;
-        req.query = {};
-        req.user = {};
-        req.session = {};
-        req.blog = blog;
-        req.originalUrl = "returnToUrlXX";
+        request.get(baseLink + "/blog/WN333/preview?lang=DE", function (err, res) {
+          should(res.statusCode).eql(200);
+          var call = jadeSpy.lastCall;
+          var v = call.args[1];
+          should(v.blog.id).equal(blog.id);
+          //should(v.articles.length).equal(0);
+          should(v.lang).equal("DE");
+          should(v.returnToUrl).equal("/blog/WN333/preview?lang=DE");
+          should(v.preview).equal('<p>12.12.2015-13.12.2015</p>\n<!--         place picture here              -->\n<ul>\n<div style=\"width: ##width##px\" class=\"wp-caption alignnone\"> \nWN333 Picture\n</div>\n</ul>\n<h2 id=\"wn333_wochenvorschau\">Wochenvorschau</h2>\n<ul>\n<p>WN333 Upcoming Events\n</p>\n<p>Hinweis:<br />Wer seinen Termin hier in der Liste sehen möchte, <a href=\"https://wiki.openstreetmap.org/wiki/Template:Calendar\">trage</a> ihn in den <a href=\"https://wiki.openstreetmap.org/wiki/Current_events\">Kalender</a> ein. Nur Termine, die dort stehen, werden in die Wochennotiz übernommen.</p>\n</ul>\n<p align=\"right\"><i>Diese Wochennotiz wurde erstellt von .</i></p>\n');
 
-        var next;
-        var res = {rendervar:{layout:"calculated layout"}};
+          bddone();
+        });
 
-        async.series([
-          function(callback) {
-            res.render = sinon.spy(callback);
-            next = sinon.spy(callback);
-            blogRouter.renderBlogPreview(req,res,next);
-          }],
-          function(result) {
-            should(result).equal('blogpreview');
-            should(next.called).be.False();
-
-            should(res.render.called).be.True();
-            var call = res.render.firstCall;
-            var v = call.args[1];
-
-
-
-            should(v.preview).equal('<p>12.12.2015-13.12.2015</p>\n<p align="right"><i>Diese Wochennotiz wurde erstellt von .</i></p>\n');
-            should(v.blog.id).equal(blog.id);
-            should(v.layout).equal("calculated layout");
-            //should(v.articles.length).equal(0);
-            should(v.lang).equal("DE");
-            should(v.returnToUrl).equal("returnToUrlXX");
-
-      
-            bddone();            
-          }
-        );
-      },true); // do not create additional articles
+      });
     });
   });
   describe('renderBlogTab',function() {
@@ -139,7 +124,7 @@ describe('routes/blog',function() {
         should(blog.id).not.equal(0);
         var newId = blog.id +1;
 
-        request.get(baseLink+"/blog/"+newId+"/preview/lang=DE", function (err, res, body) {
+        request.get(baseLink+"/blog/"+newId+"/preview?lang=DE", function (err, res) {
           should(res.statusCode).eql(404);
           bddone();
 
@@ -151,7 +136,7 @@ describe('routes/blog',function() {
         should.not.exist(err);
         should(blog.id).not.equal(0);
         var newId = "WN332";
-        request.get(baseLink+"/blog/"+newId+"/preview/lang=DE", function (err, res, body) {
+        request.get(baseLink+"/blog/"+newId+"/preview?lang=DE", function (err, res) {
           should(res.statusCode).eql(404);
           bddone();
 
@@ -166,8 +151,8 @@ describe('routes/blog',function() {
           should.exist(blog2);
           should(blog.id).not.equal(0);
           var newId = "WN333";
-          request.get(baseLink+"/blog/"+newId+"/preview/lang=DE", function (err, res, body) {
-            should(res.statusCode).eql(404);
+          request.get(baseLink+"/blog/"+newId+"/preview?lang=DE", function (err, res) {
+            should(res.statusCode).eql(500);
             bddone();
 
           });
