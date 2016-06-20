@@ -28,9 +28,9 @@ block content
       - show = parseInt(show);
 
       if (foundArticles.length>0)
-        p
+        p#articleCounter
           a(style={color:'Gray'}) 
-            | Display #{show} of #{foundArticles.length} articles.
+            | Display #{(show>foundArticles.length)?foundArticles.length:show} of #{foundArticles.length} articles.
           if (show < foundArticles.length)
             a(href="#{action}?search=#{search}&show=all&edit=#{showCollect}")   Show All
         table.table.table-striped.table-condensed.table-responsive
