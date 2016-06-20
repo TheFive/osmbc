@@ -14,7 +14,7 @@ var OpenStreetMapStrategy
                  = require('passport-openstreetmap').Strategy;
 
 var session      = require('express-session');
-var compression = require('compression')
+var compression = require('compression');
 
 var pg = require('pg');
 
@@ -295,6 +295,9 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   debug("Set development error hander");
+
+  require('express-debug')(app, {/* settings */});
+
   app.locals.pretty = true;
   app.use(function(err, req, res,next) { 
     debug('app.use Error Handler for Debug');
