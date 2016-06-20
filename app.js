@@ -14,6 +14,7 @@ var OpenStreetMapStrategy
                  = require('passport-openstreetmap').Strategy;
 
 var session      = require('express-session');
+var compression = require('compression')
 
 var pg = require('pg');
 
@@ -33,6 +34,11 @@ var layout     = require('./routes/layout').router;
 var configRouter     = require('./routes/config').router;
 
 var userModule = require('./model/user.js');
+
+
+
+
+
 
 
 
@@ -154,6 +160,11 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+
+// compress all requests
+app.use(compression());
+
 
 app.use(favicon(path.join(__dirname , 'public','images','favicon.ico')));
 
