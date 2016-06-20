@@ -52,7 +52,21 @@ describe('views/article', function() {
     bddone();
   });
 
+  describe("Menu",function(){
+    it("should call search with test",function(bddone){
+      this.timeout(4000);
+      async.series([
+        browser.visit.bind(browser,"/article/search"),
+        function(cb){ browser.fill("search","http://www.test.dä/holla");cb();},
+        browser.pressButton.bind(browser,"SearchNow")
+      ],function finalFunction(err){
+        browser.assert.text('p#articleCounter',"Display 2 of 2 articles.");
+        should.not.exist(err);
+        bddone();
+      });
 
+    });
+  });
 
   describe("Scripting Functions",function() {
     beforeEach(function(done) {

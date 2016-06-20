@@ -549,6 +549,7 @@ function createArticle(req, res, next) {
 
 function searchArticles(req, res, next) {
   debug('search');
+
   var search = req.query.search;
   var show = req.query.show;
   if (!show) show = "15";
@@ -574,11 +575,13 @@ function searchArticles(req, res, next) {
       debug('search->finalFunction');
       if (err) return next(err);
       should.exist(res.rendervar);
+      let renderer = new BlogRenderer.HtmlRenderer(null);
       res.render("collect",{layout:res.rendervar.layout,
                             search:search,
                             show:show,
                             foundArticles:result,
-                            placeholder:{},
+                            renderer:renderer,
+                            placeholder:{categories:{}},
                             showCollect:false,
                             categories:blogModule.getCategories()});
     }
