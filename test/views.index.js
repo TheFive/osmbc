@@ -18,34 +18,7 @@ var mockdate = require('mockdate');
 
 describe('views/index', function() {
   describe("Known User",function(){
-    var browser;
-    var articleId;
-    before(function(bddone) {
-      mockdate.set(new Date("2016-05-25T20:00"));
-      nock('https://hooks.slack.com/')
-        .post(/\/services\/.*/)
-        .times(999)
-        .reply(200,"ok");
-      async.series([
-        testutil.clearDB,
-        function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
-        testutil.startServer.bind(null,"TheFive"),
-        function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test",markdownEN:"test"},function(err,article){
-          if (article) articleId = article.id;
-          cb(err);
-        }); },
-        function createBlog(cb) {blogModule.createNewBlog({blog:"blog",status:"edit"},function(err){
-          cb(err);
-        }); }
-      ], function(err) {
-        browser=testutil.getBrowser();
-        bddone(err);
-      });
-    });
-    after(function(){
-      mockdate.reset();
-      testutil.stopServer();
-    });
+
 
 
     describe("Homepage",function() {
@@ -143,7 +116,7 @@ describe('views/index', function() {
       });
     });
   });
-  describe("Unkown User",function(){
+  describe("User with no rights",function(){
     before(function(){
       nock('https://hooks.slack.com/')
         .post(/\/services\/.*/)
@@ -187,6 +160,48 @@ describe('views/index', function() {
 
         bddone();
       });
+    });
+  });
+  describe("Menu",function(){
+    var browser;
+    var articleId;
+    before(function(bddone) {
+      mockdate.set(new Date("2016-05-25T20:00"));
+      nock('https://hooks.slack.com/')
+        .post(/\/services\/.*/)
+        .times(999)
+        .reply(200,"ok");
+      async.series([
+        testutil.clearDB,
+        function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
+        testutil.startServer.bind(null,"TheFive"),
+        function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test",markdownEN:"test"},function(err,article){
+          if (article) articleId = article.id;
+          cb(err);
+        }); },
+        function createBlog(cb) {blogModule.createNewBlog({blog:"blog",status:"edit"},function(err){
+          cb(err);
+        }); }
+      ], function(err) {
+        browser=testutil.getBrowser();
+        bddone(err);
+      });
+    });
+    after(function(){
+      mockdate.reset();
+      testutil.stopServer();
+    });
+    it("should call search with test",function(bddone){
+      this.timeout(4000);
+      async.series([
+        browser.visit.bind(browser,"/article/search"),
+        function(cb){ browser.fill("search","test");cb();},
+        browser.pressButton.bind(browser,"SearchNow")
+      ],function finalFunction(err){
+        should.not.exist(err);
+        bddone();
+      });
+
     });
   });
 });
