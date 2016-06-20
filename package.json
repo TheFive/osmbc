@@ -12,6 +12,7 @@
     "cheerio": "^0.20.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
+    "compression": "^1.6.2",
     "connect-pg-simple": "^3.1.0",
     "cookie-parser": "~1.4.1",
     "debug": "~2.2.0",
