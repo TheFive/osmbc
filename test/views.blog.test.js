@@ -155,7 +155,7 @@ describe('views/blog', function() {
               Referer: baseLink+"/blog/blog"
             }
           };
-          request.post(opts, function (err, res,body) {
+          request.post(opts, function (err, res) {
             should.not.exist(err);
             should(res.statusCode).eql(302);
             

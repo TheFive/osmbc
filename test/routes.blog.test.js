@@ -15,7 +15,6 @@ var userModule = require('../model/user.js');
 
 require('jstransformer-verbatim');
 
-var blogRouter = require('../routes/blog.js');
 
 
 
@@ -72,7 +71,7 @@ describe('routes/blog',function() {
         should.not.exist(err);
         should(blog.id).not.equal(0);
         var newId = "WN332";
-        request.get(baseLink + "/blog/" + newId + "/preview?lang=DE", function (err, res,) {
+        request.get(baseLink + "/blog/" + newId + "/preview?lang=DE", function (err, res) {
           should(res.statusCode).eql(404);
           bddone();
         });
@@ -160,69 +159,4 @@ describe('routes/blog',function() {
       });
     });
   });
- /*describe('Render Blog ID File Based',function() {
-    beforeEach(function (bddone) {
-      testutil.clearDB(bddone);
-    });
-    function doATest(filename) {
-     
-      it('should handle testfile '+filename,function (bddone) {
-        var file =  path.resolve(__dirname,'data', filename);
-        var data =  JSON.parse(fs.readFileSync(file));
-       
-        var blog;
-        var md;
-        var html;
-        var articles;
-
-        var res;
-
-        async.series([
-          function(done) {
-            testutil.importData(data,done);
-          },
-          function callRenderBlogId(callback) {
-            var req = {};
-            req.params = {};
-            req.params.blog_id = data.testBlogName;
-            req.query = {};
-            if (data.style) req.query.style = data.style;
-            req.user = {};
-            req.session = {articleReturnTo:"returnToUrlXX"};
-
-            res = {rendervar:{layout:"calculated layout"}};
-            res.render = sinon.spy(callback);
-            next = sinon.spy(callback);
-            blogRouter.renderBlogId(req,res,next);
-          }
-          ],
-          function (call) {
-            should(call).equal("blog");
-            should(res.render.called).be.True();
-            var call = res.render.firstCall;
-            var v = call.args[1];
-
-
-            should(v.blog.name).equal(data.testBlogName);
-            should(v.layout).equal("calculated layout");
-            should(v.main_text).equal(data.result.main_text);
-            for (var i = 0;i<data.result.changes.length;i++) {
-              should(v.change[i].user)=data.result.changes[i].user;
-              should(v.change[i].from)=data.result.changes[i].from;
-              should(v.change[i].to)=data.result.changes[i].to;
-            }
-           
-            should(v.style).equal(data.result.style);
-            should(v.left_lang).equal(data.result.left_lang);
-            should(v.right_lang).equal(data.result.right_lang);
-
-
-   
-            bddone();
-          }
-        )   
-      })
-    }
-    testutil.generateTests("data",/^router.blog.renderBlogId.+json/,doATest);
-  })*/  
 });

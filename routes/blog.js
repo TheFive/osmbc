@@ -364,7 +364,7 @@ function editBlogId(req,res) {
   debug('editBlogId');
   var blog = req.blog;
   should.exist(res.rendervar);
-  should.exit(blog);
+  should.exist(blog);
   var params = {};
   if (req.query.edit) params.edit = req.query.edit;
   if (params.edit && params.edit=="false") {
