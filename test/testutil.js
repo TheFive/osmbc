@@ -165,6 +165,10 @@ exports.importData = function importData(data,callback) {
           if (d.table == "blog") id = idReference.blog[d.oid];
           if (d.table == "user") id = idReference.user[d.oid];
           d.oid = id;
+          if (d._oid) {
+            d.oid = d._oid;
+            delete d._oid;
+          }
           logModule.log(d,function waitShort() {setTimeout(cb,1);});
         },cb4);
       } else cb4();

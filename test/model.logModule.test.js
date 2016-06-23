@@ -37,18 +37,22 @@ describe('model/changes',function() {
     });
     it('should count the different logs',function(bddone){
       async.parallel([
-        function writeLog1(cb){logModule.log({user:"Test1",blog:"Test",property:"field1"},cb);},
-        function writeLog2(cb){logModule.log({user:"Test1",blog:"Test",property:"field1"},cb);},
-        function writeLog3(cb){logModule.log({user:"Test2",blog:"Test",property:"field2"},cb);},
-        function writeLog4(cb){logModule.log({user:"Test2",blog:"Test",property:"field3"},cb);},
-        function writeLog5(cb){logModule.log({user:"Test2",blog:"Test",property:"field4"},cb);},
-        function writeLog6(cb){logModule.log({user:"Test2",blog:"OtherTest",property:"field1"},cb);}
+        function writeLog1a(cb){logModule.log({user:"Test1",blog:"Test",oid:'1',property:"field1"},cb);},
+        function writeLog1b(cb){logModule.log({user:"Test1",blog:"Test",oid:'1',property:"field1"},cb);},
+        function writeLog2(cb){logModule.log({user:"Test1",blog:"Test",oid:'2',property:"field1"},cb);},
+        function writeLog3(cb){logModule.log({user:"Test2",blog:"Test",oid:'3',property:"field2"},cb);},
+        function writeLog4(cb){logModule.log({user:"Test2",blog:"Test",oid:'4',property:"field3"},cb);},
+        function writeLog5(cb){logModule.log({user:"Test2",blog:"Test",oid:'5',property:"field4"},cb);},
+        function writeLog6(cb){logModule.log({user:"Test2",blog:"Test",oid:'6',property:"comment1"},cb);},
+        function writeLog7(cb){logModule.log({user:"Test2",blog:"Test",oid:'6',property:"comment2"},cb);},
+        function writeLog8(cb){logModule.log({user:"Test2",blog:"Test",oid:'7',property:"comment1"},cb);},
+        function writeLog9(cb){logModule.log({user:"Test2",blog:"OtherTest",oid:'6',property:"field1"},cb);}
 
       ],function(err){
         should.not.exist(err);
         logModule.countLogsForBlog("Test",function(err,result){
           should.not.exist(err);
-          should(result).eql({"field1":{"Test1":2},"field2":{"Test2":1},"field3":{"Test2":1},"field4":{"Test2":1}});
+          should(result).eql({"field1":{"Test1":2},"field2":{"Test2":1},"field3":{"Test2":1},"field4":{"Test2":1},"comment":{"Test2":2}});
           bddone();
         });
       });

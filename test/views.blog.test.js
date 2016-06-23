@@ -195,7 +195,7 @@ describe('views/blog', function() {
     });
     describe("Blog Display",function() {
       it('should show Overview with some configurations' ,function(bddone) {
-        this.timeout(40000);
+        this.timeout(60000);
         async.series([
           browser.visit.bind(browser,"/blog/WN290"),
           browser.assert.expectHtml.bind(browser,"blog_wn290_overview.html"),
