@@ -39,6 +39,7 @@ function renderOutgoingMailLog(req,res,next) {
   logModule.find("select id, data from changes where data->>'table' = 'mail' and substring(data->>'timestamp' from 1 for "+ d.length+") ='"+d+"' order by data->>'timestamp' desc",function (err,result){
     debug("logModule.find");
     if (err) return next(err);
+    res.set('content-type', 'text/html');
     res.render("maillog",{maillog:result,layout:res.rendervar.layout});
   });
 }
@@ -72,6 +73,7 @@ function renderHistoryLog(req,res,next) {
   logModule.find(search,{column:"timestamp",desc:true,limit:500},function (err,result){
     debug("logModule.find");
     if (err) return next(err);
+    res.set('content-type', 'text/html');
     res.render("history",{history:result,layout:res.rendervar.layout,params:params});
   });
 }
@@ -83,6 +85,7 @@ function renderChangeId(req, res, next) {
   logModule.findById(id,function(err,change) {
     if (!change || typeof(change.id) == 'undefined') return next();
     should.exist(res.rendervar);
+    res.set('content-type', 'text/html');
     res.render('change',{change:change,
       coloredChange:generateHTMLDiff(change.from,change.to),
       layout:res.rendervar.layout});

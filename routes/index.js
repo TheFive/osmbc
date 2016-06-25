@@ -23,7 +23,8 @@ function renderHome(req,res,next) {
       "activeUser":userModule.find.bind(userModule,{lastAccess:">"+date.toISOString()},{column:"lastAccess",desc :true})
   },function(err,result) {
     if (err) return next(err);
-
+    res.set('content-type', 'text/html');
+    //console.log(res.get('content-type'));
     res.render('index', { title: config.getValue("AppName") ,
       layout:res.rendervar.layout,
       activeUserList:result.activeUser,
@@ -33,13 +34,13 @@ function renderHome(req,res,next) {
 }
 
 function renderAdminHome(req,res,next) {
-  debug('renderHome');
+  debug('renderAdminHome');
   should.exist(res.rendervar.layout);
   async.auto({
     "historie":logModule.find.bind(logModule,{table:"IN('usert','config')"},{column:"id",desc :true,limit:20})
     },function(err,result) {
       if (err) return next(err);
-
+      res.set('content-type', 'text/html');
       res.render('adminindex', { title: config.getValue("AppName") ,
         layout:res.rendervar.layout,
 
@@ -94,6 +95,7 @@ function renderHelp(req,res) {
   should.exist(res.rendervar.layout);
   var title = req.params.title;
   var text = help.getText("menu."+title+".md");
+  res.set('content-type', 'text/html');
   res.render('help',{layout:res.rendervar.layout,text:text});
 }
 function renderChangelog(req,res,next) {
@@ -103,6 +105,7 @@ function renderChangelog(req,res,next) {
   req.user.lastChangeLogView = res.rendervar.layout.osmbc_version;
   req.user.save(function(err){
     if (err) return next(err);
+    res.set('content-type', 'text/html');
     res.render('help',{layout:res.rendervar.layout,text:text});
   });
 }

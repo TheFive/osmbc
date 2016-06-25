@@ -20,6 +20,7 @@ describe('routes/changes',function() {
         req.params = {};
         req.params.change_id = newId;
         var res = {};
+        res.set = function(){};
         res.rendervar = {layout:"TEMP"};
         var next;
 
@@ -48,6 +49,7 @@ describe('routes/changes',function() {
         req.user = "TEST";
         req.params.change_id = newId;
         var res = {};
+        res.set = function(){};
         res.rendervar = {layout:"TEMP"};
         var next;
 

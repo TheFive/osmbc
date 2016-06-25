@@ -175,6 +175,7 @@ function renderArticleId(req,res,next) {
                                   categories:categories});
 
             res.end(result);return;*/
+            res.set('content-type', 'text/html');
             res.render('article',{layout:res.rendervar.layout,
                                   article:article,
                                   googleTranslateText:configModule.getConfig("automatictranslatetext"),
@@ -235,6 +236,7 @@ function searchAndCreate(req,res,next) {
       if (err) return next(err);
       let renderer = new BlogRenderer.HtmlRenderer(null);
       should.exist(res.rendervar);
+      res.set('content-type', 'text/html');
       res.render("collect", {
         layout: res.rendervar.layout,
         search: search,
@@ -537,6 +539,7 @@ function createArticle(req, res, next) {
       debug('createArticle->finalFunction');
         if (err) return next(err);
         should.exist(res.rendervar);
+        res.set('content-type', 'text/html');
         res.render("collect",{layout:res.rendervar.layout,
                               search:"",
                               placeholder:placeholder,
@@ -645,6 +648,7 @@ function renderList(req,res,next) {
       debug('renderList->finalFunction');
         if (error) return next(error);
         should.exist(res.rendervar);
+        res.set('content-type', 'text/html');
         res.render('articlelist',{layout:res.rendervar.layout,
                                   articles:articles});      
     }

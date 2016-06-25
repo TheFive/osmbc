@@ -50,6 +50,7 @@ describe('router/article',function() {
         req.params = {};
         req.params.id = newId;
         var res = {};
+        res.set = function(){};
         var next;
 
         async.series([
@@ -81,6 +82,7 @@ describe('router/article',function() {
          
           var article;
           var res = {};
+          res.set = function(){};
           var req = {};
           req.params ={};
           req.query = {};
@@ -170,6 +172,7 @@ describe('router/article',function() {
           var data =  JSON.parse(fs.readFileSync(file));
          
           var res = {};
+          res.set = function(){};
           var req = {};
           req.params ={};
           req.query = {};
@@ -244,6 +247,7 @@ describe('router/article',function() {
         req.body = {};
         req.query = {};
         var res = {};
+        res.set = function(){};
         var next;
 
         async.series([
@@ -284,6 +288,7 @@ describe('router/article',function() {
         req.user = user;
         req.session = {};
         var res = {};
+        res.set = function(){};
         var next;
 
 
@@ -328,6 +333,7 @@ describe('router/article',function() {
       req.query = {blog:"WN234",category:"TEST"};
 
       var res = {};
+      res.set = function(){};
       var next;
       res.rendervar = {layout:"TEMP"};
 
@@ -367,6 +373,7 @@ describe('router/article',function() {
           var data =  JSON.parse(fs.readFileSync(file));
          
           var res = {};
+          res.set = function(){};
           var req = {};
           req.params ={};
           req.query = {search:data.search};
