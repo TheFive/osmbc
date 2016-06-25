@@ -17,6 +17,7 @@ describe('routes/index',function(){
   describe('renderHome',function(){
     it('should call the right Page',function(bddone){
       var res = {rendervar:{}};
+      res.set = function(){};
       var req = {};
       var next;
       async.series([

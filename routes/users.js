@@ -44,6 +44,7 @@ function renderList(req,res,next) {
     ],function(error) { 
         if (error) return next(error);
         should.exist(res.rendervar);
+        res.set('content-type', 'text/html');
         res.render('userList',{layout:res.rendervar.layout,query:query,
                                 users:users});      
     }
@@ -54,6 +55,7 @@ function renderList(req,res,next) {
 
 function renderUserId(req, res, next) {
   debug('renderUserId');
+  let redirect = false;
   var id = req.params.user_id;
   if (id === "self") res.redirect(res.rendervar.layout.htmlroot+"/usert/"+req.user.id);
   should.exist(id);
@@ -80,6 +82,7 @@ function renderUserId(req, res, next) {
         if (req.query.validation) {
           user.validateEmail(req.user,req.query.validation,function (err){
             if (err) return cb(err);
+            redirect = true;
             res.redirect(res.rendervar.layout.htmlroot+"/usert/"+user.id);
             return cb();
           });
@@ -90,7 +93,9 @@ function renderUserId(req, res, next) {
     function finalRenderCB(err) {
       debug('finalRenderCB');
       if (err) return next(err);
+      if (redirect) return;
       should.exist(res.rendervar);
+      res.set('content-type', 'text/html');
       res.render('user',{usershown:user,
                         changes:changes,
                         params:params,
@@ -180,6 +185,7 @@ function inbox (req,res) {
   debug("inbox");
   var renderer = new blogRenderer.HtmlRenderer(null);
   req.session.articleReturnTo = req.originalUrl;
+  res.set('content-type', 'text/html');
   res.render("inbox",{layout:res.rendervar.layout,renderer:renderer});
 }
 

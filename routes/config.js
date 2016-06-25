@@ -59,7 +59,7 @@ function renderConfigName(req, res, next) {
       if (name == "editorstrings") jadeFile = name;
       if (name == "categorytranslation") jadeFile = name;
       if (name == "automatictranslatetext") jadeFile = name;
-
+      res.set('content-type', 'text/html');
       res.render(jadeFile,{config:config,
                         changes:changes,
                         params:params,

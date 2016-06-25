@@ -361,16 +361,24 @@ block content
       if params.left_lang === "DE" && article["markdown"+params.left_lang]
         a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufgruf einer externen Seite)
         span=" "
+      if (params.edit && params.right_lang && article["markdown" + params.right_lang] && !article["markdown" + params.left_lang])
+        button#translateLinkLEFT.btn.btn-small.btn-primary(onClick ="javascript: window.translateLEFT();") Google Translate #{params.left_lang} <- #{params.right_lang}
+        button#translateWaitLEFT.btn.btn-small.btn-warning.hidden
+          span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+          span=" Please Wait"
+        button#translateErrorLEFT.btn.btn-small.btn-danger.hidden
+          span="Error occured"
+        button#copyLinkLEFT.btn.btn-small.btn-primary(onClick ="javascript: window.copyTextLEFT();") Copy #{params.left_lang} <- #{params.right_lang}
 
     +rightcolumn
       if (params.edit && params.right_lang && !article["markdown" + params.right_lang] && article["markdown" + params.left_lang])
-        button#translateLink.btn.btn-small.btn-primary(onClick ="javascript: window.translate();") Google Translate #{params.left_lang} -> #{params.right_lang}
-        button#translateWait.btn.btn-small.btn-warning.hidden
+        button#translateLinkRIGHT.btn.btn-small.btn-primary(onClick ="javascript: window.translateRIGHT();") Google Translate #{params.left_lang} -> #{params.right_lang}
+        button#translateWaitRIGHT.btn.btn-small.btn-warning.hidden
           span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
           span=" Please Wait"
-        button#translateError.btn.btn-small.btn-danger.hidden
+        button#translateErrorRIGHT.btn.btn-small.btn-danger.hidden
           span="Error occured"
-        button#copyLink.btn.btn-small.btn-primary(onClick ="javascript: window.copyText();") Copy #{params.left_lang} -> #{params.right_lang}
+        button#copyLinkRIGHT.btn.btn-small.btn-primary(onClick ="javascript: window.copyTextRIGHT();") Copy #{params.left_lang} -> #{params.right_lang}
 
 
 
@@ -586,28 +594,52 @@ block scripts
       window.copyText = copyText;
     }
 
-    function translate() {
-      document.getElementById("translateLink").classList.add("hidden");
-      document.getElementById("copyLink").classList.add("hidden");
-      document.getElementById("translateWait").classList.remove("hidden");
+    function translateRIGHT() {
+      document.getElementById("translateLinkRIGHT").classList.add("hidden");
+      document.getElementById("copyLinkRIGHT").classList.add("hidden");
+      document.getElementById("translateWaitRIGHT").classList.remove("hidden");
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase():'--'}";
       var originalText = document.getElementById("markdownLEFT").value;
       jQuery.post("#{layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang,{text:originalText}, function(data) {
         data = data.replace(/] \(/g,"](");
-        document.getElementById("translateWait").classList.add("hidden");
+        document.getElementById("translateWaitRIGHT").classList.add("hidden");
         document.getElementById("markdownRIGHT").value = data;
         onchangeRIGHT();
       }).fail(function(err){
         console.log(err);
-        document.getElementById("translateWait").classList.add("hidden");
-        document.getElementById("translateError").classList.remove("hidden");
+        document.getElementById("translateWaitRIGHT").classList.add("hidden");
+        document.getElementById("translateErrorRIGHT").classList.remove("hidden");
       });
     }
-    function copyText() {
-      document.getElementById("translateLink").classList.add("hidden");
-      document.getElementById("copyLink").classList.add("hidden");
+    function copyTextRIGHT() {
+      document.getElementById("translateLinkRIGHT").classList.add("hidden");
+      document.getElementById("copyLinkRIGHT").classList.add("hidden");
       document.getElementById("markdownRIGHT").value = document.getElementById("markdownLEFT").value ;
+      onchangeRIGHT();
+    }
+    function translateLEFT() {
+      document.getElementById("translateLinkLEFT").classList.add("hidden");
+      document.getElementById("copyLinkLEFT").classList.add("hidden");
+      document.getElementById("translateWaitLEFT").classList.remove("hidden");
+      var leftLang = "#{params.left_lang.toLowerCase()}";
+      var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
+      var originalText = document.getElementById("markdownRIGHT").value;
+      jQuery.post("#{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
+        data = data.replace(/] \(/g, "](");
+        document.getElementById("translateWaitLEFT").classList.add("hidden");
+        document.getElementById("markdownLEFT").value = data;
+        onchangeLEFT();
+      }).fail(function (err) {
+        console.log(err);
+        document.getElementById("translateWaitLEFT").classList.add("hidden");
+        document.getElementById("translateErrorLEFT").classList.remove("hidden");
+      });
+    }
+    function copyTextLEFT() {
+      document.getElementById("translateLinkLEFT").classList.add("hidden");
+      document.getElementById("copyLinkLEFT").classList.add("hidden");
+      document.getElementById("markdownLEFT").value = document.getElementById("markdownRIGHT").value;
       onchangeRIGHT();
     }
 

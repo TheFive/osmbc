@@ -124,6 +124,7 @@ function renderBlogStat(req, res, next) {
     function (err) {
       should.exist(res.rendervar);
       if (err) return next(err);
+      res.set('content-type', 'text/html');
       res.render('blogstat',{layout:res.rendervar.layout,
                          logs:logs,
                          blog:blog,
@@ -165,6 +166,7 @@ function renderBlogList(req, res, next) {
       },function(err,result) {
           should.exist(res.rendervar);
           if (err) return next(err);
+          res.set('content-type', 'text/html');
           res.render('bloglist',{layout:res.rendervar.layout,
                                 additionalText:additionalText,
                                 blogs:result.blogs});
@@ -370,10 +372,12 @@ function editBlogId(req,res) {
   if (params.edit && params.edit=="false") {
      res.redirect(config.getValue('htmlroot')+"/blog/edit/"+req.params.blog_id);
   }
+  res.set('content-type', 'text/html');
   res.render('editblog',{layout:res.rendervar.layout,
                      blog:blog,
                      params:params,
                      categories:blog.getCategories()});
+
 }
 
 function postBlogId(req, res, next) {

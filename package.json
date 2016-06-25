@@ -12,6 +12,7 @@
     "cheerio": "^0.20.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
+    "compression": "^1.6.2",
     "connect-pg-simple": "^3.1.0",
     "cookie-parser": "~1.4.1",
     "debug": "~2.2.0",
@@ -53,12 +54,13 @@
     "twit": "^2.2.3"
   },
   "devDependencies": {
-    "mocha": "^2.4.5",
+    "express-debug": "^1.1.1",
     "istanbul": "^0.4.3",
+    "mocha": "^2.4.5",
     "mocha-jshint": "^2.3.1",
-    "sinon": "^1.17.3",
+    "mockdate": "^1.0.4",
     "nock": "^8.0.0",
-    "zombie": "^4.2",
-    "mockdate": "^1.0.4"
+    "sinon": "^1.17.3",
+    "zombie": "^4.2"
   }
 }

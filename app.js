@@ -14,6 +14,7 @@ var OpenStreetMapStrategy
                  = require('passport-openstreetmap').Strategy;
 
 var session      = require('express-session');
+var compression = require('compression');
 
 var pg = require('pg');
 
@@ -33,6 +34,11 @@ var layout     = require('./routes/layout').router;
 var configRouter     = require('./routes/config').router;
 
 var userModule = require('./model/user.js');
+
+
+
+
+
 
 
 
@@ -147,49 +153,45 @@ function ensureAuthenticated(req, res, next) {
   res.redirect(htmlRoot+'/auth/openstreetmap');
 
 }
- 
 
+
+// create a session store
+let sessionstore = null;
+
+if (config.getValue("sessionStore")==="session-file-store") {
+
+  var FileStore    = require('session-file-store')(session);
+  sessionstore = new FileStore();
+
+} else if (config.getValue("sessionStore")=="connect-pg-simple") {
+  var pgSession = require('connect-pg-simple')(session);
+
+  sessionstore = new pgSession({
+      pg : pg,        // Use global pg-module
+      conString : config.pgstring // Connect using something else than default DATABASE_URL env variable
+    });
+} else {
+  console.log("No File Store defined, OSMBC will not run.");
+  console.log("to solve set sessionStore in config._.json");
+  process.exit(1);
+}
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+
+// compress all requests
+app.use(compression());
 app.use(favicon(path.join(__dirname , 'public','images','favicon.ico')));
-
-
-
-if (config.getValue("sessionStore")==="session-file-store") {
-
-  var FileStore    = require('session-file-store')(session);
-
-
-  // take from https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
-  app.use(session({ store: new FileStore(),
+app.use(session({ store: sessionstore,
                     secret: 'LvwnH}uHhDLxvAu3X6' ,
                     resave:true,
                     saveUninitialized:true,
                     cookie:{_expires : 1000*60*60*24*365}}));
- 
-} else if (config.getValue("sessionStore")=="connect-pg-simple") {
-  var pgSession = require('connect-pg-simple')(session);
 
-  app.use(session({
-    store: new pgSession({
-      pg : pg,        // Use global pg-module 
-      conString : config.pgstring // Connect using something else than default DATABASE_URL env variable 
-    }),
-    secret: 'LvwnH}uHhDLxvAu3X6' ,
-    resave: false,
-    saveUninitialized:true,
-      
-    cookie: { maxAge: 1000*60*60*24*365 } 
-  }));
-} else {
-  console.log("No File Store defined, OSMBC will not run.");
-  console.log("to solve set sessionStore in config._.json");
-  process.exit(1);
-}
+
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
 app.use(passport.initialize());
@@ -199,12 +201,10 @@ app.use(passport.session());
 
 
 
-// uncomment after placing your favicon in /public
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(htmlRoot,express.static(path.join(__dirname, 'public')));
 
 
 
@@ -229,7 +229,7 @@ app.get(htmlRoot + '/auth/openstreetmap',
 //   request.  If authentication fails, the user will be redirected back to the
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
-app.get(htmlRoot + '/auth/openstreetmap/callback', 
+app.get(htmlRoot + '/auth/openstreetmap/callback',
   passport.authenticate('openstreetmap', { failureRedirect: '/login'  }),
   function(req, res) {
     debug('passport.authenticate Function');
@@ -244,6 +244,8 @@ app.get(htmlRoot + '/logout', function(req, res){
 });
 
 // first register the unsecured path
+
+app.use(htmlRoot,express.static(path.join(__dirname, 'public')));
 
 app.use(htmlRoot,calender );
 app.use(htmlRoot + '/slack', slackrouter);
@@ -284,8 +286,11 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   debug("Set development error hander");
+
+  //require('express-debug')(app, {/* settings */});
+
   app.locals.pretty = true;
-  app.use(function(err, req, res,next) { 
+  app.use(function(err, req, res,next) {
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
     res.render('error', {

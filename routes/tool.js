@@ -38,6 +38,7 @@ function renderPublicCalendar(req,res,next) {
     if (err) return next(err);
     var preview = markdown.render(result);
     preview = preview.replace('<table>','<table class="table">');
+    res.set('content-type', 'text/html');
     res.render('calenderPublic.jade',{calenderAsMarkdown:result,
       errors:errors,preview:preview,layout:layout});
 
@@ -79,6 +80,7 @@ function renderCalenderAsMarkdown(req,res,next) {
 
   parseEvent.calenderToMarkdown({lang:req.user.getMainLang(),countryFlags:enableCountryFlags,duration:duration,date:date},function(err,result,errors){
     if (err) return next(err);
+    res.set('content-type', 'text/html');
     res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
                                 disablePrettify:disablePrettify,
                                 enableCountryFlags:enableCountryFlags,
@@ -189,7 +191,7 @@ function renderPictureTool(req,res) {
       let renderer = new BlogRenderer.HtmlRenderer(null);
       var preview = renderer.renderArticle(pictureLanguage,article);
       var licenses = configModule.getConfig("licenses");
-
+      res.set('content-type', 'text/html');
       res.render('pictureTool',{warning:warning,
                                 genMarkup:genMarkup,
                                 licenses:licenses,
@@ -209,7 +211,7 @@ function renderPictureTool(req,res) {
   request.on('error',function() {
     warning.push(">"+pictureURL+"< pictureURL not found");
     var licenses = configModule.getConfig("licenses");
-
+    res.set('content-type', 'text/html');
     res.render('pictureTool',{genMarkup:"picture not found",
                               warning:warning,
                               preview:"<p> Error,please try again</p>",

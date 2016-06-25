@@ -18,6 +18,7 @@ describe('router/user',function() {
       var req = {};
 
       var res = {};
+      res.set = function(){};
       var next;
       var user_id;
      
@@ -53,6 +54,7 @@ describe('router/user',function() {
       var req = {body:{OSMUser:"testNew",access:"full"},params:{},user:{displayName:"test"}};
 
       var res = {};
+      res.set = function(){};
       var next;
       var user_id;
       var newUser;
@@ -107,6 +109,7 @@ describe('router/user',function() {
         var req = {query:{},params:{}};
         req.params.user_id = newId;
         var res = {};
+        res.set = function(){};
         var next;
 
         async.series([
@@ -144,6 +147,7 @@ describe('router/user',function() {
           var req = {query:{},params:{}};
           req.query.access = "full";
           var res = {rendervar:"TEST"};
+          res.set = function(){};
           var next;
 
           async.series([
