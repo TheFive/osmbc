@@ -54,7 +54,7 @@ describe('views/article', function() {
 
   describe("Menu",function(){
     it("should call search with test",function(bddone){
-      this.timeout(4000);
+      this.timeout(5000);
       async.series([
         browser.visit.bind(browser,"/article/search"),
         function(cb){ browser.fill("search","http://www.test.dä/holla");cb();},

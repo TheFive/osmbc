@@ -54,6 +54,7 @@ describe('routes/blog',function() {
         req.user = {};
 
         var res = {};
+        res.set = function(){};
         var next;
 
         async.series([
@@ -82,6 +83,7 @@ describe('routes/blog',function() {
         req.session = {};
         req.params.blog_id = newId;
         var res = {};
+        res.set = function(){};
         var next;
 
         async.series([
@@ -113,6 +115,7 @@ describe('routes/blog',function() {
           req.user = {};
           req.session = {};
           var res = {};
+          res.set = function(){};
           var next;
 
           async.series([
@@ -150,6 +153,7 @@ describe('routes/blog',function() {
 
         var next;
         var res = {rendervar:{layout:"calculated layout"}};
+        res.set = function(){};
 
         async.series([
           function(callback) {
@@ -195,6 +199,7 @@ describe('routes/blog',function() {
         req.query = {};
 
         var res = {};
+        res.set = function(){};
         var next;
 
         async.series([
@@ -224,6 +229,7 @@ describe('routes/blog',function() {
         req.user = user;
         req.query = {};
         var res = {};
+        res.set = function(){};
         var next;
 
         async.series([
@@ -256,6 +262,7 @@ describe('routes/blog',function() {
           req.query = {};
           req.user = user;
           var res = {};
+          res.set = function(){};
           var next;
 
           async.series([
