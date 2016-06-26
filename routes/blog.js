@@ -21,7 +21,7 @@ var userModule     = require('../model/user.js');
 // it accepts an internal Blog ID of OSMBC and a blog name
 // Additional the fix blog name TBC is recognised.
 function findBlogByRouteId(id,user,callback) {
-  debug("findBlogByRouteId");
+  debug("findBlogByRouteId(%s)",id);
   var blog;
   should(typeof(user)).eql('object');
   should(typeof(callback)).eql('function');
@@ -251,6 +251,41 @@ function setReviewComment(req,res,next) {
   });
 }
 
+function setBlogStatus(req,res,next) {
+  debug('setBlogStatus');
+
+  var lang = req.body.lang;
+  var user = req.user;
+  if (!req.blog) return next();
+
+  console.log(req.body);
+
+  function finalFunction(err) {
+    if (err) return next(err);
+    let referer=req.header('Referer') || '/';
+    res.redirect(referer);
+  }
+
+  // Start Review
+  if (req.body.action=="startreview") {
+    return req.blog.setReviewComment(lang,user,"startreview",finalFunction);
+  }
+  // Mark Exported
+  if (req.body.action=="markexported") {
+    return req.blog.setReviewComment(lang,user,"markexported",finalFunction);
+  }
+
+  // Close Language
+  if (req.body.action=="closelang") {
+    return req.blog.closeBlog(lang,user,true,finalFunction);
+  }
+  // reopen Language
+  if (req.body.action=="editlang") {
+    return req.blog.closeBlog(lang,user,false,finalFunction);
+  }
+  return next(new Error("Unkown Status Combination, Please Contact the Author"));
+}
+
 function renderBlogTab(req, res,next) {
   debug('renderBlogTab');
 
@@ -312,12 +347,7 @@ function renderBlogTab(req, res,next) {
       closeLang: function (callback) {
         if (typeof(req.query.closeLang)!='undefined')
         {
-          clearParams = true;
-          var status = true;
-          if (req.query.status && req.query.status == "false") status = false;
-          blog.closeBlog(lang,req.user,status,function(err) {
-            return callback(err);
-          });
+          return callback(new Error("?closelang= parameter is not supported any longer"));
         } else return callback();
       }
 
@@ -325,6 +355,7 @@ function renderBlogTab(req, res,next) {
     },
     function(err,result) {
       debug("renderBlogTab->final function");
+      if(err) return next(err);
       should.exist(res.rendervar);
       if (clearParams) {
         var url = config.getValue('htmlroot')+"/blog/"+blog.name;
@@ -413,6 +444,7 @@ router.route('/edit/:blog_id')
   .get(editBlogId)
   .post(postBlogId);
 router.post('/:blog_id/setReviewComment',setReviewComment);
+router.post('/:blog_id/setLangStatus',setBlogStatus);
 
 
 router.get('/create', createBlog);

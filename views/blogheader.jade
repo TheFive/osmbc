@@ -70,10 +70,15 @@ block content
         if (reviewCommentsLeft)
           .row
             .col-md-12
-              if (blog["exported"+left_lang])
-                button.btn.btn-large.btn-warning(id="closebutton" type = "button" onclick ="document.getElementById('closebutton').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?closeLang&style=#{style}';") Close #{blog.name}(#{left_lang})
-              else
-                button.btn.btn-large.btn-warning(id="didexport" type = "button" onclick ="document.getElementById('didexport').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=markexported&style=#{style}';") Did Export (#{left_lang})
+              form(id="startReview" name="startReview", action="#{layout.htmlroot}/blog/#{blog.name}/setLangStatus", method="post")
+                input.hidden(type="text",name="lang" value = left_lang)
+
+                if (blog["exported"+left_lang])
+                  input.hidden(type="text",name ="action" value = "closelang")
+                  button.btn.btn-large.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{left_lang})
+                else
+                  input.hidden(type="text",name ="action" value = "markexported")
+                  button.btn.btn-large.btn-warning(id="didexport" type = "submit" ) Did Export (#{left_lang})
 
           if (blog["exported"+left_lang])
             .row
@@ -82,7 +87,10 @@ block content
       
         else
           if blog.status != "open"
-            button.btn.btn-large.btn-primary(id="readyreview" onclick ="document.getElementById('readyreview').disabled=true;location.href='#{layout.htmlroot}/blog/#{blog.name}?reviewComment=startreview&&style=#{style}';") Set #{blog.name}(#{left_lang}) ready for review
+            form(id="startReview" name="startReview", action="#{layout.htmlroot}/blog/#{blog.name}/setLangStatus", method="post")
+              input.hidden(type="text",name ="action" value = "startreview")
+              input.hidden(type="text",name="lang" value = left_lang)
+              button.btn.btn-large.btn-primary(id="readyreview" type="submit") Set #{blog.name}(#{left_lang}) ready for review
 
   .row
     div(class=columnLeftSize)
@@ -104,6 +112,7 @@ block content
                   form.form-horizontal(id="review" name="review", action="#{layout.htmlroot}/blog/#{blog.name}", method="get")
                     .col-md-10
                       input(type="text",class="form-control",name ="reviewComment",id="reviewComment" placeholder="Please Type your Review here")
+                      input.hidden(type="text",name="lang" value = left_lang)
                     .col-md-2
                       button.btn.btn-large.btn-primary(id="reviewButton" type="submit",onclick="document.getElementById('reviewButton').disabled=true;document.getElementById('review').submit();") Review#{left_lang}
 
@@ -216,10 +225,49 @@ block content
             |removed text
 
 
-block scripts                
-  script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
+block scripts
+  script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
   script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
   script.
+
+    var openEditor = null;
+    window.onload = function () {
+
+      if (typeof(Storage) !== "undefined") {
+        if (window.sessionStorage.blogUrl !== window.location.href) return;
+        var x = window.sessionStorage.blogX;
+        var y = window.sessionStorage.blogY;
+        window.scrollTo(x, y);
+      }
+    }
+
+
+
+    window.onbeforeunload = function (event) {
+      // store the scroll Position in the local Store
+      s = {x: window.scrollX, y: window.scrollY};
+
+      if (typeof(Storage) !== "undefined") {
+
+        window.sessionStorage.blogUrl = window.location.href;
+        window.sessionStorage.blogX = s.x;
+        window.sessionStorage.blogY = s.y;
+      }
+    };
+
+
+
+    function onLeaveText(id,column) {
+      if (!column) column="";
+
+      var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
+      var newValue = document.getElementById(column + "markdown" + id).value;
+      if (oldValue === newValue) return;
+      form = document.getElementById(column + 'EditArticle' + id);
+      form.submit();
+    }
+
+    // Scripts from the file blogheader.jade
     reviewButton = document.getElementById("reviewButton");
     reviewComment = document.getElementById("reviewComment");
     if (reviewComment) reviewComment.onchange = onchange;
@@ -231,29 +279,38 @@ block scripts
       
       reviewButton.disabled = (review.comment == "");
     }
-  
-    window.onload = function() {
-      if (typeof(Storage)!=="undefined") {
-        if (window.sessionStorage.blogUrl !== window.location.href) return;
-        var x = window.sessionStorage.blogX;
-        var y = window.sessionStorage.blogY;
-        window.scrollTo(x,y);
-      }
+
+    function convert(text) {
+      converter = new window.markdownit({breaks: true});
+
+      // generate the OSMBlog Style List
+      if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
+      // convert md to html
+      text = converter.render(text);
+      // skip <ul> and </ul> at start and end
+
+
+      text = '<li>' + text + '</li>';
+
+
+      return text;
+
     }
+    function onchangeMarkdown(id,column) {
+      if (!column) column="";
+      var markdownField = document.getElementById(column + "markdown" + id);
+      var md = markdownField.value;
+      var pv = document.getElementById(column+"preview"+id);
+
+
+      pv.innerHTML = convert(md);
+
+    }
+  
+
+
+
 
  
-    window.onbeforeunload = function(event) {
-        // store the scroll Position in the local Store
-        s = {x:window.scrollX,y:window.scrollY};
-
-        if (typeof(Storage)!=="undefined") {
-
-          window.sessionStorage.blogUrl = window.location.href;
-          window.sessionStorage.blogX = s.x;
-          window.sessionStorage.blogY = s.y;
-        }
-      };    
-   
-
 
 

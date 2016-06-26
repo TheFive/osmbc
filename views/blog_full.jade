@@ -83,12 +83,12 @@ block blogcontent
                 div(class=columnLeftSize)
                   div(onclick="if (!openEditor) {openEditor = document.getElementById('ldiv#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
                     div(class=(a["markdown" + lang]) ? "" : "mark")
-                      ul
+                      ul(id="lpreview#{a.id}")
                         :verbatim
                           !{renderer.renderArticle(left_lang,a)}
                   div.hidden(id="ldiv#{a.id}")
                     form(name="lEditArticle",id="lEditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{left_lang}", method="post")
-                      textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange="onLeaveText('l',#{a.id});") #{a["markdown" + left_lang]}
+                      textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange="onLeaveText(#{a.id},'l');" onkeyup="onchangeMarkdown(#{a.id},'l');") #{a["markdown" + left_lang]}
                       textarea.hidden.form-control(name="oldMarkdown"  id="loldMarkdown#{a.id}" rows=7 ) #{a["markdown" + left_lang]}
                     p
                       if a.author && a.author.collection
@@ -107,12 +107,12 @@ block blogcontent
                   if right_lang
                     div(onclick="if (!openEditor) {openEditor = document.getElementById('rdiv#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
                       div(class=(a["markdown" + lang]) ? "" : "mark")
-                        ul
+                        ul(id="rpreview#{a.id}")
                           :verbatim
                             !{renderer.renderArticle(right_lang,a)}
                     div.hidden(id="rdiv#{a.id}")
                       form(name="rEditArticle",id="rEditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{right_lang}", method="post")
-                        textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 onchange="onLeaveText('r',#{a.id});") #{a["markdown" + right_lang]}
+                        textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 onchange="onLeaveText(#{a.id},'r');" onkeyup="onchangeMarkdown(#{a.id},'r');") #{a["markdown" + right_lang]}
                         textarea.hidden.form-control(name="oldMarkdown"  id="roldMarkdown#{a.id}" rows=7 ) #{a["markdown" + right_lang]}
                       p
                         if a.author && a.author.collection
@@ -199,43 +199,6 @@ block blogcontent
 
 
 
-
-block scripts
-  script(src='https://cdn.rawgit.com/showdownjs/showdown/master/dist/showdown.min.js')
-  script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
-  script.
-    var openEditor = null;
-    window.onload = function() {
-      
-      if (typeof(Storage)!=="undefined") {
-        if (window.sessionStorage.blogUrl !== window.location.href) return;
-        var x = window.sessionStorage.blogX;
-        var y = window.sessionStorage.blogY;
-        window.scrollTo(x,y);
-      }
-    }
-
-
-    window.onbeforeunload = function(event) {
-      // store the scroll Position in the local Store
-      s = {x:window.scrollX,y:window.scrollY};
-
-      if (typeof(Storage)!=="undefined") {
-
-        window.sessionStorage.blogUrl = window.location.href;
-        window.sessionStorage.blogX = s.x;
-        window.sessionStorage.blogY = s.y;
-      }
-    };
-
-    function onLeaveText(column,id) {
-
-      var oldValue = document.getElementById(column+"oldMarkdown"+id).value;
-      var newValue = document.getElementById(column+"markdown"+id).value;
-      if (oldValue === newValue) return;
-      form = document.getElementById(column + 'EditArticle' + id);
-      form.submit();
-    }
 
 
 

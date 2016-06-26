@@ -12,6 +12,7 @@ var jade = require("jade");
 var testutil = require('../test/testutil.js');
 var blogModule = require('../model/blog.js');
 var userModule = require('../model/user.js');
+var mockdate = require('mockdate');
 
 require('jstransformer-verbatim');
 
@@ -53,6 +54,152 @@ describe('routes/blog',function() {
     bddone();
   });
 
+  describe('status functions',function() {
+    before(function(){
+      mockdate.set(new Date("2016-05-25T20:00"));
+    });
+    after(function(){
+      mockdate.reset();
+    });
+
+    it('should a start a review process', function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"}, function (err) {
+        should.not.exist(err);
+        request({
+          method: "POST",
+          url: baseLink + "/blog/WN333/setLangStatus",
+          json: true,
+          body: {lang: "DE", action: "startreview"}
+        }, function (err, res) {
+          should.not.exist(err);
+          should(res.statusCode).eql(302);
+          blogModule.findOne({name: "WN333"}, function (err, blog) {
+            should.not.exist(err);
+            should(blog.reviewCommentDE).eql([]);
+            bddone();
+          });
+        });
+      });
+    });
+    it('should mark as exported', function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"}, function (err) {
+        should.not.exist(err);
+        request({
+          method: "POST",
+          url: baseLink + "/blog/WN333/setLangStatus",
+          json: true,
+          body: {lang: "EN", action: "markexported"}
+        }, function (err, res) {
+          should.not.exist(err);
+          should(res.statusCode).eql(302);
+          blogModule.findOne({name: "WN333"}, function (err, blog) {
+            should.not.exist(err);
+            should(blog.exportedEN).eql(true);
+            bddone();
+          });
+        });
+      });
+    });
+    it('should not clear review when starting a review process', function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"},
+        {name: "WN333", reviewCommentDE: [{user: "hallo", text: "test"}]},
+        function (err) {
+          should.not.exist(err);
+          request({
+            method: "POST",
+            url: baseLink + "/blog/WN333/setLangStatus",
+            json: true,
+            body: {lang: "DE", action: "startreview"}
+          }, function (err, res) {
+            should.not.exist(err);
+            should(res.statusCode).eql(302);
+            blogModule.findOne({name: "WN333"}, function (err, blog) {
+                should.not.exist(err);
+                should(blog.reviewCommentDE).eql([{user: "hallo", text: "test"}]);
+                bddone();
+              }
+            );
+          }
+        );
+      });
+    });
+    it('should close a language', function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"},
+        {name: "WN333", reviewCommentDE: [{user: "hallo", text: "test"}]},
+        function (err) {
+          should.not.exist(err);
+          request({
+              method: "POST",
+              url: baseLink + "/blog/WN333/setLangStatus",
+              json: true,
+              body: {lang: "DE", action: "closelang"}
+            }, function (err, res) {
+              should.not.exist(err);
+              should(res.statusCode).eql(302);
+              blogModule.findOne({name: "WN333"}, function (err, blog) {
+                  should.not.exist(err);
+                  should(blog.closeDE).eql(true);
+                  bddone();
+                }
+              );
+            }
+          );
+        });
+    });
+    it('should reopen a language', function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"},
+        {name: "WN333", reviewCommentDE: [{user: "hallo", text: "test"}]},
+        function (err) {
+          should.not.exist(err);
+          request({
+              method: "POST",
+              url: baseLink + "/blog/WN333/setLangStatus",
+              json: true,
+              body: {lang: "DE", action: "editlang"}
+            }, function (err, res) {
+              should.not.exist(err);
+              should(res.statusCode).eql(302);
+              blogModule.findOne({name: "WN333"}, function (err, blog) {
+                  should.not.exist(err);
+                  should(blog.closeDE).eql(false);
+                  should(blog.exportedDE).eql(false);
+                  bddone();
+                }
+              );
+            }
+          );
+        });
+    });
+    it('should set a review comment', function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"},
+        {name: "WN333", reviewCommentEN: [{user: "hallo", text: "test"}]},
+        function (err) {
+          should.not.exist(err);
+          request({
+            method: "POST",
+            url: baseLink + "/blog/WN333/setReviewComment",
+            json: true,
+            body: {lang: "EN", text: "Everything is fine"}
+          }, function (err, res) {
+            should.not.exist(err);
+            should(res.statusCode).eql(302);
+            blogModule.findOne({name: "WN333"}, function (err, blog) {
+                should.not.exist(err);
+                should(blog.reviewCommentEN).eql([
+                  {user: "hallo", text: "test"},
+                  {
+                    text: 'Everything is fine',
+                    timestamp: '2016-05-25T20:00:00.000Z',
+                    user: 'TestUser'
+                  }
+                ]);
+                bddone();
+              }
+            );
+          });
+        });
+    });
+  });
   describe('renderBlogPreview',function() {
     it('should call next if blog id not exist', function (bddone) {
       blogModule.createNewBlog({OSMUser: "test"}, {title: "WN333"}, function (err, blog) {

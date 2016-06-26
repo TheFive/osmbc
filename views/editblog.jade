@@ -111,7 +111,12 @@ block content
                   if blog["close"+lang]
                     | close  
                     td
-                      a(href="#{layout.htmlroot}/blog/#{blog.name}?closeLang&status=false") Reopen
+                      form(id="startReview" name="reopenlang", action="#{layout.htmlroot}/blog/#{blog.name}/setLangStatus", method="post")
+                        input.hidden(type="text",name="lang" value = lang)
+                        input.hidden(type="text",name ="action" value = "editlang")
+                        button.btn.btn-xs.btn-warning(id="closebutton" type = "submit" ) Reopen
+
+
                   else 
                     | -
                 

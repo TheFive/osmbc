@@ -144,7 +144,13 @@
                   <td>review</td>
                   <td>exported</td>
                   <td>close  
-                    </td><td><a href="/blog/WN290?closeLang&amp;status=false">Reopen</a></td>
+                    </td><td>
+                      <form id="startReview" name="reopenlang" action="/blog/WN290/setLangStatus" method="post">
+                        <input type="text" name="lang" value="EN" class="hidden">
+                        <input type="text" name="action" value="editlang" class="hidden">
+                        <button id="closebutton" type="submit" class="btn btn-xs btn-warning">Reopen</button>
+                      </form>
+                    </td>
                   
                 </tr>
                 <tr>
@@ -152,7 +158,13 @@
                   <td>review</td>
                   <td>exported</td>
                   <td>close  
-                    </td><td><a href="/blog/WN290?closeLang&amp;status=false">Reopen</a></td>
+                    </td><td>
+                      <form id="startReview" name="reopenlang" action="/blog/WN290/setLangStatus" method="post">
+                        <input type="text" name="lang" value="ES" class="hidden">
+                        <input type="text" name="action" value="editlang" class="hidden">
+                        <button id="closebutton" type="submit" class="btn btn-xs btn-warning">Reopen</button>
+                      </form>
+                    </td>
                   
                 </tr>
               </tbody></table>
