@@ -124,7 +124,7 @@ function renderArticleId(req,res,next) {
             debug('renderArticleId->notranslate');
 
             if (params.notranslation==='true') {
-              article.addNotranslate(req.user,function (err) {
+              article.addNotranslate(req.user,res.rendervar.layout.usedLanguages,function (err) {
                 if (err) return callback(err);
                 var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
                 if (params.style) returnToUrl = returnToUrl+"?style="+params.style;
@@ -314,13 +314,16 @@ function postArticle(req, res, next) {
       if (err) {return next(err);}
       should.exist(article);
       if (noTranslation === "true") {
+        let showLangs = JSON.parse(req.body.languages);
         var languages = config.getLanguages();
         for (var i=0;i<languages.length;i++){
           var lang = languages[i];
-          if (changes["markdown"+lang]) continue;
-          if (article["markdown"+lang] && article["markdown"+lang].trim()==="") continue;
-          if (lang === req.user.mainLang) continue;
-          changes["markdown"+lang] = "no translation";
+          if (showLangs[lang]) {
+            if (changes["markdown"+lang]) continue;
+            if (article["markdown"+lang] && article["markdown"+lang].trim()==="") continue;
+            if (lang === req.user.mainLang) continue;
+            changes["markdown"+lang] = "no translation";
+          }
         }
       }
 
