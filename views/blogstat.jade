@@ -10,21 +10,22 @@ block content
     | Progress Overview
 
   each l in layout.languages
+    if layout.usedLanguages[l]
 
-    - unedited = blog._countUneditedMarkdown[l];
-    - notranslate = blog._countNoTranslateMarkdown[l];
-    - total = blog._countExpectedMarkdown[l] 
-    - ready = (total-unedited - notranslate)
-    - if (total == 0) total = 1
-    .row
-      .col-md-1
-        div.label.label-default(style="color:white")=l
-      .col-md-11
-        div.progress(style="margin-bottom:2px")
-          div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
-          div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
-          div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
-    
+      - unedited = blog._countUneditedMarkdown[l];
+      - notranslate = blog._countNoTranslateMarkdown[l];
+      - total = blog._countExpectedMarkdown[l]
+      - ready = (total-unedited - notranslate)
+      - if (total == 0) total = 1
+      .row
+        .col-md-1
+          div.label.label-default(style="color:white")=l
+        .col-md-11
+          div.progress(style="margin-bottom:2px")
+            div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
+            div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
+            div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
+
 
   .row
     h1
@@ -36,9 +37,10 @@ block content
       | Table of Collections, Edits & Review Counts
     - var field = ["collection","comment"]
     for lang in languages
-      - field.push("markdown"+lang)
-      - field.push("reviewComment"+lang)
-      - userlist = [];
+      if layout.usedLanguages[lang]
+        - field.push("markdown"+lang)
+        - field.push("reviewComment"+lang)
+    - userlist = [];
 
     for v in field
       - for (u in logs[v])

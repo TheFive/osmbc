@@ -31,7 +31,7 @@ describe('views/article', function() {
       testutil.clearDB,
       function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full",language:"DE",mainLang:"DE"},cb); },
       function createBlog(cb) {blogModule.createNewBlog({OSMUser:"test"},{name:'blog'},cb);},
-      function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"http://www.test.dä/holla",markdownDE:"[Text](http://www.test.dä/holla) lorem ipsum dolores."},cb);},
+      function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"http://www.test.dä/holla",markdownDE:"[Text](http://www.test.dä/holla) lorem ipsum dolores.",markdownEN:"[Text](http://www.test.dä/holla) lorem ipsum dolores."},cb);},
       function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"Link1: http://www.test.dä/holla and other"},function(err,article){
         if (article) articleId = article.id;
         cb(err);
@@ -275,7 +275,8 @@ describe('views/article', function() {
                     should(article.collection).eql("searchfor");
                     should.not.exist(article.markdownDE);
                     should(article.markdownEN).eql("no translation");
-                    should(article.markdownES).eql("no translation");
+                    // ES is NOT set, because ES is "not used in history"
+                    should.not.exist(article.markdownES);
                   }
                   bddone();
                 });

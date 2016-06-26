@@ -65,6 +65,8 @@ block content
             | No Articles found for search '#{search}'
       if (showCollect)
         form(name="input",id="input" action="#{layout.htmlroot}/article/create", method="post")
+          - var langs = JSON.stringify(layout.usedLanguages)
+          input.hidden(name="languages" value="#{langs}")
           h2 
             | Create Article 
           .row

@@ -584,13 +584,13 @@ Article.prototype.markCommentRead = function markCommentRead(user,index,callback
   self.save(callback);
 };
 
-Article.prototype.addNotranslate = function addNotranslate(user,callback) {
+Article.prototype.addNotranslate = function addNotranslate(user,shownLang,callback) {
   debug('Article.prototype.addNotranslate');
   var self = this;
   var change = {version:self.version};
   for (var i=0;i<config.getLanguages().length;i++) {
     var lang = config.getLanguages()[i];
-    if ((typeof(self["markdown"+lang])==="undefined")||(self["markdown"+lang]==="")) {
+    if (shownLang[lang] &&(typeof(self["markdown"+lang])==="undefined")||(self["markdown"+lang]==="")) {
       change["markdown"+lang]="no translation";
     }
   }
