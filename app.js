@@ -311,7 +311,8 @@ if (app.get('env') === 'test') {
   app.use(function(err, req, res,next) {
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
-    console.log(err);
+    console.log("Error Message" + err.message);
+    console.dir("Error" + err.message);
     res.render('error', {
       message: err.message,
       error: err,
