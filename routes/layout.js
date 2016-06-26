@@ -191,9 +191,7 @@ exports.prepareRenderLayout = prepareRenderLayout;
 
 
 // And configure router to set the prepare Function
-router.get('/:module', exports.prepareRenderLayout);
-router.get('/:module/:subparam', exports.prepareRenderLayout);
-router.get('/:module/:subparam/:detailparam', exports.prepareRenderLayout);
+router.get('*', exports.prepareRenderLayout);
 
 
 

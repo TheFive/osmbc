@@ -16,14 +16,19 @@ var blogRenderer   = require('../render/BlogRenderer.js');
 var logModule      = require('../model/logModule.js');
 var userModule     = require('../model/user.js');
 
+
+// Internal Function to find a blog by an ID
+// it accepts an internal Blog ID of OSMBC and a blog name
+// Additional the fix blog name TBC is recognised.
 function findBlogByRouteId(id,user,callback) {
-  debug("findBlogByRouteId");
+  debug("findBlogByRouteId(%s)",id);
   var blog;
   should(typeof(user)).eql('object');
   should(typeof(callback)).eql('function');
 
   async.series([
     function CheckTBC(cb) {
+      // check and return TBC Blog.
       debug("findBlogByRouteId->CheckTBC");
       if (id === "TBC") {
         blog = blogModule.getTBC();
@@ -32,6 +37,7 @@ function findBlogByRouteId(id,user,callback) {
     },
     function findID(cb) {
       debug("findBlogByRouteId->findID");
+      // Check and return blog by ID
       blogModule.findById(id,function(err,r) {
         if (err) return cb(err);
         if (r) blog= r;
@@ -40,6 +46,7 @@ function findBlogByRouteId(id,user,callback) {
     },
   function findByName(cb) {
     debug("findBlogByRouteId->findByName");
+    // Check and return blog by name
     if (blog) return cb();
     blogModule.find({name:id},function(err,r) {
       if (err) return cb(err);
@@ -51,76 +58,80 @@ function findBlogByRouteId(id,user,callback) {
   },
   function countItems(cb) {
     debug("findBlogByRouteId->countItems");
+    // start calculation of derived fields for the current user.
+    // these fields are stored in an temporary _xxx field in the blog object
     if (blog) return blog.calculateDerived(user,cb);
     return cb();
   }], function(err) {
     debug("findBlogByRouteId->final function");
     if (err) return callback(err);
-    if (!blog) return callback(new Error("Blog >"+id+"< not found"));
     callback(null,blog);
   });
 }
 
+function findBlogId(req,res,next,id) {
+  debug('findBlogId');
+  findBlogByRouteId(id,req.user,function(err,result) {
+    if (err) return next(err);
+    req.blog = result;
+    return next();
+  });
+}
 
 
 function renderBlogStat(req, res, next) {
   debug('renderBlogStat');
+  let blog = req.blog;
+  if (!blog) return next();
 
-  var id = req.params.blog_id;
- 
-  findBlogByRouteId(id,req.user,function(err,blog) {
-    if (err) return next(err);
-    should.exist(blog);
-    id = blog.id;
-    var name = blog.name;
-    var logs ={};
-    var editors = {};
+  var name = blog.name;
+  var logs ={};
+  var editors = {};
 
- 
-    async.series([
-      function readLogs(callback) {
-        debug("readLogs");
-        logModule.countLogsForBlog(name,function(err,result) {
-          debug('countLogsForBlog Function');
-          logs = result;
-          debug(JSON.stringify(logs));
-          if (err) return callback(err);
-      
-          callback();
-        });
-      }, function calculateEditors(callback) {
-        var addEditors = function (property,min) {  
-          for (var user in logs[property]) {
-            if (logs[property][user]>=min) {
-              if (editors[lang].indexOf(user)<0) {
-                editors[lang].push(user);
-              }
+
+  async.series([
+    function readLogs(callback) {
+      debug("readLogs");
+      logModule.countLogsForBlog(name,function(err,result) {
+        debug('countLogsForBlog Function');
+        logs = result;
+        debug(JSON.stringify(logs));
+        if (err) return callback(err);
+
+        callback();
+      });
+    }, function calculateEditors(callback) {
+      var addEditors = function (property,min) {
+        for (var user in logs[property]) {
+          if (logs[property][user]>=min) {
+            if (editors[lang].indexOf(user)<0) {
+              editors[lang].push(user);
             }
           }
-        };
-        for (var i=0;i<config.getLanguages().length;i++) {
-          var lang = config.getLanguages()[i];
-          editors[lang]=[];
-          addEditors("collection",3);
-          addEditors("markdown"+lang,2);
-          addEditors("review"+lang,1);
-          editors[lang].sort();
         }
-        callback();
+      };
+      for (var i=0;i<config.getLanguages().length;i++) {
+        var lang = config.getLanguages()[i];
+        editors[lang]=[];
+        addEditors("collection",3);
+        addEditors("markdown"+lang,2);
+        addEditors("review"+lang,1);
+        editors[lang].sort();
       }
-      ],
-      function (err) {
-        should.exist(res.rendervar);
-        if (err) return next(err);
-        res.set('content-type', 'text/html');
-        res.render('blogstat',{layout:res.rendervar.layout,
-                           logs:logs,
-                           blog:blog,
-                           editors:editors,
-                           languages:config.getLanguages()});
-      }
-    );
-  });
+      callback();
+    }
+    ],
+    function (err) {
+      should.exist(res.rendervar);
+      if (err) return next(err);
+      res.set('content-type', 'text/html');
+      res.render('blogstat',{layout:res.rendervar.layout,
+                         logs:logs,
+                         blog:blog,
+                         editors:editors,
+                         languages:config.getLanguages()});
+    }
+  );
 }
 
 
@@ -162,76 +173,124 @@ function renderBlogList(req, res, next) {
         });
 }
 
-function renderBlogPreview(req, res, next) {
+
+
+
+function renderBlogPreview(req, res,next) {
   debug('renderBlogPreview');
   req.session.articleReturnTo = req.originalUrl;
-
-  var id = req.params.blog_id;
-
-  findBlogByRouteId(id,req.user,function(err,blog) {
-    if (err) return next(err);
-    should.exist(blog);
+  let blog = req.blog;
+  if (!blog) return next();
 
 
-    var lang = req.query.lang;
-    var asMarkdown = (req.query.markdown==="true");
-    if (typeof(lang)=='undefined') lang = "DE";
-    if (config.getLanguages().indexOf(lang)<0) lang = "DE";
+  var lang = req.query.lang;
+  var asMarkdown = (req.query.markdown==="true");
+  if (typeof(lang)=='undefined') lang = "DE";
+  if (config.getLanguages().indexOf(lang)<0) lang = "DE";
 
 
-    var returnToUrl = req.session.articleReturnTo;
+  var returnToUrl = req.session.articleReturnTo;
 
 
 
 
 
 
-    async.auto({ 
-        converter:function(callback) {
-                      debug("converter function");
-                      blog.getPreviewData({lang:lang,createTeam:true,disableNotranslation:true},function(err,data) {
+  async.auto({
+      converter:function(callback) {
+                    debug("converter function");
+                    blog.getPreviewData({lang:lang,createTeam:true,disableNotranslation:true},function(err,data) {
 
-                        let renderer=new BlogRenderer.HtmlRenderer(blog);
-                        if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
-                        let result = renderer.renderBlog(lang,data);
-                        return callback(err,result);
-                      });
-                  }
-      },
-      function(err,result) {
-        debug("renderBlogPreview->final function");
-        if (req.query.download=="true") {
-          if (asMarkdown) {
-            res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
-            res.setHeader('Content-type', "text");
+                      let renderer=new BlogRenderer.HtmlRenderer(blog);
+                      if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
+                      let result = renderer.renderBlog(lang,data);
+                      return callback(err,result);
+                    });
+                }
+    },
+    function(err,result) {
+      debug("renderBlogPreview->final function");
+      if (req.query.download=="true") {
+        if (asMarkdown) {
+          res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
+          res.setHeader('Content-type', "text");
 
-            res.end(result.converter,"UTF8");
-          } else {
-            res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".html");
-            res.setHeader('Content-type', "text/html");
-            res.end(result.converter,"UTF8");
-          }
-          return;
+          res.end(result.converter,"UTF8");
         } else {
-          should.exist(res.rendervar);
-          res.set('content-type', 'text/html');
-          res.render('blogpreview',{layout:res.rendervar.layout,
-                             blog:blog,
-                             asMarkdown:asMarkdown,
-                             preview:result.converter,
-                             lang:lang,
-                             returnToUrl:returnToUrl,
-                             categories:blog.getCategories()});
+          res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".html");
+          res.setHeader('Content-type', "text/html");
+          res.end(result.converter,"UTF8");
         }
+      } else {
+        should.exist(res.rendervar);
+        res.render('blogpreview',{layout:res.rendervar.layout,
+                           blog:blog,
+                           asMarkdown:asMarkdown,
+                           preview:result.converter,
+                           lang:lang,
+                           returnToUrl:returnToUrl,
+                           categories:blog.getCategories()});
       }
-    );
+    }
+  );
+}
+
+function setReviewComment(req,res,next) {
+  debug('setReviewComment');
+
+  var lang = req.body.lang;
+  var user = req.user;
+  var data = req.body.text;
+
+
+  if (!req.blog) return next();
+  req.blog.setReviewComment(lang,user,data,function(err){
+    if (err) return next(err);
+    let referer=req.header('Referer') || '/';
+    res.redirect(referer);
   });
 }
 
-function renderBlogTab(req, res, next) {
+function setBlogStatus(req,res,next) {
+  debug('setBlogStatus');
+
+  var lang = req.body.lang;
+  var user = req.user;
+  if (!req.blog) return next();
+
+  console.log(req.body);
+
+  function finalFunction(err) {
+    if (err) return next(err);
+    let referer=req.header('Referer') || '/';
+    res.redirect(referer);
+  }
+
+  // Start Review
+  if (req.body.action=="startreview") {
+    return req.blog.setReviewComment(lang,user,"startreview",finalFunction);
+  }
+  // Mark Exported
+  if (req.body.action=="markexported") {
+    return req.blog.setReviewComment(lang,user,"markexported",finalFunction);
+  }
+
+  // Close Language
+  if (req.body.action=="closelang") {
+    return req.blog.closeBlog(lang,user,true,finalFunction);
+  }
+  // reopen Language
+  if (req.body.action=="editlang") {
+    return req.blog.closeBlog(lang,user,false,finalFunction);
+  }
+  return next(new Error("Unkown Status Combination, Please Contact the Author"));
+}
+
+function renderBlogTab(req, res,next) {
   debug('renderBlogTab');
 
-  var id = req.params.blog_id;
+  let blog = req.blog;
+  if (!blog) return next();
   var tab = req.query.tab;
 
 
@@ -240,100 +299,88 @@ function renderBlogTab(req, res, next) {
 
   req.session.lasttab = tab;
   
-  if (id === "TBC") tab = "TBC";
+  if (req.params.blog_id === "TBC") tab = "TBC";
 
-  findBlogByRouteId(id,req.user,function(err,blog) {
-    if (err) return next(err);
-    should.exist(blog);
-
-    var lang = req.user.getMainLang();
-    if (typeof(lang)=='undefined') lang = "DE";
+  var lang = req.user.getMainLang();
+  if (typeof(lang)=='undefined') lang = "DE";
 
 
-   let clearParams=false;
+ let clearParams=false;
 
 
-    async.auto({
-        dataCollect:function(callback) {
-          debug("converter function");
-          blog.getPreviewData({lang:lang,collectors:true},function(err,result) {
-            return callback(err,result);
-          });
-        },
-        userMap:function(callback){
-          debug("userColors");
-          let userMap = {};
-          userModule.find({},function(err,userlist){
-            if (err) return callback(err);
-            for (let i=0;i<userlist.length;i++) {
-              userMap[userlist[i].OSMUser]=userlist[i];
-            }
-            return callback(null,userMap);
-          });
-        },
-        review: function (callback) {
-          if (typeof(req.query.reviewComment)!='undefined')
-          {
-            clearParams = true;
-            blog.setReviewComment(lang,req.user,req.query.reviewComment,function(err) {
-              return callback(err);
-            });
-          } else return callback();
-        },
-        setStatus: function (callback) {
-          if (typeof(req.query.setStatus)!='undefined')
-          {
-            clearParams = true;
-            var changes = {status:req.query.setStatus};
-            blog.setAndSave(req.user,changes,function(err) {
-              if (err) return callback(err);
-              let referer=req.header('Referer') || '/';
-              res.redirect(referer);
-            });
-          } else return callback();
-        },
-        closeLang: function (callback) {
-          if (typeof(req.query.closeLang)!='undefined')
-          {
-            clearParams = true;
-            var status = true;
-            if (req.query.status && req.query.status == "false") status = false;
-            blog.closeBlog(lang,req.user,status,function(err) {
-              return callback(err);
-            });
-          } else return callback();
-        }
-
-
+  async.auto({
+      dataCollect:function(callback) {
+        debug("converter function");
+        blog.getPreviewData({lang:lang,collectors:true},function(err,result) {
+          return callback(err,result);
+        });
       },
-      function(err,result) {
-        debug("renderBlogTab->final function");
-        should.exist(res.rendervar);
-        if (clearParams) {
-          var url = config.getValue('htmlroot')+"/blog/"+blog.name;
-          var styleParam = "";
-          if (req.param.style) styleParam = "?style="+styleParam;
-          res.redirect(url+styleParam);
-          return;
-        }
+      userMap:function(callback){
+        debug("userColors");
+        let userMap = {};
+        userModule.find({},function(err,userlist){
+          if (err) return callback(err);
+          for (let i=0;i<userlist.length;i++) {
+            userMap[userlist[i].OSMUser]=userlist[i];
+          }
+          return callback(null,userMap);
+        });
+      },
+      review: function (callback) {
+        if (typeof(req.query.reviewComment)!='undefined')
+        {
+          return callback(new Error("?reviewComment= parameter is not supported any longer"));
+        } else return callback();
+      },
+      setStatus: function (callback) {
+        if (typeof(req.query.setStatus)!='undefined')
+        {
+          clearParams = true;
+          var changes = {status:req.query.setStatus};
+          blog.setAndSave(req.user,changes,function(err) {
+            if (err) return callback(err);
+            let referer=req.header('Referer') || '/';
+            res.redirect(referer);
+          });
+        } else return callback();
+      },
+      closeLang: function (callback) {
+        if (typeof(req.query.closeLang)!='undefined')
+        {
+          return callback(new Error("?closelang= parameter is not supported any longer"));
+        } else return callback();
+      }
 
-        var renderer = new blogRenderer.HtmlRenderer(blog);
 
-        res.render('blog_'+tab.toLowerCase(),{layout:res.rendervar.layout,
-            blog:blog,
-            articles:result.dataCollect.articles,
-            futureArticles:result.dataCollect.futureArticles,
-            teamString:result.teamString,
-            userMap:result.userMap,
-            lang:lang,
-            tab:tab,
-            left_lang:req.user.getMainLang(),
-            right_lang:req.user.getSecondLang(),
-            renderer:renderer,
-            categories:blog.getCategories()});
-        }
-      );
-  });
+    },
+    function(err,result) {
+      debug("renderBlogTab->final function");
+      if(err) return next(err);
+      should.exist(res.rendervar);
+      if (clearParams) {
+        var url = config.getValue('htmlroot')+"/blog/"+blog.name;
+        var styleParam = "";
+        if (req.param.style) styleParam = "?style="+styleParam;
+        res.redirect(url+styleParam);
+        return;
+      }
+
+      var renderer = new blogRenderer.HtmlRenderer(blog);
+
+      res.render('blog_'+tab.toLowerCase(),{layout:res.rendervar.layout,
+          blog:blog,
+          articles:result.dataCollect.articles,
+          futureArticles:result.dataCollect.futureArticles,
+          teamString:result.teamString,
+          userMap:result.userMap,
+          lang:lang,
+          tab:tab,
+          left_lang:req.user.getMainLang(),
+          right_lang:req.user.getSecondLang(),
+          renderer:renderer,
+          categories:blog.getCategories()});
+      }
+    );
 }
 
 function createBlog(req, res, next) {
@@ -346,56 +393,60 @@ function createBlog(req, res, next) {
   });
 }
 
-function editBlogId(req,res,next) {
+function editBlogId(req,res) {
   debug('editBlogId');
-  var id = req.params.blog_id;
+  var blog = req.blog;
+  should.exist(res.rendervar);
+  should.exist(blog);
   var params = {};
   if (req.query.edit) params.edit = req.query.edit;
   if (params.edit && params.edit=="false") {
-     res.redirect(config.getValue('htmlroot')+"/blog/edit/"+id);  
+     res.redirect(config.getValue('htmlroot')+"/blog/edit/"+req.params.blog_id);
   }
-  findBlogByRouteId(id,req.user,function(err,blog) {
-    if (err) return next(err);
-    should.exist(blog);
-    should.exist(res.rendervar);
-    res.set('content-type', 'text/html');
-    res.render('editblog',{layout:res.rendervar.layout,
-                       blog:blog,
-                       params:params,
-                       categories:blog.getCategories()});
-  });
+  res.set('content-type', 'text/html');
+  res.render('editblog',{layout:res.rendervar.layout,
+                     blog:blog,
+                     params:params,
+                     categories:blog.getCategories()});
+
 }
 
 function postBlogId(req, res, next) {
   debug('postBlogId');
-  var id = req.params.blog_id;
-  findBlogByRouteId(id,req.user,function(err,blog) {
-    if (err) return next(err);
-    should.exist(blog);
-    var categories;
-    try {
-      categories = JSON.parse(req.body.categories);      
-    } catch (err) {
+  var blog = req.blog;
+  if (!blog) return next();
+
+  var categories;
+  try {
+    categories = JSON.parse(req.body.categories);
+  } catch (err) {
+    return next(err);
+  }
+  var changes = {name:req.body.name,
+                 startDate:req.body.startDate,
+                 endDate:req.body.endDate,
+                 status:req.body.status,
+                 markdownImage:req.body.markdownImage,
+                 categories:categories};
+  blog.setAndSave(req.user,changes,function(err) {
+    if (err) {
       return next(err);
     }
-    var changes = {name:req.body.name,
-                   startDate:req.body.startDate,
-                   endDate:req.body.endDate,
-                   status:req.body.status,
-                   markdownImage:req.body.markdownImage,
-                   categories:categories};
-    blog.setAndSave(req.user,changes,function(err) {
-      if (err) {
-        return next(err);
-      }
-      res.redirect(config.getValue('htmlroot')+"/blog/edit/"+id);    
-    });
+    res.redirect(config.getValue('htmlroot')+"/blog/edit/"+req.params.blog_id);
   });
 }
 
 
-router.get ('/edit/:blog_id',editBlogId);
-router.post('/edit/:blog_id',postBlogId);
+
+
+router.param("blog_id",findBlogId);
+router.route('/edit/:blog_id')
+  .get(editBlogId)
+  .post(postBlogId);
+router.post('/:blog_id/setReviewComment',setReviewComment);
+router.post('/:blog_id/setLangStatus',setBlogStatus);
+
+
 router.get('/create', createBlog);
 router.get('/list', renderBlogList);
 router.get('/:blog_id', renderBlogTab);
@@ -403,7 +454,8 @@ router.get('/:blog_id/stat', renderBlogStat);
 router.get('/:blog_id/preview', renderBlogPreview);
 router.get('/:blog_id/:tab', renderBlogTab);
 router.get('/:blog_id/preview_:blogname_:downloadtime', renderBlogPreview);
-//router.post('/edit/:blog_id',postBlogId);
+
+
 
 module.exports.router = router;
 
