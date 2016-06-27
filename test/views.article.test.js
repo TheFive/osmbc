@@ -13,7 +13,7 @@ var blogModule = require("../model/blog.js");
 
 
 
-var maxTimer = 20000;
+var maxTimer = 30000;
 
 
 
