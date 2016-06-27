@@ -196,7 +196,7 @@ describe('views/blog', function() {
     });
     describe("Blog Display",function() {
       it('should show Overview with some configurations' ,function(bddone) {
-        this.timeout(60000);
+        this.timeout(65000);
         async.series([
           browser.visit.bind(browser,"/blog/WN290"),
           browser.assert.expectHtml.bind(browser,"blog_wn290_overview.html"),
@@ -227,7 +227,7 @@ describe('views/blog', function() {
         ],bddone);
       });
       it('should show Full View and close language' ,function(bddone) {
-        this.timeout(6000);
+        this.timeout(6500);
         async.series([
           browser.visit.bind(browser,"/blog/WN290?tab=full"),
           browser.pressButton.bind(browser,'#closebutton'),
