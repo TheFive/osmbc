@@ -109,12 +109,12 @@ block content
                 p=comment.text
               .form-group
                 if (!blog["close"+left_lang])
-                  form.form-horizontal(id="review" name="review", action="#{layout.htmlroot}/blog/#{blog.name}", method="get")
+                  form.form-horizontal(id="review" name="review", action="#{layout.htmlroot}/blog/#{blog.name}/setReviewComment", method="post")
                     .col-md-10
-                      input(type="text",class="form-control",name ="reviewComment",id="reviewComment" placeholder="Please Type your Review here")
+                      input(type="text",class="form-control",name ="text",id="reviewComment" placeholder="Please Type your Review here")
                       input.hidden(type="text",name="lang" value = left_lang)
                     .col-md-2
-                      button.btn.btn-large.btn-primary(id="reviewButton" type="submit",onclick="document.getElementById('reviewButton').disabled=true;document.getElementById('review').submit();") Review#{left_lang}
+                      button.btn.btn-large.btn-primary(id="reviewButton" type="submit") Review#{left_lang}
 
     div(class=columnRightSize)
       - reviewCommentsRight = blog["reviewComment"+right_lang];
@@ -131,9 +131,18 @@ block content
                   span=" "
                   i.span=layout.moment(comment.timestamp).fromNow()
                 p=comment.text
-             
+              .form-group
+                if (!blog["close" + right_lang])
+                  form.form-horizontal(id="review" name="review", action="#{layout.htmlroot}/blog/#{blog.name}/setReviewComment", method="post")
+                    .col-md-10
+                      input(type="text",class="form-control",name ="text",id="reviewComment" placeholder="Please Type your Review here")
+                      input.hidden(type="text",name="lang" value = right_lang)
+                    .col-md-2
+                      button.btn.btn-large.btn-primary(id="reviewButton" type="submit") Review#{right_lang}
 
-  
+
+
+
   .row
     .col-md-12
       ul.nav.nav-tabs
