@@ -238,7 +238,7 @@ describe('routes/blog',function() {
         });
       });
     });
-    it('should render a blog Preview', function (bddone) {
+    it('should throw an error for a blog preview with empty articles', function (bddone) {
       blogModule.createNewBlog({OSMUser: "test"}, {
         name: "WN333",
         startDate: "2015-12-12T00:00:00",
@@ -248,18 +248,12 @@ describe('routes/blog',function() {
         should.exist(blog);
         should(blog.id).not.equal(0);
         request.get(baseLink + "/blog/WN333/preview?lang=DE", function (err, res) {
-          should(res.statusCode).eql(200);
+          should(res.statusCode).eql(500);
           var call = jadeSpy.lastCall;
           var v = call.args[1];
-          should(v.blog.id).equal(blog.id);
-          //should(v.articles.length).equal(0);
-          should(v.lang).equal("DE");
-          should(v.returnToUrl).equal("/blog/WN333/preview?lang=DE");
-          should(v.preview).equal('<p>12.12.2015-13.12.2015</p>\n<!--         place picture here              -->\n<ul>\n<div style=\"width: ##width##px\" class=\"wp-caption alignnone\"> \nWN333 Picture\n</div>\n</ul>\n<h2 id=\"wn333_wochenvorschau\">Wochenvorschau</h2>\n<ul>\n<p>WN333 Upcoming Events\n</p>\n<p>Hinweis:<br />Wer seinen Termin hier in der Liste sehen möchte, <a href=\"https://wiki.openstreetmap.org/wiki/Template:Calendar\">trage</a> ihn in den <a href=\"https://wiki.openstreetmap.org/wiki/Current_events\">Kalender</a> ein. Nur Termine, die dort stehen, werden in die Wochennotiz übernommen.</p>\n</ul>\n<p align=\"right\"><i>Diese Wochennotiz wurde erstellt von .</i></p>\n');
-
+          should(v.message).equal("Article WN333 Picture contains no text for language DE.");
           bddone();
         });
-
       });
     });
   });

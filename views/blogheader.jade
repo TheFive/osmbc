@@ -162,23 +162,30 @@ block content
               +navbutton(style0,style)
             - v++ 
       
-        li.hidden-xs
-          a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{left_lang}") 
-            span.glyphicon.glyphicon-export
-            | #{left_lang}
-        if (right_lang != "--" && right_lang != null)
+        if (blog._countUneditedMarkdown && blog._countUneditedMarkdown[left_lang] == 0)
           li.hidden-xs
-            a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{right_lang}") 
+            a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{left_lang}")
               span.glyphicon.glyphicon-export
-              | #{right_lang}
+              | #{left_lang}
+        if (right_lang != "--" && right_lang != null)
+          if (blog._countUneditedMarkdown && blog._countUneditedMarkdown[right_lang] == 0)
+            li.hidden-xs
+              a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{right_lang}")
+                span.glyphicon.glyphicon-export
+                | #{right_lang}
         li.dropdown.hidden-xs
           a.dropdown-toggle(href='#', data-toggle='dropdown')
             span.glyphicon.glyphicon-export
           ul.dropdown-menu(role='menu')
+            -  var noShown = true;
             for lang in layout.languages
               if layout.usedLanguages[lang]
-                li
-                  a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{lang}") Export #{lang}
+                if (blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
+                  - noShown = false;
+                  li
+                    a(href="#{layout.htmlroot}/blog/#{blog.name}/preview?lang=#{lang}") Export #{lang}
+            if noShown
+              li="No Blog is ready for export."
 
 
 
