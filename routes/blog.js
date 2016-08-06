@@ -199,17 +199,18 @@ function renderBlogPreview(req, res,next) {
   async.auto({
       converter:function(callback) {
                     debug("converter function");
-                    blog.getPreviewData({lang:lang,createTeam:true,disableNotranslation:true},function(err,data) {
-
+                    blog.getPreviewData({lang:lang,createTeam:true,disableNotranslation:true,errorOnEmptyMarkdown:true},function(err,data) {
+                      if (err) return callback(err);
                       let renderer=new BlogRenderer.HtmlRenderer(blog);
                       if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
                       let result = renderer.renderBlog(lang,data);
-                      return callback(err,result);
+                      return callback(null,result);
                     });
                 }
     },
     function(err,result) {
       debug("renderBlogPreview->final function");
+      if (err) return next(err);
       if (req.query.download=="true") {
         if (asMarkdown) {
           res.setHeader('Content-disposition', 'attachment; filename=' + blog.name+'('+lang+')'+moment().locale(lang).format()+".md");
