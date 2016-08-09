@@ -405,12 +405,12 @@ block content
             if (comment.editstamp)
               span=" "
               i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
-            if layout.user.OSMUser === comment.user && params.editComment != i
+            if !params.edit && layout.user.OSMUser === comment.user && params.editComment != i
               a(id="EditComment#{i}" href="#{layout.htmlroot}/article/#{article.id}?editComment=#{i}")
                 span=" "
                 span.glyphicon.glyphicon-pencil
 
-            if params.editComment == i && layout.user.OSMUser === comment.user
+            if !params.edit && params.editComment == i && layout.user.OSMUser === comment.user
               form(name="EditComment",id="EditCommentForm", action="#{layout.htmlroot}/article/#{article.id}/EditComment/#{i}", method="post")
                 textarea.form-control(name="comment" id="editComment" rows=7)=comment.text
                 button.btn.btn-large.btn-primary(name = "update" type = "button" onclick ="if (document.getElementById('editComment').value.trim()==='') return;window.onbeforeunload=null; document.getElementById('EditCommentForm').submit();") Update
@@ -422,7 +422,7 @@ block content
 
     .row
       .col-md-12
-        if (!params.editComment)
+        if (!params.edit && !params.editComment)
           form(name="AddComment",id="AddComment", action="#{layout.htmlroot}/article/#{article.id}/addComment", method="post")
             textarea.form-control(name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
             button.btn.btn-large.btn-primary(name= "AddComment" type = "button" onclick ="if (document.getElementById('comment').value.trim()==='') return;window.onbeforeunload=null; document.getElementById('AddComment').submit();") Add Comment
