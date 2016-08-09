@@ -86,9 +86,19 @@ describe('model/article', function() {
       should(a.getCommentMention("User","ES")).eql("other");
 
     });
+
+    it('should select user with space',function(){
+      let a= createArticleWithComment("should to something @user name","Test more");
+      should(a.getCommentMention("user name","ES")).eql("user");
+    });
     it('should not select language if user is at the end',function(){
       let a= createArticleWithComment("should to something @user");
       should(a.getCommentMention("user","DE")).eql("user");
+
+    });
+    it('should select all',function(){
+      let a= createArticleWithComment("should to something @all");
+      should(a.getCommentMention("user","DE")).eql("language");
 
     });
   });
