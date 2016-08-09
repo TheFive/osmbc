@@ -251,7 +251,7 @@ describe('routes/blog',function() {
           should(res.statusCode).eql(500);
           var call = jadeSpy.lastCall;
           var v = call.args[1];
-          should(v.message).equal("Article WN333 Picture contains no text for language DE.");
+          should(v.message).equal("Article >>WN333 Picture<< contains no text for language DE.");
           bddone();
         });
       });
