@@ -206,6 +206,9 @@ function parseWikiInfo(description,options) {
   while (result.search("</big>")>=0) {
     result = result.replace("</big>","");
   }
+  while (result.search("'''")>=0) {
+    result = result.replace("'''","");
+  }
   return result.trim();
 }
 
