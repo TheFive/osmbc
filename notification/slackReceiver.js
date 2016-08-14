@@ -5,6 +5,12 @@ var config = require("../config.js");
 var should = require("should");
 var debug = require('debug')("OSMBC:notification:slackReceiver");
 
+var configModule = require('../model/config.js');
+
+var messageCenter = require('../notification/messageCenter.js');
+var ConfigFilter  = require('../notification/ConfigFilter.js');
+var IteratorReceiver = require('../notification/IteratorReceiver.js');
+
 config.initialise();
 
 var botName = config.getValue("AppName").toLowerCase();
@@ -15,20 +21,24 @@ var Slack = require('node-slack');
 var osmbcUrl = config.getValue('url')+config.getValue('htmlroot');
 
 
-function SlackReceiver(name,webhook,channel) {
-  debug("MailReceiver::MailReceiver");
+function SlackReceiver(name,slack,channel) {
+  debug("SlackReceiver::SlackReceiver");
+
   should(typeof(name)).eql("string");
-  should(typeof(webhook)).eql("string");
+  should(typeof(slack)).eql("string");
   // If privat channels should be adressed to,
   // please change condition to
   // (channel.substring(0,1)==="#")||(channel.substring(0,1)==="@")
   should((channel.substring(0,1)==="#")).be.True();
   this.name = name;
-  this.slack = new Slack(webhook);
+  this.slackName = slack;
+  this.hook = slackhook[this.slackName];
+  this.slack = new Slack(this.hook);
   this.channel = channel;
-  debug("Name: %s",name);
-  debug("Channel: %s",channel);
-  debug("Webhook: %s",webhook);
+  debug("Name: %s",this.name);
+  debug("Slack: %s",this.slackName);
+  debug("hook: %s",this.hook);
+  debug("channel: %s",this.channel);
 }
 
 function blogNameSlack(blog,change) {
@@ -188,4 +198,41 @@ SlackReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callba
 };
 
 
-module.exports = SlackReceiver;
+
+var iteratorReceiver = new IteratorReceiver({});
+var channelReceiverMap = {};
+
+
+var registered = false;
+var slackhook = null;
+
+function initialise(callback) {
+  debug('initialise');
+  slackhook = config.getValue("slacktool");
+  messageCenter.initialise();
+  let channelList = configModule.getConfigObject("slacknotification").getJSON();
+
+  channelReceiverMap = {};
+  for (var i=0;i<channelList.length;i++) {
+    var u = channelList[i];
+    updateChannel(u);
+  }
+  should.exist(messageCenter.global);
+  if (!registered) {
+    messageCenter.global.registerReceiver(iteratorReceiver);
+    registered = true;
+  }
+  if (callback) return callback();
+}
+
+
+function updateChannel(channel) {
+  debug('updateUser');
+  delete channelReceiverMap[channel.name];
+  channelReceiverMap[channel.slack+channel.channel] = new ConfigFilter(channel,new SlackReceiver(channel.slack+channel.channel,channel.slack,channel.channel));
+  iteratorReceiver.receiverMap = channelReceiverMap;
+}
+
+module.exports.SlackReceiver = SlackReceiver;
+module.exports.initialise = initialise;
+module.exports.updateChannel = updateChannel;

@@ -2,12 +2,7 @@
 
 var debug     = require('debug')('OSMBC:notification:messageCenter');
 var async     = require('async');
-var should    = require('should');
-var config   = require("../config.js");
-var SlackReceiver = require('../notification/slackReceiver.js');
-var messageFilter = require('../notification/messageFilter.js');
 var LogModuleReceiver = require('../notification/LogModuleReceiver');
-
 
 
 
@@ -79,57 +74,8 @@ function initialise(callback)
   var messageCenter = new MessageCenter();
   module.exports.global = messageCenter;
 
-  var slack = config.getValue("slack");
 
-  // first configure the blogs
-  var blogSlack = slack.blog;
-  var languages = config.getLanguages();
 
-  function notLanguage(lang) {
-    return lang !== k;
-  }
-  var k;
-
-  if (blogSlack) {
-    for (k in blogSlack) {
-      if (k === "default") continue;
-      languages = languages.filter(notLanguage);
-      var blogConfig = blogSlack[k];
-      should.exist(blogConfig.hook);
-      should.exist(blogConfig.channel);
-      messageCenter.registerReceiver(
-        new messageFilter.BlogStatusFilter(
-          new SlackReceiver("Blog " + k, blogConfig.hook, blogConfig.channel),
-          [k])
-      );
-    }
-    if (blogSlack.default) {
-      k = blogSlack.default;
-      should.exist(k.hook);
-      should.exist(k.channel);
-      messageCenter.registerReceiver(
-        new messageFilter.BlogStatusFilter(
-          new SlackReceiver("Blog default", k.hook, k.channel),
-          languages)
-      );
-    }
-  }
-
-  // and then the article
-  var articleSlack = slack.article;
-
-  if (articleSlack) {
-    for (k in articleSlack) {
-      var articleConfig = articleSlack[k];
-      should.exist(articleConfig.hook);
-      should.exist(articleConfig.channel);
-      messageCenter.registerReceiver(
-        new messageFilter.ArticleCollectFilter(
-          new SlackReceiver("Article " + k, articleConfig.hook, articleConfig.channel)
-        )
-      );
-    }
-  }
   messageCenter.registerReceiver(new LogModuleReceiver());
 
   console.log("Message Center initialised.");

@@ -19,6 +19,7 @@ var blogModule = require('../model/blog.js');
 var userModule = require('../model/user.js');
 var messageCenter = require('../notification/messageCenter.js');
 var mailReceiver  = require('../notification/mailReceiver.js');
+var slackReceiver  = require('../notification/slackReceiver.js');
 
 /**
  * Get port from environment and store in Express.
@@ -42,9 +43,9 @@ function initialiseServer() {
     configModule:configModule.initialise,
     blogModule:["configModule",startBlogTimer],
     messageCenter:messageCenter.initialise,
-    startMailReceiver:startMailReceiver
-
-},
+    startMailReceiver:startMailReceiver,
+    startSlackReceiver:startSlackReceiver
+  },
     function(err){
       if (err) {
         console.log(err);
@@ -72,6 +73,17 @@ function startMailReceiver(callback) {
     console.log("Mail Receiver initialised.");
     return callback();
   });
+}
+
+function startSlackReceiver(callback) {
+  debug("startSlackReceiver");
+
+  console.log("Starting Slack Receiver");
+  var result = configModule.getJSON("slacknotification");
+  console.dir(result);
+  slackReceiver.initialise(result);
+  console.log("Slack Receiver initialised.");
+  return callback();
 }
 
 function startBlogTimer(callback) {

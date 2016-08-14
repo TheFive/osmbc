@@ -183,6 +183,11 @@ var checkAndRepair = {
     if (!cf) cf = {};
     c.json = cf;
   },
+  "slacknotification":function(c) {
+    var cf = c.getJSON();
+    if (!cf) cf = {};
+    c.json = cf;
+  },
   "licenses":function(c) {
     var l = c.getJSON();
     if (!l) l={};
@@ -311,6 +316,7 @@ function initialise(callback) {
       initConfigElement.bind(null,"categorydescription"),
       initConfigElement.bind(null,"languageflags"),
       initConfigElement.bind(null,"calendarflags"),
+      initConfigElement.bind(null,"slacknotification"),
       initConfigElement.bind(null,"licenses"),
       initConfigElement.bind(null,"categorytranslation"),
       initConfigElement.bind(null,"editorstrings"),

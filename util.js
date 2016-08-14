@@ -4,7 +4,9 @@ var debug = require ('debug')('OSMBC:util');
 var markdown = require('markdown-it')({breaks:true});
 
 
-
+function isTrue(expr) {
+  return (expr === true || expr === "true");
+}
 
 function shorten(string,maxlength) {
   debug("maxString");
@@ -82,6 +84,7 @@ exports.isURL = isURL;
 exports.toPGString = toPGString;
 exports.getAllURL = getAllURL;
 exports.linkify = linkify;
+exports.isTrue = isTrue;
 
 // Convert MD to HTML, and mark all http(s) links as hyperlinks.
 exports.md_render = md_render;

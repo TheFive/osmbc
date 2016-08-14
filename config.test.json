@@ -14,7 +14,10 @@
     "access_token": "dummy",
     "access_token_secret": "dummy"
     },
-
+  "slacktool":{
+    "osmde":"https://hooks.slack.com/services/osmde",
+    "theweeklyosm":"https://hooks.slack.com/services/theweeklyosm"
+  },
   "slack":{
     "blog":{
       "DE":{
