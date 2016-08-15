@@ -44,7 +44,7 @@ function initialiseServer() {
     blogModule:["configModule",startBlogTimer],
     messageCenter:messageCenter.initialise,
     startMailReceiver:startMailReceiver,
-    startSlackReceiver:startSlackReceiver
+    startSlackReceiver:["configModule",startSlackReceiver]
   },
     function(err){
       if (err) {
@@ -78,12 +78,7 @@ function startMailReceiver(callback) {
 function startSlackReceiver(callback) {
   debug("startSlackReceiver");
 
-  console.log("Starting Slack Receiver");
-  var result = configModule.getJSON("slacknotification");
-  console.dir(result);
-  slackReceiver.initialise(result);
-  console.log("Slack Receiver initialised.");
-  return callback();
+  slackReceiver.initialise(callback);
 }
 
 function startBlogTimer(callback) {
