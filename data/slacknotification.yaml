@@ -20,12 +20,3 @@
   notifyBlogStatusChange: true
   notifyBlogLanguageStatusChange: ["ES","EN"]
 
-
-
- td=c.slack
-            td=c.channel
-            td=c.notifyNewCollection
-            td=c.notifyAllComment
-            td=c.notifyComment
-            td=c.notifyBlogStatusChange
-            td=c.notifyBlogLanguageStatusChange
