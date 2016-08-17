@@ -1,0 +1,22 @@
+
+- slack: osmde
+  channel: "#osmbcarticle"
+  notifyNewCollection: true
+  notifyAllComment: true
+  notifyComment: []
+  notifyBlogStatusChange: false
+  notifyBlogLanguageStatusChange: []
+
+- slack: osmde
+  channel: "#osmbcblog"
+  notifyNewCollection: false
+  notifyAllComment: false
+  notifyComment: false
+  notifyBlogStatusChange: true
+  notifyBlogLanguageStatusChange: ["DE"]
+
+- slack: theweeklyosm
+  channel: "#osmbcblog"
+  notifyBlogStatusChange: true
+  notifyBlogLanguageStatusChange: ["ES","EN"]
+

@@ -3,12 +3,15 @@
 
 
 var should = require('should');
+var async = require('async');
 
 
 var testutil = require('./testutil.js');
 
 var articleModule = require('../model/article.js');
 var blogModule    = require('../model/blog.js');
+var slackReceiver = require('../notification/slackReceiver.js');
+var configModule  = require('../model/config.js');
 
 
 
@@ -29,7 +32,11 @@ function checkPostJson(check) {
 
 describe('notification/slackReceiver', function() {
   beforeEach(function (bddone) {
-    testutil.clearDB(bddone);
+    async.series([
+      testutil.clearDB,
+      configModule.initialise,
+      slackReceiver.initialise
+    ],bddone);
   });
   afterEach(function(bddone){
     nock.cleanAll();
@@ -38,7 +45,7 @@ describe('notification/slackReceiver', function() {
   describe('articles',function() {
     it('should slack message, when collecting article',function (bddone){
       var slack = nock('https://hooks.slack.com/')
-        .post('/services/articleKey',checkPostJson(
+        .post('/services/osmde',checkPostJson(
           {"text":"<https://testosm.bc/article/1|Test Title> added to <https://testosm.bc/blog/WN789|WN789>\n",
             "username":"testbc(testuser)",
             "channel":"#osmbcarticle"}))
@@ -53,7 +60,7 @@ describe('notification/slackReceiver', function() {
     });
     it('should slack message, when changing a collection',function (bddone){
       var slack = nock('https://hooks.slack.com/')
-        .post('/services/articleKey',checkPostJson(
+        .post('/services/osmde',checkPostJson(
           {"text":"<https://testosm.bc/article/1|Test Title> added to <https://testosm.bc/blog/WN789|WN789>\n",
             "username":"testbc(testuser)",
             "channel":"#osmbcarticle"}))
@@ -63,7 +70,7 @@ describe('notification/slackReceiver', function() {
           should.not.exist(err);
           should(slack.isDone()).is.True();
           slack = nock('https://hooks.slack.com/')
-            .post('/services/articleKey',checkPostJson(
+            .post('/services/osmde',checkPostJson(
               {"text":"<https://testosm.bc/article/1|Test Title> changed collection\n",
                 "username":"testbc(testuser)",
                 "channel":"#osmbcarticle"}))
@@ -78,7 +85,7 @@ describe('notification/slackReceiver', function() {
     });
     it('should slack message, when adding comment (Old Format)',function (bddone){
       var slack = nock('https://hooks.slack.com/')
-        .post('/services/articleKey',checkPostJson(
+        .post('/services/osmde',checkPostJson(
           {"text":"<https://testosm.bc/article/1|Test Title> added comment\n",
             "username":"testbc(testuser)",
             "channel":"#osmbcarticle"}))
@@ -93,7 +100,7 @@ describe('notification/slackReceiver', function() {
     });
     it('should slack message, when adding comment',function (bddone){
       var slack = nock('https://hooks.slack.com/')
-        .post('/services/articleKey',checkPostJson(
+        .post('/services/osmde',checkPostJson(
           {"text":"<https://testosm.bc/article/1|Test Title> added comment:\nInformation for @User3",
             "username":"testbc(testuser)",
             "channel":"#osmbcarticle"}))
@@ -109,7 +116,7 @@ describe('notification/slackReceiver', function() {
     });
     it('should slack message, when changing comment',function (bddone){
       var slack = nock('https://hooks.slack.com/')
-        .post('/services/articleKey',checkPostJson(
+        .post('/services/osmde',checkPostJson(
           {"text":"<https://testosm.bc/article/1|Test Title> added comment:\nInformation for @User3",
             "username":"testbc(testuser)",
             "channel":"#osmbcarticle"}))
@@ -119,7 +126,7 @@ describe('notification/slackReceiver', function() {
         article.addComment({OSMUser:"testuser"},"Information for @User3",function(err) {
           should.not.exist(err);
           var slack2 = nock('https://hooks.slack.com/')
-            .post('/services/articleKey',checkPostJson(
+            .post('/services/osmde',checkPostJson(
               {"text":"<https://testosm.bc/article/1|Test Title> changed comment:\nInformation for all",
                 "username":"testbc(testuser)",
                 "channel":"#osmbcarticle"}))
@@ -138,13 +145,13 @@ describe('notification/slackReceiver', function() {
   describe('blogs',function() {
     it('should slack message when creating a blog',function (bddone){
       var slack1 = nock('https://hooks.slack.com/')
-                .post('/services/blogKeyWeekly',checkPostJson(
+                .post('/services/osmde',checkPostJson(
                   {"text":"<https://testosm.bc/blog/WN251|WN251> was created\n",
                   "username":"testbc(testuser)",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
       var slack2 = nock('https://hooks.slack.com/')
-                .post('/services/blogKey',checkPostJson(
+                .post('/services/theweeklyosm',checkPostJson(
                   {"text":"<https://testosm.bc/blog/WN251|WN251> was created\n",
                   "username":"testbc(testuser)",
                   "channel":"#osmbcblog"}))
@@ -159,26 +166,26 @@ describe('notification/slackReceiver', function() {
     });
     it('should slack message, when change blog status',function (bddone){
       var slack1a = nock('https://hooks.slack.com/')
-                .post('/services/blogKey',checkPostJson(
+                .post('/services/osmde',checkPostJson(
                   {"text":"<https://testosm.bc/blog/WN251|WN251> was created\n",
                   "username":"testbc(testuser)",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
       var slack1b = nock('https://hooks.slack.com/')
-                .post('/services/blogKeyWeekly',checkPostJson(
+                .post('/services/theweeklyosm',checkPostJson(
                   {"text":"<https://testosm.bc/blog/WN251|WN251> was created\n",
                   "username":"testbc(testuser)",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
       blogModule.createNewBlog({OSMUser:"testuser"},function(err,blog){
         var slack2a = nock('https://hooks.slack.com/')
-                  .post('/services/blogKey',checkPostJson(
+                  .post('/services/osmde',checkPostJson(
                     {"text":"<https://testosm.bc/blog/WN251|WN251> changed status to edit\n",
                     "username":"testbc(testuser)",
                     "channel":"#osmbcblog"}))
                   .reply(200,"ok");
         var slack2b = nock('https://hooks.slack.com/')
-                  .post('/services/blogKeyWeekly',checkPostJson(
+                  .post('/services/theweeklyosm',checkPostJson(
                     {"text":"<https://testosm.bc/blog/WN251|WN251> changed status to edit\n",
                     "username":"testbc(testuser)",
                     "channel":"#osmbcblog"}))
@@ -198,26 +205,26 @@ describe('notification/slackReceiver', function() {
     });
     it('should slack message, when review status is set',function (bddone){
       var slack1a = nock('https://hooks.slack.com/')
-                .post('/services/blogKey',checkPostJson(
+                .post('/services/osmde',checkPostJson(
                   {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
                   "username":"testbc(testuser)",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
       var slack1b = nock('https://hooks.slack.com/')
-                .post('/services/blogKeyWeekly',checkPostJson(
+                .post('/services/theweeklyosm',checkPostJson(
                   {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
                   "username":"testbc(testuser)",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
       blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
         var slack2a = nock('https://hooks.slack.com/')
-                  .post('/services/blogKeyWeekly',checkPostJson(
+                  .post('/services/theweeklyosm',checkPostJson(
                     {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed",
                     "username":"testbc(testuser)",
                     "channel":"#osmbcblog"}))
                   .reply(200,"ok");
         var slack2b = nock('https://hooks.slack.com/')
-                  .post('/services/blogKey',checkPostJson(
+                  .post('/services/osmde',checkPostJson(
                     {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed",
                     "username":"testbc(testuser)",
                     "channel":"#osmbcblog"}))
@@ -238,26 +245,26 @@ describe('notification/slackReceiver', function() {
     });
     it('should slack message, when review is marked as exported',function (bddone){
       var slack1a = nock('https://hooks.slack.com/')
-                .post('/services/blogKey',checkPostJson(
+                .post('/services/osmde',checkPostJson(
                   {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
                   "username":"testbc(testuser)",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
       var slack1b = nock('https://hooks.slack.com/')
-                .post('/services/blogKeyWeekly',checkPostJson(
+                .post('/services/theweeklyosm',checkPostJson(
                   {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
                   "username":"testbc(testuser)",
                   "channel":"#osmbcblog"}))
                 .reply(200,"ok");
       blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
         var slack2a = nock('https://hooks.slack.com/')
-                  .post('/services/blogKey',checkPostJson(
+                  .post('/services/osmde',checkPostJson(
                     {"text":"<https://testosm.bc/blog/blog|blog>(DE) is exported to WordPress",
                     "username":"testbc(testuser)",
                     "channel":"#osmbcblog"}))
                   .reply(200,"ok");
         var slack2b = nock('https://hooks.slack.com/')
-                  .post('/services/blogKeyWeekly',checkPostJson(
+                  .post('/services/theweeklyosm',checkPostJson(
                     {"text":"<https://testosm.bc/blog/blog|blog>(DE) is exported to WordPress",
                     "username":"testbc(testuser)",
                     "channel":"#osmbcblog"}))
@@ -278,26 +285,26 @@ describe('notification/slackReceiver', function() {
     });
     it('should slack message, when blog is closed',function (bddone){
       var slack1a = nock('https://hooks.slack.com/')
-        .post('/services/blogKey',checkPostJson(
+        .post('/services/osmde',checkPostJson(
           {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
             "username":"testbc(testuser)",
             "channel":"#osmbcblog"}))
         .reply(200,"ok");
       var slack1b = nock('https://hooks.slack.com/')
-        .post('/services/blogKeyWeekly',checkPostJson(
+        .post('/services/theweeklyosm',checkPostJson(
           {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
             "username":"testbc(testuser)",
             "channel":"#osmbcblog"}))
         .reply(200,"ok");
       blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
         var slack2a = nock('https://hooks.slack.com/')
-          .post('/services/blogKey',checkPostJson(
+          .post('/services/osmde',checkPostJson(
             {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been closed",
               "username":"testbc(testuser)",
               "channel":"#osmbcblog"}))
           .reply(200,"ok");
         var slack2b = nock('https://hooks.slack.com/')
-          .post('/services/blogKeyWeekly',checkPostJson(
+          .post('/services/theweeklyosm',checkPostJson(
             {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been closed",
               "username":"testbc(testuser)",
               "channel":"#osmbcblog"}))
@@ -317,26 +324,26 @@ describe('notification/slackReceiver', function() {
     });
     it('should slack message, when blog is reopened',function (bddone){
       var slack1a = nock('https://hooks.slack.com/')
-        .post('/services/blogKey',checkPostJson(
+        .post('/services/osmde',checkPostJson(
           {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
             "username":"testbc(testuser)",
             "channel":"#osmbcblog"}))
         .reply(200,"ok");
       var slack1b = nock('https://hooks.slack.com/')
-        .post('/services/blogKeyWeekly',checkPostJson(
+        .post('/services/theweeklyosm',checkPostJson(
           {"text":"<https://testosm.bc/blog/blog|blog> was created\n",
             "username":"testbc(testuser)",
             "channel":"#osmbcblog"}))
         .reply(200,"ok");
       blogModule.createNewBlog({OSMUser:"testuser"},{name:"blog",status:"edit"},function(err,blog){
         var slack2a = nock('https://hooks.slack.com/')
-          .post('/services/blogKey',checkPostJson(
+          .post('/services/osmde',checkPostJson(
             {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been closed",
               "username":"testbc(testuser)",
               "channel":"#osmbcblog"}))
           .reply(200,"ok");
         var slack2b = nock('https://hooks.slack.com/')
-          .post('/services/blogKeyWeekly',checkPostJson(
+          .post('/services/theweeklyosm',checkPostJson(
             {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been closed",
               "username":"testbc(testuser)",
               "channel":"#osmbcblog"}))
@@ -349,7 +356,7 @@ describe('notification/slackReceiver', function() {
           should(slack2a.isDone()).is.False();
           should(slack2b.isDone()).is.True();
           slack2b = nock('https://hooks.slack.com/')
-            .post('/services/blogKeyWeekly',checkPostJson(
+            .post('/services/theweeklyosm',checkPostJson(
               {"text":"<https://testosm.bc/blog/blog|blog>(ES) has been reopened",
                 "username":"testbc(testuser)",
                 "channel":"#osmbcblog"}))

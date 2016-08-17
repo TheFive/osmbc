@@ -12,6 +12,7 @@ var pgMap    = require('../model/pgMap.js');
 var config   = require('../config.js');
 
 var messageCenter = require('../notification/messageCenter.js');
+var slackReceiver = require('../notification/slackReceiver.js');
 
 function Config (proto)
 {
@@ -183,6 +184,11 @@ var checkAndRepair = {
     if (!cf) cf = {};
     c.json = cf;
   },
+  "slacknotification":function(c) {
+    var cf = c.getJSON();
+    if (!cf) cf = {};
+    c.json = cf;
+  },
   "licenses":function(c) {
     var l = c.getJSON();
     if (!l) l={};
@@ -257,6 +263,11 @@ Config.prototype.setAndSave = function setAndSave(user,data,callback) {
       return callback(new Error(self.json.errorMessage));
     }
     actualiseConfigMap(self);
+
+    if (self.name ==="slacknotification") {
+      // Reinitialise Slack Receiver if something is changed on slack notification.
+      slackReceiver.initialise();
+    }
     self.save(callback);
   });
 };
@@ -311,6 +322,7 @@ function initialise(callback) {
       initConfigElement.bind(null,"categorydescription"),
       initConfigElement.bind(null,"languageflags"),
       initConfigElement.bind(null,"calendarflags"),
+      initConfigElement.bind(null,"slacknotification"),
       initConfigElement.bind(null,"licenses"),
       initConfigElement.bind(null,"categorytranslation"),
       initConfigElement.bind(null,"editorstrings"),

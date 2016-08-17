@@ -3,20 +3,21 @@
 var path          = require('path');
 var config        = require('../config.js');
 var should        = require('should');
-var async         = require('async');
 var debug         = require('debug')('OSMBC:notification:mailReceiver');
 var nodemailer    = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var EmailTemplate = require('email-templates').EmailTemplate;
 
 var messageCenter = require('../notification/messageCenter.js');
-var messageFilter = require('../notification/messageFilter.js');
 var articleModule = require('../model/article.js');
 var blogModule = require('../model/blog.js');
 var logModule  = require('../model/logModule.js');
 
 var htmlToText = require('html-to-text');
 
+var UserConfigFilter = require('../notification/UserConfigFilter.js');
+
+var IteratorReceiver = require('../notification/IteratorReceiver.js');
 
 
 
@@ -358,9 +359,10 @@ MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callbac
     sendMailWithLog(self.user,mailOptions,callback);
   });
 };
+var iteratorReceiver = new IteratorReceiver({});
 var userReceiverMap = {};
 
-
+/*
 function MailUserReceiver() {
   debug('MailUserReceiver');
 }
@@ -423,7 +425,7 @@ MailUserReceiver.prototype.updateBlog = function murUpdateBlog(user,blog,change,
 MailUserReceiver.prototype.sendInfo = function sendInfo(data,cb) {
   debug("MailUserReceiver.prototype.sendInfo");
   return cb();
-};
+};*/
 
 var registered = false;
 
@@ -437,7 +439,7 @@ function initialise(userList) {
   }
   should.exist(messageCenter.global);
   if (!registered) {
-    messageCenter.global.registerReceiver(new MailUserReceiver());
+    messageCenter.global.registerReceiver(iteratorReceiver);
     registered = true;
   }
 }
@@ -449,7 +451,8 @@ function updateUser(user) {
   if (user.access !== "full") return;
   if (!user.email) return;
   if (user.email.trim() === "") return;
-  userReceiverMap[user.OSMUser] = new messageFilter.UserConfigFilter(user,new MailReceiver(user));
+  userReceiverMap[user.OSMUser] = new UserConfigFilter(user,new MailReceiver(user));
+  iteratorReceiver.receiverMap = userReceiverMap;
 }
 
 
