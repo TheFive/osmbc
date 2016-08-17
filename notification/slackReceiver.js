@@ -227,7 +227,7 @@ function initialise(callback) {
 
 
 function updateChannel(channel) {
-  debug('updateUser');
+  debug('updateChannel');
   delete channelReceiverMap[channel.name];
   channelReceiverMap[channel.slack+channel.channel] = new ConfigFilter(channel,new SlackReceiver(channel.slack+channel.channel,channel.slack,channel.channel));
   iteratorReceiver.receiverMap = channelReceiverMap;
