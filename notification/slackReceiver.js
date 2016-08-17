@@ -77,6 +77,7 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,bl
   }
   var username = botName + "("+user.OSMUser+")";
 
+
   this.slack.send({
     text:subject,
     channel: this.channel,
@@ -95,6 +96,7 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lan
     subject += "("+lang+") has been closed";
   }
   var username = botName + "("+user.OSMUser+")";
+
   this.slack.send({
     text:subject,
     channel: this.channel,
@@ -214,9 +216,10 @@ function initialise(callback) {
 
   channelReceiverMap = {};
   for (var i=0;i<channelList.length;i++) {
-    var u = channelList[i];
-    updateChannel(u);
+    var channel = channelList[i];
+    channelReceiverMap["Slack Connection "+i] = new ConfigFilter(channel,new SlackReceiver(channel.slack+channel.channel,channel.slack,channel.channel));
   }
+  iteratorReceiver.receiverMap = channelReceiverMap;
   should.exist(messageCenter.global);
   if (!registered) {
     messageCenter.global.registerReceiver(iteratorReceiver);
@@ -226,13 +229,5 @@ function initialise(callback) {
 }
 
 
-function updateChannel(channel) {
-  debug('updateChannel');
-  delete channelReceiverMap[channel.name];
-  channelReceiverMap[channel.slack+channel.channel] = new ConfigFilter(channel,new SlackReceiver(channel.slack+channel.channel,channel.slack,channel.channel));
-  iteratorReceiver.receiverMap = channelReceiverMap;
-}
-
 module.exports.SlackReceiver = SlackReceiver;
 module.exports.initialise = initialise;
-module.exports.updateChannel = updateChannel;

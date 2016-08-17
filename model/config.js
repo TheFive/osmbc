@@ -12,6 +12,7 @@ var pgMap    = require('../model/pgMap.js');
 var config   = require('../config.js');
 
 var messageCenter = require('../notification/messageCenter.js');
+var slackReceiver = require('../notification/slackReceiver.js');
 
 function Config (proto)
 {
@@ -262,6 +263,11 @@ Config.prototype.setAndSave = function setAndSave(user,data,callback) {
       return callback(new Error(self.json.errorMessage));
     }
     actualiseConfigMap(self);
+
+    if (self.name ==="slacknotification") {
+      // Reinitialise Slack Receiver if something is changed on slack notification.
+      slackReceiver.initialise();
+    }
     self.save(callback);
   });
 };

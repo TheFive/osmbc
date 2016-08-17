@@ -31,7 +31,6 @@ ConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user,article,ch
   debug('ConfigFilter.prototype.updateArticle');
   var notify = false;
 
-
   // check Collection
   if (util.isTrue(this.config.notifyNewCollection)) {
     if (change.collection && change.collection != article.collection) {
