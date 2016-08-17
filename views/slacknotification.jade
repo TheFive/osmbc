@@ -1,0 +1,47 @@
+extends config
+
+
+
+block showContentOfConfig
+  - console.dir(config.json)
+  if config.json
+    table#resulttable.table.table-striped.table-responsive
+      thead
+        tr
+          th="Slack"
+          th="Channel"
+          th="New Collects"
+          th="All Comments"
+          th="Comments"
+          th="Blog Change"
+          th="Blog Language Change"
+        tr
+          td.text-info="osmde / theweeklyosm"
+          td.text-info="#channelname"
+          td.text-info="true / false"
+          td.text-info="true / false"
+          td.text-info="List of languages in []"
+          td.text-info="true / false"
+          td.text-info="List of languages in []"
+      tbody
+
+        each c in config.json
+          tr
+            td=c.slack
+            td=c.channel
+            td=c.notifyNewCollection
+            td=c.notifyAllComment
+            td
+              if c.notifyComment
+                for t in c.notifyComment
+                  span='"'+t+'"'
+                  span=" "
+            td=c.notifyBlogStatusChange
+            td
+              if c.notifyBlogLanguageStatusChange
+                for t in c.notifyBlogLanguageStatusChange
+                  span='"' + t + '"'
+                  span=" "
+
+
+
