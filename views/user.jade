@@ -2,9 +2,10 @@ extends adminlayout
 
 
 
+
 block content
-  h1
-    |Edit OSMBC User
+
+  h1="Edit OSMBC User "+ usershown.OSMUser
   form(name="input", action="#{layout.htmlroot}/usert/#{usershown.id}", method="post")
     div.form-horizontal(role="form")
       if (usershown.hasLoggedIn())
@@ -18,11 +19,11 @@ block content
           div.col-sm-offset-2.col-sm-4
             p
               span
-                |Waiting for validation of EMail 
+                |Waiting for validation of EMail
               span.bg-info=usershown.emailInvalidation
           div.col-sm-6
             button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
-          
+
 
       +labeledInput("WNAuthor","WNAuthor",usershown.WNAuthor,"WP user for the Wochennotiz Blog blog.openstreetmap.de")
       if (usershown.WNPublicAuthor)
@@ -57,7 +58,7 @@ block content
                      ["on","off"],
                      "Send a mail for every change of a comment. I recommend to use OFF, but sometimes you may be interested in anything written in comments, than - and only then - you should use ON")
 
-    
+
       - var langlistWithUser = langlist.concat(usershown.OSMUser)
 
       +labeledMultiSelect("Mail defined comments",
@@ -97,12 +98,13 @@ block content
         div.col-sm-offset-2.col-sm-10
           input(name="OK" type="submit", class="btn btn-primary",value="OK")
 
-    
 
-    
-      
-    
 
+
+
+  .row
+    h1=usershown.OSMUser + " Heatmap"
+    p#heatmap
    
   .row
     if changes
@@ -133,10 +135,30 @@ block content
                 td= change.property
                 td= layout.util.shorten(change.from)
                 td= layout.util.shorten(change.to)
-                td= layout.moment(change.timestamp).fromNow() 
-                
+                td= layout.moment(change.timestamp).fromNow()
 
 
 
 
+
+block scripts
+
+  link(rel="stylesheet" type="text/css" href="#{layout.htmlroot}/stylesheets/calendar-heatmap.css")
+  script(src="https://d3js.org/d3.v3.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js")
+  script(src="#{layout.htmlroot}/javascripts/calendar-heatmap.js")
+
+
+  script.
+    // chart data example
+    var chartData = JSON.parse('!{JSON.stringify(userHeatMapArray)}');
+    for (var i=0;i<chartData.length;i++) {
+      chartData[i].date = new Date(chartData[i].date)
+    }
+    var chart1 = calendarHeatmap()
+            .data(chartData)
+            .selector('#heatmap')
+            .colorRange(['#D8E6E7', '#218380'])
+            .tooltipEnabled(true);
+    chart1();  // render the chart
 
