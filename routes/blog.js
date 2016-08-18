@@ -199,7 +199,7 @@ function renderBlogPreview(req, res,next) {
   async.auto({
       converter:function(callback) {
                     debug("converter function");
-                    blog.getPreviewData({lang:lang,createTeam:true,disableNotranslation:true,errorOnEmptyMarkdown:true},function(err,data) {
+                    blog.getPreviewData({lang:lang,createTeam:true,disableNotranslation:true,warningOnEmptyMarkdown:true},function(err,data) {
                       if (err) return callback(err);
                       let renderer=new BlogRenderer.HtmlRenderer(blog);
                       if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);

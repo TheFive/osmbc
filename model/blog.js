@@ -497,6 +497,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
   var futureArticles;
 
   var articleList = null;
+  var containsEmptyArticlesWarning = false;
 
   async.series([
     function readFuture(cb) {
@@ -563,8 +564,12 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
         // remove no translation article, if wanted
         if (options.disableNotranslation && r["markdown"+options.lang]==="no translation") continue;
         if ( options.errorOnEmptyMarkdown && r.categoryEN != "--unpublished--" &&
-            (   !r["markdown"+options.lang] || r["markdown"+options.lang].trim() ==="")) {
+          (   !r["markdown"+options.lang] || r["markdown"+options.lang].trim() ==="")) {
           return cb(new Error("Article >>"+ r.title+ "<< contains no text for language "+options.lang+"."));
+        }
+        if ( options.warningOnEmptyMarkdown &&  r.categoryEN != "--unpublished--" &&
+          (   !r["markdown"+options.lang] || r["markdown"+options.lang].trim() ==="")) {
+          containsEmptyArticlesWarning = true;
         }
         if (typeof(articles[r.categoryEN]) == 'undefined') {
           articles[r.categoryEN] = [];
@@ -596,6 +601,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
     result.teamString = teamString;
     result.articles = articles;
     result.futureArticles = futureArticles;
+    if (containsEmptyArticlesWarning) result.containsEmptyArticlesWarning=true;
     callback(null, result);
   });
 };

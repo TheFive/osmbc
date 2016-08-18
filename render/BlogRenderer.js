@@ -42,12 +42,24 @@ HtmlRenderer.prototype.subtitle = function htmlSubtitle(lang) {
 };
 
 MarkdownRenderer.prototype.subtitle = function markdownSubtitle(lang) {
-  debug("HtmlRenderer.prototype.subtitle %s",lang);
+  debug("MarkdownRenderer.prototype.subtitle %s", lang);
   var blog = this.blog;
   if (blog.startDate && blog.endDate) {
-    return  moment(blog.startDate).tz("Europe/Berlin").locale(lang).format('L') +"-"+moment(blog.endDate).tz("Europe/Berlin").locale(lang).format('L') +'\n\n';
+    return moment(blog.startDate).tz("Europe/Berlin").locale(lang).format('L') + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(lang).format('L') + '\n\n';
   }
   else return "missing date\n";
+};
+
+HtmlRenderer.prototype.containsEmptyArticlesWarning = function htmlContainsEmptyArticlesWarning(lang) {
+  debug("HtmlRenderer.prototype.containsEmptyArticlesWarning %s",lang);
+  should(config.getLanguages()).containEql(lang);
+  return "<p> Warning: This export contains empty Articles </p>\n";
+};
+
+
+MarkdownRenderer.prototype.containsEmptyArticlesWarning = function mdContainsEmptyArticlesWarning(lang) {
+  debug("MarkdownRenderer.prototype.containsEmptyArticlesWarning %s",lang);
+  return "Warning: This export contains empty Articles\n\n";
 };
 
 HtmlRenderer.prototype.categoryTitle = function htmlCatTitle(lang,category) {
@@ -167,6 +179,10 @@ HtmlRenderer.prototype.renderBlog = function htmlBlog(lang,articleData) {
   var i, j; // often used iterator, declared here because there is no block scope in JS.
   preview += this.subtitle(lang);
   var clist = blog.getCategories();
+
+  if (articleData.containsEmptyArticlesWarning) {
+    preview += this.containsEmptyArticlesWarning(lang);
+  }
 
 
   // Generate the blog result along the categories
