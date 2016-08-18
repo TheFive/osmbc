@@ -62,6 +62,7 @@ function renderUserId(req, res, next) {
   var params = {};
   var user;
   var changes;
+  var userHeatMapArray=null;
   async.series([
     function findAndLoadChanges(cb) {
       debug('findAndLoadChanges');
@@ -88,6 +89,15 @@ function renderUserId(req, res, next) {
           });
         } else cb();
       });
+    },
+    function findAndLoadHeatCalendarData(cb) {
+      debug('findAndLoadHeatCalendarData');
+      logModule.countLogsForUser(user.OSMUser,function(err,result){
+        if (err) console.log(err);
+        userHeatMapArray = result;
+        console.dir(userHeatMapArray);
+        cb(null,result);
+      });
     }
     ],
     function finalRenderCB(err) {
@@ -99,6 +109,7 @@ function renderUserId(req, res, next) {
       res.render('user',{usershown:user,
                         changes:changes,
                         params:params,
+                        userHeatMapArray:userHeatMapArray,
                         langlist: config.getLanguages(),
                         layout:res.rendervar.layout});
     }

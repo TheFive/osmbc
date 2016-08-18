@@ -208,6 +208,44 @@ function countLogsForBlog(blog,callback) {
   });
 }
 
+function countLogsForUser(user,callback) {
+  debug("countLogsForUser");
+
+  pg.connect(config.pgstring, function(err, client, pgdone) {
+    if (err) {
+      pgdone();
+      return (callback(err));
+    }
+    var sqlQuery =  "select to_char(date(data->>'timestamp'),'YYYY-MM-DD') as date,count(*) as count from changes where data->>'user' like $1 group by date";
+    var sqlArray = [user];
+    var startTime = new Date().getTime();
+    var result = [];
+
+    var query = client.query(sqlQuery,sqlArray);
+    debug(sqlQuery);
+
+    query.on('row',function(row) {
+      var r ={};
+      r.date = row.date;
+      r.count = parseInt(row.count);
+
+
+      result.push(r);
+    });
+    query.on('end',function () {
+      pgdone();
+      var endTime = new Date().getTime();
+      debug("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
+
+      callback(null,result);
+    });
+    query.on('error',function (err) {
+      pgdone();
+      callback(err);
+    });
+  });
+}
+
 var pgObject={};
 pgObject.createString = 'CREATE TABLE changes (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT changes_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
@@ -230,3 +268,4 @@ module.exports.table = "changes";
 module.exports.countLogsForBlog = countLogsForBlog;
 module.exports.create = create;
 module.exports.Class = Change;
+module.exports.countLogsForUser = countLogsForUser;
