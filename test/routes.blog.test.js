@@ -248,10 +248,9 @@ describe('routes/blog',function() {
         should.exist(blog);
         should(blog.id).not.equal(0);
         request.get(baseLink + "/blog/WN333/preview?lang=DE", function (err, res) {
-          should(res.statusCode).eql(500);
-          var call = jadeSpy.lastCall;
-          var v = call.args[1];
-          should(v.message).equal("Article >>WN333 Picture<< contains no text for language DE.");
+          should(res.statusCode).eql(200);
+
+          should(res.body).containEql("<p> Warning: This export contains empty Articles </p>");
           bddone();
         });
       });
