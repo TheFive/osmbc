@@ -98,7 +98,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
     debug("welcomemail_render");
     if (err) return callback(err);
     //console.dir(self.user);
-    results.text = htmlToText.fromString(results.html); 
+    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
 
     var mailOptions = {
         from: config.getValue("EmailSender"), // sender address 
@@ -132,7 +132,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blo
   infomailReview.render(data, function infomailRenderBlog(err, results) {
     debug('infomailRenderInfo');
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html); 
+    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
 
     var mailOptions = {
         from: config.getValue("EmailSender"), // sender address 
@@ -163,7 +163,7 @@ MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang
   infomailClose.render(data, function infomailRenderClose(err, results) {
     debug('infomailRenderClose');
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html); 
+    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
 
     var mailOptions = {
         from: config.getValue("EmailSender"), // sender address 
@@ -219,7 +219,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
   infomail.render(data, function infomailRender(err, results) {
     debug('infomailRender');
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html); 
+    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
 
     var mailOptions = {
         from: config.getValue("EmailSender"), // sender address 
@@ -257,7 +257,7 @@ MailReceiver.prototype.addComment = function addComment(user,article,text,callba
   infomail.render(data, function infomailRender(err, results) {
     debug('infomailRender');
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html);
+    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -298,7 +298,7 @@ MailReceiver.prototype.editComment = function editComment(user,article,index,tex
   infomail.render(data, function infomailRender(err, results) {
     debug('infomailRender');
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html);
+    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -345,7 +345,7 @@ MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callbac
   infomailBlog.render(data, function infomailRenderBlog(err, results) {
     debug('infomailRenderBlog');
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html); 
+    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
 
     var mailOptions = {
         from: config.getValue("EmailSender"), // sender address 

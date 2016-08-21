@@ -70,7 +70,7 @@ describe('notification/mailReceiver', function() {
               to:"user1@mail.bc",
               subject:"[TESTBC] WN789 added: Test Title",
               html:expectedMail,
-              text:"CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
+              text:"CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
 
 
             bddone();
@@ -94,7 +94,7 @@ describe('notification/mailReceiver', function() {
             to:"user2@mail.bc",
             subject:"[TESTBC] WN789 comment: undefined",
             html:expectedMail,
-            text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
+            text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
 
           // Second Mail Check
           result = mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0];
@@ -104,7 +104,7 @@ describe('notification/mailReceiver', function() {
             to:"user3@mail.bc",
             subject:"[TESTBC] WN789 comment: undefined",
             html:expectedMail,
-            text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
+            text:"CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for @User3\n\nCOMMENTSTATUS WAS ADDED\nopen"});
 
 
           bddone();
@@ -123,7 +123,7 @@ describe('notification/mailReceiver', function() {
             // First Mail Check
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
             var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>comment was added</h3><p>Information for none</p><h3>commentStatus was added</h3><p>open</p>';
-            var expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for none\n\nCOMMENTSTATUS WAS ADDED\nopen';
+            var expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOMMENT WAS ADDED\nInformation for none\n\nCOMMENTSTATUS WAS ADDED\nopen';
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
             should(result).eql(
@@ -135,7 +135,7 @@ describe('notification/mailReceiver', function() {
             // Second Mail Check
             result = mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0];
             expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for none and for @User3</p>';
-            expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nCOMMENT WAS CHANGED\nInformation for none and for @User3';
+            expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS CHANGED\nInformation for none and for @User3';
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
             should(result).eql(
@@ -149,7 +149,7 @@ describe('notification/mailReceiver', function() {
             
             result = mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0];
             expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">NO TITLE</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for none and for @User3</p>';
-            expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser\n\nCOMMENT WAS CHANGED\nInformation for none and for @User3';
+            expectedText = 'CHANGE IN ARTICLE OF WN789\nArticle NO TITLE [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS CHANGED\nInformation for none and for @User3';
 
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
@@ -177,7 +177,7 @@ describe('notification/mailReceiver', function() {
           // First Mail Check
           var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
           var expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>';
-          var expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser\n\nCOMMENT WAS ADDED\nInformation for none';
+          var expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for none';
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);
           should(result).eql(
@@ -203,7 +203,7 @@ describe('notification/mailReceiver', function() {
             // First Mail Check
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
             var expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>';
-            var expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser\n\nCOMMENT WAS ADDED\nInformation for none';
+            var expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for none';
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
             should(result).eql(
@@ -217,7 +217,7 @@ describe('notification/mailReceiver', function() {
             // Second Mail Check
             result = mailReceiver.for_test_only.transporter.sendMail.getCall(1).args[0];
             expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for @user3</p>';
-            expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser\n\nCOMMENT WAS CHANGED\nInformation for @user3';
+            expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS CHANGED\nInformation for @user3';
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
             should(result).eql(
@@ -231,7 +231,7 @@ describe('notification/mailReceiver', function() {
             // Third Mail Check
             result = mailReceiver.for_test_only.transporter.sendMail.getCall(2).args[0];
             expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for @user3</p>';
-            expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser\n\nCOMMENT WAS CHANGED\nInformation for @user3';
+            expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS CHANGED\nInformation for @user3';
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
             should(result).eql(
@@ -275,8 +275,8 @@ describe('notification/mailReceiver', function() {
 
         should(call.calledTwice).be.True();
         var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-        var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
-        var expectedText = 'BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value name WN251 status open startDate 1970-01-02T00:00:00.000Z endDate \n1970-01-08T00:00:00.000Z';
+        var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table id=\"valuetable\"><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
+        var expectedText = 'BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKEY         VALUE                      \nname        WN251                      \nstatus      open                       \nstartDate   1970-01-02T00:00:00.000Z   \nendDate     1970-01-08T00:00:00.000Z';
 
         //result is not sorted, so have a preview, which argument is the right one.
         var mailList = {};
@@ -314,8 +314,8 @@ describe('notification/mailReceiver', function() {
           var call = mailReceiver.for_test_only.transporter.sendMail;
           should(call.calledTwice).be.True();
           var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
-          var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table><tr><th>Key</th><th>Value</th></tr><tr><td>status</td><td>edit</td></tr></table>';
-          var expectedText ='BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKey Value status edit';
+          var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table id=\"valuetable\"><tr><th>Key</th><th>Value</th></tr><tr><td>status</td><td>edit</td></tr></table>';
+          var expectedText ='BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKEY      VALUE   \nstatus   edit';
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);
           //result is not sorted, so have a preview, which argument is the right one.
@@ -398,7 +398,7 @@ describe('notification/mailReceiver', function() {
           should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
           var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
           var expectedMail = '<h2>Blog blog was closed for ES.</h2><p>Blog <a href=\"https://testosm.bc/blog/blog\">blog</a>(ES) was closed by testuser.</p>';
-          var expectedText = 'BLOG BLOG WAS CLOSED FOR ES.\nBlog blog [https://testosm.bc/blog/blog] (ES) was closed by testuser.';
+          var expectedText = 'BLOG BLOG WAS CLOSED FOR ES.\nBlog blog [https://testosm.bc/blog/blog](ES) was closed by testuser.';
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);
           should(mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0]).eql(
@@ -438,7 +438,8 @@ describe('notification/mailReceiver', function() {
             var result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
             var code = user.emailValidationKey;
             var expectedMail = '<h2>Welcome </h2><p>You have entered your email adress in OSMBC.</p><p>If you would like to use this email address for OSMBC click on this link: <a href="https://testosm.bc/usert/1?validation='+code+'">LINK TO VALIDATE YOUR EMAIL</a>. This will lead you to your user settings.</p><p>If you would like to check your User Settings without accepting the new email go to <a href="https://testosm.bc/usert/1">User Settings </a>.</p><p>OSMBC has a wide range of email settings, read the description carefully, not to overfill your mail box.</p><p>Thanks for supporting weeklyOSM & Wochennotiz.</p><p>Have fun with OSMBC. </p><p>Christoph (TheFive).</p>';
-            var expectedText = 'WELCOME\nYou have entered your email adress in OSMBC.\n\nIf you would like to use this email address for OSMBC click on this link: LINK\nTO VALIDATE YOUR EMAIL\n[https://testosm.bc/usert/1?validation='+code+'] . This\nwill lead you to your user settings.\n\nIf you would like to check your User Settings without accepting the new email go\nto User Settings [https://testosm.bc/usert/1] .\n\nOSMBC has a wide range of email settings, read the description carefully, not to\noverfill your mail box.\n\nThanks for supporting weeklyOSM & Wochennotiz.\n\nHave fun with OSMBC.\n\nChristoph (TheFive).';
+            
+            var expectedText = 'WELCOME \nYou have entered your email adress in OSMBC.\n\nIf you would like to use this email address for OSMBC click on this link: LINK\nTO VALIDATE YOUR EMAIL\n[https://testosm.bc/usert/1?validation='+code+']. This\nwill lead you to your user settings.\n\nIf you would like to check your User Settings without accepting the new email go\nto User Settings [https://testosm.bc/usert/1].\n\nOSMBC has a wide range of email settings, read the description carefully, not to\noverfill your mail box.\n\nThanks for supporting weeklyOSM & Wochennotiz.\n\nHave fun with OSMBC. \n\nChristoph (TheFive).';
 
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
