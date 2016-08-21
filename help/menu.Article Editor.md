@@ -3,22 +3,21 @@
 
 ## Principle
 
-The article editor does have two modes, a view mode and an edit mode.
+The article editor comes with two modes, one is the view mode and the other is the edit mode.
 
 ## The View Mode
 
 ### Commenting
 
 The view mode allowes commenting and editing your comments. 
-Just type your comment into the editor. You can mention other user or languages
-by the @ sign (e.g. @TheFive will notify me, @DE will notify all users, that are
-interested in the DE language). 
+You can mention other user or languages with the @ sign (e.g. @TheFive will notify the OSMBC Author, 
+@DE will notify all users, that are interested in the DE language). 
 You can configure your notification interest (for mail notification) in your personal settings.
 
-The Inbox in OSMBC notifys for comments, where you are personally mentioned, and all
-comments mentioning your "first" language (the left one) in the menu bar.
+The other way of being notified is the inbox (in the menu bar). It notifies for all language
+mentions for the "left language". Personal mentions are notified in red.
 
-Comments are "#open" or "#solved". A solved comment is not shown in the blog overviews.
+Comments can be "#open" or "#solved". A solved comment is not shown in the blog overviews.
 You can set the status simply by typing #solved or #open in your comments.
 
 ### No Translation
@@ -32,13 +31,16 @@ you can use the button below the language indicator to set the missing languages
 In the edit mode you can change most fields of an article.
 
 On the top you can reassign the article to another blog, e.g. move it to the next week,
-or in future blog. Warning, do not move an article, if in one language it is already published.
+or in future blog. Attention: Do not move an article, if in one language it is already published.
 (There is no check for this now).
 
 Choose a category for the article. Whats an category is for is shown direct near the selector.
+If you choose unpublish as category, the article is still in the blog (to seen when it was collected),
+but it will disappear in the published blog. Please add a reason for unpublishing.
 
 An article can have an predecessor (in the same category) to indicate the position of an
 article in a blog. So if some articles belong together, you can "bind" them close together.
+You can use First, to indicate that the article has to be the first in the category.
 
 If no predecessor is set, the articles are sorted by the title in alphabetical order.
 
