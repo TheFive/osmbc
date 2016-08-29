@@ -95,7 +95,6 @@ function renderUserId(req, res, next) {
       logModule.countLogsForUser(user.OSMUser,function(err,result){
         if (err) console.log(err);
         userHeatMapArray = result;
-        console.dir(userHeatMapArray);
         cb(null,result);
       });
     }

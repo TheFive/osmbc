@@ -786,57 +786,42 @@ block scripts
 
     
     function onchangeLEFT() {
-      var md = document.getElementById("markdownLEFT").value;
-      previewLEFT = document.getElementById("previewLEFT");
-      textLeft = document.getElementById("text_left");
+      onchangeMarkdown("markdownLEFT","previewLEFT","text_left");
+    }
+    function onchangeRIGHT() {
+      onchangeMarkdown("markdownRIGHT", "previewRIGHT", "text_right");
+    }
+    function onchangeMarkdown(mdid,previewid,textid) {
+      var md = document.getElementById(mdid).value;
+      preview = document.getElementById(previewid);
+      text = document.getElementById(textid);
 
 
-      checkForTable("markdownLEFT");
-      FitToContent("markdownLEFT");
+      checkForTable(mdid);
+      FitToContent(mdid);
       
-      previewLEFT.innerHTML = convert(md);
+      preview.innerHTML = convert(md);
+      var errorOccured= false;
+
+      // Check for long links
       var longLink = md.search(/\[[^\]]{40,}\]/g);
       if (longLink>=0) {
-        //previewLEFT.style.backgroundColor="#FDC6CD";
-        textLeft.innerHTML = "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]"
-        textLeft.style.backgroundColor ="#FDC6CD";
-
-
+        //preview.style.backgroundColor="#FDC6CD";
+        text.innerHTML = "<p>Please shorten ["+md.substring(longLink+1,longLink+40)+"...]</p>"
+        text.style.backgroundColor ="#FDC6CD";
+        errorOccured = true
         }
-      else {
-         //previewLEFT.style.backgroundColor="";
-         textLeft.style.backgroundColor ="";
-         textLeft.innerHTML = noTranslationText;
+      // check wether links used are in collection
+
+      if (!errorOccured) {
+         //preview.style.backgroundColor="";
+         text.style.backgroundColor ="";
+         text.innerHTML = noTranslationText;
         }
 
 
     }
-      function onchangeRIGHT() {
-        var mdEN = document.getElementById("markdownRIGHT").value;
-        previewRIGHT = document.getElementById("previewRIGHT");
-        textRight = document.getElementById("text_right");
-        textLeft = document.getElementById("text_left");
 
-
-        checkForTable("markdownRIGHT");
-        FitToContent("markdownRIGHT");
-
-
-        previewRIGHT.innerHTML = convert(mdEN);
-        var longLink = mdEN.search(/\[[^\]]{40,}\]/g);
-        if (longLink>=0) {
-          textRight.innerHTML = "Please shorten ["+mdEN.substring(longLink+1,longLink+40)+"...]"
-          textRight.style.backgroundColor ="#FDC6CD";
-          //previewRIGHT.style.backgroundColor="#FDC6CD";
-          
-        }
-        else {
-           textRight.style.backgroundColor ="";
-           textRight.innerHTML = noTranslationText;
-           //previewRIGHT.style.backgroundColor="";
-           
-         }
-      }
       function generateGoogleTranslateLink(link,lang) {
         var googlelang = lang;
         if (lang === "JP") googlelang = "JA";
@@ -868,6 +853,7 @@ block scripts
         var linkList;
        
         var result = "";
+
 
         while( (linkList = regexToken.exec(cl)) != null ) {
 
