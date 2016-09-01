@@ -63,6 +63,13 @@ describe("model/htmltitle",function() {
       bddone();
     });
   });
+  it('should get title with other encoding',function(bddone){
+    htmltitle.getTitle("https://www.gesetze-im-internet.de/satdsig/BJNR259000007.html",function(err,result){
+      should.not.exist(err);
+      should(result).eql('SatDSiG - Gesetz zum Schutz vor Gefährdung der Sicherheit der Bundesrepublik Deutschland durch das Verbreiten von hochwertigen Erdfernerkundungsdaten');
+      bddone();
+    });
+  });
 });
 
 
