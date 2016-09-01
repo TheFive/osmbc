@@ -2,7 +2,7 @@
 
 var cheerio = require('cheerio');
 var request = require('request');
-
+var Iconv  = require('iconv').Iconv;
 var debug = require('debug')('OSMBC:model:htmltitle');
 
 function linkFrom(url,page) {
@@ -61,12 +61,23 @@ var converterList = [retrieveForum,retrieveTwitter,retrieveOsmBlog,retrieveTitle
 
 function getTitle(url,callback) {
   debug("getTitle");
-  request( { method: "GET", url: url, followAllRedirects: true },
+  request( { method: "GET", url: url, followAllRedirects: true,encoding:null },
     function (error, response,body) {
       if (error) return callback(null,"Page not Found");
+
+      var fromcharset = response.headers['content-encoding'];
+      if (!fromcharset) {
+        let r = body.toString('utf-8').match((/<meta.*?charset=([^"']+)/));
+        if (r) fromcharset = r[1];
+      }
+      var iconv = new Iconv(fromcharset,'UTF-8');
+      var utf8body = iconv.convert(body).toString('UTF-8');
+     // var utf8body = body.toString(fromcharset);
+
+
       let r = null;
       for (let i=0;i<converterList.length;i++) {
-        r = converterList[i](body,url);
+        r = converterList[i](utf8body,url);
         if (r) break;
       }
       // remove all linebreaks
