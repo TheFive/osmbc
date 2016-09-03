@@ -64,12 +64,21 @@ function getTitle(url,callback) {
   request( { method: "GET", url: url, followAllRedirects: true,encoding:null },
     function (error, response,body) {
       if (error) return callback(null,"Page not Found");
-
+      console.dir(response.headers);
       var fromcharset = response.headers['content-encoding'];
+
+      if (!fromcharset) {
+        let ct = response.headers['content-type'];
+        if (ct) {
+          let r = ct.match(/.*?charset=([^"']+)/);
+          if (r)fromcharset = r[1];
+        }
+      }
       if (!fromcharset) {
         let r = body.toString('utf-8').match((/<meta.*?charset=([^"']+)/));
         if (r) fromcharset = r[1];
       }
+      if (!fromcharset) fromcharset = "UTF-8";
       var iconv = new Iconv(fromcharset,'UTF-8');
       var utf8body = iconv.convert(body).toString('UTF-8');
      // var utf8body = body.toString(fromcharset);
