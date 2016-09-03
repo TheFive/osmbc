@@ -64,12 +64,27 @@ function getTitle(url,callback) {
   request( { method: "GET", url: url, followAllRedirects: true,encoding:null },
     function (error, response,body) {
       if (error) return callback(null,"Page not Found");
+      console.dir(response.headers);
 
+      // try to get charset from Headers (version 1)
       var fromcharset = response.headers['content-encoding'];
+
+      // if not exist, try to get charset from Headers (version 2)
+      if (!fromcharset) {
+        let ct = response.headers['content-type'];
+        if (ct) {
+          let r = ct.match(/.*?charset=([^"']+)/);
+          if (r)fromcharset = r[1];
+        }
+      }
+      // if not exist, try to parse html page for charset in text
       if (!fromcharset) {
         let r = body.toString('utf-8').match((/<meta.*?charset=([^"']+)/));
         if (r) fromcharset = r[1];
       }
+
+      // nothing given, to use parser set incoming & outcoming charset equal
+      if (!fromcharset) fromcharset = "UTF-8";
       var iconv = new Iconv(fromcharset,'UTF-8');
       var utf8body = iconv.convert(body).toString('UTF-8');
      // var utf8body = body.toString(fromcharset);
