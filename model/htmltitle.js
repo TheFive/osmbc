@@ -85,9 +85,15 @@ function getTitle(url,callback) {
 
       // nothing given, to use parser set incoming & outcoming charset equal
       if (!fromcharset) fromcharset = "UTF-8";
-      var iconv = new Iconv(fromcharset,'UTF-8');
-      var utf8body = iconv.convert(body).toString('UTF-8');
-     // var utf8body = body.toString(fromcharset);
+      var utf8body = null;
+      try {
+        var iconv = new Iconv(fromcharset,'UTF-8');
+        utf8body = iconv.convert(body).toString('UTF-8');
+      } catch (err) {
+        // There is a convert error, ognore it and convert with UTF-8
+        utf8body = body.toString('UTF-8');
+      }
+
 
 
       let r = null;

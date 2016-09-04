@@ -311,8 +311,13 @@ var server = null;
 
 exports.startServer = function startServer(userString,callback) {
   debug('startServer');
-  should.not.exist(server,"Server is allready started.");
+  if (typeof(userString)=="function") {
+    callback = userString;
+    userString = null;
+  }
+  should.not.exist(server,"Server is already started.");
   server = http.createServer(app).listen(config.getServerPort());
+
   if (userString === null) {
     if (callback) return callback();
     return;

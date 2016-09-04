@@ -30,6 +30,7 @@ var changes    = require('./routes/changes').router;
 var blog       = require('./routes/blog').router;
 var tool       = require('./routes/tool').router;
 var calender   = require('./routes/tool').publicRouter;
+var api        = require('./routes/api').publicRouter;
 var layout     = require('./routes/layout').router;
 var configRouter     = require('./routes/config').router;
 
@@ -248,6 +249,7 @@ app.get(htmlRoot + '/logout', function(req, res){
 app.use(htmlRoot,express.static(path.join(__dirname, 'public')));
 
 app.use(htmlRoot,calender );
+app.use(htmlRoot + "/api",api );
 app.use(htmlRoot + '/slack', slackrouter);
 
 // layout does not render, but prepares the res.rendervar variable fro
@@ -312,7 +314,6 @@ if (app.get('env') === 'test') {
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
     console.log("Error Message" + err.message);
-    console.dir("Error" + err.message);
     res.render('error', {
       message: err.message,
       error: err,
