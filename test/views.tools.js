@@ -87,7 +87,7 @@ describe('views/tools', function() {
     });
   });
   it('should use picture tool' ,function(bddone) {
-    this.timeout(25000);
+    this.timeout(29000);
     var fileName = path.join(__dirname,'/data/picture.jpg');
     nock('https://blog.openstreetmap.org')
       .get('/picture.jpg')
