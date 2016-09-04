@@ -66,7 +66,6 @@ function calendarHeatmap() {
   function chart() {
 
     d3.select(chart.selector()).selectAll('svg.calendar-heatmap').remove(); // remove the existing chart, if it exists
-    console.dir(d3);
     var dateRange = d3.time.days(yearAgo, now); // generates an array of date objects within the specified range
     var monthRange = d3.time.months(moment(yearAgo).startOf('month').toDate(), now); // it ignores the first month if the 1st date is after the start of the month
     var firstDate = moment(dateRange[0]);
@@ -98,12 +97,12 @@ function calendarHeatmap() {
         .attr('width', SQUARE_LENGTH)
         .attr('height', SQUARE_LENGTH)
         .attr('fill', 'white')
-        .attr('x', function (d, i) {
+        .attr('x', function (d) {
           var cellDate = moment(d);
           var result = cellDate.week() - firstDate.week() + (firstDate.weeksInYear() * (cellDate.weekYear() - firstDate.weekYear()));
           return result * (SQUARE_LENGTH + SQUARE_PADDING);
         })
-        .attr('y', function (d, i) { return MONTH_LABEL_PADDING + d.getDay() * (SQUARE_LENGTH + SQUARE_PADDING); });
+        .attr('y', function (d,) { return MONTH_LABEL_PADDING + d.getDay() * (SQUARE_LENGTH + SQUARE_PADDING); });
 
       if (typeof onClick === 'function') {
         dayRects.on('click', function (d) {
@@ -121,7 +120,7 @@ function calendarHeatmap() {
             .style('left', function () { return Math.floor(i / 7) * SQUARE_LENGTH + 'px'; })
             .style('top', function () { return d.getDay() * (SQUARE_LENGTH + SQUARE_PADDING) + MONTH_LABEL_PADDING * 3 + 'px'; });
         })
-        .on('mouseout', function (d, i) {
+        .on('mouseout', function () {
           tooltip.remove();
         });
       }
@@ -166,7 +165,7 @@ function calendarHeatmap() {
           .text(function (d) {
             return months[d.getMonth()];
           })
-          .attr('x', function (d, i) {
+          .attr('x', function (d) {
             var matchIndex = 0;
             dateRange.find(function (element, index) {
               matchIndex = index;
@@ -207,8 +206,6 @@ function calendarHeatmap() {
     }
 
     var daysOfChart = chart.data().map(function (day) {
-      console.dir(day.date);
-      console.dir(typeof(day.date));
       return day.date.toDateString();
     });
 
