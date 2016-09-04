@@ -1,15 +1,11 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2e...HEAD)
+## [1.9.2e](https://github.com/TheFive/osmbc/tree/1.9.2e) (2016-09-04)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2d...1.9.2e)
 
 **Implemented enhancements:**
 
 - implement hidden link for monitoring [\#515](https://github.com/TheFive/osmbc/issues/515)
-
-## [1.9.2e](https://github.com/TheFive/osmbc/tree/1.9.2e) (2016-09-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2d...1.9.2e)
 
 ## [1.9.2d](https://github.com/TheFive/osmbc/tree/1.9.2d) (2016-09-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2c...1.9.2d)
