@@ -39,10 +39,12 @@ block blogcontent
       if (articles[c.EN])
         tr
           td
-          td
+          td.hidden-xs
           td
             :verbatim
               !{renderer.categoryTitle(lang,c)}
+          td.hidden-xs
+          td.hidden-xs
         for a in articles[c.EN]
           - enable = true;
           - if (disableWritten  && a["markdown"+lang]) enable = false;
@@ -55,7 +57,7 @@ block blogcontent
               td
                 +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
                 - predecessorId = a.id
-              td
+              td.hidden-xs
                 if showVisibleLanguages
                   +languageDisplay(a,{short:true})
                   
@@ -67,7 +69,7 @@ block blogcontent
                     ul.no-margin
                       :verbatim
                         !{renderer.articleTitle(lang,a)}
-              td
+              td.hidden-xs
                 if (showCollector && a.author && a.author.collection)
                   each b in a.author.collection.split(",")
                     +userLabel(b,"osmbclabel-collect")
@@ -75,7 +77,7 @@ block blogcontent
                   each b in a.author["markdown"+lang].split(",")
                     +userLabel(b,"osmbclabel-markdown")
 
-              td
+              td.hidden-xs
                 if (showLanguages)
                   +languageDisplay(a)
 
@@ -83,7 +85,7 @@ block blogcontent
 
             tr
               td
-              td
+              td.hidden-xs
               td
                 div.panel.panel-default.hidden(id="div#{a.id}")
                   div.panel-heading
@@ -108,14 +110,14 @@ block blogcontent
     if futureArticles
       tr
         td
-        td
+        td.hidden-xs
         td
           h1="Future Articles"
       each a in futureArticles
         tr
           td
             +articleIcons(a,{showNumbers: showNumbers, showMail: showMail})
-          td
+          td.hidden-xs
             if showVisibleLanguages
               +languageDisplay(a,{short: true})
 
@@ -124,7 +126,7 @@ block blogcontent
             ul.no-margin
               :verbatim
                 !{renderer.articleTitle(lang,a)}
-          td
+          td.hidden-xs
             if (showCollector && a.author && a.author.collection)
               each b in a.author.collection.split(",")
                 if (b !== layout.user.OSMUser)
@@ -138,7 +140,7 @@ block blogcontent
                 else
                   span.label.osmbclabel-user.small-margin=b
 
-          td
+          td.hidden-xs
             if (showLanguages)
               +languageDisplay(a)
 
@@ -152,10 +154,12 @@ block blogcontent
       .col-md-1
         p="Left Col.: "
       .col-md-11
-        +userConfigOption("overview","showNumbers",showNumbers," show editor numbers, ")
+        div.hidden-xs
+          +userConfigOption("overview","showNumbers",showNumbers," show editor numbers, ")
         +userConfigOption("overview","showMail",showMail," show mail, ")
-        +userConfigOption("overview","showVisibleLanguages",showVisibleLanguages," show languages(short)" )
-    .row
+        div..hidden-xs
+          +userConfigOption("overview","showVisibleLanguages",showVisibleLanguages," show languages(short)" )
+    .row.hidden-xs
       .col-md-1
         p="Right Col.:"
       .col-md-11
