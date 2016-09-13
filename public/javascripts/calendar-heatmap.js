@@ -97,12 +97,12 @@ function calendarHeatmap() {
         .attr('width', SQUARE_LENGTH)
         .attr('height', SQUARE_LENGTH)
         .attr('fill', 'white')
-        .attr('x', function (d) {
+        .attr('x', function (d, i) {
           var cellDate = moment(d);
           var result = cellDate.week() - firstDate.week() + (firstDate.weeksInYear() * (cellDate.weekYear() - firstDate.weekYear()));
           return result * (SQUARE_LENGTH + SQUARE_PADDING);
         })
-        .attr('y', function (d,) { return MONTH_LABEL_PADDING + d.getDay() * (SQUARE_LENGTH + SQUARE_PADDING); });
+        .attr('y', function (d, i) { return MONTH_LABEL_PADDING + d.getDay() * (SQUARE_LENGTH + SQUARE_PADDING); });
 
       if (typeof onClick === 'function') {
         dayRects.on('click', function (d) {
@@ -120,7 +120,7 @@ function calendarHeatmap() {
             .style('left', function () { return Math.floor(i / 7) * SQUARE_LENGTH + 'px'; })
             .style('top', function () { return d.getDay() * (SQUARE_LENGTH + SQUARE_PADDING) + MONTH_LABEL_PADDING * 3 + 'px'; });
         })
-        .on('mouseout', function () {
+        .on('mouseout', function (d, i) {
           tooltip.remove();
         });
       }
@@ -165,7 +165,7 @@ function calendarHeatmap() {
           .text(function (d) {
             return months[d.getMonth()];
           })
-          .attr('x', function (d) {
+          .attr('x', function (d, i) {
             var matchIndex = 0;
             dateRange.find(function (element, index) {
               matchIndex = index;
