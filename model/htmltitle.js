@@ -34,8 +34,9 @@ function retrieveTwitter(body,url) {
   if (linkFrom(url,"twitter.com")) {
     let c = cheerio.load(body);
     let title = c('meta[property="og:description"]').attr("content");
-    //
-    title=title.replace(/(https?:\/\/[^[\] \n\r"”“]*)/gi, '<..>');
+
+    // Only replace Twitter Url, if it exists.
+    if (title) title=title.replace(/(https?:\/\/[^[\] \n\r"”“]*)/gi, '<..>');
     return title;
   }
   return null;
@@ -64,7 +65,6 @@ function getTitle(url,callback) {
   request( { method: "GET", url: url, followAllRedirects: true,encoding:null },
     function (error, response,body) {
       if (error) return callback(null,"Page not Found");
-      console.dir(response.headers);
 
       // try to get charset from Headers (version 1)
       var fromcharset = response.headers['content-encoding'];
