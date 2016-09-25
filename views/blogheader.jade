@@ -116,7 +116,7 @@ block content
                     .col-md-2
                       button.btn.btn-large.btn-primary(id="reviewButton" type="submit") Review#{left_lang}
 
-    div(class=columnRightSize)
+    div.hidden-xs(class=columnRightSize)
       - reviewCommentsRight = blog["reviewComment"+right_lang];
 
         if reviewCommentsRight
@@ -152,7 +152,7 @@ block content
         //+navbutton("FULL",style,"style","hidden-xs")
         +navbutton("Full",tab,"tab","hidden-xs")
         //+navbutton("FULLFINAL",style,"style","hidden-xs")
-        +navbutton("Review",tab,"tab","hidden-xs")
+        +navbutton("Review",tab,"tab","")
 
         //
           - v = 0

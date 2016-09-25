@@ -207,6 +207,19 @@ describe('model/user', function() {
         });
       });
     });
+    it('should trim an email adress',function (bddone){
+      userModule.findOne({OSMUser:"WelcomeMe"},function(err,user){
+        // First set a new EMail Address for the WelcomeMe user, by InviteYou.
+        user.setAndSave("WelcomeMe",{email:" NewEmail@newemail.org ",OSMUser:"WelcomeMe"}, function (err){
+          should.not.exist(err);
+          testutil.getJsonWithId("usert",user.id,function(err,result) {
+            should.not.exist(err);
+            should(result.emailInvalidation).eql("NewEmail@newemail.org");
+            bddone();
+          });
+        });
+      });
+    });
     it('should fail when username is changed and user once logged in',function (bddone){
       userModule.findOne({OSMUser:"WelcomeMe"},function(err,user){
         // First set a new EMail Address for the WelcomeMe user, by InviteYou.
