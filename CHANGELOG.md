@@ -1,5 +1,17 @@
 # Change Log
 
+## [1.9.3](https://github.com/TheFive/osmbc/tree/1.9.3) (2016-09-25)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2e...1.9.3)
+
+**Implemented enhancements:**
+
+- Trim email address before saving to avoid unseeable email incorrect errors [\#525](https://github.com/TheFive/osmbc/issues/525)
+
+**Fixed bugs:**
+
+- Read non existing tweet results in OSMBC Crash [\#523](https://github.com/TheFive/osmbc/issues/523)
+- Review of second language is shown in blog view on mobile [\#518](https://github.com/TheFive/osmbc/issues/518)
+
 ## [1.9.2e](https://github.com/TheFive/osmbc/tree/1.9.2e) (2016-09-04)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2d...1.9.2e)
 
@@ -15,14 +27,11 @@
 - Some links results in crash when getting title of page \(collect\) [\#516](https://github.com/TheFive/osmbc/issues/516)
 
 ## [1.9.2c](https://github.com/TheFive/osmbc/tree/1.9.2c) (2016-09-01)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/Link_to_osmww_help...1.9.2c)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2...1.9.2c)
 
 **Fixed bugs:**
 
 - Encoding Problems at Parsing Titles of Other Websites [\#508](https://github.com/TheFive/osmbc/issues/508)
-
-## [Link_to_osmww_help](https://github.com/TheFive/osmbc/tree/Link_to_osmww_help) (2016-08-29)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2...Link_to_osmww_help)
 
 ## [1.9.2](https://github.com/TheFive/osmbc/tree/1.9.2) (2016-08-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.1...1.9.2)
@@ -53,28 +62,19 @@
 - remove ''' from generated calendar [\#501](https://github.com/TheFive/osmbc/issues/501)
 
 ## [1.8.8b](https://github.com/TheFive/osmbc/tree/1.8.8b) (2016-08-09)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/disable_comments_in_edit...1.8.8b)
-
-## [disable_comments_in_edit](https://github.com/TheFive/osmbc/tree/disable_comments_in_edit) (2016-08-09)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/test_user_with_space...disable_comments_in_edit)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.8...1.8.8b)
 
 **Implemented enhancements:**
 
 - Disable Add Comment in Edit mode [\#497](https://github.com/TheFive/osmbc/issues/497)
 
-## [test_user_with_space](https://github.com/TheFive/osmbc/tree/test_user_with_space) (2016-08-09)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/export_empty_unpublished...test_user_with_space)
+**Fixed bugs:**
+
+- Empty unpublished article blocks export [\#500](https://github.com/TheFive/osmbc/issues/500)
 
 **Closed issues:**
 
 - Check and test user names with space in comment mentioning. [\#498](https://github.com/TheFive/osmbc/issues/498)
-
-## [export_empty_unpublished](https://github.com/TheFive/osmbc/tree/export_empty_unpublished) (2016-08-09)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.8...export_empty_unpublished)
-
-**Fixed bugs:**
-
-- Empty unpublished article blocks export [\#500](https://github.com/TheFive/osmbc/issues/500)
 
 ## [1.8.8](https://github.com/TheFive/osmbc/tree/1.8.8) (2016-08-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.7a...1.8.8)
@@ -205,13 +205,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
