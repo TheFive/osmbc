@@ -210,7 +210,7 @@ The database can be installed using the two javascript files that are **in the f
 _→ See also: section about [Configuration files](#2---configuration-files), for database access_
 
 ```sh
-NODE_ENV=???? node createdb.js
+NODE_ENV=???? node createdb.js  --createTable tablename --verbose
 ```
 
 Where `???` is the configuration that you want to use (e.g. `development` or `test`).
@@ -222,6 +222,8 @@ backup of your productive data, before doing that.
 
 To update to the acutal set of indexes just user --updateIndex. (--updateNAME option is for now only available for indexes).
 
+Remark: currently the --createTables flag is not working as intended, so you have to call the --createTable flag for 
+each table (session,config, blog, article, usert, changes).
 
 ### Import files from
 
