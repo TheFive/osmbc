@@ -82,7 +82,7 @@ passport.deserializeUser(function(name, done) {
 passport.use(new OpenStreetMapStrategy({
     consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY",{mustExist:true}),
     consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET",{mustExist:true}),
-    callbackURL: config.getCallbackUrl()
+    callbackURL: config.getValue("callbackUrl",{mustExist:true})
   },
   function(token, tokenSecret, profile, done) {
     debug('passport.use Token Function');
@@ -159,23 +159,20 @@ function ensureAuthenticated(req, res, next) {
 // create a session store
 let sessionstore = null;
 
-if (config.getValue("sessionStore")==="session-file-store") {
+if (config.getValue("sessionStore",{mustExist:true})==="session-file-store") {
 
   var FileStore    = require('session-file-store')(session);
   sessionstore = new FileStore();
 
-} else if (config.getValue("sessionStore")=="connect-pg-simple") {
+} else if (config.getValue("sessionStore",{mustExist:true})=="connect-pg-simple") {
   var pgSession = require('connect-pg-simple')(session);
 
   sessionstore = new pgSession({
       pg : pg,        // Use global pg-module
       conString : config.pgstring // Connect using something else than default DATABASE_URL env variable
     });
-} else {
-  console.log("No File Store defined, OSMBC will not run.");
-  console.log("to solve set sessionStore in config._.json");
-  process.exit(1);
 }
+
 var app = express();
 
 // view engine setup

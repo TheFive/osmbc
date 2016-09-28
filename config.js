@@ -38,6 +38,10 @@ function getPostgresDBString() {
       (configuration.postgres.connectstr !== '' )) {
         connectStr = configuration.postgres.connectstr;
       }
+  if (!connectStr) {
+    console.log("Could not build a connection string for postgres. App is terminating");
+    process.exit(1);
+  }
   return connectStr;
 }
 
@@ -106,8 +110,9 @@ exports.getValue = function(key,options) {
 
 exports.getServerPort = function() {
   exports.initialise();
-	return configuration.serverport;
+  return exports.getValue("serverport",{mustExist:true});
 };
+
 exports.getCallbackUrl = function() {
   exports.initialise();
   return configuration.callbackUrl;
