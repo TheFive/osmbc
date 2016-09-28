@@ -38,6 +38,10 @@ function getPostgresDBString() {
       (configuration.postgres.connectstr !== '' )) {
         connectStr = configuration.postgres.connectstr;
       }
+  if (!connectStr) {
+    console.log("Could not build a connection string for postgres. App is terminating");
+    process.exit(1);
+  }
   return connectStr;
 }
 
@@ -81,11 +85,19 @@ exports.getConfiguration = function() {
   exports.initialise();
 	return configuration;
 };
-exports.getValue = function(key,defValue) {
+exports.getValue = function(key,options) {
   exports.initialise();
-  var result = defValue;
+  if (options) should(typeof(options)).eql("object");
+  var result;
+  if (options) {
+    result = options.default;
+  }
   if (typeof(configuration[key]) != 'undefined') {
     result = configuration[key];
+  }
+  if (options && options.mustExist && ! result) {
+    console.log("Missing Value in config.*.json. Name: '"+key+"'");
+    process.exit(1);
   }
   return result;
 };
@@ -98,8 +110,9 @@ exports.getValue = function(key,defValue) {
 
 exports.getServerPort = function() {
   exports.initialise();
-	return configuration.serverport;
+  return exports.getValue("serverport",{mustExist:true});
 };
+
 exports.getCallbackUrl = function() {
   exports.initialise();
   return configuration.callbackUrl;
