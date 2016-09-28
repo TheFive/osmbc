@@ -81,11 +81,19 @@ exports.getConfiguration = function() {
   exports.initialise();
 	return configuration;
 };
-exports.getValue = function(key,defValue) {
+exports.getValue = function(key,options) {
   exports.initialise();
-  var result = defValue;
+  if (options) should(typeof(options)).eql("object");
+  var result;
+  if (options) {
+    result = options.default;
+  }
   if (typeof(configuration[key]) != 'undefined') {
     result = configuration[key];
+  }
+  if (options && options.mustExist && ! result) {
+    console.log("Missing Value in config.*.json. Name: '"+key+"'");
+    process.exit(1);
   }
   return result;
 };

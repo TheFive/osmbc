@@ -80,8 +80,8 @@ passport.deserializeUser(function(name, done) {
 
 
 passport.use(new OpenStreetMapStrategy({
-    consumerKey: config.getConfiguration().OPENSTREETMAP_CONSUMER_KEY,
-    consumerSecret: config.getConfiguration().OPENSTREETMAP_CONSUMER_SECRET,
+    consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY",{mustExist:true}),
+    consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET",{mustExist:true}),
     callbackURL: config.getCallbackUrl()
   },
   function(token, tokenSecret, profile, done) {
@@ -187,7 +187,7 @@ app.set('view engine', 'jade');
 app.use(compression());
 app.use(favicon(path.join(__dirname , 'public','images','favicon.ico')));
 app.use(session({ store: sessionstore,
-                    secret: 'LvwnH}uHhDLxvAu3X6' ,
+                    secret: config.getValue("SessionSecret",{mustExist:true}) ,
                     resave:true,
                     saveUninitialized:true,
                     cookie:{_expires : 1000*60*60*24*365}}));
