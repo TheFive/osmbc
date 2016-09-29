@@ -443,7 +443,7 @@ module.exports.findOne = function findOne(module,obj,order,callback) {
 
 
 exports.createTables = function(pgObject,options,analyse,callback) {
-  debug('createTable %s',pgObject.table);
+  debug('pgMap.createTables %s %s',pgObject.table,JSON.stringify(options));
   should(typeof(pg)).equal('object');
   should(typeof(options)).equal('object');
   if (typeof(analyse)==="function") {
@@ -461,31 +461,32 @@ exports.createTables = function(pgObject,options,analyse,callback) {
     }
     async.series([
       function tabledrop(cb) {
-        debug("tabledrop");
         if (options.dropTables || (options.dropTable && options.dropTable == pgObject.table)) {
+          debug("tabledrop");
           if (options.verbose) console.log("Drop Table "+pgObject.table);
           var dropString = "DROP TABLE IF EXISTS "+pgObject.table+ " CASCADE";
           client.query(dropString,cb);
         } else return cb();
       },
       function tablecreation(cb) {
-        debug("tablecreation");
         if (options.createTables || (options.createTable && options.createTable == pgObject.table) ) {
+          debug("tablecreation");
           if (options.verbose) console.log("Create Table "+pgObject.table);
           if (options.verbose) console.log("Query: "+pgObject.createString);
           client.query(pgObject.createString,cb);
         } else return cb();
       },
       function indexdrop(cb) {
-        debug("indexdrop");
         var toBeDropped = [];
         var k;
         if (options.dropIndex) {
+          debug("indexdrop");
           for (k in pgObject.indexDefinition) {
             toBeDropped.push(k);
           }
         }
         if (options.updateIndex) {
+          debug("updateindex");
           for (k in analyse.foundNOK) {
             if (toBeDropped.indexOf(k)<0) toBeDropped.push(k);
           }
@@ -503,9 +504,10 @@ exports.createTables = function(pgObject,options,analyse,callback) {
           return cb(err);});
       },
       function indexcreation(cb) {
-        debug("indexcreation");
-        if (options.verbose) console.log("Creating Indexes for "+pgObject.table);
+
         if (options.createIndex || options.updateIndex) {
+          debug("indexcreation");
+          if (options.verbose) console.log("Creating Indexes for "+pgObject.table);
           async.forEachOf(pgObject.indexDefinition,function(sql,index,eachofcb){
             var createIt = false;
             if (options.createIndex) createIt = true;
