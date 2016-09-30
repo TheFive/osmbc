@@ -12,7 +12,9 @@ block showContentOfConfig
           th="Preview"
       tbody
         each lang in layout.languages
-          - cell = config.json[lang].replace("##link##","https://www.google.de")
+          - cell = "---"
+          if config.json[lang]
+            - cell = config.json[lang].replace("##link##","https://www.google.de")
           tr
 
             td=lang
