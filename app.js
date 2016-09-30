@@ -180,7 +180,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 
+function debugExpress(a) {
+  var text=a;
+  return function(req,res,next) {debug(text);next();};
+}
+
 // compress all requests
+app.use(debugExpress("Start Route"));
 app.use(compression());
 app.use(favicon(path.join(__dirname , 'public','images','favicon.ico')));
 app.use(session({ store: sessionstore,
@@ -195,6 +201,8 @@ app.use(session({ store: sessionstore,
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(debugExpress("After passport.session"));
+
 
 
 
@@ -204,7 +212,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-
+app.use(debugExpress("After cookieParser"));
 
 // GET /auth/openstreetmap
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -249,6 +257,7 @@ app.use(htmlRoot,calender );
 app.use(htmlRoot + "/api",api );
 app.use(htmlRoot + '/slack', slackrouter);
 
+app.use(debugExpress("After Slack Initialisation"));
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
 app.use(htmlRoot + '/',ensureAuthenticated,layout);
@@ -260,7 +269,7 @@ app.use(htmlRoot + '/blog',checkAuthentification, blog);
 app.use(htmlRoot + '/tool',checkAuthentification, tool);
 app.use(htmlRoot + '/config',checkAuthentification, configRouter);
 
-
+app.use(debugExpress("After different routes"));
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
 //   the request is authenticated (typically via a persistent login session),

@@ -7,7 +7,7 @@ module.exports.pgstring = "UNDEFINED";
 
 var path    = require('path');
 var fs      = require('fs');
-var debug   = require('debug')('configuration');
+var debug   = require('debug')('OSMBC:config');
 var should  = require('should');
 var env = process.env.NODE_ENV || 'development';
 
@@ -59,11 +59,11 @@ exports.getLanguages = function() {
 
 
 exports.initialise = function initialise(callback) {
-  debug("initialise");
   if (configurationInitialised) {
     if (callback) callback();
     return;
   }
+  debug("initialise");
   configurationInitialised = true;
 	console.log("Reading Config from: "+configurationFile);
 	configuration = JSON.parse(fs.readFileSync(configurationFile));
@@ -86,6 +86,7 @@ exports.getConfiguration = function() {
 	return configuration;
 };
 exports.getValue = function(key,options) {
+  debug('getValue %s',key);
   exports.initialise();
   if (options) should(typeof(options)).eql("object");
   var result;
@@ -99,6 +100,7 @@ exports.getValue = function(key,options) {
     console.log("Missing Value in config.*.json. Name: '"+key+"'");
     process.exit(1);
   }
+  debug("getValue %s %s",key,result);
   return result;
 };
 

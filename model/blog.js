@@ -557,6 +557,8 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
     function organiseArticles(cb) {
       debug('organiseArticles');
 
+
+
       var i; // often used iterator, declared here because there is no block scope in JS.
       for (i=0;i<articleList.length;i++) {
         var r=articleList[i];
