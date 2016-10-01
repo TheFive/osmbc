@@ -212,6 +212,14 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
         self.save(cb);
       } else cb();
     },
+    function addCommentWhenGiven(cb) {
+      debug("addCommentWhenGiven");
+      if (data.addComment && data.addComment.trim() !== "") {
+        console.log("Adding Comment "+data.addComment);
+        console.dir(data);
+        self.addComment(user,data.addComment,cb);
+      } else cb();
+    },
     function addCommentWhenUnpublished(cb) {
       debug("addCommentWhenUnpublished");
       if (data.categoryEN==="--unpublished--" || data.blog==="Trash") {
