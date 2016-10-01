@@ -374,6 +374,27 @@ describe('model/article', function() {
         });
       });
     });
+    it('should set comment to solved if article is unpublished', function (bddone){
+      // Generate an article for test
+      var newArticle;
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        articleModule.findById(newArticle.id,function(err,result) {
+          should.not.exist(err);
+          result.setAndSave({OSMUser: "test"}, {categoryEN: "--unpublished--",unpublishReason:"doublette" ,version: 1}, function (err) {
+            should.not.exist(err);
+            articleModule.findById(newArticle.id,function(err,result) {
+              should.not.exist(err);
+              should(result.commentStatus).eql("solved");
+              should(result.commentList[0].text).eql('#solved because set to --unpublished--.\n\nReason:doublette')
+              bddone();
+
+            });
+          });
+        });
+      });
+    });
   });
   describe('findFunctions',function() {
     var idToFindLater;
