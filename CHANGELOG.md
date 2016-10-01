@@ -1,5 +1,17 @@
 # Change Log
 
+## [1.9.5](https://github.com/TheFive/osmbc/tree/1.9.5) (2016-10-01)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.4...1.9.5)
+
+**Implemented enhancements:**
+
+- Generate a comment including "solved" when an article is unpublished. [\#511](https://github.com/TheFive/osmbc/issues/511)
+- Disable addComment button in article edit mode. Post written comment during article save. [\#426](https://github.com/TheFive/osmbc/issues/426)
+
+**Fixed bugs:**
+
+- Blog Categories are entered as YAML for config, but JSON for blog. Thats wired. [\#532](https://github.com/TheFive/osmbc/issues/532)
+
 ## [1.9.4](https://github.com/TheFive/osmbc/tree/1.9.4) (2016-10-01)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.3a...1.9.4)
 
@@ -225,13 +237,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
@@ -1754,17 +1766,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
