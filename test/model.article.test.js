@@ -387,10 +387,25 @@ describe('model/article', function() {
             articleModule.findById(newArticle.id,function(err,result) {
               should.not.exist(err);
               should(result.commentStatus).eql("solved");
-              should(result.commentList[0].text).eql('#solved because set to --unpublished--.\n\nReason:doublette')
+              should(result.commentList[0].text).eql('#solved because set to --unpublished--.\n\nReason:doublette');
               bddone();
-
             });
+          });
+        });
+      });
+    });
+    it('should fail if something is set to unpublished without reason', function (bddone){
+      // Generate an article for test
+      var newArticle;
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        articleModule.findById(newArticle.id,function(err,result) {
+          should.not.exist(err);
+          result.setAndSave({OSMUser: "test"}, {categoryEN: "--unpublished--" ,version: 1}, function (err) {
+            should.exist(err);
+            should(err.message).eql("Missing reason for unpublishing article.");
+            bddone();
           });
         });
       });
