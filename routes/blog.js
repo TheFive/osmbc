@@ -8,6 +8,7 @@ var debug    = require('debug')('OSMBC:routes:blog');
 var config   = require('../config.js');
 var moment   = require('moment');
 var help     = require('../routes/help.js');
+var yaml     = require('js-yaml');
 
 var BlogRenderer   = require('../render/BlogRenderer.js');
 
@@ -404,6 +405,7 @@ function editBlogId(req,res) {
   if (params.edit && params.edit=="false") {
      res.redirect(config.getValue('htmlroot')+"/blog/edit/"+req.params.blog_id);
   }
+  blog._categories_yaml = yaml.safeDump(blog.categories);
   res.set('content-type', 'text/html');
   res.render('editblog',{layout:res.rendervar.layout,
                      blog:blog,
@@ -419,7 +421,7 @@ function postBlogId(req, res, next) {
 
   var categories;
   try {
-    categories = JSON.parse(req.body.categories);
+    categories = yaml.load(req.body.categories_yaml);
   } catch (err) {
     return next(err);
   }

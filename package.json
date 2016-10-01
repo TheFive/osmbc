@@ -27,7 +27,7 @@
     "iconv": "^2.2.1",
     "image-size": "^0.5.0",
     "jade": "^1.11.0",
-    "js-yaml": "^3.5.4",
+    "js-yaml": "^3.6.1",
     "jstransformer": "0.0.4",
     "jstransformer-markdown-it": "^0.2.3",
     "jstransformer-verbatim": "^1.0.0",
