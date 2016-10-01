@@ -6,7 +6,7 @@
 
 var http    = require('http');
 var async   = require('async');
-var debug   = require('debug')('osmbc:server');
+var debug   = require('debug')('OSMBC:server');
 
 
 var app     = require('../app');

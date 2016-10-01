@@ -7,7 +7,7 @@ module.exports.pgstring = "UNDEFINED";
 
 var path    = require('path');
 var fs      = require('fs');
-var debug   = require('debug')('configuration');
+var debug   = require('debug')('OSMBC:config');
 var should  = require('should');
 var env = process.env.NODE_ENV || 'development';
 
@@ -38,6 +38,10 @@ function getPostgresDBString() {
       (configuration.postgres.connectstr !== '' )) {
         connectStr = configuration.postgres.connectstr;
       }
+  if (!connectStr) {
+    console.log("Could not build a connection string for postgres. App is terminating");
+    process.exit(1);
+  }
   return connectStr;
 }
 
@@ -55,11 +59,11 @@ exports.getLanguages = function() {
 
 
 exports.initialise = function initialise(callback) {
-  debug("initialise");
   if (configurationInitialised) {
     if (callback) callback();
     return;
   }
+  debug("initialise");
   configurationInitialised = true;
 	console.log("Reading Config from: "+configurationFile);
 	configuration = JSON.parse(fs.readFileSync(configurationFile));
@@ -81,12 +85,22 @@ exports.getConfiguration = function() {
   exports.initialise();
 	return configuration;
 };
-exports.getValue = function(key,defValue) {
+exports.getValue = function(key,options) {
+  debug('getValue %s',key);
   exports.initialise();
-  var result = defValue;
+  if (options) should(typeof(options)).eql("object");
+  var result;
+  if (options) {
+    result = options.default;
+  }
   if (typeof(configuration[key]) != 'undefined') {
     result = configuration[key];
   }
+  if (options && options.mustExist && ! result) {
+    console.log("Missing Value in config.*.json. Name: '"+key+"'");
+    process.exit(1);
+  }
+  debug("getValue %s %s",key,result);
   return result;
 };
 
@@ -98,8 +112,9 @@ exports.getValue = function(key,defValue) {
 
 exports.getServerPort = function() {
   exports.initialise();
-	return configuration.serverport;
+  return exports.getValue("serverport",{mustExist:true});
 };
+
 exports.getCallbackUrl = function() {
   exports.initialise();
   return configuration.callbackUrl;

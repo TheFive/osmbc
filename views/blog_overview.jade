@@ -1,6 +1,65 @@
 extends blogheader
 
+mixin displayOverviewRow(a)
+  - enable = true;
+  - if (disableWritten  && a["markdown"+lang]) enable = false;
+  - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
+  - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
+  - if (disableNewerMarkdown && a._lastChange && a._lastChange["markdown"+left_lang] && a._lastChange["markdown"+right_lang] && (a._lastChange["markdown"+left_lang] >= a._lastChange["markdown"+right_lang])) enable = false;
+  - if (disableNewerMarkdown && a["markdown"+left_lang] && !a["markdown"+right_lang]) enable = false;
+  if enable
+    tr
+      td
+        +articleIcons(a,{showNumbers: showNumbers, showMail: showMail, predecessorId: predecessorId})
+        - predecessorId = a.id
+      td.hidden-xs
+        if showVisibleLanguages
+          +languageDisplay(a,{short: true})
 
+
+
+      td
+        div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
+          div(class=(a["markdown" + lang]) ? "" : "mark")
+            ul.no-margin
+              :verbatim
+                !{renderer.articleTitle(lang,a)}
+      td.hidden-xs
+        if (showCollector && a.author && a.author.collection)
+          each b in a.author.collection.split(",")
+            +userLabel(b,"osmbclabel-collect")
+        if (showEditor && a.author && a.author["markdown" + lang])
+          each b in a.author["markdown"+lang].split(",")
+            +userLabel(b,"osmbclabel-markdown")
+
+      td.hidden-xs
+        if (showLanguages)
+          +languageDisplay(a)
+
+
+
+    tr
+      td
+      td.hidden-xs
+      td
+        div.panel.panel-default.hidden(id="div#{a.id}")
+          div.panel-heading
+            ul(id="preview#{a.id}")
+          div.panel-body
+            form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
+              textarea.form-control(name="markdown" id="markdown" + a.id rows=7 onchange="onLeaveText(#{a.id});" onkeyup="onchangeMarkdown(#{a.id})") #{a["markdown" + lang]}
+              textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
+            p
+              if a.author && a.author.collection
+                span="Collected: "
+                each collector in a.author.collection.split(",")
+                  +userLabel(collector,"osmbclabel-collect")
+              if a.author && a.author["markdown" + lang]
+                span=" Edited: "
+                each author in a.author["markdown"+lang].split(",")
+                  +userLabel(author,"osmbclabel-markdown")
+              if a._lastChange && a._lastChange["markdown" + lang]
+                span=" Time: " + layout.moment(a._lastChange["markdown" + lang]).fromNow()
 
 block blogcontent
 
@@ -34,6 +93,7 @@ block blogcontent
         :verbatim
           <br><br>
           !{renderer.subtitle(lang)}
+    // first display all Categories of the blog
     for c in categories
       - predecessorId = "0"
       if (articles[c.EN])
@@ -46,66 +106,17 @@ block blogcontent
           td.hidden-xs
           td.hidden-xs
         for a in articles[c.EN]
-          - enable = true;
-          - if (disableWritten  && a["markdown"+lang]) enable = false;
-          - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
-          - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
-          - if (disableNewerMarkdown && a._lastChange && a._lastChange["markdown"+left_lang] && a._lastChange["markdown"+right_lang] && (a._lastChange["markdown"+left_lang] >= a._lastChange["markdown"+right_lang])) enable = false;
-          - if (disableNewerMarkdown && a["markdown"+left_lang] && !a["markdown"+right_lang]) enable = false;
-          if enable
-            tr
-              td
-                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
-                - predecessorId = a.id
-              td.hidden-xs
-                if showVisibleLanguages
-                  +languageDisplay(a,{short:true})
-                  
-
-
-              td
-                div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
-                  div(class=(a["markdown"+lang])?"":"mark")
-                    ul.no-margin
-                      :verbatim
-                        !{renderer.articleTitle(lang,a)}
-              td.hidden-xs
-                if (showCollector && a.author && a.author.collection)
-                  each b in a.author.collection.split(",")
-                    +userLabel(b,"osmbclabel-collect")
-                if (showEditor && a.author && a.author["markdown"+lang])
-                  each b in a.author["markdown"+lang].split(",")
-                    +userLabel(b,"osmbclabel-markdown")
-
-              td.hidden-xs
-                if (showLanguages)
-                  +languageDisplay(a)
-
-
-
-            tr
-              td
-              td.hidden-xs
-              td
-                div.panel.panel-default.hidden(id="div#{a.id}")
-                  div.panel-heading
-                    ul(id="preview#{a.id}")
-                  div.panel-body
-                    form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
-                      textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(#{a.id});" onkeyup="onchangeMarkdown(#{a.id})") #{a["markdown"+lang]}
-                      textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
-                    p
-                      if a.author && a.author.collection
-                        span="Collected: "
-                        each collector in a.author.collection.split(",")
-                          +userLabel(collector,"osmbclabel-collect")
-                      if a.author && a.author["markdown"+lang]
-                        span=" Edited: "
-                        each author in a.author["markdown"+lang].split(",")
-                          +userLabel(author,"osmbclabel-markdown")
-                      if a._lastChange && a._lastChange["markdown" + lang]
-                        span=" Time: "+layout.moment(a._lastChange["markdown" + lang]).fromNow()
-
+          +displayOverviewRow(a)
+        - delete articles[c.EN]
+    // Now display the undefined categories in the blog
+    - for(c in articles)
+      tr
+        td
+        td.hidden-xs
+        td
+          h1="Wrong Categorie "+c
+      for a in articles[c]
+        +displayOverviewRow(a)
 
     if futureArticles
       tr
@@ -114,35 +125,7 @@ block blogcontent
         td
           h1="Future Articles"
       each a in futureArticles
-        tr
-          td
-            +articleIcons(a,{showNumbers: showNumbers, showMail: showMail})
-          td.hidden-xs
-            if showVisibleLanguages
-              +languageDisplay(a,{short: true})
-
-
-          td
-            ul.no-margin
-              :verbatim
-                !{renderer.articleTitle(lang,a)}
-          td.hidden-xs
-            if (showCollector && a.author && a.author.collection)
-              each b in a.author.collection.split(",")
-                if (b !== layout.user.OSMUser)
-                  span.label.osmbclabel-collect.small-margin=b
-                else
-                  span.label.osmbclabel-user.small-margin=b
-            if (showEditor && a.author && a.author["markdown" + lang])
-              each b in a.author["markdown"+lang].split(",")
-                if (b !== layout.user.OSMUser)
-                  span.label.osmbclabel-markdown.small-margin=b
-                else
-                  span.label.osmbclabel-user.small-margin=b
-
-          td.hidden-xs
-            if (showLanguages)
-              +languageDisplay(a)
+        +displayOverviewRow(a)
 
 
 

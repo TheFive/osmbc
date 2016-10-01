@@ -80,9 +80,9 @@ passport.deserializeUser(function(name, done) {
 
 
 passport.use(new OpenStreetMapStrategy({
-    consumerKey: config.getConfiguration().OPENSTREETMAP_CONSUMER_KEY,
-    consumerSecret: config.getConfiguration().OPENSTREETMAP_CONSUMER_SECRET,
-    callbackURL: config.getCallbackUrl()
+    consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY",{mustExist:true}),
+    consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET",{mustExist:true}),
+    callbackURL: config.getValue("callbackUrl",{mustExist:true})
   },
   function(token, tokenSecret, profile, done) {
     debug('passport.use Token Function');
@@ -159,23 +159,20 @@ function ensureAuthenticated(req, res, next) {
 // create a session store
 let sessionstore = null;
 
-if (config.getValue("sessionStore")==="session-file-store") {
+if (config.getValue("sessionStore",{mustExist:true})==="session-file-store") {
 
   var FileStore    = require('session-file-store')(session);
   sessionstore = new FileStore();
 
-} else if (config.getValue("sessionStore")=="connect-pg-simple") {
+} else if (config.getValue("sessionStore",{mustExist:true})=="connect-pg-simple") {
   var pgSession = require('connect-pg-simple')(session);
 
   sessionstore = new pgSession({
       pg : pg,        // Use global pg-module
       conString : config.pgstring // Connect using something else than default DATABASE_URL env variable
     });
-} else {
-  console.log("No File Store defined, OSMBC will not run.");
-  console.log("to solve set sessionStore in config._.json");
-  process.exit(1);
 }
+
 var app = express();
 
 // view engine setup
@@ -183,11 +180,17 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 
+function debugExpress(a) {
+  var text=a;
+  return function(req,res,next) {debug(text);next();};
+}
+
 // compress all requests
+app.use(debugExpress("Start Route"));
 app.use(compression());
 app.use(favicon(path.join(__dirname , 'public','images','favicon.ico')));
 app.use(session({ store: sessionstore,
-                    secret: 'LvwnH}uHhDLxvAu3X6' ,
+                    secret: config.getValue("SessionSecret",{mustExist:true}) ,
                     resave:true,
                     saveUninitialized:true,
                     cookie:{_expires : 1000*60*60*24*365}}));
@@ -198,6 +201,8 @@ app.use(session({ store: sessionstore,
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(debugExpress("After passport.session"));
+
 
 
 
@@ -207,7 +212,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-
+app.use(debugExpress("After cookieParser"));
 
 // GET /auth/openstreetmap
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -252,6 +257,7 @@ app.use(htmlRoot,calender );
 app.use(htmlRoot + "/api",api );
 app.use(htmlRoot + '/slack', slackrouter);
 
+app.use(debugExpress("After Slack Initialisation"));
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
 app.use(htmlRoot + '/',ensureAuthenticated,layout);
@@ -263,7 +269,7 @@ app.use(htmlRoot + '/blog',checkAuthentification, blog);
 app.use(htmlRoot + '/tool',checkAuthentification, tool);
 app.use(htmlRoot + '/config',checkAuthentification, configRouter);
 
-
+app.use(debugExpress("After different routes"));
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
 //   the request is authenticated (typically via a persistent login session),
