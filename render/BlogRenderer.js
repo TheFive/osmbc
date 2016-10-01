@@ -135,7 +135,6 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang,article) {
     }
 
   } else {
-    if (article.author && article.author.collection) text = "[" + article.author.collection + "] ";
     text += article.displayTitle(90);
   }
   if (article.categoryEN==="--unpublished--") {
