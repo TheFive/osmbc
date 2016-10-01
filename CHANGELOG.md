@@ -1,11 +1,24 @@
 # Change Log
 
+## [1.9.4](https://github.com/TheFive/osmbc/tree/1.9.4) (2016-10-01)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.3a...1.9.4)
+
+**Implemented enhancements:**
+
+- Give a cookie hint on message: failed to find request token in session [\#524](https://github.com/TheFive/osmbc/issues/524)
+
+**Closed issues:**
+
+- Remove \[OSMUsername\] from articlecdisplay e.g. In overview [\#530](https://github.com/TheFive/osmbc/issues/530)
+
 ## [1.9.3a](https://github.com/TheFive/osmbc/tree/1.9.3a) (2016-09-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.3...1.9.3a)
 
 **Fixed bugs:**
 
 - configuration of automatictranslatetext fails if config is empty for a language. [\#534](https://github.com/TheFive/osmbc/issues/534)
+- Article with a category that is NOT in the blog category is NOT displayed in blog.  [\#529](https://github.com/TheFive/osmbc/issues/529)
+- make session secret "secret" and move it to config.\*.json [\#527](https://github.com/TheFive/osmbc/issues/527)
 
 ## [1.9.3](https://github.com/TheFive/osmbc/tree/1.9.3) (2016-09-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2e...1.9.3)
