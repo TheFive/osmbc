@@ -270,6 +270,7 @@ function postArticle(req, res, next) {
                  categoryEN:req.body.categoryEN,
                  version:req.body.version,
                  title:req.body.title,
+                 addComment:req.body.addComment,
                  commentStatus:req.body.commentStatus,
                  unpublishReason:req.body.unpublishReason,
                  unpublishReference:req.body.unpublishReference};

@@ -374,6 +374,62 @@ describe('model/article', function() {
         });
       });
     });
+    it('should set comment to solved if article is unpublished', function (bddone){
+      // Generate an article for test
+      var newArticle;
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        articleModule.findById(newArticle.id,function(err,result) {
+          should.not.exist(err);
+          result.setAndSave({OSMUser: "test"}, {categoryEN: "--unpublished--",unpublishReason:"doublette" ,version: 1}, function (err) {
+            should.not.exist(err);
+            articleModule.findById(newArticle.id,function(err,result) {
+              should.not.exist(err);
+              should(result.commentStatus).eql("solved");
+              should(result.commentList[0].text).eql('#solved because set to --unpublished--.\n\nReason:doublette');
+              bddone();
+            });
+          });
+        });
+      });
+    });
+    it('should fail if something is set to unpublished without reason', function (bddone){
+      // Generate an article for test
+      var newArticle;
+      articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+        should.not.exist(err);
+        newArticle = result;
+        articleModule.findById(newArticle.id,function(err,result) {
+          should.not.exist(err);
+          result.setAndSave({OSMUser: "test"}, {categoryEN: "--unpublished--" ,version: 1}, function (err) {
+            should.exist(err);
+            should(err.message).eql("Missing reason for unpublishing article.");
+            bddone();
+          });
+        });
+      });
+    });
+  });
+  it('should add a comment during edit', function (bddone){
+    // Generate an article for test
+    var newArticle;
+    articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+      should.not.exist(err);
+      newArticle = result;
+      articleModule.findById(newArticle.id,function(err,result) {
+        should.not.exist(err);
+        result.setAndSave({OSMUser: "test"}, {markdownDE:"Changed Markdown",addComment:"An added comment" ,version: 1}, function (err) {
+          should.not.exist(err);
+          articleModule.findById(newArticle.id,function(err,result) {
+            should.not.exist(err);
+            should(result.commentStatus).eql("open");
+            should(result.commentList[0].text).eql('An added comment');
+            bddone();
+          });
+        });
+      });
+    });
   });
   describe('findFunctions',function() {
     var idToFindLater;

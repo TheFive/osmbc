@@ -230,6 +230,13 @@ block content
                 .panel-body(id="previewRIGHT")
                   :verbatim
                     !{article["textHtml"+params.right_lang]}
+        .row
+          h4="You can add a comment here:"
+        .row
+          .col-md-12
+            textarea.form-control(name="addComment" id="addComment" rows=3 )
+
+
 
 
     else

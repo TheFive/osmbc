@@ -212,22 +212,21 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
         self.save(cb);
       } else cb();
     },
-    function setCategoryEn(cb) {
-      // Set Category for the EN Field
-
-      // First calcualte Blog
-      blogModule.findOne({name:self.blog},function(err,blog){
-        var categories= blogModule.getCategories();
-        if (blog) categories = blog.getCategories();
-        for (var i=0;i<categories.length;i++) {
-          if (data.categoryDE == categories[i].DE) {
-            data.categoryEN = categories[i].EN;
-            break;
-          }
-        } 
-        cb();           
-      });
+    function addCommentWhenGiven(cb) {
+      debug("addCommentWhenGiven");
+      if (data.addComment && data.addComment.trim() !== "") {
+        self.addComment(user,data.addComment,cb);
+      } else cb();
     },
+    function addCommentWhenUnpublished(cb) {
+      debug("addCommentWhenUnpublished");
+      if (data.categoryEN==="--unpublished--" || data.blog==="Trash") {
+        let text = "#solved because set to --unpublished--.\n\nReason:"+data.unpublishReason;
+        if (data.unpublishReference) text +="\n"+data.unpublishReference;
+        self.addComment(user,text,cb);
+      } else cb();
+    },
+
     function expandTwitterUrl(cb){
       debug('expandTwitterUrl');
       if (!util.isURL(data.collection)) return cb();
