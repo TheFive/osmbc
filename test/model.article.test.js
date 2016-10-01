@@ -411,6 +411,26 @@ describe('model/article', function() {
       });
     });
   });
+  it('should add a comment during edit', function (bddone){
+    // Generate an article for test
+    var newArticle;
+    articleModule.createNewArticle({markdownDE:"markdown",blog:"TEST"},function testSetAndSaveCreateNewArticleCB(err,result){
+      should.not.exist(err);
+      newArticle = result;
+      articleModule.findById(newArticle.id,function(err,result) {
+        should.not.exist(err);
+        result.setAndSave({OSMUser: "test"}, {markdownDE:"Changed Markdown",addComment:"An added comment" ,version: 1}, function (err) {
+          should.not.exist(err);
+          articleModule.findById(newArticle.id,function(err,result) {
+            should.not.exist(err);
+            should(result.commentStatus).eql("open");
+            should(result.commentList[0].text).eql('An added comment');
+            bddone();
+          });
+        });
+      });
+    });
+  });
   describe('findFunctions',function() {
     var idToFindLater;
     before(function (bddone) {
