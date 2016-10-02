@@ -75,6 +75,10 @@ exports.initialise = function initialise(callback) {
   should(typeof(configuration.ReviewInWP)).equal("object");
   should(typeof(configuration.languages)).equal("object");
 
+  // Do some corrections, e.g. the languages MUST contain an "EN"
+
+  if (configuration.languages.indexOf("EN")<0) configuration.languages.push("EN");
+
   exports.pgstring = getPostgresDBString();
 	if (callback) callback();
 };
