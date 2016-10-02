@@ -3,9 +3,9 @@
   
   "postgres": {
     "initialise": true,
-    "database" : "localhost:5432/osmbc",
-    "username" : "TheFive",
-    "password" : "thefive",
+    "database" : "localhost:5432/testdb",
+    "username" : "test",
+    "password" : "test",
     "connectstr" : "psql://test:test@localhost:5432/testdb"
   },
    "twitter":{

@@ -48,6 +48,7 @@ program
   .option('--verbose','verbose option','')
   .option('--dd','display table definition from database server','')
   .option('--updateIndex','bring Indexes updtodate (keep existing)','')
+  .option('--addUser [user]','add user with full access to database','')
   .parse(process.argv);
 
 if (program.verbose) {
@@ -180,6 +181,16 @@ function clearDB(options,callback) {
 }
 
 clearDB(pgOptions,function(){
-  console.log("Ready...");
-  process.exit(1);
+  if (program.addUser) {
+    userModule.createNewUser({OSMUser: program.addUser, access: "full"}, function (err, result) {
+      if (err) return console.log(err);
+      result.save(function () {
+        console.log("User " + program.addUser + " created. Ready.")
+      });
+    });
+  } else {
+    console.log("Ready...");
+    process.exit(1);
+  }
 });
+
