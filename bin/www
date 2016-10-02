@@ -85,7 +85,7 @@ function startBlogTimer(callback) {
   debug("startBlogTimer");
   blogModule.startAllTimers(function (err) {
     if (err) {
-      return callback(new Error("Error during Blog Timers Start "+err.message));
+      return callback(err);
     }
     console.log("Timer for Auto Close started");
     return callback();
