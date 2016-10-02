@@ -41,7 +41,7 @@ program
   .option('--dropTables','Drop Tables before Creation','')
   .option('--dropIndex','Drop Index before Creation','')
   .option('--dropView','Drop View before Creation','')
-  .option('--createTables ','Create all tables')
+  .option('--createTables','Create all tables')
   .option('--createTable [table]','Create a specific table')
   .option('--createView','Create all Views','')
   .option('--createIndex','Create all Index','')
@@ -76,6 +76,7 @@ var pgOptions = {
   dd:program.dd,
   updateIndex:program.updateIndex
 };
+
 
 function analyseTable(pgObject,pgOptions,callback) {
   
