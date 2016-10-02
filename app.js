@@ -62,13 +62,11 @@ console.log("Express Routes set to: SERVER"+htmlRoot);
 // if there will be a user database, this has to be integrated here
 passport.serializeUser(function(user, done) {
   debug("passport.serializeUser CB");
-  done(null, user.displayName);
+  done(null, user);
 });
 
-passport.deserializeUser(function(name, done) {
+passport.deserializeUser(function(user, done) {
   debug("passport.deserializeUser CB");
-  var user = {};
-  user.displayName = name;
   done(null, user);
 });
 
@@ -106,10 +104,13 @@ function checkAuthentification(req,res,next) {
 
   // Route / checks for authentification, so nothing has to be done,
   // just check authentification.
+  // it is imporant, that the parallel ensureAutheticated function is used
+  // BEFORE this easy funktion in the routes, to
+  // avoid any login trouble.
 
   if (req.isAuthenticated()) return next();
-  req.session.returnTo = req.originalUrl; 
-  res.redirect(htmlRoot+'/auth/openstreetmap');
+
+  return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
 }
 
 function ensureAuthenticated(req, res, next) {
@@ -150,9 +151,13 @@ function ensureAuthenticated(req, res, next) {
     });
     return;
   }
-  req.session.returnTo = req.originalUrl; 
-  res.redirect(htmlRoot+'/auth/openstreetmap');
 
+  if (!req.session.returnTo ) {
+    console.log("Setting session return to to "+req.originalUrl);
+    req.session.returnTo = req.originalUrl;
+
+  }
+  res.redirect(htmlRoot+'/auth/openstreetmap');
 }
 
 
@@ -190,10 +195,11 @@ app.use(debugExpress("Start Route"));
 app.use(compression());
 app.use(favicon(path.join(__dirname , 'public','images','favicon.ico')));
 app.use(session({ store: sessionstore,
+                    name: config.getValue("SessionName",{mustExist:true}),
                     secret: config.getValue("SessionSecret",{mustExist:true}) ,
                     resave:true,
                     saveUninitialized:true,
-                    cookie:{_expires : 1000*60*60*24*365}}));
+                    cookie:{_expires :null}}));
 
 
 // Initialize Passport!  Also use passport.session() middleware, to support
