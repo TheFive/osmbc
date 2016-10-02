@@ -39,6 +39,7 @@
     }
   },
   "SessionSecret":"keyboard cat",
+  "SessionName":"session name",
   "AppName":"TESTBC",
   "languages":["DE","EN","ES"],
   "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
