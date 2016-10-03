@@ -164,6 +164,58 @@ Blog.prototype.setReviewComment = function setReviewComment(lang,user,data,callb
   });
 };
 
+
+Blog.prototype.editReviewComment = function editReviewComment(lang,user,index,data,callback) {
+  debug("reviewComment");
+  var self = this;
+  var rc = "reviewComment"+lang;
+  should(typeof(user)).eql("object");
+  async.series([
+    function checkID(cb) {
+      if (self.id === 0) {
+        self.save(cb);
+      } else cb();
+    }
+  ],function(){
+    should.exist(self.id);
+    should(self.id).not.equal(0);
+    if (typeof(data)=='undefined') return callback();
+    if (typeof(self[rc]) === "undefined" || self[rc] === null) {
+      self[rc] = [];
+    }
+    // Index out of range, just
+    if (index< 0 || index>= self[rc].length) return callback(new Error("Edit Review Comment, Index out of Range"));
+
+
+    if (self[rc][index].user != user.OSMUser) return callback(new Error(">"+user.OSMUser+"< is not allowed to change review"));
+
+    // nothing to change.
+    if (self[rc][index].text == data) return callback();
+
+    async.series ( [
+      function logInformation(cb) {
+        debug("editReviewComment->logInformation");
+        messageCenter.global.sendLanguageStatus(user,self,lang,data,cb);
+        // This is the old log and has to be moved to the messageCenter (logReceiver)
+        // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
+      },
+      function setValues(cb) {
+        debug("editReviewComment->setValues");
+        var date = new Date();
+
+        self[rc][index].text=data;
+        self[rc][index].editstamp=date;
+        return cb();
+      }
+    ],function(err){
+      debug("setReviewComment->FinalFunction");
+      if (err) return callback(err);
+      self.save(callback);
+    });
+  });
+};
+
+
 Blog.prototype.closeBlog = function closeBlog(lang,user,status,callback) {
   debug("closeBlog");
   should(typeof(user)).eql('object');
@@ -644,6 +696,8 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
 
   self._tbcOwnArticleNumber = 0;
 
+  self._unsolvedComments = {};
+
   self._usedLanguages = {};
   var mainLang = user.mainLang;
   var secondLang = user.secondLang;
@@ -659,16 +713,19 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
         self._countUneditedMarkdown[l] = 99;
         self._countExpectedMarkdown[l] = 99;
         self._countNoTranslateMarkdown[l] = 99;
+        self._unsolvedComments[l]=99;
       }
       else {
         self._countUneditedMarkdown[l] = 0;
         self._countExpectedMarkdown[l] = 0;
         self._countNoTranslateMarkdown[l] = 0;
+        self._unsolvedComments[l]=0;
         for (j = 0; j < result.length; j++) {
-          var c = result[j].categoryEN;
+          let article= result[j];
+          var c = article.categoryEN;
           if (c == "--unpublished--") continue;
           self._countExpectedMarkdown[l] += 1;
-          var m = result[j]["markdown" + l];
+          var m = article["markdown" + l];
           if (m === "no translation") {
             self._countNoTranslateMarkdown[l] += 1;
           } else {
@@ -678,6 +735,9 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
           }
           // check, wether language is used in blog
           if (m && m !== "no translation") self._usedLanguages[l] = true;
+          if (article.commentList && article.commentStatus=="open") {
+            if (!m || m !== "no translation") self._unsolvedComments[l] += 1;
+          }
         }
       }
 
@@ -826,6 +886,20 @@ module.exports.getTBC = function() {
   return blog;
 };
 
+
+Blog.prototype.getBlogName = function(lang) {
+  if (lang=="DE") return "Wochennotiz";
+  return "Weekly";
+};
+
+
+Blog.prototype.getStatus = function(lang) {
+  let status = this.status;
+  if (this["reviewComment"+lang]) status = "Review "+lang;
+  if (this["exported"+lang]) status = "Export "+lang;
+  if (this["close"+lang]) status = "Close "+lang;
+  return status;
+};
 
 Blog.prototype.save = pgMap.save;
 

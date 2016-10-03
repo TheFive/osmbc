@@ -253,6 +253,23 @@ function setReviewComment(req,res,next) {
   });
 }
 
+function editReviewComment(req,res,next) {
+  debug('editReviewComment');
+
+  var lang = req.body.lang;
+  var user = req.user;
+  var data = req.body.text;
+  var index = req.params.index;
+
+
+  if (!req.blog) return next();
+  req.blog.editReviewComment(lang,user,index,data,function(err){
+    if (err) return next(err);
+    let referer=req.header('Referer') || '/';
+    res.redirect(referer);
+  });
+}
+
 function setBlogStatus(req,res,next) {
   debug('setBlogStatus');
 
@@ -447,6 +464,7 @@ router.route('/edit/:blog_id')
   .get(editBlogId)
   .post(postBlogId);
 router.post('/:blog_id/setReviewComment',setReviewComment);
+router.post('/:blog_id/editReviewComment/:index',editReviewComment);
 router.post('/:blog_id/setLangStatus',setBlogStatus);
 
 

@@ -72,6 +72,8 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,bl
     subject += "("+lang+") review has been started";
   } else if (status === "markexported") {
     subject += "("+lang+") is exported to WordPress";
+  } else if (status === "" || status === null) {
+    subject += "("+lang+") review comment deleted.";
   } else {
     subject += "("+lang+") has been reviewed: "+status;
   }

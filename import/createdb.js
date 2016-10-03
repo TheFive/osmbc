@@ -41,13 +41,14 @@ program
   .option('--dropTables','Drop Tables before Creation','')
   .option('--dropIndex','Drop Index before Creation','')
   .option('--dropView','Drop View before Creation','')
-  .option('--createTables ','Create all tables')
+  .option('--createTables','Create all tables')
   .option('--createTable [table]','Create a specific table')
   .option('--createView','Create all Views','')
   .option('--createIndex','Create all Index','')
   .option('--verbose','verbose option','')
   .option('--dd','display table definition from database server','')
   .option('--updateIndex','bring Indexes updtodate (keep existing)','')
+  .option('--addUser [user]','add user with full access to database','')
   .parse(process.argv);
 
 if (program.verbose) {
@@ -75,6 +76,7 @@ var pgOptions = {
   dd:program.dd,
   updateIndex:program.updateIndex
 };
+
 
 function analyseTable(pgObject,pgOptions,callback) {
   
@@ -180,6 +182,16 @@ function clearDB(options,callback) {
 }
 
 clearDB(pgOptions,function(){
-  console.log("Ready...");
-  process.exit(1);
+  if (program.addUser) {
+    userModule.createNewUser({OSMUser: program.addUser, access: "full"}, function (err, result) {
+      if (err) return console.log(err);
+      result.save(function () {
+        console.log("User " + program.addUser + " created. Ready.")
+      });
+    });
+  } else {
+    console.log("Ready...");
+    process.exit(1);
+  }
 });
+

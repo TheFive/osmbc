@@ -222,8 +222,10 @@ backup of your productive data, before doing that.
 
 To update to the acutal set of indexes just user --updateIndex. (--updateNAME option is for now only available for indexes).
 
-Remark: currently the --createTables flag is not working as intended, so you have to call the --createTable flag for 
-each table (session,config, blog, article, usert, changes).
+A full working empty copy of OSMBC can be generated with:
+```sh
+NODE_ENV=???? node import/createdb.js  --createTables --dropTables --createView --createIndex --addUser OSMUSERNAME --verbose
+```
 
 ### Import files from
 

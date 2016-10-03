@@ -268,7 +268,7 @@ describe('model/blog', function() {
     });
   });
   describe('reviewComment',function() {
-    before(function (bddone) {
+    beforeEach(function (bddone) {
       testutil.clearDB(bddone);
       process.env.TZ = 'Europe/Amsterdam';
     }) ;
@@ -304,6 +304,72 @@ describe('model/blog', function() {
               }
 
               should(result).containEql(logModule.create({oid:id,blog:"Title",user:"user",table:"blog",property:"reviewCommentDE",to:"it is approved.",from:"Add"}));
+              bddone();
+            });
+          });
+        });
+      });
+    });
+    it('should edit a review', function (bddone){
+      blogModule.createNewBlog({OSMUser:"test"},{name:"Title",status:"TEST"},function(err,newBlog){
+        should.not.exist(err);
+        should.exist(newBlog);
+        var id =newBlog.id;
+        newBlog.setReviewComment("DE",{OSMUser:"user"},"it is approved.",function(err) {
+          should.not.exist(err);
+
+          blogModule.findById(id,function(err,blog){
+            should.not.exist(err);
+            blog.editReviewComment("DE",{OSMUser:"user"},0,"is nearly approved.",function(err){
+              should.not.exist(err);
+              testutil.getJsonWithId("blog",id,function(err,result){
+                should.not.exist(err);
+                delete result._meta;
+                delete result.categories;
+                delete result.startDate;
+                delete result.endDate;
+                var now = new Date();
+                var t0 = result.reviewCommentDE[0].timestamp;
+                var t0diff = ((new Date(t0)).getTime()-now.getTime());
+                should(t0diff).be.below(10);
+
+                should(result.reviewCommentDE[0].text).equal("is nearly approved.");
+                should(result.reviewCommentDE[0].user).equal("user");
+                delete result.reviewCommentDE;
+                should(result).eql({id:id,name:"Title",status:"TEST",version:3});
+                logModule.find({},{column:"property"},function (err,result){
+                  should.not.exist(err);
+                  should.exist(result);
+                  should(result.length).equal(6);
+                  for (var i=0;i<result.length;i++) {
+                    delete result[i].id;
+                    delete result[i].timestamp;
+                  }
+                  should(result).containEql(logModule.create({oid:id,blog:"Title",user:"user",table:"blog",property:"reviewCommentDE",to:"it is approved.",from:"Add"}));
+                  should(result).containEql(logModule.create({oid:id,blog:"Title",user:"user",table:"blog",property:"reviewCommentDE",to:"is nearly approved.",from:"Add"}));
+                  bddone();
+                });
+              });
+            });
+
+          });
+
+        });
+      });
+    });
+    it('should not allow other edit a review', function (bddone){
+      blogModule.createNewBlog({OSMUser:"test"},{name:"Title",status:"TEST"},function(err,newBlog){
+        should.not.exist(err);
+        should.exist(newBlog);
+        var id =newBlog.id;
+        newBlog.setReviewComment("DE",{OSMUser:"user"},"it is approved.",function(err) {
+          should.not.exist(err);
+
+          blogModule.findById(id,function(err,blog){
+            should.not.exist(err);
+            blog.editReviewComment("DE",{OSMUser:"user2"},0,"is nearly approved.",function(err){
+              should.exist(err);
+              should(err.message).eql(">user2< is not allowed to change review");
               bddone();
             });
           });
