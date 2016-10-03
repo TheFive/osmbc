@@ -1,6 +1,24 @@
 # Change Log
 
-## [1.9.5](https://github.com/TheFive/osmbc/tree/1.9.5) (2016-10-01)
+## [1.9.6](https://github.com/TheFive/osmbc/tree/1.9.6) (2016-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.5...1.9.6)
+
+**Implemented enhancements:**
+
+- Inbox: Disable Header, that does not contain info. [\#536](https://github.com/TheFive/osmbc/issues/536)
+- Allow editing of a review comment as long as blog is not closed. [\#531](https://github.com/TheFive/osmbc/issues/531)
+- Use oauth tokens / cookies for all thefive.info websites, to avoid reauthentification for every service. [\#514](https://github.com/TheFive/osmbc/issues/514)
+- Place number of unsolved comments for published articles in the blog translation counter. [\#507](https://github.com/TheFive/osmbc/issues/507)
+
+**Fixed bugs:**
+
+- createdb.js --createTables is not working [\#526](https://github.com/TheFive/osmbc/issues/526)
+
+**Closed issues:**
+
+- Blog History not shown in Blog Views [\#537](https://github.com/TheFive/osmbc/issues/537)
+
+## [1.9.5](https://github.com/TheFive/osmbc/tree/1.9.5) (2016-10-02)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.4...1.9.5)
 
 **Implemented enhancements:**
@@ -237,13 +255,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
