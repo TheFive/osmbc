@@ -369,7 +369,7 @@ function postNewComment(req, res, next) {
       debug('postNewComment->setValues');
       if (err) {return next(err);}
       should.exist(article);
-      article.addComment(req.user,comment,function(err) {
+      article.addCommentFunction(req.user,comment,function(err) {
        debug('postNewComment->setValues->addComment');
         if (err ) {
           next(err);

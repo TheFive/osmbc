@@ -8,7 +8,6 @@ var config= require('../config.js');
 var async = require('async');
 var ProgressBar = require('progress');
 var pgMap     = require('../model/pgMap.js');
-var jsdiff = require('diff');
 
 
 config.initialise();
