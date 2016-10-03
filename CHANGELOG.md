@@ -1,5 +1,55 @@
 # Change Log
 
+## [1.9.6](https://github.com/TheFive/osmbc/tree/1.9.6) (2016-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.5...1.9.6)
+
+**Implemented enhancements:**
+
+- Inbox: Disable Header, that does not contain info. [\#536](https://github.com/TheFive/osmbc/issues/536)
+- Allow editing of a review comment as long as blog is not closed. [\#531](https://github.com/TheFive/osmbc/issues/531)
+- Use oauth tokens / cookies for all thefive.info websites, to avoid reauthentification for every service. [\#514](https://github.com/TheFive/osmbc/issues/514)
+- Place number of unsolved comments for published articles in the blog translation counter. [\#507](https://github.com/TheFive/osmbc/issues/507)
+
+**Fixed bugs:**
+
+- createdb.js --createTables is not working [\#526](https://github.com/TheFive/osmbc/issues/526)
+
+**Closed issues:**
+
+- Blog History not shown in Blog Views [\#537](https://github.com/TheFive/osmbc/issues/537)
+
+## [1.9.5](https://github.com/TheFive/osmbc/tree/1.9.5) (2016-10-02)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.4...1.9.5)
+
+**Implemented enhancements:**
+
+- Generate a comment including "solved" when an article is unpublished. [\#511](https://github.com/TheFive/osmbc/issues/511)
+- Disable addComment button in article edit mode. Post written comment during article save. [\#426](https://github.com/TheFive/osmbc/issues/426)
+
+**Fixed bugs:**
+
+- Blog Categories are entered as YAML for config, but JSON for blog. Thats wired. [\#532](https://github.com/TheFive/osmbc/issues/532)
+
+## [1.9.4](https://github.com/TheFive/osmbc/tree/1.9.4) (2016-10-01)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.3a...1.9.4)
+
+**Implemented enhancements:**
+
+- Give a cookie hint on message: failed to find request token in session [\#524](https://github.com/TheFive/osmbc/issues/524)
+
+**Closed issues:**
+
+- Remove \[OSMUsername\] from articlecdisplay e.g. In overview [\#530](https://github.com/TheFive/osmbc/issues/530)
+
+## [1.9.3a](https://github.com/TheFive/osmbc/tree/1.9.3a) (2016-09-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.3...1.9.3a)
+
+**Fixed bugs:**
+
+- configuration of automatictranslatetext fails if config is empty for a language. [\#534](https://github.com/TheFive/osmbc/issues/534)
+- Article with a category that is NOT in the blog category is NOT displayed in blog.  [\#529](https://github.com/TheFive/osmbc/issues/529)
+- make session secret "secret" and move it to config.\*.json [\#527](https://github.com/TheFive/osmbc/issues/527)
+
 ## [1.9.3](https://github.com/TheFive/osmbc/tree/1.9.3) (2016-09-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2e...1.9.3)
 

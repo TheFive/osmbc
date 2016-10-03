@@ -214,8 +214,10 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
     },
     function addCommentWhenGiven(cb) {
       debug("addCommentWhenGiven");
-      if (data.addComment && data.addComment.trim() !== "") {
-        self.addComment(user,data.addComment,cb);
+      let addComment = data.addComment;
+      delete data.addComment;
+      if (addComment && addComment.trim() !== "") {
+        self.addComment(user,addComment,cb);
       } else cb();
     },
     function addCommentWhenUnpublished(cb) {
@@ -243,6 +245,8 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
     var logblog = self.blog;
     if (data.blog) logblog = data.blog;
     delete data.version;
+
+
     for (var k in data) {
       if (data[k] === self[k]) delete data[k];
       if (data[k] === '' && typeof(self[k])=='undefined') delete data[k];
