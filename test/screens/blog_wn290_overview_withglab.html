@@ -145,26 +145,98 @@
                 <h3 class="panel-title">Review DE</h3>
               </div>
               <div class="panel-body">
-                <p><b class="span">wambacher</b><span> </span><i class="span">3 months ago</i></p>
-                <p>bin durch. some spelling errors</p>
-                <p><b class="span">derFred</b><span> </span><i class="span">3 months ago</i></p>
-                <p>only mailtest</p>
-                <p><b class="span">Peda</b><span> </span><i class="span">3 months ago</i></p>
-                <p>Kleinigkeiten</p>
-                <p><b class="span">Nakaner</b><span> </span><i class="span">3 months ago</i></p>
-                <p>Rechtschreibung und Zeichensetzung, Tippfehler</p>
-                <p><b class="span">TheFive</b><span> </span><i class="span">3 months ago</i></p>
-                <p>Review ignorieren, trigger mail und save (TEST)</p>
-                <p><b class="span">Nakaner</b><span> </span><i class="span">3 months ago</i></p>
-                <p>Linkprüfung in WP Kategorien WA bis HOT; wertenden Satz aus 1. HOT-Meldung entfernt, Mapzen-Routing nach Programme verschoben (Karten passt nicht)</p>
-                <div class="form-group">
-                  <form id="review" name="review" action="/blog/WN290/setReviewComment" method="post" class="form-horizontal">
+                <p><b class="span">wambacher</b><span> </span><span class="text-muted small">3 months ago</span>
+                </p>
+                <p id="reviewLeftTextDE0">bin durch. some spelling errors</p>
+                <div id="editReviewDE0" class="hidden">
+                  <form id="editreviewDE0" name="reviewDE0" action="/blog/WN290/editReviewComment/0" method="post" class="form-horizontal">
                     <div class="col-md-10">
-                      <input type="text" name="text" id="reviewComment" placeholder="Please Type your Review here" class="form-control">
+                      <input type="text" name="text" id="reviewCommentDE0" value="bin durch. some spelling errors" class="form-control">
                       <input type="text" name="lang" value="DE" class="hidden">
                     </div>
                     <div class="col-md-2">
-                      <button id="reviewButton" type="submit" class="btn btn-large btn-primary" disabled="true">ReviewDE</button>
+                      <button id="reviewButtonDE0" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
+                </div>
+                <p><b class="span">derFred</b><span> </span><span class="text-muted small">3 months ago</span>
+                </p>
+                <p id="reviewLeftTextDE1">only mailtest</p>
+                <div id="editReviewDE1" class="hidden">
+                  <form id="editreviewDE1" name="reviewDE1" action="/blog/WN290/editReviewComment/1" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentDE1" value="only mailtest" class="form-control">
+                      <input type="text" name="lang" value="DE" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonDE1" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
+                </div>
+                <p><b class="span">Peda</b><span> </span><span class="text-muted small">3 months ago</span>
+                </p>
+                <p id="reviewLeftTextDE2">Kleinigkeiten</p>
+                <div id="editReviewDE2" class="hidden">
+                  <form id="editreviewDE2" name="reviewDE2" action="/blog/WN290/editReviewComment/2" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentDE2" value="Kleinigkeiten" class="form-control">
+                      <input type="text" name="lang" value="DE" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonDE2" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
+                </div>
+                <p><b class="span">Nakaner</b><span> </span><span class="text-muted small">3 months ago</span>
+                </p>
+                <p id="reviewLeftTextDE3">Rechtschreibung und Zeichensetzung, Tippfehler</p>
+                <div id="editReviewDE3" class="hidden">
+                  <form id="editreviewDE3" name="reviewDE3" action="/blog/WN290/editReviewComment/3" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentDE3" value="Rechtschreibung und Zeichensetzung, Tippfehler" class="form-control">
+                      <input type="text" name="lang" value="DE" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonDE3" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
+                </div>
+                <p><b class="span">TheFive</b><span> </span><span class="text-muted small">3 months ago</span><span> </span><a onclick="document.getElementById('editReviewDE4').classList.remove('hidden');document.getElementById('reviewLeftTextDE4').classList.add('hidden');"><span class="glyphicon glyphicon-pencil"></span></a>
+                </p>
+                <p id="reviewLeftTextDE4">Review ignorieren, trigger mail und save (TEST)</p>
+                <div id="editReviewDE4" class="hidden">
+                  <form id="editreviewDE4" name="reviewDE4" action="/blog/WN290/editReviewComment/4" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentDE4" value="Review ignorieren, trigger mail und save (TEST)" class="form-control">
+                      <input type="text" name="lang" value="DE" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonDE4" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
+                </div>
+                <p><b class="span">Nakaner</b><span> </span><span class="text-muted small">3 months ago</span>
+                </p>
+                <p id="reviewLeftTextDE5">Linkprüfung in WP Kategorien WA bis HOT; wertenden Satz aus 1. HOT-Meldung entfernt, Mapzen-Routing nach Programme verschoben (Karten passt nicht)</p>
+                <div id="editReviewDE5" class="hidden">
+                  <form id="editreviewDE5" name="reviewDE5" action="/blog/WN290/editReviewComment/5" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentDE5" value="Linkprüfung in WP Kategorien WA bis HOT; wertenden Satz aus 1. HOT-Meldung entfernt, Mapzen-Routing nach Programme verschoben (Karten passt nicht)" class="form-control">
+                      <input type="text" name="lang" value="DE" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonDE5" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
+                </div>
+                <div class="form-group">
+                  <form id="reviewDE" name="reviewDE" action="/blog/WN290/setReviewComment" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').comment == '');" class="form-control">
+                      <input type="text" name="lang" value="DE" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonDE" type="submit" disabled="disabled" class="btn btn-large btn-primary">Review</button>
                     </div>
                   </form>
                 </div>
@@ -177,14 +249,26 @@
                 <h3 class="panel-title">Review EN</h3>
               </div>
               <div class="panel-body">
-                <p><b class="span">bogzab</b><span> </span><i class="span">4 months ago</i></p>
-                <p>Reviwed by Bogus Zaba 10-02-16. Minor typos and edits done. Graphic needs a caption.</p>
-                <p><b class="span">elpbatista</b><span> </span><i class="span">3 months ago</i></p>
-                <p>elpbatista</p>
-                <p><b class="span">derFred</b><span> </span><i class="span">3 months ago</i></p>
-                <p>errata: elpbatista made the review of the Spanish 290</p>
-                <p><b class="span">jinalfoflia</b><span> </span><i class="span">3 months ago</i></p>
-                <p>Reviewed English version #290</p>
+                <p><b class="span">bogzab</b><span> </span><span class="text-muted small">4 months ago</span>
+                </p>
+                <p id="reviewLeftTextEN0">Reviwed by Bogus Zaba 10-02-16. Minor typos and edits done. Graphic needs a caption.</p>
+                <div id="editReviewEN0" class="hidden">
+                </div>
+                <p><b class="span">elpbatista</b><span> </span><span class="text-muted small">3 months ago</span>
+                </p>
+                <p id="reviewLeftTextEN1">elpbatista</p>
+                <div id="editReviewEN1" class="hidden">
+                </div>
+                <p><b class="span">derFred</b><span> </span><span class="text-muted small">3 months ago</span>
+                </p>
+                <p id="reviewLeftTextEN2">errata: elpbatista made the review of the Spanish 290</p>
+                <div id="editReviewEN2" class="hidden">
+                </div>
+                <p><b class="span">jinalfoflia</b><span> </span><span class="text-muted small">3 months ago</span>
+                </p>
+                <p id="reviewLeftTextEN3">Reviewed English version #290</p>
+                <div id="editReviewEN3" class="hidden">
+                </div>
                 <div class="form-group">
                 </div>
               </div>
@@ -3125,6 +3209,7 @@ Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autóno
 <script src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js"></script>
 <script>
   var openEditor = null;
+  
   window.onload = function () {
   
     if (typeof(Storage) !== "undefined") {
@@ -3161,18 +3246,6 @@ Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autóno
     form.submit();
   }
   
-  // Scripts from the file blogheader.jade
-  reviewButton = document.getElementById("reviewButton");
-  reviewComment = document.getElementById("reviewComment");
-  if (reviewComment) reviewComment.onchange = onchange;
-  if (reviewComment) reviewComment.onkeyup = onchange;
-  
-  if (reviewButton) reviewButton.disabled = true;
-  
-  function onchange() {
-    
-    reviewButton.disabled = (review.comment == "");
-  }
   
   function convert(text) {
     converter = new window.markdownit({breaks: true});
