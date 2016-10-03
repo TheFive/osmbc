@@ -68,6 +68,10 @@ block content
   .row
     .col-md-1
       div.label.osmbclabel-lang=left_lang
+      if blog._unsolvedComments[left_lang] > 0
+        span.badge.osmbclabel-no-markdown=blog._unsolvedComments[left_lang]+"(*)"
+      else
+        span.badge.osmbclabel-markdown="0(*)"
     .col-md-11
      div.progress(style="margin-bottom:2px")
       div.progress-bar.osmbclabel-markdown(style="width:#{parseInt(100*ready/total)}%")=ready
@@ -83,6 +87,10 @@ block content
         - if (total == 0) total = 1
         .col-md-1
           div.label.label-info.osmbclabel-lang2=right_lang
+          if blog._unsolvedComments[right_lang] > 0
+            span.badge.osmbclabel-no-markdown=blog._unsolvedComments[right_lang] + "(*)"
+          else
+            span.badge.osmbclabel-markdown="0(*)"
         .col-md-11
          div.progress(style="margin-bottom:10px")
           div.progress-bar.osmbclabel-markdown(style="width:#{parseInt(100*ready/total)}%")=ready
@@ -203,7 +211,7 @@ block content
       p
         a(href="#{layout.htmlroot}/blog/edit/#{blog.name}") [Edit Blog Detail]
 
-        
+
 
 
 block scripts

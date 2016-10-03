@@ -696,6 +696,8 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
 
   self._tbcOwnArticleNumber = 0;
 
+  self._unsolvedComments = {};
+
   self._usedLanguages = {};
   var mainLang = user.mainLang;
   var secondLang = user.secondLang;
@@ -711,16 +713,19 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
         self._countUneditedMarkdown[l] = 99;
         self._countExpectedMarkdown[l] = 99;
         self._countNoTranslateMarkdown[l] = 99;
+        self._unsolvedComments[l]=99;
       }
       else {
         self._countUneditedMarkdown[l] = 0;
         self._countExpectedMarkdown[l] = 0;
         self._countNoTranslateMarkdown[l] = 0;
+        self._unsolvedComments[l]=0;
         for (j = 0; j < result.length; j++) {
-          var c = result[j].categoryEN;
+          let article= result[j];
+          var c = article.categoryEN;
           if (c == "--unpublished--") continue;
           self._countExpectedMarkdown[l] += 1;
-          var m = result[j]["markdown" + l];
+          var m = article["markdown" + l];
           if (m === "no translation") {
             self._countNoTranslateMarkdown[l] += 1;
           } else {
@@ -730,6 +735,9 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
           }
           // check, wether language is used in blog
           if (m && m !== "no translation") self._usedLanguages[l] = true;
+          if (article.commentList && article.commentStatus=="open") {
+            if (!m || m !== "no translation") self._unsolvedComments[l] += 1;
+          }
         }
       }
 
