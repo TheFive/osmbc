@@ -840,7 +840,7 @@ describe('model/article', function() {
         articleModule.findById(1,function(err,article){
           should.not.exist(err);
           should.exist(article);
-          article.addComment({OSMUser:"Test"},"a comment",cb);
+          article.addCommentFunction({OSMUser:"Test"},"a comment",cb);
         });
       };        
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
@@ -858,7 +858,7 @@ describe('model/article', function() {
         articleModule.findById(1,function(err,article){
           should.not.exist(err);
           should.exist(article);
-          article.addComment({OSMUser:""},"",function checkErr(err){
+          article.addCommentFunction({OSMUser:""},"",function checkErr(err){
             should.exist(err);
             should(err).eql(new Error("Empty Comment Added"));
             cb();
@@ -887,7 +887,7 @@ describe('model/article', function() {
       var testFunction = function testFunction(cb) {
         articleModule.findById(1,function(err,article){
           should.not.exist(err);
-          article.addComment({OSMUser:"Test2"},"a second comment",cb);
+          article.addCommentFunction({OSMUser:"Test2"},"a second comment",cb);
         });
       };        
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
