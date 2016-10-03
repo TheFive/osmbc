@@ -38,6 +38,9 @@ mixin displayArticle(article,lang)
 
 
 block content
+  - left_lang = layout.language
+  - right_lang = layout.language2
+
   - showRead = (layout.user.getOption("inbox","showRead")=="true")
   .row
     p.bg-info="This is your new inbox. All comments with mentions are shown here. Use the envelope in the article view to mark a comment as read."
@@ -58,7 +61,8 @@ block content
       .row
         .col-md-1
         .col-md-11
-          h3=blog.name
+          h4=blog.name+" "+blog.getStatus(layout.left_lang)
+          p="User mentions: "+blog._userMention.length
         for article in blog._userMention
           +displayArticle(article,left_lang)
 
@@ -72,7 +76,8 @@ block content
       .row
         .col-md-1
         .col-md-11
-          h3=blog.name
+          h4=blog.name+" "+blog.getStatus(layout.left_lang)
+          p=left_lang+" mentions: "+blog._mainLangMention.length
         for article in blog._mainLangMention
               +displayArticle(article,left_lang)
 
@@ -80,7 +85,8 @@ block content
       .row
         .col-md-1
         .col-md-11
-          h3=blog.name
+          h4=blog.name+" "+blog.getStatus(layout.right_lang)
+          p=right_lang+" mentions: "+blog._secondLangMention.length
         for article in blog._secondLangMention
               +displayArticle(article,left_lang)
 

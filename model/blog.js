@@ -879,6 +879,20 @@ module.exports.getTBC = function() {
 };
 
 
+Blog.prototype.getBlogName = function(lang) {
+  if (lang=="DE") return "Wochennotiz";
+  return "Weekly";
+};
+
+
+Blog.prototype.getStatus = function(lang) {
+  let status = this.status;
+  if (this["reviewComment"+lang]) status = "Review "+lang;
+  if (this["exported"+lang]) status = "Export "+lang;
+  if (this["close"+lang]) status = "Close "+lang;
+  return status;
+};
+
 Blog.prototype.save = pgMap.save;
 
 // Define it on BlogModule level to (for no Blog Specified)

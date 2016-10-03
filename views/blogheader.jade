@@ -95,22 +95,11 @@ block content
     - columnRightSize = "col-md-6"
     - if (right_lang== "--" || right_lang == null)  {columnLeftSize = "col-md-12";columnRightSize = "hidden";}
     .col-md-6
-      - status = blog.status
-      - if (blog["reviewComment"+left_lang]) status = "Review "+left_lang;
-      - if (blog["close"+left_lang]) status = "Close "+left_lang;
-      if blog.status == "help"
-        h2
-          | #{blog.name}
-      else if left_lang == "DE"
-        h2
-          span.hidden-xs="Wochennotiz "
-          |#{blog.name}
-          span.hidden-xs=" ("+status+")"
-      else
-        h2
-          span.hidden-xs="Weekly "
-          span=blog.name
-          span.hidden-xs=" ("+status+")"
+      h2
+        span.hidden-xs=blog.getBlogName(left_lang)+" "
+        |#{blog.name}
+        span.hidden-xs=" ("+blog.getStatus(left_lang)+")"
+
       
     .col-md-6
       if !(blog["close"+left_lang])
@@ -202,7 +191,10 @@ block content
 
   block blogcontent
   .row
-    .col-md-9
+    .col-md-8
+    .col-md-1
+      p
+        a(href="#{layout.htmlroot}/changes/log?blog=#{blog.name}&table=blog") [changes]
     .col-md-1
       p
         a(href="#{layout.htmlroot}/blog/#{blog.name}/stat") [Statistic]
@@ -211,44 +203,7 @@ block content
       p
         a(href="#{layout.htmlroot}/blog/edit/#{blog.name}") [Edit Blog Detail]
 
-
-
-
-  .row.hidden-xs
-    if changes
-      div
-        table.table.table-striped
-          thead
-            tr
-              th 
-              th
-               | user
-              th
-               |  what
-              th
-               | change
-              th
-               | when
-           tbody
-            each change, i in changes
-              tr
-                td
-                  a(href='#{layout.htmlroot}/changes/' + change.id) 
-                    span.glyphicon.glyphicon-info-sign 
-                td= change.user
-                td= change.property
-                td 
-                    :verbatim
-                      !{change.htmlDiffText(100)}
-                td= layout.moment(change.timestamp).fromNow() 
-
-      div
-        p
-          |only displaying changes 
-          span.osmbc-inserted
-            |inserted text 
-          span.osmbc-deleted
-            |removed text
+        
 
 
 block scripts
