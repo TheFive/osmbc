@@ -15,44 +15,6 @@ config.initialise();
 
 
 
-function convertComment(article,changes){
-
-  article.commentList = [];
-  if (!article.comment) return;
- 
-
-  for (var i=0;i<changes.length;i++) {
-    var from = "";
-    var to = "";
-
-    var change = changes[i];
-
-    if (change.from) from = String(change.from);
-    if (change.to) to = String(change.to);
-
-
-
-    // first check on only spaces
-    var diff = jsdiff.diffChars(from,to);
-
-    for (var k=0;k<diff.length;k++ ) {
-      var part = diff[k];
-      if (part.added) {
-          article.commentList.push(
-            {timestamp:change.timestamp,
-              user:change.user,
-              text:"inserted: "+part.value});
-      }
-      if (part.removed) { // part deleted
-        article.commentList.push(
-          {timestamp:change.timestamp,
-            user:change.user,
-            text:"removed: "+part.value});
-
-      }
-    }
-  }
-}
 
 var blogs = {};
 var articlesMap = {};
@@ -74,15 +36,15 @@ async.series([
 
           // place convert code here
 
-          logModule.find({table:"article",oid:item.id,property:"comment"},{column:"timestamp",desc:false},function(err,logs){
-            if (err) return cb(err);
+          if (item.addComment) {
+            delete item.addComment;
+            save=true;
+          }
 
-              convertComment(item,logs);
-              if (item.commentList.length>0) save = true;
 
-            progress.tick();
-            if (save) item.save(cb); else cb();
-          });
+          progress.tick();
+          if (save) item.save(cb); else cb();
+
       
         },function (){done();});
       }
