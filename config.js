@@ -46,7 +46,6 @@ function getPostgresDBString() {
 }
 
 exports.getLanguages = function() {
-  debug('getLanguages');
   configuration=exports.getConfiguration();
   return configuration.languages;
 };

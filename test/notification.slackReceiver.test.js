@@ -107,7 +107,7 @@ describe('notification/slackReceiver', function() {
         .reply(200,"ok");
       articleModule.createNewArticle({blog:"WN789",title:"Test Title"},function(err,article){
         should.not.exist(err);
-        article.addCommentFunction({OSMUser:"testuser"},"Information for @User3",function(err) {
+        article.addComment({OSMUser:"testuser"},"Information for @User3",function(err) {
           should.not.exist(err);
           should(slack.isDone()).is.True();
           bddone();
@@ -123,7 +123,7 @@ describe('notification/slackReceiver', function() {
         .reply(200,"ok");
       articleModule.createNewArticle({blog:"WN789",title:"Test Title"},function(err,article){
         should.not.exist(err);
-        article.addCommentFunction({OSMUser:"testuser"},"Information for @User3",function(err) {
+        article.addComment({OSMUser:"testuser"},"Information for @User3",function(err) {
           should.not.exist(err);
           var slack2 = nock('https://hooks.slack.com/')
             .post('/services/osmde',checkPostJson(

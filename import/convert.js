@@ -29,23 +29,30 @@ async.series([
         var progress = new ProgressBar("Converting Articles :bar :percent",{total:length});
         var count = 0;
         async.eachSeries(result,function iterator (item,cb){
-          count ++;
+
           articlesMap[item.id] = item;
           var save=false;
 
           // place convert code here
 
-          if (item.addComment) {
+          if (typeof(item.addComment)=='string') {
             delete item.addComment;
+            save=true;
+          }
+          if (typeof item.addCommentFunction == 'string') {
+            delete item.addCommentFunction;
             save=true;
           }
 
 
           progress.tick();
-          if (save) item.save(cb); else cb();
+          if (save) {
+            count ++;
+            item.save(cb);
+          } else cb();
 
       
-        },function (){done();});
+        },function (){console.log();console.log(count + " from "+length+ " Article changed");done();});
       }
     });},
   function users(done) {
