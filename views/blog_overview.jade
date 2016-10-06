@@ -7,6 +7,7 @@ mixin displayOverviewRow(a)
   - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
   - if (disableNewerMarkdown && a._lastChange && a._lastChange["markdown"+left_lang] && a._lastChange["markdown"+right_lang] && (a._lastChange["markdown"+left_lang] >= a._lastChange["markdown"+right_lang])) enable = false;
   - if (disableNewerMarkdown && a["markdown"+left_lang] && !a["markdown"+right_lang]) enable = false;
+  - if (disableSolvedComments && (typeof a.commentStatus == 'undefined' || a.commentStatus == 'solved')) enable = false;
   if enable
     tr
       td
@@ -74,16 +75,28 @@ block blogcontent
   - disableOtherCollection = (layout.user.getOption("overview","disableOtherCollection")=="true")
   - disableWritten = (layout.user.getOption("overview","disableWritten")=="true")
   - disableNewerMarkdown = (layout.user.getOption("overview","disableNewerMarkdown")=="true")
+  - disableSolvedComments = (layout.user.getOption("overview","disableSolvedComments")=="true")
 
   if disableOwnCollection
-    p.bg-danger
-      | Collections of #{layout.user.OSMUser} are disabled
+    div.alert.alert-warning
+      span.glyphicon.glyphicon-filter
+      span=" Collections of "+layout.user.OSMUser+" are disabled"
   if disableOtherCollection
-    p.bg-danger
-      | Collections not done by #{layout.user.OSMUser} are disabled
+    div.alert.alert-warning
+      span.glyphicon.glyphicon-filter
+      span=" Collections not done by "+layout.user.OSMUser+" are disabled"
   if disableWritten
-    p.bg-danger
-      | Written markdown is disabled
+    div.alert.alert-warning
+      span.glyphicon.glyphicon-filter
+      span=" Written markdown is disabled"
+  if disableNewerMarkdown
+    div.alert.alert-warning
+      span.glyphicon.glyphicon-filter
+      span=" Disable, if left lang article is newer than right lang article"
+  if disableSolvedComments
+    div.alert.alert-warning
+      span.glyphicon.glyphicon-filter
+      span=" No & Solved Comments are disabled"
 
   table
     tr
@@ -157,7 +170,8 @@ block blogcontent
         +userConfigOption("overview","disableWritten",disableWritten," disable written articles, ")
         +userConfigOption("overview","disableNewerMarkdown",disableNewerMarkdown," disable more actual edits, ")
         +userConfigOption("overview","disableOwnCollection",disableOwnCollection," disable own collections, ")
-        +userConfigOption("overview","disableOtherCollection",disableOtherCollection," disable other collections")
+        +userConfigOption("overview","disableOtherCollection",disableOtherCollection," disable other collections, ")
+        +userConfigOption("overview","disableSolvedComments",disableSolvedComments," disable No or Solved Comments")
 
 
 
