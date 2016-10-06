@@ -261,6 +261,11 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
       },
       function putValues (cb) {
         for (k in data) {
+          // do not overwrite any existing Prototype Function with a value.
+          if (Article.prototype.hasOwnProperty(k)) {
+            console.log("WARNING: Do not store "+data[k]+" for property "+k+" for Article ID "+self.id);
+            continue;
+          }
           if (typeof(data[k])!=='undefined') self[k]=data[k];
         }
         cb();

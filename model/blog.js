@@ -86,6 +86,10 @@ Blog.prototype.setAndSave = function setAndSave(user,data,callback) {
         if (typeof(value)=='undefined')  continue;
         if (value === self[key]) continue;
         if (value === '' && typeof(self[key])==='undefined') continue;
+        if (Blog.prototype.hasOwnProperty(key)) {
+          console.log("WARNING: Do not store "+data[key]+" for property "+key+" for Blog ID "+self.id);
+          continue;
+        }
         if (typeof(value)=='object') {
           if (JSON.stringify(value)==JSON.stringify(self[key])) continue;
         }
