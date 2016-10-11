@@ -33,7 +33,13 @@ block content
       p
         a(href="#{layout.htmlroot}/config/slacknotification") Configuration of Slack Channel
 
-
+    .col-md-8.visible-xs
+      p
+        br
+        - var d = new Date();
+        - d= d.toISOString();
+        - d= d.substring(0,7);
+        a(href="#{layout.htmlroot}/changes/log?table=config&date="+d) [changes]
     .col-md-8.hidden-xs
       if changes
         h4="Last Changes "
