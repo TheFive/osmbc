@@ -52,8 +52,9 @@ function renderHistoryLog(req,res,next) {
   var table = req.query.table;
   var blog = req.query.blog;
   var property = req.query.property;
+  var oid = req.query.oid;
 
-  var params={date:date,user:user,table:table,blog:blog,property:property};
+  var params={date:date,oid:oid,user:user,table:table,blog:blog,property:property};
 
 
   var search={};
@@ -68,6 +69,8 @@ function renderHistoryLog(req,res,next) {
   if (blog) search.blog = blog;
 
   if (property) search.property = property;
+
+  if (oid) search.oid = oid;
 
 
   logModule.find(search,{column:"timestamp",desc:true,limit:500},function (err,result){
