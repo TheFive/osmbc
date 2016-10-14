@@ -98,6 +98,13 @@ function renderHelp(req,res) {
   res.set('content-type', 'text/html');
   res.render('help',{layout:res.rendervar.layout,text:text});
 }
+function createBlog(req,res) {
+  debug('createBlog');
+  should.exist(res.rendervar.layout);
+  res.render('createblog',{layout:res.rendervar.layout});
+}
+
+
 function renderChangelog(req,res,next) {
   debug('renderChangelog');
   should.exist(res.rendervar.layout);
@@ -118,6 +125,7 @@ router.get('/help/:title', renderHelp);
 router.get('/changelog', renderChangelog);
 router.get('/language',languageSwitcher);
 router.get('/userconfig',setUserConfig);
+router.get('/createblog',createBlog);
 
 
 

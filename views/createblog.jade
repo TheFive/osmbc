@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  .row
+    h2="Create Blog Page"
+    p="Use this page to create a new blog."
+    p="This is normally not necessary, as there is an automatism"+" to create a new blog every tuesday."
+    p="If you would like to write a new article, please use Collect from the menu."
+    p="if you would like to translate articles, choose the blog to work on from the main page."
+    p="Please use this only, if you really need it."
+    button.btn.btn-primary(type="button" onclick="location.href='#{layout.htmlroot}/blog/create'") Create Blog

@@ -232,7 +232,7 @@
                 <div class="form-group">
                   <form id="reviewDE" name="reviewDE" action="/blog/WN290/setReviewComment" method="post" class="form-horizontal">
                     <div class="col-md-10">
-                      <input type="text" name="text" id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').comment == '');" class="form-control">
+                      <input type="text" name="text" id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').value === '');" class="form-control">
                       <input type="text" name="lang" value="DE" class="hidden">
                     </div>
                     <div class="col-md-2">

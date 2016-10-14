@@ -52,7 +52,7 @@ mixin reviewBlog(reviewComments,lang)
                       name ="text",
                       id="reviewComment"+lang
                       placeholder="Please Type your Review here"
-                      onkeyup="document.getElementById('reviewButton#{lang}').disabled = (document.getElementById('reviewComment#{lang}').comment == '');")
+                      onkeyup="document.getElementById('reviewButton#{lang}').disabled = (document.getElementById('reviewComment#{lang}').value === '');")
                 input.hidden(type="text",name="lang" value = lang)
               .col-md-2
                 button.btn.btn-large.btn-primary(id="reviewButton"+lang type="submit" disabled) Review

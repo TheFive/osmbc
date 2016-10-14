@@ -10,18 +10,14 @@ block content
           tr
             - date ="";
             - if (params.date)  date = "/"+date;
-            form(action='#{layout.htmlroot}/changes/log#{date}',method='get',id='form')
-              td
-                input.col-sm-12(type='text',id='user',name='user',placeholder='user',value=params.user)
-              td
-                input.col-sm-12(type='text',id='blog',name='blog',placeholder='blog',value=params.blog)
-              td
-                input.col-sm-12(type='text',id='table',name='table',placeholder='table',value=params.table)
-              td
-                input.col-sm-12(type='text',id='property',name='property',placeholder='property' value=params.property)
-              td
-                input.col-sm-12(type='text',id='date',name='date',placeholder='date' value=params.date  )
-              td
+            form.form-horizontal(action='#{layout.htmlroot}/changes/log#{date}',method='get',id='form')
+              div.form-group
+                input.col-sm-2(type='text',id='user',name='user',placeholder='user',value=params.user)
+                input.col-sm-2(type='text',id='blog',name='blog',placeholder='blog',value=params.blog)
+                input.col-sm-2(type='text',id='table',name='table',placeholder='table',value=params.table)
+                input.col-sm-2(type='text',id='oid',name='oid',placeholder='Object Id' value=params.oid)
+                input.col-sm-2(type='text',id='property',name='property',placeholder='property' value=params.property)
+                input.col-sm-2(type='text',id='date',name='date',placeholder='date' value=params.date  )
                 input(type='submit',class='btn btn-default')
       p
         |only displaying changes
@@ -37,6 +33,7 @@ block content
             th user
             th blog
             th table
+            th oid
             th property
             th what
             th when
@@ -52,6 +49,7 @@ block content
                 td=change.user
                 td=change.blog
                 td=change.table
+                td=change.oid
                 td=change.property
                 td
                   :verbatim
