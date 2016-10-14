@@ -1,5 +1,18 @@
 # Change Log
 
+## [1.9.8](https://github.com/TheFive/osmbc/tree/1.9.8) (2016-10-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.7...1.9.8)
+
+**Fixed bugs:**
+
+- Review Button was disabled without reason. [\#545](https://github.com/TheFive/osmbc/issues/545)
+
+**Closed issues:**
+
+- Add OID to History Filter [\#543](https://github.com/TheFive/osmbc/issues/543)
+- Warn before using create blog [\#542](https://github.com/TheFive/osmbc/issues/542)
+- Add Links to history in mobile view [\#541](https://github.com/TheFive/osmbc/issues/541)
+
 ## [1.9.7](https://github.com/TheFive/osmbc/tree/1.9.7) (2016-10-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.6a...1.9.7)
 
@@ -1798,17 +1811,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
