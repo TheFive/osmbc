@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8...HEAD)
+
+**Fixed bugs:**
+
+- GTranslate is cutting links of of the result. [\#547](https://github.com/TheFive/osmbc/issues/547)
+
 ## [1.9.8](https://github.com/TheFive/osmbc/tree/1.9.8) (2016-10-14)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.7...1.9.8)
 
