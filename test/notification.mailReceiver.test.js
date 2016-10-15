@@ -169,7 +169,7 @@ describe('notification/mailReceiver', function() {
     it('should send out mail, when adding a comment',function (bddone){
       articleModule.createNewArticle({blog:"WN278",title:"To Add A Comment"},function(err,article){
         should.not.exist(err);
-        article.addComment({OSMUser:"testuser"},"Information for none",function(err) {
+        article.addCommentFunction({OSMUser:"testuser"},"Information for none",function(err) {
           should.not.exist(err);
 
           should(mailReceiver.for_test_only.transporter.sendMail.calledOnce).be.True();
@@ -193,7 +193,7 @@ describe('notification/mailReceiver', function() {
     it('should send out mail, when changing a comment',function (bddone){
       articleModule.createNewArticle({blog:"WN278",title:"To Add A Comment"},function(err,article){
         should.not.exist(err);
-        article.addComment({OSMUser:"testuser"},"Information for none",function(err) {
+        article.addCommentFunction({OSMUser:"testuser"},"Information for none",function(err) {
           should.not.exist(err);
           article.editComment({OSMUser:"testuser"},0,"Information for @user3",function(err) {
             should.not.exist(err);

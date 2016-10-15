@@ -1,5 +1,32 @@
 # Change Log
 
+## [1.9.8](https://github.com/TheFive/osmbc/tree/1.9.8) (2016-10-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.7...1.9.8)
+
+**Fixed bugs:**
+
+- Review Button was disabled without reason. [\#545](https://github.com/TheFive/osmbc/issues/545)
+
+**Closed issues:**
+
+- Add OID to History Filter [\#543](https://github.com/TheFive/osmbc/issues/543)
+- Warn before using create blog [\#542](https://github.com/TheFive/osmbc/issues/542)
+- Add Links to history in mobile view [\#541](https://github.com/TheFive/osmbc/issues/541)
+
+## [1.9.7](https://github.com/TheFive/osmbc/tree/1.9.7) (2016-10-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.6a...1.9.7)
+
+**Implemented enhancements:**
+
+- Build Filter for Blog view "Article with unsolved comments" [\#540](https://github.com/TheFive/osmbc/issues/540)
+
+**Closed issues:**
+
+- pgMap assert, that a set field is not a existing prototype function. [\#538](https://github.com/TheFive/osmbc/issues/538)
+
+## [1.9.6a](https://github.com/TheFive/osmbc/tree/1.9.6a) (2016-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.6...1.9.6a)
+
 ## [1.9.6](https://github.com/TheFive/osmbc/tree/1.9.6) (2016-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.5...1.9.6)
 

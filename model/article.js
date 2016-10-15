@@ -217,7 +217,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
       let addComment = data.addComment;
       delete data.addComment;
       if (addComment && addComment.trim() !== "") {
-        self.addComment(user,addComment,cb);
+        self.addCommentFunction(user,addComment,cb);
       } else cb();
     },
     function addCommentWhenUnpublished(cb) {
@@ -225,7 +225,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
       if (data.categoryEN==="--unpublished--" || data.blog==="Trash") {
         let text = "#solved because set to --unpublished--.\n\nReason:"+data.unpublishReason;
         if (data.unpublishReference) text +="\n"+data.unpublishReference;
-        self.addComment(user,text,cb);
+        self.addCommentFunction(user,text,cb);
       } else cb();
     },
 
@@ -490,8 +490,8 @@ Article.prototype.getCategory = function getCategory(lang) {
 };
 
 
-Article.prototype.addComment = function addComment(user,text,callback) {
-  debug('Article.prototype.addComment');
+Article.prototype.addCommentFunction = function addCommentFunction(user,text,callback) {
+  debug('Article.prototype.addCommentFunction');
   should(typeof(user)).eql('object');
   should(typeof(text)).eql('string');
   should(typeof(callback)).eql('function');
