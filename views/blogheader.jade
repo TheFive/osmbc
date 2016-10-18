@@ -148,12 +148,11 @@ block content
   .row
     .col-md-12
       ul.nav.nav-tabs
-        //+navbutton("OVERVIEW",style,"style","")
+        li(role="presentation")
+          a(href="#filter")
+            span.glyphicon.glyphicon-filter
         +navbutton("Overview",tab,"tab","")
-        //+navbutton("TRANSLATION",style,"style","hidden-xs")
-        //+navbutton("FULL",style,"style","hidden-xs")
         +navbutton("Full",tab,"tab","hidden-xs")
-        //+navbutton("FULLFINAL",style,"style","hidden-xs")
         +navbutton("Review",tab,"tab","")
 
         //
