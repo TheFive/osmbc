@@ -128,6 +128,7 @@ function postUserId(req, res, next) {
                  mailNewCollection:req.body.mailNewCollection,
                  mailComment:req.body.mailComment,
                  mailBlogLanguageStatusChange:req.body.mailBlogLanguageStatusChange,
+                 mailCommentGeneral:req.body.mailCommentGeneral,
                  email:req.body.email,
                  access:req.body.access};
 
