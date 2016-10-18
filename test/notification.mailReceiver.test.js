@@ -50,9 +50,9 @@ describe('notification/mailReceiver', function() {
       mailChecker = sinon.spy(function(obj,doit){ return doit(null,{response:"t"});});
       mailReceiver.for_test_only.transporter.sendMail = mailChecker;
       testutil.importData({clear:true,
-                           user:[{OSMUser:"User1",email:"user1@mail.bc",access:"full",mailNewCollection:"true"},
-                                 {OSMUser:"User2",email:"user2@mail.bc",access:"full",mailAllComment:"true"},
-                                 {OSMUser:"User3",email:"user3@mail.bc",access:"full",mailComment:["DE","User3"]},
+                           user:[{OSMUser:"UserNewCollection",email:"UserNewCollection@mail.bc",access:"full",mailNewCollection:"true"},
+                                 {OSMUser:"UserAllComment",email:"UserAllComment@mail.bc",access:"full",mailAllComment:"true"},
+                                 {OSMUser:"UserMailDeUser3",email:"UserMailDeUser3@mail.bc",access:"full",mailComment:["DE","UserMailDeUser3"]},
                                  {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
                                  {OSMUser:"User5",                     access:"full",mailAllComment:"true"},
                                  {OSMUser:"User6",                     access:"full",mailBlogStatusChange:"true"}]},bddone);
@@ -69,7 +69,7 @@ describe('notification/mailReceiver', function() {
             should(result.html).eql(expectedMail);
             should(mailChecker.getCall(0).args[0]).eql(
               {from:"noreply@gmail.com",
-              to:"user1@mail.bc",
+              to:"UserNewCollection@mail.bc",
               subject:"[TESTBC] WN789 added: Test Title",
               html:expectedMail,
               text:"CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
@@ -97,7 +97,7 @@ describe('notification/mailReceiver', function() {
           should(result.text).eql(expectedText);
           should(result).eql(
             {from:"noreply@gmail.com",
-              to:"user2@mail.bc",
+              to:"UserAllComment@mail.bc",
               subject:"[TESTBC] WN278 comment: To Add A Comment",
               html:expectedMail,
               text:expectedText});
@@ -110,7 +110,7 @@ describe('notification/mailReceiver', function() {
         should.not.exist(err);
         article.addCommentFunction({OSMUser:"testuser"},"Information for none",function(err) {
           should.not.exist(err);
-          article.editComment({OSMUser:"testuser"},0,"Information for @user3",function(err) {
+          article.editComment({OSMUser:"testuser"},0,"Information for @UserMailDeUser3",function(err) {
             should.not.exist(err);
 
             should(mailChecker.calledThrice).be.True();
@@ -124,35 +124,35 @@ describe('notification/mailReceiver', function() {
             should(result).eql(
               {
                 from: "noreply@gmail.com",
-                to: "user2@mail.bc",
+                to: "UserAllComment@mail.bc",
                 subject: "[TESTBC] WN278 comment: To Add A Comment",
                 html: expectedMail,
                 text: expectedText
               });
             // Second Mail Check
             result = mailChecker.getCall(1).args[0];
-            expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for @user3</p>';
-            expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS CHANGED\nInformation for @user3';
+            expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for @UserMailDeUser3</p>';
+            expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS CHANGED\nInformation for @UserMailDeUser3';
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
             should(result).eql(
               {
                 from: "noreply@gmail.com",
-                to: "user2@mail.bc",
+                to: "UserAllComment@mail.bc",
                 subject: "[TESTBC] WN278 comment: To Add A Comment",
                 html: expectedMail,
                 text: expectedText
               });
             // Third Mail Check
             result = mailChecker.getCall(2).args[0];
-            expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for @user3</p>';
-            expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS CHANGED\nInformation for @user3';
+            expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for @UserMailDeUser3</p>';
+            expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS CHANGED\nInformation for @UserMailDeUser3';
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
             should(result).eql(
               {
                 from: "noreply@gmail.com",
-                to: "user3@mail.bc",
+                to: "UserMailDeUser3@mail.bc",
                 subject: "[TESTBC] WN278 comment: To Add A Comment",
                 html: expectedMail,
                 text: expectedText
