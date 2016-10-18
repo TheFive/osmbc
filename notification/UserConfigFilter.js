@@ -53,13 +53,13 @@ UserConfigFilter.prototype.addComment = function ucfAddComment(user,article,comm
   // if mailCommentGeneral search for mention in all comments of an article
   // and if user has written one comment in the list, so he has to be informed to.
 
-  if (this.user.mailCommentGeneral) {
+  if (this.user.mailCommentGeneral ==="true") {
     checkComment = null;
     article.commentList.forEach(function doPush(item){
-      if (checkComment) checkComment = checkComment + "###"; else checkComment = "";
+      if (checkComment) checkComment = checkComment + " ### "; else checkComment = "";
       checkComment = checkComment + item.text;
 
-      if (item.user == user.OSMUser) sendMail = true;
+      if (item.text !== comment) checkComment = checkComment +" @"+item.user+" ";
     });
   }
   for (var i=0;i<userList.length;i++) {
@@ -88,13 +88,13 @@ UserConfigFilter.prototype.editComment = function ucfEditComment(user,article,in
   // if mailCommentGeneral search for mention in all comments of an article
   // and if user has written one comment in the list, so he has to be informed to.
 
-  if (this.user.mailCommentGeneral) {
+  if (this.user.mailCommentGeneral==="true") {
     checkComment = null;
     article.commentList.forEach(function doPush(item){
       if (checkComment) checkComment = checkComment + "###"; else checkComment = "";
       checkComment = checkComment + item.text;
 
-      if (item.user == user.OSMUser) sendMail = true;
+      if (item.text !== comment) checkComment = checkComment +" @"+item.user+" ";
     });
   }
   if (this.user.mailComment) userList = this.user.mailComment;

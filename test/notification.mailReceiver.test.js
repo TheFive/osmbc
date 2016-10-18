@@ -53,6 +53,7 @@ describe('notification/mailReceiver', function() {
                            user:[{OSMUser:"UserNewCollection",email:"UserNewCollection@mail.bc",access:"full",mailNewCollection:"true"},
                                  {OSMUser:"UserAllComment",email:"UserAllComment@mail.bc",access:"full",mailAllComment:"true"},
                                  {OSMUser:"UserMailDeUser3",email:"UserMailDeUser3@mail.bc",access:"full",mailComment:["DE","UserMailDeUser3"]},
+                                 {OSMUser:"UserMailDeUser3General",email:"UserMailDeUser3General@mail.bc",access:"full",mailCommentGeneral:"true",mailComment:["DE","UserMailDeUser3General"]},
                                  {OSMUser:"User4",email:"user4@mail.bc",access:"full"},
                                  {OSMUser:"User5",                     access:"full",mailAllComment:"true"},
                                  {OSMUser:"User6",                     access:"full",mailBlogStatusChange:"true"}]},bddone);
@@ -87,7 +88,7 @@ describe('notification/mailReceiver', function() {
         article.addCommentFunction({OSMUser:"testuser"},"Information for none",function(err) {
           should.not.exist(err);
 
-          should(mailChecker.calledOnce).be.True();
+          should(mailChecker.callCount).eql(1);
 
           // First Mail Check
           var result = mailChecker.getCall(0).args[0];
@@ -105,6 +106,78 @@ describe('notification/mailReceiver', function() {
         });
       });
     });
+    it('should send out mail, when adding a comment in general Mode (by mention)',function (bddone){
+      articleModule.createNewArticle({blog:"WN278",title:"To Add A Comment",commentList:[{user:"test",text:"@UserMailDeUser3General"}]},function(err,article){
+        should.not.exist(err);
+        article.addCommentFunction({OSMUser:"testuser"},"Information for none",function(err) {
+          should.not.exist(err);
+
+          should(mailChecker.callCount).eql(2);
+
+          // First Mail Check
+          var result = mailChecker.getCall(0).args[0];
+          var expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>';
+          var expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for none';
+          should(result.html).eql(expectedMail);
+          should(result.text).eql(expectedText);
+          should(result).eql(
+            {from:"noreply@gmail.com",
+              to:"UserAllComment@mail.bc",
+              subject:"[TESTBC] WN278 comment: To Add A Comment",
+              html:expectedMail,
+              text:expectedText});
+          // Second Mail Check
+          result = mailChecker.getCall(1).args[0];
+          expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>';
+          expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for none';
+          should(result.html).eql(expectedMail);
+          should(result.text).eql(expectedText);
+          should(result).eql(
+            {from:"noreply@gmail.com",
+              to:"UserMailDeUser3General@mail.bc",
+              subject:"[TESTBC] WN278 comment: To Add A Comment",
+              html:expectedMail,
+              text:expectedText});
+          bddone();
+        });
+      });
+    });
+    it('should send out mail, when adding a comment in general Mode (by participate)',function (bddone){
+      articleModule.createNewArticle({blog:"WN278",title:"To Add A Comment",commentList:[{user:"UserMailDeUser3General",text:"First Comment text"}]},function(err,article){
+        should.not.exist(err);
+        article.addCommentFunction({OSMUser:"testuser"},"Information for none",function(err) {
+          should.not.exist(err);
+
+          should(mailChecker.callCount).eql(2);
+
+          // First Mail Check
+          var result = mailChecker.getCall(0).args[0];
+          var expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>';
+          var expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for none';
+          should(result.html).eql(expectedMail);
+          should(result.text).eql(expectedText);
+          should(result).eql(
+            {from:"noreply@gmail.com",
+              to:"UserAllComment@mail.bc",
+              subject:"[TESTBC] WN278 comment: To Add A Comment",
+              html:expectedMail,
+              text:expectedText});
+          // Second Mail Check
+          result = mailChecker.getCall(1).args[0];
+          expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>';
+          expectedText = 'CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for none';
+          should(result.html).eql(expectedMail);
+          should(result.text).eql(expectedText);
+          should(result).eql(
+            {from:"noreply@gmail.com",
+              to:"UserMailDeUser3General@mail.bc",
+              subject:"[TESTBC] WN278 comment: To Add A Comment",
+              html:expectedMail,
+              text:expectedText});
+          bddone();
+        });
+      });
+    });
     it('should send out mail, when changing a comment',function (bddone){
       articleModule.createNewArticle({blog:"WN278",title:"To Add A Comment"},function(err,article){
         should.not.exist(err);
@@ -113,7 +186,7 @@ describe('notification/mailReceiver', function() {
           article.editComment({OSMUser:"testuser"},0,"Information for @UserMailDeUser3",function(err) {
             should.not.exist(err);
 
-            should(mailChecker.calledThrice).be.True();
+            should(mailChecker.callCount).eql(3);
 
             // First Mail Check
             var result = mailChecker.getCall(0).args[0];
