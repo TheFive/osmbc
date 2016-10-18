@@ -13,6 +13,7 @@ block blogcontent
   - disableWritten = (layout.user.getOption("full","disableWritten")=="true")
   - showColoredUser = (layout.user.getOption("full","showColoredUser")=="true")
   - disableNewerMarkdown = (layout.user.getOption("full","disableNewerMarkdown")=="true")
+  - disableSolvedComments = (layout.user.getOption("full","disableSolvedComments")=="true")
 
   - firstColSize = "col-md-1"
   - secondColSize = "col-md-11"
@@ -22,16 +23,35 @@ block blogcontent
     - secondColSize = "col-md-10"
 
 
-  if disableOwnCollection
-    p.bg-danger
-      | Collections of #{layout.user.OSMUser} are disabled
-  if disableOtherCollection
-    p.bg-danger
-      | Collections not done by #{layout.user.OSMUser} are disabled
-  if disableWritten
-    p.bg-danger
-      | Written markdown is disabled
 
+  if disableOwnCollection
+    div.alert.alert-warning
+      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=full&option=disableOwnCollection&value=false";') &times
+      span.glyphicon.glyphicon-filter
+      span=" Collections of " + layout.user.OSMUser + " are disabled"
+
+  if disableOtherCollection
+    div.alert.alert-warning
+      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=full&option=disableOtherCollection&value=false";') &times
+      span.glyphicon.glyphicon-filter
+      span=" Collections not done by " + layout.user.OSMUser + " are disabled"
+  if disableWritten
+    div.alert.alert-warning
+      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=full&option=disableWritten&value=false";') &times
+      span.glyphicon.glyphicon-filter
+      span=" Written markdown is disabled"
+
+  if disableNewerMarkdown
+    div.alert.alert-warning
+      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=full&option=disableNewerMarkdown&value=false";') &times
+      span.glyphicon.glyphicon-filter
+      span=" Disable, if left lang article is newer than right lang article"
+
+  if disableSolvedComments
+    div.alert.alert-warning
+      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=full&option=disableSolvedComments&value=false";') &times
+      span.glyphicon.glyphicon-filter
+      span=" No & Solved Comments are disabled"
   .row
     div(class=firstColSize)
     div(class=secondColSize)
@@ -183,9 +203,10 @@ block blogcontent
         +userConfigOption("full","disableWritten",disableWritten," disable written articles, ")
         +userConfigOption("full","disableNewerMarkdown",disableNewerMarkdown," disable more actual edits, ")
         +userConfigOption("full","disableOwnCollection",disableOwnCollection," disable own collections, ")
-        +userConfigOption("full","disableOtherCollection",disableOtherCollection," disable other collections")
+        +userConfigOption("full","disableOtherCollection",disableOtherCollection," disable other collections, ")
+        +userConfigOption("full","disableSolvedComments",disableSolvedComments," disable No or Solved Comments")
 
-    p
+  p
 
 
 
