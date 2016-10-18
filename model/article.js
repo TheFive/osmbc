@@ -500,17 +500,25 @@ Article.prototype.addCommentFunction = function addCommentFunction(user,text,cal
   if (text.trim() === "") return callback(new Error("Empty Comment Added"));
   var self = this;
 
+  // Add the new comment with User to the comment list object
   if (!self.commentList) self.commentList = [];
   self.commentStatus = "open";
   var commentObject = {user:user.OSMUser,timestamp:new Date(),text:text};
   self.commentList.push(commentObject);
+
+  // Set the self written comment (and all before) to be read by OSMUser
   if (!self.commentRead) self.commentRead = {};
   self.commentRead[user.OSMUser] = self.commentList.length-1;
+
+
   async.series([
     function sendit(cb) {
       debug('sendit');
+
+      // send message because changed comment as described in message center
       messageCenter.global.addComment(user,self,text,cb);
     },function searchStatus(cb) {
+      
       if (text.indexOf("#solved")>= 0) {
         self.commentStatus = "solved";
       }
