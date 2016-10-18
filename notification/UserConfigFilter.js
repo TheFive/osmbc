@@ -46,11 +46,25 @@ UserConfigFilter.prototype.addComment = function ucfAddComment(user,article,comm
   if (this.user.mailAllComment == "true") {
     sendMail = true;
   }
+  let checkComment = comment;
   var userList = [];
   if (this.user.mailComment) userList = this.user.mailComment;
+
+  // if mailCommentGeneral search for mention in all comments of an article
+  // and if user has written one comment in the list, so he has to be informed to.
+
+  if (this.user.mailCommentGeneral) {
+    checkComment = null;
+    article.commentList.forEach(function doPush(item){
+      if (checkComment) checkComment = checkComment + "###"; else checkComment = "";
+      checkComment = checkComment + item.text;
+
+      if (item.user == user.OSMUser) sendMail = true;
+    });
+  }
   for (var i=0;i<userList.length;i++) {
 
-    if (comment.search(new RegExp("@"+userList[i]+"\\b","i"))>=0) {
+    if (checkComment.search(new RegExp("@"+userList[i]+"\\b","i"))>=0) {
       sendMail = true;
       debug("Mail send because comment for @"+userList[i]);
     }
@@ -67,7 +81,22 @@ UserConfigFilter.prototype.editComment = function ucfEditComment(user,article,in
   if (this.user.mailAllComment == "true") {
     sendMail = true;
   }
+  let checkComment = comment;
   var userList = [];
+  if (this.user.mailComment) userList = this.user.mailComment;
+
+  // if mailCommentGeneral search for mention in all comments of an article
+  // and if user has written one comment in the list, so he has to be informed to.
+
+  if (this.user.mailCommentGeneral) {
+    checkComment = null;
+    article.commentList.forEach(function doPush(item){
+      if (checkComment) checkComment = checkComment + "###"; else checkComment = "";
+      checkComment = checkComment + item.text;
+
+      if (item.user == user.OSMUser) sendMail = true;
+    });
+  }
   if (this.user.mailComment) userList = this.user.mailComment;
   for (var i=0;i<userList.length;i++) {
     if (comment.search(new RegExp("@"+userList[i]+"\\b","i"))>=0) {
