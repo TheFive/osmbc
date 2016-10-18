@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.9a](https://github.com/TheFive/osmbc/tree/1.9.9a) (2016-10-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.9...1.9.9a)
+
+**Implemented enhancements:**
+
+- UI Feature: allow to switch a filter of, by clicking X in the filter box. [\#550](https://github.com/TheFive/osmbc/issues/550)
+
 ## [1.9.9](https://github.com/TheFive/osmbc/tree/1.9.9) (2016-10-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8a...1.9.9)
 
@@ -300,13 +307,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
