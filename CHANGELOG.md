@@ -1,8 +1,18 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [1.9.9](https://github.com/TheFive/osmbc/tree/1.9.9) (2016-10-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8a...1.9.9)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8...HEAD)
+**Closed issues:**
+
+- Option to send out an EMail for a comment if mentioning was done somewhere in discussion, not in concrete comments. [\#549](https://github.com/TheFive/osmbc/issues/549)
+
+## [1.9.8a](https://github.com/TheFive/osmbc/tree/1.9.8a) (2016-10-15)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8...1.9.8a)
+
+**Implemented enhancements:**
+
+- Add direct link to filter at end of blog view at top of page. [\#546](https://github.com/TheFive/osmbc/issues/546)
 
 **Fixed bugs:**
 
@@ -1819,17 +1829,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
