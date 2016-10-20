@@ -600,6 +600,16 @@ Article.prototype.markCommentRead = function markCommentRead(user,index,callback
   self.save(callback);
 };
 
+Article.prototype.setTag = function setTag(user,action,tag,callback) {
+  debug('Article.prototype.setTag');
+  should(typeof(user)).eql('object');
+  should(typeof action).eql('string');
+  should(typeof tag).eql('string');
+  should(typeof(callback)).eql('function');
+
+
+};
+
 Article.prototype.addNotranslate = function addNotranslate(user,shownLang,callback) {
   debug('Article.prototype.addNotranslate');
   var self = this;
