@@ -421,20 +421,22 @@ function markCommentRead(req, res, next) {
   });
 }
 
-function setVote(req, res, next) {
-  debug('setTag');
+
+
+function doAction(req, res, next) {
+  debug('doAction');
 
   var action = req.params.action;
   var tag = req.params.tag;
 
-  if (action !== "setVote" && action !== "unsetVote") return next();
+  if (["setTag","unsetTag","setVote","unsetVote"].indexOf(action)<=0) return next(new Error(action + " is unknown"));
 
 
   var article = req.article;
   should.exist(article);
 
-  article.setTag(req.user,action,tag,function(err) {
-    debug('setTag->markCommentRead');
+  article[action](req.user,tag,function(err) {
+    debug('doAction->%s callback',action);
     if (err ) {
       next(err);
       return;
@@ -443,21 +445,6 @@ function setVote(req, res, next) {
     returnToUrl =req.header('Referer') || returnToUrl;
     res.redirect(returnToUrl);
   });
-}
-
-
-function setTag(req, res, next) {
-  debug('setTag');
-
-  var action = req.params.action;
-  var tag = req.params.tag;
-
-  if (action !== "setTag" && action !== "unsetTag") return next(new Error("Unkown Action "+action+" for article."));
-
-
-  var article = req.article;
-  should.exist(article);
-
 }
 
 function createArticle(req, res, next) {
@@ -661,8 +648,7 @@ router.param('article_id',getArticleFromID);
 
 router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
-router.get('/:article_id/:action.:tag', setVote );
-router.get('/:article_id/:action.:tag', setTag );
+router.get('/:article_id/:action.:tag', doAction );
 
 
 router.post('/:article_id/addComment', exports.postNewComment);

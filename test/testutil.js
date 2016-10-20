@@ -221,13 +221,19 @@ exports.checkData = function checkData(data,callback) {
         async.each(data.article,function checkOneArticle(d,cb){
           var commentList = d.commentList;
           var commentRead = d.commentRead;
+          var votes = d.votes;
+          var tags = d.tags;
           delete d.commentList;
           delete d.commentRead;
+          delete d.votes;
+          delete d.tags;
           articleModule.findOne(d,function(err,result){
             should.not.exist(err);
             should.exist(result,"NOT Found: "+JSON.stringify(d));
             should(result.commentList).eql(commentList);
             should(result.commentRead).eql(commentRead);
+            should(result.votes).eql(votes);
+            should(result.tags).eql(tags);
             cb();
           });
         },function(err) {
@@ -247,7 +253,8 @@ exports.checkData = function checkData(data,callback) {
         async.each(data.change,function checkOneChange(d,cb){
           logModule.find(d,function(err,result){
             should.not.exist(err);
-            should( result && result.length>0).be.True();
+            should.exist(result);
+            should(result.length>0).be.True();
             cb();
           });
         },function(err) {
