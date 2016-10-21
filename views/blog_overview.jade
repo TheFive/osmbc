@@ -16,6 +16,7 @@ mixin displayOverviewRow(a)
       td.hidden-xs
         if showVisibleLanguages
           +languageDisplay(a,{short: true})
+        +voteDisplay(a,showVotes)
 
 
 
@@ -76,6 +77,9 @@ block blogcontent
   - disableWritten = (layout.user.getOption("overview","disableWritten")=="true")
   - disableNewerMarkdown = (layout.user.getOption("overview","disableNewerMarkdown")=="true")
   - disableSolvedComments = (layout.user.getOption("overview","disableSolvedComments")=="true")
+  - showVotes = {}
+  each vote in votes
+    - showVotes[vote.name] = (layout.user.getOption("overview","showVote_"+vote.name)=="true")
 
   if disableOwnCollection
     div.alert.alert-warning
@@ -132,7 +136,6 @@ block blogcontent
       tr
         td
         td.hidden-xs
-        td
           h1="Wrong Categorie "+c
       for a in articles[c]
         +displayOverviewRow(a)
@@ -169,6 +172,12 @@ block blogcontent
         +userConfigOption("overview","showEditor",showEditor," show editor , ")
         +userConfigOption("overview","showColoredUser",showColoredUser," show users colored, ")
         +userConfigOption("overview","showLanguages",showLanguages," show languages")
+    .row
+      .col-md-1
+        p="Display Votes"
+      .col-md-11
+        each vote in votes
+          +userConfigOption("overview","showVote_"+vote.name,showVotes[vote.name]," show "+vote.name+", " )
     .row
       .col-md-1
         p="Filter: "

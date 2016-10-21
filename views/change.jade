@@ -79,7 +79,18 @@ block content
             span.osmbc-inserted-inverted
               |inserted 
             span.osmbc-deleted-inverted
-              |removed 
+              |removed
+      if change.property.substring(0,8)==="markdown"
+        tr
+          th="Preview From"
+          td
+            :verbatim
+            !{layout.md_render(change.from)}
+        tr
+          th="Preview To"
+          td
+            :verbatim
+            !{layout.md_render(change.to)}
 
 
 

@@ -1,0 +1,23 @@
+extends config
+
+block showContentOfConfig
+  - lang = layout.language
+  p
+    | Supported icons are "glyphicon" & "font awesome" icons.
+    | See Bootstrap 3.0 or font awesome documentation.
+  if config.getJSON()
+    .row
+      table.table.table-condensed
+        thead
+          tr
+            th="Icon"
+            th="At Top"
+            th="Name"
+            th="description"
+        tbody
+          each vote in config.getJSON()
+            tr
+              td.col-md-1(class=vote.iconClass)
+              td=vote.displayAtTop
+              td=vote.name
+              td=vote.description

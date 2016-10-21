@@ -600,6 +600,77 @@ Article.prototype.markCommentRead = function markCommentRead(user,index,callback
   self.save(callback);
 };
 
+Article.prototype.setVote = function setVote(user,tag,callback) {
+  debug('Article.prototype.setVote');
+  should(typeof(user)).eql('object');
+  should(typeof tag).eql('string');
+  should(typeof(callback)).eql('function');
+  var self = this;
+
+  if (!self.votes) self.votes={};
+  if (!self.votes[tag]) self.votes[tag]=[];
+  if (self.votes[tag].indexOf(user.OSMUser)<0) {
+    self.votes[tag].push(user.OSMUser);
+    self.save(callback);
+    return
+  }
+  return callback();
+};
+
+Article.prototype.unsetVote = function unsetVote(user,tag,callback) {
+  debug('Article.prototype.unsetVote');
+  should(typeof(user)).eql('object');
+  should(typeof tag).eql('string');
+  should(typeof(callback)).eql('function');
+  var self = this;
+
+  if (!self.votes) self.votes={};
+  if (!self.votes[tag]) self.votes[tag]=[];
+  let index = self.votes[tag].indexOf(user.OSMUser);
+  if (index >= 0) {
+    self.votes[tag].splice(index,1);
+
+    self.save(callback);
+    return;
+  }
+  return callback();
+};
+
+Article.prototype.setTag = function setTag(user,tag,callback) {
+  debug('Article.prototype.setTag');
+  should(typeof(user)).eql('object');
+  should(typeof tag).eql('string');
+  should(typeof(callback)).eql('function');
+  var self = this;
+
+  if (!self.tags) self.tags=[];
+  if (self.tags.indexOf(tag)<0) {
+    self.tags.push(tag);
+    self.save(callback);
+    return
+  }
+  return callback();
+};
+
+Article.prototype.unsetTag = function unsetTag(user,tag,callback) {
+  debug('Article.prototype.unsetTag');
+  should(typeof(user)).eql('object');
+  should(typeof tag).eql('string');
+  should(typeof(callback)).eql('function');
+  var self = this;
+
+  if (!self.tags) self.tags=[];
+  let index = self.tags.indexOf(tag);
+  if (index >= 0 ) {
+    console.log(index);
+    console.dir(self.tags);
+    self.tags.splice(index,1);
+    self.save(callback);
+    return;
+  }
+  return callback();
+};
+
 Article.prototype.addNotranslate = function addNotranslate(user,shownLang,callback) {
   debug('Article.prototype.addNotranslate');
   var self = this;

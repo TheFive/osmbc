@@ -14,6 +14,17 @@ var config   = require('../config.js');
 var messageCenter = require('../notification/messageCenter.js');
 var slackReceiver = require('../notification/slackReceiver.js');
 
+
+function freshupVotes(json) {
+  if (typeof json != "object") return;
+  if (!Array.isArray(json)) return;
+  for (let i=0;i<json.length;i++) {
+    let item = json[i];
+    if (item.icon && item.icon.substring(0,3)==="fa-") item.iconClass = "fa "+item.icon;
+    if (item.icon && item.icon.substring(0,10)==="glyphicon-") item.iconClass = "glyphicon "+item.icon;
+  }
+}
+
 function Config (proto)
 {
 	debug("Config");
@@ -63,7 +74,9 @@ Config.prototype.getJSON = function getJSON() {
   }
   if (this.type == "yaml") {
     try {
-      return  yaml.safeLoad(this.yaml);
+      this.json = yaml.safeLoad(this.yaml);
+      if (this.name === "votes") freshupVotes(this.json);
+      return this.json;
     }
     catch(err) {
       return {error:"YAML convert error for: "+this.name + " " ,errorMessage: err};
@@ -205,6 +218,11 @@ var checkAndRepair = {
     var es = c.getJSON();
     if (!es) es = {};
     c.json = es;
+  },
+  "votes":function (c) {
+    var v = c.getJSON();
+    if (!v) v = [];
+    c.json = v;
   }
 };
 
@@ -283,6 +301,7 @@ Config.prototype._internalSave = pgMap.save;
 // save stores the current object to database
 Config.prototype.save = function saveConfig(callback) {
   debug('Config.prototype.save');
+  delete this.json;
   this._internalSave(function didit(err,result){
     if (err) return callback(err);
     actualiseConfigMap(result);
@@ -326,7 +345,8 @@ function initialise(callback) {
       initConfigElement.bind(null,"licenses"),
       initConfigElement.bind(null,"categorytranslation"),
       initConfigElement.bind(null,"editorstrings"),
-      initConfigElement.bind(null,"automatictranslatetext")
+      initConfigElement.bind(null,"automatictranslatetext"),
+      initConfigElement.bind(null,"votes")
   ],
     function final(err){
       debug("finalFunction initialise");
