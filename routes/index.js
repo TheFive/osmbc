@@ -16,7 +16,7 @@ function renderHome(req,res,next) {
   debug('renderHome');
   should.exist(res.rendervar.layout);
   var date = new Date();
-  date.setTime(date.getTime()-1000*60*10);
+  date.setTime(date.getTime()-1000*60*15);
 
   async.auto({
     "historie":logModule.find.bind(logModule,{table:"IN('blog','article')"},{column:"id",desc :true,limit:20}),

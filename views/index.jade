@@ -43,11 +43,11 @@ block content
         .row
           h4="Current Users"
           p
-            for user,i in activeUserList
-              if (i>0)
-                span=", "
-              span.text=user.OSMUser +" "
-              span.text-muted=layout.moment(user.lastAccess).fromNow()
+            table.table
+              for user,i in activeUserList
+                tr
+                  td=user.OSMUser +" "
+                  td.text-muted=layout.moment(user.lastAccess).fromNow()
         .row
           h4="Admin View"
           a(href="#{layout.htmlroot}/osmbc/admin") click here
