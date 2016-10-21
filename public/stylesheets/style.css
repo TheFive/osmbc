@@ -77,6 +77,14 @@ table {
   color:white;
 }
 
+.osmbc-btn-voted {
+  background-color: #5cb85c;
+  color:#ccff33;
+}
+.osmbc-btn-not-voted {
+  background-color: #5cb85c;
+  color:white;
+}
 .osmbccolor-lang {
   color: #d7d711;
 }

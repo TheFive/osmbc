@@ -205,6 +205,11 @@ var checkAndRepair = {
     var es = c.getJSON();
     if (!es) es = {};
     c.json = es;
+  },
+  "votes":function (c) {
+    var v = c.getJSON();
+    if (!v) v = [];
+    c.json = v;
   }
 };
 
@@ -326,7 +331,8 @@ function initialise(callback) {
       initConfigElement.bind(null,"licenses"),
       initConfigElement.bind(null,"categorytranslation"),
       initConfigElement.bind(null,"editorstrings"),
-      initConfigElement.bind(null,"automatictranslatetext")
+      initConfigElement.bind(null,"automatictranslatetext"),
+      initConfigElement.bind(null,"votes")
   ],
     function final(err){
       debug("finalFunction initialise");

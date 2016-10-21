@@ -47,6 +47,13 @@ function renderArticleId(req,res,next) {
   debug('renderArticleId');
 
   var languageFlags = configModule.getConfig("languageflags");
+  var votes = configModule.getConfig("votes");
+
+  votes.forEach(function(item){
+    if (item.icon && item.icon.substring(0,3)==="fa-") item.iconClass = "fa "+item.icon;
+    if (item.icon && item.icon.substring(0,10)==="glyphicon-") item.iconClass = "glyphicon "+item.icon;
+  });
+
   var article = req.article;
   should.exist(article);
 
@@ -156,7 +163,7 @@ function renderArticleId(req,res,next) {
         if (req.query.edit && ! params.edit) {
           debug("return to was called, redirecting");
           var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
-          if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
+          //if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
           res.redirect(returnToUrl);
         } else {
           debug("rendering page");
@@ -182,6 +189,7 @@ function renderArticleId(req,res,next) {
                                 googleTranslateText:configModule.getConfig("automatictranslatetext"),
                                 params:params,
                                 placeholder:placeholder,
+                                votes:votes,
                                 articleCategories:result.articleForSort,
                                 blog:result.blog,
                                 changes:result.changes,
