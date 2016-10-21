@@ -18,5 +18,6 @@ block showContentOfConfig
           td="2015-12-15"
           td="Germany"
     p
-      :verbatim
-        !{config.json.footer[lang]}
+      if (config.json.footer)
+        :verbatim
+          !{config.json.footer[lang]}

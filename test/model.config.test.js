@@ -57,7 +57,7 @@ describe('model/config', function() {
           should.not.exist(err);
           testutil.findJSON("config",{name:"calendarflags"},function(err,result){
             should.not.exist(err);
-            should(result).eql({id:id,yaml:"not logged",version:2,json:"not logged",name:"calendarflags",type:"yaml"});
+            should(result).eql({id:id,yaml:"not logged",version:2,name:"calendarflags",type:"yaml"});
             logModule.find({},{column:"property"},function (err,result){
               should.not.exist(err);
               should.exist(result);

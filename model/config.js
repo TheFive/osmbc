@@ -16,8 +16,6 @@ var slackReceiver = require('../notification/slackReceiver.js');
 
 
 function freshupVotes(json) {
-  console.dir("hallole");
-  console.dir(json);
   if (typeof json != "object") return;
   if (!Array.isArray(json)) return;
   for (let i=0;i<json.length;i++) {
