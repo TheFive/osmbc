@@ -1,2 +1,12 @@
-- glyphicon-thumbs-up
-  glyphicon-thumbs-down
+- name: pro
+  icon: fa-thumbs-up
+  displayAtTop: true
+  description: Use this to show your interest publishing this article
+- name: unpublish
+  icon: fa-thumbs-down
+  displayAtTop: true
+  description: Use to vote for unpublishing this article
+- name: fav
+  icon: glyphicon-star
+  description: Favs will be shown in the weeklyOSM ecxerpt of the issue.
+- name: doit

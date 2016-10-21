@@ -62,7 +62,7 @@ function renderConfigName(req, res, next) {
       if (name == "slacknotification") jadeFile = name;
       if (name == "votes") jadeFile = name;
       res.set('content-type', 'text/html');
-      res.render(jadeFile,{config:config,
+      res.render("config/"+jadeFile,{config:config,
                         changes:changes,
                         params:params,
                         layout:res.rendervar.layout});

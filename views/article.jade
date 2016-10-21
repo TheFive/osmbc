@@ -29,21 +29,6 @@ mixin rightcolumn
       else
         p No Content provided
 
-mixin voteButton(vote,article)
-  - if (article.votes) vb_listVotes = article.votes[vote.name]
-  - vb_numVotes = 0
-  - vb_voted = false;
-  - if (vb_listVotes) vb_numVotes=vb_listVotes.length;
-  - if (vb_listVotes) vb_voted=(vb_listVotes.indexOf(layout.user.OSMUser)>=0)
-  - vb_displayClass = "osmbc-btn-not-voted"
-  - vb_voteAction = "setVote"
-  - if (vb_voted)  vb_displayClass = "osmbc-btn-voted"
-  - if (vb_voted)  vb_voteAction = "unsetVote"
-  button.btn(type="button" class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'")
-    i(class=vote.iconClass)
-    if (!vote.iconClass)
-      span=vote.name
-    span="  "+vb_numVotes
 
 block content
   p
@@ -102,7 +87,7 @@ block content
               a(href="#doublettes")
                 div.button.btn.btn-large.btn-danger=articleReferences.count+" doub."
           .col-md-1
-            button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OKOK
+            button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
 
 
         .row
@@ -261,7 +246,8 @@ block content
           p=article.blog
         .col-md-4
           for vote,i in votes
-            +voteButton(vote,article)
+            if (vote.displayAtTop)
+              +voteButton(vote,article)
         .col-md-1
           if articleReferences.count >= 1
             a(href="#doublettes")
@@ -410,21 +396,26 @@ block content
 
   form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
     input.form-control(type="hidden" name = "text" id ="textanalysefield")
-  if !params.edit
-    .row
-      h3="Votes & Tags ..."
-      table.table.table-condensed
-        tbody
-          - for vote ,i in votes
-            tr
-              td.col-md-1(class=vote.iconClass)
-              td.col-md-1=vote.name
-              td.col-md-9
-                if article.votes && article.votes[vote.name]
-                  - labelclass = "osmbclabel-collect"
-                  each user in article.votes[vote.name]
-                    - if (layout.user.OSMUser === user) labelclass = "osmbclabel-user"
-                    span.label.small-margin(class=labelclass)=user
+
+  .row
+    h3="Votes & Tags ..."
+    table.table.table-condensed
+      tbody
+        - for vote ,i in votes
+          tr
+            td.col-md-1
+              if params.edit
+                span(class=vote.iconClass)
+              else
+                +voteButton(vote,article)
+            td.col-md-1=vote.name
+            td.col-md-5
+              if article.votes && article.votes[vote.name]
+                - labelclass = "osmbclabel-collect"
+                each user in article.votes[vote.name]
+                  - if (layout.user.OSMUser === user) labelclass = "osmbclabel-user"
+                  span.label.small-margin(class=labelclass)=user
+            td.col-md-5=vote.description
 
   .row
     if (article.commentList)
