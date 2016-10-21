@@ -70,7 +70,7 @@ describe('routes/changes',function() {
             var renderData = call.args[1];
             should(renderData.layout).equal("TEMP");
             should(renderData.change).eql({titel:"Hallo",id:"1",from:"First Text",to:"First new test",timestamp:timestamp.toISOString()});
-            should(renderData.coloredChange).eql('<span style="color:grey">First </span><span class="osmbc-deleted-inverted">T</span><span class="osmbc-inserted-inverted">n</span><span style="color:grey">e</span><span class="osmbc-deleted-inverted">x</span><span class="osmbc-inserted-inverted">w </span><span style="color:grey">t</span><span class="osmbc-inserted-inverted">est</span>');
+            should(renderData.coloredChange).eql('<span style=\"color:grey\">First </span><span class=\"osmbc-deleted-inverted\">Text</span><span class=\"osmbc-inserted-inverted\">new test</span>');
             //should(renderData.moment).equal(moment);
             bddone();            
           }

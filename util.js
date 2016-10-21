@@ -45,6 +45,8 @@ function linkify(string) {
 
 
 function md_render(text) {
+  if (typeof text == "undefined") text = "";
+  if (text === null) text = "";
 
   // search a free standing link and make a markdown link from it.
   text = text.replace(/\s(https?:\/\/[^\[\]\(\)\s]*)\s/gi, ' [$1]($1) ');

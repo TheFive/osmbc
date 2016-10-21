@@ -16,8 +16,7 @@ function generateHTMLDiff(one,other) {
   if (typeof(one)!= "string") return "";
   if (typeof(other)!= "string") return "";
 
-  var diff = jsdiff.diffChars(one, other);
-
+  let diff = jsdiff.diffWords(one, other);
   var result = "";
   diff.forEach(function(part){
     // green for additions, red for deletions
