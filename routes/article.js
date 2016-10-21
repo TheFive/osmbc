@@ -7,192 +7,200 @@ var slackrouter = express.Router();
 var should   = require('should');
 var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
-var util = require('../util.js');
+var util     = require('../util.js');
 
 
-var util     = require("../util.js");
 var config        = require('../config.js');
 
 var BlogRenderer = require('../render/BlogRenderer.js');
 
 var articleModule = require('../model/article.js');
-var twitter = require('../model/twitter.js');
+var twitter       = require('../model/twitter.js');
 var blogModule    = require('../model/blog.js');
 var logModule     = require('../model/logModule.js');
 var configModule  = require('../model/config.js');
-var htmltitle  = require('../model/htmltitle.js');
+var htmltitle     = require('../model/htmltitle.js');
 
 require('jstransformer')(require('jstransformer-markdown-it'));
 
 
+// This Function converts the ID (used as :article_id in the routes) to
+// an article and stores the object in the request
+// if article_id is not existing it throws an error.
 
+function getArticleFromID(req,res,next,id) {
+  debug("getArticleFromID");
+  req.article = null;
+  should.exist(id);
+  articleModule.findById(id,function(err,result) {
+    debug('getArticleFromID->findById');
+    if (err) return next(err);
+    if (!result) return next(new Error("Article ID "+id+" does not exist"));
+    req.article = result;
+    next();
+  });
+}
+
+
+// renderArticleId prepares the view for displaying an article
 function renderArticleId(req,res,next) {
   debug('renderArticleId');
 
-  // Get the ID and the article to display
-  var id = req.params.article_id;
-
   var languageFlags = configModule.getConfig("languageflags");
+  var votes = configModule.getConfig("votes");
 
+ /* votes.forEach(function(item){
+    if (item.icon && item.icon.substring(0,3)==="fa-") item.iconClass = "fa "+item.icon;
+    if (item.icon && item.icon.substring(0,10)==="glyphicon-") item.iconClass = "glyphicon "+item.icon;
+  });*/
 
-
-
-
-
-  articleModule.findById(id,function(err,article) {
-    debug('renderArticleId->findById');
-
-
-    // if the ID does not exist, send an error
-    if (!article || typeof(article.id) == 'undefined') return next(new Error("Article "+id+" does not exist"));
-
-    // Variables for rendering purposes
+  var article = req.article;
+  should.exist(article);
 
    
-    var categories = blogModule.getCategories();
+  var categories = blogModule.getCategories();
 
-    // Params is used for indicating EditMode
-    var params = {};
-    params.edit = req.query.edit;
-    params.left_lang = req.user.getMainLang();
-    params.right_lang = req.user.getSecondLang();
-    params.editComment = null;
-    if (req.query.editComment) params.editComment = req.query.editComment;
-    if (req.query.notranslation) params.notranslation = req.query.notranslation;
+  // Params is used for indicating EditMode
+  var params = {};
+  params.edit = req.query.edit;
+  params.left_lang = req.user.getMainLang();
+  params.right_lang = req.user.getSecondLang();
+  params.editComment = null;
+  if (req.query.editComment) params.editComment = req.query.editComment;
+  if (req.query.notranslation) params.notranslation = req.query.notranslation;
 
 
- 
-    var placeholder = configModule.getPlaceholder();
-    async.auto({
-      // Find usage of Links in other articles
-      articleReferences:article.calculateUsedLinks.bind(article),
-      // Find the assoziated blog for this article
-      blog:
-      function findBlog(callback) {
-        debug('renderArticleId->blog');
 
-        blogModule.findOne({name:article.blog},function(err,blog){
-          debug('renderArticleId->findeOne');
+  var placeholder = configModule.getPlaceholder();
+  async.auto({
+    // Find usage of Links in other articles
+    articleReferences:article.calculateUsedLinks.bind(article),
+    // Find the associated blog for this article
+    blog:
+    function findBlog(callback) {
+      debug('renderArticleId->blog');
 
-          if (blog) {
-            categories = blog.getCategories();
-          } else {
-            debug('no blog found !!');
-          }
+      blogModule.findOne({name:article.blog},function(err,blog){
+        debug('renderArticleId->findOne');
+        if (blog) {
+          categories = blog.getCategories();
+        } else {
+          debug('no blog found !!');
+        }
+        callback(err,blog);
+      });
+    },
 
-          callback(err,blog);
-        });
-      },
-      // Find all log messages for the article
-      changes:
-      function (callback) {
-        debug('renderArticleId->changes');
+    // Find all log messages for the article
+    changes:
+    function (callback) {
+      debug('renderArticleId->changes');
 
-        logModule.find(" where data->>'oid' ='"+id+"' and data->>'table' = 'article' and data->>'property' not like 'comment%' ",{column:"timestamp",desc :true},function(err,result) {
-          debug('renderArticleId->findLog');
+      logModule.find(" where data->>'oid' ='"+article.id+"' and data->>'table' = 'article' and data->>'property' not like 'comment%' ",{column:"timestamp",desc :true},function(err,result) {
+        debug('renderArticleId->findLog');
 
-          callback(err,result);
-        });
-      },
-      // (informal) locking information for the article
-      edit:
-      function (callback){
-        debug('renderArticleId->edit');
+        callback(err,result);
+      });
+    },
+    // (informal) locking information for the article
+    edit:
+    function (callback){
+      debug('renderArticleId->edit');
 
-        if (typeof(params.edit)!='undefined') {
-          if (params.edit=="false") {
-            delete params.edit;
-            article.doUnlock(callback);
-            return;
-          }
-          article.doLock(req.user.displayName,callback);
+      if (typeof(params.edit)!='undefined') {
+        if (params.edit=="false") {
+          delete params.edit;
+          article.doUnlock(callback);
           return;
-        } else { 
-          return callback();
         }
-      },
-      articleForSort:
-      function articleForSort(callback){
-        debug('renderArticleId->articleForSort');
-        articleModule.find({blog:article.blog,categoryEN:article.categoryEN},function(err,result){
-          if (err) return callback(err);
-          callback(null,result);
-        });
-      },
-        notranslate:
-          function (callback){
-            debug('renderArticleId->notranslate');
+        article.doLock(req.user.displayName,callback);
+        return;
+      } else {
+        return callback();
+      }
+    },
+    articleForSort:
+    function articleForSort(callback){
+      debug('renderArticleId->articleForSort');
+      articleModule.find({blog:article.blog,categoryEN:article.categoryEN},function(err,result){
+        if (err) return callback(err);
+        callback(null,result);
+      });
+    },
+      notranslate:
+        function (callback){
+          debug('renderArticleId->notranslate');
 
-            if (params.notranslation==='true') {
-              article.addNotranslate(req.user,res.rendervar.layout.usedLanguages,function (err) {
-                if (err) return callback(err);
-                var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
-                if (params.style) returnToUrl = returnToUrl+"?style="+params.style;
-                callback(null,returnToUrl);
-              });
-            } else return callback();
-      }},
-        function (err,result) {
-          debug('renderArticleId->finalFunction');
-          if (err) return next(err);
-          if (result.notranslate) return res.redirect(result.notranslate);
-          let renderer = new BlogRenderer.HtmlRenderer();
+          if (params.notranslation==='true') {
+            article.addNotranslate(req.user,res.rendervar.layout.usedLanguages,function (err) {
+              if (err) return callback(err);
+              var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
+              if (params.style) returnToUrl = returnToUrl+"?style="+params.style;
+              callback(null,returnToUrl);
+            });
+          } else return callback();
+    }},
+      function (err,result) {
+        debug('renderArticleId->finalFunction');
+        if (err) return next(err);
+        if (result.notranslate) return res.redirect(result.notranslate);
+        let renderer = new BlogRenderer.HtmlRenderer();
 
 
 
-          var languages = config.getLanguages();
-          for (var i=0;i<languages.length;i++) {
-            var lang = languages[i];
-            if (typeof(article["markdown"+lang])!='undefined') {
-              article["textHtml"+lang]="<ul>"+renderer.renderArticle(lang,article)+"</ul>";
-            }
+        var languages = config.getLanguages();
+        for (var i=0;i<languages.length;i++) {
+          var lang = languages[i];
+          if (typeof(article["markdown"+lang])!='undefined') {
+            article["textHtml"+lang]="<ul>"+renderer.renderArticle(lang,article)+"</ul>";
           }
-          if (typeof(article.comment)!='undefined') {
-            article.commentHtml = markdown.render(article.comment);
-          } 
-
-          // 
-          if (req.query.edit && ! params.edit) {
-            debug("return to was called, redirecting");
-            var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
-            if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
-            res.redirect(returnToUrl);    
-          } else {
-            debug("rendering page");
-            // Render the article with all calculated vars
-            // (res.rendervar.layout is set by the express routing
-            // mechanism before this router)
-          /*  var file = path.resolve(__dirname,'..','views', "article.jade");
-
-            var result = jade.renderFile(file,{layout:res.rendervar.layout,
-                                  article:article,
-                                  params:params,
-                                  placeholder:placeholder,
-                                  blog:result.blog,
-                                  changes:result.changes,
-                                  articleReferences:result.articleReferences,
-                                  usedLinks:result.usedLinks,
-                                  categories:categories});
-
-            res.end(result);return;*/
-            res.set('content-type', 'text/html');
-            res.render('article',{layout:res.rendervar.layout,
-                                  article:article,
-                                  googleTranslateText:configModule.getConfig("automatictranslatetext"),
-                                  params:params,
-                                  placeholder:placeholder,
-                                  articleCategories:result.articleForSort,
-                                  blog:result.blog,
-                                  changes:result.changes,
-                                  articleReferences:result.articleReferences,
-                                  usedLinks:result.usedLinks,
-                                  categories:categories,
-                                  languageFlags:languageFlags});
-         }
         }
-      );
-    }
-  );
+        if (typeof(article.comment)!='undefined') {
+          article.commentHtml = markdown.render(article.comment);
+        }
+
+        //
+        if (req.query.edit && ! params.edit) {
+          debug("return to was called, redirecting");
+          var returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
+          //if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
+          res.redirect(returnToUrl);
+        } else {
+          debug("rendering page");
+          // Render the article with all calculated vars
+          // (res.rendervar.layout is set by the express routing
+          // mechanism before this router)
+        /*  var file = path.resolve(__dirname,'..','views', "article.jade");
+
+          var result = jade.renderFile(file,{layout:res.rendervar.layout,
+                                article:article,
+                                params:params,
+                                placeholder:placeholder,
+                                blog:result.blog,
+                                changes:result.changes,
+                                articleReferences:result.articleReferences,
+                                usedLinks:result.usedLinks,
+                                categories:categories});
+
+          res.end(result);return;*/
+          res.set('content-type', 'text/html');
+          res.render('article',{layout:res.rendervar.layout,
+                                article:article,
+                                googleTranslateText:configModule.getConfig("automatictranslatetext"),
+                                params:params,
+                                placeholder:placeholder,
+                                votes:votes,
+                                articleCategories:result.articleForSort,
+                                blog:result.blog,
+                                changes:result.changes,
+                                articleReferences:result.articleReferences,
+                                usedLinks:result.usedLinks,
+                                categories:categories,
+                                languageFlags:languageFlags});
+       }
+      }
+    );
+
 }
 
 function searchAndCreate(req,res,next) {
@@ -257,12 +265,13 @@ function searchAndCreate(req,res,next) {
 function postArticle(req, res, next) {
   debug('postArticle');
 
-  var id = req.params.article_id;
   var noTranslation = req.query.notranslation;
 
- 
 
-  var article = null;
+
+  var article = req.article;
+  // If article exists, everything is fine, if article NOT exist, it has to be created.
+
   var changes = {blog:req.body.blog,
                  collection:req.body.collection,
                  comment:req.body.comment,
@@ -280,25 +289,14 @@ function postArticle(req, res, next) {
     var lang = languages[i];
     changes["markdown"+lang] = req.body["markdown"+lang];
   }
-  var returnToUrl ;
+  var returnToUrl;
+  if (article) returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
 
   async.parallel([
-      function searchArticle(cb) {
-        debug('postArticle->searchArticle');
-        if (typeof(id)=='undefined') return cb(); 
-        articleModule.findById(id,function(err,result) {
-          debug('postArticle->searchArticle->findById');
-          if (err) return cb(err);
-          if (!result) return cb(new Error("Article ID does not exist"));
-          article = result;
-          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
-          cb();
-        });
-      },
       function createArticle(cb) {
         debug('postArticle->createArticle');
 
-        if (typeof(id)!='undefined') return cb(); 
+        if (typeof(req.article)!='undefined') return cb();
         articleModule.createNewArticle(function(err,result){
           debug('postArticle->createArticle->createNewArticle');
           if (err) return next(err);
@@ -342,171 +340,119 @@ function postArticle(req, res, next) {
 
 function postNewComment(req, res, next) {
   debug('postNewComment');
-
-  var id = req.params.article_id;
-
- 
-
-  var article = null;
+  var article = req.article;
+  should.exist(article);
   var comment = req.body.comment;
   var returnToUrl;
 
-  async.parallel([
-      function searchArticle(cb) {
-        debug('postNewComment->searchArticle');
-        if (typeof(id)=='undefined') return cb(); 
-        articleModule.findById(id,function(err,result) {
-          debug('postNewComment->searchArticle->findById');
-          if (err) return cb(err);
-          if (!result) return cb(new Error("Article ID does not exist"));
-          article = result;
-          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
-          cb();
-        });
-      }
-    ],
-    function setValues(err) {
-      debug('postNewComment->setValues');
-      if (err) {return next(err);}
-      should.exist(article);
-      article.addCommentFunction(req.user,comment,function(err) {
-       debug('postNewComment->setValues->addComment');
-        if (err ) {
-          next(err);
-          return;
-        }
-        res.redirect(returnToUrl);    
-      });
+  if (article) returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
+
+
+  article.addCommentFunction(req.user,comment,function(err) {
+   debug('postNewComment->setValues->addComment');
+    if (err ) {
+      next(err);
+      return;
     }
-  );
+    res.redirect(returnToUrl);
+  });
 }
 
 
 function postSetMarkdown(req, res, next) {
   debug('postSetMarkdown');
 
-  var id = req.params.article_id;
+
   var lang = req.params.lang;
 
 
 
-  var article = null;
+  var article = req.article;
+  should.exist(article);
+
   var markdown = req.body.markdown;
   var oldMarkdown = req.body.oldMarkdown;
 
 
-  async.parallel([
-      function searchArticle(cb) {
-        debug('postNewComment->searchArticle');
-        if (typeof(id)=='undefined') return cb();
-        articleModule.findById(id,function(err,result) {
-          debug('postNewComment->searchArticle->findById');
-          if (err) return cb(err);
-          if (!result) return cb(new Error("Article ID does not exist"));
-          article = result;
-          cb();
-        });
-      }
-    ],
-    function setValues(err) {
-      debug('postNewComment->setValues');
-      if (err) {return next(err);}
-      should.exist(article);
-      var change = {};
-      change["markdown"+lang]=markdown;
-      change.old = {};
-      change.old["markdown"+lang]=oldMarkdown;
-      article.setAndSave(req.user,change,function(err){
-        if (err) return next(err);
-        //var returnToUrl = config.getValue('htmlroot')+"/blog/"+article.blog+"/previewNEdit";
-        let referer=req.header('Referer') || '/';
-        res.redirect(referer);
-      });
-    }
-  );
+  var change = {};
+  change["markdown"+lang]=markdown;
+  change.old = {};
+  change.old["markdown"+lang]=oldMarkdown;
+  article.setAndSave(req.user,change,function(err){
+    if (err) return next(err);
+    //var returnToUrl = config.getValue('htmlroot')+"/blog/"+article.blog+"/previewNEdit";
+    let referer=req.header('Referer') || '/';
+    res.redirect(referer);
+  });
 }
+
 function postEditComment(req, res, next) {
   debug('postEditComment');
 
-  var id = req.params.article_id;
   var number = req.params.number;
+  var article = req.article;
+  should.exist(article);
 
-
-
-  var article = null;
   var comment = req.body.comment;
   var returnToUrl;
+  returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
 
-  async.parallel([
-      function searchArticle(cb) {
-        debug('postNewComment->searchArticle');
-        if (typeof(id)=='undefined') return cb();
-        articleModule.findById(id,function(err,result) {
-          debug('postNewComment->searchArticle->findById');
-          if (err) return cb(err);
-          if (!result) return cb(new Error("Article ID does not exist"));
-          article = result;
-          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
-          cb();
-        });
-      }
-    ],
-    function setValues(err) {
-      debug('postNewComment->setValues');
-      if (err) {return next(err);}
-      should.exist(article);
-      article.editComment(req.user,number,comment,function(err) {
-        debug('postNewComment->setValues->addComment');
-        if (err ) {
-          next(err);
-          return;
-        }
-        res.redirect(returnToUrl);
-      });
+
+  article.editComment(req.user,number,comment,function(err) {
+    debug('postNewComment->setValues->addComment');
+    if (err ) {
+      next(err);
+      return;
     }
-  );
+    res.redirect(returnToUrl);
+  });
 }
 
 function markCommentRead(req, res, next) {
   debug('markCommentRead');
 
-  var id = req.params.article_id;
   var number = req.query.index;
 
 
 
-  var article = null;
-
-
-  async.parallel([
-      function searchArticle(cb) {
-        debug('markCommentRead->searchArticle');
-        if (typeof(id)=='undefined') return cb();
-        articleModule.findById(id,function(err,result) {
-          debug('markCommentRead->searchArticle->findById');
-          if (err) return cb(err);
-          if (!result) return cb(new Error("Article ID does not exist"));
-          article = result;
-          cb();
-        });
-      }
-    ],
-    function setValues(err) {
-      debug('markCommentRead->setValues');
-      if (err) {return next(err);}
-      should.exist(article);
-      article.markCommentRead(req.user,number,function(err) {
-        debug('markCommentRead->markCommentRead');
-        if (err ) {
-          next(err);
-          return;
-        }
-        let returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
-        returnToUrl =req.header('Referer') || returnToUrl;
-        res.redirect(returnToUrl);
-      });
+  var article = req.article;
+  should.exist(article);
+  article.markCommentRead(req.user,number,function(err) {
+    debug('markCommentRead->markCommentRead');
+    if (err ) {
+      next(err);
+      return;
     }
-  );
+    let returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
+    returnToUrl =req.header('Referer') || returnToUrl;
+    res.redirect(returnToUrl);
+  });
+}
+
+
+
+function doAction(req, res, next) {
+  debug('doAction');
+
+  var action = req.params.action;
+  var tag = req.params.tag;
+
+  if (["setTag","unsetTag","setVote","unsetVote"].indexOf(action)<=0) return next(new Error(action + " is unknown"));
+
+
+  var article = req.article;
+  should.exist(article);
+
+  article[action](req.user,tag,function(err) {
+    debug('doAction->%s callback',action);
+    if (err ) {
+      next(err);
+      return;
+    }
+    let returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
+    returnToUrl =req.header('Referer') || returnToUrl;
+    res.redirect(returnToUrl);
+  });
 }
 
 function createArticle(req, res, next) {
@@ -696,6 +642,7 @@ exports.searchArticles = searchArticles;
 exports.postNewComment = postNewComment;
 exports.postEditComment = postEditComment;
 exports.markCommentRead = markCommentRead;
+exports.getArticleFromID = getArticleFromID;
 
 // And configure router to use render Functions
 router.get('/list', exports.renderList);
@@ -705,8 +652,11 @@ router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
 router.post('/translate/:fromLang/:toLang',translate);
 
+router.param('article_id',getArticleFromID);
+
 router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
+router.get('/:article_id/:action.:tag', doAction );
 
 
 router.post('/:article_id/addComment', exports.postNewComment);

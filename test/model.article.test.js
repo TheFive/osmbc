@@ -1005,4 +1005,182 @@ describe('model/article', function() {
 
     });
   });
+  describe("tags & votes",function(){
+    var clock;
+    before(function (bddone){
+      this.clock = sinon.useFakeTimers();
+      clock = this.clock;
+
+      bddone();
+    });
+    after(function(bddone){
+      this.clock.restore();
+      bddone();
+    });
+    it('should add a vote',function(bddone){
+
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test"}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",id:'1',version:2,
+          votes:{"testtag":["Test"]}}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.setVote({OSMUser:"Test"},"testtag",cb);
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should not add a already set vote',function(bddone){
+
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test",votes:{"testtag":["Test"]}}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",
+          votes:{"testtag":["Test"]}}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.setVote({OSMUser:"Test"},"testtag",cb);
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should unset a vote',function(bddone){
+
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test",
+          votes:{"testtag":["Test"]}}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",id:'1',version:2,
+          votes:{testtag:[]}}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.unsetVote({OSMUser:"Test"},"testtag",cb);
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should not unset a unset vote',function(bddone){
+
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test",
+          votes:{"testtag":["Test"]}}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",
+          votes:{"testtag":["Test"]}}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.unsetVote({OSMUser:"Test"},"testtag2",cb);
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+
+    it('should add a tag',function(bddone){
+
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test"}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",id:'1',version:2,
+          tags:["testtag"]}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.setTag({OSMUser:"Test"},"testtag",cb);
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should not add an added tag',function(bddone){
+
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test",tags:["testtag"]}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",
+          tags:["testtag"]}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.setTag({OSMUser:"Test"},"testtag",cb);
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should remove a tag',function(bddone){
+
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test",
+          tags:["testtag"]}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",id:'1',version:2,
+          tags:[]}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.unsetTag({OSMUser:"Test"},"testtag",cb);
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+    it('should not remove a removed tag',function(bddone){
+
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+        clear:true,
+        article:[{blog:"WN1",collection:"something",title:"test",
+          tags:["testtag"]}]};
+      var dataAfter = {
+        article:[{blog:"WN1",collection:"something",title:"test",
+          tags:["testtag"]}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1,function(err,article){
+          should.not.exist(err);
+          should.exist(article);
+          article.unsetTag({OSMUser:"Test"},"testtag2",cb);
+        });
+      };
+      testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+  });
 });

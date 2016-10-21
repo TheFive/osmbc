@@ -3,6 +3,39 @@
 - sizeExplanation = 6
 
 
+mixin voteButton(vote,article)
+  - if (article.votes) vb_listVotes = article.votes[vote.name]
+  - vb_numVotes = 0
+  - vb_voted = false;
+  - if (vb_listVotes) vb_numVotes=vb_listVotes.length;
+  - if (vb_listVotes) vb_voted=(vb_listVotes.indexOf(layout.user.OSMUser)>=0)
+  - vb_displayClass = "osmbc-btn-not-voted"
+  - vb_voteAction = "setVote"
+  - if (vb_voted)  vb_displayClass = "osmbc-btn-voted"
+  - if (vb_voted)  vb_voteAction = "unsetVote"
+  button.btn(type="button" class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'")
+    i(class=vote.iconClass)
+    if (!vote.iconClass)
+      span=vote.name
+    span="  "+vb_numVotes
+
+mixin voteLabel(vote,article)
+  - if (article.votes) vb_listVotes = article.votes[vote.name]
+  - vb_numVotes = 0
+  - vb_voted = false;
+  - if (vb_listVotes) vb_numVotes=vb_listVotes.length;
+  - if (vb_listVotes) vb_voted=(vb_listVotes.indexOf(layout.user.OSMUser)>=0)
+  - vb_displayClass = "osmbc-btn-not-voted"
+  - vb_voteAction = "setVote"
+  - if (vb_voted)  vb_displayClass = "osmbc-btn-voted"
+  - if (vb_voted)  vb_voteAction = "unsetVote"
+  span.label(class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'")
+    i(class=vote.iconClass)
+    if (!vote.iconClass)
+      span=vote.name
+    span="  "+vb_numVotes
+
+
 mixin labeledInput(label,name,value,explanation)
     - if (!value) value =""
     div.form-group
@@ -65,6 +98,10 @@ mixin languageDisplay(article,options)
         else
           span.label.osmbclabel-no-markdown=lang
 
+mixin voteDisplay(article,options)
+  each vote in votes
+    if (options[vote.name])
+      +voteLabel(vote,article)
 
 
 mixin articleIcons(a,options)

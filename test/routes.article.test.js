@@ -57,7 +57,7 @@ describe('router/article',function() {
           function(callback) {
             res.render = sinon.spy(callback);
             next = sinon.spy(callback);
-            articleRouter.renderArticleId(req,res,next);
+            articleRouter.getArticleFromID(req,res,next,newId);
           }],
           function(err) {
             should.exist(err);
@@ -101,6 +101,7 @@ describe('router/article',function() {
               articleModule.findOne({title:data.testArticleTitle},function(err,result) {
                 should.not.exist(err);
                 article = result;
+                req.article=article;
                 req.params.article_id = result.id;
                 done();
               });    
@@ -235,38 +236,6 @@ describe('router/article',function() {
     });
   });
   describe('postArticleID',function() {
-    it('should call next if article not exist',function(bddone) {
-      articleModule.createNewArticle({titel:"Hallo"},function(err,article) {
-        should.not.exist(err);
-        should(article.id).not.equal(0);
-        var newId = article.id +1;
-        var req = {};
-        req.params = {};
-        req.params.article_id = newId;
-        req.user = user;
-        req.body = {};
-        req.query = {};
-        var res = {};
-        res.set = function(){};
-        var next;
-
-        async.series([
-          function(callback) {
-            res.render = sinon.spy(callback);
-            next = sinon.spy(callback);
-            res.redirect = sinon.spy(callback);
-            articleRouter.postArticle(req,res,next);
-          }],
-          function(err) {
-            should.exist(err);
-            should(res.render.called).be.false();
-            should(res.redirect.called).be.false();
-            should(next.called).be.true();
-            bddone();            
-          }
-        );
-      });
-    });
     it('should post All Values',function(bddone) {
       articleModule.createNewArticle({title:"Hallo"},function(err,article) {
         should.not.exist(err);
@@ -287,6 +256,7 @@ describe('router/article',function() {
                    title:"TITLE"};
         req.user = user;
         req.session = {};
+        req.article=article;
         var res = {};
         res.set = function(){};
         var next;
@@ -310,6 +280,8 @@ describe('router/article',function() {
             should.not.exist(err);
             should(res.redirect.calledOnce).be.true();
             should(next.called).be.false();
+            console.dir(res.redirect.firstCall.args);
+            console.dir("/article/"+article.id);
             should(res.redirect.firstCall.calledWith("/article/"+article.id)).be.true();
             delete article._meta;
             delete article.id;

@@ -30,8 +30,6 @@ mixin rightcolumn
         p No Content provided
 
 
-
-
 block content
   p
     if (params.edit && !( blog && blog.status=="closed") )
@@ -80,6 +78,7 @@ block content
                 option(value="#{article.blog}" selected) #{article.blog}
               
           .col-md-4
+
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
 
@@ -246,6 +245,9 @@ block content
         .col-md-5
           p=article.blog
         .col-md-4
+          for vote,i in votes
+            if (vote.displayAtTop)
+              +voteButton(vote,article)
         .col-md-1
           if articleReferences.count >= 1
             a(href="#doublettes")
@@ -389,8 +391,31 @@ block content
 
 
 
+
+
+
   form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
     input.form-control(type="hidden" name = "text" id ="textanalysefield")
+
+  .row
+    h3="Votes & Tags ..."
+    table.table.table-condensed
+      tbody
+        - for vote ,i in votes
+          tr
+            td.col-md-1
+              if params.edit
+                span(class=vote.iconClass)
+              else
+                +voteButton(vote,article)
+            td.col-md-1=vote.name
+            td.col-md-5
+              if article.votes && article.votes[vote.name]
+                - labelclass = "osmbclabel-collect"
+                each user in article.votes[vote.name]
+                  - if (layout.user.OSMUser === user) labelclass = "osmbclabel-user"
+                  span.label.small-margin(class=labelclass)=user
+            td.col-md-5=vote.description
 
   .row
     if (article.commentList)

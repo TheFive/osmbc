@@ -9,6 +9,7 @@ var config   = require('../config.js');
 var moment   = require('moment');
 var help     = require('../routes/help.js');
 var yaml     = require('js-yaml');
+var configModule = require('../model/config.js');
 
 var BlogRenderer   = require('../render/BlogRenderer.js');
 
@@ -311,7 +312,7 @@ function renderBlogTab(req, res,next) {
   let blog = req.blog;
   if (!blog) return next();
   var tab = req.query.tab;
-
+  var votes = configModule.getConfig("votes");
 
   if (!tab) tab = req.session.lasttab;
   if (!tab) tab = "Overview";
@@ -394,6 +395,7 @@ function renderBlogTab(req, res,next) {
           userMap:result.userMap,
           lang:lang,
           tab:tab,
+          votes:votes,
           left_lang:req.user.getMainLang(),
           right_lang:req.user.getSecondLang(),
           renderer:renderer,
