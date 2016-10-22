@@ -49,6 +49,15 @@ block content
                   td=user.OSMUser +" "
                   td.text-muted=layout.moment(user.lastAccess).fromNow()
         .row
+          h4="Visitors Today"
+          p
+            table.table
+              tr
+                td
+                  for user,i in visitorsToday
+                    span=user.OSMUser + ", "
+
+        .row
           h4="Admin View"
           a(href="#{layout.htmlroot}/osmbc/admin") click here
     .col-md-8.hidden-xs

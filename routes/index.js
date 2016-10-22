@@ -16,11 +16,17 @@ function renderHome(req,res,next) {
   debug('renderHome');
   should.exist(res.rendervar.layout);
   var date = new Date();
-  date.setTime(date.getTime()-1000*60*15);
+  date.setTime(date.getTime()-1000*60*10);
 
+  var todayStart = new Date();
+  todayStart.setHours(0);
+  todayStart.setMinutes(0);
+  todayStart.setSeconds(0);
+  
   async.auto({
     "historie":logModule.find.bind(logModule,{table:"IN('blog','article')"},{column:"id",desc :true,limit:20}),
-      "activeUser":userModule.find.bind(userModule,{lastAccess:">"+date.toISOString()},{column:"lastAccess",desc :true})
+    "activeUser":userModule.find.bind(userModule,{lastAccess:">"+date.toISOString()},{column:"lastAccess",desc :true}),
+    "visitorsToday":userModule.find.bind(userModule,{lastAccess:">"+date.toISOString()},{column:"lastAccess",desc :true}),
   },function(err,result) {
     if (err) return next(err);
     res.set('content-type', 'text/html');
@@ -28,6 +34,7 @@ function renderHome(req,res,next) {
     res.render('index', { title: config.getValue("AppName") ,
       layout:res.rendervar.layout,
       activeUserList:result.activeUser,
+      visitorsToday:result.visitorsToday,
       changes:result.historie});
     }
   );
