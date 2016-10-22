@@ -42,7 +42,7 @@ block content
         tbody
           if (history)
             each change in history
-              tr
+              tr(onclick="document.getElementById('id_#{change.id}').classList.toggle('hidden');")
                 td
                   a(href='#{layout.htmlroot}/changes/' + change.id)
                     span.glyphicon.glyphicon-info-sign
@@ -55,6 +55,16 @@ block content
                   :verbatim
                     !{change.htmlDiffText(60)}
                 td=layout.moment(change.timestamp).locale(layout.user.language).format("L")
+              if change.property && change.property.substring(0,8)==="markdown"
+                tr(id="id_#{change.id}").hidden
+                  td
+                  td
+                  td(colspan=4).bg-info
+                    :verbatim
+                      !{layout.md_render(change.from)}
+                  td.bg-warning
+                    :verbatim
+                      !{layout.md_render(change.to)}
 
 
 
