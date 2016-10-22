@@ -16,13 +16,14 @@ var slackReceiver = require('../notification/slackReceiver.js');
 
 
 function freshupVotes(json) {
-  if (typeof json != "object") return;
-  if (!Array.isArray(json)) return;
+  if (typeof json != "object") return [];
+  if (!Array.isArray(json)) return [];
   for (let i=0;i<json.length;i++) {
     let item = json[i];
     if (item.icon && item.icon.substring(0,3)==="fa-") item.iconClass = "fa "+item.icon;
     if (item.icon && item.icon.substring(0,10)==="glyphicon-") item.iconClass = "glyphicon "+item.icon;
   }
+  return json;
 }
 
 function Config (proto)
@@ -75,7 +76,7 @@ Config.prototype.getJSON = function getJSON() {
   if (this.type == "yaml") {
     try {
       this.json = yaml.safeLoad(this.yaml);
-      if (this.name === "votes") freshupVotes(this.json);
+      if (this.name === "votes") this.json = freshupVotes(this.json);
       return this.json;
     }
     catch(err) {
