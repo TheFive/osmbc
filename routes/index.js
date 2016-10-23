@@ -22,7 +22,7 @@ function renderHome(req,res,next) {
   todayStart.setHours(0);
   todayStart.setMinutes(0);
   todayStart.setSeconds(0);
-  
+
   async.auto({
     "historie":logModule.find.bind(logModule,{table:"IN('blog','article')"},{column:"id",desc :true,limit:20}),
     "activeUser":userModule.find.bind(userModule,{lastAccess:">"+date.toISOString()},{column:"lastAccess",desc :true}),

@@ -151,7 +151,7 @@ block content
           .col-md-7
             textarea.form-control(name="title",rows=1) #{article.title}
           .col-md-3
-            +languageDisplay(article)
+            +languageDisplay(article,{func:"showRL"})
 
         .row
           .col-md-1
@@ -178,7 +178,11 @@ block content
           +leftcolumn
             span.label.label-default(id="left_lang" class="#{lbg}")=params.left_lang
           +rightcolumn
-            span.label.label-default(id="right_lang" class="#{rbg}")=params.right_lang
+            span.label.label-default.RL(id="right_lang" class="#{rbg} RL-#{params.right_lang}")=params.right_lang
+            for l in layout.activeLanguages
+              if (l!== params.right_lang)
+                span.label.label-default.RL.hidden(class= "RL-#{l}")=l
+
         .row
           .col-md-1
             p="Markdown"
@@ -198,17 +202,25 @@ block content
 
 
           +rightcolumn
-            if blog && !blog.isEditable(params.right_lang)
-              .panel.panel-default
-                .panel-body #{article["markdown"+params.right_lang]}         
-            else
-              if (placeholder.markdown[params.right_lang])
-                - p = placeholder.markdown[params.right_lang];
-              else 
-                - p = "";
-              textarea.form-control(id="markdownRIGHT" placeholder = "#{p}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=6) #{article["markdown"+params.right_lang]}
-              div(id="text_right")
-                |'no translation' or '-' to specify no translation wanted.
+            div.RL(class="RL-#{params.right_lang}")
+              if blog && !blog.isEditable(params.right_lang)
+                .panel.panel-default
+                  .panel-body #{article["markdown"+params.right_lang]}
+              else
+                if (placeholder.markdown[params.right_lang])
+                  - p = placeholder.markdown[params.right_lang];
+                else
+                  - p = "";
+                textarea.form-control(id="markdownRIGHT" placeholder = "#{p}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=6) #{article["markdown"+params.right_lang]}
+                div(id="text_right")
+                  |'no translation' or '-' to specify no translation wanted.
+             for l in layout.activeLanguages
+               if l != params.right_lang
+                 div.hidden(class = "RL RL-#{l}")
+                   .panel.panel-default
+                     .panel-body #{article["markdown"+l]}
+
+
           .col-md-1
 
             if ((params.left_lang=="DE") || (params.right_lang=="DE"))
@@ -226,9 +238,14 @@ block content
                     !{article["textHtml"+params.left_lang]}
             +rightcolumn
               .panel.panel-default
-                .panel-body(id="previewRIGHT")
+                .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
                   :verbatim
                     !{article["textHtml"+params.right_lang]}
+                each l in layout.activeLanguages
+                  if l !== params.right_lang
+                    .panel-body.RL.hidden(class="RL-#{l}")
+                      :verbatim
+                        !{article["textHtml"+l]}
         .row
           h4="You can add a comment here:"
         .row
@@ -284,20 +301,12 @@ block content
           p=article.title
         .col-md-3
           p
+            +languageDisplay(article,{func:"showRL"})
             - open = false
-            each lang in layout.languages
-              if layout.usedLanguages[lang]
-                if (article["markdown"+lang])
-                  if (article["markdown"+lang]!=="no translation")
-                    span.label.osmbclabel-markdown
-                      |#{lang}
-                  else
-                    span.label.osmbclabel-no-translation
-                      |#{lang}
-                else
-                  span.label.osmbclabel-no-markdown
-                    |#{lang}
-                  - open = true;
+            each lang in layout.activeLanguages
+              if (article["markdown"+lang])
+              else
+                - open = true;
           if open
             p
               button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?notranslation=true';") notranslation to rest
@@ -328,23 +337,12 @@ block content
           span.label.label-default(id="left_lang" class="#{lbg}") 
             |#{params.left_lang}
         +rightcolumn
-          span.label.label-default(id="right_lang" class="#{rbg}" )
+          span.label.label-default.RL(id="right_lang" class="#{rbg} RL-#{params.right_lang}" )
             |#{params.right_lang}
-  
-      if (false)
-        .row
-          .col-md-1
-            p="Markdown"
-          +leftcolumn 
-              .panel.panel-default
-                .panel-body #{article["markdown"+params.left_lang]}
+          each l in layout.activeLanguages
+            if l !== params.right_lang
+              span.label.label-default.hidden.RL(class = "RL-#{l}")=l
 
-
-
-
-          +rightcolumn
-              .panel.panel-default
-                .panel-body #{article["markdown"+params.right_lang]}
       .row
         if article.categoryEN != "Picture"
           .col-md-1
@@ -361,9 +359,14 @@ block content
 
           +rightcolumn
             .panel.panel-default
-              .panel-body(id="previewRIGHT")
+              .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
                   :verbatim
                     !{article["textHtml"+params.right_lang]}
+              each l in layout.activeLanguages
+                if l !== params.right_lang
+                  .panel-body.RL.hidden(class="RL-#{l}")
+                    :verbatim
+                      !{article["textHtml"+l]}
   .row
     .col-md-1
     +leftcolumn
@@ -962,6 +965,11 @@ block scripts
       }
 
 
+      function showRL(what) {
+        console.log("Showing RL "+what);
+        $(".RL").addClass("hidden");
+        $(".RL-"+what).removeClass("hidden");
+      }
 
       var placeholder = !{JSON.stringify(placeholder.categories)}
 

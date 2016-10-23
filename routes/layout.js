@@ -151,6 +151,10 @@ function prepareRenderLayout(req,res,next) {
         debug(JSON.stringify(err));
         return next(err);
       }
+      let activeLanguages = [];
+      languages.forEach(function(item){
+        if (usedLanguages[item]) activeLanguages.push(item);
+      });
 
       if (!(res.rendervar) || typeof(res.rendervar)=='undefined') res.rendervar = {};
       res.rendervar.layout = {user:req.user,
@@ -171,6 +175,7 @@ function prepareRenderLayout(req,res,next) {
                       moment:moment,
                       util:util,
                       usedLanguages:usedLanguages,
+                      activeLanguages:activeLanguages,
                       appName:config.getValue("AppName"),
                       bootstrap:bootstrap,
                       osmbc_version:version.osmbc_version,
