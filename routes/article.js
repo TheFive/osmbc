@@ -184,6 +184,8 @@ function renderArticleId(req,res,next) {
 
           res.end(result);return;*/
           res.set('content-type', 'text/html');
+          // change title of page
+          res.rendervar.layout.title = article.blog+"#"+article.id+"/"+article.title;
           res.render('article',{layout:res.rendervar.layout,
                                 article:article,
                                 googleTranslateText:configModule.getConfig("automatictranslatetext"),

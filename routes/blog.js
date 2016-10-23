@@ -127,6 +127,7 @@ function renderBlogStat(req, res, next) {
       should.exist(res.rendervar);
       if (err) return next(err);
       res.set('content-type', 'text/html');
+      res.rendervar.layout.title = blog.name+"/statistic";
       res.render('blogstat',{layout:res.rendervar.layout,
                          logs:logs,
                          blog:blog,
@@ -169,6 +170,7 @@ function renderBlogList(req, res, next) {
           should.exist(res.rendervar);
           if (err) return next(err);
           res.set('content-type', 'text/html');
+          res.rendervar.layout.title = "blog/list";
           res.render('bloglist',{layout:res.rendervar.layout,
                                 additionalText:additionalText,
                                 blogs:result.blogs});
@@ -226,6 +228,7 @@ function renderBlogPreview(req, res,next) {
         }
       } else {
         should.exist(res.rendervar);
+        res.rendervar.layout.title = blog.name+"/preview";
         res.render('blogpreview',{layout:res.rendervar.layout,
                            blog:blog,
                            asMarkdown:asMarkdown,
@@ -386,7 +389,7 @@ function renderBlogTab(req, res,next) {
       }
 
       var renderer = new blogRenderer.HtmlRenderer(blog);
-
+      res.rendervar.layout.title = blog.name+"/"+tab.toLowerCase();
       res.render('blog_'+tab.toLowerCase(),{layout:res.rendervar.layout,
           blog:blog,
           articles:result.dataCollect.articles,
