@@ -90,7 +90,7 @@ describe('router/article',function() {
           req.session = {};
           var next;
           res.render = null;
-          res.rendervar = {layout:"TEMP"};
+          res.rendervar = {layout:{temp:"TEMP"}};
 
           async.series([
             function(done) {
@@ -131,7 +131,7 @@ describe('router/article',function() {
               should(renderData.article).eql(article);
               if(typeof(renderData.params.edit)=='undefined') renderData.params.edit = null;
               should(renderData.params).eql(data.result.params);
-              should(renderData.layout).eql("TEMP");
+              should(renderData.layout).eql({temp:"TEMP",title:data.result.title});
               //should(renderData.user).eql(req.user);
               should(renderData.changes).eql(data.result.changes);
               //should.exist(renderData.listOfOrphanBlog);

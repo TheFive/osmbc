@@ -83,20 +83,22 @@ mixin labeledText(label,name,value,explanation)
 
 
 mixin languageDisplay(article,options)
-  - langList = layout.languages
+  - langList = layout.activeLanguages
+  - onClick = ""
   - if (options && options.short) langList = [layout.language,(layout.language2)?layout.language2:"--"]
   each lang in langList
-    if layout.usedLanguages[lang]
-      if (article["markdown" + lang])
-          if (article["markdown" + lang] !== "no translation")
-              span.label.osmbclabel-markdown=lang
-          else
-              span.label.osmbclabel-no-translation=lang
-      else
-        if (article.collection)
-          span.label.osmbclabel-collect=lang
+    - if (options && options.func) onClick = options.func+"('"+lang+"')"
+    - console.log(onClick)
+    if (article["markdown" + lang])
+        if (article["markdown" + lang] !== "no translation")
+            span.label.osmbclabel-markdown(onclick=onClick)=lang
         else
-          span.label.osmbclabel-no-markdown=lang
+            span.label.osmbclabel-no-translation(onclick=onClick)=lang
+    else
+      if (article.collection)
+        span.label.osmbclabel-collect(onclick=onClick)=lang
+      else
+        span.label.osmbclabel-no-markdown(onclick=onClick)=lang
 
 mixin voteDisplay(article,options)
   each vote in votes
