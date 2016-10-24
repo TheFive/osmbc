@@ -1,10 +1,12 @@
 # Change Log
 
-## [2.0.1](https://github.com/TheFive/osmbc/tree/2.0.1) (2016-10-24)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.0...2.0.1)
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.0...HEAD)
 
 **Closed issues:**
 
+- Implement an easy possibility to look after another langauge in the article editor. [\#557](https://github.com/TheFive/osmbc/issues/557)
 - In history list, make OID clickable to the object itself \(not the change object\) [\#556](https://github.com/TheFive/osmbc/issues/556)
 - Set the Page Title do something more meaningfull. [\#555](https://github.com/TheFive/osmbc/issues/555)
 
@@ -328,13 +330,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
