@@ -72,7 +72,7 @@ function renderHistoryLog(req,res,next) {
   if (oid) search.oid = oid;
 
 
-  logModule.find(search,{column:"timestamp",desc:true,limit:500},function (err,result){
+  logModule.find(search,{column:"timestamp",desc:true,limit:150},function (err,result){
     debug("logModule.find");
     if (err) return next(err);
     res.set('content-type', 'text/html');
