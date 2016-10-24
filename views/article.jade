@@ -371,7 +371,7 @@ block content
     .col-md-1
     +leftcolumn
       if params.left_lang === "DE" && article["markdown"+params.left_lang]
-        a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufgruf einer externen Seite)
+        a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
         span=" "
       if (params.edit && params.right_lang && article["markdown" + params.right_lang] && !article["markdown" + params.left_lang])
         button#translateLinkLEFT.btn.btn-small.btn-primary(onClick ="javascript: window.translateLEFT();") Google Translate #{params.left_lang} <- #{params.right_lang}
