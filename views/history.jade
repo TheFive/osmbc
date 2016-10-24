@@ -48,9 +48,22 @@ block content
                   a(href='#{layout.htmlroot}/changes/' + change.id)
                     span.glyphicon.glyphicon-info-sign
                 td=change.user
-                td=change.blog
+                td
+                  if change.table == "blog"
+                    a(href="#{layout.htmlroot}/blog/#{change.oid}")=change.blog
+                  else
+                    span=change.blog
                 td=change.table
-                td=change.oid
+                td
+                  if change.table == "article"
+                    a(href="#{layout.htmlroot}/article/#{change.oid}")=change.oid
+                  else
+                    if change.table == "usert"
+                      a(href="#{layout.htmlroot}/usert/#{change.oid}")=change.oid
+                    else
+                      if change.table == "blog"
+                      else
+                        span=change.oid
                 td=change.property
                 td
                   :verbatim
