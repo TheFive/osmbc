@@ -57,7 +57,7 @@ function renderAdminHome(req,res,next) {
   );
 }
 
-function renderLongRunningQueries(req,res,next) {
+function renderLongRunningQueries(req,res) {
   debug('renderLongRunningQueries');
   res.end(JSON.stringify(pgMap.longRunningQueries,null,3));
 }
@@ -133,7 +133,7 @@ function renderChangelog(req,res,next) {
 router.get('/', renderHome);
 router.get('/osmbc.html', renderHome);
 router.get('/osmbc', renderHome);
-router.get('/sql/longRunningQueries',renderLongRunningQueries);
+router.get('/osmbc/sql/longRunningQueries',renderLongRunningQueries);
 router.get('/osmbc/admin',renderAdminHome);
 router.get('/help/:title', renderHelp);
 router.get('/changelog', renderChangelog);
