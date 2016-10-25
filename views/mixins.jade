@@ -4,6 +4,7 @@
 
 
 mixin voteButton(vote,article)
+  - vb_listVotes = null
   - if (article.votes) vb_listVotes = article.votes[vote.name]
   - vb_numVotes = 0
   - vb_voted = false;
@@ -20,6 +21,7 @@ mixin voteButton(vote,article)
     span="  "+vb_numVotes
 
 mixin voteLabel(vote,article)
+  - vb_listVotes = null
   - if (article.votes) vb_listVotes = article.votes[vote.name]
   - vb_numVotes = 0
   - vb_voted = false;
