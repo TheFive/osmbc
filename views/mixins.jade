@@ -13,7 +13,7 @@ mixin voteButton(vote,article)
   - vb_voteAction = "setVote"
   - if (vb_voted)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  button.btn(type="button" class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'")
+  button.btn(type="button" class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'" style:"color:#{vote.color")
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
@@ -29,7 +29,7 @@ mixin voteLabel(vote,article)
   - vb_voteAction = "setVote"
   - if (vb_voted)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  span.label(class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'")
+  span.label(class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'" style:"color:#{vote.color}")
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name

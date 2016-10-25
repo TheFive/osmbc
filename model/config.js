@@ -20,7 +20,7 @@ function freshupVotes(json) {
   if (!Array.isArray(json)) return [];
   for (let i=0;i<json.length;i++) {
     let item = json[i];
-    if (item.icon && item.icon.substring(0,3)==="fa-") item.iconClass = "fa "+item.icon;
+    if (item.icon && item.icon.substring(0,3)==="fa-") item.iconClass = "fa-lg fa "+item.icon;
     if (item.icon && item.icon.substring(0,10)==="glyphicon-") item.iconClass = "glyphicon "+item.icon;
   }
   return json;
