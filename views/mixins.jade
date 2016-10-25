@@ -4,6 +4,7 @@
 
 
 mixin voteButton(vote,article)
+  - vb_listVotes = null
   - if (article.votes) vb_listVotes = article.votes[vote.name]
   - vb_numVotes = 0
   - vb_voted = false;
@@ -11,25 +12,29 @@ mixin voteButton(vote,article)
   - if (vb_listVotes) vb_voted=(vb_listVotes.indexOf(layout.user.OSMUser)>=0)
   - vb_displayClass = "osmbc-btn-not-voted"
   - vb_voteAction = "setVote"
-  - if (vb_voted)  vb_displayClass = "osmbc-btn-voted"
+  - vb_voteStyle = ""
+  - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  button.btn(type="button" class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'" style:"color:#{vote.color")
+  button.btn(type="button" class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'" style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
     span="  "+vb_numVotes
 
 mixin voteLabel(vote,article)
+  - vb_listVotes = null
   - if (article.votes) vb_listVotes = article.votes[vote.name]
   - vb_numVotes = 0
   - vb_voted = false;
   - if (vb_listVotes) vb_numVotes=vb_listVotes.length;
+  - if (vb_numVotes === 0) vb_numVotes = " "
   - if (vb_listVotes) vb_voted=(vb_listVotes.indexOf(layout.user.OSMUser)>=0)
   - vb_displayClass = "osmbc-btn-not-voted"
   - vb_voteAction = "setVote"
-  - if (vb_voted)  vb_displayClass = "osmbc-btn-voted"
+  - vb_voteStyle = ""
+  - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  span.label(class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'" style:"color:#{vote.color}")
+  span.label(class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'" style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
