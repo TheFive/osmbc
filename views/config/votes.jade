@@ -11,6 +11,7 @@ block showContentOfConfig
         thead
           tr
             th="Icon"
+            th="Icon Voted"
             th="At Top"
             th="Name"
             th="description"
@@ -18,6 +19,7 @@ block showContentOfConfig
           each vote in config.getJSON()
             tr
               td.col-md-1(class=vote.iconClass)
+              td.col-md-1(class=vote.iconClass style="color:#{vote.color}")
               td=vote.displayAtTop
               td=vote.name
               td=vote.description
