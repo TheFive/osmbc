@@ -9,6 +9,28 @@ var sqldebug  = require('debug')('OSMBC:model:sql');
 var config = require('../config.js');
 var util = require('../util.js');
 
+module.exports.longRunningQueries=[];
+
+function compareLRQ(a,b) {
+  return b.duration - a.duration;
+}
+
+function longRunningQueriesAdd(duration,query) {
+
+
+  if (exports.longRunningQueries.length > 10) {
+    if (exports.longRunningQueries[9].duration > duration) return;
+    exports.longRunningQueries.pop();
+  }
+
+  exports.longRunningQueries.push({duration:duration,query:query});
+  exports.longRunningQueries.sort(compareLRQ);
+
+  console.log("New Query");
+  console.dir(exports.longRunningQueries);
+
+}
+
 function generateQuery(table,obj,order) {
   debug('generateQuery');
 
@@ -276,6 +298,7 @@ module.exports.find = function find(module,obj,order,callback) {
       debug('findEndFunction');
       var endTime = new Date().getTime();
       sqldebug("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
+      longRunningQueriesAdd(endTime-startTime,sqlQuery);
       pgdone();
       callback(null,result);
     });
