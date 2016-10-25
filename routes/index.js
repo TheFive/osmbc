@@ -9,6 +9,7 @@ var help = require('../routes/help.js');
 var config = require('../config.js');
 var logModule = require('../model/logModule.js');
 var userModule = require('../model/user.js');
+var pgMap = require('../model/pgMap.js');
 
 /* GET home page. */
 
@@ -54,6 +55,11 @@ function renderAdminHome(req,res,next) {
         changes:result.historie});
     }
   );
+}
+
+function renderLongRunningQueries(req,res,next) {
+  debug('renderLongRunningQueries');
+  res.end(JSON.stringify(pgMap.longRunningQueries,null,3));
 }
 
 function languageSwitcher(req,res,next) {
@@ -127,6 +133,7 @@ function renderChangelog(req,res,next) {
 router.get('/', renderHome);
 router.get('/osmbc.html', renderHome);
 router.get('/osmbc', renderHome);
+router.get('/sql/longRunningQueries',renderLongRunningQueries);
 router.get('/osmbc/admin',renderAdminHome);
 router.get('/help/:title', renderHelp);
 router.get('/changelog', renderChangelog);
