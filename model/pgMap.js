@@ -25,10 +25,6 @@ function longRunningQueriesAdd(duration,query) {
 
   exports.longRunningQueries.push({duration:duration,query:query});
   exports.longRunningQueries.sort(compareLRQ);
-
-  console.log("New Query");
-  console.dir(exports.longRunningQueries);
-
 }
 
 function generateQuery(table,obj,order) {
