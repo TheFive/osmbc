@@ -253,7 +253,7 @@ pgObject.indexDefinition = {
   "changes_table_oid_idx":"CREATE INDEX changes_table_oid_idx ON changes USING btree (((data ->> 'table'::text)), ((data ->> 'oid'::text)))",
   "changes_blog_to_idx":"CREATE INDEX changes_blog_to_idx ON changes USING btree (((data ->> 'blog'::text)))",
   "changes_user_to_idx":"CREATE INDEX changes_user_to_idx ON changes USING btree (((data ->> 'user'::text)))",
-  "changes_table_timestamp_idx":"CREATE INDEX changes_table_timestamp_idx ON changes USING btree (((data ->> 'table'::text)), ((data ->> 'timestamp'::text)))"
+  "changes_timestamp_idx":"CREATE INDEX changes_timestamp_idx ON changes USING btree (((data ->> 'timestamp'::text)))"
 };
 
 pgObject.viewDefinition = {};
