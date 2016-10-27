@@ -257,6 +257,7 @@ app.get(htmlRoot + '/logout', function(req, res){
 
 // first register the unsecured path
 
+app.use(htmlRoot+'/bower_components',  express.static(__dirname + '/bower_components'));
 app.use(htmlRoot,express.static(path.join(__dirname, 'public')));
 
 app.use(htmlRoot,calender );
