@@ -57,6 +57,42 @@ describe('model/parseEvent',function() {
       date = parseEvent.nextDate(new Date('Dec 24'));
       should(isInRange(date)).be.True();
     });
+    it('should generate a date with previous date [previousDate-150:previousDate+166]',function(){
+      var d = new Date("2017-03-23");
+      var timeMin = d.getTime()-1000*60*60*24*150;
+      var timeMax = timeMin + 1000*60*60*24*366;
+      function isInRange(date) {
+        var result = ((date.getTime()>=timeMin)&& (date.getTime()<=timeMax));
+        return result;
+      }
+
+      var date = parseEvent.nextDate(new Date('Jan 27'),d);
+      should(isInRange(date)).be.True();
+      should(date.getDate()).equal(27);
+      should(date.getMonth()).equal(0);
+      date = parseEvent.nextDate(new Date('Feb 01'),d);
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Mar 31'),d);
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('May 10'),d);
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('May 10'),d);
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Jun 15'),d);
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Jul 20'),d);
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Aug 11'),d);
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Sep 30'),d);
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Oct 2'),d);
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Nov 28'),d);
+      should(isInRange(date)).be.True();
+      date = parseEvent.nextDate(new Date('Dec 24'),d);
+      should(isInRange(date)).be.True();
+    });
   });
   describe('parseWikiInfo',function(){
     it('should parse a [[]] reference',function(){

@@ -35,16 +35,21 @@ var regexList = [ {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *
 /* next Date is interpreting a date of the form 27 Feb as a date, that
   is in the current year. The window, to put the date in starts 50 days before now*/
 
-function nextDate(string) {
+function nextDate(string,previousDate) {
   //debug('nextDate');
   if (!string) return null;
   var now = new Date();
+  let startBefore = 50;
+  if (previousDate) {
+    now = new Date(previousDate);
+    startBefore = 150;
+  }
   if (exports.fortestonly && exports.fortestonly.currentdate) {
     now = new Date(exports.fortestonly.currentdate);
 
   }
 
-  now.setDate(now.getDate()-50);
+  now.setDate(now.getDate()-startBefore);
 
   var result = new Date(string);
   result = new Date(Date.UTC(result.getYear(),result.getMonth(),result.getDate()));
@@ -61,7 +66,7 @@ exports.nextDate = nextDate;
 /* This function returns the start date of an event, based on a string like
    Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calender event */
 
-function parseStartDate(string) {
+function parseStartDate(string,previousDate) {
  // debug('parseStartDate')
   var datestart=string;
   var dateend;
@@ -70,7 +75,7 @@ function parseStartDate(string) {
     dateend = datestart.substring(datestart.indexOf("|")+1,99999);
     datestart = datestart.substring(0,datestart.indexOf("|"));
   } 
-  datestart = nextDate(datestart);
+  datestart = nextDate(datestart,previousDate);
   //dateend = nextDate(dateend);
   return datestart;
 }
@@ -78,7 +83,7 @@ function parseStartDate(string) {
 /* This function returns the end date of an event, based on a string like
    Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calender event,
    in the case of no enddate, the start date is returned */
-function parseEndDate(string) {
+function parseEndDate(string,previousDate) {
  // debug('parseEndDate')
   var datestart = string;
   var dateend;
@@ -87,8 +92,8 @@ function parseEndDate(string) {
     dateend = datestart.substring(datestart.indexOf("|")+1,99999);
     datestart = datestart.substring(0,datestart.indexOf("|"));
   } 
-  datestart = nextDate(datestart);
-  dateend = nextDate(dateend);
+  datestart = nextDate(datestart,previousDate);
+  dateend = nextDate(dateend,previousDate);
   if (dateend === null) dateend = datestart;
   return dateend;
 }
@@ -97,7 +102,7 @@ function parseEndDate(string) {
    and putting the results into a json with the given keys.
    If no regex is matching, null is returned*/
 
-function parseLine(string) {
+function parseLine(string,previousDate) {
  // debug('parseLine');
   for (var i=0;i<regexList.length;i++){
     var results = regexList[i].regex.exec(string);
@@ -109,8 +114,8 @@ function parseLine(string) {
         var list  = regexList[i].keys;
         var convert = regexList[i].convert;
         if (list[j] == "date") {
-          r.startDate = parseStartDate(value);
-          r.endDate = parseEndDate(value);
+          r.startDate = parseStartDate(value,previousDate);
+          r.endDate = parseEndDate(value,previousDate);
 
         }  else {
           r[list[j]]=convert[j].replace("%s",value);
@@ -269,13 +274,14 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
     to.setDate(to.getDate()+duration);
 
     var events = [];
+    var previousDate = null;
 
     while (point>= 0) {
    
       var line = body.substring(0,point);
       body = body.substring(point+1,999999999);
       point = body.indexOf("\n");
-      result = parseLine(line);
+      result = parseLine(line,previousDate);
 
       if (typeof(result)=="string") {
         if (!errors) errors = "\n\nUnrecognized\n";
@@ -286,6 +292,8 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
 
 
       if (result) {
+        previousDate = result.startDate;
+        console.log(result.desc+" "+result.startDate+" previous: "+previousDate);
         if (result.endDate >= from && result.startDate <= to) {
           events.push(result);
           result.markdown = parseWikiInfo(result.desc);
@@ -302,7 +310,7 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
     // First sort Events by Date
 
 
-    events.sort(function cmpEvent(a,b){return a.startDate - b.startDate;});
+   // events.sort(function cmpEvent(a,b){return a.startDate - b.startDate;});
 
     for (var i=0;i<events.length;i++) {
       var e = events[i];
