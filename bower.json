@@ -20,6 +20,7 @@
     "font-awesome": "^4.7.0",
     "calendar-heatmap": "^0.4.1",
     "d3": "^4.3.0",
-    "moment": "^2.15.2"
+    "moment": "^2.15.2",
+    "markdown-it": "^8.0.1"
   }
 }
