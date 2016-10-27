@@ -203,6 +203,7 @@ function prepareRenderLayout(req,res,next) {
 
 // Export Render Functions for testing purposes
 exports.prepareRenderLayout = prepareRenderLayout;
+exports.path = path;
 
 
 

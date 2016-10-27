@@ -10,6 +10,7 @@ var url = require('url');
 var http = require('http');
 var https = require('https');
 var moment= require('moment');
+var layoutRouter = require('../routes/layout.js');
 var emailValidator = require('email-validator');
 var BlogRenderer = require('../render/BlogRenderer.js');
 
@@ -32,7 +33,7 @@ function renderPublicCalendar(req,res,next) {
   var htmlRoot = config.getValue("htmlroot");
   var bootstrap = config.getValue("bootstrap");
 
-  var layout = {bootstrap:bootstrap,htmlRoot:htmlRoot};
+  var layout = {bootstrap:bootstrap,htmlRoot:htmlRoot,path:layoutRouter.path};
 
   parseEvent.calenderToMarkdown({lang:"EN",countryFlags:true,duration:'200'},function(err,result,errors){
     if (err) return next(err);
