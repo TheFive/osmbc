@@ -150,9 +150,9 @@ block content
 block scripts
 
   link(rel="stylesheet" type="text/css" href="#{layout.htmlroot}/stylesheets/calendar-heatmap.css")
-  script(src="https://d3js.org/d3.v3.min.js")
-  script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js")
+  script(src=layout.path("d3")+"/d3.min.js")
   script(src="#{layout.htmlroot}/javascripts/calendar-heatmap.js")
+  script(src=layout.path("moment") + "/min/moment.min.js")
 
 
   script.

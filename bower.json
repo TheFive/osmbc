@@ -1,0 +1,26 @@
+{
+  "name": "osmbc",
+  "description": "OpenStreetMap Blog Collector",
+  "main": "",
+  "authors": [
+    "TheFive <TheFive.osm@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/TheFive/osmbc",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "font-awesome": "^4.7.0",
+    "calendar-heatmap": "^0.4.1",
+    "d3": "^4.3.0",
+    "moment": "^2.15.2",
+    "markdown-it": "^8.0.1"
+  }
+}
