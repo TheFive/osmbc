@@ -542,7 +542,6 @@ block content
  
 block scripts                
   script(src='https://cdn.jsdelivr.net/markdown-it/5.0.1/markdown-it.min.js')
-  script(src="https://cdn.rawgit.com/Triforcey/clip-j/1dbfdfc0646359ee70d714549db947d02705b303/clip-j.js" )
 
 
 
@@ -725,7 +724,24 @@ block scripts
       if (t) return isUrlRegex.test(t);
       return isUrlRegex;
     }
-    
+    function clip(text) {
+      var copyElement = document.createElement('input');
+      copyElement.setAttribute('type', 'text');
+      copyElement.setAttribute('value', text);
+      copyElement = document.body.appendChild(copyElement);
+      copyElement.select();
+      try {
+        if (!document.execCommand('copy')) throw 'Not allowed.';
+      } catch (e) {
+        copyElement.remove();
+        console.log("document.execCommand('copy'); is not supported");
+        prompt('Copy the text below. (ctrl c, enter)', text);
+      } finally {
+        if (typeof e == 'undefined') {
+          copyElement.remove();
+        }
+      }
+    }
   
 
        function generateMarkdownLink2(par1,par2) {

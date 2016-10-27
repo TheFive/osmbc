@@ -17,6 +17,9 @@
   ],
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "font-awesome": "^4.7.0"
+    "font-awesome": "^4.7.0",
+    "calendar-heatmap": "^0.4.1",
+    "d3": "^4.3.0",
+    "moment": "^2.15.2"
   }
 }
