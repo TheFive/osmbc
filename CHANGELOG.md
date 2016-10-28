@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.0.4](https://github.com/TheFive/osmbc/tree/2.0.4) (2016-10-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.2...2.0.4)
+
+**Closed issues:**
+
+- Language switch [\#562](https://github.com/TheFive/osmbc/issues/562)
+
 ## [2.0.2](https://github.com/TheFive/osmbc/tree/2.0.2) (2016-10-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.1...2.0.2)
 
