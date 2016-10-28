@@ -242,7 +242,6 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
   var duration = 24;
   if (option.date && option.date!=="" && option.date!=="null") {
     date = new Date(option.date);
-    console.log(option.date+" "+date);
   }
   if (option.duration && option.duration.trim()!=="") {
     duration = parseInt(option.duration);
@@ -293,7 +292,6 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
 
       if (result) {
         previousDate = result.startDate;
-        console.log(result.desc+" "+result.startDate+" previous: "+previousDate);
         if (result.endDate >= from && result.startDate <= to) {
           events.push(result);
           result.markdown = parseWikiInfo(result.desc);
