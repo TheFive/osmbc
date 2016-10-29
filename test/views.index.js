@@ -58,6 +58,14 @@ describe('views/index', function() {
           bddone();
         });
       });
+      it('should have bootstrap.js loaded' ,function(bddone) {
+        this.timeout(6000);
+        browser.visit('/osmbc', function(err){
+          should.not.exist(err);
+          should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
+          bddone();
+        });
+      });
     });
     describe("Admin Homepage",function() {
       it('should show it' ,function(bddone) {

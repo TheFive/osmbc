@@ -53,6 +53,14 @@ describe('views/user', function() {
       bddone();
     });
   });
+  it('should have bootstrap.js loaded' ,function(bddone) {
+    this.timeout(6000);
+    browser.visit('/osmbc', function(err){
+      should.not.exist(err);
+      should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
+      bddone();
+    });
+  });
   it('should save userdata and calculate WN User' ,function(bddone) {
     this.timeout(maxTimer);
     nock('https://blog.openstreetmap.de')
