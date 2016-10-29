@@ -194,6 +194,7 @@ module.exports.save = function(callback) {
           debug("final Function save");
           if (err) {
             debug('Forward Error');
+            debug(err);
             pgdone();
             return callback(err);
           }

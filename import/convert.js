@@ -5,9 +5,9 @@ var userModule = require('../model/user.js');
 var blogModule = require('../model/blog.js');
 var logModule = require('../model/logModule.js');
 var config= require('../config.js');
+var configModule= require('../model/config.js');
 var async = require('async');
 var ProgressBar = require('progress');
-var pgMap     = require('../model/pgMap.js');
 
 
 config.initialise();
@@ -15,9 +15,11 @@ config.initialise();
 
 
 
+
 var blogs = {};
 var articlesMap = {};
 async.series([
+  configModule.initialise,
   function articles(done) {
     articleModule.find({},function(err,result){
       if (err) {
@@ -35,14 +37,7 @@ async.series([
 
           // place convert code here
 
-          if (typeof(item.addComment)=='string') {
-            delete item.addComment;
-            save=true;
-          }
-          if (typeof item.addCommentFunction == 'string') {
-            delete item.addCommentFunction;
-            save=true;
-          }
+
 
 
           progress.tick();
@@ -52,7 +47,11 @@ async.series([
           } else cb();
 
       
-        },function (){console.log();console.log(count + " from "+length+ " Article changed");done();});
+        },function (){
+          console.log();
+          console.log(count + " from "+length+ " Article changed");
+          done();
+        });
       }
     });},
   function users(done) {
@@ -66,14 +65,20 @@ async.series([
         var progress = new ProgressBar("Converting Users :bar :percent",{total:length});
         var count = 0;
         async.eachSeries(result,function iterator (item,cb){
-          count ++;
+
           var save=false;
         
         // place convert code here
 
           progress.tick();
-          if (save) item.save(cb); else cb();
-        },function (){done();});
+          if (save) {
+            count ++;
+            item.save(cb);
+          } else cb();
+        },function (){
+          console.log();
+          console.log(count + " from "+length+ " Users changed");
+          done();});
       }
     });},
  function blog(done) {
@@ -87,7 +92,7 @@ async.series([
         var progress = new ProgressBar("Converting Blog :bar :percent",{total:length});
         var count = 0;
         async.eachSeries(result,function iterator (item,cb){
-          count ++;
+
           blogs[item.id]=item;
           var save=false;
 
@@ -98,8 +103,14 @@ async.series([
 
 
           progress.tick();
-          if (save) item.save(cb); else cb();
-        },function (){done();});
+          if (save) {
+            count ++;
+            item.save(cb);
+          } else cb();
+        },function (){
+          console.log();
+          console.log(count + " from "+length+ " Blogs changed");
+          done();});
       }
     });},
    function changes(done) {
@@ -113,22 +124,30 @@ async.series([
         var progress = new ProgressBar("Converting Changes :bar :percent",{total:length});
         var count = 0;
         async.eachSeries(result,function iterator (item,cb){
-          count ++;
+
           var save=false;
 
           // place convert code here
 
+          if ((typeof item.user == "object") && item.user.OSMUser) {
+            item.user = item.user.OSMUser;
+            save = true;
+          }
 
-        
-         
+
+
+
 
 
           progress.tick();
           if (save) {
-            item._meta = {table : logModule.table};
-            (pgMap.save.bind(item))(cb); 
+            count ++;
+            item.save(cb);
           } else cb();
-        },function (){done();});
+        },function (){
+          console.log();
+          console.log(count + " from "+length+ " Changes changed");
+          done();});
       }
     });},
   
