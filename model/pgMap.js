@@ -25,8 +25,6 @@ function longRunningQueriesAdd(duration,query) {
 
   exports.longRunningQueries.push({duration:duration,query:query});
   exports.longRunningQueries.sort(compareLRQ);
-  
-
 }
 
 function generateQuery(table,obj,order) {
@@ -196,6 +194,7 @@ module.exports.save = function(callback) {
           debug("final Function save");
           if (err) {
             debug('Forward Error');
+            debug(err);
             pgdone();
             return callback(err);
           }

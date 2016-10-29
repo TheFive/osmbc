@@ -246,6 +246,7 @@ block content
                     .panel-body.RL.hidden(class="RL-#{l}")
                       :verbatim
                         !{article["textHtml"+l]}
+
         .row
           h4="You can add a comment here:"
         .row
@@ -347,16 +348,12 @@ block content
         if article.categoryEN != "Picture"
           .col-md-1
             p="Preview"
-
-
           +leftcolumn 
             .panel.panel-default
               .panel-body(id="previewLEFT")
                 div
                   :verbatim
                     !{article["textHtml"+params.left_lang]}
-
-
           +rightcolumn
             .panel.panel-default
               .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
@@ -367,6 +364,18 @@ block content
                   .panel-body.RL.hidden(class="RL-#{l}")
                     :verbatim
                       !{article["textHtml"+l]}
+        else
+          .col-md-1
+            p="Markdown"
+          +leftcolumn
+            .panel.panel-default
+              .panel-body(id="previewLEFT")=article["markdown"+params.left_lang]
+          +rightcolumn
+            .panel.panel-default
+              .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")=article["markdown"+params.right_lang]
+              each l in layout.activeLanguages
+                if l !== params.right_lang
+                  .panel-body.RL.hidden(class="RL-#{l}")=article["markdown"+l]
   .row
     .col-md-1
     +leftcolumn

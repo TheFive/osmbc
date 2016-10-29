@@ -1,8 +1,67 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [2.0.4](https://github.com/TheFive/osmbc/tree/2.0.4) (2016-10-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.2...2.0.4)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8...HEAD)
+**Closed issues:**
+
+- Language switch [\#562](https://github.com/TheFive/osmbc/issues/562)
+
+## [2.0.2](https://github.com/TheFive/osmbc/tree/2.0.2) (2016-10-25)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.1...2.0.2)
+
+**Fixed bugs:**
+
+- Vote list in overview sometimes takes content of article the line before. [\#560](https://github.com/TheFive/osmbc/issues/560)
+
+**Closed issues:**
+
+- visitors today [\#559](https://github.com/TheFive/osmbc/issues/559)
+- check index for history page load in postgres. It is very slow. [\#558](https://github.com/TheFive/osmbc/issues/558)
+- Add coloring for voting icons via configuration. [\#554](https://github.com/TheFive/osmbc/issues/554)
+
+## [2.0.1](https://github.com/TheFive/osmbc/tree/2.0.1) (2016-10-24)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.0...2.0.1)
+
+**Closed issues:**
+
+- Implement an easy possibility to look after another langauge in the article editor. [\#557](https://github.com/TheFive/osmbc/issues/557)
+- In history list, make OID clickable to the object itself \(not the change object\) [\#556](https://github.com/TheFive/osmbc/issues/556)
+- Set the Page Title do something more meaningfull. [\#555](https://github.com/TheFive/osmbc/issues/555)
+
+## [2.0.0](https://github.com/TheFive/osmbc/tree/2.0.0) (2016-10-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.9a...2.0.0)
+
+**Implemented enhancements:**
+
+- Use a preview for markdownLANG in Change View to support reading. [\#551](https://github.com/TheFive/osmbc/issues/551)
+- Display Tags \(votable tags\) with Icons. [\#453](https://github.com/TheFive/osmbc/issues/453)
+- Allow tags for articles to vote. [\#452](https://github.com/TheFive/osmbc/issues/452)
+
+**Closed issues:**
+
+- Set Change View to word comparison in diff \(not character\). [\#552](https://github.com/TheFive/osmbc/issues/552)
+
+## [1.9.9a](https://github.com/TheFive/osmbc/tree/1.9.9a) (2016-10-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.9...1.9.9a)
+
+**Implemented enhancements:**
+
+- UI Feature: allow to switch a filter of, by clicking X in the filter box. [\#550](https://github.com/TheFive/osmbc/issues/550)
+
+## [1.9.9](https://github.com/TheFive/osmbc/tree/1.9.9) (2016-10-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8a...1.9.9)
+
+**Closed issues:**
+
+- Option to send out an EMail for a comment if mentioning was done somewhere in discussion, not in concrete comments. [\#549](https://github.com/TheFive/osmbc/issues/549)
+
+## [1.9.8a](https://github.com/TheFive/osmbc/tree/1.9.8a) (2016-10-15)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8...1.9.8a)
+
+**Implemented enhancements:**
+
+- Add direct link to filter at end of blog view at top of page. [\#546](https://github.com/TheFive/osmbc/issues/546)
 
 **Fixed bugs:**
 
@@ -290,13 +349,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
