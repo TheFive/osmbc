@@ -263,6 +263,11 @@ pgObject.table = "changes";
 module.exports.pg = pgObject;
 
 
+Change.prototype.getTable= function getTable() {
+  return "changes";
+};
+
+Change.prototype.save = pgMap.save;
 
 
 module.exports.table = "changes";
