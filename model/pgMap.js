@@ -9,22 +9,25 @@ var sqldebug  = require('debug')('OSMBC:model:sql');
 var config = require('../config.js');
 var util = require('../util.js');
 
-module.exports.longRunningQueries=[];
+module.exports.longRunningQueries={};
 
 function compareLRQ(a,b) {
   return b.duration - a.duration;
 }
 
-function longRunningQueriesAdd(duration,query) {
+function longRunningQueriesAdd(duration,query,table) {
+
+  if (!exports.longRunningQueries[table]) exports.longRunningQueries[table] =[];
+  let t = exports.longRunningQueries[table];
 
 
-  if (exports.longRunningQueries.length > 10) {
-    if (exports.longRunningQueries[9].duration > duration) return;
-    exports.longRunningQueries.pop();
+  if (t.length > 10) {
+    if (t[9].duration > duration) return;
+    t.pop();
   }
 
-  exports.longRunningQueries.push({duration:duration,query:query});
-  exports.longRunningQueries.sort(compareLRQ);
+  t.push({duration:duration,query:query});
+  t.sort(compareLRQ);
 }
 
 function generateQuery(table,obj,order) {
