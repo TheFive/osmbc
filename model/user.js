@@ -85,7 +85,10 @@ function findOne(obj1,obj2,callback) {
 var pgObject= {};
 pgObject.createString = 'CREATE TABLE usert (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT user_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);';
-pgObject.indexDefinition={};
+pgObject.indexDefinition={
+  "user_id_idx":"CREATE INDEX user_id_idx ON usert USING btree (((data ->> 'OSMUser'::text)))"
+
+};
 pgObject.viewDefinition = {};
 pgObject.table="usert";
 module.exports.pg = pgObject;

@@ -59,6 +59,7 @@ function renderAdminHome(req,res,next) {
 
 function renderLongRunningQueries(req,res) {
   debug('renderLongRunningQueries');
+  res.set('content-type', 'text');
   res.end(JSON.stringify(pgMap.longRunningQueries,null,3));
 }
 
