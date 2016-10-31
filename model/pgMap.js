@@ -298,7 +298,7 @@ module.exports.find = function find(module,obj,order,callback) {
       debug('findEndFunction');
       var endTime = new Date().getTime();
       sqldebug("SQL: ["+ (endTime - startTime)/1000 +"]("+result.length+" rows)"+ sqlQuery);
-      longRunningQueriesAdd(endTime-startTime,sqlQuery);
+      longRunningQueriesAdd(endTime-startTime,sqlQuery,table);
       pgdone();
       callback(null,result);
     });
