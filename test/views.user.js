@@ -53,6 +53,17 @@ describe('views/user', function() {
       bddone();
     });
   });
+  it('should have bootstrap.js loaded' ,function(bddone) {
+    this.timeout(6000);
+    browser.visit('/osmbc', function(err){
+      should.not.exist(err);
+
+      // test wether bootstrap.js is loaded or not
+      // see http://stackoverflow.com/questions/13933000/how-to-check-if-twitter-bootstrap-is-loaded
+      should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
+      bddone();
+    });
+  });
   it('should save userdata and calculate WN User' ,function(bddone) {
     this.timeout(maxTimer);
     nock('https://blog.openstreetmap.de')
