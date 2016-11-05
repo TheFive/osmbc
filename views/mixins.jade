@@ -215,4 +215,23 @@ mixin userConfigOption(view,option,variable,userdesc)
 
 
 
+mixin blogSelection(list,missingList,blogtype)
+  for blog in list
+    if article && blog.name == article.blog
+      option(value="#{blog.name}" selected) #{blog.name} #{blogtype}
+      - missingList.splice(0,missingList.length)
+    else
+      option(value="#{blog.name}" ) #{blog.name} #{blogtype}
+
+mixin blogSelector(article)
+    select(id="blog",name="blog").form-control
+      - var missingList = []
+      - if (article) missingList = [{name:article.blog}]
+      +blogSelection(layout.listOfOpenBlog,missingList,"")
+      +blogSelection(layout.listOfEditBlog,missingList,"(Edit)")
+      +blogSelection(layout.listOfReviewBlog,missingList,"(Review #{layout.language})")
+      +blogSelection([{name: "Future"}],missingList,"")
+      +blogSelection([{name: "Trash"}],missingList,"")
+      +blogSelection(missingList,missingList,"")
+
 block all

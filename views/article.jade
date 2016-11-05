@@ -38,38 +38,8 @@ block content
           .col-md-1
             p="Blog"
           .col-md-5
-            select(id="blog",name="blog").form-control
-              option(value="Future") Future
-              - var displayed = false;
-              for blog in layout.listOfOpenBlog
-                if blog.name == article.blog
-                  option(value="#{blog.name}" selected) #{blog.name}
-                  - displayed = true;
-                else
-                   option(value="#{blog.name}" ) #{blog.name}
+            +blogSelector(article)
 
-              for blog in layout.listOfEditBlog
-                if blog.name == article.blog
-                  option(value="#{blog.name}" selected) #{blog.name} (Edit)
-                  - displayed = true;
-                else
-                   option(value="#{blog.name}" ) #{blog.name} (Edit)
-
-              for blog in layout.listOfReviewBlog
-                if blog.name == article.blog
-                  option(value="#{blog.name}" selected) #{blog.name} (Review #{layout.language})
-                  - displayed = true;
-                else
-                   option(value="#{blog.name}" ) #{blog.name} (Review #{layout.language})
-              if (article.blog == "Trash")
-                option(value="Trash" selected) Trash
-                - displayed = true;
-              else
-                option(value="Trash" ) Trash
-
-              if (!displayed)
-                option(value="#{article.blog}" selected) #{article.blog}
-              
           .col-md-4
 
             .hidden
