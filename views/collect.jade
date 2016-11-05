@@ -77,21 +77,7 @@ block content
                   .col-md-2
                     | Blog <br>
                   .col-md-10
-                    select(id="blog",name="blog").form-control
-                      if (layout.listOfOpenBlog)  
-                        for blog in layout.listOfOpenBlog         
-                          option(value="#{blog.name}" ) #{blog.name}
-                      if (layout.listOfEditBlog)  
-                        for blog in layout.listOfEditBlog        
-                          option(value="#{blog.name}") #{blog.name} (Edit)
-                      if (layout.listOfReviewBlog)  
-                        for blog in layout.listOfReviewBlog        
-                          option(value="#{blog.name}") #{blog.name} (Review #{layout.language})
-                      option(value="Future") Future
-                      option(value="Trash") Trash
-                      if (layout.listOfHelpBlog)
-                        each helpblog in layout.listOfHelpBlog
-                           option(value="#{helpblog.name}" ) #{helpblog.name}
+                    +blogSelector
                 .row
                   .col-md-2
                     | Category <br>
@@ -137,18 +123,19 @@ block scripts
 
       categoryDisplay = document.getElementById("categoryDisplay");
       categoryEN = document.getElementById("categoryEN");
-      categoryEN.onchange = onchangeCategory;
+      if (categoryEN) categoryEN.onchange = onchangeCategory;
       okButton = document.getElementById("OK");
       okButtonlang = document.getElementById("OKLang");
       title = document.getElementById("title");
-      title.onchange = onchangeTitle;
-      title.onkeyup = onchangeTitle;
+      if (title) title.onchange = onchangeTitle;
+      if (title) title.onkeyup = onchangeTitle;
       onchangeTitle();
       onchangeCategory();
-      title.select();
+      if (title) title.select();
     }
 
     function onchangeCategory() {
+      if (!categoryEN) return;
       var c = categoryEN.value;
       if (placeholder[c]) {
          categoryDisplay.innerHTML = placeholder[c];    
@@ -156,6 +143,7 @@ block scripts
     }
 
     function onchangeTitle() {
+      if (!title) return;
       var t = title.value;
       okButton.disabled = true;
       okButtonlang.disabled = true;

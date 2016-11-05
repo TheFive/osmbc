@@ -165,6 +165,10 @@ function prepareRenderLayout(req,res,next) {
       languages.forEach(function(item){
         if (usedLanguages[item]) activeLanguages.push(item);
       });
+      if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
+      if (!result.listOfEditBlog) result.listOfEditBlog = [];
+      if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
+      if (!result.listOfOrphanBlog) result.listOfOrphanBlog = [];
 
       if (!(res.rendervar) || typeof(res.rendervar)=='undefined') res.rendervar = {};
       res.rendervar.layout = {user:req.user,
@@ -179,9 +183,8 @@ function prepareRenderLayout(req,res,next) {
                       language:req.user.getMainLang(),
                       language2:req.user.getSecondLang(),
                       listOfOpenBlog:result.listOfOpenBlog,
-                      listOfEditBlog:result.listOfEditBlog,
+                      listOfEditBlog:  result.listOfEditBlog,
                       listOfReviewBlog:result.listOfReviewBlog,
-                      listOfHelpBlog:result.listOfHelpBlog,
                       tbc:result.tbc,
                       moment:moment,
                       util:util,

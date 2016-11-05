@@ -38,45 +38,8 @@ block content
           .col-md-1
             p="Blog"
           .col-md-5
-            select(id="blog",name="blog").form-control
-              option(value="Future") Future
-              if (layout.listOfOpenBlog)  
-                - var displayed = false;
-                for blog in layout.listOfOpenBlog 
-                  if blog.name == article.blog
-                    option(value="#{blog.name}" selected) #{blog.name}
-                    - displayed = true;
-                  else
-                     option(value="#{blog.name}" ) #{blog.name}
-              if (layout.listOfEditBlog)  
-                for blog in layout.listOfEditBlog 
-                  if blog.name == article.blog         
-                    option(value="#{blog.name}" selected) #{blog.name} (Edit)
-                    - displayed = true;
-                  else
-                     option(value="#{blog.name}" ) #{blog.name} (Edit)
-              if (layout.listOfReviewBlog)  
-                for blog in layout.listOfReviewBlog 
-                  if blog.name == article.blog         
-                    option(value="#{blog.name}" selected) #{blog.name} (Review #{layout.language})
-                    - displayed = true;
-                  else
-                     option(value="#{blog.name}" ) #{blog.name} (Review #{layout.language})
-              if (article.blog == "Trash")
-                option(value="Trash" selected) Trash
-                - displayed = true;
-              else
-                option(value="Trash" ) Trash
-              if (layout.listOfHelpBlog)
-                each helpblog in layout.listOfHelpBlog
-                  if helpblog.name == article.blog         
-                    option(value="#{helpblog.name}" selected) #{helpblog.name}
-                    - displayed = true;
-                  else
-                     option(value="#{helpblog.name}" ) #{helpblog.name}
-              if (!displayed)
-                option(value="#{article.blog}" selected) #{article.blog}
-              
+            +blogSelector(article)
+
           .col-md-4
 
             .hidden
