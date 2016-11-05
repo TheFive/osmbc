@@ -1,5 +1,26 @@
 # Change Log
 
+## [2.0.5](https://github.com/TheFive/osmbc/tree/2.0.5) (2016-11-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/indexanother...2.0.5)
+
+**Closed issues:**
+
+- Failed to lookup view "config/slacknotification" in views directory "/home/thefive/production/osmbc/views" [\#565](https://github.com/TheFive/osmbc/issues/565)
+- Show Language Flag not only in German Version [\#564](https://github.com/TheFive/osmbc/issues/564)
+
+## [indexanother](https://github.com/TheFive/osmbc/tree/indexanother) (2016-10-31)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/indexforblog...indexanother)
+
+## [indexforblog](https://github.com/TheFive/osmbc/tree/indexforblog) (2016-10-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/Modify_Changes...indexforblog)
+
+## [Modify_Changes](https://github.com/TheFive/osmbc/tree/Modify_Changes) (2016-10-29)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.4...Modify_Changes)
+
+**Closed issues:**
+
+- show markdown in picture article [\#561](https://github.com/TheFive/osmbc/issues/561)
+
 ## [2.0.4](https://github.com/TheFive/osmbc/tree/2.0.4) (2016-10-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.2...2.0.4)
 
@@ -1878,17 +1899,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
