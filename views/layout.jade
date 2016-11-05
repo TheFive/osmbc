@@ -99,11 +99,11 @@ block all
                     a(href='#{layout.htmlroot}/article/search') Search
                     a(href='#{layout.htmlroot}/article/list?myArticles=true') My Collections
                   li.dropdown-header Orphaned Article
-                    if (layout.listOfOrphanBlog)
-                      for blog in layout.listOfOrphanBlog
-                        if blog
-                          li
-                            a(href="#{layout.htmlroot}/article/list?blog=#{blog}") #{blog}
+
+                    for blog in layout.listOfOrphanBlog
+                      if blog
+                        li
+                          a(href="#{layout.htmlroot}/article/list?blog=#{blog}") #{blog}
                     li
                       a(href='#{layout.htmlroot}/article/list?blog=') No Blog
 
