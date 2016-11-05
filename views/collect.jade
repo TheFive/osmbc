@@ -137,18 +137,19 @@ block scripts
 
       categoryDisplay = document.getElementById("categoryDisplay");
       categoryEN = document.getElementById("categoryEN");
-      categoryEN.onchange = onchangeCategory;
+      if (categoryEN) categoryEN.onchange = onchangeCategory;
       okButton = document.getElementById("OK");
       okButtonlang = document.getElementById("OKLang");
       title = document.getElementById("title");
-      title.onchange = onchangeTitle;
-      title.onkeyup = onchangeTitle;
+      if (title) title.onchange = onchangeTitle;
+      if (title) title.onkeyup = onchangeTitle;
       onchangeTitle();
       onchangeCategory();
-      title.select();
+      if (title) title.select();
     }
 
     function onchangeCategory() {
+      if (!categoryEN) return;
       var c = categoryEN.value;
       if (placeholder[c]) {
          categoryDisplay.innerHTML = placeholder[c];    
@@ -156,6 +157,7 @@ block scripts
     }
 
     function onchangeTitle() {
+      if (!title) return;
       var t = title.value;
       okButton.disabled = true;
       okButtonlang.disabled = true;
