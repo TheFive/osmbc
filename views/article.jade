@@ -222,8 +222,10 @@ block content
 
 
           .col-md-1
+            .row
+              i#languageFlagsShow.fa.fa-flag.fa-2x(onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
 
-            if ((params.left_lang=="DE") || (params.right_lang=="DE"))
+            .row#languageFlags.hidden
               - for (lang in languageFlags)
                 img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
           
@@ -636,8 +638,6 @@ block scripts
         editComment.onkeyup = f;
         f();
       }
-      window.translate = translate;
-      window.copyText = copyText;
     }
 
     function translateRIGHT() {
