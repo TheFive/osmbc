@@ -29,142 +29,186 @@ mixin rightcolumn
       else
         p No Content provided
 
+mixin articleMarkdown(column,lang,disabled)
+  if disabled || blog && !blog.isEditable(lang)
+    .panel.panel-default
+      .panel-body #{article["markdown" + lang]}
+  else
+    - p=""
+    if placeholder.markdown[lang]
+      - p = placeholder.markdown[lang];
+    textarea.form-control(id="markdown#{column}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6) #{article["markdown" + params.left_lang]}
+    div(id="text_left")
+      | 'no translation' or '-' to specify no translation wanted.
 
 block content
-  p
-    if (params.edit && !( blog && blog.status=="closed") )
-      form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
+  - var disabled = (!params.edit && !( blog && blog.status=="closed") )
+  - console.log(disabled)
+
+  form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
+
+    .row
+      // Block for Buttons in the upper right corner and on the top in mobile
+      .col-md-6.col-md-push-6
+        .col-md-1
+          if articleReferences.count >= 1
+            a(href="#doublettes")
+              div.button.btn.btn-large.btn-danger=articleReferences.count + " doub."
+        .col-md-1
+          button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
+        .col-md-4
+          for vote,i in votes
+            if (vote.displayAtTop)
+              +voteButton(vote,article)
+        .col-md-1
+          if articleReferences.count >= 1
+            a(href="#doublettes")
+              div.button.btn.btn-large.btn-danger=articleReferences.count + " doub."
+        .col-md-1
+          a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
+        button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") Cancel
+        .col-md-3
+          +languageDisplay(article,{func: "showRL"})
+          if (!params.edit)
+            - open = false
+            each lang in layout.activeLanguages
+              if (article["markdown" + lang])
+              else
+                - open = true;
+            if open
+              p
+                button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?notranslation=true';") notranslation to rest
+
+          // Parallel Blog for common article Attributes
+      .col-md-6.col-md-pull-6
         .row
-          .col-md-1
-            p="Blog"
-          .col-md-5
-            +blogSelector(article)
-
-          .col-md-4
-
+          div.form-group
+            label.col-md-2="Blog"
+            div.col-md-10
+              +blogSelector(article,disabled)
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
 
-          .col-md-1
-            if articleReferences.count >= 1
-              a(href="#doublettes")
-                div.button.btn.btn-large.btn-danger=articleReferences.count+" doub."
-          .col-md-1
-            button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
-
-
         .row
-          .col-md-1
-            p="Category"
-          +leftcolumn
-            select(id="categoryEN",name="categoryEN").form-control
-              for category in categories
-                - option = category[params.left_lang]
-                - if (params.right_lang !== null) option += " / "+category[params.right_lang]
-                if (category.EN == article.categoryEN)
-                  option(value="#{category.EN}" selected ) #{option} 
-                else
-                  option(value="#{category.EN}" ) #{option}
-          +rightcolumn
-            p(id="categoryDisplay" style={color: 'Gray'})
-          .col-md-1
-            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") Cancel
-        .row
-          .col-md-1
-            p="Predecessor"
-          +leftcolumn
-            select(id="predecessor",name="predecessorId").form-control
-              if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
-                option(value="" selected) None
-              else
-                option(value="") None
-              if article.predecessorId === "0"
-                option(value="0" selected) First
-              else
-                option(value="0") First
-              for a in articleCategories
-                if (a.id == article.predecessorId)
-                  option(value=a.id selected )=a.title
-                else
-                  - d= null;
-                  for b in articleCategories
-                    - if (b.predecessorId == a.predecessorId) {d=b;}
-                  if disabled
-                    option(value=a.id disabled)=a.title+"("+d.title+")"
+          .form-group
+            label.col-md-2="Category"
+            div.col-md-10
+              select(id="categoryEN",name="categoryEN" disabled=disabled).form-control
+                for category in categories
+                  - option = category[params.left_lang]
+                  - if (params.right_lang !== null) option += " / "+category[params.right_lang]
+                  if (category.EN == article.categoryEN)
+                    option(value="#{category.EN}" selected ) #{option}
                   else
-                    option(value=a.id )=a.title
-          .col-md-1
-            p="'"+article.predecessorId+"'"
+                    option(value="#{category.EN}" ) #{option}
+          .row
+            .col-md-2
+            .col-md-10
+              p(id="categoryDisplay" style={color: 'Gray'})
 
-        .row.hidden(id="unpublishReasonRow")
-          .col-md-1
-            p="Unpublish Reason"
-          .col-md-5
-            select(id="unpublishReason",name="unpublishReason").form-control
-              for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
-                if (reason == article.unpublishReason)
-                  option(value="#{reason}" selected ) #{reason}
+
+
+
+
+    // Display Predecessor Row
+    .row
+      .form-group
+        label.col-md-1="Predecessor"
+        +leftcolumn
+          select(id="predecessor",name="predecessorId" disabled=disabled).form-control
+            if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
+              option(value="" selected) None
+            else
+              option(value="") None
+            if article.predecessorId === "0"
+              option(value="0" selected) First
+            else
+              option(value="0") First
+            for a in articleCategories
+              if (a.id == article.predecessorId)
+                option(value=a.id selected )=a.title
+              else
+                - d= null;
+                for b in articleCategories
+                  - if (b.predecessorId == a.predecessorId) {d=b;}
+                if disabled
+                  option(value=a.id disabled)=a.title+"("+d.title+")"
                 else
-                  option(value="#{reason}" ) #{reason}
-          .col-md-5
-            textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1) #{article.unpublishReference}
-        .row
-          .col-md-1
-            p="Title"
-          .col-md-7
-            textarea.form-control(name="title",rows=1) #{article.title}
-          .col-md-3
-            +languageDisplay(article,{func:"showRL"})
+                  option(value=a.id )=a.title
+    // Display Title Row
+    .row
+      .form-group
+        label.col-md-1="Title"
+        .col-md-10
+          textarea.form-control(name="title",rows=1 disabled=disabled) #{article.title}
 
+
+    // Display Unpublish Reason Row
+    .row.hidden(id="unpublishReasonRow")
+      .form-group
+        label.col-md-1="Unpublish Reason"
+        .col-md-5
+          select(id="unpublishReason",name="unpublishReason" disabled=disabled).form-control
+            for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
+              if (reason == article.unpublishReason)
+                option(value="#{reason}" selected ) #{reason}
+              else
+                option(value="#{reason}" ) #{reason}
+        .col-md-5
+          textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1 disabled=disabled) #{article.unpublishReference}
+
+
+    // Display Collection Row
+    .row
+      .form-group
+        label.col-md-1="Collection"
+        .col-md-10
+          textarea.form-control(id="collection" name="collection" rows=2 disabled=disabled) #{article.collection}
+    .row
+      .col-md-1
+
+      .col-md-6
+        .div(id="linkArea")
+      if (!disabled)
+        .col-md-4
+          p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
+
+
+
+
+
+
+      - var lbg;
+      - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
+      - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
+      - var rbg;
+      - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
+      - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
+
+
+
+
+      .col-md-6
         .row
-          .col-md-1
-            p="Collection"
+          .col-md-2
           .col-md-10
-            textarea.form-control(id="collection" name="collection" rows=2) #{article.collection}
-        .row
-          .col-md-1
-            
-          .col-md-6
-              .div(id="linkArea")
-          .col-md-4
-            p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
-                
-        .row 
-          .col-md-1
-          - var lbg;
-          - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
-          - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
-          - var rbg;
-          - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
-          - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
-
-          +leftcolumn
             span.label.label-default(id="left_lang" class="#{lbg}")=params.left_lang
-          +rightcolumn
-            span.label.label-default.RL(id="right_lang" class="#{rbg} RL-#{params.right_lang}")=params.right_lang
-            for l in layout.activeLanguages
-              if (l!== params.right_lang)
-                span.label.label-default.RL.hidden(class= "RL-#{l}")=l
 
         .row
-          .col-md-1
+          .col-md-2
             p="Markdown"
 
-          +leftcolumn
-            if blog && !blog.isEditable(params.left_lang)
-              .panel.panel-default
-                .panel-body #{article["markdown"+params.left_lang]}         
-            else
-              if placeholder.markdown[params.left_lang]
-                - p = placeholder.markdown[params.left_lang];
-              else 
-                - p = "";
-              textarea.form-control(id="markdownLEFT" placeholder = "#{p}" spellcheck = "true" lang="#{params.left_lang}" name = "markdown#{params.left_lang}" rows = 6) #{article["markdown"+params.left_lang]}
-              div(id="text_left")
-                |'no translation' or '-' to specify no translation wanted.
+          .col-md-10
+            +articleMarkdown("LEFT",params.left_lang,disabled)
 
+      .col-md-5
+        .row
 
-          +rightcolumn
+          span.label.label-default.RL(id="right_lang" class="#{rbg} RL-#{params.right_lang}")=params.right_lang
+          for l in layout.activeLanguages
+            if l !== params.right_lang
+              span.label.label-default.RL.hidden(class= "RL-#{l}")=l
+        .row
             div.RL(class="RL-#{params.right_lang}")
               if blog && !blog.isEditable(params.right_lang)
                 .panel.panel-default
@@ -182,165 +226,88 @@ block content
                  div.hidden(class = "RL RL-#{l}")
                    .panel.panel-default
                      .panel-body #{article["markdown"+l]}
+       .col-md-1
+         .row
+             i#languageFlagsShow.fa.fa-flag.fa-2x(onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
 
-
-          .col-md-1
-            .row
-              i#languageFlagsShow.fa.fa-flag.fa-2x(onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
-
-            .row#languageFlags.hidden
-              - for (lang in languageFlags)
-                img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
-          
-
-        .row
-          if article.categoryEN != "Picture"
-            .col-md-1
-              p="Preview"
-            +leftcolumn
-              .panel.panel-default.panel-body(id="previewLEFT")
-                  :verbatim
-                    !{article["textHtml"+params.left_lang]}
-            +rightcolumn
-              .panel.panel-default
-                .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
-                  :verbatim
-                    !{article["textHtml"+params.right_lang]}
-                each l in layout.activeLanguages
-                  if l !== params.right_lang
-                    .panel-body.RL.hidden(class="RL-#{l}")
-                      :verbatim
-                        !{article["textHtml"+l]}
-
-        .row
-          h4="You can add a comment here:"
-        .row
-          .col-md-12
-            textarea.form-control(name="addComment" id="addComment" rows=3 )
+         .row#languageFlags.hidden
+           - for (lang in languageFlags)
+            img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
 
 
 
 
-    else
-      .row
+
+
+    .row
+      if article.categoryEN != "Picture"
         .col-md-1
-          p="Blog"
-        .col-md-5
-          p=article.blog
-        .col-md-4
-          for vote,i in votes
-            if (vote.displayAtTop)
-              +voteButton(vote,article)
-        .col-md-1
-          if articleReferences.count >= 1
-            a(href="#doublettes")
-              div.button.btn.btn-large.btn-danger=articleReferences.count+" doub."
-        .col-md-1
-          a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
-      .row
-        .col-md-1
-          p="Category"
+          p="Preview"
         +leftcolumn
-          p=article.getCategory(params.left_lang)
-
-      .row
-        - pdname = "None"
-        if article.predecessorId && article.predecessorId != ""
-          - pdname = "not in category"
-        if article.predecessorId == "0"
-          - pdname = "First"
-        for a in articleCategories
-          if (a.id == article.predecessorId)
-            - pdname = a.title
-
-
-        .col-md-1
-            p="Predecessor"
-
-        .col-md-7
-          p=pdname
-
-      .row
-        .col-md-1
-          p="Title"
-        .col-md-7
-          p=article.title
-        .col-md-3
-          p
-            +languageDisplay(article,{func:"showRL"})
-            - open = false
-            each lang in layout.activeLanguages
-              if (article["markdown"+lang])
-              else
-                - open = true;
-          if open
-            p
-              button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?notranslation=true';") notranslation to rest
-
-
-
-
-      .row
-        .col-md-1
-          p="Collection"
-        .col-md-10
-          if (article.collection)
-            #collection
+          .panel.panel-default.panel-body(id="previewLEFT")
               :verbatim
-                !{layout.md_render(article.collection)}
-              //:verbatim
-              //|<pre>!{article.collection.replace(/(https?:\/\/[^\[\] \n\r]*)/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
-      .row 
-        .col-md-1
-        - var lbg;
-        - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
-        - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
-        - var rbg;
-        - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
-        - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
-
-        +leftcolumn
-          span.label.label-default(id="left_lang" class="#{lbg}") 
-            |#{params.left_lang}
+                !{article["textHtml"+params.left_lang]}
         +rightcolumn
-          span.label.label-default.RL(id="right_lang" class="#{rbg} RL-#{params.right_lang}" )
-            |#{params.right_lang}
-          each l in layout.activeLanguages
-            if l !== params.right_lang
-              span.label.label-default.hidden.RL(class = "RL-#{l}")=l
+          .panel.panel-default
+            .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
+              :verbatim
+                !{article["textHtml"+params.right_lang]}
+            each l in layout.activeLanguages
+              if l !== params.right_lang
+                .panel-body.RL.hidden(class="RL-#{l}")
+                  :verbatim
+                    !{article["textHtml"+l]}
+    .row
+      if article.categoryEN != "Picture"
+        .col-md-1
+          p="Preview"
+        +leftcolumn
+          .panel.panel-default
+            .panel-body(id="previewLEFT")
+              div
+                :verbatim
+                  !{article["textHtml"+params.left_lang]}
+        +rightcolumn
+          .panel.panel-default
+            .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
+              :verbatim
+                !{article["textHtml"+params.right_lang]}
+            each l in layout.activeLanguages
+              if l !== params.right_lang
+                .panel-body.RL.hidden(class="RL-#{l}")
+                  :verbatim
+                    !{article["textHtml"+l]}
+      else
+        .col-md-1
+          p="Markdown"
+        +leftcolumn
+          .panel.panel-default
+            .panel-body(id="previewLEFT")=article["markdown" + params.left_lang]
+        +rightcolumn
+          .panel.panel-default
+            .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")=article["markdown" + params.right_lang]
+            each l in layout.activeLanguages
+              if l !== params.right_lang
+                .panel-body.RL.hidden(class="RL-#{l}")=article["markdown" + l]
 
-      .row
-        if article.categoryEN != "Picture"
-          .col-md-1
-            p="Preview"
-          +leftcolumn 
-            .panel.panel-default
-              .panel-body(id="previewLEFT")
-                div
-                  :verbatim
-                    !{article["textHtml"+params.left_lang]}
-          +rightcolumn
-            .panel.panel-default
-              .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
-                  :verbatim
-                    !{article["textHtml"+params.right_lang]}
-              each l in layout.activeLanguages
-                if l !== params.right_lang
-                  .panel-body.RL.hidden(class="RL-#{l}")
-                    :verbatim
-                      !{article["textHtml"+l]}
-        else
-          .col-md-1
-            p="Markdown"
-          +leftcolumn
-            .panel.panel-default
-              .panel-body(id="previewLEFT")=article["markdown"+params.left_lang]
-          +rightcolumn
-            .panel.panel-default
-              .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")=article["markdown"+params.right_lang]
-              each l in layout.activeLanguages
-                if l !== params.right_lang
-                  .panel-body.RL.hidden(class="RL-#{l}")=article["markdown"+l]
+    // Display Comment Row
+    .row
+      h4="You can add a comment here:"
+    .row
+      .col-md-12
+        textarea.form-control(name="addComment" id="addComment" rows=3 )
+
+
+  // Translate Tools
+
+
+
+
+
+
+
+
+
   .row
     .col-md-1
     +leftcolumn

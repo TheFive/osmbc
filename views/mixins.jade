@@ -223,13 +223,14 @@ mixin blogSelection(list,missingList,blogtype)
     else
       option(value="#{blog.name}" ) #{blog.name} #{blogtype}
 
-mixin blogSelector(article)
-    select(id="blog",name="blog").form-control
+mixin blogSelector(article,readonly)
+    - if (readonly !== true) readonly = false
+    select(id="blog",name="blog" disabled=readonly).form-control
       - var missingList = []
       - if (article) missingList = [{name:article.blog}]
       +blogSelection(layout.listOfOpenBlog,missingList,"")
       +blogSelection(layout.listOfEditBlog,missingList,"(Edit)")
-      +blogSelection(layout.listOfReviewBlog,missingList,"(Review #{layout.language})")
+      +blogSelection(layout.listOfReviewBlog,missingList,"(Review"+layout.language+")")
       +blogSelection([{name: "Future"}],missingList,"")
       +blogSelection([{name: "Trash"}],missingList,"")
       if layout.appName == "TheFiveBC"
