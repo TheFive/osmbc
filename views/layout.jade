@@ -1,10 +1,21 @@
 extend mixins
 
-mixin homeButton(hideclass)
+mixin homeButton(addclass)
   if layout.osmbc_version === layout.user.lastChangeLogView
-    a(href='#{layout.htmlroot}/osmbc.html' class=hideclass) #{layout.appName}
+    a(href='#{layout.htmlroot}/osmbc.html' class=addclass) #{layout.appName}
   else
-    a.bg-success(href='#{layout.htmlroot}/changelog' class=hideclass) Whats New?
+    a.bg-success(href='#{layout.htmlroot}/changelog' class=addclass) Whats New?
+
+mixin firstBlogOfList(list)
+  if (list.length > 0)
+    - var blog = list[0]
+    li
+      a(href='#{layout.htmlroot}/blog/#{blog.name}')=blog.name
+        span.badge.osmbcbadge-lang=blogNumber(blog, layout.language)
+        if layout.language2
+          span.badge.osmbcbadge-lang2=blogNumber(blog, layout.language2)
+
+
 
 block all
 
@@ -55,6 +66,11 @@ block all
                     span.badge.osmbcbadge-lang=layout.mainLangMentions
                   if (layout.secondLangMentions>0)
                     span.badge.osmbcbadge-lang2=layout.secondLangMentions
+            ul.nav.navbar-nav.pull-left.visible-xs
+              - var listall = [].concat(layout.listOfReviewBlog)
+              - listall = listall.concat(layout.listOfEditBlog)
+              - listall = listall.concat(layout.listOfOpenBlog)
+              +firstBlogOfList(listall)
 
 
 
@@ -69,34 +85,11 @@ block all
             ul.nav.navbar-nav.navbar-left
               li.show-xs
                 +homeButton("visible-xs")
-              if (layout.listOfOpenBlog && layout.listOfOpenBlog.length > 0)
-                li
-                  a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')
-                    | #{layout.listOfOpenBlog[0].name}
-                    span.badge.osmbcbadge-lang
-                      | #{blogNumber(layout.listOfOpenBlog[0], layout.language)}
-                    if layout.language2
-                      span.badge.osmbcbadge-lang2.hidden-xs
-                        | #{blogNumber(layout.listOfOpenBlog[0], layout.language2)}
+              +firstBlogOfList(layout.listOfOpenBlog)
+              +firstBlogOfList(layout.listOfEditBlog)
+              +firstBlogOfList(layout.listOfReviewBlog)
 
-              if (layout.listOfEditBlog && layout.listOfEditBlog.length>0)
-                li
-                  a(href='#{layout.htmlroot}/blog/#{layout.listOfEditBlog[0].name}')
-                    |#{layout.listOfEditBlog[0].name}
-                    span.badge.osmbcbadge-lang
-                      |#{blogNumber(layout.listOfEditBlog[0],layout.language)}
-                    if layout.language2
-                      span.badge.osmbcbadge-lang2
-                        |#{blogNumber(layout.listOfEditBlog[0],layout.language2)}
-              if (layout.listOfReviewBlog && layout.listOfReviewBlog.length>0)
-                li
-                  a(href='#{layout.htmlroot}/blog/#{layout.listOfReviewBlog[0].name}')
-                    |#{layout.listOfReviewBlog[0].name}
-                    span.badge.osmbcbadge-lang
-                      |#{blogNumber(layout.listOfReviewBlog[0],layout.language)}
-                    if layout.language2
-                      span.badge.osmbcbadge-lang2
-                        |#{blogNumber(layout.listOfReviewBlog[0],layout.language2)}
+
               li.dropdown
                 a.dropdown-toggle(href='#', data-toggle='dropdown')
                   | Lists
@@ -162,7 +155,7 @@ block all
                       if layout.usedLanguages[l]
                         li
                           a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
-                li.dropdown.hidden-xs
+                li.dropdown
                   a.btn.dropdown-toggle.osmbcbadge-lang2(href='#',style="color:white", data-toggle='dropdown')
                     |#{(layout.language2)?layout.language2:"--"}
                     span.caret
