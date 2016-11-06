@@ -305,6 +305,7 @@ function postArticle(req, res, next) {
           if (typeof(result.id) == 'undefined') return cb(new Error("Could not create Article"));
           article = result;
           changes.version = result.version;
+          changes.firstCollector = req.user.OSMUser;
           returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
           cb();          
         });

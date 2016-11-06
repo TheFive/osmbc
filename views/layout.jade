@@ -1,5 +1,11 @@
 extend mixins
 
+mixin homeButton(hideclass)
+  if layout.osmbc_version === layout.user.lastChangeLogView
+    a(href='#{layout.htmlroot}/osmbc.html' class=hideclass) #{layout.appName}
+  else
+    a.bg-success(href='#{layout.htmlroot}/changelog' class=hideclass) Whats New?
+
 block all
 
   doctype html
@@ -26,15 +32,16 @@ block all
       .navbar.navbar-default.navbar-fixed-top(role='navigation')
         .container-fluid
           .navbar-header.pull-left
-            if layout.osmbc_version === layout.user.lastChangeLogView
-              a.navbar-brand(href='#{layout.htmlroot}/osmbc.html').hidden-xs #{layout.appName}
-            else
-              a.navbar-brand.bg-success(href='#{layout.htmlroot}/changelog').hidden-xs Whats New?
+
+            +homeButton("navbar-brand hidden-xs")
             ul.nav.navbar-nav.pull-left
               li
                 a(href='#{layout.htmlroot}/article/create') Collect
             if blogNumber(layout.tbc, layout.language) > 0
-              ul.nav.navbar-nav.pull-left
+              - dynamicHide = ""
+              if (layout.tbc._tbcOwnArticleNumber == 0)
+                - dynamicHide = "hidden-xs"
+              ul.nav.navbar-nav.pull-left(class=dynamicHide)
                 li
                   a(href='#{layout.htmlroot}/blog/TBC')=layout.tbc.name
                     if (layout.tbc._tbcOwnArticleNumber > 0)
@@ -59,8 +66,9 @@ block all
               span.icon-bar
               span.icon-bar
           .navbar-collapse.collapse
-
             ul.nav.navbar-nav.navbar-left
+              li.show-xs
+                +homeButton("visible-xs")
               if (layout.listOfOpenBlog && layout.listOfOpenBlog.length > 0)
                 li
                   a(href='#{layout.htmlroot}/blog/#{layout.listOfOpenBlog[0].name}')

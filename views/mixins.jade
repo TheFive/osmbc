@@ -232,6 +232,8 @@ mixin blogSelector(article)
       +blogSelection(layout.listOfReviewBlog,missingList,"(Review #{layout.language})")
       +blogSelection([{name: "Future"}],missingList,"")
       +blogSelection([{name: "Trash"}],missingList,"")
+      if layout.appName == "TheFiveBC"
+        +blogSelection([{name: "TBC"}],missingList,"")
       +blogSelection(missingList,missingList,"")
 
 block all
