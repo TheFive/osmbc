@@ -29,7 +29,7 @@ mixin rightcolumn
       else
         p No Content provided
 
-mixin articleMarkdown(column,lang,disabled)
+mixin articleMarkdown(lang,disabled)
   if disabled || blog && !blog.isEditable(lang)
     .panel.panel-default
       .panel-body #{article["markdown" + lang]}
@@ -37,47 +37,83 @@ mixin articleMarkdown(column,lang,disabled)
     - p=""
     if placeholder.markdown[lang]
       - p = placeholder.markdown[lang];
-    textarea.form-control(id="markdown#{column}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6) #{article["markdown" + params.left_lang]}
-    div(id="text_left")
+    textarea.form-control(id="markdown#{lang}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6) #{article["markdown" + lang]}
+    div(id="text"+lang)
       | 'no translation' or '-' to specify no translation wanted.
+
+
+mixin articlePreview(lang)
+  if article.categoryEN != "Picture"
+    .panel.panel-default.panel-body(id="preview" + lang)
+      :verbatim
+        !{article["textHtml"+lang]}
+
+mixin articleTextanalyse(lang)
+  if (lang === "DE") && (article["markdown" + lang])
+    a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('preview'+lang).innerText; taform.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
+    span=" "
+
+mixin articleTranslateButton(langFrom,langTo)
+  if (params.edit && article["markdown" + langFrom] && !article["markdown" + langTo])
+    button.btn.btn-small.btn-primary(id="translate"+langFrom+langTo onClick ="javascript: window.translate('#{langFrom}','#{langTo}');") Google Translate #{langFrom} -> #{langTo}
+    button.btn.btn-small.btn-warning.hidden(id="translateWait"+langFrom+langTo)
+      span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+      span=" Please Wait"
+    button.btn.btn-small.btn-danger.hidden(id="translateError"+langFrom+langTo)
+      span="Error occured"
+
+mixin saveButton
+  button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") Save
+
+mixin doublettesButton
+  if articleReferences.count >= 1
+    a(href="#doublettes")
+      div.button.btn.btn-large.btn-danger=articleReferences.count + " doub."
+
+mixin voteButtonList
+  for vote,i in votes
+    if (vote.displayAtTop)
+      +voteButton(vote,article)
+
+mixin cancelButton
+  button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
+
+mixin editButton
+  a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
 
 block content
   - var disabled = (!params.edit && !( blog && blog.status=="closed") )
-  - console.log(disabled)
+
 
   form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
 
     .row
       // Block for Buttons in the upper right corner and on the top in mobile
       .col-md-6.col-md-push-6
-        .col-md-1
-          if articleReferences.count >= 1
-            a(href="#doublettes")
-              div.button.btn.btn-large.btn-danger=articleReferences.count + " doub."
-        .col-md-1
-          button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
-        .col-md-4
-          for vote,i in votes
-            if (vote.displayAtTop)
-              +voteButton(vote,article)
-        .col-md-1
-          if articleReferences.count >= 1
-            a(href="#doublettes")
-              div.button.btn.btn-large.btn-danger=articleReferences.count + " doub."
-        .col-md-1
-          a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
-        button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") Cancel
-        .col-md-3
-          +languageDisplay(article,{func: "showRL"})
-          if (!params.edit)
-            - open = false
-            each lang in layout.activeLanguages
-              if (article["markdown" + lang])
-              else
-                - open = true;
-            if open
-              p
-                button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?notranslation=true';") notranslation to rest
+        .row
+          .col-md-1
+            +doublettesButton
+          .col-md-4
+            +voteButtonList
+          .col-md-1
+            +saveButton
+          .col-md-2
+            +cancelButton
+          .col-md-2
+          .col-md-2
+            +editButton
+        .row
+          .col-md-3
+            +languageDisplay(article,{func: "showRL"})
+            if (!params.edit)
+              - open = false
+              each lang in layout.activeLanguages
+                if (article["markdown" + lang])
+                else
+                  - open = true;
+              if open
+                p
+                  button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?notranslation=true';") notranslation to rest
 
           // Parallel Blog for common article Attributes
       .col-md-6.col-md-pull-6
@@ -101,10 +137,10 @@ block content
                     option(value="#{category.EN}" selected ) #{option}
                   else
                     option(value="#{category.EN}" ) #{option}
-          .row
-            .col-md-2
-            .col-md-10
-              p(id="categoryDisplay" style={color: 'Gray'})
+        .row
+          .col-md-2
+          .col-md-10
+            div(id="categoryDisplay" style={color: 'Gray'})
 
 
 
@@ -199,96 +235,57 @@ block content
             p="Markdown"
 
           .col-md-10
-            +articleMarkdown("LEFT",params.left_lang,disabled)
+            +articleMarkdown(params.left_lang,disabled)
+        .row
+          .col-md-2
+            p="Preview"
+          .col-md-10
+            +articlePreview(params.left_lang)
 
       .col-md-5
-        .row
-
-          span.label.label-default.RL(id="right_lang" class="#{rbg} RL-#{params.right_lang}")=params.right_lang
-          for l in layout.activeLanguages
-            if l !== params.right_lang
-              span.label.label-default.RL.hidden(class= "RL-#{l}")=l
-        .row
-            div.RL(class="RL-#{params.right_lang}")
-              if blog && !blog.isEditable(params.right_lang)
-                .panel.panel-default
-                  .panel-body #{article["markdown"+params.right_lang]}
+        for l in layout.activeLanguages
+          .row
+            .col-md-12
+              if l === params.right_lang
+                span.label.label-default.RL(class="#{rbg} RL-#{l}")=l
               else
-                if (placeholder.markdown[params.right_lang])
-                  - p = placeholder.markdown[params.right_lang];
-                else
-                  - p = "";
-                textarea.form-control(id="markdownRIGHT" placeholder = "#{p}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=6) #{article["markdown"+params.right_lang]}
-                div(id="text_right")
-                  |'no translation' or '-' to specify no translation wanted.
-             for l in layout.activeLanguages
-               if l != params.right_lang
-                 div.hidden(class = "RL RL-#{l}")
-                   .panel.panel-default
-                     .panel-body #{article["markdown"+l]}
-       .col-md-1
-         .row
-             i#languageFlagsShow.fa.fa-flag.fa-2x(onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
-
-         .row#languageFlags.hidden
-           - for (lang in languageFlags)
-            img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
+                span.label.label-default.RL.hidden(class= "RL-#{l}")=l
+          .row
+            .col-md-12
+              if l === params.right_lang
+                .RL(class= "RL-#{l}")
+                  +articleMarkdown(l,(blog && !blog.isEditable(l)))
+              else
+                .RL.hidden(class= "RL-#{l}")
+                  +articleMarkdown(l,(blog && !blog.isEditable(l)))
+          .row
+            .col-md-12
+              if l === params.right_lang
+                .RL(class= "RL-#{l}")
+                  +articlePreview(l)
+              else
+                .RL.hidden(class= "RL-#{l}")
+                  +articlePreview(l)
 
 
 
 
 
+      .col-md-1
+        .row
+           i#languageFlagsShow.fa.fa-flag.fa-2x(onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
 
-    .row
-      if article.categoryEN != "Picture"
-        .col-md-1
-          p="Preview"
-        +leftcolumn
-          .panel.panel-default.panel-body(id="previewLEFT")
-              :verbatim
-                !{article["textHtml"+params.left_lang]}
-        +rightcolumn
-          .panel.panel-default
-            .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
-              :verbatim
-                !{article["textHtml"+params.right_lang]}
-            each l in layout.activeLanguages
-              if l !== params.right_lang
-                .panel-body.RL.hidden(class="RL-#{l}")
-                  :verbatim
-                    !{article["textHtml"+l]}
-    .row
-      if article.categoryEN != "Picture"
-        .col-md-1
-          p="Preview"
-        +leftcolumn
-          .panel.panel-default
-            .panel-body(id="previewLEFT")
-              div
-                :verbatim
-                  !{article["textHtml"+params.left_lang]}
-        +rightcolumn
-          .panel.panel-default
-            .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
-              :verbatim
-                !{article["textHtml"+params.right_lang]}
-            each l in layout.activeLanguages
-              if l !== params.right_lang
-                .panel-body.RL.hidden(class="RL-#{l}")
-                  :verbatim
-                    !{article["textHtml"+l]}
-      else
-        .col-md-1
-          p="Markdown"
-        +leftcolumn
-          .panel.panel-default
-            .panel-body(id="previewLEFT")=article["markdown" + params.left_lang]
-        +rightcolumn
-          .panel.panel-default
-            .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")=article["markdown" + params.right_lang]
-            each l in layout.activeLanguages
-              if l !== params.right_lang
-                .panel-body.RL.hidden(class="RL-#{l}")=article["markdown" + l]
+       .row#languageFlags.hidden
+         - for (lang in languageFlags)
+          img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
+
+
+
+
+
+
+
+
 
     // Display Comment Row
     .row
@@ -311,33 +308,17 @@ block content
   .row
     .col-md-1
     +leftcolumn
-      if params.left_lang === "DE" && article["markdown"+params.left_lang]
-        a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
-        span=" "
-      if (params.edit && params.right_lang && article["markdown" + params.right_lang] && !article["markdown" + params.left_lang])
-        button#translateLinkLEFT.btn.btn-small.btn-primary(onClick ="javascript: window.translateLEFT();") Google Translate #{params.left_lang} <- #{params.right_lang}
-        button#translateWaitLEFT.btn.btn-small.btn-warning.hidden
-          span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
-          span=" Please Wait"
-        button#translateErrorLEFT.btn.btn-small.btn-danger.hidden
-          span="Error occured"
-        button#copyLinkLEFT.btn.btn-small.btn-primary(onClick ="javascript: window.copyTextLEFT();") Copy #{params.left_lang} <- #{params.right_lang}
+      +articleTextanalyse(params.left_lang)
+      +articleTranslateButton(params.left_lang,params.right_lang)
 
     +rightcolumn
-      if (params.edit && params.right_lang && !article["markdown" + params.right_lang] && article["markdown" + params.left_lang])
-        button#translateLinkRIGHT.btn.btn-small.btn-primary(onClick ="javascript: window.translateRIGHT();") Google Translate #{params.left_lang} -> #{params.right_lang}
-        button#translateWaitRIGHT.btn.btn-small.btn-warning.hidden
-          span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
-          span=" Please Wait"
-        button#translateErrorRIGHT.btn.btn-small.btn-danger.hidden
-          span="Error occured"
-        button#copyLinkRIGHT.btn.btn-small.btn-primary(onClick ="javascript: window.copyTextRIGHT();") Copy #{params.left_lang} -> #{params.right_lang}
+      +articleTranslateButton(params.right_lang,params.left_lang)
 
 
 
 
 
-
+  // simple hidden form, to post data to the wortliga textanalyse service
   form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
     input.form-control(type="hidden" name = "text" id ="textanalysefield")
 
@@ -480,7 +461,7 @@ block content
             span.osmbc-deleted
               |removed text
 
- 
+
 block scripts                
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
@@ -497,35 +478,38 @@ block scripts
       };
 
     }
-    
+
 
     function init() {
-      if (document.getElementById("text_left")) {
-        noTranslationText = document.getElementById("text_left").innerHTML;
-      } else if (document.getElementById("text_right")) {
-        noTranslationText = document.getElementById("text_right").innerHTML;
+      activeLanguages = JSON.parse('!{JSON.stringify(layout.activeLanguages)}');
+      noTranslationText = null;
+
+      for (var i=0;i<activeLanguages.length;i++) {
+        lang = activeLanguages[i];
+
+        if (!noTranslationText && document.getElementById("text"+lang)) {
+          noTranslationText = document.getElementById("text"+lang).innerHTML;
+        }
+
+
+
+        markdown = document.getElementById("markdown"+lang);
+
+        if (markdown) {
+
+          markdown.onchange = onleaveFunction(lang);
+          markdown.onchange = onleaveFunction(lang);
+          markdown.onkeyup = onchangeFunction(lang);
+          markdown.onpaste = pasteFunction(lang);
+          markdown.ondrop = pasteFunction(lang);
+          markdown.onleave = onleaveFunction(lang);
+          onchangeFunction(lang)();
+        }
       }
-      markdownLEFT = document.getElementById("markdownLEFT");
-      if (markdownLEFT) {
-        markdownLEFT.onchange = onleaveLEFT;
-        markdownLEFT.onkeyup = onchangeLEFT;
-        markdownLEFT.onpaste = pasteLEFT;
-        markdownLEFT.ondrop = pasteLEFT;
-        markdownLEFT.onleave = onleaveLEFT;
-        onchangeLEFT();
-     }
-      markdownRIGHT = document.getElementById("markdownRIGHT");
-      if (markdownRIGHT) {
-        markdownRIGHT.onchange = onleaveRIGHT;
-        markdownRIGHT.onkeyup = onchangeRIGHT;
-        markdownRIGHT.onpaste = pasteRIGHT;
-        markdownRIGHT.ondrop = pasteRIGHT;
-        markdownRIGHT.onleave = onleaveRIGHT;
-        onchangeRIGHT();
-     }
+      console.log(new Date().toISOString());
 
 
-     
+
       coll = document.getElementById("collection");
       if (coll) {
         coll.onchange = onchangeCollection;
@@ -551,9 +535,9 @@ block scripts
       if (categoryEN) {
         categoryEN.onchange = onchangeCategory;
         onchangeCategory();
-       
+
         }
- 
+
       addComment = document.getElementById("AddComment");
       if (addComment) {
         f = onChangeField("AddComment");
@@ -570,70 +554,39 @@ block scripts
       }
     }
 
-    function translateRIGHT() {
-      document.getElementById("translateLinkRIGHT").classList.add("hidden");
-      document.getElementById("copyLinkRIGHT").classList.add("hidden");
-      document.getElementById("translateWaitRIGHT").classList.remove("hidden");
-      var leftLang = "#{params.left_lang.toLowerCase()}";
-      var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase():'--'}";
-      var originalText = document.getElementById("markdownLEFT").value;
-      jQuery.post("#{layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang,{text:originalText}, function(data) {
-        data = data.replace(/] \(/g,"](");
-        document.getElementById("translateWaitRIGHT").classList.add("hidden");
-        document.getElementById("markdownRIGHT").value = data;
-        onchangeRIGHT();
-      }).fail(function(err){
-        console.log(err);
-        document.getElementById("translateWaitRIGHT").classList.add("hidden");
-        document.getElementById("translateErrorRIGHT").classList.remove("hidden");
-      });
-    }
-    function copyTextRIGHT() {
-      document.getElementById("translateLinkRIGHT").classList.add("hidden");
-      document.getElementById("copyLinkRIGHT").classList.add("hidden");
-      document.getElementById("markdownRIGHT").value = document.getElementById("markdownLEFT").value ;
-      onchangeRIGHT();
-    }
-    function translateLEFT() {
-      document.getElementById("translateLinkLEFT").classList.add("hidden");
-      document.getElementById("copyLinkLEFT").classList.add("hidden");
-      document.getElementById("translateWaitLEFT").classList.remove("hidden");
+
+
+    function translate(langFrom,langTo) {
+      document.getElementById("translate"+langFrom+langTo).classList.add("hidden");
+      document.getElementById("translateWait"+langFrom+langTo).classList.remove("hidden");
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
-      var originalText = document.getElementById("markdownRIGHT").value;
+      var originalText = document.getElementById("markdown"+langFrom).value;
       jQuery.post("#{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
         data = data.replace(/] \(/g, "](");
-        document.getElementById("translateWaitLEFT").classList.add("hidden");
-        document.getElementById("markdownLEFT").value = data;
-        onchangeLEFT();
+        document.getElementById("translateWait"+langFrom+langTo).classList.add("hidden");
+        document.getElementById("markdown"+langTo).value = data;
+        onchangeFunction(langTo)();
       }).fail(function (err) {
         console.log(err);
-        document.getElementById("translateWaitLEFT").classList.add("hidden");
-        document.getElementById("translateErrorLEFT").classList.remove("hidden");
+        document.getElementById("translateWait"+langFrom+langTo).classList.add("hidden");
+        document.getElementById("translateError"+langFrom+langTo).classList.remove("hidden");
       });
     }
-    function copyTextLEFT() {
-      document.getElementById("translateLinkLEFT").classList.add("hidden");
-      document.getElementById("copyLinkLEFT").classList.add("hidden");
-      document.getElementById("markdownLEFT").value = document.getElementById("markdownRIGHT").value;
-      onchangeRIGHT();
-    }
 
-    function onleaveLEFT() {
-      var mdEN = document.getElementById("markdownLEFT").value;
-      if (mdEN.trim() == "-") {
-        document.getElementById("markdownLEFT").value = "no translation";
-        onchangeLEFT();
+
+    function onleaveFunction(lang) {
+      var l = lang;
+      return function () {
+        var md = document.getElementById("markdown"+l).value;
+        if (md.trim() == "-") {
+          document.getElementById("markdown"+l).value = "no translation";
+          onchangeFunction(l);
+        }
       }
     }
-    function onleaveRIGHT() {
-      var mdEN = document.getElementById("markdownRIGHT").value;
-      if (mdEN.trim() == "-") {
-        document.getElementById("markdownRIGHT").value = "no translation";
-        onchangeRIGHT();
-        }
-    }
-   
+
+
     function convert(text) {
       converter = new window.markdownit({breaks:true});
 
@@ -642,21 +595,21 @@ block scripts
       // convert md to html
       text = converter.render(text);
       // skip <ul> and </ul> at start and end
-      
+
 
       text = '<ul><li>'+text+'</li></ul>';
 
       if (document.getElementById("categoryEN").value=="Picture") {
          text = '<ul><li>Live Preview not supported here</li></ul>';
 
-        
+
         }
-      
+
       return text;
 
     }
     function isURL(t) {
-    
+
       var isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/
 
 
@@ -673,15 +626,14 @@ block scripts
         if (!document.execCommand('copy')) throw 'Not allowed.';
       } catch (e) {
         copyElement.remove();
-        console.log("document.execCommand('copy'); is not supported");
-        prompt('Copy the text below. (ctrl c, enter)', text);
+        prompt('Copy not supported, use your mobile to copy and press enter', text);
       } finally {
         if (typeof e == 'undefined') {
           copyElement.remove();
         }
       }
     }
-  
+
 
        function generateMarkdownLink2(par1,par2) {
         var before = par1.text;
@@ -692,13 +644,13 @@ block scripts
         ta = par1.text.substring(par1.endselection,99999);
         beforeSnip = par1.text.substring(par1.startselection,par1.endselection);
         afterSnip = par2.text.substring(par1.startselection,par2.endselection);
-    
-     
-      
- 
+
+
+
+
         if (isURL(afterSnip.trim())) {
           afterSnip = afterSnip.trim();
-       
+
           var alreadyMarkdowned = false;
           if (tb!="" && tb.charAt(tb.length-1)=="(") alreadyMarkdowned= true;
           if (ta!="" && tb.charAt(0)==")") alreadyMarkdowned= true;
@@ -716,48 +668,33 @@ block scripts
         }
         return null;
     }
-    
-    function pasteLEFT() {
-     
-      
-      var mf = document.getElementById("markdownLEFT");
-       //var textBefore = mf.value;
-      var before = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
-     
-      setTimeout(function(){
-        //var textAfter = mf.value;
-        var after = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
-        //var r = generateMarkdownLink(textBefore,textAfter);
-        var r = generateMarkdownLink2(before,after);
-        if (r) {
-          mf.value =r.text;
-          mf.selectionStart = mf.selectionEnd = r.pos;
-        }
-        mf.value = (mf.value).replace(/] \(/g,"](");
-        onchangeLEFT();
-      },1);
 
+    function pasteFunction(lang) {
+      var l = lang;
+      return function pasteLEFT() {
+
+
+        var mf = document.getElementById("markdown"+l);
+        //var textBefore = mf.value;
+        var before = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
+
+        setTimeout(function () {
+          //var textAfter = mf.value;
+          var after = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
+          //var r = generateMarkdownLink(textBefore,textAfter);
+          var r = generateMarkdownLink2(before, after);
+          if (r) {
+            mf.value = r.text;
+            mf.selectionStart = mf.selectionEnd = r.pos;
+          }
+          mf.value = (mf.value).replace(/] \(/g, "](");
+          onchangeFunction(l)();
+        }, 1);
+
+      }
     }
-    function pasteRIGHT() {
-      var mf = document.getElementById("markdownRIGHT");
-      //var textBefore = mf.value;
-      var before = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
 
-      
-      setTimeout(function(){
-        //var textAfter = mf.value;
-        var after = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
-        //var r = generateMarkdownLink(textBefore,textAfter);
-        var r = generateMarkdownLink2(before,after);
-        if (r) {
-          mf.value =r.text;
-          mf.selectionStart = mf.selectionEnd = r.pos;
-        }
-        mf.value = (mf.value).replace(/] \(/g,"](");
-        onchangeRIGHT();
-      },1);
 
-    }
 
     function checkForTable(field) {
       var md = document.getElementById(field).value;
@@ -777,22 +714,25 @@ block scripts
         }
     }
 
-    
-    function onchangeLEFT() {
-      onchangeMarkdown("markdownLEFT","previewLEFT","text_left");
+    function onchangeFunction(lang) {
+      var l = lang;
+      return function() {
+        onchangeMarkdown("markdown"+l,"preview"+l,"text"+l);
+      }
     }
-    function onchangeRIGHT() {
-      onchangeMarkdown("markdownRIGHT", "previewRIGHT", "text_right");
-    }
+
+
     function onchangeMarkdown(mdid,previewid,textid) {
       var md = document.getElementById(mdid).value;
       preview = document.getElementById(previewid);
+
       text = document.getElementById(textid);
 
 
       checkForTable(mdid);
       FitToContent(mdid);
-      
+
+
       preview.innerHTML = convert(md);
       var errorOccured= false;
 
@@ -844,27 +784,27 @@ block scripts
        // regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
         regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g
         var linkList;
-       
+
         var result = "";
 
 
         while( (linkList = regexToken.exec(cl)) != null ) {
 
             result += '<a href="'+linkList[0]+'" target="_blank" >'+linkList[0]+'</a>\n';
-            leftLang=document.getElementById("left_lang").innerHTML;
-            rightLang=document.getElementById("right_lang").innerHTML;
+            leftLang="!{params.left_lang}";
+            rightLang="!{params.right_lang}";
             result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
 
             if (rightLang !== "--" && rightLang !== "") {
               result += " "+generateGoogleTranslateLink(linkList[0],rightLang);
             }
             result +="<br>\n";
-       
+
 
         }
         result = '<p>'+result+'</p>';
         FitToContent("collection");
- 
+
 
         if (linkArea) linkArea.innerHTML = result;
       }
@@ -902,18 +842,18 @@ block scripts
 
          textfield.style.height = textfield.style.minHeight;
          var adjustedHeight = textfield.clientHeight;
-         
+
 
          if ( !maxHeight || maxHeight > adjustedHeight )
          {
             adjustedHeight = Math.max(textfield.scrollHeight, adjustedHeight);
             if ( maxHeight )
                adjustedHeight = Math.min(maxHeight, adjustedHeight);
-          
+
             if ( adjustedHeight > textfield.clientHeight ) {
-              
+
                textfield.style.height = adjustedHeight + "px";
-               
+
 
               }
          }
@@ -928,14 +868,14 @@ block scripts
       var placeholder = !{JSON.stringify(placeholder.categories)}
 
 
-    
+
 
       function onchangeCategory() {
         var categoryEN = document.getElementById("categoryEN");
         if (!categoryEN) return;
         var c = categoryEN.value;
         if (placeholder[c]) {
-           categoryDisplay.innerHTML = placeholder[c];    
+           categoryDisplay.innerHTML = placeholder[c];
           }
         showHideUnpublishReason();
       }

@@ -610,6 +610,8 @@ function renderList(req,res,next) {
 
 var Browser = require("zombie");
 
+var env = process.env.NODE_ENV || 'development';
+
 function translate(req,res,next) {
   debug("translate");
   let fromLang = req.params.fromLang;
@@ -619,10 +621,21 @@ function translate(req,res,next) {
   let browser = new Browser({site:"https://translate.google.com/"});
 
   browser.visit(link, function (err) {
-    if (err) return next(err);
+    if (err) {
+      // if it is development return a test text.
+      if (env=="development") {
+        let textTranslate = "Google Sim Translate From "+fromLang + " to "+ toLang + "("+text+")";
+        return res.end(textTranslate);
+      }
+      // Not in development return an error
+      return next(err);
+    }
     browser.fill("textarea#source",text);
     browser.click("input#gt-submit",function(err){
-      if (err) return next(err);
+      if (err) {
+
+        return next(err);
+      }
       res.end(browser.query("#result_box").textContent);
     });
 

@@ -662,8 +662,6 @@ Article.prototype.unsetTag = function unsetTag(user,tag,callback) {
   if (!self.tags) self.tags=[];
   let index = self.tags.indexOf(tag);
   if (index >= 0 ) {
-    console.log(index);
-    console.dir(self.tags);
     self.tags.splice(index,1);
     self.save(callback);
     return;

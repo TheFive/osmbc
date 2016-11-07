@@ -280,8 +280,6 @@ describe('router/article',function() {
             should.not.exist(err);
             should(res.redirect.calledOnce).be.true();
             should(next.called).be.false();
-            console.dir(res.redirect.firstCall.args);
-            console.dir("/article/"+article.id);
             should(res.redirect.firstCall.calledWith("/article/"+article.id)).be.true();
             delete article._meta;
             delete article.id;
