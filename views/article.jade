@@ -29,296 +29,348 @@ mixin rightcolumn
       else
         p No Content provided
 
-mixin articleMarkdown(lang,disabled)
-  if disabled || blog && !blog.isEditable(lang)
-    .panel.panel-default
-      .panel-body #{article["markdown" + lang]}
-  else
-    - p=""
-    if placeholder.markdown[lang]
-      - p = placeholder.markdown[lang];
-    textarea.form-control(id="markdown#{lang}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6) #{article["markdown" + lang]}
-    div(id="text"+lang)
-      | 'no translation' or '-' to specify no translation wanted.
-
-
-mixin articlePreview(lang)
-  if article.categoryEN != "Picture"
-    .panel.panel-default.panel-body(id="preview" + lang)
-      :verbatim
-        !{article["textHtml"+lang]}
-
-mixin articleTextanalyse(lang)
-  if (lang === "DE") && (article["markdown" + lang])
-    a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('preview'+lang).innerText; taform.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
-    span=" "
-
-mixin articleTranslateButton(langFrom,langTo)
-  if (params.edit && article["markdown" + langFrom] && !article["markdown" + langTo])
-    button.btn.btn-small.btn-primary(id="translate"+langFrom+langTo onClick ="javascript: window.translate('#{langFrom}','#{langTo}');") Google Translate #{langFrom} -> #{langTo}
-    button.btn.btn-small.btn-warning.hidden(id="translateWait"+langFrom+langTo)
-      span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
-      span=" Please Wait"
-    button.btn.btn-small.btn-danger.hidden(id="translateError"+langFrom+langTo)
-      span="Error occured"
-
-mixin saveButton
-  button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") Save
-
-mixin doublettesButton
-  if articleReferences.count >= 1
-    a(href="#doublettes")
-      div.button.btn.btn-large.btn-danger=articleReferences.count + " doub."
-
-mixin voteButtonList
-  for vote,i in votes
-    if (vote.displayAtTop)
-      +voteButton(vote,article)
-
-mixin cancelButton
-  button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
-
-mixin editButton
-  a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
 
 block content
-  - var disabled = (!params.edit && !( blog && blog.status=="closed") )
-
-
-  form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
-
-    .row
-      // Block for Buttons in the upper right corner and on the top in mobile
-      .col-md-6.col-md-push-6
+  p
+    if (params.edit && !( blog && blog.status=="closed") )
+      form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
         .row
           .col-md-1
-            +doublettesButton
+            p="Blog"
+          .col-md-5
+            +blogSelector(article)
+
           .col-md-4
-            +voteButtonList
-          .col-md-1
-            +saveButton
-          .col-md-2
-            +cancelButton
-          .col-md-2
-          .col-md-2
-            +editButton
-        .row
-          .col-md-3
-            +languageDisplay(article,{func: "showRL"})
-            if (!params.edit)
-              - open = false
-              each lang in layout.activeLanguages
-                if (article["markdown" + lang])
-                else
-                  - open = true;
-              if open
-                p
-                  button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?notranslation=true';") notranslation to rest
 
-          // Parallel Blog for common article Attributes
-      .col-md-6.col-md-pull-6
-        .row
-          div.form-group
-            label.col-md-2="Blog"
-            div.col-md-10
-              +blogSelector(article,disabled)
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
 
+          .col-md-1
+            if articleReferences.count >= 1
+              a(href="#doublettes")
+                div.button.btn.btn-large.btn-danger=articleReferences.count+" doub."
+          .col-md-1
+            button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") OK
+
+
         .row
-          .form-group
-            label.col-md-2="Category"
-            div.col-md-10
-              select(id="categoryEN",name="categoryEN" disabled=disabled).form-control
-                for category in categories
-                  - option = category[params.left_lang]
-                  - if (params.right_lang !== null) option += " / "+category[params.right_lang]
-                  if (category.EN == article.categoryEN)
-                    option(value="#{category.EN}" selected ) #{option}
-                  else
-                    option(value="#{category.EN}" ) #{option}
-        .row
-          .col-md-2
-          .col-md-10
-            div(id="categoryDisplay" style={color: 'Gray'})
-
-
-
-
-
-    // Display Predecessor Row
-    .row
-      .form-group
-        label.col-md-1="Predecessor"
-        +leftcolumn
-          select(id="predecessor",name="predecessorId" disabled=disabled).form-control
-            if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
-              option(value="" selected) None
-            else
-              option(value="") None
-            if article.predecessorId === "0"
-              option(value="0" selected) First
-            else
-              option(value="0") First
-            for a in articleCategories
-              if (a.id == article.predecessorId)
-                option(value=a.id selected )=a.title
-              else
-                - d= null;
-                for b in articleCategories
-                  - if (b.predecessorId == a.predecessorId) {d=b;}
-                if disabled
-                  option(value=a.id disabled)=a.title+"("+d.title+")"
+          .col-md-1
+            p="Category"
+          +leftcolumn
+            select(id="categoryEN",name="categoryEN").form-control
+              for category in categories
+                - option = category[params.left_lang]
+                - if (params.right_lang !== null) option += " / "+category[params.right_lang]
+                if (category.EN == article.categoryEN)
+                  option(value="#{category.EN}" selected ) #{option}
                 else
-                  option(value=a.id )=a.title
-    // Display Title Row
-    .row
-      .form-group
-        label.col-md-1="Title"
-        .col-md-10
-          textarea.form-control(name="title",rows=1 disabled=disabled) #{article.title}
-
-
-    // Display Unpublish Reason Row
-    .row.hidden(id="unpublishReasonRow")
-      .form-group
-        label.col-md-1="Unpublish Reason"
-        .col-md-5
-          select(id="unpublishReason",name="unpublishReason" disabled=disabled).form-control
-            for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
-              if (reason == article.unpublishReason)
-                option(value="#{reason}" selected ) #{reason}
+                  option(value="#{category.EN}" ) #{option}
+          +rightcolumn
+            p(id="categoryDisplay" style={color: 'Gray'})
+          .col-md-1
+            button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") Cancel
+        .row
+          .col-md-1
+            p="Predecessor"
+          +leftcolumn
+            select(id="predecessor",name="predecessorId").form-control
+              if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
+                option(value="" selected) None
               else
-                option(value="#{reason}" ) #{reason}
-        .col-md-5
-          textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1 disabled=disabled) #{article.unpublishReference}
+                option(value="") None
+              if article.predecessorId === "0"
+                option(value="0" selected) First
+              else
+                option(value="0") First
+              for a in articleCategories
+                if (a.id == article.predecessorId)
+                  option(value=a.id selected )=a.title
+                else
+                  - d= null;
+                  for b in articleCategories
+                    - if (b.predecessorId == a.predecessorId) {d=b;}
+                  if disabled
+                    option(value=a.id disabled)=a.title+"("+d.title+")"
+                  else
+                    option(value=a.id )=a.title
+          .col-md-1
+            p="'"+article.predecessorId+"'"
 
-
-    // Display Collection Row
-    .row
-      .form-group
-        label.col-md-1="Collection"
-        .col-md-10
-          textarea.form-control(id="collection" name="collection" rows=2 disabled=disabled) #{article.collection}
-    .row
-      .col-md-1
-
-      .col-md-6
-        .div(id="linkArea")
-      if (!disabled)
-        .col-md-4
-          p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
-
-
-
-
-
-
-      - var lbg;
-      - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
-      - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
-      - var rbg;
-      - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
-      - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
-
-
-
-
-      .col-md-6
+        .row.hidden(id="unpublishReasonRow")
+          .col-md-1
+            p="Unpublish Reason"
+          .col-md-5
+            select(id="unpublishReason",name="unpublishReason").form-control
+              for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
+                if (reason == article.unpublishReason)
+                  option(value="#{reason}" selected ) #{reason}
+                else
+                  option(value="#{reason}" ) #{reason}
+          .col-md-5
+            textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1) #{article.unpublishReference}
         .row
-          .col-md-2
+          .col-md-1
+            p="Title"
+          .col-md-7
+            textarea.form-control(name="title",rows=1) #{article.title}
+          .col-md-3
+            +languageDisplay(article,{func:"showRL"})
+
+        .row
+          .col-md-1
+            p="Collection"
           .col-md-10
-            span.label.label-default(id="left_lang" class="#{lbg}")=params.left_lang
+            textarea.form-control(id="collection" name="collection" rows=2) #{article.collection}
+        .row
+          .col-md-1
+
+          .col-md-6
+            .div(id="linkArea")
+          .col-md-4
+            p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
 
         .row
-          .col-md-2
+          .col-md-1
+          - var lbg;
+          - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
+          - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
+          - var rbg;
+          - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
+          - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
+
+          +leftcolumn
+            span.label.label-default(id="left_lang" class="#{lbg}")=params.left_lang
+          +rightcolumn
+            span.label.label-default.RL(id="right_lang" class="#{rbg} RL-#{params.right_lang}")=params.right_lang
+            for l in layout.activeLanguages
+              if (l!== params.right_lang)
+                span.label.label-default.RL.hidden(class= "RL-#{l}")=l
+
+        .row
+          .col-md-1
             p="Markdown"
 
-          .col-md-10
-            +articleMarkdown(params.left_lang,disabled)
+          +leftcolumn
+            if blog && !blog.isEditable(params.left_lang)
+              .panel.panel-default
+                .panel-body #{article["markdown"+params.left_lang]}
+            else
+              if placeholder.markdown[params.left_lang]
+                - p = placeholder.markdown[params.left_lang];
+              else
+                - p = "";
+              textarea.form-control(id="markdownLEFT" placeholder = "#{p}" spellcheck = "true" lang="#{params.left_lang}" name = "markdown#{params.left_lang}" rows = 6) #{article["markdown"+params.left_lang]}
+              div(id="text_left")
+                |'no translation' or '-' to specify no translation wanted.
+
+
+          +rightcolumn
+            div.RL(class="RL-#{params.right_lang}")
+              if blog && !blog.isEditable(params.right_lang)
+                .panel.panel-default
+                  .panel-body #{article["markdown"+params.right_lang]}
+              else
+                if (placeholder.markdown[params.right_lang])
+                  - p = placeholder.markdown[params.right_lang];
+                else
+                  - p = "";
+                textarea.form-control(id="markdownRIGHT" placeholder = "#{p}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=6) #{article["markdown"+params.right_lang]}
+                div(id="text_right")
+                  |'no translation' or '-' to specify no translation wanted.
+            for l in layout.activeLanguages
+              if l != params.right_lang
+                div.hidden(class = "RL RL-#{l}")
+                  .panel.panel-default
+                    .panel-body #{article["markdown"+l]}
+
+
+          .col-md-1
+            .row
+              i#languageFlagsShow.fa.fa-flag.fa-2x(onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
+
+            .row#languageFlags.hidden
+              - for (lang in languageFlags)
+              img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
+
+
         .row
-          .col-md-2
+          if article.categoryEN != "Picture"
+            .col-md-1
+              p="Preview"
+            +leftcolumn
+              .panel.panel-default.panel-body(id="previewLEFT")
+                :verbatim
+                  !{article["textHtml"+params.left_lang]}
+            +rightcolumn
+              .panel.panel-default
+                .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
+                  :verbatim
+                    !{article["textHtml"+params.right_lang]}
+                each l in layout.activeLanguages
+                  if l !== params.right_lang
+                    .panel-body.RL.hidden(class="RL-#{l}")
+                      :verbatim
+                        !{article["textHtml"+l]}
+
+        .row
+          h4="You can add a comment here:"
+        .row
+          .col-md-12
+            textarea.form-control(name="addComment" id="addComment" rows=3 )
+
+
+
+
+    else
+      .row
+        .col-md-1
+          p="Blog"
+        .col-md-5
+          p=article.blog
+        .col-md-4
+          for vote,i in votes
+            if (vote.displayAtTop)
+              +voteButton(vote,article)
+        .col-md-1
+          if articleReferences.count >= 1
+            a(href="#doublettes")
+              div.button.btn.btn-large.btn-danger=articleReferences.count+" doub."
+        .col-md-1
+          a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
+      .row
+        .col-md-1
+          p="Category"
+        +leftcolumn
+          p=article.getCategory(params.left_lang)
+
+      .row
+        - pdname = "None"
+        if article.predecessorId && article.predecessorId != ""
+          - pdname = "not in category"
+        if article.predecessorId == "0"
+          - pdname = "First"
+        for a in articleCategories
+          if (a.id == article.predecessorId)
+            - pdname = a.title
+
+
+        .col-md-1
+          p="Predecessor"
+
+        .col-md-7
+          p=pdname
+
+      .row
+        .col-md-1
+          p="Title"
+        .col-md-7
+          p=article.title
+        .col-md-3
+          p
+            +languageDisplay(article,{func:"showRL"})
+            - open = false
+            each lang in layout.activeLanguages
+              if (article["markdown"+lang])
+              else
+                - open = true;
+          if open
+            p
+              button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?notranslation=true';") notranslation to rest
+
+
+
+
+      .row
+        .col-md-1
+          p="Collection"
+        .col-md-10
+          if (article.collection)
+            #collection
+              :verbatim
+                !{layout.md_render(article.collection)}
+              //:verbatim
+              //|<pre>!{article.collection.replace(/(https?:\/\/[^\[\] \n\r]*)/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
+      .row
+        .col-md-1
+        - var lbg;
+        - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
+        - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
+        - var rbg;
+        - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
+        - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
+
+        +leftcolumn
+          span.label.label-default(id="left_lang" class="#{lbg}")
+            |#{params.left_lang}
+        +rightcolumn
+          span.label.label-default.RL(id="right_lang" class="#{rbg} RL-#{params.right_lang}" )
+            |#{params.right_lang}
+          each l in layout.activeLanguages
+            if l !== params.right_lang
+              span.label.label-default.hidden.RL(class = "RL-#{l}")=l
+
+      .row
+        if article.categoryEN != "Picture"
+          .col-md-1
             p="Preview"
-          .col-md-10
-            +articlePreview(params.left_lang)
-
-      .col-md-5
-        for l in layout.activeLanguages
-          .row
-            .col-md-12
-              if l === params.right_lang
-                span.label.label-default.RL(class="#{rbg} RL-#{l}")=l
-              else
-                span.label.label-default.RL.hidden(class= "RL-#{l}")=l
-          .row
-            .col-md-12
-              if l === params.right_lang
-                .RL(class= "RL-#{l}")
-                  +articleMarkdown(l,(blog && !blog.isEditable(l)))
-              else
-                .RL.hidden(class= "RL-#{l}")
-                  +articleMarkdown(l,(blog && !blog.isEditable(l)))
-          .row
-            .col-md-12
-              if l === params.right_lang
-                .RL(class= "RL-#{l}")
-                  +articlePreview(l)
-              else
-                .RL.hidden(class= "RL-#{l}")
-                  +articlePreview(l)
-
-
-
-
-
-      .col-md-1
-        .row
-           i#languageFlagsShow.fa.fa-flag.fa-2x(onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
-
-       .row#languageFlags.hidden
-         - for (lang in languageFlags)
-          img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
-
-
-
-
-
-
-
-
-
-    // Display Comment Row
-    .row
-      h4="You can add a comment here:"
-    .row
-      .col-md-12
-        textarea.form-control(name="addComment" id="addComment" rows=3 )
-
-
-  // Translate Tools
-
-
-
-
-
-
-
-
-
+          +leftcolumn
+            .panel.panel-default
+              .panel-body(id="previewLEFT")
+                div
+                  :verbatim
+                    !{article["textHtml"+params.left_lang]}
+          +rightcolumn
+            .panel.panel-default
+              .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
+                :verbatim
+                  !{article["textHtml"+params.right_lang]}
+              each l in layout.activeLanguages
+                if l !== params.right_lang
+                  .panel-body.RL.hidden(class="RL-#{l}")
+                    :verbatim
+                      !{article["textHtml"+l]}
+        else
+          .col-md-1
+            p="Markdown"
+          +leftcolumn
+            .panel.panel-default
+              .panel-body(id="previewLEFT")=article["markdown"+params.left_lang]
+          +rightcolumn
+            .panel.panel-default
+              .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")=article["markdown"+params.right_lang]
+              each l in layout.activeLanguages
+                if l !== params.right_lang
+                  .panel-body.RL.hidden(class="RL-#{l}")=article["markdown"+l]
   .row
     .col-md-1
     +leftcolumn
-      +articleTextanalyse(params.left_lang)
-      +articleTranslateButton(params.left_lang,params.right_lang)
+      if params.left_lang === "DE" && article["markdown"+params.left_lang]
+        a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewLEFT').innerText; taform.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
+        span=" "
+      if (params.edit && params.right_lang && article["markdown" + params.right_lang] && !article["markdown" + params.left_lang])
+        button#translateLinkLEFT.btn.btn-small.btn-primary(onClick ="javascript: window.translateLEFT();") Google Translate #{params.left_lang} <- #{params.right_lang}
+        button#translateWaitLEFT.btn.btn-small.btn-warning.hidden
+          span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+          span=" Please Wait"
+        button#translateErrorLEFT.btn.btn-small.btn-danger.hidden
+          span="Error occured"
+        button#copyLinkLEFT.btn.btn-small.btn-primary(onClick ="javascript: window.copyTextLEFT();") Copy #{params.left_lang} <- #{params.right_lang}
 
     +rightcolumn
-      +articleTranslateButton(params.right_lang,params.left_lang)
+      if (params.edit && params.right_lang && !article["markdown" + params.right_lang] && article["markdown" + params.left_lang])
+        button#translateLinkRIGHT.btn.btn-small.btn-primary(onClick ="javascript: window.translateRIGHT();") Google Translate #{params.left_lang} -> #{params.right_lang}
+        button#translateWaitRIGHT.btn.btn-small.btn-warning.hidden
+          span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+          span=" Please Wait"
+        button#translateErrorRIGHT.btn.btn-small.btn-danger.hidden
+          span="Error occured"
+        button#copyLinkRIGHT.btn.btn-small.btn-primary(onClick ="javascript: window.copyTextRIGHT();") Copy #{params.left_lang} -> #{params.right_lang}
 
 
 
 
 
-  // simple hidden form, to post data to the wortliga textanalyse service
+
   form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
     input.form-control(type="hidden" name = "text" id ="textanalysefield")
 
@@ -327,20 +379,20 @@ block content
     table.table.table-condensed
       tbody
         - for vote ,i in votes
-          tr
-            td.col-md-1
-              if params.edit
-                span(class=vote.iconClass)
-              else
-                +voteButton(vote,article)
-            td.col-md-1=vote.name
-            td.col-md-5
-              if article.votes && article.votes[vote.name]
-                - labelclass = "osmbclabel-collect"
-                each user in article.votes[vote.name]
-                  - if (layout.user.OSMUser === user) labelclass = "osmbclabel-user"
-                  span.label.small-margin(class=labelclass)=user
-            td.col-md-5=vote.description
+        tr
+          td.col-md-1
+            if params.edit
+              span(class=vote.iconClass)
+            else
+              +voteButton(vote,article)
+          td.col-md-1=vote.name
+          td.col-md-5
+            if article.votes && article.votes[vote.name]
+              - labelclass = "osmbclabel-collect"
+              each user in article.votes[vote.name]
+                - if (layout.user.OSMUser === user) labelclass = "osmbclabel-user"
+                span.label.small-margin(class=labelclass)=user
+          td.col-md-5=vote.description
 
   .row
     if (article.commentList)
@@ -375,7 +427,7 @@ block content
             else
               p
                 :verbatim
-                 !{layout.md_render(comment.text)}
+                  !{layout.md_render(comment.text)}
 
     .row
       .col-md-12
@@ -386,83 +438,83 @@ block content
             button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}';") Cancel
 
   #doublettes.row
-      if articleReferences.count >= 1
-        h3
-          |Links used in other Post
-        div
-          table.table.table-striped.table-responsive
-            thead
+    if articleReferences.count >= 1
+      h3
+        |Links used in other Post
+      div
+        table.table.table-striped.table-responsive
+          thead
+            tr
+              th
+                |link
+              th
+                |article
+              th
+                |Blog
+          tbody
+            each array,link in articleReferences
+              if (link != "count" )
+                each articleItem,index in array
+                  if (articleItem.id != article.id) && (index <5)
+                    tr
+                      td
+                        a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
+                      td
+                        a(href='#{layout.htmlroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
+                      td= articleItem.blog
+                  if (index == 8)
+                    tr
+                      td
+                        a(href='#{link}') #{link}
+                      td
+                        |Und #{array.length-5} weitere Artikel.
+
+
+
+  .row.visible-xs
+    p
+      br
+      a(href="#{layout.htmlroot}/changes/log?table=article&oid=#{article.id}") [changes]
+  .row.hidden-xs
+    if changes
+      h3
+        |History
+      div
+        table.table.table-striped.table-responsive
+          thead
+            tr
+              th
+                |
+              th
+                |user
+              th
+                |what
+              th
+                |change
+              th
+                |when
+          tbody
+            each change, i in changes
               tr
-                th
-                  |link
-                th
-                  |article
-                th
-                  |Blog
-            tbody
-              each array,link in articleReferences
-                if (link != "count" )
-                  each articleItem,index in array
-                    if (articleItem.id != article.id) && (index <5)
-                      tr
-                        td
-                          a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
-                        td
-                          a(href='#{layout.htmlroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
-                        td= articleItem.blog
-                    if (index == 8) 
-                      tr
-                        td
-                          a(href='#{link}') #{link}
-                        td
-                          |Und #{array.length-5} weitere Artikel.
-                
+                td
+                  a(href='#{layout.htmlroot}/changes/' + change.id)
+                    span.glyphicon.glyphicon-info-sign
+                td= change.user
+                td= change.property
+                td
+                  :verbatim
+                    !{change.htmlDiffText(100)}
+                td= layout.moment(change.timestamp).fromNow()
+      div
+        p
+          |only displaying changes
+          span.osmbc-inserted
+            |inserted text
+          span.osmbc-deleted
+            |removed text
 
 
-    .row.visible-xs
-      p
-        br
-        a(href="#{layout.htmlroot}/changes/log?table=article&oid=#{article.id}") [changes]
-    .row.hidden-xs
-      if changes
-        h3
-          |History
-        div
-          table.table.table-striped.table-responsive
-            thead
-              tr 
-                th
-                 | 
-                th
-                 |user
-                th
-                 |what
-                th
-                 |change
-                th
-                 |when
-             tbody
-              each change, i in changes
-                tr
-                  td
-                   a(href='#{layout.htmlroot}/changes/' + change.id) 
-                      span.glyphicon.glyphicon-info-sign 
-                  td= change.user
-                  td= change.property
-                  td
-                    :verbatim
-                      !{change.htmlDiffText(100)}
-                  td= layout.moment(change.timestamp).fromNow() 
-        div
-          p
-            |only displaying changes 
-            span.osmbc-inserted
-              |inserted text 
-            span.osmbc-deleted
-              |removed text
-
-
-block scripts                
+block scripts
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
 
@@ -473,40 +525,37 @@ block scripts
     googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
 
     if ('#{params.edit}'=='true'  && !("#{(blog)?blog.status:"open"}"=="closed")) {
-        window.onbeforeunload = function(event) {
-          event.returnValue = "Please use Cancel or OK to remove lock information.";
+      window.onbeforeunload = function(event) {
+        event.returnValue = "Please use Cancel or OK to remove lock information.";
       };
 
     }
 
 
     function init() {
-      activeLanguages = JSON.parse('!{JSON.stringify(layout.activeLanguages)}');
-      noTranslationText = null;
-
-      for (var i=0;i<activeLanguages.length;i++) {
-        lang = activeLanguages[i];
-
-        if (!noTranslationText && document.getElementById("text"+lang)) {
-          noTranslationText = document.getElementById("text"+lang).innerHTML;
-        }
-
-
-
-        markdown = document.getElementById("markdown"+lang);
-
-        if (markdown) {
-
-          markdown.onchange = onleaveFunction(lang);
-          markdown.onchange = onleaveFunction(lang);
-          markdown.onkeyup = onchangeFunction(lang);
-          markdown.onpaste = pasteFunction(lang);
-          markdown.ondrop = pasteFunction(lang);
-          markdown.onleave = onleaveFunction(lang);
-          onchangeFunction(lang)();
-        }
+      if (document.getElementById("text_left")) {
+        noTranslationText = document.getElementById("text_left").innerHTML;
+      } else if (document.getElementById("text_right")) {
+        noTranslationText = document.getElementById("text_right").innerHTML;
       }
-      console.log(new Date().toISOString());
+      markdownLEFT = document.getElementById("markdownLEFT");
+      if (markdownLEFT) {
+        markdownLEFT.onchange = onleaveLEFT;
+        markdownLEFT.onkeyup = onchangeLEFT;
+        markdownLEFT.onpaste = pasteLEFT;
+        markdownLEFT.ondrop = pasteLEFT;
+        markdownLEFT.onleave = onleaveLEFT;
+        onchangeLEFT();
+      }
+      markdownRIGHT = document.getElementById("markdownRIGHT");
+      if (markdownRIGHT) {
+        markdownRIGHT.onchange = onleaveRIGHT;
+        markdownRIGHT.onkeyup = onchangeRIGHT;
+        markdownRIGHT.onpaste = pasteRIGHT;
+        markdownRIGHT.ondrop = pasteRIGHT;
+        markdownRIGHT.onleave = onleaveRIGHT;
+        onchangeRIGHT();
+      }
 
 
 
@@ -515,7 +564,7 @@ block scripts
         coll.onchange = onchangeCollection;
         coll.onkeyup = onchangeCollection;
 
-        }
+      }
       onchangeCollection();
 
       if (document.getElementById("blog")){
@@ -536,7 +585,7 @@ block scripts
         categoryEN.onchange = onchangeCategory;
         onchangeCategory();
 
-        }
+      }
 
       addComment = document.getElementById("AddComment");
       if (addComment) {
@@ -554,38 +603,69 @@ block scripts
       }
     }
 
-
-
-    function translate(langFrom,langTo) {
-      document.getElementById("translate"+langFrom+langTo).classList.add("hidden");
-      document.getElementById("translateWait"+langFrom+langTo).classList.remove("hidden");
+    function translateRIGHT() {
+      document.getElementById("translateLinkRIGHT").classList.add("hidden");
+      document.getElementById("copyLinkRIGHT").classList.add("hidden");
+      document.getElementById("translateWaitRIGHT").classList.remove("hidden");
       var leftLang = "#{params.left_lang.toLowerCase()}";
-      var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
-      var originalText = document.getElementById("markdown"+langFrom).value;
-      jQuery.post("#{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
-        data = data.replace(/] \(/g, "](");
-        document.getElementById("translateWait"+langFrom+langTo).classList.add("hidden");
-        document.getElementById("markdown"+langTo).value = data;
-        onchangeFunction(langTo)();
-      }).fail(function (err) {
+      var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase():'--'}";
+      var originalText = document.getElementById("markdownLEFT").value;
+      jQuery.post("#{layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang,{text:originalText}, function(data) {
+        data = data.replace(/] \(/g,"](");
+        document.getElementById("translateWaitRIGHT").classList.add("hidden");
+        document.getElementById("markdownRIGHT").value = data;
+        onchangeRIGHT();
+      }).fail(function(err){
         console.log(err);
-        document.getElementById("translateWait"+langFrom+langTo).classList.add("hidden");
-        document.getElementById("translateError"+langFrom+langTo).classList.remove("hidden");
+        document.getElementById("translateWaitRIGHT").classList.add("hidden");
+        document.getElementById("translateErrorRIGHT").classList.remove("hidden");
       });
     }
-
-
-    function onleaveFunction(lang) {
-      var l = lang;
-      return function () {
-        var md = document.getElementById("markdown"+l).value;
-        if (md.trim() == "-") {
-          document.getElementById("markdown"+l).value = "no translation";
-          onchangeFunction(l);
-        }
-      }
+    function copyTextRIGHT() {
+      document.getElementById("translateLinkRIGHT").classList.add("hidden");
+      document.getElementById("copyLinkRIGHT").classList.add("hidden");
+      document.getElementById("markdownRIGHT").value = document.getElementById("markdownLEFT").value ;
+      onchangeRIGHT();
+    }
+    function translateLEFT() {
+      document.getElementById("translateLinkLEFT").classList.add("hidden");
+      document.getElementById("copyLinkLEFT").classList.add("hidden");
+      document.getElementById("translateWaitLEFT").classList.remove("hidden");
+      var leftLang = "#{params.left_lang.toLowerCase()}";
+      var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
+      var originalText = document.getElementById("markdownRIGHT").value;
+      jQuery.post("#{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
+        data = data.replace(/] \(/g, "](");
+        document.getElementById("translateWaitLEFT").classList.add("hidden");
+        document.getElementById("markdownLEFT").value = data;
+        onchangeLEFT();
+      }).fail(function (err) {
+        console.log(err);
+        document.getElementById("translateWaitLEFT").classList.add("hidden");
+        document.getElementById("translateErrorLEFT").classList.remove("hidden");
+      });
+    }
+    function copyTextLEFT() {
+      document.getElementById("translateLinkLEFT").classList.add("hidden");
+      document.getElementById("copyLinkLEFT").classList.add("hidden");
+      document.getElementById("markdownLEFT").value = document.getElementById("markdownRIGHT").value;
+      onchangeRIGHT();
     }
 
+    function onleaveLEFT() {
+      var mdEN = document.getElementById("markdownLEFT").value;
+      if (mdEN.trim() == "-") {
+        document.getElementById("markdownLEFT").value = "no translation";
+        onchangeLEFT();
+      }
+    }
+    function onleaveRIGHT() {
+      var mdEN = document.getElementById("markdownRIGHT").value;
+      if (mdEN.trim() == "-") {
+        document.getElementById("markdownRIGHT").value = "no translation";
+        onchangeRIGHT();
+      }
+    }
 
     function convert(text) {
       converter = new window.markdownit({breaks:true});
@@ -600,10 +680,10 @@ block scripts
       text = '<ul><li>'+text+'</li></ul>';
 
       if (document.getElementById("categoryEN").value=="Picture") {
-         text = '<ul><li>Live Preview not supported here</li></ul>';
+        text = '<ul><li>Live Preview not supported here</li></ul>';
 
 
-        }
+      }
 
       return text;
 
@@ -626,7 +706,8 @@ block scripts
         if (!document.execCommand('copy')) throw 'Not allowed.';
       } catch (e) {
         copyElement.remove();
-        prompt('Copy not supported, use your mobile to copy and press enter', text);
+        console.log("document.execCommand('copy'); is not supported");
+        prompt('Copy the text below. (ctrl c, enter)', text);
       } finally {
         if (typeof e == 'undefined') {
           copyElement.remove();
@@ -635,66 +716,81 @@ block scripts
     }
 
 
-       function generateMarkdownLink2(par1,par2) {
-        var before = par1.text;
-        var after = par2.text;
-        var tb = '';
+    function generateMarkdownLink2(par1,par2) {
+      var before = par1.text;
+      var after = par2.text;
+      var tb = '';
 
-        tb = par1.text.substring(0,par1.startselection);
-        ta = par1.text.substring(par1.endselection,99999);
-        beforeSnip = par1.text.substring(par1.startselection,par1.endselection);
-        afterSnip = par2.text.substring(par1.startselection,par2.endselection);
-
-
+      tb = par1.text.substring(0,par1.startselection);
+      ta = par1.text.substring(par1.endselection,99999);
+      beforeSnip = par1.text.substring(par1.startselection,par1.endselection);
+      afterSnip = par2.text.substring(par1.startselection,par2.endselection);
 
 
-        if (isURL(afterSnip.trim())) {
-          afterSnip = afterSnip.trim();
 
-          var alreadyMarkdowned = false;
-          if (tb!="" && tb.charAt(tb.length-1)=="(") alreadyMarkdowned= true;
-          if (ta!="" && tb.charAt(0)==")") alreadyMarkdowned= true;
-          if (!alreadyMarkdowned) {
-            var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
-            var c ;
-            if (beforeSnip == "") {
-              c = (tb+"[").length;
-            } else {
-              c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
-            }
 
-            return {text:r,pos:c};
+      if (isURL(afterSnip.trim())) {
+        afterSnip = afterSnip.trim();
+
+        var alreadyMarkdowned = false;
+        if (tb!="" && tb.charAt(tb.length-1)=="(") alreadyMarkdowned= true;
+        if (ta!="" && tb.charAt(0)==")") alreadyMarkdowned= true;
+        if (!alreadyMarkdowned) {
+          var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
+          var c ;
+          if (beforeSnip == "") {
+            c = (tb+"[").length;
+          } else {
+            c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
           }
+
+          return {text:r,pos:c};
         }
-        return null;
-    }
-
-    function pasteFunction(lang) {
-      var l = lang;
-      return function pasteLEFT() {
-
-
-        var mf = document.getElementById("markdown"+l);
-        //var textBefore = mf.value;
-        var before = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
-
-        setTimeout(function () {
-          //var textAfter = mf.value;
-          var after = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
-          //var r = generateMarkdownLink(textBefore,textAfter);
-          var r = generateMarkdownLink2(before, after);
-          if (r) {
-            mf.value = r.text;
-            mf.selectionStart = mf.selectionEnd = r.pos;
-          }
-          mf.value = (mf.value).replace(/] \(/g, "](");
-          onchangeFunction(l)();
-        }, 1);
-
       }
+      return null;
     }
 
+    function pasteLEFT() {
 
+
+      var mf = document.getElementById("markdownLEFT");
+      //var textBefore = mf.value;
+      var before = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
+
+      setTimeout(function(){
+        //var textAfter = mf.value;
+        var after = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
+        //var r = generateMarkdownLink(textBefore,textAfter);
+        var r = generateMarkdownLink2(before,after);
+        if (r) {
+          mf.value =r.text;
+          mf.selectionStart = mf.selectionEnd = r.pos;
+        }
+        mf.value = (mf.value).replace(/] \(/g,"](");
+        onchangeLEFT();
+      },1);
+
+    }
+    function pasteRIGHT() {
+      var mf = document.getElementById("markdownRIGHT");
+      //var textBefore = mf.value;
+      var before = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
+
+
+      setTimeout(function(){
+        //var textAfter = mf.value;
+        var after = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
+        //var r = generateMarkdownLink(textBefore,textAfter);
+        var r = generateMarkdownLink2(before,after);
+        if (r) {
+          mf.value =r.text;
+          mf.selectionStart = mf.selectionEnd = r.pos;
+        }
+        mf.value = (mf.value).replace(/] \(/g,"](");
+        onchangeRIGHT();
+      },1);
+
+    }
 
     function checkForTable(field) {
       var md = document.getElementById(field).value;
@@ -706,32 +802,29 @@ block scripts
       if (md.indexOf("|----")>= 0) {
         f.wrap = 'off';
         f.style.fontFamily="monospace"
-        }
+      }
       else {
         f.wrap = 'soft';
         f.style.fontFamily = cl.style.fontFamily;
 
-        }
-    }
-
-    function onchangeFunction(lang) {
-      var l = lang;
-      return function() {
-        onchangeMarkdown("markdown"+l,"preview"+l,"text"+l);
       }
     }
 
 
+    function onchangeLEFT() {
+      onchangeMarkdown("markdownLEFT","previewLEFT","text_left");
+    }
+    function onchangeRIGHT() {
+      onchangeMarkdown("markdownRIGHT", "previewRIGHT", "text_right");
+    }
     function onchangeMarkdown(mdid,previewid,textid) {
       var md = document.getElementById(mdid).value;
       preview = document.getElementById(previewid);
-
       text = document.getElementById(textid);
 
 
       checkForTable(mdid);
       FitToContent(mdid);
-
 
       preview.innerHTML = convert(md);
       var errorOccured= false;
@@ -743,155 +836,155 @@ block scripts
         text.innerHTML = "<p>Please shorten ["+md.substring(longLink+1,longLink+40)+"...]</p>"
         text.style.backgroundColor ="#FDC6CD";
         errorOccured = true
-        }
+      }
       // check wether links used are in collection
 
       if (!errorOccured) {
-         //preview.style.backgroundColor="";
-         text.style.backgroundColor ="";
-         text.innerHTML = noTranslationText;
-        }
+        //preview.style.backgroundColor="";
+        text.style.backgroundColor ="";
+        text.innerHTML = noTranslationText;
+      }
 
 
     }
 
-      function generateGoogleTranslateLink(link,lang) {
-        var googlelang = lang;
-        if (lang === "JP") googlelang = "JA";
-        var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
+    function generateGoogleTranslateLink(link,lang) {
+      var googlelang = lang;
+      if (lang === "JP") googlelang = "JA";
+      var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
 
 
-        var gtlMarkdown = "(automatic [translation](##link##))";
-        if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
+      var gtlMarkdown = "(automatic [translation](##link##))";
+      if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
 
 
-        gtlMarkdown = gtlMarkdown.replace("##link##",gtl);
+      gtlMarkdown = gtlMarkdown.replace("##link##",gtl);
 
-        var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
+      var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
 
-        return '<a href="'+gtl+'" target="_blank" ondragstart="'+dragstartFunction+'" >'+lang+'</a>';
-      }
+      return '<a href="'+gtl+'" target="_blank" ondragstart="'+dragstartFunction+'" >'+lang+'</a>';
+    }
 
-      function dragstart(event,text) {
-        event.dataTransfer.setData("TEXT", text);
-      }
-      function onchangeCollection() {
-        var clfield = document.getElementById("collection");
-        var cl;
-        if (clfield) cl = clfield.value;
-        var linkArea = document.getElementById("linkArea");
+    function dragstart(event,text) {
+      event.dataTransfer.setData("TEXT", text);
+    }
+    function onchangeCollection() {
+      var clfield = document.getElementById("collection");
+      var cl;
+      if (clfield) cl = clfield.value;
+      var linkArea = document.getElementById("linkArea");
 
-       // regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
-        regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g
-        var linkList;
+      // regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
+      regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g
+      var linkList;
 
-        var result = "";
-
-
-        while( (linkList = regexToken.exec(cl)) != null ) {
-
-            result += '<a href="'+linkList[0]+'" target="_blank" >'+linkList[0]+'</a>\n';
-            leftLang="!{params.left_lang}";
-            rightLang="!{params.right_lang}";
-            result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
-
-            if (rightLang !== "--" && rightLang !== "") {
-              result += " "+generateGoogleTranslateLink(linkList[0],rightLang);
-            }
-            result +="<br>\n";
+      var result = "";
 
 
+      while( (linkList = regexToken.exec(cl)) != null ) {
+
+        result += '<a href="'+linkList[0]+'" target="_blank" >'+linkList[0]+'</a>\n';
+        leftLang=document.getElementById("left_lang").innerHTML;
+        rightLang=document.getElementById("right_lang").innerHTML;
+        result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
+
+        if (rightLang !== "--" && rightLang !== "") {
+          result += " "+generateGoogleTranslateLink(linkList[0],rightLang);
         }
-        result = '<p>'+result+'</p>';
-        FitToContent("collection");
+        result +="<br>\n";
 
 
-        if (linkArea) linkArea.innerHTML = result;
       }
+      result = '<p>'+result+'</p>';
+      FitToContent("collection");
 
 
-      var myclick = function (id) {
-        image = document.getElementById(id);
-        src = image.src;
-        src = "![("+id+")]("+src+")";
-        clip(src);
-        alert(id+ " flag is copied to clipboard");
-      }
+      if (linkArea) linkArea.innerHTML = result;
+    }
 
-      function ondragstartflag (event,id) {
-        image = document.getElementById(id);
-        src = image.src;
-        src = "![(" + id + ")](" + src + ")";
-        event.dataTransfer.setData("TEXT", src);
-      }
-      function onchangeComment() {
-        FitToContent("comment");
-      }
-      function onChangeField(field) {
-        return function () {
-          FitToContent(field);
-        }
-      }
 
-      function FitToContent(id, maxHeight)
+    var myclick = function (id) {
+      image = document.getElementById(id);
+      src = image.src;
+      src = "![("+id+")]("+src+")";
+      clip(src);
+      alert(id+ " flag is copied to clipboard");
+    }
+
+    function ondragstartflag (event,id) {
+      image = document.getElementById(id);
+      src = image.src;
+      src = "![(" + id + ")](" + src + ")";
+      event.dataTransfer.setData("TEXT", src);
+    }
+    function onchangeComment() {
+      FitToContent("comment");
+    }
+    function onChangeField(field) {
+      return function () {
+        FitToContent(field);
+      }
+    }
+
+    function FitToContent(id, maxHeight)
+    {
+      textfield = document.getElementById(id);
+      if ( !textfield )
+        return;
+
+
+      textfield.style.height = textfield.style.minHeight;
+      var adjustedHeight = textfield.clientHeight;
+
+
+      if ( !maxHeight || maxHeight > adjustedHeight )
       {
-         textfield = document.getElementById(id);
-         if ( !textfield )
-            return;
+        adjustedHeight = Math.max(textfield.scrollHeight, adjustedHeight);
+        if ( maxHeight )
+          adjustedHeight = Math.min(maxHeight, adjustedHeight);
+
+        if ( adjustedHeight > textfield.clientHeight ) {
+
+          textfield.style.height = adjustedHeight + "px";
 
 
-         textfield.style.height = textfield.style.minHeight;
-         var adjustedHeight = textfield.clientHeight;
-
-
-         if ( !maxHeight || maxHeight > adjustedHeight )
-         {
-            adjustedHeight = Math.max(textfield.scrollHeight, adjustedHeight);
-            if ( maxHeight )
-               adjustedHeight = Math.min(maxHeight, adjustedHeight);
-
-            if ( adjustedHeight > textfield.clientHeight ) {
-
-               textfield.style.height = adjustedHeight + "px";
-
-
-              }
-         }
+        }
       }
+    }
 
 
-      function showRL(what) {
-        $(".RL").addClass("hidden");
-        $(".RL-"+what).removeClass("hidden");
+    function showRL(what) {
+      $(".RL").addClass("hidden");
+      $(".RL-"+what).removeClass("hidden");
+    }
+
+    var placeholder = !{JSON.stringify(placeholder.categories)}
+
+
+
+
+    function onchangeCategory() {
+      var categoryEN = document.getElementById("categoryEN");
+      if (!categoryEN) return;
+      var c = categoryEN.value;
+      if (placeholder[c]) {
+        categoryDisplay.innerHTML = placeholder[c];
       }
+      showHideUnpublishReason();
+    }
+    function showHideUnpublishReason() {
+      var categoryEN = document.getElementById("categoryEN");
+      if (!categoryEN) return;
+      var c = document.getElementById("categoryEN").value;
+      var b = document.getElementById("blog").value;
+      var hidden = true;
+      if (c==="--unpublished--") hidden = false;
+      if (b==="Trash") hidden = false;
+      var unpublishReasonRow = document.getElementById("unpublishReasonRow");
+      if (hidden) unpublishReasonRow.classList.add("hidden");
+      else unpublishReasonRow.classList.remove("hidden");
 
-      var placeholder = !{JSON.stringify(placeholder.categories)}
-
-
-
-
-      function onchangeCategory() {
-        var categoryEN = document.getElementById("categoryEN");
-        if (!categoryEN) return;
-        var c = categoryEN.value;
-        if (placeholder[c]) {
-           categoryDisplay.innerHTML = placeholder[c];
-          }
-        showHideUnpublishReason();
-      }
-      function showHideUnpublishReason() {
-        var categoryEN = document.getElementById("categoryEN");
-        if (!categoryEN) return;
-        var c = document.getElementById("categoryEN").value;
-        var b = document.getElementById("blog").value;
-        var hidden = true;
-        if (c==="--unpublished--") hidden = false;
-        if (b==="Trash") hidden = false;
-        var unpublishReasonRow = document.getElementById("unpublishReasonRow");
-        if (hidden) unpublishReasonRow.classList.add("hidden");
-          else unpublishReasonRow.classList.remove("hidden");
-
-      }
+    }
 
 
 
