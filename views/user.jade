@@ -80,6 +80,18 @@ block content
                      langlist,
                      "Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.")
       +labeledInput("SlackUser","SlackUser",usershown.SlackUser,"Username in the slack for using the collect feature.")
+      +labeledSelect( "Article Editor:",
+                "articleEditor",
+                usershown.articleEditor,
+                ["old", "new"],
+                ["old", "new"],
+                "Set this to new to experiment with the new article Editor, old in case of any problems.")
+      +labeledSelect( "Num Langauges:",
+                "languageCount",
+                usershown.languageCount,
+                ["2", "3"],
+                ["2", "3"],
+                "Set this to 3 if you would like to see the new article editor with 3 languages.")
       div.form-group
         label.control-label.col-sm-2(for="Color")="Color"
         div(class="col-sm-4")

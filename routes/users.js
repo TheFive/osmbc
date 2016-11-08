@@ -123,6 +123,8 @@ function postUserId(req, res, next) {
                  WNAuthor:req.body.WNAuthor,
                  WeeklyAuthor:req.body.WeeklyAuthor,
                  color:req.body.color,
+                 articleEditor:req.body.articleEditor,
+                 languagesCount:req.body.languagesCount,
                  language:req.body.language,
                  mailAllComment:req.body.mailAllComment,
                  mailNewCollection:req.body.mailNewCollection,
@@ -144,6 +146,8 @@ function postUserId(req, res, next) {
   if (typeof(changes.mailBlogLanguageStatusChange)==="undefined") {
     changes.mailBlogLanguageStatusChange = [];
   }
+  if (changes.languageCount !== 3) changes.languageCount = 2;
+  if (changes.articleEditor !== "new") changes.articleEditor = "old";
   var user;
   async.series([
     function findUser(cb) {
