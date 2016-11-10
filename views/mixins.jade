@@ -1,6 +1,7 @@
 - sizeLabel =2
 - sizeInput = 4
 - sizeExplanation = 6
+- MIXIN_INCLUDE=true
 
 
 mixin voteButton(vote,article)
@@ -15,7 +16,7 @@ mixin voteButton(vote,article)
   - vb_voteStyle = ""
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  button.btn(type="button" class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'" style=vb_voteStyle)
+  button.btn(type="button" class = vb_displayClass onclick="callAndRedraw('/article/#{article.id}/#{vb_voteAction}.#{vote.name}','/article/#{article.id}/votes')" style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
@@ -34,7 +35,7 @@ mixin voteLabel(vote,article)
   - vb_voteStyle = ""
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  span.label(class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'" style=vb_voteStyle)
+  span.label(class = vb_displayClass onclick="callAndRedraw('/article/#{article.id}/#{vb_voteAction}.#{vote.name}','/article/#{article.id}/votesBlog')" style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
@@ -237,4 +238,7 @@ mixin blogSelector(article,readonly)
         +blogSelection([{name: "TBC"}],missingList,"")
       +blogSelection(missingList,missingList,"")
 
-block all
+mixin voteButtonList(votes)
+  for vote,i in votes
+    if (vote.displayAtTop)
+      +voteButton(vote,article)

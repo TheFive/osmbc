@@ -71,7 +71,7 @@ block content
                       "mailCommentGeneral",
                       usershown.mailCommentGeneral,
                       ["false","true"],
-                      ["off","on", ],
+                      ["off","on" ],
                       "Set this to ON, if you are interested in all threads, where you (or people you are interested in) have once participated.")
       +labeledMultiSelect("Mail Status Change",
                      "mailBlogLanguageStatusChange",
@@ -80,17 +80,17 @@ block content
                      langlist,
                      "Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.")
       +labeledInput("SlackUser","SlackUser",usershown.SlackUser,"Username in the slack for using the collect feature.")
-      +labeledSelect( "Article Editor:",
+      +labeledSelect( "Article Editor",
                 "articleEditor",
                 usershown.articleEditor,
                 ["old", "new"],
                 ["old", "new"],
                 "Set this to new to experiment with the new article Editor, old in case of any problems.")
-      +labeledSelect( "Num Langauges:",
+      +labeledSelect( "Num Languages",
                 "languageCount",
                 usershown.languageCount,
-                ["2", "3"],
-                ["2", "3"],
+                ["two", "three"],
+                ["two", "three"],
                 "Set this to 3 if you would like to see the new article editor with 3 languages.")
       div.form-group
         label.control-label.col-sm-2(for="Color")="Color"

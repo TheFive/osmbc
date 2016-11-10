@@ -16,7 +16,8 @@ mixin displayOverviewRow(a)
       td.hidden-xs
         if showVisibleLanguages
           +languageDisplay(a,{short: true})
-        +voteDisplay(a,showVotes)
+        span(id="voteLabels"+ a.id)
+          +voteDisplay(a,showVotes)
 
 
 

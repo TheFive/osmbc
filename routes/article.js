@@ -7,6 +7,7 @@ var slackrouter = express.Router();
 var should   = require('should');
 var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
+var jade     = require('jade');
 var util     = require('../util.js');
 
 
@@ -186,7 +187,9 @@ function renderArticleId(req,res,next) {
           res.set('content-type', 'text/html');
           // change title of page
           res.rendervar.layout.title = article.blog+"#"+article.id+"/"+article.title;
-          res.render('article',{layout:res.rendervar.layout,
+          let jadeFile = "article";
+          if (req.user.articleEditor==="new") jadeFile= "article_new";
+          res.render(jadeFile,{layout:res.rendervar.layout,
                                 article:article,
                                 googleTranslateText:configModule.getConfig("automatictranslatetext"),
                                 params:params,
@@ -205,7 +208,76 @@ function renderArticleId(req,res,next) {
 
 }
 
-function searchAndCreate(req,res,next) {
+
+function renderArticleIdVotes(req,res,next) {
+  debug('renderArticleIdVotes');
+
+  var votes = configModule.getConfig("votes");
+
+  var article = req.article;
+  should.exist(article);
+
+  async.auto({},
+    function (err) {
+      debug('renderArticleIdVotes->finalFunction');
+      if (err) return next(err);
+
+
+      let rendervars = {layout:res.rendervar.layout,
+        article:article,
+        votes:votes,
+      };
+      let voteButtons = jade.renderFile("views/voteButtons.jade",rendervars);
+      let voteButtonsList = jade.renderFile("views/voteButtonsList.jade",rendervars);
+      res.json({"#voteButtons":voteButtons,"#voteButtonsList":voteButtonsList});
+
+    }
+  );
+
+}
+function renderArticleIdVotesBlog(req,res,next) {
+  debug('renderArticleIdVotesBlog');
+
+
+  var votes = configModule.getConfig("votes");
+  let showVotes = {};
+
+  votes.forEach(function (vote){
+    showVotes[vote.name] = (req.user.getOption("overview","showVote_"+vote.name)=="true");
+  });
+
+  var article = req.article;
+  should.exist(article);
+
+  async.auto({},
+    function (err) {
+      debug('renderArticleIdVotes->finalFunction');
+
+        if (err) return next(err);
+
+
+        let rendervars = {
+          layout: res.rendervar.layout,
+          article: article,
+          votes: votes,
+          showVotes:showVotes
+        };
+
+        jade.renderFile("views/voteLabels.jade", rendervars,function(err,result){
+          if (err) console.log(err);
+          if (err) return next(err);
+          let v = {};
+          v["#voteLabels" + article.id] = result;
+          res.json(v);
+        });
+    }
+  );
+}
+
+
+
+
+  function searchAndCreate(req,res,next) {
   debug('searchAndCreate');
   var search = req.query.search;
   var show = req.query.show;
@@ -454,7 +526,8 @@ function doAction(req, res, next) {
     }
     let returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
     returnToUrl =req.header('Referer') || returnToUrl;
-    res.redirect(returnToUrl);
+    res.end("OK");
+    //res.redirect(returnToUrl);
   });
 }
 
@@ -671,6 +744,8 @@ router.post('/translate/:fromLang/:toLang',translate);
 router.param('article_id',getArticleFromID);
 
 router.get('/:article_id', exports.renderArticleId );
+router.get('/:article_id/votes', renderArticleIdVotes );
+router.get('/:article_id/votesBlog', renderArticleIdVotesBlog );
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
 router.get('/:article_id/:action.:tag', doAction );
 

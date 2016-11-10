@@ -379,20 +379,20 @@ block content
     table.table.table-condensed
       tbody
         - for vote ,i in votes
-        tr
-          td.col-md-1
-            if params.edit
-              span(class=vote.iconClass)
-            else
-              +voteButton(vote,article)
-          td.col-md-1=vote.name
-          td.col-md-5
-            if article.votes && article.votes[vote.name]
-              - labelclass = "osmbclabel-collect"
-              each user in article.votes[vote.name]
-                - if (layout.user.OSMUser === user) labelclass = "osmbclabel-user"
-                span.label.small-margin(class=labelclass)=user
-          td.col-md-5=vote.description
+          tr
+            td.col-md-1
+              if params.edit
+                span(class=vote.iconClass)
+              else
+                +voteButton(vote,article)
+            td.col-md-1=vote.name
+            td.col-md-5
+              if article.votes && article.votes[vote.name]
+                - labelclass = "osmbclabel-collect"
+                each user in article.votes[vote.name]
+                  - if (layout.user.OSMUser === user) labelclass = "osmbclabel-user"
+                  span.label.small-margin(class=labelclass)=user
+            td.col-md-5=vote.description
 
   .row
     if (article.commentList)
@@ -484,7 +484,6 @@ block content
           thead
             tr
               th
-                |
               th
                 |user
               th
@@ -985,6 +984,7 @@ block scripts
       else unpublishReasonRow.classList.remove("hidden");
 
     }
+
 
 
 
