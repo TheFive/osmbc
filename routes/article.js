@@ -235,6 +235,36 @@ function renderArticleIdVotes(req,res,next) {
   );
 
 }
+
+function renderArticleIdCommentArea(req,res,next) {
+  debug('renderArticleCommentArea');
+
+
+  var article = req.article;
+  should.exist(article);
+  let params={};
+  params.editComment = null;
+  if (req.query.editComment) params.editComment = req.query.editComment;
+
+  async.auto({},
+    function (err) {
+      debug('renderArticleCommentArea->finalFunction');
+      if (err) return next(err);
+
+
+      let rendervars = {layout:res.rendervar.layout,
+        article:article,
+        params:params
+      };
+      jade.renderFile("views/commentArea.jade",rendervars,function(err,commentArea){
+        if (err) console.dir(err);
+        if (err) return next(err);
+        res.json({"#commentArea":commentArea});
+      });
+
+    }
+  );
+}
 function renderArticleIdVotesBlog(req,res,next) {
   debug('renderArticleIdVotesBlog');
 
@@ -429,7 +459,11 @@ function postNewComment(req, res, next) {
       next(err);
       return;
     }
-    res.redirect(returnToUrl);
+    if (req.query.reload=="false") {
+      res.end("OK");
+    } else {
+      res.redirect(returnToUrl);
+    }
   });
 }
 
@@ -746,6 +780,7 @@ router.param('article_id',getArticleFromID);
 router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/votes', renderArticleIdVotes );
 router.get('/:article_id/votesBlog', renderArticleIdVotesBlog );
+router.get('/:article_id/commentArea', renderArticleIdCommentArea );
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
 router.get('/:article_id/:action.:tag', doAction );
 

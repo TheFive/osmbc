@@ -1,0 +1,45 @@
+if !MIXIN_INCLUDE
+  include mixins
+
+if (article.commentList)
+  .row
+
+    - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
+    - if (!upToComment) upToComment = -1;
+    h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
+  each comment,i in article.commentList
+    .row
+      b
+        if (i > upToComment)
+          a(href="#{layout.htmlroot}/article/#{article.id}/markCommentRead?index=#{i}")
+            span.glyphicon.glyphicon-envelope
+          span=" "
+        span=comment.user
+      span=" "
+      span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+      if (comment.editstamp)
+        span=" "
+        i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
+      if layout.user.OSMUser === comment.user && params.editComment != i
+        a(id="EditComment#{i}" href="#{layout.htmlroot}/article/#{article.id}?editComment=#{i}")
+          span=" "
+          span.glyphicon.glyphicon-pencil
+
+      if params.editComment == i && layout.user.OSMUser === comment.user
+        form(target="iframeform" name="EditComment",id="EditCommentForm", action="#{layout.htmlroot}/article/#{article.id}/EditComment/#{i}?reload=false", method="post")
+          textarea.form-control(name="comment" id="editComment" rows=7)=comment.text
+          button.btn.btn-large.btn-primary(name = "update" type = "button" onclick ="if (document.getElementById('editComment').value.trim()==='') return; document.getElementById('EditCommentForm').submit();callAndRedraw(null,'/article/#{article.id}/commentArea');") Update
+          button.btn.btn-large.btn-default(type = "button" onclick ="callAndRedraw(null,'/article/#{article.id}/commentArea');") Cancel
+      else
+        p
+          :verbatim
+            !{layout.md_render(comment.text)}
+
+.row
+  if ( !params.editComment)
+    form(target="iframeform" name="AddComment",id="AddComment", action="#{layout.htmlroot}/article/#{article.id}/addComment?reload=false", method="post")
+      textarea.form-control(name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
+      button.btn.btn-large.btn-primary(name= "AddComment" type = "button" onclick ="if (document.getElementById('comment').value.trim()==='') return;document.getElementById('AddComment').submit();callAndRedraw(null,'/article/#{article.id}/commentArea');") Add Comment
+      button.btn.btn-large.btn-default(type = "button" onclick ="callAndRedraw(null,'/article/#{article.id}/commentArea');") Cancel
+
+iframe.hidden(name="iframeform")
