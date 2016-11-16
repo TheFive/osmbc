@@ -39,112 +39,16 @@ block content
     |#{genMarkup}
   h3
     | Preview
-    :verbatim
-      !{preview}
+    div#preview
+      :verbatim
+        !{preview}
  
 
 block scripts                
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
-  script.
-    window.onload = init;
 
-    function init() {
 
-      markdown = document.getElementById("markdown");
-      if (markdown) {
-        markdown.onchange = onchange;
-        markdown.onkeyup = onchange;
-      }
-      onchange();
-    }
-
-  
-   
-    function convert(text) {
-      converter = new window.markdownit();
-      // convert md to html
-      text = converter.render(text);
-      // skip <ul> and </ul> at start and end
-      
-      
-      return text;
-
-    }
-
-    var empty = "                                                                                  ";
-    empty = empty+empty;
-    empty = empty+empty;
-    empty = empty+empty;
-    var lineString = "---------------------------------------------------";
-    lineString = lineString + lineString;
-    lineString = lineString + lineString;
-    lineString = lineString + lineString;
-
-    function wl(string,length) {
-        return (string + empty).substring(0,length);
-    }
-    function ll(length) {
-      return lineString.substring(0,length);
-    }
-
-    function prettifyTable(text) {
-
-      var lines=[];
-      var content = text.match(/\|([^\|]*)/g);
-    
-      lengthOrt = 0;
-      lengthInhalt = 0;
-      lengthDatum = 0;
-      lengthCountry = 0;
-      for (var i=0;i<content.length-1;i=i+5) {
-        if (i==5) continue;
-        lengthOrt = Math.max(lengthOrt,content[i].trim().length);
-        lengthInhalt = Math.max(lengthInhalt,content[i+1].trim().length);
-        lengthDatum = Math.max(lengthDatum,content[i+2].trim().length);
-        lengthCountry = Math.max(lengthCountry,content[i+3].trim().length);
-      }
-      var result = "";
-      for (var i=0;i<content.length-1;i=i+5) {
-        if (i==5) {
-           result += "|"+ll(lengthOrt-1)+"|"+ll(lengthInhalt-1)+"|"+ll(lengthDatum-1)+"|"+ll(lengthCountry-1)+"|"+"\n";
-          } else
-          {
-           result += wl(content[i],lengthOrt)+wl(content[i+1],lengthInhalt)+wl(content[i+2],lengthDatum)+wl(content[i+3],lengthCountry)+"|"+"\n";
-          
-          }
-      }
-      return result;
-     
-
-    }
-  
-    
-  
-
-    
-
-    
-    function onchange() {
-      var md = document.getElementById("markdown").value;
-      preview = document.getElementById("preview");
-      html = document.getElementById("html");
-      var t = convert(md);
-      preview.innerHTML = t;
-      html.value = t;
-      if (!document.getElementById("disable").checked) {
-          setTimeout(function() {
-            var st = document.getElementById("markdown").selectionStart;
-            var se = document.getElementById("markdown").selectionEnd;
-            document.getElementById("markdown").value = prettifyTable(md);
-            document.getElementById("markdown").selectionStart = st;
-            document.getElementById("markdown").selectionEnd = se;
-
-          },1);
-            
-        }
-    
-      }
    
    
 
