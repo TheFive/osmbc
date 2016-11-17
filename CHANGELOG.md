@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.0.6](https://github.com/TheFive/osmbc/tree/2.0.6) (2016-11-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.5...2.0.6)
+
+**Fixed bugs:**
+
+- Indication of unwritten articles in full-mode [\#575](https://github.com/TheFive/osmbc/issues/575)
+
 ## [2.0.5](https://github.com/TheFive/osmbc/tree/2.0.5) (2016-11-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.4...2.0.5)
 
