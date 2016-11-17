@@ -126,7 +126,7 @@ block blogcontent
                 div(class=columnRightSize)
                   if right_lang
                     div(onclick="if (!openEditor) {openEditor = document.getElementById('rdiv#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
-                      div(class=(a["markdown" + lang]) ? "" : "mark")
+                      div(class=(a["markdown" + right_lang]) ? "" : "mark")
                         ul(id="rpreview#{a.id}")
                           :verbatim
                             !{renderer.renderArticle(right_lang,a)}
