@@ -612,7 +612,7 @@ Article.prototype.setVote = function setVote(user,tag,callback) {
   if (self.votes[tag].indexOf(user.OSMUser)<0) {
     self.votes[tag].push(user.OSMUser);
     self.save(callback);
-    return
+    return;
   }
   return callback();
 };
@@ -647,7 +647,7 @@ Article.prototype.setTag = function setTag(user,tag,callback) {
   if (self.tags.indexOf(tag)<0) {
     self.tags.push(tag);
     self.save(callback);
-    return
+    return;
   }
   return callback();
 };

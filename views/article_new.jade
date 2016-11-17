@@ -722,6 +722,7 @@ block scripts
     // for the linkArea
 
     function onchangeCollection() {
+      console.log("onchangecollection");
       var cl = $("#collection").val();
       var linkArea = $("#linkArea");
       var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
@@ -738,7 +739,9 @@ block scripts
         result +="<br>\n";
       }
       result = '<p>'+result+'</p>';
-      if (linkArea) linkArea.innerHTML = result;
+
+      if (linkArea) linkArea.html(result);
+
     }
 
 
