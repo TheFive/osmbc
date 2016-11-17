@@ -190,7 +190,13 @@ block content
 
             .row#languageFlags.hidden
               - for (lang in languageFlags)
-                img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
+                img(id="#{lang}",
+                    src="#{languageFlags[lang]}",
+                    class="img-thumbnail" ,
+                    width = 40,
+                    data-toggle="tooltip" data-placement="left" title=lang
+                    onclick="javascript:myclick(this.id)"
+                    ondragstart = "ondragstartflag(event,this.id);")
           
 
         .row
@@ -556,6 +562,7 @@ block scripts
         markdownRIGHT.onleave = onleaveRIGHT;
         onchangeRIGHT();
      }
+      $('[data-toggle="tooltip"]').tooltip();
 
 
      
