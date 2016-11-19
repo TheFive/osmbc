@@ -75,7 +75,11 @@ describe('routes/blog',function() {
           should(res.statusCode).eql(302);
           blogModule.findOne({name: "WN333"}, function (err, blog) {
             should.not.exist(err);
-            should(blog.reviewCommentDE).eql([]);
+            should(blog.reviewCommentDE).eql([{
+              text: 'startreview',
+              timestamp: '2016-05-25T20:00:00.000Z',
+              user: 'TestUser'
+            }]);
             bddone();
           });
         });

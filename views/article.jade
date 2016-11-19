@@ -17,7 +17,7 @@ mixin leftcolumn
 
 mixin rightcolumn
   if (params.right_lang !== null)
-    .col-md-5.hidden-xs
+    .col-md-5
       if block
         block
       else
@@ -38,45 +38,8 @@ block content
           .col-md-1
             p="Blog"
           .col-md-5
-            select(id="blog",name="blog").form-control
-              option(value="Future") Future
-              if (layout.listOfOpenBlog)  
-                - var displayed = false;
-                for blog in layout.listOfOpenBlog 
-                  if blog.name == article.blog
-                    option(value="#{blog.name}" selected) #{blog.name}
-                    - displayed = true;
-                  else
-                     option(value="#{blog.name}" ) #{blog.name}
-              if (layout.listOfEditBlog)  
-                for blog in layout.listOfEditBlog 
-                  if blog.name == article.blog         
-                    option(value="#{blog.name}" selected) #{blog.name} (Edit)
-                    - displayed = true;
-                  else
-                     option(value="#{blog.name}" ) #{blog.name} (Edit)
-              if (layout.listOfReviewBlog)  
-                for blog in layout.listOfReviewBlog 
-                  if blog.name == article.blog         
-                    option(value="#{blog.name}" selected) #{blog.name} (Review #{layout.language})
-                    - displayed = true;
-                  else
-                     option(value="#{blog.name}" ) #{blog.name} (Review #{layout.language})
-              if (article.blog == "Trash")
-                option(value="Trash" selected) Trash
-                - displayed = true;
-              else
-                option(value="Trash" ) Trash
-              if (layout.listOfHelpBlog)
-                each helpblog in layout.listOfHelpBlog
-                  if helpblog.name == article.blog         
-                    option(value="#{helpblog.name}" selected) #{helpblog.name}
-                    - displayed = true;
-                  else
-                     option(value="#{helpblog.name}" ) #{helpblog.name}
-              if (!displayed)
-                option(value="#{article.blog}" selected) #{article.blog}
-              
+            +blogSelector(article)
+
           .col-md-4
 
             .hidden
@@ -227,7 +190,13 @@ block content
 
             .row#languageFlags.hidden
               - for (lang in languageFlags)
-                img(id="#{lang}",src="#{languageFlags[lang]}", class="img-thumbnail" ,width = 40, onclick="javascript:myclick(this.id)" ondragstart = "ondragstartflag(event,this.id);")
+                img(id="#{lang}",
+                    src="#{languageFlags[lang]}",
+                    class="img-thumbnail" ,
+                    width = 40,
+                    data-toggle="tooltip" data-placement="left" title=lang
+                    onclick="javascript:myclick(this.id)"
+                    ondragstart = "ondragstartflag(event,this.id);")
           
 
         .row
@@ -473,6 +442,9 @@ block content
             textarea.form-control(name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
             button.btn.btn-large.btn-primary(name= "AddComment" type = "button" onclick ="if (document.getElementById('comment').value.trim()==='') return;window.onbeforeunload=null; document.getElementById('AddComment').submit();") Add Comment
             button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}';") Cancel
+            if article.commentStatus!=="solved"
+              button.btn.btn-large.btn-default(name= "AddComment" type = "button" onclick ="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; document.getElementById('AddComment').submit();") Solve Comment
+
 
   #doublettes.row
       if articleReferences.count >= 1
@@ -593,6 +565,7 @@ block scripts
         markdownRIGHT.onleave = onleaveRIGHT;
         onchangeRIGHT();
      }
+      $('[data-toggle="tooltip"]').tooltip();
 
 
      

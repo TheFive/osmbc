@@ -32,7 +32,10 @@ function getArticleFromID(req,res,next,id) {
   debug("getArticleFromID");
   req.article = null;
   should.exist(id);
-  articleModule.findById(id,function(err,result) {
+  let idNumber = Number(id);
+  console.log(idNumber);
+  if (""+idNumber !== id) return next(new Error("Article ID "+id+" does not exist (conversion error)"));
+  articleModule.findById(idNumber,function(err,result) {
     debug('getArticleFromID->findById');
     if (err) return next(err);
     if (!result) return next(new Error("Article ID "+id+" does not exist"));
@@ -305,6 +308,7 @@ function postArticle(req, res, next) {
           if (typeof(result.id) == 'undefined') return cb(new Error("Could not create Article"));
           article = result;
           changes.version = result.version;
+          changes.firstCollector = req.user.OSMUser;
           returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
           cb();          
         });

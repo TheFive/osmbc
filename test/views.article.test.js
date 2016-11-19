@@ -268,16 +268,16 @@ describe('views/article', function() {
                   should.exist(result);
                   // workaround, as zombie.js calles the submit two times
                   //should(result.length).eql(1);
-                  should(result.length).eql(2);
-                  // so both post should be correct.
-                  for (var i=0;i<2;i++) {
-                    var article = result[i];
-                    should(article.collection).eql("searchfor");
-                    should.not.exist(article.markdownDE);
-                    should(article.markdownEN).eql("no translation");
-                    // ES is NOT set, because ES is "not used in history"
-                    should.not.exist(article.markdownES);
-                  }
+                  should(result).eql([   ({
+                    id: '5',
+                    version: 2,
+                    blog: 'blog',
+                    collection: 'searchfor',
+                    categoryEN: '-- no category yet --',
+                    title: 'Test Title for Article',
+                    markdownEN: 'no translation',
+                    firstCollector: 'TheFive' } )]
+                  );
                   bddone();
                 });
               });
