@@ -148,6 +148,38 @@ describe('model/pgMap',function(){
           bddone();
         });
       });
+      it('should find on element with <',function(bddone) {
+        pgMap.find(testModule,{name:"Hallo",value:"<4"},function(err,result){
+          should.not.exist(err);
+          should(result.length).equal(1);
+          should(result[0].value).equal(3);
+          bddone();
+        });
+      });
+      it('should find on element with >',function(bddone) {
+        pgMap.find(testModule,{name:"Hallo",value:">3"},function(err,result){
+          should.not.exist(err);
+          should(result.length).equal(1);
+          should(result[0].value).equal(4);
+          bddone();
+        });
+      });
+      it('should find on element with <=',function(bddone) {
+        pgMap.find(testModule,{name:"Hallo",value:"<=4"},function(err,result){
+          should.not.exist(err);
+          should(result.length).equal(2);
+          should(result).eql([{ id: '3', name: 'Hallo', value: 3, version: 1 },{ id: '4', name: 'Hallo', value: 4, version: 1 }]);
+          bddone();
+        });
+      });
+      it('should find on element with >=',function(bddone) {
+        pgMap.find(testModule,{name:"Hallo",value:">=3"},function(err,result){
+          should.not.exist(err);
+          should(result.length).equal(2);
+          should(result).eql([{ id: '3', name: 'Hallo', value: 3, version: 1 },{ id: '4', name: 'Hallo', value: 4, version: 1 }]);
+          bddone();
+        });
+      });
       it('should find on element with IN',function(bddone) {
         pgMap.find(testModule,{name:"Hallo",value:"IN('3','4')"},function(err,result){
           should.not.exist(err);

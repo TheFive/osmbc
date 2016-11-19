@@ -229,7 +229,7 @@ mixin blogSelector(article)
       - if (article) missingList = [{name:article.blog}]
       +blogSelection(layout.listOfOpenBlog,missingList,"")
       +blogSelection(layout.listOfEditBlog,missingList,"(Edit)")
-      +blogSelection(layout.listOfReviewBlog,missingList,"(Review #{layout.language})")
+      +blogSelection(layout.listOfReviewBlog,missingList,"(Review "+layout.language+")")
       +blogSelection([{name: "Future"}],missingList,"")
       +blogSelection([{name: "Trash"}],missingList,"")
       if layout.appName == "TheFiveBC"

@@ -100,6 +100,7 @@ describe('views/blog', function() {
   });
   describe('status Functions',function(){
     beforeEach(function(bddone) {
+      mockdate.set(new Date("2016-05-25T19:00"));
       baseLink = 'http://localhost:' + config.getServerPort() + config.getValue("htmlroot");
       nock('https://hooks.slack.com/')
         .post(/\/services\/.*/)
@@ -116,6 +117,7 @@ describe('views/blog', function() {
 
     });
     afterEach(function(){
+      mockdate.reset();
       nock.cleanAll();
       testutil.stopServer();
     });
@@ -161,7 +163,11 @@ describe('views/blog', function() {
             
             blogModule.findOne({name:"blog"},function(err,blog){
               should.not.exist(err);
-              should(blog.reviewCommentDE).eql([]);
+              should(blog.reviewCommentDE).eql([{
+                text: 'startreview',
+                timestamp: '2016-05-25T19:00:00.000Z',
+                user: 'TheFive'
+              }]);
               // in test mode review is done in WP in DE Language, so the export is set too
               should(blog.exportedDE).be.True();
               cb();

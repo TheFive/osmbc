@@ -140,8 +140,13 @@ Blog.prototype.setReviewComment = function setReviewComment(lang,user,data,callb
           var date = new Date();
           if (data == "startreview") {
             // Start Review, check wether review is done in WP or not
+            if (self[rc].length===0) {
+              self[rc].push({user:user.OSMUser,text:data,timestamp:date});
+            }
             if (config.getValue("ReviewInWP").indexOf(lang)>=0) {
               self[exported]=true;
+              // Write Startreview to the review Array, do document Start in Blog
+
 
               // Review is set on WP, so the blog can be marked as exoprted
               messageCenter.global.sendLanguageStatus(user,self,lang,"markexported",cb);
@@ -245,9 +250,18 @@ Blog.prototype.closeBlog = function closeBlog(lang,user,status,callback) {
           callback();
         },
         function removeReview(callback) {
+          // Blog is reopened, so delete any review information
+          // e.g. that review is started.
+          // if there is some "substantial" review information (a review comment),
+          // keep it and do not delete anythingx
           if (status === false) {
             if (self["reviewComment"+lang] && self["reviewComment"+lang].length===0){
               delete self["reviewComment"+lang];
+            }
+            if (self["reviewComment"+lang] && self["reviewComment"+lang].length===1){
+              if (self["reviewComment"+lang][0].text=="startreview") {
+                delete self["reviewComment"+lang];
+              }
             }
             self["exported"+lang] = false;
           }
