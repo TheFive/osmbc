@@ -1,5 +1,18 @@
 # Change Log
 
+## [2.0.7](https://github.com/TheFive/osmbc/tree/2.0.7) (2016-11-19)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.6...2.0.7)
+
+**Implemented enhancements:**
+
+- Show Review Starter and link to Review Changes. [\#577](https://github.com/TheFive/osmbc/issues/577)
+- Tooltip for flags [\#574](https://github.com/TheFive/osmbc/issues/574)
+- Luxury proposal: a button to set comments on "\#solved" [\#571](https://github.com/TheFive/osmbc/issues/571)
+
+**Fixed bugs:**
+
+- OSMBC crashes on GET  /article/2372. \(with a dot\)  [\#576](https://github.com/TheFive/osmbc/issues/576)
+
 ## [2.0.6](https://github.com/TheFive/osmbc/tree/2.0.6) (2016-11-17)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.5...2.0.6)
 
@@ -359,13 +372,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
