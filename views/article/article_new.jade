@@ -82,14 +82,11 @@ mixin noTranslationButton
         - open = true;
     if open
       p
-        button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; setNoTranslation();") notranslation to rest
+        button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; setNoTranslation(); document.getElementById('input').submit();") no translation to rest
 
 
 block content
-
-
   form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
-
     .row
       // Block for Buttons in the upper right corner and on the top in mobile
       .col-md-6.col-md-push-6
