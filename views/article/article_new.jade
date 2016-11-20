@@ -1,4 +1,4 @@
-extends layout
+extends ../layout
 
 
 mixin leftcolumn
@@ -51,7 +51,7 @@ mixin articleTextanalyse(lang)
     span=" "
 
 mixin articleTranslateButton(langFrom,langTo)
-  if (params.edit && article["markdown" + langFrom] && !article["markdown" + langTo])
+  if (article["markdown" + langFrom] && !article["markdown" + langTo])
     button.btn.btn-small.btn-primary(id="translate"+langFrom+langTo onClick ="javascript: window.translate('#{langFrom}','#{langTo}');") Google Translate #{langFrom} -> #{langTo}
     button.btn.btn-small.btn-warning.hidden(id="translateWait"+langFrom+langTo)
       span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
@@ -72,11 +72,9 @@ mixin doublettesButton
 mixin cancelButton
   button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
 
-mixin editButton
-  a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
 
 mixin noTranslationButton
-  if (!params.edit)
+  div#notranslationArea
     - open = false
     each lang in layout.activeLanguages
       if (article["markdown" + lang])
@@ -84,11 +82,10 @@ mixin noTranslationButton
         - open = true;
     if open
       p
-        button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?notranslation=true';") notranslation to rest
+        button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; setNoTranslation();") notranslation to rest
 
 
 block content
-  - var disabled = (!params.edit && !( blog && blog.status=="closed") )
 
 
   form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
@@ -98,7 +95,7 @@ block content
       .col-md-6.col-md-push-6
         .row
           .col-md-4#voteButtons
-            include voteButtons
+            include ../voteButtons
           .col-md-1
             +doublettesButton
           .col-md-1
@@ -107,7 +104,6 @@ block content
 
           .col-md-2
           .col-md-2
-            +editButton
         .row
           .col-md-3
             +languageDisplay(article,{func: "showRL"})
@@ -127,7 +123,7 @@ block content
           div.form-group
             label.col-md-2="Blog"
             div.col-md-10
-              +blogSelector(article,disabled)
+              +blogSelector(article,!article.isChangeAllowed("blog"))
             .hidden
               textarea.form-control(name="version",rows=1,hide=true) #{article.version}
 
@@ -135,7 +131,7 @@ block content
           .form-group
             label.col-md-2="Category"
             div.col-md-10
-              select(id="categoryEN",name="categoryEN" disabled=disabled).form-control
+              select(id="categoryEN",name="categoryEN" disabled=!article.isChangeAllowed("categoryEN")).form-control
                 for category in categories
                   - option = category[params.left_lang]
                   - if (params.right_lang !== null) option += " / "+category[params.right_lang]
@@ -157,7 +153,7 @@ block content
       .form-group
         label.col-md-1="Predecessor"
         +leftcolumn
-          select(id="predecessor",name="predecessorId" disabled=disabled).form-control
+          select(id="predecessor",name="predecessorId" disabled=!article.isChangeAllowed("predecessorId")).form-control
             if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
               option(value="" selected) None
             else
@@ -173,7 +169,7 @@ block content
                 - d= null;
                 for b in articleCategories
                   - if (b.predecessorId == a.predecessorId) {d=b;}
-                if disabled
+                if !article.isChangeAllowed("predecessorId")
                   option(value=a.id disabled)=a.title+"("+d.title+")"
                 else
                   option(value=a.id )=a.title
@@ -182,7 +178,7 @@ block content
       .form-group
         label.col-md-1="Title"
         .col-md-10
-          textarea.form-control(name="title",rows=1 disabled=disabled) #{article.title}
+          textarea.form-control(name="title",rows=1 disabled=!article.isChangeAllowed("title")) #{article.title}
 
 
     // Display Unpublish Reason Row
@@ -190,14 +186,14 @@ block content
       .form-group
         label.col-md-1="Unpublish Reason"
         .col-md-5
-          select(id="unpublishReason",name="unpublishReason" disabled=disabled).form-control
+          select(id="unpublishReason",name="unpublishReason" disabled=!article.isChangeAllowed("unpublishReason")).form-control
             for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
               if (reason == article.unpublishReason)
                 option(value="#{reason}" selected ) #{reason}
               else
                 option(value="#{reason}" ) #{reason}
         .col-md-5
-          textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1 disabled=disabled) #{article.unpublishReference}
+          textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1 disabled=!article.isChangeAllowed("unpublishReference")) #{article.unpublishReference}
 
 
     // Display Collection Row
@@ -205,15 +201,14 @@ block content
       .form-group
         label.col-md-1="Collection"
         .col-md-10
-          textarea.form-control(id="collection" name="collection" rows=2 disabled=disabled) #{article.collection}
+          textarea.form-control(id="collection" name="collection" rows=2 disabled=!article.isChangeAllowed("collection")) #{article.collection}
     .row
       .col-md-1
 
       .col-md-6
         .div(id="linkArea")
-      if (!disabled)
-        .col-md-4
-          p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
+      .col-md-4
+        p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
 
 
 
@@ -241,7 +236,7 @@ block content
             p="Markdown"
 
           .col-md-10
-            +articleMarkdown(params.left_lang,disabled)
+            +articleMarkdown(params.left_lang,!article.isChangeAllowed("markdown"+params.left_lang))
         .row
           .col-md-2
             p="Preview"
@@ -261,11 +256,11 @@ block content
             for l in layout.activeLanguages
               if l === params.right_lang
                 .RL(class= "RL-#{l}")
-                  +articleMarkdown(l,(blog && !blog.isEditable(l)))
+                  +articleMarkdown(l,!article.isChangeAllowed("markdown"+l))
               else
                 if l !== params.left_lang
                   .RL.hidden(class= "RL-#{l}")
-                    +articleMarkdown(l,(blog && !blog.isEditable(l)))
+                    +articleMarkdown(l,!article.isChangeAllowed("markdown"+l))
         .row
           .col-md-12
             for l in layout.activeLanguages
@@ -300,20 +295,6 @@ block content
 
 
 
-    // Display Comment Row
-    .row
-      h4="You can add a comment here:"
-    .row
-      .col-md-12
-        textarea.form-control(name="addComment" id="addComment" rows=3 )
-
-
-  // Translate Tools
-
-
-
-
-
 
 
 
@@ -336,11 +317,11 @@ block content
     input.form-control(type="hidden" name = "text" id ="textanalysefield")
 
   .row#voteButtonsList
-    include voteButtonsList
+    include ../voteButtonsList
 
 
   .div#commentArea
-    include commentArea.jade
+    include commentArea
 
   #doublettes.row
       if articleReferences.count >= 1
@@ -727,7 +708,6 @@ block scripts
     // for the linkArea
 
     function onchangeCollection() {
-      console.log("onchangecollection");
       var cl = $("#collection").val();
       var linkArea = $("#linkArea");
       var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
@@ -815,22 +795,41 @@ block scripts
     }
 
 
+    function redrawFunc(redraw) {
+      console.log("Redraw" + redraw)
+      let j = $.getJSON("!{layout.htmlroot}" + redraw, function (json) {
+        console.dir(json);
+        for (k in json) {
+          $(k).html(json[k]);
+        }
+      });
+    }
     // This Function calls "call" url, if given
     // after that it callse the "redraw" url, parses
     // the json and redraws it content in the html
     function callAndRedraw(call, redraw) {
 
-      function redrawFunc () {
-        let j = $.getJSON("!{layout.htmlroot}" + redraw, function (json) {
-          for (k in json) {
-            $(k).html(json[k]);
+      $.get("!{layout.htmlroot}" + call,function(){redrawFunc(redraw);});
+
+    }
+
+    function submitAndRedraw(form,redraw) {
+      var jqForm = $(form);
+      var url = jqForm.attr('action');
+
+      $.post(url, jqForm.serialize(), function (data) {
+          if (data === "OK") {
+            redrawFunc(redraw);
           }
-        });
-      }
-      if (call === null) return redrawFunc();
-
-      $.get("!{layout.htmlroot}" + call,redrawFunc);
-
+        },
+        'text' // I expect a JSON response
+      ).fail( function(err){console.dir(err);});
+    }
+    function setNoTranslation(){
+      $('.markdownEdit').each(function(item){
+        console.log(this);
+        if (this.value=="") this.value = "no translation";
+      });
     }
 
     function translate(langFrom, langTo) {

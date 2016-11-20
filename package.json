@@ -51,7 +51,7 @@
     "request": "^2.70.0",
     "serve-favicon": "~2.3.0",
     "session-file-store": "^0.2.0",
-    "should": "^8.3.0",
+    "should": "^11.1.0",
     "twit": "^2.2.3"
   },
   "devDependencies": {

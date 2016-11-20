@@ -290,7 +290,8 @@ describe('router/article',function() {
                    collection:"COLLECTION",
                    comment:"COMMENT",
                    categoryEN:"CATEGORYEN",
-                   title:"TITLE",version:2});
+                   title:"TITLE",version:2,
+                   _blog:null});
             bddone();            
           }
         );

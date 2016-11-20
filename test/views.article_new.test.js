@@ -319,8 +319,6 @@ describe('views/article_new', function() {
               should(article.commentList.length).eql(1);
               should(article.commentList[0].text).eql("Add a test comment");
               should(article.commentList[0].user).eql("TheFive");
-
-              console.log(browser.html());
               browser.click('a[id="EditComment0"]',function(err) {
                 should.not.exist(err);
                 browser

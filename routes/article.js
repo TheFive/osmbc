@@ -34,7 +34,6 @@ function getArticleFromID(req,res,next,id) {
   req.article = null;
   should.exist(id);
   let idNumber = Number(id);
-  console.log(idNumber);
   if (""+idNumber !== id) return next(new Error("Article ID "+id+" does not exist (conversion error)"));
   articleModule.findById(idNumber,function(err,result) {
     debug('getArticleFromID->findById');
@@ -191,7 +190,7 @@ function renderArticleId(req,res,next) {
           // change title of page
           res.rendervar.layout.title = article.blog+"#"+article.id+"/"+article.title;
           let jadeFile = "article";
-          if (req.user.articleEditor==="new") jadeFile= "article_new";
+          if (req.user.articleEditor==="new") jadeFile= "article/article_new";
           res.render(jadeFile,{layout:res.rendervar.layout,
                                 article:article,
                                 googleTranslateText:configModule.getConfig("automatictranslatetext"),
@@ -259,7 +258,7 @@ function renderArticleIdCommentArea(req,res,next) {
         article:article,
         params:params
       };
-      jade.renderFile("views/commentArea.jade",rendervars,function(err,commentArea){
+      jade.renderFile("views/article/commentArea.jade",rendervars,function(err,commentArea){
         if (err) console.dir(err);
         if (err) return next(err);
         res.json({"#commentArea":commentArea});
@@ -268,6 +267,8 @@ function renderArticleIdCommentArea(req,res,next) {
     }
   );
 }
+
+
 function renderArticleIdVotesBlog(req,res,next) {
   debug('renderArticleIdVotesBlog');
 
@@ -784,6 +785,7 @@ router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/votes', renderArticleIdVotes );
 router.get('/:article_id/votesBlog', renderArticleIdVotesBlog );
 router.get('/:article_id/commentArea', renderArticleIdCommentArea );
+
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
 router.get('/:article_id/:action.:tag', doAction );
 
