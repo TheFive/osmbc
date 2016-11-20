@@ -252,12 +252,8 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
         return cb();
       });
     },
-    function checkAllowedEditing(cb) {
-      for (k in data) {
-        if (!self.isChangeAllowed(k)) return cb(new Error(k+" can not be edited"));
-      }
-      return cb();
-    },
+
+
     function addCommentWhenGiven(cb) {
       debug("addCommentWhenGiven");
       let addComment = data.addComment;
@@ -294,9 +290,13 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
 
 
     for (var k in data) {
-      if (data[k] === self[k]) delete data[k];
-      if (data[k] === '' && typeof(self[k])=='undefined') delete data[k];
+      if (data[k] === self[k]) {delete data[k];continue;}
       if (data[k]) data[k] = data[k].trim();
+      if (data[k] === '' && typeof(self[k])=='undefined') {delete data[k];continue;}
+      // all values that not have to be changed are now deleted.
+      // test wether change is allowed
+      if (!self.isChangeAllowed(k)) return callback(new Error(k+" can not be edited"));
+
     }
     async.series(
       [function logIt (cb) {
@@ -345,6 +345,7 @@ function find(obj,order,callback) {
       };
     }
   }
+  should.exist(createFunction);
   pgMap.find({table:"article",create:createFunction},obj,order,callback);
 }
 

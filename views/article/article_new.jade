@@ -30,11 +30,11 @@ mixin rightcolumn
         p No Content provided
 
 mixin articleMarkdown(lang,disabled)
-  - var d = disabled || blog && !blog.isEditable(lang)
+  - var d = disabled
   - var p=""
   if placeholder.markdown[lang]
     - p = placeholder.markdown[lang];
-  textarea.markdownEdit.form-control(id="markdown#{lang}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6 disabled = d) #{article["markdown" + lang]}
+  textarea.markdownEdit.form-control(id="markdown#{lang}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6 readonly = d) #{article["markdown" + lang]}
   div.markdownMessage(id="text"+lang )
     | 'no translation' or '-' to specify no translation wanted.
 
@@ -77,7 +77,7 @@ mixin noTranslationButton
   div#notranslationArea
     - open = false
     each lang in layout.activeLanguages
-      if (article["markdown" + lang])
+      if (article["markdown" + lang] || !article.isChangeAllowed("markdown" + lang))
       else
         - open = true;
     if open
@@ -128,14 +128,14 @@ block content
           .form-group
             label.col-md-2="Category"
             div.col-md-10
-              select(id="categoryEN",name="categoryEN" disabled=!article.isChangeAllowed("categoryEN")).form-control
+              select(id="categoryEN",name="categoryEN" ).form-control
                 for category in categories
                   - option = category[params.left_lang]
                   - if (params.right_lang !== null) option += " / "+category[params.right_lang]
                   if (category.EN == article.categoryEN)
                     option(value="#{category.EN}" selected ) #{option}
                   else
-                    option(value="#{category.EN}" ) #{option}
+                    option(value="#{category.EN}" disabled=!article.isChangeAllowed("categoryEN")) #{option}
         .row
           .col-md-2
           .col-md-10
@@ -150,15 +150,15 @@ block content
       .form-group
         label.col-md-1="Predecessor"
         +leftcolumn
-          select(id="predecessor",name="predecessorId" disabled=!article.isChangeAllowed("predecessorId")).form-control
+          select(id="predecessor",name="predecessorId" ).form-control
             if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
               option(value="" selected) None
             else
-              option(value="") None
+              option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
             if article.predecessorId === "0"
               option(value="0" selected) First
             else
-              option(value="0") First
+              option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
             for a in articleCategories
               if (a.id == article.predecessorId)
                 option(value=a.id selected )=a.title
@@ -167,7 +167,7 @@ block content
                 for b in articleCategories
                   - if (b.predecessorId == a.predecessorId) {d=b;}
                 if !article.isChangeAllowed("predecessorId")
-                  option(value=a.id disabled)=a.title+"("+d.title+")"
+                  option(value=a.id disabled=true)=a.title+"("+d.title+")"
                 else
                   option(value=a.id )=a.title
     // Display Title Row
@@ -175,7 +175,7 @@ block content
       .form-group
         label.col-md-1="Title"
         .col-md-10
-          textarea.form-control(name="title",rows=1 disabled=!article.isChangeAllowed("title")) #{article.title}
+          textarea.form-control(name="title",rows=1 readonly=!article.isChangeAllowed("title")) #{article.title}
 
 
     // Display Unpublish Reason Row
@@ -183,14 +183,14 @@ block content
       .form-group
         label.col-md-1="Unpublish Reason"
         .col-md-5
-          select(id="unpublishReason",name="unpublishReason" disabled=!article.isChangeAllowed("unpublishReason")).form-control
+          select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control
             for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
               if (reason == article.unpublishReason)
                 option(value="#{reason}" selected ) #{reason}
               else
                 option(value="#{reason}" ) #{reason}
         .col-md-5
-          textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1 disabled=!article.isChangeAllowed("unpublishReference")) #{article.unpublishReference}
+          textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference")) #{article.unpublishReference}
 
 
     // Display Collection Row
@@ -198,7 +198,7 @@ block content
       .form-group
         label.col-md-1="Collection"
         .col-md-10
-          textarea.form-control(id="collection" name="collection" rows=2 disabled=!article.isChangeAllowed("collection")) #{article.collection}
+          textarea.form-control(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection")) #{article.collection}
     .row
       .col-md-1
 
@@ -824,8 +824,8 @@ block scripts
     }
     function setNoTranslation(){
       $('.markdownEdit').each(function(item){
-        console.log(this);
-        if (this.value=="") this.value = "no translation";
+
+        if (this.value=="" && !this.readOnly ) this.value = "no translation";
       });
     }
 
