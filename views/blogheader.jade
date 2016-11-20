@@ -17,31 +17,43 @@ mixin reviewBlog(reviewComments,lang)
   if reviewComments
     .panel.panel-default
       .panel-heading
-        h3.panel-title="Review "+lang
+        .panel-title
+          span="Review "+lang
+          if (reviewComments.length>0 && reviewComments[0].text=="startreview")
+            - var reviewStarter= reviewComments[0].user
+            - var reviewStartTime = reviewComments[0].timestamp
+            span.text-muted.small=" (started by "+reviewStarter
+            span.text-muted.small=" "+layout.moment(reviewComments[0].timestamp).fromNow()
+            span.text-muted.small=") "
+            a.text-muted.small(href="#{layout.htmlroot}/changes/log?blog=#{blog.name}&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
       .panel-body
         each comment,i in reviewComments
-          p
-            b.span=comment.user
-            span=" "
-            span.text-muted.small=layout.moment(comment.timestamp).fromNow()
-            if comment.editstamp
+          if comment.text!="startreview"
+            p
+              b.span=comment.user
               span=" "
-              i.text-muted.small="Edit: "+layout.moment(comment.editstamp).fromNow()
-            if layout.user.OSMUser === comment.user && (!blog["close"+lang])
-              span=" "
-              a(onclick="document.getElementById('editReview#{lang}#{i}').classList.remove('hidden');document.getElementById('reviewLeftText#{lang}#{i}').classList.add('hidden');")
-                span.glyphicon.glyphicon-pencil
-          p(id="reviewLeftText"+lang+i)=comment.text
-          if (!comment.text)
-            p.text-muted.small="Empty Comment"
-          div.hidden(id="editReview"+lang+i)
-            if (!blog["close"+lang])
-              form.form-horizontal(id="editreview"+lang+i name="review"+lang+i, action="#{layout.htmlroot}/blog/#{blog.name}/editReviewComment/"+i, method="post")
-                .col-md-10
-                  input(type="text",class="form-control",name ="text",id="reviewComment"+lang+i,value=comment.text)
-                  input.hidden(type="text",name="lang" value = lang)
-                .col-md-2
-                  button.btn.btn-large.btn-primary(id="reviewButton"+lang+i type="submit") Change
+              span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+              if comment.editstamp
+                span=" "
+                i.text-muted.small="Edit: "+layout.moment(comment.editstamp).fromNow()
+              if layout.user.OSMUser === comment.user && (!blog["close"+lang])
+                span=" "
+                a(onclick="document.getElementById('editReview#{lang}#{i}').classList.remove('hidden');document.getElementById('reviewLeftText#{lang}#{i}').classList.add('hidden');")
+                  span.glyphicon.glyphicon-pencil
+              if reviewStartTime
+                span=" "
+                a.text-muted.small(href="#{layout.htmlroot}/changes/log?blog=#{blog.name}&user="+comment.user+"&table=article&property=markdown"+lang+"&date=>="+reviewStartTime) [changes]
+            p(id="reviewLeftText"+lang+i)=comment.text
+            if (!comment.text)
+              p.text-muted.small="Empty Comment"
+            div.hidden(id="editReview"+lang+i)
+              if (!blog["close"+lang])
+                form.form-horizontal(id="editreview"+lang+i name="review"+lang+i, action="#{layout.htmlroot}/blog/#{blog.name}/editReviewComment/"+i, method="post")
+                  .col-md-10
+                    input(type="text",class="form-control",name ="text",id="reviewComment"+lang+i,value=comment.text)
+                    input.hidden(type="text",name="lang" value = lang)
+                  .col-md-2
+                    button.btn.btn-large.btn-primary(id="reviewButton"+lang+i type="submit") Change
 
         .form-group
           if (!blog["close"+lang])
