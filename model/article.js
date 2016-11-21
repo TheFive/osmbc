@@ -46,7 +46,6 @@ function getListOfOrphanBlog(callback) {
 function Article (proto)
 {
 	debug("Article");
-  debug("Prototype %s",JSON.stringify(proto));
 	this.id = 0;
 	for (var k in proto) {
     this[k] = proto[k];

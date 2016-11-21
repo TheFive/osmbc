@@ -313,12 +313,11 @@ block content
   form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
     input.form-control(type="hidden" name = "text" id ="textanalysefield")
 
-  .row#voteButtonsList
-    include ../voteButtonsList
-
-
   .div#commentArea
     include commentArea
+
+  .row#voteButtonsList
+    include ../voteButtonsList
 
   #doublettes.row
       if articleReferences.count >= 1
