@@ -1,29 +1,61 @@
 # Change Log
 
+## [2.0.7](https://github.com/TheFive/osmbc/tree/2.0.7) (2016-11-19)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.6...2.0.7)
+
+**Implemented enhancements:**
+
+- Show Review Starter and link to Review Changes. [\#577](https://github.com/TheFive/osmbc/issues/577)
+- Tooltip for flags [\#574](https://github.com/TheFive/osmbc/issues/574)
+- Luxury proposal: a button to set comments on "\#solved" [\#571](https://github.com/TheFive/osmbc/issues/571)
+
+**Fixed bugs:**
+
+- OSMBC crashes on GET  /article/2372. \(with a dot\)  [\#576](https://github.com/TheFive/osmbc/issues/576)
+
+## [2.0.6](https://github.com/TheFive/osmbc/tree/2.0.6) (2016-11-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.5...2.0.6)
+
+**Fixed bugs:**
+
+- Indication of unwritten articles in full-mode [\#575](https://github.com/TheFive/osmbc/issues/575)
+
+## [2.0.5](https://github.com/TheFive/osmbc/tree/2.0.5) (2016-11-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.4...2.0.5)
+
+**Implemented enhancements:**
+
+- Show Language Flag not only in German Version [\#564](https://github.com/TheFive/osmbc/issues/564)
+- show markdown in picture article [\#561](https://github.com/TheFive/osmbc/issues/561)
+
+**Fixed bugs:**
+
+- Failed to lookup view "config/slacknotification" in views directory "/home/thefive/production/osmbc/views" [\#565](https://github.com/TheFive/osmbc/issues/565)
+
 ## [2.0.4](https://github.com/TheFive/osmbc/tree/2.0.4) (2016-10-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.2...2.0.4)
 
-**Closed issues:**
+**Fixed bugs:**
 
-- Language switch [\#562](https://github.com/TheFive/osmbc/issues/562)
+- Language switch not working [\#562](https://github.com/TheFive/osmbc/issues/562)
 
 ## [2.0.2](https://github.com/TheFive/osmbc/tree/2.0.2) (2016-10-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.1...2.0.2)
 
+**Implemented enhancements:**
+
+- check index for history page load in postgres. It is very slow. [\#558](https://github.com/TheFive/osmbc/issues/558)
+- Add coloring for voting icons via configuration. [\#554](https://github.com/TheFive/osmbc/issues/554)
+
 **Fixed bugs:**
 
 - Vote list in overview sometimes takes content of article the line before. [\#560](https://github.com/TheFive/osmbc/issues/560)
-
-**Closed issues:**
-
 - visitors today [\#559](https://github.com/TheFive/osmbc/issues/559)
-- check index for history page load in postgres. It is very slow. [\#558](https://github.com/TheFive/osmbc/issues/558)
-- Add coloring for voting icons via configuration. [\#554](https://github.com/TheFive/osmbc/issues/554)
 
 ## [2.0.1](https://github.com/TheFive/osmbc/tree/2.0.1) (2016-10-24)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.0...2.0.1)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Implement an easy possibility to look after another langauge in the article editor. [\#557](https://github.com/TheFive/osmbc/issues/557)
 - In history list, make OID clickable to the object itself \(not the change object\) [\#556](https://github.com/TheFive/osmbc/issues/556)
@@ -34,13 +66,10 @@
 
 **Implemented enhancements:**
 
+- Set Change View to word comparison in diff \(not character\). [\#552](https://github.com/TheFive/osmbc/issues/552)
 - Use a preview for markdownLANG in Change View to support reading. [\#551](https://github.com/TheFive/osmbc/issues/551)
 - Display Tags \(votable tags\) with Icons. [\#453](https://github.com/TheFive/osmbc/issues/453)
 - Allow tags for articles to vote. [\#452](https://github.com/TheFive/osmbc/issues/452)
-
-**Closed issues:**
-
-- Set Change View to word comparison in diff \(not character\). [\#552](https://github.com/TheFive/osmbc/issues/552)
 
 ## [1.9.9a](https://github.com/TheFive/osmbc/tree/1.9.9a) (2016-10-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.9...1.9.9a)
@@ -52,7 +81,7 @@
 ## [1.9.9](https://github.com/TheFive/osmbc/tree/1.9.9) (2016-10-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8a...1.9.9)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Option to send out an EMail for a comment if mentioning was done somewhere in discussion, not in concrete comments. [\#549](https://github.com/TheFive/osmbc/issues/549)
 
@@ -70,15 +99,15 @@
 ## [1.9.8](https://github.com/TheFive/osmbc/tree/1.9.8) (2016-10-14)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.7...1.9.8)
 
-**Fixed bugs:**
-
-- Review Button was disabled without reason. [\#545](https://github.com/TheFive/osmbc/issues/545)
-
-**Closed issues:**
+**Implemented enhancements:**
 
 - Add OID to History Filter [\#543](https://github.com/TheFive/osmbc/issues/543)
 - Warn before using create blog [\#542](https://github.com/TheFive/osmbc/issues/542)
 - Add Links to history in mobile view [\#541](https://github.com/TheFive/osmbc/issues/541)
+
+**Fixed bugs:**
+
+- Review Button was disabled without reason. [\#545](https://github.com/TheFive/osmbc/issues/545)
 
 ## [1.9.7](https://github.com/TheFive/osmbc/tree/1.9.7) (2016-10-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.6a...1.9.7)
@@ -87,7 +116,7 @@
 
 - Build Filter for Blog view "Article with unsolved comments" [\#540](https://github.com/TheFive/osmbc/issues/540)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - pgMap assert, that a set field is not a existing prototype function. [\#538](https://github.com/TheFive/osmbc/issues/538)
 
@@ -106,11 +135,8 @@
 
 **Fixed bugs:**
 
-- createdb.js --createTables is not working [\#526](https://github.com/TheFive/osmbc/issues/526)
-
-**Closed issues:**
-
 - Blog History not shown in Blog Views [\#537](https://github.com/TheFive/osmbc/issues/537)
+- createdb.js --createTables is not working [\#526](https://github.com/TheFive/osmbc/issues/526)
 
 ## [1.9.5](https://github.com/TheFive/osmbc/tree/1.9.5) (2016-10-02)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.4...1.9.5)
@@ -129,11 +155,8 @@
 
 **Implemented enhancements:**
 
-- Give a cookie hint on message: failed to find request token in session [\#524](https://github.com/TheFive/osmbc/issues/524)
-
-**Closed issues:**
-
 - Remove \[OSMUsername\] from articlecdisplay e.g. In overview [\#530](https://github.com/TheFive/osmbc/issues/530)
+- Give a cookie hint on message: failed to find request token in session [\#524](https://github.com/TheFive/osmbc/issues/524)
 
 ## [1.9.3a](https://github.com/TheFive/osmbc/tree/1.9.3a) (2016-09-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.3...1.9.3a)
@@ -166,7 +189,7 @@
 ## [1.9.2d](https://github.com/TheFive/osmbc/tree/1.9.2d) (2016-09-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2c...1.9.2d)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - Some links results in crash when getting title of page \(collect\) [\#516](https://github.com/TheFive/osmbc/issues/516)
 
@@ -481,7 +504,7 @@
 
 - possibility to sort articles in a category. [\#101](https://github.com/TheFive/osmbc/issues/101)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - Check, what is written to Slack if you reopen a blog in a language. [\#438](https://github.com/TheFive/osmbc/issues/438)
 
@@ -770,21 +793,21 @@
 
 - Change calculation of blog dates in createblog from javascript date object to moment.js [\#355](https://github.com/TheFive/osmbc/issues/355)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - New history list does not display usert table changes. [\#361](https://github.com/TheFive/osmbc/issues/361)
 
 ## [0.8.7](https://github.com/TheFive/osmbc/tree/0.8.7) (2016-03-01)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.6...0.8.7)
 
+**Implemented enhancements:**
+
+- Log blocking of send out mail in development version. [\#358](https://github.com/TheFive/osmbc/issues/358)
+
 **Fixed bugs:**
 
-- Avoid possibility of SQL Injection \(e.g. History\) [\#357](https://github.com/TheFive/osmbc/issues/357)
-
-**Closed issues:**
-
 - Category Releases should not have a bullet point [\#360](https://github.com/TheFive/osmbc/issues/360)
-- Log blocking of send out mail in development version. [\#358](https://github.com/TheFive/osmbc/issues/358)
+- Avoid possibility of SQL Injection \(e.g. History\) [\#357](https://github.com/TheFive/osmbc/issues/357)
 
 **Merged pull requests:**
 
@@ -815,13 +838,10 @@
 
 **Implemented enhancements:**
 
+- Check emal sending on new comment style [\#353](https://github.com/TheFive/osmbc/issues/353)
 - Don't send messages if a blog will be totally closed [\#352](https://github.com/TheFive/osmbc/issues/352)
 - proposal: a button to fill in all the other languages with "no translation" would be fine [\#315](https://github.com/TheFive/osmbc/issues/315)
 - Better CreateDB script for install purposes [\#66](https://github.com/TheFive/osmbc/issues/66)
-
-**Closed issues:**
-
-- Check emal sending on new comment style [\#353](https://github.com/TheFive/osmbc/issues/353)
 
 ## [0.8.3](https://github.com/TheFive/osmbc/tree/0.8.3) (2016-02-24)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.2...0.8.3)
@@ -940,12 +960,15 @@
 ## [0.7.5](https://github.com/TheFive/osmbc/tree/0.7.5) (2016-02-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.4...0.7.5)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Use full screenwidth with bootstrap [\#324](https://github.com/TheFive/osmbc/issues/324)
 - Blog - date [\#322](https://github.com/TheFive/osmbc/issues/322)
 - Display OSMUser in outgoing mail log. [\#319](https://github.com/TheFive/osmbc/issues/319)
 - Start mail subject with \[OSMBC\] [\#318](https://github.com/TheFive/osmbc/issues/318)
+
+**Closed issues:**
+
 - Make Test on Username / language case insensitive. [\#317](https://github.com/TheFive/osmbc/issues/317)
 
 ## [0.7.4](https://github.com/TheFive/osmbc/tree/0.7.4) (2016-02-11)
@@ -1878,17 +1901,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
