@@ -615,11 +615,14 @@ var Browser = require("zombie");
 
 function translate(req,res,next) {
   debug("translate");
+  var user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20';
+
+  Browser.waitDuration='30s';
   let fromLang = req.params.fromLang;
   let toLang = req.params.toLang;
   let text = req.body.text;
   let link = "#"+fromLang+"/"+toLang+"/";
-  let browser = new Browser({site:"https://translate.google.com/"});
+  let browser = new Browser({userAgent: user_agent,site:"https://translate.google.com/"});
 
   browser.visit(link, function (err) {
     if (err) return next(err);

@@ -153,7 +153,7 @@ block content
           +leftcolumn
             if blog && !blog.isEditable(params.left_lang)
               .panel.panel-default
-                .panel-body #{article["markdown"+params.left_lang]}         
+                .panel-body(id="markdownLEFT") #{article["markdown"+params.left_lang]}
             else
               if placeholder.markdown[params.left_lang]
                 - p = placeholder.markdown[params.left_lang];
@@ -168,7 +168,7 @@ block content
             div.RL(class="RL-#{params.right_lang}")
               if blog && !blog.isEditable(params.right_lang)
                 .panel.panel-default
-                  .panel-body #{article["markdown"+params.right_lang]}
+                  .panel-body(id="markdownRIGHT") #{article["markdown"+params.right_lang]}
               else
                 if (placeholder.markdown[params.right_lang])
                   - p = placeholder.markdown[params.right_lang];
@@ -619,7 +619,7 @@ block scripts
       document.getElementById("translateWaitRIGHT").classList.remove("hidden");
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase():'--'}";
-      var originalText = document.getElementById("markdownLEFT").value;
+      var originalText = $("#markdownLEFT").html();
       jQuery.post("#{layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang,{text:originalText}, function(data) {
         data = data.replace(/] \(/g,"](");
         document.getElementById("translateWaitRIGHT").classList.add("hidden");
@@ -643,7 +643,7 @@ block scripts
       document.getElementById("translateWaitLEFT").classList.remove("hidden");
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
-      var originalText = document.getElementById("markdownRIGHT").value;
+      var originalText = $("#markdownRIGHT").html();
       jQuery.post("#{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
         data = data.replace(/] \(/g, "](");
         document.getElementById("translateWaitLEFT").classList.add("hidden");
@@ -651,6 +651,7 @@ block scripts
         onchangeLEFT();
       }).fail(function (err) {
         console.log(err);
+        document.getElementById("markdownLEFT").value = JSON.stringify(err);
         document.getElementById("translateWaitLEFT").classList.add("hidden");
         document.getElementById("translateErrorLEFT").classList.remove("hidden");
       });
