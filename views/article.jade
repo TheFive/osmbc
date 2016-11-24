@@ -459,6 +459,8 @@ block content
               th
                 |article
               th
+                |category
+              th
                 |Blog
           tbody
             each array,link in articleReferences
@@ -470,13 +472,14 @@ block content
                         a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
                       td
                         a(href='#{layout.htmlroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
+                      td= articleItem.categoryEN
                       td= articleItem.blog
                   if (index == 8)
                     tr
                       td
                         a(href='#{link}') #{link}
                       td
-                        |Und #{array.length-5} weitere Artikel.
+                        |And #{array.length-5} further articles.
 
 
 
