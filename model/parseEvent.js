@@ -6,6 +6,7 @@ var moment  = require("moment");
 var request = require("request");
 var markdown = require('markdown-it')();
 var configModule = require('../model/config.js');
+var async = require('async');
 
 
 
@@ -34,6 +35,20 @@ var regexList = [ {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *
 
 /* next Date is interpreting a date of the form 27 Feb as a date, that
   is in the current year. The window, to put the date in starts 50 days before now*/
+
+function convertGeoName(name,lang,callback) {
+  //http://api.geonames.org/searchJSON?q=M%C3%BCnchen&username=demo&maxRows=1
+  //http://api.geonames.org/searchJSON?q=M%C3%BCnchen&username=TheFive&maxRows=1&lang=RU
+  if (lang === "JP") lang = "JA";
+  var requestString="http://api.geonames.org/searchJSON?q="+encodeURI(name)+"&username=TheFive&maxRows=1&lang="+lang;
+  request(requestString,function(err,response,body){
+    if (err) return callback(err,null);
+    var json = JSON.parse(body);
+    if (json && json.geonames && json.geonames[0] && json.geonames[0].name) return callback(null,json.geonames[0].name);
+    return callback(new Error("Bad Geonames Result for "+name+" in lang "+lang));
+  });
+
+}
 
 function nextDate(string,previousDate) {
   //debug('nextDate');
@@ -239,12 +254,16 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
   should(typeof(cb)).eql("function");
   var date = new Date();
   date.setDate(date.getDate()-3);
-  var duration = 24;
   if (option.date && option.date!=="" && option.date!=="null") {
     date = new Date(option.date);
   }
+  var duration = 24;
   if (option.duration && option.duration.trim()!=="") {
     duration = parseInt(option.duration);
+  }
+  var big_duration = 24;
+  if (option.big_duration && option.big_duration.trim()!=="") {
+    big_duration = parseInt(option.big_duration);
   }
   var lang = option.lang;
   var enableCountryFlags = option.countryFlags;
@@ -266,11 +285,13 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
 
     var from = new Date(date);
     var to = new Date(date);
+    var to_for_big = new Date(date);
 
     // get all Events from today
     from.setDate(from.getDate());
     // until in two weeks
     to.setDate(to.getDate()+duration);
+    to.setDate(to.getDate()+big_duration);
 
     var events = [];
     var previousDate = null;
@@ -292,11 +313,16 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
 
       if (result) {
         previousDate = result.startDate;
-        if (result.endDate >= from && result.startDate <= to) {
-          events.push(result);
+        if (result.endDate >= from && result.startDate <= to_for_big) {
+
           result.markdown = parseWikiInfo(result.desc);
           result.town = parseWikiInfo(result.town,{dontLinkify:true});
           result.country = parseWikiInfo(result.country,{dontLinkify:true});
+          let filtered=false;
+          if (option.countries && option.countries.toLowerCase().indexOf(result.country.toLowerCase())>=0) filtered = true;
+          if (result.desc.indexOf("<big>")<=0 && result.startDate <= to) filtered = true;
+
+          if (!filtered)  events.push(result);
         }
       }
     }
@@ -310,8 +336,8 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
 
    // events.sort(function cmpEvent(a,b){return a.startDate - b.startDate;});
 
-    for (var i=0;i<events.length;i++) {
-      var e = events[i];
+    async.eachSeries(events,function(e,callback){
+
 
       // first try to convert country flags:
 
@@ -327,9 +353,9 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
       var ed = moment(e.endDate);
       sd.locale(lang);
       ed.locale(lang);
-  
+
       if (e.startDate) {
-       dateString = sd.format("L");
+        dateString = sd.format("L");
       }
       if (e.endDate) {
         if ((e.startDate.getTime() !== e.endDate.getTime())) {
@@ -338,18 +364,31 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
       }
       e.dateString = dateString;
       dateLength = Math.max(dateLength,dateString.length);
-    }
-    result = "";
-    result += "|"+wl(ct.town[lang],townLength)+"|"+wl(ct.title[lang],descLength)+"|"+wl(ct.date[lang],dateLength)+"|"+wl(ct.country[lang],countryLength)+"|\n";
-    result += "|"+ll(townLength)+"|"+ll(descLength)+"|"+ll(dateLength)+"|"+ll(countryLength)+"|\n";  
-    for (i=0;i<events.length;i++) {
-      var t = events[i].town;
-      if (!t) t= "";
-      var c = events[i].country;
-      if (!c) c="";
-      result += "|"+wl(t,townLength)+"|"+wl(events[i].markdown,descLength)+"|"+wl(events[i].dateString,dateLength)+"|"+wl(c,countryLength)+"|\n";  
-    }
-    cb(null,result,errors);
+      if (option.useGeoNames) {
+        convertGeoName(e.town,option.lang,function(err,town){
+          console.log("conferted "+e.town+" to "+town);
+          if (err) return callback();
+          e.town = town;
+          if (e.town) townLength = Math.max(e.town.length,townLength);
+          return callback();
+        });
+
+      } else callback();
+
+
+    },function(){
+      result = "";
+      result += "|"+wl(ct.town[lang],townLength)+"|"+wl(ct.title[lang],descLength)+"|"+wl(ct.date[lang],dateLength)+"|"+wl(ct.country[lang],countryLength)+"|\n";
+      result += "|"+ll(townLength)+"|"+ll(descLength)+"|"+ll(dateLength)+"|"+ll(countryLength)+"|\n";
+      for (let i=0;i<events.length;i++) {
+        var t = events[i].town;
+        if (!t) t= "";
+        var c = events[i].country;
+        if (!c) c="";
+        result += "|"+wl(t,townLength)+"|"+wl(events[i].markdown,descLength)+"|"+wl(events[i].dateString,dateLength)+"|"+wl(c,countryLength)+"|\n";
+      }
+      cb(null,result,errors);
+    });
   });
 }
 

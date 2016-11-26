@@ -16,36 +16,47 @@ block content
    |  for all people to control their events.
   form(name="input", action="#{layout.htmlroot}/tool/calender2markdown", method="post")
     .row
-      .col-md-2
+      .col-md-1
         .checkbox 
          label
           if (!disablePrettify)
-            input(type='checkbox', id='disable',name="disablePrettify" value='true')
+            input(type='checkbox', id='disable',name="disablePrettify" value='false')
           else
             input(type='checkbox', id='disable',name="disablePrettify" value='true' checked)
 
-          | Disable Prettify Table  
-      .col-md-2
+          | No Prettify
+      .col-md-1
         .checkbox
          label
           if (!enableCountryFlags)
-            input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='true')
+            input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='false')
           else
             input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='true' checked)
 
-          | enable Country Flags
-      .col-md-2
+          | Country Flags
+      .col-md-1
+        .checkbox
           label
+            if (!useGeoNames)
+              input(type='checkbox', id='useGeoNames',name="useGeoNames" value='false')
+            else
+              input(type='checkbox', id='useGeoNames',name="useGeoNames" value='true' checked)
+
+            | use Geonames
+
+
+      .col-md-2
           - var pd = new Date();
           - pd.setDate(pd.getDate()-3)
           - if (date && date==="null") date =""
           - if (date && date!=="") date = layout.moment(date).locale(layout.language).format("L")
           input(id='date',name="date", value=date, placeholder=layout.moment(pd).locale(layout.language).format("L"))
-      .col-md-3
-        label
-
+      .col-md-2
         input(id='duration',name="duration" value=duration placeholder='24')
 
+
+      .col-md-4
+        input.col-xs-4(id='countries',name="countries" value=countries placeholder='germany')
 
       .col-md-1
        input(name="OK" type="submit", class="btn btn-primary",value="OK")

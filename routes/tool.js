@@ -65,6 +65,8 @@ function renderCalenderAsMarkdown(req,res,next) {
   debug('renderCalenderAsMarkdown');
 
   var disablePrettify = false;
+  var useGeoNames = false;
+  var countries = "";
   var enableCountryFlags = false;
   var date="";
   var duration="";
@@ -74,18 +76,29 @@ function renderCalenderAsMarkdown(req,res,next) {
     disablePrettify = sessionData.disablePrettify;
     enableCountryFlags = sessionData.enableCountryFlags;
     date = sessionData.date;
+
     duration = sessionData.duration;
+    if (sessionData.countries) countries = sessionData.countries;
+    if (sessionData.useGeoNames) useGeoNames = sessionData.useGeoNames;
   }
 
   if (!moment(date).isValid()) date = "";
 
-  parseEvent.calenderToMarkdown({lang:req.user.getMainLang(),countryFlags:enableCountryFlags,duration:duration,date:date},function(err,result,errors){
+  parseEvent.calenderToMarkdown(
+    {lang:req.user.getMainLang(),
+      countryFlags:enableCountryFlags,
+      duration:duration,
+      countries:countries,
+      date:date,
+      useGeoNames:useGeoNames},function(err,result,errors){
     if (err) return next(err);
     res.set('content-type', 'text/html');
     res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
                                 disablePrettify:disablePrettify,
+                                useGeoNames:useGeoNames,
                                 enableCountryFlags:enableCountryFlags,
                                 date:date,
+                                countries:countries,
                                 duration:duration,
                                 errors:errors,
                                 layout:res.rendervar.layout});  
@@ -96,6 +109,8 @@ function postCalenderAsMarkdown(req,res,next) {
   debug('postCalenderAsMarkdown');
   var disablePrettify = (req.body.disablePrettify=="true");
   var enableCountryFlags = req.body.enableCountryFlags;
+  var useGeoNames = req.body.useGeoNames;
+  var countries = req.body.countries;
   var duration = req.body.duration;
   var lang = moment.locale();
   moment.locale(req.user.getMainLang());
@@ -106,7 +121,11 @@ function postCalenderAsMarkdown(req,res,next) {
   req.session.calenderTool = {disablePrettify:disablePrettify,
                               date:date,
                               duration:duration,
+                              useGeoNames:useGeoNames,
+                              countries:countries,
+
                               enableCountryFlags:enableCountryFlags};
+  console.log(req.session.calenderTool);
   req.session.save(function(err){
     if (err) return next(err);
     res.redirect(config.getValue('htmlroot')+"/tool/calender2markdown");
