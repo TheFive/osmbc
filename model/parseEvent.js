@@ -257,11 +257,11 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
   if (option.date && option.date!=="" && option.date!=="null") {
     date = new Date(option.date);
   }
-  var duration = 24;
+  var duration = 15;
   if (option.duration && option.duration.trim()!=="") {
     duration = parseInt(option.duration);
   }
-  var big_duration = 24;
+  var big_duration = 23;
   if (option.big_duration && option.big_duration.trim()!=="") {
     big_duration = parseInt(option.big_duration);
   }
@@ -291,7 +291,7 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
     from.setDate(from.getDate());
     // until in two weeks
     to.setDate(to.getDate()+duration);
-    to.setDate(to.getDate()+big_duration);
+    to_for_big.setDate(to_for_big.getDate()+big_duration);
 
     var events = [];
     var previousDate = null;
@@ -320,7 +320,7 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
           result.country = parseWikiInfo(result.country,{dontLinkify:true});
           let filtered=false;
           if (option.countries && option.countries.toLowerCase().indexOf(result.country.toLowerCase())>=0) filtered = true;
-          if (result.desc.indexOf("<big>")<=0 && result.startDate <= to) filtered = true;
+          if (result.desc.indexOf("<big>")<=0 && result.startDate > to) filtered = true;
 
           if (!filtered)  events.push(result);
         }

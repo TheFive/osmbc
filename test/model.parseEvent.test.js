@@ -258,16 +258,13 @@ describe('model/parseEvent',function() {
   });
   describe('calenderToMarkdown',function(){
 
-    before(function(){
-      var fileName = path.join(__dirname,'/data/calenderData.wiki');
- 
-      nock('https://wiki.openstreetmap.org')
-                .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
-              
-                .replyWithFile(200,fileName);
-
-    });
     it('should load date form wiki and generate a Markdown String',function(bddone){
+      var fileName = path.join(__dirname,'/data/calenderData.wiki');
+
+      nock('https://wiki.openstreetmap.org')
+        .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
+
+        .replyWithFile(200,fileName);
       parseEvent.calenderToMarkdown({lang:"DE",date:new Date("11/28/2015"),duration:"14"},function(err,result){
         should.not.exist(err);
         var expected = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
