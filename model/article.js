@@ -263,7 +263,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
         for (k in data) {
           // do not overwrite any existing Prototype Function with a value.
           if (Article.prototype.hasOwnProperty(k)) {
-            console.log("WARNING: Do not store "+data[k]+" for property "+k+" for Article ID "+self.id);
+            console.info("WARNING: Do not store "+data[k]+" for property "+k+" for Article ID "+self.id);
             continue;
           }
           if (typeof(data[k])!=='undefined') self[k]=data[k];
@@ -612,7 +612,7 @@ Article.prototype.setVote = function setVote(user,tag,callback) {
   if (self.votes[tag].indexOf(user.OSMUser)<0) {
     self.votes[tag].push(user.OSMUser);
     self.save(callback);
-    return
+    return;
   }
   return callback();
 };
@@ -647,7 +647,7 @@ Article.prototype.setTag = function setTag(user,tag,callback) {
   if (self.tags.indexOf(tag)<0) {
     self.tags.push(tag);
     self.save(callback);
-    return
+    return;
   }
   return callback();
 };
@@ -662,8 +662,6 @@ Article.prototype.unsetTag = function unsetTag(user,tag,callback) {
   if (!self.tags) self.tags=[];
   let index = self.tags.indexOf(tag);
   if (index >= 0 ) {
-    console.log(index);
-    console.dir(self.tags);
     self.tags.splice(index,1);
     self.save(callback);
     return;

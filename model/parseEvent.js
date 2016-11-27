@@ -366,7 +366,6 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
       dateLength = Math.max(dateLength,dateString.length);
       if (option.useGeoNames) {
         convertGeoName(e.town,option.lang,function(err,town){
-          console.log("conferted "+e.town+" to "+town);
           if (err) return callback();
           e.town = town;
           if (e.town) townLength = Math.max(e.town.length,townLength);

@@ -281,8 +281,6 @@ function setBlogStatus(req,res,next) {
   var user = req.user;
   if (!req.blog) return next();
 
-  console.log(req.body);
-
   function finalFunction(err) {
     if (err) return next(err);
     let referer=req.header('Referer') || '/';

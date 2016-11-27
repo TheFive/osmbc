@@ -47,7 +47,7 @@ var userModule = require('./model/user.js');
 // Initialise config Module
 config.initialise();
 var htmlRoot = config.getValue("htmlroot");
-console.log("Express Routes set to: SERVER"+htmlRoot);
+console.info("Express Routes set to: SERVER"+htmlRoot);
 
 // taken from: https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
 // Passport session setup.
@@ -153,7 +153,7 @@ function ensureAuthenticated(req, res, next) {
   }
 
   if (!req.session.returnTo ) {
-    console.log("Setting session return to to "+req.originalUrl);
+    console.info("Setting session return to to "+req.originalUrl);
     req.session.returnTo = req.originalUrl;
 
   }
@@ -326,7 +326,7 @@ if (app.get('env') === 'test') {
   app.use(function(err, req, res,next) {
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
-    console.log("Error Message" + err.message);
+    console.error("Error Message" + err.message);
     res.render('error', {
       message: err.message,
       error: err,

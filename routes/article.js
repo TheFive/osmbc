@@ -33,7 +33,6 @@ function getArticleFromID(req,res,next,id) {
   req.article = null;
   should.exist(id);
   let idNumber = Number(id);
-  console.log(idNumber);
   if (""+idNumber !== id) return next(new Error("Article ID "+id+" does not exist (conversion error)"));
   articleModule.findById(idNumber,function(err,result) {
     debug('getArticleFromID->findById');

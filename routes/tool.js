@@ -125,7 +125,6 @@ function postCalenderAsMarkdown(req,res,next) {
                               countries:countries,
 
                               enableCountryFlags:enableCountryFlags};
-  console.log(req.session.calenderTool);
   req.session.save(function(err){
     if (err) return next(err);
     res.redirect(config.getValue('htmlroot')+"/tool/calender2markdown");

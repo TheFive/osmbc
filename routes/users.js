@@ -93,7 +93,7 @@ function renderUserId(req, res, next) {
     function findAndLoadHeatCalendarData(cb) {
       debug('findAndLoadHeatCalendarData');
       logModule.countLogsForUser(user.OSMUser,function(err,result){
-        if (err) console.log(err);
+        if (err) console.error(err);
         userHeatMapArray = result;
         cb(null,result);
       });
