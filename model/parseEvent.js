@@ -268,21 +268,11 @@ function calendarToMarkdown2(countryFlags,ct,option,cb) {
   var lang = option.lang;
   var enableCountryFlags = option.countryFlags;
 
-  var result;
-  var errors = null;
-  request(wikiEventPage, function(error, response, body) {
-    var json = JSON.parse(body);
-    //body = (json.query.pages[2567].revisions[0]["*"]);
-    body = json.query.pages;
-    for (var k in body) {
-      body = body[k];
-      break;
-    }
-    body = body.revisions[0]['*'];
+  calendarToJSON({}, function(error, result) {
 
 
 
-    var point = body.indexOf("\n");
+
 
     var from = new Date(date);
     var to = new Date(date);
@@ -294,39 +284,24 @@ function calendarToMarkdown2(countryFlags,ct,option,cb) {
     to.setDate(to.getDate()+duration);
     to_for_big.setDate(to_for_big.getDate()+big_duration);
 
+
     var events = [];
-    var previousDate = null;
-
-    while (point>= 0) {
-   
-      var line = body.substring(0,point);
-      body = body.substring(point+1,999999999);
-      point = body.indexOf("\n");
-      result = parseLine(line,previousDate);
-
-      if (typeof(result)=="string") {
-        if (!errors) errors = "\n\nUnrecognized\n";
-        errors +=result+"\n";
-        result = null;
-      }
-    
+    var errors = result.error;
 
 
-      if (result) {
-        previousDate = result.startDate;
-        if (result.endDate >= from && result.startDate <= to_for_big) {
+    for (let i=0;i<result.events.length;i++){
+      let event = result.events[i];
+      if (event.endDate >= from && event.startDate <= to_for_big) {
 
-          result.markdown = parseWikiInfo(result.desc);
-          result.town = parseWikiInfo(result.town,{dontLinkify:true});
-          result.country = parseWikiInfo(result.country,{dontLinkify:true});
-          let filtered=false;
-          if (option.countries &&
-            option.countries.toLowerCase().indexOf(result.country.toLowerCase())>=0 &&
-            result.desc.indexOf("<big>")<0) filtered = true;
-          if (result.desc.indexOf("<big>")<0 && result.startDate > to) filtered = true;
+        let filtered=false;
+        if (option.countries &&
+          option.countries.toLowerCase().indexOf(event.country.toLowerCase())>=0 &&
+          event.desc.indexOf("<big>")<0) filtered = true;
+        if (!event.big && new Date(event.startDate) > to) filtered = true;
 
-          if (!filtered)  events.push(result);
-        }
+
+
+        if (!filtered)  events.push(event);
       }
     }
     var townLength = 0;
@@ -451,6 +426,7 @@ function calendarToJSON(option,cb) {
           result.town = parseWikiInfo(result.town,{dontLinkify:true});
           result.country_md = parseWikiInfo(result.country,{dontLinkify:false});
           result.country = parseWikiInfo(result.country,{dontLinkify:true});
+          result.big = (result.desc.indexOf("<big>")>=0);
 
           result.html = markdown.renderInline(result.markdown);
           result.town_html = markdown.renderInline(result.town_md);
