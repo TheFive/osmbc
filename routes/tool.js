@@ -35,12 +35,12 @@ function renderPublicCalendar(req,res,next) {
 
   var layout = {bootstrap:bootstrap,htmlRoot:htmlRoot,path:layoutRouter.path};
 
-  parseEvent.calenderToMarkdown({lang:"EN",countryFlags:true,duration:'200'},function(err,result,errors){
+  parseEvent.calendarToMarkdown({lang:"EN",countryFlags:true,duration:'200'},function(err,result,errors){
     if (err) return next(err);
     var preview = markdown.render(result);
     preview = preview.replace('<table>','<table class="table">');
     res.set('content-type', 'text/html');
-    res.render('calenderPublic.jade',{calenderAsMarkdown:result,
+    res.render('calendarPublic.jade',{calendarAsMarkdown:result,
       errors:errors,preview:preview,layout:layout});
 
   });
@@ -54,15 +54,15 @@ function renderJSONCalendar(req,res,next) {
   }
   fs.appendFileSync("Calendarusage.log",email+" "+new Date()+"\n");
 
-  parseEvent.calenderToJSON({},function(err,result){
+  parseEvent.calendarToJSON({},function(err,result){
     if (err) return next(err);
 
     res.json(result);
   });
 }
 
-function renderCalenderAsMarkdown(req,res,next) {
-  debug('renderCalenderAsMarkdown');
+function renderCalendarAsMarkdown(req,res,next) {
+  debug('renderCalendarAsMarkdown');
 
   var disablePrettify = false;
   var useGeoNames = false;
@@ -70,7 +70,7 @@ function renderCalenderAsMarkdown(req,res,next) {
   var enableCountryFlags = false;
   var date="";
   var duration="";
-  var sessionData = req.session.calenderTool;
+  var sessionData = req.session.calendarTool;
 
   if (sessionData) {
     disablePrettify = sessionData.disablePrettify;
@@ -84,7 +84,7 @@ function renderCalenderAsMarkdown(req,res,next) {
 
   if (!moment(date).isValid()) date = "";
 
-  parseEvent.calenderToMarkdown(
+  parseEvent.calendarToMarkdown(
     {lang:req.user.getMainLang(),
       countryFlags:enableCountryFlags,
       duration:duration,
@@ -93,7 +93,7 @@ function renderCalenderAsMarkdown(req,res,next) {
       useGeoNames:useGeoNames},function(err,result,errors){
     if (err) return next(err);
     res.set('content-type', 'text/html');
-    res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
+    res.render('calendarAsMarkdown',{calendarAsMarkdown:result,
                                 disablePrettify:disablePrettify,
                                 useGeoNames:useGeoNames,
                                 enableCountryFlags:enableCountryFlags,
@@ -105,8 +105,8 @@ function renderCalenderAsMarkdown(req,res,next) {
 
   });
 }
-function postCalenderAsMarkdown(req,res,next) {
-  debug('postCalenderAsMarkdown');
+function postCalendarAsMarkdown(req,res,next) {
+  debug('postCalendarAsMarkdown');
   var disablePrettify = (req.body.disablePrettify=="true");
   var enableCountryFlags = req.body.enableCountryFlags;
   var useGeoNames = req.body.useGeoNames;
@@ -118,7 +118,7 @@ function postCalenderAsMarkdown(req,res,next) {
   var date = moment(req.body.date,"L").toISOString();
   moment.locale(lang);
 
-  req.session.calenderTool = {disablePrettify:disablePrettify,
+  req.session.calendarTool = {disablePrettify:disablePrettify,
                               date:date,
                               duration:duration,
                               useGeoNames:useGeoNames,
@@ -127,7 +127,7 @@ function postCalenderAsMarkdown(req,res,next) {
                               enableCountryFlags:enableCountryFlags};
   req.session.save(function(err){
     if (err) return next(err);
-    res.redirect(config.getValue('htmlroot')+"/tool/calender2markdown");
+    res.redirect(config.getValue('htmlroot')+"/tool/calendar2markdown");
   });
 }
 
@@ -271,8 +271,8 @@ function postPictureTool(req,res,next) {
 }
 
 
-router.get('/calender2markdown', renderCalenderAsMarkdown);
-router.post('/calender2markdown', postCalenderAsMarkdown);
+router.get('/calendar2markdown', renderCalendarAsMarkdown);
+router.post('/calendar2markdown', postCalendarAsMarkdown);
 router.get('/picturetool', renderPictureTool);
 router.post('/picturetool', postPictureTool);
 

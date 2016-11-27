@@ -29,7 +29,7 @@ var slackrouter    = require('./routes/slack').router;
 var changes    = require('./routes/changes').router;
 var blog       = require('./routes/blog').router;
 var tool       = require('./routes/tool').router;
-var calender   = require('./routes/tool').publicRouter;
+var calendar   = require('./routes/tool').publicRouter;
 var api        = require('./routes/api').publicRouter;
 var layout     = require('./routes/layout').router;
 var configRouter     = require('./routes/config').router;
@@ -260,7 +260,7 @@ app.get(htmlRoot + '/logout', function(req, res){
 app.use(htmlRoot+'/bower_components',  express.static(__dirname + '/bower_components'));
 app.use(htmlRoot,express.static(path.join(__dirname, 'public')));
 
-app.use(htmlRoot,calender );
+app.use(htmlRoot,calendar );
 app.use(htmlRoot + "/api",api );
 app.use(htmlRoot + '/slack', slackrouter);
 

@@ -28,7 +28,7 @@ describe('views/tools', function() {
     });
   });
   before(function(){
-    var fileName = path.join(__dirname,'/data/calenderData.wiki');
+    var fileName = path.join(__dirname,'/data/calendarData.wiki');
     parseEvent.fortestonly.currentdate = new Date('2016-02-05');
 
     nock('https://wiki.openstreetmap.org')
@@ -45,7 +45,7 @@ describe('views/tools', function() {
 
 
 
-  it('should open calender tool' ,function(bddone) {
+  it('should open calendar tool' ,function(bddone) {
     this.timeout(20000);
    
 
@@ -56,8 +56,8 @@ describe('views/tools', function() {
       function setLanguage (cb) {
         browser.visit('/language?lang=EN', cb);
       },
-      function visitCalender (cb) {
-        browser.visit('/tool/calender2markdown', cb);
+      function visitCalendar (cb) {
+        browser.visit('/tool/calendar2markdown', cb);
       },
       function fillValues(cb) {
         browser
@@ -95,7 +95,7 @@ describe('views/tools', function() {
       .replyWithFile(200,fileName);
 
     async.series([
-      function visitCalender (cb) {
+      function visitCalendar (cb) {
         browser.visit('/tool/picturetool', cb);
       },
       function fillValues(cb) {

@@ -75,7 +75,7 @@ MarkdownRenderer.prototype.categoryTitle = function markdownCatTitle(lang,catego
 HtmlRenderer.prototype.renderArticle = function htmlArticle(lang,article) {
   debug('HtmlRenderer.prototype.article');
 
-  var calenderTranslation = configModule.getConfig("calendartranslation");
+  var calendarTranslation = configModule.getConfig("calendartranslation");
 
 
 
@@ -100,7 +100,7 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang,article) {
   }
   if (article.categoryEN == "Upcoming Events") {
     liON = '<p>';
-    liOFF = '</p>\n'+calenderTranslation.footer[lang];
+    liOFF = '</p>\n'+calendarTranslation.footer[lang];
   }
   if (article.categoryEN == "Releases" || article.categoryEN == "Long Term Dates") {
     liON = '<p>';

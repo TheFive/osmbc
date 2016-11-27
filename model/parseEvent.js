@@ -79,7 +79,7 @@ exports.nextDate = nextDate;
 
 
 /* This function returns the start date of an event, based on a string like
-   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calender event */
+   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event */
 
 function parseStartDate(string,previousDate) {
  // debug('parseStartDate')
@@ -96,7 +96,7 @@ function parseStartDate(string,previousDate) {
 }
 
 /* This function returns the end date of an event, based on a string like
-   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calender event,
+   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event,
    in the case of no enddate, the start date is returned */
 function parseEndDate(string,previousDate) {
  // debug('parseEndDate')
@@ -113,7 +113,7 @@ function parseEndDate(string,previousDate) {
   return dateend;
 }
 
-/* parseLine is parsing a calender line, by applying the regex one by one
+/* parseLine is parsing a calendar line, by applying the regex one by one
    and putting the results into a json with the given keys.
    If no regex is matching, null is returned*/
 
@@ -249,8 +249,8 @@ function ll(length) {
 }
 
 
-function calenderToMarkdown2(countryFlags,ct,option,cb) {
-  debug('calenderToMarkdown');
+function calendarToMarkdown2(countryFlags,ct,option,cb) {
+  debug('calendarToMarkdown');
   should(typeof(cb)).eql("function");
   var date = new Date();
   date.setDate(date.getDate()-3);
@@ -270,7 +270,6 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
 
   var result;
   var errors = null;
-  debug("Date: %s",date);
   request(wikiEventPage, function(error, response, body) {
     var json = JSON.parse(body);
     //body = (json.query.pages[2567].revisions[0]["*"]);
@@ -395,7 +394,7 @@ function calenderToMarkdown2(countryFlags,ct,option,cb) {
   });
 }
 
-function calenderToMarkdown(options,cb) {
+function calendarToMarkdown(options,cb) {
 
   var calendarFlags = configModule.getConfig("calendarflags");
   if (!calendarFlags) calendarFlags = {};
@@ -406,11 +405,11 @@ function calenderToMarkdown(options,cb) {
   if (!ct.date) ct.date = {};
   if (!ct.country) ct.country = {};
 
-  calenderToMarkdown2(calendarFlags, ct, options, cb);
+  calendarToMarkdown2(calendarFlags, ct, options, cb);
 }
 
-function calenderToJSON(option,cb) {
-  debug('calenderToJSON');
+function calendarToJSON(option,cb) {
+  debug('calendarToJSON');
   should(typeof(cb)).eql("function");
 
   request(wikiEventPage, function(error, response, body) {
@@ -474,15 +473,15 @@ function calenderToJSON(option,cb) {
   });
 }
 
-function calenderToHtml(date,callback) {
-  debug('calenderToHtml');
+function calendarToHtml(date,callback) {
+  debug('calendarToHtml');
   if (typeof(date)=='function') {
     callback = date;
     date = new Date();
     date.setDate(date.getDate()-3);
   } 
-  calenderToMarkdown(date,function(err,t){
-    debug('calenderToHtml:subfunction');
+  calendarToMarkdown(date,function(err,t){
+    debug('calendarToHtml:subfunction');
 
     if (err) return callback(err);
     debug('convert markdown to html');
@@ -490,11 +489,11 @@ function calenderToHtml(date,callback) {
     return callback(null,result);
   });
 }
-/* this function reads the content of the calender wiki, and convertes it to a markdonw
+/* this function reads the content of the calendar wiki, and convertes it to a markdonw
    in the form |town|description|date|country|*/
-exports.calenderToMarkdown = calenderToMarkdown;
-exports.calenderToHtml = calenderToHtml;
-exports.calenderToJSON = calenderToJSON;
+exports.calendarToMarkdown = calendarToMarkdown;
+exports.calendarToHtml = calendarToHtml;
+exports.calendarToJSON = calendarToJSON;
 
 /* parseWikiInfo convertes a string in wikimarkup to markup.
    only links like [[]] [] are converted to [](),

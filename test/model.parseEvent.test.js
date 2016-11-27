@@ -256,18 +256,18 @@ describe('model/parseEvent',function() {
       });
     });
   });
-  describe('calenderToMarkdown',function(){
+  describe('calendarToMarkdown',function(){
 
     it('should load date form wiki and generate a Markdown String',function(bddone){
-      var fileName = path.join(__dirname,'/data/calenderData.wiki');
+      var fileName = path.join(__dirname,'/data/calendarData.wiki');
 
       nock('https://wiki.openstreetmap.org')
         .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
 
         .replyWithFile(200,fileName);
-      parseEvent.calenderToMarkdown({lang:"DE",date:new Date("11/28/2015"),duration:"14"},function(err,result){
+      parseEvent.calendarToMarkdown({lang:"DE",date:new Date("11/28/2015"),duration:"14"},function(err,result){
         should.not.exist(err);
-        var expected = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
+        var expected = fs.readFileSync(path.join(__dirname,'/data/calendar.markup'),"utf8");
         should(result).equal(expected);
          bddone();
       });
@@ -288,7 +288,7 @@ describe('model/parseEvent',function() {
         .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
 
         .reply(200,JSON.stringify(json));
-      parseEvent.calenderToMarkdown({lang:"DE",date:new Date("12/06/2015"),duration:"14",big_duration:"21"},function(err,result){
+      parseEvent.calendarToMarkdown({lang:"DE",date:new Date("12/06/2015"),duration:"14",big_duration:"21"},function(err,result){
         should.not.exist(err);
         var expected = "|Wo  |Was                                   |Wann      |Land   |\n"+
           "|----|--------------------------------------|----------|-------|\n"+
@@ -314,7 +314,7 @@ describe('model/parseEvent',function() {
         .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
 
         .reply(200,JSON.stringify(json));
-      parseEvent.calenderToMarkdown({lang:"DE",date:new Date("12/06/2015"),duration:"14",big_duration:"21",countries:"USA"},function(err,result){
+      parseEvent.calendarToMarkdown({lang:"DE",date:new Date("12/06/2015"),duration:"14",big_duration:"21",countries:"USA"},function(err,result){
         should.not.exist(err);
         var expected = "|Wo      |Was                                   |Wann      |Land   |\n"+
           "|--------|--------------------------------------|----------|-------|\n"+
@@ -326,10 +326,10 @@ describe('model/parseEvent',function() {
     });
 
   });
-  describe('calenderToJSON',function(){
+  describe('calendarToJSON',function(){
 
     before(function(){
-      var fileName = path.join(__dirname,'/data/calenderData.wiki');
+      var fileName = path.join(__dirname,'/data/calendarData.wiki');
 
       nock('https://wiki.openstreetmap.org')
         .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
@@ -338,7 +338,7 @@ describe('model/parseEvent',function() {
 
     });
     it('should Do an API call and resturn JSON',function(bddone){
-      parseEvent.calenderToJSON({},function(err,result){
+      parseEvent.calendarToJSON({},function(err,result){
         var converted=JSON.parse(JSON.stringify(result));
         var expected = JSON.parse(fs.readFileSync(path.join(__dirname,'/data/calendar.json'),"utf8"));
         should(converted).eql(expected);
