@@ -1,0 +1,46 @@
+extends layout
+
+
+mixin eventRowLang(lang,event)
+  - console.log(event);
+  - console.log(lang);
+  if (event[lang].filtered)
+    td.hidden.lang.text-muted(class="lang-#{lang}")=event.town
+    td.hidden.lang.text-muted(class="lang-#{lang}")=eventDateFormat(event,lang)
+    td.hidden.lang.text-muted(class="lang-#{lang}")=event.text
+  else
+    td.hidden.lang.text-primary(class="lang-#{lang}")=event[lang].town
+    td.hidden.lang.text-primary(class="lang-#{lang}")=eventDateFormat(event,lang)
+    td.hidden.lang.text-primary(class="lang-#{lang}")=event.text
+
+block content
+  h1
+    | Ompidompi
+  .row
+    .col-md-3
+      for lang in layout.activeLanguages
+        span.label.label-default(onclick="$('.lang').addClass('hidden');$('.lang-#{lang}').removeClass('hidden');")=lang
+    .col-md-9
+      for lang in layout.activeLanguages
+        div.hidden.lang(class="lang-#{lang}")
+          p="Language = "+lang
+          if eventsfilter[lang]
+            p="date " + eventsfilter[lang].date
+            p="duration " + eventsfilter[lang].duration
+            p="big duration " + eventsfilter[lang].big_duration
+            p="excludeCountries " + eventsfilter[lang].excludeCountries
+
+          else
+            p="Please define rules in admin zone."
+
+  table.table-condensed
+    for event in events
+      if !event.all.filtered
+        tr
+          for lang in layout.activeLanguages
+            +eventRowLang(lang,event)
+
+  pre=JSON.stringify(eventsfilter,null,2)
+
+
+

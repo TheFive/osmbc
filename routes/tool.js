@@ -10,6 +10,7 @@ var url = require('url');
 var http = require('http');
 var https = require('https');
 var moment= require('moment');
+var async = require('async');
 var layoutRouter = require('../routes/layout.js');
 var emailValidator = require('email-validator');
 var BlogRenderer = require('../render/BlogRenderer.js');
@@ -101,10 +102,70 @@ function renderCalendarAsMarkdown(req,res,next) {
                                 countries:countries,
                                 duration:duration,
                                 errors:errors,
-                                layout:res.rendervar.layout});  
+                                layout:res.rendervar.layout});
 
   });
 }
+
+function eventDateFormat(e,lang){
+  var sd = moment(e.startDate);
+  var ed = moment(e.endDate);
+  var dateString = "";
+  sd.locale(lang);
+  ed.locale(lang);
+
+  if (e.startDate) {
+    dateString = sd.format("L");
+  }
+  if (e.endDate) {
+    if ((e.startDate.getTime() !== e.endDate.getTime())) {
+      dateString = sd.format("L")+"-"+ed.format("L");
+    }
+  }
+  return dateString;
+}
+
+function renderCalendarAllLang(req,res,next) {
+  debug('renderCalendarAllLang');
+  let eventsfilter = configModule.getConfig("eventsfilter");
+  let languages = res.rendervar.layout.activeLanguages;
+  let events = {};
+  parseEvent.calendarToJSON({},function(err,result){
+    events = result.events;
+    async.each(result.events,function(event,events_cb){
+      let allfilter = true;
+      async.each(languages,function(lang,lang_cb){
+        parseEvent.convertGeoName(event.town,lang,function(err,name){
+          if (err) return lang_cb(err);
+          event[lang]={};
+          event[lang].town = name;
+          let filter = {};
+          if (eventsfilter[lang]) filter = eventsfilter[lang];
+
+          event[lang].filtered = parseEvent.filterEvent(event,filter);
+          allfilter = allfilter && event[lang].filtered
+
+          lang_cb();
+        });
+      },function(err){
+        event.all = {};
+        event.all.filtered = allfilter;
+        return events_cb(err);
+      });
+    },function didit(err){
+      if (err) return next(err);
+      res.render("calendarAllLang.jade",{
+        layout:res.rendervar.layout,
+        events:events,
+        eventsfilter:eventsfilter,
+        eventDateFormat:eventDateFormat});
+    });
+  });
+
+
+}
+
+
 function postCalendarAsMarkdown(req,res,next) {
   debug('postCalendarAsMarkdown');
   var disablePrettify = (req.body.disablePrettify=="true");
@@ -273,6 +334,7 @@ function postPictureTool(req,res,next) {
 
 router.get('/calendar2markdown', renderCalendarAsMarkdown);
 router.post('/calendar2markdown', postCalendarAsMarkdown);
+router.get('/calendarAllLang',renderCalendarAllLang);
 router.get('/picturetool', renderPictureTool);
 router.post('/picturetool', postPictureTool);
 

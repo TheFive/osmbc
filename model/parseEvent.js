@@ -36,16 +36,23 @@ var regexList = [ {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *
 /* next Date is interpreting a date of the form 27 Feb as a date, that
   is in the current year. The window, to put the date in starts 50 days before now*/
 
+var _cache = {};
+
 function convertGeoName(name,lang,callback) {
   //http://api.geonames.org/searchJSON?q=M%C3%BCnchen&username=demo&maxRows=1
   //http://api.geonames.org/searchJSON?q=M%C3%BCnchen&username=TheFive&maxRows=1&lang=RU
   if (lang === "JP") lang = "JA";
+  let key = lang+"_"+name;
+  if (_cache[key]) return callback(null,_cache[key]);
   var requestString="http://api.geonames.org/searchJSON?q="+encodeURI(name)+"&username=TheFive&maxRows=1&lang="+lang;
   request(requestString,function(err,response,body){
     if (err) return callback(err,null);
     var json = JSON.parse(body);
-    if (json && json.geonames && json.geonames[0] && json.geonames[0].name) return callback(null,json.geonames[0].name);
-    return callback(new Error("Bad Geonames Result for "+name+" in lang "+lang));
+    if (json && json.geonames && json.geonames[0] && json.geonames[0].name) {
+      _cache[key]=json.geonames[0].name;
+      return callback(null,json.geonames[0].name);
+    }
+    return callback(new Error("Bad Geonames Result for "+name+" in lang "+lang+"\n"+requestString));
   });
 
 }
@@ -248,42 +255,50 @@ function ll(length) {
   return lineString.substring(0,length);
 }
 
-
-function calendarToMarkdown2(countryFlags,ct,option,cb) {
-  debug('calendarToMarkdown');
-  should(typeof(cb)).eql("function");
+function filterEvent(event,option) {
   var date = new Date();
   date.setDate(date.getDate()-3);
   if (option.date && option.date!=="" && option.date!=="null") {
     date = new Date(option.date);
   }
   var duration = 15;
-  if (option.duration && option.duration.trim()!=="") {
+  if (option.duration && option.duration !=="") {
     duration = parseInt(option.duration);
   }
   var big_duration = 23;
-  if (option.big_duration && option.big_duration.trim()!=="") {
+  if (option.big_duration && option.big_duration!=="") {
     big_duration = parseInt(option.big_duration);
   }
+  var from = new Date(date);
+  var to = new Date(date);
+  var to_for_big = new Date(date);
+
+  // get all Events from today
+  from.setDate(from.getDate());
+  // until in two weeks
+  to.setDate(to.getDate()+duration);
+  to_for_big.setDate(to_for_big.getDate()+big_duration);
+  let filtered=false;
+  if (event.endDate < from) filtered = true;
+  if (event.startDate > to_for_big) filtered = true;
+
+
+  if (option.countries &&
+    option.countries.toLowerCase().indexOf(event.country.toLowerCase())>=0 &&
+    event.desc.indexOf("<big>")<0) filtered = true;
+  if (!event.big && new Date(event.startDate) > to) filtered = true;
+  return filtered;
+
+}
+
+function calendarToMarkdown2(countryFlags,ct,option,cb) {
+  debug('calendarToMarkdown');
+  should(typeof(cb)).eql("function");
+
   var lang = option.lang;
   var enableCountryFlags = option.countryFlags;
 
   calendarToJSON({}, function(error, result) {
-
-
-
-
-
-    var from = new Date(date);
-    var to = new Date(date);
-    var to_for_big = new Date(date);
-
-    // get all Events from today
-    from.setDate(from.getDate());
-    // until in two weeks
-    to.setDate(to.getDate()+duration);
-    to_for_big.setDate(to_for_big.getDate()+big_duration);
-
 
     var events = [];
     var errors = result.error;
@@ -291,18 +306,7 @@ function calendarToMarkdown2(countryFlags,ct,option,cb) {
 
     for (let i=0;i<result.events.length;i++){
       let event = result.events[i];
-      if (event.endDate >= from && event.startDate <= to_for_big) {
-
-        let filtered=false;
-        if (option.countries &&
-          option.countries.toLowerCase().indexOf(event.country.toLowerCase())>=0 &&
-          event.desc.indexOf("<big>")<0) filtered = true;
-        if (!event.big && new Date(event.startDate) > to) filtered = true;
-
-
-
-        if (!filtered)  events.push(event);
-      }
+      if (!filterEvent(event,option)) events.push(event);
     }
     var townLength = 0;
     var descLength = 0;
@@ -470,6 +474,8 @@ function calendarToHtml(date,callback) {
 exports.calendarToMarkdown = calendarToMarkdown;
 exports.calendarToHtml = calendarToHtml;
 exports.calendarToJSON = calendarToJSON;
+exports.filterEvent = filterEvent;
+exports.convertGeoName = convertGeoName;
 
 /* parseWikiInfo convertes a string in wikimarkup to markup.
    only links like [[]] [] are converted to [](),
