@@ -406,13 +406,14 @@ function calendarToJSON(option,cb) {
     var events = [];
     var errors = "";
 
+    var previousDate = null;
 
     while (point>= 0) {
 
       var line = body.substring(0,point);
       body = body.substring(point+1,999999999);
       point = body.indexOf("\n");
-      var result = parseLine(line);
+      var result = parseLine(line,previousDate);
 
       if (typeof(result)=="string") {
         if (!errors) errors = "\n\nUnrecognized\n";
@@ -423,6 +424,7 @@ function calendarToJSON(option,cb) {
 
 
       if (result) {
+          previousDate = result.startDate;
           events.push(result);
           result.markdown = parseWikiInfo(result.desc);
           result.text = parseWikiInfo(result.desc,{dontLinkify:true});
