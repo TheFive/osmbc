@@ -2,45 +2,99 @@ extends layout
 
 
 mixin eventRowLang(lang,event)
-  - console.log(event);
-  - console.log(lang);
   if (event[lang].filtered)
-    td.hidden.lang.text-muted(class="lang-#{lang}")=event.town
-    td.hidden.lang.text-muted(class="lang-#{lang}")=eventDateFormat(event,lang)
-    td.hidden.lang.text-muted(class="lang-#{lang}")=event.text
+    td.hidden.lang.text-muted(class="lang-#{lang}")
+      span.add-info=event.town
+    td.hidden.lang.text-muted(class="lang-#{lang}")
+      span.add-info=event.text
+    td.hidden.lang.text-muted(class="lang-#{lang}")
+      span.add-info=eventDateFormat(event,lang)
+    td.hidden.lang.text-muted(class="lang-#{lang}")
+      span.add-info=event.country
+    td.hidden.lang.text-muted(class="lang-#{lang}")
+      div.add-info
+        |!{flag(event.country,calendarFlags)}
   else
     td.hidden.lang.text-primary(class="lang-#{lang}")=event[lang].town
-    td.hidden.lang.text-primary(class="lang-#{lang}")=eventDateFormat(event,lang)
     td.hidden.lang.text-primary(class="lang-#{lang}")=event.text
+    td.hidden.lang.text-primary(class="lang-#{lang}")=eventDateFormat(event,lang)
+    td.hidden.lang.text-primary(class="lang-#{lang}")
+      div.add-info=event.country
+    td.hidden.lang.text-primary(class="lang-#{lang}")
+      |!{flag(event.country,calendarFlags)}
+
 
 block content
   h1
     | Ompidompi
   .row
-    .col-md-3
-      for lang in layout.activeLanguages
-        span.label.label-default(onclick="$('.lang').addClass('hidden');$('.lang-#{lang}').removeClass('hidden');")=lang
-    .col-md-9
+    .col-md-4
+      h4
+        for lang in layout.activeLanguages
+          span.add-info.label.label-default( class="lang+#{lang}" onclick="$('.lang').addClass('hidden');$('.lang-#{lang}').removeClass('hidden');")=lang
+        span.label.label-default(  onclick="$('.add-info').toggle(1000);")="Draft/Final"
+    .col-md-8
       for lang in layout.activeLanguages
         div.hidden.lang(class="lang-#{lang}")
-          p="Language = "+lang
-          if eventsfilter[lang]
-            p="date " + eventsfilter[lang].date
-            p="duration " + eventsfilter[lang].duration
-            p="big duration " + eventsfilter[lang].big_duration
-            p="excludeCountries " + eventsfilter[lang].excludeCountries
+          div.add-info
+            p="Language = "+lang
+            if eventsfilter[lang]
+              p="date " + eventsfilter[lang].date
+              p="duration " + eventsfilter[lang].duration
+              p="big duration " + eventsfilter[lang].big_duration
+              p="excludeCountries " + eventsfilter[lang].excludeCountries
 
-          else
-            p="Please define rules in admin zone."
+            else
+              p="Please define rules in admin zone."
 
   table.table-condensed
+    colgroup
+      col.col-md-3
+      col.col-md-3
+      col.col-md-3
+      col.col-md-1
+      col.col-md-1
+      col.col-md-1
     for event in events
       if !event.all.filtered
         tr
+          td
+            div.add-info
+              for lang in layout.activeLanguages
+                if event[lang].filtered
+                  span.label.label-default=lang
+                else
+                  span.label.label-info=lang
           for lang in layout.activeLanguages
             +eventRowLang(lang,event)
+    for blog in layout.listOfEditBlog
+      - let article = blog._upcomingEvents
 
-  pre=JSON.stringify(eventsfilter,null,2)
+      tr
+        td
+          p
+            span=blog.name
+            span=" "
+            a(href="#{layout.htmlroot}/article/#{article.id}")="Upcoming Events"
+          p
+            +languageDisplay(article)
+        for lang in layout.activeLanguages
+          td.lang(class="lang-#{lang}")
+            if (!(article["markdown"+lang]))
+              form(name="EditArticle",id="EditArticle#{article.id}#{lang}", action="#{layout.htmlroot}/article/#{article.id}/setMarkdown/#{lang}", method="post")
+                textarea.hidden.form-control(name="markdown" id="markdown" + article.id rows=7 onchange="onLeaveText(#{article.id});")="Nex Text"
+                textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{article.id}" rows=7 )=""
+                button.btn.btn-default(type="submit")="Store "+lang+" in "+blog.name
 
 
+  pre=JSON.stringify(events,null,2)
 
+
+block scripts
+  script.
+    $(document).ready(function(){
+      var lang = "!{layout.language}";
+
+      $('.lang').addClass('hidden');
+      $('.lang-'+lang).removeClass('hidden');
+    });

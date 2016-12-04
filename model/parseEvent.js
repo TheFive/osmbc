@@ -64,7 +64,9 @@ function nextDate(string,previousDate) {
   let startBefore = 50;
   if (previousDate) {
     now = new Date(previousDate);
-    startBefore = 150;
+    // This is a heuristic value, based on the used test cases.
+    // it should be avoided in wiki to have date jumps more than 5 month !
+    startBefore = 170;
   }
   if (exports.fortestonly && exports.fortestonly.currentdate) {
     now = new Date(exports.fortestonly.currentdate);
@@ -283,9 +285,9 @@ function filterEvent(event,option) {
   if (event.startDate > to_for_big) filtered = true;
 
 
-  if (option.countries &&
-    option.countries.toLowerCase().indexOf(event.country.toLowerCase())>=0 &&
-    event.desc.indexOf("<big>")<0) filtered = true;
+  if (option.excludeCountries &&
+    option.excludeCountries.toLowerCase().indexOf(event.country.toLowerCase())>=0) filtered = true;
+
   if (!event.big && new Date(event.startDate) > to) filtered = true;
   return filtered;
 
@@ -295,81 +297,89 @@ function calendarToMarkdown2(countryFlags,ct,option,cb) {
   debug('calendarToMarkdown');
   should(typeof(cb)).eql("function");
 
+  calendarToJSON({}, function(error, result) {
+    if (error) cb(error);
+    calendarJSONToMarkdown2(result,countryFlags,ct,option,cb);
+  });
+}
+
+function calendarJSONToMarkdown2(json,countryFlags,ct,option,cb) {
+  debug('calendarToMarkdown');
+  should(typeof(cb)).eql("function");
+
   var lang = option.lang;
   var enableCountryFlags = option.countryFlags;
+  let result = json;
 
-  calendarToJSON({}, function(error, result) {
-
-    var events = [];
-    var errors = result.error;
+  var events = [];
+  var errors = result.error;
 
 
-    for (let i=0;i<result.events.length;i++){
-      let event = result.events[i];
-      if (!filterEvent(event,option)) events.push(event);
+  for (let i=0;i<result.events.length;i++){
+    let event = result.events[i];
+    if (!filterEvent(event,option)) events.push(event);
+  }
+  var townLength = 0;
+  var descLength = 0;
+  var dateLength = 0;
+  var countryLength = 0;
+
+  // First sort Events by Date
+
+  // events.sort(function cmpEvent(a,b){return a.startDate - b.startDate;});
+
+  async.eachSeries(events,function(e,callback){
+
+
+    // first try to convert country flags:
+
+    if (e.country && enableCountryFlags) {
+      var country = e.country.toLowerCase();
+      if (countryFlags[country]) e.country = "!["+country+"]("+countryFlags[country]+")";
     }
-    var townLength = 0;
-    var descLength = 0;
-    var dateLength = 0;
-    var countryLength = 0;
+    if (e.town) townLength = Math.max(e.town.length,townLength);
+    if (e.markdown) descLength = Math.max(e.markdown.length,descLength);
+    if (e.country) countryLength = Math.max(e.country.length,countryLength);
+    var dateString;
+    var sd = moment(e.startDate);
+    var ed = moment(e.endDate);
+    sd.locale(lang);
+    ed.locale(lang);
 
-    // First sort Events by Date
-
-   // events.sort(function cmpEvent(a,b){return a.startDate - b.startDate;});
-
-    async.eachSeries(events,function(e,callback){
-
-
-      // first try to convert country flags:
-
-      if (e.country && enableCountryFlags) {
-        var country = e.country.toLowerCase();
-        if (countryFlags[country]) e.country = "!["+country+"]("+countryFlags[country]+")";
+    if (e.startDate) {
+      dateString = sd.format("L");
+    }
+    if (e.endDate) {
+      if ((e.startDate.getTime() !== e.endDate.getTime())) {
+        dateString = sd.format("L")+"-"+ed.format("L");
       }
-      if (e.town) townLength = Math.max(e.town.length,townLength);
-      if (e.markdown) descLength = Math.max(e.markdown.length,descLength);
-      if (e.country) countryLength = Math.max(e.country.length,countryLength);
-      var dateString;
-      var sd = moment(e.startDate);
-      var ed = moment(e.endDate);
-      sd.locale(lang);
-      ed.locale(lang);
+    }
+    e.dateString = dateString;
+    dateLength = Math.max(dateLength,dateString.length);
+    if (option.useGeoNames) {
+      convertGeoName(e.town,option.lang,function(err,town){
+        if (err) return callback();
+        e.town = town;
+        if (e.town) townLength = Math.max(e.town.length,townLength);
+        return callback();
+      });
 
-      if (e.startDate) {
-        dateString = sd.format("L");
-      }
-      if (e.endDate) {
-        if ((e.startDate.getTime() !== e.endDate.getTime())) {
-          dateString = sd.format("L")+"-"+ed.format("L");
-        }
-      }
-      e.dateString = dateString;
-      dateLength = Math.max(dateLength,dateString.length);
-      if (option.useGeoNames) {
-        convertGeoName(e.town,option.lang,function(err,town){
-          if (err) return callback();
-          e.town = town;
-          if (e.town) townLength = Math.max(e.town.length,townLength);
-          return callback();
-        });
-
-      } else callback();
+    } else callback();
 
 
-    },function(){
-      result = "";
-      result += "|"+wl(ct.town[lang],townLength)+"|"+wl(ct.title[lang],descLength)+"|"+wl(ct.date[lang],dateLength)+"|"+wl(ct.country[lang],countryLength)+"|\n";
-      result += "|"+ll(townLength)+"|"+ll(descLength)+"|"+ll(dateLength)+"|"+ll(countryLength)+"|\n";
-      for (let i=0;i<events.length;i++) {
-        var t = events[i].town;
-        if (!t) t= "";
-        var c = events[i].country;
-        if (!c) c="";
-        result += "|"+wl(t,townLength)+"|"+wl(events[i].markdown,descLength)+"|"+wl(events[i].dateString,dateLength)+"|"+wl(c,countryLength)+"|\n";
-      }
+  },function(){
+    result = "";
+    result += "|"+wl(ct.town[lang],townLength)+"|"+wl(ct.title[lang],descLength)+"|"+wl(ct.date[lang],dateLength)+"|"+wl(ct.country[lang],countryLength)+"|\n";
+    result += "|"+ll(townLength)+"|"+ll(descLength)+"|"+ll(dateLength)+"|"+ll(countryLength)+"|\n";
+    for (let i=0;i<events.length;i++) {
+      var t = events[i].town;
+      if (!t) t= "";
+      var c = events[i].country;
+      if (!c) c="";
+      result += "|"+wl(t,townLength)+"|"+wl(events[i].markdown,descLength)+"|"+wl(events[i].dateString,dateLength)+"|"+wl(c,countryLength)+"|\n";
+    }
 
-      cb(null,result,errors);
-    });
+    cb(null,result,errors);
   });
 }
 
@@ -386,6 +396,21 @@ function calendarToMarkdown(options,cb) {
 
   calendarToMarkdown2(calendarFlags, ct, options, cb);
 }
+
+function calendarJSONToMarkdown(json,options,cb) {
+
+  var calendarFlags = configModule.getConfig("calendarflags");
+  if (!calendarFlags) calendarFlags = {};
+  var ct = configModule.getConfig("calendartranslation");
+  if (!ct) ct = {};
+  if (!ct.town) ct.town = {};
+  if (!ct.title) ct.title = {};
+  if (!ct.date) ct.date = {};
+  if (!ct.country) ct.country = {};
+
+  calendarJSONToMarkdown2(json,calendarFlags, ct, options, cb);
+}
+
 
 function calendarToJSON(option,cb) {
   debug('calendarToJSON');
@@ -474,6 +499,7 @@ function calendarToHtml(date,callback) {
 /* this function reads the content of the calendar wiki, and convertes it to a markdonw
    in the form |town|description|date|country|*/
 exports.calendarToMarkdown = calendarToMarkdown;
+exports.calendarJSONToMarkdown = calendarJSONToMarkdown;
 exports.calendarToHtml = calendarToHtml;
 exports.calendarToJSON = calendarToJSON;
 exports.filterEvent = filterEvent;

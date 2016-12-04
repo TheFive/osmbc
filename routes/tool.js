@@ -125,9 +125,16 @@ function eventDateFormat(e,lang){
   return dateString;
 }
 
+function flag(country,cf){
+  let c = country.toLowerCase();
+  if (cf[c]) return  "<img src='"+cf[c]+"'></img>";
+  return country;
+}
+
 function renderCalendarAllLang(req,res,next) {
   debug('renderCalendarAllLang');
   let eventsfilter = configModule.getConfig("eventsfilter");
+  let calendarFlags = configModule.getConfig("calendarflags");
   let languages = res.rendervar.layout.activeLanguages;
   let events = {};
   parseEvent.calendarToJSON({},function(err,result){
@@ -143,7 +150,7 @@ function renderCalendarAllLang(req,res,next) {
           if (eventsfilter[lang]) filter = eventsfilter[lang];
 
           event[lang].filtered = parseEvent.filterEvent(event,filter);
-          allfilter = allfilter && event[lang].filtered
+          allfilter = allfilter && event[lang].filtered;
 
           lang_cb();
         });
@@ -157,7 +164,9 @@ function renderCalendarAllLang(req,res,next) {
       res.render("calendarAllLang.jade",{
         layout:res.rendervar.layout,
         events:events,
+        flag:flag,
         eventsfilter:eventsfilter,
+        calendarFlags: calendarFlags,
         eventDateFormat:eventDateFormat});
     });
   });
