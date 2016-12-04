@@ -717,6 +717,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
   self._unsolvedComments = {};
 
   self._usedLanguages = {};
+  self._upcomingEvents = null;
   var mainLang = user.mainLang;
   var secondLang = user.secondLang;
   var i,j;
@@ -741,6 +742,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
         for (j = 0; j < result.length; j++) {
           let article= result[j];
           var c = article.categoryEN;
+          if (c =="Upcoming Events") self._upcomingEvents = article;
           if (c == "--unpublished--") continue;
           self._countExpectedMarkdown[l] += 1;
           var m = article["markdown" + l];
