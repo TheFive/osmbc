@@ -5,7 +5,9 @@ var should  = require('should');
 var moment  = require("moment");
 var request = require("request");
 var markdown = require('markdown-it')();
+var config = require('../config.js');
 var configModule = require('../model/config.js');
+var async = require('async');
 
 
 
@@ -35,6 +37,29 @@ var regexList = [ {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *
 /* next Date is interpreting a date of the form 27 Feb as a date, that
   is in the current year. The window, to put the date in starts 50 days before now*/
 
+var _cache = {};
+var _geonamesUser = null;
+
+function convertGeoName(name,lang,callback) {
+  if (lang === "JP") lang = "JA";
+  if (!_geonamesUser) _geonamesUser = config.getValue("GeonamesUser");
+  let key = lang+"_"+name;
+  if (_cache[key]) return callback(null,_cache[key]);
+  var requestString="http://api.geonames.org/searchJSON?q="+encodeURI(name)+"&username="+_geonamesUser+"&maxRows=1&lang="+lang;
+  request(requestString,function(err,response,body){
+    if (err) return callback(err,null);
+    var json = JSON.parse(body);
+    if (json && json.geonames && json.geonames[0] && json.geonames[0].name) {
+      _cache[key]=json.geonames[0].name;
+      return callback(null,json.geonames[0].name);
+    }
+    else {
+      if (json.status) return callback(json.message, null);
+      else return callback(new Error("Bad Geonames Result for " + name + " in lang " + lang + "\n"));
+    }
+  });
+}
+
 function nextDate(string,previousDate) {
   //debug('nextDate');
   if (!string) return null;
@@ -42,7 +67,9 @@ function nextDate(string,previousDate) {
   let startBefore = 50;
   if (previousDate) {
     now = new Date(previousDate);
-    startBefore = 150;
+    // This is a heuristic value, based on the used test cases.
+    // it should be avoided in wiki to have date jumps more than 5 month !
+    startBefore = 170;
   }
   if (exports.fortestonly && exports.fortestonly.currentdate) {
     now = new Date(exports.fortestonly.currentdate);
@@ -64,7 +91,7 @@ exports.nextDate = nextDate;
 
 
 /* This function returns the start date of an event, based on a string like
-   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calender event */
+   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event */
 
 function parseStartDate(string,previousDate) {
  // debug('parseStartDate')
@@ -81,7 +108,7 @@ function parseStartDate(string,previousDate) {
 }
 
 /* This function returns the end date of an event, based on a string like
-   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calender event,
+   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event,
    in the case of no enddate, the start date is returned */
 function parseEndDate(string,previousDate) {
  // debug('parseEndDate')
@@ -98,7 +125,7 @@ function parseEndDate(string,previousDate) {
   return dateend;
 }
 
-/* parseLine is parsing a calender line, by applying the regex one by one
+/* parseLine is parsing a calendar line, by applying the regex one by one
    and putting the results into a json with the given keys.
    If no regex is matching, null is returned*/
 
@@ -233,127 +260,136 @@ function ll(length) {
   return lineString.substring(0,length);
 }
 
-
-function calenderToMarkdown2(countryFlags,ct,option,cb) {
-  debug('calenderToMarkdown');
-  should(typeof(cb)).eql("function");
+function filterEvent(event,option) {
   var date = new Date();
   date.setDate(date.getDate()-3);
-  var duration = 24;
   if (option.date && option.date!=="" && option.date!=="null") {
     date = new Date(option.date);
   }
-  if (option.duration && option.duration.trim()!=="") {
+  var duration = 15;
+  if (option.duration && option.duration !=="") {
     duration = parseInt(option.duration);
   }
+  var big_duration = 23;
+  if (option.big_duration && option.big_duration!=="") {
+    big_duration = parseInt(option.big_duration);
+  }
+  var from = new Date(date);
+  var to = new Date(date);
+  var to_for_big = new Date(date);
+
+  // get all Events from today
+  from.setDate(from.getDate());
+  // until in two weeks
+  to.setDate(to.getDate()+duration);
+  to_for_big.setDate(to_for_big.getDate()+big_duration);
+  let filtered=false;
+  if (event.endDate < from) filtered = true;
+  if (event.startDate > to_for_big) filtered = true;
+
+  if (option.includeCountries &&
+    option.includeCountries.toLowerCase().indexOf(event.country.toLowerCase())<0) filtered = true;
+
+  if (option.excludeCountries &&
+    option.excludeCountries.toLowerCase().indexOf(event.country.toLowerCase())>=0) filtered = true;
+
+
+  if (!event.big && new Date(event.startDate) > to) filtered = true;
+  return filtered;
+
+}
+
+function calendarToMarkdown2(countryFlags,ct,option,cb) {
+  debug('calendarToMarkdown');
+  should(typeof(cb)).eql("function");
+
+  calendarToJSON({}, function(error, result) {
+    if (error) cb(error);
+    calendarJSONToMarkdown2(result,countryFlags,ct,option,cb);
+  });
+}
+
+function calendarJSONToMarkdown2(json,countryFlags,ct,option,cb) {
+  debug('calendarToMarkdown');
+  should(typeof(cb)).eql("function");
+
   var lang = option.lang;
-  var enableCountryFlags = option.countryFlags;
+  var enableCountryFlags = option.enableCountryFlags;
+  let result = json;
 
-  var result;
-  var errors = null;
-  debug("Date: %s",date);
-  request(wikiEventPage, function(error, response, body) {
-    var json = JSON.parse(body);
-    //body = (json.query.pages[2567].revisions[0]["*"]);
-    body = json.query.pages;
-    for (var k in body) {
-      body = body[k];
-      break;
+  var events = [];
+  var errors = result.error;
+
+
+  for (let i=0;i<result.events.length;i++){
+    let event = result.events[i];
+    if (!filterEvent(event,option)) events.push(event);
+  }
+  var townLength = 0;
+  var descLength = 0;
+  var dateLength = 0;
+  var countryLength = 0;
+
+  // First sort Events by Date
+
+  // events.sort(function cmpEvent(a,b){return a.startDate - b.startDate;});
+
+  async.eachSeries(events,function(e,callback){
+
+
+    // first try to convert country flags:
+    e.countryFlag = e.country;
+    if (e.countryFlag && enableCountryFlags) {
+      var country = e.countryFlag.toLowerCase();
+      if (countryFlags[country]) e.countryFlag = "!["+country+"]("+countryFlags[country]+")";
     }
-    body = body.revisions[0]['*'];
+    if (e.town) townLength = Math.max(e.town.length,townLength);
+    if (e.markdown) descLength = Math.max(e.markdown.length,descLength);
+    if (e.countryFlag) countryLength = Math.max(e.countryFlag.length,countryLength);
+    var dateString;
+    var sd = moment(e.startDate);
+    var ed = moment(e.endDate);
+    sd.locale(lang);
+    ed.locale(lang);
 
-    var point = body.indexOf("\n");
-
-    var from = new Date(date);
-    var to = new Date(date);
-
-    // get all Events from today
-    from.setDate(from.getDate());
-    // until in two weeks
-    to.setDate(to.getDate()+duration);
-
-    var events = [];
-    var previousDate = null;
-
-    while (point>= 0) {
-   
-      var line = body.substring(0,point);
-      body = body.substring(point+1,999999999);
-      point = body.indexOf("\n");
-      result = parseLine(line,previousDate);
-
-      if (typeof(result)=="string") {
-        if (!errors) errors = "\n\nUnrecognized\n";
-        errors +=result+"\n";
-        result = null;
-      }
-    
-
-
-      if (result) {
-        previousDate = result.startDate;
-        if (result.endDate >= from && result.startDate <= to) {
-          events.push(result);
-          result.markdown = parseWikiInfo(result.desc);
-          result.town = parseWikiInfo(result.town,{dontLinkify:true});
-          result.country = parseWikiInfo(result.country,{dontLinkify:true});
-        }
+    if (e.startDate) {
+      dateString = sd.format("L");
+    }
+    if (e.endDate) {
+      if ((e.startDate.getTime() !== e.endDate.getTime())) {
+        dateString = sd.format("L")+"-"+ed.format("L");
       }
     }
-    var townLength = 0;
-    var descLength = 0;
-    var dateLength = 0;
-    var countryLength = 0;
+    e.dateString = dateString;
+    dateLength = Math.max(dateLength,dateString.length);
+    if (option.useGeoNames) {
+      convertGeoName(e.town,option.lang,function(err,town){
+        if (err) return callback();
+        e.town = town;
+        if (e.town) townLength = Math.max(e.town.length,townLength);
+        return callback();
+      });
 
-    // First sort Events by Date
+    } else callback();
 
 
-   // events.sort(function cmpEvent(a,b){return a.startDate - b.startDate;});
-
-    for (var i=0;i<events.length;i++) {
-      var e = events[i];
-
-      // first try to convert country flags:
-
-      if (e.country && enableCountryFlags) {
-        var country = e.country.toLowerCase();
-        if (countryFlags[country]) e.country = "!["+country+"]("+countryFlags[country]+")";
-      }
-      if (e.town) townLength = Math.max(e.town.length,townLength);
-      if (e.markdown) descLength = Math.max(e.markdown.length,descLength);
-      if (e.country) countryLength = Math.max(e.country.length,countryLength);
-      var dateString;
-      var sd = moment(e.startDate);
-      var ed = moment(e.endDate);
-      sd.locale(lang);
-      ed.locale(lang);
-  
-      if (e.startDate) {
-       dateString = sd.format("L");
-      }
-      if (e.endDate) {
-        if ((e.startDate.getTime() !== e.endDate.getTime())) {
-          dateString = sd.format("L")+"-"+ed.format("L");
-        }
-      }
-      e.dateString = dateString;
-      dateLength = Math.max(dateLength,dateString.length);
-    }
+  },function(){
     result = "";
     result += "|"+wl(ct.town[lang],townLength)+"|"+wl(ct.title[lang],descLength)+"|"+wl(ct.date[lang],dateLength)+"|"+wl(ct.country[lang],countryLength)+"|\n";
-    result += "|"+ll(townLength)+"|"+ll(descLength)+"|"+ll(dateLength)+"|"+ll(countryLength)+"|\n";  
-    for (i=0;i<events.length;i++) {
+    result += "|"+ll(townLength)+"|"+ll(descLength)+"|"+ll(dateLength)+"|"+ll(countryLength)+"|\n";
+    for (let i=0;i<events.length;i++) {
       var t = events[i].town;
       if (!t) t= "";
-      var c = events[i].country;
+      var c = events[i].countryFlag;
       if (!c) c="";
-      result += "|"+wl(t,townLength)+"|"+wl(events[i].markdown,descLength)+"|"+wl(events[i].dateString,dateLength)+"|"+wl(c,countryLength)+"|\n";  
+      result += "|"+wl(t,townLength)+"|"+wl(events[i].markdown,descLength)+"|"+wl(events[i].dateString,dateLength)+"|"+wl(c,countryLength)+"|\n";
     }
+
     cb(null,result,errors);
   });
 }
 
-function calenderToMarkdown(options,cb) {
+function calendarToMarkdown(options,cb) {
 
   var calendarFlags = configModule.getConfig("calendarflags");
   if (!calendarFlags) calendarFlags = {};
@@ -364,11 +400,26 @@ function calenderToMarkdown(options,cb) {
   if (!ct.date) ct.date = {};
   if (!ct.country) ct.country = {};
 
-  calenderToMarkdown2(calendarFlags, ct, options, cb);
+  calendarToMarkdown2(calendarFlags, ct, options, cb);
 }
 
-function calenderToJSON(option,cb) {
-  debug('calenderToJSON');
+function calendarJSONToMarkdown(json,options,cb) {
+
+  var calendarFlags = configModule.getConfig("calendarflags");
+  if (!calendarFlags) calendarFlags = {};
+  var ct = configModule.getConfig("calendartranslation");
+  if (!ct) ct = {};
+  if (!ct.town) ct.town = {};
+  if (!ct.title) ct.title = {};
+  if (!ct.date) ct.date = {};
+  if (!ct.country) ct.country = {};
+
+  calendarJSONToMarkdown2(json,calendarFlags, ct, options, cb);
+}
+
+
+function calendarToJSON(option,cb) {
+  debug('calendarToJSON');
   should(typeof(cb)).eql("function");
 
   request(wikiEventPage, function(error, response, body) {
@@ -386,13 +437,14 @@ function calenderToJSON(option,cb) {
     var events = [];
     var errors = "";
 
+    var previousDate = null;
 
     while (point>= 0) {
 
       var line = body.substring(0,point);
       body = body.substring(point+1,999999999);
       point = body.indexOf("\n");
-      var result = parseLine(line);
+      var result = parseLine(line,previousDate);
 
       if (typeof(result)=="string") {
         if (!errors) errors = "\n\nUnrecognized\n";
@@ -403,6 +455,7 @@ function calenderToJSON(option,cb) {
 
 
       if (result) {
+          previousDate = result.startDate;
           events.push(result);
           result.markdown = parseWikiInfo(result.desc);
           result.text = parseWikiInfo(result.desc,{dontLinkify:true});
@@ -410,6 +463,7 @@ function calenderToJSON(option,cb) {
           result.town = parseWikiInfo(result.town,{dontLinkify:true});
           result.country_md = parseWikiInfo(result.country,{dontLinkify:false});
           result.country = parseWikiInfo(result.country,{dontLinkify:true});
+          result.big = (result.desc.indexOf("<big>")>=0);
 
           result.html = markdown.renderInline(result.markdown);
           result.town_html = markdown.renderInline(result.town_md);
@@ -432,15 +486,15 @@ function calenderToJSON(option,cb) {
   });
 }
 
-function calenderToHtml(date,callback) {
-  debug('calenderToHtml');
+function calendarToHtml(date,callback) {
+  debug('calendarToHtml');
   if (typeof(date)=='function') {
     callback = date;
     date = new Date();
     date.setDate(date.getDate()-3);
   } 
-  calenderToMarkdown(date,function(err,t){
-    debug('calenderToHtml:subfunction');
+  calendarToMarkdown(date,function(err,t){
+    debug('calendarToHtml:subfunction');
 
     if (err) return callback(err);
     debug('convert markdown to html');
@@ -448,11 +502,14 @@ function calenderToHtml(date,callback) {
     return callback(null,result);
   });
 }
-/* this function reads the content of the calender wiki, and convertes it to a markdonw
+/* this function reads the content of the calendar wiki, and convertes it to a markdonw
    in the form |town|description|date|country|*/
-exports.calenderToMarkdown = calenderToMarkdown;
-exports.calenderToHtml = calenderToHtml;
-exports.calenderToJSON = calenderToJSON;
+exports.calendarToMarkdown = calendarToMarkdown;
+exports.calendarJSONToMarkdown = calendarJSONToMarkdown;
+exports.calendarToHtml = calendarToHtml;
+exports.calendarToJSON = calendarToJSON;
+exports.filterEvent = filterEvent;
+exports.convertGeoName = convertGeoName;
 
 /* parseWikiInfo convertes a string in wikimarkup to markup.
    only links like [[]] [] are converted to [](),

@@ -39,7 +39,7 @@ function getPostgresDBString() {
         connectStr = configuration.postgres.connectstr;
       }
   if (!connectStr) {
-    console.log("Could not build a connection string for postgres. App is terminating");
+    console.error("Could not build a connection string for postgres. App is terminating");
     process.exit(1);
   }
   return connectStr;
@@ -64,7 +64,7 @@ exports.initialise = function initialise(callback) {
   }
   debug("initialise");
   configurationInitialised = true;
-	console.log("Reading Config from: "+configurationFile);
+	console.info("Reading Config from: "+configurationFile);
 	configuration = JSON.parse(fs.readFileSync(configurationFile));
   //pg.defaults.poolSize = 40;
   //console.log("Postgres Poolsize = 40");
@@ -100,7 +100,7 @@ exports.getValue = function(key,options) {
     result = configuration[key];
   }
   if (options && options.mustExist && ! result) {
-    console.log("Missing Value in config.*.json. Name: '"+key+"'");
+    console.error("Missing Value in config.*.json. Name: '"+key+"'");
     process.exit(1);
   }
   debug("getValue %s %s",key,result);

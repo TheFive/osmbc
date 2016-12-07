@@ -263,7 +263,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
         for (k in data) {
           // do not overwrite any existing Prototype Function with a value.
           if (Article.prototype.hasOwnProperty(k)) {
-            console.log("WARNING: Do not store "+data[k]+" for property "+k+" for Article ID "+self.id);
+            console.info("WARNING: Do not store "+data[k]+" for property "+k+" for Article ID "+self.id);
             continue;
           }
           if (typeof(data[k])!=='undefined') self[k]=data[k];
@@ -663,8 +663,6 @@ Article.prototype.unsetTag = function unsetTag(user,tag,callback) {
   if (!self.tags) self.tags=[];
   let index = self.tags.indexOf(tag);
   if (index >= 0 ) {
-    console.log(index);
-    console.dir(self.tags);
     self.tags.splice(index,1);
     self.save(callback);
     return;

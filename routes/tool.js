@@ -10,6 +10,7 @@ var url = require('url');
 var http = require('http');
 var https = require('https');
 var moment= require('moment');
+var async = require('async');
 var layoutRouter = require('../routes/layout.js');
 var emailValidator = require('email-validator');
 var BlogRenderer = require('../render/BlogRenderer.js');
@@ -35,12 +36,12 @@ function renderPublicCalendar(req,res,next) {
 
   var layout = {bootstrap:bootstrap,htmlRoot:htmlRoot,path:layoutRouter.path};
 
-  parseEvent.calenderToMarkdown({lang:"EN",countryFlags:true,duration:'200'},function(err,result,errors){
+  parseEvent.calendarToMarkdown({lang:"EN",enableCountryFlags:true,duration:'200'},function(err,result,errors){
     if (err) return next(err);
     var preview = markdown.render(result);
     preview = preview.replace('<table>','<table class="table">');
     res.set('content-type', 'text/html');
-    res.render('calenderPublic.jade',{calenderAsMarkdown:result,
+    res.render('calendarPublic.jade',{calendarAsMarkdown:result,
       errors:errors,preview:preview,layout:layout});
 
   });
@@ -54,48 +55,151 @@ function renderJSONCalendar(req,res,next) {
   }
   fs.appendFileSync("Calendarusage.log",email+" "+new Date()+"\n");
 
-  parseEvent.calenderToJSON({},function(err,result){
+  parseEvent.calendarToJSON({},function(err,result){
     if (err) return next(err);
 
     res.json(result);
   });
 }
 
-function renderCalenderAsMarkdown(req,res,next) {
-  debug('renderCalenderAsMarkdown');
+function renderCalendarAsMarkdown(req,res,next) {
+  debug('renderCalendarAsMarkdown');
 
   var disablePrettify = false;
+  var useGeoNames = false;
+  var countries = "";
   var enableCountryFlags = false;
   var date="";
   var duration="";
-  var sessionData = req.session.calenderTool;
+  var sessionData = req.session.calendarTool;
 
   if (sessionData) {
     disablePrettify = sessionData.disablePrettify;
     enableCountryFlags = sessionData.enableCountryFlags;
-    date = sessionData.date;
+    date = moment(sessionData.date);
+
     duration = sessionData.duration;
+    if (sessionData.countries) countries = sessionData.countries;
+    if (sessionData.useGeoNames) useGeoNames = sessionData.useGeoNames;
   }
 
   if (!moment(date).isValid()) date = "";
 
-  parseEvent.calenderToMarkdown({lang:req.user.getMainLang(),countryFlags:enableCountryFlags,duration:duration,date:date},function(err,result,errors){
+  parseEvent.calendarToMarkdown(
+    {lang:req.user.getMainLang(),
+      enableCountryFlags:enableCountryFlags,
+      duration:duration,
+      countries:countries,
+      date:date,
+      useGeoNames:useGeoNames},function(err,result,errors){
     if (err) return next(err);
     res.set('content-type', 'text/html');
-    res.render('calenderAsMarkdown',{calenderAsMarkdown:result,
+    res.render('calendarAsMarkdown',{calendarAsMarkdown:result,
                                 disablePrettify:disablePrettify,
+                                useGeoNames:useGeoNames,
                                 enableCountryFlags:enableCountryFlags,
                                 date:date,
+                                countries:countries,
                                 duration:duration,
                                 errors:errors,
-                                layout:res.rendervar.layout});  
+                                layout:res.rendervar.layout});
 
   });
 }
-function postCalenderAsMarkdown(req,res,next) {
-  debug('postCalenderAsMarkdown');
+
+function eventDateFormat(e,lang){
+  var sd = moment(e.startDate);
+  var ed = moment(e.endDate);
+  var dateString = "";
+  sd.locale(lang);
+  ed.locale(lang);
+
+  if (e.startDate) {
+    dateString = sd.format("L");
+  }
+  if (e.endDate) {
+    if ((e.startDate.getTime() !== e.endDate.getTime())) {
+      dateString = sd.format("L")+"-"+ed.format("L");
+    }
+  }
+  return dateString;
+}
+
+function flag(country,cf){
+  let c = country.toLowerCase();
+  if (cf[c]) return  "<img src='"+cf[c]+"'></img>";
+  return country;
+}
+
+function renderCalendarAllLang(req,res,next) {
+  debug('renderCalendarAllLang');
+  let eventsfilter = configModule.getConfig("eventsfilter");
+  let calendarFlags = configModule.getConfig("calendarflags");
+  let languages = res.rendervar.layout.activeLanguages;
+  let events = {};
+  let markdown={};
+  parseEvent.calendarToJSON({},function(err,result){
+    events = result.events;
+
+    async.parallel([
+      function para1(cb_para1) {
+        async.each(result.events,function(event,events_cb){
+          let allfilter = true;
+          async.each(languages,function(lang,lang_cb){
+            parseEvent.convertGeoName(event.town,lang,function(err,name){
+              if (err) return lang_cb(err);
+              event[lang]={};
+              event[lang].town = name;
+              let filter = {};
+              if (eventsfilter[lang]) filter = eventsfilter[lang];
+
+              event[lang].filtered = parseEvent.filterEvent(event,filter);
+              allfilter = allfilter && event[lang].filtered;
+
+              lang_cb();
+            });
+          },function(err){
+            event.all = {};
+            event.all.filtered = allfilter;
+            return events_cb(err);
+          });
+        },cb_para1);
+      },
+      function para2(cb_para2) {
+        async.each(languages, function (lang,lang_cb){
+          let filter = {};
+          if (eventsfilter[lang]) filter = eventsfilter[lang];
+          filter.lang = lang;
+          parseEvent.calendarJSONToMarkdown(result,filter,function(err,text){
+            if (err) return lang_cb(err);
+            markdown[lang]=text;
+            return lang_cb();
+          });
+
+        },cb_para2);
+      }
+      ],function(err) {
+      if (err) return next(err);
+      res.render("calendarAllLang.jade",{
+        layout:res.rendervar.layout,
+        events:events,
+        errors:result.errors,
+        flag:flag,
+        markdown:markdown,
+        eventsfilter:eventsfilter,
+        calendarFlags: calendarFlags,
+        eventDateFormat:eventDateFormat});
+      }
+    );
+  });
+}
+
+
+function postCalendarAsMarkdown(req,res,next) {
+  debug('postCalendarAsMarkdown');
   var disablePrettify = (req.body.disablePrettify=="true");
   var enableCountryFlags = req.body.enableCountryFlags;
+  var useGeoNames = req.body.useGeoNames;
   var duration = req.body.duration;
   var lang = moment.locale();
   moment.locale(req.user.getMainLang());
@@ -103,13 +207,14 @@ function postCalenderAsMarkdown(req,res,next) {
   var date = moment(req.body.date,"L").toISOString();
   moment.locale(lang);
 
-  req.session.calenderTool = {disablePrettify:disablePrettify,
+  req.session.calendarTool = {disablePrettify:disablePrettify,
                               date:date,
                               duration:duration,
+                              useGeoNames:useGeoNames,
                               enableCountryFlags:enableCountryFlags};
   req.session.save(function(err){
     if (err) return next(err);
-    res.redirect(config.getValue('htmlroot')+"/tool/calender2markdown");
+    res.redirect(config.getValue('htmlroot')+"/tool/calendar2markdown");
   });
 }
 
@@ -253,8 +358,9 @@ function postPictureTool(req,res,next) {
 }
 
 
-router.get('/calender2markdown', renderCalenderAsMarkdown);
-router.post('/calender2markdown', postCalenderAsMarkdown);
+router.get('/calendar2markdown', renderCalendarAsMarkdown);
+router.post('/calendar2markdown', postCalendarAsMarkdown);
+router.get('/calendarAllLang',renderCalendarAllLang);
 router.get('/picturetool', renderPictureTool);
 router.post('/picturetool', postPictureTool);
 

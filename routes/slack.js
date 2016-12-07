@@ -41,7 +41,7 @@ function ensureAuthentificated(req,res,next) {
   }
   userModule.find({SlackUser:req.body.user_name},function(err,user){
     if (err) {
-      console.log(err);
+      console.error(err);
       return next(err);
     }
     var obj = {};

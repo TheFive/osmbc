@@ -33,7 +33,7 @@ function coloredDiffLog(one,other) {
       part.removed ? 'red' : 'grey';
     process.stderr.write(part.value[color]);
   });
-  console.log();
+  console.info();
 }
 
 program
@@ -52,14 +52,14 @@ program
   .parse(process.argv);
 
 if (program.verbose) {
-  console.log("Using NODE_ENV "+config.env);
+  console.info("Using NODE_ENV "+config.env);
 }
 
 
 config.initialise();
 
 if (program.dropTable && process.env.NODE_ENV==="production") {
-  console.log("You are going to delete production tables, please do that manual in postgres");
+  console.error("You are going to delete production tables, please do that manual in postgres");
   process.exit();
 }
 
@@ -119,27 +119,27 @@ function analyseTable(pgObject,pgOptions,callback) {
       pgdone();
       var k;
       if (pgOptions.verbose) {
-        console.log("");
-        console.log("");
-        console.log("Checking Table",pgObject.table);
-        console.log(" Found indexes OK");
+        console.info("");
+        console.info("");
+        console.info("Checking Table",pgObject.table);
+        console.info(" Found indexes OK");
         for (k in foundOK) {
-          console.log("  "+k);
+          console.info("  "+k);
         }
-        console.log(" Found indexes Need Update");
+        console.info(" Found indexes Need Update");
         for (k in foundNOK) {
 
-          console.log("  "+k+" Difference:");
+          console.info("  "+k+" Difference:");
           coloredDiffLog(foundNOK[k],database[k]);
         }
-        console.log(" Missing indexes");
+        console.info(" Missing indexes");
         for (k in expected) {
-          console.log("  "+k);
+          console.info("  "+k);
           coloredDiffLog(expected[k],"");
         }
-        console.log(" Unnecessary indexes");
+        console.info(" Unnecessary indexes");
         for (k in foundUnnecessary) {
-          console.log("  "+k);
+          console.info("  "+k);
           coloredDiffLog("",foundUnnecessary[k]);
         }
       }
@@ -184,13 +184,13 @@ function clearDB(options,callback) {
 clearDB(pgOptions,function(){
   if (program.addUser) {
     userModule.createNewUser({OSMUser: program.addUser, access: "full"}, function (err, result) {
-      if (err) return console.log(err);
+      if (err) return console.error(err);
       result.save(function () {
-        console.log("User " + program.addUser + " created. Ready.")
+        console.info("User " + program.addUser + " created. Ready.");
       });
     });
   } else {
-    console.log("Ready...");
+    console.info("Ready...");
     process.exit(1);
   }
 });

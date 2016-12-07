@@ -191,7 +191,6 @@ describe('views/index', function() {
       ], function(err) {
         testutil.stopServer();
         should.exist(err);
-        console.log(err);
         browser.assert.status(500);
         browser.assert.text('h1', 'OSM User >TheFive< has no access rights');
 
