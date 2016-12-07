@@ -16,9 +16,12 @@ mixin countryRow(country)
     - each lang in layout.activeLanguages
       - li = config.getJSON()[lang]
       if li
-        if li.excludeCountries.toLowerCase().indexOf(country.toLowerCase())>=0
+        if li.excludeCountries && li.excludeCountries.toLowerCase().indexOf(country.toLowerCase())>=0
           td
             span.glyphicon.glyphicon-minus-sign
+        else if li.includeCountries && li.includeCountries.toLowerCase().indexOf(country.toLowerCase())>=0
+          td
+            span.glyphicon.glyphicon-plus-sign
         else
           td=""
       else
@@ -27,14 +30,18 @@ mixin countryRow(country)
 
 block showContentOfConfig
   - lang = layout.language
+  - let countries = {}
   if config.getJSON()
-    - let countries = {}
+
     - each l in layout.activeLanguages
-      if config.getJSON()[l]
+      if config.getJSON()[l] && config.getJSON()[l].excludeCountries
         - each c in config.getJSON()[l].excludeCountries.split(",")
           - countries[c]="exclude"
+      if config.getJSON()[l] && config.getJSON()[l].includeCountries
+        - each c in config.getJSON()[l].includeCountries.split(",")
+          - countries[c]="include"
 
-    .row
+  .row
       table.table.table-condensed
         thead
           tr
@@ -48,7 +55,6 @@ block showContentOfConfig
           +fieldRow("big_duration")
           +fieldRow("useGeoNames")
           +fieldRow("enableCountryFlags")
-          +fieldRow("disablePrettify")
           - each l,c in countries
             +countryRow(c)
 

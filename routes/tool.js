@@ -36,7 +36,7 @@ function renderPublicCalendar(req,res,next) {
 
   var layout = {bootstrap:bootstrap,htmlRoot:htmlRoot,path:layoutRouter.path};
 
-  parseEvent.calendarToMarkdown({lang:"EN",countryFlags:true,duration:'200'},function(err,result,errors){
+  parseEvent.calendarToMarkdown({lang:"EN",enableCountryFlags:true,duration:'200'},function(err,result,errors){
     if (err) return next(err);
     var preview = markdown.render(result);
     preview = preview.replace('<table>','<table class="table">');
@@ -76,7 +76,7 @@ function renderCalendarAsMarkdown(req,res,next) {
   if (sessionData) {
     disablePrettify = sessionData.disablePrettify;
     enableCountryFlags = sessionData.enableCountryFlags;
-    date = sessionData.date;
+    date = moment(sessionData.date);
 
     duration = sessionData.duration;
     if (sessionData.countries) countries = sessionData.countries;
@@ -87,7 +87,7 @@ function renderCalendarAsMarkdown(req,res,next) {
 
   parseEvent.calendarToMarkdown(
     {lang:req.user.getMainLang(),
-      countryFlags:enableCountryFlags,
+      enableCountryFlags:enableCountryFlags,
       duration:duration,
       countries:countries,
       date:date,
@@ -137,41 +137,61 @@ function renderCalendarAllLang(req,res,next) {
   let calendarFlags = configModule.getConfig("calendarflags");
   let languages = res.rendervar.layout.activeLanguages;
   let events = {};
+  let markdown={};
   parseEvent.calendarToJSON({},function(err,result){
     events = result.events;
-    async.each(result.events,function(event,events_cb){
-      let allfilter = true;
-      async.each(languages,function(lang,lang_cb){
-        parseEvent.convertGeoName(event.town,lang,function(err,name){
-          if (err) return lang_cb(err);
-          event[lang]={};
-          event[lang].town = name;
+
+    async.parallel([
+      function para1(cb_para1) {
+        async.each(result.events,function(event,events_cb){
+          let allfilter = true;
+          async.each(languages,function(lang,lang_cb){
+            parseEvent.convertGeoName(event.town,lang,function(err,name){
+              if (err) return lang_cb(err);
+              event[lang]={};
+              event[lang].town = name;
+              let filter = {};
+              if (eventsfilter[lang]) filter = eventsfilter[lang];
+
+              event[lang].filtered = parseEvent.filterEvent(event,filter);
+              allfilter = allfilter && event[lang].filtered;
+
+              lang_cb();
+            });
+          },function(err){
+            event.all = {};
+            event.all.filtered = allfilter;
+            return events_cb(err);
+          });
+        },cb_para1);
+      },
+      function para2(cb_para2) {
+        async.each(languages, function (lang,lang_cb){
           let filter = {};
           if (eventsfilter[lang]) filter = eventsfilter[lang];
+          filter.lang = lang;
+          parseEvent.calendarJSONToMarkdown(result,filter,function(err,text){
+            if (err) return lang_cb(err);
+            markdown[lang]=text;
+            return lang_cb();
+          });
 
-          event[lang].filtered = parseEvent.filterEvent(event,filter);
-          allfilter = allfilter && event[lang].filtered;
-
-          lang_cb();
-        });
-      },function(err){
-        event.all = {};
-        event.all.filtered = allfilter;
-        return events_cb(err);
-      });
-    },function didit(err){
+        },cb_para2);
+      }
+      ],function(err) {
       if (err) return next(err);
       res.render("calendarAllLang.jade",{
         layout:res.rendervar.layout,
         events:events,
+        errors:result.errors,
         flag:flag,
+        markdown:markdown,
         eventsfilter:eventsfilter,
         calendarFlags: calendarFlags,
         eventDateFormat:eventDateFormat});
-    });
+      }
+    );
   });
-
-
 }
 
 
@@ -180,7 +200,6 @@ function postCalendarAsMarkdown(req,res,next) {
   var disablePrettify = (req.body.disablePrettify=="true");
   var enableCountryFlags = req.body.enableCountryFlags;
   var useGeoNames = req.body.useGeoNames;
-  var countries = req.body.countries;
   var duration = req.body.duration;
   var lang = moment.locale();
   moment.locale(req.user.getMainLang());
@@ -192,8 +211,6 @@ function postCalendarAsMarkdown(req,res,next) {
                               date:date,
                               duration:duration,
                               useGeoNames:useGeoNames,
-                              countries:countries,
-
                               enableCountryFlags:enableCountryFlags};
   req.session.save(function(err){
     if (err) return next(err);

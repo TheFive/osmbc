@@ -5,6 +5,7 @@ var should  = require('should');
 var moment  = require("moment");
 var request = require("request");
 var markdown = require('markdown-it')();
+var config = require('../config.js');
 var configModule = require('../model/config.js');
 var async = require('async');
 
@@ -37,14 +38,14 @@ var regexList = [ {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *
   is in the current year. The window, to put the date in starts 50 days before now*/
 
 var _cache = {};
+var _geonamesUser = null;
 
 function convertGeoName(name,lang,callback) {
-  //http://api.geonames.org/searchJSON?q=M%C3%BCnchen&username=demo&maxRows=1
-  //http://api.geonames.org/searchJSON?q=M%C3%BCnchen&username=TheFive&maxRows=1&lang=RU
   if (lang === "JP") lang = "JA";
+  if (!_geonamesUser) _geonamesUser = config.getValue("GeonamesUser");
   let key = lang+"_"+name;
   if (_cache[key]) return callback(null,_cache[key]);
-  var requestString="http://api.geonames.org/searchJSON?q="+encodeURI(name)+"&username=TheFive&maxRows=1&lang="+lang;
+  var requestString="http://api.geonames.org/searchJSON?q="+encodeURI(name)+"&username="+_geonamesUser+"&maxRows=1&lang="+lang;
   request(requestString,function(err,response,body){
     if (err) return callback(err,null);
     var json = JSON.parse(body);
@@ -52,9 +53,11 @@ function convertGeoName(name,lang,callback) {
       _cache[key]=json.geonames[0].name;
       return callback(null,json.geonames[0].name);
     }
-    return callback(new Error("Bad Geonames Result for "+name+" in lang "+lang+"\n"+requestString));
+    else {
+      if (json.status) return callback(json.message, null);
+      else return callback(new Error("Bad Geonames Result for " + name + " in lang " + lang + "\n"));
+    }
   });
-
 }
 
 function nextDate(string,previousDate) {
@@ -284,9 +287,12 @@ function filterEvent(event,option) {
   if (event.endDate < from) filtered = true;
   if (event.startDate > to_for_big) filtered = true;
 
+  if (option.includeCountries &&
+    option.includeCountries.toLowerCase().indexOf(event.country.toLowerCase())<0) filtered = true;
 
   if (option.excludeCountries &&
     option.excludeCountries.toLowerCase().indexOf(event.country.toLowerCase())>=0) filtered = true;
+
 
   if (!event.big && new Date(event.startDate) > to) filtered = true;
   return filtered;
@@ -308,7 +314,7 @@ function calendarJSONToMarkdown2(json,countryFlags,ct,option,cb) {
   should(typeof(cb)).eql("function");
 
   var lang = option.lang;
-  var enableCountryFlags = option.countryFlags;
+  var enableCountryFlags = option.enableCountryFlags;
   let result = json;
 
   var events = [];
@@ -332,14 +338,14 @@ function calendarJSONToMarkdown2(json,countryFlags,ct,option,cb) {
 
 
     // first try to convert country flags:
-
-    if (e.country && enableCountryFlags) {
-      var country = e.country.toLowerCase();
-      if (countryFlags[country]) e.country = "!["+country+"]("+countryFlags[country]+")";
+    e.countryFlag = e.country;
+    if (e.countryFlag && enableCountryFlags) {
+      var country = e.countryFlag.toLowerCase();
+      if (countryFlags[country]) e.countryFlag = "!["+country+"]("+countryFlags[country]+")";
     }
     if (e.town) townLength = Math.max(e.town.length,townLength);
     if (e.markdown) descLength = Math.max(e.markdown.length,descLength);
-    if (e.country) countryLength = Math.max(e.country.length,countryLength);
+    if (e.countryFlag) countryLength = Math.max(e.countryFlag.length,countryLength);
     var dateString;
     var sd = moment(e.startDate);
     var ed = moment(e.endDate);
@@ -374,7 +380,7 @@ function calendarJSONToMarkdown2(json,countryFlags,ct,option,cb) {
     for (let i=0;i<events.length;i++) {
       var t = events[i].town;
       if (!t) t= "";
-      var c = events[i].country;
+      var c = events[i].countryFlag;
       if (!c) c="";
       result += "|"+wl(t,townLength)+"|"+wl(events[i].markdown,descLength)+"|"+wl(events[i].dateString,dateLength)+"|"+wl(c,countryLength)+"|\n";
     }

@@ -42,7 +42,10 @@ block content
               p="date " + eventsfilter[lang].date
               p="duration " + eventsfilter[lang].duration
               p="big duration " + eventsfilter[lang].big_duration
-              p="excludeCountries " + eventsfilter[lang].excludeCountries
+              if eventsfilter[lang].excludeCountries
+                p="excludeCountries " + eventsfilter[lang].excludeCountries
+              if  eventsfilter[lang].includeCountries
+                p="includeCountries " + eventsfilter[lang].includeCountries
 
             else
               p="Please define rules in admin zone."
@@ -82,13 +85,42 @@ block content
           td.lang(class="lang-#{lang}")
             if (!(article["markdown"+lang]))
               form(name="EditArticle",id="EditArticle#{article.id}#{lang}", action="#{layout.htmlroot}/article/#{article.id}/setMarkdown/#{lang}", method="post")
-                textarea.hidden.form-control(name="markdown" id="markdown" + article.id rows=7 onchange="onLeaveText(#{article.id});")="Nex Text"
+                textarea.hidden.form-control(name="markdown" id="markdown" + article.id rows=7 onchange="onLeaveText(#{article.id});")=markdown[lang]
                 textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{article.id}" rows=7 )=""
                 button.btn.btn-default(type="submit")="Store "+lang+" in "+blog.name
 
+  h3(onclick="$('.markdownPreview').toggleClass('hidden')")
+    span.glyphicon.glyphicon-triangle-right.markdownPreview
+    span.glyphicon.glyphicon-triangle-bottom.hidden.markdownPreview
+    span="Markdown"
+  div.hidden.markdownPreview
+    for lang in layout.activeLanguages
+      pre.lang(class="lang-#{lang}")=markdown[lang]
+  h3(onclick="$('.parserErrors').toggleClass('hidden')")
+    span.glyphicon.glyphicon-triangle-right.parserErrors
+    span.glyphicon.glyphicon-triangle-bottom.hidden.parserErrors
+    span="Parsing Problems"
+  pre.hidden.parserErrors=errors
+  h3(onclick="$('.filteredEvents').toggleClass('hidden')")
+    span.glyphicon.glyphicon-triangle-right.filteredEvents
+    span.glyphicon.glyphicon-triangle-bottom.hidden.filteredEvents
+    span="Filtered Events"
 
-  pre=JSON.stringify(events,null,2)
-
+  table.hidden.filteredEvents.table
+    - let emtpyLine=false;
+    for event in events
+      if event.all.filtered
+        - emptyLine = false;
+        tr
+          td=event.town
+          td=event.text
+          td=eventDateFormat(event,lang)
+          td=event.country
+      else
+        if !emptyLine
+          tr
+            td="..."
+        - emptyLine = true;
 
 block scripts
   script.
