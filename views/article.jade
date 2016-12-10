@@ -680,6 +680,7 @@ block scripts
    
     function convert(text) {
       converter = new window.markdownit({breaks:true});
+      if (!text) return "";
 
       // generate the OSMBlog Style List
       if (text.substring(0,2)=="* ") text = text.substring(2,999999);
@@ -810,6 +811,7 @@ block scripts
       var f = document.getElementById(field);
       if (!cl) cl = f;
       if (!f) return;
+      if (!md) return;
       if (md.indexOf("|----")>= 0) {
         f.wrap = 'off';
         f.style.fontFamily="monospace"
@@ -832,6 +834,8 @@ block scripts
       var md = document.getElementById(mdid).value;
       preview = document.getElementById(previewid);
       text = document.getElementById(textid);
+      if (!preview) return;
+      if (!text) return;
 
 
       checkForTable(mdid);
