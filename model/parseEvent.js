@@ -281,19 +281,19 @@ function filterEvent(event,option) {
     big_duration = parseInt(option.big_duration);
   }
   var from = date.clone();
-  var to = from.add(duration,'days');
-  var to_for_big = from.add(big_duration,'days');
+  var to = date.clone().add(duration,'days');
+  var to_for_big = date.clone().add(big_duration,'days');
 
   // until in two weeks
   let filtered=false;
 
-  if (endDate.isBefore(from)) filtered = true;
-  if (startDate.isAfter(  to_for_big)) filtered = true;
+  if (endDate.isBefore(from,"day")) filtered = true;
+  if (startDate.isAfter(  to_for_big,"day")) filtered = true;
 
-  if (option.includeCountries &&
+  if (option.includeCountries && event.country &&
     option.includeCountries.toLowerCase().indexOf(event.country.toLowerCase())<0) filtered = true;
 
-  if (option.excludeCountries &&
+  if (option.excludeCountries && event.country &&
     option.excludeCountries.toLowerCase().indexOf(event.country.toLowerCase())>=0) filtered = true;
 
 

@@ -327,20 +327,70 @@ describe('model/parseEvent',function() {
 
   });
   describe('filterEvent',function(){
-    it('should filter an event, if it is before or after start date and end Date',function(){
+    it('should filter a one day event, thats not big',function(){
+      let test = parseEvent.filterEvent;
       // clock is set to "2015-12-06" !!
-      let event = {startDate:"2015-12-05"};
       let option = {date:0,duration:14,big_duration:21};
-      let filtered = parseEvent.filterEvent(event,option);
-      should(filtered).be.True();
 
-      event = {startDate:"2015-12-04",endDate:"2015-12-05"};
-      filtered = parseEvent.filterEvent(event,option);
-      should(filtered).be.True();
+      should(test({startDate:"2015-12-05"},option)).be.True();
+      should(test({startDate:"2015-12-06"},option)).be.False();
+      should(test({startDate:"2015-12-08"},option)).be.False();
+      should(test({startDate:"2015-12-20"},option)).be.False();
+      should(test({startDate:"2015-12-31"},option)).be.True();
+    });
+    it('should filter a one day event, thats big',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21};
 
-      event = {startDate:"2015-12-17"};
-      filtered = parseEvent.filterEvent(event,option);
-      should(filtered).be.True();
+      should(test({startDate:"2015-12-05",big:true},option)).be.True();
+      should(test({startDate:"2015-12-06",big:true},option)).be.False();
+      should(test({startDate:"2015-12-08",big:true},option)).be.False();
+      should(test({startDate:"2015-12-27",big:true},option)).be.False();
+      should(test({startDate:"2015-12-31",big:true},option)).be.True();
+    });
+    it('should filter a three day event, thats not big',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21};
+      should(test({startDate:"2015-12-02",endDate:"2015-12-05"},option)).be.True();
+      should(test({startDate:"2015-12-05",endDate:"2015-12-07"},option)).be.False();
+      should(test({startDate:"2015-12-06",endDate:"2015-12-08"},option)).be.False();
+      should(test({startDate:"2015-12-20",endDate:"2015-12-23"},option)).be.False();
+      should(test({startDate:"2015-12-21",endDate:"2015-12-22"},option)).be.True();
+    });
+    it('should filter a three day event, thats big',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21};
+      should(test({startDate:"2015-12-02",endDate:"2015-12-05",big:true},option)).be.True();
+      should(test({startDate:"2015-12-05",endDate:"2015-12-07",big:true},option)).be.False();
+      should(test({startDate:"2015-12-06",endDate:"2015-12-08",big:true},option)).be.False();
+      should(test({startDate:"2015-12-20",endDate:"2015-12-23",big:true},option)).be.False();
+      should(test({startDate:"2015-12-27",endDate:"2015-12-29",big:true},option)).be.False();
+      should(test({startDate:"2015-12-28",endDate:"2015-12-31",big:true},option)).be.True();
+    });
+    it('should filter with included countries',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21,includeCountries:"germany"};
+
+      should(test({startDate:"2015-12-05",country:"germany",big:true},option)).be.True();
+      should(test({startDate:"2015-12-06",country:"germany",big:true},option)).be.False();
+      should(test({startDate:"2015-12-08",big:true},option)).be.False(); // no country given, filter does not work
+      should(test({startDate:"2015-12-08",country:"germany",big:true},option)).be.False();
+      should(test({startDate:"2015-12-08",country:"UK",big:true},option)).be.True();
+    });
+    it('should filter with excluded countries',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21,excludeCountries:"germany"};
+
+      should(test({startDate:"2015-12-05",country:"germany",big:true},option)).be.True();
+      should(test({startDate:"2015-12-06",country:"germany",big:true},option)).be.True();
+      should(test({startDate:"2015-12-08",big:true},option)).be.False(); // no country given, filter does not work
+      should(test({startDate:"2015-12-08",country:"germany",big:true},option)).be.True();
+      should(test({startDate:"2015-12-08",country:"UK",big:true},option)).be.False();
     });
   });
   describe('calendarToJSON',function(){
