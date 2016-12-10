@@ -1,5 +1,18 @@
 # Change Log
 
+## [2.0.10](https://github.com/TheFive/osmbc/tree/2.0.10) (2016-12-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.9...2.0.10)
+
+**Fixed bugs:**
+
+- Copying language from already closed source fails. \(using Copy EN-\>DE\) [\#572](https://github.com/TheFive/osmbc/issues/572)
+
+## [2.0.9](https://github.com/TheFive/osmbc/tree/2.0.9) (2016-11-26)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.8...2.0.9)
+
+## [2.0.8](https://github.com/TheFive/osmbc/tree/2.0.8) (2016-11-22)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.7...2.0.8)
+
 ## [2.0.7](https://github.com/TheFive/osmbc/tree/2.0.7) (2016-11-19)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.6...2.0.7)
 
@@ -372,13 +385,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
@@ -966,9 +979,6 @@
 - Blog - date [\#322](https://github.com/TheFive/osmbc/issues/322)
 - Display OSMUser in outgoing mail log. [\#319](https://github.com/TheFive/osmbc/issues/319)
 - Start mail subject with \[OSMBC\] [\#318](https://github.com/TheFive/osmbc/issues/318)
-
-**Closed issues:**
-
 - Make Test on Username / language case insensitive. [\#317](https://github.com/TheFive/osmbc/issues/317)
 
 ## [0.7.4](https://github.com/TheFive/osmbc/tree/0.7.4) (2016-02-11)
@@ -1105,7 +1115,7 @@
 ## [0.6.9](https://github.com/TheFive/osmbc/tree/0.6.9) (2016-01-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7a...0.6.9)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Document Source of Blog Creation. [\#284](https://github.com/TheFive/osmbc/issues/284)
 - Base calculation of new WN Number on non trash blogs startin with WN [\#281](https://github.com/TheFive/osmbc/issues/281)
@@ -1120,18 +1130,18 @@
 ## [0.6.8](https://github.com/TheFive/osmbc/tree/0.6.8) (2016-01-26)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7...0.6.8)
 
+**Implemented enhancements:**
+
+- Display name of all collectors in Blog Preview. [\#283](https://github.com/TheFive/osmbc/issues/283)
+
 **Fixed bugs:**
 
 - Changing a language after set a blog to review sets the new blog to review too. [\#282](https://github.com/TheFive/osmbc/issues/282)
 
-**Closed issues:**
-
-- Display name of all collectors in Blog Preview. [\#283](https://github.com/TheFive/osmbc/issues/283)
-
 ## [0.6.7](https://github.com/TheFive/osmbc/tree/0.6.7) (2016-01-26)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.6...0.6.7)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Add a Trash for blogs [\#280](https://github.com/TheFive/osmbc/issues/280)
 
@@ -1187,16 +1197,13 @@
 
 **Implemented enhancements:**
 
+- Add Link to google Skill Matrix in OSMBC. [\#264](https://github.com/TheFive/osmbc/issues/264)
 - Allow horizontal Scrolling for markdown that contains table. [\#202](https://github.com/TheFive/osmbc/issues/202)
 
 **Fixed bugs:**
 
 - Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
 - Add list to ALL users not only denied and full. [\#263](https://github.com/TheFive/osmbc/issues/263)
-
-**Closed issues:**
-
-- Add Link to google Skill Matrix in OSMBC. [\#264](https://github.com/TheFive/osmbc/issues/264)
 
 ## [0.6.1](https://github.com/TheFive/osmbc/tree/0.6.1) (2016-01-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.0...0.6.1)
@@ -1325,11 +1332,8 @@
 - Load public name from blog.openstreetmap.de for every author. [\#226](https://github.com/TheFive/osmbc/issues/226)
 - Switch to node.js 4.\(2.x\)  [\#225](https://github.com/TheFive/osmbc/issues/225)
 - Add a link to the generated Author text for the Weekly. [\#223](https://github.com/TheFive/osmbc/issues/223)
-- time controlled closing of collection - depending from our editorial deadline [\#221](https://github.com/TheFive/osmbc/issues/221)
-
-**Closed issues:**
-
 - translationXX views with orange highlights for untranslated entries [\#222](https://github.com/TheFive/osmbc/issues/222)
+- time controlled closing of collection - depending from our editorial deadline [\#221](https://github.com/TheFive/osmbc/issues/221)
 
 ## [0.4.7](https://github.com/TheFive/osmbc/tree/0.4.7) (2015-12-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6b...0.4.7)
@@ -1338,9 +1342,6 @@
 
 - Distinguish between proofreading in OSMBC and WP [\#215](https://github.com/TheFive/osmbc/issues/215)
 - Block in Review - Edit in Markdown should be possible [\#213](https://github.com/TheFive/osmbc/issues/213)
-
-**Closed issues:**
-
 - Review is done in wordpress, please document your review here. [\#212](https://github.com/TheFive/osmbc/issues/212)
 
 ## [0.4.6b](https://github.com/TheFive/osmbc/tree/0.4.6b) (2015-12-20)
@@ -1400,7 +1401,7 @@
 ## [0.4.2a](https://github.com/TheFive/osmbc/tree/0.4.2a) (2015-12-14)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.2...0.4.2a)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - Error with "translate from" for the image [\#196](https://github.com/TheFive/osmbc/issues/196)
 
@@ -1440,12 +1441,9 @@
 **Fixed bugs:**
 
 - Sometimes the Userobject instead of name is logged [\#191](https://github.com/TheFive/osmbc/issues/191)
+- It is rendering spaces that not exists [\#190](https://github.com/TheFive/osmbc/issues/190)
 - IsURL Regex fails for URL with \# [\#189](https://github.com/TheFive/osmbc/issues/189)
 - But there are not differences... [\#163](https://github.com/TheFive/osmbc/issues/163)
-
-**Closed issues:**
-
-- It is rendering spaces that not exists [\#190](https://github.com/TheFive/osmbc/issues/190)
 
 ## [0.3.12e](https://github.com/TheFive/osmbc/tree/0.3.12e) (2015-12-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12d...0.3.12e)
