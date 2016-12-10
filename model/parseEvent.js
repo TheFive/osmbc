@@ -261,11 +261,17 @@ function ll(length) {
 }
 
 function filterEvent(event,option) {
-  var date = new Date();
-  date.setDate(date.getDate()-3);
-  if (option.date && option.date!=="" && option.date!=="null") {
-    date = new Date(option.date);
+  var date = new moment();
+
+  var startDate = moment(event.startDate);
+  var endDate = startDate.clone();
+  if (typeof event.endDate !== "undefined") endDate = moment(event.endDate);
+
+  let diff = -3;
+  if (typeof option.date !== "undefined" && option.date!=="" && option.date!=="null") {
+    diff = option.date;
   }
+  date = date.add(diff,'day');
   var duration = 15;
   if (option.duration && option.duration !=="") {
     duration = parseInt(option.duration);
@@ -274,18 +280,15 @@ function filterEvent(event,option) {
   if (option.big_duration && option.big_duration!=="") {
     big_duration = parseInt(option.big_duration);
   }
-  var from = new Date(date);
-  var to = new Date(date);
-  var to_for_big = new Date(date);
+  var from = date.clone();
+  var to = from.add(duration,'days');
+  var to_for_big = from.add(big_duration,'days');
 
-  // get all Events from today
-  from.setDate(from.getDate());
   // until in two weeks
-  to.setDate(to.getDate()+duration);
-  to_for_big.setDate(to_for_big.getDate()+big_duration);
   let filtered=false;
-  if (event.endDate < from) filtered = true;
-  if (event.startDate > to_for_big) filtered = true;
+
+  if (endDate.isBefore(from)) filtered = true;
+  if (startDate.isAfter(  to_for_big)) filtered = true;
 
   if (option.includeCountries &&
     option.includeCountries.toLowerCase().indexOf(event.country.toLowerCase())<0) filtered = true;
@@ -294,7 +297,7 @@ function filterEvent(event,option) {
     option.excludeCountries.toLowerCase().indexOf(event.country.toLowerCase())>=0) filtered = true;
 
 
-  if (!event.big && new Date(event.startDate) > to) filtered = true;
+  if (!event.big &&  startDate.isAfter(to)) filtered = true;
   return filtered;
 
 }
@@ -320,11 +323,6 @@ function calendarJSONToMarkdown2(json,countryFlags,ct,option,cb) {
   var events = [];
   var errors = result.error;
 
-
-  for (let i=0;i<result.events.length;i++){
-    let event = result.events[i];
-    if (!filterEvent(event,option)) events.push(event);
-  }
   var townLength = 0;
   var descLength = 0;
   var dateLength = 0;
@@ -334,7 +332,15 @@ function calendarJSONToMarkdown2(json,countryFlags,ct,option,cb) {
 
   // events.sort(function cmpEvent(a,b){return a.startDate - b.startDate;});
 
-  async.eachSeries(events,function(e,callback){
+  async.eachSeries(result.events,function(event,callback){
+    let e={};
+    e.country=event.country;
+    e.town = event.town;
+    e.startDate = event.startDate
+    e.endDate = event.endDate;
+    e.markdown = event.markdown;
+    if (!filterEvent(event,option)) events.push(e); else return callback();
+
 
 
     // first try to convert country flags:

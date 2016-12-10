@@ -326,6 +326,23 @@ describe('model/parseEvent',function() {
     });
 
   });
+  describe('filterEvent',function(){
+    it('should filter an event, if it is before or after start date and end Date',function(){
+      // clock is set to "2015-12-06" !!
+      let event = {startDate:"2015-12-05"};
+      let option = {date:0,duration:14,big_duration:21};
+      let filtered = parseEvent.filterEvent(event,option);
+      should(filtered).be.True();
+
+      event = {startDate:"2015-12-04",endDate:"2015-12-05"};
+      filtered = parseEvent.filterEvent(event,option);
+      should(filtered).be.True();
+
+      event = {startDate:"2015-12-17"};
+      filtered = parseEvent.filterEvent(event,option);
+      should(filtered).be.True();
+    });
+  });
   describe('calendarToJSON',function(){
 
     before(function(){
