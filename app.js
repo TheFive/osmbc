@@ -7,6 +7,7 @@ var favicon      = require('serve-favicon');
 var logger       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
+var async        = require('async');
 
 var debug = require('debug')('OSMBC:app');
 var passport     = require('passport');
@@ -151,13 +152,19 @@ function ensureAuthenticated(req, res, next) {
     });
     return;
   }
-
-  if (!req.session.returnTo ) {
-    console.info("Setting session return to to "+req.originalUrl);
-    req.session.returnTo = req.originalUrl;
-
-  }
-  res.redirect(htmlRoot+'/auth/openstreetmap');
+  async.series([
+    function saveReturnTo(cb) {
+      if (!req.session.returnTo ) {
+        console.log("Setting session return to to "+req.originalUrl);
+        req.session.returnTo = req.originalUrl;
+        return req.session.save(cb);
+      }
+      return cb();
+    }
+  ],function(err){
+    if (err) return next(err);
+    res.redirect(htmlRoot+'/auth/openstreetmap');
+  });
 }
 
 
