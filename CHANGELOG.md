@@ -1,5 +1,22 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.0...HEAD)
+
+**Implemented enhancements:**
+
+- Vorbesetzung von Wochenvorschau  [\#583](https://github.com/TheFive/osmbc/issues/583)
+- Event Tool: Translate City Names with geonames Database [\#578](https://github.com/TheFive/osmbc/issues/578)
+- fill empty pictures and releases articles generated automatic with table header. [\#466](https://github.com/TheFive/osmbc/issues/466)
+
+## [2.1.0](https://github.com/TheFive/osmbc/tree/2.1.0) (2016-12-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.10...2.1.0)
+
+**Fixed bugs:**
+
+- links in edit-mode of an article disappear if one the two languages is closed [\#589](https://github.com/TheFive/osmbc/issues/589)
+
 ## [2.0.10](https://github.com/TheFive/osmbc/tree/2.0.10) (2016-12-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.9...2.0.10)
 
@@ -9,6 +26,10 @@
 
 ## [2.0.9](https://github.com/TheFive/osmbc/tree/2.0.9) (2016-11-26)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.8...2.0.9)
+
+**Implemented enhancements:**
+
+- Small triangle if lines can be unfold \(as hint thats possible\) for change list [\#584](https://github.com/TheFive/osmbc/issues/584)
 
 ## [2.0.8](https://github.com/TheFive/osmbc/tree/2.0.8) (2016-11-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.7...2.0.8)
@@ -385,13 +406,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
