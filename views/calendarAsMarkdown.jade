@@ -46,10 +46,6 @@ block content
 
 
       .col-md-2
-          - var pd = new Date();
-          - pd.setDate(pd.getDate()-3)
-          - if (date && date==="null") date =""
-          - if (date && date!=="") date = layout.moment(date).locale(layout.language).format("L")
           input(id='date',name="date", value=date, placeholder=layout.moment(pd).locale(layout.language).format("L"))
       .col-md-2
         input(id='duration',name="duration" value=duration placeholder='24')

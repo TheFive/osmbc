@@ -76,14 +76,12 @@ function renderCalendarAsMarkdown(req,res,next) {
   if (sessionData) {
     disablePrettify = sessionData.disablePrettify;
     enableCountryFlags = sessionData.enableCountryFlags;
-    date = moment(sessionData.date);
+    date = sessionData.date;
 
     duration = sessionData.duration;
     if (sessionData.countries) countries = sessionData.countries;
     if (sessionData.useGeoNames) useGeoNames = sessionData.useGeoNames;
   }
-
-  if (!moment(date).isValid()) date = "";
 
   parseEvent.calendarToMarkdown(
     {lang:req.user.getMainLang(),
@@ -201,11 +199,8 @@ function postCalendarAsMarkdown(req,res,next) {
   var enableCountryFlags = req.body.enableCountryFlags;
   var useGeoNames = req.body.useGeoNames;
   var duration = req.body.duration;
-  var lang = moment.locale();
-  moment.locale(req.user.getMainLang());
 
-  var date = moment(req.body.date,"L").toISOString();
-  moment.locale(lang);
+  var date = req.body.date;
 
   req.session.calendarTool = {disablePrettify:disablePrettify,
                               date:date,

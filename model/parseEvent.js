@@ -71,10 +71,7 @@ function nextDate(string,previousDate) {
     // it should be avoided in wiki to have date jumps more than 5 month !
     startBefore = 170;
   }
-  if (exports.fortestonly && exports.fortestonly.currentdate) {
-    now = new Date(exports.fortestonly.currentdate);
 
-  }
 
   now.setDate(now.getDate()-startBefore);
 
@@ -263,13 +260,16 @@ function ll(length) {
 function filterEvent(event,option) {
   var date = new moment();
 
+
+
   var startDate = moment(event.startDate);
   var endDate = startDate.clone();
   if (typeof event.endDate !== "undefined") endDate = moment(event.endDate);
 
   let diff = -3;
-  if (typeof option.date !== "undefined" && option.date!=="" && option.date!=="null") {
-    diff = option.date;
+  let optionDiff = parseInt(option.date);
+  if (!Number.isNaN(optionDiff) ) {
+    diff = optionDiff;
   }
   date = date.add(diff,'day');
   var duration = 15;
@@ -303,8 +303,9 @@ function filterEvent(event,option) {
 }
 
 function calendarToMarkdown2(countryFlags,ct,option,cb) {
-  debug('calendarToMarkdown');
+  debug('calendarToMarkdown2');
   should(typeof(cb)).eql("function");
+
 
   calendarToJSON({}, function(error, result) {
     if (error) cb(error);
@@ -313,7 +314,7 @@ function calendarToMarkdown2(countryFlags,ct,option,cb) {
 }
 
 function calendarJSONToMarkdown2(json,countryFlags,ct,option,cb) {
-  debug('calendarToMarkdown');
+  debug('calendarJSONToMarkdown2');
   should(typeof(cb)).eql("function");
 
   var lang = option.lang;
@@ -524,6 +525,4 @@ exports.parseWikiInfo = parseWikiInfo;
 
 
 
-exports.fortestonly = {};
-exports.fortestonly.currentdate = null;
 

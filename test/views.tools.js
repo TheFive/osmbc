@@ -5,10 +5,11 @@ var testutil = require('./testutil.js');
 var nock = require("nock");
 var should  = require('should');
 var path = require('path');
+var mockdate = require('mockdate');
+var moment = require('moment');
 
 
 var userModule = require("../model/user.js");
-var parseEvent = require('../model/parseEvent.js');
 
 
 
@@ -29,7 +30,7 @@ describe('views/tools', function() {
   });
   before(function(){
     var fileName = path.join(__dirname,'/data/calendarData.wiki');
-    parseEvent.fortestonly.currentdate = new Date('2016-02-05');
+    mockdate.set('2015-11-05');
 
     nock('https://wiki.openstreetmap.org')
      .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
@@ -37,7 +38,7 @@ describe('views/tools', function() {
      .replyWithFile(200,fileName);
   });
   after(function(){
-    parseEvent.fortestonly.currentdate = null;
+    mockdate.reset();
   });
   afterEach(function(){
     testutil.stopServer();
@@ -60,8 +61,9 @@ describe('views/tools', function() {
         browser.visit('/tool/calendar2markdown', cb);
       },
       function fillValues(cb) {
+        let date = moment("2016-03-10").diff(moment('2015-11-05'),'days');
         browser
-          .fill("date","03/10/2016")
+          .fill("date",date)
           .fill("duration","24")
           .pressButton("OK",cb);
       },
