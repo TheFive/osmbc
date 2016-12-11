@@ -34,7 +34,7 @@ describe('views/tools', function() {
 
     nock('https://wiki.openstreetmap.org')
      .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
-     .times(2)
+     .times(3)
      .replyWithFile(200,fileName);
   });
   after(function(){
