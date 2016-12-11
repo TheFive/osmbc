@@ -12,8 +12,6 @@ var config = require('../config.js');
 function isServerUp(req,res,next) {
   debug('isServerUp');
   var apiKey = req.params.apiKey;
-  console.log(apiKey);
-  console.log(config.getValue("ApiKey"));
   if (apiKey != config.getValue("apiKey")) {
     let err = new Error("Not Authorised");
     err.status = 401;

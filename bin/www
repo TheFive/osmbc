@@ -48,14 +48,14 @@ function initialiseServer() {
   },
     function(err){
       if (err) {
-        console.log(err);
+        console.error(err);
         process.exit(1);
         return;
       }
       server.listen(port);
       server.on('error', onError);
       server.on('listening', onListening);
-      console.log("Server Listening on port "+port);
+      console.info("Server Listening on port "+port);
   })
 }
 
@@ -70,7 +70,7 @@ function startMailReceiver(callback) {
       return callback(new Error("Error during User Initialising for Mail "+err.message));
     }
     mailReceiver.initialise(result);
-    console.log("Mail Receiver initialised.");
+    console.info("Mail Receiver initialised.");
     return callback();
   });
 }
@@ -88,7 +88,7 @@ function startBlogTimer(callback) {
       console.dir(err);
       return callback(new Error("Error during Blog Timers Start "+err.message));
     }
-    console.log("Timer for Auto Close started");
+    console.info("Timer for Auto Close started");
     return callback();
   });
 }

@@ -87,7 +87,7 @@ Blog.prototype.setAndSave = function setAndSave(user,data,callback) {
         if (value === self[key]) continue;
         if (value === '' && typeof(self[key])==='undefined') continue;
         if (Blog.prototype.hasOwnProperty(key)) {
-          console.log("WARNING: Do not store "+data[key]+" for property "+key+" for Blog ID "+self.id);
+          console.info("WARNING: Do not store "+data[key]+" for property "+key+" for Blog ID "+self.id);
           continue;
         }
         if (typeof(value)=='object') {
@@ -717,6 +717,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
   self._unsolvedComments = {};
 
   self._usedLanguages = {};
+  self._upcomingEvents = null;
   var mainLang = user.mainLang;
   var secondLang = user.secondLang;
   var i,j;
@@ -741,6 +742,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
         for (j = 0; j < result.length; j++) {
           let article= result[j];
           var c = article.categoryEN;
+          if (c =="Upcoming Events") self._upcomingEvents = article;
           if (c == "--unpublished--") continue;
           self._countExpectedMarkdown[l] += 1;
           var m = article["markdown" + l];
@@ -877,9 +879,7 @@ Blog.prototype.startCloseTimer = function startCloseTimer() {
   if (this.status!="open") return;
   if (this.endDate) {
     var date = new Date(this.endDate);
-    console.log("Setting timer to "+date);
     _allTimer[this.id] = schedule.scheduleJob(date,function(){
-      console.log("Timer Called");
       exports.autoCloseBlog(function(){});
     });
   }

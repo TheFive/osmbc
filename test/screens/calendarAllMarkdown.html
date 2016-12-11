@@ -1,0 +1,402 @@
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+    <title>TESTBC</title>
+    <!-- Bootstrap core CSS-->
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Fixed navbar-->
+    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header pull-left"><a href="/changelog" class="bg-success navbar-brand hidden-xs">Whats New?</a>
+          <ul class="nav navbar-nav pull-left">
+            <li><a href="/article/create">Collect</a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-left">
+            <li><a href="/usert/inbox">Inbox </a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-left visible-xs">
+          </ul>
+        </div>
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
+            </li>
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Articles</li>
+                <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Collections</a></li>
+                <li class="dropdown-header">Orphaned Article
+                  </li><li><a href="/article/list?blog=">No Blog</a></li>
+                
+              </ul>
+            </li>
+            <li class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Markdown Helper</li>
+                <li><a href="/tool/calendar2markdown">OSM Calendar2Markdown</a></li>
+                <li><a href="/tool/calendarAllLang">NEW: Calendar Tool</a></li>
+                <li><a href="/tool/picturetool">Picture Tool</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">About The Team
+                  </li><li><a href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a></li>
+                
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">OSMBC</li>
+                <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
+                <li><a href="https://thefive.info//osmww/wiki/OSMBC-Help">Help</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">WeeklyOSM &amp; Wochennotiz</li>
+                <li><a href="https://thefive.info/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a></li>
+                <li><a href="https://thefive.info//osmww/wiki/Editorial-Meeting">Editorial Meetings</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotitz in OSM Wiki</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="/language?lang2=none">none</a></li>
+              </ul>
+            </li>
+            <li><a href="/usert/1">TheFive</a></li>
+          </ul>
+          <!-- /.nav-collapse-->
+          
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <p>
+        </p><h1>Ompidompi</h1>
+        <div class="row">
+          <div class="col-md-4">
+            <h4><span onclick="$('.add-info').toggle(1000);" class="label label-default">Draft/Final</span>
+            </h4>
+          </div>
+          <div class="col-md-8">
+          </div>
+        </div>
+        <table class="table-condensed">
+          <colgroup>
+            <col class="col-md-3">
+            <col class="col-md-3">
+            <col class="col-md-3">
+            <col class="col-md-1">
+            <col class="col-md-1">
+            <col class="col-md-1">
+          </colgroup>
+        </table>
+        <h3 onclick="$('.markdownPreview').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right markdownPreview"></span><span class="glyphicon glyphicon-triangle-bottom hidden markdownPreview"></span><span>Markdown</span></h3>
+        <div class="hidden markdownPreview">
+        </div>
+        <h3 onclick="$('.parserErrors').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right parserErrors"></span><span class="glyphicon glyphicon-triangle-bottom hidden parserErrors"></span><span>Parsing Problems</span></h3>
+        <pre class="hidden parserErrors">
+
+Unrecognized
+| {{cal|info}} || {{dm|Nov 28}} || [[Foundation/AGM15/Election_to_Board|Foundation board elections]] voting starts (approx. await email instructions)
+| {{cal|social}} || {{dm|Nov 28}} || 第零次新竹小聚 HsinChu Meetup #0, [[Taiwan]] {{SmallFlag|Taiwan}}
+| {{cal|social}} || {{dm|Dec 1}} || [[Rostocker Treffen]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Dec 2}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Dec 3}} || [[Stammtisch Dresden]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Dresden|Dresden Stadtwappen.svg}}
+| {{cal|social}} || {{dm|Dec 3}} || [[Wien/Stammtisch|53. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}
+| {{cal|social}} || {{dm|Dec 3}} || [[Mappa Mercia#Events|Mappa Mercia]], [[United Kingdom]] {{SmallFlag|United Kingdom}}
+| {{cal|social}} || {{dm|Dec 3}} || [[Lübecker Mappertreffen|Lübecker Mappertreffen]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|info}} || {{dm|Dec 5}} || [[Foundation/AGM15/Election_to_Board|Foundation board elections]] voting closes
+| {{cal|info}} || {{dm|Dec 5}} || [[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]]
+| {{cal|social}} || {{dm|Dec 8}} || [[Edinburgh#Social Events|Edinburgh]], [[Scotland]] {{SmallFlag|Scotland}}
+| {{cal|social}} || {{dm|Dec 8}} || [[Hamburger Mappertreffen|Hamburger Mappertreffen]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Dec 10}} || [[München#Regelmäßiger Treff|OSM-Stammtisch München]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|München|Muenchen Kleines Stadtwappen.svg}}
+| {{cal|social}} || {{dm|Dec 10}} || [[Innsbruck/Stammtisch|Stammtisch Innsbruck]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Tirol|Tirol Wappen.svg}}
+| {{cal|social}} || {{dm|Dec 11}} || [[Berlin/Stammtisch|90. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Dec 14}} || [[Passau/Mappertreffen|Mappertreffen Passau]], [[Germany]] {{SmallFlag|Germany}}{{SmallFlag|Passau|Wappen Passau.svg}}
+| {{cal|social}} || {{dm|Dec 15}} || [[Nottingham/Pub Meetup|Nottingham]], [[England]] {{SmallFlag|England}}
+| {{cal|social}} || {{dm|Dec 16}} || [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}
+| {{cal|social}} || {{dm|Dec 21}} || [[Graz/Stammtisch|Stammtisch Graz]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Steiermark|Steiermark Wappen.svg}}
+| {{cal|social}} || {{dm|Dec 30}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Düsseldorf|Dus4c_full_(1).jpg}}
+| {{cal|social}} || {{dm|Jan 6}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Jan 7}} || [[Wien/Stammtisch|54. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}
+| {{cal|social}} || {{dm|Jan 14}} || [[Berlin/Stammtisch|91. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Jan 20}} || [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}
+| {{cal|social}} || {{dm|Jan 25}} || [[Graz/Stammtisch|Stammtisch Graz]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Steiermark|Steiermark Wappen.svg}}
+| {{cal|social}} || {{dm|Feb 3}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Feb 11}} || [[Wien/Stammtisch|55. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}
+| {{cal|social}} || {{dm|Feb 12}} || [[Berlin/Stammtisch|92. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Feb 17}} || [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}
+| {{cal|social}} || {{dm|Feb 22}} || [[Graz/Stammtisch|Stammtisch Graz]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Steiermark|Steiermark Wappen.svg}}
+| {{cal|social}} || {{dm|Mar 2}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Mar 3}} || [[Wien/Stammtisch|56. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}
+| {{cal|social}} || {{dm|Mar 10}} || [[Berlin/Stammtisch|93. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Mar 16}} || [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}
+| {{cal|social}} || {{dm|Apr 6}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Apr 8}} || [[Berlin/Stammtisch|94. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|May 4}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|May 12}} || [[Berlin/Stammtisch|95. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Jun 1}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Jun 10}} || [[Berlin/Stammtisch|96. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Jul 6}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Jul 14}} || [[Berlin/Stammtisch|97. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Aug 3}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Aug 12}} || [[Berlin/Stammtisch|98. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Sep 7}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Sep 8}} || [[Berlin/Stammtisch|99. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Oct 5}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Oct 14}} || [[Berlin/Stammtisch|100. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Nov 2}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Nov 10}} || [[Berlin/Stammtisch|Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Dec 7}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Dec 9}} || [[Berlin/Stammtisch|Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Jan 5}} || Stammtisch / OSM Treffen [[Münster]], [[Germany]] {{SmallFlag|Germany}}
+| {{cal|social}} || {{dm|Jan 18}} || Stammtisch / OSM Treffen [[Osnabrück]], [[Germany]] {{SmallFlag|Germany}}
+</pre>
+        <h3 onclick="$('.filteredEvents').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right filteredEvents"></span><span class="glyphicon glyphicon-triangle-bottom hidden filteredEvents"></span><span>Filtered Events</span></h3>
+        <table class="hidden filteredEvents table">
+          <tbody><tr>
+            <td>Zaragoza</td>
+            <td>Curso de OpenStreetMap</td>
+            <td>11/16/2015-11/30/2015</td>
+            <td>Spain</td>
+          </tr>
+          <tr>
+            <td>Hamburg</td>
+            <td>PGConf.DE (Deutschsprachige PostgreSQL Konferenz) 2015</td>
+            <td>11/26/2015-11/27/2015</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Taipei</td>
+            <td>OpenStreetMap Taipei Meetup, Mozilla Community Space</td>
+            <td>11/30/2015</td>
+            <td>Taiwan</td>
+          </tr>
+          <tr>
+            <td>Maipú</td>
+            <td>Segunda Jornada del Software Libre</td>
+            <td>12/01/2015</td>
+            <td>Chile</td>
+          </tr>
+          <tr>
+            <td>London</td>
+            <td>Missing Maps</td>
+            <td>12/01/2015</td>
+            <td>United Kingdom</td>
+          </tr>
+          <tr>
+            <td>Viersen</td>
+            <td>OSM Stammtisch Viersen</td>
+            <td>12/01/2015</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Essen</td>
+            <td>Mappertreffen Essen</td>
+            <td>12/07/2015</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lyon</td>
+            <td>Rencontre mensuelle mappeurs</td>
+            <td>12/09/2015</td>
+            <td>France</td>
+          </tr>
+          <tr>
+            <td>Santiago</td>
+            <td>Hackatón Santiago 2015</td>
+            <td>12/09/2015</td>
+            <td>Chile</td>
+          </tr>
+          <tr>
+            <td>Rennes</td>
+            <td>Rencontres mensuelles</td>
+            <td>12/14/2015</td>
+            <td>France</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>12/15/2015</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Bonn</td>
+            <td>Bonner Stammtisch</td>
+            <td>12/15/2015</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Urspring</td>
+            <td>Stammtisch Ulmer Alb</td>
+            <td>12/17/2015</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Taipei</td>
+            <td>OpenStreetMap Taipei Meetup, Mozilla Community Space</td>
+            <td>12/28/2015</td>
+            <td>Taiwan</td>
+          </tr>
+          <tr>
+            <td>Bremen</td>
+            <td>Bremer Mappertreffen</td>
+            <td>12/28/2015</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>01/19/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Bremen</td>
+            <td>Bremer Mappertreffen</td>
+            <td>01/25/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>02/16/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Bremen</td>
+            <td>Bremer Mappertreffen</td>
+            <td>02/22/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>03/15/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Bremen</td>
+            <td>Bremer Mappertreffen</td>
+            <td>03/28/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>04/19/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Bremen</td>
+            <td>Bremer Mappertreffen</td>
+            <td>04/25/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>05/17/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Bremen</td>
+            <td>Bremer Mappertreffen</td>
+            <td>05/23/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>06/21/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Bremen</td>
+            <td>Bremer Mappertreffen</td>
+            <td>12/27/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>07/19/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>08/16/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Bonn</td>
+            <td>FOSS4G 2016</td>
+            <td>08/24/2016-08/26/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>09/20/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>10/18/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>11/15/2016</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Lüneburg</td>
+            <td>Mappertreffen Lüneburg</td>
+            <td>12/20/2016</td>
+            <td>Germany</td>
+          </tr>
+        </tbody></table>
+      <p></p>
+      <p></p>
+    </div>
+    <!-- /container-->
+    <!-- Bootstrap core JavaScript-->
+    <!-- ==================================================-->
+    <!-- Placed at the end of the document so the pages load faster-->
+    <!--link(rel='stylesheet', href='#{layout.bootstrap}/css/bootstrap.min.css')-->
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  
+
+
+  
+    <title></title>
+    <link rel="stylesheet" href="stylesheets/style.css">
+  
+  
+
+<script>
+  $(document).ready(function(){
+    var lang = "EN";
+  
+    $('.lang').addClass('hidden');
+    $('.lang-'+lang).removeClass('hidden');
+  });
+</script></body></html>
