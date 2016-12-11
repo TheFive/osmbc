@@ -336,7 +336,7 @@ function calendarJSONToMarkdown2(json,countryFlags,ct,option,cb) {
     let e={};
     e.country=event.country;
     e.town = event.town;
-    e.startDate = event.startDate
+    e.startDate = event.startDate;
     e.endDate = event.endDate;
     e.markdown = event.markdown;
     if (!filterEvent(event,option)) events.push(e); else return callback();

@@ -265,7 +265,7 @@ describe('model/parseEvent',function() {
         .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
 
         .replyWithFile(200,fileName);
-      parseEvent.calendarToMarkdown({lang:"DE",date:new Date("11/28/2015"),duration:"14"},function(err,result){
+      parseEvent.calendarToMarkdown({lang:"DE",date:0,duration:"14"},function(err,result){
         should.not.exist(err);
         var expected = fs.readFileSync(path.join(__dirname,'/data/calendar.markup'),"utf8");
         should(result).equal(expected);
