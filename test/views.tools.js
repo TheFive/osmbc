@@ -88,6 +88,25 @@ describe('views/tools', function() {
       });
     });
   });
+  it('should open new tool' ,function(bddone) {
+    this.timeout(20000);
+
+
+    async.series([
+      function setLanguage (cb) {
+        browser.visit('/osmbc.html', cb);
+      },
+      function setLanguage (cb) {
+        browser.visit('/language?lang=EN', cb);
+      },
+      function visitCalendar (cb) {
+        browser.visit('/tool/calendarAllLang', cb);
+      }
+    ],function(err){
+      should.not.exist(err);
+      browser.assert.expectHtml.call(browser,"calendarAllMarkdown.html",bddone);
+    });
+  });
   it('should use picture tool' ,function(bddone) {
     this.timeout(29000);
     var fileName = path.join(__dirname,'/data/picture.jpg');
