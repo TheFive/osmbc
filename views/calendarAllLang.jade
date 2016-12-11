@@ -71,7 +71,7 @@ block content
           for lang in layout.activeLanguages
             +eventRowLang(lang,event)
     for blog in layout.listOfEditBlog
-      - let article = blog._upcomingEvents
+      - var article = blog._upcomingEvents
 
       tr
         td
@@ -107,7 +107,7 @@ block content
     span="Filtered Events"
 
   table.hidden.filteredEvents.table
-    - let emtpyLine=false;
+    - var emtpyLine=false;
     for event in events
       if event.all.filtered
         - emptyLine = false;
