@@ -4,7 +4,7 @@ mixin fieldRow(field)
   tr
     td=field
     - each lang in layout.activeLanguages
-      - let li = config.getJSON()[lang]
+      - var li = config.getJSON()[lang]
       if li
         td=li[field]
       else
@@ -30,7 +30,7 @@ mixin countryRow(country)
 
 block showContentOfConfig
   - lang = layout.language
-  - let countries = {}
+  - var countries = {}
   if config.getJSON()
 
     - each l in layout.activeLanguages
