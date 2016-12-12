@@ -25,8 +25,7 @@ mixin eventRowLang(lang,event)
 
 
 block content
-  h1
-    | Ompidompi
+  h1="New Calendar Tool"
   .row
     .col-md-4
       h4
@@ -49,8 +48,13 @@ block content
 
             else
               p="Please define rules in admin zone."
+  h3(onclick="$('.tablePreview').toggleClass('hidden')")
+    span.glyphicon.glyphicon-triangle-right.hidden.tablePreview
+    span.glyphicon.glyphicon-triangle-bottom.tablePreview
+    span=" Table Preview"
 
-  table.table-condensed
+
+  table.table-condensed.tablePreview
     colgroup
       col.col-md-3
       col.col-md-3
@@ -70,7 +74,13 @@ block content
                   span.label.label-info=lang
           for lang in layout.activeLanguages
             +eventRowLang(lang,event)
-    for blog in layout.listOfEditBlog
+  h3(onclick="$('.editBlock').toggleClass('hidden')")
+    span.glyphicon.glyphicon-triangle-right.editBlock
+    span.glyphicon.glyphicon-triangle-bottom.hidden.editBlock
+    span=" Edit Block"
+
+  table.table-condensed.editBlock
+    for blog in layout.editBlog
       - var article = blog._upcomingEvents
 
       tr
@@ -83,7 +93,7 @@ block content
             +languageDisplay(article)
         for lang in layout.activeLanguages
           td.lang(class="lang-#{lang}")
-            if (!(article["markdown"+lang]))
+            if (!(article["markdown"+lang]) && blog.isEditable(lang))
               form(name="EditArticle",id="EditArticle#{article.id}#{lang}", action="#{layout.htmlroot}/article/#{article.id}/setMarkdown/#{lang}", method="post")
                 textarea.hidden.form-control(name="markdown" id="markdown" + article.id rows=7 onchange="onLeaveText(#{article.id});")=markdown[lang]
                 textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{article.id}" rows=7 )=""
@@ -92,7 +102,7 @@ block content
   h3(onclick="$('.markdownPreview').toggleClass('hidden')")
     span.glyphicon.glyphicon-triangle-right.markdownPreview
     span.glyphicon.glyphicon-triangle-bottom.hidden.markdownPreview
-    span="Markdown"
+    span=" Markdown"
   div.hidden.markdownPreview
     for lang in layout.activeLanguages
       pre.lang(class="lang-#{lang}")=markdown[lang]
@@ -104,7 +114,7 @@ block content
   h3(onclick="$('.filteredEvents').toggleClass('hidden')")
     span.glyphicon.glyphicon-triangle-right.filteredEvents
     span.glyphicon.glyphicon-triangle-bottom.hidden.filteredEvents
-    span="Filtered Events"
+    span=" Filtered Events"
 
   table.hidden.filteredEvents.table
     - var emtpyLine=false;

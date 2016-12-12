@@ -85,7 +85,7 @@
     </div>
     <div class="container-fluid">
       <p>
-        </p><h1>Ompidompi</h1>
+        </p><h1>New Calendar Tool</h1>
         <div class="row">
           <div class="col-md-4">
             <h4><span onclick="$('.add-info').toggle(1000);" class="label label-default">Draft/Final</span>
@@ -94,7 +94,8 @@
           <div class="col-md-8">
           </div>
         </div>
-        <table class="table-condensed">
+        <h3 onclick="$('.tablePreview').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right hidden tablePreview"></span><span class="glyphicon glyphicon-triangle-bottom tablePreview"></span><span> Table Preview</span></h3>
+        <table class="table-condensed tablePreview">
           <colgroup>
             <col class="col-md-3">
             <col class="col-md-3">
@@ -104,7 +105,10 @@
             <col class="col-md-1">
           </colgroup>
         </table>
-        <h3 onclick="$('.markdownPreview').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right markdownPreview"></span><span class="glyphicon glyphicon-triangle-bottom hidden markdownPreview"></span><span>Markdown</span></h3>
+        <h3 onclick="$('.editBlock').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right editBlock"></span><span class="glyphicon glyphicon-triangle-bottom hidden editBlock"></span><span> Edit Block</span></h3>
+        <table class="table-condensed editBlock">
+        </table>
+        <h3 onclick="$('.markdownPreview').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right markdownPreview"></span><span class="glyphicon glyphicon-triangle-bottom hidden markdownPreview"></span><span> Markdown</span></h3>
         <div class="hidden markdownPreview">
         </div>
         <h3 onclick="$('.parserErrors').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right parserErrors"></span><span class="glyphicon glyphicon-triangle-bottom hidden parserErrors"></span><span>Parsing Problems</span></h3>
@@ -166,7 +170,7 @@ Unrecognized
 | {{cal|social}} || {{dm|Jan 5}} || Stammtisch / OSM Treffen [[Münster]], [[Germany]] {{SmallFlag|Germany}}
 | {{cal|social}} || {{dm|Jan 18}} || Stammtisch / OSM Treffen [[Osnabrück]], [[Germany]] {{SmallFlag|Germany}}
 </pre>
-        <h3 onclick="$('.filteredEvents').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right filteredEvents"></span><span class="glyphicon glyphicon-triangle-bottom hidden filteredEvents"></span><span>Filtered Events</span></h3>
+        <h3 onclick="$('.filteredEvents').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right filteredEvents"></span><span class="glyphicon glyphicon-triangle-bottom hidden filteredEvents"></span><span> Filtered Events</span></h3>
         <table class="hidden filteredEvents table">
           <tbody><tr>
             <td>Zaragoza</td>
