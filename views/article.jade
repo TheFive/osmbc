@@ -237,6 +237,18 @@ block content
           for vote,i in votes
             if (vote.displayAtTop)
               +voteButton(vote,article)
+          if article.blog != "YiR2016"
+            if (article.copyTo && article.copyTo.YiR2016)
+              i.fa.fa-copy(class = "osmbc-btn-voted" onclick="location.href='#{layout.htmlroot}/article/#{article.copyTo.YiR2016}'")
+              span=" YiR2016"
+            else
+              i.fa.fa-copy(class = "osmbc-btn-not-voted" onclick="document.getElementById('copyToBlogForm').submit();")
+              span=" YiR2016"
+              form(id="copyToBlogForm" ,method="POST",action="#{layout.htmlroot}/article/#{article.id}/copyTo/YiR2016" )
+
+
+
+
         .col-md-1
           if articleReferences.count >= 1
             a(href="#doublettes")
@@ -457,6 +469,8 @@ block content
                 th
                   |link
                 th
+                  |category
+                th
                   |article
                 th
                   |Blog
@@ -468,6 +482,8 @@ block content
                       tr
                         td
                           a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
+                        td
+                          p=articleItem.categoryEN
                         td
                           a(href='#{layout.htmlroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
                         td= articleItem.blog
