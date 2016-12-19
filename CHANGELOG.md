@@ -1,8 +1,14 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [2.1.1](https://github.com/TheFive/osmbc/tree/2.1.1) (2016-12-19)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.0a...2.1.1)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.0...HEAD)
+**Implemented enhancements:**
+
+- Introduce a copy feature to allow "the year in review" articles. [\#594](https://github.com/TheFive/osmbc/issues/594)
+
+## [2.1.0a](https://github.com/TheFive/osmbc/tree/2.1.0a) (2016-12-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.0...2.1.0a)
 
 **Implemented enhancements:**
 
