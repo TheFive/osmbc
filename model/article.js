@@ -71,7 +71,9 @@ function createNewArticle (proto,callback) {
   }
   if (proto) should.not.exist(proto.id);
   var article = create(proto);
-  article.save(callback);
+  article.save(function(err){
+    return callback(err,article);
+  });
 }
 
 // return mention in comments of article
@@ -576,6 +578,41 @@ Article.prototype.editComment = function editComment(user,index,text,callback) {
   );
 };
 
+Article.prototype.copyToBlog = function copToBlog(blogName,languages,callback) {
+  debug('Article.prototype.copyToBlog');
+  let newArticle = {};
+  let self = this;
+  newArticle.collection = self.collection;
+  newArticle.categoryEN = self.categoryEN;
+  newArticle.title = self.title;
+  newArticle.originArticleId=self.id;
+  newArticle.blog=blogName;
+  languages.forEach(function(l){
+    if (self["markdown"+l]) newArticle["markdown"+l]="Former Text:\n\n"+self["markdown"+l];
+  });
+  if (!self.copyTo) self.copyTo={};
+
+  // check wether it is allready copied to that blog
+  if (self.copyTo[blogName]) return callback(new Error("Article <"+self.title+"> already copied to <"+blogName+">, ID<"+self.copyTo[blogName]+">"));
+
+  self.copyTo[blogName]=0;
+  let storeArticle = null;
+  async.series([
+    function(cb) {
+      createNewArticle(newArticle,function(err,a){
+        storeArticle=a;
+        return cb(err);
+      });
+    },
+    function(cb) {
+      self.copyTo[blogName]=storeArticle.id;
+      return cb();
+    },
+    function(cb) {
+      self.save(cb);
+    }
+  ],function(err){return callback(err);});
+};
 /*
 Store the number of comments, a user has read.
 -1 is indicating, nothing is read. (same as a non existing value).

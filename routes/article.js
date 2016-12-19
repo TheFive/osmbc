@@ -343,6 +343,26 @@ function postArticle(req, res, next) {
   );
 }
 
+function copyArticle(req, res, next) {
+  debug('copyArticle');
+
+  var newBlog = req.params.blog;
+
+
+
+  var article = req.article;
+  // If article exists, everything is fine, if article NOT exist, it has to be created.
+
+
+  var languages = config.getLanguages();
+
+  article.copyToBlog(newBlog,languages,function(err){
+    if (err) return next(err);
+    let referer=req.header('Referer') || '/';
+    res.redirect(referer);
+  });
+}
+
 function postNewComment(req, res, next) {
   debug('postNewComment');
   var article = req.article;
@@ -658,6 +678,7 @@ router.get('/create',exports.createArticle);
 router.get('/searchandcreate',exports.searchAndCreate);
 router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
+router.post('/:article_id/copyTo/:blog', copyArticle);
 router.post('/translate/:fromLang/:toLang',translate);
 
 router.param('article_id',getArticleFromID);
