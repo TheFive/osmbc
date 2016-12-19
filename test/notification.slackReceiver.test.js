@@ -349,7 +349,7 @@ describe('notification/slackReceiver', function() {
               "channel":"#osmbcblog"}))
           .reply(200,"ok");
         should.not.exist(err);
-        blog.closeBlog("ES",{OSMUser:"testuser"},"true",function(err){
+        blog.closeBlog("ES",{OSMUser:"testuser"},true,function(err){
           should.not.exist(err);
           should(slack1a.isDone()).is.True();
           should(slack1b.isDone()).is.True();
@@ -361,7 +361,7 @@ describe('notification/slackReceiver', function() {
                 "username":"testbc(testuser)",
                 "channel":"#osmbcblog"}))
             .reply(200,"ok");
-          blog.closeBlog("ES",{OSMUser:"testuser"},"false",function(err){
+          blog.closeBlog("ES",{OSMUser:"testuser"},false,function(err){
             should.not.exist(err);
 
             should(slack2b.isDone()).is.True();
