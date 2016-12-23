@@ -16,7 +16,9 @@ config.initialise();
 var botName = config.getValue("AppName").toLowerCase();
 
 
-var Slack = require('node-slack');
+
+
+var Slack = require('../notification/SlackAPI');
 
 var osmbcUrl = config.getValue('url')+config.getValue('htmlroot');
 
