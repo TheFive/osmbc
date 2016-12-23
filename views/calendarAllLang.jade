@@ -82,22 +82,23 @@ block content
   table.table-condensed.editBlock
     for blog in layout.editBlog
       - var article = blog._upcomingEvents
+      if article
 
-      tr
-        td
-          p
-            span=blog.name
-            span=" "
-            a(href="#{layout.htmlroot}/article/#{article.id}")="Upcoming Events"
-          p
-            +languageDisplay(article)
-        for lang in layout.activeLanguages
-          td.lang(class="lang-#{lang}")
-            if (!(article["markdown"+lang]) && blog.isEditable(lang))
-              form(name="EditArticle",id="EditArticle#{article.id}#{lang}", action="#{layout.htmlroot}/article/#{article.id}/setMarkdown/#{lang}", method="post")
-                textarea.hidden.form-control(name="markdown" id="markdown" + article.id rows=7 onchange="onLeaveText(#{article.id});")=markdown[lang]
-                textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{article.id}" rows=7 )=""
-                button.btn.btn-default(type="submit")="Store "+lang+" in "+blog.name
+        tr
+          td
+            p
+              span=blog.name
+              span=" "
+              a(href="#{layout.htmlroot}/article/#{article.id}")="Upcoming Events"
+            p
+              +languageDisplay(article)
+          for lang in layout.activeLanguages
+            td.lang(class="lang-#{lang}")
+              if (!(article["markdown"+lang]) && blog.isEditable(lang))
+                form(name="EditArticle",id="EditArticle#{article.id}#{lang}", action="#{layout.htmlroot}/article/#{article.id}/setMarkdown/#{lang}", method="post")
+                  textarea.hidden.form-control(name="markdown" id="markdown" + article.id rows=7 onchange="onLeaveText(#{article.id});")=markdown[lang]
+                  textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{article.id}" rows=7 )=""
+                  button.btn.btn-default(type="submit")="Store "+lang+" in "+blog.name
 
   h3(onclick="$('.markdownPreview').toggleClass('hidden')")
     span.glyphicon.glyphicon-triangle-right.markdownPreview
