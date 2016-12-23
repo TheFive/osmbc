@@ -35,7 +35,8 @@ function SlackReceiver(name,slack,channel) {
   this.name = name;
   this.slackName = slack;
   this.hook = slackhook[this.slackName];
-  this.slack = new Slack(this.hook);
+  if(this.hook) this.slack = new Slack(this.hook); else this.slack = null;
+
   this.channel = channel;
   debug("Name: %s",this.name);
   debug("Slack: %s",this.slackName);
@@ -82,11 +83,13 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,bl
   var username = botName + "("+user.OSMUser+")";
 
 
-  this.slack.send({
-    text:subject,
-    channel: this.channel,
-    username: username
-  },callback);
+  if (this.slack) {
+    this.slack.send({
+      text:subject,
+      channel: this.channel,
+      username: username
+    },callback);
+  } else return callback();
 };
 
 SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,callback) {
@@ -104,11 +107,13 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lan
   }
   var username = botName + "("+user.OSMUser+")";
 
-  this.slack.send({
-    text:subject,
-    channel: this.channel,
-    username: username
-  },callback);
+  if (this.slack) {
+    this.slack.send({
+      text:subject,
+      channel: this.channel,
+      username: username
+    },callback);
+  } else return callback();
 };
 
 SlackReceiver.prototype.updateArticle = function updateArticle(user,article,change,callback) {
@@ -140,11 +145,13 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user,article,chan
   debug("Sending subject "+text);
   var username = botName + "("+user.OSMUser+")";
 
-  this.slack.send({
-    text:text,
-    channel: this.channel,
-    username: username
-  },callback);
+  if (this.slack) {
+    this.slack.send({
+      text:text,
+      channel: this.channel,
+      username: username
+    },callback);
+  } else return callback();
 };
 
 
@@ -159,11 +166,13 @@ SlackReceiver.prototype.addComment = function addComment(user,article,comment,ca
 
   var username = botName + "("+user.OSMUser+")";
 
-  this.slack.send({
-    text:text,
-    channel: this.channel,
-    username: username
-  },callback);
+  if (this.slack) {
+    this.slack.send({
+      text:text,
+      channel: this.channel,
+      username: username
+    },callback);
+  } else return callback();
 };
 
 SlackReceiver.prototype.editComment = function editComment(user,article,index,comment,callback) {
@@ -176,11 +185,13 @@ SlackReceiver.prototype.editComment = function editComment(user,article,index,co
 
   var username = botName + "("+user.OSMUser+")";
 
-  this.slack.send({
-    text:text,
-    channel: this.channel,
-    username: username
-  },callback);
+  if (this.slack) {
+    this.slack.send({
+      text:text,
+      channel: this.channel,
+      username: username
+    },callback);
+  } else return callback();
 };
 
 SlackReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callback) {
@@ -199,11 +210,13 @@ SlackReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callba
   }
   var username = botName + "("+user.OSMUser+")";
 
-  this.slack.send({
-    text:subject,
-    channel: this.channel,
-    username:username
-  },callback);
+  if (this.slack) {
+    this.slack.send({
+      text:subject,
+      channel: this.channel,
+      username:username
+    },callback);
+  } else return callback();
 };
 
 
