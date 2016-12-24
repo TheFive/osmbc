@@ -35,17 +35,19 @@ block content
                   if layout.usedLanguages[lang]
                     td
                       if blog["close"+lang]
-                        - labeltype = "label-success"
+                        - labeltype = "osmbclabel-closedblog"
                         - urlblog = layout.htmlroot+"/blog/"+blog.name
 
                       else
-                        if lang!="PT"
                         if blog["reviewComment"+lang]
-                          - labeltype = "label-primary"
+                          - labeltype = "osmbclabel-reviewblog"
                           - urlblog =  layout.htmlroot+"/blog/"+blog.name
 
                         else
-                          - labeltype = "label-danger"
+                          if (blog.status === "edit")
+                            - labeltype = "osmbclabel-editblog"
+                          else
+                            - labeltype = "osmbclabel-openblog"
                           - urlblog = layout.htmlroot+"/article/list?markdown"+lang+"=&category=!=--unpublished--&blog="+blog.name
 
                       a(href="#{urlblog}")
@@ -68,23 +70,31 @@ block content
     p
       span.label.label-default
         | missing
-      span.label.label-success
+      span.label.osmbclabel-closedblog
         | total
       |  Closed Blog
 
     p
       span.label.label-default
         | missing
-      span.label.label-primary
+      span.label.osmbclabel-reviewblog
         | total
       |  Reviewed Blog
     p
       span.label.label-default
         | missing
-      span.label.label-danger
+      span.label.osmbclabel-editblog
+        | total
+      |  Edit Blog
+    p
+      span.label.label-default
+        | missing
+      span.label.osmbclabel-openblog
         | total
       |  Open Blog
-    p=" (+3d): The number in brackets shows the blog closing for that language in days"
+
+
+  p=" (+3d): The number in brackets shows the blog closing for that language in days"
     p
       | More bloglists
     p
