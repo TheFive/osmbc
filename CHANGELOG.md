@@ -1,5 +1,17 @@
 # Change Log
 
+## [2.1.3](https://github.com/TheFive/osmbc/tree/2.1.3) (2016-12-24)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.2...2.1.3)
+
+**Implemented enhancements:**
+
+- table "overview with review status of all languages" [\#596](https://github.com/TheFive/osmbc/issues/596)
+
+**Fixed bugs:**
+
+- Cannot read property 'id'of null [\#597](https://github.com/TheFive/osmbc/issues/597)
+- BLOG is closed Message for Reopening a blog [\#592](https://github.com/TheFive/osmbc/issues/592)
+
 ## [2.1.2](https://github.com/TheFive/osmbc/tree/2.1.2) (2016-12-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.1...2.1.2)
 
@@ -415,13 +427,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
