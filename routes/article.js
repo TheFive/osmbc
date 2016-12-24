@@ -92,6 +92,17 @@ function renderArticleId(req,res,next) {
         callback(err,blog);
       });
     },
+    originArticle:
+    function findOriginArticle(callback) {
+      if (article.originArticleId) {
+        articleModule.findById(article.originArticleId,callback);
+      } else return callback(null,null);
+    },
+    originBlog:["originArticle",function findOriginBlog(callback,results){
+      if (results.originArticle) {
+        blogModule.findOne({name:results.originArticle.blog},callback);
+      } else return callback(null,null);
+    }],
 
     // Find all log messages for the article
     changes:
@@ -197,6 +208,8 @@ function renderArticleId(req,res,next) {
                                 articleCategories:result.articleForSort,
                                 blog:result.blog,
                                 changes:result.changes,
+                                originArticle:result.originArticle,
+                                originBlog:result.originBlog,
                                 articleReferences:result.articleReferences,
                                 usedLinks:result.usedLinks,
                                 categories:categories,

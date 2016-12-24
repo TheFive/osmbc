@@ -31,7 +31,20 @@ mixin rightcolumn
 
 
 block content
-  p
+  .row
+    - console.log("originblog");
+    - console.log(originBlog);
+
+    if (originBlog)
+      - sourceDate = layout.moment(originBlog.startDate);
+      - sourceDate.locale(layout.language);
+      .col-md-1
+        h3="Source"
+      .col-md-5
+        h3=originBlog.name+" "+ layout.moment(originBlog.startDate).format("YYYY MMMM")
+
+
+  .row
     if (params.edit && !( blog && blog.status=="closed") )
       form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
         .row
