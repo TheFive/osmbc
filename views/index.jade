@@ -28,7 +28,7 @@ block content
                       div.label.osmbclabel-closedblog
                         span.glyphicon.glyphicon-ok
                     else if (editBlog["reviewComment"+l])
-                      div.label.osmbclabel-reviewblog=editBlog["reviewComment"+l].length
+                      div.label.osmbclabel-reviewblog=(editBlog["reviewComment"+l].length-1)
                     else
                       div.label.osmbclabel-editblog=l
             for openBlog in layout.listOfOpenBlog
