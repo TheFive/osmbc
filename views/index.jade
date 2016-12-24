@@ -18,13 +18,6 @@ block content
 
         .row
           table.table.table-condensed
-            for openBlog in layout.listOfOpenBlog
-              tr
-                td
-                  a(href="#{layout.htmlroot}/blog/#{openBlog.name}")=openBlog.name
-                for l in layout.activeLanguages
-                  td
-                    div.label.osmbclabel-openblog=l
             for editBlog in layout.editBlog
               tr
                 td
@@ -38,6 +31,13 @@ block content
                       div.label.osmbclabel-reviewblog=editBlog["reviewComment"+l].length
                     else
                       div.label.osmbclabel-editblog=l
+            for openBlog in layout.listOfOpenBlog
+              tr
+                td
+                  a(href="#{layout.htmlroot}/blog/#{openBlog.name}")=openBlog.name
+                for l in layout.activeLanguages
+                  td
+                    div.label.osmbclabel-openblog=l
 
 
 
