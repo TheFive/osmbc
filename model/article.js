@@ -13,6 +13,7 @@ var util      = require("../util.js");
 
 var messageCenter  = require("../notification/messageCenter.js");
 var blogModule     = require("../model/blog.js");
+var logModule      = require("../model/logModule.js");
 var configModule   = require('../model/config.js');
 var pgMap          = require("../model/pgMap.js");
 var twitter        = require('../model/twitter.js');
@@ -720,6 +721,75 @@ Article.prototype.addNotranslate = function addNotranslate(user,shownLang,callba
   return self.setAndSave(user,change,callback);
 };
 
+
+Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromChanges(cb) {
+  debug('Article.prototype.calculateDerivedFromChanges');
+
+  let self = this;
+
+  // does info already exist, then return
+  if (self._lastChange) return cb();
+
+  // search all logentries for this article
+  logModule.find(
+    {table: "article", oid: self.id},
+    {column: "timestamp", desc: true},
+    function (err, result) {
+      if (err) return cb(err);
+      if (result && result.length > 0) {
+        var list = {};
+        self._lastChange = {};
+        for (var i = 0; i < result.length; i++) {
+          var r = result[i];
+          let prop = r.property;
+          if (!list[prop]) list[prop] = {};
+          list[prop][r.user] = "-";
+          if (typeof(self._lastChange[prop])=="undefined") {
+            self._lastChange[prop]= r.timestamp;
+          } else if (r.timestamp > self._lastChange[prop]) {
+            self._lastChange[prop]= r.timestamp;
+          }
+        }
+        self.author = {};
+
+
+        for (var p in list) {
+          self.author[p] = "";
+          var sep = "";
+          for (var k in list[p]) {
+            self.author[p] += sep + k;
+            sep = ",";
+          }
+        }
+      }
+      return cb();
+    });
+};
+
+Article.prototype.calculateDerivedFromSourceId = function calculateDerivedFromSourceId(cb) {
+  debug('Article.prototype.calculateDerivedFromSourceId');
+
+  let self = this;
+  if (!self.originArticleId) return cb();
+  async.series([
+    function loadArticle(callback) {
+      findById(self.originArticleId,function(err,article){
+        if (err) return callback(err);
+        self._originArticle = article;
+        return callback();
+      });
+    },
+    function loadBlog(callback){
+      if (!self._originArticle) return callback();
+      blogModule.findOne({name:self._originArticle.blog},function(err,blog){
+        if (err) return callback(err);
+        self._originBlog = blog;
+        return callback();
+      });
+    }
+  ],cb);
+
+};
 
 
 function isMarkdown(text) {

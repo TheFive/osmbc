@@ -552,6 +552,15 @@ function sortArticles(listOfArticles) {
   }
   return result;
 }
+
+function calculateDependend(article, cb) {
+  debug('calculateDependend');
+
+  async.series([
+    article.calculateDerivedFromChanges.bind(article),
+    article.calculateDerivedFromSourceId.bind(article)
+  ],cb);
+}
 // Generate Articles and Category for rendering a preview by a JADE Template
 Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
   debug('getPreviewData');
@@ -582,38 +591,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
       debug('readArticlesWithCollector');
       articleModule.find({blog: self.name}, {column: "title"}, function (err, result) {
         if (options.collectors) {
-          async.each(result, function (item, each_cb) {
-            logModule.find({table: "article", oid: item.id}, {column: "timestamp", desc: true}, function (err, result) {
-              if (err) return each_cb(err);
-              if (result && result.length > 0) {
-                var list = {};
-                item._lastChange = {};
-                for (var i = 0; i < result.length; i++) {
-                  var r = result[i];
-                  let prop = r.property;
-                  if (!list[prop]) list[prop] = {};
-                  list[prop][r.user] = "-";
-                  if (typeof(item._lastChange[prop])=="undefined") {
-                    item._lastChange[prop]= r.timestamp;
-                  } else if (r.timestamp > item._lastChange[prop]) {
-                    item._lastChange[prop]= r.timestamp;
-                  }
-                }
-                item.author = {};
-
-
-                for (var p in list) {
-                  item.author[p] = "";
-                  var sep = "";
-                  for (var k in list[p]) {
-                    item.author[p] += sep + k;
-                    sep = ",";
-                  }
-                }
-              }
-              return each_cb();
-            });
-          }, function finalFunction(err) {
+          async.each(result,calculateDependend , function finalFunction(err) {
             if (err) return cb(err);
             articleList = result;
             return cb();
