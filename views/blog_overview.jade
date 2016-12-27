@@ -21,7 +21,7 @@ mixin displayOverviewRow(a)
           if a.copyTo && a.copyTo.YiR2016
             span="YiR2016"
           if a._originBlog
-            span=layout.moment(a._originBlog.startDate).locale(layout.language).format("YYYY MMMM")
+            span(style="white-space: nowrap")=layout.moment(a._originBlog.startDate).locale(layout.language).format("YYYY MMMM")
 
 
 
