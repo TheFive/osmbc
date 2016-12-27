@@ -17,8 +17,11 @@ mixin displayOverviewRow(a)
         if showVisibleLanguages
           +languageDisplay(a,{short: true})
         +voteDisplay(a,showVotes)
-        if showCopies.YiR2016 && a.copyTo && a.copyTo.YiR2016
-          span="YiR2016"
+        if showCopies.YiR2016
+          if a.copyTo && a.copyTo.YiR2016
+            span="YiR2016"
+          if a._originBlog
+            span=layout.moment(a._originBlog.startDate).locale(layout.language).format("YYYY MMMM")
 
 
 
