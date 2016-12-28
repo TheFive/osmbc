@@ -721,6 +721,12 @@ Article.prototype.addNotranslate = function addNotranslate(user,shownLang,callba
   return self.setAndSave(user,change,callback);
 };
 
+/* This Function reads changes and adds some attributes (derived attributes) to the article
+Object. For now this is mainly the last changed attribute and the author list.
+article._lastChange.markdownDE e.g. contains the last timestamp, whenn markdownDE was changed
+article.author._markdownDE contains all authors, worked on markdownDE
+article.author.collection all collectors.
+ */
 
 Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromChanges(cb) {
   debug('Article.prototype.calculateDerivedFromChanges');
@@ -743,7 +749,11 @@ Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromCha
           var r = result[i];
           let prop = r.property;
           if (!list[prop]) list[prop] = {};
+
+          // Mark the User for the current property
           list[prop][r.user] = "-";
+
+          // set the _lastChange timestamp fo the current Property
           if (typeof(self._lastChange[prop])=="undefined") {
             self._lastChange[prop]= r.timestamp;
           } else if (r.timestamp > self._lastChange[prop]) {
@@ -756,6 +766,8 @@ Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromCha
         for (var p in list) {
           self.author[p] = "";
           var sep = "";
+
+          // Iterate over all user and copy them to a list.
           for (var k in list[p]) {
             self.author[p] += sep + k;
             sep = ",";
