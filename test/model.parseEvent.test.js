@@ -256,30 +256,147 @@ describe('model/parseEvent',function() {
       });
     });
   });
-  describe('calenderToMarkdown',function(){
+  describe('calendarToMarkdown',function(){
 
-    before(function(){
-      var fileName = path.join(__dirname,'/data/calenderData.wiki');
- 
-      nock('https://wiki.openstreetmap.org')
-                .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
-              
-                .replyWithFile(200,fileName);
-
-    });
     it('should load date form wiki and generate a Markdown String',function(bddone){
-      parseEvent.calenderToMarkdown({lang:"DE",date:new Date("11/28/2015"),duration:"14"},function(err,result){
+      var fileName = path.join(__dirname,'/data/calendarData.wiki');
+
+      nock('https://wiki.openstreetmap.org')
+        .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
+
+        .replyWithFile(200,fileName);
+      parseEvent.calendarToMarkdown({lang:"DE",date:0,duration:"14"},function(err,result){
         should.not.exist(err);
-        var expected = fs.readFileSync(path.join(__dirname,'/data/calender.markup'),"utf8");
+        var expected = fs.readFileSync(path.join(__dirname,'/data/calendar.markup'),"utf8");
         should(result).equal(expected);
          bddone();
       });
     });
+    it('should load from wiki and filter out events by date',function(bddone){
+
+      var wikimarkup = "\n| {{cal|conference}} || {{dm|Dec 12}} || <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] {{SmallFlag|Germany}}";
+      wikimarkup += "\n| {{cal|conference}} || {{dm|Dec 22}} || <big>'''[Big Event to display]'''</big>, [[Bonn]], [[Germany]] {{SmallFlag|Germany}}\n";
+      wikimarkup += "\n| {{cal|conference}} || {{dm|Dec 22}} || [irgendwatt], [[Small Event to be filtered out]], [[Germany]] {{SmallFlag|Germany}}\n";
+
+      var json = {query:{pages:{2567:{}}}};
+      json.query.pages[2567].revisions=[];
+      json.query.pages[2567].revisions[0]={"*":wikimarkup};
+
+
+
+      nock('https://wiki.openstreetmap.org')
+        .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
+
+        .reply(200,JSON.stringify(json));
+      parseEvent.calendarToMarkdown({lang:"DE",date:new Date("12/06/2015"),duration:"14",big_duration:"21"},function(err,result){
+        should.not.exist(err);
+        var expected = "|Wo  |Was                                   |Wann      |Land   |\n"+
+          "|----|--------------------------------------|----------|-------|\n"+
+          "|Bonn|[FOSS4G 2016](http://2016.foss4g.org/)|12.12.2015|Germany|\n"+
+          "|Bonn|[Event to display](Big)               |22.12.2015|Germany|\n";
+        should(result).equal(expected);
+        bddone();
+      });
+    });
+    it('should load from wiki and filter out events by country',function(bddone){
+
+      var wikimarkup = "\n| {{cal|conference}} || {{dm|Dec 12}} || <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] {{SmallFlag|Germany}}";
+      wikimarkup += "\n| {{cal|conference}} || {{dm|Dec 22}} || <big>'''[Big Event to display]'''</big>, [[New York]], [[USA]] {{SmallFlag|Germany}}\n";
+      wikimarkup += "\n| {{cal|conference}} || {{dm|Dec 22}} || [irgendwatt], [[Small Event to be filtered out]], [[USA]] {{SmallFlag|Germany}}\n";
+
+      var json = {query:{pages:{2567:{}}}};
+      json.query.pages[2567].revisions=[];
+      json.query.pages[2567].revisions[0]={"*":wikimarkup};
+
+
+
+      nock('https://wiki.openstreetmap.org')
+        .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
+
+        .reply(200,JSON.stringify(json));
+      parseEvent.calendarToMarkdown({lang:"DE",date:new Date("12/06/2015"),duration:"14",big_duration:"21",countries:"USA"},function(err,result){
+        should.not.exist(err);
+        var expected = "|Wo      |Was                                   |Wann      |Land   |\n"+
+          "|--------|--------------------------------------|----------|-------|\n"+
+          "|Bonn    |[FOSS4G 2016](http://2016.foss4g.org/)|12.12.2015|Germany|\n"+
+          "|New York|[Event to display](Big)               |22.12.2015|USA    |\n";
+        should(result).equal(expected);
+        bddone();
+      });
+    });
+
   });
-  describe('calenderToJSON',function(){
+  describe('filterEvent',function(){
+    it('should filter a one day event, thats not big',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21};
+
+      should(test({startDate:"2015-12-05"},option)).be.True();
+      should(test({startDate:"2015-12-06"},option)).be.False();
+      should(test({startDate:"2015-12-08"},option)).be.False();
+      should(test({startDate:"2015-12-20"},option)).be.False();
+      should(test({startDate:"2015-12-31"},option)).be.True();
+    });
+    it('should filter a one day event, thats big',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21};
+
+      should(test({startDate:"2015-12-05",big:true},option)).be.True();
+      should(test({startDate:"2015-12-06",big:true},option)).be.False();
+      should(test({startDate:"2015-12-08",big:true},option)).be.False();
+      should(test({startDate:"2015-12-27",big:true},option)).be.False();
+      should(test({startDate:"2015-12-31",big:true},option)).be.True();
+    });
+    it('should filter a three day event, thats not big',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21};
+      should(test({startDate:"2015-12-02",endDate:"2015-12-05"},option)).be.True();
+      should(test({startDate:"2015-12-05",endDate:"2015-12-07"},option)).be.False();
+      should(test({startDate:"2015-12-06",endDate:"2015-12-08"},option)).be.False();
+      should(test({startDate:"2015-12-20",endDate:"2015-12-23"},option)).be.False();
+      should(test({startDate:"2015-12-21",endDate:"2015-12-22"},option)).be.True();
+    });
+    it('should filter a three day event, thats big',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21};
+      should(test({startDate:"2015-12-02",endDate:"2015-12-05",big:true},option)).be.True();
+      should(test({startDate:"2015-12-05",endDate:"2015-12-07",big:true},option)).be.False();
+      should(test({startDate:"2015-12-06",endDate:"2015-12-08",big:true},option)).be.False();
+      should(test({startDate:"2015-12-20",endDate:"2015-12-23",big:true},option)).be.False();
+      should(test({startDate:"2015-12-27",endDate:"2015-12-29",big:true},option)).be.False();
+      should(test({startDate:"2015-12-28",endDate:"2015-12-31",big:true},option)).be.True();
+    });
+    it('should filter with included countries',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21,includeCountries:"germany"};
+
+      should(test({startDate:"2015-12-05",country:"germany",big:true},option)).be.True();
+      should(test({startDate:"2015-12-06",country:"germany",big:true},option)).be.False();
+      should(test({startDate:"2015-12-08",big:true},option)).be.False(); // no country given, filter does not work
+      should(test({startDate:"2015-12-08",country:"germany",big:true},option)).be.False();
+      should(test({startDate:"2015-12-08",country:"UK",big:true},option)).be.True();
+    });
+    it('should filter with excluded countries',function(){
+      let test = parseEvent.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date:0,duration:14,big_duration:21,excludeCountries:"germany"};
+
+      should(test({startDate:"2015-12-05",country:"germany",big:true},option)).be.True();
+      should(test({startDate:"2015-12-06",country:"germany",big:true},option)).be.True();
+      should(test({startDate:"2015-12-08",big:true},option)).be.False(); // no country given, filter does not work
+      should(test({startDate:"2015-12-08",country:"germany",big:true},option)).be.True();
+      should(test({startDate:"2015-12-08",country:"UK",big:true},option)).be.False();
+    });
+  });
+  describe('calendarToJSON',function(){
 
     before(function(){
-      var fileName = path.join(__dirname,'/data/calenderData.wiki');
+      var fileName = path.join(__dirname,'/data/calendarData.wiki');
 
       nock('https://wiki.openstreetmap.org')
         .get('/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json')
@@ -288,7 +405,7 @@ describe('model/parseEvent',function() {
 
     });
     it('should Do an API call and resturn JSON',function(bddone){
-      parseEvent.calenderToJSON({},function(err,result){
+      parseEvent.calendarToJSON({},function(err,result){
         var converted=JSON.parse(JSON.stringify(result));
         var expected = JSON.parse(fs.readFileSync(path.join(__dirname,'/data/calendar.json'),"utf8"));
         should(converted).eql(expected);

@@ -31,7 +31,20 @@ mixin rightcolumn
 
 
 block content
-  p
+  .row
+    - console.log("originblog");
+    - console.log(originBlog);
+
+    if (originBlog)
+      - sourceDate = layout.moment(originBlog.startDate);
+      - sourceDate.locale(layout.language);
+      .col-md-1
+        h3="Source"
+      .col-md-5
+        h3=originBlog.name+" "+ layout.moment(originBlog.startDate).format("YYYY MMMM")
+
+
+  .row
     if (params.edit && !( blog && blog.status=="closed") )
       form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
         .row
@@ -168,7 +181,7 @@ block content
             div.RL(class="RL-#{params.right_lang}")
               if blog && !blog.isEditable(params.right_lang)
                 .panel.panel-default
-                  .panel-body #{article["markdown"+params.right_lang]}
+                  .panel-body(id="markdownRIGHT") #{article["markdown"+params.right_lang]}
               else
                 if (placeholder.markdown[params.right_lang])
                   - p = placeholder.markdown[params.right_lang];
@@ -237,6 +250,18 @@ block content
           for vote,i in votes
             if (vote.displayAtTop)
               +voteButton(vote,article)
+          if article.blog != "YiR2016"
+            if (article.copyTo && article.copyTo.YiR2016)
+              i.fa.fa-copy(class = "osmbc-btn-voted" onclick="location.href='#{layout.htmlroot}/article/#{article.copyTo.YiR2016}'")
+              span=" YiR2016"
+            else
+              i.fa.fa-copy(class = "osmbc-btn-not-voted" onclick="document.getElementById('copyToBlogForm').submit();")
+              span=" YiR2016"
+              form(id="copyToBlogForm" ,method="POST",action="#{layout.htmlroot}/article/#{article.id}/copyTo/YiR2016" )
+
+
+
+
         .col-md-1
           if articleReferences.count >= 1
             a(href="#doublettes")
@@ -526,6 +551,7 @@ block content
 
 
 block scripts
+
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
 
@@ -622,7 +648,7 @@ block scripts
       document.getElementById("translateWaitRIGHT").classList.remove("hidden");
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase():'--'}";
-      var originalText = document.getElementById("markdownLEFT").value;
+      var originalText = $("#markdownLEFT").html();
       jQuery.post("#{layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang,{text:originalText}, function(data) {
         data = data.replace(/] \(/g,"](");
         document.getElementById("translateWaitRIGHT").classList.add("hidden");
@@ -637,7 +663,7 @@ block scripts
     function copyTextRIGHT() {
       document.getElementById("translateLinkRIGHT").classList.add("hidden");
       document.getElementById("copyLinkRIGHT").classList.add("hidden");
-      document.getElementById("markdownRIGHT").value = document.getElementById("markdownLEFT").value ;
+      document.getElementById("markdownRIGHT").value = $("#markdownLEFT").html();
       onchangeRIGHT();
     }
     function translateLEFT() {
@@ -646,7 +672,7 @@ block scripts
       document.getElementById("translateWaitLEFT").classList.remove("hidden");
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
-      var originalText = document.getElementById("markdownRIGHT").value;
+      var originalText = $("#markdownRIGHT").html();
       jQuery.post("#{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
         data = data.replace(/] \(/g, "](");
         document.getElementById("translateWaitLEFT").classList.add("hidden");
@@ -654,6 +680,7 @@ block scripts
         onchangeLEFT();
       }).fail(function (err) {
         console.log(err);
+        document.getElementById("markdownLEFT").value = JSON.stringify(err);
         document.getElementById("translateWaitLEFT").classList.add("hidden");
         document.getElementById("translateErrorLEFT").classList.remove("hidden");
       });
@@ -661,7 +688,7 @@ block scripts
     function copyTextLEFT() {
       document.getElementById("translateLinkLEFT").classList.add("hidden");
       document.getElementById("copyLinkLEFT").classList.add("hidden");
-      document.getElementById("markdownLEFT").value = document.getElementById("markdownRIGHT").value;
+      document.getElementById("markdownLEFT").value = $("#markdownRIGHT").html();
       onchangeRIGHT();
     }
 
@@ -682,6 +709,7 @@ block scripts
 
     function convert(text) {
       converter = new window.markdownit({breaks:true});
+      if (!text) return "";
 
       // generate the OSMBlog Style List
       if (text.substring(0,2)=="* ") text = text.substring(2,999999);
@@ -812,6 +840,7 @@ block scripts
       var f = document.getElementById(field);
       if (!cl) cl = f;
       if (!f) return;
+      if (!md) return;
       if (md.indexOf("|----")>= 0) {
         f.wrap = 'off';
         f.style.fontFamily="monospace"
@@ -834,6 +863,8 @@ block scripts
       var md = document.getElementById(mdid).value;
       preview = document.getElementById(previewid);
       text = document.getElementById(textid);
+      if (!preview) return;
+      if (!text) return;
 
 
       checkForTable(mdid);

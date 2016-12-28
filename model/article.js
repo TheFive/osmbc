@@ -13,6 +13,7 @@ var util      = require("../util.js");
 
 var messageCenter  = require("../notification/messageCenter.js");
 var blogModule     = require("../model/blog.js");
+var logModule      = require("../model/logModule.js");
 var configModule   = require('../model/config.js');
 var pgMap          = require("../model/pgMap.js");
 var twitter        = require('../model/twitter.js');
@@ -70,7 +71,9 @@ function createNewArticle (proto,callback) {
   }
   if (proto) should.not.exist(proto.id);
   var article = create(proto);
-  article.save(callback);
+  article.save(function(err){
+    return callback(err,article);
+  });
 }
 
 // return mention in comments of article
@@ -308,7 +311,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
         for (k in data) {
           // do not overwrite any existing Prototype Function with a value.
           if (Article.prototype.hasOwnProperty(k)) {
-            console.log("WARNING: Do not store "+data[k]+" for property "+k+" for Article ID "+self.id);
+            console.info("WARNING: Do not store "+data[k]+" for property "+k+" for Article ID "+self.id);
             continue;
           }
           if (typeof(data[k])!=='undefined') self[k]=data[k];
@@ -648,6 +651,41 @@ Article.prototype.editComment = function editComment(user,index,text,callback) {
   );
 };
 
+Article.prototype.copyToBlog = function copToBlog(blogName,languages,callback) {
+  debug('Article.prototype.copyToBlog');
+  let newArticle = {};
+  let self = this;
+  newArticle.collection = self.collection;
+  newArticle.categoryEN = self.categoryEN;
+  newArticle.title = self.title;
+  newArticle.originArticleId=self.id;
+  newArticle.blog=blogName;
+  languages.forEach(function(l){
+    if (self["markdown"+l]) newArticle["markdown"+l]="Former Text:\n\n"+self["markdown"+l];
+  });
+  if (!self.copyTo) self.copyTo={};
+
+  // check wether it is allready copied to that blog
+  if (self.copyTo[blogName]) return callback(new Error("Article <"+self.title+"> already copied to <"+blogName+">, ID<"+self.copyTo[blogName]+">"));
+
+  self.copyTo[blogName]=0;
+  let storeArticle = null;
+  async.series([
+    function(cb) {
+      createNewArticle(newArticle,function(err,a){
+        storeArticle=a;
+        return cb(err);
+      });
+    },
+    function(cb) {
+      self.copyTo[blogName]=storeArticle.id;
+      return cb();
+    },
+    function(cb) {
+      self.save(cb);
+    }
+  ],function(err){return callback(err);});
+};
 /*
 Store the number of comments, a user has read.
 -1 is indicating, nothing is read. (same as a non existing value).
@@ -681,6 +719,7 @@ Article.prototype.setVote = function setVote(user,tag,callback) {
 
   if (!self.votes) self.votes={};
   if (!self.votes[tag]) self.votes[tag]=[];
+
   if (self.votes[tag].indexOf(user.OSMUser)<0) {
     self.votes[tag].push(user.OSMUser);
     self.save(callback);
@@ -754,6 +793,87 @@ Article.prototype.addNotranslate = function addNotranslate(user,shownLang,callba
   return self.setAndSave(user,change,callback);
 };
 
+/* This Function reads changes and adds some attributes (derived attributes) to the article
+Object. For now this is mainly the last changed attribute and the author list.
+article._lastChange.markdownDE e.g. contains the last timestamp, whenn markdownDE was changed
+article.author._markdownDE contains all authors, worked on markdownDE
+article.author.collection all collectors.
+ */
+
+Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromChanges(cb) {
+  debug('Article.prototype.calculateDerivedFromChanges');
+
+  let self = this;
+
+  // does info already exist, then return
+  if (self._lastChange) return cb();
+
+  // search all logentries for this article
+  logModule.find(
+    {table: "article", oid: self.id},
+    {column: "timestamp", desc: true},
+    function (err, result) {
+      if (err) return cb(err);
+      if (result && result.length > 0) {
+        var list = {};
+        self._lastChange = {};
+        for (var i = 0; i < result.length; i++) {
+          var r = result[i];
+          let prop = r.property;
+          if (!list[prop]) list[prop] = {};
+
+          // Mark the User for the current property
+          list[prop][r.user] = "-";
+
+          // set the _lastChange timestamp fo the current Property
+          if (typeof(self._lastChange[prop])=="undefined") {
+            self._lastChange[prop]= r.timestamp;
+          } else if (r.timestamp > self._lastChange[prop]) {
+            self._lastChange[prop]= r.timestamp;
+          }
+        }
+        self.author = {};
+
+
+        for (var p in list) {
+          self.author[p] = "";
+          var sep = "";
+
+          // Iterate over all user and copy them to a list.
+          for (var k in list[p]) {
+            self.author[p] += sep + k;
+            sep = ",";
+          }
+        }
+      }
+      return cb();
+    });
+};
+
+Article.prototype.calculateDerivedFromSourceId = function calculateDerivedFromSourceId(cb) {
+  debug('Article.prototype.calculateDerivedFromSourceId');
+
+  let self = this;
+  if (!self.originArticleId) return cb();
+  async.series([
+    function loadArticle(callback) {
+      findById(self.originArticleId,function(err,article){
+        if (err) return callback(err);
+        self._originArticle = article;
+        return callback();
+      });
+    },
+    function loadBlog(callback){
+      if (!self._originArticle) return callback();
+      blogModule.findOne({name:self._originArticle.blog},function(err,blog){
+        if (err) return callback(err);
+        self._originBlog = blog;
+        return callback();
+      });
+    }
+  ],cb);
+
+};
 
 
 function isMarkdown(text) {

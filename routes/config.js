@@ -61,6 +61,7 @@ function renderConfigName(req, res, next) {
       if (name == "automatictranslatetext") jadeFile = name;
       if (name == "slacknotification") jadeFile = name;
       if (name == "votes") jadeFile = name;
+      if (name == "eventsfilter") jadeFile = name;
       res.set('content-type', 'text/html');
       res.render("config/"+jadeFile,{config:config,
                         changes:changes,

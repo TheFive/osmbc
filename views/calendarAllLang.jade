@@ -1,0 +1,143 @@
+extends layout
+
+
+mixin eventRowLang(lang,event)
+  if (event[lang].filtered)
+    td.hidden.lang.text-muted(class="lang-#{lang}")
+      span.add-info=event.town
+    td.hidden.lang.text-muted(class="lang-#{lang}")
+      span.add-info=event.text
+    td.hidden.lang.text-muted(class="lang-#{lang}")
+      span.add-info=eventDateFormat(event,lang)
+    td.hidden.lang.text-muted(class="lang-#{lang}")
+      span.add-info=event.country
+    td.hidden.lang.text-muted(class="lang-#{lang}")
+      div.add-info
+        |!{flag(event.country,calendarFlags)}
+  else
+    td.hidden.lang.text-primary(class="lang-#{lang}")=event[lang].town
+    td.hidden.lang.text-primary(class="lang-#{lang}")=event.text
+    td.hidden.lang.text-primary(class="lang-#{lang}")=eventDateFormat(event,lang)
+    td.hidden.lang.text-primary(class="lang-#{lang}")
+      div.add-info=event.country
+    td.hidden.lang.text-primary(class="lang-#{lang}")
+      |!{flag(event.country,calendarFlags)}
+
+
+block content
+  h1="New Calendar Tool"
+  .row
+    .col-md-4
+      h4
+        for lang in layout.activeLanguages
+          span.add-info.label.label-default( class="lang+#{lang}" onclick="$('.lang').addClass('hidden');$('.lang-#{lang}').removeClass('hidden');")=lang
+        span.label.label-default(  onclick="$('.add-info').toggle(1000);")="Draft/Final"
+    .col-md-8
+      for lang in layout.activeLanguages
+        div.hidden.lang(class="lang-#{lang}")
+          div.add-info
+            p="Language = "+lang
+            if eventsfilter[lang]
+              p="date " + eventsfilter[lang].date
+              p="duration " + eventsfilter[lang].duration
+              p="big duration " + eventsfilter[lang].big_duration
+              if eventsfilter[lang].excludeCountries
+                p="excludeCountries " + eventsfilter[lang].excludeCountries
+              if  eventsfilter[lang].includeCountries
+                p="includeCountries " + eventsfilter[lang].includeCountries
+
+            else
+              p="Please define rules in admin zone."
+  h3(onclick="$('.tablePreview').toggleClass('hidden')")
+    span.glyphicon.glyphicon-triangle-right.hidden.tablePreview
+    span.glyphicon.glyphicon-triangle-bottom.tablePreview
+    span=" Table Preview"
+
+
+  table.table-condensed.tablePreview
+    colgroup
+      col.col-md-3
+      col.col-md-3
+      col.col-md-3
+      col.col-md-1
+      col.col-md-1
+      col.col-md-1
+    for event in events
+      if !event.all.filtered
+        tr
+          td
+            div.add-info
+              for lang in layout.activeLanguages
+                if event[lang].filtered
+                  span.label.label-default=lang
+                else
+                  span.label.label-info=lang
+          for lang in layout.activeLanguages
+            +eventRowLang(lang,event)
+  h3(onclick="$('.editBlock').toggleClass('hidden')")
+    span.glyphicon.glyphicon-triangle-right.editBlock
+    span.glyphicon.glyphicon-triangle-bottom.hidden.editBlock
+    span=" Edit Block"
+
+  table.table-condensed.editBlock
+    for blog in layout.editBlog
+      - var article = blog._upcomingEvents
+      if article
+
+        tr
+          td
+            p
+              span=blog.name
+              span=" "
+              a(href="#{layout.htmlroot}/article/#{article.id}")="Upcoming Events"
+            p
+              +languageDisplay(article)
+          for lang in layout.activeLanguages
+            td.lang(class="lang-#{lang}")
+              if (!(article["markdown"+lang]) && blog.isEditable(lang))
+                form(name="EditArticle",id="EditArticle#{article.id}#{lang}", action="#{layout.htmlroot}/article/#{article.id}/setMarkdown/#{lang}", method="post")
+                  textarea.hidden.form-control(name="markdown" id="markdown" + article.id rows=7 onchange="onLeaveText(#{article.id});")=markdown[lang]
+                  textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{article.id}" rows=7 )=""
+                  button.btn.btn-default(type="submit")="Store "+lang+" in "+blog.name
+
+  h3(onclick="$('.markdownPreview').toggleClass('hidden')")
+    span.glyphicon.glyphicon-triangle-right.markdownPreview
+    span.glyphicon.glyphicon-triangle-bottom.hidden.markdownPreview
+    span=" Markdown"
+  div.hidden.markdownPreview
+    for lang in layout.activeLanguages
+      pre.lang(class="lang-#{lang}")=markdown[lang]
+  h3(onclick="$('.parserErrors').toggleClass('hidden')")
+    span.glyphicon.glyphicon-triangle-right.parserErrors
+    span.glyphicon.glyphicon-triangle-bottom.hidden.parserErrors
+    span="Parsing Problems"
+  pre.hidden.parserErrors=errors
+  h3(onclick="$('.filteredEvents').toggleClass('hidden')")
+    span.glyphicon.glyphicon-triangle-right.filteredEvents
+    span.glyphicon.glyphicon-triangle-bottom.hidden.filteredEvents
+    span=" Filtered Events"
+
+  table.hidden.filteredEvents.table
+    - var emtpyLine=false;
+    for event in events
+      if event.all.filtered
+        - emptyLine = false;
+        tr
+          td=event.town
+          td=event.text
+          td=eventDateFormat(event,lang)
+          td=event.country
+      else
+        if !emptyLine
+          tr
+            td="..."
+        - emptyLine = true;
+
+block scripts
+  script.
+    $(document).ready(function(){
+      var lang = "!{layout.language}";
+
+      $('.lang').addClass('hidden');
+      $('.lang-'+lang).removeClass('hidden');
+    });

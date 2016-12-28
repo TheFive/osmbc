@@ -14,6 +14,7 @@ mixin voteButton(vote,article)
   - vb_displayClass = "osmbc-btn-not-voted"
   - vb_voteAction = "setVote"
   - vb_voteStyle = ""
+  - if (vb_listVotes && vb_listVotes.length>0)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
   button.btn(type="button" class = vb_displayClass onclick="callAndRedraw('/article/#{article.id}/#{vb_voteAction}.#{vote.name}','/article/#{article.id}/votes')" style=vb_voteStyle)
@@ -33,6 +34,7 @@ mixin voteLabel(vote,article)
   - vb_displayClass = "osmbc-btn-not-voted"
   - vb_voteAction = "setVote"
   - vb_voteStyle = ""
+  - if (vb_listVotes && vb_listVotes.length>0)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
   span.label(class = vb_displayClass onclick="callAndRedraw('/article/#{article.id}/#{vb_voteAction}.#{vote.name}','/article/#{article.id}/votesBlog')" style=vb_voteStyle)
@@ -96,13 +98,13 @@ mixin languageDisplay(article,options)
     - if (options && options.func) onClick = options.func+"('"+lang+"')"
     - var style = ""
     - if (!article.isChangeAllowed("markdown"+lang)) style="color:black"
-    if (article["markdown" + lang])
+    if (article && article["markdown" + lang])
         if (article["markdown" + lang] !== "no translation")
             span.label.osmbclabel-markdown(onclick=onClick style=style)=lang
         else
             span.label.osmbclabel-no-translation(onclick=onClick style=style)=lang
     else
-      if (article.collection)
+      if (article && article.collection)
         span.label.osmbclabel-collect(onclick=onClick style=style)=lang
       else
         span.label.osmbclabel-no-markdown(onclick=onClick style=style)=lang

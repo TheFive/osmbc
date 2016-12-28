@@ -3,9 +3,9 @@ extends layout
 
 block content
   h1
-    | Current OSM Wiki Calender as Markdown
+    | Current OSM Wiki Calendar as Markdown
   p
-    | This is a view on the calender in OpenStreetMap.
+    | This is a view on the calendar in OpenStreetMap.
     | It displays the events from today until 3 weeks.<br>
     | Markdown is converted and previewed on this page.
     | OSMBC tries to have a nice looking markdown table, if this disturbs your edit experience
@@ -14,38 +14,45 @@ block content
   p="There is a public version of this tool "
    a(href="#{layout.htmlroot}/calendar/preview") Preview
    |  for all people to control their events.
-  form(name="input", action="#{layout.htmlroot}/tool/calender2markdown", method="post")
+  form(name="input", action="#{layout.htmlroot}/tool/calendar2markdown", method="post")
     .row
-      .col-md-2
+      .col-md-1
         .checkbox 
          label
           if (!disablePrettify)
-            input(type='checkbox', id='disable',name="disablePrettify" value='true')
+            input(type='checkbox', id='disable',name="disablePrettify" value='false')
           else
             input(type='checkbox', id='disable',name="disablePrettify" value='true' checked)
 
-          | Disable Prettify Table  
-      .col-md-2
+          | No Prettify
+      .col-md-1
         .checkbox
          label
           if (!enableCountryFlags)
-            input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='true')
+            input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='false')
           else
             input(type='checkbox', id='enableCountryFlags',name="enableCountryFlags" value='true' checked)
 
-          | enable Country Flags
-      .col-md-2
+          | Country Flags
+      .col-md-1
+        .checkbox
           label
-          - var pd = new Date();
-          - pd.setDate(pd.getDate()-3)
-          - if (date && date==="null") date =""
-          - if (date && date!=="") date = layout.moment(date).locale(layout.language).format("L")
-          input(id='date',name="date", value=date, placeholder=layout.moment(pd).locale(layout.language).format("L"))
-      .col-md-3
-        label
+            if (!useGeoNames)
+              input(type='checkbox', id='useGeoNames',name="useGeoNames" value='false')
+            else
+              input(type='checkbox', id='useGeoNames',name="useGeoNames" value='true' checked)
 
+            | use Geonames
+
+
+      .col-md-2
+          input(id='date',name="date", value=date, placeholder=layout.moment(pd).locale(layout.language).format("L"))
+      .col-md-2
         input(id='duration',name="duration" value=duration placeholder='24')
 
+
+      .col-md-4
+        input.col-xs-4(id='countries',name="countries" value=countries placeholder='germany')
 
       .col-md-1
        input(name="OK" type="submit", class="btn btn-primary",value="OK")
@@ -55,7 +62,7 @@ block content
   h3
     | Markdown, please edit
   textarea(id="markdown" name="markdown" rows=25 cols=500 style="font-family:monospace")
-    |#{calenderAsMarkdown}
+    |#{calendarAsMarkdown}
   if (errors)
     h3
       |Error during convert

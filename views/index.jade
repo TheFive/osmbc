@@ -13,33 +13,39 @@ block content
             | Please to not forget to search for your Idea entering.
         .row
           h3
-            | Blogs to work on 
+            | Blogs to work on
             a(href="#{layout.htmlroot}/blog/list?status=IN('open','edit')") (more)
-       
-       
+
         .row
-          .col-md-4
-            h4
-              | Open
-            if (layout.listOfOpenBlog)
-              for openBlog in layout.listOfOpenBlog
-                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.name}","_self")')
-                  | #{openBlog.name}
-               
-          .col-md-4
-            h4
-              | Edit
-            if (layout.listOfEditBlog)
-              for openBlog in layout.listOfEditBlog
-                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.name}","_self")')
-                  | #{openBlog.name}
-          .col-md-4
-            h4
-              | Review #{layout.language}
-            if (layout.listOfReviewBlog)
-              for openBlog in layout.listOfReviewBlog
-                button.btn.btn-default(onClick='javascript:window.open("#{layout.htmlroot}/blog/#{openBlog.name}","_self")')
-                  | #{openBlog.name}
+          table.table.table-condensed
+            tr
+              td=""
+              for l in layout.activeLanguages
+                td=l
+
+            for editBlog in layout.editBlog
+              tr
+                td
+                  a(href="#{layout.htmlroot}/blog/#{editBlog.name}")=editBlog.name
+                for l in layout.activeLanguages
+                  td
+                    if (editBlog["close" + l])
+                      div.label.osmbclabel-closedblog
+                        span.glyphicon.glyphicon-ok
+                    else if (editBlog["reviewComment"+l])
+                      div.label.osmbclabel-reviewblog=(editBlog["reviewComment"+l].length-1)
+                    else
+                      div.label.osmbclabel-editblog=editBlog._countUneditedMarkdown[l]
+            for openBlog in layout.listOfOpenBlog
+              tr
+                td
+                  a(href="#{layout.htmlroot}/blog/#{openBlog.name}")=openBlog.name
+                for l in layout.activeLanguages
+                  td
+                    div.label.osmbclabel-openblog=openBlog._countUneditedMarkdown[l]
+
+
+
         .row
           h4="Current Users"
           p

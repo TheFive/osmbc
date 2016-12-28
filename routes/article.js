@@ -93,6 +93,17 @@ function renderArticleId(req,res,next) {
         callback(err,blog);
       });
     },
+    originArticle:
+    function findOriginArticle(callback) {
+      if (article.originArticleId) {
+        articleModule.findById(article.originArticleId,callback);
+      } else return callback(null,null);
+    },
+    originBlog:["originArticle",function findOriginBlog(callback,results){
+      if (results.originArticle) {
+        blogModule.findOne({name:results.originArticle.blog},callback);
+      } else return callback(null,null);
+    }],
 
     // Find all log messages for the article
     changes:
@@ -200,6 +211,8 @@ function renderArticleId(req,res,next) {
                                 articleCategories:result.articleForSort,
                                 blog:result.blog,
                                 changes:result.changes,
+                                originArticle:result.originArticle,
+                                originBlog:result.originBlog,
                                 articleReferences:result.articleReferences,
                                 usedLinks:result.usedLinks,
                                 categories:categories,
@@ -445,6 +458,26 @@ function postArticle(req, res, next) {
       });
     }
   );
+}
+
+function copyArticle(req, res, next) {
+  debug('copyArticle');
+
+  var newBlog = req.params.blog;
+
+
+
+  var article = req.article;
+  // If article exists, everything is fine, if article NOT exist, it has to be created.
+
+
+  var languages = config.getLanguages();
+
+  article.copyToBlog(newBlog,languages,function(err){
+    if (err) return next(err);
+    let referer=req.header('Referer') || '/';
+    res.redirect(referer);
+  });
 }
 
 function postNewComment(req, res, next) {
@@ -725,11 +758,14 @@ var env = process.env.NODE_ENV || 'development';
 
 function translate(req,res,next) {
   debug("translate");
+  var user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20';
+
+  Browser.waitDuration='30s';
   let fromLang = req.params.fromLang;
   let toLang = req.params.toLang;
   let text = req.body.text;
   let link = "#"+fromLang+"/"+toLang+"/";
-  let browser = new Browser({site:"https://translate.google.com/"});
+  let browser = new Browser({userAgent: user_agent,site:"https://translate.google.com/"});
 
   browser.visit(link, function (err) {
     if (err) {
@@ -777,6 +813,7 @@ router.get('/create',exports.createArticle);
 router.get('/searchandcreate',exports.searchAndCreate);
 router.get('/search',exports.searchArticles);
 router.post('/create', exports.postArticle);
+router.post('/:article_id/copyTo/:blog', copyArticle);
 router.post('/translate/:fromLang/:toLang',translate);
 
 router.param('article_id',getArticleFromID);

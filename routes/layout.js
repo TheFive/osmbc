@@ -165,6 +165,7 @@ function prepareRenderLayout(req,res,next) {
       languages.forEach(function(item){
         if (usedLanguages[item]) activeLanguages.push(item);
       });
+      if (!result.editBlog) result.editBlog = [];
       if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
       if (!result.listOfEditBlog) result.listOfEditBlog = [];
       if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
@@ -185,6 +186,7 @@ function prepareRenderLayout(req,res,next) {
                       listOfOpenBlog:result.listOfOpenBlog,
                       listOfEditBlog:  result.listOfEditBlog,
                       listOfReviewBlog:result.listOfReviewBlog,
+                      editBlog:result.editBlog,
                       tbc:result.tbc,
                       moment:moment,
                       util:util,

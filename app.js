@@ -7,6 +7,7 @@ var favicon      = require('serve-favicon');
 var logger       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
+var async        = require('async');
 
 var debug = require('debug')('OSMBC:app');
 var passport     = require('passport');
@@ -29,7 +30,7 @@ var slackrouter    = require('./routes/slack').router;
 var changes    = require('./routes/changes').router;
 var blog       = require('./routes/blog').router;
 var tool       = require('./routes/tool').router;
-var calender   = require('./routes/tool').publicRouter;
+var calendar   = require('./routes/tool').publicRouter;
 var api        = require('./routes/api').publicRouter;
 var layout     = require('./routes/layout').router;
 var configRouter     = require('./routes/config').router;
@@ -47,7 +48,7 @@ var userModule = require('./model/user.js');
 // Initialise config Module
 config.initialise();
 var htmlRoot = config.getValue("htmlroot");
-console.log("Express Routes set to: SERVER"+htmlRoot);
+console.info("Express Routes set to: SERVER"+htmlRoot);
 
 // taken from: https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
 // Passport session setup.
@@ -151,13 +152,19 @@ function ensureAuthenticated(req, res, next) {
     });
     return;
   }
-
-  if (!req.session.returnTo ) {
-    console.log("Setting session return to to "+req.originalUrl);
-    req.session.returnTo = req.originalUrl;
-
-  }
-  res.redirect(htmlRoot+'/auth/openstreetmap');
+  async.series([
+    function saveReturnTo(cb) {
+      if (!req.session.returnTo ) {
+        console.log("Setting session return to to "+req.originalUrl);
+        req.session.returnTo = req.originalUrl;
+        return req.session.save(cb);
+      }
+      return cb();
+    }
+  ],function(err){
+    if (err) return next(err);
+    res.redirect(htmlRoot+'/auth/openstreetmap');
+  });
 }
 
 
@@ -260,7 +267,7 @@ app.get(htmlRoot + '/logout', function(req, res){
 app.use(htmlRoot+'/bower_components',  express.static(__dirname + '/bower_components'));
 app.use(htmlRoot,express.static(path.join(__dirname, 'public')));
 
-app.use(htmlRoot,calender );
+app.use(htmlRoot,calendar );
 app.use(htmlRoot + "/api",api );
 app.use(htmlRoot + '/slack', slackrouter);
 
@@ -326,7 +333,7 @@ if (app.get('env') === 'test') {
   app.use(function(err, req, res,next) {
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
-    console.log("Error Message" + err.message);
+    console.error("Error Message" + err.message);
     res.render('error', {
       message: err.message,
       error: err,
@@ -349,7 +356,6 @@ app.use(function(err, req, res,next) {
   });
   if (next); // do nothing but use the next variable
 });
-
 
 
 module.exports = app;

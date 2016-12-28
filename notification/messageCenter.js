@@ -78,7 +78,7 @@ function initialise(callback)
 
   messageCenter.registerReceiver(new LogModuleReceiver());
 
-  console.log("Message Center initialised.");
+  console.info("Message Center initialised.");
   if (callback) return callback();
 }
 
