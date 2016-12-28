@@ -663,7 +663,7 @@ block scripts
     function copyTextRIGHT() {
       document.getElementById("translateLinkRIGHT").classList.add("hidden");
       document.getElementById("copyLinkRIGHT").classList.add("hidden");
-      document.getElementById("markdownRIGHT").value = document.getElementById("markdownLEFT").value ;
+      document.getElementById("markdownRIGHT").value = $("#markdownLEFT").html();
       onchangeRIGHT();
     }
     function translateLEFT() {
@@ -688,7 +688,7 @@ block scripts
     function copyTextLEFT() {
       document.getElementById("translateLinkLEFT").classList.add("hidden");
       document.getElementById("copyLinkLEFT").classList.add("hidden");
-      document.getElementById("markdownLEFT").value = document.getElementById("markdownRIGHT").value;
+      document.getElementById("markdownLEFT").value = $("#markdownRIGHT").html();
       onchangeRIGHT();
     }
 
