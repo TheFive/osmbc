@@ -14,7 +14,10 @@ block content
     .col-md-4
       div.btn-group(role="group" class="pull-right")
         button.btn.btn-default(onclick ="location.href='#{returnToUrl}';") Edit
-        button.btn.btn-default(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}/preview?download=true&lang=#{lang}';") Download
+        if (asMarkdown)
+          button.btn.btn-default(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}/preview?download=true&lang=#{lang}&markdown=true';") Download
+        else
+          button.btn.btn-default(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}/preview?download=true&lang=#{lang}';") Download
 
   row
     .col-md-12
