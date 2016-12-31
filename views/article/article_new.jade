@@ -105,10 +105,9 @@ block content
           .col-md-3
             +languageDisplay(article,{func: "showRL"})
             +noTranslationButton
-          .col-md-3
-          .col-md-1
-            +saveButton
           .col-md-2
+          .col-md-4
+            +saveButton
             +cancelButton
 
 
@@ -761,6 +760,7 @@ block scripts
 
     // Enable & Disable the different languages
     function showRL(what) {
+      console.log("showRL "+what);
       $(".RL").addClass("hidden");
       if (what == "!{params.left_lang}") what = "!{params.right_lang}";
       $(".RL-"+what).removeClass("hidden");

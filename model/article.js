@@ -145,6 +145,7 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
     case "title":
     case "blog":
     case "predecessorId":
+    case "collection":
     case "categoryEN":
       langlist.forEach(function(l){
         if (self._blog["exported"+l]=== true) result = false;
