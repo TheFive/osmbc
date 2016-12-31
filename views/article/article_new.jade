@@ -805,8 +805,11 @@ block scripts
     // after that it callse the "redraw" url, parses
     // the json and redraws it content in the html
     function callAndRedraw(call, redraw) {
-
-      $.get("!{layout.htmlroot}" + call,function(){redrawFunc(redraw);});
+      if (call) {
+        $.get("!{layout.htmlroot}" + call,function(){redrawFunc(redraw);});
+      } else {
+        redrawFunc(redraw);
+      }
 
     }
 
@@ -822,6 +825,8 @@ block scripts
         'text' // I expect a JSON response
       ).fail( function(err){console.dir(err);});
     }
+
+
     function setNoTranslation(){
       $('.markdownEdit').each(function(item){
 
