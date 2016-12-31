@@ -43,7 +43,7 @@ block content
               th.hidden-xs
                 |Cat (EN)
               th.hidden-xs
-                |Preview (#{layout.language})
+                |collection
           tbody
 
           each  article,count in foundArticles
@@ -56,12 +56,13 @@ block content
                 td
                   a(href="#{layout.htmlroot}/article/#{article.id}") #{(article.title)?article.title:"No Title"}
                 td.hidden-xs=article.categoryEN
+                td.pre=article.collection
               tr(class="class_#{article.id}").hidden
                 td
                 td(colspan=1)
                   :verbatim
                     !{layout.md_render(article["markdown"+layout.language])}
-                td(colspan=1)
+                td(colspan=2)
                   :verbatim
                     !{layout.md_render(article["markdown"+layout.language2])}
 
