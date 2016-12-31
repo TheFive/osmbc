@@ -450,7 +450,7 @@ function convertLogsToTeamString(logs,lang,users) {
     for (var i =0;i<editors.length;i++){
       for (var j =0;j<users.length;j++ ){
         if (editors[i]===users[j].OSMUser) {
-          if (users[j].WNAuthor) {
+          if (users[j].WNAuthor && users[j].WNPublicAuthor && users[j].WNPublicAuthor !="Not Found") {
             editors[i]='<a href="http://blog.openstreetmap.de/blog/author/'+users[j].WNAuthor+'">'+users[j].WNPublicAuthor+'</a>';
           }
         }
