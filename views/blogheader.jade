@@ -294,6 +294,18 @@ block scripts
       pv.innerHTML = convert(md);
 
     }
+
+    function callAndRedraw(call, redraw) {
+      $.get("!{layout.htmlroot}" + call, function (data) {
+        let j = $.getJSON("!{layout.htmlroot}" + redraw, function (json) {
+          for (k in json) {
+            $(k).html(json[k]);
+          }
+        });
+      });
+
+    }
+
   
 
 

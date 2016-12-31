@@ -1,0 +1,858 @@
+extends ../layout
+
+
+mixin leftcolumn
+  if (params.right_lang === null)
+    .col-md-10
+      if block
+        block
+      else
+        p No Content provided
+  else
+    .col-md-5
+      if block
+        block
+      else
+        p No Content provided
+
+mixin rightcolumn
+  if (params.right_lang !== null)
+    .col-md-5
+      if block
+        block
+      else
+        p No Content provided
+  else
+    .col-md-5.hidden
+      if block
+        block
+      else
+        p No Content provided
+
+mixin articleMarkdown(lang,disabled)
+  - var d = disabled
+  - var p=""
+  if placeholder.markdown[lang]
+    - p = placeholder.markdown[lang];
+  textarea.markdownEdit.form-control(id="markdown#{lang}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6 readonly = d) #{article["markdown" + lang]}
+  div.markdownMessage(id="text"+lang )
+    | 'no translation' or '-' to specify no translation wanted.
+
+
+mixin articlePreview(lang)
+    // if article.categoryEN != "Picture"
+    .panel.panel-default.panel-body.preview(id="preview" + lang, lang = lang)
+      :verbatim
+        !{article["textHtml"+lang]}
+
+mixin articleTextanalyse(lang)
+  if (lang === "DE") && (article["markdown" + lang])
+    a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('preview'+lang).innerText; taform.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
+    span=" "
+
+mixin articleTranslateButton(langFrom,langTo)
+  if (article["markdown" + langFrom] && !article["markdown" + langTo])
+    button.btn.btn-small.btn-primary(id="translate"+langFrom+langTo onClick ="javascript: window.translate('#{langFrom}','#{langTo}');") Google Translate #{langFrom} -> #{langTo}
+    button.btn.btn-small.btn-warning.hidden(id="translateWait"+langFrom+langTo)
+      span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+      span=" Please Wait"
+    button.btn.btn-small.btn-danger.hidden(id="translateError"+langFrom+langTo)
+      span="Error occured"
+
+mixin saveButton
+  button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") Save
+
+mixin doublettesButton
+  if articleReferences.count >= 1
+    a(href="#doublettes")
+      div.button.btn.btn-large.btn-danger=articleReferences.count + " doub."
+
+
+
+mixin cancelButton
+  button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
+
+
+mixin noTranslationButton
+  div#notranslationArea
+    - open = false
+    each lang in layout.activeLanguages
+      if (article["markdown" + lang] || !article.isChangeAllowed("markdown" + lang))
+      else
+        - open = true;
+    if open
+      p
+        button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; setNoTranslation(); document.getElementById('input').submit();") no translation to rest
+
+
+block content
+  p="This Editor is BETA, please change to old editor in your settings in case of any problems."
+  form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
+    .row
+      // Block for Buttons in the upper right corner and on the top in mobile
+      .col-md-6.col-md-push-6
+        .row
+          .col-md-4#voteButtons
+            include ../voteButtons
+          .col-md-1
+            +doublettesButton
+          .col-md-1
+
+          .col-md-2
+
+          .col-md-2
+          .col-md-2
+        .row
+          .col-md-3
+            +languageDisplay(article,{func: "showRL"})
+            +noTranslationButton
+          .col-md-2
+          .col-md-4
+            +saveButton
+            +cancelButton
+
+
+
+
+          // Parallel Blog for common article Attributes
+      .col-md-6.col-md-pull-6
+        .row
+          div.form-group
+            label.col-md-2="Blog"
+            div.col-md-10
+              +blogSelector(article,!article.isChangeAllowed("blog"))
+            .hidden
+              textarea.form-control(name="version",rows=1,hide=true) #{article.version}
+
+        .row
+          .form-group
+            label.col-md-2="Category"
+            div.col-md-10
+              select(id="categoryEN",name="categoryEN" ).form-control
+                for category in categories
+                  - option = category[params.left_lang]
+                  - if (params.right_lang !== null) option += " / "+category[params.right_lang]
+                  if (category.EN == article.categoryEN)
+                    option(value="#{category.EN}" selected ) #{option}
+                  else
+                    option(value="#{category.EN}" disabled=!article.isChangeAllowed("categoryEN")) #{option}
+        .row
+          .col-md-2
+          .col-md-10
+            div(id="categoryDisplay" style={color: 'Gray'})
+
+
+
+
+
+    // Display Predecessor Row
+    .row
+      .form-group
+        label.col-md-1="Predecessor"
+        +leftcolumn
+          select(id="predecessor",name="predecessorId" ).form-control
+            if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
+              option(value="" selected) None
+            else
+              option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
+            if article.predecessorId === "0"
+              option(value="0" selected) First
+            else
+              option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
+            for a in articleCategories
+              if (a.id == article.predecessorId)
+                option(value=a.id selected )=a.title
+              else
+                - d= null;
+                for b in articleCategories
+                  - if (b.predecessorId == a.predecessorId) {d=b;}
+                if !article.isChangeAllowed("predecessorId")
+                  option(value=a.id disabled=true)=a.title+"("+d.title+")"
+                else
+                  option(value=a.id )=a.title
+    // Display Title Row
+    .row
+      .form-group
+        label.col-md-1="Title"
+        .col-md-10
+          textarea.form-control(name="title",rows=1 readonly=!article.isChangeAllowed("title")) #{article.title}
+
+
+    // Display Unpublish Reason Row
+    .row.hidden(id="unpublishReasonRow")
+      .form-group
+        label.col-md-1="Unpublish Reason"
+        .col-md-5
+          select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control
+            for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
+              if (reason == article.unpublishReason)
+                option(value="#{reason}" selected ) #{reason}
+              else
+                option(value="#{reason}" ) #{reason}
+        .col-md-5
+          textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference")) #{article.unpublishReference}
+
+
+    // Display Collection Row
+    .row
+      .form-group
+        label.col-md-1="Collection"
+        .col-md-10
+          textarea.form-control(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection")) #{article.collection}
+    .row
+      .col-md-1
+
+      .col-md-6
+        .div(id="linkArea")
+      .col-md-4
+        p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
+
+
+
+
+
+
+      - var lbg;
+      - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
+      - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
+      - var rbg;
+      - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
+      - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
+
+
+
+
+      .col-md-6
+        .row
+          .col-md-2
+          .col-md-10
+            span.label.label-default(id="left_lang" class="#{lbg}")=params.left_lang
+
+        .row.markdownArea
+          .col-md-2
+            p="Markdown"
+
+          .col-md-10
+            +articleMarkdown(params.left_lang,!article.isChangeAllowed("markdown"+params.left_lang))
+        .row
+          .col-md-2
+            p="Preview"
+          .col-md-10
+            +articlePreview(params.left_lang)
+
+      .col-md-5
+        .row
+          .col-md-12
+            for l in layout.activeLanguages
+              if l === params.right_lang
+                span.label.label-default.RL(class="#{rbg} RL-#{l}")=l
+              else
+                span.label.label-default.RL.hidden(class= "RL-#{l}")=l
+        .row
+          .col-md-12
+            for l in layout.activeLanguages
+              if l === params.right_lang
+                .RL(class= "RL-#{l}")
+                  +articleMarkdown(l,!article.isChangeAllowed("markdown"+l))
+              else
+                if l !== params.left_lang
+                  .RL.hidden(class= "RL-#{l}")
+                    +articleMarkdown(l,!article.isChangeAllowed("markdown"+l))
+        .row
+          .col-md-12
+            for l in layout.activeLanguages
+              if l === params.right_lang
+                .RL(class= "RL-#{l}")
+                  +articlePreview(l)
+              else
+                .RL.hidden(class= "RL-#{l}")
+                  +articlePreview(l)
+
+
+
+
+
+      .col-md-1
+        .row
+           i#languageFlagsShow.fa.fa-flag.fa-2x(onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
+
+       .row#languageFlags.hidden
+         - for (lang in languageFlags)
+           img(id="#{lang}",
+               src="#{languageFlags[lang]}",
+               class="img-thumbnail" ,
+               width = 40,
+               data-toggle="tooltip" data-placement="left" title=lang
+               onclick="javascript:myclick(this.id)"
+               ondragstart = "ondragstartflag(event,this.id);")
+
+
+
+
+
+
+
+
+
+
+
+  .row
+    .col-md-1
+    +leftcolumn
+      +articleTextanalyse(params.left_lang)
+      +articleTranslateButton(params.left_lang,params.right_lang)
+
+    +rightcolumn
+      +articleTranslateButton(params.right_lang,params.left_lang)
+
+
+
+
+
+  // simple hidden form, to post data to the wortliga textanalyse service
+  form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
+    input.form-control(type="hidden" name = "text" id ="textanalysefield")
+
+  .div#commentArea
+    include commentArea
+
+  .row#voteButtonsList
+    include ../voteButtonsList
+
+  #doublettes.row
+      if articleReferences.count >= 1
+        h3
+          |Links used in other Post
+        div
+          table.table.table-striped.table-responsive
+            thead
+              tr
+                th="link"
+                th="article"
+                th="category"
+                th="blog"
+
+            tbody
+              each array,link in articleReferences
+                if (link != "count" )
+                  each articleItem,index in array
+                    if (articleItem.id != article.id) && (index <5)
+                      tr
+                        td
+                          a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
+                        td
+                          a(href='#{layout.htmlroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
+                        td= articleItem.categoryEN
+                        td= articleItem.blog
+                    if (index == 8) 
+                      tr
+                        td
+                          a(href='#{link}') #{link}
+                        td
+                          |And #{array.length-5} further articles.
+                
+
+
+    .row.visible-xs
+      p
+        br
+        a(href="#{layout.htmlroot}/changes/log?table=article&oid=#{article.id}") [changes]
+    .row.hidden-xs
+      if changes
+        h3
+          |History
+        div
+          table.table.table-striped.table-responsive
+            thead
+              tr 
+                th
+                 | 
+                th
+                 |user
+                th
+                 |what
+                th
+                 |change
+                th
+                 |when
+             tbody
+              each change, i in changes
+                tr
+                  td
+                   a(href='#{layout.htmlroot}/changes/' + change.id) 
+                      span.glyphicon.glyphicon-info-sign 
+                  td= change.user
+                  td= change.property
+                  td
+                    :verbatim
+                      !{change.htmlDiffText(100)}
+                  td= layout.moment(change.timestamp).fromNow() 
+        div
+          p
+            |only displaying changes 
+            span.osmbc-inserted
+              |inserted text 
+            span.osmbc-deleted
+              |removed text
+
+
+block scripts                
+  script(src=layout.path("markdown-it")+'/markdown-it.min.js')
+
+
+
+
+  script.
+
+    // Init This Window with jQuery ready Callback
+    $(document).ready(init);
+
+
+    // set Constant for Window with JADE Variables
+    googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
+    activeLanguages = JSON.parse('!{JSON.stringify(layout.activeLanguages)}');
+    leftLang = "!{params.left_lang}";
+    rightLang = "!{params.right_lang}";
+    placeholder = !{JSON.stringify(placeholder.categories)}
+
+
+    // Function to put several Events in series
+    // Usage
+    // series(callback1,callback2,callback3)
+    // generates a callback, that calls all 3 callbacks
+    // in series, bind to this
+    function series() {
+      var _arguments = arguments;
+      return function() {
+        for (var i = 0; i < _arguments.length; i++) {
+          _arguments[i].bind(this)();
+        }
+      }
+    }
+
+
+
+    // unlaodWindow Handler, to generate messages that form is left unsaved
+    function unloadWindow(event) {
+      event.returnValue = "Oops, it looks like you have forgotten to save your work.";
+    };
+
+
+    // initialise all callbacks with jQuery
+    function init() {
+      $(window).on("beforeunload",unloadWindow);
+
+      noTranslationText = $(".markdownMessage:first").html();
+
+      $(".markdownEdit")
+              .change(convertMinusNoTranslation)
+              .focusout(convertMinusNoTranslation)
+              .keyup(series(previewMarkdown,checkForTable,FitToContent,checkMarkdownError))
+              .on("paste",pasteEvent)
+              .on("drop",pasteEvent)
+              .trigger("change");
+      $("#collection")
+              .change(series(onchangeCollection,FitToContent))
+              .keyup(series(onchangeCollection,FitToContent))
+              .trigger("change");
+      $("#blog")
+              .change(showHideUnpublishReason)
+              .trigger("change");
+      $("#comment")
+              .change(FitToContent)
+              .keyup(FitToContent)
+              .trigger("change");
+      $("#categoryEN")
+              .change(series(syncPlaceholder,showHideUnpublishReason))
+              .trigger("change");
+      $("#AddComment")
+              .change(FitToContent)
+              .keyup(FitToContent)
+              .trigger("change");
+      $("#editComment")
+              .change(FitToContent)
+              .keyup(FitToContent)
+              .trigger("change");
+      resizePictures();
+      $('[data-toggle="tooltip"]').tooltip();
+
+    }
+
+
+
+
+    // Check, wether value of field is "-" and set it to "no translation"
+    // Install as onleave event handler
+    function convertMinusNoTranslation() {
+      var object = $(this)
+      var md = object.val();
+      if (md && md.trim() == "-") {
+        object.val("no translation");
+        object.trigger("change");
+      }
+    }
+
+    // Resize Pictures Handler
+    // Call in init phase, and during preview calculation of markdown
+    function resizePictures() {
+      $(".preview img").css("max-width","50%","max-height","50%");
+
+    }
+
+
+
+    // Function to convert markdown into html
+    // Add the Blog typic list element to preview, but only
+    // for specific types, (Missing: configuring this by user.)
+    function convert(text) {
+      converter = new window.markdownit({breaks:true});
+
+      // The cut at the beginning is a little bit "historic" from the
+      // OSMBC startup, so only used for emotional motivation of the developer :-)
+      if (text.substring(0,2)=="* ") text = text.substring(2,999999);
+
+
+      // convert md to html
+      text = converter.render(text);
+
+      // Display as list, this should depend on type
+
+      var cat = $("#categoryEN").val();
+      if (cat != "Picture" && cat != "Events" && cat != "Releases") {
+        text = '<ul><li>'+text+'</li></ul>';
+      }
+      return text;
+    }
+
+    // Test, wether a text is an url or not
+    // based on regex.
+    function isURL(t) {
+
+      var isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/
+      if (t) return isUrlRegex.test(t);
+      return isUrlRegex;
+    }
+
+    // Try to copy text to the clipboard
+    // if it fails, alert an error and offer the possibility to copy manual
+    function clip(text) {
+      var copyElement = document.createElement('input');
+      copyElement.setAttribute('type', 'text');
+      copyElement.setAttribute('value', text);
+      copyElement = document.body.appendChild(copyElement);
+      copyElement.select();
+      try {
+        if (!document.execCommand('copy')) throw 'Not allowed.';
+      } catch (e) {
+        copyElement.remove();
+        prompt('Copy not supported, use your mobile to copy and press enter', text);
+      } finally {
+        if (typeof e == 'undefined') {
+          copyElement.remove();
+        }
+      }
+    }
+
+    // Function that generates a markdown link in the case a
+    // url is pasted or drag'n dropped to a markdown textfield
+    //
+    function generateMarkdownLink2(par1,par2) {
+
+      // tb == Text Before Selection
+      // ta == Text Afer Selection
+      var tb = par1.text.substring(0,par1.startselection);
+      var ta = par1.text.substring(par1.endselection,99999);
+
+      // beforeSnip == selected Text before paste
+      // afterSnip == selected Text after Insert
+      var beforeSnip = par1.text.substring(par1.startselection,par1.endselection);
+      var afterSnip = par2.text.substring(par1.startselection,par2.endselection);
+
+      // only in the case, the "afterSnip" variable contains an URL, something
+      // has to be done
+      if (isURL(afterSnip.trim())) {
+
+        afterSnip = afterSnip.trim();
+
+        // Check, wether, the url is pasted into brackets ()
+        // then nothing has to be done
+        var alreadyMarkdowned = false;
+        if (tb!="" && tb.charAt(tb.length-1)=="(") alreadyMarkdowned= true;
+        if (ta!="" && tb.charAt(0)==")") alreadyMarkdowned= true;
+        if (!alreadyMarkdowned) {
+
+          // combine the new text
+          var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
+
+          // calculate the position to point to
+          // for the new text
+          // Between [] in the case, that only a link was added
+          // after the [link](http://somewhere) in case the link has already a "display" word
+          var c ;
+          if (beforeSnip == "") {
+            c = (tb+"[").length;
+          } else {
+            c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
+          }
+          return {text:r,pos:c};
+        }
+      }
+      return null;
+    }
+
+    // Event Handler for pasting text to markdown field
+    function pasteEvent() {
+      var mf = this;
+
+      // Generate a triple of text, start selection and end selection BEFORE Pasting new text
+      var before = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
+
+      setTimeout(function () {
+        // Generate a triple of text, start selection and end selection AFTER Pasting new text
+        var after = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
+
+        // And use the result, to generate the markdown link
+        var r = generateMarkdownLink2(before, after);
+
+        if (r) {
+          mf.value = r.text;
+          mf.selectionStart = mf.selectionEnd = r.pos;
+        }
+        // just for the case, that a " " war added by some browsers between [] and ()
+        // of the markdown link throw it away
+        mf.value = (mf.value).replace(/] \(/g, "](");
+        $(mf).trigger("change");
+      }, 1); // End of setTimeout function call
+    }
+
+
+    // Check, wether a markdown field contains a table
+    // and set the texttype to monospace
+    function checkForTable() {
+      var md = this.value;
+      if (md.indexOf("|----")>= 0) {
+        $(this).wrap = 'off';
+        $(this).css("fontFamily","monospace");
+        }
+      else {
+        $(this).wrap = 'soft';
+        $(this).css("fontFamily","");
+        }
+    }
+
+    // Event handler to calculate the fresh markdown preview
+    function previewMarkdown() {
+      var md = this.value;
+      preview = $(".preview[lang=" + this.lang + "]");
+      text = $(".markdownMessage[lang=" + this.lang + "]");
+      preview.html(convert(md));
+      resizePictures();
+    }
+
+
+    // Event Handler to check markdown for every error
+    // For Now
+    // * long markdown links
+    //
+    // Can be extended: Valid Urls, ...
+    function checkMarkdownError() {
+      var md = this.value;
+      text = $(".markdownMessage[lang=" + this.lang + "]");
+      var errorOccured= false;
+
+      // Check for long links
+      var longLink = md.search(/\[[^\]]{40,}\]/g);
+      if (longLink>=0) {
+        text.innerHTML = "<p>Please shorten ["+md.substring(longLink+1,longLink+40)+"...]</p>"
+        text.css("backgroundColor","#FDC6CD");
+        errorOccured = true
+        }
+
+      if (!errorOccured) {
+         //preview.style.backgroundColor="";
+         text.css("backgroundColor","");
+         text.innerHTML = noTranslationText;
+        }
+    }
+
+    // Generate the automatic google translate link for an url
+    // and a given language, used to show it in edit mode
+    function generateGoogleTranslateLink(link,lang) {
+      var googlelang = lang;
+      if (lang === "JP") googlelang = "JA";
+      var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
+
+
+      var gtlMarkdown = "(automatic [translation](##link##))";
+      if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
+
+
+      gtlMarkdown = gtlMarkdown.replace("##link##",gtl);
+
+      var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
+
+      return '<a href="'+gtl+'" target="_blank" ondragstart="'+dragstartFunction+'" >'+lang+'</a>';
+    }
+
+
+    // Eventhandler to start drag & drop
+    function dragstart(event,text) {
+      event.dataTransfer.setData("TEXT", text);
+    }
+
+    // Collection is changed, so create a linkList
+    // for the linkArea
+
+    function onchangeCollection() {
+      var cl = $("#collection").val();
+      var linkArea = $("#linkArea");
+      var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
+      var linkList;
+      var result = "";
+
+
+      while( (linkList = regexToken.exec(cl)) != null ) {
+        result += '<a href="'+linkList[0]+'" target="_blank" >'+linkList[0]+'</a>\n';
+        result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
+        if (rightLang !== "--" && rightLang !== "") {
+          result += " "+generateGoogleTranslateLink(linkList[0],rightLang);
+        }
+        result +="<br>\n";
+      }
+      result = '<p>'+result+'</p>';
+
+      if (linkArea) linkArea.html(result);
+
+    }
+
+
+    // click on a flag Event
+    // Copy the flag related information to the clipboard as markdown link
+    var myclick = function () {
+
+      src = this.src;
+      src = "![("+id+")]("+src+")";
+      clip(src);
+      alert(id+ " flag is copied to clipboard");
+    }
+
+
+    // dragStart Event
+    function ondragstartflag (event,id) {
+      image = document.getElementById(id);
+      src = image.src;
+      src = "![(" + id + ")](" + src + ")";
+      event.dataTransfer.setData("TEXT", src);
+    }
+
+
+    // Fit to content event
+    // justify the size of the textfield to the shown content
+    function FitToContent()
+    {
+      if (!this) return;
+      textfield=this;
+      textfield.style.height = textfield.style.minHeight;
+      var adjustedHeight = Math.max(textfield.scrollHeight, textfield.clientHeight);
+      if ( adjustedHeight > textfield.clientHeight ) {
+        textfield.style.height = adjustedHeight + "px";
+      }
+    }
+
+    // Enable & Disable the different languages
+    function showRL(what) {
+      console.log("showRL "+what);
+      $(".RL").addClass("hidden");
+      if (what == "!{params.left_lang}") what = "!{params.right_lang}";
+      $(".RL-"+what).removeClass("hidden");
+    }
+
+
+    function syncPlaceholder() {
+      var c = $("#categoryEN").val();
+      if (placeholder[c]) {
+         $("#categoryDisplay").html(placeholder[c]);
+        }
+      else {
+        $("#categoryDisplay").html("Missing Category Description");
+      }
+    }
+
+    function showHideUnpublishReason() {
+
+      var c = $("#categoryEN").val();
+      var b = $("#blog").val();
+
+      var hidden = true;
+      if (c==="--unpublished--") hidden = false;
+      if (b==="Trash") hidden = false;
+
+      if (hidden) $("#unpublishReasonRow").addClass("hidden");
+        else $("#unpublishReasonRow").removeClass("hidden");
+    }
+
+
+    function redrawFunc(redraw) {
+      console.log("Redraw" + redraw)
+      let j = $.getJSON("!{layout.htmlroot}" + redraw, function (json) {
+        console.dir(json);
+        for (k in json) {
+          $(k).html(json[k]);
+        }
+      });
+    }
+    // This Function calls "call" url, if given
+    // after that it callse the "redraw" url, parses
+    // the json and redraws it content in the html
+    function callAndRedraw(call, redraw) {
+
+      $.get("!{layout.htmlroot}" + call,function(){redrawFunc(redraw);});
+
+    }
+
+    function submitAndRedraw(form,redraw) {
+      var jqForm = $(form);
+      var url = jqForm.attr('action');
+
+      $.post(url, jqForm.serialize(), function (data) {
+          if (data === "OK") {
+            redrawFunc(redraw);
+          }
+        },
+        'text' // I expect a JSON response
+      ).fail( function(err){console.dir(err);});
+    }
+    function setNoTranslation(){
+      $('.markdownEdit').each(function(item){
+
+        if (this.value=="" && !this.readOnly ) this.value = "no translation";
+      });
+    }
+
+    function translate(langFrom, langTo) {
+      document.getElementById("translate" + langFrom + langTo).classList.add("hidden");
+      document.getElementById("translateWait" + langFrom + langTo).classList.remove("hidden");
+      var leftLang = "#{params.left_lang.toLowerCase()}";
+      var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
+      var originalText = document.getElementById("markdown" + langFrom).value;
+      jQuery.post("#{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
+        data = data.replace(/] \(/g, "](");
+        document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
+        document.getElementById("markdown" + langTo).value = data;
+        onchangeFunction(langTo)();
+      }).fail(function (err) {
+        console.log(err);
+        document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
+        document.getElementById("translateError" + langFrom + langTo).classList.remove("hidden");
+      });
+    }
+
+
+
+
+
+
+
+   
+
+

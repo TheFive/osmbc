@@ -47,7 +47,6 @@ function getListOfOrphanBlog(callback) {
 function Article (proto)
 {
 	debug("Article");
-  debug("Prototype %s",JSON.stringify(proto));
 	this.id = 0;
 	for (var k in proto) {
     this[k] = proto[k];
@@ -130,8 +129,41 @@ Article.prototype.getCommentRead = function getCommentRead(user) {
 };
 
 
+Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
+  debug('Article.prototype.isChangeAllowed');
+  // someone should have set _blog, so that this function can work without callback
+  
+  // blog is set to null, so no dependency;
+  if (this._blog === null) return true;
+  should.exist(this._blog);
+  should(this.blog).eql(this._blog.name);
+  let langlist = config.getLanguages();
+  let result = true;
+  let self = this;
 
-
+  switch (property) {
+    case "title":
+    case "blog":
+    case "predecessorId":
+    case "collection":
+    case "categoryEN":
+      langlist.forEach(function(l){
+        if (self._blog["exported"+l]=== true) result = false;
+        if (self._blog["close"+l]=== true) result = false;
+      });
+      if (!result) return result;
+      break;
+    default:
+      langlist.forEach(function(l){
+        if (property === "markdown"+l) {
+          if (self._blog["exported"+l]=== true) result = false;
+          if (self._blog["close"+l]=== true) result = false;
+        }
+        if (!result) return result;
+      });
+  }
+  return result;
+};
 
 
 Article.prototype.doLock = function doLock(user,callback) {
@@ -215,6 +247,16 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
         self.save(cb);
       } else cb();
     },
+    function loadBlog(cb) {
+      if (self._blog) return cb();
+      blogModule.findOne({name:self.blog},function(err,result){
+        if (err) cb(err);
+        self._blog = result;
+        return cb();
+      });
+    },
+
+
     function addCommentWhenGiven(cb) {
       debug("addCommentWhenGiven");
       let addComment = data.addComment;
@@ -251,9 +293,13 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
 
 
     for (var k in data) {
-      if (data[k] === self[k]) delete data[k];
-      if (data[k] === '' && typeof(self[k])=='undefined') delete data[k];
+      if (data[k] === self[k]) {delete data[k];continue;}
       if (data[k]) data[k] = data[k].trim();
+      if (data[k] === '' && typeof(self[k])=='undefined') {delete data[k];continue;}
+      // all values that not have to be changed are now deleted.
+      // test wether change is allowed
+      if (!self.isChangeAllowed(k)) return callback(new Error(k+" can not be edited"));
+
     }
     async.series(
       [function logIt (cb) {
@@ -286,12 +332,39 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
 
 function find(obj,order,callback) {
 	debug("find");
-  pgMap.find({table:"article",create:create},obj,order,callback);
+	let createFunction = create;
+
+	if (typeof obj.blog === "object") {
+	  let blog = obj.blog;
+    obj.blog = blog.name;
+	  createFunction = function() {
+	    return create({_blog:blog});
+    };
+  }
+  if (typeof obj.blog === "string") {
+	  if ((obj.blog =="Future") || (obj.blog =="TBC") || (obj.blog =="Trash")) {
+      createFunction = function() {
+        return create({_blog:null});
+      };
+    }
+  }
+  should.exist(createFunction);
+  pgMap.find({table:"article",create:createFunction},obj,order,callback);
 }
 
 function findById(id,callback) {
 	debug("findById %s",id);
-  pgMap.findById(id,{table:"article",create:create},callback);
+  pgMap.findById(id,{table:"article",create:create},function(err,result) {
+    if (err) callback(err);
+    if (!result) callback (null,result);
+
+    blogModule.findOne({name:result.blog},function(err,blog){
+
+      result._blog = blog;
+
+      return callback(err,result);
+    });
+  });
 }
 
 function findOne(obj1,obj2,callback) {

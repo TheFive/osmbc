@@ -128,6 +128,8 @@ module.exports.save = function(callback) {
 
   // clean property's with "_"
 
+  // store blog Reference not to loose it.
+  let blog = self._blog;
   for (var k in self) {
     if (k.substring(0,1)=="_") delete self[k];
   }
@@ -160,6 +162,7 @@ module.exports.save = function(callback) {
         sqldebug("SQL: ["+ (endTime - startTime)/1000 +"] insert to "+ table);
         
         pgdone();
+        if (typeof blog !== "undefined") self._blog = blog;
         return callback(null,self);
       });
     });
@@ -220,6 +223,7 @@ module.exports.save = function(callback) {
           })*/
           query.on('end',function () {
             pgdone();
+            if (typeof blog !== "undefined") self._blog = blog;
             return callback(null,self);
           });
         }

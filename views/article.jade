@@ -32,8 +32,6 @@ mixin rightcolumn
 
 block content
   .row
-    - console.log("originblog");
-    - console.log(originBlog);
 
     if (originBlog)
       - sourceDate = layout.moment(originBlog.startDate);
@@ -75,7 +73,7 @@ block content
                 - option = category[params.left_lang]
                 - if (params.right_lang !== null) option += " / "+category[params.right_lang]
                 if (category.EN == article.categoryEN)
-                  option(value="#{category.EN}" selected ) #{option} 
+                  option(value="#{category.EN}" selected ) #{option}
                 else
                   option(value="#{category.EN}" ) #{option}
           +rightcolumn
@@ -136,13 +134,13 @@ block content
             textarea.form-control(id="collection" name="collection" rows=2) #{article.collection}
         .row
           .col-md-1
-            
+
           .col-md-6
-              .div(id="linkArea")
+            .div(id="linkArea")
           .col-md-4
             p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
-                
-        .row 
+
+        .row
           .col-md-1
           - var lbg;
           - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
@@ -166,11 +164,11 @@ block content
           +leftcolumn
             if blog && !blog.isEditable(params.left_lang)
               .panel.panel-default
-                .panel-body(id="markdownLEFT") #{article["markdown"+params.left_lang]}
+                .panel-body #{article["markdown"+params.left_lang]}
             else
               if placeholder.markdown[params.left_lang]
                 - p = placeholder.markdown[params.left_lang];
-              else 
+              else
                 - p = "";
               textarea.form-control(id="markdownLEFT" placeholder = "#{p}" spellcheck = "true" lang="#{params.left_lang}" name = "markdown#{params.left_lang}" rows = 6) #{article["markdown"+params.left_lang]}
               div(id="text_left")
@@ -190,11 +188,11 @@ block content
                 textarea.form-control(id="markdownRIGHT" placeholder = "#{p}" lang="#{params.right_lang}" spellcheck = "true"  name = "markdown#{params.right_lang}" rows=6) #{article["markdown"+params.right_lang]}
                 div(id="text_right")
                   |'no translation' or '-' to specify no translation wanted.
-             for l in layout.activeLanguages
-               if l != params.right_lang
-                 div.hidden(class = "RL RL-#{l}")
-                   .panel.panel-default
-                     .panel-body #{article["markdown"+l]}
+            for l in layout.activeLanguages
+              if l != params.right_lang
+                div.hidden(class = "RL RL-#{l}")
+                  .panel.panel-default
+                    .panel-body #{article["markdown"+l]}
 
 
           .col-md-1
@@ -218,8 +216,8 @@ block content
               p="Preview"
             +leftcolumn
               .panel.panel-default.panel-body(id="previewLEFT")
-                  :verbatim
-                    !{article["textHtml"+params.left_lang]}
+                :verbatim
+                  !{article["textHtml"+params.left_lang]}
             +rightcolumn
               .panel.panel-default
                 .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
@@ -286,7 +284,7 @@ block content
 
 
         .col-md-1
-            p="Predecessor"
+          p="Predecessor"
 
         .col-md-7
           p=pdname
@@ -321,7 +319,7 @@ block content
                 !{layout.md_render(article.collection)}
               //:verbatim
               //|<pre>!{article.collection.replace(/(https?:\/\/[^\[\] \n\r]*)/gi, '<a href="$1" target="_blank">$1</a>')} </pre>
-      .row 
+      .row
         .col-md-1
         - var lbg;
         - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
@@ -331,7 +329,7 @@ block content
         - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
 
         +leftcolumn
-          span.label.label-default(id="left_lang" class="#{lbg}") 
+          span.label.label-default(id="left_lang" class="#{lbg}")
             |#{params.left_lang}
         +rightcolumn
           span.label.label-default.RL(id="right_lang" class="#{rbg} RL-#{params.right_lang}" )
@@ -344,7 +342,7 @@ block content
         if article.categoryEN != "Picture"
           .col-md-1
             p="Preview"
-          +leftcolumn 
+          +leftcolumn
             .panel.panel-default
               .panel-body(id="previewLEFT")
                 div
@@ -353,8 +351,8 @@ block content
           +rightcolumn
             .panel.panel-default
               .panel-body.RL(id="previewRIGHT" class="RL-#{params.right_lang}")
-                  :verbatim
-                    !{article["textHtml"+params.right_lang]}
+                :verbatim
+                  !{article["textHtml"+params.right_lang]}
               each l in layout.activeLanguages
                 if l !== params.right_lang
                   .panel-body.RL.hidden(class="RL-#{l}")
@@ -458,7 +456,7 @@ block content
             else
               p
                 :verbatim
-                 !{layout.md_render(comment.text)}
+                  !{layout.md_render(comment.text)}
 
     .row
       .col-md-12
@@ -472,87 +470,86 @@ block content
 
 
   #doublettes.row
-      if articleReferences.count >= 1
-        h3
-          |Links used in other Post
-        div
-          table.table.table-striped.table-responsive
-            thead
+    if articleReferences.count >= 1
+      h3
+        |Links used in other Post
+      div
+        table.table.table-striped.table-responsive
+          thead
+            tr
+              th
+                |link
+              th
+                |article
+              th
+                |category
+              th
+                |Blog
+          tbody
+            each array,link in articleReferences
+              if (link != "count" )
+                each articleItem,index in array
+                  if (articleItem.id != article.id) && (index <5)
+                    tr
+                      td
+                        a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
+                      td
+                        a(href='#{layout.htmlroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
+                      td= articleItem.categoryEN
+                      td= articleItem.blog
+                  if (index == 8)
+                    tr
+                      td
+                        a(href='#{link}') #{link}
+                      td
+                        |And #{array.length-5} further articles.
+
+
+
+  .row.visible-xs
+    p
+      br
+      a(href="#{layout.htmlroot}/changes/log?table=article&oid=#{article.id}") [changes]
+  .row.hidden-xs
+    if changes
+      h3
+        |History
+      div
+        table.table.table-striped.table-responsive
+          thead
+            tr
+              th
+              th
+                |user
+              th
+                |what
+              th
+                |change
+              th
+                |when
+          tbody
+            each change, i in changes
               tr
-                th
-                  |link
-                th
-                  |category
-                th
-                  |article
-                th
-                  |Blog
-            tbody
-              each array,link in articleReferences
-                if (link != "count" )
-                  each articleItem,index in array
-                    if (articleItem.id != article.id) && (index <5)
-                      tr
-                        td
-                          a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
-                        td
-                          p=articleItem.categoryEN
-                        td
-                          a(href='#{layout.htmlroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
-                        td= articleItem.blog
-                    if (index == 8) 
-                      tr
-                        td
-                          a(href='#{link}') #{link}
-                        td
-                          |Und #{array.length-5} weitere Artikel.
-                
+                td
+                  a(href='#{layout.htmlroot}/changes/' + change.id)
+                    span.glyphicon.glyphicon-info-sign
+                td= change.user
+                td= change.property
+                td
+                  :verbatim
+                    !{change.htmlDiffText(100)}
+                td= layout.moment(change.timestamp).fromNow()
+      div
+        p
+          |only displaying changes
+          span.osmbc-inserted
+            |inserted text
+          span.osmbc-deleted
+            |removed text
 
 
-    .row.visible-xs
-      p
-        br
-        a(href="#{layout.htmlroot}/changes/log?table=article&oid=#{article.id}") [changes]
-    .row.hidden-xs
-      if changes
-        h3
-          |History
-        div
-          table.table.table-striped.table-responsive
-            thead
-              tr 
-                th
-                 | 
-                th
-                 |user
-                th
-                 |what
-                th
-                 |change
-                th
-                 |when
-             tbody
-              each change, i in changes
-                tr
-                  td
-                   a(href='#{layout.htmlroot}/changes/' + change.id) 
-                      span.glyphicon.glyphicon-info-sign 
-                  td= change.user
-                  td= change.property
-                  td
-                    :verbatim
-                      !{change.htmlDiffText(100)}
-                  td= layout.moment(change.timestamp).fromNow() 
-        div
-          p
-            |only displaying changes 
-            span.osmbc-inserted
-              |inserted text 
-            span.osmbc-deleted
-              |removed text
+block scripts
 
- 
-block scripts                
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
 
@@ -563,12 +560,12 @@ block scripts
     googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
 
     if ('#{params.edit}'=='true'  && !("#{(blog)?blog.status:"open"}"=="closed")) {
-        window.onbeforeunload = function(event) {
-          event.returnValue = "Please use Cancel or OK to remove lock information.";
+      window.onbeforeunload = function(event) {
+        event.returnValue = "Please use Cancel or OK to remove lock information.";
       };
 
     }
-    
+
 
     function init() {
       if (document.getElementById("text_left")) {
@@ -584,7 +581,7 @@ block scripts
         markdownLEFT.ondrop = pasteLEFT;
         markdownLEFT.onleave = onleaveLEFT;
         onchangeLEFT();
-     }
+      }
       markdownRIGHT = document.getElementById("markdownRIGHT");
       if (markdownRIGHT) {
         markdownRIGHT.onchange = onleaveRIGHT;
@@ -593,17 +590,18 @@ block scripts
         markdownRIGHT.ondrop = pasteRIGHT;
         markdownRIGHT.onleave = onleaveRIGHT;
         onchangeRIGHT();
+
      }
       $('[data-toggle="tooltip"]').tooltip();
 
 
-     
+
       coll = document.getElementById("collection");
       if (coll) {
         coll.onchange = onchangeCollection;
         coll.onkeyup = onchangeCollection;
 
-        }
+      }
       onchangeCollection();
 
       if (document.getElementById("blog")){
@@ -623,9 +621,9 @@ block scripts
       if (categoryEN) {
         categoryEN.onchange = onchangeCategory;
         onchangeCategory();
-       
-        }
- 
+
+      }
+
       addComment = document.getElementById("AddComment");
       if (addComment) {
         f = onChangeField("AddComment");
@@ -704,9 +702,9 @@ block scripts
       if (mdEN.trim() == "-") {
         document.getElementById("markdownRIGHT").value = "no translation";
         onchangeRIGHT();
-        }
+      }
     }
-   
+
     function convert(text) {
       converter = new window.markdownit({breaks:true});
       if (!text) return "";
@@ -716,21 +714,21 @@ block scripts
       // convert md to html
       text = converter.render(text);
       // skip <ul> and </ul> at start and end
-      
+
 
       text = '<ul><li>'+text+'</li></ul>';
 
       if (document.getElementById("categoryEN").value=="Picture") {
-         text = '<ul><li>Live Preview not supported here</li></ul>';
+        text = '<ul><li>Live Preview not supported here</li></ul>';
 
-        
-        }
-      
+
+      }
+
       return text;
 
     }
     function isURL(t) {
-    
+
       var isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/
 
 
@@ -755,49 +753,49 @@ block scripts
         }
       }
     }
-  
 
-       function generateMarkdownLink2(par1,par2) {
-        var before = par1.text;
-        var after = par2.text;
-        var tb = '';
 
-        tb = par1.text.substring(0,par1.startselection);
-        ta = par1.text.substring(par1.endselection,99999);
-        beforeSnip = par1.text.substring(par1.startselection,par1.endselection);
-        afterSnip = par2.text.substring(par1.startselection,par2.endselection);
-    
-     
-      
- 
-        if (isURL(afterSnip.trim())) {
-          afterSnip = afterSnip.trim();
-       
-          var alreadyMarkdowned = false;
-          if (tb!="" && tb.charAt(tb.length-1)=="(") alreadyMarkdowned= true;
-          if (ta!="" && tb.charAt(0)==")") alreadyMarkdowned= true;
-          if (!alreadyMarkdowned) {
-            var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
-            var c ;
-            if (beforeSnip == "") {
-              c = (tb+"[").length;
-            } else {
-              c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
-            }
+    function generateMarkdownLink2(par1,par2) {
+      var before = par1.text;
+      var after = par2.text;
+      var tb = '';
 
-            return {text:r,pos:c};
+      tb = par1.text.substring(0,par1.startselection);
+      ta = par1.text.substring(par1.endselection,99999);
+      beforeSnip = par1.text.substring(par1.startselection,par1.endselection);
+      afterSnip = par2.text.substring(par1.startselection,par2.endselection);
+
+
+
+
+      if (isURL(afterSnip.trim())) {
+        afterSnip = afterSnip.trim();
+
+        var alreadyMarkdowned = false;
+        if (tb!="" && tb.charAt(tb.length-1)=="(") alreadyMarkdowned= true;
+        if (ta!="" && tb.charAt(0)==")") alreadyMarkdowned= true;
+        if (!alreadyMarkdowned) {
+          var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
+          var c ;
+          if (beforeSnip == "") {
+            c = (tb+"[").length;
+          } else {
+            c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
           }
+
+          return {text:r,pos:c};
         }
-        return null;
+      }
+      return null;
     }
-    
+
     function pasteLEFT() {
-     
-      
+
+
       var mf = document.getElementById("markdownLEFT");
-       //var textBefore = mf.value;
+      //var textBefore = mf.value;
       var before = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
-     
+
       setTimeout(function(){
         //var textAfter = mf.value;
         var after = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
@@ -817,7 +815,7 @@ block scripts
       //var textBefore = mf.value;
       var before = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
 
-      
+
       setTimeout(function(){
         //var textAfter = mf.value;
         var after = {text:mf.value,startselection:mf.selectionStart,endselection:mf.selectionEnd};
@@ -844,15 +842,15 @@ block scripts
       if (md.indexOf("|----")>= 0) {
         f.wrap = 'off';
         f.style.fontFamily="monospace"
-        }
+      }
       else {
         f.wrap = 'soft';
         f.style.fontFamily = cl.style.fontFamily;
 
-        }
+      }
     }
 
-    
+
     function onchangeLEFT() {
       onchangeMarkdown("markdownLEFT","previewLEFT","text_left");
     }
@@ -869,7 +867,7 @@ block scripts
 
       checkForTable(mdid);
       FitToContent(mdid);
-      
+
       preview.innerHTML = convert(md);
       var errorOccured= false;
 
@@ -880,155 +878,156 @@ block scripts
         text.innerHTML = "<p>Please shorten ["+md.substring(longLink+1,longLink+40)+"...]</p>"
         text.style.backgroundColor ="#FDC6CD";
         errorOccured = true
-        }
+      }
       // check wether links used are in collection
 
       if (!errorOccured) {
-         //preview.style.backgroundColor="";
-         text.style.backgroundColor ="";
-         text.innerHTML = noTranslationText;
-        }
+        //preview.style.backgroundColor="";
+        text.style.backgroundColor ="";
+        text.innerHTML = noTranslationText;
+      }
 
 
     }
 
-      function generateGoogleTranslateLink(link,lang) {
-        var googlelang = lang;
-        if (lang === "JP") googlelang = "JA";
-        var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
+    function generateGoogleTranslateLink(link,lang) {
+      var googlelang = lang;
+      if (lang === "JP") googlelang = "JA";
+      var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
 
 
-        var gtlMarkdown = "(automatic [translation](##link##))";
-        if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
+      var gtlMarkdown = "(automatic [translation](##link##))";
+      if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
 
 
-        gtlMarkdown = gtlMarkdown.replace("##link##",gtl);
+      gtlMarkdown = gtlMarkdown.replace("##link##",gtl);
 
-        var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
+      var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
 
-        return '<a href="'+gtl+'" target="_blank" ondragstart="'+dragstartFunction+'" >'+lang+'</a>';
-      }
+      return '<a href="'+gtl+'" target="_blank" ondragstart="'+dragstartFunction+'" >'+lang+'</a>';
+    }
 
-      function dragstart(event,text) {
-        event.dataTransfer.setData("TEXT", text);
-      }
-      function onchangeCollection() {
-        var clfield = document.getElementById("collection");
-        var cl;
-        if (clfield) cl = clfield.value;
-        var linkArea = document.getElementById("linkArea");
+    function dragstart(event,text) {
+      event.dataTransfer.setData("TEXT", text);
+    }
+    function onchangeCollection() {
+      var clfield = document.getElementById("collection");
+      var cl;
+      if (clfield) cl = clfield.value;
+      var linkArea = document.getElementById("linkArea");
 
-       // regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
-        regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g
-        var linkList;
-       
-        var result = "";
+      // regexToken = /(((ftp|https?):\/\/)[\-\w@:%​​_\+.~#?!,&\/\/=]+)|((mailto:)?[_​​.\w-]+@([\w][\w\-]+\.)+[a-zA-Z]{2,3})/g;
+      regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g
+      var linkList;
+
+      var result = "";
 
 
-        while( (linkList = regexToken.exec(cl)) != null ) {
+      while( (linkList = regexToken.exec(cl)) != null ) {
 
-            result += '<a href="'+linkList[0]+'" target="_blank" >'+linkList[0]+'</a>\n';
-            leftLang=document.getElementById("left_lang").innerHTML;
-            rightLang=document.getElementById("right_lang").innerHTML;
-            result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
+        result += '<a href="'+linkList[0]+'" target="_blank" >'+linkList[0]+'</a>\n';
+        leftLang=document.getElementById("left_lang").innerHTML;
+        rightLang=document.getElementById("right_lang").innerHTML;
+        result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
 
-            if (rightLang !== "--" && rightLang !== "") {
-              result += " "+generateGoogleTranslateLink(linkList[0],rightLang);
-            }
-            result +="<br>\n";
-       
-
+        if (rightLang !== "--" && rightLang !== "") {
+          result += " "+generateGoogleTranslateLink(linkList[0],rightLang);
         }
-        result = '<p>'+result+'</p>';
-        FitToContent("collection");
- 
-
-        if (linkArea) linkArea.innerHTML = result;
-      }
+        result +="<br>\n";
 
 
-      var myclick = function (id) {
-        image = document.getElementById(id);
-        src = image.src;
-        src = "![("+id+")]("+src+")";
-        clip(src);
-        alert(id+ " flag is copied to clipboard");
       }
+      result = '<p>'+result+'</p>';
+      FitToContent("collection");
 
-      function ondragstartflag (event,id) {
-        image = document.getElementById(id);
-        src = image.src;
-        src = "![(" + id + ")](" + src + ")";
-        event.dataTransfer.setData("TEXT", src);
-      }
-      function onchangeComment() {
-        FitToContent("comment");
-      }
-      function onChangeField(field) {
-        return function () {
-          FitToContent(field);
-        }
-      }
 
-      function FitToContent(id, maxHeight)
+      if (linkArea) linkArea.innerHTML = result;
+    }
+
+
+    var myclick = function (id) {
+      image = document.getElementById(id);
+      src = image.src;
+      src = "![("+id+")]("+src+")";
+      clip(src);
+      alert(id+ " flag is copied to clipboard");
+    }
+
+    function ondragstartflag (event,id) {
+      image = document.getElementById(id);
+      src = image.src;
+      src = "![(" + id + ")](" + src + ")";
+      event.dataTransfer.setData("TEXT", src);
+    }
+    function onchangeComment() {
+      FitToContent("comment");
+    }
+    function onChangeField(field) {
+      return function () {
+        FitToContent(field);
+      }
+    }
+
+    function FitToContent(id, maxHeight)
+    {
+      textfield = document.getElementById(id);
+      if ( !textfield )
+        return;
+
+
+      textfield.style.height = textfield.style.minHeight;
+      var adjustedHeight = textfield.clientHeight;
+
+
+      if ( !maxHeight || maxHeight > adjustedHeight )
       {
-         textfield = document.getElementById(id);
-         if ( !textfield )
-            return;
+        adjustedHeight = Math.max(textfield.scrollHeight, adjustedHeight);
+        if ( maxHeight )
+          adjustedHeight = Math.min(maxHeight, adjustedHeight);
+
+        if ( adjustedHeight > textfield.clientHeight ) {
+
+          textfield.style.height = adjustedHeight + "px";
 
 
-         textfield.style.height = textfield.style.minHeight;
-         var adjustedHeight = textfield.clientHeight;
-         
-
-         if ( !maxHeight || maxHeight > adjustedHeight )
-         {
-            adjustedHeight = Math.max(textfield.scrollHeight, adjustedHeight);
-            if ( maxHeight )
-               adjustedHeight = Math.min(maxHeight, adjustedHeight);
-          
-            if ( adjustedHeight > textfield.clientHeight ) {
-              
-               textfield.style.height = adjustedHeight + "px";
-               
-
-              }
-         }
+        }
       }
+    }
 
 
-      function showRL(what) {
-        $(".RL").addClass("hidden");
-        $(".RL-"+what).removeClass("hidden");
+    function showRL(what) {
+      $(".RL").addClass("hidden");
+      $(".RL-"+what).removeClass("hidden");
+    }
+
+    var placeholder = !{JSON.stringify(placeholder.categories)}
+
+
+
+
+    function onchangeCategory() {
+      var categoryEN = document.getElementById("categoryEN");
+      if (!categoryEN) return;
+      var c = categoryEN.value;
+      if (placeholder[c]) {
+        categoryDisplay.innerHTML = placeholder[c];
       }
+      showHideUnpublishReason();
+    }
+    function showHideUnpublishReason() {
+      var categoryEN = document.getElementById("categoryEN");
+      if (!categoryEN) return;
+      var c = document.getElementById("categoryEN").value;
+      var b = document.getElementById("blog").value;
+      var hidden = true;
+      if (c==="--unpublished--") hidden = false;
+      if (b==="Trash") hidden = false;
+      var unpublishReasonRow = document.getElementById("unpublishReasonRow");
+      if (hidden) unpublishReasonRow.classList.add("hidden");
+      else unpublishReasonRow.classList.remove("hidden");
 
-      var placeholder = !{JSON.stringify(placeholder.categories)}
+    }
 
-
-    
-
-      function onchangeCategory() {
-        var categoryEN = document.getElementById("categoryEN");
-        if (!categoryEN) return;
-        var c = categoryEN.value;
-        if (placeholder[c]) {
-           categoryDisplay.innerHTML = placeholder[c];    
-          }
-        showHideUnpublishReason();
-      }
-      function showHideUnpublishReason() {
-        var categoryEN = document.getElementById("categoryEN");
-        if (!categoryEN) return;
-        var c = document.getElementById("categoryEN").value;
-        var b = document.getElementById("blog").value;
-        var hidden = true;
-        if (c==="--unpublished--") hidden = false;
-        if (b==="Trash") hidden = false;
-        var unpublishReasonRow = document.getElementById("unpublishReasonRow");
-        if (hidden) unpublishReasonRow.classList.add("hidden");
-          else unpublishReasonRow.classList.remove("hidden");
-
-      }
 
 
 

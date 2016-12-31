@@ -1,6 +1,7 @@
 - sizeLabel =2
 - sizeInput = 4
 - sizeExplanation = 6
+- MIXIN_INCLUDE=true
 
 
 mixin voteButton(vote,article)
@@ -16,7 +17,7 @@ mixin voteButton(vote,article)
   - if (vb_listVotes && vb_listVotes.length>0)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  button.btn(type="button" class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'" style=vb_voteStyle)
+  button.btn(type="button" class = vb_displayClass onclick="callAndRedraw('/article/#{article.id}/#{vb_voteAction}.#{vote.name}','/article/#{article.id}/votes')" style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
@@ -36,7 +37,7 @@ mixin voteLabel(vote,article)
   - if (vb_listVotes && vb_listVotes.length>0)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  span.label(class = vb_displayClass onclick="location.href='#{layout.htmlroot}/article/#{article.id}/#{vb_voteAction}.#{vote.name}'" style=vb_voteStyle)
+  span.label(class = vb_displayClass onclick="callAndRedraw('/article/#{article.id}/#{vb_voteAction}.#{vote.name}','/article/#{article.id}/votesBlog')" style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
@@ -95,16 +96,18 @@ mixin languageDisplay(article,options)
   - if (options && options.short) langList = [layout.language,(layout.language2)?layout.language2:"--"]
   each lang in langList
     - if (options && options.func) onClick = options.func+"('"+lang+"')"
+    - var style = ""
+    - if (!article.isChangeAllowed("markdown"+lang)) style="color:black"
     if (article && article["markdown" + lang])
         if (article["markdown" + lang] !== "no translation")
-            span.label.osmbclabel-markdown(onclick=onClick)=lang
+            span.label.osmbclabel-markdown(onclick=onClick style=style)=lang
         else
-            span.label.osmbclabel-no-translation(onclick=onClick)=lang
+            span.label.osmbclabel-no-translation(onclick=onClick style=style)=lang
     else
       if (article && article.collection)
-        span.label.osmbclabel-collect(onclick=onClick)=lang
+        span.label.osmbclabel-collect(onclick=onClick style=style)=lang
       else
-        span.label.osmbclabel-no-markdown(onclick=onClick)=lang
+        span.label.osmbclabel-no-markdown(onclick=onClick style=style)=lang
 
 mixin voteDisplay(article,options)
   each vote in votes
@@ -217,25 +220,29 @@ mixin userConfigOption(view,option,variable,userdesc)
 
 
 
-mixin blogSelection(list,missingList,blogtype)
+mixin blogSelection(list,missingList,blogtype,readonly)
   for blog in list
     if article && blog.name == article.blog
       option(value="#{blog.name}" selected) #{blog.name} #{blogtype}
       - missingList.splice(0,missingList.length)
     else
-      option(value="#{blog.name}" ) #{blog.name} #{blogtype}
+      option(value="#{blog.name}" disabled=readonly) #{blog.name} #{blogtype}
 
-mixin blogSelector(article)
-    select(id="blog",name="blog").form-control
+mixin blogSelector(article,readonly)
+    - if (readonly !== true) readonly = false
+    select(id="blog",name="blog" ).form-control
       - var missingList = []
       - if (article) missingList = [{name:article.blog}]
-      +blogSelection(layout.listOfOpenBlog,missingList,"")
-      +blogSelection(layout.listOfEditBlog,missingList,"(Edit)")
-      +blogSelection(layout.listOfReviewBlog,missingList,"(Review "+layout.language+")")
-      +blogSelection([{name: "Future"}],missingList,"")
-      +blogSelection([{name: "Trash"}],missingList,"")
+      +blogSelection(layout.listOfOpenBlog,missingList,"",readonly)
+      +blogSelection(layout.listOfEditBlog,missingList,"(Edit)",readonly)
+      +blogSelection(layout.listOfReviewBlog,missingList,"(Review "+layout.language+")",readonly)
+      +blogSelection([{name: "Future"}],missingList,"",readonly)
+      +blogSelection([{name: "Trash"}],missingList,"",readonly)
       if layout.appName == "TheFiveBC"
-        +blogSelection([{name: "TBC"}],missingList,"")
-      +blogSelection(missingList,missingList,"")
+        +blogSelection([{name: "TBC"}],missingList,"",readonly)
+      +blogSelection(missingList,missingList,"",readonly)
 
-block all
+mixin voteButtonList(votes)
+  for vote,i in votes
+    if (vote.displayAtTop)
+      +voteButton(vote,article)
