@@ -10,6 +10,7 @@ function isTrue(expr) {
 
 function shorten(string,maxlength) {
   debug("maxString");
+  if (typeof(string)==="number") return string;
   if (typeof(maxlength) == 'undefined') maxlength = 30;
   if (typeof(string)=='undefined') return "";
   if (typeof(string)=='number') return string;

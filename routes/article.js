@@ -7,6 +7,7 @@ var slackrouter = express.Router();
 var should   = require('should');
 var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
+var jade     = require('jade');
 var util     = require('../util.js');
 
 
@@ -199,7 +200,9 @@ function renderArticleId(req,res,next) {
           res.set('content-type', 'text/html');
           // change title of page
           res.rendervar.layout.title = article.blog+"#"+article.id+"/"+article.title;
-          res.render('article',{layout:res.rendervar.layout,
+          let jadeFile = "article";
+          if (req.user.articleEditor==="new") jadeFile= "article/article_new";
+          res.render(jadeFile,{layout:res.rendervar.layout,
                                 article:article,
                                 googleTranslateText:configModule.getConfig("automatictranslatetext"),
                                 params:params,
@@ -220,7 +223,108 @@ function renderArticleId(req,res,next) {
 
 }
 
-function searchAndCreate(req,res,next) {
+
+function renderArticleIdVotes(req,res,next) {
+  debug('renderArticleIdVotes');
+
+  var votes = configModule.getConfig("votes");
+
+  var article = req.article;
+  should.exist(article);
+
+  async.auto({},
+    function (err) {
+      debug('renderArticleIdVotes->finalFunction');
+      if (err) return next(err);
+
+
+      let rendervars = {layout:res.rendervar.layout,
+        article:article,
+        votes:votes,
+      };
+      let voteButtons = jade.renderFile("views/voteButtons.jade",rendervars);
+      let voteButtonsList = jade.renderFile("views/voteButtonsList.jade",rendervars);
+      res.json({"#voteButtons":voteButtons,"#voteButtonsList":voteButtonsList});
+
+    }
+  );
+
+}
+
+function renderArticleIdCommentArea(req,res,next) {
+  debug('renderArticleCommentArea');
+
+
+  var article = req.article;
+  should.exist(article);
+  let params={};
+  params.editComment = null;
+  if (req.query.editComment) params.editComment = req.query.editComment;
+
+  async.auto({},
+    function (err) {
+      debug('renderArticleCommentArea->finalFunction');
+      if (err) return next(err);
+
+
+      let rendervars = {layout:res.rendervar.layout,
+        article:article,
+        params:params
+      };
+      jade.renderFile("views/article/commentArea.jade",rendervars,function(err,commentArea){
+        if (err) console.dir(err);
+        if (err) return next(err);
+        res.json({"#commentArea":commentArea});
+      });
+
+    }
+  );
+}
+
+
+function renderArticleIdVotesBlog(req,res,next) {
+  debug('renderArticleIdVotesBlog');
+
+
+  var votes = configModule.getConfig("votes");
+  let showVotes = {};
+
+  votes.forEach(function (vote){
+    showVotes[vote.name] = (req.user.getOption("overview","showVote_"+vote.name)=="true");
+  });
+
+  var article = req.article;
+  should.exist(article);
+
+  async.auto({},
+    function (err) {
+      debug('renderArticleIdVotes->finalFunction');
+
+        if (err) return next(err);
+
+
+        let rendervars = {
+          layout: res.rendervar.layout,
+          article: article,
+          votes: votes,
+          showVotes:showVotes
+        };
+
+        jade.renderFile("views/voteLabels.jade", rendervars,function(err,result){
+          if (err) console.log(err);
+          if (err) return next(err);
+          let v = {};
+          v["#voteLabels" + article.id] = result;
+          res.json(v);
+        });
+    }
+  );
+}
+
+
+
+
+  function searchAndCreate(req,res,next) {
   debug('searchAndCreate');
   var search = req.query.search;
   var show = req.query.show;
@@ -392,7 +496,11 @@ function postNewComment(req, res, next) {
       next(err);
       return;
     }
-    res.redirect(returnToUrl);
+    if (req.query.reload=="false") {
+      res.end("OK");
+    } else {
+      res.redirect(returnToUrl);
+    }
   });
 }
 
@@ -489,7 +597,8 @@ function doAction(req, res, next) {
     }
     let returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
     returnToUrl =req.header('Referer') || returnToUrl;
-    res.redirect(returnToUrl);
+    res.end("OK");
+    //res.redirect(returnToUrl);
   });
 }
 
@@ -645,6 +754,8 @@ function renderList(req,res,next) {
 
 var Browser = require("zombie");
 
+var env = process.env.NODE_ENV || 'development';
+
 function translate(req,res,next) {
   debug("translate");
   var user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20';
@@ -657,10 +768,21 @@ function translate(req,res,next) {
   let browser = new Browser({userAgent: user_agent,site:"https://translate.google.com/"});
 
   browser.visit(link, function (err) {
-    if (err) return next(err);
+    if (err) {
+      // if it is development return a test text.
+      if (env=="development") {
+        let textTranslate = "Google Sim Translate From "+fromLang + " to "+ toLang + "("+text+")";
+        return res.end(textTranslate);
+      }
+      // Not in development return an error
+      return next(err);
+    }
     browser.fill("textarea#source",text);
     browser.click("input#gt-submit",function(err){
-      if (err) return next(err);
+      if (err) {
+
+        return next(err);
+      }
       res.end(browser.query("#result_box").textContent);
     });
 
@@ -697,6 +819,10 @@ router.post('/translate/:fromLang/:toLang',translate);
 router.param('article_id',getArticleFromID);
 
 router.get('/:article_id', exports.renderArticleId );
+router.get('/:article_id/votes', renderArticleIdVotes );
+router.get('/:article_id/votesBlog', renderArticleIdVotesBlog );
+router.get('/:article_id/commentArea', renderArticleIdCommentArea );
+
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
 router.get('/:article_id/:action.:tag', doAction );
 

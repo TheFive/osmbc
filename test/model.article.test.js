@@ -347,7 +347,7 @@ describe('model/article', function() {
           should.not.exist(err);
           articleModule.findById(newArticle.id,function(err,result){
             should.not.exist(err);
-            should(result).eql({markdownDE:"Hallo",version:2,blog:"TEST",id:newArticle.id});
+            should(result).eql({_blog:null,markdownDE:"Hallo",version:2,blog:"TEST",id:newArticle.id});
             bddone();
           });
         });
@@ -497,7 +497,7 @@ describe('model/article', function() {
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({blog:"WN2",markdownDE:"test3",collection:"col3",category:"catA",version:1});
+          should(result).eql({_blog:null,blog:"WN2",markdownDE:"test3",collection:"col3",category:"catA",version:1});
           bddone();
         });
       });
@@ -1019,8 +1019,6 @@ describe('model/article', function() {
     });
     it('should add a vote',function(bddone){
 
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
       var dataBefore = {
         clear:true,
         article:[{blog:"WN1",collection:"something",title:"test"}]};
@@ -1039,8 +1037,6 @@ describe('model/article', function() {
     });
     it('should not add a already set vote',function(bddone){
 
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
       var dataBefore = {
         clear:true,
         article:[{blog:"WN1",collection:"something",title:"test",votes:{"testtag":["Test"]}}]};
@@ -1059,8 +1055,6 @@ describe('model/article', function() {
     });
     it('should unset a vote',function(bddone){
 
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
       var dataBefore = {
         clear:true,
         article:[{blog:"WN1",collection:"something",title:"test",
@@ -1080,8 +1074,6 @@ describe('model/article', function() {
     });
     it('should not unset a unset vote',function(bddone){
 
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
       var dataBefore = {
         clear:true,
         article:[{blog:"WN1",collection:"something",title:"test",
@@ -1102,8 +1094,7 @@ describe('model/article', function() {
 
     it('should add a tag',function(bddone){
 
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
+
       var dataBefore = {
         clear:true,
         article:[{blog:"WN1",collection:"something",title:"test"}]};
@@ -1122,8 +1113,6 @@ describe('model/article', function() {
     });
     it('should not add an added tag',function(bddone){
 
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
       var dataBefore = {
         clear:true,
         article:[{blog:"WN1",collection:"something",title:"test",tags:["testtag"]}]};
@@ -1142,8 +1131,6 @@ describe('model/article', function() {
     });
     it('should remove a tag',function(bddone){
 
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
       var dataBefore = {
         clear:true,
         article:[{blog:"WN1",collection:"something",title:"test",
@@ -1163,8 +1150,6 @@ describe('model/article', function() {
     });
     it('should not remove a removed tag',function(bddone){
 
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
       var dataBefore = {
         clear:true,
         article:[{blog:"WN1",collection:"something",title:"test",
@@ -1180,6 +1165,45 @@ describe('model/article', function() {
         });
       };
       testutil.doATest(dataBefore,testFunction,dataAfter,bddone);
+
+    });
+  });
+  describe("isChangeAllowed",function(){
+    it("should forbid editing of main attributes with one exported language",function(bddone){
+      let blog = blogModule.create({name:"blog",exportedEN:true});
+      let article =  articleModule.create({blog:"blog",_blog:blog});
+      should(article.isChangeAllowed("title")).be.false();
+      should(article.isChangeAllowed("predecessorId")).be.false();
+      should(article.isChangeAllowed("categoryEN")).be.false();
+      bddone();
+
+    });
+    it("should forbid editing of main attributes with one closed language",function(bddone){
+      let blog =  blogModule.create({name:"blog",closeEN:true});
+      let article = articleModule.create({blog:"blog",_blog:blog});
+      should(article.isChangeAllowed("title")).be.false();
+      should(article.isChangeAllowed("categoryEN")).be.false();
+      should(article.isChangeAllowed("predecessorId")).be.false();
+      bddone();
+    });
+    it("should forbid editing of markdown attributes with one closed language",function(bddone){
+      let blog =  blogModule.create({name:"blog",closeEN:true});
+      let article = articleModule.create({blog:"blog",_blog:blog});
+      should(article.isChangeAllowed("markdownEN")).be.false();
+      should(article.isChangeAllowed("markdownDE")).be.true();
+      should(article.isChangeAllowed("markdownES")).be.true();
+      bddone();
+    });
+    it("should allow editing if nothing is closed / exported",function(bddone){
+      let blog = blogModule.create({name:"blog"});
+      let article =  articleModule.create({blog:"blog",_blog:blog});
+      should(article.isChangeAllowed("title")).be.true();
+      should(article.isChangeAllowed("predecessor")).be.true();
+      should(article.isChangeAllowed("categoryEN")).be.true();
+      should(article.isChangeAllowed("markdownEN")).be.true();
+      should(article.isChangeAllowed("markdownDE")).be.true();
+      should(article.isChangeAllowed("markdownES")).be.true();
+      bddone();
 
     });
   });

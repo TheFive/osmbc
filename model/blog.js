@@ -589,7 +589,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options,callback) {
     },
     function readArticlesWithCollector(cb) {
       debug('readArticlesWithCollector');
-      articleModule.find({blog: self.name}, {column: "title"}, function (err, result) {
+      articleModule.find({blog: self}, {column: "title"}, function (err, result) {
         if (options.collectors) {
           async.each(result,calculateDependend , function finalFunction(err) {
             if (err) return cb(err);
@@ -700,7 +700,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user,callback) {
   var secondLang = user.secondLang;
   var i,j;
 
-  articleModule.find({blog:self.name},function (err,result) {
+  articleModule.find({blog:self},function (err,result) {
     if (err) return callback(err);
 
 

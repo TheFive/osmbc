@@ -2793,4 +2793,15 @@ Segeltörn<br>No Reason given
     pv.innerHTML = convert(md);
   
   }
+  
+  function callAndRedraw(call, redraw) {
+    $.get("" + call, function (data) {
+      let j = $.getJSON("" + redraw, function (json) {
+        for (k in json) {
+          $(k).html(json[k]);
+        }
+      });
+    });
+  
+  }
 </script></body></html>
