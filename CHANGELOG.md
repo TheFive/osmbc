@@ -1,5 +1,22 @@
 # Change Log
 
+## [2.1.7](https://github.com/TheFive/osmbc/tree/2.1.7) (2016-12-31)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.6...2.1.7)
+
+**Implemented enhancements:**
+
+- Allow a user to "start" a personal review, to mark blog as "In Review" [\#587](https://github.com/TheFive/osmbc/issues/587)
+- Display search result more condensed, showing both language previews on click. [\#586](https://github.com/TheFive/osmbc/issues/586)
+- Error Message: Add a go back \(not only to start\) button. [\#579](https://github.com/TheFive/osmbc/issues/579)
+
+**Fixed bugs:**
+
+- Not Found Towns in geonames leads to convert errors in OSMBC Calendar tool [\#593](https://github.com/TheFive/osmbc/issues/593)
+- Do not generate not found WP User links [\#588](https://github.com/TheFive/osmbc/issues/588)
+
+## [2.1.6](https://github.com/TheFive/osmbc/tree/2.1.6) (2016-12-31)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.5...2.1.6)
+
 ## [2.1.5](https://github.com/TheFive/osmbc/tree/2.1.5) (2016-12-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.4...2.1.5)
 
@@ -57,6 +74,7 @@
 **Implemented enhancements:**
 
 - Small triangle if lines can be unfold \(as hint thats possible\) for change list [\#584](https://github.com/TheFive/osmbc/issues/584)
+- Doublette Display, add Category for doublette articles. [\#581](https://github.com/TheFive/osmbc/issues/581)
 
 ## [2.0.8](https://github.com/TheFive/osmbc/tree/2.0.8) (2016-11-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.7...2.0.8)
@@ -433,13 +451,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
