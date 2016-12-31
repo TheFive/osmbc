@@ -45,18 +45,25 @@ block content
               th.hidden-xs
                 |Preview (#{layout.language})
           tbody
-       
+
           each  article,count in foundArticles
             if (count < show)
-              tr
+              tr(onclick="$('.class_#{article.id}').toggleClass('hidden');")
                 td
+                  span.glyphicon.glyphicon-triangle-right(class="class_#{article.id}")
+                  span.glyphicon.glyphicon-triangle-bottom.hidden(class="class_#{article.id}")
                   a(href="#{layout.htmlroot}/blog/#{article.blog}") #{article.blog}
                 td
                   a(href="#{layout.htmlroot}/article/#{article.id}") #{(article.title)?article.title:"No Title"}
                 td.hidden-xs=article.categoryEN
-                td.hidden-xs
+              tr(class="class_#{article.id}").hidden
+                td
+                td(colspan=1)
                   :verbatim
-                    !{renderer.renderArticle(layout.language,article)}
+                    !{layout.md_render(article["markdown"+layout.language])}
+                td(colspan=1)
+                  :verbatim
+                    !{layout.md_render(article["markdown"+layout.language2])}
 
            
       else
