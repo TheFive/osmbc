@@ -234,12 +234,12 @@
                 </div>
                 <div class="form-group">
                   <form id="reviewDE" name="reviewDE" action="/blog/WN290/setReviewComment" method="post" class="form-horizontal">
-                    <div class="col-md-10">
-                      <input type="text" name="text" id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').value === '');" class="form-control">
+                    <div class="col-md-8">
+                      <input type="text" name="text" value="reviewing..." id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').value === '');" class="hidden form-control">
                       <input type="text" name="lang" value="DE" class="hidden">
                     </div>
-                    <div class="col-md-2">
-                      <button id="reviewButtonDE" type="submit" disabled="disabled" class="btn btn-large btn-primary">Review</button>
+                    <div class="col-md-4">
+                      <button id="reviewButtonDE" type="submit" class="btn btn-large btn-primary">Start Personal Review</button>
                     </div>
                   </form>
                 </div>

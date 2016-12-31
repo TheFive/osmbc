@@ -162,6 +162,13 @@ Blog.prototype.setReviewComment = function setReviewComment(lang,user,data,callb
             // nothing has to be written to review Comment
             return cb();
           }
+          for (let i=0;i<self[rc].length;i++) {
+            if (self[rc][i].text == "reviewing..." && self[rc][i].user == user.OSMUser) {
+              self[rc][i].text=data;
+              self[rc][i].editstamp=date;
+              return cb();
+            }
+          }
           self[rc].push({user:user.OSMUser,text:data,timestamp:date});
           return cb();
         }
