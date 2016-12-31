@@ -55,7 +55,7 @@ function convertGeoName(name,lang,callback) {
     }
     else {
       if (json.status) return callback(json.message, null);
-      else return callback(new Error("Bad Geonames Result for " + name + " in lang " + lang + "\n"));
+      return callback(null,name);
     }
   });
 }
