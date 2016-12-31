@@ -9,6 +9,7 @@ var markdown = require('markdown-it')();
 var debug    = require('debug')('OSMBC:routes:article');
 var jade     = require('jade');
 var util     = require('../util.js');
+var path     = require('path');
 
 
 var config        = require('../config.js');
@@ -242,8 +243,8 @@ function renderArticleIdVotes(req,res,next) {
         article:article,
         votes:votes,
       };
-      let voteButtons = jade.renderFile("views/voteButtons.jade",rendervars);
-      let voteButtonsList = jade.renderFile("views/voteButtonsList.jade",rendervars);
+      let voteButtons = jade.renderFile(path.resolve(__dirname,'..','views', 'voteButton.jade'),rendervars);
+      let voteButtonsList = jade.renderFile(path.resolve(__dirname,'..','views', 'voteButtonsList.jade'),rendervars);
       res.json({"#voteButtons":voteButtons,"#voteButtonsList":voteButtonsList});
 
     }
@@ -271,7 +272,7 @@ function renderArticleIdCommentArea(req,res,next) {
         article:article,
         params:params
       };
-      jade.renderFile("views/article/commentArea.jade",rendervars,function(err,commentArea){
+      jade.renderFile(path.resolve(__dirname,'..','views', 'article','commentArea.jade'),rendervars,function(err,commentArea){
         if (err) console.dir(err);
         if (err) return next(err);
         res.json({"#commentArea":commentArea});
