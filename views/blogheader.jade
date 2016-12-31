@@ -27,8 +27,9 @@ mixin reviewBlog(reviewComments,lang)
             span.text-muted.small=") "
             a.text-muted.small(href="#{layout.htmlroot}/changes/log?blog=#{blog.name}&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
       .panel-body
+        - personalReviewStarted=false
         each comment,i in reviewComments
-          if comment.text!="startreview"
+          if comment.text!="startreview" && comment.text != "reviewing..."
             p
               b.span=comment.user
               span=" "
@@ -54,20 +55,43 @@ mixin reviewBlog(reviewComments,lang)
                     input.hidden(type="text",name="lang" value = lang)
                   .col-md-2
                     button.btn.btn-large.btn-primary(id="reviewButton"+lang+i type="submit") Change
+          if comment.text == "reviewing..."
+            if layout.user.OSMUser === comment.user
+              - personalReviewStarted = true
+            h3
+              div.label.label-warning
+                b.span=comment.user
+                span=" is reviewing since "+layout.moment(comment.editstamp).fromNow()
+
 
         .form-group
           if (!blog["close"+lang])
-            form.form-horizontal(id="review"+lang name="review"+lang, action="#{layout.htmlroot}/blog/#{blog.name}/setReviewComment", method="post")
-              .col-md-10
-                input(type="text",
-                      class="form-control",
-                      name ="text",
-                      id="reviewComment"+lang
-                      placeholder="Please Type your Review here"
-                      onkeyup="document.getElementById('reviewButton#{lang}').disabled = (document.getElementById('reviewComment#{lang}').value === '');")
-                input.hidden(type="text",name="lang" value = lang)
-              .col-md-2
-                button.btn.btn-large.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
+            if personalReviewStarted
+              form.form-horizontal(id="review"+lang name="review"+lang, action="#{layout.htmlroot}/blog/#{blog.name}/setReviewComment", method="post")
+                .col-md-10
+                  input(type="text",
+                        class="form-control",
+                        name ="text",
+                        id="reviewComment"+lang
+                        placeholder="Please Type your Review here"
+                        onkeyup="document.getElementById('reviewButton#{lang}').disabled = (document.getElementById('reviewComment#{lang}').value === '');")
+                  input.hidden(type="text",name="lang" value = lang)
+                .col-md-2
+                  button.btn.btn-large.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
+            else
+              form.form-horizontal(id="review" + lang name="review" + lang, action="#{layout.htmlroot}/blog/#{blog.name}/setReviewComment", method="post")
+                .col-md-8
+                  input.hidden(type="text",
+                  class="form-control",
+                  name ="text",
+                  value ="reviewing..."
+                  id="reviewComment" + lang
+                  placeholder="Please Type your Review here"
+                  onkeyup="document.getElementById('reviewButton#{lang}').disabled = (document.getElementById('reviewComment#{lang}').value === '');")
+                  input.hidden(type="text",name="lang" value = lang)
+                .col-md-4
+                  button.btn.btn-large.btn-primary(id="reviewButton" + lang type="submit") Start Personal Review
+
 
 
 block content

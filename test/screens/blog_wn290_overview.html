@@ -234,12 +234,12 @@
                 </div>
                 <div class="form-group">
                   <form id="reviewDE" name="reviewDE" action="/blog/WN290/setReviewComment" method="post" class="form-horizontal">
-                    <div class="col-md-10">
-                      <input type="text" name="text" id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').value === '');" class="form-control">
+                    <div class="col-md-8">
+                      <input type="text" name="text" value="reviewing..." id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').value === '');" class="hidden form-control">
                       <input type="text" name="lang" value="DE" class="hidden">
                     </div>
-                    <div class="col-md-2">
-                      <button id="reviewButtonDE" type="submit" disabled="disabled" class="btn btn-large btn-primary">Review</button>
+                    <div class="col-md-4">
+                      <button id="reviewButtonDE" type="submit" class="btn btn-large btn-primary">Start Personal Review</button>
                     </div>
                   </form>
                 </div>
@@ -3142,13 +3142,6 @@ Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autóno
               <p>Display Votes</p>
             </div>
             <div class="col-md-11"><span style="white-space: nowrap"><span name="choose_showVote_pro" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_pro&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show pro, </span></span><span style="white-space: nowrap"><span name="choose_showVote_unpublish" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_unpublish&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show unpublish, </span></span><span style="white-space: nowrap"><span name="choose_showVote_fav" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_fav&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show fav, </span></span><span style="white-space: nowrap"><span name="choose_showVote_doit" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_doit&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show doit, </span></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-1">
-              <p>Copy To Blogs</p>
-            </div>
-            <div class="col-md-11"><span style="white-space: nowrap"><span name="choose_showCopy_YiR2016" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showCopy_YiR2016&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show YiR2016</span></span>
             </div>
           </div>
           <div class="row">

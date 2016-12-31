@@ -6,7 +6,8 @@ block content
   h2= error.status
   pre #{error.stack}
 
-  a(href="#{layout.htmlroot}/osmbc.html") Go Back to Start
+  button(type="button" onclick="location.href='#{layout.htmlroot}/osmbc.html'") OSMBC Home
+  button(type="button" onclick="goBack()")="Go Back"
 
 if (error.message == "Version Number Differs")
   h2
@@ -31,3 +32,9 @@ if (error.message == "failed to find request token in session")
   p
     | Check the domain, it has to be thefive.info.
 
+
+
+script.
+  function goBack() {
+    window.history.back();
+  }

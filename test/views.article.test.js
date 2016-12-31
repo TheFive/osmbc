@@ -242,10 +242,10 @@ describe('views/article', function() {
           .pressButton("SearchNow",function(err){
             should.not.exist(err);
             let c = cheerio.load(browser.html());
-            let t = c("li:contains('and other')").text();
-            should(t).eql("\nLink1: http://www.test.dä/holla and other\n");
-            t = c("li:contains('dolores')").text();
-            should(t).eql("\nText lorem ipsum dolores.\n\n");
+            let t = c("td:contains('and other')").text();
+            should(t).eql("Link1: http://www.test.dä/holla and other");
+            t = c("p:contains('dolores')").text();
+            should(t).eql("Text lorem ipsum dolores.");
 
             bddone();
           });

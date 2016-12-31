@@ -162,6 +162,13 @@ Blog.prototype.setReviewComment = function setReviewComment(lang,user,data,callb
             // nothing has to be written to review Comment
             return cb();
           }
+          for (let i=0;i<self[rc].length;i++) {
+            if (self[rc][i].text == "reviewing..." && self[rc][i].user == user.OSMUser) {
+              self[rc][i].text=data;
+              self[rc][i].editstamp=date;
+              return cb();
+            }
+          }
           self[rc].push({user:user.OSMUser,text:data,timestamp:date});
           return cb();
         }
@@ -450,7 +457,7 @@ function convertLogsToTeamString(logs,lang,users) {
     for (var i =0;i<editors.length;i++){
       for (var j =0;j<users.length;j++ ){
         if (editors[i]===users[j].OSMUser) {
-          if (users[j].WNAuthor) {
+          if (users[j].WNAuthor && users[j].WNPublicAuthor && users[j].WNPublicAuthor !="Not Found") {
             editors[i]='<a href="http://blog.openstreetmap.de/blog/author/'+users[j].WNAuthor+'">'+users[j].WNPublicAuthor+'</a>';
           }
         }
