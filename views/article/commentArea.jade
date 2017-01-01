@@ -21,7 +21,7 @@ if (article.commentList)
         i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
       if layout.user.OSMUser === comment.user && params.editComment != i
         span=" "
-        span.glyphicon.glyphicon-pencil(onclick="window.callAndRedraw(null,'/article/#{article.id}/commentArea?editComment=#{i}');")
+        span.glyphicon.glyphicon-pencil(id="EditComment"+i onclick="window.callAndRedraw(null,'/article/#{article.id}/commentArea?editComment=#{i}');")
 
       if params.editComment == i && layout.user.OSMUser === comment.user
         form(target="iframeform" name="EditComment",id="EditCommentForm", action="#{layout.htmlroot}/article/#{article.id}/EditComment/#{i}?reload=false", method="post")
