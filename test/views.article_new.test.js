@@ -319,7 +319,7 @@ describe('views/article_new', function() {
               should(article.commentList.length).eql(1);
               should(article.commentList[0].text).eql("Add a test comment");
               should(article.commentList[0].user).eql("TheFive");
-              browser.click('a[id="EditComment0"]',function(err) {
+              browser.click('span[id="EditComment0"]',function(err) {
                 should.not.exist(err);
                 browser
                   .fill("comment", "And Change It")
