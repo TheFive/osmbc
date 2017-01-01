@@ -243,7 +243,7 @@ function renderArticleIdVotes(req,res,next) {
         article:article,
         votes:votes,
       };
-      let voteButtons = jade.renderFile(path.resolve(__dirname,'..','views', 'voteButton.jade'),rendervars);
+      let voteButtons = jade.renderFile(path.resolve(__dirname,'..','views', 'voteButtons.jade'),rendervars);
       let voteButtonsList = jade.renderFile(path.resolve(__dirname,'..','views', 'voteButtonsList.jade'),rendervars);
       res.json({"#voteButtons":voteButtons,"#voteButtonsList":voteButtonsList});
 
@@ -551,7 +551,11 @@ function postEditComment(req, res, next) {
       next(err);
       return;
     }
-    res.redirect(returnToUrl);
+    if (req.query.reload=="false") {
+      res.end("OK");
+    } else {
+      res.redirect(returnToUrl);
+    }
   });
 }
 
@@ -572,7 +576,11 @@ function markCommentRead(req, res, next) {
     }
     let returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
     returnToUrl =req.header('Referer') || returnToUrl;
-    res.redirect(returnToUrl);
+    if (req.query.reload=="false") {
+      res.end("OK");
+    } else {
+      res.redirect(returnToUrl);
+    }
   });
 }
 
