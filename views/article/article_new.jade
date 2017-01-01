@@ -475,6 +475,7 @@ block scripts
               .trigger("change");
       resizePictures();
       $('[data-toggle="tooltip"]').tooltip();
+      window.submitAndRedraw = submitAndRedraw;
 
     }
 
@@ -818,6 +819,7 @@ block scripts
       var url = jqForm.attr('action');
 
       $.post(url, jqForm.serialize(), function (data) {
+        console.log(data);
           if (data === "OK") {
             redrawFunc(redraw);
           }
