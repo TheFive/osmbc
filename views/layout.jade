@@ -6,14 +6,16 @@ mixin homeButton(addclass)
   else
     a.bg-success(href='#{layout.htmlroot}/changelog' class=addclass) Whats New?
 
-mixin firstBlogOfList(list)
+mixin firstBlogOfList(list,count,c)
+  - if (!count) count = 1
   if (list.length > 0)
-    - var blog = list[0]
-    li
-      a(href='#{layout.htmlroot}/blog/#{blog.name}')=blog.name
-        span.badge.osmbcbadge-lang=blogNumber(blog, layout.language)
-        if layout.language2
-          span.badge.osmbcbadge-lang2=blogNumber(blog, layout.language2)
+    each blog,i in list
+      if i<count
+        li
+          a(href='#{layout.htmlroot}/blog/#{blog.name}')=blog.name
+            span.badge.osmbcbadge-lang=blogNumber(blog, layout.language)
+            if layout.language2
+              span.badge.osmbcbadge-lang2=blogNumber(blog, layout.language2)
 
 
 
@@ -85,9 +87,9 @@ block all
             ul.nav.navbar-nav.navbar-left
               li.show-xs
                 +homeButton("visible-xs")
-              +firstBlogOfList(layout.listOfOpenBlog)
-              +firstBlogOfList(layout.listOfEditBlog)
-              +firstBlogOfList(layout.listOfReviewBlog)
+              +firstBlogOfList(layout.listOfReviewBlog,2)
+              +firstBlogOfList(layout.listOfEditBlog,2)
+              +firstBlogOfList(layout.listOfOpenBlog,2)
 
 
               li.dropdown

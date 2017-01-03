@@ -311,7 +311,7 @@ function renderArticleIdVotesBlog(req,res,next) {
           showVotes:showVotes
         };
 
-        jade.renderFile("views/voteLabels.jade", rendervars,function(err,result){
+        jade.renderFile(path.resolve(__dirname,'..','views','voteLabels.jade'), rendervars,function(err,result){
           if (err) console.log(err);
           if (err) return next(err);
           let v = {};
@@ -456,6 +456,87 @@ function postArticle(req, res, next) {
           return;
         }
         res.redirect(returnToUrl);    
+      });
+    }
+  );
+}
+
+function postArticleWithOldValues(req, res, next) {
+  debug('postArticle');
+
+  var noTranslation = req.query.notranslation;
+
+
+
+  var article = req.article;
+  // If article exists, everything is fine, if article NOT exist, it has to be created.
+
+  var changes = {blog:req.body.blog,
+    collection:req.body.collection,
+    predecessorId:req.body.predecessorId,
+    categoryEN:req.body.categoryEN,
+    title:req.body.title,
+    unpublishReason:req.body.unpublishReason,
+    unpublishReference:req.body.unpublishReference};
+
+  changes.old = {blog:req.body.oldblog,
+    collection:req.body.oldcollection,
+    predecessorId:req.body.oldpredecessorId,
+    categoryEN:req.body.oldcategoryEN,
+    title:req.body.oldtitle,
+    unpublishReason:req.body.oldunpublishReason,
+    unpublishReference:req.body.oldunpublishReference};
+
+  var languages = config.getLanguages();
+  for (var i=0;i<languages.length;i++){
+    var lang = languages[i];
+    changes["markdown"+lang] = req.body["markdown"+lang];
+  }
+  var returnToUrl;
+  if (article) returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
+
+  async.parallel([
+      function createArticle(cb) {
+        debug('postArticle->createArticle');
+
+        if (typeof(req.article)!='undefined') return cb();
+        articleModule.createNewArticle(function(err,result){
+          debug('postArticle->createArticle->createNewArticle');
+          if (err) return next(err);
+          if (typeof(result.id) == 'undefined') return cb(new Error("Could not create Article"));
+          article = result;
+          changes.version = result.version;
+          changes.firstCollector = req.user.OSMUser;
+          returnToUrl  = config.getValue('htmlroot')+"/article/"+article.id;
+          cb();
+        });
+      }
+    ],
+    function setValues(err) {
+      debug('postArticle->setValues');
+      if (err) {return next(err);}
+      should.exist(article);
+      if (noTranslation === "true") {
+        let showLangs = JSON.parse(req.body.languages);
+        var languages = config.getLanguages();
+        for (var i=0;i<languages.length;i++){
+          var lang = languages[i];
+          if (showLangs[lang]) {
+            if (changes["markdown"+lang]) continue;
+            if (article["markdown"+lang] && article["markdown"+lang].trim()==="") continue;
+            if (lang === req.user.mainLang) continue;
+            changes["markdown"+lang] = "no translation";
+          }
+        }
+      }
+
+      article.setAndSave(req.user,changes,function(err) {
+        debug('postArticle->setValues->setAndSave');
+        if (err ) {
+          next(err);
+          return;
+        }
+        res.redirect(returnToUrl);
       });
     }
   );
@@ -840,6 +921,7 @@ router.post('/:article_id/addComment', exports.postNewComment);
 router.post('/:article_id/setMarkdown/:lang', exports.postSetMarkdown);
 router.post('/:article_id/editComment/:number', exports.postEditComment);
 router.post('/:article_id', exports.postArticle);
+router.post('/:article_id/witholdvalues', postArticleWithOldValues);
 
 
 
