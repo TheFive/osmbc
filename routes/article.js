@@ -311,7 +311,7 @@ function renderArticleIdVotesBlog(req,res,next) {
           showVotes:showVotes
         };
 
-        jade.renderFile("views/voteLabels.jade", rendervars,function(err,result){
+        jade.renderFile(path.resolve(__dirname,'..','views','voteLabels.jade'), rendervars,function(err,result){
           if (err) console.log(err);
           if (err) return next(err);
           let v = {};
