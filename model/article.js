@@ -298,9 +298,10 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
       if (data[k] === '' && typeof(self[k])=='undefined') {delete data[k];continue;}
       // all values that not have to be changed are now deleted.
       // test wether change is allowed
-      if (!self.isChangeAllowed(k)) return callback(new Error(k+" can not be edited"));
+      //if (!self.isChangeAllowed(k)) return callback(new Error(k+" can not be edited"));
 
     }
+
     async.series(
       [function logIt (cb) {
         var oa = create(self);
