@@ -331,7 +331,7 @@ describe('model/article', function() {
         should.not.exist(err);
         newArticle = result;
         newArticle.setAndSave({OSMUser:"test"},{markdownDE:"Hallo"},function(err){
-          should(err.message).eql("No Version and no History Value given");
+          should(err.message).eql("No Version and no History Value for <markdownDE> given");
           bddone();
         });
       });

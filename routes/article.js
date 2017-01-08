@@ -462,7 +462,7 @@ function postArticle(req, res, next) {
 }
 
 function postArticleWithOldValues(req, res, next) {
-  debug('postArticle');
+  debug('postArticleWithOldValues');
 
   var noTranslation = req.query.notranslation;
 
@@ -479,18 +479,21 @@ function postArticleWithOldValues(req, res, next) {
     unpublishReason:req.body.unpublishReason,
     unpublishReference:req.body.unpublishReference};
 
-  changes.old = {blog:req.body.oldblog,
-    collection:req.body.oldcollection,
-    predecessorId:req.body.oldpredecessorId,
-    categoryEN:req.body.oldcategoryEN,
-    title:req.body.oldtitle,
-    unpublishReason:req.body.oldunpublishReason,
-    unpublishReference:req.body.oldunpublishReference};
+  changes.old = {blog:req.body.old_blog,
+    collection:req.body.old_collection,
+    predecessorId:req.body.old_predecessorId,
+    categoryEN:req.body.old_categoryEN,
+    title:req.body.old_title,
+    unpublishReason:req.body.old_unpublishReason,
+    unpublishReference:req.body.old_unpublishReference};
 
   var languages = config.getLanguages();
   for (var i=0;i<languages.length;i++){
     var lang = languages[i];
-    changes["markdown"+lang] = req.body["markdown"+lang];
+    if (req.body["markdown"+lang]) {
+      changes["markdown"+lang] = req.body["markdown"+lang];
+      changes.old["markdown"+lang] = req.body["old_markdown"+lang];
+    }
   }
   var returnToUrl;
   if (article) returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
