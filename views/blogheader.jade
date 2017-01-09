@@ -323,7 +323,13 @@ block scripts
       $.get("!{layout.htmlroot}" + call, function (data) {
         let j = $.getJSON("!{layout.htmlroot}" + redraw, function (json) {
           for (k in json) {
-            $(k).html(json[k]);
+            var el = document.createElement("div");
+
+            el.innerHTML = json[k];
+
+            $(k).replaceWith(el.children[0]);
+            el.remove();
+
           }
         });
       });

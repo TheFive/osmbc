@@ -288,14 +288,21 @@ function renderArticleIdVotesBlog(req,res,next) {
 
 
   var votes = configModule.getConfig("votes");
-  let showVotes = {};
+  var voteName = req.params.votename;
 
-  votes.forEach(function (vote){
-    showVotes[vote.name] = (req.user.getOption("overview","showVote_"+vote.name)=="true");
+  let vote = null;
+
+
+  votes.forEach(function(item){
+    console.log(item.name);
+    if (item.name == voteName) vote = item;
   });
+
 
   var article = req.article;
   should.exist(article);
+
+
 
   async.auto({},
     function (err) {
@@ -307,15 +314,14 @@ function renderArticleIdVotesBlog(req,res,next) {
         let rendervars = {
           layout: res.rendervar.layout,
           article: article,
-          votes: votes,
-          showVotes:showVotes
+          vote: vote
         };
 
-        jade.renderFile(path.resolve(__dirname,'..','views','voteLabels.jade'), rendervars,function(err,result){
+        jade.renderFile(path.resolve(__dirname,'..','views','voteLabel.jade'), rendervars,function(err,result){
           if (err) console.log(err);
           if (err) return next(err);
           let v = {};
-          v["#voteLabels" + article.id] = result;
+          v["#vote_"+voteName+"_" + article.id] = result;
           res.json(v);
         });
     }
@@ -913,11 +919,11 @@ router.param('article_id',getArticleFromID);
 
 router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/votes', renderArticleIdVotes );
-router.get('/:article_id/votesBlog', renderArticleIdVotesBlog );
 router.get('/:article_id/commentArea', renderArticleIdCommentArea );
 
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
 router.get('/:article_id/:action.:tag', doAction );
+router.get('/:article_id/:votename', renderArticleIdVotesBlog );
 
 
 router.post('/:article_id/addComment', exports.postNewComment);
