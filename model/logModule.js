@@ -216,7 +216,7 @@ function countLogsForUser(user,callback) {
       pgdone();
       return (callback(err));
     }
-    var sqlQuery =  "select to_char(date(data->>'timestamp'),'YYYY-MM-DD') as date,count(*) as count from changes where data->>'user' like $1 group by date";
+    var sqlQuery =  "select to_char(date(data->>'timestamp'),'YYYY-MM-DD') as date,count(*) as count from changes where data->>'user'  like $1 and data->>'table'::text in ('article','blog') group by date";
     var sqlArray = [user];
     var startTime = new Date().getTime();
     var result = [];

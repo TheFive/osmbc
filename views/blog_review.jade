@@ -10,12 +10,17 @@ block blogcontent
   - showCollector = (layout.user.getOption("review","showCollector")=="true")
   - showEditor = (layout.user.getOption("review","showEditor")=="true")
   - showLanguages = (layout.user.getOption("review","showLanguages")=="true")
-  - showColoredUser = (layout.user.getOption("full","showColoredUser")=="true")
+  - showColoredUser = (layout.user.getOption("review","showColoredUser")=="true")
+  - showVotes = {}
+  - voteIsDisplayed=0
+  each vote in votes
+    - showVotes[vote.name] = (layout.user.getOption("review","showVote_"+vote.name)=="true")
+    - if (showVotes[vote.name])  voteIsDisplayed=voteIsDisplayed+1
 
   - firstColSize = "col-md-1"
   - secondColSize = "col-md-11"
 
-  if showLanguages || showEditor || showCollector
+  if showLanguages || showEditor || showCollector || voteIsDisplayed>2
     - firstColSize = "col-md-2"
     - secondColSize = "col-md-10"
 
@@ -37,10 +42,10 @@ block blogcontent
         if a["markdown"+lang]!=="no translation"
           .row
             div(class=firstColSize)
-              div
+              span
                 +articleIcons(a,{showNumbers: showNumbers, showMail: showMail,predecessorId:predecessorId})
                 - predecessorId = a.id
-              div.hidden-xs
+              span.hidden-xs
                 if (showCollector && a.author && a.author.collection)
                   each b in a.author.collection.split(",")
                     +userLabel(b,"osmbclabel-collect")
@@ -49,9 +54,11 @@ block blogcontent
                   each b in a.author["markdown"+lang].split(",")
                     +userLabel(b,"osmbclabel-markdown")
 
-              div.hidden-xs
+              span.hidden-xs
                 if (showLanguages)
                   +languageDisplay(a)
+                span(id="voteLabels" + a.id)
+                  +voteDisplay(a,showVotes)
 
             div(class=secondColSize)
               div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
@@ -92,6 +99,13 @@ block blogcontent
           +userConfigOption("review","showCollector",showCollector," show collector, " )
           +userConfigOption("review","showEditor",showEditor," show editor , ")
           +userConfigOption("review","showLanguages",showLanguages," show languages, ")
+    .row
+      .col-md-1
+        p="Display Votes"
+      .col-md-11
+        each vote in votes
+          +userConfigOption("review","showVote_" + vote.name,showVotes[vote.name]," show " + vote.name + ", " )
+
     .row.hidden-xs
       .col-md-1
         p="Options:"

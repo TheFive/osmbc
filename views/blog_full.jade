@@ -14,11 +14,16 @@ block blogcontent
   - showColoredUser = (layout.user.getOption("full","showColoredUser")=="true")
   - disableNewerMarkdown = (layout.user.getOption("full","disableNewerMarkdown")=="true")
   - disableSolvedComments = (layout.user.getOption("full","disableSolvedComments")=="true")
+  - showVotes = {}
+  - voteIsDisplayed=0
+  each vote in votes
+    - showVotes[vote.name] = (layout.user.getOption("full","showVote_"+vote.name)=="true")
+    - if (showVotes[vote.name])  voteIsDisplayed=voteIsDisplayed+1
 
   - firstColSize = "col-md-1"
   - secondColSize = "col-md-11"
 
-  if showLanguages || showEditor || showCollector
+  if showLanguages || showEditor || showCollector || voteIsDisplayed>2
     - firstColSize = "col-md-2"
     - secondColSize = "col-md-10"
 
@@ -83,10 +88,10 @@ block blogcontent
         if enable
           .row
             div(class=firstColSize)
-              div
+              span
                 +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
                 - predecessorId = a.id
-              div
+              span
                 if (showCollector && a.author && a.author.collection)
                   each b in a.author.collection.split(",")
                     +userLabel(b,"osmbclabel-collect")
@@ -94,9 +99,11 @@ block blogcontent
                   each b in a.author["markdown"+lang].split(",")
                     +userLabel(b,"osmbclabel-markdown")
 
-              div
+              span
                 if (showLanguages)
                   +languageDisplay(a)
+              span(id="voteLabels" + a.id)
+                +voteDisplay(a,showVotes)
 
             div(class=secondColSize)
               .row
@@ -190,6 +197,12 @@ block blogcontent
         +userConfigOption("full","showCollector",showCollector," show collector, " )
         +userConfigOption("full","showEditor",showEditor," show editor , ")
         +userConfigOption("full","showLanguages",showLanguages," show languages")
+    .row
+      .col-md-1
+        p="Display Votes"
+      .col-md-11
+        each vote in votes
+          +userConfigOption("full","showVote_" + vote.name,showVotes[vote.name]," show " + vote.name + ", " )
     .row
       .col-md-1
         p="Add Options:"

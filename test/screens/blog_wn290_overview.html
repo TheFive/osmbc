@@ -3287,7 +3287,13 @@ Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autóno
     $.get("" + call, function (data) {
       let j = $.getJSON("" + redraw, function (json) {
         for (k in json) {
-          $(k).html(json[k]);
+          var el = document.createElement("div");
+  
+          el.innerHTML = json[k];
+  
+          $(k).replaceWith(el.children[0]);
+          el.remove();
+  
         }
       });
     });

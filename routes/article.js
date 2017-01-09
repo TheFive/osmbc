@@ -288,14 +288,21 @@ function renderArticleIdVotesBlog(req,res,next) {
 
 
   var votes = configModule.getConfig("votes");
-  let showVotes = {};
+  var voteName = req.params.votename;
 
-  votes.forEach(function (vote){
-    showVotes[vote.name] = (req.user.getOption("overview","showVote_"+vote.name)=="true");
+  let vote = null;
+
+
+  votes.forEach(function(item){
+    console.log(item.name);
+    if (item.name == voteName) vote = item;
   });
+
 
   var article = req.article;
   should.exist(article);
+
+
 
   async.auto({},
     function (err) {
@@ -307,15 +314,14 @@ function renderArticleIdVotesBlog(req,res,next) {
         let rendervars = {
           layout: res.rendervar.layout,
           article: article,
-          votes: votes,
-          showVotes:showVotes
+          vote: vote
         };
 
-        jade.renderFile(path.resolve(__dirname,'..','views','voteLabels.jade'), rendervars,function(err,result){
+        jade.renderFile(path.resolve(__dirname,'..','views','voteLabel.jade'), rendervars,function(err,result){
           if (err) console.log(err);
           if (err) return next(err);
           let v = {};
-          v["#voteLabels" + article.id] = result;
+          v["#vote_"+voteName+"_" + article.id] = result;
           res.json(v);
         });
     }
@@ -462,7 +468,7 @@ function postArticle(req, res, next) {
 }
 
 function postArticleWithOldValues(req, res, next) {
-  debug('postArticle');
+  debug('postArticleWithOldValues');
 
   var noTranslation = req.query.notranslation;
 
@@ -479,18 +485,21 @@ function postArticleWithOldValues(req, res, next) {
     unpublishReason:req.body.unpublishReason,
     unpublishReference:req.body.unpublishReference};
 
-  changes.old = {blog:req.body.oldblog,
-    collection:req.body.oldcollection,
-    predecessorId:req.body.oldpredecessorId,
-    categoryEN:req.body.oldcategoryEN,
-    title:req.body.oldtitle,
-    unpublishReason:req.body.oldunpublishReason,
-    unpublishReference:req.body.oldunpublishReference};
+  changes.old = {blog:req.body.old_blog,
+    collection:req.body.old_collection,
+    predecessorId:req.body.old_predecessorId,
+    categoryEN:req.body.old_categoryEN,
+    title:req.body.old_title,
+    unpublishReason:req.body.old_unpublishReason,
+    unpublishReference:req.body.old_unpublishReference};
 
   var languages = config.getLanguages();
   for (var i=0;i<languages.length;i++){
     var lang = languages[i];
-    changes["markdown"+lang] = req.body["markdown"+lang];
+    if (req.body["markdown"+lang] !== null && typeof req.body["markdown"+lang] !== 'undefined') {
+      changes["markdown"+lang] = req.body["markdown"+lang];
+      changes.old["markdown"+lang] = req.body["old_markdown"+lang];
+    }
   }
   var returnToUrl;
   if (article) returnToUrl = config.getValue('htmlroot')+"/article/"+article.id;
@@ -910,11 +919,11 @@ router.param('article_id',getArticleFromID);
 
 router.get('/:article_id', exports.renderArticleId );
 router.get('/:article_id/votes', renderArticleIdVotes );
-router.get('/:article_id/votesBlog', renderArticleIdVotesBlog );
 router.get('/:article_id/commentArea', renderArticleIdCommentArea );
 
 router.get('/:article_id/markCommentRead', exports.markCommentRead );
 router.get('/:article_id/:action.:tag', doAction );
+router.get('/:article_id/:votename', renderArticleIdVotesBlog );
 
 
 router.post('/:article_id/addComment', exports.postNewComment);
