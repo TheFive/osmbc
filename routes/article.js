@@ -496,7 +496,7 @@ function postArticleWithOldValues(req, res, next) {
   var languages = config.getLanguages();
   for (var i=0;i<languages.length;i++){
     var lang = languages[i];
-    if (req.body["markdown"+lang]) {
+    if (req.body["markdown"+lang] !== null && typeof req.body["markdown"+lang] !== 'undefined') {
       changes["markdown"+lang] = req.body["markdown"+lang];
       changes.old["markdown"+lang] = req.body["old_markdown"+lang];
     }
