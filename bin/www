@@ -75,13 +75,13 @@ function startMailReceiver(callback) {
   });
 }
 
-function startSlackReceiver(callback) {
+function startSlackReceiver(param,callback) {
   debug("startSlackReceiver");
 
   slackReceiver.initialise(callback);
 }
 
-function startBlogTimer(callback) {
+function startBlogTimer(param,callback) {
   debug("startBlogTimer");
   blogModule.startAllTimers(function (err) {
     if (err) {
