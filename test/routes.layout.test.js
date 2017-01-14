@@ -32,7 +32,6 @@ describe('routes/layout',function() {
     var req= {query:{},session:{},user:{getMainLang:getMainLang,getSecondLang:getSecondLang,language:"DE"}};
     var res = {};
     layout.prepareRenderLayout(req,res,function done(){
-      console.dir(res);
 
       let l = res.rendervar.layout;
       should(typeof l.user).eql('object');

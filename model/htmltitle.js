@@ -64,7 +64,6 @@ function getTitle(url,callback) {
   debug("getTitle");
   request( { method: "GET", url: url, followAllRedirects: true,encoding:null,timeout:2000},
     function (error, response,body) {
-      if (error) console.dir(error);
       if (error && error.code =="ESOCKETTIMEDOUT") return callback(null,url+" TIMEOUT");
       if (error) return callback(null,"Page not Found");
 
