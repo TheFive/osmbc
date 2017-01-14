@@ -100,7 +100,7 @@ function renderArticleId(req,res,next) {
         articleModule.findById(article.originArticleId,callback);
       } else return callback(null,null);
     },
-    originBlog:["originArticle",function findOriginBlog(callback,results){
+    originBlog:["originArticle",function findOriginBlog(results,callback){
       if (results.originArticle) {
         blogModule.findOne({name:results.originArticle.blog},callback);
       } else return callback(null,null);

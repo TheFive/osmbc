@@ -157,7 +157,7 @@ function renderBlogList(req, res, next) {
                  blogModule.find(query,{column:"name",desc:true},function(err,blogs) {
                  callback(err,blogs);
               });},
-        count:["blogs",function(callback,result) {
+        count:["blogs",function(result,callback) {
                   async.each(result.blogs,function(item,cb){
                     async.parallel([
                       item.calculateDerived.bind(item,req.user),
