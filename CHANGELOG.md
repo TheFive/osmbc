@@ -1,5 +1,16 @@
 # Change Log
 
+## [2.1.9](https://github.com/TheFive/osmbc/tree/2.1.9) (2017-01-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.8...2.1.9)
+
+**Implemented enhancements:**
+
+- User Table Sort by OSMBC-Changes [\#604](https://github.com/TheFive/osmbc/issues/604)
+
+**Fixed bugs:**
+
+- Collect for a website, that is down, does not work \(Missing Timeout\) [\#605](https://github.com/TheFive/osmbc/issues/605)
+
 ## [2.1.8](https://github.com/TheFive/osmbc/tree/2.1.8) (2017-01-09)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.7a...2.1.8)
 
@@ -469,13 +480,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
