@@ -32,6 +32,8 @@ var mailReceiver   = require('../notification/mailReceiver.js');
 var messageCenter  = require('../notification/messageCenter.js');
 
 
+// set Test Standard to ignore prototypes for should
+should.config.checkProtoEql = false;
 
 // getJsonWithID can be used to select a id,data structure from postgres
 // without using the model source, and is intended to used in 

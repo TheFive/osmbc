@@ -770,7 +770,6 @@ block scripts
 
     // Enable & Disable the different languages
     function showRL(what) {
-      console.log("showRL "+what);
       $(".RL").addClass("hidden");
       if (what == "!{params.left_lang}") what = "!{params.right_lang}";
       $(".RL-"+what).removeClass("hidden");
@@ -802,9 +801,7 @@ block scripts
 
 
     function redrawFunc(redraw) {
-      console.log("Redraw" + redraw)
       let j = $.getJSON("!{layout.htmlroot}" + redraw, function (json) {
-        console.dir(json);
         for (k in json) {
           $(k).html(json[k]);
         }
@@ -827,7 +824,6 @@ block scripts
       var url = jqForm.attr('action');
 
       $.post(url, jqForm.serialize(), function (data) {
-        console.log(data);
           if (data === "OK") {
             redrawFunc(redraw);
           }

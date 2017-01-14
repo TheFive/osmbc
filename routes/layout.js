@@ -120,7 +120,7 @@ function prepareRenderLayout(req,res,next) {
       });
     },
     listOfEditBlog:["editBlog",
-      function (callback,param) {
+      function (param,callback) {
         var list = [];
         for (let i=0;i<param.editBlog.length;i++) {
           if (!(param.editBlog[i]["reviewComment"+req.user.getMainLang()])) {
@@ -137,7 +137,7 @@ function prepareRenderLayout(req,res,next) {
         callback(null,list);
     }],
     listOfReviewBlog:["editBlog",
-        function (callback,param) {
+        function (param,callback) {
           var list = [];
           for (let i=0;i<param.editBlog.length;i++) {
             if ((param.editBlog[i]["reviewComment"+req.user.getMainLang()]) &&
