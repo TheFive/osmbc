@@ -2,6 +2,8 @@
 
 var should = require('should');
 
+var nock = require('nock');
+
 var testutil = require('./testutil.js');
 var htmltitle = require('../model/htmltitle.js');
 
@@ -67,6 +69,21 @@ describe("model/htmltitle",function() {
     htmltitle.getTitle("https://www.gesetze-im-internet.de/satdsig/BJNR259000007.html",function(err,result){
       should.not.exist(err);
       should(result).eql('SatDSiG - Gesetz zum Schutz vor Gefährdung der Sicherheit der Bundesrepublik Deutschland durch das Verbreiten von hochwertigen Erdfernerkundungsdaten');
+      bddone();
+    });
+  });
+  it('should handle timeout',function(bddone){
+    this.timeout(4000);
+    nock("https://www.test.test")
+      .get("/testdd")
+      .socketDelay(3000)
+      .reply(function(uri, requestBody) {
+        return "Ok";
+
+      });
+    htmltitle.getTitle("https://www.test.test/testdd",function(err,result){
+      should.not.exist(err);
+      should(result).eql('https://www.test.test/testdd TIMEOUT');
       bddone();
     });
   });

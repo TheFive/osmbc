@@ -25,7 +25,7 @@ function renderList(req,res,next) {
   var query = {};
   var sort = {column:"OSMUser"};
   if (req.query.access) query.access = req.query.access;
-  if (req.query.sort) sort.column = req.query.sort;
+  if (req.query.sort && req.query.sort!="OSMBC-changes") sort.column = req.query.sort;
   if (req.query.desc) sort.desc = true; 
   if (req.query.lastAccess) query.lastAccess = req.query.lastAccess;
 
@@ -37,6 +37,9 @@ function renderList(req,res,next) {
           async.each(users,function (item,eachcb){
             item.calculateChanges(eachcb);
           },function(err){
+            if (req.query.sort=="OSMBC-changes") {
+              users.sort(function(b,a) {return a._countChanges-b._countChanges;});
+            }
             return callback(err);
           });
         });

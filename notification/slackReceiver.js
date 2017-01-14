@@ -97,8 +97,6 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lan
 
   var subject = blogNameSlack(blog.name);
 
-  console.log("STATUS");
-  console.dir(status);
  
   if (status === false) {
     subject +="("+lang+") has been reopened";
