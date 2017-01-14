@@ -16,6 +16,8 @@ var logModule     = require('../model/logModule.js');
 var blogModule    = require('../model/blog.js');
 var messageCenter = require('../notification/messageCenter.js');
 
+// set Test Standard to ignore prototypes for should
+should.config.checkProtoEql = false;
 
 
 
