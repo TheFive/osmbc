@@ -1,5 +1,15 @@
 # Change Log
 
+## [2.2.1](https://github.com/TheFive/osmbc/tree/2.2.1) (2017-01-15)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.0...2.2.1)
+
+**Fixed bugs:**
+
+- Twitter Urls ending with whatever parameter are not expanded. [\#606](https://github.com/TheFive/osmbc/issues/606)
+
+## [2.2.0](https://github.com/TheFive/osmbc/tree/2.2.0) (2017-01-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.9...2.2.0)
+
 ## [2.1.9](https://github.com/TheFive/osmbc/tree/2.1.9) (2017-01-14)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.8...2.1.9)
 
