@@ -47,7 +47,6 @@ function expandTwitterUrl(collection,callback) {
     // The result can be accessed through the `m`-variable.
     m.forEach((match, groupIndex) => {
       if (groupIndex === 1) twitIDs.push(match);
-      console.log(`Found match, group ${groupIndex}: ${match}`);
   });
   }
 
