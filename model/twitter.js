@@ -85,7 +85,7 @@ function expandTwitterUrl(collection,callback) {
 
 
         // tweet is already expanded
-        if (collection.indexOf(tweetAsText)>0)  return cb_eachID(null);
+        if (collection.replace(/\r/g,"").indexOf(tweetAsText)>0)  return cb_eachID(null);
 
         collExtension[index] =  "Tweet by **"+result.user.name+"**\n";
         collExtension[index] += tweetAsText+"\n";
