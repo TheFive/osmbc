@@ -1,5 +1,16 @@
 # Change Log
 
+## [2.2.3](https://github.com/TheFive/osmbc/tree/2.2.3) (2017-01-15)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.2...2.2.3)
+
+**Implemented enhancements:**
+
+- Improve expansion of twitter urls. Allow multiple Urls in a collection [\#424](https://github.com/TheFive/osmbc/issues/424)
+
+**Fixed bugs:**
+
+- Twitter Urls are expanded twice when saving [\#608](https://github.com/TheFive/osmbc/issues/608)
+
 ## [2.2.2](https://github.com/TheFive/osmbc/tree/2.2.2) (2017-01-15)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.1...2.2.2)
 
