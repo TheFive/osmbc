@@ -23,49 +23,86 @@ var client = new twit(
 );
 
 
-function expandTwitterUrl(url,callback) {
+function expandTwitterUrl(collection,callback) {
   debug("expandTwitterUrl");
-  if (!url) return callback();
-
-  // No Twitter Url, return url as result.
-    
- 
-  if ((url.substring(0,20)!=="https://twitter.com/") && (url.substring(0,19)!=="http://twitter.com/")) {
-    return callback(null,url);
-  } 
-    
- 
-  if (url.indexOf("/status/")<0) return callback(null,url);
-
-  let startID = url.indexOf("/status/")+8;
-
-  var id = url.substring(startID,startID+18);
-  client.get("/statuses/show/"+id ,{tweet_mode:"extended"},function(err,result) {
-    debug("client.get");
-    //fs.writeFileSync("TwitterStatus-"+id+".json",JSON.stringify(result,null,2));
-    // not working, ignore error
-  
-    if (err) return callback(null,url);
-    if (!result) return callback(null,url);
-
-    var collection = url + "\n\n\nTweet by **"+result.user.name+"**\n";
-    collection += result.full_text+"\n";
+  if (!collection) return callback();
 
 
-    async.eachSeries(result.entities.urls,function(item,cb){
-      var u = item.expanded_url;
-      expandUrl(u,function(err,url){
-        collection = collection.replace(item.url,url);
-        cb();
-      });
-    }, function finalFunction(err){
-      if (err) return callback(err);
-      collection = collection.replace(/.https:\/\/t\.co\/........../i,"");
-      collection += "(Retweets: **"+result.retweet_count +"** Favs: **"+result.favorite_count+"**)\n";
+  // extracting Twitter Status from collection
+  // put them in an array twitIDs
 
-      return callback(null,collection);
-    });
+  const  getAllTwitterIds = /https?:\/\/twitter\.com\/[^\/ ]*\/status\/([0-9]*)/g;
+
+  let twitIDs =[];
+
+  let m;
+
+  while ((m = getAllTwitterIds.exec(collection)) !== null) {
+    /*jshint loopfunc: true */
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (m.index === getAllTwitterIds.lastIndex) {
+      getAllTwitterIds.lastIndex++;
+    }
+
+    // The result can be accessed through the `m`-variable.
+    m.forEach((match, groupIndex) => {
+      if (groupIndex === 1) twitIDs.push(match);
+      console.log(`Found match, group ${groupIndex}: ${match}`);
   });
+  }
+
+  if (twitIDs.length===0) return callback(null,collection);
+  let collExtension = [];
+
+
+  async.eachOf(twitIDs,function(twitID,index,cb_eachID){
+    client.get("/statuses/show/"+twitID ,{tweet_mode:"extended"},function(err,result) {
+      debug("client.get");
+      //fs.writeFileSync("TwitterStatus-"+id+".json",JSON.stringify(result,null,2));
+      // not working, ignore error
+
+      collExtension[index] = "";
+
+      // Error, ignore and do not expand
+      if (err) return callback(null);
+      if (!result) return callback(null);
+
+      let tweetAsText = result.full_text;
+
+      // Expand Tweet Urls
+
+      async.eachSeries(result.entities.urls,function(item,cb){
+        var u = item.expanded_url;
+        expandUrl(u,function(err,url){
+          tweetAsText = tweetAsText.replace(item.url,url);
+
+          cb();
+        });
+      }, function finalFunction(err){
+        if (err) return cb_eachID(err);
+
+        tweetAsText = tweetAsText.replace(/.https:\/\/t\.co\/........../i,"");
+
+
+        // tweet is already expanded
+        if (collection.indexOf(tweetAsText)>0)  return cb_eachID(null);
+
+        collExtension[index] =  "Tweet by **"+result.user.name+"**\n";
+        collExtension[index] += tweetAsText+"\n";
+        collExtension[index] += "(Retweets: **"+result.retweet_count +"** Favs: **"+result.favorite_count+"**)\n";
+
+        return cb_eachID(null);
+      });
+    });
+  },function(err){
+    if (err) return callback(err,null);
+    let result = collection;
+    collExtension.forEach(function(item){
+      if (item.length>0) result = result +"\n\n"+item;
+    });
+    callback(null,result);
+  });
+
 }
 
 module.exports.expandTwitterUrl = expandTwitterUrl;
