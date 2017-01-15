@@ -14,7 +14,8 @@ describe("model/twitter",function() {
   before(function (bddone){
     config.initialise();
     oldGetFunction = twitter.for_debug_only.twitterClient.get;
-    twitter.for_debug_only.twitterClient.get = sinon.spy(function (param,cb){
+    twitter.for_debug_only.twitterClient.get = sinon.spy(function (param,option,cb){
+      should(option).eql({tweet_mode:"extended"});
       if (param.substring(0,15)==="/statuses/show/") {
         var id = param.substring(15,999);
         var r = fs.readFileSync(path.join(__dirname,"data","TwitterStatus-"+id+".json"));
