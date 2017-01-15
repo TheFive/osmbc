@@ -37,7 +37,9 @@ function expandTwitterUrl(url,callback) {
  
   if (url.indexOf("/status/")<0) return callback(null,url);
 
-  var id = url.substring(url.indexOf("/status/")+8,99);
+  let startID = url.indexOf("/status/")+8;
+
+  var id = url.substring(startID,startID+18);
   client.get("/statuses/show/"+id,function(err,result) {
     debug("client.get");
     //fs.writeFileSync("TwitterStatus-"+id+".json",JSON.stringify(result,null,2));
