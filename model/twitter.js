@@ -40,7 +40,7 @@ function expandTwitterUrl(url,callback) {
   let startID = url.indexOf("/status/")+8;
 
   var id = url.substring(startID,startID+18);
-  client.get("/statuses/show/"+id,function(err,result) {
+  client.get("/statuses/show/"+id ,{tweet_mode:"extended"},function(err,result) {
     debug("client.get");
     //fs.writeFileSync("TwitterStatus-"+id+".json",JSON.stringify(result,null,2));
     // not working, ignore error
@@ -49,7 +49,7 @@ function expandTwitterUrl(url,callback) {
     if (!result) return callback(null,url);
 
     var collection = url + "\n\n\nTweet by **"+result.user.name+"**\n";
-    collection += result.text+"\n";
+    collection += result.full_text+"\n";
 
 
     async.eachSeries(result.entities.urls,function(item,cb){
