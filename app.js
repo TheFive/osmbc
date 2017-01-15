@@ -4,7 +4,7 @@ var path         = require('path');
 
 var express      = require('express');
 var favicon      = require('serve-favicon');
-var logger       = require('morgan');
+var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var async        = require('async');
@@ -34,6 +34,7 @@ var calendar   = require('./routes/tool').publicRouter;
 var api        = require('./routes/api').publicRouter;
 var layout     = require('./routes/layout').router;
 var configRouter     = require('./routes/config').router;
+var logger     = require('./config.js').logger;
 
 var userModule = require('./model/user.js');
 
@@ -48,7 +49,7 @@ var userModule = require('./model/user.js');
 // Initialise config Module
 config.initialise();
 var htmlRoot = config.getValue("htmlroot");
-console.info("Express Routes set to: SERVER"+htmlRoot);
+logger.info("Express Routes set to: SERVER"+htmlRoot);
 
 // taken from: https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
 // Passport session setup.
@@ -155,7 +156,7 @@ function ensureAuthenticated(req, res, next) {
   async.series([
     function saveReturnTo(cb) {
       if (!req.session.returnTo ) {
-        console.log("Setting session return to to "+req.originalUrl);
+        logger.info("Setting session return to to "+req.originalUrl);
         req.session.returnTo = req.originalUrl;
         return req.session.save(cb);
       }
@@ -220,7 +221,7 @@ app.use(debugExpress("After passport.session"));
 
 
 if (app.get('env') !== 'test') {
-  app.use(logger('dev'));
+  app.use(morgan('combined',{stream:logger.stream}));
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -334,7 +335,7 @@ if (app.get('env') === 'test') {
   app.use(function(err, req, res,next) {
     debug('app.use Error Handler for Debug');
     res.status(err.status || 500);
-    console.error("Error Message" + err.message);
+    logger.error("Error Message " + err.message);
     res.render('error', {
       message: err.message,
       error: err,

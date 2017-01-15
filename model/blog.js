@@ -3,6 +3,7 @@
 
 var async    = require('async');
 var config   = require('../config.js');
+var logger   = require('../config.js').logger;
 var markdown = require('markdown-it')()
           .use(require('markdown-it-sup'))
           .use(require('markdown-it-imsize'), { autofill: true });
@@ -87,7 +88,7 @@ Blog.prototype.setAndSave = function setAndSave(user,data,callback) {
         if (value === self[key]) continue;
         if (value === '' && typeof(self[key])==='undefined') continue;
         if (Blog.prototype.hasOwnProperty(key)) {
-          console.info("WARNING: Do not store "+data[key]+" for property "+key+" for Blog ID "+self.id);
+          logger.info("WARNING: Do not store "+data[key]+" for property "+key+" for Blog ID "+self.id);
           continue;
         }
         if (typeof(value)=='object') {

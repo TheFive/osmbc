@@ -9,6 +9,7 @@ var debug    = require("debug")("OSMBC:model:article");
 
 
 var config    = require("../config.js");
+var logger    = require("../config.js").logger;
 var util      = require("../util.js");
 
 var messageCenter  = require("../notification/messageCenter.js");
@@ -318,7 +319,7 @@ Article.prototype.setAndSave = function setAndSave(user,data,callback) {
         for (k in data) {
           // do not overwrite any existing Prototype Function with a value.
           if (Article.prototype.hasOwnProperty(k)) {
-            console.info("WARNING: Do not store "+data[k]+" for property "+k+" for Article ID "+self.id);
+            logger.info("WARNING: Do not store "+data[k]+" for property "+k+" for Article ID "+self.id);
             continue;
           }
           if (typeof(data[k])!=='undefined') self[k]=data[k];

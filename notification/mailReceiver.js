@@ -97,7 +97,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callba
   welcomemail.render(data, function welcomemail_render (err, results) {
     debug("welcomemail_render");
     if (err) return callback(err);
-    //console.dir(self.user);
+
     results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
 
     var mailOptions = {

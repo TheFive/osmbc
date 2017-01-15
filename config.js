@@ -5,14 +5,28 @@ module.exports.pgstring = "UNDEFINED";
 
 
 
-var path    = require('path');
-var fs      = require('fs');
-var debug   = require('debug')('OSMBC:config');
-var should  = require('should');
-var env = process.env.NODE_ENV || 'development';
+var path     = require('path');
+var fs       = require('fs');
+var debug    = require('debug')('OSMBC:config');
+var should   = require('should');
+var env      = process.env.NODE_ENV || 'development';
+var winston  = require('winston');
 
 
 
+// Define simple first logger for winston
+
+var logger = winston;
+
+if (process.env.NODE_ENV==="test") {
+  logger = new winston.Logger({level:'info',transports:[]});
+}
+
+logger.stream = {
+  write: function(message){
+    logger.info(message.substring(0,message.length-1));
+  }
+};
 
 
 
@@ -39,7 +53,7 @@ function getPostgresDBString() {
         connectStr = configuration.postgres.connectstr;
       }
   if (!connectStr) {
-    console.error("Could not build a connection string for postgres. App is terminating");
+    logger.error("Could not build a connection string for postgres. App is terminating");
     process.exit(1);
   }
   return connectStr;
@@ -64,10 +78,8 @@ exports.initialise = function initialise(callback) {
   }
   debug("initialise");
   configurationInitialised = true;
-	console.info("Reading Config from: "+configurationFile);
+	logger.info("Reading Config from: "+configurationFile);
 	configuration = JSON.parse(fs.readFileSync(configurationFile));
-  //pg.defaults.poolSize = 40;
-  //console.log("Postgres Poolsize = 40");
 
   // Do some tests with the types
 
@@ -100,7 +112,7 @@ exports.getValue = function(key,options) {
     result = configuration[key];
   }
   if (options && options.mustExist && ! result) {
-    console.error("Missing Value in config.*.json. Name: '"+key+"'");
+    logger.error("Missing Value in config.*.json. Name: '"+key+"'");
     process.exit(1);
   }
   debug("getValue %s %s",key,result);
@@ -124,5 +136,6 @@ exports.getCallbackUrl = function() {
 };
 
 exports.env = env;
+exports.logger = logger;
 
 

@@ -11,6 +11,7 @@ var request = require('request');
 
 
 var config = require('../config.js');
+var logger = require('../config.js').logger;
 
 var userModule = require('../model/user.js');
 var logModule = require('../model/logModule.js');
@@ -96,7 +97,7 @@ function renderUserId(req, res, next) {
     function findAndLoadHeatCalendarData(cb) {
       debug('findAndLoadHeatCalendarData');
       logModule.countLogsForUser(user.OSMUser,function(err,result){
-        if (err) console.error(err);
+        if (err) logger.error(err);
         userHeatMapArray = result;
         cb(null,result);
       });

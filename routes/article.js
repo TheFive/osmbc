@@ -12,7 +12,8 @@ var util     = require('../util.js');
 var path     = require('path');
 
 
-var config        = require('../config.js');
+var config    = require('../config.js');
+var logger    = require('../config.js').logger;
 
 var BlogRenderer = require('../render/BlogRenderer.js');
 
@@ -273,7 +274,7 @@ function renderArticleIdCommentArea(req,res,next) {
         params:params
       };
       jade.renderFile(path.resolve(__dirname,'..','views', 'article','commentArea.jade'),rendervars,function(err,commentArea){
-        if (err) console.dir(err);
+        if (err) logger.error(err);
         if (err) return next(err);
         res.json({"#commentArea":commentArea});
       });
@@ -294,7 +295,6 @@ function renderArticleIdVotesBlog(req,res,next) {
 
 
   votes.forEach(function(item){
-    console.log(item.name);
     if (item.name == voteName) vote = item;
   });
 
@@ -318,7 +318,7 @@ function renderArticleIdVotesBlog(req,res,next) {
         };
 
         jade.renderFile(path.resolve(__dirname,'..','views','voteLabel.jade'), rendervars,function(err,result){
-          if (err) console.log(err);
+          if (err) logger.error(err);
           if (err) return next(err);
           let v = {};
           v["#vote_"+voteName+"_" + article.id] = result;

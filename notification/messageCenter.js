@@ -3,6 +3,7 @@
 var debug     = require('debug')('OSMBC:notification:messageCenter');
 var async     = require('async');
 var LogModuleReceiver = require('../notification/LogModuleReceiver');
+var logger    = require('../config.js').logger;
 
 
 
@@ -78,7 +79,7 @@ function initialise(callback)
 
   messageCenter.registerReceiver(new LogModuleReceiver());
 
-  console.info("Message Center initialised.");
+  logger.info("Message Center initialised.");
   if (callback) return callback();
 }
 

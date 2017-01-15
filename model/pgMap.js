@@ -7,6 +7,7 @@ var debug  = require('debug')('OSMBC:model:pgMap');
 var sqldebug  = require('debug')('OSMBC:model:sql');
 
 var config = require('../config.js');
+var logger = require('../config.js').logger;
 var util = require('../util.js');
 
 module.exports.longRunningQueries={};
@@ -502,7 +503,7 @@ exports.createTables = function(pgObject,options,analyse,callback) {
       function tabledrop(cb) {
         if (options.dropTables || (options.dropTable && options.dropTable == pgObject.table)) {
           debug("tabledrop");
-          if (options.verbose) console.info("Drop Table "+pgObject.table);
+          if (options.verbose) logger.info("Drop Table "+pgObject.table);
           var dropString = "DROP TABLE IF EXISTS "+pgObject.table+ " CASCADE";
           client.query(dropString,cb);
         } else return cb();
@@ -510,8 +511,8 @@ exports.createTables = function(pgObject,options,analyse,callback) {
       function tablecreation(cb) {
         if (options.createTables || (options.createTable && options.createTable == pgObject.table) ) {
           debug("tablecreation");
-          if (options.verbose) console.info("Create Table "+pgObject.table);
-          if (options.verbose) console.info("Query: "+pgObject.createString);
+          if (options.verbose) logger.info("Create Table "+pgObject.table);
+          if (options.verbose) logger.info("Query: "+pgObject.createString);
           client.query(pgObject.createString,cb);
         } else return cb();
       },
@@ -535,7 +536,7 @@ exports.createTables = function(pgObject,options,analyse,callback) {
         }
         async.each(toBeDropped,function ftoBeDropped(index,eachofcb){
           debug("ftoBeDropped");
-          if (options.verbose) console.info("Drop Index "+index);
+          if (options.verbose) logger.info("Drop Index "+index);
           var dropIndex = "DROP INDEX if exists "+index+";";
           client.query(dropIndex,eachofcb);
         },function finalFunction(err){
@@ -546,7 +547,7 @@ exports.createTables = function(pgObject,options,analyse,callback) {
 
         if (options.createIndex || options.updateIndex) {
           debug("indexcreation");
-          if (options.verbose) console.info("Creating Indexes for "+pgObject.table);
+          if (options.verbose) logger.info("Creating Indexes for "+pgObject.table);
           async.forEachOf(pgObject.indexDefinition,function(sql,index,eachofcb){
             var createIt = false;
             if (options.createIndex) createIt = true;
@@ -554,7 +555,7 @@ exports.createTables = function(pgObject,options,analyse,callback) {
             if (analyse.expected[index]) createIt = true;
 
             if (!createIt) return eachofcb();
-            if (options.verbose) console.info("Create Index "+index);
+            if (options.verbose) logger.info("Create Index "+index);
             client.query(sql,eachofcb);
           },function finalFunction(err){return cb(err);});
         } else return cb();
@@ -564,7 +565,7 @@ exports.createTables = function(pgObject,options,analyse,callback) {
         if (options.dropView) {
           async.forEachOf(pgObject.viewDefinition,function(sql,view,eachofcb){
             var dropIndex = "DROP VIEW if exists "+view+";";
-            if (options.verbose) console.info("Drop View "+view);
+            if (options.verbose) logger.info("Drop View "+view);
             client.query(dropIndex,eachofcb);
           },function finalFunction(err){return cb(err);});
         } else return cb();
@@ -573,14 +574,14 @@ exports.createTables = function(pgObject,options,analyse,callback) {
         debug("viewscreation");
         if (options.createView) {
           async.forEachOf(pgObject.viewDefinition,function(sql,view,eachofcb){
-            if (options.verbose) console.info("Create View "+view);
+            if (options.verbose) logger.info("Create View "+view);
             client.query(sql,eachofcb);
           },function finalFunction(err){return cb(err);});
         } else return cb();
       }
     ],function finalFunction(err){
       if (options.verbose) {
-        if (err) console.dir(err);
+        if (err) logger.error(err);
       }
       pgdone();
       return callback(err);

@@ -31,7 +31,6 @@ function renderHome(req,res,next) {
   },function(err,result) {
     if (err) return next(err);
     res.set('content-type', 'text/html');
-    //console.log(res.get('content-type'));
     res.render('index', { title: config.getValue("AppName") ,
       layout:res.rendervar.layout,
       activeUserList:result.activeUser,

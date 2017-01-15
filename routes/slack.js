@@ -5,7 +5,8 @@ var async    = require('async');
 var router   = express.Router();
 var debug    = require('debug')('OSMBC:routes:slack');
 
-var config        = require('../config.js');
+var config   = require('../config.js');
+var logger   = require('../config.js').logger;
 
 
 var userModule     = require('../model/user.js');
@@ -41,7 +42,7 @@ function ensureAuthentificated(req,res,next) {
   }
   userModule.find({SlackUser:req.body.user_name},function(err,user){
     if (err) {
-      console.error(err);
+      logger.error(err);
       return next(err);
     }
     var obj = {};
