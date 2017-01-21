@@ -56,6 +56,10 @@
     "winston": "^2.3.0"
   },
   "devDependencies": {
+    "eslint": "^3.13.1",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1",
     "express-debug": "^1.1.1",
     "istanbul": "^0.4.3",
     "mocha": "^3.2.0",
