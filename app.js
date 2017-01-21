@@ -1,42 +1,41 @@
 "use strict";
 
-var path         = require('path');
+var path         = require("path");
 
-var express      = require('express');
-var favicon      = require('serve-favicon');
-var morgan       = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser   = require('body-parser');
-var async        = require('async');
+var express      = require("express");
+var favicon      = require("serve-favicon");
+var morgan       = require("morgan");
+var cookieParser = require("cookie-parser");
+var bodyParser   = require("body-parser");
+var async        = require("async");
 
-var debug = require('debug')('OSMBC:app');
-var passport     = require('passport');
-var OpenStreetMapStrategy 
-                 = require('passport-openstreetmap').Strategy;
+var debug        = require("debug")("OSMBC:app");
+var passport     = require("passport");
+var OpenStreetMapStrategy = require("passport-openstreetmap").Strategy;
 
-var session      = require('express-session');
-var compression = require('compression');
+var session      = require("express-session");
+var compression  = require("compression");
 
-var pg = require('pg');
+var pg           = require("pg");
 
-var should        = require('should');
+var should       = require("should");
 
-var config     = require('./config.js');
+var config       = require("./config.js");
 
-var index      = require('./routes/index').router;
-var users      = require('./routes/users').router;
-var article    = require('./routes/article').router;
-var slackrouter    = require('./routes/slack').router;
-var changes    = require('./routes/changes').router;
-var blog       = require('./routes/blog').router;
-var tool       = require('./routes/tool').router;
-var calendar   = require('./routes/tool').publicRouter;
-var api        = require('./routes/api').publicRouter;
-var layout     = require('./routes/layout').router;
-var configRouter     = require('./routes/config').router;
-var logger     = require('./config.js').logger;
+var index        = require("./routes/index").router;
+var users        = require("./routes/users").router;
+var article      = require("./routes/article").router;
+var slackrouter  = require("./routes/slack").router;
+var changes      = require("./routes/changes").router;
+var blog         = require("./routes/blog").router;
+var tool         = require("./routes/tool").router;
+var calendar     = require("./routes/tool").publicRouter;
+var api          = require("./routes/api").publicRouter;
+var layout       = require("./routes/layout").router;
+var configRouter = require("./routes/config").router;
+var logger       = require("./config.js").logger;
 
-var userModule = require('./model/user.js');
+var userModule   = require("./model/user.js");
 
 
 
@@ -49,7 +48,7 @@ var userModule = require('./model/user.js');
 // Initialise config Module
 config.initialise();
 var htmlRoot = config.getValue("htmlroot");
-logger.info("Express Routes set to: SERVER"+htmlRoot);
+logger.info("Express Routes set to: SERVER" + htmlRoot);
 
 // taken from: https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
 // Passport session setup.
@@ -62,12 +61,12 @@ logger.info("Express Routes set to: SERVER"+htmlRoot);
 // in OSMBC only the displayName is relevant (as long as there is no user database)
 // so this is enough for serialising.
 // if there will be a user database, this has to be integrated here
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   debug("passport.serializeUser CB");
   done(null, user);
 });
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser(function (user, done) {
   debug("passport.deserializeUser CB");
   done(null, user);
 });
@@ -80,16 +79,16 @@ passport.deserializeUser(function(user, done) {
 
 
 passport.use(new OpenStreetMapStrategy({
-    consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY",{mustExist:true}),
-    consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET",{mustExist:true}),
-    callbackURL: config.getValue("callbackUrl",{mustExist:true})
-  },
-  function(token, tokenSecret, profile, done) {
-    debug('passport.use Token Function');
+  consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY", {mustExist: true}),
+  consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET", {mustExist: true}),
+  callbackURL: config.getValue("callbackUrl", {mustExist: true})
+},
+  function (token, tokenSecret, profile, done) {
+    debug("passport.use Token Function");
     // asynchronous verification, for effect...
     process.nextTick(function () {
-      debug('passport.use Token Function->prozess.nextTick');
-      
+      debug("passport.use Token Function->prozess.nextTick");
+
       // To keep the example simple, the user's OpenStreetMap profile is returned to
       // represent the logged-in user.  In a typical application, you would want
       // to associate the OpenStreetMap account with a user record in your database,
@@ -101,8 +100,8 @@ passport.use(new OpenStreetMapStrategy({
 
 
 
-function checkAuthentification(req,res,next) {
-  debug('checkAuthentification');
+function checkAuthentification (req, res, next) {
+  debug("checkAuthentification");
 
   // Route / checks for authentification, so nothing has to be done,
   // just check authentification.
@@ -115,39 +114,39 @@ function checkAuthentification(req,res,next) {
   return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
 }
 
-function ensureAuthenticated(req, res, next) {
+function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated");
 
-  if (req.isAuthenticated()) { 
-    //if (req.user.displayName =="TheFive") return next();
+  if (req.isAuthenticated()) {
+    // if (req.user.displayName =="TheFive") return next();
     // check User
-    userModule.find({OSMUser:req.user.displayName},function(err,result){
-      debug('ensureAuthenticated->userFind');
+    userModule.find({OSMUser: req.user.displayName}, function(err, result) {
+      debug("ensureAuthenticated->userFind");
       if (err) return next(err);
-      if (result.length==1) {
+      if (result.length === 1) {
         for (var k in result[0]) {
           req.user[k] = result[0][k];
         }
         debug("User found");
-        if (result[0].access == "full") {
+        if (result[0].access === "full") {
           // save last access, ignore save callback
           var date = new Date();
           var lastStore = new Date(result[0].lastAccess);
-          if (!result[0].lastAccess || (date.getTime()-lastStore.getTime()) > 1000*60) {
+          if (!result[0].lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 60) {
             result[0].lastAccess = new Date();
-            result[0].save(function(err,u) {req.user.version = u.version;});
+            result[0].save(function(err, u) { if (err) return next(err); req.user.version = u.version; });
           }
           debug("User accepted");
           return next();
         }
       }
-      debug("User Not Found %s(found)",result.length);
+      debug("User Not Found %s(found)", result.length);
       should(result.length).lessThan(2);
-      if (result.length == 1) {
-        err = new Error('OSM User >'+req.user.displayName+'< has no access rights');
+      if (result.length === 1) {
+        err = new Error("OSM User >" + req.user.displayName + "< has no access rights");
       }
       if (result.length === 0) {
-        err = new Error('OSM User >'+req.user.displayName+'< does not exist.');
+        err = new Error("OSM User >" + req.user.displayName + "< does not exist.");
       }
       return next(err);
     });
@@ -155,16 +154,16 @@ function ensureAuthenticated(req, res, next) {
   }
   async.series([
     function saveReturnTo(cb) {
-      if (!req.session.returnTo ) {
-        logger.info("Setting session return to to "+req.originalUrl);
+      if (!req.session.returnTo) {
+        logger.info("Setting session return to to " + req.originalUrl);
         req.session.returnTo = req.originalUrl;
         return req.session.save(cb);
       }
       return cb();
     }
-  ],function(err){
+  ], function(err) {
     if (err) return next(err);
-    res.redirect(htmlRoot+'/auth/openstreetmap');
+    res.redirect(htmlRoot + "/auth/openstreetmap");
   });
 }
 
@@ -172,36 +171,34 @@ function ensureAuthenticated(req, res, next) {
 // create a session store
 let sessionstore = null;
 
-if (config.getValue("sessionStore",{mustExist:true})==="session-file-store") {
-
-  var FileStore    = require('session-file-store')(session);
+if (config.getValue("sessionStore", {mustExist: true}) === "session-file-store") {
+  var FileStore    = require("session-file-store")(session);
   sessionstore = new FileStore();
+} else if (config.getValue("sessionStore", {mustExist: true}) === "connect-pg-simple") {
+  var PgSession = require("connect-pg-simple")(session);
 
-} else if (config.getValue("sessionStore",{mustExist:true})=="connect-pg-simple") {
-  var pgSession = require('connect-pg-simple')(session);
-
-  sessionstore = new pgSession({
-      pg : pg,        // Use global pg-module
-      conString : config.pgstring // Connect using something else than default DATABASE_URL env variable
-    });
+  sessionstore = new PgSession({
+    pg: pg,        // Use global pg-module
+    conString: config.pgstring // Connect using something else than default DATABASE_URL env variable
+  });
 }
 
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "jade");
 
 
 function debugExpress(a) {
-  var text=a;
-  return function(req,res,next) {debug(text);next();};
+  var text = a;
+  return function(req, res, next) { debug(text); next(); };
 }
 
 // compress all requests
 app.use(debugExpress("Start Route"));
 app.use(compression());
-app.use(favicon(path.join(__dirname , 'public','images','favicon.ico')));
+app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 
 
 var cookieMaxAge = config.getValue("cookieMaxAge");
@@ -209,20 +206,24 @@ var cookieMaxAge = config.getValue("cookieMaxAge");
 if (isNaN(cookieMaxAge)) {
   cookieMaxAge = null;
 } else {
-  cookieMaxAge = cookieMaxAge * 1000*60*60*24;
+  cookieMaxAge = cookieMaxAge * 1000 * 60 * 60 * 24;
 }
 
 
-logger.info("Set Max Age of cookies to " + ((!cookieMaxAge)?"default":(cookieMaxAge/(1000*60*60*24) +" days")));
+logger.info("Set Max Age of cookies to " + ((!cookieMaxAge) ? "default" : (cookieMaxAge / (1000 * 60 * 60 * 24) + " days")));
 
 
 
-app.use(session({ store: sessionstore,
-                    name: config.getValue("SessionName",{mustExist:true}),
-                    secret: config.getValue("SessionSecret",{mustExist:true}) ,
-                    resave:true,
-                    saveUninitialized:true,
-                    cookie:{ maxAge : cookieMaxAge}}));
+app.use(session(
+  {
+    store: sessionstore,
+    name: config.getValue("SessionName", {mustExist: true}),
+    secret: config.getValue("SessionSecret", {mustExist: true}),
+    resave: true,
+    saveUninitialized: true,
+    cookie: {maxAge: cookieMaxAge}
+  }
+));
 
 
 // Initialize Passport!  Also use passport.session() middleware, to support
@@ -235,8 +236,8 @@ app.use(debugExpress("After passport.session"));
 
 
 
-if (app.get('env') !== 'test') {
-  app.use(morgan('combined',{stream:logger.stream}));
+if (app.get("env") !== "test") {
+  app.use(morgan("combined", { stream: logger.stream }));
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -249,11 +250,10 @@ app.use(debugExpress("After cookieParser"));
 //   request.  The first step in OpenStreetMap authentication will involve redirecting
 //   the user to openstreetmap.org.  After authorization, OpenStreetMap will redirect the user
 //   back to this application at /auth/openstreetmap/callback
-app.get(htmlRoot + '/auth/openstreetmap',
-  //passport.authenticate('openstreetmap'),
-  passport.authenticate('openstreetmap'),
-  function(req, res){
-    debug('never come here function!!!');
+app.get(htmlRoot + "/auth/openstreetmap",
+  passport.authenticate("openstreetmap"),
+  function (req, res) {
+    debug("never come here function!!!");
     debug(req);
     debug(res);
     // The request will be redirected to OpenStreetMap for authentication, so this
@@ -265,40 +265,39 @@ app.get(htmlRoot + '/auth/openstreetmap',
 //   request.  If authentication fails, the user will be redirected back to the
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
-app.get(htmlRoot + '/auth/openstreetmap/callback',
-  passport.authenticate('openstreetmap', { failureRedirect: '/login'  }),
+app.get(htmlRoot + "/auth/openstreetmap/callback",
+  passport.authenticate("openstreetmap", {failureRedirect: "/login"}),
   function(req, res) {
-    debug('passport.authenticate Function');
-    res.redirect(req.session.returnTo || '/');
-    //res.redirect('/');
+    debug("passport.authenticate Function");
+    res.redirect(req.session.returnTo || "/");
   });
 
-app.get(htmlRoot + '/logout', function(req, res){
-  debug('logoutFunction');
+app.get(htmlRoot + "/logout", function(req, res) {
+  debug("logoutFunction");
   req.logout();
-  res.redirect('/');
+  res.redirect("/");
 });
 
 // first register the unsecured path
 
-app.use(htmlRoot+'/bower_components',  express.static(__dirname + '/bower_components'));
-app.use(htmlRoot,express.static(path.join(__dirname, 'public')));
+app.use(htmlRoot + "/bower_components", express.static(path.join(__dirname, "/bower_components")));
+app.use(htmlRoot, express.static(path.join(__dirname, "public")));
 
-app.use(htmlRoot,calendar );
-app.use(htmlRoot + "/api",api );
-app.use(htmlRoot + '/slack', slackrouter);
+app.use(htmlRoot, calendar);
+app.use(htmlRoot + "/api", api);
+app.use(htmlRoot + "/slack", slackrouter);
 
 app.use(debugExpress("After Slack Initialisation"));
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
-app.use(htmlRoot + '/',ensureAuthenticated,layout);
-app.use(htmlRoot + '/',checkAuthentification,index);
-app.use(htmlRoot + '/usert',checkAuthentification, users);
-app.use(htmlRoot + '/article',checkAuthentification, article);
-app.use(htmlRoot + '/changes',checkAuthentification, changes);
-app.use(htmlRoot + '/blog',checkAuthentification, blog);
-app.use(htmlRoot + '/tool',checkAuthentification, tool);
-app.use(htmlRoot + '/config',checkAuthentification, configRouter);
+app.use(htmlRoot + "/", ensureAuthenticated, layout);
+app.use(htmlRoot + "/", checkAuthentification, index);
+app.use(htmlRoot + "/usert", checkAuthentification, users);
+app.use(htmlRoot + "/article", checkAuthentification, article);
+app.use(htmlRoot + "/changes", checkAuthentification, changes);
+app.use(htmlRoot + "/blog", checkAuthentification, blog);
+app.use(htmlRoot + "/tool", checkAuthentification, tool);
+app.use(htmlRoot + "/config", checkAuthentification, configRouter);
 
 app.use(debugExpress("After different routes"));
 // Simple route middleware to ensure user is authenticated.
@@ -313,8 +312,8 @@ app.use(debugExpress("After different routes"));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  debug('app.use Error Handler');
-  var err = new Error('Not Found');
+  debug("app.use Error Handler");
+  var err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
@@ -323,19 +322,16 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
+if (app.get("env") === "development") {
   debug("Set development error hander");
-
-  //require('express-debug')(app, {/* settings */});
-
   app.locals.pretty = true;
-  app.use(function(err, req, res,next) {
-    debug('app.use Error Handler for Debug');
+  app.use(function(err, req, res, next) {
+    debug("app.use Error Handler for Debug");
     res.status(err.status || 500);
-    res.render('error', {
+    res.render("error", {
       message: err.message,
       error: err,
-      layout:{htmlroot:htmlRoot}
+      layout: {htmlroot: htmlRoot}
     });
     if (next); // do nothing but use the next variable
   });
@@ -344,32 +340,32 @@ if (app.get('env') === 'development') {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'test') {
+if (app.get("env") === "test") {
   debug("Set test error hander");
   app.locals.pretty = true;
-  app.use(function(err, req, res,next) {
-    debug('app.use Error Handler for Debug');
+  app.use(function(err, req, res, next) {
+    debug("app.use Error Handler for Debug");
     res.status(err.status || 500);
     logger.error("Error Message " + err.message);
-    res.render('error', {
+    res.render("error", {
       message: err.message,
       error: err,
-      layout:{htmlroot:htmlRoot}
+      layout: {htmlroot: htmlRoot}
     });
     if (next); // do nothing but use the next variable
   });
 }
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res,next) {
+app.use(function(err, req, res, next) {
   debug("Set production error hander");
-  debug('app.use status function');
+  debug("app.use status function");
   debug(JSON.stringify(err));
   res.status(err.status || 500);
-  res.render('error', {
+  res.render("error", {
     message: err.message,
     error: {},
-    layout:{htmlroot:htmlRoot}
+    layout: {htmlroot: htmlRoot}
   });
   if (next); // do nothing but use the next variable
 });

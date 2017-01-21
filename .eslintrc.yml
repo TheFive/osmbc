@@ -2,3 +2,10 @@ extends: standard
 plugins:
   - standard
   - promise
+
+rules:
+   quotes: [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }]
+   semi: [2,"always"]
+   no-multi-spaces: [2,{"exceptions": { "VariableDeclarator": true }}]
+   no-multiple-empty-lines: 0
+   space-before-function-paren: 0
