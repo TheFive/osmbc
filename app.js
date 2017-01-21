@@ -202,12 +202,27 @@ function debugExpress(a) {
 app.use(debugExpress("Start Route"));
 app.use(compression());
 app.use(favicon(path.join(__dirname , 'public','images','favicon.ico')));
+
+
+var cookieMaxAge = config.getValue("cookieMaxAge");
+
+if (isNaN(cookieMaxAge)) {
+  cookieMaxAge = null;
+} else {
+  cookieMaxAge = cookieMaxAge * 1000*60*60*24;
+}
+
+
+logger.info("Set Max Age of cookies to " + ((!cookieMaxAge)?"default":(cookieMaxAge/(1000*60*60*24) +" days")));
+
+
+
 app.use(session({ store: sessionstore,
                     name: config.getValue("SessionName",{mustExist:true}),
                     secret: config.getValue("SessionSecret",{mustExist:true}) ,
                     resave:true,
                     saveUninitialized:true,
-                    cookie:{_expires :null}}));
+                    cookie:{ maxAge : cookieMaxAge}}));
 
 
 // Initialize Passport!  Also use passport.session() middleware, to support
