@@ -333,7 +333,6 @@ if (app.get("env") === "development") {
       error: err,
       layout: {htmlroot: htmlRoot}
     });
-    if (next); // do nothing but use the next variable
   });
 }
 
@@ -352,9 +351,9 @@ if (app.get("env") === "test") {
       error: err,
       layout: {htmlroot: htmlRoot}
     });
-    if (next); // do nothing but use the next variable
   });
 }
+
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
@@ -367,7 +366,6 @@ app.use(function(err, req, res, next) {
     error: {},
     layout: {htmlroot: htmlRoot}
   });
-  if (next); // do nothing but use the next variable
 });
 
 
