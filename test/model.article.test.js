@@ -27,11 +27,11 @@ should.config.checkProtoEql = false;
 
 
 
-describe('model/article', function() {
+describe("model/article", function() {
   var testUser = {displayName:"user",OSMUser:"user"};
   var slackNock;
   before(function (bddone) {
-   //nock all slack messages
+   // nock all slack messages
    slackNock = nock('https://hooks.slack.com/')
                 .post(/\/services\/.*/) 
                 .times(999) 
