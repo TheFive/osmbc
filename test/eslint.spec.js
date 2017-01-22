@@ -5,6 +5,6 @@ var lint = require("mocha-eslint");
 
 describe("eslint", function() {
   it.skip("should eslint", function() {
-    lint(["../"], {});
+    lint(["../"], {formatter:"stylish"});
   });
 });
