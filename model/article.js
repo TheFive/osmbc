@@ -179,7 +179,7 @@ Article.prototype.doLock = function doLock(user, callback) {
         if (err) return callback(err);
         var status = "not found";
         if (result) status = result.status;
-        if (status == "closed") delete self.lock;
+        if (status === "closed") delete self.lock;
         cb();
       });
     }
@@ -213,7 +213,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("Version of Article %s", self.version);
   debug("Version of dataset %s", data.version);
   if (data.version) {
-    if (self.version != parseInt(data.version)) {
+    if (self.version !== parseInt(data.version)) {
       var error = new Error("Version Number Differs");
       return callback(error);
     }
@@ -227,7 +227,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       }
       if (!data.old || typeof (data.old[k]) === "undefined") return callback(new Error("No Version and no History Value for <" + k + "> given"));
 
-      if (self[k] && self[k] != data.old[k]) return callback(new Error("Field " + k + " already changed in DB"));
+      if (self[k] && self[k] !== data.old[k]) return callback(new Error("Field " + k + " already changed in DB"));
       if (typeof (self[k]) === "undefined" && data.old[k] !== "") return callback(new Error("Field " + k + " already changed in DB"));
     }
     delete data.old;
@@ -292,10 +292,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
     if (err) return callback(err);
     should.exist(self.id);
     should(self.id).not.equal(0);
-    var logblog = self.blog;
-    if (data.blog) logblog = data.blog;
     delete data.version;
-
 
     for (var k in data) {
       if (data[k] === self[k]) { delete data[k]; continue; }
@@ -340,18 +337,18 @@ function find(obj, order, callback) {
   let createFunction = create;
 
   if (typeof obj.blog === "object") {
-	  let blog = obj.blog;
+    let blog = obj.blog;
     obj.blog = blog.name;
-	  createFunction = function() {
-	    return create({_blog: blog});
-  };
-  }
-  if (typeof obj.blog === "string") {
-	  if ((obj.blog == "Future") || (obj.blog == "TBC") || (obj.blog == "Trash")) {
     createFunction = function() {
-      return create({_blog: null});
+      return create({_blog: blog});
     };
   }
+  if (typeof obj.blog === "string") {
+    if ((obj.blog === "Future") || (obj.blog === "TBC") || (obj.blog === "Trash")) {
+      createFunction = function() {
+        return create({_blog: null});
+      };
+    }
   }
   should.exist(createFunction);
   pgMap.find({table: "article", create: createFunction}, obj, order, callback);
@@ -424,7 +421,7 @@ Article.prototype.calculateLinks = function calculateLinks() {
       for (let respoint = 0; respoint < res.length; respoint++) {
         var add = true;
         for (var k in languageFlags) {
-          if (res[respoint] == languageFlags[k]) {
+          if (res[respoint] === languageFlags[k]) {
             add = false;
             break;
           }
@@ -539,9 +536,9 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(callback) {
         if (result) {
           for (var i = result.length - 1; i >= 0; i--) {
             let dropIt = false;
-            if (result[i].id == self.id) dropIt = true;
-            if (result[i].blog == "Trash") dropIt = true;
-            if (result[i].categoryEN == "--unpublished--") dropIt = true;
+            if (result[i].id === self.id) dropIt = true;
+            if (result[i].blog === "Trash") dropIt = true;
+            if (result[i].categoryEN === "--unpublished--") dropIt = true;
             if (dropIt) {
               result.splice(i, 1);
             }
