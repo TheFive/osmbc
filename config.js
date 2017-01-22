@@ -5,12 +5,12 @@ module.exports.pgstring = "UNDEFINED";
 
 
 
-var path     = require('path');
-var fs       = require('fs');
-var debug    = require('debug')('OSMBC:config');
-var should   = require('should');
-var env      = process.env.NODE_ENV || 'development';
-var winston  = require('winston');
+var path     = require("path");
+var fs       = require("fs");
+var debug    = require("debug")("OSMBC:config");
+var should   = require("should");
+var env      = process.env.NODE_ENV || "development";
+var winston  = require("winston");
 
 
 
@@ -18,20 +18,20 @@ var winston  = require('winston');
 
 var logger = winston;
 
-if (process.env.NODE_ENV==="test") {
-  logger = new winston.Logger({level:'info',transports:[]});
+if (process.env.NODE_ENV === "test") {
+  logger = new winston.Logger({level: "info", transports: []});
 }
 
 logger.stream = {
-  write: function(message){
-    logger.info(message.substring(0,message.length-1));
+  write: function(message) {
+    logger.info(message.substring(0, message.length - 1));
   }
 };
 
 
 
 // the configurationfile should be in the "running" directory
-var configurationFile = path.resolve(__dirname, 'config.'+env+'.json');
+var configurationFile = path.resolve(__dirname, "config." + env + ".json");
 var configuration;
 var configurationInitialised = false;
 
@@ -39,19 +39,19 @@ var configurationInitialised = false;
 
 
 function getPostgresDBString() {
-  debug('getPostgresDBString');
-  configuration=exports.getConfiguration();
+  debug("getPostgresDBString");
+  configuration = exports.getConfiguration();
   var userString = "";
   if (configuration.postgres.username !== "") {
-    userString = configuration.postgres.username + ':' + configuration.postgres.password +'@';
+    userString = configuration.postgres.username + ":" + configuration.postgres.password + "@";
   }
-  var connectStr ='postgres://' +
+  var connectStr = "postgres://" +
               userString +
               configuration.postgres.database;
-  if ((typeof(configuration.postgres.connectstr)!='undefined' ) &&
-      (configuration.postgres.connectstr !== '' )) {
-        connectStr = configuration.postgres.connectstr;
-      }
+  if ((typeof (configuration.postgres.connectstr) !== "undefined") &&
+      (configuration.postgres.connectstr !== "")) {
+    connectStr = configuration.postgres.connectstr;
+  }
   if (!connectStr) {
     logger.error("Could not build a connection string for postgres. App is terminating");
     process.exit(1);
@@ -60,7 +60,7 @@ function getPostgresDBString() {
 }
 
 exports.getLanguages = function() {
-  configuration=exports.getConfiguration();
+  configuration = exports.getConfiguration();
   return configuration.languages;
 };
 
@@ -78,44 +78,44 @@ exports.initialise = function initialise(callback) {
   }
   debug("initialise");
   configurationInitialised = true;
-	logger.info("Reading Config from: "+configurationFile);
-	configuration = JSON.parse(fs.readFileSync(configurationFile));
+  logger.info("Reading Config from: " + configurationFile);
+  configuration = JSON.parse(fs.readFileSync(configurationFile));
 
   // Do some tests with the types
 
-  should(typeof(configuration.ReviewInWP)).equal("object");
-  should(typeof(configuration.languages)).equal("object");
+  should(typeof (configuration.ReviewInWP)).equal("object");
+  should(typeof (configuration.languages)).equal("object");
 
   // Do some corrections, e.g. the languages MUST contain an "EN"
 
-  if (configuration.languages.indexOf("EN")<0) configuration.languages.push("EN");
+  if (configuration.languages.indexOf("EN") < 0) configuration.languages.push("EN");
 
   exports.pgstring = getPostgresDBString();
-	if (callback) callback();
+  if (callback) callback();
 };
 
 
 
 exports.getConfiguration = function() {
   exports.initialise();
-	return configuration;
+  return configuration;
 };
-exports.getValue = function(key,options) {
-  debug('getValue %s',key);
+exports.getValue = function(key, options) {
+  debug("getValue %s", key);
   exports.initialise();
-  if (options) should(typeof(options)).eql("object");
+  if (options) should(typeof (options)).eql("object");
   var result;
   if (options) {
     result = options.default;
   }
-  if (typeof(configuration[key]) != 'undefined') {
+  if (typeof (configuration[key]) !== "undefined") {
     result = configuration[key];
   }
-  if (options && options.mustExist && ! result) {
-    logger.error("Missing Value in config.*.json. Name: '"+key+"'");
+  if (options && options.mustExist && !result) {
+    logger.error("Missing Value in config.*.json. Name: '" + key + "'");
     process.exit(1);
   }
-  debug("getValue %s %s",key,result);
+  debug("getValue %s %s", key, result);
   return result;
 };
 
@@ -127,7 +127,7 @@ exports.getValue = function(key,options) {
 
 exports.getServerPort = function() {
   exports.initialise();
-  return exports.getValue("serverport",{mustExist:true});
+  return exports.getValue("serverport", {mustExist: true});
 };
 
 exports.getCallbackUrl = function() {

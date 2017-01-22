@@ -1,6 +1,6 @@
 "use strict";
-var debug = require('debug')('OSMBC:notification:messageFilter');
-var util = require('../util.js');
+var debug = require("debug")("OSMBC:notification:messageFilter");
+var util = require("../util.js");
 
 
 /* ConfigFilter Class
@@ -21,43 +21,43 @@ var util = require('../util.js');
 * */
 
 
-function ConfigFilter(config,receiver){
-  debug('ConfigFilter');
+function ConfigFilter(config, receiver) {
+  debug("ConfigFilter");
   this.config = config;
   this.receiver = receiver;
 }
 
-ConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user,article,change,cb) {
-  debug('ConfigFilter.prototype.updateArticle');
+ConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, article, change, cb) {
+  debug("ConfigFilter.prototype.updateArticle");
   var notify = false;
 
   // check Collection
   if (util.isTrue(this.config.notifyNewCollection)) {
-    if (change.collection && change.collection != article.collection) {
+    if (change.collection && change.collection !== article.collection) {
       notify = true;
       debug("Notification because new collection");
     }
   }
   if (util.isTrue(this.config.notifyAllComment)) {
-    if (change.comment && change.comment != article.comment) {
+    if (change.comment && change.comment !== article.comment) {
       notify = true;
       debug("Notification because changed comment");
     }
   }
   var userList = [];
   if (this.config.notifyComment) userList = this.config.notifyComment;
-  for (var i=0;i<userList.length;i++) {
-    if (change.comment && change.comment.search(new RegExp("@"+userList[i],"i"))>=0) {
+  for (var i = 0; i < userList.length; i++) {
+    if (change.comment && change.comment.search(new RegExp("@" + userList[i], "i")) >= 0) {
       notify = true;
-      debug("Notification because comment for @"+userList[i]);
+      debug("Notification because comment for @" + userList[i]);
     }
   }
   if (!notify) return cb();
-  this.receiver.updateArticle(user,article,change,cb);
+  this.receiver.updateArticle(user, article, change, cb);
 };
 
-ConfigFilter.prototype.addComment = function ucfAddComment(user,article,comment,cb) {
-  debug('ConfigFilter.prototype.addComment');
+ConfigFilter.prototype.addComment = function ucfAddComment(user, article, comment, cb) {
+  debug("ConfigFilter.prototype.addComment");
   var notify = false;
 
   // check Collection
@@ -66,19 +66,18 @@ ConfigFilter.prototype.addComment = function ucfAddComment(user,article,comment,
   }
   var userList = [];
   if (this.config.notifyComment) userList = this.config.notifyComment;
-  for (var i=0;i<userList.length;i++) {
-
-    if (comment.search(new RegExp("@"+userList[i]+"\\b","i"))>=0) {
+  for (var i = 0; i < userList.length; i++) {
+    if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
       notify = true;
-      debug("Notification because comment for @"+userList[i]);
+      debug("Notification because comment for @" + userList[i]);
     }
   }
   if (!notify) return cb();
-  this.receiver.addComment(user,article,comment,cb);
+  this.receiver.addComment(user, article, comment, cb);
 };
 
-ConfigFilter.prototype.editComment = function ucfEditComment(user,article,index,comment,cb) {
-  debug('ConfigFilter.prototype.addComment');
+ConfigFilter.prototype.editComment = function ucfEditComment(user, article, index, comment, cb) {
+  debug("ConfigFilter.prototype.addComment");
   var notify = false;
 
   // check Collection
@@ -87,60 +86,60 @@ ConfigFilter.prototype.editComment = function ucfEditComment(user,article,index,
   }
   var userList = [];
   if (this.config.notifyComment) userList = this.config.notifyComment;
-  for (var i=0;i<userList.length;i++) {
-    if (comment.search(new RegExp("@"+userList[i]+"\\b","i"))>=0) {
+  for (var i = 0; i < userList.length; i++) {
+    if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
       notify = true;
-      debug("Notification because comment for @"+userList[i]);
+      debug("Notification because comment for @" + userList[i]);
     }
   }
   if (!notify) return cb();
-  this.receiver.editComment(user,article,index,comment,cb);
+  this.receiver.editComment(user, article, index, comment, cb);
 };
 
-ConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user,blog,change,cb) {
-  debug('ConfigFilter.prototype.updateBlog');
+ConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, change, cb) {
+  debug("ConfigFilter.prototype.updateBlog");
   var notify = false;
 
 
   // check Collection
-  if (util.isTrue(this.config.notifyBlogStatusChange )) {
-    if (change.status && change.status != blog.status && change.status != "closed") {
+  if (util.isTrue(this.config.notifyBlogStatusChange)) {
+    if (change.status && change.status !== blog.status && change.status !== "closed") {
       notify = true;
     }
   }
- 
+
   if (!notify) return cb();
-  this.receiver.updateBlog(user,blog,change,cb);
+  this.receiver.updateBlog(user, blog, change, cb);
 };
 
 
-ConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,cb) {
-  debug('ConfigFilter.prototype.sendLanguageStatus');
+ConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, cb) {
+  debug("ConfigFilter.prototype.sendLanguageStatus");
   var wnList = [];
   var notify = false;
   if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
-  for (var i=0;i<wnList.length;i++) {
+  for (var i = 0; i < wnList.length; i++) {
     var l = wnList[i];
     if (l === lang) notify = true;
   }
   if (!notify) return cb();
   debug("Send out notification");
-  this.receiver.sendLanguageStatus(user,blog,lang,status,cb);
+  this.receiver.sendLanguageStatus(user, blog, lang, status, cb);
 };
 
-ConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,cb) {
-  debug('ConfigFilter.prototype.sendCloseStatus');
+ConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {
+  debug("ConfigFilter.prototype.sendCloseStatus");
   var wnList = [];
   var notify = false;
   if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
   if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
-  for (var i=0;i<wnList.length;i++) {
+  for (var i = 0; i < wnList.length; i++) {
     var l = wnList[i];
     if (l === lang) notify = true;
   }
   if (!notify) return cb();
   debug("Send out notification");
-  this.receiver.sendCloseStatus(user,blog,lang,status,cb);
+  this.receiver.sendCloseStatus(user, blog, lang, status, cb);
 };
 
 

@@ -325,6 +325,7 @@ app.use(function(req, res, next) {
 if (app.get("env") === "development") {
   debug("Set development error hander");
   app.locals.pretty = true;
+  /* jshint -W098 */
   app.use(function(err, req, res, next) {
     debug("app.use Error Handler for Debug");
     res.status(err.status || 500);
@@ -334,6 +335,7 @@ if (app.get("env") === "development") {
       layout: {htmlroot: htmlRoot}
     });
   });
+  /* jshint +W098 */
 }
 
 
@@ -342,6 +344,7 @@ if (app.get("env") === "development") {
 if (app.get("env") === "test") {
   debug("Set test error hander");
   app.locals.pretty = true;
+  /* jshint -W098 */
   app.use(function(err, req, res, next) {
     debug("app.use Error Handler for Debug");
     res.status(err.status || 500);
@@ -352,14 +355,16 @@ if (app.get("env") === "test") {
       layout: {htmlroot: htmlRoot}
     });
   });
+  /* jshint +W098 */
 }
 
 // production error handler
 // no stacktraces leaked to user
+/* jshint -W098 */
 app.use(function(err, req, res, next) {
   debug("Set production error hander");
   debug("app.use status function");
-  debug(JSON.stringify(err));
+  logger.err(JSON.stringify(err));
   res.status(err.status || 500);
   res.render("error", {
     message: err.message,
@@ -367,6 +372,7 @@ app.use(function(err, req, res, next) {
     layout: {htmlroot: htmlRoot}
   });
 });
+/* jshint +W098 */
 
 
 module.exports = app;
