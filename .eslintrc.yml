@@ -3,6 +3,7 @@ plugins:
   - standard
   - promise
 
+
 rules:
    quotes: [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }]
    semi: [2,"always"]
@@ -10,5 +11,5 @@ rules:
    no-multiple-empty-lines: 0
    space-before-function-paren: 0
    no-multi-str: 0
-   new-cap: [2,{ "newIsCapExceptions": ["moment"] ,capIsNewExceptions:["True","Router"] }]
+   new-cap: [2,{ "newIsCapExceptions": ["moment"] ,capIsNewExceptions:["True","Router","False"] }]
    no-useless-escape: 0

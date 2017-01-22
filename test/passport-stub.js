@@ -1,7 +1,7 @@
 
 // jshint ignore: start
 // this is external code stubbing the passport lib for tests
-// as there is an "this" error with use-strict i have totally 
+// as there is an "this" error with use-strict i have totally
 // disabled jshint for this file.
 
 
@@ -23,10 +23,10 @@ passportStub = (function(_this) {
     passport = {
       deserializeUser: done,
       serializeUser: done,
-      _userProperty: 'user',
-      _key: 'passport'
+      _userProperty: "user",
+      _key: "passport"
     };
-    req.__defineGetter__('_passport', function() {
+    req.__defineGetter__("_passport", function() {
       return {
         instance: passport,
         session: {
@@ -34,16 +34,16 @@ passportStub = (function(_this) {
         }
       };
     });
-    req.__defineGetter__('user', function() {
+    req.__defineGetter__("user", function() {
       return _this.user;
     });
-    req.__defineSetter__('user', function(val) {
+    req.__defineSetter__("user", function(val) {
       _this.user = val;
-      return val; 
+      return val;
     });
     return next();
   };
-})(this); 
+})(this);
 
 exports.install = function(app) {
   debug("passportStub");
@@ -52,10 +52,10 @@ exports.install = function(app) {
     match: function() {
       return true;
     },
-    path: '',
+    path: "",
     handle: passportStub,
     handle_request: passportStub,
-    _id: 'passport.stub'
+    _id: "passport.stub"
   });
 };
 
@@ -65,7 +65,7 @@ exports.uninstall = function() {
     return;
   }
   return this.app._router.stack.forEach(function(middleware, index, stack) {
-    if (middleware._id === 'passport.stub') {
+    if (middleware._id === "passport.stub") {
       return stack.splice(index, 1);
     }
   });
@@ -78,11 +78,11 @@ exports.login = function(user) {
   }
   this.active = true;
   this.user = user;
-  return user; 
+  return user;
 };
 
 exports.logout = function() {
   debug("logout");
   this.active = false;
-  return false; 
+  return false;
 };

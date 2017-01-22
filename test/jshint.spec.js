@@ -1,10 +1,10 @@
 "use strict";
 
-require('mocha-jshint')({
+require("mocha-jshint")({
   git: {
     modified: true,
     commits: 2,
-    pretty:true
+    pretty: true
 
   }
 });

@@ -1,36 +1,35 @@
 "use strict";
 
-var async = require('async');
-var should = require('should');
-var request = require('request');
-var config = require('../config');
+var async = require("async");
+var should = require("should");
+var request = require("request");
+var config = require("../config");
 
 
-var testutil = require('../test/testutil.js');
+var testutil = require("../test/testutil.js");
 
-require('jstransformer-verbatim');
-
-
+require("jstransformer-verbatim");
 
 
 
-describe('routes/api',function() {
+
+
+describe("routes/api", function() {
   var baseLink;
-  before(function(bddone){
-    baseLink = 'http://localhost:' + config.getServerPort() + config.getValue("htmlroot");
+  before(function(bddone) {
+    baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
     async.series([
       testutil.clearDB,
-      testutil.startServer,
-    ],bddone);
-
+      testutil.startServer
+    ], bddone);
   });
-  after(function(bddone){
+  after(function(bddone) {
     testutil.stopServer();
     bddone();
   });
 
-  describe('monitor functions',function() {
-    it('should give OK with correct ApiKey', function (bddone) {
+  describe("monitor functions", function() {
+    it("should give OK with correct ApiKey", function (bddone) {
       request({
         method: "GET",
         url: baseLink + "/api/monitor/testapikey"
@@ -41,7 +40,7 @@ describe('routes/api',function() {
         bddone();
       });
     });
-    it('should give unauthorised with incorrect ApiKey', function (bddone) {
+    it("should give unauthorised with incorrect ApiKey", function (bddone) {
       request({
         method: "GET",
         url: baseLink + "/api/monitor/incorrecttestapikey"
@@ -52,8 +51,8 @@ describe('routes/api',function() {
       });
     });
   });
-  describe('monitor postgres functions',function() {
-    it('should give OK with correct ApiKey', function (bddone) {
+  describe("monitor postgres functions", function() {
+    it("should give OK with correct ApiKey", function (bddone) {
       request({
         method: "GET",
         url: baseLink + "/api/monitorpostgres/testapikey"
@@ -64,7 +63,7 @@ describe('routes/api',function() {
         bddone();
       });
     });
-    it('should give unauthorised with incorrect ApiKey', function (bddone) {
+    it("should give unauthorised with incorrect ApiKey", function (bddone) {
       request({
         method: "GET",
         url: baseLink + "/api/monitorpostgres/incorrecttestapikey"
