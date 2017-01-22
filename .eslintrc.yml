@@ -10,3 +10,5 @@ rules:
    no-multiple-empty-lines: 0
    space-before-function-paren: 0
    no-multi-str: 0
+   new-cap: [2,{ "newIsCapExceptions": ["moment"] }]
+   no-useless-escape: 0
