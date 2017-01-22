@@ -1,30 +1,30 @@
 "use strict";
 
-var express  = require('express');
-var async    = require('async');
+var express  = require("express");
+var async    = require("async");
 var router   = express.Router();
-var debug    = require('debug')('OSMBC:routes:slack');
+var debug    = require("debug")("OSMBC:routes:slack");
 
-var config   = require('../config.js');
-var logger   = require('../config.js').logger;
+var config   = require("../config.js");
+var logger   = require("../config.js").logger;
 
 
-var userModule     = require('../model/user.js');
-var htmltitle     = require('../model/htmltitle.js');
-var articleModule     = require('../model/article.js');
+var userModule     = require("../model/user.js");
+var htmltitle     = require("../model/htmltitle.js");
+var articleModule     = require("../model/article.js");
 
 
 var botName = config.getValue("AppName").toLowerCase();
 
-var osmbcUrl = config.getValue('url')+config.getValue('htmlroot');
+var osmbcUrl = config.getValue("url") + config.getValue("htmlroot");
 
 function articleNameSlack(article) {
-  debug('articleNameSlack');
-  return  "<"+osmbcUrl+"/article/"+article.id+"|"+article.title+">";
+  debug("articleNameSlack");
+  return "<" + osmbcUrl + "/article/" + article.id + "|" + article.title + ">";
 }
 
-function ensureAuthentificated(req,res,next) {
-  debug('ensureAuthentificated');
+function ensureAuthentificated(req, res, next) {
+  debug("ensureAuthentificated");
   var slackTeam = req.params.team;
   let token = "xx";
   if (config.getValue("slack").article[slackTeam]) {
@@ -36,11 +36,11 @@ function ensureAuthentificated(req,res,next) {
   }
   // to not answer to bots
 
-  if (req.body.user_name=="slackbot") {
+  if (req.body.user_name === "slackbot") {
     res.json({});
     return;
   }
-  userModule.find({SlackUser:req.body.user_name},function(err,user){
+  userModule.find({SlackUser: req.body.user_name}, function(err, user) {
     if (err) {
       logger.error(err);
       return next(err);
@@ -56,13 +56,13 @@ function ensureAuthentificated(req,res,next) {
     obj.user_name = req.body.user_name;
     obj.username = botName;
 
-    if (user.length ===0) {
-      obj.text = "<@"+obj.user_id+"> I never heard from you. Please enter your Slack Name in <"+osmbcUrl+"/usert/self|OSMBC>";
+    if (user.length === 0) {
+      obj.text = "<@" + obj.user_id + "> I never heard from you. Please enter your Slack Name in <" + osmbcUrl + "/usert/self|OSMBC>";
       res.json(obj);
       return;
     }
-    if (user.length>1) {
-      obj.text = "<@"+obj.user_id+"> is registered more than once in <"+osmbcUrl+"/usert/self|OSMBC>";
+    if (user.length > 1) {
+      obj.text = "<@" + obj.user_id + "> is registered more than once in <" + osmbcUrl + "/usert/self|OSMBC>";
       res.json(obj);
       return;
     }
@@ -75,11 +75,11 @@ function ensureAuthentificated(req,res,next) {
 
 function searchUrlInSlack(text) {
   debug("searchUrlInSlack");
-  if (text.search("<")>=0) {
+  if (text.search("<") >= 0) {
     let from = text.search("<");
     let to = text.search(">");
-    if ( from < to) {
-      return text.substring(from +1, to );
+    if (from < to) {
+      return text.substring(from + 1, to);
     }
   }
   return null;
@@ -88,7 +88,7 @@ function searchUrlInSlack(text) {
 function extractTextWithoutUrl(text) {
   debug("extractTextWithoutUrl");
   let url = searchUrlInSlack(text);
-  if (url) text = text.replace("<"+url+">","");
+  if (url) text = text.replace("<" + url + ">", "");
   return text;
 }
 
@@ -100,7 +100,7 @@ function extractTextWithoutUrl(text) {
 
 
 
-function postSlackCreateUseTBC(req,res,next) {
+function postSlackCreateUseTBC(req, res, next) {
   debug("postSlackCreateUseTBC");
 
   var obj = {};
@@ -115,39 +115,38 @@ function postSlackCreateUseTBC(req,res,next) {
   obj.text = req.body.text;
   obj.username = botName;
 
-  let url=searchUrlInSlack(obj.text);
-  let title=extractTextWithoutUrl(obj.text);
+  let url = searchUrlInSlack(obj.text);
+  let title = extractTextWithoutUrl(obj.text);
   let blog = "TBC";
 
-  if (typeof(url)==="undefined" || url === "" || url === null) {
-
-    obj.text = "<@"+ req.body.user_id+"> Please enter an url.";
+  if (typeof (url) === "undefined" || url === "" || url === null) {
+    obj.text = "<@" + req.body.user_id + "> Please enter an url.";
     res.json(obj);
     return;
   }
 
-  async.series([function calcTitle(cb){
-    if (typeof(title)==="undefined" || title === "") {
-      htmltitle.getTitle(url,function (err,t){
+  async.series([function calcTitle(cb) {
+    if (typeof (title) === "undefined" || title === "") {
+      htmltitle.getTitle(url, function (err, t) {
         if (err) return cb(err);
         title = t;
         return cb();
       });
     } else return cb();
-  }],function createArticle(err){
+  }], function createArticle(err) {
     if (err) return next(err);
-    let changes = {title:title,
-      collection:url,
-      firstCollector:req.user.OSMUser,
-      categoryEN:"-- no category yet --",
-      blog:blog};
-    articleModule.createNewArticle(function(err,result){
+    let changes = {title: title,
+      collection: url,
+      firstCollector: req.user.OSMUser,
+      categoryEN: "-- no category yet --",
+      blog: blog};
+    articleModule.createNewArticle(function(err, result) {
       if (err) return next(err);
       changes.version = result.version;
 
-      result.setAndSave(req.user,changes,function(err){
+      result.setAndSave(req.user, changes, function(err) {
         if (err) return next(err);
-        obj.text = articleNameSlack(result)+" created.\n";
+        obj.text = articleNameSlack(result) + " created.\n";
         res.json(obj);
       });
     });
@@ -156,7 +155,7 @@ function postSlackCreateUseTBC(req,res,next) {
 
 
 
-router.post('/create/:team', ensureAuthentificated,postSlackCreateUseTBC);
+router.post("/create/:team", ensureAuthentificated, postSlackCreateUseTBC);
 
 
 
