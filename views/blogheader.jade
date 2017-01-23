@@ -22,7 +22,7 @@ mixin reviewBlog(reviewComments,lang)
           if (reviewComments.length>0 && reviewComments[0].text=="startreview")
             - var reviewStarter= reviewComments[0].user
             - var reviewStartTime = reviewComments[0].timestamp
-            span.text-muted.small=" (started by "+reviewStarter
+            span.text-muted.small=" (enabled by "+reviewStarter
             span.text-muted.small=" "+layout.moment(reviewComments[0].timestamp).fromNow()
             span.text-muted.small=") "
             a.text-muted.small(href="#{layout.htmlroot}/changes/log?blog=#{blog.name}&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
