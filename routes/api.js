@@ -1,11 +1,14 @@
 "use strict";
 
-var debug = require("debug")("OSMBC:routes:api");
-var express = require("express");
-var userModule = require("../model/user.js");
-var publicRouter = express.Router();
-
-var config = require("../config.js");
+var debug         = require("debug")("OSMBC:routes:api");
+var express       = require("express");
+var userModule    = require("../model/user.js");
+var publicRouter  = express.Router();
+var async         = require("async");
+var htmltitle     = require("../model/htmlTitle.js");
+var util          = require("../util.js");
+var articleModule = require("../model/article.js");
+var config        = require("../config.js");
 
 
 // If function is called just return OK
@@ -15,6 +18,7 @@ function isServerUp(req, res, next) {
   if (apiKey !== config.getValue("apiKey")) {
     let err = new Error("Not Authorised");
     err.status = 401;
+    err.type = "API";
     return next(err);
   }
   res.end("OK");
@@ -28,6 +32,7 @@ function isPostgresUp(req, res, next) {
   if (apiKey !== config.getValue("apiKey")) {
     let err = new Error("Not Authorised");
     err.status = 401;
+    err.type = "API";
     return next(err);
   }
   userModule.find({OSMUser: "test"}, function(err) {
@@ -42,43 +47,81 @@ function collectArticle(req, res, next) {
   if (apiKey !== config.getValue("apiKey.TBC")) {
     let err = new Error("Not Authorised");
     err.status = 401;
+    err.type = "API";
     return next(err);
   }
-  let err = null;
-  if (!req.body.title) {
-    err = new Error("Missing Title");
+  let changes = {};
+  changes.categoryEN = "-- no category yet --";
+  if (req.body.categoryEN) {
+    changes.categoryEN = req.body.cateogryEN;
   }
-  if (!req.body.collection) {
-    err = new Error("Missing Collection");
-  }
-  let osmuser = null;
-  if (req.body.OSMUser) osmuser = req.body.OSMUser;
-  if (!osmuser && !req.body.email) {
-    err = new Error("No Email given, can not assign to an OSMBC User");
-  }
-  if (!osmuser && req.body.email) {
-    // Do an asynch search in all users or email adress
+  changes.blog = "TBC";
+  let user="";
 
-  }
-  if (!osmuser) err = new Error("No User could be determined.");
-  let category = "-- no category yet --";
-  if (!req.body.categoryEN) {
-    category = req.body.cateogryEN;
-  }
-  if (err) return next(err);
-  let changes = {title: req.body.title,
-    collection: req.body.collection,
-    firstCollector: req.user.OSMUser,
-    categoryEN: category,
-    blog: "TBC"};
-  articleModule.createNewArticle(function(err, result) {
+  config.getLanguages().forEach(function copyMarkdown(lang){
+    if (req.body["markdown"+lang]) {
+      changes["markdown"+lang] = req.body["markdown"+lang];
+    }
+  });
+
+  async.series([
+    function getTitle(cb) {
+      if (req.body.title) {
+        changes.title = req.body.title;
+        return cb();
+      }
+      else {
+        let url = util.getAllURL(req.body.collection);
+        if (url.length === 0) {
+          changes.title="NOT GIVEN";
+          return cb();
+        }
+        htmltitle.getTitle(url[0],function(err,title){
+          if (err) cb(cb);
+          changes.title = title;
+          return cb();
+        });
+      }
+    },
+    function getCollection(cb) {
+      if (req.body.collection) {
+        changes.collection = req.body.collection;
+        return cb();
+      } else {
+        let error = new Error("Missing Collection");
+        error.type = "API";
+        return cb(error);
+      }
+    },
+    function getOSMuser(cb) {
+      let query = {};
+      if (req.body.OSMUser) {
+        query.OSMUser = req.body.OSMUser;
+      } else {
+        query.email = req.body.email;
+      }
+      userModule.findOne(query,function(err,userFound){
+        if (err || !userFound) {
+          let err = new Error("No OSMUser given, could not resolve email address");
+          err.type = "API";
+          return cb(err);
+        }
+        user = userFound;
+        changes.firstCollector = user.OSMUser;
+        return cb();
+      });
+
+    }
+  ],function(err) {
     if (err) return next(err);
-    changes.version = result.version;
-
-    result.setAndSave(req.user, changes, function(err) {
+    articleModule.createNewArticle(function(err, result) {
       if (err) return next(err);
-      obj.text = articleNameSlack(result) + " created.\n";
-      res.json(obj);
+      changes.version = result.version;
+
+      result.setAndSave(user, changes, function(err) {
+        if (err) return next(err);
+        res.send("Article Collected in TBC.");
+      });
     });
   });
 }

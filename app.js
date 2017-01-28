@@ -329,6 +329,7 @@ if (app.get("env") === "development") {
   app.use(function(err, req, res, next) {
     debug("app.use Error Handler for Debug");
     res.status(err.status || 500);
+    if (err.type && err.type === "API") return res.send(err.message);
     res.render("error", {
       message: err.message,
       error: err,
@@ -349,6 +350,7 @@ if (app.get("env") === "test") {
     debug("app.use Error Handler for Debug");
     res.status(err.status || 500);
     logger.error("Error Message " + err.message);
+    if (err.type && err.type === "API") return res.send(err.message+"\n"+JSON.stringify(err));
     res.render("error", {
       message: err.message,
       error: err,
@@ -364,8 +366,9 @@ if (app.get("env") === "test") {
 app.use(function(err, req, res, next) {
   debug("Set production error hander");
   debug("app.use status function");
-  logger.err(JSON.stringify(err));
+  logger.error(JSON.stringify(err));
   res.status(err.status || 500);
+  if (err.type && err.type === "API") return res.send(err.message);
   res.render("error", {
     message: err.message,
     error: {},
