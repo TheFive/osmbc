@@ -50,10 +50,11 @@ function collectArticle(req, res, next) {
     err.type = "API";
     return next(err);
   }
+
   let changes = {};
   changes.categoryEN = "-- no category yet --";
   if (req.body.categoryEN) {
-    changes.categoryEN = req.body.cateogryEN;
+    changes.categoryEN = req.body.categoryEN;
   }
   changes.blog = "TBC";
   let user="";
@@ -71,7 +72,8 @@ function collectArticle(req, res, next) {
         return cb();
       }
       else {
-        let url = util.getAllURL(req.body.collection);
+        let url = [];
+        if (typeof req.body.collection==="string") url = util.getAllURL(req.body.collection);
         if (url.length === 0) {
           changes.title="NOT GIVEN";
           return cb();
@@ -89,6 +91,7 @@ function collectArticle(req, res, next) {
         return cb();
       } else {
         let error = new Error("Missing Collection");
+        error.status = 422;
         error.type = "API";
         return cb(error);
       }
@@ -98,12 +101,19 @@ function collectArticle(req, res, next) {
       if (req.body.OSMUser) {
         query.OSMUser = req.body.OSMUser;
       } else {
+        if (!req.body.email) {
+          let err = new Error("No OSMUser && EMail given");
+          err.type = "API";
+          err.status = 422;
+          return cb(err);
+        }
         query.email = req.body.email;
       }
-      userModule.findOne(query,function(err,userFound){
+      userModule.findOne(query, function(err, userFound) {
         if (err || !userFound) {
           let err = new Error("No OSMUser given, could not resolve email address");
           err.type = "API";
+          err.status = 422;
           return cb(err);
         }
         user = userFound;
