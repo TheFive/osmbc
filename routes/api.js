@@ -11,30 +11,31 @@ var articleModule = require("../model/article.js");
 var config        = require("../config.js");
 
 
-// If function is called just return OK
-function isServerUp(req, res, next) {
-  debug("isServerUp");
+let apiKeys = config.getValue("apiKeys",{mustExist:true});
+
+function checkApiKey(req,res,next) {
+  debug("checkApiKey");
   var apiKey = req.params.apiKey;
-  if (apiKey !== config.getValue("apiKey")) {
+  if (!apiKeys[apiKey]) {
     let err = new Error("Not Authorised");
     err.status = 401;
     err.type = "API";
     return next(err);
   }
+  req.apiKey = apiKeys[apiKey];
+  next();
+}
+
+// If function is called just return OK
+function isServerUp(req, res) {
+  debug("isServerUp");
   res.end("OK");
 }
 
 // If function is called query a postgres user,
 // and check, wether there is a postgres error
-function isPostgresUp(req, res, next) {
+function isPostgresUp(req, res) {
   debug("isPostgresUp");
-  var apiKey = req.params.apiKey;
-  if (apiKey !== config.getValue("apiKey")) {
-    let err = new Error("Not Authorised");
-    err.status = 401;
-    err.type = "API";
-    return next(err);
-  }
   userModule.find({OSMUser: "test"}, function(err) {
     if (err) return res.end("Postgres Error");
     res.end("OK");
@@ -43,14 +44,6 @@ function isPostgresUp(req, res, next) {
 
 function collectArticle(req, res, next) {
   debug("collectArticle");
-  var apiKey = req.params.apiKey;
-  if (apiKey !== config.getValue("apiKey.TBC")) {
-    let err = new Error("Not Authorised");
-    err.status = 401;
-    err.type = "API";
-    return next(err);
-  }
-
   let changes = {};
   changes.categoryEN = "-- no category yet --";
   if (req.body.categoryEN) {
@@ -135,6 +128,8 @@ function collectArticle(req, res, next) {
     });
   });
 }
+
+publicRouter.param("apiKey",checkApiKey);
 
 publicRouter.get("/monitor/:apiKey", isServerUp);
 publicRouter.get("/monitorPostgres/:apiKey", isPostgresUp);

@@ -18,7 +18,7 @@ var logModule = require("../model/logModule.js");
 var blogRenderer = require("../render/BlogRenderer.js");
 
 
-
+var htmlroot = config.getValue("htmlroot",{mustExist:true});
 
 function renderList(req, res, next) {
   debug("renderList");
@@ -194,7 +194,7 @@ function postUserId(req, res, next) {
 
   ], function(err) {
     if (err) return next(err);
-    res.redirect(config.getValue("htmlroot") + "/usert/" + id);
+    res.redirect(htmlroot + "/usert/" + id);
   });
 }
 
@@ -211,7 +211,7 @@ function createUser(req, res, next) {
   var proto = {};
   userModule.createNewUser(proto, function(err, user) {
     if (err) return next(err);
-    res.redirect(config.getValue("htmlroot") + "/usert/" + user.id + "?edit=true");
+    res.redirect(htmlroot + "/usert/" + user.id + "?edit=true");
   });
 }
 

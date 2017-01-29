@@ -15,7 +15,7 @@ var configModule = require("../model/config.js");
 var logModule = require("../model/logModule.js");
 
 
-
+let htmlroot = config.getValue("htmlroot",{mustExist:true});
 
 
 
@@ -96,7 +96,7 @@ function postConfigId(req, res, next) {
 
   ], function(err) {
     if (err) return next(err);
-    res.redirect(config.getValue("htmlroot") + "/config/" + configData.name);
+    res.redirect(htmlroot + "/config/" + configData.name);
   });
 }
 

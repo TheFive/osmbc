@@ -11,6 +11,8 @@ var logModule = require("../model/logModule.js");
 var userModule = require("../model/user.js");
 var pgMap = require("../model/pgMap.js");
 
+
+let appName = config.getValue("AppName",{mustExist:true});
 /* GET home page. */
 
 function renderHome(req, res, next) {
@@ -31,7 +33,7 @@ function renderHome(req, res, next) {
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
-    res.render("index", { title: config.getValue("AppName"),
+    res.render("index", { title: appName,
       layout: res.rendervar.layout,
       activeUserList: result.activeUser,
       visitorsToday: result.visitorsToday,
@@ -48,7 +50,7 @@ function renderAdminHome(req, res, next) {
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
-    res.render("adminindex", { title: config.getValue("AppName"),
+    res.render("adminindex", { title: appName,
       layout: res.rendervar.layout,
 
       changes: result.historie});

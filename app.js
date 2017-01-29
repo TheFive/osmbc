@@ -47,7 +47,7 @@ var userModule   = require("./model/user.js");
 
 // Initialise config Module
 config.initialise();
-var htmlRoot = config.getValue("htmlroot");
+var htmlRoot = config.getValue("htmlroot",{mustExist:true});
 logger.info("Express Routes set to: SERVER" + htmlRoot);
 
 // taken from: https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js

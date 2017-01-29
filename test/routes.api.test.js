@@ -21,7 +21,7 @@ describe("routes/api", function() {
   beforeEach(function(bddone) {
     baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
     async.series([
-      function(cb) { testutil.importData({clear: true, user: [{"OSMUser": "TheFive", "email": "simple@test.test"}]},cb); },
+      function(cb) { testutil.importData({clear: true, user: [{"OSMUser": "TheFive", "email": "simple@test.test"}]}, cb); },
       testutil.startServer
     ], bddone);
   });
@@ -76,8 +76,8 @@ describe("routes/api", function() {
       });
     });
   });
-  describe("Collect API",function(){
-    it("should not work with incorrect APi Key",function (bddone){
+  describe("Collect API", function() {
+    it("should not work with incorrect APi Key", function (bddone) {
       request({
         method: "POST",
         url: baseLink + "/api/collectArticle/incorrecttestapikey"
@@ -87,7 +87,7 @@ describe("routes/api", function() {
         bddone();
       });
     });
-    it("should not work with non JSON Data",function (bddone){
+    it("should not work with non JSON Data", function (bddone) {
       request({
         method: "POST",
         url: baseLink + "/api/collectArticle/testapikey.TBC"
@@ -97,10 +97,10 @@ describe("routes/api", function() {
         bddone();
       });
     });
-    it("should not work without OSMUser",function (bddone){
+    it("should not work without OSMUser", function (bddone) {
       request({
         method: "POST",
-        json:{collection:"simple Text"},
+        json: {collection: "simple Text"},
         url: baseLink + "/api/collectArticle/testapikey.TBC"
       }, function (err, res) {
         should.not.exist(err);
@@ -109,7 +109,7 @@ describe("routes/api", function() {
         bddone();
       });
     });
-    it("should not work without OSMUser && wrong email",function (bddone){
+    it("should not work without OSMUser && wrong email", function (bddone) {
       request({
         method: "POST",
         json: {collection: "simple Text", "email": "Blubber"},
@@ -121,85 +121,85 @@ describe("routes/api", function() {
         bddone();
       });
     });
-    it("should work with OSMUser",function (bddone){
+    it("should work with OSMUser", function (bddone) {
       request({
         method: "POST",
-        json:{collection:"simple Text","OSMUser":"TheFive"},
+        json: {collection: "simple Text", "OSMUser": "TheFive"},
         url: baseLink + "/api/collectArticle/testapikey.TBC"
       }, function (err, res) {
         should.not.exist(err);
-        should(res.body).eql('Article Collected in TBC.');
+        should(res.body).eql("Article Collected in TBC.");
         should(res.statusCode).eql(200);
-        articleModule.find({},function(err,articles){
+        articleModule.find({}, function(err, articles) {
           should.not.exist(err);
           should(articles).eql([
-             {
-              id: '1',
+            {
+              id: "1",
               version: 2,
-              categoryEN: '-- no category yet --',
-              blog: 'TBC',
-              title: 'NOT GIVEN',
-              collection: 'simple Text',
-              firstCollector: 'TheFive'
+              categoryEN: "-- no category yet --",
+              blog: "TBC",
+              title: "NOT GIVEN",
+              collection: "simple Text",
+              firstCollector: "TheFive"
             }
-          ])
+          ]);
           bddone();
         });
       });
     });
-    it("should work with alternative email",function (bddone){
+    it("should work with alternative email", function (bddone) {
       nock("https://www.link.ong")
         .get("/something")
-        .reply(200,"<title>Page Title</title>");
+        .reply(200, "<title>Page Title</title>");
       request({
         method: "POST",
         json: {collection: "simple Text with https://www.link.ong/something", "email": "simple@test.test"},
         url: baseLink + "/api/collectArticle/testapikey.TBC"
       }, function (err, res) {
         should.not.exist(err);
-        should(res.body).eql('Article Collected in TBC.');
+        should(res.body).eql("Article Collected in TBC.");
         should(res.statusCode).eql(200);
-        articleModule.find({},function(err,articles){
+        articleModule.find({}, function(err, articles) {
           should.not.exist(err);
           should(articles).eql([
             {
-              id: '1',
+              id: "1",
               version: 2,
-              categoryEN: '-- no category yet --',
-              blog: 'TBC',
-              title: 'Page Title',
-              collection: 'simple Text with https://www.link.ong/something',
-              firstCollector: 'TheFive'
+              categoryEN: "-- no category yet --",
+              blog: "TBC",
+              title: "Page Title",
+              collection: "simple Text with https://www.link.ong/something",
+              firstCollector: "TheFive"
             }
-          ])
+          ]);
           bddone();
         });
       });
     });
-    it("should work more infos",function (bddone){
+    it("should work more infos", function (bddone) {
       request({
         method: "POST",
-        json: {collection: "simple Text with https://www.link.ong/something", "email": "simple@test.test",title:"Title","markdownDE":"Hier der erste Text","markdownEN":"Some Text in English",categoryEN:"category given"},
+        json: {collection: "simple Text with https://www.link.ong/something", "email": "simple@test.test", title: "Title", "markdownDE": "Hier der erste Text", "markdownEN": "Some Text in English", categoryEN: "category given"},
         url: baseLink + "/api/collectArticle/testapikey.TBC"
       }, function (err, res) {
         should.not.exist(err);
-        should(res.body).eql('Article Collected in TBC.');
+        should(res.body).eql("Article Collected in TBC.");
         should(res.statusCode).eql(200);
-        articleModule.find({},function(err,articles){
+        articleModule.find({}, function(err, articles) {
           should.not.exist(err);
           should(articles).eql([
             {
-              id: '1',
+              id: "1",
               version: 2,
-              categoryEN: 'category given',
+              categoryEN: "category given",
               markdownDE: "Hier der erste Text",
               markdownEN: "Some Text in English",
-              blog: 'TBC',
-              title: 'Title',
-              collection: 'simple Text with https://www.link.ong/something',
-              firstCollector: 'TheFive'
+              blog: "TBC",
+              title: "Title",
+              collection: "simple Text with https://www.link.ong/something",
+              firstCollector: "TheFive"
             }
-          ])
+          ]);
           bddone();
         });
       });

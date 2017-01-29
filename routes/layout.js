@@ -14,8 +14,9 @@ var markdown = require("markdown-it")();
 var articleModule = require("../model/article.js");
 var blogModule    = require("../model/blog.js");
 
-var htmlRoot = config.getValue("htmlroot");
-var bootstrap = config.getValue("bootstrap");
+var htmlRoot = config.getValue("htmlroot",{mustExist:true});
+var bootstrap = config.getValue("bootstrap",{mustExist:true});
+var appName = config.getValue("AppName",{mustExist:true});
 
 
 function calculateUnreadMessages(list, user) {
@@ -192,11 +193,11 @@ function prepareRenderLayout(req, res, next) {
         util: util,
         usedLanguages: usedLanguages,
         activeLanguages: activeLanguages,
-        appName: config.getValue("AppName"),
+        appName: appName,
         bootstrap: bootstrap,
         osmbc_version: version.osmbc_version,
         style: style,
-        title: config.getValue("AppName"),
+        title: appName,
         md_render: util.md_render
       };
       next();

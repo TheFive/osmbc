@@ -18,6 +18,7 @@ var blogRenderer   = require("../render/BlogRenderer.js");
 var logModule      = require("../model/logModule.js");
 var userModule     = require("../model/user.js");
 
+let htmlroot = config.getValue("htmlroot",{mustExist:true});
 
 // Internal Function to find a blog by an ID
 // it accepts an internal Blog ID of OSMBC and a blog name
@@ -378,7 +379,7 @@ function renderBlogTab(req, res, next) {
       if (err) return next(err);
       should.exist(res.rendervar);
       if (clearParams) {
-        var url = config.getValue("htmlroot") + "/blog/" + blog.name;
+        var url = htmlroot + "/blog/" + blog.name;
         var styleParam = "";
         if (req.param.style) styleParam = "?style=" + styleParam;
         res.redirect(url + styleParam);
@@ -409,7 +410,7 @@ function createBlog(req, res, next) {
 
   blogModule.createNewBlog(req.user, function(err) {
     if (err) return next(err);
-    res.redirect(config.getValue("htmlroot") + "/blog/list?status=open");
+    res.redirect(htmlroot + "/blog/list?status=open");
     // res.render('bloglist',{blogs:blogs,user:req.user});
   });
 }
@@ -422,7 +423,7 @@ function editBlogId(req, res) {
   var params = {};
   if (req.query.edit) params.edit = req.query.edit;
   if (params.edit && params.edit === "false") {
-    res.redirect(config.getValue("htmlroot") + "/blog/edit/" + req.params.blog_id);
+    res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
   }
   blog._categories_yaml = yaml.safeDump(blog.categories);
   res.set("content-type", "text/html");
@@ -453,7 +454,7 @@ function postBlogId(req, res, next) {
     if (err) {
       return next(err);
     }
-    res.redirect(config.getValue("htmlroot") + "/blog/edit/" + req.params.blog_id);
+    res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
   });
 }
 
