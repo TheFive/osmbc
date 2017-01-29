@@ -27,6 +27,7 @@ var htmltitle     = require("../model/htmltitle.js");
 require("jstransformer")(require("jstransformer-markdown-it"));
 
 
+let htmlroot = config.getValue("htmlroot",{mustExist:true});
 // This Function converts the ID (used as :article_id in the routes) to
 // an article and stores the object in the request
 // if article_id is not existing it throws an error.
@@ -150,7 +151,7 @@ function renderArticleId(req, res, next) {
           if (params.notranslation === "true") {
             article.addNotranslate(req.user, res.rendervar.layout.usedLanguages, function (err) {
               if (err) return callback(err);
-              var returnToUrl = config.getValue("htmlroot") + "/article/" + article.id;
+              var returnToUrl = htmlroot + "/article/" + article.id;
               if (params.style) returnToUrl = returnToUrl + "?style=" + params.style;
               callback(null, returnToUrl);
             });
@@ -178,7 +179,7 @@ function renderArticleId(req, res, next) {
         //
         if (req.query.edit && !params.edit) {
           debug("return to was called, redirecting");
-          var returnToUrl = config.getValue("htmlroot") + "/article/" + article.id;
+          var returnToUrl = htmlroot + "/article/" + article.id;
           // if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
           res.redirect(returnToUrl);
         } else {
@@ -333,7 +334,7 @@ function searchAndCreate(req, res, next) {
   var show = req.query.show;
   if (!show) show = "15";
   if (req.query.edit && req.query.edit === "false") {
-    var returnToUrl = config.getValue("htmlroot") + "/osmbc.html";
+    var returnToUrl = htmlroot + "/osmbc.html";
     if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
     res.redirect(returnToUrl);
     return;
@@ -413,7 +414,7 @@ function postArticle(req, res, next) {
     changes["markdown" + lang] = req.body["markdown" + lang];
   }
   var returnToUrl;
-  if (article) returnToUrl = config.getValue("htmlroot") + "/article/" + article.id;
+  if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
   async.parallel([
     function createArticle(cb) {
@@ -427,7 +428,7 @@ function postArticle(req, res, next) {
         article = result;
         changes.version = result.version;
         changes.firstCollector = req.user.OSMUser;
-        returnToUrl = config.getValue("htmlroot") + "/article/" + article.id;
+        returnToUrl = htmlroot + "/article/" + article.id;
         cb();
       });
     }
@@ -497,7 +498,7 @@ function postArticleWithOldValues(req, res, next) {
     }
   }
   var returnToUrl;
-  if (article) returnToUrl = config.getValue("htmlroot") + "/article/" + article.id;
+  if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
   async.parallel([
     function createArticle(cb) {
@@ -511,7 +512,7 @@ function postArticleWithOldValues(req, res, next) {
         article = result;
         changes.version = result.version;
         changes.firstCollector = req.user.OSMUser;
-        returnToUrl = config.getValue("htmlroot") + "/article/" + article.id;
+        returnToUrl = htmlroot + "/article/" + article.id;
         cb();
       });
     }
@@ -573,7 +574,7 @@ function postNewComment(req, res, next) {
   var comment = req.body.comment;
   var returnToUrl;
 
-  if (article) returnToUrl = config.getValue("htmlroot") + "/article/" + article.id;
+  if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
 
   article.addCommentFunction(req.user, comment, function(err) {
@@ -612,7 +613,7 @@ function postSetMarkdown(req, res, next) {
   change.old["markdown" + lang] = oldMarkdown;
   article.setAndSave(req.user, change, function(err) {
     if (err) return next(err);
-    // var returnToUrl = config.getValue('htmlroot')+"/blog/"+article.blog+"/previewNEdit";
+    // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
     let referer = req.header("Referer") || "/";
     res.redirect(referer);
   });
@@ -627,7 +628,7 @@ function postEditComment(req, res, next) {
 
   var comment = req.body.comment;
   var returnToUrl;
-  returnToUrl = config.getValue("htmlroot") + "/article/" + article.id;
+  returnToUrl = htmlroot + "/article/" + article.id;
 
 
   article.editComment(req.user, number, comment, function(err) {
@@ -659,7 +660,7 @@ function markCommentRead(req, res, next) {
       next(err);
       return;
     }
-    let returnToUrl  = config.getValue("htmlroot") + "/article/" + article.id;
+    let returnToUrl  = htmlroot + "/article/" + article.id;
     returnToUrl = req.header("Referer") || returnToUrl;
     if (req.query.reload === "false") {
       res.end("OK");
@@ -689,7 +690,7 @@ function doAction(req, res, next) {
       next(err);
       return;
     }
-    let returnToUrl  = config.getValue("htmlroot") + "/article/" + article.id;
+    let returnToUrl  = htmlroot + "/article/" + article.id;
     returnToUrl = req.header("Referer") || returnToUrl;
     res.end("OK");
     // res.redirect(returnToUrl);

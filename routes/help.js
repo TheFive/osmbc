@@ -12,11 +12,13 @@ var markdown = require("markdown-it")()
 
 var token = null;
 
+let htmlroot = config.getValue("htmlroot",{mustExist:true});
+
 function initToken() {
   debug("initToken");
   if (token) return;
   token = {
-    "##osmbcroot##": config.getValue("htmlroot")
+    "##osmbcroot##": htmlroot
   };
 }
 

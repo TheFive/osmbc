@@ -27,14 +27,13 @@ var configModule = require("../model/config.js");
 
 var sizeOf = require("image-size");
 
-
+let htmlroot = config.getValue("htmlroot",{mustExist:true});
+let bootstrap = config.getValue("bootstrap",{mustExist:true});
 
 function renderPublicCalendar(req, res, next) {
   debug("renderPublicCalendar");
-  var htmlRoot = config.getValue("htmlroot");
-  var bootstrap = config.getValue("bootstrap");
 
-  var layout = {bootstrap: bootstrap, htmlRoot: htmlRoot, path: layoutRouter.path};
+  var layout = {bootstrap: bootstrap, htmlRoot: htmlroot, path: layoutRouter.path};
 
   parseEvent.calendarToMarkdown({lang: "EN", enableCountryFlags: true, duration: "200"}, function(err, result, errors) {
     if (err) return next(err);
@@ -209,7 +208,7 @@ function postCalendarAsMarkdown(req, res, next) {
     enableCountryFlags: enableCountryFlags};
   req.session.save(function(err) {
     if (err) return next(err);
-    res.redirect(config.getValue("htmlroot") + "/tool/calendar2markdown");
+    res.redirect(htmlroot + "/tool/calendar2markdown");
   });
 }
 
@@ -346,7 +345,7 @@ function postPictureTool(req, res, next) {
     pictureAText: pictureAText};
   req.session.save(function(err) {
     if (err) return next(err);
-    res.redirect(config.getValue("htmlroot") + "/tool/picturetool");
+    res.redirect(htmlroot + "/tool/picturetool");
   });
 }
 

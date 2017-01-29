@@ -59,10 +59,6 @@ function getPostgresDBString() {
   return connectStr;
 }
 
-exports.getLanguages = function() {
-  configuration = exports.getConfiguration();
-  return configuration.languages;
-};
 
 
 
@@ -111,7 +107,7 @@ exports.getValue = function(key, options) {
   if (typeof (configuration[key]) !== "undefined") {
     result = configuration[key];
   }
-  if (options && options.mustExist && !result) {
+  if (options && options.mustExist && typeof result === "undefined") {
     logger.error("Missing Value in config.*.json. Name: '" + key + "'");
     process.exit(1);
   }
@@ -120,6 +116,11 @@ exports.getValue = function(key, options) {
 };
 
 
+let languages = exports.getValue("languages",{mustExist:true});
+
+exports.getLanguages = function() {
+  return languages;
+};
 
 
 
