@@ -40,14 +40,18 @@ mixin articleMarkdown(lang,disabled)
 
 
 mixin articlePreview(lang)
-    // if article.categoryEN != "Picture"
-    .panel.panel-default.panel-body.preview(id="preview" + lang, lang = lang)
-      :verbatim
-        !{article["textHtml"+lang]}
+  // if article.categoryEN != "Picture"
+  .panel.panel-default.panel-body.preview(id="preview" + lang, lang = lang)
+    :verbatim
+      !{article["textHtml"+lang]}
+
+
 
 mixin articleTextanalyse(lang)
   if (lang === "DE") && (article["markdown" + lang])
-    a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('preview'+lang).innerText; taform.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
+    form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
+      input.form-control(type="hidden" name = "text" id ="textanalysefield")
+    a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewDE').innerText; taform.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
     span=" "
 
 mixin articleTranslateButton(langFrom,langTo)
@@ -311,6 +315,7 @@ block content
       +articleTranslateButton(params.left_lang,params.right_lang)
 
     +rightcolumn
+      +articleTextanalyse(params.right_lang)
       +articleTranslateButton(params.right_lang,params.left_lang)
 
 
