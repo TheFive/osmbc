@@ -1,5 +1,17 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.3...HEAD)
+
+**Implemented enhancements:**
+
+- Make Session Expiration \(maxAge\) configurable. [\#609](https://github.com/TheFive/osmbc/issues/609)
+
+**Fixed bugs:**
+
+- new editor - add ons [\#611](https://github.com/TheFive/osmbc/issues/611)
+
 ## [2.2.3](https://github.com/TheFive/osmbc/tree/2.2.3) (2017-01-15)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.2...2.2.3)
 
