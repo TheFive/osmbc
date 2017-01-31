@@ -12,6 +12,7 @@ var debug   = require('debug')('OSMBC:server');
 var app     = require('../app');
 
 var config  = require('../config.js');
+var logger  = require('../config.js').logger;
 
 
 var configModule = require('../model/config.js');
@@ -48,14 +49,14 @@ function initialiseServer() {
   },
     function(err){
       if (err) {
-        console.error(err);
+        logger.error(err);
         process.exit(1);
         return;
       }
       server.listen(port);
       server.on('error', onError);
       server.on('listening', onListening);
-      console.info("Server Listening on port "+port);
+      logger.info("Server Listening on port "+port);
   })
 }
 
@@ -70,7 +71,7 @@ function startMailReceiver(callback) {
       return callback(new Error("Error during User Initialising for Mail "+err.message));
     }
     mailReceiver.initialise(result);
-    console.info("Mail Receiver initialised.");
+    logger.info("Mail Receiver initialised.");
     return callback();
   });
 }
@@ -85,10 +86,10 @@ function startBlogTimer(param,callback) {
   debug("startBlogTimer");
   blogModule.startAllTimers(function (err) {
     if (err) {
-      console.dir(err);
+      logger.error(err);
       return callback(new Error("Error during Blog Timers Start "+err.message));
     }
-    console.info("Timer for Auto Close started");
+    logger.info("Timer for Auto Close started");
     return callback();
   });
 }
@@ -130,11 +131,11 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      logger.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      logger.error(bind + ' is already in use');
       process.exit(1);
       break;
     default:

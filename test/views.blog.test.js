@@ -1,70 +1,67 @@
 "use strict";
 
-var async = require('async');
-var testutil = require('./testutil.js');
+var async = require("async");
+var testutil = require("./testutil.js");
 var nock = require("nock");
-var should  = require('should');
-var request   = require('request');
-var path = require('path');
-var fs = require('fs');
-var mockdate = require('mockdate');
+var should  = require("should");
+var request   = require("request");
+var path = require("path");
+var fs = require("fs");
+var mockdate = require("mockdate");
 
-var config = require('../config.js');
+var config = require("../config.js");
 
-var configModule = require('../model/config.js');
-var blogModule   = require('../model/blog.js');
-var userModule   = require('../model/user.js');
-
-
+var configModule = require("../model/config.js");
+var blogModule   = require("../model/blog.js");
+var userModule   = require("../model/user.js");
 
 
 
-describe('views/blog', function() {
+
+
+describe("views/blog", function() {
   let baseLink;
   var data;
 
-  describe('export',function(){
+  describe("export", function() {
     before(function(bddone) {
-      var file =  path.resolve(__dirname,'data', "views.blog.export.1.json");
-      data =  JSON.parse(fs.readFileSync(file));
-      baseLink = 'http://localhost:' + config.getServerPort() + config.getValue("htmlroot");
-      nock('https://hooks.slack.com/')
+      var file =  path.resolve(__dirname, "data", "views.blog.export.1.json");
+      data = JSON.parse(fs.readFileSync(file));
+      baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+      nock("https://hooks.slack.com/")
         .post(/\/services\/.*/)
         .times(999)
-        .reply(200,"ok");
+        .reply(200, "ok");
 
-      process.env.TZ = 'Europe/Amsterdam';
+      process.env.TZ = "Europe/Amsterdam";
       async.series([
-        testutil.importData.bind(null,data),
-        testutil.startServer.bind(null,"USER1"),
+        testutil.importData.bind(null, data),
+        testutil.startServer.bind(null, "USER1"),
         configModule.initialise
-      ],bddone);
-
-
+      ], bddone);
     });
-    after(function(){
+    after(function(bddone) {
       nock.cleanAll();
-      testutil.stopServer();
+      testutil.stopServer(bddone);
     });
-    it('should generate preview as html',function(bddone){
-
+    it("should generate preview as html", function(bddone) {
       async.series([
 
-        function(cb){
+        function(cb) {
           var opts = {
-            url: baseLink+"/blog/"+data.blogName+"/preview?lang=DE&download=true", method: 'get'
+            url: baseLink + "/blog/" + data.blogName + "/preview?lang=DE&download=true", method: "get"
           };
           request(opts, function (err, res, body) {
             should.not.exist(err);
             should(res.statusCode).eql(200);
-            let file =  path.resolve(__dirname,'data', "views.blog.export.1.html");
-            let expectation =  fs.readFileSync(file,"UTF8");
+            let file =  path.resolve(__dirname, "data", "views.blog.export.1.html");
+            let expectation =  fs.readFileSync(file, "UTF8");
 
-            var result = testutil.domcompare(body,expectation);
+            var result = testutil.domcompare(body, expectation);
 
 
 
-            if (result.getDifferences().length>0) {
+            if (result.getDifferences().length > 0) {
               console.log("---------Result:----------");
               console.log(body);
               console.log("---------expected Result:----------");
@@ -75,98 +72,93 @@ describe('views/blog', function() {
             cb();
           });
         }
-      ],bddone);
+      ], bddone);
     });
-    it('should generate preview as markdown',function(bddone){
-
+    it("should generate preview as markdown", function(bddone) {
       async.series([
 
-        function(cb){
+        function(cb) {
           var opts = {
-            url: baseLink+"/blog/"+data.blogName+"/preview?lang=DE&markdown=true&download=true", method: 'get'
+            url: baseLink + "/blog/" + data.blogName + "/preview?lang=DE&markdown=true&download=true", method: "get"
           };
           request(opts, function (err, res, body) {
             should.not.exist(err);
             should(res.statusCode).eql(200);
-            let file =  path.resolve(__dirname,'data', "views.blog.export.1.md");
-            let expectation =  fs.readFileSync(file,"UTF8");
+            let file =  path.resolve(__dirname, "data", "views.blog.export.1.md");
+            let expectation =  fs.readFileSync(file, "UTF8");
 
             should(body).eql(expectation);
             cb();
           });
         }
-      ],bddone);
+      ], bddone);
     });
   });
-  describe('status Functions',function(){
+  describe("status Functions", function() {
     beforeEach(function(bddone) {
       mockdate.set(new Date("2016-05-25T19:00"));
-      baseLink = 'http://localhost:' + config.getServerPort() + config.getValue("htmlroot");
-      nock('https://hooks.slack.com/')
+      baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+      nock("https://hooks.slack.com/")
         .post(/\/services\/.*/)
         .times(999)
-        .reply(200,"ok");
+        .reply(200, "ok");
 
-      process.env.TZ = 'Europe/Amsterdam';
+      process.env.TZ = "Europe/Amsterdam";
       async.series([
-        testutil.importData.bind(null,{clear:true,blog:[{name:"blog"}],user:[{OSMUser:"TheFive",access:"full",mainLang:"DE"}]}),
-        testutil.startServer.bind(null,"TheFive"),
+        testutil.importData.bind(null, {clear: true, blog: [{name: "blog"}], user: [{OSMUser: "TheFive", access: "full", mainLang: "DE"}]}),
+        testutil.startServer.bind(null, "TheFive"),
         configModule.initialise
-      ],bddone);
-
-
+      ], bddone);
     });
-    afterEach(function(){
+    afterEach(function(bddone) {
       mockdate.reset();
       nock.cleanAll();
-      testutil.stopServer();
+      testutil.stopServer(bddone);
     });
-    it('should close a blog',function(bddone){
-
+    it("should close a blog", function(bddone) {
       async.series([
 
-        function(cb){
+        function(cb) {
           var opts = {
-            url: baseLink+"/blog/blog?setStatus=closed",
-            method: 'get',
-            headers:{
-              Referer: baseLink+"/blog/blog"
+            url: baseLink + "/blog/blog?setStatus=closed",
+            method: "get",
+            headers: {
+              Referer: baseLink + "/blog/blog"
             }
           };
           request(opts, function (err, res) {
             should.not.exist(err);
             should(res.statusCode).eql(200);
-            blogModule.findOne({name:"blog"},function(err,blog){
+            blogModule.findOne({name: "blog"}, function(err, blog) {
               should.not.exist(err);
               should(blog.status).eql("closed");
               cb();
             });
           });
         }
-      ],bddone);
+      ], bddone);
     });
-    it('should start a review',function(bddone){
-
+    it("should start a review", function(bddone) {
       async.series([
 
-        function(cb){
+        function(cb) {
           var opts = {
-            url: baseLink+"/blog/blog/setReviewComment",
-            form:{lang:"DE",text:"startreview"},
-            headers:{
-              Referer: baseLink+"/blog/blog"
+            url: baseLink + "/blog/blog/setReviewComment",
+            form: {lang: "DE", text: "startreview"},
+            headers: {
+              Referer: baseLink + "/blog/blog"
             }
           };
           request.post(opts, function (err, res) {
             should.not.exist(err);
             should(res.statusCode).eql(302);
-            
-            blogModule.findOne({name:"blog"},function(err,blog){
+
+            blogModule.findOne({name: "blog"}, function(err, blog) {
               should.not.exist(err);
               should(blog.reviewCommentDE).eql([{
-                text: 'startreview',
-                timestamp: '2016-05-25T19:00:00.000Z',
-                user: 'TheFive'
+                text: "startreview",
+                timestamp: "2016-05-25T19:00:00.000Z",
+                user: "TheFive"
               }]);
               // in test mode review is done in WP in DE Language, so the export is set too
               should(blog.exportedDE).be.True();
@@ -174,106 +166,106 @@ describe('views/blog', function() {
             });
           });
         }
-      ],bddone);
+      ], bddone);
     });
   });
-  describe('browser tests',function(){
+  describe("browser tests", function() {
     var browser;
     beforeEach(function(bddone) {
       this.timeout(6000);
-      process.env.TZ = 'Europe/Amsterdam';
+      process.env.TZ = "Europe/Amsterdam";
       mockdate.set(new Date("2016-05-25T19:00"));
-      nock('https://hooks.slack.com/')
+      nock("https://hooks.slack.com/")
         .post(/\/services\/.*/)
         .times(999)
-        .reply(200,"ok");
+        .reply(200, "ok");
       async.series([
-        testutil.importData.bind(null,JSON.parse(fs.readFileSync(path.join(__dirname,"data","DataWN290.json"),"UTF8"))),
-        function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full",mainLang:"DE",secondLang:"EN"},cb); },
-        testutil.startServer.bind(null,"TheFive")
+        testutil.importData.bind(null, JSON.parse(fs.readFileSync(path.join(__dirname, "data", "DataWN290.json"), "UTF8"))),
+        function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN"}, cb); },
+        testutil.startServer.bind(null, "TheFive")
       ], function(err) {
-        browser=testutil.getBrowser();
+        browser = testutil.getBrowser();
         bddone(err);
       });
     });
-    afterEach(function(){
+    afterEach(function(bddone) {
       mockdate.reset();
-      testutil.stopServer();
+      testutil.stopServer(bddone);
     });
-    describe("Blog Display",function() {
-      it('should show Overview with some configurations' ,function(bddone) {
+    describe("Blog Display", function() {
+      it("should show Overview with some configurations", function(bddone) {
         this.timeout(65000);
         async.series([
-          browser.visit.bind(browser,"/blog/WN290"),
-          browser.assert.expectHtml.bind(browser,"blog_wn290_overview.html"),
-          browser.click.bind(browser,'span[name="choose_showNumbers"]'),
-          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
-          browser.click.bind(browser,'span[name="choose_showMail"]'),
-          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
-          browser.click.bind(browser,'span[name="choose_showVisibleLanguages"]'),
-          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
-          browser.click.bind(browser,'span[name="choose_showCollector"]'),
-          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
-          browser.click.bind(browser,'span[name="choose_showEditor"]'),
-          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
-          browser.click.bind(browser,'span[name="choose_showColoredUser"]'),
-          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
-          browser.click.bind(browser,'span[name="choose_showLanguages"]'),
-          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
-          browser.visit.bind(browser,"/blog/WN290"),
-          browser.visit.bind(browser,"/blog/WN290"), //just call again to set zombie.js referer correct
-          browser.assert.expectHtml.bind(browser,"blog_wn290_overview_withglab.html")
-        ],bddone);
+          browser.visit.bind(browser, "/blog/WN290"),
+          browser.assert.expectHtml.bind(browser, "blog_wn290_overview.html"),
+          browser.click.bind(browser, 'span[name="choose_showNumbers"]'),
+          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
+          browser.click.bind(browser, 'span[name="choose_showMail"]'),
+          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
+          browser.click.bind(browser, 'span[name="choose_showVisibleLanguages"]'),
+          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
+          browser.click.bind(browser, 'span[name="choose_showCollector"]'),
+          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
+          browser.click.bind(browser, 'span[name="choose_showEditor"]'),
+          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
+          browser.click.bind(browser, 'span[name="choose_showColoredUser"]'),
+          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
+          browser.click.bind(browser, 'span[name="choose_showLanguages"]'),
+          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
+          browser.visit.bind(browser, "/blog/WN290"),
+          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
+          browser.assert.expectHtml.bind(browser, "blog_wn290_overview_withglab.html")
+        ], bddone);
       });
-      it('should show Full View' ,function(bddone) {
+      it("should show Full View", function(bddone) {
         this.timeout(6000);
         async.series([
-          browser.visit.bind(browser,"/blog/WN290?tab=full"),
-          browser.assert.expectHtml.bind(browser,"blog_wn290_full.html")
-        ],bddone);
+          browser.visit.bind(browser, "/blog/WN290?tab=full"),
+          browser.assert.expectHtml.bind(browser, "blog_wn290_full.html")
+        ], bddone);
       });
-      it('should show Full View and close language' ,function(bddone) {
+      it("should show Full View and close language", function(bddone) {
         this.timeout(6500);
         async.series([
-          browser.visit.bind(browser,"/blog/WN290?tab=full"),
-          browser.pressButton.bind(browser,'#closebutton'),
+          browser.visit.bind(browser, "/blog/WN290?tab=full"),
+          browser.pressButton.bind(browser, "#closebutton"),
           function(cb) {
-            blogModule.find({name:"WN290"},function(err,blog){
+            blogModule.find({name: "WN290"}, function(err, blog) {
               should.not.exist(err);
               should(blog.length).eql(1);
               should(blog[0].closeDE).be.True();
               cb();
             });
           }
-        ],bddone);
+        ], bddone);
       });
-      it('should show Review View' ,function(bddone) {
+      it("should show Review View", function(bddone) {
         this.timeout(6000);
         async.series([
-          browser.visit.bind(browser,"/blog/WN290?tab=review"),
-          browser.assert.expectHtml.bind(browser,"blog_wn290_review.html"),
-        ],bddone);
+          browser.visit.bind(browser, "/blog/WN290?tab=review"),
+          browser.assert.expectHtml.bind(browser, "blog_wn290_review.html")
+        ], bddone);
       });
-      it('should show Statistic View' ,function(bddone) {
+      it("should show Statistic View", function(bddone) {
         this.timeout(6000);
         async.series([
-          browser.visit.bind(browser,"/blog/WN290/stat"),
-          browser.assert.expectHtml.bind(browser,"blog_wn290_stat.html")
-        ],bddone);
+          browser.visit.bind(browser, "/blog/WN290/stat"),
+          browser.assert.expectHtml.bind(browser, "blog_wn290_stat.html")
+        ], bddone);
       });
-      it('should show edit View' ,function(bddone) {
+      it("should show edit View", function(bddone) {
         this.timeout(7000);
         async.series([
-          browser.visit.bind(browser,"/blog/edit/WN290"),
-          browser.assert.expectHtml.bind(browser,"blog_wn290_edit.html")
-        ],bddone);
+          browser.visit.bind(browser, "/blog/edit/WN290"),
+          browser.assert.expectHtml.bind(browser, "blog_wn290_edit.html")
+        ], bddone);
       });
-      it('should show the Blog List' ,function(bddone) {
+      it("should show the Blog List", function(bddone) {
         this.timeout(6000);
         async.series([
-          browser.visit.bind(browser,"/blog/list?status=edit"),
-          browser.assert.expectHtml.bind(browser,"blog_list.html")
-        ],bddone);
+          browser.visit.bind(browser, "/blog/list?status=edit"),
+          browser.assert.expectHtml.bind(browser, "blog_list.html")
+        ], bddone);
       });
     });
   });

@@ -1,45 +1,45 @@
 "use strict";
 
-var path          = require('path');
-var config        = require('../config.js');
-var should        = require('should');
-var debug         = require('debug')('OSMBC:notification:mailReceiver');
-var nodemailer    = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
-var EmailTemplate = require('email-templates').EmailTemplate;
+var path          = require("path");
+var config        = require("../config.js");
+var should        = require("should");
+var debug         = require("debug")("OSMBC:notification:mailReceiver");
+var nodemailer    = require("nodemailer");
+var smtpTransport = require("nodemailer-smtp-transport");
+var EmailTemplate = require("email-templates").EmailTemplate;
 
-var messageCenter = require('../notification/messageCenter.js');
-var articleModule = require('../model/article.js');
-var blogModule = require('../model/blog.js');
-var logModule  = require('../model/logModule.js');
+var messageCenter = require("../notification/messageCenter.js");
+var articleModule = require("../model/article.js");
+var blogModule = require("../model/blog.js");
+var logModule  = require("../model/logModule.js");
 
-var htmlToText = require('html-to-text');
+var htmlToText = require("html-to-text");
 
-var UserConfigFilter = require('../notification/UserConfigFilter.js');
+var UserConfigFilter = require("../notification/UserConfigFilter.js");
 
-var IteratorReceiver = require('../notification/IteratorReceiver.js');
+var IteratorReceiver = require("../notification/IteratorReceiver.js");
 
 
 
-var infoMailtemplateDir = path.join(__dirname, '..','email', 'infomail');
+var infoMailtemplateDir = path.join(__dirname, "..", "email", "infomail");
 var infomail = new EmailTemplate(infoMailtemplateDir);
 
-var infoMailBlogtemplateDir = path.join(__dirname, '..','email', 'infomailBlog');
+var infoMailBlogtemplateDir = path.join(__dirname, "..", "email", "infomailBlog");
 var infomailBlog = new EmailTemplate(infoMailBlogtemplateDir);
 
-var infoMailReviewtemplateDir = path.join(__dirname, '..','email', 'infomailReview');
+var infoMailReviewtemplateDir = path.join(__dirname, "..", "email", "infomailReview");
 var infomailReview = new EmailTemplate(infoMailReviewtemplateDir);
 
-var infoMailClosetemplateDir = path.join(__dirname, '..','email', 'infomailClose');
+var infoMailClosetemplateDir = path.join(__dirname, "..", "email", "infomailClose");
 var infomailClose = new EmailTemplate(infoMailClosetemplateDir);
 
-var welcomeMailtemplateDir = path.join(__dirname, '..','email', 'welcome');
+var welcomeMailtemplateDir = path.join(__dirname, "..", "email", "welcome");
 var welcomemail = new EmailTemplate(welcomeMailtemplateDir);
 
 var transporter = nodemailer.createTransport(smtpTransport(config.getValue("SMTP")));
 
 var layout = {
-  htmlroot : config.getValue("htmlroot"),
+  htmlroot: config.getValue("htmlroot"),
   url: config.getValue("url")
 };
 
@@ -47,39 +47,39 @@ var layout = {
 
 
 
-function sendMailWithLog(user,mailOptions,callback) {
+function sendMailWithLog(user, mailOptions, callback) {
   debug("sendMailWithLog");
 
-  function logMail(error,info){
+  function logMail(error, info) {
     debug("logMail Error response");
     var logObject = {
-      user:user.OSMUser,
-      table:"mail",
-      to:mailOptions.to,
-      subject:mailOptions.subject,
-      text:mailOptions.text,
-      error:error,
-      response:(info)?info.response:"no response"
+      user: user.OSMUser,
+      table: "mail",
+      to: mailOptions.to,
+      subject: mailOptions.subject,
+      text: mailOptions.text,
+      error: error,
+      response: (info) ? info.response : "no response"
     };
 
 
     if (error) {
-      logModule.log(logObject,function cb(){
+      logModule.log(logObject, function cb() {
         return callback();
       });
     } else {
-      logModule.log(logObject,callback);
+      logModule.log(logObject, callback);
     }
   }
   // for development Reasons, filter Mail Address
   var allowedMailAddresses = config.getValue("AllowedMailAddresses");
   if (allowedMailAddresses) {
-    if (allowedMailAddresses.indexOf(mailOptions.to)<0) return logMail(null,{response:"Blocked by "+config.getValue("AppName")});
+    if (allowedMailAddresses.indexOf(mailOptions.to) < 0) return logMail(null, {response: "Blocked by " + config.getValue("AppName")});
   }
 
   var appName = config.getValue("AppName");
-  if (appName)   mailOptions.subject = "["+appName+"] "+mailOptions.subject;
-  transporter.sendMail(mailOptions,logMail);
+  if (appName) mailOptions.subject = "[" + appName + "] " + mailOptions.subject;
+  transporter.sendMail(mailOptions, logMail);
 }
 
 function MailReceiver(user) {
@@ -87,102 +87,102 @@ function MailReceiver(user) {
   this.user = user;
 }
 
-MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter,callback) {
+MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter, callback) {
   debug("MailReceiver.prototype.sendWelcomeMail");
 
 
   var self = this;
-  var data = {user:this.user,inviter:inviter,layout:layout};
+  var data = {user: this.user, inviter: inviter, layout: layout};
 
-  welcomemail.render(data, function welcomemail_render (err, results) {
-    debug("welcomemail_render");
+  welcomemail.render(data, function welcomemailRender (err, results) {
+    debug("welcomemailRender");
     if (err) return callback(err);
-    //console.dir(self.user);
-    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
+
+    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
 
     var mailOptions = {
-        from: config.getValue("EmailSender"), // sender address 
-        to: self.user.emailInvalidation, // list of receivers 
-        subject: "Welcome to OSMBC", // Subject line 
-        text: results.text,
-        html: results.html
+      from: config.getValue("EmailSender"), // sender address
+      to: self.user.emailInvalidation, // list of receivers
+      subject: "Welcome to OSMBC", // Subject line
+      text: results.text,
+      html: results.html
     };
-     
-    // send mail with defined transport object 
-    sendMailWithLog(self.user,mailOptions,callback);
-  }); 
+
+    // send mail with defined transport object
+    sendMailWithLog(self.user, mailOptions, callback);
+  });
 };
 
-MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,callback) {
+MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, callback) {
   debug("MailReceiver.prototype.sendLanguageStatus");
 
   var self = this;
 
 
-  var subject = blog.name +"("+lang+") has been reviewed by user "+user.OSMUser;
+  var subject = blog.name + "(" + lang + ") has been reviewed by user " + user.OSMUser;
   if (status === "startreview") {
-    subject = blog.name +"("+lang+") review has been started";
+    subject = blog.name + "(" + lang + ") review has been started";
   }
   if (status === "markexported") {
-    subject = blog.name + "("+lang+") is exported to WordPress";
+    subject = blog.name + "(" + lang + ") is exported to WordPress";
   }
 
-  var data = {user:user,blog:blog,status:status,lang:lang,layout:layout};
+  var data = {user: user, blog: blog, status: status, lang: lang, layout: layout};
 
   infomailReview.render(data, function infomailRenderBlog(err, results) {
-    debug('infomailRenderInfo');
+    debug("infomailRenderInfo");
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
+    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
 
     var mailOptions = {
-        from: config.getValue("EmailSender"), // sender address 
-        to: self.user.email, // list of receivers 
-        subject: subject, // Subject line 
-        text: results.text,
-        html: results.html
+      from: config.getValue("EmailSender"), // sender address
+      to: self.user.email, // list of receivers
+      subject: subject, // Subject line
+      text: results.text,
+      html: results.html
     };
-     
-    // send mail with defined transport object 
-    sendMailWithLog(self.user,mailOptions,callback);
+
+    // send mail with defined transport object
+    sendMailWithLog(self.user, mailOptions, callback);
   });
 };
 
-MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,callback) {
+MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, callback) {
   debug("MailReceiver.prototype.sendCloseStatus");
 
   var self = this;
 
 
-  var subject = blog.name +"("+lang+") has been closed by user "+user.OSMUser;
+  var subject = blog.name + "(" + lang + ") has been closed by user " + user.OSMUser;
   if (status === false) {
-    subject = blog.name +"("+lang+") has been reopened by "+user.OSMUser;
+    subject = blog.name + "(" + lang + ") has been reopened by " + user.OSMUser;
   }
 
-  var data = {user:user,blog:blog,status:status,lang:lang,layout:layout};
+  var data = {user: user, blog: blog, status: status, lang: lang, layout: layout};
 
   infomailClose.render(data, function infomailRenderClose(err, results) {
-    debug('infomailRenderClose');
+    debug("infomailRenderClose");
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
+    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
 
     var mailOptions = {
-        from: config.getValue("EmailSender"), // sender address 
-        to: self.user.email, // list of receivers 
-        subject: subject, // Subject line 
-        text: results.text,
-        html: results.html
+      from: config.getValue("EmailSender"), // sender address
+      to: self.user.email, // list of receivers
+      subject: subject, // Subject line
+      text: results.text,
+      html: results.html
     };
-     
-    // send mail with defined transport object 
-    sendMailWithLog(self.user,mailOptions,callback);
+
+    // send mail with defined transport object
+    sendMailWithLog(self.user, mailOptions, callback);
   });
 };
 
-MailReceiver.prototype.updateArticle = function updateArticle(user,article,change,callback) {
+MailReceiver.prototype.updateArticle = function updateArticle(user, article, change, callback) {
   debug("MailReceiver.prototype.updateArticle");
 
-  should(typeof(change)).eql("object");
- 
+  should(typeof (change)).eql("object");
+
 
   var self = this;
   var newArticle = articleModule.create();
@@ -194,50 +194,50 @@ MailReceiver.prototype.updateArticle = function updateArticle(user,article,chang
   for (k in change) {
     newArticle[k] = change[k];
   }
- 
+
 
   var subject;
   var logblog = article.blog;
   if (change.blog) logblog = change.blog;
 
   if (!article.collection && change.collection) {
-     subject = logblog + " added: "+newArticle.title;
+    subject = logblog + " added: " + newArticle.title;
   }
   if (article.collection && change.collection) {
-     subject = logblog + " changed: "+newArticle.title;
+    subject = logblog + " changed: " + newArticle.title;
   }
   if (!article.comment && change.comment) {
-     subject = logblog + " comment: "+newArticle.title;
+    subject = logblog + " comment: " + newArticle.title;
   }
   if (article.comment && change.comment) {
-     subject = logblog + " comment: "+newArticle.title;
+    subject = logblog + " comment: " + newArticle.title;
   }
 
 
-  var data = {user:this.user,changeby:user,article:article,newArticle:newArticle,layout:layout,logblog:logblog};
+  var data = {user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog};
 
   infomail.render(data, function infomailRender(err, results) {
-    debug('infomailRender');
+    debug("infomailRender");
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
+    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
 
     var mailOptions = {
-        from: config.getValue("EmailSender"), // sender address 
-        to: self.user.email, // list of receivers 
-        subject: subject, // Subject line 
-        text: results.text,
-        html: results.html
+      from: config.getValue("EmailSender"), // sender address
+      to: self.user.email, // list of receivers
+      subject: subject, // Subject line
+      text: results.text,
+      html: results.html
     };
-     
-    // send mail with defined transport object 
-    sendMailWithLog(self.user,mailOptions,callback);
+
+    // send mail with defined transport object
+    sendMailWithLog(self.user, mailOptions, callback);
   });
 };
 
-MailReceiver.prototype.addComment = function addComment(user,article,text,callback) {
+MailReceiver.prototype.addComment = function addComment(user, article, text, callback) {
   debug("MailReceiver.prototype.addComment");
 
-  should(typeof(text)).eql("string");
+  should(typeof (text)).eql("string");
 
 
   var self = this;
@@ -249,15 +249,15 @@ MailReceiver.prototype.addComment = function addComment(user,article,text,callba
   newArticle.comment = text;
 
   var logblog = article.blog;
-  var subject = logblog + " comment: "+newArticle.title;
+  var subject = logblog + " comment: " + newArticle.title;
 
 
-  var data = {user:this.user,changeby:user,article:article,newArticle:newArticle,layout:layout,logblog:logblog};
+  var data = {user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog};
 
   infomail.render(data, function infomailRender(err, results) {
-    debug('infomailRender');
+    debug("infomailRender");
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
+    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -268,14 +268,14 @@ MailReceiver.prototype.addComment = function addComment(user,article,text,callba
     };
 
     // send mail with defined transport object
-    sendMailWithLog(self.user,mailOptions,callback);
+    sendMailWithLog(self.user, mailOptions, callback);
   });
 };
 
-MailReceiver.prototype.editComment = function editComment(user,article,index,text,callback) {
+MailReceiver.prototype.editComment = function editComment(user, article, index, text, callback) {
   debug("MailReceiver.prototype.addComment");
 
-  should(typeof(text)).eql("string");
+  should(typeof (text)).eql("string");
 
 
   var self = this;
@@ -290,15 +290,15 @@ MailReceiver.prototype.editComment = function editComment(user,article,index,tex
   oldArticle.comment = article.commentList[index];
 
   var logblog = article.blog;
-  var subject = logblog + " comment: "+newArticle.title;
+  var subject = logblog + " comment: " + newArticle.title;
 
 
-  var data = {user:this.user,changeby:user,article:oldArticle,newArticle:newArticle,layout:layout,logblog:logblog};
+  var data = {user: this.user, changeby: user, article: oldArticle, newArticle: newArticle, layout: layout, logblog: logblog};
 
   infomail.render(data, function infomailRender(err, results) {
-    debug('infomailRender');
+    debug("infomailRender");
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
+    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -309,11 +309,11 @@ MailReceiver.prototype.editComment = function editComment(user,article,index,tex
     };
 
     // send mail with defined transport object
-    sendMailWithLog(self.user,mailOptions,callback);
+    sendMailWithLog(self.user, mailOptions, callback);
   });
 };
 
-MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callback) {
+MailReceiver.prototype.updateBlog = function updateBlog(user, blog, change, callback) {
   debug("MailReceiver.prototype.updateBlog");
 
 
@@ -334,29 +334,29 @@ MailReceiver.prototype.updateBlog = function updateBlog(user,blog,change,callbac
   if (change.name) blogName = change.name;
 
   if (!blog.name && change.name) {
-     subject = blogName + " was created";
-  } else  {
-     subject = blogName + " changed status to "+newBlog.status;
+    subject = blogName + " was created";
+  } else {
+    subject = blogName + " changed status to " + newBlog.status;
   }
- 
 
-  var data = {user:this.user,changeby:user,blog:blog,newBlog:newBlog,layout:layout,blogName:blogName};
+
+  var data = {user: this.user, changeby: user, blog: blog, newBlog: newBlog, layout: layout, blogName: blogName};
 
   infomailBlog.render(data, function infomailRenderBlog(err, results) {
-    debug('infomailRenderBlog');
+    debug("infomailRenderBlog");
     if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html,{tables:['#valuetable']});
+    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
 
     var mailOptions = {
-        from: config.getValue("EmailSender"), // sender address 
-        to: self.user.email, // list of receivers 
-        subject: subject, // Subject line 
-        text: results.text,
-        html: results.html
+      from: config.getValue("EmailSender"), // sender address
+      to: self.user.email, // list of receivers
+      subject: subject, // Subject line
+      text: results.text,
+      html: results.html
     };
-     
-    // send mail with defined transport object 
-    sendMailWithLog(self.user,mailOptions,callback);
+
+    // send mail with defined transport object
+    sendMailWithLog(self.user, mailOptions, callback);
   });
 };
 var iteratorReceiver = new IteratorReceiver({});
@@ -425,15 +425,15 @@ MailUserReceiver.prototype.updateBlog = function murUpdateBlog(user,blog,change,
 MailUserReceiver.prototype.sendInfo = function sendInfo(data,cb) {
   debug("MailUserReceiver.prototype.sendInfo");
   return cb();
-};*/
+}; */
 
 var registered = false;
 
 function initialise(userList) {
-  debug('initialise');
+  debug("initialise");
   messageCenter.initialise();
   userReceiverMap = {};
-  for (var i=0;i<userList.length;i++) {
+  for (var i = 0; i < userList.length; i++) {
     var u = userList[i];
     updateUser(u);
   }
@@ -446,12 +446,12 @@ function initialise(userList) {
 
 
 function updateUser(user) {
-  debug('updateUser');
+  debug("updateUser");
   delete userReceiverMap[user.OSMUser];
   if (user.access !== "full") return;
   if (!user.email) return;
   if (user.email.trim() === "") return;
-  userReceiverMap[user.OSMUser] = new UserConfigFilter(user,new MailReceiver(user));
+  userReceiverMap[user.OSMUser] = new UserConfigFilter(user, new MailReceiver(user));
   iteratorReceiver.receiverMap = userReceiverMap;
 }
 
@@ -460,7 +460,7 @@ module.exports.MailReceiver = MailReceiver;
 module.exports.initialise = initialise;
 module.exports.updateUser = updateUser;
 
-module.exports.for_test_only= {transporter:transporter};
+module.exports.for_test_only = {transporter: transporter};
 
- 
-// setup e-mail data with unicode symbols 
+
+// setup e-mail data with unicode symbols

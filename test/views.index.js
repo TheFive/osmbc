@@ -1,66 +1,68 @@
 "use strict";
 
-var async = require('async');
-var testutil = require('./testutil.js');
-var should  = require('should');
-var nock = require('nock');
+var async = require("async");
+var testutil = require("./testutil.js");
+var should  = require("should");
+var nock = require("nock");
 
 var userModule = require("../model/user.js");
 var articleModule = require("../model/article.js");
 var blogModule = require("../model/blog.js");
 
-var mockdate = require('mockdate');
+var mockdate = require("mockdate");
 
 
 
 
 
 
-describe('views/index', function() {
-  describe("Known User",function(){
+describe("views/index", function() {
+  describe("Known User", function() {
     var browser;
-    var articleId;
     before(function(bddone) {
       mockdate.set(new Date("2016-05-25T20:00"));
-      nock('https://hooks.slack.com/')
+      nock("https://hooks.slack.com/")
         .post(/\/services\/.*/)
         .times(999)
-        .reply(200,"ok");
+        .reply(200, "ok");
       async.series([
         testutil.clearDB,
-        function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
-        testutil.startServer.bind(null,"TheFive"),
-        function createArticle(cb) {articleModule.createNewArticle({blog:"blog",collection:"test",markdownEN:"test"},function(err,article){
-          if (article) articleId = article.id;
-          cb(err);
-        }); },
-        function createBlog(cb) {blogModule.createNewBlog({blog:"blog",status:"edit"},function(err){
-          cb(err);
-        }); }
+        function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full"}, cb); },
+        testutil.startServer.bind(null, "TheFive"),
+        function createArticle(cb) {
+          articleModule.createNewArticle({blog: "blog", collection: "test", markdownEN: "test"}, function(err) {
+            cb(err);
+          });
+        },
+        function createBlog(cb) {
+          blogModule.createNewBlog({blog: "blog", status: "edit"}, function(err) {
+            cb(err);
+          });
+        }
       ], function(err) {
-        browser=testutil.getBrowser();
+        browser = testutil.getBrowser();
         bddone(err);
       });
     });
-    after(function(){
+    after(function(bddone) {
       mockdate.reset();
-      testutil.stopServer();
+      testutil.stopServer(bddone);
     });
 
 
-    describe("Homepage",function() {
-      it('should find welcome text on Homepage' ,function(bddone) {
+    describe("Homepage", function() {
+      it("should find welcome text on Homepage", function(bddone) {
         this.timeout(6000);
-        browser.visit('/osmbc', function(err){
+        browser.visit("/osmbc", function(err) {
           should.not.exist(err);
           browser.assert.success();
-          browser.assert.text('h2', 'Welcome to OSM BCOSM BC');
+          browser.assert.text("h2", "Welcome to OSM BCOSM BC");
           bddone();
         });
       });
-      it('should have bootstrap.js loaded' ,function(bddone) {
+      it("should have bootstrap.js loaded", function(bddone) {
         this.timeout(6000);
-        browser.visit('/osmbc', function(err){
+        browser.visit("/osmbc", function(err) {
           should.not.exist(err);
           // test wether bootstrap.js is loaded or not
           // see http://stackoverflow.com/questions/13933000/how-to-check-if-twitter-bootstrap-is-loaded
@@ -69,45 +71,44 @@ describe('views/index', function() {
         });
       });
     });
-    describe("Admin Homepage",function() {
-      it('should show it' ,function(bddone) {
+    describe("Admin Homepage", function() {
+      it("should show it", function(bddone) {
         this.timeout(6000);
         async.series([
-          browser.visit.bind(browser,"/osmbc/admin"),
-          browser.assert.expectHtml.bind(browser,"admin_home.html")
-        ],bddone);
+          browser.visit.bind(browser, "/osmbc/admin"),
+          browser.assert.expectHtml.bind(browser, "admin_home.html")
+        ], bddone);
       });
     });
-    describe("Not Defined Page",function() {
-
-      it('should throw an error message' ,function(bddone) {
+    describe("Not Defined Page", function() {
+      it("should throw an error message", function(bddone) {
         this.timeout(6000);
-        browser.visit('/notdefined.html', function(err){
+        browser.visit("/notdefined.html", function(err) {
           should.exist(err);
           browser.assert.status(404);
-          browser.assert.text('h1', 'Not Found');
+          browser.assert.text("h1", "Not Found");
           bddone();
         });
       });
     });
-    describe("Help",function() {
-      it('should display Help Text' ,function(bddone) {
+    describe("Help", function() {
+      it("should display Help Text", function(bddone) {
         this.timeout(6000);
-        browser.visit('/help/OSMBC', function(err){
+        browser.visit("/help/OSMBC", function(err) {
           should.not.exist(err);
           browser.assert.success();
-          browser.assert.text('h1', 'OSMBC Instructions');
+          browser.assert.text("h1", "OSMBC Instructions");
           bddone();
         });
       });
     });
-    describe("LanguageSetter",function() {
-      it('should set the language' ,function(bddone) {
+    describe("LanguageSetter", function() {
+      it("should set the language", function(bddone) {
         this.timeout(12000);
-        browser.referer="/osmbc";
-        browser.visit('/language?lang=EN', function(err){
+        browser.referer = "/osmbc";
+        browser.visit("/language?lang=EN", function(err) {
           should.not.exist(err);
-          browser.reload(function(err){
+          browser.reload(function(err) {
             should.not.exist(err);
             browser.assert.success();
             var html = browser.html();
@@ -117,10 +118,10 @@ describe('views/index', function() {
           });
         });
       });
-      it('should set the second language' ,function(bddone) {
+      it("should set the second language", function(bddone) {
         this.timeout(12000);
-        browser.referer="/osmbc";
-        browser.visit('/language?lang2=ES', function(err){
+        browser.referer = "/osmbc";
+        browser.visit("/language?lang2=ES", function(err) {
           should.not.exist(err);
           should.not.exist(err);
           browser.reload(function(err) {
@@ -133,12 +134,12 @@ describe('views/index', function() {
           });
         });
       });
-      it('should set the second language to -- if both equal' ,function(bddone) {
+      it("should set the second language to -- if both equal", function(bddone) {
         this.timeout(12000);
-        browser.referer="/osmbc";
-        browser.visit('/language?lang=ES', function(err) {
+        browser.referer = "/osmbc";
+        browser.visit("/language?lang=ES", function(err) {
           should.not.exist(err);
-          browser.visit('/language?lang2=ES', function (err) {
+          browser.visit("/language?lang2=ES", function (err) {
             should.not.exist(err);
             browser.reload(function(err) {
               should.not.exist(err);
@@ -153,46 +154,44 @@ describe('views/index', function() {
       });
     });
   });
-  describe("Unkown User",function(){
-    before(function(){
-      nock('https://hooks.slack.com/')
+  describe("Unkown User", function() {
+    before(function(bddone) {
+      nock("https://hooks.slack.com/")
         .post(/\/services\/.*/)
         .times(999)
-        .reply(200,"ok");
+        .reply(200, "ok");
+      bddone();
     });
-    after(function(){
-
-    });
-    it("should throw an error if user not exits",function(bddone) {
-      let browser=testutil.getBrowser();
+    it("should throw an error if user not exits", function(bddone) {
+      let browser = testutil.getBrowser();
 
       async.series([
         testutil.clearDB,
-        function createUser(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"full"},cb); },
-        testutil.startServer.bind(null,"TheFiveNotExist"),
-        browser.visit.bind(browser,"/osmbc")
+        function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full"}, cb); },
+        testutil.startServer.bind(null, "TheFiveNotExist"),
+        browser.visit.bind(browser, "/osmbc")
       ], function(err) {
         testutil.stopServer();
         should.exist(err);
         browser.assert.status(500);
-        browser.assert.text('h1', 'OSM User >TheFiveNotExist< does not exist.');
+        browser.assert.text("h1", "OSM User >TheFiveNotExist< does not exist.");
 
         bddone();
       });
     });
-    it("should throw an error if user has no access rights",function(bddone) {
-      let browser=testutil.getBrowser();
+    it("should throw an error if user has no access rights", function(bddone) {
+      let browser = testutil.getBrowser();
 
       async.series([
         testutil.clearDB,
-        function createUser1(cb) {userModule.createNewUser({OSMUser:"TheFive",access:"none"},cb); },
-        testutil.startServer.bind(null,"TheFive"),
-        browser.visit.bind(browser,"/osmbc")
+        function createUser1(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "none"}, cb); },
+        testutil.startServer.bind(null, "TheFive"),
+        browser.visit.bind(browser, "/osmbc")
       ], function(err) {
         testutil.stopServer();
         should.exist(err);
         browser.assert.status(500);
-        browser.assert.text('h1', 'OSM User >TheFive< has no access rights');
+        browser.assert.text("h1", "OSM User >TheFive< has no access rights");
 
         bddone();
       });

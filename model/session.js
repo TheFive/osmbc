@@ -17,7 +17,7 @@ pgObject.indexDefinition = {
 };
 
 pgObject.viewDefinition = {};
-pgObject.table="session";
+pgObject.table = "session";
 
 module.exports.pg = pgObject;
 
