@@ -21,7 +21,7 @@ describe("routes/api", function() {
   beforeEach(function(bddone) {
     baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
     async.series([
-      function(cb) { testutil.importData({clear: true, user: [{"OSMUser": "TheFive", "email": "simple@test.test"}]}, cb); },
+      function(cb) { testutil.importData({clear: true, user: [{"OSMUser": "TheFive", "email": "simple@test.test",language:"DE"}]}, cb); },
       testutil.startServer
     ], bddone);
   });
@@ -194,6 +194,33 @@ describe("routes/api", function() {
               categoryEN: "category given",
               markdownDE: "Hier der erste Text",
               markdownEN: "Some Text in English",
+              blog: "TBC",
+              title: "Title",
+              collection: "simple Text with https://www.link.ong/something",
+              firstCollector: "TheFive"
+            }
+          ]);
+          bddone();
+        });
+      });
+    });
+    it("should work more and set markdown correct", function (bddone) {
+      request({
+        method: "POST",
+        json: {collection: "simple Text with https://www.link.ong/something", "email": "simple@test.test", title: "Title", "markdown": "Hier der erste Text"},
+        url: baseLink + "/api/collectArticle/testapikey.TBC"
+      }, function (err, res) {
+        should.not.exist(err);
+        should(res.body).eql("Article Collected in TBC.");
+        should(res.statusCode).eql(200);
+        articleModule.find({}, function(err, articles) {
+          should.not.exist(err);
+          should(articles).eql([
+            {
+              id: "1",
+              version: 2,
+              categoryEN: "-- no category yet --",
+              markdownDE: "Hier der erste Text",
               blog: "TBC",
               title: "Title",
               collection: "simple Text with https://www.link.ong/something",

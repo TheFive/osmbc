@@ -117,6 +117,12 @@ function collectArticle(req, res, next) {
     }
   ],function(err) {
     if (err) return next(err);
+
+    // check on existence of markdown in body
+
+    if (req.body.markdown && typeof user == "object" && user.language) {
+      changes["markdown"+user.language] = req.body.markdown;
+    }
     articleModule.createNewArticle(function(err, result) {
       if (err) return next(err);
       changes.version = result.version;
