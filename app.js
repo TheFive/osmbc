@@ -146,7 +146,7 @@ function ensureAuthenticated (req, res, next) {
         err = new Error("OSM User >" + req.user.displayName + "< has no access rights");
       }
       if (result.length === 0) {
-        err = new Error("OSM User >" + req.user.displayName + "< does not exist.");
+        err = new Error("OSM User >" + req.user.displayName + "< is not an OSMBC user.");
       }
       return next(err);
     });
@@ -275,7 +275,7 @@ app.get(htmlRoot + "/auth/openstreetmap/callback",
 app.get(htmlRoot + "/logout", function(req, res) {
   debug("logoutFunction");
   req.logout();
-  res.redirect("/");
+  res.redirect(htmlRoot+"/osmbc.html");
 });
 
 // first register the unsecured path
