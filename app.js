@@ -146,7 +146,7 @@ function ensureAuthenticated (req, res, next) {
         err = new Error("OSM User >" + req.user.displayName + "< has no access rights");
       }
       if (result.length === 0) {
-        err = new Error("OSM User >" + req.user.displayName + "< is not an OSMBC user..");
+        err = new Error("OSM User >" + req.user.displayName + "< is not an OSMBC user.");
       }
       return next(err);
     });
