@@ -174,7 +174,7 @@ describe("views/index", function() {
         testutil.stopServer();
         should.exist(err);
         browser.assert.status(500);
-        browser.assert.text("h1", "OSM User >TheFiveNotExist< does not exist.");
+        browser.assert.text("h1", "OSM User >TheFiveNotExist< is not an OSMBC user.");
 
         bddone();
       });
