@@ -59,6 +59,7 @@ function renderHistoryLog(req, res, next) {
   var search = {};
   if (date) search.timestamp = date + "%";
   if (date && ((date.indexOf("<") >= 0) || (date.indexOf(">") >= 0))) search.timestamp = date;
+  if (date && ((date.indexOf("GE:") >= 0) || (date.indexOf(">") >= 0))) search.timestamp = date;
   if (user) search.user = user;
   if (table) {
     search.table = table;

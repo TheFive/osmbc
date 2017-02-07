@@ -204,7 +204,7 @@ describe("notification/slackReceiver", function() {
         });
       });
     });
-    it("should slack message, when review status is set", function (bddone) {
+    it("should slack message, when review status is set (no startreview)", function (bddone) {
       var slack1a = nock("https://hooks.slack.com/")
                 .post("/services/osmde", checkPostJson(
                   {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
@@ -220,16 +220,56 @@ describe("notification/slackReceiver", function() {
       blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit"}, function(err, blog) {
         var slack2a = nock("https://hooks.slack.com/")
                   .post("/services/theweeklyosm", checkPostJson(
-                    {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed",
+                    {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed ()",
                       "username": "testbc(testuser)",
                       "channel": "#osmbcblog"}))
                   .reply(200, "ok");
         var slack2b = nock("https://hooks.slack.com/")
                   .post("/services/osmde", checkPostJson(
-                    {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed",
+                    {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed ()",
                       "username": "testbc(testuser)",
                       "channel": "#osmbcblog"}))
                   .reply(200, "ok");
+        should.not.exist(err);
+        blog.setReviewComment("ES", {OSMUser: "testuser"}, "I have reviewed", function(err) {
+          should.not.exist(err);
+          should(slack1a.isDone()).is.True();
+          should(slack1b.isDone()).is.True();
+          should(slack2a.isDone()).is.True();
+          should(slack2b.isDone()).is.False();
+          nock.cleanAll();
+
+
+          bddone();
+        });
+      });
+    });
+    it("should slack message, when review status is set (with startreview)", function (bddone) {
+      var slack1a = nock("https://hooks.slack.com/")
+        .post("/services/osmde", checkPostJson(
+          {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
+            "username": "testbc(testuser)",
+            "channel": "#osmbcblog"}))
+        .reply(200, "ok");
+      var slack1b = nock("https://hooks.slack.com/")
+        .post("/services/theweeklyosm", checkPostJson(
+          {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
+            "username": "testbc(testuser)",
+            "channel": "#osmbcblog"}))
+        .reply(200, "ok");
+      blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit",reviewCommentES:[{timestamp:"__timestamp__"}]}, function(err, blog) {
+        var slack2a = nock("https://hooks.slack.com/")
+          .post("/services/theweeklyosm", checkPostJson(
+            {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed (<https://testosm.bc/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__| view changes>)",
+              "username": "testbc(testuser)",
+              "channel": "#osmbcblog"}))
+          .reply(200, "ok");
+        var slack2b = nock("https://hooks.slack.com/")
+          .post("/services/osmde", checkPostJson(
+            {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed (<https://testosm.bc/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__| view changes>)",
+              "username": "testbc(testuser)",
+              "channel": "#osmbcblog"}))
+          .reply(200, "ok");
         should.not.exist(err);
         blog.setReviewComment("ES", {OSMUser: "testuser"}, "I have reviewed", function(err) {
           should.not.exist(err);

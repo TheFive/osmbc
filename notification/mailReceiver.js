@@ -126,6 +126,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, bl
   if (status === "markexported") {
     subject = blog.name + "(" + lang + ") is exported to WordPress";
   }
+  if (status === "reviewing...") return callback();
 
   var data = {user: user, blog: blog, status: status, lang: lang, layout: layout};
 
