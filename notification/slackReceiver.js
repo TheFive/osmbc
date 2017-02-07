@@ -71,14 +71,24 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, b
 
   var subject = blogNameSlack(blog.name);
 
+
+  let reviewChangesLink = "";
+
+  if (blog["reviewComment"+lang] && blog["reviewComment"+lang][0]) {
+    reviewChangesLink = "<"+osmbcUrl+"/changes/log?blog="+blog.name+"&table=article&property=markdown"+lang+"&date=GE:"+blog["reviewComment"+lang][0].timestamp+"| view changes>";
+  }
+
+
   if (status === "startreview") {
-    subject += "(" + lang + ") review has been started";
+    subject += "(" + lang + ") review has been started ("+reviewChangesLink+")";
   } else if (status === "markexported") {
     subject += "(" + lang + ") is exported to WordPress";
   } else if (status === "" || status === null) {
     subject += "(" + lang + ") review comment deleted.";
+  } else if (status === "reviewing...") {
+    subject = "has started Review for: "+subject+"(" + lang + ")";
   } else {
-    subject += "(" + lang + ") has been reviewed: " + status;
+    subject += "(" + lang + ") has been reviewed: " + status+ " ("+reviewChangesLink+")";
   }
   var username = botName + "(" + user.OSMUser + ")";
 
