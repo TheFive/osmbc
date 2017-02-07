@@ -1,12 +1,14 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.3...HEAD)
+## [2.2.4](https://github.com/TheFive/osmbc/tree/2.2.4) (2017-02-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.3...2.2.4)
 
 **Implemented enhancements:**
 
+- Add Logout possibility on User Page [\#614](https://github.com/TheFive/osmbc/issues/614)
+- allow logout if user has no access rights. see passport.logout [\#613](https://github.com/TheFive/osmbc/issues/613)
 - Make Session Expiration \(maxAge\) configurable. [\#609](https://github.com/TheFive/osmbc/issues/609)
+- Put Link to change list for Review Comments in slack notification. [\#585](https://github.com/TheFive/osmbc/issues/585)
 
 **Fixed bugs:**
 
@@ -520,13 +522,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
