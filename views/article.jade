@@ -993,6 +993,10 @@ block scripts
     }
 
     var placeholder = !{JSON.stringify(placeholder.categories)}
+    var catArray = !{JSON.stringify(categories)};
+    var noCategorie = "no categorie";
+    if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
+
 
 
 
@@ -1001,6 +1005,11 @@ block scripts
       var categoryEN = document.getElementById("categoryEN");
       if (!categoryEN) return;
       var c = categoryEN.value;
+      if (c === noCategorie) {
+        categoryEN.style.backgroundColor = "#FDC6CD";
+      } else {
+        categoryEN.style.backgroundColor = "";
+      }
       if (placeholder[c]) {
         categoryDisplay.innerHTML = placeholder[c];
       }

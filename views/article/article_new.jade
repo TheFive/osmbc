@@ -427,6 +427,9 @@ block scripts
     leftLang = "!{params.left_lang}";
     rightLang = "!{params.right_lang}";
     placeholder = !{JSON.stringify(placeholder.categories)}
+    var catArray = !{JSON.stringify(categories)};
+    var noCategorie = "no categorie";
+    if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
 
 
     // Function to put several Events in series
@@ -783,6 +786,11 @@ block scripts
 
     function syncPlaceholder() {
       var c = $("#categoryEN").val();
+      if (c === noCategorie) {
+        $("#categoryEN").css("backgroundColor", "#FDC6CD");
+      } else {
+        $("#categoryEN").css("backgroundColor","");
+      }
       if (placeholder[c]) {
          $("#categoryDisplay").html(placeholder[c]);
         }
