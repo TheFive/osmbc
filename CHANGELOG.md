@@ -1,5 +1,13 @@
 # Change Log
 
+## [2.2.5](https://github.com/TheFive/osmbc/tree/2.2.5) (2017-02-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.4...2.2.5)
+
+**Implemented enhancements:**
+
+- Warn if a link is collected but no category given [\#616](https://github.com/TheFive/osmbc/issues/616)
+- Position of button Edit Block Area in new calendar tool [\#599](https://github.com/TheFive/osmbc/issues/599)
+
 ## [2.2.4](https://github.com/TheFive/osmbc/tree/2.2.4) (2017-02-07)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.3...2.2.4)
 
