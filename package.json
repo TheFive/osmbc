@@ -16,6 +16,7 @@
     "connect-pg-simple": "^3.1.0",
     "cookie-parser": "~1.4.1",
     "debug": "^2.6.0",
+    "deferred": "^0.7.5",
     "diff": "^3.2.0",
     "email-templates": "^2.3.0",
     "email-validator": "^1.0.4",
