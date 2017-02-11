@@ -63,6 +63,7 @@
     "eslint-plugin-standard": "^2.0.1",
     "express-debug": "^1.1.1",
     "istanbul": "^0.4.3",
+    "license-checker": "^8.0.3",
     "mocha": "^3.2.0",
     "mocha-eslint": "^3.0.1",
     "mocha-jshint": "^2.3.1",
