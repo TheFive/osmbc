@@ -6,9 +6,6 @@ var async  = require("async");
 var path   = require("path");
 var nock   = require("nock");
 var fs     = require("fs");
-var compare = require("dom-compare").compare;
-var groupingreporter = require("dom-compare").GroupingReporter;
-var jsdom = require("node-jsdom");
 
 var debug  = require("debug")("OSMBC:test:testutil");
 var passportStub = require("./passport-stub.js");
@@ -278,21 +275,29 @@ exports.checkData = function checkData(data, callback) {
 // result.getDifferences() is an array with the differences
 // dom-compare offers an GroupingReporter to display the differences
 // in more detail.
-exports.domcompare = function domcompare(actualHTML, expectedHTML) {
-  var expectedDOM = jsdom.jsdom(expectedHTML);
-  var actualDOM = jsdom.jsdom(actualHTML);
-  var result = compare(expectedDOM, actualDOM);
 
-  if (result.getDifferences().length > 0) {
-    console.log("Actual HTML-----");
-    console.log(actualHTML);
-    console.log("Expected HTML------");
-    console.log(expectedHTML);
-    console.log("Error Message-----");
-    console.log(groupingreporter.report(result));
-  }
+var HtmlDiffer = require('html-differ').HtmlDiffer,
+  htmlDiffer = new HtmlDiffer({});
 
-  return result;
+exports.equalHtml = function equalHtml(actualHTML, expectedHTML) {
+
+  let diff = (htmlDiffer.diffHtml(actualHTML,expectedHTML));
+
+  if (diff.length==1) return true;
+
+  let colors = require('colors/safe');
+  colors.enabled=true;
+
+  diff.forEach(function(part){
+    // green for additions, red for deletions
+    // grey for common parts
+    if (part.added) {
+      console.log(colors.green(part.value));
+    } else if (part.removed) {
+      console.log(colors.red(part.value));
+    } else console.log(colors.grey(part.value));
+  });
+  return false;
 };
 
 

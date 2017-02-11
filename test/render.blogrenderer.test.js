@@ -231,18 +231,7 @@ describe("render/blogrenderer", function() {
             if (markdown) {
               should(html).eql(htmlResult);
             } else {
-              var result = testutil.domcompare(html, htmlResult);
-
-
-
-              if (result.getDifferences().length > 0) {
-                console.log("---------Result:----------");
-                console.log(html);
-                console.log("---------expected Result:----------");
-                console.log(htmlResult);
-
-                should.not.exist(result.getDifferences());
-              }
+              should(testutil.equalHtml(html, htmlResult)).be.True();
             }
 
             bddone();
