@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.5...HEAD)
+
+**Closed issues:**
+
+- Allow Support for LetsEncrypt for wiki.openstreetmap.org Request in Calendar [\#618](https://github.com/TheFive/osmbc/issues/618)
+
 ## [2.2.5](https://github.com/TheFive/osmbc/tree/2.2.5) (2017-02-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.4...2.2.5)
 
