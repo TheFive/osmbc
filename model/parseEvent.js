@@ -8,6 +8,7 @@ var markdown = require("markdown-it")();
 var config = require("../config.js");
 var configModule = require("../model/config.js");
 var async = require("async");
+var https = require('https');
 
 
 
@@ -411,12 +412,23 @@ function calendarJSONToMarkdown(json, options, cb) {
   calendarJSONToMarkdown2(json, calendarFlags, ct, options, cb);
 }
 
+let agentOptions = {
+
+  rejectUnauthorized: false
+};
+
+let agent = new https.Agent(agentOptions);
 
 function calendarToJSON(option, cb) {
   debug("calendarToJSON");
   should(typeof (cb)).eql("function");
 
-  request(wikiEventPage, function(error, response, body) {
+  var requestOptions = {
+    url:   wikiEventPage,
+    agent:agent
+  };
+
+  request.get(requestOptions, function(error, response, body) {
     if (error) return cb(error);
     var json = JSON.parse(body);
     // body = (json.query.pages[2567].revisions[0]["*"]);
