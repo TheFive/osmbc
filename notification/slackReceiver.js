@@ -52,8 +52,12 @@ function blogNameSlack(blog, change) {
 
 function articleNameSlack(article, change) {
   debug("articleNameSlack");
-  if (change) return "<" + osmbcUrl + "/article/" + article.id + "|" + change + ">";
-  return "<" + osmbcUrl + "/article/" + article.id + "|" + article.title + ">";
+  let title = article.title;
+  if (change) title = change;
+  title = title.replace(/(<)/gm, "«");
+  title = title.replace(/(>)/gm, "»");
+
+  return "<" + osmbcUrl + "/article/" + article.id + "|" + title + ">";
 }
 
 
