@@ -17,7 +17,7 @@ let licenses= {
 describe("license-check", function() {
   let usedLicenses = {};
   before(function(bddone) {
-    this.timeout = 4000;
+    this.timeout(4000);
     checker.init({
       start: path.join(__dirname, "..")
     }, function (err, json) {
@@ -70,7 +70,8 @@ describe("license-check", function() {
       "BSD",
       "BSD*",
       "MIT/X11",
-      "Apache-2.0"].forEach(function(l){
+      "Apache-2.0",
+      "Apache*"].forEach(function(l){
       delete usedLicenses[l];
     });
     should(usedLicenses).eql({});
