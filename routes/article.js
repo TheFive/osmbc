@@ -807,7 +807,7 @@ function renderList(req, res, next) {
         query.blog = blog;
       }
       let order = {column: "title"};
-      if (blog = "Trash")  order = {column: "id",desc:true};
+      if (blog == "Trash")  order = {column: "id",desc:true};
       articleModule.find(query, order, function(err, result) {
         debug("renderList->findArticleFunction->find");
         if (err) return callback(err);
