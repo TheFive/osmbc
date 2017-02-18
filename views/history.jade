@@ -74,7 +74,7 @@ block content
                 td
                   :verbatim
                     !{change.htmlDiffText(60)}
-                td=layout.moment(change.timestamp).locale(layout.user.language).format("L")
+                td=layout.moment(change.timestamp).locale(layout.user_locale).format("L")
               if change.property && change.property.substring(0,8)==="markdown"
                 tr(class="class_#{change.id}").hidden
                   td

@@ -76,14 +76,12 @@ block content
         .col-md-2
           | Period 
         .col-md-3
-          - userlanguage = layout.user.language
-          - if (!userlanguage) userlanguage = "DE";
 
           p
-            |#{layout.moment(blog.startDate).tz("Europe/Berlin").locale(userlanguage).format("LLLL z")}
+            |#{layout.moment(blog.startDate).tz("Europe/Berlin").locale(layout.user_locale).format("LLLL z")}
         .col-md-3
           p
-            | #{layout.moment(blog.endDate).tz("Europe/Berlin").locale(userlanguage).format("LLLL z")}
+            | #{layout.moment(blog.endDate).tz("Europe/Berlin").locale(layout.user_locale).format("LLLL z")}
       .row
         .col-md-2
           | Status 

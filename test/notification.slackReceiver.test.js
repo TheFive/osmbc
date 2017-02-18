@@ -58,21 +58,21 @@ describe("notification/slackReceiver", function() {
         });
       });
     });
-    it("should slack message, when changing a collection", function (bddone) {
+    it("should slack message, when changing a collection (with <..> in Title)", function (bddone) {
       var slack = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          {"text": "<https://testosm.bc/article/1|Test Title> added to <https://testosm.bc/blog/WN789|WN789>\n",
+          {"text": "<https://testosm.bc/article/1|Test «..» «..» Title> added to <https://testosm.bc/blog/WN789|WN789>\n",
             "username": "testbc(testuser)",
             "channel": "#osmbcarticle"}))
         .reply(200, "ok");
       articleModule.createNewArticle(function(err, article) {
         should.not.exist(err);
-        article.setAndSave({OSMUser: "testuser"}, {version: 1, blog: "WN789", collection: "newtext", title: "Test Title"}, function(err) {
+        article.setAndSave({OSMUser: "testuser"}, {version: 1, blog: "WN789", collection: "newtext", title: "Test <..> <..> Title"}, function(err) {
           should.not.exist(err);
           should(slack.isDone()).is.True();
           slack = nock("https://hooks.slack.com/")
             .post("/services/osmde", checkPostJson(
-              {"text": "<https://testosm.bc/article/1|Test Title> changed collection\n",
+              {"text": "<https://testosm.bc/article/1|Test «..» «..» Title> changed collection\n",
                 "username": "testbc(testuser)",
                 "channel": "#osmbcarticle"}))
             .reply(200, "ok");

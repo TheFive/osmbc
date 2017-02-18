@@ -198,6 +198,9 @@ function prepareRenderLayout(req, res, next) {
         osmbc_version: version.osmbc_version,
         style: style,
         title: appName,
+        user_locale: config.moment_locale((req.user.language)?req.user.language:req.user.getMainLang()),
+        language_locale: config.moment_locale(req.user.getMainLang()),
+        language2_locale: config.moment_locale(req.user.getSecondLang()),
         md_render: util.md_render
       };
       next();

@@ -57,18 +57,8 @@ describe("views/blog", function() {
             let file =  path.resolve(__dirname, "data", "views.blog.export.1.html");
             let expectation =  fs.readFileSync(file, "UTF8");
 
-            var result = testutil.domcompare(body, expectation);
+            should(testutil.equalHtml(body, expectation)).be.True();
 
-
-
-            if (result.getDifferences().length > 0) {
-              console.log("---------Result:----------");
-              console.log(body);
-              console.log("---------expected Result:----------");
-              console.log(expectation);
-
-              should.not.exist(result.getDifferences());
-            }
             cb();
           });
         }

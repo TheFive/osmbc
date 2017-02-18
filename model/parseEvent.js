@@ -349,8 +349,8 @@ function calendarJSONToMarkdown2(json, countryFlags, ct, option, cb) {
     var dateString;
     var sd = moment(e.startDate);
     var ed = moment(e.endDate);
-    sd.locale(lang);
-    ed.locale(lang);
+    sd.locale(config.moment_locale(lang));
+    ed.locale(config.moment_locale(lang));
 
     if (e.startDate) {
       dateString = sd.format("L");
