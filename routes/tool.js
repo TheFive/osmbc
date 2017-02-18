@@ -108,8 +108,8 @@ function eventDateFormat(e, lang) {
   var sd = moment(e.startDate);
   var ed = moment(e.endDate);
   var dateString = "";
-  sd.locale(lang);
-  ed.locale(lang);
+  sd.locale(config.moment_locale(lang));
+  ed.locale(config.moment_locale(lang));
 
   if (e.startDate) {
     dateString = sd.format("L");

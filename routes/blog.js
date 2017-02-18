@@ -220,12 +220,12 @@ function renderBlogPreview(req, res, next) {
       if (err) return next(err);
       if (req.query.download === "true") {
         if (asMarkdown) {
-          res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(lang).format() + ".md");
+          res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".md");
           res.setHeader("Content-type", "text");
 
           res.end(result.converter, "UTF8");
         } else {
-          res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(lang).format() + ".html");
+          res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".html");
           res.setHeader("Content-type", "text/html");
           res.end(result.converter, "UTF8");
         }
