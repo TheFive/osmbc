@@ -1,8 +1,20 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [2.2.6](https://github.com/TheFive/osmbc/tree/2.2.6) (2017-02-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.5a...2.2.6)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.5...HEAD)
+**Implemented enhancements:**
+
+- Add a filter / sort possibility for trash view [\#621](https://github.com/TheFive/osmbc/issues/621)
+- Change date format for the EN blog [\#620](https://github.com/TheFive/osmbc/issues/620)
+
+**Fixed bugs:**
+
+- Generation of Slack links has problems with \< or \> in title. [\#619](https://github.com/TheFive/osmbc/issues/619)
+- If Slack connection is broken, no change of data is possible. [\#351](https://github.com/TheFive/osmbc/issues/351)
+
+## [2.2.5a](https://github.com/TheFive/osmbc/tree/2.2.5a) (2017-02-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.5...2.2.5a)
 
 **Closed issues:**
 
