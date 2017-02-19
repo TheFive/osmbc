@@ -5,6 +5,9 @@
 var should = require("should");
 var sinon  = require("sinon");
 var nock   = require("nock");
+var fs     = require("fs");
+var path   = require("path");
+
 
 
 var testutil = require("./testutil.js");
@@ -21,6 +24,7 @@ var messageCenter = require("../notification/messageCenter.js");
 
 
 messageCenter.initialise();
+let logFile = path.join(__dirname,"..","maillogTest.log");
 
 
 describe("notification/mailReceiver", function() {
@@ -46,6 +50,7 @@ describe("notification/mailReceiver", function() {
     });
 
     beforeEach(function (bddone) {
+      if (fs.existsSync(logFile)) fs.unlink(logFile);
       oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
       mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
       mailReceiver.for_test_only.transporter.sendMail = mailChecker;
@@ -75,8 +80,6 @@ describe("notification/mailReceiver", function() {
                 subject: "[TESTBC] WN789 added: Test Title",
                 html: expectedMail,
                 text: "CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
-
-
             bddone();
           }, 900);
         });
@@ -103,6 +106,7 @@ describe("notification/mailReceiver", function() {
               html: expectedMail,
               text: expectedText});
           bddone();
+
         });
       });
     });

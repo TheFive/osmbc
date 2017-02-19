@@ -13,7 +13,6 @@ var EmailTemplate = require("email-templates").EmailTemplate;
 var messageCenter = require("../notification/messageCenter.js");
 var articleModule = require("../model/article.js");
 var blogModule = require("../model/blog.js");
-var logModule  = require("../model/logModule.js");
 
 var htmlToText = require("html-to-text");
 
@@ -23,6 +22,8 @@ var winston = require('winston');
 require('winston-daily-rotate-file');
 
 let logDir = config.getValue("maillog_directory",{mustExist:true});
+let logNamePrefix = config.getValue("maillog_prefix",{mustExist:true});
+let logNameDateFormat = config.getValue("maillog_dateformat",{mustExist:true});
 if (logDir === ".") logDir = path.join(__dirname,"..");
 
 
@@ -34,9 +35,9 @@ if (!(fs.existsSync(logDir))) {
 
 
 var transport = new winston.transports.DailyRotateFile({
-  filename: 'maillog_',
+  filename: logNamePrefix,
   dirname: logDir,
-  datePattern: 'yyyy-MM.log',
+  datePattern: logNameDateFormat,
   level: process.env.ENV === 'development' ? 'debug' : 'info'
 });
 
@@ -488,7 +489,7 @@ module.exports.MailReceiver = MailReceiver;
 module.exports.initialise = initialise;
 module.exports.updateUser = updateUser;
 
-module.exports.for_test_only = {transporter: transporter};
+module.exports.for_test_only = {transporter: transporter,logger:logger};
 
 
 // setup e-mail data with unicode symbols
