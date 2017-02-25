@@ -119,8 +119,12 @@ function postSlackCreateUseTBC(req, res, next) {
   let title = extractTextWithoutUrl(obj.text);
   let blog = "TBC";
 
-  if (typeof (url) === "undefined" || url === "" || url === null) {
-    obj.text = "<@" + req.body.user_id + "> Please enter an url.";
+  if (typeof (url) === "undefined" || url === "" || url === null) {/
+    // The following text was used for Slack
+    // obj.text = "<@" + req.body.user_id + "> Please enter an url.";
+
+    // This is the mattermost variant
+    obj.text = "@" + req.body.user_id + " Please enter an url.";
     res.json(obj);
     return;
   }
