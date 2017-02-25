@@ -432,6 +432,7 @@ function calendarToJSON(option, cb) {
     if (error) return cb(error);
     var json = JSON.parse(body);
     // body = (json.query.pages[2567].revisions[0]["*"]);
+    if (!json.query) return cb(new Error("No Query Field in Wiki Page"));
     body = json.query.pages;
     for (var k in body) {
       body = body[k];

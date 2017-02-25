@@ -1,5 +1,25 @@
 # Change Log
 
+## [2.2.6](https://github.com/TheFive/osmbc/tree/2.2.6) (2017-02-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.5a...2.2.6)
+
+**Implemented enhancements:**
+
+- Add a filter / sort possibility for trash view [\#621](https://github.com/TheFive/osmbc/issues/621)
+- Change date format for the EN blog [\#620](https://github.com/TheFive/osmbc/issues/620)
+
+**Fixed bugs:**
+
+- Generation of Slack links has problems with \< or \> in title. [\#619](https://github.com/TheFive/osmbc/issues/619)
+- If Slack connection is broken, no change of data is possible. [\#351](https://github.com/TheFive/osmbc/issues/351)
+
+## [2.2.5a](https://github.com/TheFive/osmbc/tree/2.2.5a) (2017-02-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.5...2.2.5a)
+
+**Closed issues:**
+
+- Allow Support for LetsEncrypt for wiki.openstreetmap.org Request in Calendar [\#618](https://github.com/TheFive/osmbc/issues/618)
+
 ## [2.2.5](https://github.com/TheFive/osmbc/tree/2.2.5) (2017-02-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.4...2.2.5)
 
