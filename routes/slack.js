@@ -124,7 +124,7 @@ function postSlackCreateUseTBC(req, res, next) {
     // obj.text = "<@" + req.body.user_id + "> Please enter an url.";
 
     // This is the mattermost variant
-    obj.text = "@" + req.body.user_id + " Please enter an url.";
+    obj.text = "@" + req.body.user_name + " Please enter an url.";
     res.json(obj);
     return;
   }
