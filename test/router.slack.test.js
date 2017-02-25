@@ -162,7 +162,7 @@ describe("router/slack", function() {
       userName = "TestSlackUseTBC";
       userId = "55";
       async.series([
-        talk.bind(null, "Text without a title", "<@55> Please enter an url.")
+        talk.bind(null, "Text without a title", "@TestSlackUseTBC Please enter an url.")
       ], bddone);
     });
   });
