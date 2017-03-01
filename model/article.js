@@ -27,6 +27,7 @@ var listOfOrphanBlog = null;
 function getListOfOrphanBlog(callback) {
   debug("getListOfOrphanBlog");
   if (listOfOrphanBlog) return callback(null, listOfOrphanBlog);
+  let loob = [];
 
   pg.connect(config.pgstring, function(err, client, pgdone) {
     if (err) return callback(err);
@@ -35,10 +36,11 @@ function getListOfOrphanBlog(callback) {
     var query = client.query('select name from "OpenBlogWithArticle" order by name');
     debug("reading list of open blog");
     query.on("row", function(row) {
-      listOfOrphanBlog.push(row.name);
+      loob.push(row.name);
     });
     query.on("end", function () {
       pgdone();
+      listOfOrphanBlog = loob;
       callback(null, listOfOrphanBlog);
     });
   });
