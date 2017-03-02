@@ -183,3 +183,8 @@ table {
   margin-right: 0px;
   margin-left: 0px;
 }
+
+.osmbc-help-text {
+  font-style: italic;
+  color: lightblue;
+}

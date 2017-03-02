@@ -47,6 +47,7 @@ describe("notification/slackReceiver", function() {
         .post("/services/osmde", checkPostJson(
           {"text": "<https://testosm.bc/article/1|Test Title> added to <https://testosm.bc/blog/WN789|WN789>\n",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcarticle"}))
         .reply(200, "ok");
       articleModule.createNewArticle(function(err, article) {
@@ -63,6 +64,7 @@ describe("notification/slackReceiver", function() {
         .post("/services/osmde", checkPostJson(
           {"text": "<https://testosm.bc/article/1|Test «..» «..» Title> added to <https://testosm.bc/blog/WN789|WN789>\n",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcarticle"}))
         .reply(200, "ok");
       articleModule.createNewArticle(function(err, article) {
@@ -74,6 +76,7 @@ describe("notification/slackReceiver", function() {
             .post("/services/osmde", checkPostJson(
               {"text": "<https://testosm.bc/article/1|Test «..» «..» Title> changed collection\n",
                 "username": "testbc(testuser)",
+                "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                 "channel": "#osmbcarticle"}))
             .reply(200, "ok");
           article.setAndSave({OSMUser: "testuser"}, {version: 2, collection: "New Text was to short"}, function(err) {
@@ -89,6 +92,7 @@ describe("notification/slackReceiver", function() {
         .post("/services/osmde", checkPostJson(
           {"text": "<https://testosm.bc/article/1|Test Title> added comment\n",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcarticle"}))
         .reply(200, "ok");
       articleModule.createNewArticle(function(err, article) {
@@ -105,6 +109,7 @@ describe("notification/slackReceiver", function() {
         .post("/services/osmde", checkPostJson(
           {"text": "<https://testosm.bc/article/1|Test Title> added comment:\nInformation for @User3",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcarticle"}))
         .reply(200, "ok");
       articleModule.createNewArticle({blog: "WN789", title: "Test Title"}, function(err, article) {
@@ -121,6 +126,7 @@ describe("notification/slackReceiver", function() {
         .post("/services/osmde", checkPostJson(
           {"text": "<https://testosm.bc/article/1|Test Title> added comment:\nInformation for @User3",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcarticle"}))
         .reply(200, "ok");
       articleModule.createNewArticle({blog: "WN789", title: "Test Title"}, function(err, article) {
@@ -131,6 +137,7 @@ describe("notification/slackReceiver", function() {
             .post("/services/osmde", checkPostJson(
               {"text": "<https://testosm.bc/article/1|Test Title> changed comment:\nInformation for all",
                 "username": "testbc(testuser)",
+                "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                 "channel": "#osmbcarticle"}))
             .reply(200, "ok");
           article.editComment({OSMUser: "testuser"}, 0, "Information for all", function(err) {
@@ -149,12 +156,14 @@ describe("notification/slackReceiver", function() {
                 .post("/services/osmde", checkPostJson(
                   {"text": "<https://testosm.bc/blog/WN251|WN251> was created\n",
                     "username": "testbc(testuser)",
+                    "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                     "channel": "#osmbcblog"}))
                 .reply(200, "ok");
       var slack2 = nock("https://hooks.slack.com/")
                 .post("/services/theweeklyosm", checkPostJson(
                   {"text": "<https://testosm.bc/blog/WN251|WN251> was created\n",
                     "username": "testbc(testuser)",
+                    "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                     "channel": "#osmbcblog"}))
                 .reply(200, "ok");
       blogModule.createNewBlog({OSMUser: "testuser"}, function(err) {
@@ -170,12 +179,14 @@ describe("notification/slackReceiver", function() {
                 .post("/services/osmde", checkPostJson(
                   {"text": "<https://testosm.bc/blog/WN251|WN251> was created\n",
                     "username": "testbc(testuser)",
+                    "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                     "channel": "#osmbcblog"}))
                 .reply(200, "ok");
       var slack1b = nock("https://hooks.slack.com/")
                 .post("/services/theweeklyosm", checkPostJson(
                   {"text": "<https://testosm.bc/blog/WN251|WN251> was created\n",
                     "username": "testbc(testuser)",
+                    "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                     "channel": "#osmbcblog"}))
                 .reply(200, "ok");
       blogModule.createNewBlog({OSMUser: "testuser"}, function(err, blog) {
@@ -183,12 +194,14 @@ describe("notification/slackReceiver", function() {
                   .post("/services/osmde", checkPostJson(
                     {"text": "<https://testosm.bc/blog/WN251|WN251> changed status to edit\n",
                       "username": "testbc(testuser)",
+                      "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                       "channel": "#osmbcblog"}))
                   .reply(200, "ok");
         var slack2b = nock("https://hooks.slack.com/")
                   .post("/services/theweeklyosm", checkPostJson(
                     {"text": "<https://testosm.bc/blog/WN251|WN251> changed status to edit\n",
                       "username": "testbc(testuser)",
+                      "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                       "channel": "#osmbcblog"}))
                   .reply(200, "ok");
         should.not.exist(err);
@@ -209,12 +222,14 @@ describe("notification/slackReceiver", function() {
                 .post("/services/osmde", checkPostJson(
                   {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
                     "username": "testbc(testuser)",
+                    "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                     "channel": "#osmbcblog"}))
                 .reply(200, "ok");
       var slack1b = nock("https://hooks.slack.com/")
                 .post("/services/theweeklyosm", checkPostJson(
                   {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
                     "username": "testbc(testuser)",
+                    "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                     "channel": "#osmbcblog"}))
                 .reply(200, "ok");
       blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit"}, function(err, blog) {
@@ -222,12 +237,14 @@ describe("notification/slackReceiver", function() {
                   .post("/services/theweeklyosm", checkPostJson(
                     {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed ()",
                       "username": "testbc(testuser)",
+                      "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                       "channel": "#osmbcblog"}))
                   .reply(200, "ok");
         var slack2b = nock("https://hooks.slack.com/")
                   .post("/services/osmde", checkPostJson(
                     {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed ()",
                       "username": "testbc(testuser)",
+                      "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                       "channel": "#osmbcblog"}))
                   .reply(200, "ok");
         should.not.exist(err);
@@ -249,12 +266,14 @@ describe("notification/slackReceiver", function() {
         .post("/services/osmde", checkPostJson(
           {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcblog"}))
         .reply(200, "ok");
       var slack1b = nock("https://hooks.slack.com/")
         .post("/services/theweeklyosm", checkPostJson(
           {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcblog"}))
         .reply(200, "ok");
       blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit",reviewCommentES:[{timestamp:"__timestamp__"}]}, function(err, blog) {
@@ -262,12 +281,14 @@ describe("notification/slackReceiver", function() {
           .post("/services/theweeklyosm", checkPostJson(
             {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed (<https://testosm.bc/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__| view changes>)",
               "username": "testbc(testuser)",
+              "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
               "channel": "#osmbcblog"}))
           .reply(200, "ok");
         var slack2b = nock("https://hooks.slack.com/")
           .post("/services/osmde", checkPostJson(
             {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed (<https://testosm.bc/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__| view changes>)",
               "username": "testbc(testuser)",
+              "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
               "channel": "#osmbcblog"}))
           .reply(200, "ok");
         should.not.exist(err);
@@ -289,12 +310,14 @@ describe("notification/slackReceiver", function() {
                 .post("/services/osmde", checkPostJson(
                   {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
                     "username": "testbc(testuser)",
+                    "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                     "channel": "#osmbcblog"}))
                 .reply(200, "ok");
       var slack1b = nock("https://hooks.slack.com/")
                 .post("/services/theweeklyosm", checkPostJson(
                   {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
                     "username": "testbc(testuser)",
+                    "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                     "channel": "#osmbcblog"}))
                 .reply(200, "ok");
       blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit"}, function(err, blog) {
@@ -302,12 +325,14 @@ describe("notification/slackReceiver", function() {
                   .post("/services/osmde", checkPostJson(
                     {"text": "<https://testosm.bc/blog/blog|blog>(DE) is exported to WordPress",
                       "username": "testbc(testuser)",
+                      "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                       "channel": "#osmbcblog"}))
                   .reply(200, "ok");
         var slack2b = nock("https://hooks.slack.com/")
                   .post("/services/theweeklyosm", checkPostJson(
                     {"text": "<https://testosm.bc/blog/blog|blog>(DE) is exported to WordPress",
                       "username": "testbc(testuser)",
+                      "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                       "channel": "#osmbcblog"}))
                   .reply(200, "ok");
         should.not.exist(err);
@@ -329,12 +354,14 @@ describe("notification/slackReceiver", function() {
         .post("/services/osmde", checkPostJson(
           {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcblog"}))
         .reply(200, "ok");
       var slack1b = nock("https://hooks.slack.com/")
         .post("/services/theweeklyosm", checkPostJson(
           {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcblog"}))
         .reply(200, "ok");
       blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit"}, function(err, blog) {
@@ -342,12 +369,14 @@ describe("notification/slackReceiver", function() {
           .post("/services/osmde", checkPostJson(
             {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been closed",
               "username": "testbc(testuser)",
+              "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
               "channel": "#osmbcblog"}))
           .reply(200, "ok");
         var slack2b = nock("https://hooks.slack.com/")
           .post("/services/theweeklyosm", checkPostJson(
             {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been closed",
               "username": "testbc(testuser)",
+              "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
               "channel": "#osmbcblog"}))
           .reply(200, "ok");
         should.not.exist(err);
@@ -368,12 +397,14 @@ describe("notification/slackReceiver", function() {
         .post("/services/osmde", checkPostJson(
           {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcblog"}))
         .reply(200, "ok");
       var slack1b = nock("https://hooks.slack.com/")
         .post("/services/theweeklyosm", checkPostJson(
           {"text": "<https://testosm.bc/blog/blog|blog> was created\n",
             "username": "testbc(testuser)",
+            "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
             "channel": "#osmbcblog"}))
         .reply(200, "ok");
       blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit"}, function(err, blog) {
@@ -381,12 +412,14 @@ describe("notification/slackReceiver", function() {
           .post("/services/osmde", checkPostJson(
             {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been closed",
               "username": "testbc(testuser)",
+              "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
               "channel": "#osmbcblog"}))
           .reply(200, "ok");
         var slack2b = nock("https://hooks.slack.com/")
           .post("/services/theweeklyosm", checkPostJson(
             {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been closed",
               "username": "testbc(testuser)",
+              "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
               "channel": "#osmbcblog"}))
           .reply(200, "ok");
         should.not.exist(err);
@@ -400,6 +433,7 @@ describe("notification/slackReceiver", function() {
             .post("/services/theweeklyosm", checkPostJson(
               {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reopened",
                 "username": "testbc(testuser)",
+                "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                 "channel": "#osmbcblog"}))
             .reply(200, "ok");
           blog.closeBlog("ES", {OSMUser: "testuser"}, false, function(err) {

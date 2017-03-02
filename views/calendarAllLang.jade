@@ -47,7 +47,7 @@ block content
                 p="includeCountries " + eventsfilter[lang].includeCountries
 
             else
-              p="Please define rules in admin zone."
+              p.osmbc-help-text="Please define rules in admin zone."
 
   h3(onclick="$('.editBlock').toggleClass('hidden')")
     span.glyphicon.glyphicon-triangle-bottom.editBlock
@@ -74,6 +74,10 @@ block content
                   textarea.hidden.form-control(name="markdown" id="markdown" + article.id rows=7 onchange="onLeaveText(#{article.id});")=markdown[lang]
                   textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{article.id}" rows=7 )=""
                   button.btn.btn-default(type="submit")="Store " + lang + " in " + blog.name
+    p.osmbc-help-text
+      span="The store button is available, if the blog is in edit mode and the event article is empty. "
+      a(href="https://thefive.info/osmww/wiki/Article%3A-The-Language-Indicator")="Click here"
+      span=" for a more detailed info on the colors in the article indicator. Use upcoming events to jump direct to the article."
 
   h3(onclick="$('.tablePreview').toggleClass('hidden')")
     span.glyphicon.glyphicon-triangle-right.hidden.tablePreview

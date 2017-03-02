@@ -59,5 +59,8 @@
   "apiKeys":{
     "testapikey":"monitor",
     "testapikey.TBC":"TBC Collections"
-  }
+  },
+  "maillog_directory":".",
+  "maillog_prefix":"maillogTest",
+  "maillog_dateformat":".log"
 }
