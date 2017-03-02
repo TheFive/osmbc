@@ -1,7 +1,14 @@
 # Change Log
 
+## [2.2.7](https://github.com/TheFive/osmbc/tree/2.2.7) (2017-03-02)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.6a...2.2.7)
+
 ## [2.2.6a](https://github.com/TheFive/osmbc/tree/2.2.6a) (2017-02-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.6...2.2.6a)
+
+**Implemented enhancements:**
+
+- Move Log if Email to file [\#622](https://github.com/TheFive/osmbc/issues/622)
 
 **Fixed bugs:**
 
