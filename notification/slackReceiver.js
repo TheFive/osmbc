@@ -21,6 +21,7 @@ var botName = config.getValue("AppName").toLowerCase();
 var Slack = require("../notification/SlackAPI");
 
 var osmbcUrl = config.getValue("url") + config.getValue("htmlroot");
+var iconUrl = osmbcUrl+"/images/osmbc_im_logo.png";
 
 
 function SlackReceiver(name, slack, channel) {
@@ -101,7 +102,8 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, b
     this.slack.send({
       text: subject,
       channel: this.channel,
-      username: username
+      username: username,
+      icon_url: iconUrl
     }, callback);
   } else return callback();
 };
@@ -123,7 +125,8 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, l
     this.slack.send({
       text: subject,
       channel: this.channel,
-      username: username
+      username: username,
+      icon_url: iconUrl
     }, callback);
   } else return callback();
 };
@@ -161,7 +164,8 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user, article, ch
     this.slack.send({
       text: text,
       channel: this.channel,
-      username: username
+      username: username,
+      icon_url: iconUrl
     }, callback);
   } else return callback();
 };
@@ -182,7 +186,8 @@ SlackReceiver.prototype.addComment = function addComment(user, article, comment,
     this.slack.send({
       text: text,
       channel: this.channel,
-      username: username
+      username: username,
+      icon_url: iconUrl
     }, callback);
   } else return callback();
 };
@@ -201,7 +206,8 @@ SlackReceiver.prototype.editComment = function editComment(user, article, index,
     this.slack.send({
       text: text,
       channel: this.channel,
-      username: username
+      username: username,
+      icon_url: iconUrl
     }, callback);
   } else return callback();
 };
@@ -226,7 +232,8 @@ SlackReceiver.prototype.updateBlog = function updateBlog(user, blog, change, cal
     this.slack.send({
       text: subject,
       channel: this.channel,
-      username: username
+      username: username,
+      icon_url: iconUrl
     }, callback);
   } else return callback();
 };
