@@ -33,23 +33,6 @@ block all
                 span.icon-bar
             .navbar-collapse.collapse
               ul.nav.navbar-nav.navbar-left
-                li.dropdown
-                  a.dropdown-toggle(href='#', data-toggle='dropdown')
-                    | Lists
-                    span.caret
-                  ul.dropdown-menu(role='menu')
-                    li.dropdown-header OutgoingMail
-                      li
-                        - var d = new Date();
-                        - d= d.toISOString();
-                        - d= d.substring(0,10);
-                        a(href="#{layout.htmlroot + '/changes/mail/' + d}") Mail Log Today
-                      li
-                        - var d = new Date();
-                        - d= d.toISOString();
-                        - d= d.substring(0,13);
-                        a(href="#{layout.htmlroot + '/changes/mail/' + d}") Mail Log This Hour
-
                 li.dropdown.hidden-xs
                   a.dropdown-toggle(href='#', data-toggle='dropdown')
                     | User
