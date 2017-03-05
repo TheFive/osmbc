@@ -132,7 +132,8 @@ function ensureAuthenticated (req, res, next) {
           // save last access, ignore save callback
           var date = new Date();
           var lastStore = new Date(result[0].lastAccess);
-          if (!result[0].lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 60) {
+          // only store last access when GETting something, not in POSTs.
+          if (req.method === "GET" && (!result[0].lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 5)) {
             result[0].lastAccess = new Date();
             result[0].save(function(err, u) { if (err) return next(err); req.user.version = u.version; });
           }

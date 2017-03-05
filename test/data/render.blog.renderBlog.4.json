@@ -1,9 +1,9 @@
 {
-  "blog":[{"name":"BLOG","startDate":"2015-02-02","endDate":"2015-03-03"}],
+  "blog":[{"name":"BLOG","startDate":"2015-02-01","endDate":"2015-02-08"}],
   "article":[{"blog":"BLOG",
               "markdownEN":"* This is a small test article.",
               "categoryEN":"not exist"}],
   "testBlogName":"BLOG",
   "lang":"EN",
-  "testBlogResultHtml":"<p>02/02/2015-03/03/2015</p><!--         place picture here              --><h2> Blog Missing Cat: not exist</h2>\n<p> Please use [edit blog detail] to enter category</p>\n<p> Or edit The Articles  <a href=\"/article/1\">1</a> </p>\n<p align=\"right\"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\"> produced</a> by .</i></p> "
+  "testBlogResultHtml":"<p>01/02/2015-08/02/2015</p><!--         place picture here              --><h2> Blog Missing Cat: not exist</h2>\n<p> Please use [edit blog detail] to enter category</p>\n<p> Or edit The Articles  <a href=\"/article/1\">1</a> </p>\n<p align=\"right\"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\"> produced</a> by .</i></p> "
 }
