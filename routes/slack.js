@@ -14,9 +14,9 @@ var htmltitle     = require("../model/htmltitle.js");
 var articleModule     = require("../model/article.js");
 
 
-var botName = config.getValue("AppName",{mustExist:true}).toLowerCase();
+var botName = config.getValue("AppName", {mustExist: true}).toLowerCase();
 
-var osmbcUrl = config.getValue("url",{mustExist:true}) + config.getValue("htmlroot",{mustExist:true});
+var osmbcUrl = config.getValue("url", {mustExist: true}) + config.getValue("htmlroot", {mustExist: true});
 
 function articleNameSlack(article) {
   debug("articleNameSlack");

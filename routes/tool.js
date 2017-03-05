@@ -27,8 +27,8 @@ var configModule = require("../model/config.js");
 
 var sizeOf = require("image-size");
 
-let htmlroot = config.getValue("htmlroot",{mustExist:true});
-let bootstrap = config.getValue("bootstrap",{mustExist:true});
+let htmlroot = config.getValue("htmlroot", {mustExist: true});
+let bootstrap = config.getValue("bootstrap", {mustExist: true});
 
 function renderPublicCalendar(req, res, next) {
   debug("renderPublicCalendar");

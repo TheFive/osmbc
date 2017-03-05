@@ -18,7 +18,7 @@ var logModule = require("../model/logModule.js");
 var blogRenderer = require("../render/BlogRenderer.js");
 
 
-var htmlroot = config.getValue("htmlroot",{mustExist:true});
+var htmlroot = config.getValue("htmlroot", {mustExist: true});
 
 function renderList(req, res, next) {
   debug("renderList");

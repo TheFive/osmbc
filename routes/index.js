@@ -12,7 +12,7 @@ var userModule = require("../model/user.js");
 var pgMap = require("../model/pgMap.js");
 
 
-let appName = config.getValue("AppName",{mustExist:true});
+let appName = config.getValue("AppName", {mustExist: true});
 /* GET home page. */
 
 function renderHome(req, res, next) {
