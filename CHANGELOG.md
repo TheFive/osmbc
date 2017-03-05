@@ -1,5 +1,28 @@
 # Change Log
 
+## [2.2.8](https://github.com/TheFive/osmbc/tree/2.2.8) (2017-03-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.7...2.2.8)
+
+**Fixed bugs:**
+
+- Mattermost: Logo of Bot is the same as TheFive Logo. [\#625](https://github.com/TheFive/osmbc/issues/625)
+- User can't save his settings, because timestamp is updating "version" [\#623](https://github.com/TheFive/osmbc/issues/623)
+
+## [2.2.7](https://github.com/TheFive/osmbc/tree/2.2.7) (2017-03-02)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.6a...2.2.7)
+
+## [2.2.6a](https://github.com/TheFive/osmbc/tree/2.2.6a) (2017-02-25)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.6...2.2.6a)
+
+**Implemented enhancements:**
+
+- Move Log if Email to file [\#622](https://github.com/TheFive/osmbc/issues/622)
+
+**Fixed bugs:**
+
+- Log File Error [\#626](https://github.com/TheFive/osmbc/issues/626)
+- Mattermost: Bot is sending usernames in wrong format to OSMBC. [\#624](https://github.com/TheFive/osmbc/issues/624)
+
 ## [2.2.6](https://github.com/TheFive/osmbc/tree/2.2.6) (2017-02-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.5a...2.2.6)
 
@@ -550,13 +573,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 

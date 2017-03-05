@@ -27,7 +27,7 @@ var htmltitle     = require("../model/htmltitle.js");
 require("jstransformer")(require("jstransformer-markdown-it"));
 
 
-let htmlroot = config.getValue("htmlroot",{mustExist:true});
+let htmlroot = config.getValue("htmlroot", {mustExist: true});
 // This Function converts the ID (used as :article_id in the routes) to
 // an article and stores the object in the request
 // if article_id is not existing it throws an error.
@@ -691,7 +691,7 @@ function doAction(req, res, next) {
       return;
     }
     let returnToUrl  = htmlroot + "/article/" + article.id;
-    returnToUrl = req.header("Referer") || returnToUrl;
+    if (req.header("Referer")) returnToUrl = req.header("Referer");
     res.end("OK");
     // res.redirect(returnToUrl);
   });
@@ -807,7 +807,7 @@ function renderList(req, res, next) {
         query.blog = blog;
       }
       let order = {column: "title"};
-      if (blog == "Trash")  order = {column: "id",desc:true};
+      if (blog === "Trash") order = {column: "id", desc: true};
       articleModule.find(query, order, function(err, result) {
         debug("renderList->findArticleFunction->find");
         if (err) return callback(err);

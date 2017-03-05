@@ -4,7 +4,6 @@ var path          = require("path");
 var config        = require("../config.js");
 var should        = require("should");
 var debug         = require("debug")("OSMBC:notification:mailReceiver");
-var path          = require("path");
 var fs            = require("fs");
 var nodemailer    = require("nodemailer");
 var smtpTransport = require("nodemailer-smtp-transport");
@@ -18,17 +17,17 @@ var htmlToText = require("html-to-text");
 
 
 
-var winston = require('winston');
-require('winston-daily-rotate-file');
+var winston = require("winston");
+require("winston-daily-rotate-file");
 
-let logDir = config.getValue("maillog_directory",{mustExist:true});
-let logNamePrefix = config.getValue("maillog_prefix",{mustExist:true});
-let logNameDateFormat = config.getValue("maillog_dateformat",{mustExist:true});
-if (logDir === ".") logDir = path.join(__dirname,"..");
+let logDir = config.getValue("maillog_directory", {mustExist: true});
+let logNamePrefix = config.getValue("maillog_prefix", {mustExist: true});
+let logNameDateFormat = config.getValue("maillog_dateformat", {mustExist: true});
+if (logDir === ".") logDir = path.join(__dirname, "..");
 
 
 if (!(fs.existsSync(logDir))) {
-  console.log("Missing Directory (maillog_directory) %s",logDir);
+  console.log("Missing Directory (maillog_directory) %s", logDir);
   process.exit(1);
 }
 
@@ -38,7 +37,7 @@ var transport = new winston.transports.DailyRotateFile({
   filename: logNamePrefix,
   dirname: logDir,
   datePattern: logNameDateFormat,
-  level: process.env.ENV === 'development' ? 'debug' : 'info'
+  level: process.env.ENV === "development" ? "debug" : "info"
 });
 
 var logger = new (winston.Logger)({
@@ -96,7 +95,7 @@ function sendMailWithLog(user, mailOptions, callback) {
       response: (info) ? info.response : "no response"
     };
 
-    logger.info({user:logObject.user,to:logObject.to,message:logObject.subject,error:logObject.error,response:logObject.response});
+    logger.info({user: logObject.user, to: logObject.to, message: logObject.subject, error: logObject.error, response: logObject.response});
     callback();
   }
   // for development Reasons, filter Mail Address
@@ -489,7 +488,7 @@ module.exports.MailReceiver = MailReceiver;
 module.exports.initialise = initialise;
 module.exports.updateUser = updateUser;
 
-module.exports.for_test_only = {transporter: transporter,logger:logger};
+module.exports.for_test_only = {transporter: transporter, logger: logger};
 
 
 // setup e-mail data with unicode symbols
