@@ -21,7 +21,7 @@ var botName = config.getValue("AppName").toLowerCase();
 var Slack = require("../notification/SlackAPI");
 
 var osmbcUrl = config.getValue("url") + config.getValue("htmlroot");
-var iconUrl = osmbcUrl+"/images/osmbc_im_logo.png";
+var iconUrl = osmbcUrl + "/images/osmbc_im_logo.png";
 
 
 function SlackReceiver(name, slack, channel) {
@@ -79,21 +79,21 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, b
 
   let reviewChangesLink = "";
 
-  if (blog["reviewComment"+lang] && blog["reviewComment"+lang][0]) {
-    reviewChangesLink = "<"+osmbcUrl+"/changes/log?blog="+blog.name+"&table=article&property=markdown"+lang+"&date=GE:"+blog["reviewComment"+lang][0].timestamp+"| view changes>";
+  if (blog["reviewComment" + lang] && blog["reviewComment" + lang][0]) {
+    reviewChangesLink = "<" + osmbcUrl + "/changes/log?blog=" + blog.name + "&table=article&property=markdown" + lang + "&date=GE:" + blog["reviewComment" + lang][0].timestamp + "| view changes>";
   }
 
 
   if (status === "startreview") {
-    subject += "(" + lang + ") review has been started ("+reviewChangesLink+")";
+    subject += "(" + lang + ") review has been started (" + reviewChangesLink + ")";
   } else if (status === "markexported") {
     subject += "(" + lang + ") is exported to WordPress";
   } else if (status === "" || status === null) {
     subject += "(" + lang + ") review comment deleted.";
   } else if (status === "reviewing...") {
-    subject = "has started Review for: "+subject+"(" + lang + ")";
+    subject = "has started Review for: " + subject + "(" + lang + ")";
   } else {
-    subject += "(" + lang + ") has been reviewed: " + status+ " ("+reviewChangesLink+")";
+    subject += "(" + lang + ") has been reviewed: " + status + " (" + reviewChangesLink + ")";
   }
   var username = botName + "(" + user.OSMUser + ")";
 

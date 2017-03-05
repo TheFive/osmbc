@@ -11,9 +11,9 @@ var articleModule = require("../model/article.js");
 var config        = require("../config.js");
 
 
-let apiKeys = config.getValue("apiKeys",{mustExist:true});
+let apiKeys = config.getValue("apiKeys", {mustExist: true});
 
-function checkApiKey(req,res,next) {
+function checkApiKey(req, res, next) {
   debug("checkApiKey");
   var apiKey = req.params.apiKey;
   if (!apiKeys[apiKey]) {
@@ -50,11 +50,11 @@ function collectArticle(req, res, next) {
     changes.categoryEN = req.body.categoryEN;
   }
   changes.blog = "TBC";
-  let user="";
+  let user = "";
 
-  config.getLanguages().forEach(function copyMarkdown(lang){
-    if (req.body["markdown"+lang]) {
-      changes["markdown"+lang] = req.body["markdown"+lang];
+  config.getLanguages().forEach(function copyMarkdown(lang) {
+    if (req.body["markdown" + lang]) {
+      changes["markdown" + lang] = req.body["markdown" + lang];
     }
   });
 
@@ -63,15 +63,14 @@ function collectArticle(req, res, next) {
       if (req.body.title) {
         changes.title = req.body.title;
         return cb();
-      }
-      else {
+      } else {
         let url = [];
-        if (typeof req.body.collection==="string") url = util.getAllURL(req.body.collection);
+        if (typeof req.body.collection === "string") url = util.getAllURL(req.body.collection);
         if (url.length === 0) {
-          changes.title="NOT GIVEN";
+          changes.title = "NOT GIVEN";
           return cb();
         }
-        htmltitle.getTitle(url[0],function(err,title){
+        htmltitle.getTitle(url[0], function(err, title) {
           if (err) cb(cb);
           changes.title = title;
           return cb();
@@ -113,15 +112,14 @@ function collectArticle(req, res, next) {
         changes.firstCollector = user.OSMUser;
         return cb();
       });
-
     }
-  ],function(err) {
+  ], function(err) {
     if (err) return next(err);
 
     // check on existence of markdown in body
 
-    if (req.body.markdown && typeof user == "object" && user.language) {
-      changes["markdown"+user.language] = req.body.markdown;
+    if (req.body.markdown && typeof user === "object" && user.language) {
+      changes["markdown" + user.language] = req.body.markdown;
     }
     articleModule.createNewArticle(function(err, result) {
       if (err) return next(err);
@@ -135,11 +133,11 @@ function collectArticle(req, res, next) {
   });
 }
 
-publicRouter.param("apiKey",checkApiKey);
+publicRouter.param("apiKey", checkApiKey);
 
 publicRouter.get("/monitor/:apiKey", isServerUp);
 publicRouter.get("/monitorPostgres/:apiKey", isPostgresUp);
 
-publicRouter.post("/collectArticle/:apiKey",collectArticle);
+publicRouter.post("/collectArticle/:apiKey", collectArticle);
 
 module.exports.publicRouter = publicRouter;
