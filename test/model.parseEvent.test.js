@@ -311,12 +311,12 @@ describe("model/parseEvent", function() {
         .get("/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json")
 
         .reply(200, JSON.stringify(json));
-      parseEvent.calendarToMarkdown({lang: "DE", date: new Date("12/06/2015"), duration: "14", big_duration: "21", countries: "USA"}, function(err, result) {
+      parseEvent.calendarToMarkdown({lang: "EN", date: new Date("12/06/2015"), duration: "14", big_duration: "21", countries: "USA"}, function(err, result) {
         should.not.exist(err);
-        var expected = "|Wo      |Was                                   |Wann      |Land   |\n" +
+        var expected = "|Where   |What                                  |When      |Country|\n" +
           "|--------|--------------------------------------|----------|-------|\n" +
-          "|Bonn    |[FOSS4G 2016](http://2016.foss4g.org/)|12.12.2015|Germany|\n" +
-          "|New York|[Event to display](Big)               |22.12.2015|USA    |\n";
+          "|Bonn    |[FOSS4G 2016](http://2016.foss4g.org/)|12/12/2015|Germany|\n" +
+          "|New York|[Event to display](Big)               |22/12/2015|USA    |\n";
         should(result).equal(expected);
         bddone();
       });
