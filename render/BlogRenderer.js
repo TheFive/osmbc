@@ -35,7 +35,7 @@ HtmlRenderer.prototype.subtitle = function htmlSubtitle(lang) {
   var blog = this.blog;
   should(config.getLanguages()).containEql(lang);
   if (blog.startDate && blog.endDate) {
-    return "<p>" + moment(blog.startDate).tz("Europe/Berlin").locale(lang).format("L") + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(lang).format("L") + "</p>\n";
+    return "<p>" + moment(blog.startDate).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L") + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L") + "</p>\n";
   } else return "<p> missing date </p>\n";
 };
 
@@ -43,7 +43,7 @@ MarkdownRenderer.prototype.subtitle = function markdownSubtitle(lang) {
   debug("MarkdownRenderer.prototype.subtitle %s", lang);
   var blog = this.blog;
   if (blog.startDate && blog.endDate) {
-    return moment(blog.startDate).tz("Europe/Berlin").locale(lang).format("L") + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(lang).format("L") + "\n\n";
+    return moment(blog.startDate).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L") + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L") + "\n\n";
   } else return "missing date\n";
 };
 
