@@ -5,6 +5,7 @@
 
 **Fixed bugs:**
 
+- using format dd/mm/yyyy for EN in Calendar as well [\#628](https://github.com/TheFive/osmbc/issues/628)
 - Mattermost: Logo of Bot is the same as TheFive Logo. [\#625](https://github.com/TheFive/osmbc/issues/625)
 - User can't save his settings, because timestamp is updating "version" [\#623](https://github.com/TheFive/osmbc/issues/623)
 
