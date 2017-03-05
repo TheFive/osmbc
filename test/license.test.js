@@ -10,7 +10,8 @@ let licenses= {
   "pkginfo@0.2.3": "MIT",
   "uglify-js@2.2.5": "BSD-2-Clause",
   "vow-fs@0.3.1": "MIT",
-  "vow@0.4.3": "MIT"
+  "vow@0.4.3": "MIT",
+  "tweetnacl@0.14.3" : "Unlicense"
 };
 
 
@@ -24,8 +25,13 @@ describe("license-check", function() {
     }, function (err, json) {
       should.not.exist(err);
       for (let k in json) {
-        if (k==="mdfigcaption@0.1.1" && moment().isBefore(moment("2017-06-01  "))) continue;
+        if (k==="mdfigcaption@0.1.1" && moment().isBefore(moment("2017-06-01"))) continue;
+        // License not give, so please overwrite with manual capturet licenses
         if (json[k].licenses === "UNKNOWN" && licenses[k]) {
+          json[k].licenses = licenses[k];
+        }
+        // Check, wether there is a manual overwrite for the license
+        if (licenses[k]) {
           json[k].licenses = licenses[k];
         }
         let l = json[k].licenses;
@@ -44,6 +50,8 @@ describe("license-check", function() {
   it('should not use GPL',function(bddone){
     should.not.exist(usedLicenses.GPL);
     should.not.exist(usedLicenses.GNUP);
+    //EUPL is a GNU compatible license, so will not be used
+    should.not.exist(usedLicenses["EUPL-1.1"]);
     bddone();
   });
   it('should have checked all licenses',function(bddone){

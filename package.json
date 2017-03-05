@@ -47,7 +47,7 @@
     "progress": "^1.1.8",
     "randomstring": "^1.1.4",
     "request": "^2.79.0",
-    "serve-favicon": "~2.3.2",
+    "serve-favicon": "~2.4.1",
     "session-file-store": "^1.0.0",
     "should": "^11.1.0",
     "twit": "^2.2.3",
