@@ -230,7 +230,7 @@ mixin blogSelection(list,missingList,blogtype,readonly)
 
 mixin blogSelector(article,readonly)
     - if (readonly !== true) readonly = false
-    select(id="blog",name="blog" ).form-control
+    select(id="blog",name="blog" ).form-control.af
       - var missingList = []
       - if (article) missingList = [{name:article.blog}]
       +blogSelection(layout.listOfOpenBlog,missingList,"",readonly)

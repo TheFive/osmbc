@@ -34,7 +34,7 @@ mixin articleMarkdown(lang,disabled)
   - var p=""
   if placeholder.markdown[lang]
     - p = placeholder.markdown[lang];
-  textarea.markdownEdit.form-control(id="markdown#{lang}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6 readonly = d) #{article["markdown" + lang]}
+  textarea.markdownEdit.form-control.af(id="markdown#{lang}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6 readonly = d) #{article["markdown" + lang]}
   div.markdownMessage(id="text"+lang )
     | 'no translation' or '-' to specify no translation wanted.
 
@@ -64,7 +64,7 @@ mixin articleTranslateButton(langFrom,langTo)
       span="Error occured"
 
 mixin saveButton
-  button.btn.btn-large.btn-primary(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") Save
+  button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") Save
 
 mixin doublettesButton
   if articleReferences.count >= 1
@@ -125,7 +125,7 @@ block content
             label.col-md-2="Blog"
             div.col-md-10
               +blogSelector(article,!article.isChangeAllowed("blog"))
-              textarea.hidden.form-control(name="old_blog",rows=1,hide=true) #{article.blog}
+              textarea.hidden.form-control(id="old_blog" name="old_blog",rows=1,hide=true) #{article.blog}
 
 
 
@@ -133,8 +133,8 @@ block content
           .form-group
             label.col-md-2="Category"
             div.col-md-10
-              textarea.hidden.form-control(name="old_categoryEN",rows=1,hide=true) #{article.categoryEN}
-              select(id="categoryEN",name="categoryEN" ).form-control
+              textarea.hidden.form-control(id="old_categoryEN" name="old_categoryEN",rows=1,hide=true) #{article.categoryEN}
+              select(id="categoryEN",name="categoryEN" ).form-control.af
                 for category in categories
                   - option = category[params.left_lang]
                   - if (params.right_lang !== null) option += " / "+category[params.right_lang]
@@ -156,8 +156,8 @@ block content
       .form-group
         label.col-md-1="Predecessor"
         +leftcolumn
-          textarea.hidden.form-control(name="old_predecessorId",rows=1,hide=true) #{article.predecessorId}
-          select(id="predecessor",name="predecessorId" ).form-control
+          textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true) #{article.predecessorId}
+          select(id="predecessorId",name="predecessorId" ).form-control.af
             if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
               option(value="" selected) None
             else
@@ -182,8 +182,8 @@ block content
       .form-group
         label.col-md-1="Title"
         .col-md-10
-          textarea.hidden.form-control(name="old_title",rows=1,hide=true) #{article.title}
-          textarea.form-control(name="title",rows=1 readonly=!article.isChangeAllowed("title")) #{article.title}
+          textarea.hidden.form-control(id="old_title" name="old_title",rows=1,hide=true) #{article.title}
+          textarea.form-control.af(id="title" name="title",rows=1 readonly=!article.isChangeAllowed("title")) #{article.title}
 
 
     // Display Unpublish Reason Row
@@ -191,16 +191,16 @@ block content
       .form-group
         label.col-md-1="Unpublish Reason"
         .col-md-5
-          textarea.hidden.form-control(name="old_unpublishReason",rows=1,hide=true) #{article.unpublishReason}
-          select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control
+          textarea.hidden.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true) #{article.unpublishReason}
+          select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control.af
             for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
               if (reason == article.unpublishReason)
                 option(value="#{reason}" selected ) #{reason}
               else
                 option(value="#{reason}" ) #{reason}
         .col-md-5
-          textarea.hidden.form-control(name="old_unpublishReference",rows=1,hide=true) #{article.unpublishReference}
-          textarea.form-control(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference")) #{article.unpublishReference}
+          textarea.hidden.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true) #{article.unpublishReference}
+          textarea.form-control.af(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference")) #{article.unpublishReference}
 
 
     // Display Collection Row
@@ -208,8 +208,8 @@ block content
       .form-group
         label.col-md-1="Collection"
         .col-md-10
-          textarea.form-control(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection")) #{article.collection}
-          textarea.hidden.form-control(name="old_collection",rows=1,hide=true) #{article.collection}
+          textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection")) #{article.collection}
+          textarea.hidden.form-control(id="old_collection" name="old_collection",rows=1,hide=true) #{article.collection}
     .row
       .col-md-1
 
@@ -262,7 +262,7 @@ block content
         .row
           .col-md-12
             for l in layout.activeLanguages
-              textarea.hidden.form-control(name="old_markdown"+l,rows=1,hide=true) #{article["markdown"+l]}
+              textarea.hidden.form-control(id="old_markdown"+l, name="old_markdown"+l,rows=1,hide=true) #{article["markdown"+l]}
               if l === params.right_lang
                 .RL(class= "RL-#{l}")
                   +articleMarkdown(l,!article.isChangeAllowed("markdown"+l))
@@ -463,23 +463,27 @@ block scripts
       $(".markdownEdit")
               .change(convertMinusNoTranslation)
               .focusout(convertMinusNoTranslation)
-              .keyup(series(previewMarkdown,checkForTable,FitToContent,checkMarkdownError))
+              .keyup(series(previewMarkdown,checkForTable,FitToContent,checkMarkdownError,showModified))
               .on("paste",pasteEvent)
               .on("drop",pasteEvent)
               .trigger("change");
       $("#collection")
               .change(series(onchangeCollection,FitToContent))
-              .keyup(series(onchangeCollection,FitToContent))
+              .keyup(series(onchangeCollection,FitToContent,showModified))
               .trigger("change");
+      $("#title")
+        .keyup(showModified)
+      $("#predecessorId")
+        .change(showModified)
       $("#blog")
-              .change(showHideUnpublishReason)
+              .change(series(showHideUnpublishReason,showModified))
               .trigger("change");
       $("#comment")
               .change(FitToContent)
               .keyup(FitToContent)
               .trigger("change");
       $("#categoryEN")
-              .change(series(syncPlaceholder,showHideUnpublishReason))
+              .change(series(syncPlaceholder,showHideUnpublishReason,showModified))
               .trigger("change");
       $("#AddComment")
               .change(FitToContent)
@@ -797,6 +801,25 @@ block scripts
       else {
         $("#categoryDisplay").html("Missing Category Description");
       }
+    }
+
+    function showModified() {
+
+      var modified = false;
+
+      $(".af").each(function(index,object){
+
+        var newVal = $(this).val();
+        var oldVal = $("#old_" + this.name + ":hidden").val();
+
+        if (oldVal != newVal) {
+          $(this).css("backgroundColor", "#ffffcc");
+          modified = true;
+        } else {
+          $(this).css("backgroundColor", "");
+        }
+      });
+      $("#saveButton").prop("disabled",!modified)
     }
 
     function showHideUnpublishReason() {
