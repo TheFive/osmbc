@@ -1,5 +1,13 @@
 # Change Log
 
+## [2.2.9](https://github.com/TheFive/osmbc/tree/2.2.9) (2017-03-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.8...2.2.9)
+
+**Implemented enhancements:**
+
+- Show modified status in new article editor by color and disabling save button [\#630](https://github.com/TheFive/osmbc/issues/630)
+- Move Mail Logging from DB to Hard Drive, disable online review of maillog [\#563](https://github.com/TheFive/osmbc/issues/563)
+
 ## [2.2.8](https://github.com/TheFive/osmbc/tree/2.2.8) (2017-03-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.7...2.2.8)
 
