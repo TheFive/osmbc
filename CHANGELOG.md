@@ -1,12 +1,5 @@
 # Change Log
 
-## [2.2.9a](https://github.com/TheFive/osmbc/tree/2.2.9a) (2017-03-08)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.9...2.2.9a)
-
-**Fixed bugs:**
-
-- Slack integration editor crashes when a channel name does not start with "\#" [\#632](https://github.com/TheFive/osmbc/issues/632)
-
 ## [2.2.9](https://github.com/TheFive/osmbc/tree/2.2.9) (2017-03-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.8...2.2.9)
 
@@ -589,13 +582,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
