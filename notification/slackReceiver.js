@@ -256,6 +256,7 @@ function initialise(callback) {
   channelReceiverMap = {};
   for (var i = 0; i < channelList.length; i++) {
     var channel = channelList[i];
+    if (channel.channel.substring(0,1)!="#") continue;
     channelReceiverMap["Slack Connection " + i] = new ConfigFilter(channel, new SlackReceiver(channel.slack + channel.channel, channel.slack, channel.channel));
   }
   iteratorReceiver.receiverMap = channelReceiverMap;
