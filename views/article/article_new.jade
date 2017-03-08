@@ -182,6 +182,7 @@ block content
       .form-group
         label.col-md-1="Title"
         .col-md-10
+          div.label.label-danger#title_unsaved(style="display:none")="unsaved"
           textarea.hidden.form-control(id="old_title" name="old_title",rows=1,hide=true) #{article.title}
           textarea.form-control.af(id="title" name="title",rows=1 readonly=!article.isChangeAllowed("title")) #{article.title}
 
@@ -208,6 +209,7 @@ block content
       .form-group
         label.col-md-1="Collection"
         .col-md-10
+          div.label.label-danger#collection_unsaved(style="display:none")="unsaved"
           textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection")) #{article.collection}
           textarea.hidden.form-control(id="old_collection" name="old_collection",rows=1,hide=true) #{article.collection}
     .row
@@ -238,6 +240,7 @@ block content
           .col-md-2
           .col-md-10
             span.label.label-default(id="left_lang" class="#{lbg}")=params.left_lang
+            span.label.label-danger(style="display:none" id="markdown"+params.left_lang+"_unsaved" class="lbg")="unsaved"
 
         .row.markdownArea
           .col-md-2
@@ -256,9 +259,12 @@ block content
           .col-md-12
             for l in layout.activeLanguages
               if l === params.right_lang
-                span.label.label-default.RL(class="#{rbg} RL-#{l}")=l
+                span.label.label-default.RL(class="RL-#{l}")=l
+                span.label.label-danger.RL(style="display:none" id="markdown"+l+"_unsaved" class="RL-#{l}")="unsaved"
               else
                 span.label.label-default.RL.hidden(class= "RL-#{l}")=l
+                span.label.label-danger.RL.hidden(style="display:none" id="markdown"+l+"_unsaved" class="RL-#{l}")="unsaved"
+
         .row
           .col-md-12
             for l in layout.activeLanguages
@@ -814,9 +820,11 @@ block scripts
 
         if (oldVal != newVal) {
           $(this).css("backgroundColor", "#ffffcc");
+          $("#"+this.name+"_unsaved").show()
           modified = true;
         } else {
           $(this).css("backgroundColor", "");
+          $("#"+this.name+"_unsaved").hide()
         }
       });
       $("#saveButton").prop("disabled",!modified)
