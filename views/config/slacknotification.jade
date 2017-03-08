@@ -27,7 +27,11 @@ block showContentOfConfig
         each c in config.json
           tr
             td=c.slack
-            td=c.channel
+            if c.channel.substring(0,1)==="#"
+              td=c.channel
+            else
+              td.danger=c.channel
+
             td=c.notifyNewCollection
             td=c.notifyAllComment
             td
