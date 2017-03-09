@@ -64,7 +64,7 @@ mixin articleTranslateButton(langFrom,langTo)
       span="Error occured"
 
 mixin saveButton
-  button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="window.onbeforeunload=null; document.getElementById('input').submit();") Save
+  button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="window.onbeforeunload=null; disableUnchanged();document.getElementById('input').submit();") Save
 
 mixin doublettesButton
   if articleReferences.count >= 1
@@ -868,13 +868,34 @@ block scripts
 
     }
 
+    function disableUnchanged() {
+      activeLanguages.forEach(function(lang){
+        if ($("#markdown"+lang).val() === $("#old_markdown"+lang).val()) {
+          $("#markdown"+lang).prop("disabled",true);
+          $("#old_markdown"+lang).prop("disabled",true);
+        }
+      });
+
+    }
+
     function submitAndRedraw(form,redraw) {
       var jqForm = $(form);
       var url = jqForm.attr('action');
 
-      $.post(url, jqForm.serialize(), function (data) {
+      var toPost = jqForm.serialize();
+
+
+      // clean unchanged values, to reduce post overhead.
+      for (var k in toPost) {
+        if (toPost[k]===toPost["old_"+k]) {
+          delete toPost[k];
+          delete toPost["old_"+k];
+        }
+      }
+
+      $.post(url, toPost , function (data) {
           if (data === "OK") {
-            redrawFunc(redraw);
+            if (redraw) redrawFunc(redraw);
           }
         },
         'text' // I expect a JSON response
