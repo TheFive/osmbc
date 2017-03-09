@@ -462,7 +462,6 @@ block scripts
 
     // initialise all callbacks with jQuery
     function init() {
-      $(window).on("beforeunload",unloadWindow);
 
       noTranslationText = $(".markdownMessage:first").html();
 
@@ -827,7 +826,13 @@ block scripts
           $("#"+this.name+"_unsaved").hide()
         }
       });
-      $("#saveButton").prop("disabled",!modified)
+      $("#saveButton").prop("disabled",!modified);
+      if (modified) {
+        $(window).on("beforeunload",unloadWindow);
+      } else {
+        $(window).on("beforeunload");
+      }
+
     }
 
     function showHideUnpublishReason() {
