@@ -235,7 +235,7 @@ describe("notification/slackReceiver", function() {
       blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit"}, function(err, blog) {
         var slack2a = nock("https://hooks.slack.com/")
                   .post("/services/theweeklyosm", checkPostJson(
-                    {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed ()",
+                    {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed (, )",
                       "username": "testbc(testuser)",
                       "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
                       "channel": "#osmbcblog"}))
@@ -279,7 +279,7 @@ describe("notification/slackReceiver", function() {
       blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit",reviewCommentES:[{timestamp:"__timestamp__"}]}, function(err, blog) {
         var slack2a = nock("https://hooks.slack.com/")
           .post("/services/theweeklyosm", checkPostJson(
-            {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed (<https://testosm.bc/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__| view changes>)",
+            {"text": "<https://testosm.bc/blog/blog|blog>(ES) has been reviewed: I have reviewed (<https://testosm.bc/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__&user=testuser|User Review>, <https://testosm.bc/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__|Full Review>)",
               "username": "testbc(testuser)",
               "icon_url": "https://testosm.bc/images/osmbc_im_logo.png",
               "channel": "#osmbcblog"}))
