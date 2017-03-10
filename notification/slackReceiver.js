@@ -78,9 +78,12 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, b
 
 
   let reviewChangesLink = "";
+  let reviewChangesWithUserLink = "";
 
   if (blog["reviewComment" + lang] && blog["reviewComment" + lang][0]) {
-    reviewChangesLink = "<" + osmbcUrl + "/changes/log?blog=" + blog.name + "&table=article&property=markdown" + lang + "&date=GE:" + blog["reviewComment" + lang][0].timestamp + "| view changes>";
+    let baselink = osmbcUrl + "/changes/log?blog=" + blog.name + "&table=article&property=markdown" + lang + "&date=GE:" + blog["reviewComment" + lang][0].timestamp;
+    reviewChangesLink = "<" + baselink + "|Full Review>";
+    reviewChangesWithUserLink = "<" + baselink + "&user="+user.OSMUser+ "|User Review>";
   }
 
 
@@ -93,7 +96,7 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, b
   } else if (status === "reviewing...") {
     subject = "has started Review for: " + subject + "(" + lang + ")";
   } else {
-    subject += "(" + lang + ") has been reviewed: " + status + " (" + reviewChangesLink + ")";
+    subject += "(" + lang + ") has been reviewed: " + status + " (" + reviewChangesWithUserLink + ", "+reviewChangesLink+")";
   }
   var username = botName + "(" + user.OSMUser + ")";
 
