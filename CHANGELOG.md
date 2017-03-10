@@ -1,5 +1,17 @@
 # Change Log
 
+## [2.2.11](https://github.com/TheFive/osmbc/tree/2.2.11) (2017-03-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.10...2.2.11)
+
+**Implemented enhancements:**
+
+- avert warning when leaving unchanged editpage [\#448](https://github.com/TheFive/osmbc/issues/448)
+
+**Fixed bugs:**
+
+- New Editor has problems with Calendar Article [\#636](https://github.com/TheFive/osmbc/issues/636)
+- View Changes doesn't filter on Users any longer. [\#635](https://github.com/TheFive/osmbc/issues/635)
+
 ## [2.2.10](https://github.com/TheFive/osmbc/tree/2.2.10) (2017-03-08)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.9a...2.2.10)
 
@@ -27,7 +39,6 @@
 
 **Fixed bugs:**
 
-- using format dd/mm/yyyy for EN in Calendar as well [\#628](https://github.com/TheFive/osmbc/issues/628)
 - Mattermost: Logo of Bot is the same as TheFive Logo. [\#625](https://github.com/TheFive/osmbc/issues/625)
 - User can't save his settings, because timestamp is updating "version" [\#623](https://github.com/TheFive/osmbc/issues/623)
 
@@ -596,13 +607,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
@@ -2110,17 +2121,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
