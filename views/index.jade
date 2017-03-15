@@ -8,7 +8,7 @@ block content
         h2.visible-xs
           | OSM BC
         .row 
-          p
+          p.osmbc-help-text
             | See recent blogs to work on below. If you just want to collect an article or an idea, use the collect menu on in the navbar.
         .row
           h3
@@ -106,11 +106,12 @@ block content
                       !{change.htmlDiffText(40)}
                   td= layout.moment(change.timestamp).fromNow()
         div
-          p
-            |only displaying changes 
+          p.osmbc-help-text
+            |only displaying changes:
             span.osmbc-inserted
-              |inserted text 
+              | This is inserted text
+            span=" "
             span.osmbc-deleted
-              |removed text
+              | and this is removed text
 
   div.footer

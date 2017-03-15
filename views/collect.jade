@@ -16,7 +16,7 @@ block content
           .col-sm-6
             input(type="text",class="form-control",name ="search",value="#{search}")
             if showCollect 
-              p.text-muted(align="center") Please check your link for duplicates before   collecting.
+              p.osmbc-help-text(align="center") Please check your link for duplicates before   collecting.
 
           .col-sm-2
             button.btn.btn-large.btn-primary(name="SearchNow" type="submit") Search
@@ -99,7 +99,7 @@ block content
             .col-md-6
               .row
                 .col-md-7
-                  p(id="categoryDisplay" style={color:'Gray'})
+                  p.osmbc-help-text(id="categoryDisplay")
                 .col-md-5
                   input.btn.btn-large.btn-primary(type="submit", id="OK",value="OK")
                   a(href="#{layout.htmlroot}/article/searchandcreate?edit=false" class="btn btn-default" role="button") Cancel
