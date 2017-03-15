@@ -35,8 +35,8 @@ mixin articleMarkdown(lang,disabled)
   if placeholder.markdown[lang]
     - p = placeholder.markdown[lang];
   textarea.markdownEdit.form-control.af(id="markdown#{lang}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6 readonly = d) #{article["markdown" + lang]}
-  div.markdownMessage(id="text"+lang )
-    | 'no translation' or '-' to specify no translation wanted.
+  p.osmbc-help-text="'no translation' or '-' to specify no translation wanted."
+  p.markdownMessage.bg-danger(id="text"+lang lang="#{lang}" style="display:none" )="Default Error Message"
 
 
 mixin articlePreview(lang)
@@ -107,10 +107,12 @@ block content
           .col-md-2
           .col-md-2
         .row
-          .col-md-3
+          .col-md-4
+
             +languageDisplay(article,{func: "showRL"})
+            p.osmbc-help-text="Click to change left lang"
             +noTranslationButton
-          .col-md-2
+          .col-md-1
           .col-md-4
             +saveButton
             +cancelButton
@@ -145,38 +147,39 @@ block content
         .row
           .col-md-2
           .col-md-10
-            div(id="categoryDisplay" style={color: 'Gray'})
-
-
-
-
-
-    // Display Predecessor Row
-    .row
-      .form-group
-        label.col-md-1="Predecessor"
-        +leftcolumn
-          textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true) #{article.predecessorId}
-          select(id="predecessorId",name="predecessorId" ).form-control.af
-            if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
-              option(value="" selected) None
-            else
-              option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
-            if article.predecessorId === "0"
-              option(value="0" selected) First
-            else
-              option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
-            for a in articleCategories
-              if (a.id == article.predecessorId)
-                option(value=a.id selected )=a.title
-              else
-                - d= null;
-                for b in articleCategories
-                  - if (b.predecessorId == a.predecessorId) {d=b;}
-                if !article.isChangeAllowed("predecessorId")
-                  option(value=a.id disabled=true)=a.title+"("+d.title+")"
+            p.osmbc-help-text(id="categoryDisplay")
+        // Display Predecessor Row
+        .row
+          .form-group
+            label.col-md-2="Predecessor"
+            .col-md-10
+              textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true) #{article.predecessorId}
+              select(id="predecessorId",name="predecessorId" ).form-control.af
+                if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
+                  option(value="" selected) None
                 else
-                  option(value=a.id )=a.title
+                  option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
+                if article.predecessorId === "0"
+                  option(value="0" selected) First
+                else
+                  option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
+                for a in articleCategories
+                  if (a.id == article.predecessorId)
+                    option(value=a.id selected )=a.title
+                  else
+                    - d= null;
+                    for b in articleCategories
+                      - if (b.predecessorId == a.predecessorId) {d=b;}
+                    if !article.isChangeAllowed("predecessorId")
+                      option(value=a.id disabled=true)=a.title+"("+d.title+")"
+                    else
+                      option(value=a.id )=a.title
+
+
+
+
+
+
     // Display Title Row
     .row
       .form-group
@@ -218,7 +221,7 @@ block content
       .col-md-6
         .div(id="linkArea")
       .col-md-4
-        p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
+        p.osmbc-help-text Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
 
 
 
@@ -463,8 +466,6 @@ block scripts
     // initialise all callbacks with jQuery
     function init() {
 
-      noTranslationText = $(".markdownMessage:first").html();
-
       $(".markdownEdit")
               .change(convertMinusNoTranslation)
               .focusout(convertMinusNoTranslation)
@@ -670,7 +671,6 @@ block scripts
     function previewMarkdown() {
       var md = this.value;
       preview = $(".preview[lang=" + this.lang + "]");
-      text = $(".markdownMessage[lang=" + this.lang + "]");
       preview.html(convert(md));
       resizePictures();
     }
@@ -688,16 +688,19 @@ block scripts
 
       // Check for long links
       var longLink = md.search(/\[[^\]]{40,}\]/g);
+      console.log(longLink);
+      console.log(text);
+      console.log(this.lang);
+      console.log(text.length);
       if (longLink>=0) {
-        text.innerHTML = "<p>Please shorten ["+md.substring(longLink+1,longLink+40)+"...]</p>"
-        text.css("backgroundColor","#FDC6CD");
+        text.show(400);
+        text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
         errorOccured = true
         }
 
       if (!errorOccured) {
          //preview.style.backgroundColor="";
-         text.css("backgroundColor","");
-         text.innerHTML = noTranslationText;
+          text.hide(400);
         }
     }
 
