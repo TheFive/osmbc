@@ -1,5 +1,17 @@
 # Change Log
 
+## [2.2.12](https://github.com/TheFive/osmbc/tree/2.2.12) (2017-03-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.11...2.2.12)
+
+**Implemented enhancements:**
+
+- Allow both languages \(left & Right\) to start a review [\#641](https://github.com/TheFive/osmbc/issues/641)
+
+**Fixed bugs:**
+
+- Leave new Article Editor is missing a Warning, if something has changed. [\#642](https://github.com/TheFive/osmbc/issues/642)
+- Copy flag button is not working [\#640](https://github.com/TheFive/osmbc/issues/640)
+
 ## [2.2.11](https://github.com/TheFive/osmbc/tree/2.2.11) (2017-03-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.10...2.2.11)
 
@@ -50,7 +62,7 @@
 
 **Implemented enhancements:**
 
-- Move Log if Email to file [\#622](https://github.com/TheFive/osmbc/issues/622)
+- Move Log of Email to file [\#622](https://github.com/TheFive/osmbc/issues/622)
 
 **Fixed bugs:**
 
