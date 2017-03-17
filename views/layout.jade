@@ -6,6 +6,7 @@ mixin homeButton(addclass)
   else
     a.bg-success(href='#{layout.htmlroot}/changelog' class=addclass) Whats New?
 
+
 mixin firstBlogOfList(list,count,c)
   - if (!count) count = 1
   if (list.length > 0)
@@ -45,6 +46,10 @@ block all
       .navbar.navbar-default.navbar-fixed-top(role='navigation')
         .container-fluid
           .navbar-header.pull-left
+            //- generate a list of all blogs for Menu
+            - var listall = [].concat(layout.listOfReviewBlog)
+            - listall = listall.concat(layout.listOfEditBlog)
+            - listall = listall.concat(layout.listOfOpenBlog)
 
             +homeButton("navbar-brand hidden-xs")
             ul.nav.navbar-nav.pull-left
@@ -69,9 +74,7 @@ block all
                   if (layout.secondLangMentions>0)
                     span.badge.osmbcbadge-lang2=layout.secondLangMentions
             ul.nav.navbar-nav.pull-left.visible-xs
-              - var listall = [].concat(layout.listOfReviewBlog)
-              - listall = listall.concat(layout.listOfEditBlog)
-              - listall = listall.concat(layout.listOfOpenBlog)
+
               +firstBlogOfList(listall)
 
 
@@ -87,9 +90,8 @@ block all
             ul.nav.navbar-nav.navbar-left
               li.show-xs
                 +homeButton("visible-xs")
-              +firstBlogOfList(layout.listOfReviewBlog,2)
-              +firstBlogOfList(layout.listOfEditBlog,2)
-              +firstBlogOfList(layout.listOfOpenBlog,2)
+              +firstBlogOfList(listall,2)
+
 
 
               li.dropdown

@@ -35,8 +35,8 @@ mixin articleMarkdown(lang,disabled)
   if placeholder.markdown[lang]
     - p = placeholder.markdown[lang];
   textarea.markdownEdit.form-control.af(id="markdown#{lang}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6 readonly = d) #{article["markdown" + lang]}
-  div.markdownMessage(id="text"+lang )
-    | 'no translation' or '-' to specify no translation wanted.
+  p.osmbc-help-text="'no translation' or '-' to specify no translation wanted."
+  p.markdownMessage.bg-danger(id="text"+lang lang="#{lang}" style="display:none" )="Default Error Message"
 
 
 mixin articlePreview(lang)
@@ -64,7 +64,7 @@ mixin articleTranslateButton(langFrom,langTo)
       span="Error occured"
 
 mixin saveButton
-  button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="window.onbeforeunload=null; disableUnchanged();document.getElementById('input').submit();") Save
+  button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="disableUnchanged();document.getElementById('input').submit();") Save
 
 mixin doublettesButton
   if articleReferences.count >= 1
@@ -74,7 +74,7 @@ mixin doublettesButton
 
 
 mixin cancelButton
-  button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
+  button.btn.btn-large.btn-default(type = "button" onclick ="disableUnchanged(); location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
 
 
 mixin noTranslationButton
@@ -90,7 +90,7 @@ mixin noTranslationButton
 
 
 block content
-  p="This Editor is BETA, please change to old editor in your settings in case of any problems."
+  p.osmbc-help-text="This Editor is BETA, please change to old editor in your settings in case of any problems."
   form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}/witholdvalues", method="post")
     .row
       // Block for Buttons in the upper right corner and on the top in mobile
@@ -107,10 +107,12 @@ block content
           .col-md-2
           .col-md-2
         .row
-          .col-md-3
+          .col-md-4
+
             +languageDisplay(article,{func: "showRL"})
+            p.osmbc-help-text="Click to change left lang"
             +noTranslationButton
-          .col-md-2
+          .col-md-1
           .col-md-4
             +saveButton
             +cancelButton
@@ -145,38 +147,39 @@ block content
         .row
           .col-md-2
           .col-md-10
-            div(id="categoryDisplay" style={color: 'Gray'})
-
-
-
-
-
-    // Display Predecessor Row
-    .row
-      .form-group
-        label.col-md-1="Predecessor"
-        +leftcolumn
-          textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true) #{article.predecessorId}
-          select(id="predecessorId",name="predecessorId" ).form-control.af
-            if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
-              option(value="" selected) None
-            else
-              option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
-            if article.predecessorId === "0"
-              option(value="0" selected) First
-            else
-              option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
-            for a in articleCategories
-              if (a.id == article.predecessorId)
-                option(value=a.id selected )=a.title
-              else
-                - d= null;
-                for b in articleCategories
-                  - if (b.predecessorId == a.predecessorId) {d=b;}
-                if !article.isChangeAllowed("predecessorId")
-                  option(value=a.id disabled=true)=a.title+"("+d.title+")"
+            p.osmbc-help-text(id="categoryDisplay")
+        // Display Predecessor Row
+        .row
+          .form-group
+            label.col-md-2="Predecessor"
+            .col-md-10
+              textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true) #{article.predecessorId}
+              select(id="predecessorId",name="predecessorId" ).form-control.af
+                if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
+                  option(value="" selected) None
                 else
-                  option(value=a.id )=a.title
+                  option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
+                if article.predecessorId === "0"
+                  option(value="0" selected) First
+                else
+                  option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
+                for a in articleCategories
+                  if (a.id == article.predecessorId)
+                    option(value=a.id selected )=a.title
+                  else
+                    - d= null;
+                    for b in articleCategories
+                      - if (b.predecessorId == a.predecessorId) {d=b;}
+                    if !article.isChangeAllowed("predecessorId")
+                      option(value=a.id disabled=true)=a.title+"("+d.title+")"
+                    else
+                      option(value=a.id )=a.title
+
+
+
+
+
+
     // Display Title Row
     .row
       .form-group
@@ -218,7 +221,7 @@ block content
       .col-md-6
         .div(id="linkArea")
       .col-md-4
-        p Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
+        p.osmbc-help-text Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
 
 
 
@@ -292,17 +295,20 @@ block content
 
       .col-md-1
         .row
-           i#languageFlagsShow.fa.fa-flag.fa-2x(onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
+           i#languageFlagsShow.fa.fa-flag.fa-2x(
+               onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
 
-       .row#languageFlags.hidden
-         - for (lang in languageFlags)
-           img(id="#{lang}",
+        .row#languageFlags.hidden
+           - for (lang in languageFlags)
+             img(id="#{lang}",
                src="#{languageFlags[lang]}",
                class="img-thumbnail" ,
                width = 40,
                data-toggle="tooltip" data-placement="left" title=lang
                onclick="javascript:myclick(this.id)"
                ondragstart = "ondragstartflag(event,this.id);")
+           p.osmbc-help-text="Click to copy to clipboard, or use drag and drop."
+
 
 
 
@@ -438,57 +444,54 @@ block scripts
     if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
 
 
-    // Function to put several Events in series
-    // Usage
-    // series(callback1,callback2,callback3)
-    // generates a callback, that calls all 3 callbacks
-    // in series, bind to this
-    function series() {
-      var _arguments = arguments;
-      return function() {
-        for (var i = 0; i < _arguments.length; i++) {
-          _arguments[i].bind(this)();
-        }
-      }
-    }
-
-
 
     // unlaodWindow Handler, to generate messages that form is left unsaved
-    function unloadWindow(event) {
-      event.returnValue = "Oops, it looks like you have forgotten to save your work.";
+    function unloadWindowWarning(event) {
+      let dialogText = "Oops, it looks like you have forgotten to save your work."
+      event.returnValue = dialogText;
+      return dialogText;
     };
 
 
     // initialise all callbacks with jQuery
     function init() {
 
-      noTranslationText = $(".markdownMessage:first").html();
-
       $(".markdownEdit")
               .change(convertMinusNoTranslation)
+              .change(previewMarkdown)
+              .change(showModified)
               .focusout(convertMinusNoTranslation)
-              .keyup(series(previewMarkdown,checkForTable,FitToContent,checkMarkdownError,showModified))
+              .keyup(previewMarkdown)
+              .keyup(checkForTable)
+              .keyup(FitToContent)
+              .keyup(checkMarkdownError)
+              .keyup(showModified)
               .on("paste",pasteEvent)
               .on("drop",pasteEvent)
               .trigger("change");
       $("#collection")
-              .change(series(onchangeCollection,FitToContent))
-              .keyup(series(onchangeCollection,FitToContent,showModified))
+              .change(onchangeCollection)
+              .change(FitToContent)
+              .keyup(onchangeCollection)
+              .keyup(FitToContent)
+              .keyup(showModified)
               .trigger("change");
       $("#title")
-        .keyup(showModified)
+              .keyup(showModified)
       $("#predecessorId")
-        .change(showModified)
+              .change(showModified)
       $("#blog")
-              .change(series(showHideUnpublishReason,showModified))
+              .change(showHideUnpublishReason)
+              .change(showModified)
               .trigger("change");
       $("#comment")
               .change(FitToContent)
               .keyup(FitToContent)
               .trigger("change");
       $("#categoryEN")
-              .change(series(syncPlaceholder,showHideUnpublishReason,showModified))
+              .change(syncPlaceholder)
+              .change(showHideUnpublishReason)
+              .change(showModified)
               .trigger("change");
       $("#AddComment")
               .change(FitToContent)
@@ -670,7 +673,6 @@ block scripts
     function previewMarkdown() {
       var md = this.value;
       preview = $(".preview[lang=" + this.lang + "]");
-      text = $(".markdownMessage[lang=" + this.lang + "]");
       preview.html(convert(md));
       resizePictures();
     }
@@ -688,16 +690,19 @@ block scripts
 
       // Check for long links
       var longLink = md.search(/\[[^\]]{40,}\]/g);
+      console.log(longLink);
+      console.log(text);
+      console.log(this.lang);
+      console.log(text.length);
       if (longLink>=0) {
-        text.innerHTML = "<p>Please shorten ["+md.substring(longLink+1,longLink+40)+"...]</p>"
-        text.css("backgroundColor","#FDC6CD");
+        text.show(400);
+        text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
         errorOccured = true
         }
 
       if (!errorOccured) {
          //preview.style.backgroundColor="";
-         text.css("backgroundColor","");
-         text.innerHTML = noTranslationText;
+          text.hide(400);
         }
     }
 
@@ -754,9 +759,11 @@ block scripts
 
     // click on a flag Event
     // Copy the flag related information to the clipboard as markdown link
-    var myclick = function () {
+    var myclick = function (id) {
 
-      src = this.src;
+      src = $("#"+id).attr("src");
+
+
       src = "![("+id+")]("+src+")";
       clip(src);
       alert(id+ " flag is copied to clipboard");
@@ -828,9 +835,9 @@ block scripts
       });
       $("#saveButton").prop("disabled",!modified);
       if (modified) {
-        $(window).on("beforeunload",unloadWindow);
+        $(window).on("beforeunload",unloadWindowWarning);
       } else {
-        $(window).on("beforeunload");
+        $(window).off("beforeunload",unloadWindowWarning);
       }
 
     }
@@ -875,6 +882,7 @@ block scripts
           $("#old_markdown"+lang).prop("disabled",true);
         }
       });
+      $(window).off("beforeunload",unloadWindowWarning);
 
     }
 

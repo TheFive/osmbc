@@ -187,4 +187,6 @@ table {
 .osmbc-help-text {
   font-style: italic;
   color: lightblue;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
