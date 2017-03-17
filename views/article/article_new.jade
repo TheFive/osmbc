@@ -90,7 +90,7 @@ mixin noTranslationButton
 
 
 block content
-  p="This Editor is BETA, please change to old editor in your settings in case of any problems."
+  p.osmbc-help-text="This Editor is BETA, please change to old editor in your settings in case of any problems."
   form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}/witholdvalues", method="post")
     .row
       // Block for Buttons in the upper right corner and on the top in mobile
@@ -295,17 +295,20 @@ block content
 
       .col-md-1
         .row
-           i#languageFlagsShow.fa.fa-flag.fa-2x(onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
+           i#languageFlagsShow.fa.fa-flag.fa-2x(
+               onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
 
-       .row#languageFlags.hidden
-         - for (lang in languageFlags)
-           img(id="#{lang}",
+        .row#languageFlags.hidden
+           - for (lang in languageFlags)
+             img(id="#{lang}",
                src="#{languageFlags[lang]}",
                class="img-thumbnail" ,
                width = 40,
                data-toggle="tooltip" data-placement="left" title=lang
                onclick="javascript:myclick(this.id)"
                ondragstart = "ondragstartflag(event,this.id);")
+           p.osmbc-help-text="Click to copy to clipboard, or use drag and drop."
+
 
 
 
@@ -441,21 +444,6 @@ block scripts
     if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
 
 
-    // Function to put several Events in series
-    // Usage
-    // series(callback1,callback2,callback3)
-    // generates a callback, that calls all 3 callbacks
-    // in series, bind to this
-    function series() {
-      var _arguments = arguments;
-      return function() {
-        for (var i = 0; i < _arguments.length; i++) {
-          _arguments[i].bind(this)();
-        }
-      }
-    }
-
-
 
     // unlaodWindow Handler, to generate messages that form is left unsaved
     function unloadWindowWarning(event) {
@@ -470,28 +458,40 @@ block scripts
 
       $(".markdownEdit")
               .change(convertMinusNoTranslation)
+              .change(previewMarkdown)
+              .change(showModified)
               .focusout(convertMinusNoTranslation)
-              .keyup(series(previewMarkdown,checkForTable,FitToContent,checkMarkdownError,showModified))
+              .keyup(previewMarkdown)
+              .keyup(checkForTable)
+              .keyup(FitToContent)
+              .keyup(checkMarkdownError)
+              .keyup(showModified)
               .on("paste",pasteEvent)
               .on("drop",pasteEvent)
               .trigger("change");
       $("#collection")
-              .change(series(onchangeCollection,FitToContent))
-              .keyup(series(onchangeCollection,FitToContent,showModified))
+              .change(onchangeCollection)
+              .change(FitToContent)
+              .keyup(onchangeCollection)
+              .keyup(FitToContent)
+              .keyup(showModified)
               .trigger("change");
       $("#title")
-        .keyup(showModified)
+              .keyup(showModified)
       $("#predecessorId")
-        .change(showModified)
+              .change(showModified)
       $("#blog")
-              .change(series(showHideUnpublishReason,showModified))
+              .change(showHideUnpublishReason)
+              .change(showModified)
               .trigger("change");
       $("#comment")
               .change(FitToContent)
               .keyup(FitToContent)
               .trigger("change");
       $("#categoryEN")
-              .change(series(syncPlaceholder,showHideUnpublishReason,showModified))
+              .change(syncPlaceholder)
+              .change(showHideUnpublishReason)
+              .change(showModified)
               .trigger("change");
       $("#AddComment")
               .change(FitToContent)
