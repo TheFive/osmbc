@@ -759,9 +759,11 @@ block scripts
 
     // click on a flag Event
     // Copy the flag related information to the clipboard as markdown link
-    var myclick = function () {
+    var myclick = function (id) {
 
-      src = this.src;
+      src = $("#"+id).attr("src");
+
+
       src = "![("+id+")]("+src+")";
       clip(src);
       alert(id+ " flag is copied to clipboard");
