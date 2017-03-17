@@ -92,6 +92,33 @@ mixin reviewBlog(reviewComments,lang)
                 .col-md-4
                   button.btn.btn-large.btn-primary(id="reviewButton" + lang type="submit") Start Personal Review
 
+mixin blogReviewButtons(lang)
+  if !(blog["close"+lang])
+    - _rc = blog["reviewComment"+lang];
+    if (_rc)
+      .row
+        .col-md-12
+          form(id="startReview" name="startReview", action="#{layout.htmlroot}/blog/#{blog.name}/setLangStatus", method="post")
+            input.hidden(type="text",name="lang" value = lang)
+
+            if (blog["exported"+lang])
+              input.hidden(type="text",name ="action" value = "closelang")
+              button.btn.btn-large.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
+            else
+              input.hidden(type="text",name ="action" value = "markexported")
+              button.btn.btn-large.btn-warning(id="didexport" type = "submit" ) Did Export (#{lang})
+
+      if (blog["exported"+lang])
+        .row
+          .alert.bg-danger.text-center.bold
+            | <strong>Blog is exported, please do the last Review in WordPress</strong>
+
+    else
+      if blog.status != "open"
+        form(id="startReview" name="startReview", action="#{layout.htmlroot}/blog/#{blog.name}/setLangStatus", method="post")
+          input.hidden(type="text",name ="action" value = "startreview")
+          input.hidden(type="text",name="lang" value = lang)
+          button.btn.btn-large.btn-primary(id="readyreview" type="submit") Set #{blog.name}(#{lang}) ready for review
 
 
 block content
@@ -145,33 +172,10 @@ block content
         span.hidden-xs=" ("+blog.getStatus(left_lang)+")"
 
       
-    .col-md-6
-      if !(blog["close"+left_lang])
-        - reviewCommentsLeft = blog["reviewComment"+left_lang];
-        if (reviewCommentsLeft)
-          .row
-            .col-md-12
-              form(id="startReview" name="startReview", action="#{layout.htmlroot}/blog/#{blog.name}/setLangStatus", method="post")
-                input.hidden(type="text",name="lang" value = left_lang)
-
-                if (blog["exported"+left_lang])
-                  input.hidden(type="text",name ="action" value = "closelang")
-                  button.btn.btn-large.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{left_lang})
-                else
-                  input.hidden(type="text",name ="action" value = "markexported")
-                  button.btn.btn-large.btn-warning(id="didexport" type = "submit" ) Did Export (#{left_lang})
-
-          if (blog["exported"+left_lang])
-            .row
-              .alert.bg-danger.text-center.bold
-                | <strong>Blog is exported, please do the last Review in WordPress</strong>
-      
-        else
-          if blog.status != "open"
-            form(id="startReview" name="startReview", action="#{layout.htmlroot}/blog/#{blog.name}/setLangStatus", method="post")
-              input.hidden(type="text",name ="action" value = "startreview")
-              input.hidden(type="text",name="lang" value = left_lang)
-              button.btn.btn-large.btn-primary(id="readyreview" type="submit") Set #{blog.name}(#{left_lang}) ready for review
+    .col-md-3
+      +blogReviewButtons(left_lang)
+    .col-md-3
+      +blogReviewButtons(right_lang)
 
   .row
     div(class=columnLeftSize)
