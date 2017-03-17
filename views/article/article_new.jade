@@ -64,7 +64,7 @@ mixin articleTranslateButton(langFrom,langTo)
       span="Error occured"
 
 mixin saveButton
-  button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="window.onbeforeunload=null; disableUnchanged();document.getElementById('input').submit();") Save
+  button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="disableUnchanged();document.getElementById('input').submit();") Save
 
 mixin doublettesButton
   if articleReferences.count >= 1
@@ -74,7 +74,7 @@ mixin doublettesButton
 
 
 mixin cancelButton
-  button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
+  button.btn.btn-large.btn-default(type = "button" onclick ="disableUnchanged(); location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
 
 
 mixin noTranslationButton
@@ -458,8 +458,10 @@ block scripts
 
 
     // unlaodWindow Handler, to generate messages that form is left unsaved
-    function unloadWindow(event) {
-      event.returnValue = "Oops, it looks like you have forgotten to save your work.";
+    function unloadWindowWarning(event) {
+      let dialogText = "Oops, it looks like you have forgotten to save your work."
+      event.returnValue = dialogText;
+      return dialogText;
     };
 
 
@@ -831,9 +833,9 @@ block scripts
       });
       $("#saveButton").prop("disabled",!modified);
       if (modified) {
-        $(window).on("beforeunload",unloadWindow);
+        $(window).on("beforeunload",unloadWindowWarning);
       } else {
-        $(window).on("beforeunload");
+        $(window).off("beforeunload",unloadWindowWarning);
       }
 
     }
@@ -878,6 +880,7 @@ block scripts
           $("#old_markdown"+lang).prop("disabled",true);
         }
       });
+      $(window).off("beforeunload",unloadWindowWarning);
 
     }
 
