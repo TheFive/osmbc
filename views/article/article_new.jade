@@ -963,8 +963,6 @@ block scripts
       var from =  langFrom.toLowerCase();
       var to = langTo.toLowerCase();
       var originalText = document.getElementById("markdown" + langFrom).value;
-      if (from === "jp") {from = "ja"};
-      if (to === "jp") {to = "ja"}
       jQuery.post("#{layout.htmlroot}/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
         data = data.replace(/] \(/g, "](");
         document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
