@@ -941,14 +941,15 @@ block scripts
     function translate(langFrom, langTo) {
       document.getElementById("translate" + langFrom + langTo).classList.add("hidden");
       document.getElementById("translateWait" + langFrom + langTo).classList.remove("hidden");
-      var leftLang = "#{params.left_lang.toLowerCase()}";
-      var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
+      var from =  langFrom.toLowerCase();
+      var to = langTo.toLowerCase();
       var originalText = document.getElementById("markdown" + langFrom).value;
-      jQuery.post("#{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
+      if (from === "jp") {from = "ja"};
+      if (to === "jp") {to = "ja"}
+      jQuery.post("#{layout.htmlroot}/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
         data = data.replace(/] \(/g, "](");
         document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
-        document.getElementById("markdown" + langTo).value = data;
-        onchangeFunction(langTo)();
+        $("#markdown" + langTo).val(data).trigger("change");
       }).fail(function (err) {
         console.log(err);
         document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
