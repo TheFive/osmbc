@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.2.13](https://github.com/TheFive/osmbc/tree/2.2.13) (2017-03-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.12...2.2.13)
+
+**Implemented enhancements:**
+
+- Show Categories in Future Preview and improve column display in Full Review [\#639](https://github.com/TheFive/osmbc/issues/639)
+
 ## [2.2.12](https://github.com/TheFive/osmbc/tree/2.2.12) (2017-03-17)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.11...2.2.12)
 
@@ -619,13 +626,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
