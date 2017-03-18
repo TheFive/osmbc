@@ -656,7 +656,12 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
     var result = {};
     result.teamString = teamString;
     result.articles = articles;
-    result.futureArticles = futureArticles;
+    result.futureArticles = {};
+    futureArticles.forEach(function (a) {
+      if (!result.futureArticles[a.categoryEN]) result.futureArticles[a.categoryEN] = [];
+      result.futureArticles[a.categoryEN].push(a);
+    });
+
     if (containsEmptyArticlesWarning) result.containsEmptyArticlesWarning = true;
     callback(null, result);
   });

@@ -38,7 +38,8 @@
                 <li class="dropdown-header">Articles</li>
                 <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Collections</a></li>
                 <li class="dropdown-header">Orphaned Article
-                  </li><li><a href="/article/list?blog=">No Blog</a></li>
+                  </li><li><a href="/article/list?blog=Future">Future</a></li>
+                  <li><a href="/article/list?blog=">No Blog</a></li>
                 
               </ul>
             </li>
@@ -3116,6 +3117,52 @@ Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autóno
             <td class="hidden-xs"></td>
             <td>
               <h1>Future Articles</h1>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="hidden-xs"></td>
+            <td>
+              <h4 style="color:grey">Did you know …</h4>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="/article/66"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td class="hidden-xs"><span onclick="" style="" class="label osmbclabel-markdown">DE</span><span onclick="" style="" class="label osmbclabel-markdown">EN</span><span id="voteLabels66"></span>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div66');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div>
+                  <ul class="no-margin">
+<li>Google For Future</li>
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td class="hidden-xs">
+            </td>
+            <td class="hidden-xs"><span onclick="" style="" class="label osmbclabel-markdown">DE</span><span onclick="" style="" class="label osmbclabel-markdown">EN</span><span onclick="" style="" class="label osmbclabel-collect">ES</span>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="hidden-xs"></td>
+            <td>
+              <div id="div66" class="panel panel-default hidden">
+                <div class="panel-heading">
+                  <ul id="preview66"></ul>
+                </div>
+                <div class="panel-body">
+                  <form name="EditArticle" id="EditArticle66" action="/article/66/setMarkdown/DE" method="post">
+                    <textarea name="markdown" id="markdown66" rows="7" onchange="onLeaveText(66);" onkeyup="onchangeMarkdown(66)" class="form-control">Google war doch die Zukunft ?</textarea>
+                    <textarea name="oldMarkdown" id="oldMarkdown66" rows="7" class="hidden form-control">Google war doch die Zukunft ?</textarea>
+                  </form>
+                  <p>
+                  </p>
+                </div>
+              </div>
             </td>
           </tr>
         </tbody></table>
