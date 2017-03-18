@@ -242,7 +242,12 @@ block content
         .row
           .col-md-2
           .col-md-10
-            span.label.label-default(id="left_lang" class="#{lbg}")=params.left_lang
+            span.label.label-default(
+               id="left_lang"
+               class="#{lbg}"
+               draggable="true"
+               data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+               ondragstart="ondragstartLangLabel(event,'#{params.left_lang}');")="  "+params.left_lang+"  "
             span.label.label-danger(style="display:none" id="markdown"+params.left_lang+"_unsaved" class="lbg")="unsaved"
 
         .row.markdownArea
@@ -262,10 +267,18 @@ block content
           .col-md-12
             for l in layout.activeLanguages
               if l === params.right_lang
-                span.label.label-default.RL(class="RL-#{l}")=l
+                span.label.label-default.RL(
+                   class="RL-#{l}"
+                   draggable="true"
+                   data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+                   ondragstart="ondragstartLangLabel(event,'#{l}');")=l
                 span.label.label-danger.RL(style="display:none" id="markdown"+l+"_unsaved" class="RL-#{l}")="unsaved"
               else
-                span.label.label-default.RL.hidden(class= "RL-#{l}")=l
+                span.label.label-default.RL.hidden(
+                    class= "RL-#{l}"
+                    draggable="true"
+                    data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+                    ondragstart="ondragstartLangLabel(event,'#{l}');")=l
                 span.label.label-danger.RL.hidden(style="display:none" id="markdown"+l+"_unsaved" class="RL-#{l}")="unsaved"
 
         .row
@@ -464,6 +477,7 @@ block scripts
               .change(convertMinusNoTranslation)
               .change(previewMarkdown)
               .change(showModified)
+              .change(FitToContent)
               .focusout(convertMinusNoTranslation)
               .keyup(previewMarkdown)
               .keyup(checkForTable)
@@ -694,10 +708,6 @@ block scripts
 
       // Check for long links
       var longLink = md.search(/\[[^\]]{40,}\]/g);
-      console.log(longLink);
-      console.log(text);
-      console.log(this.lang);
-      console.log(text.length);
       if (longLink>=0) {
         text.show(400);
         text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
@@ -780,6 +790,12 @@ block scripts
       src = image.src;
       src = "![(" + id + ")](" + src + ")";
       event.dataTransfer.setData("TEXT", src);
+    }
+
+    function ondragstartLangLabel( event,lang) {
+      console.log("ondragstartlanglabel %s",lang);
+      var v = $("#markdown" + lang).val();
+      event.dataTransfer.setData("TEXT", v)
     }
 
 
