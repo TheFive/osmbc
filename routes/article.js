@@ -26,6 +26,8 @@ var htmltitle     = require("../model/htmltitle.js");
 
 require("jstransformer")(require("jstransformer-markdown-it"));
 
+var gglTranslateAPI = require('google-translate-api');
+
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
 // This Function converts the ID (used as :article_id in the routes) to
@@ -852,11 +854,14 @@ function renderList(req, res, next) {
   );
 }
 
+
+/*
 var Browser = require("zombie");
 
 var env = process.env.NODE_ENV || "development";
 
-function translate(req, res, next) {
+
+function translateOLD(req, res, next) {
   debug("translate");
   var userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20";
 
@@ -886,7 +891,26 @@ function translate(req, res, next) {
     });
   });
 }
+*/
 
+function translate(req, res, next) {
+  debug("translate");
+
+  console.log("translate");
+  console.log(req.params);
+  let fromLang = req.params.fromLang;
+  let toLang = req.params.toLang;
+  let text = req.body.text;
+
+  console.log("%s %s %s",fromLang,toLang,text);
+  gglTranslateAPI(text,{from:fromLang,to:toLang}).then(function (result){
+    console.log(result);
+    res.end(result.text);
+  }).catch(function(err){console.log(err);next(err);});
+
+
+
+}
 
 // Export Render Functions for testing purposes
 exports.renderArticleId = renderArticleId;

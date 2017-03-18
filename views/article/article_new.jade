@@ -242,7 +242,12 @@ block content
         .row
           .col-md-2
           .col-md-10
-            span.label.label-default(id="left_lang" class="#{lbg}")=params.left_lang
+            span.label.label-default(
+               id="left_lang"
+               class="#{lbg}"
+               draggable="true"
+               data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+               ondragstart="ondragstartLangLabel(event,'#{params.left_lang}');")="  "+params.left_lang+"  "
             span.label.label-danger(style="display:none" id="markdown"+params.left_lang+"_unsaved" class="lbg")="unsaved"
 
         .row.markdownArea
@@ -262,10 +267,18 @@ block content
           .col-md-12
             for l in layout.activeLanguages
               if l === params.right_lang
-                span.label.label-default.RL(class="RL-#{l}")=l
+                span.label.label-default.RL(
+                   class="RL-#{l}"
+                   draggable="true"
+                   data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+                   ondragstart="ondragstartLangLabel(event,'#{l}');")=l
                 span.label.label-danger.RL(style="display:none" id="markdown"+l+"_unsaved" class="RL-#{l}")="unsaved"
               else
-                span.label.label-default.RL.hidden(class= "RL-#{l}")=l
+                span.label.label-default.RL.hidden(
+                    class= "RL-#{l}"
+                    draggable="true"
+                    data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+                    ondragstart="ondragstartLangLabel(event,'#{l}');")=l
                 span.label.label-danger.RL.hidden(style="display:none" id="markdown"+l+"_unsaved" class="RL-#{l}")="unsaved"
 
         .row
@@ -325,14 +338,33 @@ block content
     +leftcolumn
       p
         +articleTextanalyse(params.left_lang)
-      p
-        +articleTranslateButton(params.left_lang,params.right_lang)
+      for l in layout.activeLanguages
+        if (l === params.right_lang)
+          p.RL(class="RL-#{l}")
+            +articleTranslateButton(params.left_lang,l)
+        else
+          p.RL(class="RL-#{l}").hidden
+            +articleTranslateButton(params.left_lang,l)
 
     +rightcolumn
-      p
-        +articleTextanalyse(params.right_lang)
-      p
-        +articleTranslateButton(params.right_lang,params.left_lang)
+      for l in layout.activeLanguages
+        if (l===params.right_lang)
+          div.RL(class="RL-#{l}")
+            p
+              +articleTextanalyse(l)
+            p
+              +articleTranslateButton(l,params.left_lang)
+        else
+          div.RL(class="RL-#{l}").hidden
+            p
+              +articleTextanalyse(l)
+            p
+              +articleTranslateButton(l,params.left_lang)
+
+
+
+
+
 
 
 
@@ -464,6 +496,7 @@ block scripts
               .change(convertMinusNoTranslation)
               .change(previewMarkdown)
               .change(showModified)
+              .change(FitToContent)
               .focusout(convertMinusNoTranslation)
               .keyup(previewMarkdown)
               .keyup(checkForTable)
@@ -694,10 +727,6 @@ block scripts
 
       // Check for long links
       var longLink = md.search(/\[[^\]]{40,}\]/g);
-      console.log(longLink);
-      console.log(text);
-      console.log(this.lang);
-      console.log(text.length);
       if (longLink>=0) {
         text.show(400);
         text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
@@ -780,6 +809,12 @@ block scripts
       src = image.src;
       src = "![(" + id + ")](" + src + ")";
       event.dataTransfer.setData("TEXT", src);
+    }
+
+    function ondragstartLangLabel( event,lang) {
+      console.log("ondragstartlanglabel %s",lang);
+      var v = $("#markdown" + lang).val();
+      event.dataTransfer.setData("TEXT", v)
     }
 
 
@@ -925,14 +960,15 @@ block scripts
     function translate(langFrom, langTo) {
       document.getElementById("translate" + langFrom + langTo).classList.add("hidden");
       document.getElementById("translateWait" + langFrom + langTo).classList.remove("hidden");
-      var leftLang = "#{params.left_lang.toLowerCase()}";
-      var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
+      var from =  langFrom.toLowerCase();
+      var to = langTo.toLowerCase();
       var originalText = document.getElementById("markdown" + langFrom).value;
-      jQuery.post("#{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
+      if (from === "jp") {from = "ja"};
+      if (to === "jp") {to = "ja"}
+      jQuery.post("#{layout.htmlroot}/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
         data = data.replace(/] \(/g, "](");
         document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
-        document.getElementById("markdown" + langTo).value = data;
-        onchangeFunction(langTo)();
+        $("#markdown" + langTo).val(data).trigger("change");
       }).fail(function (err) {
         console.log(err);
         document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
