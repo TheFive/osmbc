@@ -26,7 +26,7 @@ var htmltitle     = require("../model/htmltitle.js");
 
 require("jstransformer")(require("jstransformer-markdown-it"));
 
-var gglTranslateAPI = require('google-translate-api');
+var gglTranslateAPI = require("google-translate-api");
 
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
@@ -133,7 +133,6 @@ function renderArticleId(req, res, next) {
           return;
         }
         article.doLock(req.user.displayName, callback);
-        return;
       } else {
         return callback();
       }
@@ -896,23 +895,16 @@ function translateOLD(req, res, next) {
 function translate(req, res, next) {
   debug("translate");
 
-  console.log("translate");
-  console.log(req.params);
   let fromLang = req.params.fromLang;
   let toLang = req.params.toLang;
   let text = req.body.text;
 
-  if (fromLang === "jp") {fromLang = "ja"};
-  if (toLang === "jp") {toLang = "ja"}
+  if (fromLang === "jp") { fromLang = "ja"; };
+  if (toLang === "jp") { toLang = "ja"; }
 
-  console.log("%s %s %s",fromLang,toLang,text);
-  gglTranslateAPI(text,{from:fromLang,to:toLang}).then(function (result){
-    console.log(result);
+  gglTranslateAPI(text, {from: fromLang, to: toLang}).then(function (result) {
     res.end(result.text);
-  }).catch(function(err){console.log(err);next(err);});
-
-
-
+  }).catch(function(err) { next(err); });
 }
 
 // Export Render Functions for testing purposes
