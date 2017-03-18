@@ -338,14 +338,33 @@ block content
     +leftcolumn
       p
         +articleTextanalyse(params.left_lang)
-      p
-        +articleTranslateButton(params.left_lang,params.right_lang)
+      for l in layout.activeLanguages
+        if (l === params.right_lang)
+          p.RL(class="RL-#{l}")
+            +articleTranslateButton(params.left_lang,l)
+        else
+          p.RL(class="RL-#{l}").hidden
+            +articleTranslateButton(params.left_lang,l)
 
     +rightcolumn
-      p
-        +articleTextanalyse(params.right_lang)
-      p
-        +articleTranslateButton(params.right_lang,params.left_lang)
+      for l in layout.activeLanguages
+        if (l===params.right_lang)
+          div.RL(class="RL-#{l}")
+            p
+              +articleTextanalyse(l)
+            p
+              +articleTranslateButton(l,params.left_lang)
+        else
+          div.RL(class="RL-#{l}").hidden
+            p
+              +articleTextanalyse(l)
+            p
+              +articleTranslateButton(l,params.left_lang)
+
+
+
+
+
 
 
 
