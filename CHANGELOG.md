@@ -1,5 +1,13 @@
 # Change Log
 
+## [2.2.14](https://github.com/TheFive/osmbc/tree/2.2.14) (2017-03-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.13...2.2.14)
+
+**Fixed bugs:**
+
+- Google Translate Button is wrong and needs to much time. [\#643](https://github.com/TheFive/osmbc/issues/643)
+- New Editor has no support for copy button \(replaced by Label Drag n Drop\) [\#631](https://github.com/TheFive/osmbc/issues/631)
+
 ## [2.2.13](https://github.com/TheFive/osmbc/tree/2.2.13) (2017-03-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.12...2.2.13)
 
