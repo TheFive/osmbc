@@ -902,6 +902,9 @@ function translate(req, res, next) {
   let toLang = req.params.toLang;
   let text = req.body.text;
 
+  if (fromLang === "jp") {fromLang = "ja"};
+  if (toLang === "jp") {toLang = "ja"}
+
   console.log("%s %s %s",fromLang,toLang,text);
   gglTranslateAPI(text,{from:fromLang,to:toLang}).then(function (result){
     console.log(result);
