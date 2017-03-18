@@ -323,12 +323,16 @@ block content
   .row
     .col-md-1
     +leftcolumn
-      +articleTextanalyse(params.left_lang)
-      +articleTranslateButton(params.left_lang,params.right_lang)
+      p
+        +articleTextanalyse(params.left_lang)
+      p
+        +articleTranslateButton(params.left_lang,params.right_lang)
 
     +rightcolumn
-      +articleTextanalyse(params.right_lang)
-      +articleTranslateButton(params.right_lang,params.left_lang)
+      p
+        +articleTextanalyse(params.right_lang)
+      p
+        +articleTranslateButton(params.right_lang,params.left_lang)
 
 
 

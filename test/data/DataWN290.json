@@ -1638,6 +1638,16 @@
     "markdownEN": "How does share alike apply on generalized OSM data? Tobias Wendorff [asks](https://lists.openstreetmap.org/pipermail/legal-talk/2016-February/008372.html) this question at Legal Talk mailing list.",
     "markdownES": "¿Cómo compartir por igual se aplica en los datos generalizados de OSM? Tobias Wendorff [pregunta](https://lists.openstreetmap.org/pipermail/legal-talk/2016-February/008372.html) por esta cuestión en la lista de correo Aspectos Legales.",
     "markdownJP": "「継承(Share alike)」をOSMデータに適用するにはどのようにすればよいでしょうか。Tobias WendorffがLegal Talkメーリングリストで[質問](https://lists.openstreetmap.org/pipermail/legal-talk/2016-February/008372.html)しています。"
+  },
+  {
+    "id": "11999",
+    "version": 18,
+    "blog": "Future",
+    "collection": "https://www.google.de",
+    "title": "Google For Future",
+    "categoryEN": "Did you know …",
+    "markdownDE": "Google war doch die Zukunft ?",
+    "markdownEN": "Google is Future, isn't it ?"
   }],
 "blog":[{
   "id": "321",

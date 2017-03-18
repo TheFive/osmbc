@@ -147,8 +147,15 @@ block blogcontent
         td.hidden-xs
         td
           h1="Future Articles"
-      each a in futureArticles
-        +displayOverviewRow(a)
+      for c,k in futureArticles
+
+        tr
+          td
+          td.hidden-xs
+          td
+            h4(style="color:grey")=k
+        each a in futureArticles[k]
+          +displayOverviewRow(a)
 
 
 

@@ -160,29 +160,43 @@ block blogcontent
       div(class=firstColSize)
       div(class=secondColSize)
         h2="Future Articles"
-    each a in futureArticles
-      .row
-        div(class=firstColSize)
-          div
-            +articleIcons(a,{showNumbers: showNumbers, showMail: showMail})
-          div
-            if (showCollector && a.author && a.author.collection)
-              each b in a.author.collection.split(",")
-                +userLabel(b,"osmbclabel-collect")
-            if (showEditor && a.author && a.author["markdown" + lang])
-              each b in a.author["markdown"+lang].split(",")
-                +userLabel(collector,"osmbclabel-markdown")
+    each c,k in futureArticles
+      - var cat = null;
+      - categories.forEach(function(sk) {if (sk.EN==k) {cat = sk;}});
+      div(class=firstColSize)
+      div(class=secondColSize)
+        .row
+          div(class=columnLeftSize)
+            h4(style="color:grey")=cat[left_lang]
+          div(class=columnRightSize)
+            h4(style="color:grey")=cat[right_lang]
+      each a in futureArticles[k]
+        .row
+          div(class=firstColSize)
+            div
+              +articleIcons(a,{showNumbers: showNumbers, showMail: showMail})
+            div
+              if (showCollector && a.author && a.author.collection)
+                each b in a.author.collection.split(",")
+                  +userLabel(b,"osmbclabel-collect")
+              if (showEditor && a.author && a.author["markdown" + lang])
+                each b in a.author["markdown"+lang].split(",")
+                  +userLabel(collector,"osmbclabel-markdown")
 
-          div
-            if (showLanguages)
-              +languageDisplay(a)
+            div
+              if (showLanguages)
+                +languageDisplay(a)
 
-        div(class=secondColSize)
-          .row
-            div(class=columnLeftSize)
-              ul
-                :verbatim
-                  !{renderer.renderArticle(left_lang,a)}
+          div(class=secondColSize)
+            .row
+              div(class=columnLeftSize)
+                ul
+                  :verbatim
+                    !{renderer.renderArticle(left_lang,a)}
+              div(class=columnRightSize)
+                ul
+                  :verbatim
+                    !{renderer.renderArticle(right_lang,a)}
 
 
   .row#filter
