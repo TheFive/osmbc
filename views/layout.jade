@@ -172,6 +172,18 @@ block all
                       if layout.usedLanguages[l]
                         li
                           a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
+                - for (i = 3; params && params.columns && i<= params.columns;i++)
+                  li.dropdown
+                    a.btn.dropdown-toggle.label-default(href='#', style="color:white",data-toggle='dropdown')
+                      | #{(layout["language"+i]) ? layout["language"+i] : "--"}
+                      span.caret
+                    ul.dropdown-menu(role='menu')
+                      li
+                        a(href='#{layout.htmlroot}/language?lang'+i+'=none') none
+                      each l in layout.languages
+                        if layout.usedLanguages[l]
+                          li
+                            a(href='#{layout.htmlroot}/language?lang'+i+'=#{l}') #{l}
                 if layout.user
                     li
                       a(href='#{layout.htmlroot}/usert/#{layout.user.id}') #{layout.user.displayName}

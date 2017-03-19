@@ -73,6 +73,8 @@ function renderArticleId(req, res, next) {
   params.edit = req.query.edit;
   params.left_lang = req.user.getMainLang();
   params.right_lang = req.user.getSecondLang();
+  params.lang3 = req.user.getLang3();
+  params.lang4 = req.user.getLang4();
   params.editComment = null;
   if (req.query.editComment) params.editComment = req.query.editComment;
   if (req.query.notranslation) params.notranslation = req.query.notranslation;
@@ -205,7 +207,28 @@ function renderArticleId(req, res, next) {
           // change title of page
           res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
           let jadeFile = "article";
-          if (req.user.articleEditor === "new") jadeFile = "article/article_new";
+          let newEditor = req.user.articleEditor === "new";
+          if (newEditor) {
+            jadeFile = "article/article_twocolumn";
+            if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";
+          }
+          if (newEditor && req.user.languageCount === "three") {
+            jadeFile = "article/article_threecolumn";
+            if (req.user.getLang3()==="--" ) jadeFile = "article/article_twocolumn";
+            if (req.user.getSecondLang()==="--" ) jadeFile = "article/article_onecolumn";
+
+            params.columns=3;
+          }
+          if (newEditor && req.user.languageCount === "four") {
+            jadeFile = "article/article_fourcolumn";
+            console.log(req.user.getSecondLang());
+            if (req.user.getLang4()===null ) jadeFile = "article/article_threecolumn";
+            if (req.user.getLang3()===null ) jadeFile = "article/article_twocolumn";
+            if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";
+            params.columns=4;
+          }
+
+
           res.render(jadeFile, {layout: res.rendervar.layout,
             article: article,
             googleTranslateText: configModule.getConfig("automatictranslatetext"),
@@ -899,8 +922,13 @@ function translate(req, res, next) {
   let toLang = req.params.toLang;
   let text = req.body.text;
 
-  if (fromLang === "jp") { fromLang = "ja"; };
+
+
+  if (fromLang === "jp") { fromLang = "ja"; }
   if (toLang === "jp") { toLang = "ja"; }
+
+  if (fromLang === "cz") { fromLang = "cs"; }
+  if (toLang === "cz") { toLang = "cs"; }
 
   gglTranslateAPI(text, {from: fromLang, to: toLang}).then(function (result) {
     res.end(result.text);
