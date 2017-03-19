@@ -1,5 +1,18 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.14...HEAD)
+
+**Implemented enhancements:**
+
+- Disallow change of Category & Blog after one language is closed in an article. [\#567](https://github.com/TheFive/osmbc/issues/567)
+- allow more than two columns in article & blog view. [\#330](https://github.com/TheFive/osmbc/issues/330)
+
+**Fixed bugs:**
+
+- New editor does not support one column [\#637](https://github.com/TheFive/osmbc/issues/637)
+
 ## [2.2.14](https://github.com/TheFive/osmbc/tree/2.2.14) (2017-03-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.13...2.2.14)
 
