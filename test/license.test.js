@@ -73,6 +73,7 @@ describe("license-check", function() {
       "BSD-3-Clause AND MIT",
       "BSD-2-Clause",
       "BSD-3-Clause",
+      "BSD-3-Clause OR MIT",
       "BSD-4-Clause",
       'AFLv2.1',
       'BSD' ,
