@@ -207,18 +207,19 @@ function renderArticleId(req, res, next) {
           // change title of page
           res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
           let jadeFile = "article";
-          if (req.user.articleEditor === "new") {
+          let newEditor = req.user.articleEditor === "new";
+          if (newEditor) {
             jadeFile = "article/article_twocolumn";
             if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";
           }
-          if (req.user.articleEditor === "3column") {
+          if (newEditor && req.user.languageCount === "three") {
             jadeFile = "article/article_threecolumn";
             if (req.user.getLang3()==="--" ) jadeFile = "article/article_twocolumn";
             if (req.user.getSecondLang()==="--" ) jadeFile = "article/article_onecolumn";
 
             params.columns=3;
           }
-          if (req.user.articleEditor === "4column") {
+          if (newEditor && req.user.languageCount === "four") {
             jadeFile = "article/article_fourcolumn";
             console.log(req.user.getSecondLang());
             if (req.user.getLang4()===null ) jadeFile = "article/article_threecolumn";

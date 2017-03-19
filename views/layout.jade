@@ -174,7 +174,7 @@ block all
                           a(href='#{layout.htmlroot}/language?lang2=#{l}') #{l}
                 - for (i = 3; params && params.columns && i<= params.columns;i++)
                   li.dropdown
-                    a.btn.dropdown-toggle(href='#', data-toggle='dropdown')
+                    a.btn.dropdown-toggle.label-default(href='#', style="color:white",data-toggle='dropdown')
                       | #{(layout["language"+i]) ? layout["language"+i] : "--"}
                       span.caret
                     ul.dropdown-menu(role='menu')
