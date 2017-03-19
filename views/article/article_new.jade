@@ -48,7 +48,7 @@ mixin articlePreview(lang)
 
 mixin articleTextanalyse(lang)
   if (lang === "DE") && (article["markdown" + lang])
-    a(href="#" onClick ="taform = document.getElementById('textanalyseform');console.log(taform);taf = document.getElementById('textanalysefield');console.log(taf);taf.value = document.getElementById('previewDE').innerText; taf.parentElement.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
+    a(href="#" onClick ="taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewDE').innerText; taf.parentElement.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
 
 mixin articleTranslateButton(langFrom,langTo)
   if (article["markdown" + langFrom] && !article["markdown" + langTo])
@@ -350,6 +350,8 @@ block scripts
     activeLanguages = JSON.parse('!{JSON.stringify(layout.activeLanguages)}');
     leftLang = "!{params.left_lang}";
     rightLang = "!{params.right_lang}";
+    lang3 = "!{params.lang3}";
+    lang4 = "!{params.lang4}";
     placeholder = !{JSON.stringify(placeholder.categories)}
     var catArray = !{JSON.stringify(categories)};
     var noCategorie = "no categorie";
@@ -402,9 +404,10 @@ block scripts
               .keyup(FitToContent)
               .trigger("change");
       $("#categoryEN")
+              .change(showModified)
               .change(syncPlaceholder)
               .change(showHideUnpublishReason)
-              .change(showModified)
+
               .trigger("change");
       $("#AddComment")
               .change(FitToContent)
@@ -620,6 +623,7 @@ block scripts
     function generateGoogleTranslateLink(link,lang) {
       var googlelang = lang;
       if (lang === "JP") googlelang = "JA";
+      if (lang === "CZ") googlelang = "CS";
       var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
 
 
@@ -657,6 +661,13 @@ block scripts
         if (rightLang !== "--" && rightLang !== "") {
           result += " "+generateGoogleTranslateLink(linkList[0],rightLang);
         }
+        if (lang3 !== "--" && lang3 !== "") {
+          result += " " + generateGoogleTranslateLink(linkList[0], lang3);
+        }
+        if (lang4 !== "--" && lang4 !== "") {
+          result += " " + generateGoogleTranslateLink(linkList[0], lang4);
+        }
+
         result +="<br>\n";
       }
       result = '<p>'+result+'</p>';
@@ -688,7 +699,6 @@ block scripts
     }
 
     function ondragstartLangLabel( event,lang) {
-      console.log("ondragstartlanglabel %s",lang);
       var v = $("#markdown" + lang).val();
       event.dataTransfer.setData("TEXT", v)
     }
@@ -719,11 +729,6 @@ block scripts
 
     function syncPlaceholder() {
       var c = $("#categoryEN").val();
-      if (c === noCategorie) {
-        $("#categoryEN").css("backgroundColor", "#FDC6CD");
-      } else {
-        $("#categoryEN").css("backgroundColor","");
-      }
       if (placeholder[c]) {
          $("#categoryDisplay").html(placeholder[c]);
         }
@@ -736,18 +741,31 @@ block scripts
 
       var modified = false;
 
+      var newVal = $(this).val();
+      var oldVal = $("#old_" + this.name + ":hidden").val();
+
+      var modifiedColor = "#ffffcc";
+      var normalColor = ""
+      if (this.name==="categoryEN" && newVal === noCategorie) {
+        normalColor = "#FDC6CD";
+        modifiedColor = "#FDC6AB";
+      }
+
+      if (oldVal != newVal) {
+        $(this).css("backgroundColor", modifiedColor);
+        $("#" + this.name + "_unsaved").show()
+      } else {
+        $(this).css("backgroundColor", normalColor);
+        $("#" + this.name + "_unsaved").hide()
+      }
+
       $(".af").each(function(index,object){
 
         var newVal = $(this).val();
         var oldVal = $("#old_" + this.name + ":hidden").val();
 
         if (oldVal != newVal) {
-          $(this).css("backgroundColor", "#ffffcc");
-          $("#"+this.name+"_unsaved").show()
           modified = true;
-        } else {
-          $(this).css("backgroundColor", "");
-          $("#"+this.name+"_unsaved").hide()
         }
       });
       $("#saveButton").prop("disabled",!modified);

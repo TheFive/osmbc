@@ -78,8 +78,8 @@ function languageSwitcher(req, res, next) {
   for (let v=0;v<lang.length-1;v++) {
     for (let i=v+1;i<lang.length;i++) {
       while (i < lang.length && lang[v]===lang[i]) {
-        lang.splice(i,1)
-      };
+        lang.splice(i,1);
+      }
     }
   }
 

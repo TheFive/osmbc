@@ -14,92 +14,84 @@ block markdownArea
 
 
 
-    .col-md-6
-      .row
-        .col-md-2
-        .col-md-10
+    .row
+      .col-md-6
           span.label.label-default(
-          id="left_lang"
-          class="#{lbg}"
-          draggable="true"
-          data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
-          ondragstart="ondragstartLangLabel(event,'#{params.left_lang}');")="  " + params.left_lang + "  "
+            id="left_lang"
+            class="#{lbg}"
+            draggable="true"
+            data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+            ondragstart="ondragstartLangLabel(event,'#{params.left_lang}');")="  " + params.left_lang + "  "
           span.label.label-danger(style="display:none" id="markdown" + params.left_lang + "_unsaved" )="unsaved"
 
-      .row.markdownArea
-        .col-md-2
-          p="Markdown"
-
-        .col-md-10
           +articleMarkdown(params.left_lang,!article.isChangeAllowed("markdown" + params.left_lang))
-      .row
-        .col-md-2
-          p="Preview"
-        .col-md-10
           +articlePreview(params.left_lang)
 
-    .col-md-5
-      .row
-        .col-md-12
-          for l in layout.activeLanguages
-            if l === params.right_lang
-              span.label.osmbclabel-lang2.RL(
-                class="RL-#{l}"
-                draggable="true"
-                data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
-                ondragstart="ondragstartLangLabel(event,'#{l}');")=l
-              span.label.label-default.RLOFF.hidden(
-                  class="RLOFF-#{l}"
-                  data-toggle="tooltip" data-placement="left" title="Click on language display to enable")="."
-              span.label.label-danger(style="display:none" id="markdown" + l + "_unsaved" )="unsaved: "+l
-            else
-              span.label.label-default.RL.hidden(
-                class= "RL-#{l}"
-                draggable="true"
-                data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
-                ondragstart="ondragstartLangLabel(event,'#{l}');")=l
-              if l === params.left_lang
-                span.label.label-default.RLOFF(class="RLOFF-#{l}")="-"
-              else
-                span.label.label-default.RLOFF(
+      .col-md-6
+
+            for l in layout.activeLanguages
+              if l === params.right_lang
+                span.label.osmbclabel-lang2.RL(
+                  class="RL-#{l}"
+                  draggable="true"
+                  data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+                  ondragstart="ondragstartLangLabel(event,'#{l}');")=l
+                span.label.label-default.RLOFF.hidden(
                     class="RLOFF-#{l}"
-                    data-toggle="tooltip" data-placement="left" title="Click on language display to see "+l+" here")="."
-              span.label.label-danger(style="display:none" id="markdown" + l + "_unsaved")="unsaved: "+l
+                    data-toggle="tooltip" data-placement="left" title="Click on language display to enable")="."
+                span.label.label-danger(style="display:none" id="markdown" + l + "_unsaved" )="unsaved: "+l
+              else
+                span.label.label-default.RL.hidden(
+                  class= "RL-#{l}"
+                  draggable="true"
+                  data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+                  ondragstart="ondragstartLangLabel(event,'#{l}');")=l
+                if l === params.left_lang
+                  span.label.label-default.RLOFF(class="RLOFF-#{l}")="-"
+                else
+                  span.label.label-default.RLOFF(
+                      class="RLOFF-#{l}"
+                      data-toggle="tooltip" data-placement="left" title="Click on language display to see "+l+" here")="."
+                span.label.label-danger(style="display:none" id="markdown" + l + "_unsaved")="unsaved: "+l
 
-      .row
-        .col-md-12
-          for l in layout.activeLanguages
-            textarea.hidden.form-control(id="old_markdown" + l, name="old_markdown" + l,rows=1,hide=true) #{article["markdown" + l]}
-            if l === params.right_lang
-              .RL(class= "RL-#{l}")
-                +articleMarkdown(l,!article.isChangeAllowed("markdown" + l))
-            else
-              if l !== params.left_lang
-                .RL.hidden(class= "RL-#{l}")
+
+            for l in layout.activeLanguages
+              textarea.hidden.form-control(id="old_markdown" + l, name="old_markdown" + l,rows=1,hide=true) #{article["markdown" + l]}
+              if l === params.right_lang
+                .RL(class= "RL-#{l}")
                   +articleMarkdown(l,!article.isChangeAllowed("markdown" + l))
-      .row
-        .col-md-12
-          for l in layout.activeLanguages
-            if l === params.right_lang
-              .RL(class= "RL-#{l}")
-                +articlePreview(l)
-            else
-              .RL.hidden(class= "RL-#{l}")
-                +articlePreview(l)
+              else
+                if l !== params.left_lang
+                  .RL.hidden(class= "RL-#{l}")
+                    +articleMarkdown(l,!article.isChangeAllowed("markdown" + l))
+
+            for l in layout.activeLanguages
+              if l === params.right_lang
+                .RL(class= "RL-#{l}")
+                  +articlePreview(l)
+              else
+                .RL.hidden(class= "RL-#{l}")
+                  +articlePreview(l)
 
 
 
 
 
-    .col-md-1
-      .row
+    .row
+      .col-md-6
         i#languageFlagsShow.fa.fa-flag.fa-2x(
-          onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
+        onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
 
-      .row#languageFlags.hidden
+    .row#languageFlags.hidden
+      .col-md-6
         - for (lang in languageFlags)
           img(id="#{lang}",
-            srcunsragstart = "ondragstartflag(event,this.id);")
+            src="#{languageFlags[lang]}",
+            class="img-thumbnail" ,
+            width = 40,
+            data-toggle="tooltip" data-placement="bottom" title=lang
+            onclick="javascript:myclick(this.id)"
+            ondragstart = "ondragstartflag(event,this.id);")
         p.osmbc-help-text="Click to copy to clipboard, or use drag and drop."
 
 

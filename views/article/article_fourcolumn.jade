@@ -4,14 +4,18 @@ extends article_new
 block markdownArea
 
   .row
-    .col-md-4
+    .col-md-6
       +markdownWithPreview(params.left_lang)
 
-    .col-md-4
+    .col-md-6
       +markdownWithPreview(params.right_lang)
 
-    .col-md-4
+  .row
+    .col-md-6
       +markdownWithPreview(params.lang3)
+    .col-md-6
+      +markdownWithPreview(params.lang4)
+
 
 
 

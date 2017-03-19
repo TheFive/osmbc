@@ -73,6 +73,8 @@ function renderArticleId(req, res, next) {
   params.edit = req.query.edit;
   params.left_lang = req.user.getMainLang();
   params.right_lang = req.user.getSecondLang();
+  params.lang3 = req.user.getLang3();
+  params.lang4 = req.user.getLang4();
   params.editComment = null;
   if (req.query.editComment) params.editComment = req.query.editComment;
   if (req.query.notranslation) params.notranslation = req.query.notranslation;
@@ -217,7 +219,7 @@ function renderArticleId(req, res, next) {
             params.columns=3;
           }
           if (req.user.articleEditor === "4column") {
-            jadeFile = "article/article_threecolumn";
+            jadeFile = "article/article_fourcolumn";
             console.log(req.user.getSecondLang());
             if (req.user.getLang4()===null ) jadeFile = "article/article_threecolumn";
             if (req.user.getLang3()===null ) jadeFile = "article/article_twocolumn";
@@ -919,10 +921,10 @@ function translate(req, res, next) {
   let toLang = req.params.toLang;
   let text = req.body.text;
 
-  if (fromLang === "jp") { fromLang = "ja"; };
+  if (fromLang === "jp") { fromLang = "ja"; }
   if (toLang === "jp") { toLang = "ja"; }
 
-  if (fromLang === "cz") { fromLang = "cs"; };
+  if (fromLang === "cz") { fromLang = "cs"; }
   if (toLang === "cz") { toLang = "cs"; }
 
   gglTranslateAPI(text, {from: fromLang, to: toLang}).then(function (result) {
