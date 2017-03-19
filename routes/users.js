@@ -152,7 +152,7 @@ function postUserId(req, res, next) {
     changes.mailBlogLanguageStatusChange = [];
   }
   if (changes.languageCount !== "three") changes.languageCount = "two";
-  if (changes.articleEditor !== "new") changes.articleEditor = "old";
+  if (["new","3column","4column"].indexOf(changes.articleEditor) <0 ) changes.articleEditor = "old";
   var user;
   async.series([
     function findUser(cb) {

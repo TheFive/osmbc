@@ -1,0 +1,118 @@
+extends article_new
+
+
+block markdownArea
+
+  .row
+    - var lbg;
+    - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
+    - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
+    - var rbg;
+    - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
+    - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
+
+
+
+
+    .col-md-4
+      .row
+          span.label.label-default(
+          id="left_lang"
+          class="#{lbg}"
+          draggable="true"
+          data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+          ondragstart="ondragstartLangLabel(event,'#{params.left_lang}');")="  " + params.left_lang + "  "
+          span.label.label-danger(style="display:none" id="markdown" + params.left_lang + "_unsaved" class="lbg")="unsaved"
+
+      .row.markdownArea
+        +articleMarkdown(params.left_lang,!article.isChangeAllowed("markdown" + params.left_lang))
+      .row
+        +articlePreview(params.left_lang)
+
+    .col-md-4
+      .row
+        span.label.label-default(
+          id="right_lang"
+          class="#{rbg}"
+          draggable="true"
+          data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+          ondragstart="ondragstartLangLabel(event,'#{params.right_lang}');")="  " + params.right_lang + "  "
+        span.label.label-danger(style="display:none" id="markdown" + params.right_lang + "_unsaved" class="lbg")="unsaved"
+
+      .row.markdownArea
+        +articleMarkdown(params.right_lang,!article.isChangeAllowed("markdown" + params.right_lang))
+      .row
+        +articlePreview(params.right_lang)
+
+    .col-md-4
+      .row
+        span.label.label-default(
+          id="third_lang"
+          draggable="true"
+          data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+          ondragstart="ondragstartLangLabel(event,'#{params.left_lang}');")="  " + "EN" + "  "
+        span.label.label-danger(style="display:none" id="markdown" + "EN" + "_unsaved" )="unsaved"
+
+      .row.markdownArea
+        +articleMarkdown("EN",!article.isChangeAllowed("markdown" + params.left_lang))
+      .row
+        +articlePreview("EN")
+
+
+
+
+  .row
+    i#languageFlagsShow.fa.fa-flag.fa-2x(
+    onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
+
+  .row#languageFlags.hidden
+    - for (lang in languageFlags)
+      img(id="#{lang}",
+        src="#{languageFlags[lang]}",
+        class="img-thumbnail" ,
+        width = 40,
+        data-toggle="tooltip" data-placement="left" title=lang
+        onclick="javascript:myclick(this.id)"
+        ondragstart = "ondragstartflag(event,this.id);")
+    p.osmbc-help-text="Click to copy to clipboard, or use drag and drop."
+
+
+
+
+
+
+
+
+
+
+
+
+  .row
+    .col-md-1
+    +leftcolumn
+      p
+        +articleTextanalyse(params.left_lang)
+      for l in layout.activeLanguages
+        if (l === params.right_lang)
+          p.RL(class="RL-#{l}")
+            +articleTranslateButton(params.left_lang,l)
+        else
+          p.RL(class="RL-#{l}").hidden
+            +articleTranslateButton(params.left_lang,l)
+
+    +rightcolumn
+      for l in layout.activeLanguages
+        if (l === params.right_lang)
+          div.RL(class="RL-#{l}")
+            p
+              +articleTextanalyse(l)
+            p
+              +articleTranslateButton(l,params.left_lang)
+        else
+          div.RL(class="RL-#{l}").hidden
+            p
+              +articleTextanalyse(l)
+            p
+              +articleTranslateButton(l,params.left_lang)
+
+

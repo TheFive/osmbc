@@ -40,7 +40,6 @@ mixin articleMarkdown(lang,disabled)
 
 
 mixin articlePreview(lang)
-  // if article.categoryEN != "Picture"
   .panel.panel-default.panel-body.preview(id="preview" + lang, lang = lang)
     :verbatim
       !{article["textHtml"+lang]}
@@ -49,14 +48,14 @@ mixin articlePreview(lang)
 
 mixin articleTextanalyse(lang)
   if (lang === "DE") && (article["markdown" + lang])
-    form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
-      input.form-control(type="hidden" name = "text" id ="textanalysefield")
-    a(href="#" onClick ="javascript: taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewDE').innerText; taform.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
-    span=" "
+    a(href="#" onClick ="taform = document.getElementById('textanalyseform');console.log(taform);taf = document.getElementById('textanalysefield');console.log(taf);taf.value = document.getElementById('previewDE').innerText; taf.parentElement.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
 
 mixin articleTranslateButton(langFrom,langTo)
   if (article["markdown" + langFrom] && !article["markdown" + langTo])
-    button.btn.btn-small.btn-primary(id="translate"+langFrom+langTo onClick ="javascript: window.translate('#{langFrom}','#{langTo}');") Google Translate #{langFrom} -> #{langTo}
+    button.btn.btn-small.btn-primary(
+         id="translate"+langFrom+langTo
+         onClick ="window.translate('#{langFrom}','#{langTo}');return false;"
+       ) Google Translate #{langFrom} -> #{langTo}
     button.btn.btn-small.btn-warning.hidden(id="translateWait"+langFrom+langTo)
       span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
       span=" Please Wait"
@@ -88,9 +87,27 @@ mixin noTranslationButton
       p
         button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; setNoTranslation(); document.getElementById('input').submit();") no translation to rest
 
+mixin markdownWithPreview(lang)
+  - labelClass = ""
+  - if (params.left_lang === lang) labelClass = "osmbclabel-lang";
+  - if (params.right_lang === lang) labelClass = "osmbclabel-lang2";
+  span.label.label-default(
+      class="#{labelClass}"
+      draggable="true"
+      data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+      ondragstart="ondragstartLangLabel(event,'#{lang}');")="  " + lang + "  "
+  span.label.label-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
+
+
+  textarea.hidden.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true) #{article["markdown" + lang]}
+  +articleMarkdown(lang,!article.isChangeAllowed("markdown" + lang))
+  +articlePreview(lang)
+  +articleTextanalyse(lang)
 
 block content
   p.osmbc-help-text="This Editor is BETA, please change to old editor in your settings in case of any problems."
+  form#textanalyseform( method="POST",action="http://wortliga.de/textanalyse/" )
+    input.form-control(type="hidden" name = "text" id ="textanalysefield")
   form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}/witholdvalues", method="post")
     .row
       // Block for Buttons in the upper right corner and on the top in mobile
@@ -224,103 +241,7 @@ block content
         p.osmbc-help-text Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
 
 
-
-
-
-
-      - var lbg;
-      - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
-      - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
-      - var rbg;
-      - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
-      - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
-
-
-
-
-      .col-md-6
-        .row
-          .col-md-2
-          .col-md-10
-            span.label.label-default(
-               id="left_lang"
-               class="#{lbg}"
-               draggable="true"
-               data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
-               ondragstart="ondragstartLangLabel(event,'#{params.left_lang}');")="  "+params.left_lang+"  "
-            span.label.label-danger(style="display:none" id="markdown"+params.left_lang+"_unsaved" class="lbg")="unsaved"
-
-        .row.markdownArea
-          .col-md-2
-            p="Markdown"
-
-          .col-md-10
-            +articleMarkdown(params.left_lang,!article.isChangeAllowed("markdown"+params.left_lang))
-        .row
-          .col-md-2
-            p="Preview"
-          .col-md-10
-            +articlePreview(params.left_lang)
-
-      .col-md-5
-        .row
-          .col-md-12
-            for l in layout.activeLanguages
-              if l === params.right_lang
-                span.label.label-default.RL(
-                   class="RL-#{l}"
-                   draggable="true"
-                   data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
-                   ondragstart="ondragstartLangLabel(event,'#{l}');")=l
-                span.label.label-danger.RL(style="display:none" id="markdown"+l+"_unsaved" class="RL-#{l}")="unsaved"
-              else
-                span.label.label-default.RL.hidden(
-                    class= "RL-#{l}"
-                    draggable="true"
-                    data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
-                    ondragstart="ondragstartLangLabel(event,'#{l}');")=l
-                span.label.label-danger.RL.hidden(style="display:none" id="markdown"+l+"_unsaved" class="RL-#{l}")="unsaved"
-
-        .row
-          .col-md-12
-            for l in layout.activeLanguages
-              textarea.hidden.form-control(id="old_markdown"+l, name="old_markdown"+l,rows=1,hide=true) #{article["markdown"+l]}
-              if l === params.right_lang
-                .RL(class= "RL-#{l}")
-                  +articleMarkdown(l,!article.isChangeAllowed("markdown"+l))
-              else
-                if l !== params.left_lang
-                  .RL.hidden(class= "RL-#{l}")
-                    +articleMarkdown(l,!article.isChangeAllowed("markdown"+l))
-        .row
-          .col-md-12
-            for l in layout.activeLanguages
-              if l === params.right_lang
-                .RL(class= "RL-#{l}")
-                  +articlePreview(l)
-              else
-                .RL.hidden(class= "RL-#{l}")
-                  +articlePreview(l)
-
-
-
-
-
-      .col-md-1
-        .row
-           i#languageFlagsShow.fa.fa-flag.fa-2x(
-               onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
-
-        .row#languageFlags.hidden
-           - for (lang in languageFlags)
-             img(id="#{lang}",
-               src="#{languageFlags[lang]}",
-               class="img-thumbnail" ,
-               width = 40,
-               data-toggle="tooltip" data-placement="left" title=lang
-               onclick="javascript:myclick(this.id)"
-               ondragstart = "ondragstartflag(event,this.id);")
-           p.osmbc-help-text="Click to copy to clipboard, or use drag and drop."
+    block markdownArea
 
 
 
@@ -328,51 +249,6 @@ block content
 
 
 
-
-
-
-
-
-  .row
-    .col-md-1
-    +leftcolumn
-      p
-        +articleTextanalyse(params.left_lang)
-      for l in layout.activeLanguages
-        if (l === params.right_lang)
-          p.RL(class="RL-#{l}")
-            +articleTranslateButton(params.left_lang,l)
-        else
-          p.RL(class="RL-#{l}").hidden
-            +articleTranslateButton(params.left_lang,l)
-
-    +rightcolumn
-      for l in layout.activeLanguages
-        if (l===params.right_lang)
-          div.RL(class="RL-#{l}")
-            p
-              +articleTextanalyse(l)
-            p
-              +articleTranslateButton(l,params.left_lang)
-        else
-          div.RL(class="RL-#{l}").hidden
-            p
-              +articleTextanalyse(l)
-            p
-              +articleTranslateButton(l,params.left_lang)
-
-
-
-
-
-
-
-
-
-
-  // simple hidden form, to post data to the wortliga textanalyse service
-  form(id="textanalyseform" ,method="POST",action="http://wortliga.de/textanalyse/" )
-    input.form-control(type="hidden" name = "text" id ="textanalysefield")
 
   .div#commentArea
     include commentArea
@@ -834,8 +710,10 @@ block scripts
     // Enable & Disable the different languages
     function showRL(what) {
       $(".RL").addClass("hidden");
+      $(".RLOFF").removeClass("hidden");
       if (what == "!{params.left_lang}") what = "!{params.right_lang}";
       $(".RL-"+what).removeClass("hidden");
+      $(".RLOFF-"+what).addClass("hidden");
     }
 
 
@@ -963,11 +841,14 @@ block scripts
       var from =  langFrom.toLowerCase();
       var to = langTo.toLowerCase();
       var originalText = document.getElementById("markdown" + langFrom).value;
+      console.log("Translate from %s to %s", from, to);
       jQuery.post("#{layout.htmlroot}/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
+        console.log("Translation received");
         data = data.replace(/] \(/g, "](");
         document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
         $("#markdown" + langTo).val(data).trigger("change");
       }).fail(function (err) {
+        console.log("Translation failed");
         console.log(err);
         document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
         document.getElementById("translateError" + langFrom + langTo).classList.remove("hidden");

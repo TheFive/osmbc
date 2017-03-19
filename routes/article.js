@@ -205,7 +205,27 @@ function renderArticleId(req, res, next) {
           // change title of page
           res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
           let jadeFile = "article";
-          if (req.user.articleEditor === "new") jadeFile = "article/article_new";
+          if (req.user.articleEditor === "new") {
+            jadeFile = "article/article_twocolumn";
+            if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";
+          }
+          if (req.user.articleEditor === "3column") {
+            jadeFile = "article/article_threecolumn";
+            if (req.user.getLang3()==="--" ) jadeFile = "article/article_twocolumn";
+            if (req.user.getSecondLang()==="--" ) jadeFile = "article/article_onecolumn";
+
+            params.columns=3;
+          }
+          if (req.user.articleEditor === "4column") {
+            jadeFile = "article/article_threecolumn";
+            console.log(req.user.getSecondLang());
+            if (req.user.getLang4()===null ) jadeFile = "article/article_threecolumn";
+            if (req.user.getLang3()===null ) jadeFile = "article/article_twocolumn";
+            if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";
+            params.columns=4;
+          }
+
+
           res.render(jadeFile, {layout: res.rendervar.layout,
             article: article,
             googleTranslateText: configModule.getConfig("automatictranslatetext"),
@@ -901,6 +921,9 @@ function translate(req, res, next) {
 
   if (fromLang === "jp") { fromLang = "ja"; };
   if (toLang === "jp") { toLang = "ja"; }
+
+  if (fromLang === "cz") { fromLang = "cs"; };
+  if (toLang === "cz") { toLang = "cs"; }
 
   gglTranslateAPI(text, {from: fromLang, to: toLang}).then(function (result) {
     res.end(result.text);
