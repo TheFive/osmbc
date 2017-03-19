@@ -151,8 +151,8 @@ function postUserId(req, res, next) {
   if (typeof (changes.mailBlogLanguageStatusChange) === "undefined") {
     changes.mailBlogLanguageStatusChange = [];
   }
-  if (changes.languageCount !== "three") changes.languageCount = "two";
-  if (changes.articleEditor !== "new") changes.articleEditor = "old";
+  if (["three","four"].indexOf(changes.languageCount) <0) changes.languageCount = "two";
+  if (["new"].indexOf(changes.articleEditor) <0 ) changes.articleEditor = "old";
   var user;
   async.series([
     function findUser(cb) {

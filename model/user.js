@@ -263,6 +263,18 @@ User.prototype.getSecondLang = function getSecondLang() {
   return null;
 };
 
+User.prototype.getLang3 = function getLang3() {
+  debug("User.prototype.getLang3");
+  if (this.lang3) return this.lang3;
+  return null;
+};
+
+User.prototype.getLang4 = function getLang4() {
+  debug("User.prototype.getLang4");
+  if (this.lang4) return this.lang4;
+  return null;
+};
+
 
 User.prototype.setOption = function setOption(view, option, value) {
   debug("User.prototype.setOption");

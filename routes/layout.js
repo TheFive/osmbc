@@ -184,6 +184,8 @@ function prepareRenderLayout(req, res, next) {
         secondLangMentions: secondLangMentions,
         language: req.user.getMainLang(),
         language2: req.user.getSecondLang(),
+        language3: req.user.getLang3(),
+        language4: req.user.getLang4(),
         listOfOpenBlog: result.listOfOpenBlog,
         listOfEditBlog: result.listOfEditBlog,
         listOfReviewBlog: result.listOfReviewBlog,

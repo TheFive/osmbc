@@ -1,0 +1,45 @@
+extends article_new
+
+
+block markdownArea
+
+  .row
+    .col-md-4
+      +markdownWithPreview(params.left_lang)
+
+    .col-md-4
+      +markdownWithPreview(params.right_lang)
+
+    .col-md-4
+      +markdownWithPreview(params.lang3)
+
+
+
+
+
+  .row
+    i#languageFlagsShow.fa.fa-flag.fa-2x(
+    onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
+
+  .row#languageFlags.hidden
+    - for (lang in languageFlags)
+      img(id="#{lang}",
+        src="#{languageFlags[lang]}",
+        class="img-thumbnail" ,
+        width = 40,
+        data-toggle="tooltip" data-placement="bottom" title=lang
+        onclick="javascript:myclick(this.id)"
+        ondragstart = "ondragstartflag(event,this.id);")
+    p.osmbc-help-text="Click to copy to clipboard, or use drag and drop."
+
+
+
+
+
+
+
+
+
+
+
+
