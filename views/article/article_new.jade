@@ -257,37 +257,37 @@ block content
     include ../voteButtonsList
 
   #doublettes.row
-      if articleReferences.count >= 1
-        h3
-          |Links used in other Post
-        div
-          table.table.table-striped.table-responsive
-            thead
-              tr
-                th="link"
-                th="article"
-                th="category"
-                th="blog"
+    if articleReferences.count >= 1
+      h3
+        |Links used in other Post
+      div
+        table.table.table-striped.table-responsive
+          thead
+            tr
+              th="link"
+              th="article"
+              th="category"
+              th="blog"
 
-            tbody
-              each array,link in articleReferences
-                if (link != "count" )
-                  each articleItem,index in array
-                    if (articleItem.id != article.id) && (index <5)
-                      tr
-                        td
-                          a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
-                        td
-                          a(href=layout.htmlroot+'/article/'+articleItem.id) #{articleItem.displayTitle()}
-                        td= articleItem.categoryEN
-                        td= articleItem.blog
-                    if (index == 8) 
-                      tr
-                        td
-                          a(href='#{link}') #{link}
-                        td
-                          |And #{array.length-5} further articles.
-                
+          tbody
+            each array,link in articleReferences
+              if (link != "count" )
+                each articleItem,index in array
+                  if (articleItem.id != article.id) && (index <5)
+                    tr
+                      td
+                        a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
+                      td
+                        a(href=layout.htmlroot+'/article/'+articleItem.id) #{articleItem.displayTitle()}
+                      td= articleItem.categoryEN
+                      td= articleItem.blog
+                  if (index == 8)
+                    tr
+                      td
+                        a(href='#{link}') #{link}
+                      td
+                        |And #{array.length-5} further articles.
+
 
 
     .row.visible-xs
@@ -312,7 +312,7 @@ block content
                  |change
                 th
                  |when
-             tbody
+            tbody
               each change, i in changes
                 tr
                   td

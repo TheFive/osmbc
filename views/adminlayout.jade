@@ -96,11 +96,11 @@ block all
                       li
                         a(href=layout.htmlroot+'/language?lang=#{l}') #{l}
                 if layout.user
-                    li
-                      a(href=layout.htmlroot+'/usert/#{layout.user.id}') #{layout.user.displayName}
-                  else
-                    li
-                      a(href='./') Anonymous
+                  li
+                    a(href=layout.htmlroot+'/usert/#{layout.user.id}') #{layout.user.displayName}
+                else
+                  li
+                    a(href='./') Anonymous
             // /.nav-collapse
 
 
