@@ -23,8 +23,8 @@ block markdownArea
 
   .row#languageFlags.hidden
     - for (lang in languageFlags)
-      img(id="#{lang}",
-        src="#{languageFlags[lang]}",
+      img(id=lang,
+        src=languageFlags[lang],
         class="img-thumbnail" ,
         width = 40,
         data-toggle="tooltip" data-placement="bottom" title=lang
