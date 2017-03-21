@@ -52,9 +52,9 @@ block content
                 td
                   span.glyphicon.glyphicon-triangle-right(class="class_#{article.id}")
                   span.glyphicon.glyphicon-triangle-bottom.hidden(class="class_#{article.id}")
-                  a(href="#{layout.htmlroot}/blog/#{article.blog}") #{article.blog}
+                  a(href=layout.htmlroot+"/blog/#{article.blog}") #{article.blog}
                 td
-                  a(href="#{layout.htmlroot}/article/#{article.id}") #{(article.title)?article.title:"No Title"}
+                  a(href=layout.htmlroot+"/article/#{article.id}") #{(article.title)?article.title:"No Title"}
                 td.hidden-xs=article.categoryEN
                 td.pre=article.collection
               tr(class="class_#{article.id}").hidden
@@ -72,7 +72,7 @@ block content
           a(style={color:'Gray'}) 
             | No Articles found for search '#{search}'
       if (showCollect)
-        form(name="input",id="input" action="#{layout.htmlroot}/article/create", method="post")
+        form(name="input",id="input" action=layout.htmlroot+"/article/create", method="post")
           - var langs = JSON.stringify(layout.usedLanguages)
           input.hidden(name="languages" value="#{langs}")
           h2 
@@ -102,7 +102,7 @@ block content
                   p.osmbc-help-text(id="categoryDisplay")
                 .col-md-5
                   input.btn.btn-large.btn-primary(type="submit", id="OK",value="OK")
-                  a(href="#{layout.htmlroot}/article/searchandcreate?edit=false" class="btn btn-default" role="button") Cancel
+                  a(href=layout.htmlroot+"/article/searchandcreate?edit=false" class="btn btn-default" role="button") Cancel
                   button.btn.btn-large.osmbcbadge-lang(id="OKLang",name="OKLang", onclick ="window.onbeforeunload=null; document.getElementById('input').action = '#{layout.htmlroot}/article/create?notranslation=true';document.getElementById('input').submit();") OK (only #{layout.user.mainLang})
 
             

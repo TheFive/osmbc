@@ -10,7 +10,7 @@ block content
           tr
             - date ="";
             - if (params.date)  date = "/"+date;
-            form.form-horizontal(action='#{layout.htmlroot}/changes/log#{date}',method='get',id='form')
+            form.form-horizontal(action=layout.htmlroot+'/changes/log#{date}',method='get',id='form')
               div.form-group
                 input.col-sm-2(type='text',id='user',name='user',placeholder='user',value=params.user)
                 input.col-sm-2(type='text',id='blog',name='blog',placeholder='blog',value=params.blog)
@@ -51,21 +51,21 @@ block content
                     span.glyphicon.glyphicon-triangle-right(class="class_#{change.id}")
                     span.glyphicon.glyphicon-triangle-bottom.hidden(class="class_#{change.id}")
                 td
-                  a(href='#{layout.htmlroot}/changes/' + change.id)
+                  a(href=layout.htmlroot+'/changes/' + change.id)
                     span.glyphicon.glyphicon-info-sign
                 td=change.user
                 td
                   if change.table == "blog"
-                    a(href="#{layout.htmlroot}/blog/#{change.oid}")=change.blog
+                    a(href=layout.htmlroot+"/blog/#{change.oid}")=change.blog
                   else
                     span=change.blog
                 td=change.table
                 td
                   if change.table == "article"
-                    a(href="#{layout.htmlroot}/article/#{change.oid}")=change.oid
+                    a(href=layout.htmlroot+"/article/#{change.oid}")=change.oid
                   else
                     if change.table == "usert"
-                      a(href="#{layout.htmlroot}/usert/#{change.oid}")=change.oid
+                      a(href=layout.htmlroot+"/usert/#{change.oid}")=change.oid
                     else
                       if change.table == "blog"
                       else

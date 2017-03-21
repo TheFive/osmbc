@@ -6,36 +6,36 @@ block content
       h1="Configuration"
       h2="Calendar"
       p
-        a(href="#{layout.htmlroot}/config/calendartranslation")  Calendar Translation Texts
+        a(href=layout.htmlroot+"/config/calendartranslation")  Calendar Translation Texts
       p
-        a(href="#{layout.htmlroot}/config/calendarflags")  Flags for calendar
+        a(href=layout.htmlroot+"/config/calendarflags")  Flags for calendar
       p
-        a(href="#{layout.htmlroot}/config/eventsfilter")  Filter for calendar
+        a(href=layout.htmlroot+"/config/eventsfilter")  Filter for calendar
       h2="Editor Info"
       p
-        a(href="#{layout.htmlroot}/config/formulation_tipDE")  Formulation Hint for DE
+        a(href=layout.htmlroot+"/config/formulation_tipDE")  Formulation Hint for DE
       p
-        a(href="#{layout.htmlroot}/config/formulation_tipEN")  Formulation Hint for EN
+        a(href=layout.htmlroot+"/config/formulation_tipEN")  Formulation Hint for EN
       p
-        a(href="#{layout.htmlroot}/config/categorydescription")  Descriptions for Categories
+        a(href=layout.htmlroot+"/config/categorydescription")  Descriptions for Categories
       p
-        a(href="#{layout.htmlroot}/config/languageflags") Language Flags for German Blog
+        a(href=layout.htmlroot+"/config/languageflags") Language Flags for German Blog
       h2="Pictures"
       p
-        a(href="#{layout.htmlroot}/config/licenses") Picture Licensing
+        a(href=layout.htmlroot+"/config/licenses") Picture Licensing
       h2="Blog"
       p
-        a(href="#{layout.htmlroot}/config/editorstrings") Author Documentation
+        a(href=layout.htmlroot+"/config/editorstrings") Author Documentation
       p
-        a(href="#{layout.htmlroot}/config/categorytranslation") Category Translation
+        a(href=layout.htmlroot+"/config/categorytranslation") Category Translation
       h2="Article"
       p
-        a(href="#{layout.htmlroot}/config/automatictranslatetext") Text for Google Translate Links
+        a(href=layout.htmlroot+"/config/automatictranslatetext") Text for Google Translate Links
       p
-        a(href="#{layout.htmlroot}/config/votes") Votes For Articles
+        a(href=layout.htmlroot+"/config/votes") Votes For Articles
       h2="IM Notification"
       p
-        a(href="#{layout.htmlroot}/config/slacknotification") Configuration of IM Channel (Slack,MM)
+        a(href=layout.htmlroot+"/config/slacknotification") Configuration of IM Channel (Slack,MM)
 
     .col-md-8.visible-xs
       p
@@ -43,14 +43,14 @@ block content
         - var d = new Date();
         - d= d.toISOString();
         - d= d.substring(0,7);
-        a(href="#{layout.htmlroot}/changes/log?table=config&date="+d) [changes]
+        a(href=layout.htmlroot+"/changes/log?table=config&date="+d) [changes]
     .col-md-8.hidden-xs
       if changes
         h4="Last Changes "
           - var d = new Date();
           - d= d.toISOString();
           - d= d.substring(0,7);
-          a(href="#{layout.htmlroot}/changes/log?date="+d)  (more)
+          a(href=layout.htmlroot+"/changes/log?date="+d)  (more)
         div
           table.table.table-striped.table-condensed.table-responsive
             thead
@@ -73,7 +73,7 @@ block content
               each change, i in changes
                 tr
                   td
-                    a(href='#{layout.htmlroot}/changes/' + change.id) 
+                    a(href=layout.htmlroot+'/changes/' + change.id)
                       span.glyphicon.glyphicon-info-sign
                   td= change.blog
                   td= change.user
@@ -95,6 +95,6 @@ block content
     .col-md-8
     .col-md-4
       if layout.style!="style.css"
-        a(href="#{layout.htmlroot}/osmbc.html?tempstyleOff=true") Switch Development Color off for this session.
+        a(href=layout.htmlroot+"/osmbc.html?tempstyleOff=true") Switch Development Color off for this session.
 
   div.footer

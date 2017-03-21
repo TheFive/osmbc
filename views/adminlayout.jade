@@ -22,9 +22,9 @@ block all
           .container-fluid
             .navbar-header.pull-left
               if layout.osmbc_version === layout.user.lastChangeLogView
-                a.navbar-brand(href='#{layout.htmlroot}/osmbc.html') #{layout.appName}
+                a.navbar-brand(href=layout.htmlroot+'/osmbc.html') #{layout.appName}
               else
-                a.navbar-brand.bg-success(href='#{layout.htmlroot}/changelog') Whats New?
+                a.navbar-brand.bg-success(href=layout.htmlroot+'/changelog') Whats New?
             .navbar-header
               button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')
                 span.sr-only Toggle navigation
@@ -40,15 +40,15 @@ block all
                   ul.dropdown-menu(role='menu')
                     li.dropdown-header List
                     li
-                      a(href="#{layout.htmlroot}/usert/create") Create
+                      a(href=layout.htmlroot+"/usert/create") Create
                     li
-                      a(href="#{layout.htmlroot}/usert/list?access=full") List Active
+                      a(href=layout.htmlroot+"/usert/list?access=full") List Active
                     li
-                      a(href="#{layout.htmlroot}/usert/list?access=denied") List Denied
+                      a(href=layout.htmlroot+"/usert/list?access=denied") List Denied
                     li
-                      a(href="#{layout.htmlroot}/usert/list") List All
+                      a(href=layout.htmlroot+"/usert/list") List All
                     li
-                      a(href="#{layout.htmlroot}/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
+                      a(href=layout.htmlroot+"/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
                 li.dropdown.hidden-xs
                   a.dropdown-toggle(href='#', data-toggle='dropdown')
                     | Tool
@@ -56,9 +56,9 @@ block all
                   ul.dropdown-menu(role='menu')
                     li.dropdown-header Action
                     li
-                      a(href="#{layout.htmlroot}/createblog") Create Blog
+                      a(href=layout.htmlroot+"/createblog") Create Blog
                 li
-                  a(href="#{layout.htmlroot}/osmbc/admin") Admin
+                  a(href=layout.htmlroot+"/osmbc/admin") Admin
 
               ul.nav.navbar-nav.navbar-right
                 li.dropdown
@@ -70,17 +70,17 @@ block all
                       a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md") Version #{layout.osmbc_version}
                     li.divider
                     li
-                      a(href="#{layout.htmlroot}/help/OSMBC") OSMBC
+                      a(href=layout.htmlroot+"/help/OSMBC") OSMBC
                     li
-                      a(href="#{layout.htmlroot}/help/How To Integrate A Picture") How To Integrate A Picture
+                      a(href=layout.htmlroot+"/help/How To Integrate A Picture") How To Integrate A Picture
                     li
-                      a(href="#{layout.htmlroot}/help/Notification") Using OSMBC Notifications
+                      a(href=layout.htmlroot+"/help/Notification") Using OSMBC Notifications
                     li
-                      a(href="#{layout.htmlroot}/help/The Blog Views") The Blog Views
+                      a(href=layout.htmlroot+"/help/The Blog Views") The Blog Views
                     li
-                      a(href="#{layout.htmlroot}/help/Beginner's How To") Beginner's How To
+                      a(href=layout.htmlroot+"/help/Beginner's How To") Beginner's How To
                     li
-                      a(href="#{layout.htmlroot}/help/Categories") Which Category to use ?
+                      a(href=layout.htmlroot+"/help/Categories") Which Category to use ?
                     li.divider
                     li
                       a(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
@@ -94,10 +94,10 @@ block all
                   ul.dropdown-menu(role='menu')
                     each l in layout.languages
                       li
-                        a(href='#{layout.htmlroot}/language?lang=#{l}') #{l}
+                        a(href=layout.htmlroot+'/language?lang=#{l}') #{l}
                 if layout.user
                     li
-                      a(href='#{layout.htmlroot}/usert/#{layout.user.id}') #{layout.user.displayName}
+                      a(href=layout.htmlroot+'/usert/#{layout.user.id}') #{layout.user.displayName}
                   else
                     li
                       a(href='./') Anonymous

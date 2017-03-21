@@ -139,7 +139,7 @@ mixin articleIcons(a,options)
         span.glyphicon.glyphicon-comment.small-margin(style="color:grey")
       if !a.getCommentRead(layout.user.OSMUser)
         span.glyphicon.glyphicon-envelope.small-margin
-  a(href="#{layout.htmlroot}/article/#{a.id}")
+  a(href=layout.htmlroot+"/article/#{a.id}")
     span.glyphicon.glyphicon-open.small-margin
   if a.predecessorId
     if (a.predecessorId === options.predecessorId)
@@ -150,9 +150,9 @@ mixin articleIcons(a,options)
 
 mixin navbutton(userstyle,style,p,addClass)
   if (userstyle == style)
-    li.active(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
+    li.active(class="#{addClass}"):  a(href=layout.htmlroot+"/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
   else
-    li(class="#{addClass}"):  a(href="#{layout.htmlroot}/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
+    li(class="#{addClass}"):  a(href=layout.htmlroot+"/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
 
 
 mixin articleIconLegend(view)

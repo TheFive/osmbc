@@ -6,7 +6,7 @@ extends adminlayout
 block content
 
   h1="Edit OSMBC User "+ usershown.OSMUser
-  form(name="input", action="#{layout.htmlroot}/usert/#{usershown.id}", method="post")
+  form(name="input", action=layout.htmlroot+"/usert/#{usershown.id}", method="post")
     div.form-horizontal(role="form")
       if (usershown.hasLoggedIn())
         +labeledText("OSMUser","OSMUser",usershown.OSMUser,"User already logged in, namechange not possible.")
@@ -129,7 +129,7 @@ block content
     .col-md-2
       if (usershown.OSMUser === layout.user.OSMUser)
         p
-          a(href="#{layout.htmlroot}/logout") [logout user]
+          a(href=layout.htmlroot+"/logout") [logout user]
 
 
 
@@ -158,7 +158,7 @@ block content
             each change, i in changes
               tr
                 td
-                  a(href='#{layout.htmlroot}/changes/' + change.id) #{change.id} 
+                  a(href=layout.htmlroot+'/changes/' + change.id) #{change.id}
                 td= change.user
                 td= change.property
                 td= layout.util.shorten(change.from)
@@ -171,9 +171,9 @@ block content
 
 block scripts
 
-  link(rel="stylesheet" type="text/css" href="#{layout.htmlroot}/stylesheets/calendar-heatmap.css")
+  link(rel="stylesheet" type="text/css" href=layout.htmlroot+"/stylesheets/calendar-heatmap.css")
   script(src=layout.path("d3")+"/d3.min.js")
-  script(src="#{layout.htmlroot}/javascripts/calendar-heatmap.js")
+  script(src=layout.htmlroot+"/javascripts/calendar-heatmap.js")
   script(src=layout.path("moment") + "/min/moment.min.js")
 
 

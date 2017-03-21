@@ -25,7 +25,7 @@ block content
 
           
     if (params && params.edit) 
-      form(name="input", action="#{layout.htmlroot}/blog/edit/#{blog.id}", method="post")
+      form(name="input", action=layout.htmlroot+"/blog/edit/#{blog.id}", method="post")
         .row
           .col-md-2
             | Name 
@@ -33,7 +33,7 @@ block content
             input(type="text",class="form-control",name ="name",value="#{blog.name}") 
           .col-md-4
             input(type="submit", class="btn btn-primary",value="OK")
-            a(href="#{layout.htmlroot}/blog/edit/#{blog.name}?edit=false" class="btn btn-default" role="button") Cancel
+            a(href=layout.htmlroot+"/blog/edit/#{blog.name}?edit=false" class="btn btn-default" role="button") Cancel
         .row
           .col-md-2
             | Period 
@@ -71,7 +71,7 @@ block content
             | #{blog.name}
         .col-md-6
         .col-md-1
-          a(href="#{layout.htmlroot}/blog/edit/#{blog.name}?edit=true" class="btn btn-primary" role="button") Edit
+          a(href=layout.htmlroot+"/blog/edit/#{blog.name}?edit=true" class="btn btn-primary" role="button") Edit
       .row
         .col-md-2
           | Period 
@@ -109,7 +109,7 @@ block content
                   if blog["close"+lang]
                     | close  
                     td
-                      form(id="startReview" name="reopenlang", action="#{layout.htmlroot}/blog/#{blog.name}/setLangStatus", method="post")
+                      form(id="startReview" name="reopenlang", action=layout.htmlroot+"/blog/#{blog.name}/setLangStatus", method="post")
                         input.hidden(type="text",name="lang" value = lang)
                         input.hidden(type="text",name ="action" value = "editlang")
                         button.btn.btn-xs.btn-warning(id="closebutton" type = "submit" ) Reopen
@@ -124,10 +124,8 @@ block content
           | Show Articles
         .col-md-10
           p 
-            a(href="#{layout.htmlroot}/article/list?blog=#{blog.name}") List of all articles 
-          p 
-            Use this link to go to "unlinked" articles.
-      
+            a(href=layout.htmlroot+"/article/list?blog=#{blog.name}") List of all articles
+          p="Use this link to go to 'unlinked' articles."
       .row
         .col-md-2
 
