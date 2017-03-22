@@ -93,7 +93,12 @@ mixin labeledText(label,name,value,explanation)
 mixin languageDisplay(article,options)
   - langList = layout.activeLanguages
   - onClick = ""
-  - if (options && options.short) langList = [layout.language,(layout.language2)?layout.language2:"--"]
+  - if (options && options.short) {
+  -  langList = [layout.language];
+  -  if (layout.language2) langList.push(layout.language2);
+  -  if (layout.language3) langList.push(layout.language3);
+  -  if (layout.language4) langList.push(layout.language4);
+  - }
   each lang in langList
     - if (options && options.func) onClick = options.func+"('"+lang+"')"
     - var style = ""
