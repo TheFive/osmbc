@@ -18,6 +18,7 @@ var htmlRoot = config.getValue("htmlroot", {mustExist: true});
 var bootstrap = config.getValue("bootstrap", {mustExist: true});
 var appName = config.getValue("AppName", {mustExist: true});
 
+let url=config.getValue("url");
 
 function calculateUnreadMessages(list, user) {
   var result = 0;
@@ -176,6 +177,7 @@ function prepareRenderLayout(req, res, next) {
       res.rendervar.layout = {user: req.user,
         listOfOrphanBlog: result.listOfOrphanBlog,
         htmlroot: htmlRoot,
+        url:url,
         languages: languages,
         markdown: markdown,
         path: path,

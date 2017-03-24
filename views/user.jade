@@ -116,6 +116,26 @@ block content
         div.col-sm-offset-2.col-sm-10
           input(name="OK" type="submit", class="btn btn-primary",value="OK")
 
+  if (usershown.OSMUser === layout.user.OSMUser)
+    .row
+      h1="Your Api Key"
+      if (usershown.apiKey)
+        p="Your api key is: "+usershown.apiKey+". "
+          span="If you have to change your key, press "
+          a(href=layout.htmlroot+"/usert/createApiKey")="Change Key"
+        p="Please create a bookmarklet with a name of your choice and the following link:"
+          pre
+            |javascript: var request = new XMLHttpRequest();
+            |request.open("GET", "#{layout.url}#{layout.htmlroot}/api/collect/#{usershown.apiKey}?collection="+document.location, true);
+            |request.onreadystatechange = function() {var done = 4, ok = 200;if (request.readyState == done && request.status == ok) {if (request.responseText) {alert(request.responseText);}}};
+            |request.send(null);
+
+      else
+        a(href=layout.htmlroot+"/usert/createApiKey")="Generate Key"
+
+
+
+
 
 
 

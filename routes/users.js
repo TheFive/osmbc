@@ -215,11 +215,21 @@ function createUser(req, res, next) {
   });
 }
 
+function createApiKey(req,res,next) {
+  debug("createApiKey");
+  req.user.createApiKey(function(err){
+    if (err) return next(err);
+    let referer = req.header("Referer") || "/";
+    res.redirect(referer);
+  });
+}
+
 
 
 router.get("/inbox", inbox);
 router.get("/list", renderList);
 router.get("/create", createUser);
+router.get("/createApiKey",createApiKey);
 router.get("/:user_id", renderUserId);
 router.post("/:user_id", postUserId);
 

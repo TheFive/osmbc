@@ -292,6 +292,15 @@ User.prototype.getOption = function getOption(view, option) {
   if (defaultOption && defaultOption[view] && defaultOption[view][option]) return defaultOption[view][option];
   return null;
 };
+
+
+User.prototype.createApiKey = function createApiKey(callback) {
+  debug("createApiKey");
+  let apiKey = random.generate({length:10});
+  this.apiKey = apiKey;
+  this.save(callback);
+};
+
 // Creates an User object and stores it to database
 // can use a prototype to initialise data
 // Parameter: Prototype (optional)
