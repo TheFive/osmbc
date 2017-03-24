@@ -55,6 +55,7 @@ function articleNameSlack(article, change) {
   debug("articleNameSlack");
   let title = article.title;
   if (change) title = change;
+  if (!title) title = "";
   title = title.replace(/(<)/gm, "«");
   title = title.replace(/(>)/gm, "»");
 

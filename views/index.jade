@@ -13,7 +13,7 @@ block content
         .row
           h3
             | Blogs to work on
-            a(href="#{layout.htmlroot}/blog/list?status=IN('open','edit')") (more)
+            a(href=layout.htmlroot+"/blog/list?status=IN('open','edit')") (more)
 
         .row
           table.table.table-condensed
@@ -25,7 +25,7 @@ block content
             for openBlog in layout.listOfOpenBlog.slice(0).reverse()
               tr
                 td
-                  a(href="#{layout.htmlroot}/blog/#{openBlog.name}")=openBlog.name
+                  a(href=layout.htmlroot+"/blog/#{openBlog.name}")=openBlog.name
                 for l in layout.activeLanguages
                   td
                     div.label.osmbclabel-openblog=openBlog._countUneditedMarkdown[l]
@@ -33,7 +33,7 @@ block content
             for editBlog in layout.editBlog.slice(0).reverse()
               tr
                 td
-                  a(href="#{layout.htmlroot}/blog/#{editBlog.name}")=editBlog.name
+                  a(href=layout.htmlroot+"/blog/#{editBlog.name}")=editBlog.name
                 for l in layout.activeLanguages
                   td
                     if (editBlog["close" + l])
@@ -65,14 +65,14 @@ block content
 
         .row
           h4="Admin View"
-          a(href="#{layout.htmlroot}/osmbc/admin") click here
+          a(href=layout.htmlroot+"/osmbc/admin") click here
     .col-md-8.hidden-xs
       if changes
         h4="Last Changes "
           - var d = new Date();
           - d= d.toISOString();
           - d= d.substring(0,7);
-          a(href="#{layout.htmlroot}/changes/log?date="+d)  (more)
+          a(href=layout.htmlroot+"/changes/log?date="+d)  (more)
         div
           table.table.table-striped.table-condensed.table-responsive
             thead
@@ -95,7 +95,7 @@ block content
               each change, i in changes
                 tr
                   td
-                    a(href='#{layout.htmlroot}/changes/' + change.id) 
+                    a(href=layout.htmlroot+'/changes/' + change.id)
                       span.glyphicon.glyphicon-info-sign
                   td= change.blog
                   td= change.user

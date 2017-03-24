@@ -19,7 +19,7 @@ block content
               if layout.usedLanguages[lang]
                 th= lang
             th service
-         tbody
+        tbody
           - var onlyhelp = true
           each blog in blogs
             if blog.status != help
@@ -29,7 +29,7 @@ block content
             tr
               if (onlyhelp || blog.status != "help")
                 td
-                  a(href='#{layout.htmlroot}/blog/' + blog.name) #{blog.name} 
+                  a(href=layout.htmlroot+'/blog/' + blog.name) #{blog.name}
                 td= blog.status
                 for lang in layout.languages
                   if layout.usedLanguages[lang]
@@ -61,7 +61,7 @@ block content
 
                 td
                   if blog.status != "closed"
-                    a(href="#{layout.htmlroot}/blog/#{blog.name}?setStatus=closed") Close Blog
+                    a(href=layout.htmlroot+"/blog/#{blog.name}?setStatus=closed") Close Blog
                   else
                     |-
   row
@@ -98,10 +98,10 @@ block content
     p
       | More bloglists
     p
-       a(href="#{layout.htmlroot}/blog/list?status=open") (open) 
-       a(href="#{layout.htmlroot}/blog/list?status=edit") (edit) 
-       a(href="#{layout.htmlroot}/blog/list?status=closed") (closed) 
-       a(href="#{layout.htmlroot}/blog/list?status=trash") (trash) 
+       a(href=layout.htmlroot+"/blog/list?status=open")="(open) "
+       a(href=layout.htmlroot+"/blog/list?status=edit")="(edit) "
+       a(href=layout.htmlroot+"/blog/list?status=closed")="(closed) "
+       a(href=layout.htmlroot+"/blog/list?status=trash")="(trash) "
   row.hidden-xs
     div(id="additionalText")
       if additionalText

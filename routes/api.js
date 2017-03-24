@@ -16,14 +16,22 @@ let apiKeys = config.getValue("apiKeys", {mustExist: true});
 function checkApiKey(req, res, next) {
   debug("checkApiKey");
   var apiKey = req.params.apiKey;
-  if (!apiKeys[apiKey]) {
-    let err = new Error("Not Authorised");
-    err.status = 401;
-    err.type = "API";
-    return next(err);
+
+  if (apiKeys[apiKey]) {
+    req.apiKey = apiKeys[apiKey];
+    return next();
   }
-  req.apiKey = apiKeys[apiKey];
-  next();
+
+  userModule.findOne({apiKey:req.params.apiKey},function(err,user){
+    if (err || !user) {
+      let err = new Error("Not Authorised");
+      err.status = 401;
+      err.type = "API";
+      return next(err);
+    }
+    req.user = user;
+    next();
+  });
 }
 
 // If function is called just return OK
@@ -133,11 +141,68 @@ function collectArticle(req, res, next) {
   });
 }
 
+function collectArticleLink(req, res, next) {
+  debug("collectArticleLink");
+  let changes = {};
+  changes.categoryEN = "-- no category yet --";
+  changes.blog = "TBC";
+  let collection = encodeURI(req.query.collection);
+  if (!req.user) return next(new Error("for collect not defined"));
+  async.series([
+    function getTitle(cb) {
+      if (req.query.title) {
+        changes.title = req.query.title;
+        return cb();
+      } else {
+        let url = [];
+        if (typeof collection === "string") url = util.getAllURL(collection);
+        if (url.length === 0) {
+          changes.title = "NOT GIVEN";
+          return cb();
+        }
+        htmltitle.getTitle(url[0], function(err, title) {
+          if (err) cb(err);
+          changes.title = title;
+          return cb();
+        });
+      }
+    },
+    function getCollection(cb) {
+      if (req.query.collection) {
+        changes.collection = collection;
+        return cb();
+      } else {
+        let error = new Error("Missing Collection");
+        error.status = 422;
+        error.type = "API";
+        return cb(error);
+      }
+    }
+  ], function(err) {
+    if (err) return next(err);
+
+    // check on existence of markdown in body
+    articleModule.createNewArticle(function(err, result) {
+      if (err) return next(err);
+      changes.version = result.version;
+
+      result.setAndSave(req.user, changes, function(err) {
+        if (err) return next(err);
+        res.set("Access-Control-Allow-Origin","*");
+        res.send("Article Collected in TBC.");
+      });
+    });
+  });
+}
+
 publicRouter.param("apiKey", checkApiKey);
 
 publicRouter.get("/monitor/:apiKey", isServerUp);
 publicRouter.get("/monitorPostgres/:apiKey", isPostgresUp);
 
 publicRouter.post("/collectArticle/:apiKey", collectArticle);
+publicRouter.get("/collect/:apiKey",collectArticleLink);
 
 module.exports.publicRouter = publicRouter;
+
+

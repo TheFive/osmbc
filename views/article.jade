@@ -44,7 +44,7 @@ block content
 
   .row
     if (params.edit && !( blog && blog.status=="closed") )
-      form(name="input",id="input", action="#{layout.htmlroot}/article/#{article.id}", method="post")
+      form(name="input",id="input", action=layout.htmlroot+"/article/#{article.id}", method="post")
         .row
           .col-md-1
             p="Blog"
@@ -257,7 +257,7 @@ block content
             a(href="#doublettes")
               div.button.btn.btn-large.btn-danger=articleReferences.count+" doub."
         .col-md-1
-          a(href="#{layout.htmlroot}/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
+          a(href=layout.htmlroot+"/article/#{article.id}?edit=true" class="btn btn-primary" role="button") Edit
       .row
         .col-md-1
           p="Category"
@@ -399,7 +399,7 @@ block content
     h3="Votes & Tags ..."
     table.table.table-condensed
       tbody
-        - for vote ,i in votes
+        for vote ,i in votes
           tr
             td.col-md-1
               if params.edit
@@ -426,7 +426,7 @@ block content
           .col-md-12
             b
               if (i > upToComment)
-                a(href="#{layout.htmlroot}/article/#{article.id}/markCommentRead?index=#{i}")
+                a(href=layout.htmlroot+"/article/#{article.id}/markCommentRead?index=#{i}")
                   span.glyphicon.glyphicon-envelope
                 span=" "
               span=comment.user
@@ -436,12 +436,12 @@ block content
               span=" "
               i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
             if !params.edit && layout.user.OSMUser === comment.user && params.editComment != i
-              a(id="EditComment#{i}" href="#{layout.htmlroot}/article/#{article.id}?editComment=#{i}")
+              a(id="EditComment#{i}" href=layout.htmlroot+"/article/#{article.id}?editComment=#{i}")
                 span=" "
                 span.glyphicon.glyphicon-pencil
 
             if !params.edit && params.editComment == i && layout.user.OSMUser === comment.user
-              form(name="EditComment",id="EditCommentForm", action="#{layout.htmlroot}/article/#{article.id}/EditComment/#{i}", method="post")
+              form(name="EditComment",id="EditCommentForm", action=layout.htmlroot+"/article/#{article.id}/EditComment/#{i}", method="post")
                 textarea.form-control(name="comment" id="editComment" rows=7)=comment.text
                 button.btn.btn-large.btn-primary(name = "update" type = "button" onclick ="if (document.getElementById('editComment').value.trim()==='') return;window.onbeforeunload=null; document.getElementById('EditCommentForm').submit();") Update
                 button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}';") Cancel
@@ -453,7 +453,7 @@ block content
     .row
       .col-md-12
         if (!params.edit && !params.editComment)
-          form(name="AddComment",id="AddComment", action="#{layout.htmlroot}/article/#{article.id}/addComment", method="post")
+          form(name="AddComment",id="AddComment", action=layout.htmlroot+"/article/#{article.id}/addComment", method="post")
             textarea.form-control(name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
             button.btn.btn-large.btn-primary(name= "AddComment" type = "button" onclick ="if (document.getElementById('comment').value.trim()==='') return;window.onbeforeunload=null; document.getElementById('AddComment').submit();") Add Comment
             button.btn.btn-large.btn-default(type = "button" onclick ="window.onbeforeunload=null; location.href='#{layout.htmlroot}/article/#{article.id}';") Cancel
@@ -486,7 +486,7 @@ block content
                       td
                         a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
                       td
-                        a(href='#{layout.htmlroot}/article/'+articleItem.id) #{articleItem.displayTitle()}
+                        a(href=layout.htmlroot+'/article/'+articleItem.id) #{articleItem.displayTitle()}
                       td= articleItem.categoryEN
                       td= articleItem.blog
                   if (index == 8)
@@ -501,7 +501,7 @@ block content
   .row.visible-xs
     p
       br
-      a(href="#{layout.htmlroot}/changes/log?table=article&oid=#{article.id}") [changes]
+      a(href=layout.htmlroot+"/changes/log?table=article&oid=#{article.id}") [changes]
   .row.hidden-xs
     if changes
       h3
@@ -523,7 +523,7 @@ block content
             each change, i in changes
               tr
                 td
-                  a(href='#{layout.htmlroot}/changes/' + change.id)
+                  a(href=layout.htmlroot+'/changes/' + change.id)
                     span.glyphicon.glyphicon-info-sign
                 td= change.user
                 td= change.property
@@ -639,7 +639,7 @@ block scripts
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase():'--'}";
       var originalText = $("#markdownLEFT").html();
-      jQuery.post("#{layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang,{text:originalText}, function(data) {
+      jQuery.post(layout.htmlroot+"/article/translate/"+leftLang+"/"+rightLang,{text:originalText}, function(data) {
         data = data.replace(/] \(/g,"](");
         document.getElementById("translateWaitRIGHT").classList.add("hidden");
         document.getElementById("markdownRIGHT").value = data;
@@ -663,7 +663,7 @@ block scripts
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
       var originalText = $("#markdownRIGHT").html();
-      jQuery.post("#{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
+      jQuery.post(layout.htmlroot+"/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
         data = data.replace(/] \(/g, "](");
         document.getElementById("translateWaitLEFT").classList.add("hidden");
         document.getElementById("markdownLEFT").value = data;

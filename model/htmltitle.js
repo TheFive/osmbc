@@ -104,6 +104,7 @@ function getTitle(url, callback) {
       }
       // remove all linebreaks
       r = r.replace(/(\r\n|\n|\r)/gm, " ");
+      if (r===null) r = "Not Found";
       return callback(null, r);
     }
   );

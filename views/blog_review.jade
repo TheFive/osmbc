@@ -69,7 +69,7 @@ block blogcontent
                       !{renderer.renderArticle(lang,a)}
 
               div.hidden(id="div#{a.id}")
-                form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
+                form(name="EditArticle",id="EditArticle#{a.id}", action=layout.htmlroot+"/article/#{a.id}/setMarkdown/#{lang}", method="post")
                   textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(#{a.id});" onkeyup="onchangeMarkdown(#{a.id})") #{a["markdown"+lang]}
                   textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
                 p

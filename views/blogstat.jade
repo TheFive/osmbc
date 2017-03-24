@@ -61,7 +61,7 @@ block content
             each u in userlist
               if logs[v]
                 td
-                  a(href="#{layout.htmlroot}/article/list?blog=#{blog.name}&user=#{u}&property=#{v}") #{logs[v][u]}
+                  a(href=layout.htmlroot+"/article/list?blog=#{blog.name}&user=#{u}&property=#{v}") #{logs[v][u]}
               else
                 td
                   | 
