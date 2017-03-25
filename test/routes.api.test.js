@@ -21,7 +21,7 @@ describe("routes/api", function() {
   beforeEach(function(bddone) {
     baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
     async.series([
-      function(cb) { testutil.importData({clear: true, user: [{"OSMUser": "TheFive", "email": "simple@test.test",language:"DE"}]}, cb); },
+      function(cb) { testutil.importData({clear: true, user: [{"OSMUser": "TheFive", "email": "simple@test.test",language:"DE","apiKey":"334433"}]}, cb); },
       testutil.startServer
     ], bddone);
   });
@@ -224,6 +224,31 @@ describe("routes/api", function() {
               blog: "TBC",
               title: "Title",
               collection: "simple Text with https://www.link.ong/something",
+              firstCollector: "TheFive"
+            }
+          ]);
+          bddone();
+        });
+      });
+    });
+    it("should collect with simple GET call", function (bddone) {
+      request({
+        method: "GET",
+        url: baseLink + "/api/collect/334433?collection=simple%20text"
+      }, function (err, res) {
+        should.not.exist(err);
+        should(res.body).eql("Article Collected in TBC.");
+        should(res.statusCode).eql(200);
+        articleModule.find({}, function(err, articles) {
+          should.not.exist(err);
+          should(articles).eql([
+            {
+              id: "1",
+              version: 2,
+              categoryEN: "-- no category yet --",
+              blog: "TBC",
+              title: "NOT GIVEN",
+              collection: "simple%20text",
               firstCollector: "TheFive"
             }
           ]);

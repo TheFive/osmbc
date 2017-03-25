@@ -148,6 +148,7 @@ function collectArticleLink(req, res, next) {
   changes.blog = "TBC";
   let collection = encodeURI(req.query.collection);
   if (!req.user) return next(new Error("for collect not defined"));
+  changes.firstCollector = req.user.OSMUser;
   async.series([
     function getTitle(cb) {
       if (req.query.title) {
