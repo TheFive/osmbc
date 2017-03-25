@@ -1,5 +1,77 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.14...HEAD)
+
+**Implemented enhancements:**
+
+- Use bookmarklet to collect from browser [\#647](https://github.com/TheFive/osmbc/issues/647)
+- Extend small \(2\) language display to new 4 languages variant in Blog view [\#645](https://github.com/TheFive/osmbc/issues/645)
+- Disallow change of Category & Blog after one language is closed in an article. [\#567](https://github.com/TheFive/osmbc/issues/567)
+- allow more than two columns in article & blog view. [\#330](https://github.com/TheFive/osmbc/issues/330)
+
+**Fixed bugs:**
+
+- New editor does not support one column [\#637](https://github.com/TheFive/osmbc/issues/637)
+
+**Closed issues:**
+
+- Upgrade Jade to PUG [\#644](https://github.com/TheFive/osmbc/issues/644)
+
+## [2.2.14](https://github.com/TheFive/osmbc/tree/2.2.14) (2017-03-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.13...2.2.14)
+
+**Fixed bugs:**
+
+- Google Translate Button is wrong and needs to much time. [\#643](https://github.com/TheFive/osmbc/issues/643)
+- New Editor has no support for copy button \(replaced by Label Drag n Drop\) [\#631](https://github.com/TheFive/osmbc/issues/631)
+
+## [2.2.13](https://github.com/TheFive/osmbc/tree/2.2.13) (2017-03-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.12...2.2.13)
+
+**Implemented enhancements:**
+
+- Show Categories in Future Preview and improve column display in Full Review [\#639](https://github.com/TheFive/osmbc/issues/639)
+
+## [2.2.12](https://github.com/TheFive/osmbc/tree/2.2.12) (2017-03-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.11...2.2.12)
+
+**Implemented enhancements:**
+
+- Allow both languages \(left & Right\) to start a review [\#641](https://github.com/TheFive/osmbc/issues/641)
+
+**Fixed bugs:**
+
+- Leave new Article Editor is missing a Warning, if something has changed. [\#642](https://github.com/TheFive/osmbc/issues/642)
+- Copy flag button is not working [\#640](https://github.com/TheFive/osmbc/issues/640)
+
+## [2.2.11](https://github.com/TheFive/osmbc/tree/2.2.11) (2017-03-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.10...2.2.11)
+
+**Implemented enhancements:**
+
+- avert warning when leaving unchanged editpage [\#448](https://github.com/TheFive/osmbc/issues/448)
+
+**Fixed bugs:**
+
+- New Editor has problems with Calendar Article [\#636](https://github.com/TheFive/osmbc/issues/636)
+- View Changes doesn't filter on Users any longer. [\#635](https://github.com/TheFive/osmbc/issues/635)
+
+## [2.2.10](https://github.com/TheFive/osmbc/tree/2.2.10) (2017-03-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.9a...2.2.10)
+
+**Implemented enhancements:**
+
+- Put unsaved status to textfields in new article editor. [\#634](https://github.com/TheFive/osmbc/issues/634)
+
+## [2.2.9a](https://github.com/TheFive/osmbc/tree/2.2.9a) (2017-03-08)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.9...2.2.9a)
+
+**Fixed bugs:**
+
+- Slack integration editor crashes when a channel name does not start with "\#" [\#632](https://github.com/TheFive/osmbc/issues/632)
+
 ## [2.2.9](https://github.com/TheFive/osmbc/tree/2.2.9) (2017-03-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.8...2.2.9)
 
@@ -13,7 +85,6 @@
 
 **Fixed bugs:**
 
-- using format dd/mm/yyyy for EN in Calendar as well [\#628](https://github.com/TheFive/osmbc/issues/628)
 - Mattermost: Logo of Bot is the same as TheFive Logo. [\#625](https://github.com/TheFive/osmbc/issues/625)
 - User can't save his settings, because timestamp is updating "version" [\#623](https://github.com/TheFive/osmbc/issues/623)
 
@@ -25,7 +96,7 @@
 
 **Implemented enhancements:**
 
-- Move Log if Email to file [\#622](https://github.com/TheFive/osmbc/issues/622)
+- Move Log of Email to file [\#622](https://github.com/TheFive/osmbc/issues/622)
 
 **Fixed bugs:**
 
@@ -2096,17 +2167,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)

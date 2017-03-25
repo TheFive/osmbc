@@ -859,7 +859,6 @@ block scripts
       var from =  langFrom.toLowerCase();
       var to = langTo.toLowerCase();
       var originalText = document.getElementById("markdown" + langFrom).value;
-      console.log("Translate from %s to %s", from, to);
       jQuery.post(layout.htmlroot+"/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
         console.log("Translation received");
         data = data.replace(/] \(/g, "](");
