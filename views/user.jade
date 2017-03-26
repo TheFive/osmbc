@@ -123,11 +123,18 @@ block content
         p="Your api key is: "+usershown.apiKey+". "
           span="If you have to change your key, press "
           a(href=layout.htmlroot+"/usert/createApiKey")="Change Key"
-        p="Please create a bookmarklet with a name of your choice and the following link:"
+        p="Please create a bookmarklet with a name of your choice and the following javascript code as 'link':"
           pre
             |javascript: var request = new XMLHttpRequest();
             |request.open("GET", "#{layout.url}#{layout.htmlroot}/api/collect/#{usershown.apiKey}?collection="+document.location, true);
-            |request.onreadystatechange = function() {var done = 4, ok = 200;if (request.readyState == done && request.status == ok) {if (request.responseText) {alert(request.responseText);}}};
+            |request.onreadystatechange = function()
+            |  {var done = 4, ok = 200;
+            |   if (request.readyState == done && request.status == ok)
+            |    {if (request.responseText && request.responseText.substring(0,4)=="http") {window.open(request.responseText)}
+            |     else {alert.request.responseText}
+            |    }
+            |    if (request.readyState == done && request.status != ok) alert("An Error occured "+request.responseText);
+            |   };
             |request.send(null);
 
       else

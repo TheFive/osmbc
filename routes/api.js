@@ -190,7 +190,7 @@ function collectArticleLink(req, res, next) {
       result.setAndSave(req.user, changes, function(err) {
         if (err) return next(err);
         res.set("Access-Control-Allow-Origin","*");
-        res.send("Article Collected in TBC.");
+        res.send(config.getValue("url")+config.getValue("htmlroot")+"/article/"+result.id);
       });
     });
   });
