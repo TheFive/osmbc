@@ -237,7 +237,7 @@ describe("routes/api", function() {
         url: baseLink + "/api/collect/334433?collection=simple%20text"
       }, function (err, res) {
         should.not.exist(err);
-        should(res.body).eql("Article Collected in TBC.");
+        should(res.body).eql("https://testosm.bc/article/1");
         should(res.statusCode).eql(200);
         articleModule.find({}, function(err, articles) {
           should.not.exist(err);
