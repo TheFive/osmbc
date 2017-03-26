@@ -130,7 +130,7 @@ block content
             |request.onreadystatechange = function()
             |  {var done = 4, ok = 200;
             |   if (request.readyState == done && request.status == ok)
-            |    {if (request.responseText && request.responseText.substring(0,4)=="http") {window.open(request.responseText)}
+            |    {if (request.responseText && request.responseText.substring(0,4)=="http") {if (window.confirm("Send to OSMBC's TBC, open Editor?")){window.location.href=request.responseText}}
             |     else {alert.request.responseText}
             |    }
             |    if (request.readyState == done && request.status != ok) alert("An Error occured "+request.responseText);
