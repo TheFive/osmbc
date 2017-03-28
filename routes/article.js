@@ -123,22 +123,6 @@ function renderArticleId(req, res, next) {
         callback(err, result);
       });
     },
-    // (informal) locking information for the article
-    edit:
-    function (callback) {
-      debug("renderArticleId->edit");
-
-      if (typeof (params.edit) !== "undefined") {
-        if (params.edit === "false") {
-          delete params.edit;
-          article.doUnlock(callback);
-          return;
-        }
-        article.doLock(req.user.displayName, callback);
-      } else {
-        return callback();
-      }
-    },
     articleForSort:
     function articleForSort(callback) {
       debug("renderArticleId->articleForSort");

@@ -53,7 +53,7 @@ mixin articleTextanalyse(lang)
 mixin articleTranslateButton(langFrom,langTo)
   if (article["markdown" + langFrom] && !article["markdown" + langTo])
     button.btn.btn-small.btn-primary(
-         id="translate"+langFrom+langTo
+         id="translate"+langFrom+langTo name = "translate"+langFrom+langTo
          onClick ="window.translate('#{langFrom}','#{langTo}');return false;"
        ) Google Translate #{langFrom} -> #{langTo}
     button.btn.btn-small.btn-warning.hidden(id="translateWait"+langFrom+langTo)
@@ -859,7 +859,7 @@ block scripts
       var from =  langFrom.toLowerCase();
       var to = langTo.toLowerCase();
       var originalText = document.getElementById("markdown" + langFrom).value;
-      jQuery.post(layout.htmlroot+"/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
+      jQuery.post("!{layout.htmlroot}/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
         console.log("Translation received");
         data = data.replace(/] \(/g, "](");
         document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");

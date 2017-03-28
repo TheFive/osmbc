@@ -30,10 +30,11 @@ describe("views/article_new", function() {
   beforeEach(function(bddone) {
     async.series([
       testutil.clearDB,
-      function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE", articleEditor: "new"}, cb); },
-      function createBlog(cb) { blogModule.createNewBlog({OSMUser: "test"}, {name: "blog"}, cb); },
-      function createArticle(cb) { articleModule.createNewArticle({blog: "blog", collection: "http://www.test.dä/holla", markdownDE: "[Text](http://www.test.dä/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.dä/holla) lorem ipsum dolores."}, cb); },
-      function createArticle(cb) {
+      (cb) => { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE",secondLang:"EN", articleEditor: "new"}, cb); },
+      (cb) => { blogModule.createNewBlog({OSMUser: "test"}, {name: "blog"}, cb); },
+      (cb) => { articleModule.createNewArticle({blog: "blog", collection: "http://www.test.dä/holla", markdownDE: "[Text](http://www.test.dä/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.dä/holla) lorem ipsum dolores."}, cb); },
+      (cb) => { articleModule.createNewArticle({blog: "blog", collection: "http://www.test.dä/holla", markdownDE: "[Text](http://www.test.dä/holla) ist eine gute Referenz."}, cb); },
+      (cb) => {
         articleModule.createNewArticle({blog: "blog", collection: "Link1: http://www.test.dä/holla and other"}, function(err, article) {
           if (article) articleId = article.id;
           cb(err);
@@ -334,6 +335,23 @@ describe("views/article_new", function() {
               });
             });
           });
+      });
+    });
+  });
+  describe("Translate",function(){
+    it("should call and translate an article",function(bddone){
+      this.timeout(maxTimer*2);
+      browser.visit("/article/4", function(err) {
+        should.not.exist(err);
+        browser.pressButton("translateDEEN",function(err){
+          should.not.exist(err);
+          console.log("pressed button");
+          setTimeout(function(){
+            console.log("checked");
+            browser.assert.value("#markdownEN","lolo");
+            bddone();
+          },2000);
+        });
       });
     });
   });
