@@ -639,7 +639,7 @@ block scripts
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase():'--'}";
       var originalText = $("#markdownLEFT").html();
-      jQuery.post(layout.htmlroot+"/article/translate/"+leftLang+"/"+rightLang,{text:originalText}, function(data) {
+      jQuery.post("!(layout.htmlroot}/article/translate/"+leftLang+"/"+rightLang,{text:originalText}, function(data) {
         data = data.replace(/] \(/g,"](");
         document.getElementById("translateWaitRIGHT").classList.add("hidden");
         document.getElementById("markdownRIGHT").value = data;
@@ -663,7 +663,7 @@ block scripts
       var leftLang = "#{params.left_lang.toLowerCase()}";
       var rightLang = "#{(params.right_lang) ? params.right_lang.toLowerCase() : '--'}";
       var originalText = $("#markdownRIGHT").html();
-      jQuery.post(layout.htmlroot+"/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
+      jQuery.post("!{layout.htmlroot}/article/translate/" + rightLang + "/" + leftLang, {text: originalText}, function (data) {
         data = data.replace(/] \(/g, "](");
         document.getElementById("translateWaitLEFT").classList.add("hidden");
         document.getElementById("markdownLEFT").value = data;
