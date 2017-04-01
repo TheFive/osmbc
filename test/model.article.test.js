@@ -174,14 +174,14 @@ describe("model/article", function() {
         // get a second copy of the article (use Database for Copy)
         articleModule.findById(id, function(err, result) {
           should.not.exist(err);
-          newArticle.blog = "TESTNEW";
-          newArticle._blog = {name:"TESTNEW"};
-          newArticle._derivedInfo = 42;
+          result.blog = "TESTNEW";
+          result._blog = {name:"TESTNEW"};
+          result._derivedInfo = 42;
 
 
-          newArticle.save(function(err) {
+          result.save(function(err) {
             should.not.exist(err);
-            should(newArticle).eql({
+            should(result).eql({
               id: id,
               markdownDE: 'markdown',
               blog: 'TESTNEW',

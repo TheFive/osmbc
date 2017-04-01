@@ -6,6 +6,7 @@ var fs = require("fs");
 var nock = require("nock");
 var cheerio = require("cheerio");
 var should = require("should");
+var config = require("../config.js");
 var testutil = require("./testutil.js");
 var userModule = require("../model/user.js");
 var articleModule = require("../model/article.js");
@@ -32,8 +33,8 @@ describe("views/article_new", function() {
       testutil.clearDB,
       (cb) => { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE",secondLang:"EN", articleEditor: "new"}, cb); },
       (cb) => { blogModule.createNewBlog({OSMUser: "test"}, {name: "blog"}, cb); },
-      (cb) => { articleModule.createNewArticle({blog: "blog", collection: "http://www.test.dä/holla", markdownDE: "[Text](http://www.test.dä/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.dä/holla) lorem ipsum dolores."}, cb); },
-      (cb) => { articleModule.createNewArticle({blog: "blog", collection: "http://www.test.dä/holla", markdownDE: "[Text](http://www.test.dä/holla) ist eine gute Referenz."}, cb); },
+      (cb) => { articleModule.createNewArticle({blog: "blog", collection: "http://www.test.dä/holla", markdownDE: "[Text](http://www.test.dä/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.dä/holla) lerom upsim deloros."}, cb); },
+      (cb) => { articleModule.createNewArticle({blog: "blog", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz."}, cb); },
       (cb) => {
         articleModule.createNewArticle({blog: "blog", collection: "Link1: http://www.test.dä/holla and other"}, function(err, article) {
           if (article) articleId = article.id;
@@ -63,6 +64,8 @@ describe("views/article_new", function() {
         function(cb) { browser.fill("search", "http://www.test.dä/holla"); cb(); },
         browser.pressButton.bind(browser, "SearchNow")
       ], function finalFunction(err) {
+        should.not.exist(err);
+        console.log(browser.html());
         browser.assert.text("p#articleCounter", "Display 2 of 2 articles.");
         should.not.exist(err);
         bddone();
@@ -288,7 +291,7 @@ describe("views/article_new", function() {
                   // should(result.length).eql(1);
                   should(result.length).eql(1);
                   should(result).eql([ ({
-                    id: "5",
+                    id: "6",
                     version: 2,
                     blog: "blog",
                     collection: "searchfor",
@@ -343,14 +346,14 @@ describe("views/article_new", function() {
       this.timeout(maxTimer*2);
       browser.visit("/article/4", function(err) {
         should.not.exist(err);
+        nock("http://localhost:" + config.getServerPort(),{allowUnmocked: false})
+          .post("/article/translate/de/en","text=%5BText%5D(http%3A%2F%2Fwww.tst.%C3%A4d%2Fholla)+ist+eine+gute+Referenz.")
+          .reply(200,"[Text](http://www.test.de/holla) is a good reference.");
         browser.pressButton("translateDEEN",function(err){
           should.not.exist(err);
-          console.log("pressed button");
-          setTimeout(function(){
-            console.log("checked");
-            browser.assert.value("#markdownEN","lolo");
-            bddone();
-          },2000);
+          //should(translateNock.isDone()).be.True();
+          should(browser.query("#markdownEN").value).eql("[Text](http://www.test.de/holla) is a good reference.");
+          bddone();
         });
       });
     });
