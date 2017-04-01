@@ -117,15 +117,21 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
     text = markdown.render(md);
 
 
-    if (liON.indexOf("##width##") >= 0) {
-      // it is a picture, try to calculate the size.
-      var width = parseInt(text.substring(text.indexOf('width="') + 7)) + 10;
 
-      liON = liON.replace("##width##", width);
-    }
     if (article.categoryEN === "Picture") {
+      if (liON.indexOf("##width##") >= 0) {
+        // it is a picture, try to calculate the size.
+        var width = parseInt(text.substring(text.indexOf('width="') + 7)) + 10;
+
+        liON = liON.replace("##width##", width);
+      }
       text = text.replace("<p>", '<p class="wp-caption-text">');
       text = text.replace("<p>", '<p class="wp-caption-text">');
+    } else {
+      // Not a picture remove <p> at start and end
+      if (text.substring(0,3)==="<p>" && text.substring(text.length-5,text.length-1)==="</p>") {
+        text = text.substring(3,text.length-5)+"\n";
+      }
     }
   } else {
     text += article.displayTitle(90);

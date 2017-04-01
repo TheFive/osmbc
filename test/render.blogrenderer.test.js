@@ -59,37 +59,37 @@ describe("render/blogrenderer", function() {
     it("should generate a preview when markdown is specified (Edit Link)", function (bddone) {
       var article = articleModule.create({markdownDE: "[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id="undefined_0">\n<p><a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.</p>\n\n</li>');
+      should(result).equal('<li id="undefined_0">\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n\n</li>');
       bddone();
     });
     it("should generate a preview when markdown is specified (Translate Link Required)", function (bddone) {
       var article = articleModule.create({markdownDE: "[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id="undefined_0">\n<p><a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.</p>\n\n</li>');
+      should(result).equal('<li id="undefined_0">\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n\n</li>');
       bddone();
     });
     it("should generate a preview when markdown is specified (with Star)", function (bddone) {
       var article = articleModule.create({markdownDE: "* [Paul](https://test.link.de) tells something about [nothing](www.nothing.de)."});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id="undefined_0">\n<p><a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.</p>\n\n</li>');
+      should(result).equal('<li id="undefined_0">\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n\n</li>');
       bddone();
     });
     it("should generate a preview with a comment and no status", function (bddone) {
       var article = articleModule.create({markdownDE: "small markdown", commentList: [{text: "Hallo"}], commentRead: {TheFive: 0}});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id="undefined_0">\n<p>small markdown</p>\n\n</li>');
+      should(result).equal('<li id="undefined_0">\nsmall markdown\n\n</li>');
       bddone();
     });
     it("should generate a preview with a comment and open status", function (bddone) {
       var article = articleModule.create({markdownDE: "small markdown", commentList: [{text: "Hallo"}], commentStatus: "open", commentRead: {TheFive: 0}});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id="undefined_0">\n<p>small markdown</p>\n\n</li>');
+      should(result).equal('<li id="undefined_0">\nsmall markdown\n\n</li>');
       bddone();
     });
     it("should generate a preview with a comment and open status checking Marktext", function (bddone) {
       var article = articleModule.create({markdownDE: "small markdown", commentList: [{text: "Hallo"}], commentStatus: "open"});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id=\"undefined_0\">\n<p>small markdown</p>\n\n</li>');
+      should(result).equal('<li id=\"undefined_0\">\nsmall markdown\n\n</li>');
       bddone();
     });
     it("should generate a preview (no markdown) with a comment and open status", function (bddone) {
@@ -107,25 +107,25 @@ describe("render/blogrenderer", function() {
     it("should generate a preview with a comment and open status and reference for all user", function (bddone) {
       var article = articleModule.create({markdownDE: "small markdown", commentList: [{text: "Hallo @all"}], commentStatus: "open", commentRead: {TheFive: 0}});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id="undefined_0">\n<p>small markdown</p>\n\n</li>');
+      should(result).equal('<li id="undefined_0">\nsmall markdown\n\n</li>');
       bddone();
     });
     it("should generate a preview with a comment and open status and reference for a specific user", function (bddone) {
       var article = articleModule.create({markdownDE: "small markdown", commentList: [{text: "Hallo @user"}], commentStatus: "open"});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id="undefined_0">\n<p>small markdown</p>\n\n</li>');
+      should(result).equal('<li id="undefined_0">\nsmall markdown\n\n</li>');
       bddone();
     });
     it("should generate a preview with a comment and open status and reference for a specific language", function (bddone) {
       var article = articleModule.create({markdownDE: "small markdown", commentList: [{text: "simpel text"}, {text: "Hallo @DE"}, {text: "dudeldü"}], commentStatus: "open", commentRead: {user: 0}});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id="undefined_0">\n<p>small markdown</p>\n\n</li>');
+      should(result).equal('<li id="undefined_0">\nsmall markdown\n\n</li>');
       bddone();
     });
     it("should generate a preview with a comment and solved status", function (bddone) {
       var article = articleModule.create({markdownDE: "small markdown", commentList: [{text: "solved"}], commentStatus: "solved"});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id="undefined_0">\n<p>small markdown</p>\n\n</li>');
+      should(result).equal('<li id="undefined_0">\nsmall markdown\n\n</li>');
       bddone();
     });
     it("should generate a preview Github Error #102 in german", function (bddone) {
@@ -156,7 +156,7 @@ describe("render/blogrenderer", function() {
         commentList: [{text: "Hallo"}],
         commentStatus: "solved"});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id=\"undefined_0\">\n<p>Wir erzählen euch was über Karten.</p>\n\n</li>');
+      should(result).equal('<li id=\"undefined_0\">\nWir erzählen euch was über Karten.\n\n</li>');
       bddone();
     });
     it("should generate an article for Upcoming Events", function (bddone) {
@@ -164,7 +164,7 @@ describe("render/blogrenderer", function() {
         markdownDE: "Eine Tabelle",
         categoryEN: "Upcoming Events"});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal('<p><p>Eine Tabelle</p>\n\n</p>\n<p>Hinweis:<br />Wer seinen Termin hier in der Liste sehen möchte, <a href=\"https://wiki.openstreetmap.org/wiki/Template:Calendar\">trage</a> ihn in den <a href=\"https://wiki.openstreetmap.org/wiki/Current_events\">Kalender</a> ein. Nur Termine, die dort stehen, werden in die Wochennotiz übernommen.</p>\n');
+      should(result).equal('<p>Eine Tabelle\n\n</p>\n<p>Hinweis:<br />Wer seinen Termin hier in der Liste sehen möchte, <a href=\"https://wiki.openstreetmap.org/wiki/Template:Calendar\">trage</a> ihn in den <a href=\"https://wiki.openstreetmap.org/wiki/Current_events\">Kalender</a> ein. Nur Termine, die dort stehen, werden in die Wochennotiz übernommen.</p>\n');
       bddone();
     });
     it("should generate an article for Long Term Dates", function (bddone) {
@@ -172,7 +172,7 @@ describe("render/blogrenderer", function() {
         markdownDE: "Eine Tabelle",
         categoryEN: "Long Term Dates"});
       var result = renderer.renderArticle("DE", article);
-      should(result).equal("<p><p>Eine Tabelle</p>\n\n</p>");
+      should(result).equal("<p>Eine Tabelle\n\n</p>");
       bddone();
     });
   });
