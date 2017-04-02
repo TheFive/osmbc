@@ -4,7 +4,6 @@ var async = require("async");
 var path = require("path");
 var fs = require("fs");
 var nock = require("nock");
-var cheerio = require("cheerio");
 var should = require("should");
 var testutil = require("./testutil.js");
 var userModule = require("../model/user.js");
@@ -54,20 +53,6 @@ describe("views/article", function() {
     bddone();
   });
 
-  describe("Menu", function() {
-    it("should call search with test", function(bddone) {
-      this.timeout(5000);
-      async.series([
-        browser.visit.bind(browser, "/article/search"),
-        function(cb) { browser.fill("search", "http://www.test.dä/holla"); cb(); },
-        browser.pressButton.bind(browser, "SearchNow")
-      ], function finalFunction(err) {
-        browser.assert.text("p#articleCounter", "Display 2 of 2 articles.");
-        should.not.exist(err);
-        bddone();
-      });
-    });
-  });
 
   describe("Scripting Functions", function() {
     beforeEach(function(done) {
@@ -208,82 +193,6 @@ describe("views/article", function() {
             });
           });
         });
-      });
-    });
-  });
-  describe("Collect", function() {
-    it("should search and store collected article", function(bddone) {
-      this.timeout(maxTimer);
-      browser.visit("/article/create", function(err) {
-        should.not.exist(err);
-        browser
-          .fill("search", "searchfor")
-          .pressButton("SearchNow", function(err) {
-            should.not.exist(err);
-            browser
-              .fill("title", "Test Title for Article")
-              .pressButton("OK", function(err) {
-                should.not.exist(err);
-                articleModule.find({title: "Test Title for Article"}, function(err, result) {
-                  should.not.exist(err);
-                  should.exist(result);
-                  should(result.length).eql(1);
-                  should(result[0].collection).eql("searchfor");
-                  bddone();
-                });
-              });
-          });
-      });
-    });
-    it("should search and find existing article", function(bddone) {
-      this.timeout(maxTimer);
-      browser.visit("/article/create", function(err) {
-        should.not.exist(err);
-        browser
-          .fill("search", "http://www.test.dä/holla")
-          .pressButton("SearchNow", function(err) {
-            should.not.exist(err);
-            let c = cheerio.load(browser.html());
-            let t = c("td:contains('and other')").text();
-            should(t).eql("Link1: http://www.test.dä/holla and other");
-            t = c("p:contains('dolores')").text();
-            should(t).eql("Text lorem ipsum dolores.");
-
-            bddone();
-          });
-      });
-    });
-    it("should search and store collected article for one language", function(bddone) {
-      this.timeout(maxTimer);
-      browser.visit("/article/create", function(err) {
-        should.not.exist(err);
-        browser
-          .fill("search", "searchfor")
-          .pressButton("SearchNow", function(err) {
-            should.not.exist(err);
-            browser
-              .fill("title", "Test Title for Article")
-              .click("button[id=OKLang]", function(err) {
-                should.not.exist(err);
-                articleModule.find({title: "Test Title for Article"}, function(err, result) {
-                  should.not.exist(err);
-                  should.exist(result);
-                  // workaround, as zombie.js calles the submit two times
-                  // should(result.length).eql(1);
-                  should(result).eql([ ({
-                    id: "5",
-                    version: 2,
-                    blog: "blog",
-                    collection: "searchfor",
-                    categoryEN: "-- no category yet --",
-                    title: "Test Title for Article",
-                    markdownEN: "no translation",
-                    firstCollector: "TheFive" })]
-                  );
-                  bddone();
-                });
-              });
-          });
       });
     });
   });
