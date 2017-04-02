@@ -4,7 +4,6 @@ var async = require("async");
 var path = require("path");
 var fs = require("fs");
 var nock = require("nock");
-var cheerio = require("cheerio");
 var should = require("should");
 var config = require("../config.js");
 var testutil = require("./testutil.js");
