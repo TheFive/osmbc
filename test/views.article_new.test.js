@@ -65,7 +65,6 @@ describe("views/article_new", function() {
         browser.pressButton.bind(browser, "SearchNow")
       ], function finalFunction(err) {
         should.not.exist(err);
-        console.log(browser.html());
         browser.assert.text("p#articleCounter", "Display 2 of 2 articles.");
         should.not.exist(err);
         bddone();
@@ -168,42 +167,49 @@ describe("views/article_new", function() {
       bddone();
     });
     describe("Change Collection Trigger", function() {
-      it("should calculate Translation Links in Link Area", function(bddone) {
-        should(browser.evaluate("$('#linkArea').html()")).eql('<p><a href="http://www.test.dä/holla" target="_blank">http://www.test.dä/holla</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.test.dä/holla" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.test.dä/holla))\');">DE</a><br>\n</p>');
-        browser.fill("#collection", "https://www.testlink.de https://www.testlink2.de");
+      function checkLink(link,langVisible, langTranslation) {
+        if (!langTranslation) langTranslation = langVisible;
+        let transText = "MISSING TRANSTEXT in TEST";
+        if (langVisible === "DE") transText = "automatische [Übersetzung]";
+        if (langVisible === "EN") transText = "automatic [translation]";
+        // Check the visible Link
+        browser.assert.text('#linkArea a[href="'+link+'"]', link);
 
+        // Check the translation
+        browser.assert.text('#linkArea a[href="https://translate.google.com/translate?sl=auto&tl='+langTranslation+'&u='+link+'"]', langVisible);
+        browser.assert.attribute('#linkArea a[href="https://translate.google.com/translate?sl=auto&tl='+langTranslation+'&u='+link+'"]', "ondragstart","dragstart(event,'("+transText+"(https://translate.google.com/translate?sl=auto&tl="+langTranslation+"&u="+link+"))');");
 
-
-        should(browser.evaluate("$('#linkArea').html()")).eql('<p><a href="https://www.testlink.de" target="_blank">https://www.testlink.de</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://www.testlink.de" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://www.testlink.de))\');">DE</a><br>\n<a href="https://www.testlink2.de" target="_blank">https://www.testlink2.de</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://www.testlink2.de" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://www.testlink2.de))\');">DE</a><br>\n</p>');
-        bddone();
-      });
+      }
       it("should ignore brackets in a link (e.g. Markdown)", function(bddone) {
         browser.fill("#collection", "Some collection [link](https://www.openstreetmap.org/a_brilliant_map) in Markdown");
-        should(browser.evaluate("$('#linkArea').html()")).equal('<p><a href="https://www.openstreetmap.org/a_brilliant_map" target="_blank">https://www.openstreetmap.org/a_brilliant_map</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://www.openstreetmap.org/a_brilliant_map" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://www.openstreetmap.org/a_brilliant_map))\');">DE</a><br>\n</p>');
+        checkLink("https://www.openstreetmap.org/a_brilliant_map","DE");
+        checkLink("https://www.openstreetmap.org/a_brilliant_map","EN");
+        bddone();
+      });
+      it("should work on links with queries", function(bddone) {
+        browser.fill("#collection", "https://www.site.org/didl?query=some");
+        checkLink("https://www.site.org/didl?query=some","DE");
+        checkLink("https://www.site.org/didl?query=some","EN");
         bddone();
       });
       it("should show multiple links from collection only separated by carrige return", function(bddone) {
-        browser.fill("collection", "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");
-        should(browser.evaluate("$('#linkArea').html()")).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE))\');">DE</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681))\');">DE</a><br>\n</p>');
-        bddone();
-      });
-      it("should show multiple links from collection field under the field", function(bddone) {
-        browser.fill("collection", "Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: http://www.openstreetmap.org/user/Severák/diary/37681");
-        should(browser.evaluate("$('#linkArea').html()")).equal('<p><a href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE))\');">DE</a><br>\n<a href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severák/diary/37681</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681))\');">DE</a><br>\n</p>');
-        bddone();
-      });
-      it("should show the links from collection field under the field", function(bddone2) {
-        var file =  path.resolve(__dirname, "data", "util.data.json");
-        var data = JSON.parse(fs.readFileSync(file));
-        for (var i = 0; i < data.isURLArray.length; i++) {
-          var link = data.isURLArray[i];
-          var linkUrl = data.isURLArrayEncoded[i];
+        console.log(browser.evaluate("$('#linkArea').html()"));
 
-          browser.fill("collection", link);
-          should(browser.evaluate("$('#linkArea').html()")).equal('<p><a href="' + linkUrl + '" target="_blank">' + linkUrl + '</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=' + linkUrl + '" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=' + linkUrl + '))\');">DE</a><br>\n</p>');
-        }
-        bddone2();
+        checkLink("http://www.test.dä/holla","DE");
+        checkLink("http://www.test.dä/holla","EN");
+
+        // Change collection with two links
+        browser.fill("collection", "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");
+
+        checkLink("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE","DE");
+        checkLink("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE","EN");
+
+        checkLink("http://www.openstreetmap.org/user/Severák/diary/37681","DE");
+        checkLink("http://www.openstreetmap.org/user/Severák/diary/37681","EN");
+
+        bddone();
       });
+
     });
   });
   describe("QueryParameters", function() {
