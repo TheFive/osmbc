@@ -50,28 +50,10 @@ describe("views/article_new", function() {
   afterEach(function(bddone) {
     testutil.stopServer(bddone);
   });
-
   after(function(bddone) {
     nock.cleanAll();
     bddone();
   });
-
-  describe("Menu", function() {
-    it("should call search with test", function(bddone) {
-      this.timeout(5000);
-      async.series([
-        browser.visit.bind(browser, "/article/search"),
-        function(cb) { browser.fill("search", "http://www.test.dä/holla"); cb(); },
-        browser.pressButton.bind(browser, "SearchNow")
-      ], function finalFunction(err) {
-        should.not.exist(err);
-        browser.assert.text("p#articleCounter", "Display 2 of 2 articles.");
-        should.not.exist(err);
-        bddone();
-      });
-    });
-  });
-
   describe("Scripting Functions", function() {
     beforeEach(function(done) {
       this.timeout(maxTimer);
@@ -79,10 +61,6 @@ describe("views/article_new", function() {
         if (err) return done(err);
         browser.wait(1000, done);
       });
-    });
-    it("should have converted collection correct", function(bddone) {
-      browser.assert.text("#collection", "Link1: http://www.test.dä/holla and other");
-      return bddone();
     });
     it("should isURL work on page", function(bddone) {
       var file =  path.resolve(__dirname, "data", "util.data.json");
@@ -148,68 +126,70 @@ describe("views/article_new", function() {
     });
     /* eslint-enable mocha/no-synchronous-tests */
   });
-  describe("Article Editing", function() {
+
+  it.skip("should calculate a new height, if to many lines are used", function(bddone) {
+    // Function is skipped, it is unclear, how to deal with modified height in zombie.js
+    should(browser.evaluate("$('textarea#collection').innerHeight()")).eql(4);
+    browser.fill("#collection", "\n\nhallole\n\n\nanother row");
+
+    // Simulate a change Event manually
+    browser.evaluate("$('textarea#collection').on('change')");
+    should(browser.evaluate("$('textarea#collection').innerHeight()")).eql(8);
+    bddone();
+  });
+  describe("Change Collection", function() {
     beforeEach(function(bddone) {
       this.timeout(maxTimer * 3);
-      browser.visit("/article/" + articleId + "?edit=true", function(err) {
+      browser.visit("/article/" + articleId, function(err) {
         if (err) return bddone(err);
         setTimeout(function() { bddone(); }, 2500);
       });
     });
-    it.skip("should calculate a new height, if to many lines are used", function(bddone) {
-      // Function is skipped, it is unclear, how to deal with modified height in zombie.js
-      should(browser.evaluate("$('textarea#collection').innerHeight()")).eql(4);
-      browser.fill("#collection", "\n\nhallole\n\n\nanother row");
+    it("should have converted collection correct", function(bddone) {
+      browser.assert.text("#collection", "Link1: http://www.test.dä/holla and other");
+      return bddone();
+    });
+    function checkLink(link,langVisible, langTranslation) {
+      if (!langTranslation) langTranslation = langVisible;
+      let transText = "MISSING TRANSTEXT in TEST";
+      if (langVisible === "DE") transText = "automatische [Übersetzung]";
+      if (langVisible === "EN") transText = "automatic [translation]";
+      // Check the visible Link
+      browser.assert.text('#linkArea a[href="'+link+'"]', link);
 
-      // Simulate a change Event manually
-      browser.evaluate("$('textarea#collection').on('change')");
-      should(browser.evaluate("$('textarea#collection').innerHeight()")).eql(8);
+      // Check the translation
+      browser.assert.text('#linkArea a[href="https://translate.google.com/translate?sl=auto&tl='+langTranslation+'&u='+link+'"]', langVisible);
+      browser.assert.attribute('#linkArea a[href="https://translate.google.com/translate?sl=auto&tl='+langTranslation+'&u='+link+'"]', "ondragstart","dragstart(event,'("+transText+"(https://translate.google.com/translate?sl=auto&tl="+langTranslation+"&u="+link+"))');");
+
+    }
+    it("should ignore brackets in a collection (e.g. Markdown)", function(bddone) {
+      browser.fill("#collection", "Some collection [link](https://www.openstreetmap.org/a_brilliant_map) in Markdown");
+      checkLink("https://www.openstreetmap.org/a_brilliant_map","DE");
+      checkLink("https://www.openstreetmap.org/a_brilliant_map","EN");
       bddone();
     });
-    describe("Change Collection Trigger", function() {
-      function checkLink(link,langVisible, langTranslation) {
-        if (!langTranslation) langTranslation = langVisible;
-        let transText = "MISSING TRANSTEXT in TEST";
-        if (langVisible === "DE") transText = "automatische [Übersetzung]";
-        if (langVisible === "EN") transText = "automatic [translation]";
-        // Check the visible Link
-        browser.assert.text('#linkArea a[href="'+link+'"]', link);
+    it("should work on links with queries", function(bddone) {
+      browser.fill("#collection", "https://www.site.org/didl?query=some");
+      checkLink("https://www.site.org/didl?query=some","DE");
+      checkLink("https://www.site.org/didl?query=some","EN");
+      bddone();
+    });
+    it("should show multiple links from collection", function(bddone) {
+      console.log(browser.evaluate("$('#linkArea').html()"));
 
-        // Check the translation
-        browser.assert.text('#linkArea a[href="https://translate.google.com/translate?sl=auto&tl='+langTranslation+'&u='+link+'"]', langVisible);
-        browser.assert.attribute('#linkArea a[href="https://translate.google.com/translate?sl=auto&tl='+langTranslation+'&u='+link+'"]', "ondragstart","dragstart(event,'("+transText+"(https://translate.google.com/translate?sl=auto&tl="+langTranslation+"&u="+link+"))');");
+      checkLink("http://www.test.dä/holla","DE");
+      checkLink("http://www.test.dä/holla","EN");
 
-      }
-      it("should ignore brackets in a link (e.g. Markdown)", function(bddone) {
-        browser.fill("#collection", "Some collection [link](https://www.openstreetmap.org/a_brilliant_map) in Markdown");
-        checkLink("https://www.openstreetmap.org/a_brilliant_map","DE");
-        checkLink("https://www.openstreetmap.org/a_brilliant_map","EN");
-        bddone();
-      });
-      it("should work on links with queries", function(bddone) {
-        browser.fill("#collection", "https://www.site.org/didl?query=some");
-        checkLink("https://www.site.org/didl?query=some","DE");
-        checkLink("https://www.site.org/didl?query=some","EN");
-        bddone();
-      });
-      it("should show multiple links from collection only separated by carrige return", function(bddone) {
-        console.log(browser.evaluate("$('#linkArea').html()"));
+      // Change collection with two links
+      browser.fill("collection", "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");
 
-        checkLink("http://www.test.dä/holla","DE");
-        checkLink("http://www.test.dä/holla","EN");
+      checkLink("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE","DE");
+      checkLink("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE","EN");
 
-        // Change collection with two links
-        browser.fill("collection", "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");
+      checkLink("http://www.openstreetmap.org/user/Severák/diary/37681","DE");
+      checkLink("http://www.openstreetmap.org/user/Severák/diary/37681","EN");
 
-        checkLink("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE","DE");
-        checkLink("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE","EN");
-
-        checkLink("http://www.openstreetmap.org/user/Severák/diary/37681","DE");
-        checkLink("http://www.openstreetmap.org/user/Severák/diary/37681","EN");
-
-        bddone();
-      });
-
+      bddone();
     });
   });
   describe("QueryParameters", function() {
@@ -233,83 +213,6 @@ describe("views/article_new", function() {
             });
           });
         });
-      });
-    });
-  });
-  describe("Collect", function() {
-    it("should search and store collected article", function(bddone) {
-      this.timeout(maxTimer);
-      browser.visit("/article/create", function(err) {
-        should.not.exist(err);
-        browser
-          .fill("search", "searchfor")
-          .pressButton("SearchNow", function(err) {
-            should.not.exist(err);
-            browser
-              .fill("title", "Test Title for Article")
-              .pressButton("OK", function(err) {
-                should.not.exist(err);
-                articleModule.find({title: "Test Title for Article"}, function(err, result) {
-                  should.not.exist(err);
-                  should.exist(result);
-                  should(result.length).eql(1);
-                  should(result[0].collection).eql("searchfor");
-                  bddone();
-                });
-              });
-          });
-      });
-    });
-    it("should search and find existing article", function(bddone) {
-      this.timeout(maxTimer);
-      browser.visit("/article/create", function(err) {
-        should.not.exist(err);
-        browser
-          .fill("search", "http://www.test.dä/holla")
-          .pressButton("SearchNow", function(err) {
-            should.not.exist(err);
-            let c = cheerio.load(browser.html());
-            let t = c("td:contains('and other')").text();
-            should(t).eql("Link1: http://www.test.dä/holla and other");
-            t = c("p:contains('dolores')").text();
-            should(t).eql("Text lorem ipsum dolores.");
-
-            bddone();
-          });
-      });
-    });
-    it("should search and store collected article for one language", function(bddone) {
-      this.timeout(maxTimer);
-      browser.visit("/article/create", function(err) {
-        should.not.exist(err);
-        browser
-          .fill("search", "searchfor")
-          .pressButton("SearchNow", function(err) {
-            should.not.exist(err);
-            browser
-              .fill("title", "Test Title for Article")
-              .click("button[id=OKLang]", function(err) {
-                should.not.exist(err);
-                articleModule.find({title: "Test Title for Article"}, function(err, result) {
-                  should.not.exist(err);
-                  should.exist(result);
-                  // workaround, as zombie.js calles the submit two times
-                  // should(result.length).eql(1);
-                  should(result.length).eql(1);
-                  should(result).eql([ ({
-                    id: "6",
-                    version: 2,
-                    blog: "blog",
-                    collection: "searchfor",
-                    categoryEN: "-- no category yet --",
-                    title: "Test Title for Article",
-                    markdownEN: "no translation",
-                    firstCollector: "TheFive" })]
-                  );
-                  bddone();
-                });
-              });
-          });
       });
     });
   });
