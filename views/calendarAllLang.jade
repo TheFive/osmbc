@@ -32,6 +32,7 @@ block content
         for lang in layout.activeLanguages
           span.add-info.label.label-default( class="lang+#{lang}" onclick="$('.lang').addClass('hidden');$('.lang-#{lang}').removeClass('hidden');")=lang
         span.label.label-default(  onclick="$('.add-info').toggle(1000);")="Draft/Final"
+      p.osmbc-help-text="Click on language or Draft/Final to change view"
     .col-md-8
       for lang in layout.activeLanguages
         div.hidden.lang(class="lang-#{lang}")
