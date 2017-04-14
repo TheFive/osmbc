@@ -168,39 +168,19 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
 };
 
 
-Article.prototype.doLock = function doLock(user, callback) {
-  debug("doLock");
-  var self = this;
-  if (self.lock) return callback();
-  self.lock = {};
-  self.lock.user = user;
-  self.lock.timestamp = new Date();
-  async.parallel([
-    function updateClosed(cb) {
-      blogModule.findOne({title: self.blog}, function(err, result) {
-        if (err) return callback(err);
-        var status = "not found";
-        if (result) status = result.status;
-        if (status === "closed") delete self.lock;
-        cb();
-      });
-    }
-  ], function() {
-      // ignore Error and unlock if article is closed
 
-    self.save(callback);
-  }
-  );
-};
 
-Article.prototype.doUnlock = function doUnlock(callback) {
-  debug("doUnlock");
-  var self = this;
-  if (typeof (self.lock) === "undefined") return callback();
-  delete self.lock;
-  self.save(callback);
-};
-
+// Set a Value (List of Values) and store it in the database
+// Store the changes in the change (history table) too.
+// There are 3 parameter
+// user: the user stored in the change object
+// data: the JSON with the changed values
+// callback
+// Logging is written based on an in memory compare
+// the object is written in total
+// There is no version checking on the database, so it is
+// an very optimistic "locking"
+// Article.prototype.setAndSave = setAndSave;
 Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
   should(typeof (user)).equal("object");
@@ -301,6 +281,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       if (data[k]) data[k] = data[k].trim();
       if (data[k] === "" && typeof (self[k]) === "undefined") { delete data[k]; continue; }
       // all values that not have to be changed are now deleted.
+      // commented out as there where side effects.
       // test wether change is allowed
       // if (!self.isChangeAllowed(k)) return callback(new Error(k+" can not be edited"));
     }
@@ -308,7 +289,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
     async.series(
       [function logIt (cb) {
         var oa = create(self);
-        // do not wait on email;
+        // do not wait on email, so put empty callback handler
         messageCenter.global.updateArticle(user, oa, data, function() {});
         cb();
       },
@@ -407,6 +388,8 @@ function findUserEditFieldsArticles(blog, user, field, callback) {
   pgMap.find({table: "article", create: create}, query, callback);
 }
 
+// Calculate all links in markdown (final Text) and collection
+// there is no double check for the result
 Article.prototype.calculateLinks = function calculateLinks() {
   debug("calculateLinks");
   var links = [];
@@ -437,7 +420,13 @@ Article.prototype.calculateLinks = function calculateLinks() {
 };
 
 
-
+// Calculate a Title with a maximal length for Article
+// The properties are tried in this order
+// a) Title
+// b) Markdown (final Text)
+// c) Collection
+// the maximal length is optional (default is 30)
+// Article.prototype.displayTitle = displayTitle;
 Article.prototype.displayTitle = function displayTitle(maxlength) {
   if (typeof (maxlength) === "undefined") maxlength = 30;
   var result = "";
@@ -457,22 +446,6 @@ Article.prototype.displayTitle = function displayTitle(maxlength) {
   return result;
 };
 
-/*
-function displayTitleEN(maxlength) {
-  if (typeof(maxlength) == 'undefined') maxlength = 30;
-  if (typeof(this.title)!='undefined' && this.title != "") {
-    return util.shorten(this.title,maxlength)
-  }
-  if (typeof(this.markdownEN)!='undefined' && this.markdownEN !="") {
-    var md = this.markdownEN;
-    if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
-    return util.shorten(md,maxlength)
-  }
-  if (typeof(this.collection)!='undefined' && this.collection !="") {
-    return util.shorten(this.collection,maxlength)
-  }
-  return "Empty Article";
-} */
 
 
 var pgObject = {};
@@ -878,36 +851,19 @@ Article.prototype.calculateDerivedFromSourceId = function calculateDerivedFromSo
 
 
 function isMarkdown(text) {
-  debug("isMarkdonw");
+  debug("isMarkdown");
   if (typeof (text) !== "string") return false;
   if (text.trim() === "") return false;
   if (text === "no translation") return false;
   return true;
 }
-// Calculate a Title with a maximal length for Article
-// The properties are tried in this order
-// a) Title
-// b) Markdown (final Text)
-// c) Collection
-// the maximal length is optional (default is 30)
-// Article.prototype.displayTitle = displayTitle;
-// Article.prototype.displayTitleEN = displayTitleEN;
 
-// Calculate all links in markdown (final Text) and collection
-// there is no double check for the result
-// Article.prototype.calculateLinks = calculateLinks;
 
-// Set a Value (List of Values) and store it in the database
-// Store the changes in the change (history table) too.
-// There are 3 parameter
-// user: the user stored in the change object
-// data: the JSON with the changed values
-// callback
-// Logging is written based on an in memory compare
-// the object is written in total
-// There is no version checking on the database, so it is
-// an very optimistic "locking"
-// Article.prototype.setAndSave = setAndSave;
+
+
+
+
+
 
 // save stores the current object to database
 Article.prototype.save = pgMap.save;
@@ -916,11 +872,6 @@ Article.prototype.save = pgMap.save;
 Article.prototype.remove = pgMap.remove;
 
 
-
-// lock an Article for editing
-// adds a timestamp for the lock
-// Article.prototype.doLock = doLock;
-// Article.prototype.doUnlock = doUnlock;
 
 
 // Create an Article object in memory, do not save

@@ -26,7 +26,12 @@ var htmltitle     = require("../model/htmltitle.js");
 
 require("jstransformer")(require("jstransformer-markdown-it"));
 
-var gglTranslateAPI = require("google-translate-api");
+
+var MsTranslator = require('mstranslator');
+var msTransClient = new MsTranslator({
+  api_key: config.getValue("MS_TranslateApiKey",{mustExist:true})
+}, true);
+
 
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
@@ -122,22 +127,6 @@ function renderArticleId(req, res, next) {
 
         callback(err, result);
       });
-    },
-    // (informal) locking information for the article
-    edit:
-    function (callback) {
-      debug("renderArticleId->edit");
-
-      if (typeof (params.edit) !== "undefined") {
-        if (params.edit === "false") {
-          delete params.edit;
-          article.doUnlock(callback);
-          return;
-        }
-        article.doLock(req.user.displayName, callback);
-      } else {
-        return callback();
-      }
     },
     articleForSort:
     function articleForSort(callback) {
@@ -913,9 +902,9 @@ function translateOLD(req, res, next) {
     });
   });
 }
-*/
 
-function translate(req, res, next) {
+
+function translateGOOGLEOLD(req, res, next) {
   debug("translate");
 
   let fromLang = req.params.fromLang;
@@ -933,6 +922,31 @@ function translate(req, res, next) {
   gglTranslateAPI(text, {from: fromLang, to: toLang}).then(function (result) {
     res.end(result.text);
   }).catch(function(err) { next(err); });
+}*/
+
+function translate(req, res, next) {
+  debug("translate");
+
+  let fromLang = req.params.fromLang;
+  let toLang = req.params.toLang;
+  let text = req.body.text;
+
+  if (fromLang === "jp") { fromLang = "ja"; }
+  if (toLang === "jp") { toLang = "ja"; }
+
+  if (fromLang === "cz") { fromLang = "cs"; }
+  if (toLang === "cz") { toLang = "cs"; }
+
+  var params = {
+    text: text,
+    from: fromLang,
+    to: toLang
+  };
+
+  msTransClient.translate(params, function (err,result) {
+    if (err) return next(err);
+    res.end(result);
+  });
 }
 
 // Export Render Functions for testing purposes

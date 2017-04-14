@@ -43,7 +43,7 @@ describe("model/article", function() {
     nock.cleanAll();
     bddone();
   });
-  context("Article Constructor", function() {
+  describe("Article Constructor", function() {
     it("should create an Article object", function(bddone) {
       var article = articleModule.create({oid: "Test"});
       should(article.oid).eql("Test");
@@ -159,6 +159,36 @@ describe("model/article", function() {
               should(err).eql(Error("Version Number Differs"));
               bddone();
             });
+          });
+        });
+      });
+    });
+    it("should keep the intern reference to a blog (_blog)", function (bddone) {
+      // Generate an article for test
+      var newArticle;
+      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function(err, result) {
+        should.not.exist(err);
+        newArticle = result;
+        var id = result.id;
+
+        // get a second copy of the article (use Database for Copy)
+        articleModule.findById(id, function(err, result) {
+          should.not.exist(err);
+          result.blog = "TESTNEW";
+          result._blog = {name:"TESTNEW"};
+          result._derivedInfo = 42;
+
+
+          result.save(function(err) {
+            should.not.exist(err);
+            should(result).eql({
+              id: id,
+              markdownDE: 'markdown',
+              blog: 'TESTNEW',
+              version: 2,
+              _blog:  { name: 'TESTNEW' }
+          });
+            bddone();
           });
         });
       });
@@ -413,26 +443,6 @@ describe("model/article", function() {
       });
     });
   });
-  it("should add a comment during edit", function (bddone) {
-    // Generate an article for test
-    var newArticle;
-    articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function testSetAndSaveCreateNewArticleCB(err, result) {
-      should.not.exist(err);
-      newArticle = result;
-      articleModule.findById(newArticle.id, function(err, result) {
-        should.not.exist(err);
-        result.setAndSave({OSMUser: "test"}, {markdownDE: "Changed Markdown", addComment: "An added comment", version: 1}, function (err) {
-          should.not.exist(err);
-          articleModule.findById(newArticle.id, function(err, result) {
-            should.not.exist(err);
-            should(result.commentStatus).eql("open");
-            should(result.commentList[0].text).eql("An added comment");
-            bddone();
-          });
-        });
-      });
-    });
-  });
   describe("findFunctions", function() {
     var idToFindLater;
     before(function (bddone) {
@@ -678,50 +688,6 @@ describe("model/article", function() {
       });
     });
   });
-  describe("lock", function() {
-    before(function(bddone) {
-      async.series([
-        testutil.clearDB,
-        function c1(cb) { articleModule.createNewArticle({blog: "WN1", title: "1", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", category: "catA"}, cb); },
-        function c2(cb) { articleModule.createNewArticle({blog: "WN1", blogEN: "EN1", title: "2", markdownDE: "test1 some [ping](https://link.to/hallo) http://www.osm.de/12345", collection: "http://www.osm.de/12345", category: "catB"}, cb); },
-        function c3(cb) { articleModule.createNewArticle({blog: "WN2", blogEN: "EN1", title: "3", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col3 http://www.google.de", category: "catA"}, cb); },
-        function a1(cb) { blogModule.createNewBlog({OSMUser: "test"}, {title: "WN1", status: "closed"}, cb); },
-        function a2(cb) { blogModule.createNewBlog({OSMUser: "test"}, {title: "WN2", status: "open"}, cb); },
-        function a2(cb) { blogModule.createNewBlog({OSMUser: "test"}, {title: "EN1", status: "closed"}, cb); }
-
-      ], function(err) {
-        should.not.exist(err);
-        bddone();
-      }
-      );
-    });
-    it("should lock articles in open blogs", function(bddone) {
-      articleModule.findOne({title: "3"}, function(err, article) {
-        should.not.exist(err);
-        should.exist(article);
-        article.doLock("TEST", function(err) {
-          should.not.exist(err);
-          should(article.lock.user).equal("TEST");
-          // Hope that 30ms are enough to come from locking to this code on
-          // the test machine.
-          should(new Date() - new Date(article.lock.timestamp)).lessThan(30);
-          bddone();
-        });
-      });
-    });
-    it("should not lock articles in closed blogs", function(bddone) {
-      articleModule.findOne({title: "2"}, function(err, article) {
-        should.not.exist(err);
-        should.exist(article);
-        article.doLock("TEST", function(err) {
-          should.not.exist(err);
-          should.not.exist(article.lock);
-          bddone();
-        });
-      });
-    });
-  });
-
   describe("calculateUsedLinks", function() {
     var idToFindLater;
     before(function (bddone) {
@@ -826,6 +792,26 @@ describe("model/article", function() {
     after(function(bddone) {
       this.clock.restore();
       bddone();
+    });
+    it("should add a comment during edit", function (bddone) {
+      // Generate an article for test
+      var newArticle;
+      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function testSetAndSaveCreateNewArticleCB(err, result) {
+        should.not.exist(err);
+        newArticle = result;
+        articleModule.findById(newArticle.id, function(err, result) {
+          should.not.exist(err);
+          result.setAndSave({OSMUser: "test"}, {markdownDE: "Changed Markdown", addComment: "An added comment", version: 1}, function (err) {
+            should.not.exist(err);
+            articleModule.findById(newArticle.id, function(err, result) {
+              should.not.exist(err);
+              should(result.commentStatus).eql("open");
+              should(result.commentList[0].text).eql("An added comment");
+              bddone();
+            });
+          });
+        });
+      });
     });
     it("should add a comment", function(bddone) {
       var timestamp = new Date();
@@ -1230,6 +1216,65 @@ describe("model/article", function() {
       should(article.isChangeAllowed("markdownDE")).be.true();
       should(article.isChangeAllowed("markdownES")).be.true();
       bddone();
+    });
+  });
+  describe("isMarkdown",function(){
+    it("should not accept numbers and empty string as markdown",function(bddone){
+      should(articleModule.isMarkdown(5)).is.False();
+      should(articleModule.isMarkdown(null)).is.False();
+      should(articleModule.isMarkdown("")).is.False();
+      bddone();
+    });
+    it("should not accept no translation as markdown",function(bddone){
+      should(articleModule.isMarkdown("no translation")).is.False();
+      bddone();
+    });
+    it("should  accept markdown",function(bddone){
+      should(articleModule.isMarkdown("adsfas")).is.True();
+      bddone();
+    });
+  });
+  describe("Copy Articles",function(){
+    before(function (bddone) {
+      testutil.importData({clear: true,
+        blog: [{name: "WN1", exportedDE: true, status: "edit"},
+          {name: "WNclosed", status: "closed"},
+          {name: "WN2", status: "open"},
+          {name: "CopyToBlog", status: "open"}],
+        article: [{blog: "WN1", title: "first", id: 1},
+          {blog: "WN2", title: "second", categoryEN: "cat", markdownEN: "ENMarkdown",markdownDE:"DEMarkdown" ,markdownES:"ESMarkdown",id: 2},
+          {blog: "WNclosed", title: "third", id: 3},
+          {blog: "WN1", title: "forth", id: 4},
+          {blog: "WrongBlog", title: "fifth", categoryEN: "cat", id: 5}],
+        change: [{blog: "WN1", property: "collection", user: "test", oid: 1, table: "article"},
+          {blog: "WN2", property: "collection", user: "test", oid: 2, table: "article"},
+          {blog: "WN2", property: "collection", user: "test", oid: 2, table: "article"},
+          {blog: "WN2", property: "collection", user: "test", oid: 2, table: "article"},
+          {blog: "WNclosed", property: "collection", user: "test", oid: 3, table: "article"},
+          {blog: "WN2", property: "collection", user: "test2", oid: 4, table: "article"},
+          {blog: "WrongBlog", property: "markdownDE", user: "test", oid: 5, table: "article"}]}, bddone);
+    });
+    it('should copy an article to another blog',function(bddone){
+      articleModule.findById(2,function(err,article){
+        should.not.exist(err);
+        article.copyToBlog("CopyToBlog",["DE","EN"],function(err){
+          should.not.exist(err);
+          articleModule.findOne({blog:"CopyToBlog"},function(err,article){
+            should.not.exist(err);
+            should(article).eql({
+              id: '6',
+              categoryEN: 'cat',
+              title: 'second',
+              originArticleId: '2',
+              blog: 'CopyToBlog',
+              markdownDE: 'Former Text:\n\nDEMarkdown',
+              markdownEN: 'Former Text:\n\nENMarkdown',
+              version: 1
+            });
+            bddone();
+          });
+        });
+      });
     });
   });
 });

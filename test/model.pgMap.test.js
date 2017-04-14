@@ -4,7 +4,7 @@ var config = require("../config.js");
 var should = require("should");
 var async  = require("async");
 
-var pgMap = require("../model/pgMap.js");
+var pgMap  = require("../model/pgMap.js");
 
 
 function TestTable(proto) {

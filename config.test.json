@@ -64,5 +64,6 @@
   },
   "maillog_directory":".",
   "maillog_prefix":"maillogTest",
-  "maillog_dateformat":".log"
+  "maillog_dateformat":".log",
+  "MS_TranslateApiKey":"hidden"
 }

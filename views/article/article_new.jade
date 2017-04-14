@@ -53,9 +53,9 @@ mixin articleTextanalyse(lang)
 mixin articleTranslateButton(langFrom,langTo)
   if (article["markdown" + langFrom] && !article["markdown" + langTo])
     button.btn.btn-small.btn-primary(
-         id="translate"+langFrom+langTo
+         id="translate"+langFrom+langTo name = "translate"+langFrom+langTo
          onClick ="window.translate('#{langFrom}','#{langTo}');return false;"
-       ) Google Translate #{langFrom} -> #{langTo}
+       ) Translate #{langFrom} -> #{langTo}
     button.btn.btn-small.btn-warning.hidden(id="translateWait"+langFrom+langTo)
       span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
       span=" Please Wait"
