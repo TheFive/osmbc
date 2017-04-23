@@ -89,7 +89,7 @@ function renderArticleId(req, res, next) {
   var placeholder = configModule.getPlaceholder();
   async.auto({
     // Find usage of Links in other articles
-    articleReferences: article.calculateUsedLinks.bind(article),
+    articleReferences: article.calculateUsedLinks.bind(article,{ignoreStandard:true}),
     // Find the associated blog for this article
     blog:
     function findBlog(callback) {

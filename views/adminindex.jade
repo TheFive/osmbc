@@ -5,34 +5,48 @@ block content
     .col-md-4
       h1="Configuration"
       h2="Calendar"
-      p
-        a(href=layout.htmlroot+"/config/calendartranslation")  Calendar Translation Texts
-      p
-        a(href=layout.htmlroot+"/config/calendarflags")  Flags for calendar
-      p
-        a(href=layout.htmlroot+"/config/eventsfilter")  Filter for calendar
+      .row
+        .col-md-6
+          p
+            a(href=layout.htmlroot+"/config/calendartranslation")  Calendar Translation Texts
+          p
+            a(href=layout.htmlroot+"/config/calendarflags")  Flags for calendar
+        .col-md-6
+          p
+            a(href=layout.htmlroot+"/config/eventsfilter")  Filter for calendar
       h2="Editor Info"
-      p
-        a(href=layout.htmlroot+"/config/formulation_tipDE")  Formulation Hint for DE
-      p
-        a(href=layout.htmlroot+"/config/formulation_tipEN")  Formulation Hint for EN
-      p
-        a(href=layout.htmlroot+"/config/categorydescription")  Descriptions for Categories
-      p
-        a(href=layout.htmlroot+"/config/languageflags") Language Flags for German Blog
+      .row
+        .col-md-6
+          p
+            a(href=layout.htmlroot+"/config/formulation_tipDE")  Formulation Hint for DE
+          p
+            a(href=layout.htmlroot+"/config/formulation_tipEN")  Formulation Hint for EN
+        .col-md-6
+          p
+            a(href=layout.htmlroot+"/config/categorydescription")  Descriptions for Categories
+          p
+            a(href=layout.htmlroot+"/config/languageflags") Language Flags for German Blog
       h2="Pictures"
       p
         a(href=layout.htmlroot+"/config/licenses") Picture Licensing
       h2="Blog"
-      p
-        a(href=layout.htmlroot+"/config/editorstrings") Author Documentation
-      p
-        a(href=layout.htmlroot+"/config/categorytranslation") Category Translation
+      .row
+        .col-md-6
+          p
+            a(href=layout.htmlroot+"/config/editorstrings") Author Documentation
+        .col-md-6
+          p
+            a(href=layout.htmlroot+"/config/categorytranslation") Category Translation
       h2="Article"
-      p
-        a(href=layout.htmlroot+"/config/automatictranslatetext") Text for Google Translate Links
-      p
-        a(href=layout.htmlroot+"/config/votes") Votes For Articles
+      .row
+        .col-md-6
+          p
+            a(href=layout.htmlroot+"/config/automatictranslatetext") Text for Translate Links
+          p
+            a(href=layout.htmlroot+"/config/ignoreforsearch") Not a Doublette Link
+        .col-md-6
+          p
+            a(href=layout.htmlroot+"/config/votes") Votes For Articles
       h2="IM Notification"
       p
         a(href=layout.htmlroot+"/config/slacknotification") Configuration of IM Channel (Slack,MM)

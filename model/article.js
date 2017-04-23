@@ -481,9 +481,13 @@ module.exports.pg = pgObject;
 // Async function to search for each Link in the article in the database
 // callback forwards every error, and as result offers an
 // object map, with and array of Articles for each shortened link
-Article.prototype.calculateUsedLinks = function calculateUsedLinks(callback) {
+Article.prototype.calculateUsedLinks = function calculateUsedLinks(options,callback) {
   debug("calculateUsedLinks");
   // Get all Links in this article
+  if (typeof options === "function") {
+    callback = options;
+    options = {};
+  }
   var usedLinks = this.calculateLinks();
   var self = this;
 
@@ -493,11 +497,15 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(callback) {
   if ((this.categoryEN === "Upcoming Events") || (this.categoryEN === "Releases")) {
     return callback(null, articleReferences);
   }
+  let ignoreStandard = [];
+  if (options.ignoreStandard) ignoreStandard = configModule.getConfig("ignoreforsearch");
+
 
   // For each link, search in DB on usage
   async.each(usedLinks,
     function forEachUsedLink(item, cb) {
       debug("forEachUsedLink");
+      if (options.ignoreStandard && ignoreStandard.indexOf(item)>=0) return cb();
       var reference = item;
 
       // shorten HTTP / HTTPS links by the leading HTTP(s)

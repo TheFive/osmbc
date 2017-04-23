@@ -29,6 +29,7 @@ function renderConfigName(req, res, next) {
   async.series([
     function findConfig(cb) {
       debug("findAndCreateConfig");
+      console.log(name);
       configModule.getConfigObject(name, function(err, result) {
         if (err) return cb(err);
         config = result;
@@ -62,6 +63,7 @@ function renderConfigName(req, res, next) {
       if (name === "slacknotification") jadeFile = name;
       if (name === "votes") jadeFile = name;
       if (name === "eventsfilter") jadeFile = name;
+      if (name === "ignoreforsearch") jadeFile = "config";
       res.set("content-type", "text/html");
       res.render("config/" + jadeFile, {config: config,
         changes: changes,

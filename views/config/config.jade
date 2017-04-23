@@ -11,7 +11,10 @@ block content
         - sizeLabel = 0
         - sizeInput = 11
         - sizeExplanation = 1
-        h2=config.name
+        if config.name === "ignoreforsearch"
+          h2="List of URLS, that are no doublettes"
+        else
+          h2=config.name
         if config.type == "yaml"
           div.form-group
             div(class="col-sm-#{sizeInput}")
