@@ -698,6 +698,7 @@ describe("model/article", function() {
         function c02(cb) { articleModule.createNewArticle({blog: "Trash", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "catA"}, cb); },
         function c01(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "--unpublished--"}, cb); },
         function c2(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo) http://www.osm.de/12345", collection: "http://www.osm.de/12345", categoryEN: "catB"}, cb); },
+        function c2(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test1 some [google](http://www.google.de)", collection: "http://www.osm.de/12345", categoryEN: "catB"}, cb); },
         function c3(cb) {
           articleModule.createNewArticle({blog: "WN2", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col3 http://www.google.de", categoryEN: "catA"},
                          function(err, result) {
@@ -719,9 +720,23 @@ describe("model/article", function() {
         article.calculateUsedLinks(function(err, result) {
           should.not.exist(err);
           should.exist(result);
+          should(result.count).equal(3);
+          should(result["https://link.to/hallo"].length).equal(2);
+          should(result["http://www.google.de"].length).equal(1);
+
+          bddone();
+        });
+      });
+    });
+    it("should display the other Articles Links and ignore Standards", function(bddone) {
+      articleModule.findById(idToFindLater, function(err, article) {
+        should.not.exist(err);
+        article.calculateUsedLinks({ignoreStandard:true}, function(err, result) {
+          should.not.exist(err);
+          should.exist(result);
           should(result.count).equal(2);
           should(result["https://link.to/hallo"].length).equal(2);
-          should(result["http://www.google.de"].length).equal(0);
+          should.not.exist(result["http://www.google.de"]);
 
           bddone();
         });

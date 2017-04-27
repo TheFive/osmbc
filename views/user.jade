@@ -118,7 +118,8 @@ block content
 
   if (usershown.OSMUser === layout.user.OSMUser)
     .row
-      h1="Your Api Key"
+      h1="Using Bookmarklets as Collect Support"
+      h3="Using the TBC (To Be Collected Feature) with your personal API Key. (Collect and check later)"
       if (usershown.apiKey)
         p="Your api key is: "+usershown.apiKey+". "
           span="If you have to change your key, press "
@@ -136,9 +137,20 @@ block content
             |    if (request.readyState == done && request.status != ok) alert("An Error occured "+request.responseText);
             |   };
             |request.send(null);
+        p="If you are using Firefox, you can add this link to your bookmarks. Please disable Open in Sidebar Option for this bookmark. "
+          a(href="javascript: var request = new XMLHttpRequest();request.open('GET', '#{layout.url}#{layout.htmlroot}/api/collect/#{usershown.apiKey}?collection='+document.location, true);request.onreadystatechange = function(){var done = 4, ok = 200;if (request.readyState == done && request.status == ok){if (request.responseText && request.responseText.substring(0,4)=='http') {if (window.confirm('Send to OSMBCs TBC, open Editor?')){window.location.href=request.responseText}}else {alert.request.responseText}}if (request.readyState == done && request.status != ok) alert('An Error occured '+request.responseText);};request.send(null);" rel="sidebar" title="OSMBC TBC") Add TBC Link to Firefox
 
       else
         a(href=layout.htmlroot+"/usert/createApiKey")="Generate Key"
+      h3="Using the OSMBC Search Function"
+      p="Please create a bookmarklet with a name of your choice and the following javascript code as 'link':"
+        pre
+          | javascript: window.location.href='https://thefive.info/article/searchandcreate?search='+document.location+'&SearchNow='
+
+      p="If you are using Firefox, you can add this link to your bookmarks. Please disable Open in Sidebar Option"
+      a(href="javascript: window.location.href='https://thefive.info/article/searchandcreate?search='+document.location+'&SearchNow='" rel="sidebar" title="OSMBC Search") Add OSMBC Search Link to Firefox
+
+
 
 
 

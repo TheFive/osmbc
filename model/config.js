@@ -197,6 +197,11 @@ var checkAndRepair = {
     if (!cf) cf = {};
     c.json = cf;
   },
+  "ignoreforsearch": function(c) {
+    var cf = c.getJSON();
+    if (!cf) cf = [];
+    c.json = cf;
+  },
   "slacknotification": function(c) {
     var cf = c.getJSON();
     if (!cf) cf = {};
@@ -350,7 +355,8 @@ function initialise(callback) {
     initConfigElement.bind(null, "editorstrings"),
     initConfigElement.bind(null, "automatictranslatetext"),
     initConfigElement.bind(null, "votes"),
-    initConfigElement.bind(null, "eventsfilter")
+    initConfigElement.bind(null, "eventsfilter"),
+    initConfigElement.bind(null, "ignoreforsearch")
   ],
     function final(err) {
       debug("finalFunction initialise");
