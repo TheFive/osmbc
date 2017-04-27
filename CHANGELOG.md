@@ -1,8 +1,27 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [2.3.3](https://github.com/TheFive/osmbc/tree/2.3.3) (2017-04-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.2...2.3.3)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.1...HEAD)
+**Implemented enhancements:**
+
+- New Calender Tool - storing maybe posssible without changing the language [\#651](https://github.com/TheFive/osmbc/issues/651)
+- Simplify Adding Bookmarklets for Firefox Users [\#649](https://github.com/TheFive/osmbc/issues/649)
+- Doublettes: Disable standard links [\#638](https://github.com/TheFive/osmbc/issues/638)
+
+**Fixed bugs:**
+
+- Items are surrounded by `\<p\>` tags in export view [\#650](https://github.com/TheFive/osmbc/issues/650)
+
+## [2.3.2](https://github.com/TheFive/osmbc/tree/2.3.2) (2017-04-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.1a...2.3.2)
+
+**Implemented enhancements:**
+
+- Link to fix Calendar problems [\#648](https://github.com/TheFive/osmbc/issues/648)
+
+## [2.3.1a](https://github.com/TheFive/osmbc/tree/2.3.1a) (2017-03-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.1...2.3.1a)
 
 **Closed issues:**
 
@@ -2174,17 +2193,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
