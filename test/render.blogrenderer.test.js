@@ -231,8 +231,8 @@ describe("render/blogrenderer", function() {
             if (markdown) {
               should(html).eql(htmlResult);
             } else {
-              should(html).eql(htmlResult);
-              //should(testutil.equalHtml(html, htmlResult)).be.True();
+              //should(html).eql(htmlResult);
+              should(testutil.equalHtml(html, htmlResult)).be.True();
             }
 
             bddone();
