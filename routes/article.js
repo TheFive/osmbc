@@ -35,6 +35,8 @@ var msTransClient = new MsTranslator({
 
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
+let oldEditorDisabled = config.getValue("diableOldEditor",{mustExist:true});
+
 // This Function converts the ID (used as :article_id in the routes) to
 // an article and stores the object in the request
 // if article_id is not existing it throws an error.
@@ -196,7 +198,9 @@ function renderArticleId(req, res, next) {
           // change title of page
           res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
           let jadeFile = "article";
-          let newEditor = req.user.articleEditor === "new";
+          let newEditor = true;
+
+          if (!oldEditorDisabled) newEditor = req.user.articleEditor === "new";
           if (newEditor) {
             jadeFile = "article/article_twocolumn";
             if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";

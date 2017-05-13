@@ -80,12 +80,13 @@ block content
                      langlist,
                      "Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.")
       +labeledInput("Mattermost User","SlackUser",usershown.SlackUser,"Username in the slack for using the collect feature.")
-      +labeledSelect( "Article Editor",
-                "articleEditor",
-                usershown.articleEditor,
-                ["old", "new"],
-                ["old", "new"],
-                "Set this to new to experiment with the new article Editor, old in case of any problems.")
+      if (!oldEditorDisabled)
+        +labeledSelect( "Article Editor",
+                  "articleEditor",
+                  usershown.articleEditor,
+                  ["old", "new"],
+                  ["old", "new"],
+                  "Set this to new to experiment with the new article Editor, old in case of any problems.")
       +labeledSelect( "Num Languages",
                 "languageCount",
                 usershown.languageCount,
