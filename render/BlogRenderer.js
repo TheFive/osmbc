@@ -6,6 +6,7 @@ var moment = require("moment-timezone");
 var util = require("../util.js");
 var configModule = require("../model/config.js");
 var config = require("../config.js");
+var html = require('html');
 
 var should = require("should");
 
@@ -88,7 +89,7 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
 
 
   var liON = '<li id="' + pageLink + '">\n';
-  var liOFF = "</li>";
+  var liOFF = "</li>\n";
 
 
   if (article.categoryEN === "Picture") {
@@ -134,7 +135,7 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
       }
     }
   } else {
-    text += article.displayTitle(90);
+    text += article.displayTitle(90)+"\n";
   }
   if (article.categoryEN === "--unpublished--") {
     var reason2 = "No Reason given";
@@ -143,7 +144,7 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
     if (article.unpublishReference) text += " (" + article.unpublishReference + ")";
   }
 
-  return liON + text + "\n" + liOFF;
+  return liON + text + liOFF;
 };
 
 MarkdownRenderer.prototype.renderArticle = function markdownArticle(lang, article) {
@@ -160,7 +161,7 @@ HtmlRenderer.prototype.articleTitle = function htmlArticle(lang, article) {
     text += "<br>" + reason2;
     if (article.unpublishReference) text += " (" + article.unpublishReference + ")";
   }
-  return "<li>" + text + "</li>";
+  return "<li>" + text + "</li>\n";
 };
 MarkdownRenderer.prototype.articleTitle = function markdownArticle(lang, article) {
   debug("MarkdownRenderer.prototype.article");
@@ -225,7 +226,9 @@ HtmlRenderer.prototype.renderBlog = function htmlBlog(lang, articleData) {
     preview += "</p>\n";
   }
 
-  return preview + teamString;
+
+  return html.prettyPrint(preview + teamString, {indent_size: 2});
+
 };
 
 

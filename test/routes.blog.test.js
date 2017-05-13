@@ -255,7 +255,7 @@ describe("routes/blog", function() {
           should.not.exist(err);
           should(res.statusCode).eql(200);
 
-          should(res.body).containEql("<p> Warning: This export contains empty Articles </p>");
+          should(res.body).containEql("<p>Warning: This export contains empty Articles</p>");
           bddone();
         });
       });

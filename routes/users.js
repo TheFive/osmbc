@@ -113,6 +113,7 @@ function renderUserId(req, res, next) {
       res.render("user", {usershown: user,
         changes: changes,
         params: params,
+        oldEditorDisabled:config.getValue("diableOldEditor"),
         userHeatMapArray: userHeatMapArray,
         langlist: config.getLanguages(),
         layout: res.rendervar.layout});

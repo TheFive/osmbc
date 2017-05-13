@@ -278,12 +278,16 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
     for (var k in data) {
       if (data[k] === self[k]) { delete data[k]; continue; }
+      if (data[k] === undefined) {delete data[k];continue;}
       if (data[k]) data[k] = data[k].trim();
       if (data[k] === "" && typeof (self[k]) === "undefined") { delete data[k]; continue; }
+
       // all values that not have to be changed are now deleted.
-      // commented out as there where side effects.
-      // test wether change is allowed
-      // if (!self.isChangeAllowed(k)) return callback(new Error(k+" can not be edited"));
+
+      // Now check, wether deletion is allowed or not.
+      if (!self.isChangeAllowed(k)) {
+        return callback(new Error(k+" can not be edited. Blog is already exported."));
+      }
     }
 
     async.series(

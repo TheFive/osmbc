@@ -406,6 +406,48 @@ describe("model/article", function() {
         });
       });
     });
+    it("should report error when blog is closed", function (bddone) {
+      // Generate an article for test
+      var newArticle;
+      async.auto({
+          blog:blogModule.createNewBlog.bind(null,{OSMUser:"TheFive"}, {name: "TEST", exportedEN: true}),
+        article:articleModule.createNewArticle.bind(null, {markdownDE: "markdown", blog: "TEST"})
+
+       },
+       function testSetAndSaveCreateNewArticleCB(err, result) {
+        should.not.exist(err);
+        newArticle = result.article;
+        articleModule.findById(newArticle.id, function(err, result) {
+          should.not.exist(err);
+          result.setAndSave({OSMUser: "test"}, {markdownEN: "test", version: 1}, function (err) {
+            should.exist(err);
+            should(err.message).eql("markdownEN can not be edited. Blog is already exported.");
+            bddone();
+          });
+        });
+      });
+    });
+    it("should not report error when blog is closed, but markdown is undefined", function (bddone) {
+      // Generate an article for test
+      var newArticle;
+      async.auto({
+          blog:blogModule.createNewBlog.bind(null,{OSMUser:"TheFive"}, {name: "TEST", exportedEN: true}),
+          article:articleModule.createNewArticle.bind(null, {markdownDE: "markdown", blog: "TEST"})
+
+        },
+        function testSetAndSaveCreateNewArticleCB(err, result) {
+          should.not.exist(err);
+          newArticle = result.article;
+          articleModule.findById(newArticle.id, function(err, result) {
+            should.not.exist(err);
+            let b;
+            result.setAndSave({OSMUser: "test"}, {markdownEN:b,markdownDE:"hallo", version: 1}, function (err) {
+              should.not.exist(err);
+              bddone();
+            });
+          });
+        });
+    });
     it("should set comment to solved if article is unpublished", function (bddone) {
       // Generate an article for test
       var newArticle;

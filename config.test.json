@@ -65,5 +65,6 @@
   "maillog_directory":".",
   "maillog_prefix":"maillogTest",
   "maillog_dateformat":".log",
-  "MS_TranslateApiKey":"hidden"
+  "MS_TranslateApiKey":"hidden",
+  "diableOldEditor":false
 }
