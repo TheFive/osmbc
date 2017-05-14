@@ -66,5 +66,6 @@
   "maillog_prefix":"maillogTest",
   "maillog_dateformat":".log",
   "MS_TranslateApiKey":"hidden",
-  "diableOldEditor":false
+  "diableOldEditor":false,
+  "CalendarDateFormat":"L"
 }
