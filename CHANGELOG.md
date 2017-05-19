@@ -1,8 +1,42 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [2.3.4](https://github.com/TheFive/osmbc/tree/2.3.4) (2017-05-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.3...2.3.4)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.1...HEAD)
+**Implemented enhancements:**
+
+- Do not allow change of markdown, if blog is exported in model \(throw an error\) [\#653](https://github.com/TheFive/osmbc/issues/653)
+
+**Fixed bugs:**
+
+- Formatting Issue of Exported HTML [\#652](https://github.com/TheFive/osmbc/issues/652)
+
+**Closed issues:**
+
+- Disable Old Editor via config file for all [\#654](https://github.com/TheFive/osmbc/issues/654)
+
+## [2.3.3](https://github.com/TheFive/osmbc/tree/2.3.3) (2017-04-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.2...2.3.3)
+
+**Implemented enhancements:**
+
+- New Calender Tool - storing maybe posssible without changing the language [\#651](https://github.com/TheFive/osmbc/issues/651)
+- Simplify Adding Bookmarklets for Firefox Users [\#649](https://github.com/TheFive/osmbc/issues/649)
+- Doublettes: Disable standard links [\#638](https://github.com/TheFive/osmbc/issues/638)
+
+**Fixed bugs:**
+
+- Items are surrounded by `\<p\>` tags in export view [\#650](https://github.com/TheFive/osmbc/issues/650)
+
+## [2.3.2](https://github.com/TheFive/osmbc/tree/2.3.2) (2017-04-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.1a...2.3.2)
+
+**Implemented enhancements:**
+
+- Link to fix Calendar problems [\#648](https://github.com/TheFive/osmbc/issues/648)
+
+## [2.3.1a](https://github.com/TheFive/osmbc/tree/2.3.1a) (2017-03-28)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.1...2.3.1a)
 
 **Closed issues:**
 
@@ -660,13 +694,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
