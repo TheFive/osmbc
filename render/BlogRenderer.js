@@ -6,7 +6,7 @@ var moment = require("moment-timezone");
 var util = require("../util.js");
 var configModule = require("../model/config.js");
 var config = require("../config.js");
-var html = require('html');
+
 
 var should = require("should");
 
@@ -227,7 +227,7 @@ HtmlRenderer.prototype.renderBlog = function htmlBlog(lang, articleData) {
   }
 
 
-  return html.prettyPrint(preview + teamString, {indent_size: 2});
+  return preview + teamString;
 
 };
 
