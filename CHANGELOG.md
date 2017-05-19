@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.4...HEAD)
+
+**Fixed bugs:**
+
+- CR-LF bug [\#661](https://github.com/TheFive/osmbc/issues/661)
+
 ## [2.3.4](https://github.com/TheFive/osmbc/tree/2.3.4) (2017-05-13)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.3...2.3.4)
 
