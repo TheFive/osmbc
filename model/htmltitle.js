@@ -2,7 +2,7 @@
 
 var cheerio = require("cheerio");
 var request = require("request");
-var Iconv  = require("iconv").Iconv;
+var iconv = require('iconv-lite');
 var debug = require("debug")("OSMBC:model:htmltitle");
 
 function linkFrom(url, page) {
@@ -87,13 +87,15 @@ function getTitle(url, callback) {
       // nothing given, to use parser set incoming & outcoming charset equal
       if (!fromcharset) fromcharset = "UTF-8";
       var utf8body = null;
+      utf8body = iconv.decode(body,fromcharset);
+      /*
       try {
         var iconv = new Iconv(fromcharset, "UTF-8");
         utf8body = iconv.convert(body).toString("UTF-8");
       } catch (err) {
         // There is a convert error, ognore it and convert with UTF-8
         utf8body = body.toString("UTF-8");
-      }
+      }*/
 
 
 
