@@ -8,6 +8,8 @@ var http    = require('http');
 var async   = require('async');
 var debug   = require('debug')('OSMBC:server');
 
+var stoppable = require('stoppable');
+
 
 var app     = require('../app');
 
@@ -33,7 +35,7 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server = stoppable(http.createServer(app));
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -59,6 +61,12 @@ function initialiseServer() {
       logger.info("Server Listening on port "+port);
   })
 }
+
+process.on('SIGINT', function() {
+  console.log('Received a stoprequest (SIGINT)');
+  server.stop();
+});
+
 
 initialiseServer();
 

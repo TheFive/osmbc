@@ -25,7 +25,7 @@ describe("license-check", function() {
     }, function (err, json) {
       should.not.exist(err);
       for (let k in json) {
-        if (k==="mdfigcaption@0.1.1" && moment().isBefore(moment("2017-06-01"))) continue;
+        if (k==="mdfigcaption@0.1.1" && moment().isBefore(moment("2017-08-01"))) continue;
         // License not give, so please overwrite with manual capturet licenses
         if (json[k].licenses === "UNKNOWN" && licenses[k]) {
           json[k].licenses = licenses[k];

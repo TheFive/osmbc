@@ -29,6 +29,7 @@ var sizeOf = require("image-size");
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
 let bootstrap = config.getValue("bootstrap", {mustExist: true});
+let osmbcDateFormat = config.getValue("CalendarDateFormat",{mustExist:true});
 
 function renderPublicCalendar(req, res, next) {
   debug("renderPublicCalendar");
@@ -112,11 +113,11 @@ function eventDateFormat(e, lang) {
   ed.locale(config.moment_locale(lang));
 
   if (e.startDate) {
-    dateString = sd.format("L");
+    dateString = sd.format(osmbcDateFormat);
   }
   if (e.endDate) {
     if ((e.startDate.getTime() !== e.endDate.getTime())) {
-      dateString = sd.format("L") + "-" + ed.format("L");
+      dateString = sd.format(osmbcDateFormat) + "-" + ed.format(osmbcDateFormat);
     }
   }
   return dateString;

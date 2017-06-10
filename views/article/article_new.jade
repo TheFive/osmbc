@@ -354,6 +354,7 @@ block scripts
     lang4 = "!{params.lang4}";
     placeholder = !{JSON.stringify(placeholder.categories)}
     var catArray = !{JSON.stringify(categories)};
+    var articleReferences = !{JSON.stringify(articleReferences)};
     var noCategorie = "no categorie";
     if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
 
@@ -656,16 +657,20 @@ block scripts
 
 
       while( (linkList = regexToken.exec(cl)) != null ) {
-        result += '<a href="'+linkList[0]+'" target="_blank" >'+linkList[0]+'</a>\n';
-        result += " "+generateGoogleTranslateLink(linkList[0],leftLang);
+        var link = linkList[0];
+        if (articleReferences[link] && (articleReferences[link]).length >0) {
+          result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+link+'</a>\n';
+        }
+        else result += '<a class="label label-default" href="'+link+'" target="_blank" >'+link+'</a>\n';
+        result += " "+generateGoogleTranslateLink(link,leftLang);
         if (rightLang !== "--" && rightLang !== "") {
-          result += " "+generateGoogleTranslateLink(linkList[0],rightLang);
+          result += " "+generateGoogleTranslateLink(link,rightLang);
         }
         if (lang3 !== "--" && lang3 !== "") {
-          result += " " + generateGoogleTranslateLink(linkList[0], lang3);
+          result += " " + generateGoogleTranslateLink(link, lang3);
         }
         if (lang4 !== "--" && lang4 !== "") {
-          result += " " + generateGoogleTranslateLink(linkList[0], lang4);
+          result += " " + generateGoogleTranslateLink(link, lang4);
         }
 
         result +="<br>\n";

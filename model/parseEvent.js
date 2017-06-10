@@ -10,6 +10,7 @@ var configModule = require("../model/config.js");
 var async = require("async");
 var https = require("https");
 
+let osmbcDateFormat = config.getValue("CalendarDateFormat",{mustExist:true});
 
 
 // This page is delivering the calendar events
@@ -353,11 +354,11 @@ function calendarJSONToMarkdown2(json, countryFlags, ct, option, cb) {
     ed.locale(config.moment_locale(lang));
 
     if (e.startDate) {
-      dateString = sd.format("L");
+      dateString = sd.format(osmbcDateFormat);
     }
     if (e.endDate) {
       if ((e.startDate.getTime() !== e.endDate.getTime())) {
-        dateString = sd.format("L") + "-" + ed.format("L");
+        dateString = sd.format(osmbcDateFormat) + "-" + ed.format(osmbcDateFormat);
       }
     }
     e.dateString = dateString;
