@@ -5,6 +5,7 @@
 
 **Implemented enhancements:**
 
+- Allow move of articles if only NT articles are closed [\#663](https://github.com/TheFive/osmbc/issues/663)
 - Format links in collection in red do indicate doublettes. [\#662](https://github.com/TheFive/osmbc/issues/662)
 - Make Calendar Date Format configurable via config.js [\#655](https://github.com/TheFive/osmbc/issues/655)
 - adding existing links to collection [\#404](https://github.com/TheFive/osmbc/issues/404)
