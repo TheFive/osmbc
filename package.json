@@ -13,7 +13,7 @@
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "compression": "^1.6.2",
-    "connect-pg-simple": "^4.2.0",
+    "connect-pg-simple": "^3.1.2",
     "cookie-parser": "~1.4.1",
     "debug": "^2.6.0",
     "deferred": "^0.7.5",
