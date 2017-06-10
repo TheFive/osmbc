@@ -1263,6 +1263,18 @@ describe("model/article", function() {
       should(article.isChangeAllowed("markdownES")).be.true();
       bddone();
     });
+    it("should allow editing if language is closed, but article is no translation", function(bddone) {
+      let blog =  blogModule.create({name: "blog", closeEN: true,exportedDE:true});
+      let article = articleModule.create({blog: "blog", _blog: blog,markdownEN:"no translation",markdownDE:"no translation"});
+      should(article.isChangeAllowed("markdownEN")).be.false();
+      should(article.isChangeAllowed("markdownDE")).be.false();
+      should(article.isChangeAllowed("markdownES")).be.true();
+      should(article.isChangeAllowed("title")).be.true();
+      should(article.isChangeAllowed("blog")).be.true();
+      should(article.isChangeAllowed("predecessorId")).be.true();
+      should(article.isChangeAllowed("categoryEN")).be.true();
+      bddone();
+    });
     it("should allow editing if nothing is closed / exported", function(bddone) {
       let blog = blogModule.create({name: "blog"});
       let article =  articleModule.create({blog: "blog", _blog: blog});

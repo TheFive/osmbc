@@ -150,8 +150,8 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
     case "collection":
     case "categoryEN":
       langlist.forEach(function(l) {
-        if (self._blog["exported" + l] === true) result = false;
-        if (self._blog["close" + l] === true) result = false;
+        if (self._blog["exported" + l] === true && self["markdown"+l]!="no translation") result = false;
+        if (self._blog["close" + l] === true && self["markdown"+l]!="no translation") result = false;
       });
       if (!result) return result;
       break;
