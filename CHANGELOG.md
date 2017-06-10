@@ -1,8 +1,13 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [2.3.5](https://github.com/TheFive/osmbc/tree/2.3.5) (2017-06-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.4...2.3.5)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.4...HEAD)
+**Implemented enhancements:**
+
+- Format links in collection in red do indicate doublettes. [\#662](https://github.com/TheFive/osmbc/issues/662)
+- Make Calendar Date Format configurable via config.js [\#655](https://github.com/TheFive/osmbc/issues/655)
+- adding existing links to collection [\#404](https://github.com/TheFive/osmbc/issues/404)
 
 **Fixed bugs:**
 
