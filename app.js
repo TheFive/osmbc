@@ -329,6 +329,9 @@ if (app.get("env") === "development") {
   /* jshint -W098 */
   app.use(function(err, req, res, next) {
     debug("app.use Error Handler for Debug");
+    logger.error(err.toString());
+    logger.error(err.stack);
+
     res.status(err.status || 500);
     if (err.type && err.type === "API") return res.send(err.message);
     res.render("error", {
@@ -349,6 +352,8 @@ if (app.get("env") === "test") {
   /* jshint -W098 */
   app.use(function(err, req, res, next) {
     debug("app.use Error Handler for Debug");
+    logger.error(err.toString());
+    logger.error(err.stack);
     res.status(err.status || 500);
     logger.error("Error Message " + err.message);
     if (err.type && err.type === "API") return res.send(err.message+"\n"+JSON.stringify(err));
