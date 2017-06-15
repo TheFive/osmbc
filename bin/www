@@ -63,7 +63,7 @@ function initialiseServer() {
 }
 
 process.on('SIGINT', function() {
-  console.log('Received a stoprequest (SIGINT)');
+  logger.info('Received a stoprequest (SIGINT)');
   server.stop();
   process.exit()
 });

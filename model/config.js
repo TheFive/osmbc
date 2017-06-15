@@ -380,8 +380,6 @@ module.exports.getConfigObject = function(text, callback) {
   else {
     for (let key in configMap) {
       let c=configMap[key];
-      console.log(c);
-      console.log(c.id,text);
       if (c.id === text) {
         config = c;
         break;

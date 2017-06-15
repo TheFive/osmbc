@@ -214,7 +214,6 @@ function renderArticleId(req, res, next) {
           }
           if (newEditor && req.user.languageCount === "four") {
             jadeFile = "article/article_fourcolumn";
-            console.log(req.user.getSecondLang());
             if (req.user.getLang4()===null ) jadeFile = "article/article_threecolumn";
             if (req.user.getLang3()===null ) jadeFile = "article/article_twocolumn";
             if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";

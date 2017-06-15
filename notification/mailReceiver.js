@@ -27,7 +27,7 @@ if (logDir === ".") logDir = path.join(__dirname, "..");
 
 
 if (!(fs.existsSync(logDir))) {
-  console.log("Missing Directory (maillog_directory) %s", logDir);
+  console.err("Missing Directory (maillog_directory) %s", logDir);
   process.exit(1);
 }
 
