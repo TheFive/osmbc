@@ -6,6 +6,8 @@
     "database" : "localhost:5432/testdb",
     "username" : "test",
     "password" : "test",
+    "server" : "xx",
+    "port":"xx",
     "connectstr" : "psql://test:test@localhost:5432/testdb"
   },
    "twitter":{

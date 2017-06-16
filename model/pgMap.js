@@ -1,6 +1,6 @@
 "use strict";
 
-var pg     = require("pg");
+var pool     = require("../model/db.js");
 var should = require("should");
 var async  = require("async");
 var debug  = require("debug")("OSMBC:model:pgMap");
@@ -146,90 +146,76 @@ module.exports.save = function(callback) {
 
     // store first version in database
     self.version = 1;
-    pg.connect(config.pgstring, function(err, client, pgdone) {
-      if (err) {
-        pgdone();
-        return (callback(err));
-      }
-      var sqlquery = "insert into " + table + "(data) values ($1) returning id";
-      sqldebug("Query %s", sqlquery);
-      var startTime = new Date().getTime();
-      var query = client.query(sqlquery, [self]);
-      query.on("row", function(row) {
-        debug("Created Row ID %s", row.id);
-        self.id = row.id;
-      });
-      query.on("end", function () {
-        var endTime = new Date().getTime();
-        sqldebug("SQL: [" + (endTime - startTime) / 1000 + "] insert to " + table);
-
-        pgdone();
-        if (typeof blog !== "undefined") self._blog = blog;
-        return callback(null, self);
-      });
+    var sqlquery = "insert into " + table + "(data) values ($1) returning id";
+    sqldebug("Query %s", sqlquery);
+    var startTime = new Date().getTime();
+    var query = pool.query(sqlquery, [self]);
+    query.on("row", function(row) {
+      debug("Created Row ID %s", row.id);
+      self.id = row.id;
+    });
+    query.on("end", function () {
+      var endTime = new Date().getTime();
+      sqldebug("SQL: [" + (endTime - startTime) / 1000 + "] insert to " + table);
+      if (typeof blog !== "undefined") self._blog = blog;
+      return callback(null, self);
     });
   } else {
     debug("Object will be updated, current version is %s", self.version);
-    pg.connect(config.pgstring, function(err, client, pgdone) {
-      if (err) {
-        pgdone();
-        return (callback(err));
-      }
-      async.series([
-        function(cb) {
-          debug("Check version of object");
-          var versionsEqual = false;
+    async.series([
+      function(cb) {
+        debug("Check version of object");
+        var versionsEqual = false;
 
-          var query = client.query("select (data->>'version')::int as version from " + table + " where id = $1", [self.id]);
-          var startTime = new Date().getTime();
-          query.on("row", function(row) {
-            debug("row Version in Database %s", row.version);
-            if (row.version === null) {
-                // No Data in Database, so no conflict.
-              versionsEqual = true;
-            } else if (row.version === self.version) {
-              debug("No Error");
-              versionsEqual = true;
-            }
-          });
-          query.on("error", function(err) {
-            debug("error %s", err);
-            return cb(err);
-          });
-          query.on("end", function() {
-            debug("end");
-            var err = null;
-            var endTime = new Date().getTime();
-            sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
-            if (!versionsEqual) {
-              debug("send error");
-              err = new Error("Version Number Differs");
-            }
-            return cb(err);
-          });
-        }
-      ],
-        function finalFunction(err) {
-          debug("final Function save");
-          if (err) {
-            debug("Forward Error");
-            debug(err);
-            pgdone();
-            return callback(err);
+        var query = pool.query("select (data->>'version')::int as version from " + table + " where id = $1", [self.id]);
+        var startTime = new Date().getTime();
+        query.on("row", function(row) {
+          debug("row Version in Database %s", row.version);
+          if (row.version === null) {
+              // No Data in Database, so no conflict.
+            versionsEqual = true;
+          } else if (row.version === self.version) {
+            debug("No Error");
+            versionsEqual = true;
           }
-          self.version += 1;
-          var query = client.query("update " + table + " set data = $2 where id = $1", [self.id, self]);
-          /* query.on('row',function(row) {
-            results.push(row);
-          }) */
-          query.on("end", function () {
-            pgdone();
-            if (typeof blog !== "undefined") self._blog = blog;
-            return callback(null, self);
-          });
+        });
+        query.on("error", function(err) {
+          debug("error %s", err);
+          return cb(err);
+        });
+        query.on("end", function() {
+          debug("end");
+          var err = null;
+          var endTime = new Date().getTime();
+          sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
+          if (!versionsEqual) {
+            debug("send error");
+            err = new Error("Version Number Differs");
+          }
+          return cb(err);
+        });
+      }
+    ],
+      function finalFunction(err) {
+        debug("final Function save");
+        if (err) {
+          debug("Forward Error");
+          debug(err);
+
+          return callback(err);
         }
-      );
-    });
+        self.version += 1;
+        var query = pool.query("update " + table + " set data = $2 where id = $1", [self.id, self]);
+        /* query.on('row',function(row) {
+          results.push(row);
+        }) */
+        query.on("end", function () {
+
+          if (typeof blog !== "undefined") self._blog = blog;
+          return callback(null, self);
+        });
+      }
+    );
   }
 };
 
@@ -244,20 +230,16 @@ module.exports.remove = function(callback) {
     return;
   }
   // we have to change the beer
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-    if (err) return (callback(err));
-    debug("call delete");
+  debug("call delete");
 
-    var query = client.query("delete from " + table + " where id = $1", [self.id]);
-    /* query.on('row',function(row) {
-      results.push(row);
-    }) */
-    query.on("end", function (result) {
-      debug("end called");
+  var query = pool.query("delete from " + table + " where id = $1", [self.id]);
+  /* query.on('row',function(row) {
+    results.push(row);
+  }) */
+  query.on("end", function (result) {
+    debug("end called");
 
-      pgdone();
-      callback(null, result);
-    });
+    callback(null, result);
   });
 };
 
@@ -277,47 +259,38 @@ module.exports.find = function find(module, obj, order, callback) {
 
   debug("Connecting to DB" + config.pgstring);
 
-  pg.connect(config.pgstring, function findPgConnect(err, client, pgdone) {
-    debug("findPgConnect");
-    if (err) {
-      pgdone();
-      return (callback(err));
+  var table = module.table;
+  var sqlQuery = generateQuery(table, obj, order);
+
+  var result = [];
+
+  var startTime = new Date().getTime();
+
+  var query;
+
+  if (obj && obj.params) {
+    query = pool.query(sqlQuery, obj.params);
+  } else query = pool.query(sqlQuery);
+
+  query.on("row", function findRowFunction(row) {
+    debug("findRowFunction");
+    var r = module.create();
+    for (var k in row.data) {
+      r[k] = row.data[k];
     }
-    var table = module.table;
-    var sqlQuery = generateQuery(table, obj, order);
-
-    var result = [];
-
-    var startTime = new Date().getTime();
-
-    var query;
-
-    if (obj && obj.params) {
-      query = client.query(sqlQuery, obj.params);
-    } else query = client.query(sqlQuery);
-
-    query.on("row", function findRowFunction(row) {
-      debug("findRowFunction");
-      var r = module.create();
-      for (var k in row.data) {
-        r[k] = row.data[k];
-      }
-      r.id = row.id;
-      result.push(r);
-    });
-    query.on("error", function findErrorFunction(error) {
-      debug("findErrorFunction");
-      pgdone();
-      callback(error);
-    });
-    query.on("end", function findEndFunction() {
-      debug("findEndFunction");
-      var endTime = new Date().getTime();
-      sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
-      longRunningQueriesAdd(endTime - startTime, sqlQuery, table);
-      pgdone();
-      callback(null, result);
-    });
+    r.id = row.id;
+    result.push(r);
+  });
+  query.on("error", function findErrorFunction(error) {
+    debug("findErrorFunction");
+    callback(error);
+  });
+  query.on("end", function findEndFunction() {
+    debug("findEndFunction");
+    var endTime = new Date().getTime();
+    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
+    longRunningQueriesAdd(endTime - startTime, sqlQuery, table);
+    callback(null, result);
   });
 };
 
@@ -333,74 +306,66 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
     order = null;
   }
 
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-    if (err) {
-      pgdone();
-      return (callback(err));
+
+  var result = [];
+
+  var orderBy = "";
+
+  if (order) {
+    should.exist(order.column);
+    orderBy = " order by data->>'" + order.column + "'";
+    if (order.desc) {
+      orderBy += " desc";
     }
+  }
+  var germanVector = "@@ plainto_tsquery('german', '" + search + "')";
+  var englishVector = "@@ plainto_tsquery('english', '" + search + "')";
 
-    var result = [];
-
-    var orderBy = "";
-
-    if (order) {
-      should.exist(order.column);
-      orderBy = " order by data->>'" + order.column + "'";
-      if (order.desc) {
-        orderBy += " desc";
-      }
+  if (util.isURL(search)) {
+    var http1Url = search;
+    var http2Url;
+    if (search.substring(0, 5) === "http:") {
+      http2Url = "https:" + search.substring(5, 9999);
     }
-    var germanVector = "@@ plainto_tsquery('german', '" + search + "')";
-    var englishVector = "@@ plainto_tsquery('english', '" + search + "')";
-
-    if (util.isURL(search)) {
-      var http1Url = search;
-      var http2Url;
-      if (search.substring(0, 5) === "http:") {
-        http2Url = "https:" + search.substring(5, 9999);
-      }
-      if (search.substring(0, 6) === "https:") {
-        http2Url = "http:" + search.substring(6, 9999);
-      }
-      search = "''" + util.toPGString(http1Url, 2) + "'' | ''(" + util.toPGString(http1Url, 2) + ")'' ";
-      if (http2Url) search += "| ''" + util.toPGString(http2Url, 2) + "'' | ''(" + util.toPGString(http1Url, 2) + ")'' ";
-      germanVector = "@@ to_tsquery('german', '" + search + "')";
-      englishVector = "@@ to_tsquery('english', '" + search + "')";
+    if (search.substring(0, 6) === "https:") {
+      http2Url = "http:" + search.substring(6, 9999);
     }
+    search = "''" + util.toPGString(http1Url, 2) + "'' | ''(" + util.toPGString(http1Url, 2) + ")'' ";
+    if (http2Url) search += "| ''" + util.toPGString(http2Url, 2) + "'' | ''(" + util.toPGString(http1Url, 2) + ")'' ";
+    germanVector = "@@ to_tsquery('german', '" + search + "')";
+    englishVector = "@@ to_tsquery('english', '" + search + "')";
+  }
 
-    var sqlQuery =  "select id, data from article \
-                          where to_tsvector('german', coalesce(data->>'title','')::text || ' '|| \
-                                                      coalesce(data->>'collection','')  || ' '|| \
-                                                      coalesce(data->>'markdownDE','')   ) " + germanVector + " \
-                            or to_tsvector('english',  coalesce(data->>'collection','')  || ' '|| \
-                                                      coalesce(data->>'markdownEN','')   ) " + englishVector +
-                        orderBy;
-    var startTime = new Date().getTime();
+  var sqlQuery =  "select id, data from article \
+                        where to_tsvector('german', coalesce(data->>'title','')::text || ' '|| \
+                                                    coalesce(data->>'collection','')  || ' '|| \
+                                                    coalesce(data->>'markdownDE','')   ) " + germanVector + " \
+                          or to_tsvector('english',  coalesce(data->>'collection','')  || ' '|| \
+                                                    coalesce(data->>'markdownEN','')   ) " + englishVector +
+                      orderBy;
+  var startTime = new Date().getTime();
 
-    var query = client.query(sqlQuery);
+  var query = pool.query(sqlQuery);
 
-    query.on("row", function(row) {
-      debug("query.on row");
-      var r = module.create();
-      for (var k in row.data) {
-        r[k] = row.data[k];
-      }
-      r.id = row.id;
-      result.push(r);
-    });
-    query.on("end", function () {
-      debug("query.on end");
-      pgdone();
-      var endTime = new Date().getTime();
-      sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
-      return callback(null, result);
-    });
-    query.on("error", function (err) {
-      debug("query on err");
-      debug(err);
-      pgdone();
-      return callback(err);
-    });
+  query.on("row", function(row) {
+    debug("query.on row");
+    var r = module.create();
+    for (var k in row.data) {
+      r[k] = row.data[k];
+    }
+    r.id = row.id;
+    result.push(r);
+  });
+  query.on("end", function () {
+    debug("query.on end");
+    var endTime = new Date().getTime();
+    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
+    return callback(null, result);
+  });
+  query.on("error", function (err) {
+    debug("query on err");
+    debug(err);
+    return callback(err);
   });
 };
 
@@ -409,33 +374,26 @@ module.exports.findById = function findById(id, module, callback) {
   debug("findById %s", id);
   var table = module.table;
 
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-    if (err) {
-      pgdone();
-      return (callback(err));
+  var result = null;
+  var idToSearch = 0;
+
+  if (id % 1 === 0) idToSearch = id;
+
+
+  var startTime = new Date().getTime();
+
+  var query = pool.query("select id,data from " + table + " where id = $1", [idToSearch]);
+  query.on("row", function(row) {
+    result = module.create();
+    for (var k in row.data) {
+      result[k] = row.data[k];
     }
-    var result = null;
-    var idToSearch = 0;
-
-    if (id % 1 === 0) idToSearch = id;
-
-
-    var startTime = new Date().getTime();
-
-    var query = client.query("select id,data from " + table + " where id = $1", [idToSearch]);
-    query.on("row", function(row) {
-      result = module.create();
-      for (var k in row.data) {
-        result[k] = row.data[k];
-      }
-      result.id = row.id;
-    });
-    query.on("end", function () {
-      pgdone();
-      var endTime = new Date().getTime();
-      debug("SQL: [" + (endTime - startTime) / 1000 + "] Select by id from " + table);
-      callback(null, result);
-    });
+    result.id = row.id;
+  });
+  query.on("end", function () {
+    var endTime = new Date().getTime();
+    debug("SQL: [" + (endTime - startTime) / 1000 + "] Select by id from " + table);
+    callback(null, result);
   });
 };
 
@@ -450,39 +408,31 @@ module.exports.findOne = function findOne(module, obj, order, callback) {
     order = null;
   }
 
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-    if (err) {
-      pgdone();
-      return (callback(err));
+  var result = null;
+
+
+  var sqlQuery = generateQuery(module.table, obj, order);
+
+  var startTime = new Date().getTime();
+
+  var query = pool.query(sqlQuery + " limit 1");
+  query.on("row", function(row) {
+    result = module.create();
+    for (var k in row.data) {
+      result[k] = row.data[k];
     }
-    var result = null;
-
-
-    var sqlQuery = generateQuery(module.table, obj, order);
-
-    var startTime = new Date().getTime();
-
-    var query = client.query(sqlQuery + " limit 1");
-    query.on("row", function(row) {
-      result = module.create();
-      for (var k in row.data) {
-        result[k] = row.data[k];
-      }
-      result.id = row.id;
-    });
-    query.on("end", function () {
-      pgdone();
-      var endTime = new Date().getTime();
-      sqldebug("SQL: [" + (endTime - startTime) / 1000 + "]" + sqlQuery);
-      callback(null, result);
-    });
+    result.id = row.id;
+  });
+  query.on("end", function () {
+    var endTime = new Date().getTime();
+    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "]" + sqlQuery);
+    callback(null, result);
   });
 };
 
 
 exports.createTables = function(pgObject, options, analyse, callback) {
   debug("pgMap.createTables %s %s", pgObject.table, JSON.stringify(options));
-  should(typeof (pg)).equal("object");
   should(typeof (options)).equal("object");
   if (typeof (analyse) === "function") {
     callback = analyse;
@@ -490,124 +440,111 @@ exports.createTables = function(pgObject, options, analyse, callback) {
   }
   should(typeof (analyse)).equal("object");
 
-  pg.connect(config.pgstring, function pgconnected(err, client, pgdone) {
-    debug("pgconnected");
-    if (err) {
-      callback(err);
-      pgdone();
-      return;
-    }
-    async.series([
-      function tabledrop(cb) {
-        if (options.dropTables || (options.dropTable && options.dropTable === pgObject.table)) {
-          debug("tabledrop");
-          if (options.verbose) logger.info("Drop Table " + pgObject.table);
-          var dropString = "DROP TABLE IF EXISTS " + pgObject.table + " CASCADE";
-          client.query(dropString, cb);
-        } else return cb();
-      },
-      function tablecreation(cb) {
-        if (options.createTables || (options.createTable && options.createTable === pgObject.table)) {
-          debug("tablecreation");
-          if (options.verbose) logger.info("Create Table " + pgObject.table);
-          if (options.verbose) logger.info("Query: " + pgObject.createString);
-          client.query(pgObject.createString, cb);
-        } else return cb();
-      },
-      function indexdrop(cb) {
-        var toBeDropped = [];
-        var k;
-        if (options.dropIndex) {
-          debug("indexdrop");
-          for (k in pgObject.indexDefinition) {
-            toBeDropped.push(k);
-          }
+  async.series([
+    function tabledrop(cb) {
+      if (options.dropTables || (options.dropTable && options.dropTable === pgObject.table)) {
+        debug("tabledrop");
+        if (options.verbose) logger.info("Drop Table " + pgObject.table);
+        var dropString = "DROP TABLE IF EXISTS " + pgObject.table + " CASCADE";
+        pool.query(dropString, cb);
+      } else return cb();
+    },
+    function tablecreation(cb) {
+      if (options.createTables || (options.createTable && options.createTable === pgObject.table)) {
+        debug("tablecreation");
+        if (options.verbose) logger.info("Create Table " + pgObject.table);
+        if (options.verbose) logger.info("Query: " + pgObject.createString);
+        pool.query(pgObject.createString, cb);
+      } else return cb();
+    },
+    function indexdrop(cb) {
+      var toBeDropped = [];
+      var k;
+      if (options.dropIndex) {
+        debug("indexdrop");
+        for (k in pgObject.indexDefinition) {
+          toBeDropped.push(k);
         }
-        if (options.updateIndex) {
-          debug("updateindex");
-          for (k in analyse.foundNOK) {
-            if (toBeDropped.indexOf(k) < 0) toBeDropped.push(k);
-          }
-          for (k in analyse.foundUnnecessary) {
-            if (toBeDropped.indexOf(k) < 0) toBeDropped.push(k);
-          }
+      }
+      if (options.updateIndex) {
+        debug("updateindex");
+        for (k in analyse.foundNOK) {
+          if (toBeDropped.indexOf(k) < 0) toBeDropped.push(k);
         }
-        async.each(toBeDropped, function ftoBeDropped(index, eachofcb) {
-          debug("ftoBeDropped");
-          if (options.verbose) logger.info("Drop Index " + index);
-          var dropIndex = "DROP INDEX if exists " + index + ";";
-          client.query(dropIndex, eachofcb);
-        }, function finalFunction(err) {
-          debug("finalFunction");
-          return cb(err);
-        });
-      },
-      function indexcreation(cb) {
-        if (options.createIndex || options.updateIndex) {
-          debug("indexcreation");
-          if (options.verbose) logger.info("Creating Indexes for " + pgObject.table);
-          async.forEachOf(pgObject.indexDefinition, function(sql, index, eachofcb) {
-            var createIt = false;
-            if (options.createIndex) createIt = true;
-            if (analyse.foundNOK[index]) createIt = true;
-            if (analyse.expected[index]) createIt = true;
+        for (k in analyse.foundUnnecessary) {
+          if (toBeDropped.indexOf(k) < 0) toBeDropped.push(k);
+        }
+      }
+      async.each(toBeDropped, function ftoBeDropped(index, eachofcb) {
+        debug("ftoBeDropped");
+        if (options.verbose) logger.info("Drop Index " + index);
+        var dropIndex = "DROP INDEX if exists " + index + ";";
+        pool.query(dropIndex, eachofcb);
+      }, function finalFunction(err) {
+        debug("finalFunction");
+        return cb(err);
+      });
+    },
+    function indexcreation(cb) {
+      if (options.createIndex || options.updateIndex) {
+        debug("indexcreation");
+        if (options.verbose) logger.info("Creating Indexes for " + pgObject.table);
+        async.forEachOf(pgObject.indexDefinition, function(sql, index, eachofcb) {
+          var createIt = false;
+          if (options.createIndex) createIt = true;
+          if (analyse.foundNOK[index]) createIt = true;
+          if (analyse.expected[index]) createIt = true;
 
-            if (!createIt) return eachofcb();
-            if (options.verbose) logger.info("Create Index " + index);
-            client.query(sql, eachofcb);
-          }, function finalFunction(err) { return cb(err); });
-        } else return cb();
-      },
-      function viewsdrop(cb) {
-        debug("viewsdrop");
-        if (options.dropView) {
-          async.forEachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
-            var dropIndex = "DROP VIEW if exists " + view + ";";
-            if (options.verbose) logger.info("Drop View " + view);
-            client.query(dropIndex, eachofcb);
-          }, function finalFunction(err) { return cb(err); });
-        } else return cb();
-      },
-      function viewscreation(cb) {
-        debug("viewscreation");
-        if (options.createView) {
-          async.forEachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
-            if (options.verbose) logger.info("Create View " + view);
-            client.query(sql, eachofcb);
-          }, function finalFunction(err) { return cb(err); });
-        } else return cb();
-      }
-    ], function finalFunction(err) {
-      if (options.verbose) {
-        if (err) logger.error(err);
-      }
-      pgdone();
-      return callback(err);
-    });
+          if (!createIt) return eachofcb();
+          if (options.verbose) logger.info("Create Index " + index);
+          pool.query(sql, eachofcb);
+        }, function finalFunction(err) { return cb(err); });
+      } else return cb();
+    },
+    function viewsdrop(cb) {
+      debug("viewsdrop");
+      if (options.dropView) {
+        async.forEachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
+          var dropIndex = "DROP VIEW if exists " + view + ";";
+          if (options.verbose) logger.info("Drop View " + view);
+          pool.query(dropIndex, eachofcb);
+        }, function finalFunction(err) { return cb(err); });
+      } else return cb();
+    },
+    function viewscreation(cb) {
+      debug("viewscreation");
+      if (options.createView) {
+        async.forEachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
+          if (options.verbose) logger.info("Create View " + view);
+          pool.query(sql, eachofcb);
+        }, function finalFunction(err) { return cb(err); });
+      } else return cb();
+    }
+  ], function finalFunction(err) {
+    if (options.verbose) {
+      if (err) logger.error(err);
+    }
+    return callback(err);
   });
 };
 
 
 module.exports.count = function count(sql, callback) {
   debug("count");
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-    if (err) return callback(err);
 
-    var startTime = new Date().getTime();
-    var result;
-    var query = client.query(sql);
-    query.on("row", function(row) {
-      result = {};
-      for (var k in row) {
-        result[k] = row[k];
-      }
-    });
-    query.on("end", function () {
-      pgdone();
-      var endTime = new Date().getTime();
-      sqldebug("SQL: [" + (endTime - startTime) / 1000 + "]" + sql);
-      callback(null, result);
-    });
+  var startTime = new Date().getTime();
+  var result;
+  var query = pool.query(sql);
+  query.on("row", function(row) {
+    result = {};
+    for (var k in row) {
+      result[k] = row[k];
+    }
+  });
+  query.on("end", function () {
+    var endTime = new Date().getTime();
+    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "]" + sql);
+    callback(null, result);
   });
 };
 
