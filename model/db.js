@@ -2,6 +2,7 @@
 const pg = require('pg');
 var config = require("../config.js");
 var should = require("should");
+var sqldebug  = require("debug")("OSMBC:model:sql");
 
 
 let pg_c = config.getValue("postgres",{mustexist:true});
@@ -36,17 +37,14 @@ var pg_config = {
 //this initializes a connection pool
 //it will keep idle connections open for 30 seconds
 //and set a limit of maximum 10 idle clients
-const pool = new pg.Pool(pg_config);
+let pool = new pg.Pool(pg_config);
 
 let query=pool.query("select count(*) from usert");
-query.on("row", function(row) {
-});
-query.on("end", function () {
-});
-query.on("error",function(err) {
+
+query.catch(function(err){
   logger.error(err);
   process.exit(1);
-});
+}).then(function() {});
 
 pool.on('error', function (err) {
   // if an error is encountered by a client while it sits idle in the pool
@@ -60,13 +58,33 @@ pool.on('error', function (err) {
 
 //export the query method for passing queries to the pool
 module.exports.query = function (text, values, callback) {
-  console.log('query:', text, values);
-  if (callback) return pool.query(text, values, callback);
-  return pool.query(text, values);
+  if (typeof values === "function") {
+    callback = values;
+    values = undefined;
+  }
+  should.exist(callback);
+
+  var startTime = new Date().getTime();
+  pool.query(text, values, function(err,result) {
+    var endTime = new Date().getTime();
+    if(err) {
+      sqldebug("SQL: [" + (endTime - startTime) / 1000 + "]( Result: ERROR)" + text);
+      return callback(err);
+    }
+    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.rows.length + " rows)" + text);
+    return callback(null, result);
+  });
+
 };
 
 // the pool also supports checking out a client for
 // multiple operations, such as a transaction
 module.exports.connect = function (callback) {
   return pool.connect(callback);
+};
+
+module.exports.fortestonly = {};
+module.exports.fortestonly.testpool = function rebindPool() {
+  let pool = new pg.Pool(pg_config);
+  return pool;
 };

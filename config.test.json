@@ -3,11 +3,11 @@
   
   "postgres": {
     "initialise": true,
-    "database" : "localhost:5432/testdb",
+    "database" : "testdb",
     "username" : "test",
     "password" : "test",
-    "server" : "xx",
-    "port":"xx",
+    "server" : "localhost",
+    "port":"5432",
     "connectstr" : "psql://test:test@localhost:5432/testdb"
   },
    "twitter":{

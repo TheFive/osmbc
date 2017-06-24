@@ -18,6 +18,7 @@ var config = require("../config.js");
 var app = require("../app.js");
 
 var pgMap = require("../model/pgMap.js");
+var pool  = require("../model/db.js");
 var blogModule    = require("../model/blog.js");
 var articleModule = require("../model/article.js");
 var logModule     = require("../model/logModule.js");
@@ -39,18 +40,11 @@ should.config.checkProtoEql = false;
 // will throw an error
 exports.getJsonWithId = function getJsonWithId(table, id, cb) {
   debug("getJsonWithId");
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-    should.not.exist(err);
-    var query = client.query("select data from " + table + " where id = $1", [id]);
-    var result;
-    query.on("row", function(row) {
-      result = row.data;
-    });
-    query.on("end", function() {
-      pgdone();
-      cb(null, result);
-      return;
-    });
+  let result = null;
+  pool.query("select data from " + table + " where id = $1", [id],function(err,pgResult){
+    if (err) return cb(err);
+    if (pgResult.rows.length==1) result = pgResult.rows[0];
+    return cb(null,result);
   });
 };
 

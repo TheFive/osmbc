@@ -149,51 +149,37 @@ module.exports.save = function(callback) {
     var sqlquery = "insert into " + table + "(data) values ($1) returning id";
     sqldebug("Query %s", sqlquery);
     var startTime = new Date().getTime();
-    var query = pool.query(sqlquery, [self]);
-    query.on("row", function(row) {
-      debug("Created Row ID %s", row.id);
-      self.id = row.id;
-    });
-    query.on("end", function () {
-      var endTime = new Date().getTime();
-      sqldebug("SQL: [" + (endTime - startTime) / 1000 + "] insert to " + table);
-      if (typeof blog !== "undefined") self._blog = blog;
-      return callback(null, self);
-    });
+    var query = pool.query(sqlquery, [self],callback);
   } else {
     debug("Object will be updated, current version is %s", self.version);
     async.series([
       function(cb) {
         debug("Check version of object");
         var versionsEqual = false;
-
-        var query = pool.query("select (data->>'version')::int as version from " + table + " where id = $1", [self.id]);
         var startTime = new Date().getTime();
-        query.on("row", function(row) {
-          debug("row Version in Database %s", row.version);
-          if (row.version === null) {
+
+        var query = pool.query("select (data->>'version')::int as version from " + table + " where id = $1",
+                  [self.id],function(err,result){
+            if (err) return cb(err);
+            let row = null;
+            if (result && result.rows) row = result.rows[0];
+            if (row.version === null) {
               // No Data in Database, so no conflict.
-            versionsEqual = true;
-          } else if (row.version === self.version) {
-            debug("No Error");
-            versionsEqual = true;
-          }
-        });
-        query.on("error", function(err) {
-          debug("error %s", err);
-          return cb(err);
-        });
-        query.on("end", function() {
-          debug("end");
-          var err = null;
-          var endTime = new Date().getTime();
-          sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
-          if (!versionsEqual) {
-            debug("send error");
-            err = new Error("Version Number Differs");
-          }
-          return cb(err);
-        });
+              versionsEqual = true;
+            } else if (row.version === self.version) {
+              debug("No Error");
+              versionsEqual = true;
+            }
+            debug("end");
+            err = null;
+            var endTime = new Date().getTime();
+            sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
+            if (!versionsEqual) {
+              debug("send error");
+              err = new Error("Version Number Differs");
+            }
+            return cb(err);
+          });
       }
     ],
       function finalFunction(err) {
@@ -243,6 +229,40 @@ module.exports.remove = function(callback) {
   });
 };
 
+function convertResultFunction(module,callback) {
+  should.exist(callback);
+  return function crs(err,pgResult) {
+    let result = [];
+    if (err) return callback(err);
+    console.log(pgResult);
+    pgResult.rows.forEach(function(row){
+      var r = module.create();
+      for (var k in row.data) {
+        r[k] = row.data[k];
+      }
+      r.id = row.id;
+      result.push(r);
+    });
+    return callback(null,result);
+  }
+}
+
+function convertOneResultFunction(module,callback) {
+  should.exist(callback);
+  return function crs(err,pgResult) {
+    let result = [];
+    if (err) return callback(err);
+    if (pgResult.rows.length == 0) return callback(null,null);
+    let row = pgResult.rows[0];
+    var r = module.create();
+    for (var k in row.data) {
+      r[k] = row.data[k];
+    }
+    r.id = row.id;
+    return callback(null,r);
+  }
+}
+
 module.exports.find = function find(module, obj, order, callback) {
   debug("find");
   if (typeof (obj) === "function") {
@@ -266,32 +286,12 @@ module.exports.find = function find(module, obj, order, callback) {
 
   var startTime = new Date().getTime();
 
-  var query;
 
   if (obj && obj.params) {
-    query = pool.query(sqlQuery, obj.params);
-  } else query = pool.query(sqlQuery);
-
-  query.on("row", function findRowFunction(row) {
-    debug("findRowFunction");
-    var r = module.create();
-    for (var k in row.data) {
-      r[k] = row.data[k];
-    }
-    r.id = row.id;
-    result.push(r);
-  });
-  query.on("error", function findErrorFunction(error) {
-    debug("findErrorFunction");
-    callback(error);
-  });
-  query.on("end", function findEndFunction() {
-    debug("findEndFunction");
-    var endTime = new Date().getTime();
-    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
-    longRunningQueriesAdd(endTime - startTime, sqlQuery, table);
-    callback(null, result);
-  });
+    pool.query(sqlQuery, obj.params,convertResultFunction(module,callback));
+  } else {
+    pool.query(sqlQuery,undefined,convertResultFunction(module,callback));
+  }
 };
 
 
@@ -343,30 +343,10 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
                           or to_tsvector('english',  coalesce(data->>'collection','')  || ' '|| \
                                                     coalesce(data->>'markdownEN','')   ) " + englishVector +
                       orderBy;
-  var startTime = new Date().getTime();
 
-  var query = pool.query(sqlQuery);
+  pool.query(sqlQuery,convertResultFunction(module,callback));
 
-  query.on("row", function(row) {
-    debug("query.on row");
-    var r = module.create();
-    for (var k in row.data) {
-      r[k] = row.data[k];
-    }
-    r.id = row.id;
-    result.push(r);
-  });
-  query.on("end", function () {
-    debug("query.on end");
-    var endTime = new Date().getTime();
-    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
-    return callback(null, result);
-  });
-  query.on("error", function (err) {
-    debug("query on err");
-    debug(err);
-    return callback(err);
-  });
+
 };
 
 
@@ -382,19 +362,7 @@ module.exports.findById = function findById(id, module, callback) {
 
   var startTime = new Date().getTime();
 
-  var query = pool.query("select id,data from " + table + " where id = $1", [idToSearch]);
-  query.on("row", function(row) {
-    result = module.create();
-    for (var k in row.data) {
-      result[k] = row.data[k];
-    }
-    result.id = row.id;
-  });
-  query.on("end", function () {
-    var endTime = new Date().getTime();
-    debug("SQL: [" + (endTime - startTime) / 1000 + "] Select by id from " + table);
-    callback(null, result);
-  });
+  var query = pool.query("select id,data from " + table + " where id = $1", [idToSearch],convertOneResultFunction(module,callback));
 };
 
 module.exports.findOne = function findOne(module, obj, order, callback) {
@@ -415,19 +383,7 @@ module.exports.findOne = function findOne(module, obj, order, callback) {
 
   var startTime = new Date().getTime();
 
-  var query = pool.query(sqlQuery + " limit 1");
-  query.on("row", function(row) {
-    result = module.create();
-    for (var k in row.data) {
-      result[k] = row.data[k];
-    }
-    result.id = row.id;
-  });
-  query.on("end", function () {
-    var endTime = new Date().getTime();
-    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "]" + sqlQuery);
-    callback(null, result);
-  });
+  var query = pool.query(sqlQuery + " limit 1",convertOneResultFunction(module,callback));
 };
 
 
