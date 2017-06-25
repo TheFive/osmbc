@@ -129,16 +129,18 @@ module.exports.save = function(callback) {
   var self = this;
   var table = self.getTable();
 
-  // clean property's with "_"
-
   // store blog Reference not to loose it.
   let blog = self._blog;
+
+  // clean property's with "_"
   for (var k in self) {
     if (k.substring(0, 1) === "_") delete self[k];
   }
+  // id must be >= 0;
   if (self.id === -1) {
     return callback(new Error("Virtual Object can not be saved"));
   }
+
   // first check, wether ID is known or not
   if (self.id === 0) {
     // we have to create the object
@@ -148,8 +150,7 @@ module.exports.save = function(callback) {
     self.version = 1;
     var sqlquery = "insert into " + table + "(data) values ($1) returning id";
     sqldebug("Query %s", sqlquery);
-    var startTime = new Date().getTime();
-    var query = pool.query(sqlquery, [self],callback);
+    pool.query(sqlquery, [self], callback);
   } else {
     debug("Object will be updated, current version is %s", self.version);
     async.series([
@@ -158,28 +159,28 @@ module.exports.save = function(callback) {
         var versionsEqual = false;
         var startTime = new Date().getTime();
 
-        var query = pool.query("select (data->>'version')::int as version from " + table + " where id = $1",
-                  [self.id],function(err,result){
-            if (err) return cb(err);
-            let row = null;
-            if (result && result.rows) row = result.rows[0];
-            if (row.version === null) {
+        pool.query("select (data->>'version')::int as version from " + table + " where id = $1",
+                  [self.id], function(err, result) {
+                    if (err) return cb(err);
+                    let row = null;
+                    if (result && result.rows) row = result.rows[0];
+                    if (row.version === null) {
               // No Data in Database, so no conflict.
-              versionsEqual = true;
-            } else if (row.version === self.version) {
-              debug("No Error");
-              versionsEqual = true;
-            }
-            debug("end");
-            err = null;
-            var endTime = new Date().getTime();
-            sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
-            if (!versionsEqual) {
-              debug("send error");
-              err = new Error("Version Number Differs");
-            }
-            return cb(err);
-          });
+                      versionsEqual = true;
+                    } else if (row.version === self.version) {
+                      debug("No Error");
+                      versionsEqual = true;
+                    }
+                    debug("end");
+                    err = null;
+                    var endTime = new Date().getTime();
+                    sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
+                    if (!versionsEqual) {
+                      debug("send error");
+                      err = new Error("Version Number Differs");
+                    }
+                    return cb(err);
+                  });
       }
     ],
       function finalFunction(err) {
@@ -191,14 +192,9 @@ module.exports.save = function(callback) {
           return callback(err);
         }
         self.version += 1;
-        var query = pool.query("update " + table + " set data = $2 where id = $1", [self.id, self]);
-        /* query.on('row',function(row) {
-          results.push(row);
-        }) */
-        query.on("end", function () {
-
+        pool.query("update " + table + " set data = $2 where id = $1", [self.id, self], function(err) {
           if (typeof blog !== "undefined") self._blog = blog;
-          return callback(null, self);
+          return callback(err, self);
         });
       }
     );
@@ -229,13 +225,12 @@ module.exports.remove = function(callback) {
   });
 };
 
-function convertResultFunction(module,callback) {
+function convertResultFunction(module, callback) {
   should.exist(callback);
-  return function crs(err,pgResult) {
+  return function crs(err, pgResult) {
     let result = [];
     if (err) return callback(err);
-    console.log(pgResult);
-    pgResult.rows.forEach(function(row){
+    pgResult.rows.forEach(function(row) {
       var r = module.create();
       for (var k in row.data) {
         r[k] = row.data[k];
@@ -243,24 +238,23 @@ function convertResultFunction(module,callback) {
       r.id = row.id;
       result.push(r);
     });
-    return callback(null,result);
-  }
+    return callback(null, result);
+  };
 }
 
-function convertOneResultFunction(module,callback) {
+function convertOneResultFunction(module, callback) {
   should.exist(callback);
-  return function crs(err,pgResult) {
-    let result = [];
+  return function crs(err, pgResult) {
     if (err) return callback(err);
-    if (pgResult.rows.length == 0) return callback(null,null);
+    if (pgResult.rows.length === 0) return callback(null, null);
     let row = pgResult.rows[0];
     var r = module.create();
     for (var k in row.data) {
       r[k] = row.data[k];
     }
     r.id = row.id;
-    return callback(null,r);
-  }
+    return callback(null, r);
+  };
 }
 
 module.exports.find = function find(module, obj, order, callback) {
@@ -282,15 +276,12 @@ module.exports.find = function find(module, obj, order, callback) {
   var table = module.table;
   var sqlQuery = generateQuery(table, obj, order);
 
-  var result = [];
-
-  var startTime = new Date().getTime();
 
 
   if (obj && obj.params) {
-    pool.query(sqlQuery, obj.params,convertResultFunction(module,callback));
+    pool.query(sqlQuery, obj.params, convertResultFunction(module, callback));
   } else {
-    pool.query(sqlQuery,undefined,convertResultFunction(module,callback));
+    pool.query(sqlQuery, undefined, convertResultFunction(module, callback));
   }
 };
 
@@ -306,8 +297,6 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
     order = null;
   }
 
-
-  var result = [];
 
   var orderBy = "";
 
@@ -344,9 +333,7 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
                                                     coalesce(data->>'markdownEN','')   ) " + englishVector +
                       orderBy;
 
-  pool.query(sqlQuery,convertResultFunction(module,callback));
-
-
+  pool.query(sqlQuery, convertResultFunction(module, callback));
 };
 
 
@@ -354,15 +341,13 @@ module.exports.findById = function findById(id, module, callback) {
   debug("findById %s", id);
   var table = module.table;
 
-  var result = null;
   var idToSearch = 0;
 
   if (id % 1 === 0) idToSearch = id;
 
 
-  var startTime = new Date().getTime();
 
-  var query = pool.query("select id,data from " + table + " where id = $1", [idToSearch],convertOneResultFunction(module,callback));
+  pool.query("select id,data from " + table + " where id = $1", [idToSearch], convertOneResultFunction(module, callback));
 };
 
 module.exports.findOne = function findOne(module, obj, order, callback) {
@@ -376,14 +361,11 @@ module.exports.findOne = function findOne(module, obj, order, callback) {
     order = null;
   }
 
-  var result = null;
-
 
   var sqlQuery = generateQuery(module.table, obj, order);
 
-  var startTime = new Date().getTime();
 
-  var query = pool.query(sqlQuery + " limit 1",convertOneResultFunction(module,callback));
+  pool.query(sqlQuery + " limit 1", convertOneResultFunction(module, callback));
 };
 
 

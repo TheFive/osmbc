@@ -137,7 +137,10 @@ describe("model/pgMap", function() {
         pgMap.find(testModule, {name: ""}, function(err, result) {
           should.not.exist(err);
           should(result.length).equal(2);
+          should(result).eql([new TestTable( { id: '1', name: '', version: 1 }),new TestTable({ id: '2', nameEN: '', version: 1 })]);
           bddone();
+
+
         });
       });
       it("should find on element with !=", function(bddone) {
