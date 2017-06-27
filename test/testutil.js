@@ -42,7 +42,9 @@ exports.getJsonWithId = function getJsonWithId(table, id, cb) {
   let result = null;
   pool.query("select data from " + table + " where id = $1", [id],function(err,pgResult){
     if (err) return cb(err);
-    if (pgResult.rows.length==1) result = pgResult.rows[0];
+    if (pgResult.rows.length==1) {
+      result = pgResult.rows[0].data;
+    }
     return cb(null,result);
   });
 };

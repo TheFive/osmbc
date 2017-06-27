@@ -10,25 +10,6 @@ var config = require("../config.js");
 var logger = require("../config.js").logger;
 var util = require("../util.js");
 
-module.exports.longRunningQueries = {};
-
-function compareLRQ(a, b) {
-  return b.duration - a.duration;
-}
-
-function longRunningQueriesAdd(duration, query, table) {
-  if (!exports.longRunningQueries[table]) exports.longRunningQueries[table] = [];
-  let t = exports.longRunningQueries[table];
-
-
-  if (t.length > 10) {
-    if (t[9].duration > duration) return;
-    t.pop();
-  }
-
-  t.push({duration: duration, query: query});
-  t.sort(compareLRQ);
-}
 
 function generateQuery(table, obj, order) {
   debug("generateQuery");
@@ -150,7 +131,12 @@ module.exports.save = function(callback) {
     self.version = 1;
     var sqlquery = "insert into " + table + "(data) values ($1) returning id";
     sqldebug("Query %s", sqlquery);
-    pool.query(sqlquery, [self], callback);
+    pool.query(sqlquery, [self], function(err,result){
+      if (err) return callback(err);
+      should.exist(result.rows);
+      self.id = result.rows[0].id;
+      return callback(null,self);
+    });
   } else {
     debug("Object will be updated, current version is %s", self.version);
     async.series([
@@ -214,15 +200,7 @@ module.exports.remove = function(callback) {
   // we have to change the beer
   debug("call delete");
 
-  var query = pool.query("delete from " + table + " where id = $1", [self.id]);
-  /* query.on('row',function(row) {
-    results.push(row);
-  }) */
-  query.on("end", function (result) {
-    debug("end called");
-
-    callback(null, result);
-  });
+  pool.query("delete from " + table + " where id = $1", [self.id], callback);
 };
 
 function convertResultFunction(module, callback) {
@@ -469,20 +447,14 @@ exports.createTables = function(pgObject, options, analyse, callback) {
 
 module.exports.count = function count(sql, callback) {
   debug("count");
-
-  var startTime = new Date().getTime();
   var result;
-  var query = pool.query(sql);
-  query.on("row", function(row) {
+  pool.query(sql,function (err,pgResult){
+    if (err) return callback(err);
     result = {};
-    for (var k in row) {
-      result[k] = row[k];
+    for (var k in pgResult.rows[0]) {
+      result[k] = pgResult.rows[0][k];
     }
-  });
-  query.on("end", function () {
-    var endTime = new Date().getTime();
-    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "]" + sql);
-    callback(null, result);
+    callback(null,result);
   });
 };
 

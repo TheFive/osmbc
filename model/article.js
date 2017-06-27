@@ -294,8 +294,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       [function logIt (cb) {
         var oa = create(self);
         // do not wait on email, so put empty callback handler
-        messageCenter.global.updateArticle(user, oa, data, function() {});
-        cb();
+        messageCenter.global.updateArticle(user, oa, data, cb);
       },
         function putValues (cb) {
           for (k in data) {
