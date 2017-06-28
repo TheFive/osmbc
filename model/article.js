@@ -222,10 +222,14 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
   if (data.categoryEN === "--unpublished--" || data.blog === "Trash") {
     if ((!data.unpublishReason || data.unpublishReason.trim() === "") &&
-          (!self.unpublishReason || self.unpublishReason.trim() === "")) {
+      (!self.unpublishReason || self.unpublishReason.trim() === "")) {
       return callback(new Error("Missing reason for unpublishing article."));
     }
   }
+  if (self.categoryEN !== "--unpublished--" && data.blog === "Trash") {
+    return callback(new Error("Only unpublished articles can be moved to trash."))
+  }
+
 
 
   async.series([
