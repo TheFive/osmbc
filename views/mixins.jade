@@ -242,7 +242,7 @@ mixin blogSelector(article,readonly)
       +blogSelection(layout.listOfEditBlog,missingList,"(Edit)",readonly)
       +blogSelection(layout.listOfReviewBlog,missingList,"(Review "+layout.language+")",readonly)
       +blogSelection([{name: "Future"}],missingList,"",readonly)
-      if (article.categoryEN === "--unpublished--")
+      if (article.categoryEN === "--unpublished --")
         +blogSelection([{name: "Trash"}],missingList,"",readonly)
       if layout.appName == "TheFiveBC"
         +blogSelection([{name: "TBC"}],missingList,"",readonly)
