@@ -1,5 +1,17 @@
 # Change Log
 
+## [2.3.6](https://github.com/TheFive/osmbc/tree/2.3.6) (2017-07-04)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.5...2.3.6)
+
+**Implemented enhancements:**
+
+- Trash can only be called, if article is in unpublish [\#670](https://github.com/TheFive/osmbc/issues/670)
+
+**Fixed bugs:**
+
+- Quick Edit box on Review Tab does not select a language to spell check [\#668](https://github.com/TheFive/osmbc/issues/668)
+- Click in admin history on config change leads to an error. [\#666](https://github.com/TheFive/osmbc/issues/666)
+
 ## [2.3.5](https://github.com/TheFive/osmbc/tree/2.3.5) (2017-06-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.4...2.3.5)
 
