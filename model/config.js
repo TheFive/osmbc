@@ -369,10 +369,25 @@ module.exports.getConfig = function(text) {
   debug("exports.getConfig");
   return configMap[text].getValue();
 };
+
+
 module.exports.getConfigObject = function(text, callback) {
   debug("exports.getConfig");
-  if (callback) return callback(null, configMap[text]);
-  return configMap[text];
+  let config = null;
+  if (configMap[text]) {
+    config = configMap[text];
+  }
+  else {
+    for (let key in configMap) {
+      let c=configMap[key];
+      if (c.id === text) {
+        config = c;
+        break;
+      }
+    }
+  }
+  if (callback) return callback(null, config);
+  return config;
 };
 
 module.exports.initialise = initialise;
