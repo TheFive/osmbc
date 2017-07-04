@@ -227,7 +227,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
     }
   }
   if (self.categoryEN !== "--unpublished--" && data.blog === "Trash") {
-    return callback(new Error("Only unpublished articles can be moved to trash."))
+    return callback(new Error("Only unpublished articles can be moved to trash."));
   }
 
 
