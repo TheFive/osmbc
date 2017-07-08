@@ -458,6 +458,13 @@ function convertLogsToTeamString(logs, lang, users) {
     for (var i = 0; i < editors.length; i++) {
       for (var j = 0; j < users.length; j++) {
         if (editors[i] === users[j].OSMUser) {
+          // Ignore the editor, if he wants to be anonymous
+          if (users[j].WNAuthor && users[j].WNAuthor === "anonymous") {
+            editors.splice(i,i+1);
+            i=i-1;
+            j=9999;
+            continue;
+          }
           if (users[j].WNAuthor && users[j].WNPublicAuthor && users[j].WNPublicAuthor !== "Not Found") {
             editors[i] = '<a href="http://blog.openstreetmap.de/blog/author/' + users[j].WNAuthor + '">' + users[j].WNPublicAuthor + "</a>";
           }
