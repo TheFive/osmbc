@@ -24,76 +24,14 @@ describe("model/parseEvent", function() {
   });
   describe("nextDate", function() {
     it("should generate a date in the timeframe [now-50:now+316]", function() {
-      var d = new Date();
-      var timeMin = d.getTime() - 1000 * 60 * 60 * 24 * 50;
-      var timeMax = timeMin + 1000 * 60 * 60 * 24 * 366;
-      function isInRange(date) {
-        var result = ((date.getTime() >= timeMin) && (date.getTime() <= timeMax));
-        return result;
-      }
+      should(parseEvent.nextDate("Jan 27","2015")).eql(new Date(Date.UTC(2015,0,27)));
+      should(parseEvent.nextDate("Feb 01","2016")).eql(new Date(Date.UTC(2016,1,1)));
+      should(parseEvent.nextDate("Mar 31","2015")).eql(new Date(Date.UTC(2015,2,31)));
+      should(parseEvent.nextDate("May 27","2015")).eql(new Date(Date.UTC(2015,4,27)));
+      should(parseEvent.nextDate("Dec 27","2015")).eql(new Date(Date.UTC(2015,11,27)));
+      should(parseEvent.nextDate("Jan 01","2015")).eql(new Date(Date.UTC(2015,0,1)));
+      should(parseEvent.nextDate("Jan 27","2015")).eql(new Date(Date.UTC(2015,0,27)));
 
-      var date = parseEvent.nextDate(new Date("Jan 27"));
-      should(isInRange(date)).be.True();
-      should(date.getDate()).equal(27);
-      should(date.getMonth()).equal(0);
-      date = parseEvent.nextDate(new Date("Feb 01"));
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Mar 31"));
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("May 10"));
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("May 10"));
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Jun 15"));
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Jul 20"));
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Aug 11"));
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Sep 30"));
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Oct 2"));
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Nov 28"));
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Dec 24"));
-      should(isInRange(date)).be.True();
-    });
-    it("should generate a date with previous date [previousDate-150:previousDate+166]", function() {
-      var d = new Date("2017-03-23");
-      var timeMin = d.getTime() - 1000 * 60 * 60 * 24 * 150;
-      var timeMax = timeMin + 1000 * 60 * 60 * 24 * 366;
-      function isInRange(date) {
-        var result = ((date.getTime() >= timeMin) && (date.getTime() <= timeMax));
-        return result;
-      }
-
-      var date = parseEvent.nextDate(new Date("Jan 27"), d);
-      should(isInRange(date)).be.True();
-      should(date.getDate()).equal(27);
-      should(date.getMonth()).equal(0);
-      date = parseEvent.nextDate(new Date("Feb 01"), d);
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Mar 31"), d);
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("May 10"), d);
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("May 10"), d);
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Jun 15"), d);
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Jul 20"), d);
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Aug 11"), d);
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Sep 30"), d);
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Oct 2"), d);
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Nov 28"), d);
-      should(isInRange(date)).be.True();
-      date = parseEvent.nextDate(new Date("Dec 24"), d);
-      should(isInRange(date)).be.True();
     });
   });
   describe("parseWikiInfo", function() {
@@ -133,13 +71,13 @@ describe("model/parseEvent", function() {
       should(parseEvent.parseLine("|-        ")).equal(null);
     });
     it("should return values for entry with no town", function() {
-      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine('| {{cal|social}} || {{dm|y=2015|Nov 25}} || <span class="p-name"> [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] </span> {{SmallFlag|Germany}}');
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
 
       delete result.startDate;
-      should(result).deepEqual("| {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] {{SmallFlag|Germany}}"
+      should(result).deepEqual('| {{cal|social}} || {{dm|y=2015|Nov 25}} || <span class="p-name"> [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] </span> {{SmallFlag|Germany}}'
         /* {type:"social",
 
                                 desc:"[[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]]",
@@ -149,7 +87,7 @@ describe("model/parseEvent", function() {
                               } */);
     });
     it("should return values for entry with comma separated town", function() {
-      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Nov 25}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]],  [[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine('| {{cal|social}} || {{dm|Y=2015|Nov 25}} || <span class="p-name"> [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]],  [[Düsseldorf]] , [[Germany]] </span> {{SmallFlag|Germany}}');
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -158,11 +96,12 @@ describe("model/parseEvent", function() {
         desc: "[[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]]",
         town: "[[Düsseldorf]]",
         country: "[[Germany]]",
-        countryflag: "Germany"
+        countryflag: "Germany",
+        year : "2015"
       });
     });
     it("should return values for entry with town (comma)", function() {
-      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Nov 25}} || Stammtisch,  [[Düsseldorf]],  [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine('| {{cal|social}} || {{dm|y=2015|Nov 25}} ||  <span class="p-name"> Stammtisch,  [[Düsseldorf]],  [[Germany]] </span> {{SmallFlag|Germany}}');
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -171,11 +110,12 @@ describe("model/parseEvent", function() {
         desc: "Stammtisch",
         town: "[[Düsseldorf]]",
         country: "[[Germany]]",
-        countryflag: "Germany"
+        countryflag: "Germany",
+        year: "2015"
       });
     });
     it("should return values for entry with town (comma) V2", function() {
-      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Nov 25}} || Stammtisch , [[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine('| {{cal|social}} || {{dm|y=2015|Nov 25}} ||  <span class="p-name"> Stammtisch , [[Düsseldorf]] , [[Germany]]  </span> {{SmallFlag|Germany}}');
       should.exist(result);
       should(result.startDate.getDate()).equal(25);
       should(result.startDate.getMonth()).equal(10);
@@ -190,11 +130,12 @@ describe("model/parseEvent", function() {
         desc: "Stammtisch",
         town: "[[Düsseldorf]]",
         country: "[[Germany]]",
-        countryflag: "Germany"
+        countryflag: "Germany",
+        year:"2015"
       });
     });
     it("should return values for entry with town and external description", function() {
-      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Nov 25}} || [https://www.link.de/sublink Tolle Veranstaltung]  ,[[Düsseldorf]] , [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine('| {{cal|social}} || {{dm|y=2015|Nov 25}} || <span class="p-name"> [https://www.link.de/sublink Tolle Veranstaltung]  ,[[Düsseldorf]] , [[Germany]]  </span> {{SmallFlag|Germany}}');
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -203,12 +144,13 @@ describe("model/parseEvent", function() {
         desc: "[https://www.link.de/sublink Tolle Veranstaltung]",
         town: "[[Düsseldorf]]",
         country: "[[Germany]]",
-        countryflag: "Germany"
+        countryflag: "Germany",
+        year:"2015"
       });
     });
     //
     it("should return values for entry with more complex description", function() {
-      var result = parseEvent.parseLine("| {{cal|conference}} || {{dm|Aug 24|Aug 26}} || <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] {{SmallFlag|Germany}}");
+      var result = parseEvent.parseLine("| {{cal|conference}} || {{dm|y=2015|Aug 24|Aug 26}} || <span class=\"p-name\"> <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] </span> {{SmallFlag|Germany}}");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -217,25 +159,26 @@ describe("model/parseEvent", function() {
         desc: "<big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>",
         town: "[[Bonn]]",
         country: "[[Germany]]",
-        countryflag: "Germany"
+        countryflag: "Germany",
+        year: "2015"
       });
     });
 
     it("should return values for entry with no town and country", function() {
-      var result = parseEvent.parseLine("| {{cal|info}} || {{dm|Dec 5}} || [[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]]");
+      var result = parseEvent.parseLine("| {{cal|info}} || {{dm|y=2015|Dec 5}} || <span class=\"p-name\"> [[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]] </span>");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
-      should(result).deepEqual("| {{cal|info}} || {{dm|Dec 5}} || [[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]]" /* {type:"info",
+      should(result).deepEqual("| {{cal|info}} || {{dm|y=2015|Dec 5}} || <span class=\"p-name\"> [[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]] </span>" /* {type:"info",
                                 desc:"[[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]]"
                               } */);
     });
     it("should return values for entry with country and two flags", function() {
-      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|Dec 3}} || [[Wien/Stammtisch|53. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Wien|Wien Wappen.svg}} {{SmallFlag|Austria}}");
+      var result = parseEvent.parseLine("| {{cal|social}} || {{dm|y=2015|Dec 3}} ||  <span class=\"p-name\"> [[Wien/Stammtisch|53. Wiener Stammtisch]], [[Austria]] </span> {{SmallFlag|Wien|Wien Wappen.svg}} {{SmallFlag|Austria}}");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
-      should(result).deepEqual("| {{cal|social}} || {{dm|Dec 3}} || [[Wien/Stammtisch|53. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Wien|Wien Wappen.svg}} {{SmallFlag|Austria}}"/* {type:"social",
+      should(result).deepEqual("| {{cal|social}} || {{dm|y=2015|Dec 3}} ||  <span class=\"p-name\"> [[Wien/Stammtisch|53. Wiener Stammtisch]], [[Austria]] </span> {{SmallFlag|Wien|Wien Wappen.svg}} {{SmallFlag|Austria}}"/* {type:"social",
        desc:"[[Wien/Stammtisch|53. Wiener Stammtisch]]",
        country:"Austria",
        countryflag:"Austria",
@@ -243,7 +186,7 @@ describe("model/parseEvent", function() {
        } */);
     });
     it("should return values with name and link in wiki different", function() {
-      var result = parseEvent.parseLine("| {{cal|pizza}} || {{dm|Apr 22|Apr 24}} || [http://spaceapps.cl International Space Apps Challenge], [[Santiago,_Chile|Santiago]], [[Chile]] {{SmallFlag|Chile}} {{SmallFlag|Santiago,_Chile|Escudo_de_Santiago_(Chile).svg}} ");
+      var result = parseEvent.parseLine("| {{cal|pizza}} || {{dm|y=2015|Apr 22|Apr 24}} ||  <span class=\"p-name\"> [http://spaceapps.cl International Space Apps Challenge], [[Santiago,_Chile|Santiago]], [[Chile]] </span> {{SmallFlag|Chile}} {{SmallFlag|Santiago,_Chile|Escudo_de_Santiago_(Chile).svg}} ");
       should.exist(result);
       delete result.startDate;
       delete result.endDate;
@@ -252,7 +195,8 @@ describe("model/parseEvent", function() {
         "countryflag": "Chile}} {{SmallFlag|Santiago,_Chile|Escudo_de_Santiago_(Chile).svg",
         "desc": "[http://spaceapps.cl International Space Apps Challenge]",
         "town": "[[Santiago,_Chile|Santiago]]",
-        "type": "pizza"
+        "type": "pizza",
+        "year": "2015"
       });
     });
   });
@@ -272,9 +216,9 @@ describe("model/parseEvent", function() {
       });
     });
     it("should load from wiki and filter out events by date", function(bddone) {
-      var wikimarkup = "\n| {{cal|conference}} || {{dm|Dec 12}} || <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] {{SmallFlag|Germany}}";
-      wikimarkup += "\n| {{cal|conference}} || {{dm|Dec 22}} || <big>'''[Big Event to display]'''</big>, [[Bonn]], [[Germany]] {{SmallFlag|Germany}}\n";
-      wikimarkup += "\n| {{cal|conference}} || {{dm|Dec 22}} || [irgendwatt], [[Small Event to be filtered out]], [[Germany]] {{SmallFlag|Germany}}\n";
+      var wikimarkup = "\n| {{cal|conference}} || {{dm|y=2015|Dec 12}} || <span class=\"p-name\"> <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] </span> {{SmallFlag|Germany}}";
+      wikimarkup += "\n| {{cal|conference}} || {{dm|y=2015|Dec 22}} ||  <span class=\"p-name\"> <big>'''[Big Event to display]'''</big>, [[Bonn]], [[Germany]] </span> {{SmallFlag|Germany}}\n";
+      wikimarkup += "\n| {{cal|conference}} || {{dm|y=2015|Dec 22}} || <span class=\"p-name\">  [irgendwatt], [[Small Event to be filtered out]], [[Germany]] </span> {{SmallFlag|Germany}}\n";
 
       var json = {query: {pages: {2567: {}}}};
       json.query.pages[2567].revisions = [];
@@ -297,9 +241,9 @@ describe("model/parseEvent", function() {
       });
     });
     it("should load from wiki and filter out events by country", function(bddone) {
-      var wikimarkup = "\n| {{cal|conference}} || {{dm|Dec 12}} || <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] {{SmallFlag|Germany}}";
-      wikimarkup += "\n| {{cal|conference}} || {{dm|Dec 22}} || <big>'''[Big Event to display]'''</big>, [[New York]], [[USA]] {{SmallFlag|Germany}}\n";
-      wikimarkup += "\n| {{cal|conference}} || {{dm|Dec 22}} || [irgendwatt], [[Small Event to be filtered out]], [[USA]] {{SmallFlag|Germany}}\n";
+      var wikimarkup = "\n| {{cal|conference}} || {{dm|y=2015|Dec 12}} || <span class=\"p-name\"> <big>'''[http://2016.foss4g.org/ FOSS4G 2016]'''</big>, [[Bonn]], [[Germany]] </span> {{SmallFlag|Germany}}";
+      wikimarkup += "\n| {{cal|conference}} || {{dm|y=2015|Dec 22}} || <span class=\"p-name\"> <big>'''[Big Event to display]'''</big>, [[New York]], [[USA]]  </span> {{SmallFlag|Germany}}\n";
+      wikimarkup += "\n| {{cal|conference}} || {{dm|y=2015|Dec 22}} || <span class=\"p-name\"> [irgendwatt], [[Small Event to be filtered out]], [[USA]] </span> {{SmallFlag|Germany}}\n";
 
       var json = {query: {pages: {2567: {}}}};
       json.query.pages[2567].revisions = [];
@@ -398,7 +342,7 @@ describe("model/parseEvent", function() {
 
         .replyWithFile(200, fileName);
     });
-    it("should Do an API call and resturn JSON", function(bddone) {
+    it("should Do an API call and return JSON", function(bddone) {
       parseEvent.calendarToJSON({}, function(err, result) {
         should.not.exist(err);
         var converted = JSON.parse(JSON.stringify(result));

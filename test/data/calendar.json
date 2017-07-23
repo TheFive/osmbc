@@ -19,7 +19,8 @@
       "country_md": "[Spain](https://wiki.openstreetmap.org/wiki/Spain)",
       "html": "<a href=\"http://osluz.unizar.es/content/curso-de-openstreetmap\">Curso de OpenStreetMap</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Zaragoza\">Zaragoza</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Spain\">Spain</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Spain\">Spain</a>",
+      "year":"2015"
     },
     {
       "type": "conference",
@@ -36,7 +37,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"http://2015.pgconf.de/\">PGConf.DE (Deutschsprachige PostgreSQL Konferenz) 2015</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Hamburg\">Hamburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2015"
     },
     {
       "type": "meeting",
@@ -53,7 +55,8 @@
       "country_md": "[Taiwan](https://wiki.openstreetmap.org/wiki/Taiwan)",
       "html": "OpenStreetMap Taipei Meetup, Mozilla Community Space",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Taipei\">Taipei</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Taiwan\">Taiwan</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Taiwan\">Taiwan</a>",
+      "year":"2015"
     },
     {
       "type": "speaking",
@@ -70,7 +73,8 @@
       "country_md": "[Chile](https://wiki.openstreetmap.org/wiki/Chile)",
       "html": "<a href=\"https://reps.mozilla.org/e/jornada-de-software-libre-inacap-maipu/\">Segunda Jornada del Software Libre</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Maip%C3%BA\">Maipú</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Chile\">Chile</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Chile\">Chile</a>",
+      "year":"2015"
     },
     {
       "type": "mapevent",
@@ -87,7 +91,8 @@
       "country_md": "[United Kingdom](https://wiki.openstreetmap.org/wiki/United%20Kingdom)",
       "html": "<a href=\"https://www.eventbrite.co.uk/e/missing-mapshot-december-mapathon-tickets-19653629535\">Missing Maps</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/London\">London</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/United%20Kingdom\">United Kingdom</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/United%20Kingdom\">United Kingdom</a>",
+      "year":"2015"
     },
     {
       "type": "social",
@@ -104,7 +109,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Niederrhein/Viersen/Stammtisch\">OSM Stammtisch Viersen</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Viersen\">Viersen</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2015"
     },
     {
       "type": "social",
@@ -121,7 +127,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Essen/OSM-Treffen\">Mappertreffen Essen</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Essen\">Essen</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2015"
     },
     {
       "type": "social",
@@ -138,7 +145,8 @@
       "country_md": "[France](https://wiki.openstreetmap.org/wiki/France)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Lyon#Groupe%20local%20lyonnais\">Rencontre mensuelle mappeurs</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Lyon\">Lyon</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/France\">France</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/France\">France</a>",
+      "year":"2015"
     },
     {
       "type": "speaking",
@@ -155,7 +163,8 @@
       "country_md": "[Chile](https://wiki.openstreetmap.org/wiki/Chile)",
       "html": "<a href=\"http://hackaton.softwarelibrechile.cl/\">Hackatón Santiago 2015</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Santiago\">Santiago</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Chile\">Chile</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Chile\">Chile</a>",
+      "year":"2015"
     },
     {
       "type": "meeting",
@@ -172,7 +181,8 @@
       "country_md": "[France](https://wiki.openstreetmap.org/wiki/France)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Rennes#Cartoparties%20et%20autres%20rencontres\">Rencontres mensuelles</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Rennes\">Rennes</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/France\">France</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/France\">France</a>",
+      "year":"2015"
     },
     {
       "type": "social",
@@ -189,7 +199,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2015"
     },
     {
       "type": "social",
@@ -206,7 +217,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bonn/Stammtisch\">Bonner Stammtisch</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bonn\">Bonn</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2015"
     },
     {
       "type": "social",
@@ -223,7 +235,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/UlmerAlb\">Stammtisch Ulmer Alb</a>",
       "town_html": "Urspring",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2015"
     },
     {
       "type": "meeting",
@@ -240,7 +253,8 @@
       "country_md": "[Taiwan](https://wiki.openstreetmap.org/wiki/Taiwan)",
       "html": "OpenStreetMap Taipei Meetup, Mozilla Community Space",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Taipei\">Taipei</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Taiwan\">Taiwan</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Taiwan\">Taiwan</a>",
+      "year":"2015"
     },
     {
       "type": "social",
@@ -257,7 +271,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen\">Bremer Mappertreffen</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen\">Bremen</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2015"
     },
     {
       "type": "social",
@@ -274,7 +289,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -291,7 +307,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen\">Bremer Mappertreffen</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen\">Bremen</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -308,7 +325,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -325,7 +343,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen\">Bremer Mappertreffen</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen\">Bremen</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -342,7 +361,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -359,7 +379,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen\">Bremer Mappertreffen</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen\">Bremen</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -376,7 +397,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -393,7 +415,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen\">Bremer Mappertreffen</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen\">Bremen</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -410,7 +433,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -427,7 +451,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen\">Bremer Mappertreffen</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen\">Bremen</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -444,7 +469,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -461,7 +487,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen\">Bremer Mappertreffen</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bremen\">Bremen</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -478,7 +505,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -495,7 +523,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "conference",
@@ -512,7 +541,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"http://2016.foss4g.org/\">FOSS4G 2016</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Bonn\">Bonn</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -529,7 +559,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -546,7 +577,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -563,7 +595,8 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     },
     {
       "type": "social",
@@ -580,8 +613,9 @@
       "country_md": "[Germany](https://wiki.openstreetmap.org/wiki/Germany)",
       "html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg/Mappertreffen\">Mappertreffen Lüneburg</a>",
       "town_html": "<a href=\"https://wiki.openstreetmap.org/wiki/L%C3%BCneburg\">Lüneburg</a>",
-      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>"
+      "country_html": "<a href=\"https://wiki.openstreetmap.org/wiki/Germany\">Germany</a>",
+      "year":"2016"
     }
   ],
-  "errors": "\n\nUnrecognized\n| {{cal|info}} || {{dm|Nov 28}} || [[Foundation/AGM15/Election_to_Board|Foundation board elections]] voting starts (approx. await email instructions)\n| {{cal|social}} || {{dm|Nov 28}} || 第零次新竹小聚 HsinChu Meetup #0, [[Taiwan]] {{SmallFlag|Taiwan}}\n| {{cal|social}} || {{dm|Dec 1}} || [[Rostocker Treffen]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Dec 2}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Dec 3}} || [[Stammtisch Dresden]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Dresden|Dresden Stadtwappen.svg}}\n| {{cal|social}} || {{dm|Dec 3}} || [[Wien/Stammtisch|53. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}\n| {{cal|social}} || {{dm|Dec 3}} || [[Mappa Mercia#Events|Mappa Mercia]], [[United Kingdom]] {{SmallFlag|United Kingdom}}\n| {{cal|social}} || {{dm|Dec 3}} || [[Lübecker Mappertreffen|Lübecker Mappertreffen]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|info}} || {{dm|Dec 5}} || [[Foundation/AGM15/Election_to_Board|Foundation board elections]] voting closes\n| {{cal|info}} || {{dm|Dec 5}} || [[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]]\n| {{cal|social}} || {{dm|Dec 8}} || [[Edinburgh#Social Events|Edinburgh]], [[Scotland]] {{SmallFlag|Scotland}}\n| {{cal|social}} || {{dm|Dec 8}} || [[Hamburger Mappertreffen|Hamburger Mappertreffen]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Dec 10}} || [[München#Regelmäßiger Treff|OSM-Stammtisch München]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|München|Muenchen Kleines Stadtwappen.svg}}\n| {{cal|social}} || {{dm|Dec 10}} || [[Innsbruck/Stammtisch|Stammtisch Innsbruck]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Tirol|Tirol Wappen.svg}}\n| {{cal|social}} || {{dm|Dec 11}} || [[Berlin/Stammtisch|90. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Dec 14}} || [[Passau/Mappertreffen|Mappertreffen Passau]], [[Germany]] {{SmallFlag|Germany}}{{SmallFlag|Passau|Wappen Passau.svg}}\n| {{cal|social}} || {{dm|Dec 15}} || [[Nottingham/Pub Meetup|Nottingham]], [[England]] {{SmallFlag|England}}\n| {{cal|social}} || {{dm|Dec 16}} || [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}\n| {{cal|social}} || {{dm|Dec 21}} || [[Graz/Stammtisch|Stammtisch Graz]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Steiermark|Steiermark Wappen.svg}}\n| {{cal|social}} || {{dm|Dec 30}} || [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Düsseldorf|Dus4c_full_(1).jpg}}\n| {{cal|social}} || {{dm|Jan 6}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Jan 7}} || [[Wien/Stammtisch|54. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}\n| {{cal|social}} || {{dm|Jan 14}} || [[Berlin/Stammtisch|91. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Jan 20}} || [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}\n| {{cal|social}} || {{dm|Jan 25}} || [[Graz/Stammtisch|Stammtisch Graz]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Steiermark|Steiermark Wappen.svg}}\n| {{cal|social}} || {{dm|Feb 3}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Feb 11}} || [[Wien/Stammtisch|55. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}\n| {{cal|social}} || {{dm|Feb 12}} || [[Berlin/Stammtisch|92. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Feb 17}} || [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}\n| {{cal|social}} || {{dm|Feb 22}} || [[Graz/Stammtisch|Stammtisch Graz]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Steiermark|Steiermark Wappen.svg}}\n| {{cal|social}} || {{dm|Mar 2}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Mar 3}} || [[Wien/Stammtisch|56. Wiener Stammtisch]], [[Austria]] {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}\n| {{cal|social}} || {{dm|Mar 10}} || [[Berlin/Stammtisch|93. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Mar 16}} || [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}\n| {{cal|social}} || {{dm|Apr 6}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Apr 8}} || [[Berlin/Stammtisch|94. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|May 4}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|May 12}} || [[Berlin/Stammtisch|95. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Jun 1}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Jun 10}} || [[Berlin/Stammtisch|96. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Jul 6}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Jul 14}} || [[Berlin/Stammtisch|97. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Aug 3}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Aug 12}} || [[Berlin/Stammtisch|98. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Sep 7}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Sep 8}} || [[Berlin/Stammtisch|99. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Oct 5}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Oct 14}} || [[Berlin/Stammtisch|100. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Nov 2}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Nov 10}} || [[Berlin/Stammtisch|Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Dec 7}} || [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Dec 9}} || [[Berlin/Stammtisch|Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Jan 5}} || Stammtisch / OSM Treffen [[Münster]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|Jan 18}} || Stammtisch / OSM Treffen [[Osnabrück]], [[Germany]] {{SmallFlag|Germany}}\n"
+  "errors": "\n\nUnrecognized\n| {{cal|info}} || {{dm|y=2015|Nov 28}} ||<span class=\"p-name\"> [[Foundation/AGM15/Election_to_Board|Foundation board elections]] voting starts (approx. await email instructions)</span>\n| {{cal|social}} || {{dm|y=2015|Nov 28}} ||<span class=\"p-name\"> 第零次新竹小聚 HsinChu Meetup #0, [[Taiwan]] </span> {{SmallFlag|Taiwan}}\n| {{cal|social}} || {{dm|y=2015|Dec 1}} ||  <span class=\"p-name\"> [[Rostocker Treffen]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2015|Dec 2}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2015|Dec 3}} ||<span class=\"p-name\"> [[Stammtisch Dresden]], [[Germany]] </span> {{SmallFlag|Germany}} {{SmallFlag|Dresden|Dresden Stadtwappen.svg}}\n| {{cal|social}} || {{dm|y=2015|Dec 3}} ||<span class=\"p-name\"> [[Wien/Stammtisch|53. Wiener Stammtisch]], [[Austria]] </span> {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}\n| {{cal|social}} || {{dm|y=2015|Dec 3}} ||<span class=\"p-name\"> [[Mappa Mercia#Events|Mappa Mercia]], [[United Kingdom]] </span> {{SmallFlag|United Kingdom}}\n| {{cal|social}} || {{dm|y=2015|Dec 3}} ||<span class=\"p-name\"> [[Lübecker Mappertreffen|Lübecker Mappertreffen]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|info}} || {{dm|y=2015|Dec 5}} ||<span class=\"p-name\"> [[Foundation/AGM15/Election_to_Board|Foundation board elections]] voting closes\n| {{cal|info}} || {{dm|y=2015|Dec 5}} ||<span class=\"p-name\"> [[Foundation/AGM15|Foundation Annual General Meeting]] on [[IRC]]\n| {{cal|social}} || {{dm|y=2015|Dec 8}} ||<span class=\"p-name\"> [[Edinburgh#Social Events|Edinburgh]], [[Scotland]] </span> {{SmallFlag|Scotland}}\n| {{cal|social}} || {{dm|y=2015|Dec 8}} ||<span class=\"p-name\"> [[Hamburger Mappertreffen|Hamburger Mappertreffen]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2015|Dec 10}} ||<span class=\"p-name\"> [[München#Regelmäßiger Treff|OSM-Stammtisch München]], [[Germany]] </span> {{SmallFlag|Germany}} {{SmallFlag|München|Muenchen Kleines Stadtwappen.svg}}\n| {{cal|social}} || {{dm|y=2015|Dec 10}} ||<span class=\"p-name\"> [[Innsbruck/Stammtisch|Stammtisch Innsbruck]], [[Austria]] </span> {{SmallFlag|Austria}} </span> {{SmallFlag|Tirol|Tirol Wappen.svg}}\n| {{cal|social}} || <span class=\"p-name\"> [[Berlin/Stammtisch|90. Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2015|Dec 14}} ||<span class=\"p-name\"> [[Passau/Mappertreffen|Mappertreffen Passau]], [[Germany]] </span> {{SmallFlag|Germany}}</span> {{SmallFlag|Passau|Wappen Passau.svg}}\n| {{cal|social}} || {{dm|y=2015|Dec 15}} ||<span class=\"p-name\"> [[Nottingham/Pub Meetup|Nottingham]], [[England]] </span> {{SmallFlag|England}}\n| {{cal|social}} || {{dm|y=2015|Dec 16}} ||<span class=\"p-name\"> [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] </span> {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}\n| {{cal|social}} || {{dm|y=2015|Dec 21}} ||<span class=\"p-name\"> [[Graz/Stammtisch|Stammtisch Graz]], [[Austria]] </span> {{SmallFlag|Austria}} {{SmallFlag|Steiermark|Steiermark Wappen.svg}}\n| {{cal|social}} || {{dm|y=2015|Dec 30}} ||<span class=\"p-name\"> [[Düsseldorf/Stammtisch|Stammtisch Düsseldorf]], [[Germany]] </span> {{SmallFlag|Germany}} {{SmallFlag|Düsseldorf|Dus4c_full_(1).jpg}}\n| {{cal|social}} || {{dm|y=2016|Jan 6}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Jan 7}} ||<span class=\"p-name\"> [[Wien/Stammtisch|54. Wiener Stammtisch]], [[Austria]] </span> {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}\n| {{cal|social}} || {{dm|y=2016|Jan 14}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|91. Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Jan 20}} ||<span class=\"p-name\"> [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] </span> {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}\n| {{cal|social}} || {{dm|y=2016|Jan 25}} ||<span class=\"p-name\"> [[Graz/Stammtisch|Stammtisch Graz]], [[Austria]] </span> {{SmallFlag|Austria}} {{SmallFlag|Steiermark|Steiermark Wappen.svg}}\n| {{cal|social}} || {{dm|y=2016|Feb 3}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Feb 11}} ||<span class=\"p-name\"> [[Wien/Stammtisch|55. Wiener Stammtisch]], [[Austria]] </span> {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}\n| {{cal|social}} || {{dm|y=2016|Feb 12}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|92. Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Feb 17}} ||<span class=\"p-name\"> [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] </span> {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}\n| {{cal|social}} || {{dm|y=2016|Feb 22}} ||<span class=\"p-name\"> [[Graz/Stammtisch|Stammtisch Graz]], [[Austria]] </span> {{SmallFlag|Austria}} </span> {{SmallFlag|Steiermark|Steiermark Wappen.svg}}\n| {{cal|social}} || {{dm|y=2016|Mar 2}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Mar 3}} ||<span class=\"p-name\"> [[Wien/Stammtisch|56. Wiener Stammtisch]], [[Austria]] </span> {{SmallFlag|Austria}} {{SmallFlag|Wien|Wien Wappen.svg}}\n| {{cal|social}} || {{dm|y=2016|Mar 10}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|93. Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Mar 16}} ||<span class=\"p-name\"> [[Karlsruhe#Nächstes Treffen|Stammtisch Karlsruhe]], [[Germany]] </span> {{SmallFlag|Germany}} {{SmallFlag|Karlsruhe|Coat of arms de-bw Karlsruhe.svg}}\n| {{cal|social}} || {{dm|y=2016|Apr 6}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Apr 8}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|94. Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|May 4}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|May 12}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|95. Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2015|Jun 1}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2015|Jun 10}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|96. Berlin-Brandenburg Stammtisch]], [[Germany]] {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2015|Jul 6}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2015|Jul 14}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|97. Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2015|Aug 3}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Aug 12}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|98. Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Sep 7}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Sep 8}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|99. Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Oct 5}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Oct 14}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|100. Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Nov 2}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Nov 10}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Dec 7}} ||<span class=\"p-name\"> [[Stuttgart/Stammtisch|Stammtisch Stuttgart]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Dec 9}} ||<span class=\"p-name\"> [[Berlin/Stammtisch|Berlin-Brandenburg Stammtisch]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Jan 5}} ||<span class=\"p-name\"> Stammtisch / OSM Treffen [[Münster]], [[Germany]] </span> {{SmallFlag|Germany}}\n| {{cal|social}} || {{dm|y=2016|Jan 18}} ||<span class=\"p-name\"> Stammtisch / OSM Treffen [[Osnabrück]], [[Germany]] </span> {{SmallFlag|Germany}}\n"
 }
