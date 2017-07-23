@@ -391,7 +391,7 @@ function findUserEditFieldsArticles(blog, user, field, callback) {
            where (article.id)::text = changes.data->>'oid' and changes.data->>'table'='article' \
            and changes.data->>'blog' = '" + blog + "' \
            and changes.data->>'user' = '" + user + "' \
-           and changes.data->>'property' = '" + field + "'";
+           and changes.data->>'property' like '" + field + "'";
 
   pgMap.find({table: "article", create: create}, query, callback);
 }

@@ -78,12 +78,21 @@ function renderUserId(req, res, next) {
         cb();
       });
     },
+    function findAndLoaduserByName(cb) {
+      debug("findAndLoaduser");
+      userModule.findOne({OSMUser:id}, function findAndLoaduserCB(err, result) {
+        debug("findAndLoaduser_CB");
+        if (err) return cb(err);
+        user = result;
+        return cb();
+      });
+    },
     function findAndLoaduser(cb) {
       debug("findAndLoaduser");
       userModule.findById(id, function findAndLoaduserCB(err, result) {
         debug("findAndLoaduser_CB");
         if (err) return cb(err);
-        user = result;
+        if (result) user = result;
         if (!user || typeof (user.id) === "undefined") return cb(new Error("User ID >" + id + "< Not Found"));
         if (req.query.validation) {
           user.validateEmail(req.user, req.query.validation, function (err) {
@@ -170,6 +179,10 @@ function postUserId(req, res, next) {
       debug("getPublicAuthor");
       if (!changes.WNAuthor) return cb();
       if (changes.WNAuthor === user.WNAuthor) return cb();
+      if (changes.WNAuthor === "anonymous") {
+        changes.WNPublicAuthor = "not mentioned";
+        return cb();
+      }
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
       request("https://blog.openstreetmap.de/blog/author/" + changes.WNAuthor, function(error, response, body) {
         changes.WNPublicAuthor = "Not Found";
