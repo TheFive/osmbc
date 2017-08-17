@@ -183,6 +183,10 @@ function postUserId(req, res, next) {
         changes.WNPublicAuthor = "not mentioned";
         return cb();
       }
+      if (changes.WNAuthor.substring(0,1) === "[") {
+        changes.WNPublicAuthor = "markdown used";
+        return cb();
+      }
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
       request("https://blog.openstreetmap.de/blog/author/" + changes.WNAuthor, function(error, response, body) {
         changes.WNPublicAuthor = "Not Found";
