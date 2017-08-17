@@ -466,8 +466,6 @@ function convertLogsToTeamString(logs, lang, users) {
         // check on Markdown started with [
         if (users[j].WNAuthor.substring(0,1)==="[") {
           editors[i] = markdown.renderInline(users[j].WNAuthor);
-          console.log(users[j].WNAuthor);
-          console.log(editors[i]);
         }
         // the next test is only necessary in case of Wochennotiz
         // after done all other tests
