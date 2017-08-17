@@ -34,7 +34,6 @@
     "markdown-it": "^8.2.2",
     "markdown-it-imsize": "^2.0.1",
     "markdown-it-sup": "^1.0.0",
-    "mdfigcaption": "^0.1.1",
     "moment": "^2.17.1",
     "moment-timezone": "^0.5.11",
     "morgan": "^1.7.0",
