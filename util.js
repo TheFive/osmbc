@@ -1,8 +1,9 @@
 "use strict";
 
 var debug = require("debug")("OSMBC:util");
-var markdown = require("markdown-it")({breaks: true});
-
+var markdown = require("markdown-it")()
+  .use(require("markdown-it-sup"))
+  .use(require("markdown-it-imsize"), { autofill: true });
 
 function isTrue(expr) {
   return (expr === true || expr === "true");
