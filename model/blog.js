@@ -5,6 +5,10 @@ var async    = require("async");
 var config   = require("../config.js");
 var logger   = require("../config.js").logger;
 
+var markdown = require("markdown-it")()
+  .use(require("markdown-it-sup"))
+  .use(require("markdown-it-imsize"), { autofill: true });
+
 var should   = require("should");
 var moment   = require("moment");
 
