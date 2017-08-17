@@ -210,7 +210,7 @@
     "version": 20,
     "blog": "WN290",
     "title": "Mapping in Marocco ... ",
-    "categoryEN": "Mapping",
+    "categoryEN": "This Category does not exist",
     "collection": "https://twitter.com/OsmMaroc/status/689054778840748033\r\n\r\nhttp://openstreetmap.ma/projet.php",
     "markdownDE": "In der Stadt Chefchaouen in Marokko hat die Zusammenarbeit von Stadtverwaltung, jungen Enthusiasten und der OSM Community zu einem [bemerkenswerten Ergebnis](https://twitter.com/OsmMaroc/status/689054778840748033) geführt. Das Projekt ist hier ausführlich [beschrieben](http://openstreetmap.ma/projet.php). (automatische [Übersetzung](https://translate.google.de/translate?sl=auto&tl=%20DE&u=http://openstreetmap.ma/projet.php)).",
     "markdownEN": "In the city of Chefchaouen (the chief town of the province of the same name) in Morocco, a collaboration between young enthusiasts and OSM community led to a [remarkable result](https://twitter.com/OsmMaroc/status/689054778840748033). The project is [described here](http://openstreetmap.ma/projet.php) in detail. (automatic [translation](https://translate.google.de/translate?sl=auto&tl=EN&u=http://openstreetmap.ma/projet.php)).",
@@ -1646,6 +1646,16 @@
     "collection": "https://www.google.de",
     "title": "Google For Future",
     "categoryEN": "Did you know …",
+    "markdownDE": "Google war doch die Zukunft ?",
+    "markdownEN": "Google is Future, isn't it ?"
+  },
+  {
+    "id": "12000",
+    "version": 18,
+    "blog": "Future",
+    "collection": "https://www.google.de",
+    "title": "Google For Future",
+    "categoryEN": "Non Existing CategoryEN",
     "markdownDE": "Google war doch die Zukunft ?",
     "markdownEN": "Google is Future, isn't it ?"
   }],

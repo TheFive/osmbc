@@ -167,9 +167,9 @@ block blogcontent
       div(class=secondColSize)
         .row
           div(class=columnLeftSize)
-            h4(style="color:grey")=cat[left_lang]
+            h4(style="color:grey")=(cat) ? cat[left_lang] : k
           div(class=columnRightSize)
-            h4(style="color:grey")=cat[right_lang]
+            h4(style="color:grey")=(cat) ? cat[right_lang] : k
       each a in futureArticles[k]
         .row
           div(class=firstColSize)
