@@ -130,12 +130,12 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
       text = text.replace("<p>", '<p class="wp-caption-text">');
     } else {
       // Not a picture remove <p> at start and end
-      if (text.substring(0,3)==="<p>" && text.substring(text.length-5,text.length-1)==="</p>") {
-        text = text.substring(3,text.length-5)+"\n";
+      if (text.substring(0, 3) === "<p>" && text.substring(text.length - 5, text.length - 1) === "</p>") {
+        text = text.substring(3, text.length - 5) + "\n";
       }
     }
   } else {
-    text += article.displayTitle(90)+"\n";
+    text += article.displayTitle(90) + "\n";
   }
   if (article.categoryEN === "--unpublished--") {
     var reason2 = "No Reason given";
@@ -228,7 +228,6 @@ HtmlRenderer.prototype.renderBlog = function htmlBlog(lang, articleData) {
 
 
   return preview + teamString;
-
 };
 
 

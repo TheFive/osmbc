@@ -80,7 +80,7 @@ function renderUserId(req, res, next) {
     },
     function findAndLoaduserByName(cb) {
       debug("findAndLoaduser");
-      userModule.findOne({OSMUser:id}, function findAndLoaduserCB(err, result) {
+      userModule.findOne({OSMUser: id}, function findAndLoaduserCB(err, result) {
         debug("findAndLoaduser_CB");
         if (err) return cb(err);
         user = result;
@@ -122,7 +122,7 @@ function renderUserId(req, res, next) {
       res.render("user", {usershown: user,
         changes: changes,
         params: params,
-        oldEditorDisabled:config.getValue("diableOldEditor"),
+        oldEditorDisabled: config.getValue("diableOldEditor"),
         userHeatMapArray: userHeatMapArray,
         langlist: config.getLanguages(),
         layout: res.rendervar.layout});
@@ -161,8 +161,8 @@ function postUserId(req, res, next) {
   if (typeof (changes.mailBlogLanguageStatusChange) === "undefined") {
     changes.mailBlogLanguageStatusChange = [];
   }
-  if (["three","four"].indexOf(changes.languageCount) <0) changes.languageCount = "two";
-  if (["new"].indexOf(changes.articleEditor) <0 ) changes.articleEditor = "old";
+  if (["three", "four"].indexOf(changes.languageCount) < 0) changes.languageCount = "two";
+  if (["new"].indexOf(changes.articleEditor) < 0) changes.articleEditor = "old";
   var user;
   async.series([
     function findUser(cb) {
@@ -183,7 +183,7 @@ function postUserId(req, res, next) {
         changes.WNPublicAuthor = "not mentioned";
         return cb();
       }
-      if (changes.WNAuthor.substring(0,1) === "[") {
+      if (changes.WNAuthor.substring(0, 1) === "[") {
         changes.WNPublicAuthor = "markdown used";
         return cb();
       }
@@ -233,9 +233,9 @@ function createUser(req, res, next) {
   });
 }
 
-function createApiKey(req,res,next) {
+function createApiKey(req, res, next) {
   debug("createApiKey");
-  req.user.createApiKey(function(err){
+  req.user.createApiKey(function(err) {
     if (err) return next(err);
     let referer = req.header("Referer") || "/";
     res.redirect(referer);
@@ -247,7 +247,7 @@ function createApiKey(req,res,next) {
 router.get("/inbox", inbox);
 router.get("/list", renderList);
 router.get("/create", createUser);
-router.get("/createApiKey",createApiKey);
+router.get("/createApiKey", createApiKey);
 router.get("/:user_id", renderUserId);
 router.post("/:user_id", postUserId);
 

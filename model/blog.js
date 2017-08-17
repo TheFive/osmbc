@@ -458,13 +458,13 @@ function convertLogsToTeamString(logs, lang, users) {
       if (editors[i] === users[j].OSMUser) {
         // Ignore the editor, if he wants to be anonymous
         if (users[j].WNAuthor && users[j].WNAuthor === "anonymous") {
-          editors.splice(i,i+1);
-          i=i-1;
-          j=9999;
+          editors.splice(i, i + 1);
+          i = i - 1;
+          j = 9999;
           continue;
         }
         // check on Markdown started with [
-        if (users[j].WNAuthor.substring(0,1)==="[") {
+        if (users[j].WNAuthor.substring(0, 1) === "[") {
           editors[i] = markdown.renderInline(users[j].WNAuthor);
         }
         // the next test is only necessary in case of Wochennotiz

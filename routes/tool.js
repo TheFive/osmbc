@@ -29,7 +29,7 @@ var sizeOf = require("image-size");
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
 let bootstrap = config.getValue("bootstrap", {mustExist: true});
-let osmbcDateFormat = config.getValue("CalendarDateFormat",{mustExist:true});
+let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
 
 function renderPublicCalendar(req, res, next) {
   debug("renderPublicCalendar");

@@ -150,8 +150,8 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
     case "collection":
     case "categoryEN":
       langlist.forEach(function(l) {
-        if (self._blog["exported" + l] === true && self["markdown"+l]!="no translation") result = false;
-        if (self._blog["close" + l] === true && self["markdown"+l]!="no translation") result = false;
+        if (self._blog["exported" + l] === true && self["markdown" + l] !== "no translation") result = false;
+        if (self._blog["close" + l] === true && self["markdown" + l] !== "no translation") result = false;
       });
       if (!result) return result;
       break;
@@ -282,7 +282,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
     for (var k in data) {
       if (data[k] === self[k]) { delete data[k]; continue; }
-      if (data[k] === undefined) {delete data[k];continue;}
+      if (data[k] === undefined) { delete data[k]; continue; }
       if (data[k]) data[k] = data[k].trim();
       if (data[k] === "" && typeof (self[k]) === "undefined") { delete data[k]; continue; }
 
@@ -290,7 +290,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
       // Now check, wether deletion is allowed or not.
       if (!self.isChangeAllowed(k)) {
-        return callback(new Error(k+" can not be edited. Blog is already exported."));
+        return callback(new Error(k + " can not be edited. Blog is already exported."));
       }
     }
 
@@ -489,7 +489,7 @@ module.exports.pg = pgObject;
 // Async function to search for each Link in the article in the database
 // callback forwards every error, and as result offers an
 // object map, with and array of Articles for each shortened link
-Article.prototype.calculateUsedLinks = function calculateUsedLinks(options,callback) {
+Article.prototype.calculateUsedLinks = function calculateUsedLinks(options, callback) {
   debug("calculateUsedLinks");
   // Get all Links in this article
   if (typeof options === "function") {
@@ -513,7 +513,7 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(options,callb
   async.each(usedLinks,
     function forEachUsedLink(item, cb) {
       debug("forEachUsedLink");
-      if (options.ignoreStandard && ignoreStandard.indexOf(item)>=0) return cb();
+      if (options.ignoreStandard && ignoreStandard.indexOf(item) >= 0) return cb();
       var reference = item;
 
       // shorten HTTP / HTTPS links by the leading HTTP(s)
@@ -777,7 +777,7 @@ Article.prototype.addNotranslate = function addNotranslate(user, shownLang, call
   var change = {version: self.version};
   for (var i = 0; i < config.getLanguages().length; i++) {
     var lang = config.getLanguages()[i];
-    if (shownLang[lang] && (typeof (self["markdown" + lang]) === "undefined") || (self["markdown" + lang] === "")) {
+    if (shownLang[lang] && ((typeof (self["markdown" + lang]) === "undefined") || (self["markdown" + lang] === ""))) {
       change["markdown" + lang] = "no translation";
     }
   }

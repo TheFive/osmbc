@@ -22,7 +22,7 @@ function checkApiKey(req, res, next) {
     return next();
   }
 
-  userModule.findOne({apiKey:req.params.apiKey},function(err,user){
+  userModule.findOne({apiKey: req.params.apiKey}, function(err, user) {
     if (err || !user) {
       let err = new Error("Not Authorised");
       err.status = 401;
@@ -189,8 +189,8 @@ function collectArticleLink(req, res, next) {
 
       result.setAndSave(req.user, changes, function(err) {
         if (err) return next(err);
-        res.set("Access-Control-Allow-Origin","*");
-        res.send(config.getValue("url")+config.getValue("htmlroot")+"/article/"+result.id);
+        res.set("Access-Control-Allow-Origin", "*");
+        res.send(config.getValue("url") + config.getValue("htmlroot") + "/article/" + result.id);
       });
     });
   });
@@ -202,7 +202,7 @@ publicRouter.get("/monitor/:apiKey", isServerUp);
 publicRouter.get("/monitorPostgres/:apiKey", isPostgresUp);
 
 publicRouter.post("/collectArticle/:apiKey", collectArticle);
-publicRouter.get("/collect/:apiKey",collectArticleLink);
+publicRouter.get("/collect/:apiKey", collectArticleLink);
 
 module.exports.publicRouter = publicRouter;
 

@@ -3,8 +3,10 @@
 
 var lint = require("mocha-eslint");
 
-describe("eslint", function() {
-  it.skip("should eslint", function() {
-    lint(["../"], {formatter:"stylish"});
-  });
-});
+
+lint(["model"], {formatter:"stylish"});
+lint(["notification"], {formatter:"stylish"});
+lint(["render"], {formatter:"stylish"});
+lint(["routes"], {formatter:"stylish"});
+lint(["views"], {formatter:"stylish"});
+
