@@ -207,7 +207,7 @@ describe("views/article_new", function() {
               should.not.exist(err);
               should(article.markdownDE).eql("Text");
               should(article.markdownEN).eql("no translation");
-              should(article.markdownES).eql("no translation");
+              should(article.markdownES).eql("");
               bddone();
             });
           });

@@ -84,7 +84,7 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, b
   if (blog["reviewComment" + lang] && blog["reviewComment" + lang][0]) {
     let baselink = osmbcUrl + "/changes/log?blog=" + blog.name + "&table=article&property=markdown" + lang + "&date=GE:" + blog["reviewComment" + lang][0].timestamp;
     reviewChangesLink = "<" + baselink + "|Full Review>";
-    reviewChangesWithUserLink = "<" + baselink + "&user="+user.OSMUser+ "|User Review>";
+    reviewChangesWithUserLink = "<" + baselink + "&user=" + user.OSMUser + "|User Review>";
   }
 
 
@@ -97,7 +97,7 @@ SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, b
   } else if (status === "reviewing...") {
     subject = "has started Review for: " + subject + "(" + lang + ")";
   } else {
-    subject += "(" + lang + ") has been reviewed: " + status + " (" + reviewChangesWithUserLink + ", "+reviewChangesLink+")";
+    subject += "(" + lang + ") has been reviewed: " + status + " (" + reviewChangesWithUserLink + ", " + reviewChangesLink + ")";
   }
   var username = botName + "(" + user.OSMUser + ")";
 
@@ -260,7 +260,7 @@ function initialise(callback) {
   channelReceiverMap = {};
   for (var i = 0; i < channelList.length; i++) {
     var channel = channelList[i];
-    if (channel.channel.substring(0,1)!="#") continue;
+    if (channel.channel.substring(0, 1) !== "#") continue;
     channelReceiverMap["Slack Connection " + i] = new ConfigFilter(channel, new SlackReceiver(channel.slack + channel.channel, channel.slack, channel.channel));
   }
   iteratorReceiver.receiverMap = channelReceiverMap;

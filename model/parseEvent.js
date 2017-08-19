@@ -10,22 +10,22 @@ var configModule = require("../model/config.js");
 var async = require("async");
 var https = require("https");
 
-let osmbcDateFormat = config.getValue("CalendarDateFormat",{mustExist:true});
+let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
 
 
 // This page is delivering the calendar events
 var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json";
 
 
-var regexList = [ {regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *\[\[(.*)\]\] *, *\[\[(.*)\]\] *\{\{SmallFlag\|(.*)\}\}/gi,
-  keys: ["type", "date", "desc", "town", "country", "countryflag"],
-  convert: ["%s", "%s", "%s", "[[%s]]", "[[%s]]", "%s"]},
-{regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *, *\[\[(.*)\]\] *\{\{SmallFlag\|(.*)\}\}/gi,
-  keys: ["type", "date", "desc", "town", "country", "countryflag"],
-  convert: ["%s", "%s", "%s", "%s", "[[%s]]", "%s"]},
-{regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\}/gi,
-  keys: ["type", "date", "desc", "town", "country", "countryflag"],
-  convert: ["%s", "%s", "%s", "%s", "%s", "%s"]}
+var regexList = [ {regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *\[\[(.*)\]\] *, *\[\[(.*)\]\] *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
+  keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],
+  convert: ["%s", "%s", "%s", "%s", "[[%s]]", "[[%s]]", "%s"]},
+{regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *(.*) *, *\[\[(.*)\]\] *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
+  keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],
+  convert: ["%s", "%s", "%s", "%s", "%s", "[[%s]]", "%s"]},
+{regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *(.*) *, *(.*) *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
+  keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],
+  convert: ["%s", "%s", "%s", "%s", "%s", "%s", "%s"]}
 //  {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\} *\{\{SmallFlag\|(.*)\}\}/gi,
 //  keys:[               "type",                "date",              "desc",       "country","wappenflag","countryflag"]},
 //  {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\}/gi,
@@ -61,27 +61,15 @@ function convertGeoName(name, lang, callback) {
   });
 }
 
-function nextDate(string, previousDate) {
+function nextDate(string, year) {
   // debug('nextDate');
   if (!string) return null;
-  var now = new Date();
-  let startBefore = 50;
-  if (previousDate) {
-    now = new Date(previousDate);
-    // This is a heuristic value, based on the used test cases.
-    // it should be avoided in wiki to have date jumps more than 5 month !
-    startBefore = 170;
-  }
 
 
-  now.setDate(now.getDate() - startBefore);
 
   var result = new Date(string);
-  result = new Date(Date.UTC(result.getYear(), result.getMonth(), result.getDate()));
+  result = new Date(Date.UTC(parseInt(year), result.getMonth(), result.getDate()));
 
-  while (result.getTime() <= now.getTime()) {
-    result = new Date(Date.UTC(result.getFullYear() + 1, result.getMonth(), result.getDate()));
-  }
   return result;
 }
 // for Test purposes exported
@@ -91,13 +79,13 @@ exports.nextDate = nextDate;
 /* This function returns the start date of an event, based on a string like
    Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event */
 
-function parseStartDate(string, previousDate) {
+function parseStartDate(string, year) {
  // debug('parseStartDate')
   let datestart = string;
   if (string.indexOf("|") >= 0) {
     datestart = datestart.substring(0, datestart.indexOf("|"));
   }
-  datestart = nextDate(datestart, previousDate);
+  datestart = nextDate(datestart, year);
   // dateend = nextDate(dateend);
   return datestart;
 }
@@ -105,7 +93,7 @@ function parseStartDate(string, previousDate) {
 /* This function returns the end date of an event, based on a string like
    Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event,
    in the case of no enddate, the start date is returned */
-function parseEndDate(string, previousDate) {
+function parseEndDate(string, year) {
  // debug('parseEndDate')
   var datestart = string;
   var dateend;
@@ -114,8 +102,8 @@ function parseEndDate(string, previousDate) {
     dateend = datestart.substring(datestart.indexOf("|") + 1, 99999);
     datestart = datestart.substring(0, datestart.indexOf("|"));
   }
-  datestart = nextDate(datestart, previousDate);
-  dateend = nextDate(dateend, previousDate);
+  datestart = nextDate(datestart, year);
+  dateend = nextDate(dateend, year);
   if (dateend === null) dateend = datestart;
   return dateend;
 }
@@ -124,10 +112,11 @@ function parseEndDate(string, previousDate) {
    and putting the results into a json with the given keys.
    If no regex is matching, null is returned */
 
-function parseLine(string, previousDate) {
+function parseLine(string) {
  // debug('parseLine');
   for (var i = 0; i < regexList.length; i++) {
     var results = regexList[i].regex.exec(string);
+    let year = null;
 
     if (results) {
       var r = {};
@@ -135,9 +124,10 @@ function parseLine(string, previousDate) {
         var value = results[j + 1].trim();
         var list  = regexList[i].keys;
         var convert = regexList[i].convert;
+        if (list[j] === "year") year = value;
         if (list[j] === "date") {
-          r.startDate = parseStartDate(value, previousDate);
-          r.endDate = parseEndDate(value, previousDate);
+          r.startDate = parseStartDate(value, year);
+          r.endDate = parseEndDate(value, year);
         } else {
           r[list[j]] = convert[j].replace("%s", value);
         }
@@ -446,13 +436,12 @@ function calendarToJSON(option, cb) {
     var events = [];
     var errors = "";
 
-    var previousDate = null;
-
     while (point >= 0) {
       var line = body.substring(0, point);
       body = body.substring(point + 1, 999999999);
       point = body.indexOf("\n");
-      var result = parseLine(line, previousDate);
+      var result = parseLine(line);
+      result = parseLine(line);
 
       if (typeof (result) === "string") {
         if (!errors) errors = "\n\nUnrecognized\n";
@@ -463,7 +452,6 @@ function calendarToJSON(option, cb) {
 
 
       if (result) {
-        previousDate = result.startDate;
         events.push(result);
         result.markdown = parseWikiInfo(result.desc);
         result.text = parseWikiInfo(result.desc, {dontLinkify: true});

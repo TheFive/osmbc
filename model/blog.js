@@ -4,12 +4,10 @@
 var async    = require("async");
 var config   = require("../config.js");
 var logger   = require("../config.js").logger;
-var markdown = require("markdown-it")()
-          .use(require("markdown-it-sup"))
-          .use(require("markdown-it-imsize"), { autofill: true });
 
-var mdFigCaption = require("mdfigcaption");
-markdown.use(mdFigCaption);
+var markdown = require("markdown-it")()
+  .use(require("markdown-it-sup"))
+  .use(require("markdown-it-imsize"), { autofill: true });
 
 var should   = require("should");
 var moment   = require("moment");
@@ -454,10 +452,24 @@ function convertLogsToTeamString(logs, lang, users) {
   addEditors("markdown" + lang, 2);
   addEditors("reviewComment" + lang, 1);
   editors.sort();
-  if (users && lang === "DE") {
-    for (var i = 0; i < editors.length; i++) {
-      for (var j = 0; j < users.length; j++) {
-        if (editors[i] === users[j].OSMUser) {
+
+  for (var i = 0; i < editors.length; i++) {
+    for (var j = 0; j < users.length; j++) {
+      if (editors[i] === users[j].OSMUser) {
+        // Ignore the editor, if he wants to be anonymous
+        if (users[j].WNAuthor && users[j].WNAuthor === "anonymous") {
+          editors.splice(i, i + 1);
+          i = i - 1;
+          j = 9999;
+          continue;
+        }
+        // check on Markdown started with [
+        if (users[j].WNAuthor.substring(0, 1) === "[") {
+          editors[i] = markdown.renderInline(users[j].WNAuthor);
+        }
+        // the next test is only necessary in case of Wochennotiz
+        // after done all other tests
+        if (users && lang === "DE") {
           if (users[j].WNAuthor && users[j].WNPublicAuthor && users[j].WNPublicAuthor !== "Not Found") {
             editors[i] = '<a href="http://blog.openstreetmap.de/blog/author/' + users[j].WNAuthor + '">' + users[j].WNPublicAuthor + "</a>";
           }
@@ -465,6 +477,7 @@ function convertLogsToTeamString(logs, lang, users) {
       }
     }
   }
+
   var editorsString = "";
   if (editors.length >= 1) editorsString = editors[0];
   for (var i2 = 1; i2 < editors.length; i2++) {

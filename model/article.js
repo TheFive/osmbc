@@ -2,7 +2,6 @@
 // Exported Functions and prototypes are defined at end of file
 
 
-var pg       = require("pg");
 var async    = require("async");
 var should   = require("should");
 var debug    = require("debug")("OSMBC:model:article");
@@ -17,6 +16,7 @@ var blogModule     = require("../model/blog.js");
 var logModule      = require("../model/logModule.js");
 var configModule   = require("../model/config.js");
 var pgMap          = require("../model/pgMap.js");
+var db          = require("../model/db.js");
 var twitter        = require("../model/twitter.js");
 
 
@@ -28,21 +28,18 @@ function getListOfOrphanBlog(callback) {
   debug("getListOfOrphanBlog");
   if (listOfOrphanBlog) return callback(null, listOfOrphanBlog);
   let loob = [];
-
-  pg.connect(config.pgstring, function(err, client, pgdone) {
+  listOfOrphanBlog = [];
+  var query = 'select name from "OpenBlogWithArticle" order by name';
+  db.query(query, function(err, result) {
     if (err) return callback(err);
-
-    listOfOrphanBlog = [];
-    var query = client.query('select name from "OpenBlogWithArticle" order by name');
-    debug("reading list of open blog");
-    query.on("row", function(row) {
-      loob.push(row.name);
-    });
-    query.on("end", function () {
-      pgdone();
-      listOfOrphanBlog = loob;
-      callback(null, listOfOrphanBlog);
-    });
+    if (result) {
+      console.log(result);
+      result.rows.forEach(function(item) {
+        loob.push(item.name);
+      });
+    }
+    listOfOrphanBlog = loob;
+    callback(null, listOfOrphanBlog);
   });
 }
 
@@ -150,8 +147,8 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
     case "collection":
     case "categoryEN":
       langlist.forEach(function(l) {
-        if (self._blog["exported" + l] === true && self["markdown"+l]!="no translation") result = false;
-        if (self._blog["close" + l] === true && self["markdown"+l]!="no translation") result = false;
+        if (self._blog["exported" + l] === true && self["markdown" + l] !== "no translation") result = false;
+        if (self._blog["close" + l] === true && self["markdown" + l] !== "no translation") result = false;
       });
       if (!result) return result;
       break;
@@ -222,10 +219,14 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
   if (data.categoryEN === "--unpublished--" || data.blog === "Trash") {
     if ((!data.unpublishReason || data.unpublishReason.trim() === "") &&
-          (!self.unpublishReason || self.unpublishReason.trim() === "")) {
+      (!self.unpublishReason || self.unpublishReason.trim() === "")) {
       return callback(new Error("Missing reason for unpublishing article."));
     }
   }
+  if (self.categoryEN !== "--unpublished--" && data.blog === "Trash") {
+    return callback(new Error("Only unpublished articles can be moved to trash."));
+  }
+
 
 
   async.series([
@@ -278,7 +279,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
     for (var k in data) {
       if (data[k] === self[k]) { delete data[k]; continue; }
-      if (data[k] === undefined) {delete data[k];continue;}
+      if (data[k] === undefined) { delete data[k]; continue; }
       if (data[k]) data[k] = data[k].trim();
       if (data[k] === "" && typeof (self[k]) === "undefined") { delete data[k]; continue; }
 
@@ -286,7 +287,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
       // Now check, wether deletion is allowed or not.
       if (!self.isChangeAllowed(k)) {
-        return callback(new Error(k+" can not be edited. Blog is already exported."));
+        return callback(new Error(k + " can not be edited. Blog is already exported."));
       }
     }
 
@@ -386,7 +387,7 @@ function findUserEditFieldsArticles(blog, user, field, callback) {
            where (article.id)::text = changes.data->>'oid' and changes.data->>'table'='article' \
            and changes.data->>'blog' = '" + blog + "' \
            and changes.data->>'user' = '" + user + "' \
-           and changes.data->>'property' = '" + field + "'";
+           and changes.data->>'property' like '" + field + "'";
 
   pgMap.find({table: "article", create: create}, query, callback);
 }
@@ -484,7 +485,7 @@ module.exports.pg = pgObject;
 // Async function to search for each Link in the article in the database
 // callback forwards every error, and as result offers an
 // object map, with and array of Articles for each shortened link
-Article.prototype.calculateUsedLinks = function calculateUsedLinks(options,callback) {
+Article.prototype.calculateUsedLinks = function calculateUsedLinks(options, callback) {
   debug("calculateUsedLinks");
   // Get all Links in this article
   if (typeof options === "function") {
@@ -508,7 +509,7 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(options,callb
   async.each(usedLinks,
     function forEachUsedLink(item, cb) {
       debug("forEachUsedLink");
-      if (options.ignoreStandard && ignoreStandard.indexOf(item)>=0) return cb();
+      if (options.ignoreStandard && ignoreStandard.indexOf(item) >= 0) return cb();
       var reference = item;
 
       // shorten HTTP / HTTPS links by the leading HTTP(s)
@@ -772,8 +773,9 @@ Article.prototype.addNotranslate = function addNotranslate(user, shownLang, call
   var change = {version: self.version};
   for (var i = 0; i < config.getLanguages().length; i++) {
     var lang = config.getLanguages()[i];
-    if (shownLang[lang] && (typeof (self["markdown" + lang]) === "undefined") || (self["markdown" + lang] === "")) {
+    if (shownLang[lang] && ((typeof (self["markdown" + lang]) === "undefined") || (self["markdown" + lang] === ""))) {
       change["markdown" + lang] = "no translation";
+      console.log("Set %s to no translation", lang);
     }
   }
   return self.setAndSave(user, change, callback);

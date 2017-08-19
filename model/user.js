@@ -296,7 +296,7 @@ User.prototype.getOption = function getOption(view, option) {
 
 User.prototype.createApiKey = function createApiKey(callback) {
   debug("createApiKey");
-  let apiKey = random.generate({length:10});
+  let apiKey = random.generate({length: 10});
   this.apiKey = apiKey;
   this.save(callback);
 };

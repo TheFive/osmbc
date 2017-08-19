@@ -27,15 +27,15 @@ var htmltitle     = require("../model/htmltitle.js");
 require("jstransformer")(require("jstransformer-markdown-it"));
 
 
-var MsTranslator = require('mstranslator');
+var MsTranslator = require("mstranslator");
 var msTransClient = new MsTranslator({
-  api_key: config.getValue("MS_TranslateApiKey",{mustExist:true})
+  api_key: config.getValue("MS_TranslateApiKey", {mustExist: true})
 }, true);
 
 
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
-let oldEditorDisabled = config.getValue("diableOldEditor",{mustExist:true});
+let oldEditorDisabled = config.getValue("diableOldEditor", {mustExist: true});
 
 // This Function converts the ID (used as :article_id in the routes) to
 // an article and stores the object in the request
@@ -91,7 +91,7 @@ function renderArticleId(req, res, next) {
   var placeholder = configModule.getPlaceholder();
   async.auto({
     // Find usage of Links in other articles
-    articleReferences: article.calculateUsedLinks.bind(article,{ignoreStandard:true}),
+    articleReferences: article.calculateUsedLinks.bind(article, {ignoreStandard: true}),
     // Find the associated blog for this article
     blog:
     function findBlog(callback) {
@@ -203,21 +203,21 @@ function renderArticleId(req, res, next) {
           if (!oldEditorDisabled) newEditor = req.user.articleEditor === "new";
           if (newEditor) {
             jadeFile = "article/article_twocolumn";
-            if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";
+            if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
           }
           if (newEditor && req.user.languageCount === "three") {
             jadeFile = "article/article_threecolumn";
-            if (req.user.getLang3()==="--" ) jadeFile = "article/article_twocolumn";
-            if (req.user.getSecondLang()==="--" ) jadeFile = "article/article_onecolumn";
+            if (req.user.getLang3() === "--") jadeFile = "article/article_twocolumn";
+            if (req.user.getSecondLang() === "--") jadeFile = "article/article_onecolumn";
 
-            params.columns=3;
+            params.columns = 3;
           }
           if (newEditor && req.user.languageCount === "four") {
             jadeFile = "article/article_fourcolumn";
-            if (req.user.getLang4()===null ) jadeFile = "article/article_threecolumn";
-            if (req.user.getLang3()===null ) jadeFile = "article/article_twocolumn";
-            if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";
-            params.columns=4;
+            if (req.user.getLang4() === null) jadeFile = "article/article_threecolumn";
+            if (req.user.getLang3() === null) jadeFile = "article/article_twocolumn";
+            if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
+            params.columns = 4;
           }
 
 
@@ -706,10 +706,7 @@ function doAction(req, res, next) {
       next(err);
       return;
     }
-    let returnToUrl  = htmlroot + "/article/" + article.id;
-    if (req.header("Referer")) returnToUrl = req.header("Referer");
     res.end("OK");
-    // res.redirect(returnToUrl);
   });
 }
 
@@ -925,7 +922,7 @@ function translateGOOGLEOLD(req, res, next) {
   gglTranslateAPI(text, {from: fromLang, to: toLang}).then(function (result) {
     res.end(result.text);
   }).catch(function(err) { next(err); });
-}*/
+} */
 
 function translate(req, res, next) {
   debug("translate");
@@ -946,7 +943,7 @@ function translate(req, res, next) {
     to: toLang
   };
 
-  msTransClient.translate(params, function (err,result) {
+  msTransClient.translate(params, function (err, result) {
     if (err) return next(err);
     res.end(result);
   });

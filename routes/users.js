@@ -78,12 +78,21 @@ function renderUserId(req, res, next) {
         cb();
       });
     },
+    function findAndLoaduserByName(cb) {
+      debug("findAndLoaduser");
+      userModule.findOne({OSMUser: id}, function findAndLoaduserCB(err, result) {
+        debug("findAndLoaduser_CB");
+        if (err) return cb(err);
+        user = result;
+        return cb();
+      });
+    },
     function findAndLoaduser(cb) {
       debug("findAndLoaduser");
       userModule.findById(id, function findAndLoaduserCB(err, result) {
         debug("findAndLoaduser_CB");
         if (err) return cb(err);
-        user = result;
+        if (result) user = result;
         if (!user || typeof (user.id) === "undefined") return cb(new Error("User ID >" + id + "< Not Found"));
         if (req.query.validation) {
           user.validateEmail(req.user, req.query.validation, function (err) {
@@ -113,7 +122,7 @@ function renderUserId(req, res, next) {
       res.render("user", {usershown: user,
         changes: changes,
         params: params,
-        oldEditorDisabled:config.getValue("diableOldEditor"),
+        oldEditorDisabled: config.getValue("diableOldEditor"),
         userHeatMapArray: userHeatMapArray,
         langlist: config.getLanguages(),
         layout: res.rendervar.layout});
@@ -152,8 +161,8 @@ function postUserId(req, res, next) {
   if (typeof (changes.mailBlogLanguageStatusChange) === "undefined") {
     changes.mailBlogLanguageStatusChange = [];
   }
-  if (["three","four"].indexOf(changes.languageCount) <0) changes.languageCount = "two";
-  if (["new"].indexOf(changes.articleEditor) <0 ) changes.articleEditor = "old";
+  if (["three", "four"].indexOf(changes.languageCount) < 0) changes.languageCount = "two";
+  if (["new"].indexOf(changes.articleEditor) < 0) changes.articleEditor = "old";
   var user;
   async.series([
     function findUser(cb) {
@@ -170,6 +179,14 @@ function postUserId(req, res, next) {
       debug("getPublicAuthor");
       if (!changes.WNAuthor) return cb();
       if (changes.WNAuthor === user.WNAuthor) return cb();
+      if (changes.WNAuthor === "anonymous") {
+        changes.WNPublicAuthor = "not mentioned";
+        return cb();
+      }
+      if (changes.WNAuthor.substring(0, 1) === "[") {
+        changes.WNPublicAuthor = "markdown used";
+        return cb();
+      }
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
       request("https://blog.openstreetmap.de/blog/author/" + changes.WNAuthor, function(error, response, body) {
         changes.WNPublicAuthor = "Not Found";
@@ -216,9 +233,9 @@ function createUser(req, res, next) {
   });
 }
 
-function createApiKey(req,res,next) {
+function createApiKey(req, res, next) {
   debug("createApiKey");
-  req.user.createApiKey(function(err){
+  req.user.createApiKey(function(err) {
     if (err) return next(err);
     let referer = req.header("Referer") || "/";
     res.redirect(referer);
@@ -230,7 +247,7 @@ function createApiKey(req,res,next) {
 router.get("/inbox", inbox);
 router.get("/list", renderList);
 router.get("/create", createUser);
-router.get("/createApiKey",createApiKey);
+router.get("/createApiKey", createApiKey);
 router.get("/:user_id", renderUserId);
 router.post("/:user_id", postUserId);
 

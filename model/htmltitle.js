@@ -2,7 +2,7 @@
 
 var cheerio = require("cheerio");
 var request = require("request");
-var iconv = require('iconv-lite');
+var iconv = require("iconv-lite");
 var debug = require("debug")("OSMBC:model:htmltitle");
 
 function linkFrom(url, page) {
@@ -87,7 +87,7 @@ function getTitle(url, callback) {
       // nothing given, to use parser set incoming & outcoming charset equal
       if (!fromcharset) fromcharset = "UTF-8";
       var utf8body = null;
-      utf8body = iconv.decode(body,fromcharset);
+      utf8body = iconv.decode(body, fromcharset);
       /*
       try {
         var iconv = new Iconv(fromcharset, "UTF-8");
@@ -95,7 +95,7 @@ function getTitle(url, callback) {
       } catch (err) {
         // There is a convert error, ognore it and convert with UTF-8
         utf8body = body.toString("UTF-8");
-      }*/
+      } */
 
 
 
@@ -106,7 +106,7 @@ function getTitle(url, callback) {
       }
       // remove all linebreaks
       r = r.replace(/(\r\n|\n|\r)/gm, " ");
-      if (r===null) r = "Not Found";
+      if (r === null) r = "Not Found";
       return callback(null, r);
     }
   );

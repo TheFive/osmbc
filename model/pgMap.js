@@ -131,11 +131,11 @@ module.exports.save = function(callback) {
     self.version = 1;
     var sqlquery = "insert into " + table + "(data) values ($1) returning id";
     sqldebug("Query %s", sqlquery);
-    pool.query(sqlquery, [self], function(err,result){
+    pool.query(sqlquery, [self], function(err, result) {
       if (err) return callback(err);
       should.exist(result.rows);
       self.id = result.rows[0].id;
-      return callback(null,self);
+      return callback(null, self);
     });
   } else {
     debug("Object will be updated, current version is %s", self.version);
@@ -448,13 +448,13 @@ exports.createTables = function(pgObject, options, analyse, callback) {
 module.exports.count = function count(sql, callback) {
   debug("count");
   var result;
-  pool.query(sql,function (err,pgResult){
+  pool.query(sql, function (err, pgResult) {
     if (err) return callback(err);
     result = {};
     for (var k in pgResult.rows[0]) {
       result[k] = pgResult.rows[0][k];
     }
-    callback(null,result);
+    callback(null, result);
   });
 };
 

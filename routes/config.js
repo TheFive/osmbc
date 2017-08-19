@@ -32,7 +32,7 @@ function renderConfigName(req, res, next) {
       configModule.getConfigObject(name, function(err, result) {
         if (err) return cb(err);
         config = result;
-        if (!config) return cb(new Error("Config >"+name+"< not found"));
+        if (!config) return cb(new Error("Config >" + name + "< not found"));
         // JSON is not initially saved, so create it by getting it.
         config.json = config.getJSON();
         return cb();
