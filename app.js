@@ -352,7 +352,6 @@ if (app.get("env") === "test") {
   /* jshint -W098 */
   app.use(function(err, req, res, next) {
     debug("app.use Error Handler for Debug");
-    console.dir(err);
     res.status(err.status || 500);
     logger.error("Error Message " + err.message);
     if (err.type && err.type === "API") return res.send(err.message+"\n"+JSON.stringify(err));

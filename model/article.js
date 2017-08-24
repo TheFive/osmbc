@@ -781,7 +781,6 @@ Article.prototype.addNotranslate = function addNotranslate(user, shownLang, call
       change["markdown" + lang] = "no translation";
     }
   }
-  console.log(user);
   return self.setAndSave(user, change, callback);
 };
 
