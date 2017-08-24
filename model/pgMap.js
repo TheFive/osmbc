@@ -146,43 +146,43 @@ module.exports.save = function(callback) {
         var startTime = new Date().getTime();
 
         pool.query("select (data->>'version')::int as version from " + table + " where id = $1",
-                  [self.id], function(err, result) {
-                    if (err) return cb(err);
-                    let row = null;
-                    if (result && result.rows) row = result.rows[0];
-                    if (row.version === null) {
+          [self.id], function(err, result) {
+            if (err) return cb(err);
+            let row = null;
+            if (result && result.rows) row = result.rows[0];
+            if (row.version === null) {
               // No Data in Database, so no conflict.
-                      versionsEqual = true;
-                    } else if (row.version === self.version) {
-                      debug("No Error");
-                      versionsEqual = true;
-                    }
-                    debug("end");
-                    err = null;
-                    var endTime = new Date().getTime();
-                    sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
-                    if (!versionsEqual) {
-                      debug("send error");
-                      err = new Error("Version Number Differs");
-                    }
-                    return cb(err);
-                  });
+              versionsEqual = true;
+            } else if (row.version === self.version) {
+              debug("No Error");
+              versionsEqual = true;
+            }
+            debug("end");
+            err = null;
+            var endTime = new Date().getTime();
+            sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
+            if (!versionsEqual) {
+              debug("send error");
+              err = new Error("Version Number Differs");
+            }
+            return cb(err);
+          });
       }
     ],
-      function finalFunction(err) {
-        debug("final Function save");
-        if (err) {
-          debug("Forward Error");
-          debug(err);
+    function finalFunction(err) {
+      debug("final Function save");
+      if (err) {
+        debug("Forward Error");
+        debug(err);
 
-          return callback(err);
-        }
-        self.version += 1;
-        pool.query("update " + table + " set data = $2 where id = $1", [self.id, self], function(err) {
-          if (typeof blog !== "undefined") self._blog = blog;
-          return callback(err, self);
-        });
+        return callback(err);
       }
+      self.version += 1;
+      pool.query("update " + table + " set data = $2 where id = $1", [self.id, self], function(err) {
+        if (typeof blog !== "undefined") self._blog = blog;
+        return callback(err, self);
+      });
+    }
     );
   }
 };

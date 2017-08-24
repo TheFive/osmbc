@@ -48,28 +48,28 @@ function renderConfigName(req, res, next) {
       });
     }
   ],
-    function finalRenderCB(err) {
-      debug("finalRenderCB");
-      if (err) return next(err);
-      should.exist(res.rendervar);
-      var jadeFile = "config";
-      if (name === "calendarflags") jadeFile = name;
-      if (name === "categorydescription") jadeFile = name;
-      if (name === "languageflags") jadeFile = "calendarflags";
-      if (name === "calendartranslation") jadeFile = name;
-      if (name === "editorstrings") jadeFile = name;
-      if (name === "categorytranslation") jadeFile = name;
-      if (name === "automatictranslatetext") jadeFile = name;
-      if (name === "slacknotification") jadeFile = name;
-      if (name === "votes") jadeFile = name;
-      if (name === "eventsfilter") jadeFile = name;
-      if (name === "ignoreforsearch") jadeFile = "config";
-      res.set("content-type", "text/html");
-      res.render("config/" + jadeFile, {config: config,
-        changes: changes,
-        params: params,
-        layout: res.rendervar.layout});
-    }
+  function finalRenderCB(err) {
+    debug("finalRenderCB");
+    if (err) return next(err);
+    should.exist(res.rendervar);
+    var jadeFile = "config";
+    if (name === "calendarflags") jadeFile = name;
+    if (name === "categorydescription") jadeFile = name;
+    if (name === "languageflags") jadeFile = "calendarflags";
+    if (name === "calendartranslation") jadeFile = name;
+    if (name === "editorstrings") jadeFile = name;
+    if (name === "categorytranslation") jadeFile = name;
+    if (name === "automatictranslatetext") jadeFile = name;
+    if (name === "slacknotification") jadeFile = name;
+    if (name === "votes") jadeFile = name;
+    if (name === "eventsfilter") jadeFile = name;
+    if (name === "ignoreforsearch") jadeFile = "config";
+    res.set("content-type", "text/html");
+    res.render("config/" + jadeFile, {config: config,
+      changes: changes,
+      params: params,
+      layout: res.rendervar.layout});
+  }
   );
 }
 

@@ -360,10 +360,10 @@ function initialise(callback) {
     initConfigElement.bind(null, "eventsfilter"),
     initConfigElement.bind(null, "ignoreforsearch")
   ],
-    function final(err) {
-      debug("finalFunction initialise");
-      return callback(err);
-    });
+  function final(err) {
+    debug("finalFunction initialise");
+    return callback(err);
+  });
 }
 
 

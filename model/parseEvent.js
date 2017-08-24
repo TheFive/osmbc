@@ -80,7 +80,7 @@ exports.nextDate = nextDate;
    Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event */
 
 function parseStartDate(string, year) {
- // debug('parseStartDate')
+  // debug('parseStartDate')
   let datestart = string;
   if (string.indexOf("|") >= 0) {
     datestart = datestart.substring(0, datestart.indexOf("|"));
@@ -94,7 +94,7 @@ function parseStartDate(string, year) {
    Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event,
    in the case of no enddate, the start date is returned */
 function parseEndDate(string, year) {
- // debug('parseEndDate')
+  // debug('parseEndDate')
   var datestart = string;
   var dateend;
 
@@ -113,7 +113,7 @@ function parseEndDate(string, year) {
    If no regex is matching, null is returned */
 
 function parseLine(string) {
- // debug('parseLine');
+  // debug('parseLine');
   for (var i = 0; i < regexList.length; i++) {
     var results = regexList[i].regex.exec(string);
     let year = null;

@@ -113,20 +113,20 @@ function renderUserId(req, res, next) {
       });
     }
   ],
-    function finalRenderCB(err) {
-      debug("finalRenderCB");
-      if (err) return next(err);
-      if (redirect) return;
-      should.exist(res.rendervar);
-      res.set("content-type", "text/html");
-      res.render("user", {usershown: user,
-        changes: changes,
-        params: params,
-        oldEditorDisabled: config.getValue("diableOldEditor"),
-        userHeatMapArray: userHeatMapArray,
-        langlist: config.getLanguages(),
-        layout: res.rendervar.layout});
-    }
+  function finalRenderCB(err) {
+    debug("finalRenderCB");
+    if (err) return next(err);
+    if (redirect) return;
+    should.exist(res.rendervar);
+    res.set("content-type", "text/html");
+    res.render("user", {usershown: user,
+      changes: changes,
+      params: params,
+      oldEditorDisabled: config.getValue("diableOldEditor"),
+      userHeatMapArray: userHeatMapArray,
+      langlist: config.getLanguages(),
+      layout: res.rendervar.layout});
+  }
   );
 }
 

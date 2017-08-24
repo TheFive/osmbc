@@ -2,7 +2,6 @@
 var checker = require('license-checker');
 var should = require('should');
 var path = require('path');
-var moment = require('moment');
 
 let licenses= {
   "string-hash@1.1.0": "CC0",
@@ -39,8 +38,8 @@ function buildLicenseObject(object,cb) {
         usedLicenses[l] = pl;
       }
     }
-    cb();
-  }
+    callback();
+  };
 }
 
 let allowedLicensesProd = ["MIT",

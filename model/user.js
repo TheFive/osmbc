@@ -184,11 +184,11 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   ], function finalFunction(err) {
     if (err) return callback(err);
     async.forEachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
-        // There is no Value for the key, so do nothing
+      // There is no Value for the key, so do nothing
       if (typeof (value) === "undefined") return cbEachOf();
 
-        // The Value to be set, is the same then in the object itself
-        // so do nothing
+      // The Value to be set, is the same then in the object itself
+      // so do nothing
       if (value === self[key]) return cbEachOf();
       if (JSON.stringify(value) === JSON.stringify(self[key])) return cbEachOf();
       if (typeof (self[key]) === "undefined" && value === "") return cbEachOf();
@@ -200,9 +200,9 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
 
       async.series([
         function(cb) {
-            // do not log validation key in logfile
+          // do not log validation key in logfile
           var toValue = value;
-            // Hide Validation Key not to show to all users
+          // Hide Validation Key not to show to all users
           if (key === "emailValidationKey") return cb();
 
           messageCenter.global.sendInfo({oid: self.id, user: user.OSMUser, table: "usert", property: key, from: self[key], to: toValue}, cb);
@@ -218,14 +218,14 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
       debug("setAndSaveFinalCB");
       if (err) return callback(err);
       self.save(function (err) {
-          // Inform Mail Receiver Module, that there could be a change
+        // Inform Mail Receiver Module, that there could be a change
         if (err) return callback(err);
-          // tell mail receiver to update the information about the users
+        // tell mail receiver to update the information about the users
         mailReceiver.updateUser(self);
         if (sendWelcomeEmail) {
           var m = new mailReceiver.MailReceiver(self);
-            // do not wait for mail to go out.
-            // mail is logged in outgoing mail list
+          // do not wait for mail to go out.
+          // mail is logged in outgoing mail list
           m.sendWelcomeMail(user.OSMUser, function () {});
         }
         return callback();

@@ -91,18 +91,18 @@ function renderCalendarAsMarkdown(req, res, next) {
       countries: countries,
       date: date,
       useGeoNames: useGeoNames}, function(err, result, errors) {
-    if (err) return next(err);
-    res.set("content-type", "text/html");
-    res.render("calendarAsMarkdown", {calendarAsMarkdown: result,
-      disablePrettify: disablePrettify,
-      useGeoNames: useGeoNames,
-      enableCountryFlags: enableCountryFlags,
-      date: date,
-      countries: countries,
-      duration: duration,
-      errors: errors,
-      layout: res.rendervar.layout});
-  });
+      if (err) return next(err);
+      res.set("content-type", "text/html");
+      res.render("calendarAsMarkdown", {calendarAsMarkdown: result,
+        disablePrettify: disablePrettify,
+        useGeoNames: useGeoNames,
+        enableCountryFlags: enableCountryFlags,
+        date: date,
+        countries: countries,
+        duration: duration,
+        errors: errors,
+        layout: res.rendervar.layout});
+    });
 }
 
 function eventDateFormat(e, lang) {

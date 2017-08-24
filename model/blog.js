@@ -131,34 +131,34 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
       function logInformation(cb) {
         debug("setReviewComment->logInformation");
         messageCenter.global.sendLanguageStatus(user, self, lang, data, cb);
-          // This is the old log and has to be moved to the messageCenter (logReceiver)
-          // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
+        // This is the old log and has to be moved to the messageCenter (logReceiver)
+        // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
       },
       function checkSpecialCommands(cb) {
         debug("setReviewComment->checkSpecialCommands");
         var date = new Date();
         if (data === "startreview") {
-            // Start Review, check wether review is done in WP or not
+          // Start Review, check wether review is done in WP or not
           if (self[rc].length === 0) {
             self[rc].push({user: user.OSMUser, text: data, timestamp: date});
           }
           if (config.getValue("ReviewInWP").indexOf(lang) >= 0) {
             self[exported] = true;
-              // Write Startreview to the review Array, do document Start in Blog
+            // Write Startreview to the review Array, do document Start in Blog
 
 
-              // Review is set on WP, so the blog can be marked as exoprted
+            // Review is set on WP, so the blog can be marked as exoprted
             messageCenter.global.sendLanguageStatus(user, self, lang, "markexported", cb);
-              // This is the old log, that has to be moved to the messageCenter
-              // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
+            // This is the old log, that has to be moved to the messageCenter
+            // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
             return;
           }
-            // nothing has to be written to the review comments
+          // nothing has to be written to the review comments
           return cb();
         }
         if (data === "markexported") {
           self[exported] = true;
-            // nothing has to be written to review Comment
+          // nothing has to be written to review Comment
           return cb();
         }
         for (let i = 0; i < self[rc].length; i++) {
@@ -256,10 +256,10 @@ Blog.prototype.closeBlog = function closeBlog(lang, user, status, callback) {
         callback();
       },
       function removeReview(callback) {
-          // Blog is reopened, so delete any review information
-          // e.g. that review is started.
-          // if there is some "substantial" review information (a review comment),
-          // keep it and do not delete anythingx
+        // Blog is reopened, so delete any review information
+        // e.g. that review is started.
+        // if there is some "substantial" review information (a review comment),
+        // keep it and do not delete anythingx
         if (status === false) {
           if (self["reviewComment" + lang] && self["reviewComment" + lang].length === 0) {
             delete self["reviewComment" + lang];
@@ -361,19 +361,19 @@ function createNewBlog(user, proto, callback, noArticle) {
         articleModule.createNewArticle({blog: blog.name, categoryEN: "Picture", title: blog.name + " Picture"}, cb);
       }
     ],
-      function finalFunction(err) {
+    function finalFunction(err) {
+      if (err) return callback(err);
+      blog.save(function feedback(err, savedblog) {
         if (err) return callback(err);
-        blog.save(function feedback(err, savedblog) {
-          if (err) return callback(err);
-          emptyBlog.id = savedblog.id;
-          messageCenter.global.updateBlog(user, emptyBlog, change, function(err) {
-            if (err) {
-              return callback(err);
-            }
-            return callback(null, savedblog);
-          });
+        emptyBlog.id = savedblog.id;
+        messageCenter.global.updateBlog(user, emptyBlog, change, function(err) {
+          if (err) {
+            return callback(err);
+          }
+          return callback(null, savedblog);
         });
-      }
+      });
+    }
     );
   });
 }

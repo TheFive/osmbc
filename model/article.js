@@ -299,17 +299,17 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
         // do not wait on email, so put empty callback handler
         messageCenter.global.updateArticle(user, oa, data, cb);
       },
-        function putValues (cb) {
-          for (k in data) {
+      function putValues (cb) {
+        for (k in data) {
           // do not overwrite any existing Prototype Function with a value.
-            if (Article.prototype.hasOwnProperty(k)) {
-              logger.info("WARNING: Do not store " + data[k] + " for property " + k + " for Article ID " + self.id);
-              continue;
-            }
-            if (typeof (data[k]) !== "undefined") self[k] = data[k];
+          if (Article.prototype.hasOwnProperty(k)) {
+            logger.info("WARNING: Do not store " + data[k] + " for property " + k + " for Article ID " + self.id);
+            continue;
           }
-          cb();
-        }],
+          if (typeof (data[k]) !== "undefined") self[k] = data[k];
+        }
+        cb();
+      }],
       function setAndSaveFinalCB(err) {
         if (err) return callback(err);
         self.save(function (err) {

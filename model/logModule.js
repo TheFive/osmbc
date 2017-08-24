@@ -67,7 +67,7 @@ module.exports.log = function log(object, callback) {
         return savecb(err);
       });
     }],
-    function(err) { callback(err); }
+  function(err) { callback(err); }
   );
 };
 
