@@ -34,25 +34,6 @@ describe("model/pgMap", function() {
     config.initialise(bddone);
   });
   describe("createTable", function() {
-    it("should return an error, if problems with Database", function(bddone) {
-      // local store connect String
-      var connectString = config.pgstring;
-      config.pgstring = "This wont work";
-      var pgObject = {};
-
-      pgObject.createString = "CREATE TABLE test (  id bigserial NOT NULL,  data json,  \
-                  CONSTRAINT test_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);";
-      pgObject.indexDefinition = {};
-      pgObject.viewDefinition = {};
-      pgObject.table = "test";
-
-      pgMap.createTables(pgObject, {createTables: true, dropTables: true}, function(err, result) {
-        should.not.exist(result);
-        should.exist(err);
-        config.pgstring = connectString;
-        bddone();
-      });
-    });
     it("should return an error, if problems with Create String", function(bddone) {
       var pgObject = {};
 
@@ -71,30 +52,6 @@ describe("model/pgMap", function() {
     });
   });
   describe("find functions", function() {
-    describe("findOne", function() {
-      it("should return an error, if problems with the database", function(bddone) {
-        var connectString = config.pgstring;
-        config.pgstring = "This wont work";
-        pgMap.findOne(testModule, function(err, result) {
-          should.not.exist(result);
-          should.exist(err);
-          config.pgstring = connectString;
-          bddone();
-        });
-      });
-    });
-    describe("findById", function() {
-      it("should return an error, if problems with the database", function(bddone) {
-        var connectString = config.pgstring;
-        config.pgstring = "This wont work";
-        pgMap.findById(testModule, 1, function(err, result) {
-          should.not.exist(result);
-          should.exist(err);
-          config.pgstring = connectString;
-          bddone();
-        });
-      });
-    });
     describe("find", function() {
       beforeEach(function(bddone) {
         async.series([
@@ -123,21 +80,14 @@ describe("model/pgMap", function() {
         bddone
         );
       });
-      it("should return an error, if problems with the database", function(bddone) {
-        var connectString = config.pgstring;
-        config.pgstring = "This wont work";
-        pgMap.find({table: "testtable"}, 1, function(err, result) {
-          should.not.exist(result);
-          should.exist(err);
-          config.pgstring = connectString;
-          bddone();
-        });
-      });
       it("should create a valid SQL for empty string queries", function(bddone) {
         pgMap.find(testModule, {name: ""}, function(err, result) {
           should.not.exist(err);
           should(result.length).equal(2);
+          should(result).eql([new TestTable( { id: '1', name: '', version: 1 }),new TestTable({ id: '2', nameEN: '', version: 1 })]);
           bddone();
+
+
         });
       });
       it("should find on element with !=", function(bddone) {
@@ -168,7 +118,8 @@ describe("model/pgMap", function() {
         pgMap.find(testModule, {name: "Hallo", value: "<=4"}, function(err, result) {
           should.not.exist(err);
           should(result.length).equal(2);
-          should(result).eql([{ id: "3", name: "Hallo", value: 3, version: 1 }, { id: "4", name: "Hallo", value: 4, version: 1 }]);
+          should(result).eql([new TestTable({ id: "3", name: "Hallo", value: 3, version: 1 }),
+                              new TestTable({ id: "4", name: "Hallo", value: 4, version: 1 })]);
           bddone();
         });
       });
@@ -176,7 +127,8 @@ describe("model/pgMap", function() {
         pgMap.find(testModule, {name: "Hallo", value: ">=3"}, function(err, result) {
           should.not.exist(err);
           should(result.length).equal(2);
-          should(result).eql([{ id: "3", name: "Hallo", value: 3, version: 1 }, { id: "4", name: "Hallo", value: 4, version: 1 }]);
+          should(result).eql([new TestTable({ id: "3", name: "Hallo", value: 3, version: 1 }),
+                              new TestTable({ id: "4", name: "Hallo", value: 4, version: 1 })]);
           bddone();
         });
       });
@@ -236,18 +188,6 @@ describe("model/pgMap", function() {
     });
   });
   describe("save", function() {
-    it("should return an error, if problems with the database (id=0)", function(bddone) {
-      var testObject = new TestTable({id: 0});
-      var connectString = config.pgstring;
-      config.pgstring = "This wont work";
-      testObject.save = pgMap.save;
-      testObject.save(function(err, result) {
-        should.not.exist(result);
-        should.exist(err);
-        config.pgstring = connectString;
-        bddone();
-      });
-    });
     it("should return an error, if problems with the database (id!=0)", function(bddone) {
       var testObject = new TestTable({id: 1});
       var connectString = config.pgstring;

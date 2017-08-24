@@ -24,7 +24,7 @@ describe("views/blog", function() {
   var data;
 
   describe("export", function() {
-    before(function(bddone) {
+    beforeEach(function(bddone) {
       var file =  path.resolve(__dirname, "data", "views.blog.export.1.json");
       data = JSON.parse(fs.readFileSync(file));
       baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
@@ -40,7 +40,7 @@ describe("views/blog", function() {
         configModule.initialise
       ], bddone);
     });
-    after(function(bddone) {
+    afterEach(function(bddone) {
       nock.cleanAll();
       testutil.stopServer(bddone);
     });

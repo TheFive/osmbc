@@ -54,9 +54,6 @@ describe("views/config", function() {
     ], function(err) {
       should.exist(err);
       browser.assert.status(500);
-      // should.not.exist(err);
-      // browser.assert.text('table#resulttable',"WhereWWhenCountryMunichOpenStreetMap Default Meeting2015-12-15Germany");
-      // console.log("HTML:"+browser.html());
 
       bddone();
     });

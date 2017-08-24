@@ -11,10 +11,10 @@ var configModule = require("../model/config.js");
 var async = require('async');
 
 function exportArticle(blog,callback) {
-  console.log("export article");
+  console.info("export article");
   articleModule.find({blog:blog},function(err,result){
-    if (err) return console.log(err);
-    if (!result) return console.log("Nothing found");
+    if (err) return console.error(err);
+    if (!result) return console.info("Nothing found");
     fs.writeFileSync("article.json","[");
     for (let i=0;i<result.length;i++) {
       let a=result[i];
@@ -29,10 +29,10 @@ function exportArticle(blog,callback) {
 }
 
 function exportBlog(blo,callback) {
-  console.log("export blog");
+  console.info("export blog");
   blogModule.find({name:blog},function(err,result){
-    if (err) return console.log(err);
-    if (!result) return console.log("Nothing found");
+    if (err) return console.error(err);
+    if (!result) return console.info("Nothing found");
     fs.writeFileSync("blog.json","[");
     for (let i=0;i<result.length;i++) {
       let a=result[i];
@@ -47,10 +47,10 @@ function exportBlog(blo,callback) {
 }
 
 function exportChange(blog,callback) {
-  console.log("export change");
+  console.info("export change");
   logModule.find({blog:blog},function(err,result){
-    if (err) return console.log(err);
-    if (!result) return console.log("Nothing found");
+    if (err) return console.error(err);
+    if (!result) return console.info("Nothing found");
     fs.writeFileSync("change.json","[");
     for (let i=0;i<result.length;i++) {
       let a=result[i];
@@ -75,4 +75,4 @@ async.series([
   exportArticle.bind(null,blog),
   exportBlog.bind(null,blog),
   exportChange.bind(null,blog)
-],function(err){console.log(err);console.log("Fertig");});
+],function(err){console.error(err);console.info("Fertig");});

@@ -49,8 +49,8 @@ async.series([
 
       
         },function (){
-          console.log();
-          console.log(count + " from "+length+ " Article changed");
+          console.info();
+          console.info(count + " from "+length+ " Article changed");
           done();
         });
       }
@@ -58,7 +58,7 @@ async.series([
   function users(done) {
     userModule.find({},function(err,result){
       if (err) {
-        console.log(err);
+        console.error(err);
         return;
       }
       if (result) {
@@ -77,15 +77,15 @@ async.series([
             item.save(cb);
           } else cb();
         },function (){
-          console.log();
-          console.log(count + " from "+length+ " Users changed");
+          console.info();
+          console.info(count + " from "+length+ " Users changed");
           done();});
       }
     });},
  function blog(done) {
     blogModule.find({},function(err,result){
       if (err) {
-        console.log(err);
+        console.error(err);
         return;
       }
       if (result) {
@@ -109,15 +109,15 @@ async.series([
             item.save(cb);
           } else cb();
         },function (){
-          console.log();
-          console.log(count + " from "+length+ " Blogs changed");
+          console.info();
+          console.info(count + " from "+length+ " Blogs changed");
           done();});
       }
     });},
    function changes(done) {
     logModule.find({},function(err,result){
       if (err) {
-        console.log(err);
+        console.error(err);
         return;
       }
       if (result) {
@@ -146,11 +146,11 @@ async.series([
             item.save(cb);
           } else cb();
         },function (){
-          console.log();
-          console.log(count + " from "+length+ " Changes changed");
+          console.info();
+          console.info(count + " from "+length+ " Changes changed");
           done();});
       }
     });},
   
 
-],function(err) {if (err) console.dir(err);console.log("READY.");});
+],function(err) {if (err) console.error(err);console.info("READY.");});

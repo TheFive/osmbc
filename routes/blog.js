@@ -49,7 +49,7 @@ function findBlogByRouteId(id, user, callback) {
     },
     function findByName(cb) {
       debug("findBlogByRouteId->findByName");
-    // Check and return blog by name
+      // Check and return blog by name
       if (blog) return cb();
       blogModule.find({name: id}, function(err, r) {
         if (err) return cb(err);
@@ -61,8 +61,8 @@ function findBlogByRouteId(id, user, callback) {
     },
     function countItems(cb) {
       debug("findBlogByRouteId->countItems");
-    // start calculation of derived fields for the current user.
-    // these fields are stored in an temporary _xxx field in the blog object
+      // start calculation of derived fields for the current user.
+      // these fields are stored in an temporary _xxx field in the blog object
       if (blog) return blog.calculateDerived(user, cb);
       return cb();
     }], function(err) {
@@ -124,17 +124,17 @@ function renderBlogStat(req, res, next) {
       callback();
     }
   ],
-    function (err) {
-      should.exist(res.rendervar);
-      if (err) return next(err);
-      res.set("content-type", "text/html");
-      res.rendervar.layout.title = blog.name + "/statistic";
-      res.render("blogstat", {layout: res.rendervar.layout,
-        logs: logs,
-        blog: blog,
-        editors: editors,
-        languages: config.getLanguages()});
-    }
+  function (err) {
+    should.exist(res.rendervar);
+    if (err) return next(err);
+    res.set("content-type", "text/html");
+    res.rendervar.layout.title = blog.name + "/statistic";
+    res.render("blogstat", {layout: res.rendervar.layout,
+      logs: logs,
+      blog: blog,
+      editors: editors,
+      languages: config.getLanguages()});
+  }
   );
 }
 
@@ -215,32 +215,32 @@ function renderBlogPreview(req, res, next) {
       });
     }
   },
-    function(err, result) {
-      debug("renderBlogPreview->final function");
-      if (err) return next(err);
-      if (req.query.download === "true") {
-        if (asMarkdown) {
-          res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".md");
-          res.setHeader("Content-type", "text");
+  function(err, result) {
+    debug("renderBlogPreview->final function");
+    if (err) return next(err);
+    if (req.query.download === "true") {
+      if (asMarkdown) {
+        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".md");
+        res.setHeader("Content-type", "text");
 
-          res.end(result.converter, "UTF8");
-        } else {
-          res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".html");
-          res.setHeader("Content-type", "text/html");
-          res.end(result.converter, "UTF8");
-        }
+        res.end(result.converter, "UTF8");
       } else {
-        should.exist(res.rendervar);
-        res.rendervar.layout.title = blog.name + "/preview";
-        res.render("blogpreview", {layout: res.rendervar.layout,
-          blog: blog,
-          asMarkdown: asMarkdown,
-          preview: result.converter,
-          lang: lang,
-          returnToUrl: returnToUrl,
-          categories: blog.getCategories()});
+        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".html");
+        res.setHeader("Content-type", "text/html");
+        res.end(result.converter, "UTF8");
       }
+    } else {
+      should.exist(res.rendervar);
+      res.rendervar.layout.title = blog.name + "/preview";
+      res.render("blogpreview", {layout: res.rendervar.layout,
+        blog: blog,
+        asMarkdown: asMarkdown,
+        preview: result.converter,
+        lang: lang,
+        returnToUrl: returnToUrl,
+        categories: blog.getCategories()});
     }
+  }
   );
 }
 
@@ -374,35 +374,35 @@ function renderBlogTab(req, res, next) {
 
 
   },
-    function(err, result) {
-      debug("renderBlogTab->final function");
-      if (err) return next(err);
-      should.exist(res.rendervar);
-      if (clearParams) {
-        var url = htmlroot + "/blog/" + blog.name;
-        var styleParam = "";
-        if (req.param.style) styleParam = "?style=" + styleParam;
-        res.redirect(url + styleParam);
-        return;
-      }
-
-      var renderer = new blogRenderer.HtmlRenderer(blog);
-      res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
-      res.render("blog_" + tab.toLowerCase(), {layout: res.rendervar.layout,
-        blog: blog,
-        articles: result.dataCollect.articles,
-        futureArticles: result.dataCollect.futureArticles,
-        teamString: result.teamString,
-        userMap: result.userMap,
-        lang: lang,
-        tab: tab,
-        votes: votes,
-        left_lang: req.user.getMainLang(),
-        right_lang: req.user.getSecondLang(),
-        renderer: renderer,
-        categories: blog.getCategories()});
+  function(err, result) {
+    debug("renderBlogTab->final function");
+    if (err) return next(err);
+    should.exist(res.rendervar);
+    if (clearParams) {
+      var url = htmlroot + "/blog/" + blog.name;
+      var styleParam = "";
+      if (req.param.style) styleParam = "?style=" + styleParam;
+      res.redirect(url + styleParam);
+      return;
     }
-    );
+
+    var renderer = new blogRenderer.HtmlRenderer(blog);
+    res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
+    res.render("blog_" + tab.toLowerCase(), {layout: res.rendervar.layout,
+      blog: blog,
+      articles: result.dataCollect.articles,
+      futureArticles: result.dataCollect.futureArticles,
+      teamString: result.teamString,
+      userMap: result.userMap,
+      lang: lang,
+      tab: tab,
+      votes: votes,
+      left_lang: req.user.getMainLang(),
+      right_lang: req.user.getSecondLang(),
+      renderer: renderer,
+      categories: blog.getCategories()});
+  }
+  );
 }
 
 function createBlog(req, res, next) {

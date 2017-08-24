@@ -1,6 +1,5 @@
 "use strict";
 
-var pg     = require("pg");
 var should = require("should");
 var async  = require("async");
 var path   = require("path");
@@ -18,6 +17,7 @@ var config = require("../config.js");
 var app = require("../app.js");
 
 var pgMap = require("../model/pgMap.js");
+var pool  = require("../model/db.js");
 var blogModule    = require("../model/blog.js");
 var articleModule = require("../model/article.js");
 var logModule     = require("../model/logModule.js");
@@ -39,18 +39,13 @@ should.config.checkProtoEql = false;
 // will throw an error
 exports.getJsonWithId = function getJsonWithId(table, id, cb) {
   debug("getJsonWithId");
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-    should.not.exist(err);
-    var query = client.query("select data from " + table + " where id = $1", [id]);
-    var result;
-    query.on("row", function(row) {
-      result = row.data;
-    });
-    query.on("end", function() {
-      pgdone();
-      cb(null, result);
-      return;
-    });
+  let result = null;
+  pool.query("select data from " + table + " where id = $1", [id],function(err,pgResult){
+    if (err) return cb(err);
+    if (pgResult.rows.length==1) {
+      result = pgResult.rows[0].data;
+    }
+    return cb(null,result);
   });
 };
 
@@ -292,10 +287,10 @@ exports.equalHtml = function equalHtml(actualHTML, expectedHTML) {
     // green for additions, red for deletions
     // grey for common parts
     if (part.added) {
-      console.log(colors.green(part.value));
+      console.info(colors.green(part.value));
     } else if (part.removed) {
-      console.log(colors.red(part.value));
-    } else console.log(colors.grey(part.value));
+      console.info(colors.red(part.value));
+    } else console.info(colors.grey(part.value));
   });
   return false;
 };
@@ -399,7 +394,7 @@ Browser.Assert.prototype.expectHtml = function expectHtml(name, cb) {
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
   if (string === expected) {
     // everything is fine, delete any existing actual file

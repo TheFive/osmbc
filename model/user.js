@@ -1,6 +1,7 @@
 "use strict";
 
 var pgMap = require("./pgMap.js");
+var util = require("../util.js");
 var debug = require("debug")("OSMBC:model:user");
 var should = require("should");
 var async = require("async");
@@ -135,9 +136,7 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
 
 User.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
-  should(typeof (user)).equal("string");
-  should(typeof (data)).equal("object");
-  should(typeof (callback)).equal("function");
+  util.requireTypes([user, data, callback], ["object", "object", "function"]);
   var self = this;
   delete self.lock;
   var sendWelcomeEmail = false;
@@ -146,7 +145,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
 
   // check and react on Mail Change
   if (data.email && data.email.trim() !== "" && data.email !== self.email) {
-    if (self.OSMUser !== user && self.hasLoggedIn()) return callback(new Error("EMail address can only be changed by the user himself, after he has logged in."));
+    if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) return callback(new Error("EMail address can only be changed by the user himself, after he has logged in."));
     if (data.email !== "resend") {
       if (!emailValidator.validate(data.email)) {
         var error = new Error("Invalid Email Address: " + data.email);
@@ -185,11 +184,11 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   ], function finalFunction(err) {
     if (err) return callback(err);
     async.forEachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
-        // There is no Value for the key, so do nothing
+      // There is no Value for the key, so do nothing
       if (typeof (value) === "undefined") return cbEachOf();
 
-        // The Value to be set, is the same then in the object itself
-        // so do nothing
+      // The Value to be set, is the same then in the object itself
+      // so do nothing
       if (value === self[key]) return cbEachOf();
       if (JSON.stringify(value) === JSON.stringify(self[key])) return cbEachOf();
       if (typeof (self[key]) === "undefined" && value === "") return cbEachOf();
@@ -201,12 +200,12 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
 
       async.series([
         function(cb) {
-            // do not log validation key in logfile
+          // do not log validation key in logfile
           var toValue = value;
-            // Hide Validation Key not to show to all users
+          // Hide Validation Key not to show to all users
           if (key === "emailValidationKey") return cb();
 
-          messageCenter.global.sendInfo({oid: self.id, user: user, table: "usert", property: key, from: self[key], to: toValue}, cb);
+          messageCenter.global.sendInfo({oid: self.id, user: user.OSMUser, table: "usert", property: key, from: self[key], to: toValue}, cb);
         },
         function(cb) {
           self[key] = value;
@@ -219,15 +218,15 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
       debug("setAndSaveFinalCB");
       if (err) return callback(err);
       self.save(function (err) {
-          // Inform Mail Receiver Module, that there could be a change
+        // Inform Mail Receiver Module, that there could be a change
         if (err) return callback(err);
-          // tell mail receiver to update the information about the users
+        // tell mail receiver to update the information about the users
         mailReceiver.updateUser(self);
         if (sendWelcomeEmail) {
           var m = new mailReceiver.MailReceiver(self);
-            // do not wait for mail to go out.
-            // mail is logged in outgoing mail list
-          m.sendWelcomeMail(user, function () {});
+          // do not wait for mail to go out.
+          // mail is logged in outgoing mail list
+          m.sendWelcomeMail(user.OSMUser, function () {});
         }
         return callback();
       });
@@ -296,7 +295,7 @@ User.prototype.getOption = function getOption(view, option) {
 
 User.prototype.createApiKey = function createApiKey(callback) {
   debug("createApiKey");
-  let apiKey = random.generate({length:10});
+  let apiKey = random.generate({length: 10});
   this.apiKey = apiKey;
   this.save(callback);
 };

@@ -174,7 +174,6 @@ describe("views/article_new", function() {
       bddone();
     });
     it("should show multiple links from collection", function(bddone) {
-      console.log(browser.evaluate("$('#linkArea').html()"));
 
       checkLink("http://www.test.dä/holla","DE");
       checkLink("http://www.test.dä/holla","EN");
@@ -207,7 +206,7 @@ describe("views/article_new", function() {
               should.not.exist(err);
               should(article.markdownDE).eql("Text");
               should(article.markdownEN).eql("no translation");
-              should(article.markdownES).eql("no translation");
+              should(article.markdownES).eql("");
               bddone();
             });
           });

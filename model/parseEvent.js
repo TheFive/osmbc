@@ -10,7 +10,7 @@ var configModule = require("../model/config.js");
 var async = require("async");
 var https = require("https");
 
-let osmbcDateFormat = config.getValue("CalendarDateFormat",{mustExist:true});
+let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
 
 
 // This page is delivering the calendar events
@@ -18,13 +18,13 @@ var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&title
 
 
 var regexList = [ {regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *\[\[(.*)\]\] *, *\[\[(.*)\]\] *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
-  keys: ["type", "year" , "date", "desc", "town", "country", "countryflag"],
+  keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],
   convert: ["%s", "%s", "%s", "%s", "[[%s]]", "[[%s]]", "%s"]},
 {regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *(.*) *, *\[\[(.*)\]\] *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
   keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],
   convert: ["%s", "%s", "%s", "%s", "%s", "[[%s]]", "%s"]},
 {regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *(.*) *, *(.*) *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
-  keys: ["type", "year" , "date", "desc", "town", "country", "countryflag"],
+  keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],
   convert: ["%s", "%s", "%s", "%s", "%s", "%s", "%s"]}
 //  {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\} *\{\{SmallFlag\|(.*)\}\}/gi,
 //  keys:[               "type",                "date",              "desc",       "country","wappenflag","countryflag"]},
@@ -79,8 +79,8 @@ exports.nextDate = nextDate;
 /* This function returns the start date of an event, based on a string like
    Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event */
 
-function parseStartDate(string,year) {
- // debug('parseStartDate')
+function parseStartDate(string, year) {
+  // debug('parseStartDate')
   let datestart = string;
   if (string.indexOf("|") >= 0) {
     datestart = datestart.substring(0, datestart.indexOf("|"));
@@ -94,7 +94,7 @@ function parseStartDate(string,year) {
    Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event,
    in the case of no enddate, the start date is returned */
 function parseEndDate(string, year) {
- // debug('parseEndDate')
+  // debug('parseEndDate')
   var datestart = string;
   var dateend;
 
@@ -113,7 +113,7 @@ function parseEndDate(string, year) {
    If no regex is matching, null is returned */
 
 function parseLine(string) {
- // debug('parseLine');
+  // debug('parseLine');
   for (var i = 0; i < regexList.length; i++) {
     var results = regexList[i].regex.exec(string);
     let year = null;

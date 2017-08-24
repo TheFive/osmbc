@@ -67,7 +67,7 @@ function renderLongRunningQueries(req, res) {
 function languageSwitcher(req, res, next) {
   debug("languageSwitcher");
 
-  var lang= [req.user.getMainLang(),req.user.getSecondLang(),req.user.getLang3(),req.user.getLang4()];
+  var lang = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()];
 
   if (req.query.lang) lang[0] = req.query.lang;
   if (req.query.lang2) lang[1] = req.query.lang2;
@@ -75,10 +75,10 @@ function languageSwitcher(req, res, next) {
   if (req.query.lang4) lang[3] = req.query.lang4;
 
 
-  for (let v=0;v<lang.length-1;v++) {
-    for (let i=v+1;i<lang.length;i++) {
-      while (i < lang.length && lang[v]===lang[i]) {
-        lang.splice(i,1);
+  for (let v = 0; v < lang.length - 1; v++) {
+    for (let i = v + 1; i < lang.length; i++) {
+      while (i < lang.length && lang[v] === lang[i]) {
+        lang.splice(i, 1);
       }
     }
   }
@@ -89,24 +89,22 @@ function languageSwitcher(req, res, next) {
   if (config.getLanguages().indexOf(lang[0]) >= 0) {
     req.user.mainLang = lang[0];
   }
-  if (lang.length>=2 && config.getLanguages().indexOf(lang[1]) >= 0) {
+  if (lang.length >= 2 && config.getLanguages().indexOf(lang[1]) >= 0) {
     req.user.secondLang = lang[1];
   } else {
     req.user.secondLang = null;
     req.user.lang3 = null;
     req.user.lang4 = null;
   }
-  if (lang.length>=3 && config.getLanguages().indexOf(lang[2]) >= 0) {
+  if (lang.length >= 3 && config.getLanguages().indexOf(lang[2]) >= 0) {
     req.user.lang3 = lang[2];
-  }
-  else {
+  } else {
     req.user.lang3 = null;
     req.user.lang4 = null;
   }
-  if (lang.length>=4 && config.getLanguages().indexOf(lang[3]) >= 0) {
+  if (lang.length >= 4 && config.getLanguages().indexOf(lang[3]) >= 0) {
     req.user.lang4 = lang[3];
-  }
-  else {
+  } else {
     req.user.lang4 = null;
   }
 

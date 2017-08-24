@@ -27,15 +27,15 @@ var htmltitle     = require("../model/htmltitle.js");
 require("jstransformer")(require("jstransformer-markdown-it"));
 
 
-var MsTranslator = require('mstranslator');
+var MsTranslator = require("mstranslator");
 var msTransClient = new MsTranslator({
-  api_key: config.getValue("MS_TranslateApiKey",{mustExist:true})
+  api_key: config.getValue("MS_TranslateApiKey", {mustExist: true})
 }, true);
 
 
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
-let oldEditorDisabled = config.getValue("diableOldEditor",{mustExist:true});
+let oldEditorDisabled = config.getValue("diableOldEditor", {mustExist: true});
 
 // This Function converts the ID (used as :article_id in the routes) to
 // an article and stores the object in the request
@@ -64,7 +64,7 @@ function renderArticleId(req, res, next) {
   var languageFlags = configModule.getConfig("languageflags");
   var votes = configModule.getConfig("votes");
 
- /* votes.forEach(function(item){
+  /* votes.forEach(function(item){
     if (item.icon && item.icon.substring(0,3)==="fa-") item.iconClass = "fa "+item.icon;
     if (item.icon && item.icon.substring(0,10)==="glyphicon-") item.iconClass = "glyphicon "+item.icon;
   }); */
@@ -91,7 +91,7 @@ function renderArticleId(req, res, next) {
   var placeholder = configModule.getPlaceholder();
   async.auto({
     // Find usage of Links in other articles
-    articleReferences: article.calculateUsedLinks.bind(article,{ignoreStandard:true}),
+    articleReferences: article.calculateUsedLinks.bind(article, {ignoreStandard: true}),
     // Find the associated blog for this article
     blog:
     function findBlog(callback) {
@@ -151,37 +151,37 @@ function renderArticleId(req, res, next) {
             });
           } else return callback();
         }},
-      function (err, result) {
-        debug("renderArticleId->finalFunction");
-        if (err) return next(err);
-        if (result.notranslate) return res.redirect(result.notranslate);
-        let renderer = new BlogRenderer.HtmlRenderer();
+  function (err, result) {
+    debug("renderArticleId->finalFunction");
+    if (err) return next(err);
+    if (result.notranslate) return res.redirect(result.notranslate);
+    let renderer = new BlogRenderer.HtmlRenderer();
 
 
 
-        var languages = config.getLanguages();
-        for (var i = 0; i < languages.length; i++) {
-          var lang = languages[i];
-          if (typeof (article["markdown" + lang]) !== "undefined") {
-            article["textHtml" + lang] = "<ul>" + renderer.renderArticle(lang, article) + "</ul>";
-          }
-        }
-        if (typeof (article.comment) !== "undefined") {
-          article.commentHtml = markdown.render(article.comment);
-        }
+    var languages = config.getLanguages();
+    for (var i = 0; i < languages.length; i++) {
+      var lang = languages[i];
+      if (typeof (article["markdown" + lang]) !== "undefined") {
+        article["textHtml" + lang] = "<ul>" + renderer.renderArticle(lang, article) + "</ul>";
+      }
+    }
+    if (typeof (article.comment) !== "undefined") {
+      article.commentHtml = markdown.render(article.comment);
+    }
 
-        //
-        if (req.query.edit && !params.edit) {
-          debug("return to was called, redirecting");
-          var returnToUrl = htmlroot + "/article/" + article.id;
-          // if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
-          res.redirect(returnToUrl);
-        } else {
-          debug("rendering page");
-          // Render the article with all calculated vars
-          // (res.rendervar.layout is set by the express routing
-          // mechanism before this router)
-        /*  var file = path.resolve(__dirname,'..','views', "article.jade");
+    //
+    if (req.query.edit && !params.edit) {
+      debug("return to was called, redirecting");
+      var returnToUrl = htmlroot + "/article/" + article.id;
+      // if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
+      res.redirect(returnToUrl);
+    } else {
+      debug("rendering page");
+      // Render the article with all calculated vars
+      // (res.rendervar.layout is set by the express routing
+      // mechanism before this router)
+      /*  var file = path.resolve(__dirname,'..','views', "article.jade");
 
           var result = jade.renderFile(file,{layout:res.rendervar.layout,
                                 article:article,
@@ -194,51 +194,51 @@ function renderArticleId(req, res, next) {
                                 categories:categories});
 
           res.end(result);return; */
-          res.set("content-type", "text/html");
-          // change title of page
-          res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
-          let jadeFile = "article";
-          let newEditor = true;
+      res.set("content-type", "text/html");
+      // change title of page
+      res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
+      let jadeFile = "article";
+      let newEditor = true;
 
-          if (!oldEditorDisabled) newEditor = req.user.articleEditor === "new";
-          if (newEditor) {
-            jadeFile = "article/article_twocolumn";
-            if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";
-          }
-          if (newEditor && req.user.languageCount === "three") {
-            jadeFile = "article/article_threecolumn";
-            if (req.user.getLang3()==="--" ) jadeFile = "article/article_twocolumn";
-            if (req.user.getSecondLang()==="--" ) jadeFile = "article/article_onecolumn";
-
-            params.columns=3;
-          }
-          if (newEditor && req.user.languageCount === "four") {
-            jadeFile = "article/article_fourcolumn";
-            if (req.user.getLang4()===null ) jadeFile = "article/article_threecolumn";
-            if (req.user.getLang3()===null ) jadeFile = "article/article_twocolumn";
-            if (req.user.getSecondLang()===null ) jadeFile = "article/article_onecolumn";
-            params.columns=4;
-          }
-
-
-          res.render(jadeFile, {layout: res.rendervar.layout,
-            article: article,
-            googleTranslateText: configModule.getConfig("automatictranslatetext"),
-            params: params,
-            placeholder: placeholder,
-            votes: votes,
-            articleCategories: result.articleForSort,
-            blog: result.blog,
-            changes: result.changes,
-            originArticle: result.originArticle,
-            originBlog: result.originBlog,
-            articleReferences: result.articleReferences,
-            usedLinks: result.usedLinks,
-            categories: categories,
-            languageFlags: languageFlags});
-        }
+      if (!oldEditorDisabled) newEditor = req.user.articleEditor === "new";
+      if (newEditor) {
+        jadeFile = "article/article_twocolumn";
+        if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
       }
-    );
+      if (newEditor && req.user.languageCount === "three") {
+        jadeFile = "article/article_threecolumn";
+        if (req.user.getLang3() === "--") jadeFile = "article/article_twocolumn";
+        if (req.user.getSecondLang() === "--") jadeFile = "article/article_onecolumn";
+
+        params.columns = 3;
+      }
+      if (newEditor && req.user.languageCount === "four") {
+        jadeFile = "article/article_fourcolumn";
+        if (req.user.getLang4() === null) jadeFile = "article/article_threecolumn";
+        if (req.user.getLang3() === null) jadeFile = "article/article_twocolumn";
+        if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
+        params.columns = 4;
+      }
+
+
+      res.render(jadeFile, {layout: res.rendervar.layout,
+        article: article,
+        googleTranslateText: configModule.getConfig("automatictranslatetext"),
+        params: params,
+        placeholder: placeholder,
+        votes: votes,
+        articleCategories: result.articleForSort,
+        blog: result.blog,
+        changes: result.changes,
+        originArticle: result.originArticle,
+        originBlog: result.originBlog,
+        articleReferences: result.articleReferences,
+        usedLinks: result.usedLinks,
+        categories: categories,
+        languageFlags: languageFlags});
+    }
+  }
+  );
 }
 
 
@@ -449,33 +449,33 @@ function postArticle(req, res, next) {
       });
     }
   ],
-    function setValues(err) {
-      debug("postArticle->setValues");
-      if (err) { return next(err); }
-      should.exist(article);
-      if (noTranslation === "true") {
-        let showLangs = JSON.parse(req.body.languages);
-        var languages = config.getLanguages();
-        for (var i = 0; i < languages.length; i++) {
-          var lang = languages[i];
-          if (showLangs[lang]) {
-            if (changes["markdown" + lang]) continue;
-            if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
-            if (lang === req.user.mainLang) continue;
-            changes["markdown" + lang] = "no translation";
-          }
+  function setValues(err) {
+    debug("postArticle->setValues");
+    if (err) { return next(err); }
+    should.exist(article);
+    if (noTranslation === "true") {
+      let showLangs = JSON.parse(req.body.languages);
+      var languages = config.getLanguages();
+      for (var i = 0; i < languages.length; i++) {
+        var lang = languages[i];
+        if (showLangs[lang]) {
+          if (changes["markdown" + lang]) continue;
+          if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
+          if (lang === req.user.mainLang) continue;
+          changes["markdown" + lang] = "no translation";
         }
       }
-
-      article.setAndSave(req.user, changes, function(err) {
-        debug("postArticle->setValues->setAndSave");
-        if (err) {
-          next(err);
-          return;
-        }
-        res.redirect(returnToUrl);
-      });
     }
+
+    article.setAndSave(req.user, changes, function(err) {
+      debug("postArticle->setValues->setAndSave");
+      if (err) {
+        next(err);
+        return;
+      }
+      res.redirect(returnToUrl);
+    });
+  }
   );
 }
 
@@ -533,33 +533,33 @@ function postArticleWithOldValues(req, res, next) {
       });
     }
   ],
-    function setValues(err) {
-      debug("postArticle->setValues");
-      if (err) { return next(err); }
-      should.exist(article);
-      if (noTranslation === "true") {
-        let showLangs = JSON.parse(req.body.languages);
-        var languages = config.getLanguages();
-        for (var i = 0; i < languages.length; i++) {
-          var lang = languages[i];
-          if (showLangs[lang]) {
-            if (changes["markdown" + lang]) continue;
-            if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
-            if (lang === req.user.mainLang) continue;
-            changes["markdown" + lang] = "no translation";
-          }
+  function setValues(err) {
+    debug("postArticle->setValues");
+    if (err) { return next(err); }
+    should.exist(article);
+    if (noTranslation === "true") {
+      let showLangs = JSON.parse(req.body.languages);
+      var languages = config.getLanguages();
+      for (var i = 0; i < languages.length; i++) {
+        var lang = languages[i];
+        if (showLangs[lang]) {
+          if (changes["markdown" + lang]) continue;
+          if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
+          if (lang === req.user.mainLang) continue;
+          changes["markdown" + lang] = "no translation";
         }
       }
-
-      article.setAndSave(req.user, changes, function(err) {
-        debug("postArticle->setValues->setAndSave");
-        if (err) {
-          next(err);
-          return;
-        }
-        res.redirect(returnToUrl);
-      });
     }
+
+    article.setAndSave(req.user, changes, function(err) {
+      debug("postArticle->setValues->setAndSave");
+      if (err) {
+        next(err);
+        return;
+      }
+      res.redirect(returnToUrl);
+    });
+  }
   );
 }
 
@@ -706,10 +706,7 @@ function doAction(req, res, next) {
       next(err);
       return;
     }
-    let returnToUrl  = htmlroot + "/article/" + article.id;
-    if (req.header("Referer")) returnToUrl = req.header("Referer");
     res.end("OK");
-    // res.redirect(returnToUrl);
   });
 }
 
@@ -732,29 +729,29 @@ function createArticle(req, res, next) {
       // Blog Name is defined, so nothing to calculate
       if (proto.blog) return callback();
       blogModule.findOne({status: "open"}, {column: "name", desc: false},
-                         function calculateWNResult(err, blog) {
-                           if (err) return callback(err);
-                           debug("createArticle->calculateWNResult");
-                           if (blog) {
-                             if (typeof (proto.blog) === "undefined") {
-                               proto.blog = blog.name;
-                             }
-                           }
-                           callback();
-                         });
+        function calculateWNResult(err, blog) {
+          if (err) return callback(err);
+          debug("createArticle->calculateWNResult");
+          if (blog) {
+            if (typeof (proto.blog) === "undefined") {
+              proto.blog = blog.name;
+            }
+          }
+          callback();
+        });
     }
   ],
-    function finalFunction(err) {
-      debug("createArticle->finalFunction");
-      if (err) return next(err);
-      should.exist(res.rendervar);
-      res.set("content-type", "text/html");
-      res.render("collect", {layout: res.rendervar.layout,
-        search: "",
-        placeholder: placeholder,
-        showCollect: true,
-        categories: blogModule.getCategories()});
-    }
+  function finalFunction(err) {
+    debug("createArticle->finalFunction");
+    if (err) return next(err);
+    should.exist(res.rendervar);
+    res.set("content-type", "text/html");
+    res.render("collect", {layout: res.rendervar.layout,
+      search: "",
+      placeholder: placeholder,
+      showCollect: true,
+      categories: blogModule.getCategories()});
+  }
   );
 }
 
@@ -782,20 +779,20 @@ function searchArticles(req, res, next) {
       } else return cb();
     }
   ],
-    function finalFunction(err) {
-      debug("search->finalFunction");
-      if (err) return next(err);
-      should.exist(res.rendervar);
-      let renderer = new BlogRenderer.HtmlRenderer(null);
-      res.render("collect", {layout: res.rendervar.layout,
-        search: search,
-        show: show,
-        foundArticles: result,
-        renderer: renderer,
-        placeholder: {categories: {}},
-        showCollect: false,
-        categories: blogModule.getCategories()});
-    }
+  function finalFunction(err) {
+    debug("search->finalFunction");
+    if (err) return next(err);
+    should.exist(res.rendervar);
+    let renderer = new BlogRenderer.HtmlRenderer(null);
+    res.render("collect", {layout: res.rendervar.layout,
+      search: search,
+      show: show,
+      foundArticles: result,
+      renderer: renderer,
+      placeholder: {categories: {}},
+      showCollect: false,
+      categories: blogModule.getCategories()});
+  }
   );
 }
 
@@ -925,7 +922,7 @@ function translateGOOGLEOLD(req, res, next) {
   gglTranslateAPI(text, {from: fromLang, to: toLang}).then(function (result) {
     res.end(result.text);
   }).catch(function(err) { next(err); });
-}*/
+} */
 
 function translate(req, res, next) {
   debug("translate");
@@ -946,7 +943,7 @@ function translate(req, res, next) {
     to: toLang
   };
 
-  msTransClient.translate(params, function (err,result) {
+  msTransClient.translate(params, function (err, result) {
     if (err) return next(err);
     res.end(result);
   });

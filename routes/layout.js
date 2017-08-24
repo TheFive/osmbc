@@ -18,7 +18,7 @@ var htmlRoot = config.getValue("htmlroot", {mustExist: true});
 var bootstrap = config.getValue("bootstrap", {mustExist: true});
 var appName = config.getValue("AppName", {mustExist: true});
 
-let url=config.getValue("url");
+let url = config.getValue("url");
 
 function calculateUnreadMessages(list, user) {
   var result = 0;
@@ -158,57 +158,57 @@ function prepareRenderLayout(req, res, next) {
       }]
   },
 
-    function (err, result) {
-      if (err) {
-        debug(JSON.stringify(err));
-        return next(err);
-      }
-      let activeLanguages = [];
-      languages.forEach(function(item) {
-        if (usedLanguages[item]) activeLanguages.push(item);
-      });
-      if (!result.editBlog) result.editBlog = [];
-      if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
-      if (!result.listOfEditBlog) result.listOfEditBlog = [];
-      if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
-      if (!result.listOfOrphanBlog) result.listOfOrphanBlog = [];
-
-      if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
-      res.rendervar.layout = {user: req.user,
-        listOfOrphanBlog: result.listOfOrphanBlog,
-        htmlroot: htmlRoot,
-        url:url,
-        languages: languages,
-        markdown: markdown,
-        path: path,
-        userMentions: userMentions,
-        mainLangMentions: mainLangMentions,
-        secondLangMentions: secondLangMentions,
-        language: req.user.getMainLang(),
-        language2: req.user.getSecondLang(),
-        language3: req.user.getLang3(),
-        language4: req.user.getLang4(),
-        listOfOpenBlog: result.listOfOpenBlog,
-        listOfEditBlog: result.listOfEditBlog,
-        listOfReviewBlog: result.listOfReviewBlog,
-        editBlog: result.editBlog,
-        tbc: result.tbc,
-        moment: moment,
-        util: util,
-        usedLanguages: usedLanguages,
-        activeLanguages: activeLanguages,
-        appName: appName,
-        bootstrap: bootstrap,
-        osmbc_version: version.osmbc_version,
-        style: style,
-        title: appName,
-        user_locale: config.moment_locale((req.user.language) ? req.user.language : req.user.getMainLang()),
-        language_locale: config.moment_locale(req.user.getMainLang()),
-        language2_locale: config.moment_locale(req.user.getSecondLang()),
-        md_render: util.md_render
-      };
-      next();
+  function (err, result) {
+    if (err) {
+      debug(JSON.stringify(err));
+      return next(err);
     }
+    let activeLanguages = [];
+    languages.forEach(function(item) {
+      if (usedLanguages[item]) activeLanguages.push(item);
+    });
+    if (!result.editBlog) result.editBlog = [];
+    if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
+    if (!result.listOfEditBlog) result.listOfEditBlog = [];
+    if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
+    if (!result.listOfOrphanBlog) result.listOfOrphanBlog = [];
+
+    if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
+    res.rendervar.layout = {user: req.user,
+      listOfOrphanBlog: result.listOfOrphanBlog,
+      htmlroot: htmlRoot,
+      url: url,
+      languages: languages,
+      markdown: markdown,
+      path: path,
+      userMentions: userMentions,
+      mainLangMentions: mainLangMentions,
+      secondLangMentions: secondLangMentions,
+      language: req.user.getMainLang(),
+      language2: req.user.getSecondLang(),
+      language3: req.user.getLang3(),
+      language4: req.user.getLang4(),
+      listOfOpenBlog: result.listOfOpenBlog,
+      listOfEditBlog: result.listOfEditBlog,
+      listOfReviewBlog: result.listOfReviewBlog,
+      editBlog: result.editBlog,
+      tbc: result.tbc,
+      moment: moment,
+      util: util,
+      usedLanguages: usedLanguages,
+      activeLanguages: activeLanguages,
+      appName: appName,
+      bootstrap: bootstrap,
+      osmbc_version: version.osmbc_version,
+      style: style,
+      title: appName,
+      user_locale: config.moment_locale((req.user.language) ? req.user.language : req.user.getMainLang()),
+      language_locale: config.moment_locale(req.user.getMainLang()),
+      language2_locale: config.moment_locale(req.user.getSecondLang()),
+      md_render: util.md_render
+    };
+    next();
+  }
   );
 }
 
