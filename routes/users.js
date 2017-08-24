@@ -204,7 +204,7 @@ function postUserId(req, res, next) {
         return cb();
       });
     }, function saveUser(cb) {
-      user.setAndSave(req.user.displayName, changes, function(err) {
+      user.setAndSave(req.user, changes, function(err) {
         debug("setAndSaveCB");
         cb(err);
       });

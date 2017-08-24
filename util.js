@@ -1,6 +1,8 @@
 "use strict";
 
 var debug = require("debug")("OSMBC:util");
+var should = require('should');
+
 var markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
   .use(require("markdown-it-imsize"), { autofill: true });
@@ -82,12 +84,19 @@ function getAllURL(t) {
   if (r === null) return [];
   return r;
 }
+
+function requireTypes(vars,types) {
+  for (let i = 0;i<vars.length;i++) {
+    should(typeof vars[i]).eql(types[i]);
+  }
+}
 // shorten shorten a string up to maxlength
 // default is 30. If a string is shortenend, "..." is appendet
 exports.shorten = shorten;
 exports.isURL = isURL;
 exports.toPGString = toPGString;
 exports.getAllURL = getAllURL;
+exports.requireTypes = requireTypes;
 exports.linkify = linkify;
 exports.isTrue = isTrue;
 

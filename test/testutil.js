@@ -287,10 +287,10 @@ exports.equalHtml = function equalHtml(actualHTML, expectedHTML) {
     // green for additions, red for deletions
     // grey for common parts
     if (part.added) {
-      console.log(colors.green(part.value));
+      console.info(colors.green(part.value));
     } else if (part.removed) {
-      console.log(colors.red(part.value));
-    } else console.log(colors.grey(part.value));
+      console.info(colors.red(part.value));
+    } else console.info(colors.grey(part.value));
   });
   return false;
 };
@@ -394,7 +394,7 @@ Browser.Assert.prototype.expectHtml = function expectHtml(name, cb) {
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
   if (string === expected) {
     // everything is fine, delete any existing actual file

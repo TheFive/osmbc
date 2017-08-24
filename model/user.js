@@ -1,6 +1,7 @@
 "use strict";
 
 var pgMap = require("./pgMap.js");
+var util = require("../util.js");
 var debug = require("debug")("OSMBC:model:user");
 var should = require("should");
 var async = require("async");
@@ -135,9 +136,7 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
 
 User.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
-  should(typeof (user)).equal("string");
-  should(typeof (data)).equal("object");
-  should(typeof (callback)).equal("function");
+  util.requireTypes([user, data, callback], ["object", "object", "function"]);
   var self = this;
   delete self.lock;
   var sendWelcomeEmail = false;
@@ -146,7 +145,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
 
   // check and react on Mail Change
   if (data.email && data.email.trim() !== "" && data.email !== self.email) {
-    if (self.OSMUser !== user && self.hasLoggedIn()) return callback(new Error("EMail address can only be changed by the user himself, after he has logged in."));
+    if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) return callback(new Error("EMail address can only be changed by the user himself, after he has logged in."));
     if (data.email !== "resend") {
       if (!emailValidator.validate(data.email)) {
         var error = new Error("Invalid Email Address: " + data.email);
@@ -206,7 +205,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
             // Hide Validation Key not to show to all users
           if (key === "emailValidationKey") return cb();
 
-          messageCenter.global.sendInfo({oid: self.id, user: user, table: "usert", property: key, from: self[key], to: toValue}, cb);
+          messageCenter.global.sendInfo({oid: self.id, user: user.OSMUser, table: "usert", property: key, from: self[key], to: toValue}, cb);
         },
         function(cb) {
           self[key] = value;
@@ -227,7 +226,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
           var m = new mailReceiver.MailReceiver(self);
             // do not wait for mail to go out.
             // mail is logged in outgoing mail list
-          m.sendWelcomeMail(user, function () {});
+          m.sendWelcomeMail(user.OSMUser, function () {});
         }
         return callback();
       });

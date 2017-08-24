@@ -174,7 +174,6 @@ describe("views/article_new", function() {
       bddone();
     });
     it("should show multiple links from collection", function(bddone) {
-      console.log(browser.evaluate("$('#linkArea').html()"));
 
       checkLink("http://www.test.dä/holla","DE");
       checkLink("http://www.test.dä/holla","EN");

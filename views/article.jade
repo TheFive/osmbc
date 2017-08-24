@@ -645,7 +645,7 @@ block scripts
         document.getElementById("markdownRIGHT").value = data;
         onchangeRIGHT();
       }).fail(function(err){
-        console.log(err);
+        console.error(err);
         document.getElementById("translateWaitRIGHT").classList.add("hidden");
         document.getElementById("translateErrorRIGHT").classList.remove("hidden");
       });
@@ -669,7 +669,7 @@ block scripts
         document.getElementById("markdownLEFT").value = data;
         onchangeLEFT();
       }).fail(function (err) {
-        console.log(err);
+        console.error(err);
         document.getElementById("markdownLEFT").value = JSON.stringify(err);
         document.getElementById("translateWaitLEFT").classList.add("hidden");
         document.getElementById("translateErrorLEFT").classList.remove("hidden");
@@ -737,7 +737,7 @@ block scripts
         if (!document.execCommand('copy')) throw 'Not allowed.';
       } catch (e) {
         copyElement.remove();
-        console.log("document.execCommand('copy'); is not supported");
+        console.error("document.execCommand('copy'); is not supported");
         prompt('Copy the text below. (ctrl c, enter)', text);
       } finally {
         if (typeof e == 'undefined') {

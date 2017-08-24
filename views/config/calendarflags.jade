@@ -11,7 +11,6 @@ block showContentOfConfig
     - for (i =0;i*6<=(all.length);i++)
       .row
         - for (j=i*6;j<Math.min(all.length,(i+1)*6);j++)
-          - console.log(i+" "+j);
           .col-sm-2
             | #{all[j].key}
             img(src="#{all[j].val}", class="img-thumbnail" ,width = 30)

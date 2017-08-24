@@ -4,6 +4,7 @@
 var async    = require("async");
 var config   = require("../config.js");
 var logger   = require("../config.js").logger;
+var util     = require("../util.js");
 
 var markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
@@ -62,7 +63,7 @@ function create (proto) {
 // as there is no locking with version numbers yet.
 Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
-  should(typeof (user)).eql("object");
+  util.requireTypes([user, data, callback], ["object", "object", "function"]);
   var self = this;
   delete self.lock;
   articleModule.removeOpenBlogCache();

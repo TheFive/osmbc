@@ -428,7 +428,7 @@ describe("notification/mailReceiver", function() {
       userModule.findOne({OSMUser: "WelcomeMe"}, function(err, user) {
         should.not.exist(err);
         // First set a new EMail Adress for the WecomeMe user, by InviteYou.
-        user.setAndSave("WelcomeMe", {email: "WelcomeMe@newemail.org"}, function (err) {
+        user.setAndSave({OSMUser:"WelcomeMe"}, {email: "WelcomeMe@newemail.org"}, function (err) {
           should.not.exist(err);
           setTimeout(function () {
             should(typeof (mailChecker)).eql("function");

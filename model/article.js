@@ -26,6 +26,9 @@ var listOfOrphanBlog = null;
 
 function getListOfOrphanBlog(callback) {
   debug("getListOfOrphanBlog");
+  util.requireTypes([callback], ["function"]);
+
+  if (process.env.NODE_ENV === "test") listOfOrphanBlog = null;
   if (listOfOrphanBlog) return callback(null, listOfOrphanBlog);
   let loob = [];
   listOfOrphanBlog = [];
@@ -33,7 +36,6 @@ function getListOfOrphanBlog(callback) {
   db.query(query, function(err, result) {
     if (err) return callback(err);
     if (result) {
-      console.log(result);
       result.rows.forEach(function(item) {
         loob.push(item.name);
       });
@@ -81,8 +83,10 @@ function createNewArticle (proto, callback) {
 // other == there is a comment, but no mentioning
 // null There is no comment.
 
-Article.prototype.getCommentMention = function getCommentMention(user, lang1, lang2) {
+Article.prototype.getCommentMention = function getCommentMention(userName, lang1, lang2) {
   debug("Article.prototype.getCommentMention");
+
+  // No Type Check, Variables can be empty.
 
   if (this.commentStatus === "solved") return null;
   var comment = this.comment;
@@ -92,7 +96,7 @@ Article.prototype.getCommentMention = function getCommentMention(user, lang1, la
     }
   }
   if (!comment) return null;
-  if (comment.search(new RegExp("@" + user + "\\b", "i")) >= 0) return "user";
+  if (comment.search(new RegExp("@" + userName + "\\b", "i")) >= 0) return "user";
 
   if (lang1 && comment.search(new RegExp("@" + lang1 + "\\b", "i")) >= 0) return "language";
   if (lang2 && comment.search(new RegExp("@" + lang2 + "\\b", "i")) >= 0) return "language";
@@ -180,9 +184,7 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
 // Article.prototype.setAndSave = setAndSave;
 Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
-  should(typeof (user)).equal("object");
-  should(typeof (data)).equal("object");
-  should(typeof (callback)).equal("function");
+  util.requireTypes([user, data, callback], ["object", "object", "function"]);
   listOfOrphanBlog = null;
 
   var self = this;
@@ -769,15 +771,17 @@ Article.prototype.unsetTag = function unsetTag(user, tag, callback) {
 
 Article.prototype.addNotranslate = function addNotranslate(user, shownLang, callback) {
   debug("Article.prototype.addNotranslate");
+  util.requireTypes([user, shownLang, callback], ["object", "object", "function"]);
+
   var self = this;
   var change = {version: self.version};
   for (var i = 0; i < config.getLanguages().length; i++) {
     var lang = config.getLanguages()[i];
     if (shownLang[lang] && ((typeof (self["markdown" + lang]) === "undefined") || (self["markdown" + lang] === ""))) {
       change["markdown" + lang] = "no translation";
-      console.log("Set %s to no translation", lang);
     }
   }
+  console.log(user);
   return self.setAndSave(user, change, callback);
 };
 

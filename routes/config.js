@@ -90,7 +90,7 @@ function postConfigId(req, res, next) {
       });
     },
     function saveConfig(cb) {
-      configData.setAndSave(req.user.displayName, changes, function(err) {
+      configData.setAndSave(req.user, changes, function(err) {
         debug("setAndSaveCB");
         cb(err);
       });
