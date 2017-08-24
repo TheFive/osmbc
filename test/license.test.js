@@ -20,6 +20,7 @@ function buildLicenseObject(object,cb) {
   return function buildLicenseObject(err,json) {
     should.not.exist(err);
     for (let k in json) {
+      if (k==="osmbc@0.0.0") continue;
       // License not give, so please overwrite with manual capturet licenses
       if (json[k].licenses === "UNKNOWN" && licenses[k]) {
         json[k].licenses = licenses[k];
@@ -54,6 +55,7 @@ let allowedLicensesProd = ["MIT",
   "Public Domain",
   "Public domain",
   "CC0",
+  "CC0-1.0",
   "Unlicense",
   "ISC",
   "(BSD-2-Clause OR MIT)",
@@ -72,7 +74,7 @@ let allowedLicensesProd = ["MIT",
   "Apache*"];
 
 let allowedLicensesDev = allowedLicensesProd.concat([
-  "LGPL-2.1+"
+  "LGPL-2.1+","CC-BY-3.0"
 ]);
 
 function shouldNotUseGPL(usedLicenses){

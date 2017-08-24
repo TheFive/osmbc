@@ -91,7 +91,7 @@ module.exports.query = function (text, values, callback) {
       sqldebug("SQL: [" + (endTime - startTime) / 1000 + "]( Result: ERROR)" + text);
       return callback(err);
     }
-    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.rows.length + " rows)" + text);
+    sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + ((result.rows) ? result.rows.length : 0) + " rows)" + text);
     return callback(null, result);
   });
 };
