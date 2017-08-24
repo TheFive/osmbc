@@ -15,81 +15,116 @@ let licenses= {
 };
 
 
-
-describe("license-check", function() {
-  let usedLicenses = {};
-  before(function(bddone) {
-    this.timeout(4000);
-    checker.init({
-      start: path.join(__dirname, "..")
-    }, function (err, json) {
-      should.not.exist(err);
-      for (let k in json) {
-        if (k==="mdfigcaption@0.1.1" && moment().isBefore(moment("2017-08-01"))) continue;
-        // License not give, so please overwrite with manual capturet licenses
-        if (json[k].licenses === "UNKNOWN" && licenses[k]) {
-          json[k].licenses = licenses[k];
-        }
-        // Check, wether there is a manual overwrite for the license
-        if (licenses[k]) {
-          json[k].licenses = licenses[k];
-        }
-        let l = json[k].licenses;
-        let pl = k + " License(" + json[k].licenses + ")";
-        if (Array.isArray(l)) {
-          l.forEach(function (license) { // jshint ignore:line
-            usedLicenses[license] = pl;
-          });
-        } else {
-          usedLicenses[l] = pl;
-        }
+function buildLicenseObject(object,cb) {
+  let usedLicenses = object;
+  let callback = cb;
+  return function buildLicenseObject(err,json) {
+    should.not.exist(err);
+    for (let k in json) {
+      // License not give, so please overwrite with manual capturet licenses
+      if (json[k].licenses === "UNKNOWN" && licenses[k]) {
+        json[k].licenses = licenses[k];
       }
+      // Check, wether there is a manual overwrite for the license
+      if (licenses[k]) {
+        json[k].licenses = licenses[k];
+      }
+      let l = json[k].licenses;
+      let pl = k + " License(" + json[k].licenses + ")";
+      if (Array.isArray(l)) {
+        l.forEach(function (license) { // jshint ignore:line
+          usedLicenses[license] = pl;
+        });
+      } else {
+        usedLicenses[l] = pl;
+      }
+    }
+    cb();
+  }
+}
+
+let allowedLicensesProd = ["MIT",
+  "MIT*",
+  "(MIT AND CC-BY-3.0)",
+  "MIT (http://mootools.net/license.txt)",
+  "WTFPL",
+  "Artistic-2.0",
+  "(MIT AND JSON)",
+  "(WTFPL OR MIT)",
+  "Apache License, Version 2.0",
+  "Public Domain",
+  "Public domain",
+  "CC0",
+  "Unlicense",
+  "ISC",
+  "(BSD-2-Clause OR MIT)",
+  "BSD-3-Clause AND MIT",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "BSD-3-Clause OR MIT",
+  "BSD-4-Clause",
+  'AFLv2.1',
+  'BSD' ,
+  "BSD-like",
+  "BSD",
+  "BSD*",
+  "MIT/X11",
+  "Apache-2.0",
+  "Apache*"];
+
+let allowedLicensesDev = allowedLicensesProd.concat([
+  "LGPL-2.1+"
+]);
+
+function shouldNotUseGPL(usedLicenses){
+  should.not.exist(usedLicenses.GPL);
+  should.not.exist(usedLicenses.GNUP);
+  //EUPL is a GNU compatible license, so will not be used
+  should.not.exist(usedLicenses["EUPL-1.1"]);
+  should.not.exist(usedLicenses["LGPL-2.1+"]);
+}
+
+describe("license-check",function(){
+  describe("license-check-Production", function() {
+    let usedLicenses = {};
+    before(function(bddone) {
+      this.timeout(4000);
+      checker.init({
+        production:true,
+        start: path.join(__dirname, "..")
+      }, buildLicenseObject(usedLicenses,bddone));
+    });
+    it('should not use GPL',function(bddone){
+      shouldNotUseGPL(usedLicenses);
+      bddone();
+    });
+    it('should have checked all licenses',function(bddone){
+      allowedLicensesProd.forEach(function(l){
+        delete usedLicenses[l];
+      });
+      should(usedLicenses).eql({});
       bddone();
     });
   });
-  it('should not use GPL',function(bddone){
-    should.not.exist(usedLicenses.GPL);
-    should.not.exist(usedLicenses.GNUP);
-    //EUPL is a GNU compatible license, so will not be used
-    should.not.exist(usedLicenses["EUPL-1.1"]);
-    bddone();
-  });
-  it('should have checked all licenses',function(bddone){
-    ["MIT",
-      "MIT*",
-      "(MIT AND CC-BY-3.0)",
-      "MIT (http://mootools.net/license.txt)",
-      "WTFPL",
-      "Artistic-2.0",
-      "(MIT AND JSON)",
-      "(WTFPL OR MIT)",
-      "Apache License, Version 2.0",
-      "Public Domain",
-      "Public domain",
-      "CC0",
-      "Unlicense",
-      "ISC",
-      "(BSD-2-Clause OR MIT)",
-      "BSD-3-Clause AND MIT",
-      "BSD-2-Clause",
-      "BSD-3-Clause",
-      "BSD-3-Clause OR MIT",
-      "BSD-4-Clause",
-      'AFLv2.1',
-      'BSD' ,
-      "BSD-like",
-      "BSD",
-      "BSD*",
-      "MIT/X11",
-      "Apache-2.0",
-      "Apache*"].forEach(function(l){
-      delete usedLicenses[l];
+
+  describe("license-check-development", function() {
+    let usedLicenses = {};
+    before(function(bddone) {
+      this.timeout(4000);
+      checker.init({
+        development:true,
+        start: path.join(__dirname, "..")
+      }, buildLicenseObject(usedLicenses,bddone));
     });
-    should(usedLicenses).eql({});
-    bddone();
+    it('should have checked all licenses',function(bddone){
+      allowedLicensesDev.forEach(function(l){
+        delete usedLicenses[l];
+      });
+      should(usedLicenses).eql({});
+      bddone();
+    });
   });
 });
-
 
 
 
