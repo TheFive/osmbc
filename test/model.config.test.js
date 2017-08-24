@@ -53,7 +53,7 @@ describe("model/config", function() {
         changeConfig = result;
         var id = changeConfig.id;
         changeConfig.yaml = "not logged";
-        changeConfig.setAndSave("user", {version: 1, yaml: "not logged"}, function(err) {
+        changeConfig.setAndSave({OSMUser:"user"}, {version: 1, yaml: "not logged"}, function(err) {
           should.not.exist(err);
           testutil.findJSON("config", {name: "calendarflags"}, function(err, result) {
             should.not.exist(err);

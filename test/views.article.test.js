@@ -188,7 +188,9 @@ describe("views/article", function() {
               should.not.exist(err);
               should(article.markdownDE).eql("Text");
               should(article.markdownEN).eql("no translation");
-              should(article.markdownES).eql("no translation");
+              // Markdown ES should not be set, as there is no
+              // article in ES Language yet, and the user has not ES as language
+              should(article.markdownES).eql("");
               bddone();
             });
           });

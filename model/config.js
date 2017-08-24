@@ -10,6 +10,8 @@ var path     = require("path");
 
 var pgMap    = require("../model/pgMap.js");
 var config   = require("../config.js");
+var util     = require("../util.js");
+
 
 var messageCenter = require("../notification/messageCenter.js");
 var slackReceiver = require("../notification/slackReceiver.js");
@@ -239,9 +241,9 @@ var checkAndRepair = {
 
 Config.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
-  should(typeof (user)).equal("string");
-  should(typeof (data)).equal("object");
-  should(typeof (callback)).equal("function");
+
+  util.requireTypes([user, data, callback], ["object", "object", "function"]);
+
   var self = this;
 
   // try to convert YAML if necessary
@@ -358,10 +360,10 @@ function initialise(callback) {
     initConfigElement.bind(null, "eventsfilter"),
     initConfigElement.bind(null, "ignoreforsearch")
   ],
-    function final(err) {
-      debug("finalFunction initialise");
-      return callback(err);
-    });
+  function final(err) {
+    debug("finalFunction initialise");
+    return callback(err);
+  });
 }
 
 

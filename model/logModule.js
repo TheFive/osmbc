@@ -1,6 +1,6 @@
 "use strict";
 
-var pg = require("pg");
+var db = require("../model/db.js");
 var async = require("async");
 var config = require("../config.js");
 var pgMap = require("../model/pgMap.js");
@@ -60,21 +60,14 @@ module.exports.log = function log(object, callback) {
     },
     function saveData(savecb) {
       debug("saveData");
-      pg.connect(config.pgstring, function(err, client, pgdone) {
-        if (err) {
-          pgdone();
-          return (savecb(err));
-        }
-        if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
-        debug(object);
-        var query = client.query("insert into changes (data) values ($1) ", [object]);
-        query.on("end", function () {
-          pgdone();
-          savecb();
-        });
+      if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
+      debug(object);
+
+      db.query("insert into changes (data) values ($1) ", [object], function(err) {
+        return savecb(err);
       });
     }],
-    function(err) { callback(err); }
+  function(err) { callback(err); }
   );
 };
 
@@ -156,92 +149,71 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars) {
 function countLogsForBlog(blog, callback) {
   debug("countLogsForBlog");
 
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-    if (err) {
-      pgdone();
-      return (callback(err));
+
+  var sqlQuery =  "select username as user,property,count(*) as change_nr from (select data->>'user' as username,case when data->>'property' like 'comment%' then 'comment' else data->>'property' end as property, data->>'oid' as oid from changes where (((data->>'to' != '') and (data->>'to' != 'no translation') and (data->>'to' != 'startreview') and (data->>'to' != 'markexported'))or ((data->'to') is null))  and (data->>'blog' = $1)  group by data->>'blog',data->>'user',property,data->>'oid') as listoffields group by username,property";
+  var sqlArray = [blog];
+  var startTime = new Date().getTime();
+  var result = [];
+
+  debug(sqlQuery);
+  db.query(sqlQuery, sqlArray, function(err, queryResult) {
+    if (err) return callback(err);
+    if (queryResult) {
+      queryResult.rows.forEach(function(item) {
+        var r = {};
+        for (var k in item) {
+          r[k] = item[k];
+        }
+
+        result.push(r);
+      });
     }
-    var sqlQuery =  "select username as user,property,count(*) as change_nr from (select data->>'user' as username,case when data->>'property' like 'comment%' then 'comment' else data->>'property' end as property, data->>'oid' as oid from changes where (((data->>'to' != '') and (data->>'to' != 'no translation') and (data->>'to' != 'startreview') and (data->>'to' != 'markexported'))or ((data->'to') is null))  and (data->>'blog' = $1)  group by data->>'blog',data->>'user',property,data->>'oid') as listoffields group by username,property";
-    var sqlArray = [blog];
-    var startTime = new Date().getTime();
-    var result = [];
+    var endTime = new Date().getTime();
+    debug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
 
-    var query = client.query(sqlQuery, sqlArray);
-    debug(sqlQuery);
-
-    query.on("row", function(row) {
-      var r = {};
-      for (var k in row) {
-        r[k] = row[k];
-      }
-
-      result.push(r);
-    });
-    query.on("end", function () {
-      pgdone();
-      var endTime = new Date().getTime();
-      debug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
-
-      var logs = {};
-      for (var i = 0; i < result.length; i++) {
-        var o = result[i];
-        if (!logs[o.property]) logs[o.property] = {};
-        logs[o.property][o.user] = parseInt(o.change_nr);
-      }
-      for (i = 0; i < config.getLanguages().length; i++) {
-        var l = config.getLanguages()[i];
-        if (blog["reviewComment" + l]) {
-          for (var j = 0; j < blog["reviewComment" + l].length; j++) {
-            if (!logs["review" + l]) logs["review" + l] = {};
-            logs["review" + l][blog["reviewComment" + l][j].user] = 1;
-          }
+    var logs = {};
+    for (var i = 0; i < result.length; i++) {
+      var o = result[i];
+      if (!logs[o.property]) logs[o.property] = {};
+      logs[o.property][o.user] = parseInt(o.change_nr);
+    }
+    for (i = 0; i < config.getLanguages().length; i++) {
+      var l = config.getLanguages()[i];
+      if (blog["reviewComment" + l]) {
+        for (var j = 0; j < blog["reviewComment" + l].length; j++) {
+          if (!logs["review" + l]) logs["review" + l] = {};
+          logs["review" + l][blog["reviewComment" + l][j].user] = 1;
         }
       }
-
-      callback(null, logs);
-    });
-    query.on("error", function (err) {
-      pgdone();
-      callback(err);
-    });
+    }
+    callback(null, logs);
   });
 }
 
 function countLogsForUser(user, callback) {
   debug("countLogsForUser");
 
-  pg.connect(config.pgstring, function(err, client, pgdone) {
-    if (err) {
-      pgdone();
-      return (callback(err));
+
+  var sqlQuery =  "select to_char(date(data->>'timestamp'),'YYYY-MM-DD') as date,count(*) as count from changes where data->>'user'  like $1 and data->>'table'::text in ('article','blog') group by date";
+  var sqlArray = [user];
+  var startTime = new Date().getTime();
+  var result = [];
+  debug(sqlQuery);
+  db.query(sqlQuery, sqlArray, function(err, queryResult) {
+    if (err) return callback(err);
+    if (queryResult) {
+      queryResult.rows.forEach(function(item) {
+        var r = {};
+        r.date = item.date;
+        r.count = parseInt(item.count);
+        result.push(r);
+      });
     }
-    var sqlQuery =  "select to_char(date(data->>'timestamp'),'YYYY-MM-DD') as date,count(*) as count from changes where data->>'user'  like $1 and data->>'table'::text in ('article','blog') group by date";
-    var sqlArray = [user];
-    var startTime = new Date().getTime();
-    var result = [];
 
-    var query = client.query(sqlQuery, sqlArray);
-    debug(sqlQuery);
+    var endTime = new Date().getTime();
+    debug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
 
-    query.on("row", function(row) {
-      var r = {};
-      r.date = row.date;
-      r.count = parseInt(row.count);
-
-
-      result.push(r);
-    });
-    query.on("end", function () {
-      pgdone();
-      var endTime = new Date().getTime();
-      debug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
-
-      callback(null, result);
-    });
-    query.on("error", function (err) {
-      pgdone();
-      callback(err);
-    });
+    callback(null, result);
   });
 }
 

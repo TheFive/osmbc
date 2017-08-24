@@ -2,7 +2,6 @@
 // Exported Functions and prototypes are defined at end of file
 
 
-var pg       = require("pg");
 var async    = require("async");
 var should   = require("should");
 var debug    = require("debug")("OSMBC:model:article");
@@ -17,6 +16,7 @@ var blogModule     = require("../model/blog.js");
 var logModule      = require("../model/logModule.js");
 var configModule   = require("../model/config.js");
 var pgMap          = require("../model/pgMap.js");
+var db          = require("../model/db.js");
 var twitter        = require("../model/twitter.js");
 
 
@@ -26,23 +26,22 @@ var listOfOrphanBlog = null;
 
 function getListOfOrphanBlog(callback) {
   debug("getListOfOrphanBlog");
+  util.requireTypes([callback], ["function"]);
+
+  if (process.env.NODE_ENV === "test") listOfOrphanBlog = null;
   if (listOfOrphanBlog) return callback(null, listOfOrphanBlog);
   let loob = [];
-
-  pg.connect(config.pgstring, function(err, client, pgdone) {
+  listOfOrphanBlog = [];
+  var query = 'select name from "OpenBlogWithArticle" order by name';
+  db.query(query, function(err, result) {
     if (err) return callback(err);
-
-    listOfOrphanBlog = [];
-    var query = client.query('select name from "OpenBlogWithArticle" order by name');
-    debug("reading list of open blog");
-    query.on("row", function(row) {
-      loob.push(row.name);
-    });
-    query.on("end", function () {
-      pgdone();
-      listOfOrphanBlog = loob;
-      callback(null, listOfOrphanBlog);
-    });
+    if (result) {
+      result.rows.forEach(function(item) {
+        loob.push(item.name);
+      });
+    }
+    listOfOrphanBlog = loob;
+    callback(null, listOfOrphanBlog);
   });
 }
 
@@ -84,8 +83,10 @@ function createNewArticle (proto, callback) {
 // other == there is a comment, but no mentioning
 // null There is no comment.
 
-Article.prototype.getCommentMention = function getCommentMention(user, lang1, lang2) {
+Article.prototype.getCommentMention = function getCommentMention(userName, lang1, lang2) {
   debug("Article.prototype.getCommentMention");
+
+  // No Type Check, Variables can be empty.
 
   if (this.commentStatus === "solved") return null;
   var comment = this.comment;
@@ -95,7 +96,7 @@ Article.prototype.getCommentMention = function getCommentMention(user, lang1, la
     }
   }
   if (!comment) return null;
-  if (comment.search(new RegExp("@" + user + "\\b", "i")) >= 0) return "user";
+  if (comment.search(new RegExp("@" + userName + "\\b", "i")) >= 0) return "user";
 
   if (lang1 && comment.search(new RegExp("@" + lang1 + "\\b", "i")) >= 0) return "language";
   if (lang2 && comment.search(new RegExp("@" + lang2 + "\\b", "i")) >= 0) return "language";
@@ -183,9 +184,7 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
 // Article.prototype.setAndSave = setAndSave;
 Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
-  should(typeof (user)).equal("object");
-  should(typeof (data)).equal("object");
-  should(typeof (callback)).equal("function");
+  util.requireTypes([user, data, callback], ["object", "object", "function"]);
   listOfOrphanBlog = null;
 
   var self = this;
@@ -298,20 +297,19 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       [function logIt (cb) {
         var oa = create(self);
         // do not wait on email, so put empty callback handler
-        messageCenter.global.updateArticle(user, oa, data, function() {});
-        cb();
+        messageCenter.global.updateArticle(user, oa, data, cb);
       },
-        function putValues (cb) {
-          for (k in data) {
+      function putValues (cb) {
+        for (k in data) {
           // do not overwrite any existing Prototype Function with a value.
-            if (Article.prototype.hasOwnProperty(k)) {
-              logger.info("WARNING: Do not store " + data[k] + " for property " + k + " for Article ID " + self.id);
-              continue;
-            }
-            if (typeof (data[k]) !== "undefined") self[k] = data[k];
+          if (Article.prototype.hasOwnProperty(k)) {
+            logger.info("WARNING: Do not store " + data[k] + " for property " + k + " for Article ID " + self.id);
+            continue;
           }
-          cb();
-        }],
+          if (typeof (data[k]) !== "undefined") self[k] = data[k];
+        }
+        cb();
+      }],
       function setAndSaveFinalCB(err) {
         if (err) return callback(err);
         self.save(function (err) {
@@ -773,6 +771,8 @@ Article.prototype.unsetTag = function unsetTag(user, tag, callback) {
 
 Article.prototype.addNotranslate = function addNotranslate(user, shownLang, callback) {
   debug("Article.prototype.addNotranslate");
+  util.requireTypes([user, shownLang, callback], ["object", "object", "function"]);
+
   var self = this;
   var change = {version: self.version};
   for (var i = 0; i < config.getLanguages().length; i++) {

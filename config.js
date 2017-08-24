@@ -1,9 +1,6 @@
 "use strict";
 
 
-module.exports.pgstring = "UNDEFINED";
-
-
 
 var path     = require("path");
 var fs       = require("fs");
