@@ -135,11 +135,11 @@ function importBlog(nr,callback) {
   var number = "000"+nr;
 
   var blogName = "WN"+number.substring(number.length-3,99);
-  console.log("Import WN "+blogName);
+  console.info("Import WN "+blogName);
   
   blogModule.findOne({name:blogName},function (err,b) { 
   if (b) {
-    console.log(blogName+" already exists");
+    console.error(blogName+" already exists");
     return callback();
   }
 
@@ -184,8 +184,7 @@ function importBlog(nr,callback) {
         result = [];
         categoryList = [];
         parser.write(body);
-        console.log("Loaded Url:",url);
-        //console.log("Articles: ",result);
+        console.info("Loaded Url:",url);
         var blog = blogModule.create();
 
         //fs.writeFileSync(blogName,body,"utf8");
@@ -199,15 +198,15 @@ function importBlog(nr,callback) {
           else 
           {
             c.EN = c.DE+"Not Translated";
-            console.log(c.EN);
+            console.info(c.EN);
           }
           cat.push(c);
         }
         
 
 
-        blog.setAndSave("IMPORT",{name:blogName,status:"published",categories:cat},function(err){
-          console.log("Blog Saved Error("+err+")");
+        blog.setAndSave({OSMUser:"IMPORT"},{name:blogName,status:"published",categories:cat},function(err){
+          console.info("Blog Saved Error("+err+")");
           async.each(result,function iterator(item,cb) {
             var category = item.title;
             //console.dir("ITEM"+item);
@@ -218,8 +217,7 @@ function importBlog(nr,callback) {
               //console.log(articleProto);
               var markdownDE = toMarkdown(articleProto);
               var article = articleModule.create();
-              article.setAndSave("IMPORT",{blog:blogName,category:category,markdownDE:markdownDE},function(err){
-                //console.log("Article Saved");
+              article.setAndSave({OSMUser:"IMPORT"},{blog:blogName,category:category,markdownDE:markdownDE},function(err){
                 cba(err);
               });
 
@@ -230,7 +228,7 @@ function importBlog(nr,callback) {
 
 
           }, function() {
-            console.log("Blog "+blogName+ " imported");
+            console.info("Blog "+blogName+ " imported");
             callback();
           }
           ) ;
@@ -245,10 +243,10 @@ function importBlog(nr,callback) {
 
 config.initialise();
 
-importBlog(268,function(){console.log("Ready.");});
-importBlog(269,function(){console.log("Ready.");});
-importBlog(270,function(){console.log("Ready.");});
-importBlog(271,function(){console.log("Ready.");});
+importBlog(268,function(){console.info("Ready.");});
+importBlog(269,function(){console.info("Ready.");});
+importBlog(270,function(){console.info("Ready.");});
+importBlog(271,function(){console.info("Ready.");});
 /*
 async.timesLimit(1,1,function (n,next){
   console.log("Start Import for "+n);
