@@ -16,7 +16,6 @@ install:
 
 services:
 
-dist: precise
 
 addons:
   postgresql: "9.6"
