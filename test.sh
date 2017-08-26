@@ -11,7 +11,7 @@
 #
 #
 
-if  [ $TRAVIS == "TRUE"]
+if  [ "$TRAVIS" = "TRUE" ]
 then
 
   echo "Start Travis Test With Coverage Upload"
