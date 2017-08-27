@@ -18,7 +18,7 @@ then
 
   echo "but do a mocha before"
 
-  ./node_modules/mocha/bin/_mocha
+  ./node_modules/mocha/bin/mocha
 
   echo "mocha is done"
   istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R min && cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js && rm -rf ./coverage
@@ -29,7 +29,7 @@ else
 
   echo "but do a mocha before"
 
-  ./node_modules/mocha/bin/_mocha
+  ./node_modules/mocha/bin/mocha
 
   echo "mocha is done"
 
