@@ -59,9 +59,10 @@ var pgConfig = {
 // and set a limit of maximum 10 idle clients
 let pool = new pg.Pool(pgConfig);
 
-let query = pool.query("select count(*) from usert");
+let query = pool.query("select 1");
 
 query.catch(function(err) {
+  logger.error("Error try to test on USERT for database access....");
   logger.error(err);
   process.exit(1);
 }).then(function() {});
@@ -85,6 +86,7 @@ module.exports.query = function (text, values, callback) {
   should.exist(callback);
 
   var startTime = new Date().getTime();
+  sqldebug("SQL: start %s", text);
   pool.query(text, values, function(err, result) {
     var endTime = new Date().getTime();
     if (err) {
