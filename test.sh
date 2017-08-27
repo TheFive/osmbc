@@ -16,14 +16,23 @@ then
 
   echo "Start Travis Test With Coverage Upload"
 
-  echo "but to a mocha before"
+  echo "but do a mocha before"
 
-  mocha
+  ./node_modules/mocha/bin/_mocha
+
+  echo "mocha is done"
   istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R min && cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js && rm -rf ./coverage
 
 else
 
   echo "Start Travis Test Without Coverage Upload"
+
+  echo "but do a mocha before"
+
+  ./node_modules/mocha/bin/_mocha
+
+  echo "mocha is done"
+
   istanbul cover ./node_modules/mocha/bin/_mocha --report html
 
 fi
