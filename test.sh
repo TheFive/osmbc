@@ -10,6 +10,18 @@
 # ("test": "NODE_ENV=test ./test$TRAVIS.sh") (from package.json)
 #
 #
-echo "Start Travis Test Without Coverage Upload"
-istanbul cover ./node_modules/mocha/bin/_mocha --report html
 
+if  [ "$TRAVIS" = "TRUE" ]
+then
+
+  echo "Start Travis Test With Coverage Upload"
+
+  istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R min && cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js && rm -rf ./coverage
+
+else
+
+  echo "Start Travis Test Without Coverage Upload"
+
+  istanbul cover ./node_modules/mocha/bin/_mocha --report html
+
+fi

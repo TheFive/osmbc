@@ -7,6 +7,8 @@ node_js:
 before_install:
  - npm i npm@2.14.4 --global
  - npm install -g bower
+ - export TRAVIS=TRUE
+
 
 install:
  - npm install
@@ -15,23 +17,20 @@ install:
 
 services:
 
+
 addons:
-  postgresql: "9.3"
+  postgresql: "9.6"
   apt:
     sources:
       - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
+  
 
 env:
-  global:
-    - CXX=g++-4.8
+
 
 before_script:
   - psql -c 'create database testdb;' -U postgres
   - psql -c "CREATE USER test WITH UNENCRYPTED PASSWORD 'test' " -U postgres
-  - psql testdb -c "CREATE EXTENSION hstore SCHEMA public;" -U postgres
-
 
 
 

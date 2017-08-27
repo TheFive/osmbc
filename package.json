@@ -2,10 +2,10 @@
   "name": "osmbc",
   "version": "0.0.0",
   "private": true,
-  "license":"MIT",
+  "license": "MIT",
   "scripts": {
     "start": "NODE_ENV=development node ./bin/www",
-    "test": "NODE_ENV=test ./test$TRAVIS.sh"
+    "test": "NODE_ENV=test ./test.sh"
   },
   "dependencies": {
     "async": "^2.1.4",
@@ -58,7 +58,9 @@
   "devDependencies": {
     "eslint": "^4.5.0",
     "eslint-config-standard": "^10.2.0",
+    "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-mocha": "^4.8.0",
+    "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^3.0.1",
     "express-debug": "^1.1.1",
