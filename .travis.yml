@@ -32,6 +32,8 @@ before_script:
   - psql -c 'create database testdb;' -U postgres
   - psql -c "CREATE USER test WITH UNENCRYPTED PASSWORD 'test' " -U postgres
   - psql testdb -c "CREATE EXTENSION hstore SCHEMA public;" -U postgres
+  - psql -C "select inet_server_port();"
+  - psql -C "select inet_server_addr();"
 
 
 
