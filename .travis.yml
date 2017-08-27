@@ -8,6 +8,7 @@ before_install:
  - npm i npm@2.14.4 --global
  - npm install -g bower
  - export TRAVIS=TRUE
+ - export TEST_LOG=TRUE
 
 install:
  - npm install

@@ -15,7 +15,7 @@ var winston  = require("winston");
 
 var logger = winston;
 
-if (process.env.NODE_ENV === "test") {
+if (process.env.NODE_ENV === "test" && process.env.TEST_LOG !== "TRUE") {
   logger = new winston.Logger({level: "info", transports: []});
 }
 
