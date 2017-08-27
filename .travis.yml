@@ -9,7 +9,6 @@ before_install:
  - npm install -g bower
  - export TRAVIS=TRUE
  - export TEST_LOG=TRUE
- - export DEBUG=OSMBC*
 
 install:
  - npm install
@@ -33,7 +32,8 @@ before_script:
   - psql -c 'create database testdb;' -U postgres
   - psql -c "CREATE USER test WITH UNENCRYPTED PASSWORD 'test' " -U postgres
   - psql -c "select inet_server_port();"
-  - psql -c "\conninfo" 
+  - psql -c "\conninfo"
+  - export DEBUG=OSMBC*
 
 
 
