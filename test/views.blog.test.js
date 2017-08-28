@@ -215,7 +215,7 @@ describe("views/blog", function() {
         ], bddone);
       });
       it("should show Full View and close language", function(bddone) {
-        this.timeout(6500);
+        this.timeout(9000);
         async.series([
           browser.visit.bind(browser, "/blog/WN290?tab=full"),
           browser.pressButton.bind(browser, "#closebutton"),
