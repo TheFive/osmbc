@@ -1,5 +1,23 @@
 # Change Log
 
+## [2.4.0](https://github.com/TheFive/osmbc/tree/2.4.0) (2017-08-24)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.7a...2.4.0)
+
+**Implemented enhancements:**
+
+- More flexible author naming in an issue, allow markdown to enable other links [\#679](https://github.com/TheFive/osmbc/issues/679)
+
+**Fixed bugs:**
+
+- BlogView \(Full\) Crashes, if a category is used, that is not defined in blog.  [\#667](https://github.com/TheFive/osmbc/issues/667)
+
+**Closed issues:**
+
+- Switch to pg.pool, pg.connect is deprecated. [\#680](https://github.com/TheFive/osmbc/issues/680)
+
+## [2.3.7a](https://github.com/TheFive/osmbc/tree/2.3.7a) (2017-07-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.7...2.3.7a)
+
 ## [2.3.7](https://github.com/TheFive/osmbc/tree/2.3.7) (2017-07-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.6...2.3.7)
 
@@ -732,13 +750,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
