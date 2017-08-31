@@ -9,3 +9,4 @@ test/screens/actual*.*
 bower_components
 log/
 
+package-lock.json
