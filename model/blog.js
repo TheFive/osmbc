@@ -465,7 +465,7 @@ function convertLogsToTeamString(logs, lang, users) {
           continue;
         }
         // check on Markdown started with [
-        if (users[j].WNAuthor.substring(0, 1) === "[") {
+        if (users[j].WNAuthor && users[j].WNAuthor.substring(0, 1) === "[") {
           editors[i] = markdown.renderInline(users[j].WNAuthor);
         }
         // the next test is only necessary in case of Wochennotiz
