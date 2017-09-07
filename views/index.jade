@@ -60,7 +60,9 @@ block content
               tr
                 td
                   for user,i in visitorsToday
-                    span=user.OSMUser + ", "
+                    span
+                      a(href=layout.htmlroot+"/usert/"+user.OSMUser)=user.OSMUser
+                      span=", "
 
         .row
           h4="Admin View"
