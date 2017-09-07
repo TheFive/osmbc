@@ -2,7 +2,6 @@
 
 var async = require("async");
 var testutil = require("./testutil.js");
-var nock = require("nock");
 var should  = require("should");
 
 var userModule = require("../model/user.js");
@@ -66,9 +65,6 @@ describe("views/user", function() {
   });
   it("should save userdata and calculate WN User", function(bddone) {
     this.timeout(maxTimer);
-    nock("https://blog.openstreetmap.de")
-      .get("/blog/author/WNAuthor")
-      .reply(200, '<meta charset="UTF-8" /> \n<title>WNPublic | OSMBlog</title>\n');
     async.series([
       function visitUser (cb) {
         browser.visit("/usert/create", cb);
@@ -77,7 +73,7 @@ describe("views/user", function() {
         browser
           .fill("OSMUser", "TestUser")
           .fill("EMail", "")
-          .fill("WNAuthor", "WNAuthor")
+          .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
           .pressButton("OK", cb);
       }
     ], function(err) {
@@ -85,8 +81,7 @@ describe("views/user", function() {
       userModule.findById(2, function(err, result) {
         should.not.exist(err);
         should(result.OSMUser).eql("TestUser");
-        should(result.WNAuthor).eql("WNAuthor");
-        should(result.WNPublicAuthor).eql("WNPublic");
+        should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
         should(result.mailComment).eql([]);
         should(result.mailBlogLanguageStatusChange).eql([]);
         bddone();
@@ -95,9 +90,6 @@ describe("views/user", function() {
   });
   it("should save single Options for Mail & Blog Notifications", function(bddone) {
     this.timeout(maxTimer);
-    nock("https://blog.openstreetmap.de")
-      .get("/blog/author/WNAuthor")
-      .reply(200, '<meta charset="UTF-8" /> \n<title>WNPublic | OSMBlog</title>\n');
     async.series([
       function visitUser (cb) {
         browser.visit("/usert/create", cb);
@@ -108,7 +100,7 @@ describe("views/user", function() {
         browser
           .fill("OSMUser", "TestUser")
           .fill("EMail", "")
-          .fill("WNAuthor", "WNAuthor")
+          .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
           .pressButton("OK", cb);
       }
     ], function(err) {
@@ -116,8 +108,7 @@ describe("views/user", function() {
       userModule.findById(2, function(err, result) {
         should.not.exist(err);
         should(result.OSMUser).eql("TestUser");
-        should(result.WNAuthor).eql("WNAuthor");
-        should(result.WNPublicAuthor).eql("WNPublic");
+        should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
         should(result.mailComment).eql(["DE"]);
         should(result.mailBlogLanguageStatusChange).eql(["DE"]);
         bddone();
@@ -126,9 +117,6 @@ describe("views/user", function() {
   });
   it("should save two Options for Mail & Blog Notifications", function(bddone) {
     this.timeout(maxTimer);
-    nock("https://blog.openstreetmap.de")
-      .get("/blog/author/WNAuthor")
-      .reply(200, '<meta charset="UTF-8" /> \n<title>WNPublic | OSMBlog</title>\n');
     async.series([
       function visitUser (cb) {
         browser.visit("/usert/create", cb);
@@ -141,7 +129,7 @@ describe("views/user", function() {
         browser
           .fill("OSMUser", "TestUser")
           .fill("EMail", "")
-          .fill("WNAuthor", "WNAuthor")
+          .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
           .pressButton("OK", cb);
       }
     ], function(err) {
@@ -149,8 +137,7 @@ describe("views/user", function() {
       userModule.findById(2, function(err, result) {
         should.not.exist(err);
         should(result.OSMUser).eql("TestUser");
-        should(result.WNAuthor).eql("WNAuthor");
-        should(result.WNPublicAuthor).eql("WNPublic");
+        should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
         should(result.mailComment).eql(["DE", "EN"]);
         should(result.mailBlogLanguageStatusChange).eql(["DE", "EN"]);
         bddone();
@@ -204,20 +191,105 @@ describe("views/user", function() {
     this.timeout(maxTimer);
 
     async.series([
-      function createUser1(cb) { userModule.createNewUser({OSMUser: "Test1", access: "full", WNAuthor: "b", color: "green"}, cb); },
-      function createUser2(cb) { userModule.createNewUser({OSMUser: "Test2", access: "full", WNAuthor: "a", color: "blue"}, cb); },
+      function createUser1(cb) { userModule.createNewUser({OSMUser: "Test1", access: "full", mdWeeklyAuthor: "b", color: "green"}, cb); },
+      function createUser2(cb) { userModule.createNewUser({OSMUser: "Test2", access: "full", mdWeeklyAuthor: "[a](https://a.a)", color: "blue"}, cb); },
       function createUser2(cb) { userModule.createNewUser({OSMUser: "Test3", access: "denied"}, cb); },
       function visitUser (cb) {
         browser.visit("/usert/list?access=full", cb);
       },
-      function clickOnWNAuthor(cb) {
-        browser.click('a[id="sortWNAuthor"]', cb);
+      function clickOnwnWeeklyAuthor(cb) {
+        browser.click('a[id="sortWeeklyAuthor"]', cb);
       }
     ], function(err) {
       should.not.exist(err);
       var r = browser.html();
       r = r.substring(r.indexOf("<table"), r.indexOf("</table"));
-      should(testutil.equalHtml(r, '<table class=\"table table-striped table-responsive\"><thead><tr><th>color</th><th><a href=\"/usert/list?access=full&amp;sort=OSMUser\">Name</a></th><th>OSM</th><th><a id=\"sortWNAuthor\" href=\"/usert/list?access=full&amp;sort=WNAuthor\">WNAuthor</a></th><th><a id="sortOSMBCChanges" href="/usert/list?access=full&amp;sort=OSMBC-changes">OSMBC Changes</a></th><th>Email</th><th>Collection</th><th>AllComment</th><th>Comment</th><th>Status</th><th><a href=\"/usert/list?access=full&amp;sort=language\">Language</a></th><th>access</th><th><a href=\"/usert/list?access=full&amp;sort=lastAccess&amp;desc=true\">lastAccess</a></th></tr></thead><tbody><tr><td><span style=\"background-color:blue\" class=\"label osmbclabel-collect\">Test2</span></td><td><a href=\"/usert/3\">Test2</a></td><td><a href=\"http://www.openstreetmap.org/user/Test2\">[OSM]</a></td><td><a href=\"https://blog.openstreetmap.de/blog/author/a\">a</a></td><td><a href=\"/changes/log?user=Test2\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>Never</td></tr><tr><td><span style=\"background-color:green\" class=\"label osmbclabel-collect\">Test1</span></td><td><a href=\"/usert/2\">Test1</a></td><td><a href=\"http://www.openstreetmap.org/user/Test1\">[OSM]</a></td><td><a href=\"https://blog.openstreetmap.de/blog/author/b\">b</a></td><td><a href=\"/changes/log?user=Test1\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>Never</td></tr><tr><td><span style=\"background-color:undefined\" class=\"label osmbclabel-collect\">TheFive</span></td><td><a href=\"/usert/1\">TheFive</a></td><td><a href=\"http://www.openstreetmap.org/user/TheFive\">[OSM]</a></td><td></td><td><a href=\"/changes/log?user=TheFive\">(0)</a></td><td></td><td><p> </p></td><td><p> </p></td><td></td><td></td><td></td><td>full</td><td>a few seconds ago</td></tr></tbody>')).be.True();
+      should(testutil.equalHtml(r, '<table class="table table-striped table-responsive">\n' +
+        "              <thead>\n" +
+        "                <tr>\n" +
+        "                  <th>color</th>\n" +
+        '                  <th><a href="/usert/list?access=full&amp;sort=OSMUser">Name</a></th>\n' +
+        "                  <th>OSM</th>\n" +
+        '                  <th><a id="sortWeeklyAuthor" href="/usert/list?access=full&amp;sort=mdWeeklyAuthor">WeeklyAuthor</a></th>\n' +
+        '                  <th><a id="sortOSMBCChanges" href="/usert/list?access=full&amp;sort=OSMBC-changes">OSMBC Changes</a></th>\n' +
+        "                  <th>Email</th>\n" +
+        "                  <th>Collection</th>\n" +
+        "                  <th>AllComment</th>\n" +
+        "                  <th>Comment</th>\n" +
+        "                  <th>Status</th>\n" +
+        '                  <th><a href="/usert/list?access=full&amp;sort=language">Language</a></th>\n' +
+        "                  <th>access</th>\n" +
+        '                  <th><a href="/usert/list?access=full&amp;sort=lastAccess&amp;desc=true">lastAccess</a></th>\n' +
+        "                </tr>\n" +
+        "              </thead>\n" +
+        "              <tbody>\n" +
+        "                <tr>\n" +
+        '                  <td><span style="background-color:blue" class="label osmbclabel-collect">Test2</span></td>\n' +
+        '                  <td><a href="/usert/3">Test2</a>\n' +
+        "                  </td>\n" +
+        '                  <td><a href="http://www.openstreetmap.org/user/Test2">[OSM]</a></td>\n' +
+        '                  <td><a href="https://a.a">a</a>\n' +
+        "                  </td>\n" +
+        '                  <td><a href="/changes/log?user=Test2">(0)</a></td>\n' +
+        "                  <td>\n" +
+        "                  </td>\n" +
+        "                  <td>\n" +
+        "                    <p> </p>\n" +
+        "                  </td>\n" +
+        "                  <td>\n" +
+        "                    <p> </p>\n" +
+        "                  </td>\n" +
+        "                  <td></td>\n" +
+        "                  <td></td>\n" +
+        "                  <td></td>\n" +
+        "                  <td>full</td>\n" +
+        "                  <td>Never</td>\n" +
+        "                </tr>\n" +
+        "                <tr>\n" +
+        '                  <td><span style="background-color:green" class="label osmbclabel-collect">Test1</span></td>\n' +
+        '                  <td><a href="/usert/2">Test1</a>\n' +
+        "                  </td>\n" +
+        '                  <td><a href="http://www.openstreetmap.org/user/Test1">[OSM]</a></td>\n' +
+        "                  <td>b\n" +
+        "                  </td>\n" +
+        '                  <td><a href="/changes/log?user=Test1">(0)</a></td>\n' +
+        "                  <td>\n" +
+        "                  </td>\n" +
+        "                  <td>\n" +
+        "                    <p> </p>\n" +
+        "                  </td>\n" +
+        "                  <td>\n" +
+        "                    <p> </p>\n" +
+        "                  </td>\n" +
+        "                  <td></td>\n" +
+        "                  <td></td>\n" +
+        "                  <td></td>\n" +
+        "                  <td>full</td>\n" +
+        "                  <td>Never</td>\n" +
+        "                </tr>\n" +
+        "                <tr>\n" +
+        '                  <td><span style="background-color:undefined" class="label osmbclabel-collect">TheFive</span></td>\n' +
+        '                  <td><a href="/usert/1">TheFive</a>\n' +
+        "                  </td>\n" +
+        '                  <td><a href="http://www.openstreetmap.org/user/TheFive">[OSM]</a></td>\n' +
+        "                  <td>\n" +
+        "                  </td>\n" +
+        '                  <td><a href="/changes/log?user=TheFive">(0)</a></td>\n' +
+        "                  <td>\n" +
+        "                  </td>\n" +
+        "                  <td>\n" +
+        "                    <p> </p>\n" +
+        "                  </td>\n" +
+        "                  <td>\n" +
+        "                    <p> </p>\n" +
+        "                  </td>\n" +
+        "                  <td></td>\n" +
+        "                  <td></td>\n" +
+        "                  <td></td>\n" +
+        "                  <td>full</td>\n" +
+        "                  <td>a few seconds ago</td>\n" +
+        "                </tr>\n" +
+        "              </tbody>")).be.True();
 
       bddone();
     });

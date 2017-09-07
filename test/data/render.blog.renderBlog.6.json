@@ -21,7 +21,7 @@
             {"blog":"BLOG","user":"USER3","_oid":"7","property":"collection","to":"value"},
             {"blog":"BLOG","user":"USER4","_oid":"8","property":"collection","to":"value"},
             {"blog":"BLOG","user":"USER5","_oid":"9","property":"collection","to":"value"}],
-  "user":[{"OSMUser":"USER1","WNAuthor":"user_1","WNPublicAuthor":"PaulTemple"}],
+  "user":[{"OSMUser":"USER1","mdWeeklyAuthor":"user_1","WNPublicAuthor":"PaulTemple"}],
   "testBlogName":"BLOG",
   "lang":"DE",
   "asMarkdown":true,

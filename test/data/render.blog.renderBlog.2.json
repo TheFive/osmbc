@@ -33,8 +33,8 @@
             {"blog":"BLOG","user":"USER3","_oid":"9","property":"collection","to":"value"},
             {"blog":"BLOG","user":"USER4","_oid":"10","property":"collection","to":"value"},
             {"blog":"BLOG","user":"USER5","_oid":"11","property":"collection","to":"value"}],
-  "user":[{"OSMUser":"USER1","WNAuthor":"user_1","WNPublicAuthor":"PaulTemple"},
-    {"OSMUser":"USER2","WNAuthor":"anonymous"}],
+  "user":[{"OSMUser":"USER1","mdWeeklyAuthor":"[user_1](https://aLink.org)"},
+    {"OSMUser":"USER2","mdWeeklyAuthor":"anonymous"}],
   "testBlogName":"BLOG",
   "lang":"DE",
   "testBlogResultHtml":"render.blog.preview.2.html"

@@ -17,7 +17,7 @@ block content
               a(href=layout.htmlroot+"/usert/list"+params+"sort=OSMUser") Name
             th="OSM"
             th
-              a(id="sortWNAuthor" href=layout.htmlroot+"/usert/list"+params+"sort=WNAuthor") WNAuthor
+              a(id="sortWeeklyAuthor" href=layout.htmlroot+"/usert/list"+params+"sort=mdWeeklyAuthor") WeeklyAuthor
             th
               a(id="sortOSMBCChanges" href=layout.htmlroot+"/usert/list"+params+"sort=OSMBC-changes")="OSMBC Changes"
             th
@@ -51,8 +51,9 @@ block content
               td
                  a(href='http://www.openstreetmap.org/user/#{user.OSMUser}') [OSM]
               td
-                if user.WNAuthor
-                 a(href='https://blog.openstreetmap.de/blog/author/#{user.WNAuthor}') #{(user.WNPublicAuthor)?user.WNPublicAuthor:user.WNAuthor}
+                if user.mdWeeklyAuthor
+
+                  |!{layout.markdown.renderInline(user.mdWeeklyAuthor)}
               td
                 a(href=layout.htmlroot+'/changes/log?user=#{user.OSMUser}') (#{user._countChanges})
               td

@@ -7,7 +7,6 @@ var debug = require("debug")("OSMBC:routes:users");
 
 var express    = require("express");
 var router     = express.Router();
-var request = require("request");
 
 
 var config = require("../config.js");
@@ -135,8 +134,7 @@ function postUserId(req, res, next) {
   var id = req.params.user_id;
   var changes = {OSMUser: req.body.OSMUser,
     SlackUser: req.body.SlackUser,
-    WNAuthor: req.body.WNAuthor,
-    WeeklyAuthor: req.body.WeeklyAuthor,
+    mdWeeklyAuthor: req.body.mdWeeklyAuthor,
     color: req.body.color,
     articleEditor: req.body.articleEditor,
     languageCount: req.body.languageCount,
@@ -175,35 +173,7 @@ function postUserId(req, res, next) {
         return cb();
       });
     },
-    function getPublicAuthor(cb) {
-      debug("getPublicAuthor");
-      if (!changes.WNAuthor) return cb();
-      if (changes.WNAuthor === user.WNAuthor) return cb();
-      if (changes.WNAuthor === "anonymous") {
-        changes.WNPublicAuthor = "not mentioned";
-        return cb();
-      }
-      if (changes.WNAuthor.substring(0, 1) === "[") {
-        changes.WNPublicAuthor = "markdown used";
-        return cb();
-      }
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-      request("https://blog.openstreetmap.de/blog/author/" + changes.WNAuthor, function(error, response, body) {
-        changes.WNPublicAuthor = "Not Found";
-        if (error) return cb();
-        if (response.statusCode !== 200) return cb();
-        if (body.indexOf("<title>") < 0) return cb();
-        var start = body.indexOf("<title>") + 7;
-        var end = body.indexOf("</title>");
-        var s = body.substring(start, end);
-        if (s.indexOf("|") >= 0) {
-          s = s.substring(0, s.indexOf("|"));
-          s = s.trim();
-        }
-        changes.WNPublicAuthor = s;
-        return cb();
-      });
-    }, function saveUser(cb) {
+    function saveUser(cb) {
       user.setAndSave(req.user, changes, function(err) {
         debug("setAndSaveCB");
         cb(err);
