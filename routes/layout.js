@@ -1,22 +1,24 @@
 "use strict";
 
-var express  = require("express");
-var async    = require("async");
-var moment   = require("moment-timezone");
-var router   = express.Router();
-var debug    = require("debug")("OSMBC:routes:layout");
+var express       = require("express");
+var async         = require("async");
+var moment        = require("moment-timezone");
+var router        = express.Router();
+var debug         = require("debug")("OSMBC:routes:layout");
 
 var util          = require("../util.js");
 var config        = require("../config.js");
-var version = require("../version.js");
-var markdown = require("markdown-it")();
+var version       = require("../version.js");
+var markdown      = require("markdown-it")();
 
 var articleModule = require("../model/article.js");
 var blogModule    = require("../model/blog.js");
 
-var htmlRoot = config.getValue("htmlroot", {mustExist: true});
-var bootstrap = config.getValue("bootstrap", {mustExist: true});
-var appName = config.getValue("AppName", {mustExist: true});
+var htmlRoot      = config.getValue("htmlroot", {mustExist: true});
+var bootstrap     = config.getValue("bootstrap", {mustExist: true});
+var appName       = config.getValue("AppName", {mustExist: true});
+
+
 
 let url = config.getValue("url");
 
@@ -205,7 +207,8 @@ function prepareRenderLayout(req, res, next) {
       user_locale: config.moment_locale((req.user.language) ? req.user.language : req.user.getMainLang()),
       language_locale: config.moment_locale(req.user.getMainLang()),
       language2_locale: config.moment_locale(req.user.getSecondLang()),
-      md_render: util.md_render
+      md_render: util.md_render,
+      md_renderInline: markdown.renderInline
     };
     next();
   }

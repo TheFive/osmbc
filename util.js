@@ -66,6 +66,7 @@ function md_render(text) {
   return text;
 }
 
+
 var isUrlRegex =      /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
 var getAllUrlRegex = /(https?:\/\/[^\[\] \n\r()]*)/g;
 

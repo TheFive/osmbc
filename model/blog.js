@@ -458,23 +458,19 @@ function convertLogsToTeamString(logs, lang, users) {
     for (var j = 0; j < users.length; j++) {
       if (editors[i] === users[j].OSMUser) {
         // Ignore the editor, if he wants to be anonymous
-        if (users[j].WNAuthor && users[j].WNAuthor === "anonymous") {
+        if (users[j].mdWeeklyAuthor && users[j].mdWeeklyAuthor === "anonymous") {
           editors.splice(i, i + 1);
           i = i - 1;
           j = 9999;
           continue;
         }
         // check on Markdown started with [
-        if (users[j].WNAuthor && users[j].WNAuthor.substring(0, 1) === "[") {
-          editors[i] = markdown.renderInline(users[j].WNAuthor);
+        if (users[j].mdWeeklyAuthor) {
+          editors[i] = markdown.renderInline(users[j].mdWeeklyAuthor);
+          continue;
         }
-        // the next test is only necessary in case of Wochennotiz
-        // after done all other tests
-        if (users && lang === "DE") {
-          if (users[j].WNAuthor && users[j].WNPublicAuthor && users[j].WNPublicAuthor !== "Not Found") {
-            editors[i] = '<a href="http://blog.openstreetmap.de/blog/author/' + users[j].WNAuthor + '">' + users[j].WNPublicAuthor + "</a>";
-          }
-        }
+        // default the link with the OSM Profile
+        editors[i] = '<a href="https://www.openstreetmap.org/user/' + editors[i] + '">' + editors[i] + "</a>";
       }
     }
   }

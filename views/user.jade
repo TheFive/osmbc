@@ -25,11 +25,14 @@ block content
             button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
 
 
-      +labeledInput("WNAuthor","WNAuthor",usershown.WNAuthor,"Use anonymous to skip mentioning. Markdown for any link (e.g. [OSM User](https://www.openstreetmap.org/user/OSM%20User)), or your WP user for the Wochennotiz Blog blog.openstreetmap.de")
-      if (usershown.WNPublicAuthor)
+      +labeledInput("Author for Blog","mdWeeklyAuthor",usershown.mdWeeklyAuthor,"Use anonymous to skip mentioning. Markdown for any link (e.g. [OSM User](https://www.openstreetmap.org/user/OSM%20User)")
+      if (usershown.mdWeeklyAuthor)
         div.col-sm-offset-2.col-sm-10
-          p
-            | Public Author name is: #{usershown.WNPublicAuthor}
+          if (usershown.mdWeeklyAuthor === "anonymous")
+            p="User is not displayed in Weekly Author Footer"
+          else
+            p
+              | Public Author name is !{layout.markdown.renderInline(usershown.mdWeeklyAuthor,true)}
 
 
 
