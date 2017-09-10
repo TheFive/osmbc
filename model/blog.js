@@ -460,6 +460,7 @@ function convertLogsToTeamString(logs, lang, users) {
         // Ignore the editor, if he wants to be anonymous
         if (users[j].mdWeeklyAuthor && users[j].mdWeeklyAuthor === "anonymous") {
           editors.splice(i, 1);
+          i = i - 1;
           j = 9999;
           continue;
         }
