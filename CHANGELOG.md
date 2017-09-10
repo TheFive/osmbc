@@ -1,5 +1,27 @@
 # Change Log
 
+## [2.4.1](https://github.com/TheFive/osmbc/tree/2.4.1) (2017-09-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.0a...2.4.1)
+
+**Implemented enhancements:**
+
+- Visitors Today, make a link out of every name to jump to the user page. [\#685](https://github.com/TheFive/osmbc/issues/685)
+
+**Fixed bugs:**
+
+- Markdown Editor Name results in markdown used [\#687](https://github.com/TheFive/osmbc/issues/687)
+
+## [2.4.0a](https://github.com/TheFive/osmbc/tree/2.4.0a) (2017-08-31)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.0...2.4.0a)
+
+**Implemented enhancements:**
+
+- Crash when calling preview blog. [\#686](https://github.com/TheFive/osmbc/issues/686)
+
+**Closed issues:**
+
+- Prepare connect-pg-session to use \>4.2 by using connectObject not connectString [\#664](https://github.com/TheFive/osmbc/issues/664)
+
 ## [2.4.0](https://github.com/TheFive/osmbc/tree/2.4.0) (2017-08-24)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.7a...2.4.0)
 
@@ -750,13 +772,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
