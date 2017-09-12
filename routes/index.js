@@ -57,7 +57,7 @@ function renderAdminHome(req, res, next) {
 
   async.auto({
     "historie": logModule.find.bind(logModule, {table: "IN('usert','config')"}, {column: "id", desc: true, limit: 20}),
-    "longAbsent": userModule.find.bind(userModule, {lastAccess: "<" + date,access:"full")
+    "longAbsent": userModule.find.bind(userModule, {lastAccess: "<" + date, access: "full"})
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");

@@ -29,6 +29,7 @@ describe("views/index", function() {
         testutil.clearDB,
         function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full"}, cb); },
         function createUser(cb) { userModule.createNewUser({OSMUser: "OldUser", access: "full",lastAccess:"2016-02-25T20:00"}, cb); },
+        function createUser(cb) { userModule.createNewUser({OSMUser: "OldUserAway", access: "denied",lastAccess:"2016-02-25T20:00"}, cb); },
         testutil.startServer.bind(null, "TheFive"),
         function createArticle(cb) {
           articleModule.createNewArticle({blog: "blog", collection: "test", markdownEN: "test"}, function(err) {
