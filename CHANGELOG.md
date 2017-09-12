@@ -1,5 +1,13 @@
 # Change Log
 
+## [2.4.2](https://github.com/TheFive/osmbc/tree/2.4.2) (2017-09-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.1...2.4.2)
+
+**Implemented enhancements:**
+
+- Show list of long absent user on admin homepage [\#688](https://github.com/TheFive/osmbc/issues/688)
+- Add a list to show new registered \(e.g. Last month\) users [\#682](https://github.com/TheFive/osmbc/issues/682)
+
 ## [2.4.1](https://github.com/TheFive/osmbc/tree/2.4.1) (2017-09-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.0a...2.4.1)
 
