@@ -69,5 +69,7 @@
   "maillog_dateformat":".log",
   "MS_TranslateApiKey":"hidden",
   "diableOldEditor":false,
-  "CalendarDateFormat":"L"
+  "CalendarDateFormat":"L",
+  "WelcomeInterval":"1 month",
+  "userIsOldInDays":60
 }

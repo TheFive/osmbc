@@ -458,5 +458,21 @@ module.exports.count = function count(sql, callback) {
   });
 };
 
+module.exports.select = function select(sql, callback) {
+  debug("select");
+  var result = [];
+  pool.query(sql, function (err, pgResult) {
+    if (err) return callback(err);
+    for (var i = 0; i < pgResult.rows.length; i++) {
+      let item = {};
+      for (var k in pgResult.rows[i]) {
+        item[k] = pgResult.rows[i][k];
+      }
+      result.push(item);
+    }
+    callback(null, result);
+  });
+};
+
 
 

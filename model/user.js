@@ -9,7 +9,7 @@ var messageCenter = require("../notification/messageCenter.js");
 var mailReceiver = require("../notification/mailReceiver.js");
 var random = require("randomstring");
 var emailValidator = require("email-validator");
-
+var config = require("../config.js");
 
 function User (proto) {
   debug("User");
@@ -136,6 +136,7 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
 
 User.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
+  // reset cache
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
   var self = this;
   delete self.lock;
@@ -298,6 +299,29 @@ User.prototype.createApiKey = function createApiKey(callback) {
   let apiKey = random.generate({length: 10});
   this.apiKey = apiKey;
   this.save(callback);
+};
+
+
+// this functions returns (and caches) the new users
+// Users that have done their first edit in the last month
+
+var _newUsers = null;
+let interval = config.getValue("WelcomeInterval", {mustExist: true});
+
+module.exports.getNewUsers = function getNewUsers(callback) {
+  debug("getNewUsers");
+  if (_newUsers) return callback(null, _newUsers);
+
+
+  pgMap.select("select data->>'user' as osmuser ,min(data->>'timestamp') as first from changes group by data->>'user' having ( min(data->>'timestamp')  )::timestamp with time zone  > current_timestamp - interval '" + interval + "'", function(err, result) {
+    if (err) return callback(err);
+    console.log(result);
+    _newUsers = result;
+    setTimeout(function() {
+      _newUsers = null;
+    }, 10 * 60 * 1000);
+    callback(null, result);
+  });
 };
 
 // Creates an User object and stores it to database

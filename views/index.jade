@@ -63,6 +63,18 @@ block content
                     span
                       a(href=layout.htmlroot+"/usert/"+user.OSMUser)=user.OSMUser
                       span=", "
+        if (newUsers && newUsers.length>0)
+          .row
+            h4="Welcome To The Team"
+            p
+              table.table
+                tr
+                  td
+                    for user,i in newUsers
+                      span
+                        a(href=layout.htmlroot + "/usert/" + user.osmuser)=user.osmuser
+                        span=", "
+
 
         .row
           h4="Admin View"
