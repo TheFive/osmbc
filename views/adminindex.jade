@@ -4,7 +4,7 @@ block content
   .row
     .col-md-4
       h1="Configuration"
-      h2="Calendar"
+      h3="Calendar"
       .row
         .col-md-6
           p
@@ -14,7 +14,7 @@ block content
         .col-md-6
           p
             a(href=layout.htmlroot+"/config/eventsfilter")  Filter for calendar
-      h2="Editor Info"
+      h3="Editor Info"
       .row
         .col-md-6
           p
@@ -26,10 +26,10 @@ block content
             a(href=layout.htmlroot+"/config/categorydescription")  Descriptions for Categories
           p
             a(href=layout.htmlroot+"/config/languageflags") Language Indicator Icons
-      h2="Pictures"
+      h3="Pictures"
       p
         a(href=layout.htmlroot+"/config/licenses") Picture Licensing
-      h2="Blog"
+      h3="Blog"
       .row
         .col-md-6
           p
@@ -37,7 +37,7 @@ block content
         .col-md-6
           p
             a(href=layout.htmlroot+"/config/categorytranslation") Category Translation
-      h2="Article"
+      h3="Article"
       .row
         .col-md-6
           p
@@ -47,7 +47,7 @@ block content
         .col-md-6
           p
             a(href=layout.htmlroot+"/config/votes") Votes For Articles
-      h2="IM Notification"
+      h3="IM Notification"
       p
         a(href=layout.htmlroot+"/config/slacknotification") Configuration of IM Channel (Slack,MM)
 
@@ -59,51 +59,61 @@ block content
         - d= d.substring(0,7);
         a(href=layout.htmlroot+"/changes/log?table=config&date="+d) [changes]
     .col-md-8.hidden-xs
-      if changes
-        h4="Last Changes "
-          - var d = new Date();
-          - d= d.toISOString();
-          - d= d.substring(0,7);
-          a(href=layout.htmlroot+"/changes/log?date="+d)  (more)
-        div
-          table.table.table-striped.table-condensed.table-responsive
-            thead
-              tr 
-                th
-                 | 
-                th
-                 | blog
-                th
-                 | user
-                th
-                 | table
-                th
-                 | what
-                th
-                 | Change
-                th
-                 | when
-            tbody
-              each change, i in changes
+      .row
+        h4="Long Absent"
+        p
+          table.table
+            tr
+              td
+                for user,i in longAbsent
+                  span
+                    a(href=layout.htmlroot + "/usert/" + user.OSMUser)=user.OSMUser
+                    span=", "
+      .row
+        if changes
+          h4="Last Changes "
+            - var d = new Date();
+            - d= d.toISOString();
+            - d= d.substring(0,7);
+            a(href=layout.htmlroot+"/changes/log?date="+d)  (more)
+          div
+            table.table.table-striped.table-condensed.table-responsive
+              thead
                 tr
-                  td
-                    a(href=layout.htmlroot+'/changes/' + change.id)
-                      span.glyphicon.glyphicon-info-sign
-                  td= change.blog
-                  td= change.user
-                  td= change.table
-                  td= change.property
-                  td
-                    :verbatim
-                      !{change.htmlDiffText(40)}
-                  td= layout.moment(change.timestamp).fromNow()
-        div
-          p
-            |only displaying changes 
-            span.osmbc-inserted
-              |inserted text 
-            span.osmbc-deleted
-              |removed text
+                  th=""
+                  th
+                   | blog
+                  th
+                   | user
+                  th
+                   | table
+                  th
+                   | what
+                  th
+                   | Change
+                  th
+                   | when
+              tbody
+                each change, i in changes
+                  tr
+                    td
+                      a(href=layout.htmlroot+'/changes/' + change.id)
+                        span.glyphicon.glyphicon-info-sign
+                    td= change.blog
+                    td= change.user
+                    td= change.table
+                    td= change.property
+                    td
+                      :verbatim
+                        !{change.htmlDiffText(40)}
+                    td= layout.moment(change.timestamp).fromNow()
+          div
+            p
+              |only displaying changes
+              span.osmbc-inserted
+                |inserted text
+              span.osmbc-deleted
+                |removed text
 
   .row
     .col-md-8

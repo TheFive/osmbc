@@ -10,6 +10,8 @@ var config = require("../config.js");
 var logModule = require("../model/logModule.js");
 var userModule = require("../model/user.js");
 var pgMap = require("../model/pgMap.js");
+var moment = require("moment");
+
 
 
 let appName = config.getValue("AppName", {mustExist: true});
@@ -29,7 +31,8 @@ function renderHome(req, res, next) {
   async.auto({
     "historie": logModule.find.bind(logModule, {table: "IN('blog','article')"}, {column: "id", desc: true, limit: 20}),
     "activeUser": userModule.find.bind(userModule, {lastAccess: ">" + date.toISOString()}, {column: "lastAccess", desc: true}),
-    "visitorsToday": userModule.find.bind(userModule, {lastAccess: ">" + todayStart.toISOString()}, {column: "OSMUser", desc: false})
+    "visitorsToday": userModule.find.bind(userModule, {lastAccess: ">" + todayStart.toISOString()}, {column: "OSMUser", desc: false}),
+    "newUsers": userModule.getNewUsers.bind(userModule)
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
@@ -37,22 +40,30 @@ function renderHome(req, res, next) {
       layout: res.rendervar.layout,
       activeUserList: result.activeUser,
       visitorsToday: result.visitorsToday,
+      newUsers: result.newUsers,
       changes: result.historie});
   }
   );
 }
 
+let userIsOldInDays = config.getValue("userIsOldInDays", {mustExist: true});
+
 function renderAdminHome(req, res, next) {
   debug("renderAdminHome");
   should.exist(res.rendervar.layout);
+  let date = new moment();
+  date = date.subtract(userIsOldInDays, "Days").toISOString();
+
+
   async.auto({
-    "historie": logModule.find.bind(logModule, {table: "IN('usert','config')"}, {column: "id", desc: true, limit: 20})
+    "historie": logModule.find.bind(logModule, {table: "IN('usert','config')"}, {column: "id", desc: true, limit: 20}),
+    "longAbsent": userModule.find.bind(userModule, {lastAccess: "<" + date})
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
     res.render("adminindex", { title: appName,
       layout: res.rendervar.layout,
-
+      longAbsent: result.longAbsent,
       changes: result.historie});
   }
   );
