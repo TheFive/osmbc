@@ -60,7 +60,6 @@ function renderAdminHome(req, res, next) {
     "longAbsent": userModule.find.bind(userModule, {lastAccess: "<" + date})
   }, function(err, result) {
     if (err) return next(err);
-    console.log(result.longAbsent);
     res.set("content-type", "text/html");
     res.render("adminindex", { title: appName,
       layout: res.rendervar.layout,
