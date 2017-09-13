@@ -1,16 +1,19 @@
 "use strict";
 
-var pgMap = require("./pgMap.js");
-var util = require("../util.js");
-var debug = require("debug")("OSMBC:model:user");
-var should = require("should");
-var async = require("async");
-var messageCenter = require("../notification/messageCenter.js");
-var mailReceiver = require("../notification/mailReceiver.js");
-var random = require("randomstring");
+var pgMap          = require("./pgMap.js");
+var util           = require("../util.js");
+var debug          = require("debug")("OSMBC:model:user");
+var should         = require("should");
+var async          = require("async");
+var messageCenter  = require("../notification/messageCenter.js");
+var mailReceiver   = require("../notification/mailReceiver.js");
+var random         = require("randomstring");
 var emailValidator = require("email-validator");
-var config = require("../config.js");
+var config         = require("../config.js");
 
+
+// generate an user object, use Prototpye
+// to prototype some fields
 function User (proto) {
   debug("User");
   debug("Prototype %s", JSON.stringify(proto));
@@ -20,11 +23,17 @@ function User (proto) {
   }
 }
 
+
+// return a new User Object (in memory)
+// Optional: Protoype
 function create (proto) {
   debug("create");
   return new User(proto);
 }
 
+
+// create a new user in the database
+// avoid doublettes in OSMUser (osm account).
 function createNewUser (proto, callback) {
   debug("createNewUser");
   if (typeof (proto) === "function") {
@@ -52,6 +61,8 @@ function createNewUser (proto, callback) {
   });
 }
 
+// Calculate derived values
+// now: Calculate only number of changes
 User.prototype.calculateChanges = function calculateChanges(callback) {
   debug("User.prototype.calculateChanges");
   var self = this;
@@ -64,6 +75,7 @@ User.prototype.calculateChanges = function calculateChanges(callback) {
 };
 
 
+// use some database function from pgMap
 User.prototype.remove = pgMap.remove;
 
 function find(obj, ord, callback) {
@@ -93,6 +105,9 @@ pgObject.viewDefinition = {};
 pgObject.table = "usert";
 module.exports.pg = pgObject;
 
+
+// This function is called by the link
+// send out via EMail if someone registers a new email
 User.prototype.validateEmail = function validateEmail(user, validationCode, callback) {
   debug("validateEmail");
   should(typeof (user)).eql("object");
@@ -134,6 +149,10 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
 
 
 
+// pgMap setAndSave Function,
+// Check on EMail change (and trigger new validation)
+// create error if user that already have logged in
+// changes their OSM Account
 User.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
   // reset cache
