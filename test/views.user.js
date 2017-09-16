@@ -9,7 +9,7 @@ var articleModule = require("../model/article.js");
 
 
 
-var maxTimer = 10000;
+var maxTimer = 15000;
 
 
 describe("views/user", function() {
