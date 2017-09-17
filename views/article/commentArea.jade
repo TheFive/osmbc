@@ -38,7 +38,8 @@ if !MIXIN_INCLUDE
                 :verbatim
                   !{layout.md_render(comment.text)}
 
-    .rown(name="iframeform")  if ( !params.editComment)
+    .row
+      if (!params.editComment)
       form(target="iframeform" name="AddComment",id="AddComment", action=layout.htmlroot + "/article/#{article.id}/addComment?reload=false", method="post")
         textarea.form-control(spellcheck = "true" name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
         button.btn.btn-large.btn-primary(name= "AddComment" type = "button" onclick ="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/#{article.id}/commentArea');") Add Comment
@@ -47,4 +48,4 @@ if !MIXIN_INCLUDE
           button.btn.btn-large.btn-default(name= "AddComment" type = "button" onclick ="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/#{article.id}/commentArea');") Solve Comment
 
 
-    iframe.hidde
+iframe.hidden(name="iframeform")
