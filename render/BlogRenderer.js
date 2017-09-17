@@ -100,7 +100,7 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
     liON = "<p>";
     liOFF = "</p>\n" + calendarTranslation.footer[lang];
   }
-  if (article.categoryEN === "Releases" || article.categoryEN === "Long Term Dates") {
+  if (article.categoryEN === "Long Term Dates") {
     liON = "<p>";
     liOFF = "</p>";
   }
