@@ -13,6 +13,7 @@ var markdown      = require("markdown-it")();
 
 var articleModule = require("../model/article.js");
 var blogModule    = require("../model/blog.js");
+var userModule    = require("../model/user.js");
 
 var htmlRoot      = config.getValue("htmlroot", {mustExist: true});
 var bootstrap     = config.getValue("bootstrap", {mustExist: true});
@@ -208,7 +209,8 @@ function prepareRenderLayout(req, res, next) {
       language_locale: config.moment_locale(req.user.getMainLang()),
       language2_locale: config.moment_locale(req.user.getSecondLang()),
       md_render: util.md_render,
-      md_renderInline: markdown.renderInline
+      md_renderInline: markdown.renderInline,
+      getAvatar: userModule.getAvatar
     };
     next();
   }

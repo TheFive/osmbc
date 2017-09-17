@@ -51,6 +51,8 @@ block content
             table.table
               for user,i in activeUserList
                 tr
+                  td
+                    img(src=layout.user.getAvatar() style="height:25px;width:25px")
                   td=user.OSMUser +" "
                   td.text-muted=layout.moment(user.lastAccess).fromNow()
         .row
@@ -68,12 +70,14 @@ block content
             h4="Welcome To The Team"
             p
               table.table
-                tr
-                  td
-                    for user,i in newUsers
-                      span
-                        a(href=layout.htmlroot + "/usert/" + user.osmuser)=user.osmuser
-                        span=", "
+                for user,i in newUsers
+                  tr
+                    td
+                      img(src=layout.getAvatar(user.osmuser) style="height:25px;width:25px")
+                    td
+                      a(href=layout.htmlroot+"/usert/"+user.osmuser)=user.osmuser
+
+
 
 
         .row

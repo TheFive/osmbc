@@ -10,6 +10,10 @@ var mailReceiver   = require("../notification/mailReceiver.js");
 var random         = require("randomstring");
 var emailValidator = require("email-validator");
 var config         = require("../config.js");
+var cheerio        = require("cheerio");
+var request        = require("request");
+var path           = require("path");
+var fs             = require("fs");
 
 
 // generate an user object, use Prototpye
@@ -61,6 +65,39 @@ function createNewUser (proto, callback) {
   });
 }
 
+let avatarCache = path.join(__dirname, "..", "public", "ch_av");
+
+function cacheOSMAvatar(osmuser, callback) {
+  debug("cacheOSMAvatar %s", osmuser);
+  var requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
+  request(requestString, function(err, response, body) {
+    if (err) return callback(err, null);
+    if (body) {
+      let c = cheerio.load(body);
+      let avatarLink = c(".user_image").attr("src");
+      if (avatarLink === undefined) return callback();
+      if (avatarLink.substring(0, 1) === "/") avatarLink = "https://www.openstreetmap.org" + avatarLink;
+      request.get({url: avatarLink, encoding: "binary"}, function (err, response, body) {
+        if (err) return callback(err);
+        fs.writeFile(path.join(avatarCache, util.linkify(osmuser) + ".png"), body, "binary", function(err) {
+          return callback(err);
+        });
+      });
+    } else return callback();
+  });
+}
+
+function cacheOSMAvatarAll(callback) {
+  debug("cacheOSMAvatarAll");
+  find({}, function(err, users) {
+    if (err) return callback(err);
+    async.eachLimit(users, 4, function (item, cb) {
+      cacheOSMAvatar(item.OSMUser, cb);
+    }, function(err) { return callback(err); });
+  });
+}
+cacheOSMAvatarAll(function(err) { if (err) console.err("Error during Cache of User Avatar" + err.message); });
+
 // Calculate derived values
 // now: Calculate only number of changes
 User.prototype.calculateChanges = function calculateChanges(callback) {
@@ -74,6 +111,20 @@ User.prototype.calculateChanges = function calculateChanges(callback) {
   });
 };
 
+let htmlroot = config.getValue("htmlroot");
+
+
+function getAvatar(osmuser) {
+  debug("getAvatar");
+  /* jshint -W040 */
+  if (osmuser === undefined && this !== undefined) osmuser = this.OSMUser;
+  /* jshint +W040 */
+  return htmlroot + "/ch_av/" + util.linkify(osmuser) + ".png";
+}
+
+
+User.prototype.getAvatar = getAvatar;
+module.exports.getAvatar = getAvatar;
 
 // use some database function from pgMap
 User.prototype.remove = pgMap.remove;
@@ -181,11 +232,8 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
       // resend case.
       delete data.email;
     }
-
-
     sendWelcomeEmail = true;
   }
-
   // Check Change of OSMUser Name.
   if (data.OSMUser !== self.OSMUser) {
     if (self.hasLoggedIn()) return callback(new Error(">" + self.OSMUser + "< already has logged in, change in name not possible."));
@@ -200,7 +248,8 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
           } else return cb();
         });
       } else return cb();
-    }
+    },
+    cacheOSMAvatar.bind(null, data.OSMUser)
   ], function finalFunction(err) {
     if (err) return callback(err);
     async.forEachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
@@ -334,7 +383,6 @@ module.exports.getNewUsers = function getNewUsers(callback) {
 
   pgMap.select("select data->>'user' as osmuser ,min(data->>'timestamp') as first from changes group by data->>'user' having ( min(data->>'timestamp')  )::timestamp with time zone  > current_timestamp - interval '" + interval + "'", function(err, result) {
     if (err) return callback(err);
-    console.log(result);
     _newUsers = result;
     setTimeout(function() {
       _newUsers = null;
