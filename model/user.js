@@ -96,7 +96,9 @@ function cacheOSMAvatarAll(callback) {
     }, function(err) { return callback(err); });
   });
 }
-cacheOSMAvatarAll(function(err) { if (err) console.err("Error during Cache of User Avatar" + err.message); });
+if (process.env.node_env !== "test") {
+  cacheOSMAvatarAll(function(err) { if (err) console.err("Error during Cache of User Avatar" + err.message); });
+}
 
 // Calculate derived values
 // now: Calculate only number of changes
