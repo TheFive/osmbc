@@ -8,5 +8,6 @@ testForPreview.html
 test/screens/actual*.*
 bower_components
 log/
+ch_av/
 
 package-lock.json
