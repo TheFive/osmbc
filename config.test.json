@@ -56,7 +56,7 @@
   "ReviewInWP":["DE"],
   "EmailSender":"noreply@gmail.com",
   "url":"https://testosm.bc",
-  "SMTP":"smtps not defined, as all mails should be mocked by sinon in test",
+  "SMTP":{},
   "sessionStore":"connect-pg-simple",
   "apiKey":"testapikey",
   "apiKey.TBC":"testapikey.TBC",

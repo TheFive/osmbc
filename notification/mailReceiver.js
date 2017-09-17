@@ -6,7 +6,6 @@ var should        = require("should");
 var debug         = require("debug")("OSMBC:notification:mailReceiver");
 var fs            = require("fs");
 var nodemailer    = require("nodemailer");
-var smtpTransport = require("nodemailer-smtp-transport");
 var EmailTemplate = require("email-templates").EmailTemplate;
 
 var messageCenter = require("../notification/messageCenter.js");
@@ -69,7 +68,7 @@ var infomailClose = new EmailTemplate(infoMailClosetemplateDir);
 var welcomeMailtemplateDir = path.join(__dirname, "..", "email", "welcome");
 var welcomemail = new EmailTemplate(welcomeMailtemplateDir);
 
-var transporter = nodemailer.createTransport(smtpTransport(config.getValue("SMTP")));
+var transporter = nodemailer.createTransport(config.getValue("SMTP"));
 
 var layout = {
   htmlroot: config.getValue("htmlroot"),

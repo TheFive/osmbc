@@ -9,8 +9,9 @@ var help = require("../routes/help.js");
 var config = require("../config.js");
 var logModule = require("../model/logModule.js");
 var userModule = require("../model/user.js");
-var pgMap = require("../model/pgMap.js");
+var db = require("../model/db.js");
 var moment = require("moment");
+
 
 
 
@@ -72,7 +73,9 @@ function renderAdminHome(req, res, next) {
 function renderLongRunningQueries(req, res) {
   debug("renderLongRunningQueries");
   res.set("content-type", "text");
-  res.end(JSON.stringify(pgMap.longRunningQueries, null, 3));
+  let result = "No Data";
+  if (db.longRunningQueries) result = JSON.stringify(db.longRunningQueries, null, 3);
+  res.end(result);
 }
 
 function languageSwitcher(req, res, next) {

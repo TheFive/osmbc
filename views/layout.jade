@@ -186,7 +186,7 @@ block all
                             a(href=layout.htmlroot+'/language?lang'+i+'=#{l}') #{l}
                 if layout.user
                   li
-                    a(href=layout.htmlroot+'/usert/#{layout.user.id}') #{layout.user.displayName}
+                    img(src=layout.user.getAvatar() onclick="location.href='"+layout.htmlroot+"/usert/#{layout.user.id}';" style="height:50px;width:50px")
                 else
                   li
                     a(href='./') Anonymous
