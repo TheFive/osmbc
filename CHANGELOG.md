@@ -1,5 +1,27 @@
 # Change Log
 
+## [2.4.3](https://github.com/TheFive/osmbc/tree/2.4.3) (2017-09-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.2b...2.4.3)
+
+**Implemented enhancements:**
+
+- Use OSM Avatar for user display. [\#691](https://github.com/TheFive/osmbc/issues/691)
+
+## [2.4.2b](https://github.com/TheFive/osmbc/tree/2.4.2b) (2017-09-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.2a...2.4.2b)
+
+**Implemented enhancements:**
+
+- Do not disable user lists in Admin section in mobile view [\#681](https://github.com/TheFive/osmbc/issues/681)
+
+**Closed issues:**
+
+- Skip Bullet Skipping for Categorie Releases [\#690](https://github.com/TheFive/osmbc/issues/690)
+- Switch from Nodemailer 2.x to 4.1 [\#689](https://github.com/TheFive/osmbc/issues/689)
+
+## [2.4.2a](https://github.com/TheFive/osmbc/tree/2.4.2a) (2017-09-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.2...2.4.2a)
+
 ## [2.4.2](https://github.com/TheFive/osmbc/tree/2.4.2) (2017-09-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.1...2.4.2)
 
