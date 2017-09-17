@@ -74,7 +74,7 @@ function renderLongRunningQueries(req, res) {
   debug("renderLongRunningQueries");
   res.set("content-type", "text");
   let result = "No Data";
-  if (db.longRunningQueries) result = JSON.stringify(db.longRunningQueries,null,3);
+  if (db.longRunningQueries) result = JSON.stringify(db.longRunningQueries, null, 3);
   res.end(result);
 }
 
