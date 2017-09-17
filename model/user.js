@@ -14,6 +14,7 @@ var cheerio        = require("cheerio");
 var request        = require("request");
 var path           = require("path");
 var fs             = require("fs");
+var logger         = require("../config.js").logger
 
 
 // generate an user object, use Prototpye
@@ -97,7 +98,7 @@ function cacheOSMAvatarAll(callback) {
   });
 }
 if (process.env.node_env !== "test") {
-  cacheOSMAvatarAll(function(err) { if (err) console.err("Error during Cache of User Avatar" + err.message); });
+  cacheOSMAvatarAll(function(err) { if (err) logger.error("Error during Cache of User Avatar" + err.message); });
 }
 
 // Calculate derived values
