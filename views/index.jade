@@ -52,7 +52,7 @@ block content
               for user,i in activeUserList
                 tr
                   td
-                    img(src=layout.user.getAvatar() style="height:25px;width:25px")
+                    img(src=layout.getAvatar(user.OSMUser) style="height:25px;width:25px")
                   td=user.OSMUser +" "
                   td.text-muted=layout.moment(user.lastAccess).fromNow()
         .row
