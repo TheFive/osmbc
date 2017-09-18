@@ -68,21 +68,13 @@ function renderUserId(req, res, next) {
   var changes;
   var userHeatMapArray = null;
   async.series([
-    function findAndLoadChanges(cb) {
-      debug("findAndLoadChanges");
-      logModule.find({table: "usert", oid: id}, {column: "timestamp", desc: true}, function findAndLoadChangesCB(err, result) {
-        debug("findAndLoadChanges_CB");
-        if (err) return cb(err);
-        changes = result;
-        cb();
-      });
-    },
     function findAndLoaduserByName(cb) {
       debug("findAndLoaduser");
       userModule.findOne({OSMUser: id}, function findAndLoaduserCB(err, result) {
         debug("findAndLoaduser_CB");
         if (err) return cb(err);
         user = result;
+        id = user.id;
         return cb();
       });
     },
@@ -101,6 +93,15 @@ function renderUserId(req, res, next) {
             return cb();
           });
         } else cb();
+      });
+    },
+    function findAndLoadChanges(cb) {
+      debug("findAndLoadChanges");
+      logModule.find({table: "usert", oid: id}, {column: "timestamp", desc: true}, function findAndLoadChangesCB(err, result) {
+        debug("findAndLoadChanges_CB");
+        if (err) return cb(err);
+        changes = result;
+        cb();
       });
     },
     function findAndLoadHeatCalendarData(cb) {
