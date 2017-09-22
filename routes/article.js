@@ -949,47 +949,32 @@ function translate(req, res, next) {
   });
 }
 
-// Export Render Functions for testing purposes
-exports.renderArticleId = renderArticleId;
-exports.renderList = renderList;
-exports.postSetMarkdown = postSetMarkdown;
 
-// postArticle is called, by a post from the createArticle
-// view or the /:article_id view, and decides
-// wether to create a new object, or update an existing
-exports.postArticle = postArticle;
-exports.createArticle = createArticle;
-exports.searchAndCreate = searchAndCreate;
-exports.searchArticles = searchArticles;
-exports.postNewComment = postNewComment;
-exports.postEditComment = postEditComment;
-exports.markCommentRead = markCommentRead;
-exports.getArticleFromID = getArticleFromID;
 
 // And configure router to use render Functions
-router.get("/list", exports.renderList);
-router.get("/create", exports.createArticle);
-router.get("/searchandcreate", exports.searchAndCreate);
-router.get("/search", exports.searchArticles);
-router.post("/create", exports.postArticle);
+router.get("/list", renderList);
+router.get("/create", createArticle);
+router.get("/searchandcreate", searchAndCreate);
+router.get("/search", searchArticles);
+router.post("/create", postArticle);
 router.post("/:article_id/copyTo/:blog", copyArticle);
 router.post("/translate/:fromLang/:toLang", translate);
 
 router.param("article_id", getArticleFromID);
 
-router.get("/:article_id", exports.renderArticleId);
+router.get("/:article_id", renderArticleId);
 router.get("/:article_id/votes", renderArticleIdVotes);
 router.get("/:article_id/commentArea", renderArticleIdCommentArea);
 
-router.get("/:article_id/markCommentRead", exports.markCommentRead);
+router.get("/:article_id/markCommentRead", markCommentRead);
 router.get("/:article_id/:action.:tag", doAction);
 router.get("/:article_id/:votename", renderArticleIdVotesBlog);
 
 
-router.post("/:article_id/addComment", exports.postNewComment);
-router.post("/:article_id/setMarkdown/:lang", exports.postSetMarkdown);
-router.post("/:article_id/editComment/:number", exports.postEditComment);
-router.post("/:article_id", exports.postArticle);
+router.post("/:article_id/addComment", postNewComment);
+router.post("/:article_id/setMarkdown/:lang", postSetMarkdown);
+router.post("/:article_id/editComment/:number", postEditComment);
+router.post("/:article_id", postArticle);
 router.post("/:article_id/witholdvalues", postArticleWithOldValues);
 
 
