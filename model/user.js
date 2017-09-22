@@ -14,7 +14,7 @@ var cheerio        = require("cheerio");
 var request        = require("request");
 var path           = require("path");
 var fs             = require("fs");
-var logger         = require("../config.js").logger
+var logger         = require("../config.js").logger;
 
 
 // generate an user object, use Prototpye

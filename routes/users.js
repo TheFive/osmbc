@@ -74,7 +74,7 @@ function renderUserId(req, res, next) {
         debug("findAndLoaduser_CB");
         if (err) return cb(err);
         user = result;
-        id = user.id;
+        if (user) id = user.id;
         return cb();
       });
     },
