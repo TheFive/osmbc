@@ -81,7 +81,7 @@ exports.clearDB = function clearDB(done) {
     function(done) { pgMap.createTables(configModule.pg, pgOptions, done); }
 
   ], function(err) {
-    if (err) console.dir(err);
+    if (err) console.err(err);
     should.not.exist(err);
     configModule.initialiseConfigMap();
     configModule.initialise(done);
@@ -103,6 +103,7 @@ exports.importData = function importData(data, callback) {
     function clearDB(cb0) {
       debug("clearDB");
       if (data.clear) {
+        articleModule.removeOpenBlogCache();
         exports.clearDB(cb0);
       } else cb0();
     },

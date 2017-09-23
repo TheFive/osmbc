@@ -984,3 +984,5 @@ module.exports.router = router;
 module.exports.slackrouter = slackrouter;
 
 
+module.exports.fortestonly = {};
+module.exports.fortestonly.getArticleFromID = getArticleFromID;

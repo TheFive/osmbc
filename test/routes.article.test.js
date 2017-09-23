@@ -1,22 +1,26 @@
 "use strict";
 
-var sinon = require("sinon");
-var should = require("should");
-var async  = require("async");
-var path   = require("path");
-var nock   = require("nock");
-var fs     = require("fs");
+var sinon   = require("sinon");
+var should  = require("should");
+var async   = require("async");
+var path    = require("path");
+var nock    = require("nock");
+var request = require("request");
+var fs      = require("fs");
+var config  = require("../config.js");
+var cheerio = require("cheerio");
 
 var articleModule = require("../model/article.js");
 var userModule = require("../model/user.js");
 
-var articleRouter = require("../routes/article.js");
+var articleRouterForTestOnly = require("../routes/article.js").fortestonly;
 
 var testutil = require("./testutil.js");
 
 
 describe("router/article", function() {
   var user = null;
+  var baseLink;
 
   after(function (bddone) {
     nock.cleanAll();
@@ -24,6 +28,7 @@ describe("router/article", function() {
   });
 
   beforeEach(function (bddone) {
+    baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
     // Clear DB Contents for each test
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
@@ -40,11 +45,12 @@ describe("router/article", function() {
       }
     ], bddone);
   });
-  describe("renderArticleId", function() {
+  describe("internal functions",function(){
     it("should call next if article not exist", function(bddone) {
       articleModule.createNewArticle({titel: "Hallo"}, function(err, article) {
         should.not.exist(err);
         should(article.id).not.equal(0);
+
         var newId = article.id + 1;
         var req = {};
         req.params = {};
@@ -54,109 +60,66 @@ describe("router/article", function() {
         var next;
 
         async.series([
-          function(callback) {
-            res.render = sinon.spy(callback);
-            next = sinon.spy(callback);
-            articleRouter.getArticleFromID(req, res, next, newId);
-          }],
-        function(err) {
-          should.exist(err);
-          should(next.called).be.true();
-          should(res.render.called).be.false();
-          bddone();
-        }
+            function(callback) {
+              res.render = sinon.spy(callback);
+              next = sinon.spy(callback);
+              articleRouterForTestOnly.getArticleFromID(req, res, next, newId);
+            }],
+          function(err) {
+            should.exist(err);
+            should(next.called).be.true();
+            should(res.render.called).be.false();
+            bddone();
+          }
         );
       });
     });
-    describe("Do file base tests", function() {
-      beforeEach(function (bddone) {
-        articleModule.removeOpenBlogCache();
-        testutil.clearDB(bddone);
-      });
-      function doATest(filename) {
-        it("should test: " + filename, function (bddone) {
-          var file =  path.resolve(__dirname, "data", filename);
+  });
+  describe("renderArticleId", function() {
+    beforeEach(function (bddone) {
+      testutil.startServer("TestUser", bddone);
+    });
 
-          var data =  JSON.parse(fs.readFileSync(file));
-
-          var article;
-          var res = {};
-          res.set = function() {};
-          var req = {};
-          req.params = {};
-          req.query = {};
-          req.user = user;
-          req.session = {};
-          var next;
-          res.render = null;
-          res.rendervar = {layout: {temp: "TEMP"}};
-
-          async.series([
-            function(done) {
-              testutil.importData(data, done);
-            },
-            function(done) {
-              // search for the test Article
-              articleModule.findOne({title: data.testArticleTitle}, function(err, result) {
-                should.not.exist(err);
-                article = result;
-                req.article = article;
-                req.params.article_id = result.id;
-                done();
-              });
-            },
-            function(done) {
-              // do the test
-              res.render = sinon.spy(function() { done(); });
-              next = sinon.spy(function() { done(); });
-
-              articleRouter.renderArticleId(req, res, next);
-            }
-
-          ],
-          function (err) {
+    it("should run route /article/:id", function (bddone) {
+      var article;
+      var id;
+      async.series([
+        function(done) {
+          testutil.importData(
+            {
+              "blog":[{"name":"BLOG","status":"open"}],
+              "user":[{"OSMUser":"TestUser",access:"full"}],
+              "article":[
+                {"blog":"BLOG","markdownDE":"* Dies ist ein kleiner Testartikel.","category":"Mapping"},
+                {"blog":"BLOG","title":"BLOG","markdownDE":"* Dies ist ein grosser Testartikel.","category":"Keine"}],clear:true}, done);
+        },
+        function(done) {
+          // search for the test Article
+          articleModule.findOne({title: "BLOG"}, function(err, result) {
             should.not.exist(err);
-            should(next.called).be.false();
-
-            var call = res.render.firstCall;
-            should(call.calledWith("article")).be.true();
-            var renderData = call.args[1];
-
-
-            // clean up test data for comparison, Database IDs are random
-            for (var i = 0; i < renderData.changes.length; i++) delete renderData.changes[i].id;
-            for (i = 0; i < data.result.changes.length; i++) data.result.changes[i].oid = req.params.article_id;
-            article.textHtmlDE = data.result.articleText;
-            should(renderData.article).eql(article);
-            if (typeof (renderData.params.edit) === "undefined") renderData.params.edit = null;
-            should(renderData.params).eql(data.result.params);
-            should(renderData.layout).eql({temp: "TEMP", title: data.result.title});
-            // should(renderData.user).eql(req.user);
-            should(renderData.changes).eql(data.result.changes);
-            // should.exist(renderData.listOfOrphanBlog);
-            // should(renderData.listOfOrphanBlog).eql(data.result.listOfOrphanBlog);
-            // should.exist(renderData.listOfOpenBlog);
-            // should(renderData.listOfOpenBlog).eql(data.result.listOfOpenBlog);
-            // Reduce article Refererences for comparison
-            for (var k in renderData.articleReferences) {
-              if (k === "count") continue;
-              var a = renderData.articleReferences[k];
-              for (i = 0; i < a.length; i++) {
-                delete a[i]._meta;
-                delete a[i].id;
-              }
-            }
-            should(renderData.articleReferences).eql(data.result.articleReferences);
-            should(renderData.usedLinks).eql(data.result.usedLinks);
-            should(renderData.categories).eql(data.result.categories);
-
-
-            bddone();
-          }
-          );
+            article = result;
+            id = result.id;
+            done();
+          });
+        }
+      ],
+      function (err) {
+        should.not.exist(err);
+        request({
+          method: "GET",
+          url: baseLink + "/article/"+id,
+          json: true,
+          body: {lang: "DE", action: "startreview"}
+        },function(err,response,body){
+          should.not.exist(err);
+          should(response.statusCode).eql(200);
+          let c = cheerio.load(body);
+          c("div.child:contains('Title')").value().eql("hallo");
+          bddone();
         });
+
       }
-      testutil.generateTests("data", /^router.article.renderArticleId.+json/, doATest);
+      );
     });
   });
   describe("list", function() {
