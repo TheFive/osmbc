@@ -60,6 +60,7 @@ describe("router/article", function() {
         var next;
 
         async.series([
+<<<<<<< HEAD
             function(callback) {
               res.render = sinon.spy(callback);
               next = sinon.spy(callback);
@@ -71,6 +72,19 @@ describe("router/article", function() {
             should(res.render.called).be.false();
             bddone();
           }
+=======
+          function(callback) {
+            res.render = sinon.spy(callback);
+            next = sinon.spy(callback);
+            articleRouter.getArticleFromID(req, res, next, newId);
+          }],
+        function(err) {
+          should.exist(err);
+          should(next.called).be.true();
+          should(res.render.called).be.false();
+          bddone();
+        }
+>>>>>>> 9d446de... Remove Old Article Editor Sourcecode. Fix Tests to new Editor behaviour
         );
       });
     });
@@ -79,7 +93,7 @@ describe("router/article", function() {
     beforeEach(function (bddone) {
       testutil.startServer("TestUser", bddone);
     });
-
+    
     it("should run route /article/:id", function (bddone) {
       var article;
       var id;
