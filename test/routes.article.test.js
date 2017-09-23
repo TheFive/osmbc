@@ -26,9 +26,9 @@ describe("router/article", function() {
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     nock("https://hooks.slack.com/")
-            .post(/\/services\/.*/)
-            .times(999)
-            .reply(200, "ok");
+      .post(/\/services\/.*/)
+      .times(999)
+      .reply(200, "ok");
     async.series([
       testutil.clearDB,
       function cu(cb) {
@@ -59,12 +59,12 @@ describe("router/article", function() {
             next = sinon.spy(callback);
             articleRouter.getArticleFromID(req, res, next, newId);
           }],
-          function(err) {
-            should.exist(err);
-            should(next.called).be.true();
-            should(res.render.called).be.false();
-            bddone();
-          }
+        function(err) {
+          should.exist(err);
+          should(next.called).be.true();
+          should(res.render.called).be.false();
+          bddone();
+        }
         );
       });
     });
@@ -114,45 +114,45 @@ describe("router/article", function() {
             }
 
           ],
-            function (err) {
-              should.not.exist(err);
-              should(next.called).be.false();
+          function (err) {
+            should.not.exist(err);
+            should(next.called).be.false();
 
-              var call = res.render.firstCall;
-              should(call.calledWith("article")).be.true();
-              var renderData = call.args[1];
+            var call = res.render.firstCall;
+            should(call.calledWith("article/article_onecolumn")).be.true();
+            var renderData = call.args[1];
 
 
-              // clean up test data for comparison, Database IDs are random
-              for (var i = 0; i < renderData.changes.length; i++) delete renderData.changes[i].id;
-              for (i = 0; i < data.result.changes.length; i++) data.result.changes[i].oid = req.params.article_id;
-              article.textHtmlDE = data.result.articleText;
-              should(renderData.article).eql(article);
-              if (typeof (renderData.params.edit) === "undefined") renderData.params.edit = null;
-              should(renderData.params).eql(data.result.params);
-              should(renderData.layout).eql({temp: "TEMP", title: data.result.title});
-              // should(renderData.user).eql(req.user);
-              should(renderData.changes).eql(data.result.changes);
-              // should.exist(renderData.listOfOrphanBlog);
-              // should(renderData.listOfOrphanBlog).eql(data.result.listOfOrphanBlog);
-              // should.exist(renderData.listOfOpenBlog);
-              // should(renderData.listOfOpenBlog).eql(data.result.listOfOpenBlog);
-              // Reduce article Refererences for comparison
-              for (var k in renderData.articleReferences) {
-                if (k === "count") continue;
-                var a = renderData.articleReferences[k];
-                for (i = 0; i < a.length; i++) {
-                  delete a[i]._meta;
-                  delete a[i].id;
-                }
+            // clean up test data for comparison, Database IDs are random
+            for (var i = 0; i < renderData.changes.length; i++) delete renderData.changes[i].id;
+            for (i = 0; i < data.result.changes.length; i++) data.result.changes[i].oid = req.params.article_id;
+            article.textHtmlDE = data.result.articleText;
+            should(renderData.article).eql(article);
+            if (typeof (renderData.params.edit) === "undefined") renderData.params.edit = null;
+            should(renderData.params).eql(data.result.params);
+            should(renderData.layout).eql({temp: "TEMP", title: data.result.title});
+            // should(renderData.user).eql(req.user);
+            should(renderData.changes).eql(data.result.changes);
+            // should.exist(renderData.listOfOrphanBlog);
+            // should(renderData.listOfOrphanBlog).eql(data.result.listOfOrphanBlog);
+            // should.exist(renderData.listOfOpenBlog);
+            // should(renderData.listOfOpenBlog).eql(data.result.listOfOpenBlog);
+            // Reduce article Refererences for comparison
+            for (var k in renderData.articleReferences) {
+              if (k === "count") continue;
+              var a = renderData.articleReferences[k];
+              for (i = 0; i < a.length; i++) {
+                delete a[i]._meta;
+                delete a[i].id;
               }
-              should(renderData.articleReferences).eql(data.result.articleReferences);
-              should(renderData.usedLinks).eql(data.result.usedLinks);
-              should(renderData.categories).eql(data.result.categories);
-
-
-              bddone();
             }
+            should(renderData.articleReferences).eql(data.result.articleReferences);
+            should(renderData.usedLinks).eql(data.result.usedLinks);
+            should(renderData.categories).eql(data.result.categories);
+
+
+            bddone();
+          }
           );
         });
       }
@@ -201,32 +201,32 @@ describe("router/article", function() {
             }
 
           ],
-            function (err) {
-              should.not.exist(err);
-              should(next.called).be.false();
+          function (err) {
+            should.not.exist(err);
+            should(next.called).be.false();
 
 
 
-              var call = res.render.firstCall;
-              should(call.calledWith("articlelist")).be.true();
-              var renderData = call.args[1];
+            var call = res.render.firstCall;
+            should(call.calledWith("articlelist")).be.true();
+            var renderData = call.args[1];
 
 
-              should(renderData.articles.length).equal(data.result.articles.length);
-              for (var i = 0; i < renderData.articles.length; i++) {
-                delete renderData.articles[i]._meta;
-                delete renderData.articles[i].id;
-              }
-              should(renderData.articles).eql(data.result.articles);
-
-              should(renderData.listofOrphanBlogs).eql(data.result.listOfOrphanBlogs);
-              // should(renderData.util).equal(util);
-              // should(renderData.user).eql(req.user);
-              should(renderData.layout).eql("TEMP");
-
-
-              bddone();
+            should(renderData.articles.length).equal(data.result.articles.length);
+            for (var i = 0; i < renderData.articles.length; i++) {
+              delete renderData.articles[i]._meta;
+              delete renderData.articles[i].id;
             }
+            should(renderData.articles).eql(data.result.articles);
+
+            should(renderData.listofOrphanBlogs).eql(data.result.listOfOrphanBlogs);
+            // should(renderData.util).equal(util);
+            // should(renderData.user).eql(req.user);
+            should(renderData.layout).eql("TEMP");
+
+
+            bddone();
+          }
           );
         });
       }
@@ -274,25 +274,25 @@ describe("router/article", function() {
             });
           }
         ],
-          function(err) {
-            should.not.exist(err);
-            should(res.redirect.calledOnce).be.true();
-            should(next.called).be.false();
-            should(res.redirect.firstCall.calledWith("/article/" + article.id)).be.true();
-            delete article._meta;
-            delete article.id;
-            should(article).eql({markdownDE: "MARKDOWNDE",
-              markdownEN: "MARKDOWNEN",
-              blog: "BLOG",
-              commentStatus: "open",
-              collection: "COLLECTION",
-              comment: "COMMENT",
-              categoryEN: "CATEGORYEN",
-              title: "TITLE",
-              version: 2,
-              _blog: null});
-            bddone();
-          }
+        function(err) {
+          should.not.exist(err);
+          should(res.redirect.calledOnce).be.true();
+          should(next.called).be.false();
+          should(res.redirect.firstCall.calledWith("/article/" + article.id)).be.true();
+          delete article._meta;
+          delete article.id;
+          should(article).eql({markdownDE: "MARKDOWNDE",
+            markdownEN: "MARKDOWNEN",
+            blog: "BLOG",
+            commentStatus: "open",
+            collection: "COLLECTION",
+            comment: "COMMENT",
+            categoryEN: "CATEGORYEN",
+            title: "TITLE",
+            version: 2,
+            _blog: null});
+          bddone();
+        }
         );
       });
     });
@@ -318,14 +318,14 @@ describe("router/article", function() {
           articleRouter.createArticle(req, res, next);
         }
       ],
-        function(err) {
-          should.not.exist(err);
-          should(res.render.calledOnce).be.true();
-          should(res.render.firstCall.calledWith("collect"));
-          should(next.called).be.false();
-          should(res.redirect.called).be.false();
-          bddone();
-        }
+      function(err) {
+        should.not.exist(err);
+        should(res.render.calledOnce).be.true();
+        should(res.render.firstCall.calledWith("collect"));
+        should(next.called).be.false();
+        should(res.redirect.called).be.false();
+        bddone();
+      }
       );
     });
   });
@@ -364,27 +364,27 @@ describe("router/article", function() {
             }
 
           ],
-            function (err) {
-              should.not.exist(err);
-              should(next.called).be.false();
+          function (err) {
+            should.not.exist(err);
+            should(next.called).be.false();
 
-              var call = res.render.firstCall;
-              should(call.calledWith("collect")).be.true();
-              var renderData = call.args[1];
-
-
-              // clean up test data for comparison, Database IDs are random
-              for (var i = 0; i < renderData.foundArticles.length; i++) {
-                delete renderData.foundArticles[i].id;
-                delete renderData.foundArticles[i]._meta;
-              }
-              should(renderData.foundArticles).eql(data.result.foundArticles);
-              should(renderData.layout).eql("TEMP");
-              should(renderData.search).eql(data.search);
+            var call = res.render.firstCall;
+            should(call.calledWith("collect")).be.true();
+            var renderData = call.args[1];
 
 
-              bddone();
+            // clean up test data for comparison, Database IDs are random
+            for (var i = 0; i < renderData.foundArticles.length; i++) {
+              delete renderData.foundArticles[i].id;
+              delete renderData.foundArticles[i]._meta;
             }
+            should(renderData.foundArticles).eql(data.result.foundArticles);
+            should(renderData.layout).eql("TEMP");
+            should(renderData.search).eql(data.search);
+
+
+            bddone();
+          }
           );
         });
       }

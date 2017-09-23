@@ -35,7 +35,9 @@ var msTransClient = new MsTranslator({
 
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
-let oldEditorDisabled = config.getValue("diableOldEditor", {mustExist: true});
+
+// send info, that disableOldEditor is not needed any longer
+config.getValue("diableOldEditor", {deprecated: true});
 
 // This Function converts the ID (used as :article_id in the routes) to
 // an article and stores the object in the request
@@ -178,41 +180,21 @@ function renderArticleId(req, res, next) {
       res.redirect(returnToUrl);
     } else {
       debug("rendering page");
-      // Render the article with all calculated vars
-      // (res.rendervar.layout is set by the express routing
-      // mechanism before this router)
-      /*  var file = path.resolve(__dirname,'..','views', "article.jade");
 
-          var result = jade.renderFile(file,{layout:res.rendervar.layout,
-                                article:article,
-                                params:params,
-                                placeholder:placeholder,
-                                blog:result.blog,
-                                changes:result.changes,
-                                articleReferences:result.articleReferences,
-                                usedLinks:result.usedLinks,
-                                categories:categories});
-
-          res.end(result);return; */
       res.set("content-type", "text/html");
       // change title of page
       res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
-      let jadeFile = "article";
-      let newEditor = true;
+      let jadeFile = "article/article_twocolumn";
+      if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
 
-      if (!oldEditorDisabled) newEditor = req.user.articleEditor === "new";
-      if (newEditor) {
-        jadeFile = "article/article_twocolumn";
-        if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
-      }
-      if (newEditor && req.user.languageCount === "three") {
+      if (req.user.languageCount === "three") {
         jadeFile = "article/article_threecolumn";
         if (req.user.getLang3() === "--") jadeFile = "article/article_twocolumn";
         if (req.user.getSecondLang() === "--") jadeFile = "article/article_onecolumn";
 
         params.columns = 3;
       }
-      if (newEditor && req.user.languageCount === "four") {
+      if (req.user.languageCount === "four") {
         jadeFile = "article/article_fourcolumn";
         if (req.user.getLang4() === null) jadeFile = "article/article_threecolumn";
         if (req.user.getLang3() === null) jadeFile = "article/article_twocolumn";
