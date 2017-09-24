@@ -18,60 +18,77 @@ var mockdate = require("mockdate");
 require("jstransformer-verbatim");
 
 
+var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+
 
 
 
 describe("routes/blog", function() {
-  var baseLink;
-  beforeEach(function(bddone) {
-    async.series([
-      testutil.clearDB,
-      function cu(cb) {
-        userModule.createNewUser({OSMUser: "TestUser", displayName: "TestUser", access: "full"}, function (err) {
-          if (err) cb(err);
-          cb();
-        });
-      }
-    ], bddone);
-  });
-  before(function(bddone) {
-    sinon.spy(jade, "__express");
+  this.timeout(3000);
+  var id = 2;
 
-    nock("https://hooks.slack.com/")
-            .post(/\/services\/.*/)
-            .times(999)
-            .reply(200, "ok");
-    baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
-    testutil.startServer("TestUser", bddone);
-  });
-  after(function(bddone) {
-    jade.__express.restore();
+  after(function (bddone) {
     nock.cleanAll();
-    testutil.stopServer();
     bddone();
+    mockdate.reset();
   });
 
-  describe("status functions", function() {
-    before(function(bddone) {
-      mockdate.set(new Date("2016-05-25T20:00"));
-      return bddone();
+  beforeEach(function (bddone) {
+    // Clear DB Contents for each test
+    mockdate.set(new Date("2016-05-25T20:00"));
+    nock("https://hooks.slack.com/")
+      .post(/\/services\/.*/)
+      .times(999)
+      .reply(200, "ok");
+    testutil.importData(
+      {
+        "blog": [{name: "WN333", status: "edit"},
+          {name: "secondblog", status: "edit"}],
+        "user": [{"OSMUser": "TestUser", access: "full"},
+          {OSMUser: "TestUserDenied", access: "denied"},
+          { "OSMUser": "Hallo", access: "full"}
+        ],
+        "article": [
+          {"blog": "WN333", "markdownDE": "* Dies ist ein kleiner Testartikel.", "category": "Mapping"},
+          {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment"}]}],
+        clear: true}, bddone);
+  });
+  describe("route GET /blog/edit/:blog_id", function() {});
+  describe("route POST /blog/edit/:blog_id", function() {});
+  describe("route POST /blog/:blog_id/setReviewComment", function() {
+    it("should set a review comment", function (bddone) {
+      testutil.startServer("TestUser", function() {
+        request.post({url: baseLink + "/blog/WN333/setReviewComment",
+          form: {lang: "EN", text: "Everything is fine"}
+        }, function (err, res, body) {
+          should.not.exist(err);
+          console.log(body);
+          should(res.statusCode).eql(302);
+          blogModule.findOne({name: "WN333"}, function (err, blog) {
+            should.not.exist(err);
+            should(blog.reviewCommentEN).eql([
+              {
+                text: "Everything is fine",
+                timestamp: "2016-05-25T20:00:00.000Z",
+                user: "TestUser"
+              }
+            ]);
+            bddone();
+          }
+          );
+        });
+      });
     });
-    after(function(bddone) {
-      mockdate.reset();
-      return bddone();
-    });
-
+  });
+  describe("route POST /blog/:blog_id/editReviewComment/:index", function() {});
+  describe("route POST /blog/:blog_id/setLangStatus", function() {
     it("should a start a review process", function (bddone) {
-      blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"}, function (err) {
-        should.not.exist(err);
-        request({
-          method: "POST",
-          url: baseLink + "/blog/WN333/setLangStatus",
-          json: true,
-          body: {lang: "DE", action: "startreview"}
-        }, function (err, res) {
+      testutil.startServer("TestUser", function() {
+        request.post({url: baseLink + "/blog/WN333/setLangStatus", form: {lang: "DE", action: "startreview"}
+        }, function (err, res, body) {
           should.not.exist(err);
           should(res.statusCode).eql(302);
+          should(body).eql("Found. Redirecting to /");
           blogModule.findOne({name: "WN333"}, function (err, blog) {
             should.not.exist(err);
             should(blog.reviewCommentDE).eql([{
@@ -85,16 +102,12 @@ describe("routes/blog", function() {
       });
     });
     it("should mark as exported", function (bddone) {
-      blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"}, function (err) {
-        should.not.exist(err);
-        request({
-          method: "POST",
-          url: baseLink + "/blog/WN333/setLangStatus",
-          json: true,
-          body: {lang: "EN", action: "markexported"}
-        }, function (err, res) {
+      testutil.startServer("TestUser", function() {
+        request.post({url: baseLink + "/blog/WN333/setLangStatus", form: {lang: "EN", action: "markexported"}
+        }, function (err, res, body) {
           should.not.exist(err);
           should(res.statusCode).eql(302);
+          should(body).eql("Found. Redirecting to /");
           blogModule.findOne({name: "WN333"}, function (err, blog) {
             should.not.exist(err);
             should(blog.exportedEN).eql(true);
@@ -104,27 +117,21 @@ describe("routes/blog", function() {
       });
     });
     it("should not clear review when starting a review process", function (bddone) {
-      blogModule.createNewBlog({OSMUser: "test"},
-        {name: "WN333", reviewCommentDE: [{user: "hallo", text: "test"}]},
-        function (err) {
+      testutil.startServer("TestUser", function() {
+        request.post({
+          url: baseLink + "/blog/WN333/setLangStatus",
+          form: {lang: "DE", action: "startreview"}
+        }, function (err, res, body) {
           should.not.exist(err);
-          request({
-            method: "POST",
-            url: baseLink + "/blog/WN333/setLangStatus",
-            json: true,
-            body: {lang: "DE", action: "startreview"}
-          }, function (err, res) {
+          should(res.statusCode).eql(302);
+          should(body).eql("Found. Redirecting to /");
+          blogModule.findOne({name: "WN333"}, function (err, blog) {
             should.not.exist(err);
-            should(res.statusCode).eql(302);
-            blogModule.findOne({name: "WN333"}, function (err, blog) {
-              should.not.exist(err);
-              should(blog.reviewCommentDE).eql([{user: "hallo", text: "test"}]);
-              bddone();
-            }
-            );
-          }
-        );
+            should(blog.reviewCommentDE).eql([{user: "hallo", text: "test", "timestamp": "2016-05-25T20:00:00.000Z"}]);
+            bddone();
+          });
         });
+      });
     });
     it("should close a language", function (bddone) {
       blogModule.createNewBlog({OSMUser: "test"},
@@ -144,7 +151,7 @@ describe("routes/blog", function() {
               should(blog.closeDE).eql(true);
               bddone();
             }
-              );
+            );
           }
           );
         });
@@ -168,42 +175,17 @@ describe("routes/blog", function() {
               should(blog.exportedDE).eql(false);
               bddone();
             }
-              );
+            );
           }
           );
         });
     });
-    it("should set a review comment", function (bddone) {
-      blogModule.createNewBlog({OSMUser: "test"},
-        {name: "WN333", reviewCommentEN: [{user: "hallo", text: "test"}]},
-        function (err) {
-          should.not.exist(err);
-          request({
-            method: "POST",
-            url: baseLink + "/blog/WN333/setReviewComment",
-            json: true,
-            body: {lang: "EN", text: "Everything is fine"}
-          }, function (err, res) {
-            should.not.exist(err);
-            should(res.statusCode).eql(302);
-            blogModule.findOne({name: "WN333"}, function (err, blog) {
-              should.not.exist(err);
-              should(blog.reviewCommentEN).eql([
-                  {user: "hallo", text: "test"},
-                {
-                  text: "Everything is fine",
-                  timestamp: "2016-05-25T20:00:00.000Z",
-                  user: "TestUser"
-                }
-              ]);
-              bddone();
-            }
-            );
-          });
-        });
-    });
   });
-  describe("renderBlogPreview", function() {
+  describe("route GET /blog/create", function() {});
+  describe("route GET /blog/list", function() {});
+  describe("route GET /blog/:blog_id", function() {});
+  describe("route GET /blog/:blog_id/stat", function() {});
+  describe("route GET /blog/:blog_id/preview", function() {
     it("should call next if blog id not exist", function (bddone) {
       blogModule.createNewBlog({OSMUser: "test"}, {title: "WN333"}, function (err, blog) {
         should.not.exist(err);
@@ -261,8 +243,6 @@ describe("routes/blog", function() {
         });
       });
     });
-  });
-  describe("renderBlogTab", function() {
     it("should call next if blog id not exist", function(bddone) {
       blogModule.createNewBlog({OSMUser: "test"}, {title: "WN333"}, function(err, blog) {
         should.not.exist(err);
@@ -305,4 +285,6 @@ describe("routes/blog", function() {
       });
     });
   });
+  describe("route GET /blog/:blog_id/:tab", function() {});
+  describe("route GET /blog/:blog_id/preview_:blogname_:downloadtime", function() {});
 });
