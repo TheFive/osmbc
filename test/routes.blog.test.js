@@ -62,7 +62,6 @@ describe("routes/blog", function() {
           form: {lang: "EN", text: "Everything is fine"}
         }, function (err, res, body) {
           should.not.exist(err);
-          console.log(body);
           should(res.statusCode).eql(302);
           blogModule.findOne({name: "WN333"}, function (err, blog) {
             should.not.exist(err);
