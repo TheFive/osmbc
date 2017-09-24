@@ -296,6 +296,7 @@ function renderArticleIdVotesBlog(req, res, next) {
 
   var article = req.article;
   should.exist(article);
+  should.exist(vote);
 
 
 
@@ -676,7 +677,7 @@ function doAction(req, res, next) {
   var action = req.params.action;
   var tag = req.params.tag;
 
-  if (["setTag", "unsetTag", "setVote", "unsetVote"].indexOf(action) <= 0) return next(new Error(action + " is unknown"));
+  if (["setTag", "unsetTag", "setVote", "unsetVote"].indexOf(action) < 0) return next(new Error(action + " is unknown"));
 
 
   var article = req.article;
@@ -968,3 +969,4 @@ module.exports.slackrouter = slackrouter;
 
 module.exports.fortestonly = {};
 module.exports.fortestonly.getArticleFromID = getArticleFromID;
+module.exports.fortestonly.msTransClient = msTransClient;

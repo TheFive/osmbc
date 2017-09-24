@@ -154,6 +154,7 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
         if (self._blog["exported" + l] === true && self["markdown" + l] !== "no translation") result = false;
         if (self._blog["close" + l] === true && self["markdown" + l] !== "no translation") result = false;
       });
+      if (self._blog.status === "closed") result = false;
       if (!result) return result;
       break;
     default:
@@ -347,7 +348,7 @@ function findById(id, callback) {
   debug("findById %s", id);
   pgMap.findById(id, {table: "article", create: create}, function(err, result) {
     if (err) callback(err);
-    if (!result) callback(null, result);
+    if (!result) return callback(null, result);
 
     blogModule.findOne({name: result.blog}, function(err, blog) {
       result._blog = blog;

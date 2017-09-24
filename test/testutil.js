@@ -322,7 +322,7 @@ exports.startServer = function startServer(userString, callback) {
     callback = userString;
     userString = null;
   }
-  should.not.exist(server, "Server is already started.");
+  if (server) exports.stopServer();
   server = http.createServer(app).listen(config.getServerPort());
 
   if (userString === null) {
