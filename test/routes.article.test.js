@@ -453,7 +453,7 @@ describe("router/article", function() {
                 firstCollector: "TestUser"
               });
               bddone();
-            });Article ID walo does not exist (conversion error)
+            });
           });
         });
       });
