@@ -43,7 +43,7 @@ describe("routes/blog", function() {
     testutil.importData(
       {
         "blog": [{name: "WN333", status: "edit"},
-          {name: "secondblog", status: "edit"}],
+          {name: "secondblog", status: "edit",reviewCommentDE:[{text:"first review"}]}],
         "user": [{"OSMUser": "TestUser", access: "full"},
           {OSMUser: "TestUserDenied", access: "denied"},
           { "OSMUser": "Hallo", access: "full"}
@@ -53,9 +53,54 @@ describe("routes/blog", function() {
           {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment"}]}],
         clear: true}, bddone);
   });
-  describe("route GET /blog/edit/:blog_id", function() {});
-  describe("route POST /blog/edit/:blog_id", function() {});
+  describe("route GET /blog/edit/:blog_id", function() {
+    let url = baseLink + "/blog/edit/WN333";
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+  });
+  describe("route POST /blog/edit/:blog_id", function() {
+    let url = baseLink + "/blog/edit/WN333";
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.post({url: url,form:{}}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.post({url: url,form:{}}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+  });
   describe("route POST /blog/:blog_id/setReviewComment", function() {
+    let url = baseLink + "/blog/WN333/setReviewComment";
     it("should set a review comment", function (bddone) {
       testutil.startServer("TestUser", function() {
         request.post({url: baseLink + "/blog/WN333/setReviewComment",
@@ -78,9 +123,53 @@ describe("routes/blog", function() {
         });
       });
     });
+
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.post({url: url,form:{}}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.post({url: url,form:{}}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
   });
-  describe("route POST /blog/:blog_id/editReviewComment/:index", function() {});
+  describe("route POST /blog/:blog_id/editReviewComment/:index", function() {
+    let url = baseLink + "/blog/WN333/editReviewComment/1";
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.post({url: url,form:{}}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.post({url: url,form:{}}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+  });
   describe("route POST /blog/:blog_id/setLangStatus", function() {
+    let url = baseLink + "/blog/WN333/setLangStatus";
     it("should a start a review process", function (bddone) {
       testutil.startServer("TestUser", function() {
         request.post({url: baseLink + "/blog/WN333/setLangStatus", form: {lang: "DE", action: "startreview"}
@@ -118,15 +207,15 @@ describe("routes/blog", function() {
     it("should not clear review when starting a review process", function (bddone) {
       testutil.startServer("TestUser", function() {
         request.post({
-          url: baseLink + "/blog/WN333/setLangStatus",
+          url: baseLink + "/blog/secondblog/setLangStatus",
           form: {lang: "DE", action: "startreview"}
         }, function (err, res, body) {
           should.not.exist(err);
           should(res.statusCode).eql(302);
           should(body).eql("Found. Redirecting to /");
-          blogModule.findOne({name: "WN333"}, function (err, blog) {
+          blogModule.findOne({name: "secondblog"}, function (err, blog) {
             should.not.exist(err);
-            should(blog.reviewCommentDE).eql([{user: "hallo", text: "test", "timestamp": "2016-05-25T20:00:00.000Z"}]);
+            should(blog.reviewCommentDE).eql([{"text": "first review"}]);
             bddone();
           });
         });
@@ -144,6 +233,7 @@ describe("routes/blog", function() {
             body: {lang: "DE", action: "closelang"}
           }, function (err, res) {
             should.not.exist(err);
+            console.log
             should(res.statusCode).eql(302);
             blogModule.findOne({name: "WN333"}, function (err, blog) {
               should.not.exist(err);
@@ -179,12 +269,141 @@ describe("routes/blog", function() {
           );
         });
     });
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.post({url: url,form:{}}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.post({url: url,form:{}}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
   });
-  describe("route GET /blog/create", function() {});
-  describe("route GET /blog/list", function() {});
-  describe("route GET /blog/:blog_id", function() {});
-  describe("route GET /blog/:blog_id/stat", function() {});
+  describe("route GET /blog/create", function() {
+    let url = baseLink + "/blog/create";
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+  });
+  describe("route GET /blog/list", function() {
+    let url = baseLink + "/blog/list";
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+  });
+  describe("route GET /blog/:blog_id", function() {
+    let url = baseLink + "/blog/WN333";
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+  });
+  describe("route GET /blog/:blog_id/stat", function() {
+    let url = baseLink + "/blog/WN333/stat";
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+  });
   describe("route GET /blog/:blog_id/preview", function() {
+    let url = baseLink + "/blog/WN333/preview";
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
     it("should call next if blog id not exist", function (bddone) {
       blogModule.createNewBlog({OSMUser: "test"}, {title: "WN333"}, function (err, blog) {
         should.not.exist(err);
@@ -284,6 +503,50 @@ describe("routes/blog", function() {
       });
     });
   });
-  describe("route GET /blog/:blog_id/:tab", function() {});
-  describe("route GET /blog/:blog_id/preview_:blogname_:downloadtime", function() {});
+  describe("route GET /blog/:blog_id/:tab", function() {
+    let url = baseLink + "/blog/WN333/overview";
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+  });
+  describe("route GET /blog/:blog_id/preview_:blogname_:downloadtime", function() {
+    let url = baseLink + "/blog/WN333/preview_WN333_20172322";
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+  });
 });
