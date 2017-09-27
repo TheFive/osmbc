@@ -275,7 +275,7 @@ Config.prototype.setAndSave = function setAndSave(user, data, callback) {
         // do not log validation key in logfile
         var toValue = value;
 
-        messageCenter.global.sendInfo({oid: self.id, user: user, table: "config", property: key, from: self[key], to: toValue}, cb);
+        messageCenter.global.sendInfo({oid: self.id, user: user.OSMUser, table: "config", property: key, from: self[key], to: toValue}, cb);
       },
       function(cb) {
         self[key] = value;
