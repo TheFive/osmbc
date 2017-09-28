@@ -913,7 +913,7 @@ describe("router/article", function() {
           should(params.text).eql("Dies ist ein deutscher Text.");
           return callback(null, "This is an english text.");
         });
-        stub2 = sinon.stub(deeplTranslate, "translate").callsFake(function(text, from, to) {
+        stub2 = sinon.stub(deeplTranslate, "translate").callsFake(function(text, to, from) {
           should(from).eql("DE");
           should(to).eql("EN");
           should(text).eql("Dies ist ein deutscher Text.");
