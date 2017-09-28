@@ -936,7 +936,7 @@ function translate(req, res, next) {
     res.end(result);
   }); */
 
-  deeplTranslate.translate(text, fromLang.toUpperCase(), toLang.toUpperCase())
+  deeplTranslate.translate(text, toLang.toUpperCase(), fromLang.toUpperCase())
     .then(result => res.end(result.translation))
     .catch(err => { next(err); });
 }
