@@ -33,9 +33,14 @@ var msTransClient = new MsTranslator({
 }, true);
 
 
+const deeplTranslate = require("deepl-translator");
+
+
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
-let oldEditorDisabled = config.getValue("diableOldEditor", {mustExist: true});
+
+// send info, that disableOldEditor is not needed any longer
+config.getValue("diableOldEditor", {deprecated: true});
 
 // This Function converts the ID (used as :article_id in the routes) to
 // an article and stores the object in the request
@@ -178,41 +183,21 @@ function renderArticleId(req, res, next) {
       res.redirect(returnToUrl);
     } else {
       debug("rendering page");
-      // Render the article with all calculated vars
-      // (res.rendervar.layout is set by the express routing
-      // mechanism before this router)
-      /*  var file = path.resolve(__dirname,'..','views', "article.jade");
 
-          var result = jade.renderFile(file,{layout:res.rendervar.layout,
-                                article:article,
-                                params:params,
-                                placeholder:placeholder,
-                                blog:result.blog,
-                                changes:result.changes,
-                                articleReferences:result.articleReferences,
-                                usedLinks:result.usedLinks,
-                                categories:categories});
-
-          res.end(result);return; */
       res.set("content-type", "text/html");
       // change title of page
       res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
-      let jadeFile = "article";
-      let newEditor = true;
+      let jadeFile = "article/article_twocolumn";
+      if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
 
-      if (!oldEditorDisabled) newEditor = req.user.articleEditor === "new";
-      if (newEditor) {
-        jadeFile = "article/article_twocolumn";
-        if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
-      }
-      if (newEditor && req.user.languageCount === "three") {
+      if (req.user.languageCount === "three") {
         jadeFile = "article/article_threecolumn";
         if (req.user.getLang3() === "--") jadeFile = "article/article_twocolumn";
         if (req.user.getSecondLang() === "--") jadeFile = "article/article_onecolumn";
 
         params.columns = 3;
       }
-      if (newEditor && req.user.languageCount === "four") {
+      if (req.user.languageCount === "four") {
         jadeFile = "article/article_fourcolumn";
         if (req.user.getLang4() === null) jadeFile = "article/article_threecolumn";
         if (req.user.getLang3() === null) jadeFile = "article/article_twocolumn";
@@ -314,6 +299,7 @@ function renderArticleIdVotesBlog(req, res, next) {
 
   var article = req.article;
   should.exist(article);
+  should.exist(vote);
 
 
 
@@ -694,7 +680,7 @@ function doAction(req, res, next) {
   var action = req.params.action;
   var tag = req.params.tag;
 
-  if (["setTag", "unsetTag", "setVote", "unsetVote"].indexOf(action) <= 0) return next(new Error(action + " is unknown"));
+  if (["setTag", "unsetTag", "setVote", "unsetVote"].indexOf(action) < 0) return next(new Error(action + " is unknown"));
 
 
   var article = req.article;
@@ -937,59 +923,50 @@ function translate(req, res, next) {
   if (fromLang === "cz") { fromLang = "cs"; }
   if (toLang === "cz") { toLang = "cs"; }
 
+  /*
   var params = {
     text: text,
     from: fromLang,
     to: toLang
   };
 
+
   msTransClient.translate(params, function (err, result) {
     if (err) return next(err);
     res.end(result);
-  });
+  }); */
+
+  deeplTranslate.translate(text, fromLang.toUpperCase(), toLang.toUpperCase())
+    .then(result => res.end(result.translation))
+    .catch(err => { next(err); });
 }
 
-// Export Render Functions for testing purposes
-exports.renderArticleId = renderArticleId;
-exports.renderList = renderList;
-exports.postSetMarkdown = postSetMarkdown;
 
-// postArticle is called, by a post from the createArticle
-// view or the /:article_id view, and decides
-// wether to create a new object, or update an existing
-exports.postArticle = postArticle;
-exports.createArticle = createArticle;
-exports.searchAndCreate = searchAndCreate;
-exports.searchArticles = searchArticles;
-exports.postNewComment = postNewComment;
-exports.postEditComment = postEditComment;
-exports.markCommentRead = markCommentRead;
-exports.getArticleFromID = getArticleFromID;
 
 // And configure router to use render Functions
-router.get("/list", exports.renderList);
-router.get("/create", exports.createArticle);
-router.get("/searchandcreate", exports.searchAndCreate);
-router.get("/search", exports.searchArticles);
-router.post("/create", exports.postArticle);
+router.get("/list", renderList);
+router.get("/create", createArticle);
+router.get("/searchandcreate", searchAndCreate);
+router.get("/search", searchArticles);
+router.post("/create", postArticle);
 router.post("/:article_id/copyTo/:blog", copyArticle);
 router.post("/translate/:fromLang/:toLang", translate);
 
 router.param("article_id", getArticleFromID);
 
-router.get("/:article_id", exports.renderArticleId);
+router.get("/:article_id", renderArticleId);
 router.get("/:article_id/votes", renderArticleIdVotes);
 router.get("/:article_id/commentArea", renderArticleIdCommentArea);
 
-router.get("/:article_id/markCommentRead", exports.markCommentRead);
+router.get("/:article_id/markCommentRead", markCommentRead);
 router.get("/:article_id/:action.:tag", doAction);
 router.get("/:article_id/:votename", renderArticleIdVotesBlog);
 
 
-router.post("/:article_id/addComment", exports.postNewComment);
-router.post("/:article_id/setMarkdown/:lang", exports.postSetMarkdown);
-router.post("/:article_id/editComment/:number", exports.postEditComment);
-router.post("/:article_id", exports.postArticle);
+router.post("/:article_id/addComment", postNewComment);
+router.post("/:article_id/setMarkdown/:lang", postSetMarkdown);
+router.post("/:article_id/editComment/:number", postEditComment);
+router.post("/:article_id", postArticle);
 router.post("/:article_id/witholdvalues", postArticleWithOldValues);
 
 
@@ -999,3 +976,6 @@ module.exports.router = router;
 module.exports.slackrouter = slackrouter;
 
 
+module.exports.fortestonly = {};
+module.exports.fortestonly.getArticleFromID = getArticleFromID;
+module.exports.fortestonly.msTransClient = msTransClient;

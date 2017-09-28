@@ -858,6 +858,7 @@ Blog.prototype.isEditable = function isEditable(lang) {
   if (typeof (closeLANG) !== "undefined") {
     if (closeLANG) result = false;
   }
+  if (this.status === "closed") result = false;
   return result;
 };
 
