@@ -33,6 +33,9 @@ var msTransClient = new MsTranslator({
 }, true);
 
 
+const deeplTranslate = require("deepl-translator");
+
+
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
 
@@ -920,16 +923,22 @@ function translate(req, res, next) {
   if (fromLang === "cz") { fromLang = "cs"; }
   if (toLang === "cz") { toLang = "cs"; }
 
+  /*
   var params = {
     text: text,
     from: fromLang,
     to: toLang
   };
 
+
   msTransClient.translate(params, function (err, result) {
     if (err) return next(err);
     res.end(result);
-  });
+  }); */
+
+  deeplTranslate.translate(text, fromLang.toUpperCase(), toLang.toUpperCase())
+    .then(result => res.end(result.translation))
+    .catch(err => { next(err); });
 }
 
 

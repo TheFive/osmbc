@@ -17,6 +17,7 @@
     "connect-pg-simple": "^4.2.0",
     "cookie-parser": "~1.4.1",
     "debug": "^3.0.0",
+    "deepl-translator": "^1.0.1",
     "deferred": "^0.7.5",
     "diff": "^3.2.0",
     "email-templates": "^2.3.0",

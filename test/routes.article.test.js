@@ -6,6 +6,7 @@ var nock    = require("nock");
 var request = require("request");
 var config  = require("../config.js");
 var mockdate = require("mockdate");
+var deeplTranslate = require("deepl-translator");
 
 var articleModule = require("../model/article.js");
 
@@ -904,6 +905,7 @@ describe("router/article", function() {
       let url = baseLink + "/article/translate/DE/EN";
       let form = {text: "Dies ist ein deutscher Text."};
       let stub;
+      let stub2;
       beforeEach(function() {
         stub = sinon.stub(articleRouterForTestOnly.msTransClient, "translate").callsFake(function(params, callback) {
           should(params.from).eql("DE");
@@ -911,9 +913,16 @@ describe("router/article", function() {
           should(params.text).eql("Dies ist ein deutscher Text.");
           return callback(null, "This is an english text.");
         });
+        stub2 = sinon.stub(deeplTranslate, "translate").callsFake(function(text, from, to) {
+          should(from).eql("DE");
+          should(to).eql("EN");
+          should(text).eql("Dies ist ein deutscher Text.");
+          return new Promise((resolve) => { resolve({translation: "This is an english text."}); });
+        });
       });
       afterEach(function() {
         stub.restore();
+        stub2.restore();
       });
 
       it("should run with full access user", function (bddone) {
