@@ -6,7 +6,6 @@ var nock    = require("nock");
 var request = require("request");
 var config  = require("../config.js");
 var mockdate = require("mockdate");
-var deeplTranslate = require("deepl-translator");
 
 var articleModule = require("../model/article.js");
 
@@ -659,7 +658,6 @@ describe("router/article", function() {
           should(response.statusCode).eql(500);
           should(body.indexOf("Field markdownDE already changed in DB")).not.equal(-1);
 
-
           // check, that object is not changed
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
@@ -885,7 +883,6 @@ describe("router/article", function() {
         });
       });
     });
-
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
         request.get({url: url}, function (err, response, body) {
@@ -893,12 +890,6 @@ describe("router/article", function() {
           should(response.statusCode).eql(500);
           should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
           bddone();
-        });
-        stub2 = sinon.stub(deeplTranslate, "translate").callsFake(function(text, to, from) {
-          should(from).eql("DE");
-          should(to).eql("EN");
-          should(text).eql("Dies ist ein deutscher Text.");
-          return new Promise((resolve) => { resolve({translation: "This is an english text."}); });
         });
       });
     });
