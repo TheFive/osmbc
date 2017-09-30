@@ -70,7 +70,7 @@ let avatarCache = path.join(__dirname, "..", "public", "ch_av");
 
 function cacheOSMAvatar(osmuser, callback) {
   debug("cacheOSMAvatar %s", osmuser);
-  if (process.env.NODE_ENV === "test") return;
+  if (process.env.NODE_ENV === "test") return callback();
   var requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
   request(requestString, function(err, response, body) {
     if (err) return callback(err, null);
