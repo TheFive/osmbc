@@ -70,6 +70,7 @@ let avatarCache = path.join(__dirname, "..", "public", "ch_av");
 
 function cacheOSMAvatar(osmuser, callback) {
   debug("cacheOSMAvatar %s", osmuser);
+  if (process.env.NODE_ENV === "test") return;
   var requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
   request(requestString, function(err, response, body) {
     if (err) return callback(err, null);
@@ -90,7 +91,6 @@ function cacheOSMAvatar(osmuser, callback) {
 
 function cacheOSMAvatarAll(callback) {
   debug("cacheOSMAvatarAll");
-  if (process.env.NODE_ENV === "test") return;
   find({}, function(err, users) {
     if (err) return callback(err);
     async.eachLimit(users, 4, function (item, cb) {
@@ -98,7 +98,7 @@ function cacheOSMAvatarAll(callback) {
     }, function(err) { return callback(err); });
   });
 }
-if (process.env.node_env !== "test") {
+if (process.env.NODE_ENV !== "test") {
   cacheOSMAvatarAll(function(err) { if (err) logger.error("Error during Cache of User Avatar" + err.message); });
 }
 
