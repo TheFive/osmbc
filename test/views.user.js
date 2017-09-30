@@ -86,7 +86,6 @@ describe("views/user", function() {
     });
   });
   it("should save single Options for Mail & Blog Notifications", function(bddone) {
-    this.timeout(maxTimer);
     async.series([
       function visitUser (cb) {
         browser.visit("/usert/create", cb);
@@ -142,7 +141,6 @@ describe("views/user", function() {
   });
 
   it("should not validate a usermail if wrong user logged in", function(bddone) {
-    this.timeout(maxTimer);
     async.series([
       function createUser(cb) {
         userModule.createNewUser({OSMUser: "TestValidate", emailInvalidation: "test@test.org", emailValidationKey: "123456789"}, cb);
