@@ -1,11 +1,13 @@
 "use strict";
 
+
 var sinon   = require("sinon");
 var should  = require("should");
 var nock    = require("nock");
 var request = require("request");
 var config  = require("../config.js");
 var mockdate = require("mockdate");
+var deeplTranslate = require("deepl-translator");
 
 var articleModule = require("../model/article.js");
 
@@ -14,6 +16,7 @@ var articleRouterForTestOnly = require("../routes/article.js").fortestonly;
 var testutil = require("./testutil.js");
 
 var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+
 
 
 describe("router/article", function() {
