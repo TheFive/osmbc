@@ -90,6 +90,7 @@ function cacheOSMAvatar(osmuser, callback) {
 
 function cacheOSMAvatarAll(callback) {
   debug("cacheOSMAvatarAll");
+  if (process.env.NODE_ENV === "test") return;
   find({}, function(err, users) {
     if (err) return callback(err);
     async.eachLimit(users, 4, function (item, cb) {
