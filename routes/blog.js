@@ -484,9 +484,3 @@ router.get("/:blog_id/:tab", renderBlogTab);
 
 module.exports.router = router;
 
-
-// the following modules are exported for test reasons
-module.exports.renderBlogPreview = renderBlogPreview;
-module.exports.renderBlogTab = renderBlogTab;
-
-

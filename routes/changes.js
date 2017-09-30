@@ -32,17 +32,6 @@ function generateHTMLDiff(one, other) {
 }
 
 
-function renderOutgoingMailLog(req, res, next) {
-  debug("renderOutgoingMailLog");
-  var d = req.params.date;
-  logModule.find("select id, data from changes where data->>'table' = 'mail' and substring(data->>'timestamp' from 1 for " + d.length + ") ='" + d + "' order by data->>'timestamp' desc", function (err, result) {
-    debug("logModule.find");
-    if (err) return next(err);
-    res.set("content-type", "text/html");
-    res.render("maillog", {maillog: result, layout: res.rendervar.layout});
-  });
-}
-
 
 function renderHistoryLog(req, res, next) {
   debug("renderHistoryLog");
@@ -88,7 +77,7 @@ function renderChangeId(req, res, next) {
   var id = req.params.change_id;
   logModule.findById(id, function(err, change) {
     if (err) return next(err);
-    if (!change || typeof (change.id) === "undefined") return next();
+    if (!change || typeof (change.id) === "undefined") return next(new Error("Change id >" + id + "< not found."));
     should.exist(res.rendervar);
     res.set("content-type", "text/html");
     res.render("change", {change: change,
@@ -98,13 +87,9 @@ function renderChangeId(req, res, next) {
 }
 
 
+router.get("/log", renderHistoryLog);
 router.get("/:change_id", renderChangeId);
 
-router.get("/mail/:date", renderOutgoingMailLog);
-
-router.get("/log", renderHistoryLog);
-
-module.exports.renderChangeId = renderChangeId;
 module.exports.router = router;
 
 
