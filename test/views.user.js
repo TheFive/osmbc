@@ -9,10 +9,10 @@ var articleModule = require("../model/article.js");
 
 
 
-var maxTimer = 30000;
 
 
 describe("views/user", function() {
+  this.timeout(100000);
   var browser;
   beforeEach(function(bddone) {
     async.series([
@@ -35,7 +35,6 @@ describe("views/user", function() {
 
 
   it("should not change username, if user logged in", function(bddone) {
-    this.timeout(maxTimer);
     async.series([
       function createUser(cb) {
         userModule.createNewUser({OSMUser: "test", lastAccess: (new Date()).toISOString()}, cb);
@@ -53,7 +52,6 @@ describe("views/user", function() {
     });
   });
   it("should have bootstrap.js loaded", function(bddone) {
-    this.timeout(6000);
     browser.visit("/osmbc", function(err) {
       should.not.exist(err);
 
@@ -64,7 +62,6 @@ describe("views/user", function() {
     });
   });
   it("should save userdata and calculate WN User", function(bddone) {
-    this.timeout(maxTimer);
     async.series([
       function visitUser (cb) {
         browser.visit("/usert/create", cb);
@@ -116,7 +113,6 @@ describe("views/user", function() {
     });
   });
   it("should save two Options for Mail & Blog Notifications", function(bddone) {
-    this.timeout(maxTimer);
     async.series([
       function visitUser (cb) {
         browser.visit("/usert/create", cb);
@@ -161,7 +157,6 @@ describe("views/user", function() {
     });
   });
   it("should validate a usermail if correct user logged in", function(bddone) {
-    this.timeout(maxTimer);
 
     async.series([
       function createUser(cb) {
@@ -188,8 +183,6 @@ describe("views/user", function() {
     });
   });
   it("should display & sort userlist", function(bddone) {
-    this.timeout(maxTimer);
-
     async.series([
       function createUser1(cb) { userModule.createNewUser({OSMUser: "Test1", access: "full", mdWeeklyAuthor: "b", color: "green"}, cb); },
       function createUser2(cb) { userModule.createNewUser({OSMUser: "Test2", access: "full", mdWeeklyAuthor: "[a](https://a.a)", color: "blue"}, cb); },

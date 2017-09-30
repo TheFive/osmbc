@@ -9,10 +9,11 @@ var userModule = require("../model/user.js");
 
 
 
-var maxTimer = 12000;
+var maxTimer = 50000;
 
 
 describe("views/config", function() {
+  this.timeout(maxTimer);
   var browser;
   beforeEach(function(bddone) {
     async.series([
@@ -30,7 +31,6 @@ describe("views/config", function() {
 
 
   it("should open and not save wrong yaml", function(bddone) {
-    this.timeout(maxTimer);
     async.series([
       function visitTranslation (cb) {
         browser.visit("/config/calendartranslation", cb);
@@ -59,7 +59,6 @@ describe("views/config", function() {
     });
   });
   it("should open and save calendartranslation", function(bddone) {
-    this.timeout(maxTimer);
     async.series([
       function visitTranslation (cb) {
         browser.visit("/config/calendartranslation", cb);
@@ -84,7 +83,6 @@ describe("views/config", function() {
       browser.assert.success();
       should.not.exist(err);
       browser.assert.text("table#resulttable", "WW WA WNN LL Munich OpenStreetMap Default Meeting 2015-12-15 Germany");
-      // console.log("HTML:"+browser.html());
 
       bddone();
     });

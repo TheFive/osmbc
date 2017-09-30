@@ -17,6 +17,7 @@ var mockdate = require("mockdate");
 
 
 describe("views/index", function() {
+  this.timeout(12000);
   describe("Known User", function() {
     var browser;
     before(function(bddone) {
@@ -54,7 +55,7 @@ describe("views/index", function() {
 
     describe("Homepage", function() {
       it("should find welcome text on Homepage", function(bddone) {
-        this.timeout(6000);
+
         browser.visit("/osmbc", function(err) {
           should.not.exist(err);
           browser.assert.success();
@@ -75,7 +76,6 @@ describe("views/index", function() {
     });
     describe("Admin Homepage", function() {
       it("should show it", function(bddone) {
-        this.timeout(6000);
         async.series([
           browser.visit.bind(browser, "/osmbc/admin"),
           browser.assert.expectHtml.bind(browser, "admin_home.html")
@@ -84,7 +84,6 @@ describe("views/index", function() {
     });
     describe("Not Defined Page", function() {
       it("should throw an error message", function(bddone) {
-        this.timeout(6000);
         browser.visit("/notdefined.html", function(err) {
           should.exist(err);
           browser.assert.status(404);
@@ -106,7 +105,6 @@ describe("views/index", function() {
     });
     describe("LanguageSetter", function() {
       it("should set the language", function(bddone) {
-        this.timeout(12000);
         browser.referer = "/osmbc";
         browser.visit("/language?lang=EN", function(err) {
           should.not.exist(err);
@@ -137,7 +135,6 @@ describe("views/index", function() {
         });
       });
       it("should set the second language to -- if both equal", function(bddone) {
-        this.timeout(12000);
         browser.referer = "/osmbc";
         browser.visit("/language?lang=ES", function(err) {
           should.not.exist(err);

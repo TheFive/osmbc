@@ -20,7 +20,7 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("h
 
 
 describe("router/article", function() {
-  this.timeout(3000);
+  this.timeout(this.timeout()*2);
   var id = 2;
 
   after(function (bddone) {
@@ -42,7 +42,9 @@ describe("router/article", function() {
           {name: "secondblog", status: "edit"}],
         "user": [{"OSMUser": "TestUser", access: "full"},
           {OSMUser: "TestUserDenied", access: "denied"},
-          { "OSMUser": "Hallo", access: "full"}
+          { "OSMUser": "Hallo", access: "full"},
+          { "OSMUser": "UserWith3Lang", access: "full",languageCount:"three"},
+          { "OSMUser": "UserWith4Lang", access: "full",languageCount:"four"}
         ],
         "article": [
           {"blog": "BLOG", "markdownDE": "* Dies ist ein kleiner Testartikel.", "category": "Mapping"},
@@ -53,6 +55,26 @@ describe("router/article", function() {
     let url = baseLink + "/article/" + id;
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
+        request.get({ url: url}, function(err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(200);
+          should(body.indexOf('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>')).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should run with full access user and 3 lang", function (bddone) {
+      testutil.startServer("UserWith3Lang", function() {
+        request.get({ url: url}, function(err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(200);
+          should(body.indexOf('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>')).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should run with full access user and 4 lang", function (bddone) {
+      testutil.startServer("UserWith4Lang", function() {
         request.get({ url: url}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);

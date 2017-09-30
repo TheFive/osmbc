@@ -20,7 +20,7 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("h
 
 
 describe("routes/blog", function() {
-  this.timeout(3000);
+  this.timeout(8000);
 
   after(function (bddone) {
     nock.cleanAll();

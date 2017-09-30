@@ -11,11 +11,11 @@ var blogModule = require("../model/blog.js");
 
 
 
-var maxTimer = 30000;
 
 
 
 describe("views/collect", function() {
+  this.timeout(100000);
   var browser;
   var articleId;
   before(function(bddone) {
@@ -70,7 +70,6 @@ describe("views/collect", function() {
   });
   describe("Collect", function() {
     it("should search and store collected article", function(bddone) {
-      this.timeout(maxTimer);
       browser.visit("/article/create", function(err) {
         should.not.exist(err);
         browser
@@ -93,7 +92,6 @@ describe("views/collect", function() {
       });
     });
     it("should search and find existing article", function(bddone) {
-      this.timeout(maxTimer);
       browser.visit("/article/create", function(err) {
         should.not.exist(err);
         browser
@@ -111,7 +109,6 @@ describe("views/collect", function() {
       });
     });
     it("should search and store collected article for one language", function(bddone) {
-      this.timeout(maxTimer);
       browser.visit("/article/create", function(err) {
         should.not.exist(err);
         browser
