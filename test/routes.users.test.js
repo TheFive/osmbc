@@ -96,11 +96,10 @@ describe("router/user", function() {
   });
   describe("renderUserId", function() {
     after(function (bddone) {
-     // console.dir(GLOBAL);
       bddone();
     });
     it("should call next if user not exist", function(bddone) {
-      this.timeout(5000);
+      this.timeout(this.timeout()*3);
       userModule.createNewUser({displayName: "TeST"}, function(err, user) {
         should.not.exist(err);
         should(user.id).not.equal(0);

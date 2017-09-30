@@ -9,6 +9,7 @@ var htmltitle = require("../model/htmltitle.js");
 
 
 describe("model/htmltitle", function() {
+  this.timeout(4000);
   before(function(bddone) {
     testutil.nockHtmlPages();
     return bddone();
@@ -77,7 +78,6 @@ describe("model/htmltitle", function() {
     });
   });
   it("should handle timeout", function(bddone) {
-    this.timeout(4000);
     nock("https://www.test.test")
       .get("/testdd")
       .socketDelay(3000)

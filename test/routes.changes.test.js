@@ -19,7 +19,7 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("h
 
 
 describe("routes/changes", function() {
-  this.timeout(3000);
+  this.timeout(this.timeout()*2);
   let changeid;
 
   after(function (bddone) {

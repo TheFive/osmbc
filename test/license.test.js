@@ -86,10 +86,10 @@ function shouldNotUseGPL(usedLicenses){
 }
 
 describe("license-check",function(){
+  this.timeout(10000);
   describe("license-check-Production", function() {
     let usedLicenses = {};
     before(function(bddone) {
-      this.timeout(8000);
       checker.init({
         production:true,
         start: path.join(__dirname, "..")
@@ -111,7 +111,6 @@ describe("license-check",function(){
   describe("license-check-development", function() {
     let usedLicenses = {};
     before(function(bddone) {
-      this.timeout(8000);
       checker.init({
         development:true,
         start: path.join(__dirname, "..")

@@ -20,7 +20,7 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("h
 
 
 describe("router/article", function() {
-  this.timeout(3000);
+  this.timeout(this.timeout()*2);
   var id = 2;
 
   after(function (bddone) {
