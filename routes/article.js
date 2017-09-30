@@ -327,12 +327,6 @@ function searchAndCreate(req, res, next) {
   var search = req.query.search;
   var show = req.query.show;
   if (!show) show = "15";
-  if (req.query.edit && req.query.edit === "false") {
-    var returnToUrl = htmlroot + "/osmbc.html";
-    if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
-    res.redirect(returnToUrl);
-    return;
-  }
   if (!search || typeof (search) === "undefined") search = "";
   var placeholder = configModule.getPlaceholder();
 
