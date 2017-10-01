@@ -174,9 +174,15 @@ function renderChangelog(req, res, next) {
   });
 }
 
+var htmlRoot = config.getValue("htmlroot",{mustExist:true});
+
+function redirectHome(req,res) {
+  res.redirect(htmlRoot +"/");
+}
+
 router.get("/", renderHome);
-router.get("/osmbc.html", renderHome);
-router.get("/osmbc", renderHome);
+router.get("/osmbc.html", redirectHome);
+router.get("/osmbc", redirectHome);
 router.get("/osmbc/sql/longRunningQueries", renderLongRunningQueries);
 router.get("/osmbc/admin", renderAdminHome);
 router.get("/help/:title", renderHelp);
@@ -188,4 +194,3 @@ router.get("/createblog", createBlog);
 
 
 module.exports.router = router;
-module.exports.renderHome = renderHome;
