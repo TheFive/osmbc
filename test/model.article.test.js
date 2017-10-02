@@ -462,7 +462,7 @@ describe("model/article", function() {
             articleModule.findById(newArticle.id, function(err, result) {
               should.not.exist(err);
               should(result.commentStatus).eql("solved");
-              should(result.commentList[0].text).eql("#solved because set to --unpublished--.\n\nReason:doublette");
+              should(result.commentList[0].text).eql("#solved because set to --unpublished--.\n\nReason: doublette");
               bddone();
             });
           });
