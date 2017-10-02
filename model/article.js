@@ -259,7 +259,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
     function addCommentWhenUnpublished(cb) {
       debug("addCommentWhenUnpublished");
       if (data.categoryEN === "--unpublished--" || data.blog === "Trash") {
-        let text = "#solved because set to --unpublished--.\n\nReason:" + data.unpublishReason;
+        let text = "#solved because set to --unpublished--.\n\nReason: " + data.unpublishReason;
         if (data.unpublishReference) text += "\n" + data.unpublishReference;
         self.addCommentFunction(user, text, cb);
       } else cb();
