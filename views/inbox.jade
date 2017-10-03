@@ -34,7 +34,7 @@ mixin displayArticle(article,lang)
                           i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
                         p
                           :verbatim
-                          !{layout.md_render(comment.text)}
+                            !{layout.md_render(comment.text)}
 
 
 block content
