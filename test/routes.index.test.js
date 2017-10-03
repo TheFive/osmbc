@@ -88,7 +88,17 @@ describe("routes/index", function() {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           should(body.indexOf("<h1>Change Log</h1>")).not.equal(-1);
-          bddone();
+          userModule.findById(1,function(err,user){
+            should(user).eql({
+              id: '1',
+              OSMUser: 'TestUser',
+              access: 'full',
+              version: 2,
+              displayName: 'TestUser',
+              lastChangeLogView: '1.8.4'
+            } );
+            bddone();
+          });
         });
       });
     });
@@ -185,9 +195,39 @@ describe("routes/index", function() {
               version: 2,
               displayName: 'TestUser',
               option:  { v1:  { o1: 'v2' } }
-          });
+            });
             bddone();
           });
+        });
+      });
+    });
+    it("should throw an error on missing option", function (bddone) {
+      testutil.startServer("TestUser", function () {
+        request.get({url: baseLink + "/userconfig?view=v1&option=o1"}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("<h1>missing value in option</h1>")).not.eql(-1);
+          bddone();
+        });
+      });
+    });
+    it("should throw an error on missing view", function (bddone) {
+      testutil.startServer("TestUser", function () {
+        request.get({url: baseLink + "/userconfig"}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("<h1>missing view in option</h1>")).not.eql(-1);
+          bddone();
+        });
+      });
+    });
+    it("should throw an error on missing value", function (bddone) {
+      testutil.startServer("TestUser", function () {
+        request.get({url: baseLink + "/userconfig?view=V1"}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("<h1>missing option in option</h1>")).not.eql(-1);
+          bddone();
         });
       });
     });
