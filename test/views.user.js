@@ -12,7 +12,7 @@ var articleModule = require("../model/article.js");
 
 
 describe("views/user", function() {
-  this.timeout(50000);
+  this.timeout(100000);
   var browser;
   beforeEach(function(bddone) {
     async.series([

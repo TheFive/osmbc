@@ -1,11 +1,8 @@
 "use strict";
 
-const async = require("async");
-const sinon = require("sinon");
 const should = require("should");
 const config = require("../config.js");
 const request = require("request");
-const userRouter = require("../routes/users.js");
 const userModule = require("../model/user.js");
 const testutil = require("./testutil.js");
 
@@ -108,7 +105,7 @@ describe("router/user", function() {
               "version": 1
             });
             bddone();
-          })
+          });
         });
       });
     });
@@ -146,7 +143,7 @@ describe("router/user", function() {
             should.exist(user);
             should.exist(user.apiKey);
             bddone();
-          })
+          });
         });
       });
     });
@@ -229,7 +226,7 @@ describe("router/user", function() {
     let url = baseLink + "/usert/2";
     it("should change user data", function (bddone) {
       testutil.startServer("TestUser", function () {
-        request.post({url: url,form:{color:"red",language:"ES"}}, function (err, response, body) {
+        request.post({url: url,form:{color:"red",language:"ES"}}, function (err, response) {
           should.not.exist(err);
           should(response.statusCode).eql(302);
           userModule.findById(2,function(err,user){
