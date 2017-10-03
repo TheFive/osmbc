@@ -4,26 +4,6 @@ var config = require("../config.js");
 var should = require("should");
 var sqldebug  = require("debug")("OSMBC:model:sql");
 
-module.exports.longRunningQueries = {};
-
-function compareLRQ(a, b) {
-  return b.duration - a.duration;
-}
-
-function longRunningQueriesAdd(duration, query, table) {
-  if (!exports.longRunningQueries[table]) exports.longRunningQueries[table] = [];
-  let t = exports.longRunningQueries[table];
-
-
-  if (t.length > 10) {
-    if (t[9].duration > duration) return;
-    t.pop();
-  }
-
-  t.push({duration: duration, query: query});
-  t.sort(compareLRQ);
-}
-
 
 let pgConfigValues = config.getValue("postgres", {mustexist: true});
 
@@ -109,5 +89,3 @@ module.exports.fortestonly.testpool = function rebindPool() {
   let pool = new pg.Pool(pgConfig);
   return pool;
 };
-
-module.exports.longRunningQueriesAdd = longRunningQueriesAdd;

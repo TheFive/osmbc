@@ -81,7 +81,7 @@ exports.clearDB = function clearDB(done) {
     function(done) { pgMap.createTables(configModule.pg, pgOptions, done); }
 
   ], function(err) {
-    if (err) console.err(err);
+    if (err) console.error(err);
     should.not.exist(err);
     configModule.initialiseConfigMap();
     configModule.initialise(done);

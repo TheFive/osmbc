@@ -92,17 +92,6 @@ describe("views/index", function() {
         });
       });
     });
-    describe("Help", function() {
-      it("should display Help Text", function(bddone) {
-        this.timeout(6000);
-        browser.visit("/help/OSMBC", function(err) {
-          should.not.exist(err);
-          browser.assert.success();
-          browser.assert.text("h1", "OSMBC Instructions");
-          bddone();
-        });
-      });
-    });
     describe("LanguageSetter", function() {
       it("should set the language", function(bddone) {
         browser.referer = "/osmbc";
