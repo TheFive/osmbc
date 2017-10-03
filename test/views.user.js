@@ -43,7 +43,7 @@ describe("views/user", function() {
         browser.visit("/usert/1", cb);
       },
       function waitALittle(cb) {
-        browser.wait(10, cb);
+        browser.wait(100, cb);
       }
     ], function(err) {
       should.not.exist(err);
