@@ -1,11 +1,9 @@
 "use strict";
 
 var should  = require("should");
-var async   = require("async");
 var config  = require("../config.js");
 var request = require("request");
 var testutil = require("./testutil.js");
-var userModule = require("../model/user.js");
 
 var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
 
@@ -220,7 +218,7 @@ describe("routes/tool", function() {
         request.get({url: url+"?email=mail@server.domain"}, function (err, response, body) {
           should.not.exist(err);
           body = JSON.parse(body);
-          should(body.generator).eql("TheFive Wiki Calendar Parser")
+          should(body.generator).eql("TheFive Wiki Calendar Parser");
           should(response.statusCode).eql(200);
           bddone();
         });

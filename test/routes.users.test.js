@@ -10,11 +10,14 @@ const baseLink = "http://localhost:" + config.getServerPort() + config.getValue(
 
 describe("router/user", function() {
   this.timeout(5000);
+  before(function(bddone){
+    testutil.clearDB(bddone);
+  });
   beforeEach(function(bddone) {
     config.initialise();
     testutil.importData(
       {
-        user: [{OSMUser: "TestUser", access: "full",version:"1",id:1},
+        user: [{OSMUser: "TestUser", access: "full",version:"1",id:1,lastAccess:"20160102"},
           {OSMUser: "TestUserDenied", access: "denied"},
           { "OSMUser": "Hallo", access: "full"}
         ],
@@ -171,12 +174,12 @@ describe("router/user", function() {
   });
   describe("routes GET /:user_id", function(){
     let url = baseLink + "/usert/1";
-    it("should show user data by id", function (bddone) {
+    it("should show user dafta by id", function (bddone) {
       testutil.startServer("TestUser", function () {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("<input name=\"OSMUser\" id=\"OSMUser\" value=\"TestUser\" class=\"form-control\"/>")).not.equal(-1);
+          should(body.indexOf('<input name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly" class="form-control"/>')).not.equal(-1);
           should(body.indexOf("<h1>TestUser Heatmap</h1>")).not.equal(-1);
           bddone();
         });
