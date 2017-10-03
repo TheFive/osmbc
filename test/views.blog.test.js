@@ -25,6 +25,9 @@ describe("views/blog", function() {
   var data;
 
   describe("export", function() {
+    before(function(bddone){
+      testutil.clearDB(bddone);
+    });
     beforeEach(function(bddone) {
       var file =  path.resolve(__dirname, "data", "views.blog.export.1.json");
       data = JSON.parse(fs.readFileSync(file));

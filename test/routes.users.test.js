@@ -176,7 +176,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("<input name=\"OSMUser\" id=\"OSMUser\" value=\"TestUser\" readonly=\"readonly\" class=\"form-control\"/>")).not.equal(-1);
+          should(body.indexOf("<input name=\"OSMUser\" id=\"OSMUser\" value=\"TestUser\" class=\"form-control\"/>")).not.equal(-1);
           should(body.indexOf("<h1>TestUser Heatmap</h1>")).not.equal(-1);
           bddone();
         });
