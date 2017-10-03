@@ -174,10 +174,10 @@ function renderChangelog(req, res, next) {
   });
 }
 
-var htmlRoot = config.getValue("htmlroot",{mustExist:true});
+var htmlRoot = config.getValue("htmlroot", {mustExist: true});
 
-function redirectHome(req,res) {
-  res.redirect(htmlRoot +"/");
+function redirectHome(req, res) {
+  res.redirect(htmlRoot + "/");
 }
 
 router.get("/", renderHome);

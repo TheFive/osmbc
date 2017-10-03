@@ -1,8 +1,6 @@
 "use strict";
 
 var should  = require("should");
-var sinon   = require("sinon");
-var async   = require("async");
 var config  = require("../config.js");
 var request = require("request");
 var testutil = require("./testutil.js");
