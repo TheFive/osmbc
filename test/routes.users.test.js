@@ -9,6 +9,7 @@ const testutil = require("./testutil.js");
 const baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
 
 describe("router/user", function() {
+  this.timeout(5000);
   beforeEach(function(bddone) {
     config.initialise();
     testutil.importData(
