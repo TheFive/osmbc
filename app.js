@@ -15,6 +15,7 @@ var OpenStreetMapStrategy = require("passport-openstreetmap").Strategy;
 
 var session      = require("express-session");
 var compression  = require("compression");
+var helmet       = require("helmet");
 
 var pg           = require("pg");
 
@@ -185,6 +186,8 @@ if (config.getValue("sessionStore", {mustExist: true}) === "session-file-store")
 }
 
 var app = express();
+
+app.use(helmet());
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
