@@ -37,7 +37,7 @@ const deeplTranslate = require("deepl-translator");
 
 
 
-let htmlroot = config.getValue("htmlroot", {mustExist: true});
+let htmlroot = config.htmlRoot();
 
 // send info, that disableOldEditor is not needed any longer
 config.getValue("diableOldEditor", {deprecated: true});

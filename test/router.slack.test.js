@@ -65,7 +65,7 @@ describe("router/slack", function() {
 
   before(function(bddone) {
     server = http.createServer(app).listen(config.getServerPort());
-    link = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot") + "/slack/create/wn";
+    link = "http://localhost:" + config.getServerPort() + config.htmlRoot() + "/slack/create/wn";
 
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)

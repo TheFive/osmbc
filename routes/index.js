@@ -158,7 +158,7 @@ function renderChangelog(req, res, next) {
   });
 }
 
-var htmlRoot = config.getValue("htmlroot", {mustExist: true});
+var htmlRoot = config.htmlRoot();
 
 function redirectHome(req, res) {
   res.redirect(htmlRoot + "/");

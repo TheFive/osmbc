@@ -18,7 +18,7 @@ var blogRenderer   = require("../render/BlogRenderer.js");
 var logModule      = require("../model/logModule.js");
 var userModule     = require("../model/user.js");
 
-let htmlroot = config.getValue("htmlroot", {mustExist: true});
+let htmlroot = config.htmlRoot();
 
 // Internal Function to find a blog by an ID
 // it accepts an internal Blog ID of OSMBC and a blog name

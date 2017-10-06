@@ -31,7 +31,7 @@ describe("views/blog", function() {
     beforeEach(function(bddone) {
       var file =  path.resolve(__dirname, "data", "views.blog.export.1.json");
       data = JSON.parse(fs.readFileSync(file));
-      baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+      baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
       nock("https://hooks.slack.com/")
         .post(/\/services\/.*/)
         .times(999)
@@ -91,7 +91,7 @@ describe("views/blog", function() {
   describe("status Functions", function() {
     beforeEach(function(bddone) {
       mockdate.set(new Date("2016-05-25T19:00"));
-      baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+      baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
       nock("https://hooks.slack.com/")
         .post(/\/services\/.*/)
         .times(999)

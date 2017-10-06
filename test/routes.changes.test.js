@@ -12,7 +12,7 @@ var testutil = require("../test/testutil.js");
 var logModule = require("../model/logModule.js");
 var mockdate = require("mockdate");
 
-var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 

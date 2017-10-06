@@ -6,7 +6,7 @@ const request = require("request");
 const userModule = require("../model/user.js");
 const testutil = require("./testutil.js");
 
-const baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 describe("router/user", function() {
   this.timeout(5000);

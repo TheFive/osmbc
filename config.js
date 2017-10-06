@@ -75,10 +75,10 @@ exports.initialise = function initialise(callback) {
   configuration = JSON.parse(fs.readFileSync(configurationFile));
 
   // Do some tests with the types
-  
-  configuration.languages.forEach(function(lang){
+
+  configuration.languages.forEach(function(lang) {
     if (!configuration.moment_locale) configuration.moment_locale = {};
-    if(configuration.moment_locale[lang]) return;
+    if (configuration.moment_locale[lang]) return;
     configuration.moment_locale[lang] = lang;
   });
 
@@ -122,11 +122,15 @@ exports.getValue = function(key, options) {
 };
 
 
-let languages = exports.getValue("languages",{mustExist:true});
+let languages = exports.getValue("languages", {mustExist: true});
+let htmlRoot = exports.getValue("htmlroot", {mustExist: true});
+
 
 exports.getLanguages = function() {
   return languages;
 };
+
+exports.htmlRoot = function() { return htmlRoot; };
 
 exports.moment_locale = function(lang) {
   return configuration.moment_locale[lang];

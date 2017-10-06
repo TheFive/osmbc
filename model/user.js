@@ -115,7 +115,7 @@ User.prototype.calculateChanges = function calculateChanges(callback) {
   });
 };
 
-let htmlroot = config.getValue("htmlroot");
+let htmlroot = config.htmlRoot();
 
 
 function getAvatar(osmuser) {

@@ -15,7 +15,7 @@ var configModule = require("../model/config.js");
 var logModule = require("../model/logModule.js");
 
 
-let htmlroot = config.getValue("htmlroot", {mustExist: true});
+let htmlroot = config.htmlRoot();
 
 
 

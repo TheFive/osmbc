@@ -27,7 +27,7 @@ var configModule = require("../model/config.js");
 
 var sizeOf = require("image-size");
 
-let htmlroot = config.getValue("htmlroot", {mustExist: true});
+let htmlroot = config.htmlRoot();
 let bootstrap = config.getValue("bootstrap", {mustExist: true});
 let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
 

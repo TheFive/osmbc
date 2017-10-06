@@ -5,7 +5,7 @@ var config  = require("../config.js");
 var request = require("request");
 var testutil = require("./testutil.js");
 
-var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 describe("routes/tool", function() {

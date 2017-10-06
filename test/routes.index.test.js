@@ -7,7 +7,7 @@ var request = require("request");
 var testutil = require("./testutil.js");
 var userModule = require("../model/user.js");
 
-var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 describe("routes/index", function() {

@@ -15,7 +15,7 @@ var articleModule = require("../model/article.js");
 var blogModule    = require("../model/blog.js");
 var userModule    = require("../model/user.js");
 
-var htmlRoot      = config.getValue("htmlroot", {mustExist: true});
+var htmlRoot      = config.htmlRoot();
 var bootstrap     = config.getValue("bootstrap", {mustExist: true});
 var appName       = config.getValue("AppName", {mustExist: true});
 

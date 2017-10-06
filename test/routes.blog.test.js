@@ -14,7 +14,7 @@ var mockdate = require("mockdate");
 require("jstransformer-verbatim");
 
 
-var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 
