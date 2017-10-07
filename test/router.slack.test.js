@@ -45,7 +45,6 @@ describe("router/slack", function() {
   }
   function findArticle(a, cb) {
     articleModule.find(a, function(err, result) {
-      // console.dir(result);
       should.not.exist(err);
       should.exist(result);
       should(result.length).eql(1);
