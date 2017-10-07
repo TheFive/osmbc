@@ -76,11 +76,13 @@ block content
                       img(src=layout.getAvatar(user.osmuser) style="height:25px;width:25px")
                     td
                       a(href=layout.htmlroot+"/usert/"+user.osmuser)=user.osmuser
+                    td
+                      a(href=layout.htmlroot+"/changes/log?user="+user.osmuser) (edits)
 
 
 
 
-        .row
+      .row
           h4="Admin View"
           a(href=layout.htmlroot+"/osmbc/admin") click here
     .col-md-8.hidden-xs
