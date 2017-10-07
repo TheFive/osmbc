@@ -169,6 +169,7 @@ module.exports.pg = pgObject;
 var checkAndRepair = {
   "formulation_tipEN": function () {},
   "formulation_tipDE": function () {},
+  "tipoftheday": function() {},
   "calendartranslation": function (c) {
     var ct = c.getJSON();
     if (!ct) ct = {};
@@ -347,6 +348,7 @@ function initialise(callback) {
   async.series([
     initConfigElement.bind(null, "formulation_tipEN"),
     initConfigElement.bind(null, "formulation_tipDE"),
+    initConfigElement.bind(null, "tipoftheday"),
     initConfigElement.bind(null, "calendartranslation"),
     initConfigElement.bind(null, "categorydescription"),
     initConfigElement.bind(null, "languageflags"),

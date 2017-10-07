@@ -30,7 +30,8 @@ describe("routes/index", function() {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           should(body.indexOf("<title>TESTBC</title>")).not.equal(-1);
-          should(body.indexOf("<h2 class=\"hidden-xs\">Welcome to OSM BC</h2>")).not.equal(-1);
+
+          should(body.indexOf("<h2>Welcome to OSMBC</h2>")).not.equal(-1);
           bddone();
         });
       });

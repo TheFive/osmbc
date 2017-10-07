@@ -3,13 +3,9 @@ extends layout
 block content
   .row
     .col-md-4
-        h2.hidden-xs
-          | Welcome to OSM BC
-        h2.visible-xs
-          | OSM BC
-        .row 
-          p.osmbc-help-text
-            | See recent blogs to work on below. If you just want to collect an article or an idea, use the collect menu on in the navbar.
+        .row
+          :verbatim
+            !{layout.md_render(tipOfTheDay)}
         .row
           h3="Blogs to work on "
             a(href=layout.htmlroot+"/blog/list?status=IN('open','edit')") (more)
@@ -82,7 +78,7 @@ block content
 
 
 
-      .row
+        .row
           h4="Admin View"
           a(href=layout.htmlroot+"/osmbc/admin") click here
     .col-md-8.hidden-xs
