@@ -6,9 +6,9 @@ var async  = require("async");
 var debug  = require("debug")("OSMBC:model:pgMap");
 var sqldebug  = require("debug")("OSMBC:model:sql");
 
-var config = require("../util/config.js");
-var logger = require("../util/config.js").logger;
-var util = require("../util/util.js");
+var config = require("../config.js");
+var logger = require("../config.js").logger;
+var util = require("../util.js");
 
 
 function generateQuery(table, obj, order) {

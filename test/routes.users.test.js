@@ -1,7 +1,7 @@
 "use strict";
 
 const should = require("should");
-const config = require("../util/config.js");
+const config = require("../config.js");
 const request = require("request");
 const userModule = require("../model/user.js");
 const testutil = require("./testutil.js");

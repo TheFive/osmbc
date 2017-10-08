@@ -3,7 +3,7 @@
 var fs = require("fs");
 var path = require("path");
 var debug = require("debug")("OSMBC:routes:help");
-var config = require("../util/config.js");
+var config = require("../config.js");
 
 var markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))

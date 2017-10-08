@@ -8,12 +8,12 @@ var should   = require("should");
 var markdown = require("markdown-it")();
 var debug    = require("debug")("OSMBC:routes:article");
 var jade     = require("jade");
-var util     = require("../util/util.js");
+var util     = require("../util.js");
 var path     = require("path");
 
 
-var config    = require("../util/config.js");
-var logger    = require("../util/config.js").logger;
+var config    = require("../config.js");
+var logger    = require("../config.js").logger;
 
 var BlogRenderer = require("../render/BlogRenderer.js");
 

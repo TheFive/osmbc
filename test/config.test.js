@@ -1,6 +1,6 @@
 "use strict";
 
-var config = require("../util/config.js");
+var config = require("../config.js");
 var async = require("async");
 var should = require("should");
 

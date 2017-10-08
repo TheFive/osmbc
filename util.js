@@ -1,19 +1,7 @@
 "use strict";
 
 var debug = require("debug")("OSMBC:util");
-var async = require("async");
 var should = require('should');
-
-var logger  = require('../util/config.js').logger;
-
-
-var configModule = require('../model/config.js');
-var blogModule = require('../model/blog.js');
-var userModule = require('../model/user.js');
-var messageCenter = require('../notification/messageCenter.js');
-var mailReceiver  = require('../notification/mailReceiver.js');
-var slackReceiver  = require('../notification/slackReceiver.js');
-
 
 var markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
@@ -103,8 +91,6 @@ function requireTypes(vars,types) {
     should(typeof vars[i]).eql(types[i]);
   }
 }
-
-
 // shorten shorten a string up to maxlength
 // default is 30. If a string is shortenend, "..." is appendet
 exports.shorten = shorten;
@@ -117,54 +103,3 @@ exports.isTrue = isTrue;
 
 // Convert MD to HTML, and mark all http(s) links as hyperlinks.
 exports.md_render = md_render;
-
-
-// do not know where to place this stuff,
-// so i start here to have one initialisation function, which does all
-
-
-function startBlogTimer(param,callback) {
-  debug("startBlogTimer");
-  blogModule.startAllTimers(function (err) {
-    if (err) {
-      logger.error(err);
-      return callback(new Error("Error during Blog Timers Start "+err.message));
-    }
-    logger.info("Timer for Auto Close started");
-    return callback();
-  });
-}
-
-// Initialise Mail Module with all users
-function startMailReceiver(callback) {
-  debug("startMailReceiver");
-  userModule.find({access:"full"},function initUsers(err,result) {
-    if (err) {
-      return callback(new Error("Error during User Initialising for Mail "+err.message));
-    }
-    mailReceiver.initialise(result);
-    logger.info("Mail Receiver initialised.");
-    return callback();
-  });
-}
-
-
-
-function startSlackReceiver(param,callback) {
-  debug("startSlackReceiver");
-
-  slackReceiver.initialise(callback);
-}
-
-
-
-exports.initialiseModules = function(callback) {
-  debug("initialiseModules");
-  async.auto({
-    configModule:configModule.initialise,
-    blogModule:["configModule",startBlogTimer],
-    messageCenter:["configModule",function(param,callback){messageCenter.initialise(callback);}],
-    startMailReceiver:startMailReceiver,
-    startSlackReceiver:["configModule",startSlackReceiver]
-  },callback);
-};

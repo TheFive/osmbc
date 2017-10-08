@@ -5,8 +5,8 @@ var async    = require("async");
 var router   = express.Router();
 var debug    = require("debug")("OSMBC:routes:slack");
 
-var config   = require("../util/config.js");
-var logger   = require("../util/config.js").logger;
+var config   = require("../config.js");
+var logger   = require("../config.js").logger;
 
 
 var userModule     = require("../model/user.js");

@@ -1,7 +1,7 @@
 "use strict";
 
 var pgMap          = require("./pgMap.js");
-var util           = require("../util/util.js");
+var util           = require("../util.js");
 var debug          = require("debug")("OSMBC:model:user");
 var should         = require("should");
 var async          = require("async");
@@ -9,12 +9,12 @@ var messageCenter  = require("../notification/messageCenter.js");
 var mailReceiver   = require("../notification/mailReceiver.js");
 var random         = require("randomstring");
 var emailValidator = require("email-validator");
-var config         = require("../util/config.js");
+var config         = require("../config.js");
 var cheerio        = require("cheerio");
 var request        = require("request");
 var path           = require("path");
 var fs             = require("fs");
-var logger         = require("../util/config.js").logger;
+var logger         = require("../config.js").logger;
 
 
 // generate an user object, use Prototpye

@@ -7,7 +7,7 @@ var program = require('commander');
 require('colors');
 
 
-var config        = require('../util/config.js');
+var config        = require('../config.js');
 var pgMap         = require('../model/pgMap.js');
 var blogModule    = require('../model/blog.js');
 var articleModule = require('../model/article.js');
@@ -176,10 +176,7 @@ function clearDB(options,callback) {
     function(done) {ct(session.pg,pgOptions,done);},
 
   ],function(err) {
-    if (err) {
-      console.error("Error occured in import/createeDB");
-      console.error(err);
-    }
+    if (err) console.dir(err);
     callback();
   });
 }

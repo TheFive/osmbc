@@ -3,7 +3,7 @@
 var nock  = require("nock");
 var should = require("should");
 var request = require("request");
-var config = require("../util/config");
+var config = require("../config");
 
 
 

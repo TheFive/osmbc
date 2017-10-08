@@ -8,7 +8,7 @@ var nock      = require("nock");
 
 var testutil  = require("./testutil.js");
 
-var config    = require("../util/config.js");
+var config    = require("../config.js");
 var app       = require("../app.js");
 
 var slackRouter = require("../routes/slack.js");
@@ -45,6 +45,7 @@ describe("router/slack", function() {
   }
   function findArticle(a, cb) {
     articleModule.find(a, function(err, result) {
+      // console.dir(result);
       should.not.exist(err);
       should.exist(result);
       should(result.length).eql(1);

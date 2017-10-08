@@ -7,7 +7,7 @@ var path = require("path");
 var fs = require("fs");
 var sinon = require("sinon");
 
-var util = require("../util/util.js");
+var configModule = require("../model/config.js");
 
 
 /* eslint-disable mocha/no-synchronous-tests */
@@ -16,7 +16,7 @@ describe("model/parseEvent", function() {
   var clock;
   before(function(bddone) {
     clock = sinon.useFakeTimers(new Date("2015-12-06").getTime());
-    util.initialiseModules(bddone);
+    configModule.initialise(bddone);
   });
   after(function(bddone) {
     clock.restore();

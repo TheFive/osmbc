@@ -7,7 +7,7 @@ var debug = require('debug')('OSMBC:import:download');
 
 var articleModule = require('../model/article.js');
 var blogModule = require('../model/blog.js');
-var config=require('../util/config.js');
+var config=require('../config.js');
 
 var async = require('async');
 
@@ -178,10 +178,7 @@ function importBlog(nr,callback) {
     ],
     function loadedWN(err){ 
       debug('loadedWN');
-      if (err) {
-        console.error("Error occured in import/downlad importBlog function");
-        console.error(err);
-      }
+      if (err) console.dir(err);
       if (body) {
         state = null;
         result = [];
@@ -212,8 +209,12 @@ function importBlog(nr,callback) {
           console.info("Blog Saved Error("+err+")");
           async.each(result,function iterator(item,cb) {
             var category = item.title;
+            //console.dir("ITEM"+item);
             if (category === null) return cb();
+            //console.dir("Import Category: "+category);
+            //console.dir(item.element.length+" Elements in Category");
             async.each(item.element,function eachArticle(articleProto,cba) {
+              //console.log(articleProto);
               var markdownDE = toMarkdown(articleProto);
               var article = articleModule.create();
               article.setAndSave({OSMUser:"IMPORT"},{blog:blogName,category:category,markdownDE:markdownDE},function(err){
@@ -248,7 +249,7 @@ importBlog(270,function(){console.info("Ready.");});
 importBlog(271,function(){console.info("Ready.");});
 /*
 async.timesLimit(1,1,function (n,next){
-  console.info("Start Import for "+n);
+  console.log("Start Import for "+n);
   importBlog(n,next);
 
 })*/

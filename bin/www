@@ -13,11 +13,16 @@ var stoppable = require('stoppable');
 
 var app     = require('../app');
 
-var config  = require('../util/config.js');
-var logger  = require('../util/config.js').logger;
-var util    = require('../util/util.js');
+var config  = require('../config.js');
+var logger  = require('../config.js').logger;
 
 
+var configModule = require('../model/config.js');
+var blogModule = require('../model/blog.js');
+var userModule = require('../model/user.js');
+var messageCenter = require('../notification/messageCenter.js');
+var mailReceiver  = require('../notification/mailReceiver.js');
+var slackReceiver  = require('../notification/slackReceiver.js');
 
 /**
  * Get port from environment and store in Express.
@@ -37,7 +42,13 @@ var server = stoppable(http.createServer(app));
  */
 function initialiseServer() {
   debug('initialiseServer');
-  util.initialiseModules(
+  async.auto({
+    configModule:configModule.initialise,
+    blogModule:["configModule",startBlogTimer],
+    messageCenter:messageCenter.initialise,
+    startMailReceiver:startMailReceiver,
+    startSlackReceiver:["configModule",startSlackReceiver]
+  },
     function(err){
       if (err) {
         logger.error(err);
@@ -48,8 +59,7 @@ function initialiseServer() {
       server.on('error', onError);
       server.on('listening', onListening);
       logger.info("Server Listening on port "+port);
-    }
-  );
+  })
 }
 
 process.on('SIGINT', function() {
@@ -62,7 +72,36 @@ process.on('SIGINT', function() {
 initialiseServer();
 
 
+// Initialise Mail Module with all users
+function startMailReceiver(callback) {
+  debug("startMailReceiver");
+  userModule.find({access:"full"},function initUsers(err,result) {
+    if (err) {
+      return callback(new Error("Error during User Initialising for Mail "+err.message));
+    }
+    mailReceiver.initialise(result);
+    logger.info("Mail Receiver initialised.");
+    return callback();
+  });
+}
 
+function startSlackReceiver(param,callback) {
+  debug("startSlackReceiver");
+
+  slackReceiver.initialise(callback);
+}
+
+function startBlogTimer(param,callback) {
+  debug("startBlogTimer");
+  blogModule.startAllTimers(function (err) {
+    if (err) {
+      logger.error(err);
+      return callback(new Error("Error during Blog Timers Start "+err.message));
+    }
+    logger.info("Timer for Auto Close started");
+    return callback();
+  });
+}
 
 
 /**

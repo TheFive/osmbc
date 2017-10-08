@@ -9,7 +9,7 @@ var path = require("path");
 var fs = require("fs");
 var mockdate = require("mockdate");
 
-var config = require("../util/config.js");
+var config = require("../config.js");
 
 var configModule = require("../model/config.js");
 var blogModule   = require("../model/blog.js");

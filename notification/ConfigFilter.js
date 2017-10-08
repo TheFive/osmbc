@@ -1,6 +1,6 @@
 "use strict";
 var debug = require("debug")("OSMBC:notification:messageFilter");
-var util = require("../util/util.js");
+var util = require("../util.js");
 
 
 /* ConfigFilter Class

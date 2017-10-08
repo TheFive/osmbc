@@ -2,9 +2,9 @@
 // Exported Functions and prototypes are defined at end of file
 
 var async    = require("async");
-var config   = require("../util/config.js");
-var logger   = require("../util/config.js").logger;
-var util     = require("../util/util.js");
+var config   = require("../config.js");
+var logger   = require("../config.js").logger;
+var util     = require("../util.js");
 
 var markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
