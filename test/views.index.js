@@ -59,7 +59,7 @@ describe("views/index", function() {
         browser.visit("/osmbc", function(err) {
           should.not.exist(err);
           browser.assert.success();
-          browser.assert.text("h2", "Welcome to OSMBC");
+          browser.assert.text("h2", "Welcome to OSM BCOSM BC");
           bddone();
         });
       });

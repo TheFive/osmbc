@@ -9,7 +9,6 @@ var help = require("../routes/help.js");
 var config = require("../config.js");
 var logModule = require("../model/logModule.js");
 var userModule = require("../model/user.js");
-var configModule = require("../model/config.js");
 var moment = require("moment");
 
 
@@ -42,7 +41,6 @@ function renderHome(req, res, next) {
       activeUserList: result.activeUser,
       visitorsToday: result.visitorsToday,
       newUsers: result.newUsers,
-      tipOfTheDay: configModule.getConfig("tipoftheday"),
       changes: result.historie});
   }
   );
