@@ -1,11 +1,11 @@
 "use strict";
 
 var articleModule = require('../model/article.js');
-var logger   = require("../config.js").logger;
+var logger   = require("../util/config.js").logger;
 var userModule = require('../model/user.js');
 var blogModule = require('../model/blog.js');
 var logModule = require('../model/logModule.js');
-var config= require('../config.js');
+var config= require('../util/config.js');
 var configModule= require('../model/config.js');
 var async = require('async');
 var ProgressBar = require('progress');

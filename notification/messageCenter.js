@@ -3,7 +3,7 @@
 var debug     = require("debug")("OSMBC:notification:messageCenter");
 var async     = require("async");
 var LogModuleReceiver = require("../notification/LogModuleReceiver");
-var logger    = require("../config.js").logger;
+var logger    = require("../util/config.js").logger;
 
 
 

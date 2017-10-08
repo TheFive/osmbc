@@ -1,7 +1,7 @@
 "use strict";
 
 var twitter = require("../model/twitter.js");
-var config = require("../config.js");
+var config = require("../util/config.js");
 var path = require("path");
 var fs = require("fs");
 var sinon = require("sinon");

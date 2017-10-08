@@ -1,6 +1,6 @@
 "use strict";
 const pg = require("pg");
-var config = require("../config.js");
+var config = require("../util/config.js");
 var should = require("should");
 var sqldebug  = require("debug")("OSMBC:model:sql");
 
@@ -12,7 +12,7 @@ should.exist(pgConfigValues.database);
 should.exist(pgConfigValues.password);
 should.exist(pgConfigValues.server);
 should.exist(pgConfigValues.port);
-var logger    = require("../config.js").logger;
+var logger    = require("../util/config.js").logger;
 
 if (pgConfigValues.connectStr && pgConfigValues.connectStr !== "") {
   logger.error("Database connectStr is deprecated, please remove from config");

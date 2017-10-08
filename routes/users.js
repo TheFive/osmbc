@@ -9,8 +9,8 @@ var express    = require("express");
 var router     = express.Router();
 
 
-var config = require("../config.js");
-var logger = require("../config.js").logger;
+var config = require("../util/config.js");
+var logger = require("../util/config.js").logger;
 
 var userModule = require("../model/user.js");
 var logModule = require("../model/logModule.js");

@@ -1,7 +1,7 @@
 "use strict";
 
 var Twit = require("twit");
-var config = require("../config.js");
+var config = require("../util/config.js");
 var request = require("request");
 var async = require("async");
 var debug = require("debug")("OSMBC:model:twitter");

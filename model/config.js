@@ -9,8 +9,8 @@ var path     = require("path");
 
 
 var pgMap    = require("../model/pgMap.js");
-var config   = require("../config.js");
-var util     = require("../util.js");
+var config   = require("../util/config.js");
+var util     = require("../util/util.js");
 
 
 var messageCenter = require("../notification/messageCenter.js");

@@ -7,9 +7,9 @@ var should   = require("should");
 var debug    = require("debug")("OSMBC:model:article");
 
 
-var config    = require("../config.js");
-var logger    = require("../config.js").logger;
-var util      = require("../util.js");
+var config    = require("../util/config.js");
+var logger    = require("../util/config.js").logger;
+var util      = require("../util/util.js");
 
 var messageCenter  = require("../notification/messageCenter.js");
 var blogModule     = require("../model/blog.js");

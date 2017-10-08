@@ -2,7 +2,7 @@
 
 var should  = require("should");
 var async   = require("async");
-var config  = require("../config.js");
+var config  = require("../util/config.js");
 var request = require("request");
 var testutil = require("./testutil.js");
 var userModule = require("../model/user.js");

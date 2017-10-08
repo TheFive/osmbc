@@ -2,7 +2,7 @@
 
 var db = require("../model/db.js");
 var async = require("async");
-var config = require("../config.js");
+var config = require("../util/config.js");
 var pgMap = require("../model/pgMap.js");
 var debug = require("debug")("OSMBC:model:logModule");
 

@@ -12,7 +12,7 @@ var passportStub = require("./passport-stub.js");
 var Browser = require("zombie");
 var http = require("http");
 
-var config = require("../config.js");
+var config = require("../util/config.js");
 
 var app = require("../app.js");
 

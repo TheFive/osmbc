@@ -1,7 +1,7 @@
 "use strict";
 
 
-var config = require("../config.js");
+var config = require("../util/config.js");
 var should = require("should");
 var debug = require("debug")("OSMBC:notification:slackReceiver");
 

@@ -21,7 +21,7 @@ var pg           = require("pg");
 
 var should       = require("should");
 
-var config       = require("./config.js");
+var config       = require("./util/config.js");
 
 var index        = require("./routes/index").router;
 var users        = require("./routes/users").router;
@@ -34,7 +34,7 @@ var calendar     = require("./routes/tool").publicRouter;
 var api          = require("./routes/api").publicRouter;
 var layout       = require("./routes/layout").router;
 var configRouter = require("./routes/config").router;
-var logger       = require("./config.js").logger;
+var logger       = require("./util/config.js").logger;
 
 var userModule   = require("./model/user.js");
 

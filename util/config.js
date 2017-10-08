@@ -28,7 +28,7 @@ logger.stream = {
 
 
 // the configurationfile should be in the "running" directory
-var configurationFile = path.resolve(__dirname, "config." + env + ".json");
+var configurationFile = path.resolve(__dirname,"..", "config." + env + ".json");
 var configuration;
 var configurationInitialised = false;
 

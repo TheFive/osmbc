@@ -5,7 +5,7 @@ var sinon   = require("sinon");
 var should  = require("should");
 var nock    = require("nock");
 var request = require("request");
-var config  = require("../config.js");
+var config  = require("../util/config.js");
 var mockdate = require("mockdate");
 var deeplTranslate = require("deepl-translator");
 
