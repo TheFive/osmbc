@@ -1,28 +1,30 @@
 "use strict";
 
-var express  = require("express");
-var async    = require("async");
-var router   = express.Router();
-var slackrouter = express.Router();
-var should   = require("should");
-var markdown = require("markdown-it")();
-var debug    = require("debug")("OSMBC:routes:article");
-var jade     = require("jade");
-var util     = require("../util.js");
-var path     = require("path");
+const express  = require("express");
+const async    = require("async");
+const router   = express.Router();
+const slackrouter = express.Router();
+const should   = require("should");
+const markdown = require("markdown-it")();
+const debug    = require("debug")("OSMBC:routes:article");
+const jade     = require("jade");
+const util     = require("../util.js");
+const path     = require("path");
 
 
-var config    = require("../config.js");
-var logger    = require("../config.js").logger;
+const config    = require("../config.js");
+const logger    = require("../config.js").logger;
 
-var BlogRenderer = require("../render/BlogRenderer.js");
+const BlogRenderer = require("../render/BlogRenderer.js");
 
-var articleModule = require("../model/article.js");
-var twitter       = require("../model/twitter.js");
-var blogModule    = require("../model/blog.js");
-var logModule     = require("../model/logModule.js");
-var configModule  = require("../model/config.js");
-var htmltitle     = require("../model/htmltitle.js");
+const articleModule = require("../model/article.js");
+const twitter       = require("../model/twitter.js");
+const blogModule    = require("../model/blog.js");
+const logModule     = require("../model/logModule.js");
+const configModule  = require("../model/config.js");
+const htmltitle     = require("../model/htmltitle.js");
+
+const auth        = require("../routes/auth.js");
 
 require("jstransformer")(require("jstransformer-markdown-it"));
 
@@ -930,30 +932,30 @@ function translate(req, res, next) {
 
 
 // And configure router to use render Functions
-router.get("/list", renderList);
-router.get("/create", createArticle);
-router.get("/searchandcreate", searchAndCreate);
-router.get("/search", searchArticles);
-router.post("/create", postArticle);
-router.post("/:article_id/copyTo/:blog", copyArticle);
-router.post("/translate/:fromLang/:toLang", translate);
+router.get("/list", auth.checkRole("full"), renderList);
+router.get("/create", auth.checkRole("full"), createArticle);
+router.get("/searchandcreate", auth.checkRole("full"), searchAndCreate);
+router.get("/search", auth.checkRole("full"), searchArticles);
+router.post("/create", auth.checkRole("full"), postArticle);
+router.post("/:article_id/copyTo/:blog", auth.checkRole("full"), copyArticle);
+router.post("/translate/:fromLang/:toLang", auth.checkRole("full"), translate);
 
 router.param("article_id", getArticleFromID);
 
-router.get("/:article_id", renderArticleId);
-router.get("/:article_id/votes", renderArticleIdVotes);
-router.get("/:article_id/commentArea", renderArticleIdCommentArea);
+router.get("/:article_id", auth.checkRole(["full", "guest"]), renderArticleId);
+router.get("/:article_id/votes", auth.checkRole(["full"]), renderArticleIdVotes);
+router.get("/:article_id/commentArea", auth.checkRole(["full"]), renderArticleIdCommentArea);
 
-router.get("/:article_id/markCommentRead", markCommentRead);
-router.get("/:article_id/:action.:tag", doAction);
-router.get("/:article_id/:votename", renderArticleIdVotesBlog);
+router.get("/:article_id/markCommentRead", auth.checkRole(["full"]), markCommentRead);
+router.get("/:article_id/:action.:tag", auth.checkRole(["full"]), doAction);
+router.get("/:article_id/:votename", auth.checkRole(["full"]), renderArticleIdVotesBlog);
 
 
-router.post("/:article_id/addComment", postNewComment);
-router.post("/:article_id/setMarkdown/:lang", postSetMarkdown);
-router.post("/:article_id/editComment/:number", postEditComment);
-router.post("/:article_id", postArticle);
-router.post("/:article_id/witholdvalues", postArticleWithOldValues);
+router.post("/:article_id/addComment", auth.checkRole(["full"]), postNewComment);
+router.post("/:article_id/setMarkdown/:lang", auth.checkRole(["full"]), postSetMarkdown);
+router.post("/:article_id/editComment/:number", auth.checkRole(["full"]), postEditComment);
+router.post("/:article_id", auth.checkRole(["full"]), postArticle);
+router.post("/:article_id/witholdvalues", auth.checkRole(["full"]), postArticleWithOldValues);
 
 
 

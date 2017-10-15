@@ -118,7 +118,7 @@ app.get(htmlRoot + "/auth/openstreetmap/callback", auth.passport.authenticate("o
 app.get(htmlRoot + "/logout", function(req, res) {
   debug("logoutFunction");
   req.logout();
-  res.redirect(htmlRoot+"/osmbc.html");
+  res.redirect(htmlRoot + "/osmbc.html");
 });
 
 // first register the unsecured path
@@ -133,13 +133,13 @@ app.use(htmlRoot + "/slack", slackrouter);
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
 app.use(htmlRoot + "/", auth.ensureAuthenticated, layout);
-app.use(htmlRoot + "/", auth.checkAuthentification, index);
-app.use(htmlRoot + "/usert", auth.checkAuthentification, users);
-app.use(htmlRoot + "/article", auth.checkAuthentification, article);
-app.use(htmlRoot + "/changes", auth.checkAuthentification, changes);
-app.use(htmlRoot + "/blog", auth.checkAuthentification, blog);
-app.use(htmlRoot + "/tool", auth.checkAuthentification, tool);
-app.use(htmlRoot + "/config", auth.checkAuthentification, configRouter);
+app.use(htmlRoot + "/", index);
+app.use(htmlRoot + "/usert", users);
+app.use(htmlRoot + "/article", article);
+app.use(htmlRoot + "/changes", changes);
+app.use(htmlRoot + "/blog", blog);
+app.use(htmlRoot + "/tool", tool);
+app.use(htmlRoot + "/config", configRouter);
 
 
 // error handlers
@@ -188,7 +188,7 @@ if (app.get("env") === "test") {
     debug("app.use Error Handler for Debug");
     res.status(err.status || 500);
     logger.error("Error Message " + err.message);
-    if (err.type && err.type === "API") return res.send(err.message+"\n"+JSON.stringify(err));
+    if (err.type && err.type === "API") return res.send(err.message + "\n" + JSON.stringify(err));
     res.render("error", {
       message: err.message,
       error: err,

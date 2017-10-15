@@ -65,19 +65,28 @@ function (token, tokenSecret, profile, done) {
 ));
 
 
-function checkAuthentification (req, res, next) {
-  debug("checkAuthentification");
-
-  // Route / checks for authentification, so nothing has to be done,
-  // just check authentification.
-  // it is imporant, that the parallel ensureAutheticated function is used
-  // BEFORE this easy funktion in the routes, to
-  // avoid any login trouble.
-
-  if (req.isAuthenticated()) return next();
-
-  return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
+function checkRole(role) {
+  let roleArray = role;
+  if (typeof role === "string") roleArray = [role];
+  return function checkAuthentification (req, res, next) {
+    debug("checkAuthentification");
+    if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
+    if (roleArray.indexOf(req.user.access) >=0 ) return next();
+    return next(new Error("OSM User >" + req.user.displayName + "< has not enough access rights"));
+  };
 }
+
+function hasRole(role) {
+  let roleArray = role;
+  if (typeof role === "string") roleArray = [role];
+  return function checkAuthentification (req, res, next) {
+    debug("checkAuthentification");
+    if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
+    if (roleArray.indexOf(req.user.access) >=0 ) return next();
+    return next("route");
+  };
+}
+
 
 function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated");
@@ -93,7 +102,7 @@ function ensureAuthenticated (req, res, next) {
           req.user[k] = result[0][k];
         }
         debug("User found");
-        if (result[0].access === "full") {
+        if ((result[0].access === "full") ||(result[0].access === "guest")) {
           // save last access, ignore save callback
           var date = new Date();
           var lastStore = new Date(result[0].lastAccess);
@@ -112,7 +121,11 @@ function ensureAuthenticated (req, res, next) {
         err = new Error("OSM User >" + req.user.displayName + "< has no access rights");
       }
       if (result.length === 0) {
-        err = new Error("OSM User >" + req.user.displayName + "< is not an OSMBC user.");
+        let osmname = req.user.displayName;
+        req.user = userModule.create();
+        req.user.OSMUser = osmname;
+        req.user.access = "guest";
+        return next();
       }
       return next(err);
     });
@@ -135,5 +148,6 @@ function ensureAuthenticated (req, res, next) {
 
 
 module.exports.passport = passport;
-module.exports.checkAuthentification = checkAuthentification;
+module.exports.checkRole = checkRole;
+module.exports.hasRole = hasRole;
 module.exports.ensureAuthenticated = ensureAuthenticated;

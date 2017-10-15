@@ -98,6 +98,7 @@ function cacheOSMAvatarAll(callback) {
     }, function(err) { return callback(err); });
   });
 }
+
 if (process.env.NODE_ENV !== "test") {
   cacheOSMAvatarAll(function(err) { if (err) logger.error("Error during Cache of User Avatar" + err.message); });
 }
@@ -115,15 +116,13 @@ User.prototype.calculateChanges = function calculateChanges(callback) {
   });
 };
 
-let htmlroot = config.htmlRoot();
-
 
 function getAvatar(osmuser) {
   debug("getAvatar");
   /* jshint -W040 */
   if (osmuser === undefined && this !== undefined) osmuser = this.OSMUser;
   /* jshint +W040 */
-  return htmlroot + "/ch_av/" + util.linkify(osmuser) + ".png";
+  return config.htmlRoot() + "/ch_av/" + util.linkify(osmuser) + ".png";
 }
 
 

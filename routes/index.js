@@ -1,16 +1,16 @@
 "use strict";
 
-var should = require("should");
-var debug = require("debug")("OSMBC:routes:index");
-var express = require("express");
-var async = require("async");
-var router = express.Router();
-var help = require("../routes/help.js");
-var config = require("../config.js");
-var logModule = require("../model/logModule.js");
-var userModule = require("../model/user.js");
-var moment = require("moment");
-
+const should = require("should");
+const debug = require("debug")("OSMBC:routes:index");
+const express = require("express");
+const async = require("async");
+const router = express.Router();
+const help = require("../routes/help.js");
+const config = require("../config.js");
+const logModule = require("../model/logModule.js");
+const userModule = require("../model/user.js");
+const moment = require("moment");
+const auth = require("../routes/auth.js");
 
 
 
@@ -164,14 +164,14 @@ function redirectHome(req, res) {
   res.redirect(htmlRoot + "/");
 }
 
-router.get("/", renderHome);
+router.get("/", auth.checkRole(["full","guest"]),renderHome);
 router.get("/osmbc.html", redirectHome);
 router.get("/osmbc", redirectHome);
-router.get("/osmbc/admin", renderAdminHome);
-router.get("/changelog", renderChangelog);
-router.get("/language", languageSwitcher);
-router.get("/userconfig", setUserConfig);
-router.get("/createblog", createBlog);
+router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
+router.get("/changelog", auth.checkRole(["full"]),renderChangelog);
+router.get("/language", auth.checkRole(["full"]) , languageSwitcher);
+router.get("/userconfig", auth.checkRole(["full"]),setUserConfig);
+router.get("/createblog", auth.checkRole(["full"]),createBlog);
 
 
 
