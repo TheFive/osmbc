@@ -7,13 +7,13 @@ var path = require("path");
 
 var testutil = require("./testutil.js");
 var logModule = require("../model/logModule.js");
-var util = require("../util/util.js");
+var initialize = require("../util/initialize.js");
 
 
 
 describe("model/changes", function() {
   before(function(bddone){
-    util.initialiseModule(bddone);
+    initialize.initialiseModules(bddone);
   });
   context("Change Constructor", function() {
     /* eslint-disable mocha/no-synchronous-tests */
