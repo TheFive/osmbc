@@ -4,7 +4,7 @@
 var async    = require("async");
 var config   = require("../config.js");
 var logger   = require("../config.js").logger;
-var util     = require("../util.js");
+var util     = require("../util/util.js");
 
 var markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
@@ -885,6 +885,7 @@ Blog.prototype.startCloseTimer = function startCloseTimer() {
 exports.startAllTimers = function startAllTimers(callback) {
   debug("startAllTimers");
   exports.find({status: "open"}, function(err, result) {
+    if (err && err.message === "relation \"blog\" does not exist") return callback();
     if (err) return callback(err);
     if (!result) return callback();
     for (var i = 0; i < result.length; i++) {

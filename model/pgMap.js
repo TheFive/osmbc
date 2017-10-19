@@ -8,7 +8,7 @@ var sqldebug  = require("debug")("OSMBC:model:sql");
 
 var config = require("../config.js");
 var logger = require("../config.js").logger;
-var util = require("../util.js");
+var util = require("../util/util.js");
 
 
 function generateQuery(table, obj, order) {
