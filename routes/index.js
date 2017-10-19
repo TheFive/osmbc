@@ -164,14 +164,14 @@ function redirectHome(req, res) {
   res.redirect(htmlRoot + "/");
 }
 
-router.get("/", auth.checkRole(["full","guest"]),renderHome);
+router.get("/", auth.checkRole(["full", "guest"]), renderHome);
 router.get("/osmbc.html", redirectHome);
 router.get("/osmbc", redirectHome);
 router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
-router.get("/changelog", auth.checkRole(["full"]),renderChangelog);
-router.get("/language", auth.checkRole(["full"]) , languageSwitcher);
-router.get("/userconfig", auth.checkRole(["full"]),setUserConfig);
-router.get("/createblog", auth.checkRole(["full"]),createBlog);
+router.get("/changelog", auth.checkRole(["full"]), renderChangelog);
+router.get("/language", auth.checkRole(["full"]), languageSwitcher);
+router.get("/userconfig", auth.checkRole(["full"]), setUserConfig);
+router.get("/createblog", auth.checkRole(["full"]), createBlog);
 
 
 

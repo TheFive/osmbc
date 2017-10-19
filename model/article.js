@@ -9,7 +9,7 @@ const debug    = require("debug")("OSMBC:model:article");
 
 const config    = require("../config.js");
 const logger    = require("../config.js").logger;
-const util      = require("../util.js");
+const util      = require("../util/util.js");
 
 const messageCenter  = require("../notification/messageCenter.js");
 const blogModule     = require("../model/blog.js");

@@ -1,7 +1,7 @@
 "use strict";
 
 var pgMap          = require("./pgMap.js");
-var util           = require("../util.js");
+var util           = require("../util/util.js");
 var debug          = require("debug")("OSMBC:model:user");
 var should         = require("should");
 var async          = require("async");

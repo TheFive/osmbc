@@ -8,7 +8,7 @@ const should   = require("should");
 const markdown = require("markdown-it")();
 const debug    = require("debug")("OSMBC:routes:article");
 const jade     = require("jade");
-const util     = require("../util.js");
+const util     = require("../util/util.js");
 const path     = require("path");
 
 
@@ -25,6 +25,7 @@ const configModule  = require("../model/config.js");
 const htmltitle     = require("../model/htmltitle.js");
 
 const auth        = require("../routes/auth.js");
+
 
 require("jstransformer")(require("jstransformer-markdown-it"));
 

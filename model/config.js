@@ -10,7 +10,7 @@ var path     = require("path");
 
 var pgMap    = require("../model/pgMap.js");
 var config   = require("../config.js");
-var util     = require("../util.js");
+var util     = require("../util/util.js");
 
 
 var messageCenter = require("../notification/messageCenter.js");
@@ -46,6 +46,7 @@ function createNewConfig (proto, callback) {
   debug("createNewConfig");
   should(typeof (proto)).eql("object");
   should.exist(proto.type);
+  should.exist(configMap, "Config Module not initialised.");
 
   if (proto) should.not.exist(proto.id);
   var config = create(proto);
@@ -151,6 +152,7 @@ function getConfigObject(text, callback) {
 
 function actualiseConfigMap(obj) {
   should.exist(obj);
+  should.exist(configMap, "Config Module not initialised.");
   configMap[obj.name] = obj;
 }
 
@@ -323,6 +325,7 @@ Config.prototype.save = function saveConfig(callback) {
 
 function initConfigElement(name, callback) {
   debug("initConfigElement %s", name);
+  should.exist(configMap, "Config Module not initialised.");
   if (configMap[name]) return callback(null, configMap[name]);
   getConfigObject(name, function _doInitConfigElement(err, result) {
     debug("_doInitConfigElement");
@@ -342,6 +345,7 @@ module.exports.initialiseConfigMap = function initialiseConfigMap() { configMap 
 
 function initialise(callback) {
   debug("initialise");
+  should.exist(callback);
   if (configMap) return callback();
   configMap = {};
   async.series([
@@ -369,13 +373,15 @@ function initialise(callback) {
 
 module.exports.getConfig = function(text) {
   debug("exports.getConfig");
+  should.exist(configMap, "Config Module not initialised.");
+
   return configMap[text].getValue();
 };
 
-
 module.exports.getConfigObject = function(text, callback) {
-  debug("exports.getConfig");
+  debug("exports.getConfigObject");
   let config = null;
+  should.exist(configMap, "Config Module not initialised.");
   if (configMap[text]) {
     config = configMap[text];
   } else {
@@ -387,6 +393,7 @@ module.exports.getConfigObject = function(text, callback) {
       }
     }
   }
+  should.exist(config);
   if (callback) return callback(null, config);
   return config;
 };

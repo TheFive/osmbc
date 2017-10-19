@@ -13,13 +13,12 @@ const debug        = require("debug")("OSMBC:app");
 const session      = require("express-session");
 const compression  = require("compression");
 
+const helmet       = require("helmet");
+
 
 
 const config       = require("./config.js");
-const logger       = require("./config.js").logger;
 
-
-const auth         = require("./routes/auth.js");
 const index        = require("./routes/index").router;
 const users        = require("./routes/users").router;
 const article      = require("./routes/article").router;
@@ -31,6 +30,13 @@ const calendar     = require("./routes/tool").publicRouter;
 const api          = require("./routes/api").publicRouter;
 const layout       = require("./routes/layout").router;
 const configRouter = require("./routes/config").router;
+const logger       = require("./config.js").logger;
+const auth         = require("./routes/auth.js");
+
+
+
+
+
 
 
 
@@ -45,6 +51,8 @@ logger.info("Express Routes set to: SERVER" + htmlRoot);
 
 
 var app = express();
+
+app.use(helmet());
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

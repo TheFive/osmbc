@@ -3,7 +3,7 @@
 var debug = require("debug")("OSMBC:render:BlogRenderer");
 var moment = require("moment-timezone");
 
-var util = require("../util.js");
+var util = require("../util/util.js");
 var configModule = require("../model/config.js");
 var config = require("../config.js");
 

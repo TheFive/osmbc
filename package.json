@@ -24,6 +24,7 @@
     "email-validator": "^1.0.4",
     "express": "^4.14.0",
     "express-session": "^1.13.0",
+    "helmet": "^3.8.2",
     "html-to-text": "^3.0.0",
     "htmlparser2": "^3.9.0",
     "iconv-lite": "^0.4.17",

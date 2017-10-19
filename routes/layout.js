@@ -6,7 +6,7 @@ var moment        = require("moment-timezone");
 var router        = express.Router();
 var debug         = require("debug")("OSMBC:routes:layout");
 
-var util          = require("../util.js");
+var util          = require("../util/util.js");
 var config        = require("../config.js");
 var version       = require("../version.js");
 var markdown      = require("markdown-it")();

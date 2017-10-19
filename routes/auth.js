@@ -71,7 +71,7 @@ function checkRole(role) {
   return function checkAuthentification (req, res, next) {
     debug("checkAuthentification");
     if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
-    if (roleArray.indexOf(req.user.access) >=0 ) return next();
+    if (roleArray.indexOf(req.user.access) >= 0) return next();
     return next(new Error("OSM User >" + req.user.displayName + "< has not enough access rights"));
   };
 }
@@ -82,7 +82,7 @@ function hasRole(role) {
   return function checkAuthentification (req, res, next) {
     debug("checkAuthentification");
     if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
-    if (roleArray.indexOf(req.user.access) >=0 ) return next();
+    if (roleArray.indexOf(req.user.access) >= 0) return next();
     return next("route");
   };
 }
@@ -102,7 +102,7 @@ function ensureAuthenticated (req, res, next) {
           req.user[k] = result[0][k];
         }
         debug("User found");
-        if ((result[0].access === "full") ||(result[0].access === "guest")) {
+        if ((result[0].access === "full") || (result[0].access === "guest")) {
           // save last access, ignore save callback
           var date = new Date();
           var lastStore = new Date(result[0].lastAccess);
