@@ -3,7 +3,7 @@
 
 var debug = require("debug")("OSMBC:util:initialize");
 var async = require("async");
-var logger  = require('../util/config.js').logger;
+var logger  = require('../config.js').logger;
 
 
 var configModule = require('../model/config.js');
