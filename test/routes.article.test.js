@@ -119,7 +119,7 @@ describe("router/article", function() {
       testutil.startServer("TestUserNonExisting", function () {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
+          should(response.statusCode).eql(200);
           should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
           bddone();
         });
