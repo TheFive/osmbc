@@ -105,7 +105,6 @@ mixin markdownWithPreview(lang)
   +articleTextanalyse(lang)
 
 block content
-  p.osmbc-help-text="This Editor is BETA, please change to old editor in your settings in case of any problems."
   form#textanalyseform( method="POST",action="http://wortliga.de/textanalyse/" )
     input.form-control(type="hidden" name = "text" id ="textanalysefield")
   form(name="input",id="input", action=layout.htmlroot+"/article/#{article.id}/witholdvalues", method="post")
@@ -847,7 +846,7 @@ block scripts
           }
         },
         'text' // I expect a JSON response
-      ).fail( function(err){console.dir(err);});
+      ).fail( function(err){console.error(err);});
     }
 
 
