@@ -8,6 +8,7 @@ var request = require("request");
 var config  = require("../config.js");
 var mockdate = require("mockdate");
 var deeplTranslate = require("deepl-translator");
+var initialise = require("../util/initialise.js");
 
 var articleModule = require("../model/article.js");
 
@@ -23,6 +24,7 @@ describe("router/article", function() {
   this.timeout(this.timeout()*2);
   var id = 2;
 
+  before(initialise.initialiseModules);
   after(function (bddone) {
     nock.cleanAll();
     bddone();
