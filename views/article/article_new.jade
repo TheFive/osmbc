@@ -105,6 +105,7 @@ mixin markdownWithPreview(lang)
   +articleTextanalyse(lang)
 
 block content
+  // FullAccessArticleView
   form#textanalyseform( method="POST",action="http://wortliga.de/textanalyse/" )
     input.form-control(type="hidden" name = "text" id ="textanalysefield")
   form(name="input",id="input", action=layout.htmlroot+"/article/#{article.id}/witholdvalues", method="post")
