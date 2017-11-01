@@ -70,5 +70,6 @@
   "MS_TranslateApiKey":"hidden",
   "CalendarDateFormat":"L",
   "WelcomeInterval":"1 month",
-  "userIsOldInDays":60
+  "userIsOldInDays":60,
+  "AlternativeCalendarData":"http://this.is/AnUrl"
 }
