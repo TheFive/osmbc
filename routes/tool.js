@@ -211,13 +211,13 @@ function renderCalendarAllLangAlternative(req, res, next) {
   };
   request(options, function(error, response, body) {
     if (error) return next(error);
-    body.forEach(function modifyItem(item) {
+    body.events.forEach(function modifyItem(item) {
       item.desc = item.description;
       item.startDate = new Date(item.start);
       item.endDate = new Date(item.end);
       item.text = item.desc;
     });
-    let result = {events: body, error: "No Information"};
+    let result = {events: body.events, error: "No Information"};
     result.discontinue = false;
     result.serviceProvider = "Thomas";
     renderEvents(result, req, res, next);
