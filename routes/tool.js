@@ -53,7 +53,9 @@ function renderJSONCalendar(req, res, next) {
   debug("renderPublicCalendar");
   var email = req.query.email;
   if (!emailValidator.validate(email)) {
-    return next(new Error("Please add your email to query. Thanks TheFive. " + email + " looks invalid."));
+    let err = new Error("Please add your email to query. Thanks TheFive. " + email + " looks invalid.");
+    err.type = "API";
+    return next(err);
   }
   fs.appendFileSync("Calendarusage.log", email + " " + new Date() + "\n");
 
@@ -125,6 +127,7 @@ function eventDateFormat(e, lang) {
 }
 
 function flag(country, cf) {
+  if (!country) country = "";
   let c = country.toLowerCase();
   if (cf[c]) return "<img src='" + cf[c] + "'></img>";
   return country;
@@ -199,27 +202,41 @@ function renderCalendarAllLang(req, res, next) {
   });
 }
 
-let alternativeCalendarData = config.getValue("AlternativeCalendarData", {mustExist: true});
+let alternativeCalendarData = config.getValue("CalendarInterface", {mustExist: true});
 
 function renderCalendarAllLangAlternative(req, res, next) {
   debug("renderCalendarAllLang");
 
+  let par = req.params.calendar;
+
+  let cc = alternativeCalendarData[par];
+
   var options = {
-    url: alternativeCalendarData,
+    url: cc.url,
     method: "GET",
     json: true
   };
+  let result = {events: []};
   request(options, function(error, response, body) {
     if (error) return next(error);
-    body.events.forEach(function modifyItem(item) {
-      item.desc = item.description;
-      item.startDate = new Date(item.start);
-      item.endDate = new Date(item.end);
-      item.text = item.desc;
+    if (response.statusCode !== 200) {
+      return next(Error("url: " + cc.url + " returns:\n" + body));
+    }
+    if (!body[cc.events]) return next("Missing events in calendar data");
+    body[cc.events].forEach(function modifyItem(item) {
+      let i = {};
+      i.desc = item[cc.description];
+      i.startDate = new Date(item[cc.startDate]);
+      i.endDate = new Date(item[cc.endDate]);
+      i.text = item[cc.desc];
+      i.big = item[cc.big];
+      i.country = item[cc.country];
+      i.town = item[cc.town];
+      result.events.push(i);
     });
-    let result = {events: body.events, error: "No Information"};
+    result.error = "no information";
     result.discontinue = false;
-    result.serviceProvider = "Thomas";
+    result.serviceProvider = par;
     renderEvents(result, req, res, next);
   });
 }
@@ -386,7 +403,7 @@ function postPictureTool(req, res, next) {
 router.get("/calendar2markdown", renderCalendarAsMarkdown);
 router.post("/calendar2markdown", postCalendarAsMarkdown);
 router.get("/calendarAllLang", renderCalendarAllLang);
-router.get("/calendarAllLangAlternative", renderCalendarAllLangAlternative);
+router.get("/calendarAllLang/:calendar", renderCalendarAllLangAlternative);
 router.get("/picturetool", renderPictureTool);
 router.post("/picturetool", postPictureTool);
 

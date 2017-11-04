@@ -121,8 +121,10 @@ block all
                   li.dropdown-header Markdown Helper
                   li
                     a(href=layout.htmlroot+"/tool/calendarAllLang") Calendar Tool (OSMBC)
-                  li
-                    a(href=layout.htmlroot + "/tool/calendarAllLangAlternative") Calendar Tool (Thomas)
+                  for integration,name in layout.calendarInterface
+
+                    li
+                      a(href=layout.htmlroot + "/tool/calendarAllLang/"+name)="Calendar Tool (" + name + ")"
                   li
                     a(href=layout.htmlroot+"/tool/picturetool") Picture Tool
                   li.divider
