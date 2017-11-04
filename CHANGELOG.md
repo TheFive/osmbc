@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.4.3h](https://github.com/TheFive/osmbc/tree/2.4.3h) (2017-11-04)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3g...2.4.3h)
+
+**Closed issues:**
+
+- More flexible Calendar JSON Interface [\#700](https://github.com/TheFive/osmbc/issues/700)
+
 ## [2.4.3g](https://github.com/TheFive/osmbc/tree/2.4.3g) (2017-11-01)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3f...2.4.3g)
 
