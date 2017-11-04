@@ -43,6 +43,8 @@ function path(component) {
   return htmlRoot + "/bower_components/" + component + dist;
 }
 
+let calendarInterface = config.getValue("CalendarInterface", {mustExist: true});
+
 
 function prepareRenderLayout(req, res, next) {
   debug("prepareRenderLayout");
@@ -210,7 +212,9 @@ function prepareRenderLayout(req, res, next) {
       language2_locale: config.moment_locale(req.user.getSecondLang()),
       md_render: util.md_render,
       md_renderInline: markdown.renderInline,
-      getAvatar: userModule.getAvatar
+      getAvatar: userModule.getAvatar,
+      calendarInterface: calendarInterface
+
     };
     next();
   }

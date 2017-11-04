@@ -289,6 +289,7 @@ function filterEvent(event, option) {
 
 
   if (!event.big && startDate.isAfter(to)) filtered = true;
+
   return filtered;
 }
 
