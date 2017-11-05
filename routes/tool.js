@@ -25,6 +25,8 @@ var articleModule = require("../model/article.js");
 var configModule = require("../model/config.js");
 
 
+const auth        = require("../routes/auth.js");
+
 var sizeOf = require("image-size");
 
 let htmlroot = config.htmlRoot();
@@ -351,11 +353,11 @@ function postPictureTool(req, res, next) {
 }
 
 
-router.get("/calendar2markdown", renderCalendarAsMarkdown);
-router.post("/calendar2markdown", postCalendarAsMarkdown);
-router.get("/calendarAllLang", renderCalendarAllLang);
-router.get("/picturetool", renderPictureTool);
-router.post("/picturetool", postPictureTool);
+router.get("/calendar2markdown", auth.checkRole("full"), renderCalendarAsMarkdown);
+router.post("/calendar2markdown", auth.checkRole("full"), postCalendarAsMarkdown);
+router.get("/calendarAllLang", auth.checkRole("full"), renderCalendarAllLang);
+router.get("/picturetool", auth.checkRole("full"), renderPictureTool);
+router.post("/picturetool", auth.checkRole("full"), postPictureTool);
 
 publicRouter.get("/calendar/preview", renderPublicCalendar);
 publicRouter.get("/calendar/json", renderJSONCalendar);

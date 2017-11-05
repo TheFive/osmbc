@@ -30,7 +30,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("<h1>Current OSM Wiki Calendar as Markdown</h1>")).not.equal(-1);
+          body.should.containEql("<h1>Current OSM Wiki Calendar as Markdown</h1>");
           bddone();
         });
       });
@@ -40,7 +40,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
@@ -50,7 +50,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -76,7 +76,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf(" <h1>New Calendar Tool</h1>")).not.equal(-1);
+          body.should.containEql(" <h1>New Calendar Tool</h1>");
           bddone();
         });
       });
@@ -86,7 +86,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
@@ -96,7 +96,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -109,7 +109,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("<h1>Generate OSMBC Picture Markdown</h1>")).not.equal(-1);
+          body.should.containEql("<h1>Generate OSMBC Picture Markdown</h1>");
           bddone();
         });
       });
@@ -119,7 +119,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
@@ -129,7 +129,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -152,7 +152,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
@@ -162,7 +162,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -175,7 +175,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf(" <title>OSMBC Calendar Preview</title>")).not.equal(-1);
+          body.should.containEql(" <title>OSMBC Calendar Preview</title>");
           bddone();
         });
       });
@@ -185,7 +185,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf(" <title>OSMBC Calendar Preview</title>")).not.equal(-1);
+          body.should.containEql(" <title>OSMBC Calendar Preview</title>");
           bddone();
         });
       });
@@ -195,7 +195,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf(" <title>OSMBC Calendar Preview</title>")).not.equal(-1);
+          body.should.containEql(" <title>OSMBC Calendar Preview</title>");
           bddone();
         });
       });
@@ -208,7 +208,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("<h1>Please add your email to query. Thanks TheFive. undefined looks invalid.</h1>")).not.equal(-1);
+          body.should.containEql("<h1>Please add your email to query. Thanks TheFive. undefined looks invalid.</h1>");
           bddone();
         });
       });
