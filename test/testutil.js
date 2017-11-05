@@ -428,4 +428,3 @@ Browser.Assert.prototype.expectHtml = function expectHtml(name, cb) {
   return cb();
 };
 
-module.exports.contains
