@@ -177,12 +177,15 @@ function renderEvents(result, req, res, next) {
     }
   ], function(err) {
     if (err) return next(err);
+
     res.render("calendarAllLang.jade", {
       layout: res.rendervar.layout,
       events: result.events,
       errors: result.errors,
       flag: flag,
+      timestamp: result.timestamp,
       discontinue: result.discontinue,
+      refresh: result.refreshurl,
       serviceProvider: result.serviceProvider,
       markdown: markdown,
       eventsfilter: eventsfilter,
@@ -236,8 +239,34 @@ function renderCalendarAllLangAlternative(req, res, next) {
     });
     result.error = "no information";
     result.discontinue = false;
+    result.timestamp = "unknown";
+    result.refreshurl = false;
+    if (cc.refreshurl) result.refreshurl = true;
+    if (cc.timestamp) result.timestamp = body[cc.timestamp];
     result.serviceProvider = par;
     renderEvents(result, req, res, next);
+  });
+}
+
+function renderCalendarRefresh(req, res, next) {
+  debug("renderCalendarAllLang");
+
+  let par = req.params.calendar;
+
+  let cc = alternativeCalendarData[par];
+
+  if (!cc.refreshurl) return next(new Error("Refreshurl missing"));
+
+  var options = {
+    url: cc.refreshurl,
+    method: "GET"
+  };
+  request(options, function(error, response, body) {
+    if (error) return next(error);
+    if (response.statusCode !== 200) {
+      return next(Error("url: " + cc.url + " returns:\n" + body));
+    }
+    res.redirect(htmlroot + "/tool/calendarAllLang/" + par);
   });
 }
 
@@ -404,6 +433,7 @@ router.get("/calendar2markdown", renderCalendarAsMarkdown);
 router.post("/calendar2markdown", postCalendarAsMarkdown);
 router.get("/calendarAllLang", renderCalendarAllLang);
 router.get("/calendarAllLang/:calendar", renderCalendarAllLangAlternative);
+router.get("/calendarRefresh/:calendar", renderCalendarRefresh);
 router.get("/picturetool", renderPictureTool);
 router.post("/picturetool", postPictureTool);
 
