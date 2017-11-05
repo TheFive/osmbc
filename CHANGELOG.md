@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.4.3i](https://github.com/TheFive/osmbc/tree/2.4.3i) (2017-11-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3h...2.4.3i)
+
+**Closed issues:**
+
+- Implement Refresh Mechanism from osmcalendar [\#701](https://github.com/TheFive/osmbc/issues/701)
+
 ## [2.4.3h](https://github.com/TheFive/osmbc/tree/2.4.3h) (2017-11-04)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3g...2.4.3h)
 
@@ -838,13 +845,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
