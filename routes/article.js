@@ -200,6 +200,7 @@ function renderArticleId(req, res, next) {
       if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
       params.columns = 4;
     }
+    if (req.user.access === "guest") jadeFile = "article/article_guest";
 
 
     res.render(jadeFile, {layout: res.rendervar.layout,

@@ -72,7 +72,7 @@ function checkRole(role) {
     debug("checkAuthentification");
     if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
     if (roleArray.indexOf(req.user.access) >= 0) return next();
-    return next(new Error("OSM User >" + req.user.displayName + "< has not enough access rights"));
+    return next(new Error("OSM User >" + req.user.OSMUser + "< has not enough access rights"));
   };
 }
 
