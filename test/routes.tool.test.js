@@ -76,7 +76,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf(" <h1>New Calendar Tool</h1>")).not.equal(-1);
+          body.should.containEql(" <h1>Calendar Tool (OSMBC)</h1>");
           bddone();
         });
       });
@@ -208,7 +208,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("<h1>Please add your email to query. Thanks TheFive. undefined looks invalid.</h1>")).not.equal(-1);
+          body.should.containEql("Please add your email to query. Thanks TheFive. undefined looks invalid.");
           bddone();
         });
       });
