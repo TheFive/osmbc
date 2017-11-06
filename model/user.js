@@ -12,8 +12,6 @@ var emailValidator = require("email-validator");
 var config         = require("../config.js");
 var cheerio        = require("cheerio");
 var request        = require("request");
-var path           = require("path");
-var fs             = require("fs");
 var logger         = require("../config.js").logger;
 
 
@@ -66,7 +64,7 @@ function createNewUser (proto, callback) {
   });
 }
 
-let avatarCache = path.join(__dirname, "..", "public", "ch_av");
+let avatarCache = {};
 
 function cacheOSMAvatar(osmuser, callback) {
   debug("cacheOSMAvatar %s", osmuser);
@@ -79,13 +77,9 @@ function cacheOSMAvatar(osmuser, callback) {
       let avatarLink = c(".user_image").attr("src");
       if (avatarLink === undefined) return callback();
       if (avatarLink.substring(0, 1) === "/") avatarLink = "https://www.openstreetmap.org" + avatarLink;
-      request.get({url: avatarLink, encoding: "binary"}, function (err, response, body) {
-        if (err) return callback(err);
-        fs.writeFile(path.join(avatarCache, util.linkify(osmuser) + ".png"), body, "binary", function(err) {
-          return callback(err);
-        });
-      });
-    } else return callback();
+      avatarCache[osmuser] = avatarLink;
+    }
+    return callback();
   });
 }
 
@@ -115,15 +109,13 @@ User.prototype.calculateChanges = function calculateChanges(callback) {
   });
 };
 
-let htmlroot = config.getValue("htmlroot");
-
 
 function getAvatar(osmuser) {
   debug("getAvatar");
   /* jshint -W040 */
   if (osmuser === undefined && this !== undefined) osmuser = this.OSMUser;
   /* jshint +W040 */
-  return htmlroot + "/ch_av/" + util.linkify(osmuser) + ".png";
+  return avatarCache[osmuser];
 }
 
 
