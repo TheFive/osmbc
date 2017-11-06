@@ -158,11 +158,10 @@ describe("views/index", function() {
         function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full"}, cb); },
         testutil.startServer.bind(null, "TheFiveNotExist"),
         browser.visit.bind(browser, "/osmbc")
-      ], function(err) {
+      ], function() {
         testutil.stopServer();
-        should.exist(err);
-        browser.assert.status(500);
-        browser.assert.text("h1", "OSM User >TheFiveNotExist< is not an OSMBC user.");
+        browser.assert.status(200);
+        browser.html().should.containEql("You are logged in as guest");
 
         bddone();
       });

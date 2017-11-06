@@ -36,7 +36,10 @@ function renderHome(req, res, next) {
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
-    res.render("index", { title: appName,
+    let view = "index";
+    if (req.user.access === "guest") view = "index_guest";
+
+    res.render(view, { title: appName,
       layout: res.rendervar.layout,
       activeUserList: result.activeUser,
       visitorsToday: result.visitorsToday,

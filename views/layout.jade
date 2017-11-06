@@ -185,7 +185,6 @@ block all
                           li
                             a(href=layout.htmlroot+'/language?lang'+i+'=#{l}') #{l}
                 if layout.user
-                  li=layout.user.access
                   li
                     img(src=layout.user.getAvatar() onclick="location.href='"+layout.htmlroot+"/usert/#{layout.user.id}';" style="height:50px;width:50px")
                 else

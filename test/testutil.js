@@ -349,6 +349,7 @@ exports.startServer = function startServer(userString, callback) {
     if (err) return callback(err);
     if (user === null) user = {};
     user.displayName = userString;
+    user.OSMUser = userString;
     // initialize the browser using the same port as the test application
     passportStub.install(app);
     passportStub.login(user);
@@ -428,3 +429,9 @@ Browser.Assert.prototype.expectHtml = function expectHtml(name, cb) {
   return cb();
 };
 
+
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
+  console.error(reason.stack);
+  // application specific logging, throwing an error, or other logic here
+});

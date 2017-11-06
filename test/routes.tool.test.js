@@ -1,16 +1,21 @@
 "use strict";
 
 var should  = require("should");
+var async   = require("async");
 var config  = require("../config.js");
 var request = require("request");
 var testutil = require("./testutil.js");
+var initialise = require("../util/initialise.js");
+
 
 var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 describe("routes/tool", function() {
   before(function(bddone){
-    testutil.clearDB(bddone);
+    async.series([
+      initialise.initialiseModules,
+      testutil.clearDB],bddone);
   });
   beforeEach(function(bddone) {
     config.initialise();

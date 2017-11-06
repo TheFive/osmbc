@@ -1,17 +1,21 @@
 "use strict";
 
 const should = require("should");
+const async  = require("async");
 const config = require("../config.js");
 const request = require("request");
 const userModule = require("../model/user.js");
 const testutil = require("./testutil.js");
+var initialise = require("../util/initialise.js");
 
 const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 describe("router/user", function() {
   this.timeout(5000);
   before(function(bddone){
-    testutil.clearDB(bddone);
+    async.series([
+      initialise.initialiseModules,
+      testutil.clearDB],bddone);
   });
   beforeEach(function(bddone) {
     config.initialise();
@@ -31,7 +35,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("<h2>Inbox Direct Mention:</h2>")).not.equal(-1);
+          body.should.containEql("<h2>Inbox Direct Mention:</h2>");
           bddone();
         });
       });
@@ -41,7 +45,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
@@ -51,7 +55,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -64,8 +68,8 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("<td><a href=\"/usert/1\">TestUser</a>")).not.equal(-1);
-          should(body.indexOf("<td><a href=\"/usert/2\">TestUserDenied</a>")).not.equal(-1);
+          body.should.containEql("<td><a href=\"/usert/1\">TestUser</a>");
+          body.should.containEql("<td><a href=\"/usert/2\">TestUserDenied</a>");
           bddone();
         });
       });
@@ -75,7 +79,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
@@ -85,7 +89,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -118,7 +122,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
@@ -128,7 +132,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -156,7 +160,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
@@ -166,7 +170,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -179,8 +183,8 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf('<input name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly" class="form-control"/>')).not.equal(-1);
-          should(body.indexOf("<h1>TestUser Heatmap</h1>")).not.equal(-1);
+          body.should.containEql('<input name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly" class="form-control"/>');
+          body.should.containEql("<h1>TestUser Heatmap</h1>");
           bddone();
         });
       });
@@ -200,7 +204,7 @@ describe("router/user", function() {
         request.get({url: baseLink + "/usert/TestUserDenied",followRedirect:false}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("<h1>TestUserDenied Heatmap</h1>")).not.equal(-1);
+          body.should.containEql("<h1>TestUserDenied Heatmap</h1>");
           bddone();
         });
       });
@@ -210,7 +214,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
@@ -220,7 +224,7 @@ describe("router/user", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -257,7 +261,7 @@ describe("router/user", function() {
         request.post({url: url,form:{color:"red",language:"ES"}}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
@@ -267,7 +271,7 @@ describe("router/user", function() {
         request.get({url: url,form:{color:"red",language:"ES"}}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
