@@ -228,10 +228,11 @@ function renderCalendarAllLangAlternative(req, res, next) {
     if (!body[cc.events]) return next("Missing events in calendar data");
     body[cc.events].forEach(function modifyItem(item) {
       let i = {};
-      i.desc = item[cc.description];
+      i.desc = item[cc.desc];
       i.startDate = new Date(item[cc.startDate]);
       i.endDate = new Date(item[cc.endDate]);
-      i.text = item[cc.desc];
+      i.text = item[cc.text];
+      i.markdown = item[cc.markdown];
       i.big = item[cc.big];
       i.country = item[cc.country];
       i.town = item[cc.town];
