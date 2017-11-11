@@ -9,7 +9,6 @@ var help = require("../routes/help.js");
 var config = require("../config.js");
 var logModule = require("../model/logModule.js");
 var userModule = require("../model/user.js");
-var db = require("../model/db.js");
 var moment = require("moment");
 
 
@@ -70,13 +69,6 @@ function renderAdminHome(req, res, next) {
   );
 }
 
-function renderLongRunningQueries(req, res) {
-  debug("renderLongRunningQueries");
-  res.set("content-type", "text");
-  let result = "No Data";
-  if (db.longRunningQueries) result = JSON.stringify(db.longRunningQueries, null, 3);
-  res.end(result);
-}
 
 function languageSwitcher(req, res, next) {
   debug("languageSwitcher");
@@ -91,7 +83,7 @@ function languageSwitcher(req, res, next) {
 
   for (let v = 0; v < lang.length - 1; v++) {
     for (let i = v + 1; i < lang.length; i++) {
-      while (i < lang.length && lang[v] === lang[i]) {
+      while (i < lang.length && (lang[v] === lang[i] || lang[i] === null)) {
         lang.splice(i, 1);
       }
     }
@@ -147,14 +139,6 @@ function setUserConfig(req, res, next) {
   });
 }
 
-function renderHelp(req, res) {
-  debug("help");
-  should.exist(res.rendervar.layout);
-  var title = req.params.title;
-  var text = help.getText("menu." + title + ".md");
-  res.set("content-type", "text/html");
-  res.render("help", {layout: res.rendervar.layout, text: text});
-}
 function createBlog(req, res) {
   debug("createBlog");
   should.exist(res.rendervar.layout);
@@ -174,12 +158,16 @@ function renderChangelog(req, res, next) {
   });
 }
 
+var htmlRoot = config.getValue("htmlroot", {mustExist: true});
+
+function redirectHome(req, res) {
+  res.redirect(htmlRoot + "/");
+}
+
 router.get("/", renderHome);
-router.get("/osmbc.html", renderHome);
-router.get("/osmbc", renderHome);
-router.get("/osmbc/sql/longRunningQueries", renderLongRunningQueries);
+router.get("/osmbc.html", redirectHome);
+router.get("/osmbc", redirectHome);
 router.get("/osmbc/admin", renderAdminHome);
-router.get("/help/:title", renderHelp);
 router.get("/changelog", renderChangelog);
 router.get("/language", languageSwitcher);
 router.get("/userconfig", setUserConfig);
@@ -188,4 +176,3 @@ router.get("/createblog", createBlog);
 
 
 module.exports.router = router;
-module.exports.renderHome = renderHome;

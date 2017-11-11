@@ -71,5 +71,6 @@
   "CalendarDateFormat":"L",
   "WelcomeInterval":"1 month",
   "userIsOldInDays":60,
-  "CalendarInterface":{}
+  "CalendarInterface":{},
+  "PublicCalendarPage":"http://linktopubliccalendar.org"
 }

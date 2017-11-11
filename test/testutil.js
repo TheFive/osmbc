@@ -81,7 +81,7 @@ exports.clearDB = function clearDB(done) {
     function(done) { pgMap.createTables(configModule.pg, pgOptions, done); }
 
   ], function(err) {
-    if (err) console.err(err);
+    if (err) console.error(err);
     should.not.exist(err);
     configModule.initialiseConfigMap();
     configModule.initialise(done);
@@ -100,12 +100,28 @@ exports.importData = function importData(data, callback) {
   var idReference = {blog: {}, article: {}, user: {}};
 
   async.series([
-    function clearDB(cb0) {
-      debug("clearDB");
-      if (data.clear) {
+    function initialiseDB(cb0) {
+      debug("initialiseDB");
+      if (data.initialise) {
         articleModule.removeOpenBlogCache();
         exports.clearDB(cb0);
       } else cb0();
+    },
+    function clearDB(cb0a) {
+      debug("clearDB");
+      if (data.clear) {
+        articleModule.removeOpenBlogCache();
+        async.series([
+          pool.query.bind(null,"delete from usert;"),
+          pool.query.bind(null,"delete from blog;"),
+          pool.query.bind(null,"delete from article;"),
+          pool.query.bind(null,"delete from changes;"),
+          pool.query.bind(null,"ALTER SEQUENCE usert_id_seq RESTART WITH 1;"),
+          pool.query.bind(null,"ALTER SEQUENCE blog_id_seq RESTART WITH 1;"),
+          pool.query.bind(null,"ALTER SEQUENCE article_id_seq RESTART WITH 1;"),
+          pool.query.bind(null,"ALTER SEQUENCE changes_id_seq RESTART WITH 1;")
+        ],cb0a);
+      } else return cb0a();
     },
     function importAllUsers(cb1) {
       debug("importAllUsers");

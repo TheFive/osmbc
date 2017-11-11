@@ -1,78 +1,131 @@
 "use strict";
 
+
+var nock  = require("nock");
 var should = require("should");
-var async = require("async");
-var sinon = require("sinon");
-var logRoutes = require("../routes/changes.js");
+var request = require("request");
+var config = require("../config");
+
+
+
+var testutil = require("../test/testutil.js");
 var logModule = require("../model/logModule.js");
-var testutil = require("./testutil.js");
+var mockdate = require("mockdate");
+
+var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+
+
+
+
 
 describe("routes/changes", function() {
-  describe("renderChangeId", function() {
-    beforeEach(function(bddone) {
-      testutil.clearDB(bddone);
-    });
-    it("should call next if change not exist", function(bddone) {
-      logModule.log({titel: "Hallo"}, function(err) {
-        should.not.exist(err);
-        var newId = 999;
-        var req = {};
-        req.params = {};
-        req.params.change_id = newId;
-        var res = {};
-        res.set = function() {};
-        res.rendervar = {layout: "TEMP"};
-        var next;
+  this.timeout(this.timeout()*2);
+  let changeid;
 
-        async.series([
-          function(callback) {
-            res.render = sinon.spy(callback);
-            next = sinon.spy(callback);
-            logRoutes.renderChangeId(req, res, next);
-          }],
-          function(err) {
-            should.not.exist(err);
-            should(next.called).be.true();
-            should(res.render.called).be.false();
-            bddone();
-          }
-        );
+  after(function (bddone) {
+    nock.cleanAll();
+    bddone();
+    mockdate.reset();
+  });
+
+  beforeEach(function (bddone) {
+    // Clear DB Contents for each test
+    mockdate.set(new Date("2016-05-25T20:00"));
+    nock("https://hooks.slack.com/")
+      .post(/\/services\/.*/)
+      .times(999)
+      .reply(200, "ok");
+    testutil.importData(
+      {
+        blog: [{name: "WN333", status: "edit"},
+          {name: "secondblog", status: "edit", reviewCommentDE: [{text: "first review", user: "TestUser"}]}],
+        user: [{"OSMUser": "TestUser", access: "full"},
+          {OSMUser: "TestUserDenied", access: "denied"},
+          { "OSMUser": "Hallo", access: "full"}
+        ],
+        change: [{"oid": "321",
+          "blog": "WN333",
+          "user": "TestUser",
+          "table": "blog",
+          "property": "status",
+          "from": "open",
+          "to": "trash",
+          "timestamp": "2016-01-26T21:31:59.879Z"}],
+        article: [
+          {"blog": "WN333", "markdownDE": "* Dies ist ein kleiner Testartikel.", "category": "Mapping"},
+          {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment"}]}],
+        clear: true}, function(err) {
+        if (err) bddone(err);
+        logModule.find({timestamp: "2016-01-26T21:31:59.879Z"}, function(err, log) {
+          changeid = log[0].id;
+          bddone();
+        });
+      });
+  });
+  describe("route GET /:change_id", function() {
+    it("should display one change id", function (bddone) {
+      testutil.startServer("TestUser", function () {
+        request.get({url: baseLink + "/changes/" + changeid}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(200);
+          should(body.indexOf("<td>2016-01-26T21:31:59.879Z (4 months ago)</td>")).not.equal(-1);
+          should(body.indexOf("<td>WN333</td>")).not.equal(-1);
+          should(body.indexOf("<td>TestUser</td>")).not.equal(-1);
+          bddone();
+        });
       });
     });
-    it("should call prepare rendering", function(bddone) {
-      var timestamp = new Date();
-      logModule.log({titel: "Hallo", from: "First Text", to: "First new test", timestamp: timestamp}, function(err) {
-        should.not.exist(err);
-        var newId = 1;
-        var req = {};
-        req.params = {};
-        req.user = "TEST";
-        req.params.change_id = newId;
-        var res = {};
-        res.set = function() {};
-        res.rendervar = {layout: "TEMP"};
-        var next;
-
-        async.series([
-          function(callback) {
-            res.render = sinon.spy(callback);
-            next = sinon.spy(callback);
-            logRoutes.renderChangeId(req, res, next);
-          }],
-          function() {
-            should(next.called).be.false();
-            should(res.render.called).be.true();
-
-            var call = res.render.firstCall;
-            should(call.calledWith("change")).be.true();
-            var renderData = call.args[1];
-            should(renderData.layout).equal("TEMP");
-            should(renderData.change).eql({titel: "Hallo", id: "1", from: "First Text", to: "First new test", timestamp: timestamp.toISOString()});
-            should(renderData.coloredChange).eql('<span style=\"color:grey\">First </span><span class=\"osmbc-deleted-inverted\">Text</span><span class=\"osmbc-inserted-inverted\">new test</span>');
-            // should(renderData.moment).equal(moment);
-            bddone();
-          }
-        );
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.get({url: baseLink + "/changes/" + changeid}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: baseLink + "/changes/" + changeid}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+  });
+  describe("route GET /log", function() {
+    let url = baseLink + "/changes/log";
+    it("should show list", function (bddone) {
+      testutil.startServer("TestUser", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(200);
+          should(body.indexOf("<td><a href=\"/changes/2\"><span class=\"glyphicon glyphicon-info-sign\"></span></a></td>")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny denied access user", function (bddone) {
+      testutil.startServer("TestUserDenied", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          bddone();
+        });
+      });
+    });
+    it("should deny non existing user", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: url}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(500);
+          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          bddone();
+        });
       });
     });
   });

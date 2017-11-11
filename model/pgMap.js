@@ -8,7 +8,7 @@ var sqldebug  = require("debug")("OSMBC:model:sql");
 
 var config = require("../config.js");
 var logger = require("../config.js").logger;
-var util = require("../util.js");
+var util = require("../util/util.js");
 
 
 function generateQuery(table, obj, order) {
@@ -105,9 +105,13 @@ function generateQuery(table, obj, order) {
 }
 
 
-module.exports.save = function(callback) {
+module.exports.save = function(options, callback) {
   debug("save");
-  var self = this;
+  if (typeof options === "function") {
+    callback = options;
+    options = null;
+  }
+  let self = this;
   var table = self.getTable();
 
   // store blog Reference not to loose it.
@@ -177,7 +181,7 @@ module.exports.save = function(callback) {
 
         return callback(err);
       }
-      self.version += 1;
+      if (!options || !options.noVersionIncrease) self.version += 1;
       pool.query("update " + table + " set data = $2 where id = $1", [self.id, self], function(err) {
         if (typeof blog !== "undefined") self._blog = blog;
         return callback(err, self);

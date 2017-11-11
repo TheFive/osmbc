@@ -4,26 +4,6 @@ var config = require("../config.js");
 var should = require("should");
 var sqldebug  = require("debug")("OSMBC:model:sql");
 
-module.exports.longRunningQueries = {};
-
-function compareLRQ(a, b) {
-  return b.duration - a.duration;
-}
-
-function longRunningQueriesAdd(duration, query, table) {
-  if (!exports.longRunningQueries[table]) exports.longRunningQueries[table] = [];
-  let t = exports.longRunningQueries[table];
-
-
-  if (t.length > 10) {
-    if (t[9].duration > duration) return;
-    t.pop();
-  }
-
-  t.push({duration: duration, query: query});
-  t.sort(compareLRQ);
-}
-
 
 let pgConfigValues = config.getValue("postgres", {mustexist: true});
 
@@ -59,24 +39,6 @@ var pgConfig = {
 // and set a limit of maximum 10 idle clients
 let pool = new pg.Pool(pgConfig);
 
-let query = pool.query("select 1");
-
-query.catch(function(err) {
-  logger.error("Error try to test on USERT for database access....");
-  logger.error(err);
-  process.exit(1);
-}).then(function() {});
-
-pool.on("error", function (err) {
-  // if an error is encountered by a client while it sits idle in the pool
-  // the pool itself will emit an error event with both the error and
-  // the client which emitted the original error
-  // this is a rare occurrence but can happen if there is a network partition
-  // between your application and the database, the database restarts, etc.
-  // and so you might want to handle it and at least log it out
-  console.error("idle client error", err.message, err.stack);
-});
-
 // export the query method for passing queries to the pool
 module.exports.query = function (text, values, callback) {
   if (typeof values === "function") {
@@ -109,5 +71,3 @@ module.exports.fortestonly.testpool = function rebindPool() {
   let pool = new pg.Pool(pgConfig);
   return pool;
 };
-
-module.exports.longRunningQueriesAdd = longRunningQueriesAdd;

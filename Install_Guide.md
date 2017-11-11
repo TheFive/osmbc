@@ -245,7 +245,6 @@ user access to your OSMBC instance.
 insert into usert (data) values ('{"OSMUser":"?? your osm user name ??","access":"full"}');
 ```
 
-
 But of course it will be better to ask the Weekly - Wochennotiz team, to get a SQL dump.
 
 ## Usage of Bower

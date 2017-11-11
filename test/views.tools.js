@@ -17,6 +17,7 @@ var userModule = require("../model/user.js");
 
 
 describe("views/tools", function() {
+  this.timeout(20000);
   var browser;
   beforeEach(function(bddone) {
     async.series([
@@ -49,7 +50,7 @@ describe("views/tools", function() {
 
 
   it("should open calendar tool", function(bddone) {
-    this.timeout(20000);
+
 
 
     async.series([
@@ -90,9 +91,6 @@ describe("views/tools", function() {
     });
   });
   it("should open new tool", function(bddone) {
-    this.timeout(20000);
-
-
     async.series([
       function setLanguage (cb) {
         browser.visit("/osmbc.html", cb);
@@ -109,7 +107,6 @@ describe("views/tools", function() {
     });
   });
   it("should use picture tool", function(bddone) {
-    this.timeout(29000);
     var fileName = path.join(__dirname, "/data/picture.jpg");
     nock("https://blog.openstreetmap.org")
       .get("/picture.jpg")

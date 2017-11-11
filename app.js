@@ -15,6 +15,7 @@ var OpenStreetMapStrategy = require("passport-openstreetmap").Strategy;
 
 var session      = require("express-session");
 var compression  = require("compression");
+var helmet       = require("helmet");
 
 var pg           = require("pg");
 
@@ -135,7 +136,7 @@ function ensureAuthenticated (req, res, next) {
           // only store last access when GETting something, not in POSTs.
           if (req.method === "GET" && (!result[0].lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 5)) {
             result[0].lastAccess = new Date();
-            result[0].save(function(err, u) { if (err) return next(err); req.user.version = u.version; });
+            result[0].save({noVersionIncrease:true},function(err) { if (err) return next(err);});
           }
           debug("User accepted");
           return next();
@@ -185,6 +186,8 @@ if (config.getValue("sessionStore", {mustExist: true}) === "session-file-store")
 }
 
 var app = express();
+
+app.use(helmet());
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

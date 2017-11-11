@@ -61,7 +61,7 @@ function renderUserId(req, res, next) {
   debug("renderUserId");
   let redirect = false;
   var id = req.params.user_id;
-  if (id === "self") res.redirect(res.rendervar.layout.htmlroot + "/usert/" + req.user.id);
+  if (id === "self") return res.redirect(res.rendervar.layout.htmlroot + "/usert/" + req.user.id);
   should.exist(id);
   var params = {};
   var user;

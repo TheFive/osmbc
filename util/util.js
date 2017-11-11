@@ -1,7 +1,11 @@
 "use strict";
 
-var debug = require("debug")("OSMBC:util");
+var debug = require("debug")("OSMBC:util:util");
 var should = require('should');
+
+
+
+
 
 var markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))

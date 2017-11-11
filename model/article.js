@@ -9,7 +9,7 @@ var debug    = require("debug")("OSMBC:model:article");
 
 var config    = require("../config.js");
 var logger    = require("../config.js").logger;
-var util      = require("../util.js");
+var util      = require("../util/util.js");
 
 var messageCenter  = require("../notification/messageCenter.js");
 var blogModule     = require("../model/blog.js");
@@ -259,7 +259,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
     function addCommentWhenUnpublished(cb) {
       debug("addCommentWhenUnpublished");
       if (data.categoryEN === "--unpublished--" || data.blog === "Trash") {
-        let text = "#solved because set to --unpublished--.\n\nReason:" + data.unpublishReason;
+        let text = "#solved because set to --unpublished--.\n\nReason: " + data.unpublishReason;
         if (data.unpublishReference) text += "\n" + data.unpublishReference;
         self.addCommentFunction(user, text, cb);
       } else cb();

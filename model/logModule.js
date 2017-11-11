@@ -61,8 +61,6 @@ module.exports.log = function log(object, callback) {
     function saveData(savecb) {
       debug("saveData");
       if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
-      debug(object);
-
       db.query("insert into changes (data) values ($1) ", [object], function(err) {
         return savecb(err);
       });

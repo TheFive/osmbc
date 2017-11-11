@@ -6,7 +6,7 @@ var userModule    = require("../model/user.js");
 var publicRouter  = express.Router();
 var async         = require("async");
 var htmltitle     = require("../model/htmltitle.js");
-var util          = require("../util.js");
+var util          = require("../util/util.js");
 var articleModule = require("../model/article.js");
 var config        = require("../config.js");
 

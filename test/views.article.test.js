@@ -12,7 +12,7 @@ var blogModule = require("../model/blog.js");
 
 
 
-var maxTimer = 40000;
+var maxTimer = 10000;
 
 
 
@@ -130,7 +130,7 @@ describe("views/article", function() {
   });
   describe("Scripting Functions in Edit Mode", function() {
     beforeEach(function(done) {
-      this.timeout(maxTimer * 3);
+      this.timeout(maxTimer * 4);
       browser.visit("/article/" + articleId + "?edit=true&style=OVERVIEW", function(err) {
  //     browser.visit('/article/'+articleId, function(err){
         if (err) return done(err);

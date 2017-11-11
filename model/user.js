@@ -1,7 +1,7 @@
 "use strict";
 
 var pgMap          = require("./pgMap.js");
-var util           = require("../util.js");
+var util           = require("../util/util.js");
 var debug          = require("debug")("OSMBC:model:user");
 var should         = require("should");
 var async          = require("async");
@@ -12,8 +12,6 @@ var emailValidator = require("email-validator");
 var config         = require("../config.js");
 var cheerio        = require("cheerio");
 var request        = require("request");
-var path           = require("path");
-var fs             = require("fs");
 var logger         = require("../config.js").logger;
 
 
@@ -66,10 +64,11 @@ function createNewUser (proto, callback) {
   });
 }
 
-let avatarCache = path.join(__dirname, "..", "public", "ch_av");
+let avatarCache = {};
 
 function cacheOSMAvatar(osmuser, callback) {
   debug("cacheOSMAvatar %s", osmuser);
+  if (process.env.NODE_ENV === "test") return callback();
   var requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
   request(requestString, function(err, response, body) {
     if (err) return callback(err, null);
@@ -78,13 +77,9 @@ function cacheOSMAvatar(osmuser, callback) {
       let avatarLink = c(".user_image").attr("src");
       if (avatarLink === undefined) return callback();
       if (avatarLink.substring(0, 1) === "/") avatarLink = "https://www.openstreetmap.org" + avatarLink;
-      request.get({url: avatarLink, encoding: "binary"}, function (err, response, body) {
-        if (err) return callback(err);
-        fs.writeFile(path.join(avatarCache, util.linkify(osmuser) + ".png"), body, "binary", function(err) {
-          return callback(err);
-        });
-      });
-    } else return callback();
+      avatarCache[osmuser] = avatarLink;
+    }
+    return callback();
   });
 }
 
@@ -97,7 +92,7 @@ function cacheOSMAvatarAll(callback) {
     }, function(err) { return callback(err); });
   });
 }
-if (process.env.node_env !== "test") {
+if (process.env.NODE_ENV !== "test") {
   cacheOSMAvatarAll(function(err) { if (err) logger.error("Error during Cache of User Avatar" + err.message); });
 }
 
@@ -114,15 +109,13 @@ User.prototype.calculateChanges = function calculateChanges(callback) {
   });
 };
 
-let htmlroot = config.getValue("htmlroot");
-
 
 function getAvatar(osmuser) {
   debug("getAvatar");
   /* jshint -W040 */
   if (osmuser === undefined && this !== undefined) osmuser = this.OSMUser;
   /* jshint +W040 */
-  return htmlroot + "/ch_av/" + util.linkify(osmuser) + ".png";
+  return avatarCache[osmuser];
 }
 
 

@@ -8,7 +8,7 @@ var should   = require("should");
 var markdown = require("markdown-it")();
 var debug    = require("debug")("OSMBC:routes:article");
 var jade     = require("jade");
-var util     = require("../util.js");
+var util     = require("../util/util.js");
 var path     = require("path");
 
 
@@ -175,53 +175,45 @@ function renderArticleId(req, res, next) {
       article.commentHtml = markdown.render(article.comment);
     }
 
-    //
-    if (req.query.edit && !params.edit) {
-      debug("return to was called, redirecting");
-      var returnToUrl = htmlroot + "/article/" + article.id;
-      // if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
-      res.redirect(returnToUrl);
-    } else {
-      debug("rendering page");
+    debug("rendering page");
 
-      res.set("content-type", "text/html");
-      // change title of page
-      res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
-      let jadeFile = "article/article_twocolumn";
-      if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
+    res.set("content-type", "text/html");
+    // change title of page
+    res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
+    let jadeFile = "article/article_twocolumn";
+    if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
 
-      if (req.user.languageCount === "three") {
-        jadeFile = "article/article_threecolumn";
-        if (req.user.getLang3() === "--") jadeFile = "article/article_twocolumn";
-        if (req.user.getSecondLang() === "--") jadeFile = "article/article_onecolumn";
+    if (req.user.languageCount === "three") {
+      jadeFile = "article/article_threecolumn";
+      if (req.user.getLang3() === "--") jadeFile = "article/article_twocolumn";
+      if (req.user.getSecondLang() === "--") jadeFile = "article/article_onecolumn";
 
-        params.columns = 3;
-      }
-      if (req.user.languageCount === "four") {
-        jadeFile = "article/article_fourcolumn";
-        if (req.user.getLang4() === null) jadeFile = "article/article_threecolumn";
-        if (req.user.getLang3() === null) jadeFile = "article/article_twocolumn";
-        if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
-        params.columns = 4;
-      }
-
-
-      res.render(jadeFile, {layout: res.rendervar.layout,
-        article: article,
-        googleTranslateText: configModule.getConfig("automatictranslatetext"),
-        params: params,
-        placeholder: placeholder,
-        votes: votes,
-        articleCategories: result.articleForSort,
-        blog: result.blog,
-        changes: result.changes,
-        originArticle: result.originArticle,
-        originBlog: result.originBlog,
-        articleReferences: result.articleReferences,
-        usedLinks: result.usedLinks,
-        categories: categories,
-        languageFlags: languageFlags});
+      params.columns = 3;
     }
+    if (req.user.languageCount === "four") {
+      jadeFile = "article/article_fourcolumn";
+      if (req.user.getLang4() === null) jadeFile = "article/article_threecolumn";
+      if (req.user.getLang3() === null) jadeFile = "article/article_twocolumn";
+      if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
+      params.columns = 4;
+    }
+
+
+    res.render(jadeFile, {layout: res.rendervar.layout,
+      article: article,
+      googleTranslateText: configModule.getConfig("automatictranslatetext"),
+      params: params,
+      placeholder: placeholder,
+      votes: votes,
+      articleCategories: result.articleForSort,
+      blog: result.blog,
+      changes: result.changes,
+      originArticle: result.originArticle,
+      originBlog: result.originBlog,
+      articleReferences: result.articleReferences,
+      usedLinks: result.usedLinks,
+      categories: categories,
+      languageFlags: languageFlags});
   }
   );
 }
@@ -335,12 +327,6 @@ function searchAndCreate(req, res, next) {
   var search = req.query.search;
   var show = req.query.show;
   if (!show) show = "15";
-  if (req.query.edit && req.query.edit === "false") {
-    var returnToUrl = htmlroot + "/osmbc.html";
-    if (req.session.articleReturnTo) returnToUrl = req.session.articleReturnTo;
-    res.redirect(returnToUrl);
-    return;
-  }
   if (!search || typeof (search) === "undefined") search = "";
   var placeholder = configModule.getPlaceholder();
 

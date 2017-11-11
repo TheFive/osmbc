@@ -20,10 +20,14 @@ var userModule   = require("../model/user.js");
 
 
 describe("views/blog", function() {
+  this.timeout(100000);
   let baseLink;
   var data;
 
   describe("export", function() {
+    before(function(bddone){
+      testutil.clearDB(bddone);
+    });
     beforeEach(function(bddone) {
       var file =  path.resolve(__dirname, "data", "views.blog.export.1.json");
       data = JSON.parse(fs.readFileSync(file));
@@ -162,7 +166,6 @@ describe("views/blog", function() {
   describe("browser tests", function() {
     var browser;
     beforeEach(function(bddone) {
-      this.timeout(6000);
       process.env.TZ = "Europe/Amsterdam";
       mockdate.set(new Date("2016-05-25T19:00"));
       nock("https://hooks.slack.com/")
@@ -184,7 +187,6 @@ describe("views/blog", function() {
     });
     describe("Blog Display", function() {
       it("should show Overview with some configurations", function(bddone) {
-        this.timeout(65000);
         async.series([
           browser.visit.bind(browser, "/blog/WN290"),
           browser.assert.expectHtml.bind(browser, "blog_wn290_overview.html"),
@@ -208,14 +210,12 @@ describe("views/blog", function() {
         ], bddone);
       });
       it("should show Full View", function(bddone) {
-        this.timeout(6000);
         async.series([
           browser.visit.bind(browser, "/blog/WN290?tab=full"),
           browser.assert.expectHtml.bind(browser, "blog_wn290_full.html")
         ], bddone);
       });
       it("should show Full View and close language", function(bddone) {
-        this.timeout(9000);
         async.series([
           browser.visit.bind(browser, "/blog/WN290?tab=full"),
           browser.pressButton.bind(browser, "#closebutton"),
@@ -230,28 +230,24 @@ describe("views/blog", function() {
         ], bddone);
       });
       it("should show Review View", function(bddone) {
-        this.timeout(6000);
         async.series([
           browser.visit.bind(browser, "/blog/WN290?tab=review"),
           browser.assert.expectHtml.bind(browser, "blog_wn290_review.html")
         ], bddone);
       });
       it("should show Statistic View", function(bddone) {
-        this.timeout(6000);
         async.series([
           browser.visit.bind(browser, "/blog/WN290/stat"),
           browser.assert.expectHtml.bind(browser, "blog_wn290_stat.html")
         ], bddone);
       });
       it("should show edit View", function(bddone) {
-        this.timeout(7000);
         async.series([
           browser.visit.bind(browser, "/blog/edit/WN290"),
           browser.assert.expectHtml.bind(browser, "blog_wn290_edit.html")
         ], bddone);
       });
       it("should show the Blog List", function(bddone) {
-        this.timeout(6000);
         async.series([
           browser.visit.bind(browser, "/blog/list?status=edit"),
           browser.assert.expectHtml.bind(browser, "blog_list.html")

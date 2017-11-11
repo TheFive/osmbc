@@ -315,7 +315,10 @@ function renderBlogTab(req, res, next) {
 
   let blog = req.blog;
   if (!blog) return next();
+
   var tab = req.query.tab;
+  if (!tab) tab = req.params.tab;
+
   var votes = configModule.getConfig("votes");
 
   if (!tab) tab = req.session.lasttab;
@@ -454,7 +457,7 @@ function postBlogId(req, res, next) {
     if (err) {
       return next(err);
     }
-    res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
+    res.redirect(htmlroot + "/blog/edit/" + blog.name);
   });
 }
 
@@ -476,15 +479,8 @@ router.get("/:blog_id", renderBlogTab);
 router.get("/:blog_id/stat", renderBlogStat);
 router.get("/:blog_id/preview", renderBlogPreview);
 router.get("/:blog_id/:tab", renderBlogTab);
-router.get("/:blog_id/preview_:blogname_:downloadtime", renderBlogPreview);
 
 
 
 module.exports.router = router;
-
-
-// the following modules are exported for test reasons
-module.exports.renderBlogPreview = renderBlogPreview;
-module.exports.renderBlogTab = renderBlogTab;
-
 
