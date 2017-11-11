@@ -1,6 +1,33 @@
-extends article_mixin
+extends ../layout
 
 
+mixin leftcolumn
+  if (params.right_lang === null)
+    .col-md-10
+      if block
+        block
+      else
+        p No Content provided
+  else
+    .col-md-5
+      if block
+        block
+      else
+        p No Content provided
+
+mixin rightcolumn
+  if (params.right_lang !== null)
+    .col-md-5
+      if block
+        block
+      else
+        p No Content provided
+  else
+    .col-md-5.hidden
+      if block
+        block
+      else
+        p No Content provided
 
 mixin articleMarkdown(lang,disabled)
   - var d = disabled
@@ -17,23 +44,58 @@ mixin articlePreview(lang)
     :verbatim
       !{article["textHtml"+lang]}
 
+
+
+mixin articleTextanalyse(lang)
+  if (lang === "DE") && (article["markdown" + lang])
+    a(href="#" onClick ="taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewDE').innerText; taf.parentElement.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
+
+mixin articleTranslateButton(langFrom,langTo)
+  if (article["markdown" + langFrom] && !article["markdown" + langTo])
+    button.btn.btn-small.btn-primary(
+         id="translate"+langFrom+langTo name = "translate"+langFrom+langTo
+         onClick ="window.translate('#{langFrom}','#{langTo}');return false;"
+       ) Translate #{langFrom} -> #{langTo}
+    button.btn.btn-small.btn-warning.hidden(id="translateWait"+langFrom+langTo)
+      span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+      span=" Please Wait"
+    button.btn.btn-small.btn-danger.hidden(id="translateError"+langFrom+langTo)
+      span="Error occured"
+
 mixin saveButton
   button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="disableUnchanged();document.getElementById('input').submit();") Save
+
+mixin doublettesButton
+  if articleReferences.count >= 1
+    a(href="#doublettes")
+      div.button.btn.btn-large.btn-danger=articleReferences.count + " doub."
+
 
 
 mixin cancelButton
   button.btn.btn-large.btn-default(type = "button" onclick ="disableUnchanged(); location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
 
 
+mixin noTranslationButton
+  div#notranslationArea
+    - open = false
+    each lang in layout.activeLanguages
+      if (article["markdown" + lang] || !article.isChangeAllowed("markdown" + lang))
+      else
+        - open = true;
+    if open
+      p
+        button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; setNoTranslation(); document.getElementById('input').submit();") no translation to rest
+
 mixin markdownWithPreview(lang)
   - labelClass = ""
   - if (params.left_lang === lang) labelClass = "osmbclabel-lang";
   - if (params.right_lang === lang) labelClass = "osmbclabel-lang2";
   span.label.label-default(
-  class="#{labelClass}"
-  draggable="true"
-  data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
-  ondragstart="ondragstartLangLabel(event,'#{lang}');")="  " + lang + "  "
+      class="#{labelClass}"
+      draggable="true"
+      data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+      ondragstart="ondragstartLangLabel(event,'#{lang}');")="  " + lang + "  "
   span.label.label-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
 
 
@@ -42,143 +104,9 @@ mixin markdownWithPreview(lang)
   +articlePreview(lang)
   +articleTextanalyse(lang)
 
-block content
-  form(name="input",id="input", action=layout.htmlroot+"/article/#{article.id}/witholdvalues", method="post")
-    .row
-      // Block for Buttons in the upper right corner and on the top in mobile
-      .col-md-6.col-md-push-6
-        .row
-        .row
-          .col-md-4
-          .col-md-1
-          .col-md-4
-            +saveButton
-            +cancelButton
 
 
-
-
-          // Parallel Blog for common article Attributes
-      .col-md-6.col-md-pull-6
-        .row
-          div.form-group
-            label.col-md-2="Blog"
-            div.col-md-10
-              +blogSelector(article,!article.isChangeAllowed("blog"))
-              textarea.hidden.form-control(id="old_blog" name="old_blog",rows=1,hide=true) #{article.blog}
-
-
-
-        .row
-          .form-group
-            label.col-md-2="Category"
-            div.col-md-10
-              textarea.hidden.form-control(id="old_categoryEN" name="old_categoryEN",rows=1,hide=true) #{article.categoryEN}
-              select(id="categoryEN",name="categoryEN" ).form-control.af
-                for category in categories
-                  - option = category[params.left_lang]
-                  - if (params.right_lang !== null) option += " / "+category[params.right_lang]
-                  if (category.EN == article.categoryEN)
-                    option(value="#{category.EN}" selected ) #{option}
-                  else
-                    option(value="#{category.EN}" disabled=!article.isChangeAllowed("categoryEN")) #{option}
-        .row
-          .col-md-2
-          .col-md-10
-            p.osmbc-help-text(id="categoryDisplay")
-        // Display Predecessor Row
-        .row
-          .form-group
-            label.col-md-2="Predecessor"
-            .col-md-10
-              textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true) #{article.predecessorId}
-              select(id="predecessorId",name="predecessorId" ).form-control.af
-                if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
-                  option(value="" selected) None
-                else
-                  option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
-                if article.predecessorId === "0"
-                  option(value="0" selected) First
-                else
-                  option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
-                for a in articleCategories
-                  if (a.id == article.predecessorId)
-                    option(value=a.id selected )=a.title
-                  else
-                    - d= null;
-                    for b in articleCategories
-                      - if (b.predecessorId == a.predecessorId) {d=b;}
-                    if !article.isChangeAllowed("predecessorId")
-                      option(value=a.id disabled=true)=a.title+"("+d.title+")"
-                    else
-                      option(value=a.id )=a.title
-
-
-
-
-
-
-    // Display Title Row
-    .row
-      .form-group
-        label.col-md-1="Title"
-        .col-md-10
-          div.label.label-danger#title_unsaved(style="display:none")="unsaved"
-          textarea.hidden.form-control(id="old_title" name="old_title",rows=1,hide=true) #{article.title}
-          textarea.form-control.af(id="title" name="title",rows=1 readonly=!article.isChangeAllowed("title")) #{article.title}
-
-
-    // Display Unpublish Reason Row
-    .row.hidden(id="unpublishReasonRow")
-      .form-group
-        label.col-md-1="Unpublish Reason"
-        .col-md-5
-          textarea.hidden.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true) #{article.unpublishReason}
-          select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control.af
-            for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
-              if (reason == article.unpublishReason)
-                option(value="#{reason}" selected ) #{reason}
-              else
-                option(value="#{reason}" ) #{reason}
-        .col-md-5
-          textarea.hidden.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true) #{article.unpublishReference}
-          textarea.form-control.af(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference")) #{article.unpublishReference}
-
-
-    // Display Collection Row
-    .row
-      .form-group
-        label.col-md-1="Collection"
-        .col-md-10
-          div.label.label-danger#collection_unsaved(style="display:none")="unsaved"
-          textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection")) #{article.collection}
-          textarea.hidden.form-control(id="old_collection" name="old_collection",rows=1,hide=true) #{article.collection}
-    .row
-      .col-md-1
-
-      .col-md-6
-        .div(id="linkArea")
-      .col-md-4
-        p.osmbc-help-text Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
-
-
-    block markdownArea
-
-
-
-
-
-
-
-
-  .div#commentArea
-    include commentArea
-
-
-
-
-
-block scripts
+block scripts                
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
 
@@ -217,52 +145,52 @@ block scripts
     function init() {
 
       $(".markdownEdit")
-        .change(convertMinusNoTranslation)
-        .change(previewMarkdown)
-        .change(showModified)
-        .change(FitToContent)
-        .focusout(convertMinusNoTranslation)
-        .keyup(previewMarkdown)
-        .keyup(checkForTable)
-        .keyup(FitToContent)
-        .keyup(checkMarkdownError)
-        .keyup(showModified)
-        .on("paste",pasteEvent)
-        .on("drop",pasteEvent)
-        .trigger("change");
+              .change(convertMinusNoTranslation)
+              .change(previewMarkdown)
+              .change(showModified)
+              .change(FitToContent)
+              .focusout(convertMinusNoTranslation)
+              .keyup(previewMarkdown)
+              .keyup(checkForTable)
+              .keyup(FitToContent)
+              .keyup(checkMarkdownError)
+              .keyup(showModified)
+              .on("paste",pasteEvent)
+              .on("drop",pasteEvent)
+              .trigger("change");
       $("#collection")
-        .change(onchangeCollection)
-        .change(FitToContent)
-        .keyup(onchangeCollection)
-        .keyup(FitToContent)
-        .keyup(showModified)
-        .trigger("change");
+              .change(onchangeCollection)
+              .change(FitToContent)
+              .keyup(onchangeCollection)
+              .keyup(FitToContent)
+              .keyup(showModified)
+              .trigger("change");
       $("#title")
-        .keyup(showModified)
+              .keyup(showModified)
       $("#predecessorId")
-        .change(showModified)
+              .change(showModified)
       $("#blog")
-        .change(showHideUnpublishReason)
-        .change(showModified)
-        .trigger("change");
+              .change(showHideUnpublishReason)
+              .change(showModified)
+              .trigger("change");
       $("#comment")
-        .change(FitToContent)
-        .keyup(FitToContent)
-        .trigger("change");
+              .change(FitToContent)
+              .keyup(FitToContent)
+              .trigger("change");
       $("#categoryEN")
-        .change(showModified)
-        .change(syncPlaceholder)
-        .change(showHideUnpublishReason)
+              .change(showModified)
+              .change(syncPlaceholder)
+              .change(showHideUnpublishReason)
 
-        .trigger("change");
+              .trigger("change");
       $("#AddComment")
-        .change(FitToContent)
-        .keyup(FitToContent)
-        .trigger("change");
+              .change(FitToContent)
+              .keyup(FitToContent)
+              .trigger("change");
       $("#editComment")
-        .change(FitToContent)
-        .keyup(FitToContent)
-        .trigger("change");
+              .change(FitToContent)
+              .keyup(FitToContent)
+              .trigger("change");
       resizePictures();
       $('[data-toggle="tooltip"]').tooltip();
       window.submitAndRedraw = submitAndRedraw;
@@ -424,11 +352,11 @@ block scripts
       if (md.indexOf("|----")>= 0) {
         $(this).wrap = 'off';
         $(this).css("fontFamily","monospace");
-      }
+        }
       else {
         $(this).wrap = 'soft';
         $(this).css("fontFamily","");
-      }
+        }
     }
 
     // Event handler to calculate the fresh markdown preview
@@ -456,12 +384,12 @@ block scripts
         text.show(400);
         text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
         errorOccured = true
-      }
+        }
 
       if (!errorOccured) {
-        //preview.style.backgroundColor="";
-        text.hide(400);
-      }
+         //preview.style.backgroundColor="";
+          text.hide(400);
+        }
     }
 
     // Generate the automatic google translate link for an url
@@ -580,8 +508,8 @@ block scripts
     function syncPlaceholder() {
       var c = $("#categoryEN").val();
       if (placeholder[c]) {
-        $("#categoryDisplay").html(placeholder[c]);
-      }
+         $("#categoryDisplay").html(placeholder[c]);
+        }
       else {
         $("#categoryDisplay").html("Missing Category Description");
       }
@@ -637,7 +565,7 @@ block scripts
       if (b==="Trash") hidden = false;
 
       if (hidden) $("#unpublishReasonRow").addClass("hidden");
-      else $("#unpublishReasonRow").removeClass("hidden");
+        else $("#unpublishReasonRow").removeClass("hidden");
     }
 
 
@@ -728,6 +656,6 @@ block scripts
 
 
 
-
+   
 
 
