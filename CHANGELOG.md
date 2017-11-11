@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.4.4](https://github.com/TheFive/osmbc/tree/2.4.4) (2017-11-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3i...2.4.4)
+
+**Closed issues:**
+
+- Redirect public calendar page to configurable page. [\#709](https://github.com/TheFive/osmbc/issues/709)
+
 ## [2.4.3i](https://github.com/TheFive/osmbc/tree/2.4.3i) (2017-11-05)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3h...2.4.3i)
 
