@@ -168,63 +168,6 @@ describe("routes/tool", function() {
       });
     });
   });
-  describe("route GET public /calendar/preview",function(){
-    let url = baseLink + "/calendar/preview";
-    it("should show calendar for OSMBC Users", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.get({url: url}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          should(body.indexOf(" <title>OSMBC Calendar Preview</title>")).not.equal(-1);
-          bddone();
-        });
-      });
-    });
-    it("should show calendar for denied users", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          should(body.indexOf(" <title>OSMBC Calendar Preview</title>")).not.equal(-1);
-          bddone();
-        });
-      });
-    });
-    it("should show calendar for non existing users", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          should(body.indexOf(" <title>OSMBC Calendar Preview</title>")).not.equal(-1);
-          bddone();
-        });
-      });
-    });
-  });
-  describe("route GET public /calendar/json",function(){
-    let url = baseLink + "/calendar/json";
-    it("should deny access without email", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.get({url: url}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("Please add your email to query. Thanks TheFive. undefined looks invalid.");
-          bddone();
-        });
-      });
-    });
-    it("should give json with email adress", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url+"?email=mail@server.domain"}, function (err, response, body) {
-          should.not.exist(err);
-          body = JSON.parse(body);
-          should(body.generator).eql("TheFive Wiki Calendar Parser");
-          should(response.statusCode).eql(200);
-          bddone();
-        });
-      });
-    });
-  });
 });
 
 

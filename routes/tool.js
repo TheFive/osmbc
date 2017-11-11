@@ -1,7 +1,6 @@
 "use strict";
 
 var debug = require("debug")("OSMBC:routes:tool");
-var fs = require("fs");
 var express = require("express");
 var router = express.Router();
 var publicRouter = express.Router();
@@ -12,13 +11,8 @@ var https = require("https");
 var moment = require("moment");
 var async = require("async");
 var request = require("request");
-var layoutRouter = require("../routes/layout.js");
-var emailValidator = require("email-validator");
 var BlogRenderer = require("../render/BlogRenderer.js");
 
-var markdown = require("markdown-it")()
-  .use(require("markdown-it-sup"))
-  .use(require("markdown-it-imsize"), { autofill: true });
 
 var parseEvent = require("../model/parseEvent.js");
 
@@ -29,42 +23,9 @@ var configModule = require("../model/config.js");
 var sizeOf = require("image-size");
 
 let htmlroot = config.getValue("htmlroot", {mustExist: true});
-let bootstrap = config.getValue("bootstrap", {mustExist: true});
 let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
 
-function renderPublicCalendar(req, res, next) {
-  debug("renderPublicCalendar");
 
-  var layout = {bootstrap: bootstrap, htmlRoot: htmlroot, path: layoutRouter.path};
-
-  parseEvent.calendarToMarkdown({lang: "EN", enableCountryFlags: true, duration: "200"}, function(err, result, errors) {
-    if (err) return next(err);
-    var preview = markdown.render(result);
-    preview = preview.replace("<table>", '<table class="table">');
-    res.set("content-type", "text/html");
-    res.render("calendarPublic.jade", {calendarAsMarkdown: result,
-      errors: errors,
-      preview: preview,
-      layout: layout});
-  });
-}
-
-function renderJSONCalendar(req, res, next) {
-  debug("renderPublicCalendar");
-  var email = req.query.email;
-  if (!emailValidator.validate(email)) {
-    let err = new Error("Please add your email to query. Thanks TheFive. " + email + " looks invalid.");
-    err.type = "API";
-    return next(err);
-  }
-  fs.appendFileSync("Calendarusage.log", email + " " + new Date() + "\n");
-
-  parseEvent.calendarToJSON({}, function(err, result) {
-    if (err) return next(err);
-
-    res.json(result);
-  });
-}
 
 function renderCalendarAsMarkdown(req, res, next) {
   debug("renderCalendarAsMarkdown");
@@ -429,6 +390,16 @@ function postPictureTool(req, res, next) {
   });
 }
 
+let publicCalendarPage = config.getValue("PublicCalendarPage", {mustExist: true});
+
+function renderPublicCalendar(req, res, next) {
+  debug("renderPublicCalendar");
+  request.get({url: publicCalendarPage}, function(err, response, body) {
+    if (err) return next(err);
+    if (response.statusCode !== 200) return next(new Error("Public Calendar returned status " + response.statusCode));
+    res.send(body);
+  });
+}
 
 router.get("/calendar2markdown", renderCalendarAsMarkdown);
 router.post("/calendar2markdown", postCalendarAsMarkdown);
@@ -439,6 +410,6 @@ router.get("/picturetool", renderPictureTool);
 router.post("/picturetool", postPictureTool);
 
 publicRouter.get("/calendar/preview", renderPublicCalendar);
-publicRouter.get("/calendar/json", renderJSONCalendar);
+
 module.exports.router = router;
 module.exports.publicRouter = publicRouter;
