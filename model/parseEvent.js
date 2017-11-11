@@ -6,6 +6,7 @@ var moment  = require("moment");
 var request = require("request");
 var markdown = require("markdown-it")();
 var config = require("../config.js");
+var logger = require("../config.js").logger;
 var configModule = require("../model/config.js");
 var async = require("async");
 var https = require("https");
@@ -16,6 +17,10 @@ let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
 // This page is delivering the calendar events
 var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json";
 
+
+if (discontinueTime.isBefore(moment())) {
+  logger.error("parse Event can be removed from source");
+}
 
 var regexList = [ {regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *\[\[(.*)\]\] *, *\[\[(.*)\]\] *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
   keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],

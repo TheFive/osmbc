@@ -1,7 +1,6 @@
 "use strict";
 
 var debug = require("debug")("OSMBC:routes:tool");
-var fs = require("fs");
 var express = require("express");
 var router = express.Router();
 var publicRouter = express.Router();
@@ -11,13 +10,9 @@ var http = require("http");
 var https = require("https");
 var moment = require("moment");
 var async = require("async");
-var layoutRouter = require("../routes/layout.js");
-var emailValidator = require("email-validator");
+var request = require("request");
 var BlogRenderer = require("../render/BlogRenderer.js");
 
-var markdown = require("markdown-it")()
-  .use(require("markdown-it-sup"))
-  .use(require("markdown-it-imsize"), { autofill: true });
 
 var parseEvent = require("../model/parseEvent.js");
 
@@ -30,40 +25,9 @@ const auth        = require("../routes/auth.js");
 var sizeOf = require("image-size");
 
 let htmlroot = config.htmlRoot();
-let bootstrap = config.getValue("bootstrap", {mustExist: true});
 let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
 
-function renderPublicCalendar(req, res, next) {
-  debug("renderPublicCalendar");
 
-  var layout = {bootstrap: bootstrap, htmlRoot: htmlroot, path: layoutRouter.path};
-
-  parseEvent.calendarToMarkdown({lang: "EN", enableCountryFlags: true, duration: "200"}, function(err, result, errors) {
-    if (err) return next(err);
-    var preview = markdown.render(result);
-    preview = preview.replace("<table>", '<table class="table">');
-    res.set("content-type", "text/html");
-    res.render("calendarPublic.jade", {calendarAsMarkdown: result,
-      errors: errors,
-      preview: preview,
-      layout: layout});
-  });
-}
-
-function renderJSONCalendar(req, res, next) {
-  debug("renderPublicCalendar");
-  var email = req.query.email;
-  if (!emailValidator.validate(email)) {
-    return next(new Error("Please add your email to query. Thanks TheFive. " + email + " looks invalid."));
-  }
-  fs.appendFileSync("Calendarusage.log", email + " " + new Date() + "\n");
-
-  parseEvent.calendarToJSON({}, function(err, result) {
-    if (err) return next(err);
-
-    res.json(result);
-  });
-}
 
 function renderCalendarAsMarkdown(req, res, next) {
   debug("renderCalendarAsMarkdown");
@@ -140,55 +104,73 @@ function renderCalendarAllLang(req, res, next) {
   let markdown = {};
   parseEvent.calendarToJSON({}, function(err, result) {
     if (err) return next(err);
-    events = result.events;
+    result.discontinue = true;
+    result.serviceProvider = "OSMBC";
+    renderEvents(result, req, res, next);
+  });
+}
 
-    async.parallel([
-      function para1(cbPara1) {
-        async.each(result.events, function(event, eventsCB) {
-          let allfilter = true;
-          async.each(languages, function(lang, langCB) {
-            parseEvent.convertGeoName(event.town, lang, function(err, name) {
-              if (err) return langCB(err);
-              event[lang] = {};
-              event[lang].town = name;
-              let filter = {};
-              if (eventsfilter[lang]) filter = eventsfilter[lang];
+let alternativeCalendarData = config.getValue("CalendarInterface", {mustExist: true});
 
-              event[lang].filtered = parseEvent.filterEvent(event, filter);
-              allfilter = allfilter && event[lang].filtered;
+function renderCalendarAllLangAlternative(req, res, next) {
+  debug("renderCalendarAllLang");
 
-              langCB();
-            });
-          }, function(err) {
-            event.all = {};
-            event.all.filtered = allfilter;
-            return eventsCB(err);
-          });
-        }, cbPara1);
-      },
-      function para2(cbPara2) {
-        async.each(languages, function (lang, langCB) {
-          let filter = {};
-          if (eventsfilter[lang]) filter = eventsfilter[lang];
-          filter.lang = lang;
-          parseEvent.calendarJSONToMarkdown(result, filter, function(err, text) {
-            if (err) return langCB(err);
-            markdown[lang] = text;
-            return langCB();
-          });
-        }, cbPara2);
-      }
-    ], function(err) {
-      if (err) return next(err);
-      res.render("calendarAllLang.jade", {
-        layout: res.rendervar.layout,
-        events: events,
-        errors: result.errors,
-        flag: flag,
-        markdown: markdown,
-        eventsfilter: eventsfilter,
-        calendarFlags: calendarFlags,
-        eventDateFormat: eventDateFormat});
+  let par = req.params.calendar;
+
+  let cc = alternativeCalendarData[par];
+
+  var options = {
+    url: cc.url,
+    method: "GET",
+    json: true
+  };
+  let result = {events: []};
+  request(options, function(error, response, body) {
+    if (error) return next(error);
+    if (response.statusCode !== 200) {
+      return next(Error("url: " + cc.url + " returns:\n" + body));
+    }
+    if (!body[cc.events]) return next("Missing events in calendar data");
+    body[cc.events].forEach(function modifyItem(item) {
+      let i = {};
+      i.desc = item[cc.desc];
+      i.startDate = new Date(item[cc.startDate]);
+      i.endDate = new Date(item[cc.endDate]);
+      i.text = item[cc.text];
+      i.markdown = item[cc.markdown];
+      i.big = item[cc.big];
+      i.country = item[cc.country];
+      i.town = item[cc.town];
+      result.events.push(i);
+    });
+    result.error = "no information";
+    result.discontinue = false;
+    result.timestamp = "unknown";
+    result.refreshurl = false;
+    if (cc.refreshurl) result.refreshurl = true;
+    if (cc.timestamp) result.timestamp = body[cc.timestamp];
+    result.serviceProvider = par;
+    renderEvents(result, req, res, next);
+  });
+}
+
+function renderCalendarRefresh(req, res, next) {
+  debug("renderCalendarAllLang");
+
+  let par = req.params.calendar;
+
+  let cc = alternativeCalendarData[par];
+
+  if (!cc.refreshurl) return next(new Error("Refreshurl missing"));
+
+  var options = {
+    url: cc.refreshurl,
+    method: "GET"
+  };
+  request(options, function(error, response, body) {
+    if (error) return next(error);
+    if (response.statusCode !== 200) {
+      return next(Error("url: " + cc.url + " returns:\n" + body));
     }
     );
   });
@@ -352,6 +334,16 @@ function postPictureTool(req, res, next) {
   });
 }
 
+let publicCalendarPage = config.getValue("PublicCalendarPage", {mustExist: true});
+
+function renderPublicCalendar(req, res, next) {
+  debug("renderPublicCalendar");
+  request.get({url: publicCalendarPage}, function(err, response, body) {
+    if (err) return next(err);
+    if (response.statusCode !== 200) return next(new Error("Public Calendar returned status " + response.statusCode));
+    res.send(body);
+  });
+}
 
 router.get("/calendar2markdown", auth.checkRole("full"), renderCalendarAsMarkdown);
 router.post("/calendar2markdown", auth.checkRole("full"), postCalendarAsMarkdown);
@@ -360,6 +352,6 @@ router.get("/picturetool", auth.checkRole("full"), renderPictureTool);
 router.post("/picturetool", auth.checkRole("full"), postPictureTool);
 
 publicRouter.get("/calendar/preview", renderPublicCalendar);
-publicRouter.get("/calendar/json", renderJSONCalendar);
+
 module.exports.router = router;
 module.exports.publicRouter = publicRouter;

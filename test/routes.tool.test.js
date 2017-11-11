@@ -81,7 +81,7 @@ describe("routes/tool", function() {
         request.get({url: url}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql(" <h1>New Calendar Tool</h1>");
+          body.should.containEql(" <h1>Calendar Tool (OSMBC)</h1>");
           bddone();
         });
       });
@@ -168,63 +168,6 @@ describe("routes/tool", function() {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
-  });
-  describe("route GET public /calendar/preview",function(){
-    let url = baseLink + "/calendar/preview";
-    it("should show calendar for OSMBC Users", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.get({url: url}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql(" <title>OSMBC Calendar Preview</title>");
-          bddone();
-        });
-      });
-    });
-    it("should show calendar for denied users", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql(" <title>OSMBC Calendar Preview</title>");
-          bddone();
-        });
-      });
-    });
-    it("should show calendar for non existing users", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql(" <title>OSMBC Calendar Preview</title>");
-          bddone();
-        });
-      });
-    });
-  });
-  describe("route GET public /calendar/json",function(){
-    let url = baseLink + "/calendar/json";
-    it("should deny access without email", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.get({url: url}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("<h1>Please add your email to query. Thanks TheFive. undefined looks invalid.</h1>");
-          bddone();
-        });
-      });
-    });
-    it("should give json with email adress", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url+"?email=mail@server.domain"}, function (err, response, body) {
-          should.not.exist(err);
-          body = JSON.parse(body);
-          should(body.generator).eql("TheFive Wiki Calendar Parser");
-          should(response.statusCode).eql(200);
           bddone();
         });
       });
