@@ -228,7 +228,8 @@ function renderCalendarRefresh(req, res, next) {
     if (response.statusCode !== 200) {
       return next(Error("url: " + cc.url + " returns:\n" + body));
     }
-    res.redirect(htmlroot + "/tool/calendarAllLang/" + par);
+    let referer = req.header("Referer") || "/";
+    res.redirect(referer);
   });
 }
 
@@ -397,6 +398,8 @@ function renderPublicCalendar(req, res, next) {
   request.get({url: publicCalendarPage}, function(err, response, body) {
     if (err) return next(err);
     if (response.statusCode !== 200) return next(new Error("Public Calendar returned status " + response.statusCode));
+
+    body = body.replace("</body>"," <a href="+htmlroot+"/calendarRefresh/Thomas>Refresh (wait >60 seconds)</a></body>");
     res.send(body);
   });
 }
@@ -405,11 +408,11 @@ router.get("/calendar2markdown", renderCalendarAsMarkdown);
 router.post("/calendar2markdown", postCalendarAsMarkdown);
 router.get("/calendarAllLang", renderCalendarAllLang);
 router.get("/calendarAllLang/:calendar", renderCalendarAllLangAlternative);
-router.get("/calendarRefresh/:calendar", renderCalendarRefresh);
 router.get("/picturetool", renderPictureTool);
 router.post("/picturetool", postPictureTool);
 
 publicRouter.get("/calendar/preview", renderPublicCalendar);
+publicRouter.get("/calendarRefresh/:calendar", renderCalendarRefresh);
 
 module.exports.router = router;
 module.exports.publicRouter = publicRouter;
