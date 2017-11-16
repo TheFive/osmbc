@@ -399,7 +399,7 @@ function renderPublicCalendar(req, res, next) {
     if (err) return next(err);
     if (response.statusCode !== 200) return next(new Error("Public Calendar returned status " + response.statusCode));
 
-    body = body.replace("</body>"," <a href="+htmlroot+"/calendarRefresh/Thomas>Refresh (wait >60 seconds)</a></body>");
+    body = body.replace("</body>", " <a href=" + htmlroot + "/calendarRefresh/Thomas>Refresh (wait >60 seconds)</a></body>");
     res.send(body);
   });
 }
