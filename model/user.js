@@ -13,7 +13,7 @@ var config         = require("../config.js");
 var cheerio        = require("cheerio");
 var request        = require("request");
 var logger         = require("../config.js").logger;
-var animated       = require('animated-gif-detector');
+var animated       = require("animated-gif-detector");
 
 
 // generate an user object, use Prototpye
@@ -79,13 +79,12 @@ function cacheOSMAvatar(osmuser, callback) {
       if (avatarLink === undefined) return callback();
       if (avatarLink.substring(0, 1) === "/") avatarLink = "https://www.openstreetmap.org" + avatarLink;
       avatarCache[osmuser] = avatarLink;
-      var req = request(avatarLink)
+      request(avatarLink)
         .pipe(animated())
-        .on('animated', function() {
+        .on("animated", function() {
           console.error(osmuser + " uses animated gif, will be exchanged by a default");
           avatarCache[osmuser] = "https://www.openstreetmap.org/assets/users/images/large-afe7442b856c223cca92b1a16d96a3266ec0c86cac8031269e90ef93562adb72.png";
         });
-
     }
     return callback();
   });
