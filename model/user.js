@@ -93,7 +93,7 @@ function cacheOSMAvatarAll(callback) {
   });
 }
 if (process.env.NODE_ENV !== "test") {
-  cacheOSMAvatarAll(function(err) { if (err) logger.error("Error during Cache of User Avatar" + err.message); });
+  cacheOSMAvatarAll(function(err) { if (err) logger.error("Error during Cache of User Avatar " + err.message); });
 }
 
 // Calculate derived values
