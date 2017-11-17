@@ -239,9 +239,10 @@ app.use(debugExpress("After passport.session"));
 
 
 
+morgan.token('OSMUser', function (req, res) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user"  });
 
 if (app.get("env") !== "test") {
-  app.use(morgan("combined", { stream: logger.stream }));
+  app.use(morgan(":OSMUser :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"", { stream: logger.stream }));
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
