@@ -1,5 +1,17 @@
 # Change Log
 
+## [2.4.5](https://github.com/TheFive/osmbc/tree/2.4.5) (2017-11-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.4...2.4.5)
+
+**Implemented enhancements:**
+
+- Disable Animated GIFs as avatar [\#713](https://github.com/TheFive/osmbc/issues/713)
+
+**Fixed bugs:**
+
+- Blog route: throw an error ir a wrong tab is requested [\#712](https://github.com/TheFive/osmbc/issues/712)
+- A link with parentesis \(\) is not parsed correctly to the drag&drop area [\#711](https://github.com/TheFive/osmbc/issues/711)
+
 ## [2.4.4](https://github.com/TheFive/osmbc/tree/2.4.4) (2017-11-11)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3i...2.4.4)
 
@@ -852,13 +864,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
