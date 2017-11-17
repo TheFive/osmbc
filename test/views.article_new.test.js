@@ -161,8 +161,8 @@ describe("views/article_new", function() {
       browser.assert.attribute('#linkArea a[href="https://translate.google.com/translate?sl=auto&tl='+langTranslation+'&u='+link+'"]', "ondragstart","dragstart(event,'("+transText+"(https://translate.google.com/translate?sl=auto&tl="+langTranslation+"&u="+link+"))');");
 
     }
-    it("should ignore brackets in a collection (e.g. Markdown)", function(bddone) {
-      browser.fill("#collection", "Some collection [link](https://www.openstreetmap.org/a_brilliant_map) in Markdown");
+    it("should ignore brackets in a collection (No Markdown)", function(bddone) {
+      browser.fill("#collection", "Some collection [link](https://www.openstreetmap.org/a_brilliant_map in Markdown");
       checkLink("https://www.openstreetmap.org/a_brilliant_map","DE");
       checkLink("https://www.openstreetmap.org/a_brilliant_map","EN");
       bddone();

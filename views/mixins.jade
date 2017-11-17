@@ -153,11 +153,11 @@ mixin articleIcons(a,options)
       span.hidden-xs.glyphicon.glyphicon-stop.small-margin.text-warning
 
 
-mixin navbutton(userstyle,style,p,addClass)
-  if (userstyle == style)
-    li.active(class="#{addClass}"):  a(href=layout.htmlroot+"/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
+mixin navbutton(tab,activetab,addClass)
+  if (tab == activetab)
+    li.active(class="#{addClass}"):  a(href=layout.htmlroot+"/blog/#{blog.name}/#{tab}") #{tab}
   else
-    li(class="#{addClass}"):  a(href=layout.htmlroot+"/blog/#{blog.name}?#{p}=#{userstyle}") #{userstyle}
+    li(class="#{addClass}"):  a(href=layout.htmlroot+"/blog/#{blog.name}/#{tab}") #{tab}
 
 
 mixin articleIconLegend(view)
