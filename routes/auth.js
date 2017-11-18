@@ -2,7 +2,6 @@
 
 const debug = require("debug")("OSMBC:routes:auth");
 const async = require("async");
-const should = require("should");
 
 const config = require("../config.js");
 const logger = require("../config.js").logger;
@@ -28,12 +27,17 @@ var htmlRoot = config.htmlRoot();
 // if there will be a user database, this has to be integrated here
 passport.serializeUser(function (user, done) {
   debug("passport.serializeUser CB");
-  done(null, user);
+  done(null, user.displayName);
 });
+
 
 passport.deserializeUser(function (user, done) {
   debug("passport.deserializeUser CB");
-  done(null, user);
+  userModule.find({OSMUser: user}, function(err, result) {
+    if (result.length === 1) return done(null, result[0]);
+    if (result.length === 0) return done(null,null);
+    if (result.length > 1) return done(null,null);
+  });
 });
 
 
@@ -92,45 +96,28 @@ function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated");
 
   if (req.isAuthenticated()) {
-    // if (req.user.displayName =="TheFive") return next();
-    // check User
-    userModule.find({OSMUser: req.user.displayName}, function(err, result) {
-      debug("ensureAuthenticated->userFind");
-      if (err) return next(err);
-      if (result.length === 1) {
-        for (var k in result[0]) {
-          req.user[k] = result[0][k];
-        }
-        debug("User found");
-        if ((result[0].access === "full") || (result[0].access === "guest")) {
-          // save last access, ignore save callback
-          var date = new Date();
-          var lastStore = new Date(result[0].lastAccess);
-          // only store last access when GETting something, not in POSTs.
-          if (req.method === "GET" && (!result[0].lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 5)) {
-            result[0].lastAccess = new Date();
-            result[0].save({noVersionIncrease: true}, function(err) { if (err) return next(err); });
-          }
-          debug("User accepted");
-          return next();
-        }
+    if (req.user && req.user.access === "full") {
+      var date = new Date();
+      var lastStore = new Date(req.user.lastAccess);
+      // only store last access when GETting something, not in POSTs.
+      if (req.method === "GET" && (!req.user.lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 5)) {
+        let stamp = new Date();
+        req.user.lastAccess = stamp;
+        req.session.lastAccess = stamp;
+        req.user.save({noVersionIncrease: true}, function (err) {
+          if (err) return next(err);
+        });
       }
-      debug("User Not Found %s(found)", result.length);
-      should(result.length).lessThan(2);
-      if (result.length === 1) {
-        err = new Error("OSM User >" + req.user.displayName + "< has no access rights");
-      }
-      if (result.length === 0) {
-        let osmname = req.user.displayName;
-        req.user = userModule.create();
-        req.user.OSMUser = osmname;
-        req.user.access = "guest";
-        return next();
-      }
+      return next();
+    }
+    if (req.user && req.user.OSMUser && req.user.access !== "full"){
+      let err = new Error("OSM User >" + req.user.displayName + "< has no access rights");
       return next(err);
-    });
-    return;
+    }
+    let err = new Error("OSM User >" + req.user.displayName + "< is not an OSMBC user.");
+    return next(err);
   }
+  // is not authenticated
   async.series([
     function saveReturnTo(cb) {
       if (!req.session.returnTo) {

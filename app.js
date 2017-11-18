@@ -15,8 +15,6 @@ const compression  = require("compression");
 
 const helmet       = require("helmet");
 
-
-
 const config       = require("./config.js");
 
 const index        = require("./routes/index").router;
@@ -45,6 +43,9 @@ const auth         = require("./routes/auth.js");
 config.initialise();
 var htmlRoot = config.htmlRoot();
 logger.info("Express Routes set to: SERVER" + htmlRoot);
+
+
+
 
 
 

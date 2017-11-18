@@ -97,11 +97,6 @@ function flag(country, cf) {
 
 function renderCalendarAllLang(req, res, next) {
   debug("renderCalendarAllLang");
-  let eventsfilter = configModule.getConfig("eventsfilter");
-  let calendarFlags = configModule.getConfig("calendarflags");
-  let languages = res.rendervar.layout.activeLanguages;
-  let events = {};
-  let markdown = {};
   parseEvent.calendarToJSON({}, function(err, result) {
     if (err) return next(err);
     result.discontinue = true;
