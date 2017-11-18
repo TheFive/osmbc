@@ -99,6 +99,7 @@ function cacheOSMAvatarAll(callback) {
     }, function(err) { return callback(err); });
   });
 }
+
 if (process.env.NODE_ENV !== "test") {
   cacheOSMAvatarAll(function(err) { if (err) logger.error("Error during Cache of User Avatar " + err.message); });
 }
@@ -121,6 +122,7 @@ function getAvatar(osmuser) {
   debug("getAvatar");
   /* jshint -W040 */
   if (osmuser === undefined && this !== undefined) osmuser = this.OSMUser;
+  cacheOSMAvatar(osmuser,function(){});
   /* jshint +W040 */
   return avatarCache[osmuser];
 }

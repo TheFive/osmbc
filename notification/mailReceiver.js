@@ -71,7 +71,7 @@ var welcomemail = new EmailTemplate(welcomeMailtemplateDir);
 var transporter = nodemailer.createTransport(config.getValue("SMTP"));
 
 var layout = {
-  htmlroot: config.getValue("htmlroot"),
+  htmlroot: config.htmlRoot(),
   url: config.getValue("url")
 };
 

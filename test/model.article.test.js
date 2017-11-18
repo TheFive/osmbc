@@ -350,7 +350,7 @@ describe("model/article", function() {
                     bddone();
                   });
                 });
-              }, 400);
+              }, 500);
             });
           });
         });

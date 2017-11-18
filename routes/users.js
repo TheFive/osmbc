@@ -7,6 +7,8 @@ var debug = require("debug")("OSMBC:routes:users");
 
 var express    = require("express");
 var router     = express.Router();
+const auth        = require("../routes/auth.js");
+
 
 
 var config = require("../config.js");
@@ -17,7 +19,7 @@ var logModule = require("../model/logModule.js");
 var blogRenderer = require("../render/BlogRenderer.js");
 
 
-var htmlroot = config.getValue("htmlroot", {mustExist: true});
+var htmlroot = config.htmlRoot();
 
 function renderList(req, res, next) {
   debug("renderList");
@@ -215,12 +217,12 @@ function createApiKey(req, res, next) {
 
 
 
-router.get("/inbox", inbox);
-router.get("/list", renderList);
-router.get("/create", createUser);
-router.get("/createApiKey", createApiKey);
-router.get("/:user_id", renderUserId);
-router.post("/:user_id", postUserId);
+router.get("/inbox", auth.checkRole("full"), inbox);
+router.get("/list", auth.checkRole("full"), renderList);
+router.get("/create", auth.checkRole("full"), createUser);
+router.get("/createApiKey", auth.checkRole("full"), createApiKey);
+router.get("/:user_id", auth.checkRole("full"), renderUserId);
+router.post("/:user_id", auth.checkRole("full"), postUserId);
 
 module.exports.createUser = createUser;
 module.exports.postUserId = postUserId;

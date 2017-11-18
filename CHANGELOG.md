@@ -1,41 +1,5 @@
 # Change Log
 
-## [2.4.3h](https://github.com/TheFive/osmbc/tree/2.4.3h) (2017-11-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3g...2.4.3h)
-
-**Closed issues:**
-
-- More flexible Calendar JSON Interface [\#700](https://github.com/TheFive/osmbc/issues/700)
-
-## [2.4.3g](https://github.com/TheFive/osmbc/tree/2.4.3g) (2017-11-01)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3f...2.4.3g)
-
-**Closed issues:**
-
-- Integrate another Calendar Parser [\#699](https://github.com/TheFive/osmbc/issues/699)
-
-## [2.4.3f](https://github.com/TheFive/osmbc/tree/2.4.3f) (2017-10-21)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3e...2.4.3f)
-
-## [2.4.3e](https://github.com/TheFive/osmbc/tree/2.4.3e) (2017-09-28)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3d...2.4.3e)
-
-## [2.4.3d](https://github.com/TheFive/osmbc/tree/2.4.3d) (2017-09-27)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3c...2.4.3d)
-
-**Fixed bugs:**
-
-- History is not shown on users page, if the route is called with users name, not id [\#692](https://github.com/TheFive/osmbc/issues/692)
-
-## [2.4.3c](https://github.com/TheFive/osmbc/tree/2.4.3c) (2017-09-17)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3b...2.4.3c)
-
-## [2.4.3b](https://github.com/TheFive/osmbc/tree/2.4.3b) (2017-09-17)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3a...2.4.3b)
-
-## [2.4.3a](https://github.com/TheFive/osmbc/tree/2.4.3a) (2017-09-17)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3...2.4.3a)
-
 ## [2.4.3](https://github.com/TheFive/osmbc/tree/2.4.3) (2017-09-17)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.2b...2.4.3)
 
@@ -838,13 +802,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 

@@ -6,6 +6,8 @@ var router = express.Router();
 var debug = require("debug")("OSMBC:routes:changes");
 var logModule = require("../model/logModule.js");
 var jsdiff = require("diff");
+const auth        = require("../routes/auth.js");
+
 
 
 function generateHTMLDiff(one, other) {
@@ -87,8 +89,8 @@ function renderChangeId(req, res, next) {
 }
 
 
-router.get("/log", renderHistoryLog);
-router.get("/:change_id", renderChangeId);
+router.get("/log", auth.checkRole("full"), renderHistoryLog);
+router.get("/:change_id", auth.checkRole("full"), renderChangeId);
 
 module.exports.router = router;
 

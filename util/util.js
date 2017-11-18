@@ -45,6 +45,7 @@ function toPGString(string, count) {
 
 function linkify(string) {
   debug("linkify");
+  if (string === undefined) string = "undefined";
   var result = string.toLowerCase();
   while (result.indexOf(" ") >= 0) {
     result = result.replace(" ", "_");

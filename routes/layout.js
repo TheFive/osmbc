@@ -15,7 +15,7 @@ var articleModule = require("../model/article.js");
 var blogModule    = require("../model/blog.js");
 var userModule    = require("../model/user.js");
 
-var htmlRoot      = config.getValue("htmlroot", {mustExist: true});
+var htmlRoot      = config.htmlRoot();
 var bootstrap     = config.getValue("bootstrap", {mustExist: true});
 var appName       = config.getValue("AppName", {mustExist: true});
 
@@ -42,8 +42,6 @@ function path(component) {
   if (component === "moment") dist = "";
   return htmlRoot + "/bower_components/" + component + dist;
 }
-
-let calendarInterface = config.getValue("CalendarInterface", {mustExist: true});
 
 
 function prepareRenderLayout(req, res, next) {
@@ -212,9 +210,7 @@ function prepareRenderLayout(req, res, next) {
       language2_locale: config.moment_locale(req.user.getSecondLang()),
       md_render: util.md_render,
       md_renderInline: markdown.renderInline,
-      getAvatar: userModule.getAvatar,
-      calendarInterface: calendarInterface
-
+      getAvatar: userModule.getAvatar
     };
     next();
   }

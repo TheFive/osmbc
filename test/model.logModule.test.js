@@ -7,7 +7,7 @@ var path = require("path");
 
 var testutil = require("./testutil.js");
 var logModule = require("../model/logModule.js");
-var initialize = require("../util/initialize.js");
+var initialize = require("../util/initialise.js");
 
 
 

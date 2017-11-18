@@ -6,7 +6,6 @@ var moment  = require("moment");
 var request = require("request");
 var markdown = require("markdown-it")();
 var config = require("../config.js");
-var logger = require("../config.js").logger;
 var configModule = require("../model/config.js");
 var async = require("async");
 var https = require("https");
@@ -17,11 +16,7 @@ let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
 // This page is delivering the calendar events
 var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json";
 
-let discontinueTime = moment("01/01/2018", "MM/DD/YYYY");
 
-if (discontinueTime.isBefore(moment())) {
-  logger.error("parse Event can be removed from source");
-}
 
 var regexList = [ {regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *\[\[(.*)\]\] *, *\[\[(.*)\]\] *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
   keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],
@@ -289,7 +284,6 @@ function filterEvent(event, option) {
 
 
   if (!event.big && startDate.isAfter(to)) filtered = true;
-
   return filtered;
 }
 
@@ -385,7 +379,6 @@ function calendarJSONToMarkdown2(json, countryFlags, ct, option, cb) {
 }
 
 function calendarToMarkdown(options, cb) {
-  if (discontinueTime.isBefore(moment())) return cb(new Error("Service discontinued"));
   var calendarFlags = configModule.getConfig("calendarflags");
   if (!calendarFlags) calendarFlags = {};
   var ct = configModule.getConfig("calendartranslation");
@@ -399,7 +392,6 @@ function calendarToMarkdown(options, cb) {
 }
 
 function calendarJSONToMarkdown(json, options, cb) {
-  if (discontinueTime.isBefore(moment())) return cb(new Error("Service discontinued"));
   var calendarFlags = configModule.getConfig("calendarflags");
   if (!calendarFlags) calendarFlags = {};
   var ct = configModule.getConfig("calendartranslation");
@@ -421,7 +413,6 @@ let agent = new https.Agent(agentOptions);
 
 function calendarToJSON(option, cb) {
   debug("calendarToJSON");
-  if (discontinueTime.isBefore(moment())) return cb(new Error("Service discontinued"));
   should(typeof (cb)).eql("function");
 
   var requestOptions = {
@@ -494,7 +485,6 @@ function calendarToJSON(option, cb) {
 
 function calendarToHtml(date, callback) {
   debug("calendarToHtml");
-  if (discontinueTime.isBefore(moment())) return callback(new Error("Service discontinued"));
   if (typeof (date) === "function") {
     callback = date;
     date = new Date();

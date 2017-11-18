@@ -221,7 +221,7 @@ HtmlRenderer.prototype.renderBlog = function htmlBlog(lang, articleData) {
     preview += "<p> Please use [edit blog detail] to enter category</p>\n";
     preview += "<p> Or edit The Articles ";
     for (i = 0; i < articles[k].length; i++) {
-      preview += ' <a href="' + config.getValue("htmlroot") + "/article/" + articles[k][i].id + '">' + articles[k][i].id + "</a> ";
+      preview += ' <a href="' + config.htmlRoot() + "/article/" + articles[k][i].id + '">' + articles[k][i].id + "</a> ";
     }
     preview += "</p>\n";
   }

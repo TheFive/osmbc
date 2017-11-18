@@ -7,6 +7,8 @@ var debug    = require("debug")("OSMBC:routes:config");
 
 var express    = require("express");
 var router     = express.Router();
+const auth        = require("../routes/auth.js");
+
 
 
 var config = require("../config.js");
@@ -15,7 +17,7 @@ var configModule = require("../model/config.js");
 var logModule = require("../model/logModule.js");
 
 
-let htmlroot = config.getValue("htmlroot", {mustExist: true});
+let htmlroot = config.htmlRoot();
 
 
 
@@ -103,8 +105,8 @@ function postConfigId(req, res, next) {
 }
 
 
-router.get("/:name", renderConfigName);
-router.post("/:name", postConfigId);
+router.get("/:name", auth.checkRole("full"), renderConfigName);
+router.post("/:name", auth.checkRole("full"), postConfigId);
 
 
 module.exports.router = router;

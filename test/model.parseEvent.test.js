@@ -7,7 +7,7 @@ var path = require("path");
 var fs = require("fs");
 var sinon = require("sinon");
 
-var initialize = require("../util/initialize.js");
+var initialize = require("../util/initialise.js");
 
 
 /* eslint-disable mocha/no-synchronous-tests */

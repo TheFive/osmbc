@@ -1,0 +1,97 @@
+include mixins
+
+mixin homeButton(addclass)
+  a(href=layout.htmlroot+'/osmbc.html' class=addclass) #{layout.appName}
+
+
+mixin firstBlogOfList(list,count,c)
+  - if (!count) count = 1
+  if (list.length > 0)
+    each blog,i in list
+      if i<count
+        li
+          a(href=layout.htmlroot+'/blog/#{blog.name}')=blog.name
+            span.badge.osmbcbadge-lang=blogNumber(blog, layout.language)
+            if layout.language2
+              span.badge.osmbcbadge-lang2=blogNumber(blog, layout.language2)
+
+
+
+block all
+
+  doctype html
+  html(lang='en')
+    head
+      meta(charset='utf-8')
+      meta(http-equiv='X-UA-Compatible', content='IE=edge')
+      meta(name='viewport', content='width=device-width, initial-scale=1')
+      meta(name='description', content='')
+      meta(name='author', content='')
+      link(rel='icon', href='/favicon.ico')
+      title=layout.title
+      // Bootstrap core CSS
+      link(href=layout.path("bootstrap")+'/css/bootstrap.min.css', rel='stylesheet')
+
+      link(href=layout.path("font-awesome")+"/css/font-awesome.min.css" rel='stylesheet')
+
+    body
+
+
+      // Fixed navbar
+      .navbar.navbar-default.navbar-fixed-top(role='navigation')
+        .container-fluid
+          .navbar-header.pull-left
+            +homeButton("navbar-brand hidden-xs")
+            ul.nav.navbar-nav.pull-left
+              li
+                a(href=layout.htmlroot+'/article/create') Collect
+            ul.nav.navbar-nav.pull-left
+              li
+                a(href=layout.htmlroot+'/usert/inbox')="Inbox "
+                  if (layout.userMentions>0)
+                    span.badge.osmbcbadge-user=layout.userMentions
+                  if (layout.mainLangMentions>0)
+                    span.badge.osmbcbadge-lang=layout.mainLangMentions
+                  if (layout.secondLangMentions>0)
+                    span.badge.osmbcbadge-lang2=layout.secondLangMentions
+
+
+
+
+          .navbar-header.pull-right
+            ul.nav.navbar-nav.pull-right
+
+              if layout.user
+                li=layout.user.access
+                li
+                  img(src=layout.user.getAvatar() onclick="location.href='"+layout.htmlroot+"/usert/#{layout.user.id}';" style="height:50px;width:50px")
+              else
+                li
+                  a(href='./') Anonymous
+
+
+      .container-fluid
+
+          p
+           block content
+          p
+
+      // /container
+
+      // Bootstrap core JavaScript
+      // ==================================================
+      // Placed at the end of the document so the pages load faster
+      //link(rel='stylesheet', href='#{layout.bootstrap}/css/bootstrap.min.css')
+      script(src=layout.path("jquery")+'/jquery.min.js')
+      script(src=layout.path("bootstrap")+'/js/bootstrap.min.js')
+
+  doctype html
+  html
+    head
+      title= title
+      link(rel='stylesheet', href='#{layout.htmlroot}#{layout.style}')
+    body
+
+  block scripts
+
+

@@ -1,24 +1,26 @@
 "use strict";
 
-var express  = require("express");
-var router   = express.Router();
-var async    = require("async");
-var should   = require("should");
-var debug    = require("debug")("OSMBC:routes:blog");
-var config   = require("../config.js");
-var moment   = require("moment");
-var help     = require("../routes/help.js");
-var yaml     = require("js-yaml");
-var configModule = require("../model/config.js");
+const express  = require("express");
+const router   = express.Router();
+const async    = require("async");
+const should   = require("should");
+const debug    = require("debug")("OSMBC:routes:blog");
+const config   = require("../config.js");
+const moment   = require("moment");
+const help     = require("../routes/help.js");
+const yaml     = require("js-yaml");
+const configModule = require("../model/config.js");
 
-var BlogRenderer   = require("../render/BlogRenderer.js");
+const BlogRenderer   = require("../render/BlogRenderer.js");
 
-var blogModule     = require("../model/blog.js");
-var blogRenderer   = require("../render/BlogRenderer.js");
-var logModule      = require("../model/logModule.js");
-var userModule     = require("../model/user.js");
+const blogModule     = require("../model/blog.js");
+const blogRenderer   = require("../render/BlogRenderer.js");
+const logModule      = require("../model/logModule.js");
+const userModule     = require("../model/user.js");
 
-let htmlroot = config.getValue("htmlroot", {mustExist: true});
+const auth        = require("../routes/auth.js");
+
+const htmlroot = config.htmlRoot();
 
 // Internal Function to find a blog by an ID
 // it accepts an internal Blog ID of OSMBC and a blog name
@@ -468,20 +470,19 @@ function postBlogId(req, res, next) {
 
 
 router.param("blog_id", findBlogId);
-router.route("/edit/:blog_id")
-  .get(editBlogId)
-  .post(postBlogId);
-router.post("/:blog_id/setReviewComment", setReviewComment);
-router.post("/:blog_id/editReviewComment/:index", editReviewComment);
-router.post("/:blog_id/setLangStatus", setBlogStatus);
+router.get("/edit/:blog_id", auth.checkRole(["full"]), editBlogId);
+router.post("/edit/:blog_id", auth.checkRole(["full"]), postBlogId);
+router.post("/:blog_id/setReviewComment", auth.checkRole(["full"]), setReviewComment);
+router.post("/:blog_id/editReviewComment/:index", auth.checkRole(["full"]), editReviewComment);
+router.post("/:blog_id/setLangStatus", auth.checkRole(["full"]), setBlogStatus);
 
 
-router.get("/create", createBlog);
-router.get("/list", renderBlogList);
-router.get("/:blog_id", renderBlogTab);
-router.get("/:blog_id/stat", renderBlogStat);
-router.get("/:blog_id/preview", renderBlogPreview);
-router.get("/:blog_id/:tab", renderBlogTab);
+router.get("/create", auth.checkRole(["full"]), createBlog);
+router.get("/list", auth.checkRole(["full"]), renderBlogList);
+router.get("/:blog_id", auth.checkRole(["full"]), renderBlogTab);
+router.get("/:blog_id/stat", auth.checkRole(["full"]), renderBlogStat);
+router.get("/:blog_id/preview", auth.checkRole(["full"]), renderBlogPreview);
+router.get("/:blog_id/:tab", auth.checkRole(["full"]), renderBlogTab);
 
 
 

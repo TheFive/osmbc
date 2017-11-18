@@ -2,22 +2,22 @@
 // Exported Functions and prototypes are defined at end of file
 
 
-var async    = require("async");
-var should   = require("should");
-var debug    = require("debug")("OSMBC:model:article");
+const async    = require("async");
+const should   = require("should");
+const debug    = require("debug")("OSMBC:model:article");
 
 
-var config    = require("../config.js");
-var logger    = require("../config.js").logger;
-var util      = require("../util/util.js");
+const config    = require("../config.js");
+const logger    = require("../config.js").logger;
+const util      = require("../util/util.js");
 
-var messageCenter  = require("../notification/messageCenter.js");
-var blogModule     = require("../model/blog.js");
-var logModule      = require("../model/logModule.js");
-var configModule   = require("../model/config.js");
-var pgMap          = require("../model/pgMap.js");
-var db          = require("../model/db.js");
-var twitter        = require("../model/twitter.js");
+const messageCenter  = require("../notification/messageCenter.js");
+const blogModule     = require("../model/blog.js");
+const logModule      = require("../model/logModule.js");
+const configModule   = require("../model/config.js");
+const pgMap          = require("../model/pgMap.js");
+const db          = require("../model/db.js");
+const twitter        = require("../model/twitter.js");
 
 
 
