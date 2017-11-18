@@ -15,6 +15,8 @@ var articleRouterForTestOnly = require("../routes/article.js").fortestonly;
 
 var testutil = require("./testutil.js");
 
+var initialize = require("../util/initialize.js");
+
 var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
 
 
@@ -22,6 +24,8 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("h
 describe("router/article", function() {
   this.timeout(this.timeout()*2);
   var id = 2;
+
+  before(initialize.initialiseModules);
 
   after(function (bddone) {
     nock.cleanAll();

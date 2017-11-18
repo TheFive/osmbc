@@ -6,13 +6,17 @@ var config  = require("../config.js");
 var request = require("request");
 var testutil = require("./testutil.js");
 var userModule = require("../model/user.js");
+var mockdate = require("mockdate");
+var initialize = require("../util/initialize.js");
 
 var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
 
 
 describe("routes/index", function() {
+  before(initialize.initialiseModules);
   beforeEach(function(bddone) {
     config.initialise();
+    mockdate.set(new Date("2016-05-25T20:00"));
     testutil.importData(
       {
         user: [{"OSMUser": "TestUser", access: "full",version:"1"},
@@ -21,6 +25,9 @@ describe("routes/index", function() {
         ],
         clear:true
       },bddone);
+  });
+  after(function(){
+    mockdate.reset();
   });
   describe("route GET /",function(){
     let url = baseLink + "/";
@@ -94,6 +101,7 @@ describe("routes/index", function() {
               OSMUser: 'TestUser',
               access: 'full',
               version: 2,
+              lastAccess: "2016-05-25T20:00:00.000Z",
               displayName: 'TestUser',
               lastChangeLogView: '1.8.4'
             } );
@@ -148,6 +156,7 @@ describe("routes/index", function() {
             OSMUser: 'TestUser',
             access: 'full',
             version: 4,
+            lastAccess: "2016-05-25T20:00:00.000Z",
             displayName: 'TestUser',
             mainLang: 'ES',
             secondLang: 'EN',
@@ -192,6 +201,7 @@ describe("routes/index", function() {
               id: '1',
               OSMUser: 'TestUser',
               access: 'full',
+              lastAccess: "2016-05-25T20:00:00.000Z",
               version: 2,
               displayName: 'TestUser',
               option:  { v1:  { o1: 'v2' } }

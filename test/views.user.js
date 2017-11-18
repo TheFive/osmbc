@@ -6,6 +6,7 @@ var should  = require("should");
 
 var userModule = require("../model/user.js");
 var articleModule = require("../model/article.js");
+var passportStub = require("./passport-stub.js");
 
 
 
@@ -155,16 +156,21 @@ describe("views/user", function() {
     });
   });
   it("should validate a usermail if correct user logged in", function(bddone) {
-
+    let user = null;
     async.series([
       function createUser(cb) {
         userModule.find({OSMUser: "TheFive"}, function(err, result) {
           should.not.exist(err);
-          var user = result[0];
+          user = result[0];
           user.emailInvalidation = "test@test.org";
           user.emailValidationKey = "123456789";
           user.save(cb);
         });
+      },
+      function (cb) {
+        // loging in user again, because passportStub does not reload user now.
+        passportStub.login(user);
+        cb();
       },
       function visitUser (cb) {
         browser.visit("/usert/1?validation=123456789", cb);
