@@ -20,7 +20,7 @@ var articleModule = require("../model/article.js");
 var configModule = require("../model/config.js");
 
 
-const auth        = require("../routes/auth.js");
+const checkRole        = require("../routes/auth.js").checkRole;
 
 var sizeOf = require("image-size");
 
@@ -90,9 +90,72 @@ function eventDateFormat(e, lang) {
 }
 
 function flag(country, cf) {
+  if (!country) country = "";
   let c = country.toLowerCase();
   if (cf[c]) return "<img src='" + cf[c] + "'></img>";
   return country;
+}
+
+function renderEvents(result, req, res, next) {
+  let languages = res.rendervar.layout.activeLanguages;
+  let eventsfilter = configModule.getConfig("eventsfilter");
+  let calendarFlags = configModule.getConfig("calendarflags");
+  let markdown = {};
+
+  async.parallel([
+    function para1(cbPara1) {
+      async.each(result.events, function(event, eventsCB) {
+        let allfilter = true;
+        async.each(languages, function(lang, langCB) {
+          parseEvent.convertGeoName(event.town, lang, function(err, name) {
+            if (err) return langCB(err);
+            event[lang] = {};
+            event[lang].town = name;
+            let filter = {};
+            if (eventsfilter[lang]) filter = eventsfilter[lang];
+
+            event[lang].filtered = parseEvent.filterEvent(event, filter);
+            allfilter = allfilter && event[lang].filtered;
+
+            langCB();
+          });
+        }, function(err) {
+          event.all = {};
+          event.all.filtered = allfilter;
+          return eventsCB(err);
+        });
+      }, cbPara1);
+    },
+    function para2(cbPara2) {
+      async.each(languages, function (lang, langCB) {
+        let filter = {};
+        if (eventsfilter[lang]) filter = eventsfilter[lang];
+        filter.lang = lang;
+        parseEvent.calendarJSONToMarkdown(result, filter, function(err, text) {
+          if (err) return langCB(err);
+          markdown[lang] = text;
+          return langCB();
+        });
+      }, cbPara2);
+    }
+  ], function(err) {
+    if (err) return next(err);
+
+    res.render("calendarAllLang.jade", {
+      layout: res.rendervar.layout,
+      events: result.events,
+      errors: result.errors,
+      flag: flag,
+      timestamp: result.timestamp,
+      discontinue: result.discontinue,
+      refresh: result.refreshurl,
+      serviceProvider: result.serviceProvider,
+      markdown: markdown,
+      eventsfilter: eventsfilter,
+      calendarFlags: calendarFlags,
+      eventDateFormat: eventDateFormat});
+  }
+  );
 }
 
 function renderCalendarAllLang(req, res, next) {
@@ -344,12 +407,12 @@ function renderPublicCalendar(req, res, next) {
 }
 
 
-router.get("/calendar2markdown", renderCalendarAsMarkdown);
-router.post("/calendar2markdown", postCalendarAsMarkdown);
-router.get("/calendarAllLang", renderCalendarAllLang);
-router.get("/calendarAllLang/:calendar", renderCalendarAllLangAlternative);
-router.get("/picturetool", renderPictureTool);
-router.post("/picturetool", postPictureTool);
+router.get("/calendar2markdown", checkRole("full"), renderCalendarAsMarkdown);
+router.post("/calendar2markdown", checkRole("full"), postCalendarAsMarkdown);
+router.get("/calendarAllLang", checkRole("full"), renderCalendarAllLang);
+router.get("/calendarAllLang/:calendar", checkRole("full"), renderCalendarAllLangAlternative);
+router.get("/picturetool", checkRole("full"), renderPictureTool);
+router.post("/picturetool", checkRole("full"), postPictureTool);
 
 publicRouter.get("/calendar/preview", renderPublicCalendar);
 publicRouter.get("/calendarRefresh/:calendar", renderCalendarRefresh);

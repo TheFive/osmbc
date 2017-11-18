@@ -30,13 +30,13 @@ passport.serializeUser(function (user, done) {
   done(null, user.displayName);
 });
 
-
 passport.deserializeUser(function (user, done) {
   debug("passport.deserializeUser CB");
   userModule.find({OSMUser: user}, function(err, result) {
+    if (err) return done(null, null);
     if (result.length === 1) return done(null, result[0]);
-    if (result.length === 0) return done(null,null);
-    if (result.length > 1) return done(null,null);
+    if (result.length === 0) return done(null, null);
+    if (result.length > 1) return done(null, null);
   });
 });
 
@@ -110,7 +110,7 @@ function ensureAuthenticated (req, res, next) {
       }
       return next();
     }
-    if (req.user && req.user.OSMUser && req.user.access !== "full"){
+    if (req.user && req.user.OSMUser && req.user.access !== "full") {
       let err = new Error("OSM User >" + req.user.displayName + "< has no access rights");
       return next(err);
     }

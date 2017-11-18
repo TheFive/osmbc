@@ -122,7 +122,7 @@ function getAvatar(osmuser) {
   debug("getAvatar");
   /* jshint -W040 */
   if (osmuser === undefined && this !== undefined) osmuser = this.OSMUser;
-  cacheOSMAvatar(osmuser,function(){});
+  cacheOSMAvatar(osmuser, function() {});
   /* jshint +W040 */
   return avatarCache[osmuser];
 }
