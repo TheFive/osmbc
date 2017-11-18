@@ -321,10 +321,13 @@ function renderBlogTab(req, res, next) {
   var tab = req.query.tab;
   if (!tab) tab = req.params.tab;
 
+
   var votes = configModule.getConfig("votes");
 
   if (!tab) tab = req.session.lasttab;
   if (!tab) tab = "Overview";
+
+  if (["full", "overview", "review"].indexOf(tab.toLowerCase()) < 0) return next();
 
   req.session.lasttab = tab;
 

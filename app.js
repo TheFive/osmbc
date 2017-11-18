@@ -98,9 +98,14 @@ app.use(auth.passport.session());
 
 
 
+morgan.token('OSMUser', function (req) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user";  });
+
+morgan.token('remote-addr', function (req) {
+  return req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+});
 
 if (app.get("env") !== "test") {
-  app.use(morgan("combined", { stream: logger.stream }));
+  app.use(morgan(":OSMUser :remote-addr :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"", { stream: logger.stream }));
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
