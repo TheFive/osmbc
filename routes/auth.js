@@ -35,7 +35,11 @@ passport.deserializeUser(function (user, done) {
   userModule.find({OSMUser: user}, function(err, result) {
     if (err) return done(null, null);
     if (result.length === 1) return done(null, result[0]);
-    if (result.length === 0) return done(null, null);
+    if (result.length === 0) {
+      userModule.createNewUser({OSMUser:user,access:"guest"}, function(err, user) {
+        if (err) return done(null,null);
+        return done(null,user);
+      });    }
     if (result.length > 1) return done(null, null);
   });
 });
@@ -96,7 +100,7 @@ function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated");
 
   if (req.isAuthenticated()) {
-    if (req.user && req.user.access === "full") {
+    if (req.user && req.user.access && req.user.access !== "denied") {
       var date = new Date();
       var lastStore = new Date(req.user.lastAccess);
       // only store last access when GETting something, not in POSTs.
@@ -110,7 +114,7 @@ function ensureAuthenticated (req, res, next) {
       }
       return next();
     }
-    if (req.user && req.user.OSMUser && req.user.access !== "full") {
+    if (req.user && req.user.access === "denied") {
       let err = new Error("OSM User >" + req.user.displayName + "< has no access rights");
       return next(err);
     }
