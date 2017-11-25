@@ -7,10 +7,10 @@ var nock   = require("nock");
 var fs     = require("fs");
 
 var debug  = require("debug")("OSMBC:test:testutil");
-var passportStub = require("./passport-stub.js");
 // use zombie.js as headless browser
 var Browser = require("zombie");
 var http = require("http");
+var request = require("request");
 
 var config = require("../config.js");
 
@@ -27,6 +27,7 @@ var configModule  = require("../model/config.js");
 
 var mailReceiver   = require("../notification/mailReceiver.js");
 var messageCenter  = require("../notification/messageCenter.js");
+var passport = require("passport");
 
 
 // set Test Standard to ignore prototypes for should
@@ -40,12 +41,12 @@ should.config.checkProtoEql = false;
 exports.getJsonWithId = function getJsonWithId(table, id, cb) {
   debug("getJsonWithId");
   let result = null;
-  pool.query("select data from " + table + " where id = $1", [id],function(err,pgResult){
+  pool.query("select data from " + table + " where id = $1", [id], function(err, pgResult) {
     if (err) return cb(err);
-    if (pgResult.rows.length==1) {
+    if (pgResult.rows.length == 1) {
       result = pgResult.rows[0].data;
     }
-    return cb(null,result);
+    return cb(null, result);
   });
 };
 
@@ -112,15 +113,15 @@ exports.importData = function importData(data, callback) {
       if (data.clear) {
         articleModule.removeOpenBlogCache();
         async.series([
-          pool.query.bind(null,"delete from usert;"),
-          pool.query.bind(null,"delete from blog;"),
-          pool.query.bind(null,"delete from article;"),
-          pool.query.bind(null,"delete from changes;"),
-          pool.query.bind(null,"ALTER SEQUENCE usert_id_seq RESTART WITH 1;"),
-          pool.query.bind(null,"ALTER SEQUENCE blog_id_seq RESTART WITH 1;"),
-          pool.query.bind(null,"ALTER SEQUENCE article_id_seq RESTART WITH 1;"),
-          pool.query.bind(null,"ALTER SEQUENCE changes_id_seq RESTART WITH 1;")
-        ],cb0a);
+          pool.query.bind(null, "delete from usert;"),
+          pool.query.bind(null, "delete from blog;"),
+          pool.query.bind(null, "delete from article;"),
+          pool.query.bind(null, "delete from changes;"),
+          pool.query.bind(null, "ALTER SEQUENCE usert_id_seq RESTART WITH 1;"),
+          pool.query.bind(null, "ALTER SEQUENCE blog_id_seq RESTART WITH 1;"),
+          pool.query.bind(null, "ALTER SEQUENCE article_id_seq RESTART WITH 1;"),
+          pool.query.bind(null, "ALTER SEQUENCE changes_id_seq RESTART WITH 1;")
+        ], cb0a);
       } else return cb0a();
     },
     function importAllUsers(cb1) {
@@ -288,19 +289,18 @@ exports.checkData = function checkData(data, callback) {
 // dom-compare offers an GroupingReporter to display the differences
 // in more detail.
 
-var HtmlDiffer = require('html-differ').HtmlDiffer,
+var HtmlDiffer = require("html-differ").HtmlDiffer,
   htmlDiffer = new HtmlDiffer({});
 
 exports.equalHtml = function equalHtml(actualHTML, expectedHTML) {
+  let diff = (htmlDiffer.diffHtml(actualHTML, expectedHTML));
 
-  let diff = (htmlDiffer.diffHtml(actualHTML,expectedHTML));
+  if (diff.length == 1) return true;
 
-  if (diff.length==1) return true;
+  let colors = require("colors/safe");
+  colors.enabled = true;
 
-  let colors = require('colors/safe');
-  colors.enabled=true;
-
-  diff.forEach(function(part){
+  diff.forEach(function(part) {
     // green for additions, red for deletions
     // grey for common parts
     if (part.added) {
@@ -345,17 +345,29 @@ exports.startServer = function startServer(userString, callback) {
     if (callback) return callback();
     return;
   }
-  userModule.findOne({OSMUser: userString}, function(err, user) {
-    if (err) return callback(err);
-    if (user === null) user = {};
-    user.displayName = userString;
-    user.OSMUser = userString;
-    // initialize the browser using the same port as the test application
-    passportStub.install(app);
-    passportStub.login(user);
-    callback();
-  });
+
+  passport._strategies.openstreetmap._token_response = {
+    access_token: 'at-1234',
+    expires_in: 3600
+  };
+
+  passport._strategies.openstreetmap._profile = {
+    displayName: userString
+  };
+  return callback();
 };
+
+var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
+
+exports.startServerWithLogin = function(userString,jar,callback) {
+  debug("startServerWithLogin");
+  exports.startServer(userString,function(err){
+    if (err) return callback(err);
+    request.get({url:baseLink + "/osmbc",jar:jar},function(err){
+      return callback(err);
+    });
+  });
+}
 
 exports.stopServer = function stopServer(callback) {
   debug("stopServer");
@@ -430,8 +442,8 @@ Browser.Assert.prototype.expectHtml = function expectHtml(name, cb) {
 };
 
 
-process.on('unhandledRejection', (reason, p) => {
-  console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
+process.on("unhandledRejection", (reason, p) => {
+  console.error("Unhandled Rejection at: Promise", p, "reason:", reason);
   console.error(reason.stack);
   // application specific logging, throwing an error, or other logic here
 });

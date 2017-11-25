@@ -653,7 +653,11 @@ function markCommentRead(req, res, next) {
       return;
     }
     let returnToUrl  = htmlroot + "/article/" + article.id;
-    returnToUrl = req.header("Referer") || returnToUrl;
+
+    // Do not loop with auth (can happen in tests)
+    if (req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
+      returnToUrl = req.header("Referer") || returnToUrl;
+    }
     if (req.query.reload === "false") {
       res.end("OK");
     } else {

@@ -27,7 +27,8 @@ var htmlRoot = config.htmlRoot();
 // if there will be a user database, this has to be integrated here
 passport.serializeUser(function (user, done) {
   debug("passport.serializeUser CB");
-  done(null, user.displayName);
+  let username = (user.displayName) ? user.displayName : "";
+  done(null, username);
 });
 
 passport.deserializeUser(function (user, done) {
@@ -36,10 +37,11 @@ passport.deserializeUser(function (user, done) {
     if (err) return done(null, null);
     if (result.length === 1) return done(null, result[0]);
     if (result.length === 0) {
-      userModule.createNewUser({OSMUser:user,access:"guest"}, function(err, user) {
-        if (err) return done(null,null);
-        return done(null,user);
-      });    }
+      userModule.createNewUser({OSMUser: user, access: "guest"}, function(err, user) {
+        if (err) return done(null, null);
+        return done(null, user);
+      });
+    }
     if (result.length > 1) return done(null, null);
   });
 });
@@ -51,14 +53,22 @@ passport.deserializeUser(function (user, done) {
 //   credentials (in this case, a token, tokenSecret, and OpenStreetMap profile), and
 //   invoke a callback with a user object.
 
+let Strategy = null;
+if (process.env.NODE_ENV === "test") {
+  Strategy = require("passport-mocked").Strategy;
+} else {
+  Strategy = OpenStreetMapStrategy;
+}
 
-passport.use(new OpenStreetMapStrategy({
+passport.use(new Strategy({
+  name: "openstreetmap",
   consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY", {mustExist: true}),
   consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET", {mustExist: true}),
   callbackURL: config.getValue("callbackUrl", {mustExist: true})
 },
 function (token, tokenSecret, profile, done) {
   debug("passport.use Token Function");
+
   // asynchronous verification, for effect...
   process.nextTick(function () {
     debug("passport.use Token Function->prozess.nextTick");
@@ -98,8 +108,8 @@ function hasRole(role) {
 
 function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated");
-
   if (req.isAuthenticated()) {
+    debug("ensureAuthenticated: OK");
     if (req.user && req.user.access && req.user.access !== "denied") {
       var date = new Date();
       var lastStore = new Date(req.user.lastAccess);
@@ -115,13 +125,14 @@ function ensureAuthenticated (req, res, next) {
       return next();
     }
     if (req.user && req.user.access === "denied") {
-      let err = new Error("OSM User >" + req.user.displayName + "< has no access rights");
+      let err = new Error("OSM User >" + req.user.OSMUser + "< has no access rights");
       return next(err);
     }
-    let err = new Error("OSM User >" + req.user.displayName + "< is not an OSMBC user.");
+    let err = new Error("OSM User >" + req.user.OSMUser + "< is not an OSMBC user.");
     return next(err);
   }
   // is not authenticated
+  debug("ensureAuthenticated: Not OK");
   async.series([
     function saveReturnTo(cb) {
       if (!req.session.returnTo) {
