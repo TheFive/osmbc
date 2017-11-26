@@ -186,7 +186,7 @@ function renderCalendarAllLangAlternative(req, res, next) {
   request(options, function(error, response, body) {
     if (error) return next(error);
     if (response.statusCode !== 200) {
-      return next(Error("url: " + cc.url + " returns:\n" + body));
+      return next(Error("url: " + cc.url + " returns: \n" + response.statusCode + JSON.stringify(body)));
     }
     if (!body[cc.events]) return next("Missing events in calendar data");
     body[cc.events].forEach(function modifyItem(item) {

@@ -25,7 +25,13 @@ mixin eventRowLang(lang,event)
 
 
 block content
-  h1="New Calendar Tool"
+  if (discontinue)
+    div.alert.alert-danger="This service will be discontinued on 1.1.2018"
+  h1="Calendar Tool (" + serviceProvider + ")"
+  p
+    span="Data from: "+timestamp+" "
+    if (refresh)
+      a(href=layout.htmlroot+"/tool/calendarRefresh/"+serviceProvider) Refresh Data
   .row
     .col-md-4
       h4

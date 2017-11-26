@@ -130,6 +130,7 @@ describe("views/blog", function() {
           request(opts, function (err, res, body) {
             should.not.exist(err);
             should(res.statusCode).eql(200);
+            body.should.containEql("closed");
             blogModule.findOne({name: "blog"}, function(err, blog) {
               should.not.exist(err);
               should(blog.status).eql("closed");
