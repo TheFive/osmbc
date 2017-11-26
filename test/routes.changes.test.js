@@ -21,8 +21,9 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 describe("routes/changes", function() {
-  this.timeout(this.timeout()*2);
+  this.timeout(this.timeout() * 2);
   let changeid;
+  let jar = null;
 
   before(initialise.initialiseModules);
   after(function (bddone) {
@@ -34,6 +35,7 @@ describe("routes/changes", function() {
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00"));
+    jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
@@ -68,7 +70,7 @@ describe("routes/changes", function() {
   describe("route GET /:change_id", function() {
     it("should display one change id", function (bddone) {
       testutil.startServer("TestUser", function () {
-        request.get({url: baseLink + "/changes/" + changeid}, function (err, response, body) {
+        request.get({url: baseLink + "/changes/" + changeid, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("<td>2016-01-26T21:31:59.879Z (4 months ago)</td>");
@@ -80,7 +82,7 @@ describe("routes/changes", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: baseLink + "/changes/" + changeid}, function (err, response, body) {
+        request.get({url: baseLink + "/changes/" + changeid, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -90,7 +92,7 @@ describe("routes/changes", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/changes/" + changeid}, function (err, response, body) {
+        request.get({url: baseLink + "/changes/" + changeid, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -103,7 +105,7 @@ describe("routes/changes", function() {
     let url = baseLink + "/changes/log";
     it("should show list", function (bddone) {
       testutil.startServer("TestUser", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("<td><a href=\"/changes/2\"><span class=\"glyphicon glyphicon-info-sign\"></span></a></td>");
@@ -113,7 +115,7 @@ describe("routes/changes", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -123,7 +125,7 @@ describe("routes/changes", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");

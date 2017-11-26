@@ -21,6 +21,7 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 describe("routes/blog", function() {
   this.timeout(30000);
+  let jar = null;
 
   after(function (bddone) {
     nock.cleanAll();
@@ -31,6 +32,7 @@ describe("routes/blog", function() {
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00"));
+    jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
@@ -52,7 +54,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/edit/WN333";
     it("should allow full user", function (bddone) {
       testutil.startServer("TestUser", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("<h2>WN333</h2>");
@@ -64,7 +66,7 @@ describe("routes/blog", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -74,7 +76,7 @@ describe("routes/blog", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -86,11 +88,11 @@ describe("routes/blog", function() {
   describe("route POST /blog/edit/:blog_id", function() {
     let url = baseLink + "/blog/edit/WN333";
     it("should post data on edit blog", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.post({url: url, form: {name: "WNNew", status: "undefinedstate"}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function () {
+        request.post({url: url, form: {name: "WNNew", status: "undefinedstate"}, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(302);
-          should(body).eql("Found. Redirecting to /blog/edit/WNNew");
+          should(response.statusCode).eql(200);
+          body.should.containEql("<h2>WNNew</h2>");
           blogModule.findById(1, function(err, blog) {
             should.not.exist(err);
             should(blog.name).eql("WNNew");
@@ -101,8 +103,8 @@ describe("routes/blog", function() {
       });
     });
     it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.post({url: url, form: {}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserDenied",jar, function () {
+        request.post({url: url, form: {}, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -111,8 +113,8 @@ describe("routes/blog", function() {
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.post({url: url, form: {}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
+        request.post({url: url, form: {}, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -124,13 +126,13 @@ describe("routes/blog", function() {
   describe("route POST /blog/:blog_id/setReviewComment", function() {
     let url = baseLink + "/blog/WN333/setReviewComment";
     it("should set a review comment", function (bddone) {
-      testutil.startServer("TestUser", function() {
+      testutil.startServerWithLogin("TestUser",jar, function() {
         request.post({url: baseLink + "/blog/WN333/setReviewComment",
-          form: {lang: "EN", text: "Everything is fine"}
+          form: {lang: "EN", text: "Everything is fine"}, jar: jar , followAllRedirects:true
         }, function (err, res, body) {
           should.not.exist(err);
-          should(res.statusCode).eql(302);
-          should(body).eql("Found. Redirecting to /");
+          should(res.statusCode).eql(200);
+          body.should.containEql("Everything is fine");
           blogModule.findOne({name: "WN333"}, function (err, blog) {
             should.not.exist(err);
             should(blog.reviewCommentEN).eql([
@@ -147,8 +149,8 @@ describe("routes/blog", function() {
       });
     });
     it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.post({url: url, form: {}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserDenied",jar, function () {
+        request.post({url: url, form: {}, jar: jar, followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -157,8 +159,8 @@ describe("routes/blog", function() {
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.post({url: url, form: {}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
+        request.post({url: url, form: {}, jar: jar, followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -170,8 +172,8 @@ describe("routes/blog", function() {
   describe("route POST /blog/:blog_id/editReviewComment/:index", function() {
     let url = baseLink + "/blog/secondblog/editReviewComment/0";
     it("should edit an existing comment", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.post({url: url, form: {lang: "DE", text: "New Comment"}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function () {
+        request.post({url: url, form: {lang: "DE", text: "New Comment"}, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(body).eql("Found. Redirecting to /");
           should(response.statusCode).eql(302);
@@ -188,8 +190,8 @@ describe("routes/blog", function() {
       });
     });
     it("should not allow other users to edit comment", function (bddone) {
-      testutil.startServer("Hallo", function () {
-        request.post({url: url, form: {lang: "DE", text: "New Comment"}}, function (err, response, body) {
+      testutil.startServerWithLogin("Hallo",jar, function () {
+        request.post({url: url, form: {lang: "DE", text: "New Comment"}, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("is not allowed to change review");
@@ -205,8 +207,8 @@ describe("routes/blog", function() {
       });
     });
     it("should raise an index fail", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.post({url: baseLink + "/blog/secondblog/editReviewComment/1", form: {lang: "DE", text: "New Comment"}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function () {
+        request.post({url: baseLink + "/blog/secondblog/editReviewComment/1", form: {lang: "DE", text: "New Comment"}, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("Index out of Range");
@@ -215,8 +217,8 @@ describe("routes/blog", function() {
       });
     });
     it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.post({url: url, form: {}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserDenied",jar, function () {
+        request.post({url: url, form: {}, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -225,8 +227,8 @@ describe("routes/blog", function() {
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.post({url: url, form: {}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
+        request.post({url: url, form: {}, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -238,8 +240,8 @@ describe("routes/blog", function() {
   describe("route POST /blog/:blog_id/setLangStatus", function() {
     let url = baseLink + "/blog/WN333/setLangStatus";
     it("should a start a review process", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({url: baseLink + "/blog/WN333/setLangStatus", form: {lang: "DE", action: "startreview"}
+      testutil.startServerWithLogin("TestUser",jar, function() {
+        request.post({url: baseLink + "/blog/WN333/setLangStatus", form: {lang: "DE", action: "startreview"}, jar: jar
         }, function (err, res, body) {
           should.not.exist(err);
           should(res.statusCode).eql(302);
@@ -257,8 +259,8 @@ describe("routes/blog", function() {
       });
     });
     it("should mark as exported", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({url: baseLink + "/blog/WN333/setLangStatus", form: {lang: "EN", action: "markexported"}
+      testutil.startServerWithLogin("TestUser",jar, function() {
+        request.post({url: baseLink + "/blog/WN333/setLangStatus", form: {lang: "EN", action: "markexported"}, jar: jar
         }, function (err, res, body) {
           should.not.exist(err);
           should(res.statusCode).eql(302);
@@ -272,10 +274,10 @@ describe("routes/blog", function() {
       });
     });
     it("should not clear review when starting a review process", function (bddone) {
-      testutil.startServer("TestUser", function() {
+      testutil.startServerWithLogin("TestUser",jar, function() {
         request.post({
           url: baseLink + "/blog/secondblog/setLangStatus",
-          form: {lang: "DE", action: "startreview"}
+          form: {lang: "DE", action: "startreview"}, jar: jar
         }, function (err, res, body) {
           should.not.exist(err);
           should(res.statusCode).eql(302);
@@ -289,13 +291,13 @@ describe("routes/blog", function() {
       });
     });
     it("should close a language", function (bddone) {
-      testutil.startServer("TestUser", function() {
+      testutil.startServerWithLogin("TestUser",jar, function() {
         request.post({
           url: baseLink + "/blog/WN333/setLangStatus",
           headers:{
             referrer: baseLink + "/blog/WN333"
           },
-          form: {lang: "DE", action: "closelang"}
+          form: {lang: "DE", action: "closelang"}, jar: jar
         }, function (err, res, body) {
           should.not.exist(err);
           should(body).eql("Found. Redirecting to http://localhost:35043/blog/WN333");
@@ -311,12 +313,12 @@ describe("routes/blog", function() {
       });
     });
     it("should reopen a language", function (bddone) {
-      testutil.startServer("TestUser", function() {
+      testutil.startServerWithLogin("TestUser",jar, function() {
         request.post({
 
           url: baseLink + "/blog/WN333/setLangStatus",
           json: true,
-          body: {lang: "DE", action: "editlang"}
+          body: {lang: "DE", action: "editlang"}, jar: jar
         }, function (err, res) {
           should.not.exist(err);
           should(res.statusCode).eql(302);
@@ -332,8 +334,8 @@ describe("routes/blog", function() {
       });
     });
     it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.post({url: url, form: {}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserDenied",jar, function () {
+        request.post({url: url, form: {}, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -342,8 +344,8 @@ describe("routes/blog", function() {
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.post({url: url, form: {}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
+        request.post({url: url, form: {}, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -356,7 +358,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/create";
     it("should create a new blog",function(bddone){
       testutil.startServer("TestUser", function () {
-        request.get(url, function (err, response, body) {
+        request.get({url:url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("<td><a href=\"/blog/WN334\">WN334</a></td>");
@@ -366,7 +368,7 @@ describe("routes/blog", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -376,7 +378,7 @@ describe("routes/blog", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -389,7 +391,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/list";
     it("should get the list",function(bddone){
       testutil.startServer("TestUser", function () {
-        request.get(url, function (err, response, body) {
+        request.get({url:url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("<td><a href=\"/blog/WN333\">WN333</a></td>");
@@ -399,7 +401,7 @@ describe("routes/blog", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -409,7 +411,7 @@ describe("routes/blog", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -422,7 +424,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/WN333";
     it("should get the blog",function(bddone){
       testutil.startServer("TestUser", function () {
-        request.get(url, function (err, response, body) {
+        request.get({url:url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("<title>WN333/overview</title>");
@@ -432,7 +434,7 @@ describe("routes/blog", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -442,7 +444,7 @@ describe("routes/blog", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -455,7 +457,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/WN333/stat";
     it("should get the blog",function(bddone){
       testutil.startServer("TestUser", function () {
-        request.get(url, function (err, response, body) {
+        request.get({url:url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("<title>WN333/statistic</title>");
@@ -465,7 +467,7 @@ describe("routes/blog", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -475,7 +477,7 @@ describe("routes/blog", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -488,7 +490,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/WN333/preview";
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -498,7 +500,7 @@ describe("routes/blog", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
@@ -508,7 +510,7 @@ describe("routes/blog", function() {
     });
     it("should throw an error, if blog is not existing", function (bddone) {
       testutil.startServer("TestUser", function () {
-        request.get({url: baseLink +"/blog/WN999"}, function (err, response, body) {
+        request.get({url: baseLink +"/blog/WN999", jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(404);
           body.should.containEql("<h1>Not Found</h1>");
@@ -520,7 +522,7 @@ describe("routes/blog", function() {
       blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"}, function (err) {
         should.not.exist(err);
         testutil.startServer("TestUser", function () {
-          request.get(baseLink + "/blog/WN333/preview?lang=DE", function (err, res,body) {
+          request.get({url:baseLink + "/blog/WN333/preview?lang=DE", jar: jar}, function (err, res,body) {
             should.not.exist(err);
             should(res.statusCode).eql(500);
             body.should.containEql("Blog &gt;WN333&lt; exists twice, internal id of first: 1");
@@ -537,7 +539,7 @@ describe("routes/blog", function() {
       }, function (err) {
         should.not.exist(err);
         testutil.startServer("TestUser",function(){
-          request.get(baseLink + "/blog/WN334/preview?lang=DE", function (err, res,body) {
+          request.get({url:baseLink + "/blog/WN334/preview?lang=DE", jar: jar}, function (err, res,body) {
             should.not.exist(err);
             should(res.statusCode).eql(200);
             should(body).containEql("<p>12.12.2015-13.12.2015</p>\n" +
@@ -549,7 +551,7 @@ describe("routes/blog", function() {
     });
     it("should call next if blog id not exist", function(bddone) {
       testutil.startServer("TestUser",function(){
-        request.get(baseLink + "/blog/WN999/preview?lang=DE", function (err, res) {
+        request.get({url:baseLink + "/blog/WN999/preview?lang=DE", jar: jar}, function (err, res) {
           should.not.exist(err);
           should(res.statusCode).eql(404);
           bddone();
@@ -561,7 +563,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/WN333/full";
     it("should get full tab", function (bddone) {
       testutil.startServer("TestUser", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("<title>WN333/full</title>");
@@ -571,7 +573,7 @@ describe("routes/blog", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -581,7 +583,7 @@ describe("routes/blog", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");

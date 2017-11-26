@@ -87,6 +87,8 @@ app.use(session(
   }
 ));
 
+app.use(cookieParser());
+
 
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
@@ -95,18 +97,24 @@ app.use(auth.passport.session());
 
 
 
-morgan.token('OSMUser', function (req) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user";  });
+morgan.token("OSMUser", function (req) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user"; });
 
-morgan.token('remote-addr', function (req) {
-  return req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+morgan.token("remote-addr", function (req) {
+  return req.headers["x-real-ip"] || req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 });
 
 if (app.get("env") !== "test") {
   app.use(morgan(":OSMUser :remote-addr :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"", { stream: logger.stream }));
 }
+if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
+  app.use(morgan(":OSMUser :remote-addr :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"", { immediate:true }));
+  app.use(function(req,res,next){
+    console.info("Cookies: ",req.cookies);
+    next();
+  });
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 // GET /auth/openstreetmap
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -120,9 +128,10 @@ app.get(htmlRoot + "/auth/openstreetmap", auth.passport.authenticate("openstreet
 //   request.  If authentication fails, the user will be redirected back to the
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
-app.get(htmlRoot + "/auth/openstreetmap/callback", auth.passport.authenticate("openstreetmap", {failureRedirect: "/login"}),
+app.get(htmlRoot + "/auth/openstreetmap/callback",
+  auth.passport.authenticate("openstreetmap", {failureRedirect: "/login"}),
   function(req, res) {
-    debug("passport.authenticate Function");
+    debug("after passport.authenticate Function");
     res.redirect(req.session.returnTo || "/");
   });
 
