@@ -369,7 +369,10 @@ function renderBlogTab(req, res, next) {
         var changes = {status: req.query.setStatus};
         blog.setAndSave(req.user, changes, function(err) {
           if (err) return callback(err);
-          let referer = req.header("Referer") || "/";
+          let referer =  "/";
+          if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
+            referer = req.header("Referer");
+          }
           res.redirect(referer);
         });
       } else return callback();
@@ -446,9 +449,9 @@ function postBlogId(req, res, next) {
   var blog = req.blog;
   if (!blog) return next();
 
-  var categories;
+  var categories = null;
   try {
-    categories = yaml.load(req.body.categories_yaml);
+    if (req.body.categories_yaml) categories = yaml.load(req.body.categories_yaml);
   } catch (err) {
     return next(err);
   }

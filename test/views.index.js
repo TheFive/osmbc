@@ -171,7 +171,7 @@ describe("views/index", function() {
 
       async.series([
         testutil.clearDB,
-        function createUser1(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "none"}, cb); },
+        function createUser1(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "denied"}, cb); },
         testutil.startServer.bind(null, "TheFive"),
         browser.visit.bind(browser, "/osmbc")
       ], function(err) {

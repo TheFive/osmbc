@@ -367,7 +367,7 @@ exports.startServerWithLogin = function(userString,jar,callback) {
       return callback(err);
     });
   });
-}
+};
 
 exports.stopServer = function stopServer(callback) {
   debug("stopServer");

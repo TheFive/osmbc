@@ -4,7 +4,6 @@
 var sinon   = require("sinon");
 var should  = require("should");
 var nock    = require("nock");
-var async   = require("async");
 var request = require("request");
 var config  = require("../config.js");
 var mockdate = require("mockdate");
@@ -21,7 +20,7 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 
-describe("router/article", function() {
+describe("routes/article", function() {
   this.timeout(this.timeout() * 2);
   var id = 2;
   let jar;
@@ -458,6 +457,7 @@ describe("router/article", function() {
         request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
+          body.should.containEql("unpublisnReason");
           articleModule.findById(3, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -513,6 +513,7 @@ describe("router/article", function() {
         request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
+          body.should.containEql("new collection");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -569,6 +570,7 @@ describe("router/article", function() {
         request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
+          body.should.containEql("BLOG");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -656,6 +658,9 @@ describe("router/article", function() {
         request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
+          // ..setMarkdown/DE is redirecting to caller page, that is
+          // /osmbc in this case
+          body.should.containEql("OSMBC");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -740,6 +745,7 @@ describe("router/article", function() {
         request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
+          body.should.containEql("This comment will be added.");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -801,6 +807,7 @@ describe("router/article", function() {
       testutil.startServerWithLogin("Hallo",jar, function() {
         request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
+          body.should.containEql("This comment will be changed.");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -879,6 +886,7 @@ describe("router/article", function() {
       testutil.startServerWithLogin("TestUser",jar, function() {
         request.post({ url: url, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
+          body.should.containEql("secondblog");
 
           should(response.statusCode).eql(200);
           articleModule.findById(3, function(err, article) {

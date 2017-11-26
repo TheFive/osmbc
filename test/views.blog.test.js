@@ -23,13 +23,15 @@ describe("views/blog", function() {
   this.timeout(100000);
   let baseLink;
   var data;
+  let jar  = null;
 
   describe("export", function() {
-    before(function(bddone){
+    before(function(bddone) {
       testutil.clearDB(bddone);
     });
     beforeEach(function(bddone) {
       var file =  path.resolve(__dirname, "data", "views.blog.export.1.json");
+      jar = request.jar();
       data = JSON.parse(fs.readFileSync(file));
       baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
       nock("https://hooks.slack.com/")
@@ -50,10 +52,11 @@ describe("views/blog", function() {
     });
     it("should generate preview as html", function(bddone) {
       async.series([
-
         function(cb) {
           var opts = {
-            url: baseLink + "/blog/" + data.blogName + "/preview?lang=DE&download=true", method: "get"
+            jar: jar,
+            url: baseLink + "/blog/" + data.blogName + "/preview?lang=DE&download=true",
+            method: "get"
           };
           request(opts, function (err, res, body) {
             should.not.exist(err);
@@ -73,7 +76,9 @@ describe("views/blog", function() {
 
         function(cb) {
           var opts = {
-            url: baseLink + "/blog/" + data.blogName + "/preview?lang=DE&markdown=true&download=true", method: "get"
+            jar: jar,
+            url: baseLink + "/blog/" + data.blogName + "/preview?lang=DE&markdown=true&download=true",
+            method: "get"
           };
           request(opts, function (err, res, body) {
             should.not.exist(err);
@@ -91,6 +96,7 @@ describe("views/blog", function() {
   describe("status Functions", function() {
     beforeEach(function(bddone) {
       mockdate.set(new Date("2016-05-25T19:00"));
+      jar = request.jar();
       baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
       nock("https://hooks.slack.com/")
         .post(/\/services\/.*/)
@@ -100,7 +106,7 @@ describe("views/blog", function() {
       process.env.TZ = "Europe/Amsterdam";
       async.series([
         testutil.importData.bind(null, {clear: true, blog: [{name: "blog"}], user: [{OSMUser: "TheFive", access: "full", mainLang: "DE"}]}),
-        testutil.startServer.bind(null, "TheFive"),
+        testutil.startServerWithLogin.bind(null, "TheFive",jar),
         configModule.initialise
       ], bddone);
     });
@@ -115,12 +121,13 @@ describe("views/blog", function() {
         function(cb) {
           var opts = {
             url: baseLink + "/blog/blog?setStatus=closed",
+            jar: jar,
             method: "get",
             headers: {
               Referer: baseLink + "/blog/blog"
             }
           };
-          request(opts, function (err, res) {
+          request(opts, function (err, res, body) {
             should.not.exist(err);
             should(res.statusCode).eql(200);
             blogModule.findOne({name: "blog"}, function(err, blog) {
@@ -138,6 +145,7 @@ describe("views/blog", function() {
         function(cb) {
           var opts = {
             url: baseLink + "/blog/blog/setReviewComment",
+            jar: jar,
             form: {lang: "DE", text: "startreview"},
             headers: {
               Referer: baseLink + "/blog/blog"
