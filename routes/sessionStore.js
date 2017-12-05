@@ -1,8 +1,9 @@
 "use strict";
 
+const should = require("should");
 const config       = require("../config.js");
 
-const pg           = require("pg");
+const db           = require("../model/db.js");
 
 
 
@@ -15,8 +16,10 @@ module.exports = function(session) {
   } else if (config.getValue("sessionStore", {mustExist: true}) === "connect-pg-simple") {
     var PgSession = require("connect-pg-simple")(session);
 
+    let pool = db.getPool();
+    should.exist(pool);
     sessionStore = new PgSession({
-      pg: pg, // Use global pg-module
+      pool: pool, // Use global pg-module
       conString: config.pgstring // Connect using something else than default DATABASE_URL env variable
     });
   }

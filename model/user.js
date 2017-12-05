@@ -380,6 +380,7 @@ User.prototype.createApiKey = function createApiKey(callback) {
 
 var _newUsers = null;
 let interval = config.getValue("WelcomeInterval", {mustExist: true});
+let welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", {mustExist: true});
 
 module.exports.getNewUsers = function getNewUsers(callback) {
   debug("getNewUsers");
@@ -391,7 +392,7 @@ module.exports.getNewUsers = function getNewUsers(callback) {
     _newUsers = result;
     setTimeout(function() {
       _newUsers = null;
-    }, 10 * 60 * 1000);
+    }, welcomeRefresh * 1000);
     callback(null, result);
   });
 };

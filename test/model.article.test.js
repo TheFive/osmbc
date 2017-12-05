@@ -1,7 +1,5 @@
 "use strict";
 
-
-
 var async  = require("async");
 var should = require("should");
 var nock   = require("nock");

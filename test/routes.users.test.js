@@ -1,5 +1,6 @@
 "use strict";
 
+const wtfnode = require("wtfnode");
 const should = require("should");
 const async  = require("async");
 const config = require("../config.js");
@@ -29,6 +30,11 @@ describe("router/user", function() {
         ],
         clear:true
       },bddone);
+  });
+  after(function(bddone){
+    testutil.stopServer();
+    wtfnode.dump();
+    bddone();
   });
   describe("routes GET /inbox", function(){
     let url = baseLink + "/usert/inbox";

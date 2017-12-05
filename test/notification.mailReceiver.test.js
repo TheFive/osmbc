@@ -1,7 +1,7 @@
 "use strict";
 
 
-
+var wtfnode = require("wtfnode");
 var should = require("should");
 var sinon  = require("sinon");
 var nock   = require("nock");
@@ -38,6 +38,8 @@ describe("notification/mailReceiver", function() {
 
   after(function (bddone) {
     nock.cleanAll();
+    wtfnode.dump();
+    setTimeout(function(){wtfnode.dump();},3000);
     bddone();
   });
 
@@ -67,21 +69,19 @@ describe("notification/mailReceiver", function() {
       articleModule.createNewArticle(function(err, article) {
         should.not.exist(err);
         article.setAndSave({OSMUser: "testuser"}, {version: 1, blog: "WN789", collection: "newtext", title: "Test Title"}, function(err) {
-          setTimeout(function () {
-            should.not.exist(err);
-            should(mailChecker.callCount).eql(1);
-            should(mailChecker.calledOnce).be.True();
-            var result = mailChecker.getCall(0).args[0];
-            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">Test Title</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p><h3>title was added</h3><p>Test Title</p>';
-            should(result.html).eql(expectedMail);
-            should(mailChecker.getCall(0).args[0]).eql(
-              {from: "noreply@gmail.com",
-                to: "UserNewCollection@mail.bc",
-                subject: "[TESTBC] WN789 added: Test Title",
-                html: expectedMail,
-                text: "CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
-            bddone();
-          }, 900);
+          should.not.exist(err);
+          should(mailChecker.callCount).eql(1);
+          should(mailChecker.calledOnce).be.True();
+          var result = mailChecker.getCall(0).args[0];
+          var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">Test Title</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p><h3>title was added</h3><p>Test Title</p>';
+          should(result.html).eql(expectedMail);
+          should(mailChecker.getCall(0).args[0]).eql(
+            {from: "noreply@gmail.com",
+              to: "UserNewCollection@mail.bc",
+              subject: "[TESTBC] WN789 added: Test Title",
+              html: expectedMail,
+              text: "CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
+          bddone();
         });
       });
     });

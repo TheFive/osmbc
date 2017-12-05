@@ -17,7 +17,7 @@ var config = require("../config.js");
 var app = require("../app.js");
 
 var pgMap = require("../model/pgMap.js");
-var pool  = require("../model/db.js");
+var db  = require("../model/db.js");
 var blogModule    = require("../model/blog.js");
 var articleModule = require("../model/article.js");
 var logModule     = require("../model/logModule.js");
@@ -41,7 +41,7 @@ should.config.checkProtoEql = false;
 exports.getJsonWithId = function getJsonWithId(table, id, cb) {
   debug("getJsonWithId");
   let result = null;
-  pool.query("select data from " + table + " where id = $1", [id], function(err, pgResult) {
+  db.query("select data from " + table + " where id = $1", [id], function(err, pgResult) {
     if (err) return cb(err);
     if (pgResult.rows.length == 1) {
       result = pgResult.rows[0].data;
@@ -113,14 +113,14 @@ exports.importData = function importData(data, callback) {
       if (data.clear) {
         articleModule.removeOpenBlogCache();
         async.series([
-          pool.query.bind(null, "delete from usert;"),
-          pool.query.bind(null, "delete from blog;"),
-          pool.query.bind(null, "delete from article;"),
-          pool.query.bind(null, "delete from changes;"),
-          pool.query.bind(null, "ALTER SEQUENCE usert_id_seq RESTART WITH 1;"),
-          pool.query.bind(null, "ALTER SEQUENCE blog_id_seq RESTART WITH 1;"),
-          pool.query.bind(null, "ALTER SEQUENCE article_id_seq RESTART WITH 1;"),
-          pool.query.bind(null, "ALTER SEQUENCE changes_id_seq RESTART WITH 1;")
+          db.query.bind(null, "delete from usert;"),
+          db.query.bind(null, "delete from blog;"),
+          db.query.bind(null, "delete from article;"),
+          db.query.bind(null, "delete from changes;"),
+          db.query.bind(null, "ALTER SEQUENCE usert_id_seq RESTART WITH 1;"),
+          db.query.bind(null, "ALTER SEQUENCE blog_id_seq RESTART WITH 1;"),
+          db.query.bind(null, "ALTER SEQUENCE article_id_seq RESTART WITH 1;"),
+          db.query.bind(null, "ALTER SEQUENCE changes_id_seq RESTART WITH 1;")
         ], cb0a);
       } else return cb0a();
     },

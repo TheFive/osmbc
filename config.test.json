@@ -72,5 +72,6 @@
   "WelcomeInterval":"1 month",
   "userIsOldInDays":60,
   "CalendarInterface":{},
-  "PublicCalendarPage":"http://linktopubliccalendar.org"
+  "PublicCalendarPage":"http://linktopubliccalendar.org",
+  "WelcomeRefreshInSeconds":1
 }
