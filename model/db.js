@@ -32,8 +32,8 @@ var pgConfig = {
   host: pgConfigValues.server,
   port: pgConfigValues.port,
   max: 10,
-  connectionTimeoutMillis: 100,
-  idleTimeoutMillis: 100
+  connectionTimeoutMillis: 1000,
+  idleTimeoutMillis: 1000
 };
 
 // this initializes a connection pool

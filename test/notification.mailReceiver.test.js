@@ -1,7 +1,6 @@
 "use strict";
 
 
-var wtfnode = require("wtfnode");
 var should = require("should");
 var sinon  = require("sinon");
 var nock   = require("nock");
@@ -38,8 +37,6 @@ describe("notification/mailReceiver", function() {
 
   after(function (bddone) {
     nock.cleanAll();
-    wtfnode.dump();
-    setTimeout(function(){wtfnode.dump();},3000);
     bddone();
   });
 
