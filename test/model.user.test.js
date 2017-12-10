@@ -200,6 +200,35 @@ describe("model/user", function() {
         });
       });
     });
+    it("should trim OSM User Name", function (bddone) {
+      var newUser;
+      userModule.createNewUser({OSMUser: "Test", access: "full"}, function(err, result) {
+        should.not.exist(err);
+        newUser = result;
+        var id = result.id;
+        var changeValues = {};
+        changeValues.OSMUser = " Untrimmed Username ";
+        changeValues.access = newUser.access;
+        changeValues.version = 1;
+        newUser.setAndSave({OSMUser:"user"}, changeValues, function(err) {
+          should.not.exist(err);
+          testutil.getJsonWithId("usert", id, function(err, result) {
+            should.not.exist(err);
+            delete result._meta;
+            should(result).eql({id: id, OSMUser: "Untrimmed Username", access: "full", version: 2});
+            logModule.find({}, {column: "property"}, function (err, result) {
+              should.not.exist(err);
+              should.exist(result);
+              should(result.length).equal(1);
+
+              // There should be no mail
+              should(mailReceiver.for_test_only.transporter.sendMail.called).be.False();
+              bddone();
+            });
+          });
+        });
+      });
+    });
     it("should fail when change email by another user", function (bddone) {
       userModule.findOne({OSMUser: "WelcomeMe"}, function(err, user) {
         should.not.exist(err);

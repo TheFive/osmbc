@@ -218,6 +218,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   var sendWelcomeEmail = false;
   // remove spaces from front and and of email adress
   if (data.email) data.email = data.email.trim();
+  if (data.OSMUser) data.OSMUser = data.OSMUser.trim();
 
   // check and react on Mail Change
   if (data.email && data.email.trim() !== "" && data.email !== self.email) {
