@@ -4,10 +4,10 @@ var async  = require("async");
 var should = require("should");
 var nock   = require("nock");
 var debug  = require("debug")("OSMBC:test:article.test");
-var sinon  = require("sinon");
 
 
 var testutil = require("./testutil.js");
+var mockdate = require("mockdate");
 
 var articleModule = require("../model/article.js");
 var logModule     = require("../model/logModule.js");
@@ -838,15 +838,14 @@ describe("model/article", function() {
     });
   });
   describe("comments", function() {
-    var clock;
     before(function (bddone) {
-      this.clock = sinon.useFakeTimers();
-      clock = this.clock;
+      mockdate.set(new Date("2016-05-25T20:00"));
+
 
       bddone();
     });
     after(function(bddone) {
-      this.clock.restore();
+      mockdate.reset();
       bddone();
     });
     it("should add a comment during edit", function (bddone) {
@@ -944,7 +943,7 @@ describe("model/article", function() {
     it("should edit a comment", function(bddone) {
       var timestamp = new Date();
       var timestamp2 = new Date();
-      timestamp2.setTime(timestamp2.getTime() + 200);
+      timestamp2.setTime(timestamp2.getTime());
       var dataBefore = {
         clear: true,
         article: [{blog: "WN1",
@@ -962,7 +961,6 @@ describe("model/article", function() {
         change: [{blog: "WN1", oid: 1, table: "article", property: "comment0", from: "a comment", to: "a changed comment", user: "Test", timestamp: timestamp2.toISOString()}]};
       var testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
-          clock.tick(200);
 
           should.not.exist(err);
           article.editComment({OSMUser: "Test"}, 0, "a changed comment", cb);
@@ -993,7 +991,6 @@ describe("model/article", function() {
       };
       var testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
-          clock.tick(200);
 
           should.not.exist(err);
           article.markCommentRead({OSMUser: "Test"}, 1, cb);
@@ -1020,7 +1017,6 @@ describe("model/article", function() {
         change: []};
       var testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
-          clock.tick(200);
 
           should.not.exist(err);
           article.editComment({OSMUser: "Test"}, 0, " ", function checkErr(err) {
@@ -1049,7 +1045,7 @@ describe("model/article", function() {
           commentList: [{user: "Test", timestamp: timestampIso, text: "a comment"}]}]};
       var testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
-          clock.tick();
+
 
           should.not.exist(err);
           article.editComment({OSMUser: "Test2"}, 0, "a changed comment", function (err) {
@@ -1063,12 +1059,12 @@ describe("model/article", function() {
   });
   describe("tags & votes", function() {
     before(function (bddone) {
-      this.clock = sinon.useFakeTimers();
+      mockdate.set(new Date("2016-05-25T20:00"));
 
       bddone();
     });
     after(function(bddone) {
-      this.clock.restore();
+      mockdate.reset();
       bddone();
     });
     it("should add a vote", function(bddone) {

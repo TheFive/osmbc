@@ -6,6 +6,8 @@ var sinon  = require("sinon");
 var nock   = require("nock");
 var fs     = require("fs");
 var path   = require("path");
+var mockdate = require("mockdate");
+
 
 
 
@@ -240,12 +242,12 @@ describe("notification/mailReceiver", function() {
     var mailChecker;
     afterEach(function (bddone) {
       mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
-      this.clock.restore();
+      mockdate.reset();
       bddone();
     });
 
     beforeEach(function (bddone) {
-      this.clock = sinon.useFakeTimers();
+      mockdate.set(new Date("2016-05-25T20:00"));
       oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
       mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
       mailReceiver.for_test_only.transporter.sendMail = mailChecker;
@@ -263,8 +265,8 @@ describe("notification/mailReceiver", function() {
 
         should(mailChecker.calledTwice).be.True();
         var result = mailChecker.getCall(0).args[0];
-        var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table id=\"valuetable\"><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
-        var expectedText = "BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKEY         VALUE                      \nname        WN251                      \nstatus      open                       \nstartDate   1970-01-02T00:00:00.000Z   \nendDate     1970-01-08T00:00:00.000Z";
+        var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table id=\"valuetable\"><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>2016-05-26T20:00:00.000Z</td></tr><tr><td>endDate</td><td>2016-06-01T20:00:00.000Z</td></tr></table>';
+        var expectedText = "BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKEY         VALUE                      \nname        WN251                      \nstatus      open                       \nstartDate   2016-05-26T20:00:00.000Z   \nendDate     2016-06-01T20:00:00.000Z";
 
         // result is not sorted, so have a preview, which argument is the right one.
         var mailList = {};
