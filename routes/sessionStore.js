@@ -19,8 +19,7 @@ module.exports = function(session) {
     let pool = db.getPool();
     should.exist(pool);
     sessionStore = new PgSession({
-      pool: pool, // Use global pg-module
-      conString: config.pgstring // Connect using something else than default DATABASE_URL env variable
+      pool: pool // Use global pg-module
     });
   }
   return sessionStore;
