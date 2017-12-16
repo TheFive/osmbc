@@ -35,7 +35,13 @@ passport.deserializeUser(function (user, done) {
   debug("passport.deserializeUser CB");
   userModule.find({OSMUser: user}, function(err, result) {
     if (err) return done(null, null);
-    if (result.length === 1) return done(null, result[0]);
+    if (result.length === 1) {
+      let overWriteRole = config.getValue("DefineRole")
+      if (overWriteRole && overWriteRole[result[0].OSMUser]){
+        result[0].access = overWriteRole[result[0].OSMUser];
+      }
+      return done(null, result[0]);
+    }
     if (result.length === 0) {
       userModule.createNewUser({OSMUser: user, access: "guest"}, function(err, user) {
         if (err) return done(null, null);

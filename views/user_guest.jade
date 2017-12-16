@@ -1,0 +1,90 @@
+extends adminlayout
+
+
+
+
+block content
+
+  h1="Edit OSMBC User "+ usershown.OSMUser
+  form(name="input", action=layout.htmlroot+"/usert/#{usershown.id}", method="post")
+    div.form-horizontal(role="form")
+      +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
+      +labeledInput("EMail","email",usershown.email,"This mail is used for information about changes. To delete the email just submit a space for this field.")
+
+      if (usershown.emailInvalidation)
+        div.form-group
+          div.col-sm-offset-2.col-sm-4
+            p
+              span
+                |Waiting for validation of EMail
+              span.bg-info=usershown.emailInvalidation
+          div.col-sm-6
+            button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
+
+
+
+      +labeledSelect("Language",
+                    "language",
+                     usershown.language,
+                     langlist,
+                     langlist,
+                     "Main Language for the user, used for default values.")
+
+
+
+
+
+
+
+
+
+      form-group
+        div.col-sm-offset-2.col-sm-10
+          input(name="OK" type="submit", class="btn btn-primary",value="OK")
+
+
+
+
+
+
+  .row
+    h1=usershown.OSMUser + " Heatmap"
+    p#heatmap
+
+  .row
+    .col-md-10
+    .col-md-2
+      if (usershown.OSMUser === layout.user.OSMUser)
+        p
+          a(href=layout.htmlroot+"/logout") [logout user]
+
+
+
+
+
+
+
+
+
+
+block scripts
+
+  link(rel="stylesheet" type="text/css" href=layout.htmlroot+"/stylesheets/calendar-heatmap.css")
+  script(src=layout.path("d3")+"/d3.min.js")
+  script(src=layout.htmlroot+"/javascripts/calendar-heatmap.js")
+  script(src=layout.path("moment") + "/min/moment.min.js")
+
+
+  script.
+    // chart data example
+    var chartData = JSON.parse('!{JSON.stringify(userHeatMapArray)}');
+    for (var i=0;i<chartData.length;i++) {
+      chartData[i].date = new Date(chartData[i].date)
+    }
+    var chart1 = calendarHeatmap()
+            .data(chartData)
+            .selector('#heatmap')
+            .colorRange(['#D8E6E7', '#218380'])
+            .tooltipEnabled(true);
+    chart1();  // render the chart
+

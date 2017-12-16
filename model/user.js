@@ -219,6 +219,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   // remove spaces from front and and of email adress
   if (data.email) data.email = data.email.trim();
   if (data.OSMUser) data.OSMUser = data.OSMUser.trim();
+  if (data.OSMUser === "autocreate") return callback(new Error("User >autocreate< not allowed"));
 
   // check and react on Mail Change
   if (data.email && data.email.trim() !== "" && data.email !== self.email) {
@@ -390,6 +391,9 @@ module.exports.getNewUsers = function getNewUsers(callback) {
 
   pgMap.select("select data->>'user' as osmuser ,min(data->>'timestamp') as first from changes group by data->>'user' having ( min(data->>'timestamp')  )::timestamp with time zone  > current_timestamp - interval '" + interval + "'", function(err, result) {
     if (err) return callback(err);
+    if (result.indexOf("autocreate")>=0) {
+      result = result.splice(result.indexOf("autocreate"),result.indexOf("autocreate")+1);
+    }
     _newUsers = result;
     setTimeout(function() {
       _newUsers = null;

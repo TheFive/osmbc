@@ -115,7 +115,7 @@ exports.getValue = function(key, options) {
     process.exit(1);
   }
   if (options && options.deprecated && typeof result !== "undefined") {
-    logger.info("Unnecessary Value in config.*.json. Name: '" + key + "'");
+    logger.error("Unnecessary Value in config.*.json. Name: '" + key + "'");
   }
   debug("getValue %s %s", key, result);
   return result;

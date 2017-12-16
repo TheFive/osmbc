@@ -9,6 +9,7 @@ const help = require("../routes/help.js");
 const config = require("../config.js");
 const logModule = require("../model/logModule.js");
 const userModule = require("../model/user.js");
+const articleModule = require("../model/article.js");
 const moment = require("moment");
 const auth = require("../routes/auth.js");
 
@@ -37,7 +38,8 @@ function renderHome(req, res, next) {
     if (err) return next(err);
     res.set("content-type", "text/html");
     let view = "index";
-    if (req.user.access === "guest") view = "index_guest";
+    should(req.user.access).eql("full");
+
 
     res.render(view, { title: appName,
       layout: res.rendervar.layout,
@@ -45,6 +47,33 @@ function renderHome(req, res, next) {
       visitorsToday: result.visitorsToday,
       newUsers: result.newUsers,
       changes: result.historie});
+  }
+  );
+}
+
+function renderGuestHome(req, res, next) {
+  debug("renderGuestHome");
+  should.exist(res.rendervar.layout);
+  var date = new Date();
+  date.setTime(date.getTime() - 1000 * 60 * 10);
+
+  var todayStart = new Date();
+  todayStart.setHours(0);
+  todayStart.setMinutes(0);
+  todayStart.setSeconds(0);
+
+  async.auto({
+    "articles":articleModule.find.bind(articleModule,{firstCollector:req.user.OSMUser},{column:"blog",desc:true})
+  }, function(err, result) {
+    if (err) return next(err);
+    res.set("content-type", "text/html");
+    let view = "index_guest";
+    should(req.user.access).eql("guest");
+
+    res.render(view, { title: appName,
+      articles:result.articles,
+      layout: res.rendervar.layout
+    });
   }
   );
 }
@@ -167,11 +196,12 @@ function redirectHome(req, res) {
   res.redirect(htmlRoot + "/");
 }
 
-router.get("/", auth.checkRole(["full", "guest"]), renderHome);
+router.get("/", auth.hasRole(["full"]), renderHome);
+router.get("/", auth.checkRole([ "guest"]), renderGuestHome);
 router.get("/osmbc.html", redirectHome);
 router.get("/osmbc", redirectHome);
 router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
-router.get("/changelog", auth.checkRole(["full"]), renderChangelog);
+router.get("/changelog", auth.checkRole(["full","guest"]), renderChangelog);
 router.get("/language", auth.checkRole(["full"]), languageSwitcher);
 router.get("/userconfig", auth.checkRole(["full"]), setUserConfig);
 router.get("/createblog", auth.checkRole(["full"]), createBlog);

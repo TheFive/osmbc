@@ -18,10 +18,129 @@ mixin firstBlogOfList(list,count,c)
             if layout.language2
               span.badge.osmbcbadge-lang2=blogNumber(blog, layout.language2)
 
+mixin collectMenu
+  ul.nav.navbar-nav.pull-left
+    li
+      a(href=layout.htmlroot + '/article/create') Collect
 
+mixin tbcMenu
+  if blogNumber(layout.tbc, layout.language) > 0
+    - dynamicHide = ""
+    if (layout.tbc._tbcOwnArticleNumber == 0)
+      - dynamicHide = "hidden-xs"
+    ul.nav.navbar-nav.pull-left(class=dynamicHide)
+      li
+        a(href=layout.htmlroot+'/blog/TBC')=layout.tbc.name
+        if (layout.tbc._tbcOwnArticleNumber > 0)
+          span.badge.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
+
+mixin inboxMenu
+ ul.nav.navbar-nav.pull-left
+   li
+     a(href=layout.htmlroot + '/usert/inbox')="Inbox "
+       if (layout.userMentions > 0)
+         span.badge.osmbcbadge-user=layout.userMentions
+       if (layout.mainLangMentions > 0)
+         span.badge.osmbcbadge-lang=layout.mainLangMentions
+       if (layout.secondLangMentions > 0)
+         span.badge.osmbcbadge-lang2=layout.secondLangMentions
+
+mixin articleMenu
+  li.dropdown
+    a.dropdown-toggle(href='#', data-toggle='dropdown')
+      | Lists
+      span.caret
+    ul.dropdown-menu(role='menu')
+      li.dropdown-header Articles
+      li
+        a(href=layout.htmlroot + '/article/search') Search
+        a(href=layout.htmlroot + '/article/list?myArticles=true') My Empty Collections
+      li.dropdown-header Orphaned Article
+
+        for blog in layout.listOfOrphanBlog
+          if blog
+            li
+              a(href=layout.htmlroot + "/article/list?blog=#{blog}") #{blog}
+        li
+          a(href=layout.htmlroot + '/article/list?blog=') No Blog
+
+mixin toolMenu
+  li.dropdown.hidden-xs
+    a.dropdown-toggle(href='#', data-toggle='dropdown')
+      | Tool
+      span.caret
+    ul.dropdown-menu(role='menu')
+      li.dropdown-header Markdown Helper
+      li
+        a(href=layout.htmlroot + "/tool/calendarAllLang") Calendar Tool (OSMBC)
+      for integration,name in layout.calendarInterface
+
+        li
+          a(href=layout.htmlroot + "/tool/calendarAllLang/" + name)="Calendar Tool (" + name + ")"
+      li
+        a(href=layout.htmlroot + "/tool/picturetool") Picture Tool
+      li.divider
+      li.dropdown-header About The Team
+        li
+          a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
+
+mixin helpMenu
+  li.dropdown
+    a.dropdown-toggle(href='#', data-toggle='dropdown')
+      | Help
+      span.caret
+    ul.dropdown-menu(role='menu')
+      li.dropdown-header OSMBC
+      li
+        a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md") Version #{layout.osmbc_version}
+      li
+        a(href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help") Help
+      li.divider
+      li.dropdown-header WeeklyOSM & Wochennotiz
+      li
+        a(href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules") Vision & Rules
+      li
+        a(href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting") Editorial Meetings
+      li
+        a(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
+      li
+        a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
+
+mixin langChooser(langString)
+  - let l = "language"
+  - let label = "osmbcbadge-lang"
+  if (langString === "lang2")
+    - l = "language2"
+    - label = "osmbcbadge-lang2"
+  if (langString === "lang3")
+    - l = "language3"
+    - label = "label-default"
+  if (langString === "lang4")
+    - l = "language4"
+    - label = "label-default"
+
+  li.dropdown
+    a.btn.dropdown-toggle(class=label, href='#', style="color:white", data-toggle='dropdown')
+      |#{(layout[l])?layout[l]:"--"}
+      span.caret
+    ul.dropdown-menu(role='menu')
+      if (langString !== "lang")
+        li
+          a(href=layout.htmlroot + '/language?'+langString+'=none') none
+      each litem in layout.languages
+        if layout.usedLanguages[litem]
+          li
+            a(href=layout.htmlroot + '/language?'+langString+'=#{litem}') #{litem}
+
+mixin userAvatar
+  if layout.user
+    li
+      img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/#{layout.user.id}';" style="height:50px;width:50px")
+  else
+    li
+      a(href='./') Anonymous
 
 block all
-
   doctype html
   html(lang='en')
     head
@@ -34,7 +153,6 @@ block all
       title=layout.title
       // Bootstrap core CSS
       link(href=layout.path("bootstrap")+'/css/bootstrap.min.css', rel='stylesheet')
-
       link(href=layout.path("font-awesome")+"/css/font-awesome.min.css" rel='stylesheet')
 
     body
@@ -52,30 +170,14 @@ block all
             - listall = listall.concat(layout.listOfOpenBlog)
 
             +homeButton("navbar-brand hidden-xs")
-            ul.nav.navbar-nav.pull-left
-              li
-                a(href=layout.htmlroot+'/article/create') Collect
-            if blogNumber(layout.tbc, layout.language) > 0
-              - dynamicHide = ""
-              if (layout.tbc._tbcOwnArticleNumber == 0)
-                - dynamicHide = "hidden-xs"
-              ul.nav.navbar-nav.pull-left(class=dynamicHide)
-                li
-                  a(href=layout.htmlroot+'/blog/TBC')=layout.tbc.name
-                    if (layout.tbc._tbcOwnArticleNumber > 0)
-                      span.badge.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
-            ul.nav.navbar-nav.pull-left
-              li
-                a(href=layout.htmlroot+'/usert/inbox')="Inbox "
-                  if (layout.userMentions>0)
-                    span.badge.osmbcbadge-user=layout.userMentions
-                  if (layout.mainLangMentions>0)
-                    span.badge.osmbcbadge-lang=layout.mainLangMentions
-                  if (layout.secondLangMentions>0)
-                    span.badge.osmbcbadge-lang2=layout.secondLangMentions
-            ul.nav.navbar-nav.pull-left.visible-xs
+            +collectMenu
+            if (layout.user.access === "full")
+              +tbcMenu
+            +inboxMenu
 
-              +firstBlogOfList(listall)
+            if (layout.user.access === "full")
+              ul.nav.navbar-nav.pull-left.visible-xs
+                +firstBlogOfList(listall)
 
 
 
@@ -86,112 +188,24 @@ block all
               span.icon-bar
               span.icon-bar
               span.icon-bar
+
           .navbar-collapse.collapse
             ul.nav.navbar-nav.navbar-left
               li.show-xs
                 +homeButton("visible-xs")
-              +firstBlogOfList(listall,2)
-
-
-
-              li.dropdown
-                a.dropdown-toggle(href='#', data-toggle='dropdown')
-                  | Lists
-                  span.caret
-                ul.dropdown-menu(role='menu')
-                  li.dropdown-header Articles
-                  li
-                    a(href=layout.htmlroot+'/article/search') Search
-                    a(href=layout.htmlroot+'/article/list?myArticles=true') My Empty Collections
-                  li.dropdown-header Orphaned Article
-
-                    for blog in layout.listOfOrphanBlog
-                      if blog
-                        li
-                          a(href=layout.htmlroot+"/article/list?blog=#{blog}") #{blog}
-                    li
-                      a(href=layout.htmlroot+'/article/list?blog=') No Blog
-
-
-              li.dropdown.hidden-xs
-                a.dropdown-toggle(href='#', data-toggle='dropdown')
-                  | Tool
-                  span.caret
-                ul.dropdown-menu(role='menu')
-                  li.dropdown-header Markdown Helper
-                  li
-                    a(href=layout.htmlroot+"/tool/calendarAllLang") Calendar Tool (OSMBC)
-                  for integration,name in layout.calendarInterface
-
-                    li
-                      a(href=layout.htmlroot + "/tool/calendarAllLang/"+name)="Calendar Tool (" + name + ")"
-                  li
-                    a(href=layout.htmlroot+"/tool/picturetool") Picture Tool
-                  li.divider
-                  li.dropdown-header About The Team
-                    li
-                      a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
-
+              if (layout.user.access === "full")
+                +firstBlogOfList(listall,2)
+                +articleMenu
+                +toolMenu
             ul.nav.navbar-nav.navbar-right
-                li.dropdown
-                  a.dropdown-toggle(href='#', data-toggle='dropdown')
-                    | Help
-                    span.caret
-                  ul.dropdown-menu(role='menu')
-                    li.dropdown-header OSMBC
-                    li
-                      a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md") Version #{layout.osmbc_version}
-                    li
-                      a(href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help") Help
-                    li.divider
-                    li.dropdown-header WeeklyOSM & Wochennotiz
-                    li
-                      a(href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules") Vision & Rules
-                    li
-                      a(href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting") Editorial Meetings
-                    li
-                      a(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
-                    li
-                      a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
+              +helpMenu
+              +langChooser("lang")
+              +langChooser("lang2")
+              - for (i = 3; params && params.columns && i<= params.columns;i++)
+                +langChooser("lang"+i)
+              +userAvatar
 
-                li.dropdown
-                  a.btn.dropdown-toggle.osmbcbadge-lang(href='#', style="color:white", data-toggle='dropdown')
-                    |#{layout.language}
-                    span.caret
-                  ul.dropdown-menu(role='menu')
-                    each l in layout.languages
-                      if layout.usedLanguages[l]
-                        li
-                          a(href=layout.htmlroot+'/language?lang=#{l}') #{l}
-                li.dropdown
-                  a.btn.dropdown-toggle.osmbcbadge-lang2(href='#',style="color:white", data-toggle='dropdown')
-                    |#{(layout.language2)?layout.language2:"--"}
-                    span.caret
-                  ul.dropdown-menu(role='menu')
-                    li
-                      a(href=layout.htmlroot+'/language?lang2=none') none
-                    each l in layout.languages
-                      if layout.usedLanguages[l]
-                        li
-                          a(href=layout.htmlroot+'/language?lang2=#{l}') #{l}
-                - for (i = 3; params && params.columns && i<= params.columns;i++)
-                  li.dropdown
-                    a.btn.dropdown-toggle.label-default(href='#', style="color:white",data-toggle='dropdown')
-                      | #{(layout["language"+i]) ? layout["language"+i] : "--"}
-                      span.caret
-                    ul.dropdown-menu(role='menu')
-                      li
-                        a(href=layout.htmlroot+'/language?lang'+i+'=none') none
-                      each l in layout.languages
-                        if layout.usedLanguages[l]
-                          li
-                            a(href=layout.htmlroot+'/language?lang'+i+'=#{l}') #{l}
-                if layout.user
-                  li
-                    img(src=layout.user.getAvatar() onclick="location.href='"+layout.htmlroot+"/usert/#{layout.user.id}';" style="height:50px;width:50px")
-                else
-                  li
-                    a(href='./') Anonymous
+
             // /.nav-collapse
 
 

@@ -15,8 +15,8 @@ should.exist(pgConfigValues.server);
 should.exist(pgConfigValues.port);
 var logger    = require("../config.js").logger;
 
-if (pgConfigValues.connectStr && pgConfigValues.connectStr !== "") {
-  logger.error("Database connectStr is deprecated, please remove from config");
+if (pgConfigValues.connectstr && pgConfigValues.connectStr !== "") {
+  logger.error("Database connectstr is deprecated, please remove from config");
   process.exit(1);
 }
 
