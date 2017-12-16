@@ -63,7 +63,7 @@ function renderGuestHome(req, res, next) {
   todayStart.setSeconds(0);
 
   async.auto({
-    "articles":articleModule.find.bind(articleModule,{firstCollector:req.user.OSMUser},{column:"blog",desc:true})
+    "articles": articleModule.find.bind(articleModule, {firstCollector: req.user.OSMUser}, {column: "blog", desc: true})
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
@@ -71,7 +71,7 @@ function renderGuestHome(req, res, next) {
     should(req.user.access).eql("guest");
 
     res.render(view, { title: appName,
-      articles:result.articles,
+      articles: result.articles,
       layout: res.rendervar.layout
     });
   }
@@ -197,13 +197,13 @@ function redirectHome(req, res) {
 }
 
 router.get("/", auth.hasRole(["full"]), renderHome);
-router.get("/", auth.checkRole([ "guest"]), renderGuestHome);
+router.get("/", auth.checkRole(["guest"]), renderGuestHome);
 router.get("/osmbc.html", redirectHome);
 router.get("/osmbc", redirectHome);
 router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
-router.get("/changelog", auth.checkRole(["full","guest"]), renderChangelog);
-router.get("/language", auth.checkRole(["full"]), languageSwitcher);
-router.get("/userconfig", auth.checkRole(["full"]), setUserConfig);
+router.get("/changelog", auth.checkRole(["full", "guest"]), renderChangelog);
+router.get("/language", auth.checkRole(["full","guest"]), languageSwitcher);
+router.get("/userconfig", auth.checkRole(["full","guest"]), setUserConfig);
 router.get("/createblog", auth.checkRole(["full"]), createBlog);
 
 

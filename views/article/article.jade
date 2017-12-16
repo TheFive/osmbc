@@ -12,7 +12,8 @@ block content
       .col-md-6.col-md-push-6
         .row
           .col-md-4#voteButtons
-            include ../voteButtons
+            if (layout.user.access === "full")
+              include ../voteButtons
           .col-md-1
             +doublettesButton
           .col-md-1
@@ -26,7 +27,8 @@ block content
 
             +languageDisplay(article,{func: "showRL"})
             p.osmbc-help-text="Click to change left lang"
-            +noTranslationButton
+            if (layout.user.access === "full")
+              +noTranslationButton
           .col-md-1
           .col-md-4
             +saveButton
@@ -41,7 +43,7 @@ block content
           div.form-group
             label.col-md-2="Blog"
             div.col-md-10
-              +blogSelector(article,!article.isChangeAllowed("blog"))
+              +blogSelector(article,layout.user.access !== "full" || !article.isChangeAllowed("blog"))
               textarea.hidden.form-control(id="old_blog" name="old_blog",rows=1,hide=true) #{article.blog}
 
 
@@ -64,31 +66,32 @@ block content
           .col-md-10
             p.osmbc-help-text(id="categoryDisplay")
         // Display Predecessor Row
-        .row
-          .form-group
-            label.col-md-2="Predecessor"
-            .col-md-10
-              textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true) #{article.predecessorId}
-              select(id="predecessorId",name="predecessorId" ).form-control.af
-                if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
-                  option(value="" selected) None
-                else
-                  option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
-                if article.predecessorId === "0"
-                  option(value="0" selected) First
-                else
-                  option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
-                for a in articleCategories
-                  if (a.id == article.predecessorId)
-                    option(value=a.id selected )=a.title
+        if (layout.user.access === "full")
+          .row
+            .form-group
+              label.col-md-2="Predecessor"
+              .col-md-10
+                textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true) #{article.predecessorId}
+                select(id="predecessorId",name="predecessorId" ).form-control.af
+                  if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
+                    option(value="" selected) None
                   else
-                    - d= null;
-                    for b in articleCategories
-                      - if (b.predecessorId == a.predecessorId) {d=b;}
-                    if !article.isChangeAllowed("predecessorId")
-                      option(value=a.id disabled=true)=a.title+"("+d.title+")"
+                    option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
+                  if article.predecessorId === "0"
+                    option(value="0" selected) First
+                  else
+                    option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
+                  for a in articleCategories
+                    if (a.id == article.predecessorId)
+                      option(value=a.id selected )=a.title
                     else
-                      option(value=a.id )=a.title
+                      - d= null;
+                      for b in articleCategories
+                        - if (b.predecessorId == a.predecessorId) {d=b;}
+                      if !article.isChangeAllowed("predecessorId")
+                        option(value=a.id disabled=true)=a.title+"("+d.title+")"
+                      else
+                        option(value=a.id )=a.title
 
 
 
@@ -151,8 +154,9 @@ block content
   .div#commentArea
     include commentArea
 
-  .row#voteButtonsList
-    include ../voteButtonsList
+  if (layout.user.access === "full")
+    .row#voteButtonsList
+      include ../voteButtonsList
 
   #doublettes.row
     if articleReferences.count >= 1
@@ -188,47 +192,47 @@ block content
 
 
 
-    .row.visible-xs
-      p
-        br
-        a(href=layout.htmlroot+"/changes/log?table=article&oid=#{article.id}") [changes]
-    .row.hidden-xs
-      if changes
-        h3
-          |History
-        div
-          table.table.table-striped.table-responsive
-            thead
-              tr 
-                th
-                 | 
-                th
-                 |user
-                th
-                 |what
-                th
-                 |change
-                th
-                 |when
-            tbody
-              each change, i in changes
+    if (layout.user.access === "full")
+      .row.visible-xs
+        p
+          br
+          a(href=layout.htmlroot+"/changes/log?table=article&oid=#{article.id}") [changes]
+      .row.hidden-xs
+        if changes
+          h3
+            |History
+          div
+            table.table.table-striped.table-responsive
+              thead
                 tr
-                  td
-                   a(href=layout.htmlroot+'/changes/' + change.id)
-                      span.glyphicon.glyphicon-info-sign 
-                  td= change.user
-                  td= change.property
-                  td
-                    :verbatim
-                      !{change.htmlDiffText(100)}
-                  td= layout.moment(change.timestamp).fromNow() 
-        div
-          p
-            |only displaying changes 
-            span.osmbc-inserted
-              |inserted text 
-            span.osmbc-deleted
-              |removed text
+                  th
+                  th
+                   |user
+                  th
+                   |what
+                  th
+                   |change
+                  th
+                   |when
+              tbody
+                each change, i in changes
+                  tr
+                    td
+                     a(href=layout.htmlroot+'/changes/' + change.id)
+                        span.glyphicon.glyphicon-info-sign
+                    td= change.user
+                    td= change.property
+                    td
+                      :verbatim
+                        !{change.htmlDiffText(100)}
+                    td= layout.moment(change.timestamp).fromNow()
+          div
+            p
+              |only displaying changes
+              span.osmbc-inserted
+                |inserted text
+              span.osmbc-deleted
+                |removed text
 
 
 

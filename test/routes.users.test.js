@@ -215,6 +215,16 @@ describe("router/user", function() {
         });
       });
     });
+    it("should show user data for fresh created guest user", function (bddone) {
+      testutil.startServerWithLogin("TestUserNewGuest",jar, function () {
+        request.get({url: baseLink + "/usert/TestUserNewGuest",followRedirect:false,jar:jar}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(200);
+          body.should.containEql("<h1>TestUserNewGuest Heatmap</h1>");
+          bddone();
+        });
+      });
+    });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url,jar:jar}, function (err, response, body) {
@@ -230,7 +240,7 @@ describe("router/user", function() {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
+          body.should.containEql("<h1>Not allowed to access this page</h1>");
           bddone();
         });
       });
@@ -273,8 +283,8 @@ describe("router/user", function() {
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url,form:{color:"red",language:"ES"},jar:jar}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar , function () {
+        request.post({url: url,form:{color:"red",language:"ES"},jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");

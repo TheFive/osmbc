@@ -63,11 +63,35 @@ function renderUserId(req, res, next) {
   debug("renderUserId");
   let redirect = false;
   var id = req.params.user_id;
+
+
+  if (req.query.becomeGuest === "true" && req.user.access === "full") {
+    logger.info("Switch user "+req.user.OSMUser+" to guest");
+    req.user.access = "guest";
+    req.user.temporaryGuest = true;
+    req.user.save({noVersionIncrease: true},function(err){
+      if (err) return next(err);
+      res.redirect(htmlroot+"/usert/self");
+    });
+    return;
+  }
+  if (req.query.becomeFull === "true" && req.user.access === "guest" && req.user.temporaryGuest === true) {
+    req.user.access = "full";
+    delete req.user.temporaryGuest ;
+    req.user.save({noVersionIncrease: true},function(err){
+      if (err) return next(err);
+      res.redirect(htmlroot+"/usert/self");
+    });
+    return;
+  }
+
+
   if (id === "self") return res.redirect(res.rendervar.layout.htmlroot + "/usert/" + req.user.id);
   should.exist(id);
   if (req.user.access === "guest") {
-    if ((req.user.OSMUser !== id ) && (req.user.id !== id)) return next(new Error("Not allowed to access this page"));
+    if ((req.user.OSMUser !== id) && (req.user.id !== id)) return next();
   }
+
   var params = {};
   var user;
   var changes;
@@ -222,11 +246,11 @@ function createApiKey(req, res, next) {
 
 
 
-router.get("/inbox", auth.checkRole("full"), inbox);
+router.get("/inbox", auth.checkRole(["full","guest"]), inbox);
 router.get("/list", auth.checkRole("full"), renderList);
 router.get("/create", auth.checkRole("full"), createUser);
 router.get("/createApiKey", auth.checkRole("full"), createApiKey);
-router.get("/:user_id", auth.checkRole(["full","guest"]), renderUserId);
+router.get("/:user_id", auth.checkRole(["full", "guest"]), renderUserId);
 router.post("/:user_id", auth.checkRole("full"), postUserId);
 
 module.exports.createUser = createUser;

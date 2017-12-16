@@ -391,8 +391,8 @@ module.exports.getNewUsers = function getNewUsers(callback) {
 
   pgMap.select("select data->>'user' as osmuser ,min(data->>'timestamp') as first from changes group by data->>'user' having ( min(data->>'timestamp')  )::timestamp with time zone  > current_timestamp - interval '" + interval + "'", function(err, result) {
     if (err) return callback(err);
-    if (result.indexOf("autocreate")>=0) {
-      result = result.splice(result.indexOf("autocreate"),result.indexOf("autocreate")+1);
+    if (result.indexOf("autocreate") >= 0) {
+      result = result.splice(result.indexOf("autocreate"), result.indexOf("autocreate") + 1);
     }
     _newUsers = result;
     setTimeout(function() {

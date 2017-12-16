@@ -68,7 +68,7 @@ describe("routes/index", function() {
   });
   describe("route GET /osmbc.html", function() {
     it("should redirect to /", function(bddone) {
-      testutil.startServerWithLogin("TestUser",jar, function () {
+      testutil.startServerWithLogin("TestUser", jar, function () {
         request.get({url: baseLink + "/osmbc.html", followRedirect: false, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(302);
@@ -80,7 +80,7 @@ describe("routes/index", function() {
   });
   describe("route GET /osmbc", function() {
     it("should redirect to /", function(bddone) {
-      testutil.startServerWithLogin("TestUser",jar, function () {
+      testutil.startServerWithLogin("TestUser", jar, function () {
         request.get({url: baseLink + "/osmbc", followRedirect: false, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(302);
@@ -126,8 +126,8 @@ describe("routes/index", function() {
       testutil.startServer("TestUserNonExisting", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
+          should(response.statusCode).eql(200);
+          body.should.containEql("<h1>Change Log</h1>");
           bddone();
         });
       });
@@ -145,7 +145,7 @@ describe("routes/index", function() {
       }
 
       async.series([
-        testutil.startServerWithLogin.bind(null, "TestUser",jar),
+        testutil.startServerWithLogin.bind(null, "TestUser", jar),
         requestLanguageSetter.bind(null, "lang", "ES"),
         requestLanguageSetter.bind(null, "lang3", "EN"),
         requestLanguageSetter.bind(null, "lang4", "EN")
@@ -192,7 +192,7 @@ describe("routes/index", function() {
   describe("route GET /userconfig", function() {
     let url = baseLink + "/userconfig?view=v1&option=o1&value=v2";
     it("should set options for a view", function (bddone) {
-      testutil.startServerWithLogin("TestUser",jar, function () {
+      testutil.startServerWithLogin("TestUser", jar, function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);

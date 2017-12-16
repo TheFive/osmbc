@@ -200,7 +200,6 @@ function renderArticleId(req, res, next) {
       if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
       params.columns = 4;
     }
-    if (req.user.access === "guest") jadeFile = "article/article_guest";
 
 
     res.render(jadeFile, {layout: res.rendervar.layout,
@@ -254,6 +253,8 @@ function renderArticleIdCommentArea(req, res, next) {
 
   var article = req.article;
   should.exist(article);
+
+  if (req.user.access === "guest" && article.firstCollector !== req.user.OSMUser) return next();
   let params = {};
   params.editComment = null;
   if (req.query.editComment) params.editComment = req.query.editComment;
@@ -567,6 +568,10 @@ function postNewComment(req, res, next) {
   var returnToUrl;
 
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
+
+  if (req.user.access === "guest") {
+    if (article.firstCollector !== req.user.OSMUser) return next();
+  }
 
 
   article.addCommentFunction(req.user, comment, function(err) {
@@ -939,7 +944,7 @@ function translate(req, res, next) {
 
 // And configure router to use render Functions
 router.get("/list", auth.checkRole("full"), renderList);
-router.get("/create", auth.checkRole("full"), createArticle);
+router.get("/create", auth.checkRole(["full", "guest"]), createArticle);
 router.get("/searchandcreate", auth.checkRole("full"), searchAndCreate);
 router.get("/search", auth.checkRole("full"), searchArticles);
 router.post("/create", auth.checkRole("full"), postArticle);
@@ -950,14 +955,14 @@ router.param("article_id", getArticleFromID);
 
 router.get("/:article_id", auth.checkRole(["full", "guest"]), renderArticleId);
 router.get("/:article_id/votes", auth.checkRole(["full"]), renderArticleIdVotes);
-router.get("/:article_id/commentArea", auth.checkRole(["full"]), renderArticleIdCommentArea);
+router.get("/:article_id/commentArea", auth.checkRole(["full","guest"]), renderArticleIdCommentArea);
 
 router.get("/:article_id/markCommentRead", auth.checkRole(["full"]), markCommentRead);
 router.get("/:article_id/:action.:tag", auth.checkRole(["full"]), doAction);
 router.get("/:article_id/:votename", auth.checkRole(["full"]), renderArticleIdVotesBlog);
 
 
-router.post("/:article_id/addComment", auth.checkRole(["full"]), postNewComment);
+router.post("/:article_id/addComment", auth.checkRole(["full","guest"]), postNewComment);
 router.post("/:article_id/setMarkdown/:lang", auth.checkRole(["full"]), postSetMarkdown);
 router.post("/:article_id/editComment/:number", auth.checkRole(["full"]), postEditComment);
 router.post("/:article_id", auth.checkRole(["full"]), postArticle);

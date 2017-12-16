@@ -66,29 +66,30 @@ block content
         for article in blog._userMention
           +displayArticle(article,left_lang)
 
-  .row
-    .col-md-1
-    .col-md-11
-      h2= "Inbox Indirect Mention:"
+  if (layout.user.access === "full")
+    .row
+      .col-md-1
+      .col-md-11
+        h2= "Inbox Indirect Mention:"
 
-  for blog in bloglist
-    if blog._mainLangMention && blog._mainLangMention.length > 0
-      .row
-        .col-md-1
-        .col-md-11
-          h4=blog.name+" "+blog.getStatus(layout.left_lang)
-          p=left_lang+" mentions: "+blog._mainLangMention.length
-        for article in blog._mainLangMention
-              +displayArticle(article,left_lang)
+    for blog in bloglist
+      if blog._mainLangMention && blog._mainLangMention.length > 0
+        .row
+          .col-md-1
+          .col-md-11
+            h4=blog.name+" "+blog.getStatus(layout.left_lang)
+            p=left_lang+" mentions: "+blog._mainLangMention.length
+          for article in blog._mainLangMention
+                +displayArticle(article,left_lang)
 
-    if blog._secondLangMention && blog._secondLangMention.length > 0
-      .row
-        .col-md-1
-        .col-md-11
-          h4=blog.name+" "+blog.getStatus(layout.right_lang)
-          p=right_lang+" mentions: "+blog._secondLangMention.length
-        for article in blog._secondLangMention
-              +displayArticle(article,left_lang)
+      if blog._secondLangMention && blog._secondLangMention.length > 0
+        .row
+          .col-md-1
+          .col-md-11
+            h4=blog.name+" "+blog.getStatus(layout.right_lang)
+            p=right_lang+" mentions: "+blog._secondLangMention.length
+          for article in blog._secondLangMention
+                +displayArticle(article,left_lang)
 
   .row
     h2="Options"

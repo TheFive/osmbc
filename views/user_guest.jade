@@ -57,9 +57,9 @@ block content
       if (usershown.OSMUser === layout.user.OSMUser)
         p
           a(href=layout.htmlroot+"/logout") [logout user]
-
-
-
+        if (layout.user.temporaryGuest)
+          p
+            a(href=layout.htmlroot + "/usert/self?becomeFull=true") [Switch back to full]
 
 
 
