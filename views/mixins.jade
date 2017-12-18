@@ -252,3 +252,30 @@ mixin voteButtonList(votes)
   for vote,i in votes
     if (vote.displayAtTop)
       +voteButton(vote,article)
+
+mixin blogStatusTable
+  table.table.table-condensed
+    tr
+      td=""
+      for l in layout.activeLanguages
+        td=l
+
+    for openBlog in layout.listOfOpenBlog.slice(0).reverse()
+      tr
+        td=openBlog.name
+        for l in layout.activeLanguages
+          td
+            div.label.osmbclabel-openblog=openBlog._countUneditedMarkdown[l]
+
+    for editBlog in layout.editBlog.slice(0).reverse()
+      tr
+        td=editBlog.name
+        for l in layout.activeLanguages
+          td
+            if (editBlog["close" + l])
+              div.label.osmbclabel-closedblog
+                span.glyphicon.glyphicon-ok
+            else if (editBlog["reviewComment" + l])
+              div.label.osmbclabel-reviewblog=(editBlog["reviewComment" + l].length - 1)
+            else
+              div.label.osmbclabel-editblog=editBlog._countUneditedMarkdown[l]

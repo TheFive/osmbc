@@ -63,15 +63,44 @@ function renderUserId(req, res, next) {
   debug("renderUserId");
   let redirect = false;
   var id = req.params.user_id;
+
+
+  if (req.query.becomeGuest === "true" && req.user.access === "full") {
+    logger.info("Switch user " + req.user.OSMUser + " to guest");
+    req.user.access = "guest";
+    req.user.temporaryGuest = true;
+    req.user.save({noVersionIncrease: true}, function(err) {
+      if (err) return next(err);
+      res.redirect(htmlroot + "/usert/self");
+    });
+    return;
+  }
+  if (req.query.becomeFull === "true" && req.user.access === "guest" && req.user.temporaryGuest === true) {
+    req.user.access = "full";
+    delete req.user.temporaryGuest;
+    req.user.save({noVersionIncrease: true}, function(err) {
+      if (err) return next(err);
+      res.redirect(htmlroot + "/usert/self");
+    });
+    return;
+  }
+
+
   if (id === "self") return res.redirect(res.rendervar.layout.htmlroot + "/usert/" + req.user.id);
   should.exist(id);
+  if (req.user.access === "guest") {
+    if ((req.user.OSMUser !== id) && (req.user.id !== id)) {
+      return res.status(403).send("Not allowed for guests.");
+    }
+  }
+
   var params = {};
   var user;
   var changes;
   var userHeatMapArray = null;
   async.series([
     function findAndLoaduserByName(cb) {
-      debug("findAndLoaduser");
+      debug("findAndLoaduserByName");
       userModule.findOne({OSMUser: id}, function findAndLoaduserCB(err, result) {
         debug("findAndLoaduser_CB");
         if (err) return cb(err);
@@ -80,8 +109,8 @@ function renderUserId(req, res, next) {
         return cb();
       });
     },
-    function findAndLoaduser(cb) {
-      debug("findAndLoaduser");
+    function findAndLoaduserById(cb) {
+      debug("findAndLoaduserById");
       userModule.findById(id, function findAndLoaduserCB(err, result) {
         debug("findAndLoaduser_CB");
         if (err) return cb(err);
@@ -120,8 +149,10 @@ function renderUserId(req, res, next) {
     if (err) return next(err);
     if (redirect) return;
     should.exist(res.rendervar);
+    let view = "user";
+    if (req.user.access === "guest") view = "user_guest";
     res.set("content-type", "text/html");
-    res.render("user", {usershown: user,
+    res.render(view, {usershown: user,
       changes: changes,
       params: params,
       oldEditorDisabled: config.getValue("diableOldEditor"),
@@ -217,11 +248,11 @@ function createApiKey(req, res, next) {
 
 
 
-router.get("/inbox", auth.checkRole("full"), inbox);
+router.get("/inbox", auth.checkRole(["full", "guest"]), inbox);
 router.get("/list", auth.checkRole("full"), renderList);
 router.get("/create", auth.checkRole("full"), createUser);
 router.get("/createApiKey", auth.checkRole("full"), createApiKey);
-router.get("/:user_id", auth.checkRole("full"), renderUserId);
+router.get("/:user_id", auth.checkRole(["full", "guest"]), renderUserId);
 router.post("/:user_id", auth.checkRole("full"), postUserId);
 
 module.exports.createUser = createUser;

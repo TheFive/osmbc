@@ -1,45 +1,34 @@
-extends layout_guest
+extends layout
 
 block content
   .row
-    .col-md-6
-        h2.hidden-xs
-          | Welcome to OSM BC
-        h2.visible-xs
-          | OSM BC
-        .row 
-          p.osmbc-help-text
-            | You are logged in as guest.
-    .col-md-6
+    .col-md-8
+      h2.hidden-xs
+        | Welcome to OSM BC
+      h2.visible-xs
+        | OSM BC
+      .row
+        p.osmbc-help-text
+          | You are logged in as guest.
+      h2="Your Articles"
+      table.table.table-condensed
+        for a in articles
+          tr
+            td=a.blog
+            td
+              p=a.categoryEN
+              p
+                a(href=layout.htmlroot+"/article/"+a.id)=a.displayTitle()
+              if (a.categoryEN ==="--unpublished--")
+                p="unpublish reason: "+a.unpublishReason+" ( "+a.unpublishReference+" ) "
+
+
+
+    .col-md-4
       .row
           h3="Current Status"
 
         .row
-          table.table.table-condensed
-            tr
-              td=""
-              for l in layout.activeLanguages
-                td=l
-
-            for openBlog in layout.listOfOpenBlog.slice(0).reverse()
-              tr
-                td=openBlog.name
-                for l in layout.activeLanguages
-                  td
-                    div.label.osmbclabel-openblog=openBlog._countUneditedMarkdown[l]
-
-            for editBlog in layout.editBlog.slice(0).reverse()
-              tr
-                td=editBlog.name
-                for l in layout.activeLanguages
-                  td
-                    if (editBlog["close" + l])
-                      div.label.osmbclabel-closedblog
-                        span.glyphicon.glyphicon-ok
-                    else if (editBlog["reviewComment"+l])
-                      div.label.osmbclabel-reviewblog=(editBlog["reviewComment"+l].length-1)
-                    else
-                      div.label.osmbclabel-editblog=editBlog._countUneditedMarkdown[l]
-
+          +blogStatusTable
 
   div.footer

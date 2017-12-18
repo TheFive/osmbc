@@ -57,6 +57,7 @@ SlackAPI.prototype.send = function(message, cb) {
       logger.error(err);
       logger.error("While sending");
       logger.error(message);
+      logger.error("To Hook: "+command);
       err = null;
     }
     if (d) return err ? d.reject(err) : d.resolve({res: res, body: body});

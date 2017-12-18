@@ -10,33 +10,34 @@ if !MIXIN_INCLUDE
         - if (!upToComment) upToComment = -1;
         h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
       each comment,i in article.commentList
-        .row
-          .col-xs-1
-            img(src=layout.getAvatar(comment.user) style="height:40px;width:40px")
-          .col-xs-11
-            b
-              if (i > upToComment)
-                span.glyphicon.glyphicon-envelope(onclick="window.callAndRedraw('/article/#{article.id}/markCommentRead?index=#{i}&reload=false','/article/#{article.id}/commentArea');")
+        if (   (layout.user.access === "full")|| (comment.text.indexOf("@"+layout.user.OSMUser)>=0)|| (comment.user === layout.user.OSMUser))
+          .row
+            .col-xs-1
+              img(src=layout.getAvatar(comment.user) style="height:40px;width:40px")
+            .col-xs-11
+              b
+                if (i > upToComment)
+                  span.glyphicon.glyphicon-envelope(onclick="window.callAndRedraw('/article/#{article.id}/markCommentRead?index=#{i}&reload=false','/article/#{article.id}/commentArea');")
+                  span=" "
+                span=comment.user
+              span=" "
+              span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+              if (comment.editstamp)
                 span=" "
-              span=comment.user
-            span=" "
-            span.text-muted.small=layout.moment(comment.timestamp).fromNow()
-            if (comment.editstamp)
-              span=" "
-              i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
-            if layout.user.OSMUser === comment.user && params.editComment != i
-              span=" "
-              span.glyphicon.glyphicon-pencil(id="EditComment"+i onclick="window.callAndRedraw(null,'/article/#{article.id}/commentArea?editComment=#{i}');")
+                i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
+              if layout.user.OSMUser === comment.user && params.editComment != i
+                span=" "
+                span.glyphicon.glyphicon-pencil(id="EditComment"+i onclick="window.callAndRedraw(null,'/article/#{article.id}/commentArea?editComment=#{i}');")
 
-            if params.editComment == i && layout.user.OSMUser === comment.user
-              form(target="iframeform" name="EditComment",id="EditCommentForm", action=layout.htmlroot+"/article/#{article.id}/EditComment/#{i}?reload=false", method="post")
-                textarea.form-control(spellcheck = "true" name="comment" id="editComment" rows=7)=comment.text
-                button.btn.btn-large.btn-primary(name = "update" type = "button" onclick ="window.submitAndRedraw('form#EditCommentForm','/article/#{article.id}/commentArea');") Update
-                button.btn.btn-large.btn-default(type = "button" onclick ="window.callAndRedraw(null,'/article/#{article.id}/commentArea');") Cancel
-            else
-              p
-                :verbatim
-                  !{layout.md_render(comment.text)}
+              if params.editComment == i && layout.user.OSMUser === comment.user
+                form(target="iframeform" name="EditComment",id="EditCommentForm", action=layout.htmlroot+"/article/#{article.id}/EditComment/#{i}?reload=false", method="post")
+                  textarea.form-control(spellcheck = "true" name="comment" id="editComment" rows=7)=comment.text
+                  button.btn.btn-large.btn-primary(name = "update" type = "button" onclick ="window.submitAndRedraw('form#EditCommentForm','/article/#{article.id}/commentArea');") Update
+                  button.btn.btn-large.btn-default(type = "button" onclick ="window.callAndRedraw(null,'/article/#{article.id}/commentArea');") Cancel
+              else
+                p
+                  :verbatim
+                    !{layout.md_render(comment.text)}
 
     .row
       if (!params.editComment)

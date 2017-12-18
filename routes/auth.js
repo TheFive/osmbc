@@ -35,7 +35,13 @@ passport.deserializeUser(function (user, done) {
   debug("passport.deserializeUser CB");
   userModule.find({OSMUser: user}, function(err, result) {
     if (err) return done(null, null);
-    if (result.length === 1) return done(null, result[0]);
+    if (result.length === 1) {
+      let overWriteRole = config.getValue("DefineRole");
+      if (overWriteRole && overWriteRole[result[0].OSMUser]) {
+        result[0].access = overWriteRole[result[0].OSMUser];
+      }
+      return done(null, result[0]);
+    }
     if (result.length === 0) {
       userModule.createNewUser({OSMUser: user, access: "guest"}, function(err, user) {
         if (err) return done(null, null);
@@ -83,13 +89,20 @@ function (token, tokenSecret, profile, done) {
 ));
 
 
-function checkRole(role) {
+function checkRole(role, functions) {
   let roleArray = role;
+  let functionsArray = functions;
   if (typeof role === "string") roleArray = [role];
+  if (typeof functions === "function") functionsArray = [functions];
   return function checkAuthentification (req, res, next) {
     debug("checkAuthentification");
     if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
-    if (roleArray.indexOf(req.user.access) >= 0) return next();
+    let accessIndex = roleArray.indexOf(req.user.access);
+    if (accessIndex >= 0) {
+      if (!functionsArray) return next();
+      if (!functionsArray[accessIndex]) return next();
+      return functionsArray[accessIndex](req, res, next);
+    }
     return next(new Error("OSM User >" + req.user.OSMUser + "< has not enough access rights"));
   };
 }

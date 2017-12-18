@@ -200,7 +200,6 @@ function renderArticleId(req, res, next) {
       if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
       params.columns = 4;
     }
-    if (req.user.access === "guest") jadeFile = "article/article_guest";
 
 
     res.render(jadeFile, {layout: res.rendervar.layout,
@@ -231,6 +230,7 @@ function renderArticleIdVotes(req, res, next) {
   var article = req.article;
   should.exist(article);
 
+
   async.auto({},
     function (err) {
       debug("renderArticleIdVotes->finalFunction");
@@ -254,6 +254,7 @@ function renderArticleIdCommentArea(req, res, next) {
 
   var article = req.article;
   should.exist(article);
+
   let params = {};
   params.editComment = null;
   if (req.query.editComment) params.editComment = req.query.editComment;
@@ -296,8 +297,6 @@ function renderArticleIdVotesBlog(req, res, next) {
   var article = req.article;
   should.exist(article);
   should.exist(vote);
-
-
 
   async.auto({},
     function (err) {
@@ -382,7 +381,6 @@ function postArticle(req, res, next) {
   debug("postArticle");
 
   var noTranslation = req.query.notranslation;
-
 
 
   var article = req.article;
@@ -567,6 +565,10 @@ function postNewComment(req, res, next) {
   var returnToUrl;
 
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
+
+  if (req.user.access === "guest") {
+    if (article.firstCollector !== req.user.OSMUser) return next();
+  }
 
 
   article.addCommentFunction(req.user, comment, function(err) {
@@ -936,32 +938,40 @@ function translate(req, res, next) {
 }
 
 
+function isFirstCollector(req, res, next) {
+  if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
+  if (!req.article) return next();
+  res.status(403).send("This article is not allowed for guests");
+}
+let allowFullAccess = auth.checkRole("full");
+let allowGuestAccess = auth.checkRole(["full", "guest"], [null, isFirstCollector]);
+
 
 // And configure router to use render Functions
-router.get("/list", auth.checkRole("full"), renderList);
-router.get("/create", auth.checkRole("full"), createArticle);
-router.get("/searchandcreate", auth.checkRole("full"), searchAndCreate);
-router.get("/search", auth.checkRole("full"), searchArticles);
-router.post("/create", auth.checkRole("full"), postArticle);
-router.post("/:article_id/copyTo/:blog", auth.checkRole("full"), copyArticle);
-router.post("/translate/:fromLang/:toLang", auth.checkRole("full"), translate);
+router.get("/list", allowFullAccess, renderList);
+router.get("/create", allowGuestAccess, createArticle);
+router.get("/searchandcreate", allowFullAccess, searchAndCreate);
+router.get("/search", allowFullAccess, searchArticles);
+router.post("/create", allowGuestAccess, postArticle);
+router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);
+router.post("/translate/:fromLang/:toLang", allowFullAccess, translate);
 
 router.param("article_id", getArticleFromID);
 
-router.get("/:article_id", auth.checkRole(["full", "guest"]), renderArticleId);
-router.get("/:article_id/votes", auth.checkRole(["full"]), renderArticleIdVotes);
-router.get("/:article_id/commentArea", auth.checkRole(["full"]), renderArticleIdCommentArea);
+router.get("/:article_id", allowGuestAccess, renderArticleId);
+router.get("/:article_id/votes", allowFullAccess, renderArticleIdVotes);
+router.get("/:article_id/commentArea", allowGuestAccess, renderArticleIdCommentArea);
 
-router.get("/:article_id/markCommentRead", auth.checkRole(["full"]), markCommentRead);
-router.get("/:article_id/:action.:tag", auth.checkRole(["full"]), doAction);
-router.get("/:article_id/:votename", auth.checkRole(["full"]), renderArticleIdVotesBlog);
+router.get("/:article_id/markCommentRead", allowFullAccess, markCommentRead);
+router.get("/:article_id/:action.:tag", allowFullAccess, doAction);
+router.get("/:article_id/:votename", allowFullAccess, renderArticleIdVotesBlog);
 
 
-router.post("/:article_id/addComment", auth.checkRole(["full"]), postNewComment);
-router.post("/:article_id/setMarkdown/:lang", auth.checkRole(["full"]), postSetMarkdown);
-router.post("/:article_id/editComment/:number", auth.checkRole(["full"]), postEditComment);
-router.post("/:article_id", auth.checkRole(["full"]), postArticle);
-router.post("/:article_id/witholdvalues", auth.checkRole(["full"]), postArticleWithOldValues);
+router.post("/:article_id/addComment", allowGuestAccess, postNewComment);
+router.post("/:article_id/setMarkdown/:lang", allowFullAccess, postSetMarkdown);
+router.post("/:article_id/editComment/:number", allowFullAccess, postEditComment);
+router.post("/:article_id", allowFullAccess, postArticle);
+router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldValues);
 
 
 

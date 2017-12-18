@@ -120,10 +120,9 @@ describe("routes/article", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response) {
           should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.not.containEql("FullAccessArticleView");
+          should(response.statusCode).eql(403);
           bddone();
         });
       });
@@ -195,8 +194,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserNonExisting", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("This article is not allowed for guests");
           bddone();
         });
       });
@@ -368,8 +367,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserNonExisting", function () {
         request.get({url: baseLink + "/article/create", jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
+          should(response.statusCode).eql(200);
+          body.should.containEql('<p align="center" class="osmbc-help-text">Please check your link for duplicates before   collecting.</p>');
           bddone();
         });
       });
@@ -482,8 +481,8 @@ describe("routes/article", function() {
       });
     });
     it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserDenied",jar, function() {
+        request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
           body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
@@ -492,12 +491,31 @@ describe("routes/article", function() {
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
+        request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
+          should(response.statusCode).eql(200);
+          body.should.containEql("unpublisnReason");
+          articleModule.findById(3, function (err, article) {
+            should.not.exist(err);
+            delete article._blog;
+            should(article).eql({
+              id: "3",
+              version: 3,
+              commentList: [{user: "TestUserNonExisting", timestamp: "2016-05-25T20:00:00.000Z", text: "addComment"}],
+              commentStatus: "open",
+              commentRead: {TestUserNonExisting: 0},
+              blog: "BLOG",
+              collection: "COLLECTION",
+              comment: "comment",
+              categoryEN: "categoryEN",
+              title: "title",
+              unpublishReason: "unpublisnReason",
+              unpublishReference: "unpublishReference",
+              firstCollector: "TestUserNonExisting"
+            });
+            bddone();
+          });
         });
       });
     });
