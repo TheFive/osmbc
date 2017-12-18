@@ -95,7 +95,7 @@ describe("views/blog", function() {
   });
   describe("status Functions", function() {
     beforeEach(function(bddone) {
-      mockdate.set(new Date("2016-05-25T19:00"));
+      mockdate.set(new Date("2016-05-25T19:00:00Z"));
       jar = request.jar();
       baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
       nock("https://hooks.slack.com/")
@@ -176,7 +176,7 @@ describe("views/blog", function() {
     var browser;
     beforeEach(function(bddone) {
       process.env.TZ = "Europe/Amsterdam";
-      mockdate.set(new Date("2016-05-25T19:00"));
+      mockdate.set(new Date("2016-05-25T19:00:00Z"));
       nock("https://hooks.slack.com/")
         .post(/\/services\/.*/)
         .times(999)

@@ -247,7 +247,7 @@ describe("notification/mailReceiver", function() {
     });
 
     beforeEach(function (bddone) {
-      mockdate.set(new Date("2016-05-25T20:00"));
+      mockdate.set(new Date("2016-05-25T20:00:00Z"));
       oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
       mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
       mailReceiver.for_test_only.transporter.sendMail = mailChecker;

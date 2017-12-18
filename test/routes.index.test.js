@@ -17,7 +17,7 @@ describe("routes/index", function() {
   before(initialise.initialiseModules);
   beforeEach(function(bddone) {
     config.initialise();
-    mockdate.set(new Date("2016-05-25T20:00"));
+    mockdate.set(new Date("2016-05-25T20:00:00Z"));
     jar = request.jar();
     testutil.importData(
       {

@@ -31,7 +31,7 @@ describe("routes/blog", function() {
   before(initialise.initialiseModules);
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
-    mockdate.set(new Date("2016-05-25T20:00"));
+    mockdate.set(new Date("2016-05-25T20:00:00Z"));
     jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
