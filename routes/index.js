@@ -202,8 +202,8 @@ router.get("/osmbc.html", redirectHome);
 router.get("/osmbc", redirectHome);
 router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
 router.get("/changelog", auth.checkRole(["full", "guest"]), renderChangelog);
-router.get("/language", auth.checkRole(["full","guest"]), languageSwitcher);
-router.get("/userconfig", auth.checkRole(["full","guest"]), setUserConfig);
+router.get("/language", auth.checkRole(["full", "guest"]), languageSwitcher);
+router.get("/userconfig", auth.checkRole(["full", "guest"]), setUserConfig);
 router.get("/createblog", auth.checkRole(["full"]), createBlog);
 
 

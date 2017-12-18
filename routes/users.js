@@ -66,21 +66,21 @@ function renderUserId(req, res, next) {
 
 
   if (req.query.becomeGuest === "true" && req.user.access === "full") {
-    logger.info("Switch user "+req.user.OSMUser+" to guest");
+    logger.info("Switch user " + req.user.OSMUser + " to guest");
     req.user.access = "guest";
     req.user.temporaryGuest = true;
-    req.user.save({noVersionIncrease: true},function(err){
+    req.user.save({noVersionIncrease: true}, function(err) {
       if (err) return next(err);
-      res.redirect(htmlroot+"/usert/self");
+      res.redirect(htmlroot + "/usert/self");
     });
     return;
   }
   if (req.query.becomeFull === "true" && req.user.access === "guest" && req.user.temporaryGuest === true) {
     req.user.access = "full";
-    delete req.user.temporaryGuest ;
-    req.user.save({noVersionIncrease: true},function(err){
+    delete req.user.temporaryGuest;
+    req.user.save({noVersionIncrease: true}, function(err) {
       if (err) return next(err);
-      res.redirect(htmlroot+"/usert/self");
+      res.redirect(htmlroot + "/usert/self");
     });
     return;
   }
@@ -89,7 +89,9 @@ function renderUserId(req, res, next) {
   if (id === "self") return res.redirect(res.rendervar.layout.htmlroot + "/usert/" + req.user.id);
   should.exist(id);
   if (req.user.access === "guest") {
-    if ((req.user.OSMUser !== id) && (req.user.id !== id)) return next();
+    if ((req.user.OSMUser !== id) && (req.user.id !== id)) {
+      return res.status(403).send("Not allowed for guests.");
+    }
   }
 
   var params = {};
@@ -246,7 +248,7 @@ function createApiKey(req, res, next) {
 
 
 
-router.get("/inbox", auth.checkRole(["full","guest"]), inbox);
+router.get("/inbox", auth.checkRole(["full", "guest"]), inbox);
 router.get("/list", auth.checkRole("full"), renderList);
 router.get("/create", auth.checkRole("full"), createUser);
 router.get("/createApiKey", auth.checkRole("full"), createApiKey);

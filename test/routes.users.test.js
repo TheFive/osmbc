@@ -60,8 +60,9 @@ describe("router/user", function() {
       testutil.startServer("TestUserNonExisting", function () {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
+          should(response.statusCode).eql(200);
+          body.should.not.containEql("<h2>Inbox Inirect Mention:</h2>");
+          body.should.containEql("<h2>Inbox Direct Mention:</h2>");
           bddone();
         });
       });
@@ -239,8 +240,8 @@ describe("router/user", function() {
       testutil.startServer("TestUserNonExisting", function () {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("<h1>Not allowed to access this page</h1>");
+          should(response.statusCode).eql(403);
+          body.should.containEql("Not allowed for guests.");
           bddone();
         });
       });

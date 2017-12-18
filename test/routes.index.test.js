@@ -135,15 +135,14 @@ describe("routes/index", function() {
   });
   describe("route GET /language", function() {
     let url = baseLink + "/language?lang=DE";
+    function requestLanguageSetter(whichlang, lang, cb) {
+      request.get({url: baseLink + "/language?" + whichlang + "=" + lang, jar: jar}, function (err, response) {
+        should.not.exist(err);
+        should(response.statusCode).eql(200);
+        return cb();
+      });
+    }
     it("should change language", function (bddone) {
-      function requestLanguageSetter(whichlang, lang, cb) {
-        request.get({url: baseLink + "/language?" + whichlang + "=" + lang, jar: jar}, function (err, response) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          return cb();
-        });
-      }
-
       async.series([
         testutil.startServerWithLogin.bind(null, "TestUser", jar),
         requestLanguageSetter.bind(null, "lang", "ES"),
@@ -178,12 +177,27 @@ describe("routes/index", function() {
         });
       });
     });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
+    it("should work for non existing / guest user", function (bddone) {
+      async.series([
+        testutil.startServerWithLogin.bind(null, "TestUserNonExisting", jar),
+        requestLanguageSetter.bind(null, "lang", "ES"),
+        requestLanguageSetter.bind(null, "lang3", "EN"),
+        requestLanguageSetter.bind(null, "lang4", "EN")
+
+      ], function (err) {
+        should.not.exist(err);
+        userModule.find({OSMUser:"TestUserNonExisting"}, function (err, user) {
+          should(user[0]).eql({
+            id: "4",
+            OSMUser: "TestUserNonExisting",
+            access: "guest",
+            version: 4,
+            lastAccess: "2016-05-25T20:00:00.000Z",
+            mainLang: "ES",
+            secondLang: "EN",
+            lang3: null,
+            lang4: null
+          });
           bddone();
         });
       });
@@ -252,11 +266,11 @@ describe("routes/index", function() {
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
+      testutil.startServerWithLogin("TestUser", jar, function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
+          should(response.statusCode).eql(200);
+          body.should.containEql("changed");
           bddone();
         });
       });
