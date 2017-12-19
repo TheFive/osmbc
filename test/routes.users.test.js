@@ -91,7 +91,7 @@ describe("router/user", function() {
         });
       });
     });
-    it("should deny non existing user", function (bddone) {
+    it("should deny non existing / guest user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
@@ -222,6 +222,16 @@ describe("router/user", function() {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("<h1>TestUserNewGuest Heatmap</h1>");
+          bddone();
+        });
+      });
+    });
+    it("should not show user data of other user for fresh created guest user", function (bddone) {
+      testutil.startServerWithLogin("TestUserNewGuest",jar, function () {
+        request.get({url: baseLink + "/usert/TestUserDenied",followRedirect:false,jar:jar}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(403);
+          body.should.containEql("Not allowed for guests.");
           bddone();
         });
       });

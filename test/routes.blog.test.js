@@ -25,8 +25,9 @@ describe("routes/blog", function() {
 
   after(function (bddone) {
     nock.cleanAll();
-    bddone();
+    testutil.stopServer();
     mockdate.reset();
+    bddone();
   });
   before(initialise.initialiseModules);
   beforeEach(function (bddone) {

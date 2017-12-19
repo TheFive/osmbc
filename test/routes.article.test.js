@@ -1,6 +1,5 @@
 "use strict";
 
-
 var sinon   = require("sinon");
 var should  = require("should");
 var nock    = require("nock");
@@ -29,8 +28,9 @@ describe("routes/article", function() {
 
   after(function (bddone) {
     nock.cleanAll();
-    bddone();
+    testutil.stopServer();
     mockdate.reset();
+    bddone();
   });
 
   beforeEach(function (bddone) {
@@ -52,7 +52,7 @@ describe("routes/article", function() {
           { "OSMUser": "UserWith4Lang", access: "full", languageCount: "four"}
         ],
         "article": [
-          {"blog": "BLOG", "markdownDE": "* Dies ist ein kleiner Testartikel.", "category": "Mapping"},
+          {"blog": "BLOG", "markdownDE": "* Dies ist ein kleiner Testartikel.", "category": "Mapping",firstCollector:"TestUserNonExisting"},
           {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment"}]}],
         clear: true}, bddone);
   });
@@ -123,6 +123,16 @@ describe("routes/article", function() {
         request.get({url: url, jar: jar}, function (err, response) {
           should.not.exist(err);
           should(response.statusCode).eql(403);
+          bddone();
+        });
+      });
+    });
+    it("should allow non existing user for self collected", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: baseLink + "/article/1", jar: jar}, function (err, response,body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(200);
+          body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
           bddone();
         });
       });
