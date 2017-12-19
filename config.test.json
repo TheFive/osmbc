@@ -72,5 +72,6 @@
   "userIsOldInDays":60,
   "CalendarInterface":{},
   "PublicCalendarPage":"http://linktopubliccalendar.org",
-  "WelcomeRefreshInSeconds":1
+  "WelcomeRefreshInSeconds":1,
+  "createGuestUsersAutomatic":true
 }
