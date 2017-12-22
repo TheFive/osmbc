@@ -1,5 +1,7 @@
 "use strict";
 
+const should = require("should");
+
 var debug = require("debug")("OSMBC:notification:messageFilter");
 
 

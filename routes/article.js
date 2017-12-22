@@ -1,30 +1,33 @@
 "use strict";
 
-const express  = require("express");
-const async    = require("async");
-const router   = express.Router();
+const express     = require("express");
+const async       = require("async");
+const should      = require("should");
+const markdown    = require("markdown-it")();
+const debug       = require("debug")("OSMBC:routes:article");
+const path        = require("path");
+
+
+const router      = express.Router();
 const slackrouter = express.Router();
-const should   = require("should");
-const markdown = require("markdown-it")();
-const debug    = require("debug")("OSMBC:routes:article");
-const jade     = require("jade");
-const util     = require("../util/util.js");
-const path     = require("path");
+const jade        = require("jade");
 
 
-const config    = require("../config.js");
-const logger    = require("../config.js").logger;
+const util          = require("../util/util.js");
+const config        = require("../config.js");
+const logger        = require("../config.js").logger;
 
-const BlogRenderer = require("../render/BlogRenderer.js");
+const BlogRenderer  = require("../render/BlogRenderer.js");
 
 const articleModule = require("../model/article.js");
 const twitter       = require("../model/twitter.js");
 const blogModule    = require("../model/blog.js");
 const logModule     = require("../model/logModule.js");
 const configModule  = require("../model/config.js");
+const userModule    = require("../model/user.js");
 const htmltitle     = require("../model/htmltitle.js");
 
-const auth        = require("../routes/auth.js");
+const auth          = require("../routes/auth.js");
 
 
 require("jstransformer")(require("jstransformer-markdown-it"));
@@ -93,6 +96,7 @@ function renderArticleId(req, res, next) {
   params.editComment = null;
   if (req.query.editComment) params.editComment = req.query.editComment;
   if (req.query.notranslation) params.notranslation = req.query.notranslation;
+  let collectedByGuest = false;
 
 
 
@@ -101,6 +105,16 @@ function renderArticleId(req, res, next) {
     // Find usage of Links in other articles
     articleReferences: article.calculateUsedLinks.bind(article, {ignoreStandard: true}),
     // Find the associated blog for this article
+
+    firstCollectorAccess: function (cb) {
+      userModule.find({OSMUser: article.firstCollector}, function (err, userArray) {
+        if (err) return cb(err);
+        let user = null;
+        if (userArray.length >= 0) user = userArray[0];
+        if (user && user.access === "guest") collectedByGuest = true;
+        return cb();
+      });
+    },
     blog:
     function findBlog(callback) {
       debug("renderArticleId->blog");
@@ -216,7 +230,8 @@ function renderArticleId(req, res, next) {
       articleReferences: result.articleReferences,
       usedLinks: result.usedLinks,
       categories: categories,
-      languageFlags: languageFlags});
+      languageFlags: languageFlags,
+      collectedByGuest: collectedByGuest});
   }
   );
 }
@@ -259,6 +274,7 @@ function renderArticleIdCommentArea(req, res, next) {
   params.editComment = null;
   if (req.query.editComment) params.editComment = req.query.editComment;
 
+
   async.auto({},
     function (err) {
       debug("renderArticleCommentArea->finalFunction");
@@ -298,7 +314,7 @@ function renderArticleIdVotesBlog(req, res, next) {
   should.exist(article);
   should.exist(vote);
 
-  async.auto({},
+  async.auto({ },
     function (err) {
       debug("renderArticleIdVotes->finalFunction");
 
@@ -318,8 +334,7 @@ function renderArticleIdVotesBlog(req, res, next) {
         v["#vote_" + voteName + "_" + article.id] = result;
         res.json(v);
       });
-    }
-  );
+    });
 }
 
 

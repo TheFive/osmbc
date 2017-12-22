@@ -5,7 +5,6 @@ if !MIXIN_INCLUDE
   .col-md-6
     if (article.commentList)
       .row
-
         - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
         - if (!upToComment) upToComment = -1;
         h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"

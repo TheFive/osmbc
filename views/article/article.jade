@@ -127,6 +127,12 @@ block content
 
     // Display Collection Row
     .row
+      .col-md-1
+      .col-md-11
+        if (collectedByGuest && layout.user.access !== "guest")
+          div.label.osmbclabel-guest="This article was collected by our guest user " + article.firstCollector + "."
+
+    .row
       .form-group
         label.col-md-1="Collection"
         .col-md-10
