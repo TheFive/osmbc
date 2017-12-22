@@ -14,14 +14,14 @@
 
 Before you install OSMBC the following Software has to be installed.
 
-**a)** Postgres 9.4 or higher
+**a)** Postgres 9.3 or higher
 
-The System should work with postgres version higher than 9.4. JSONB is required.
+The system is tested and developed under `9.3`, as far as i know all features
+used should work with `9.4`.
 
-**b)** Node.JS 6.x or higher
+**b)** Node.JS 10.* or higher
 
-OSMBC runs with `6.11.x` on the production machine. 
-First very quick tests with `8.x` failed.
+OSMBC runs with `4.2.4` on the development machine and with `4.2.3` on the production server.
 
 ## 2 - Configuration files
 
@@ -204,7 +204,6 @@ The solution for this is using `nvm` — _Node Version Manager_:
 ## 5 - Database
 
 The database can be installed using the two javascript files that are **in the folder `import`**.
-For test purposes you need only the database, that is named in config.test.json, it can be empty, as all tests are (should be) context free.
 
 ### Creating tables and views and the first uster
 

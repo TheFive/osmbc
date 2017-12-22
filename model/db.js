@@ -1,5 +1,6 @@
 "use strict";
-const pg = require("pg");
+
+const {Pool} = require("pg");
 var config = require("../config.js");
 var should = require("should");
 var sqldebug  = require("debug")("OSMBC:model:sql");
@@ -14,8 +15,8 @@ should.exist(pgConfigValues.server);
 should.exist(pgConfigValues.port);
 var logger    = require("../config.js").logger;
 
-if (pgConfigValues.connectStr && pgConfigValues.connectStr !== "") {
-  logger.error("Database connectStr is deprecated, please remove from config");
+if (pgConfigValues.connectstr && pgConfigValues.connectStr !== "") {
+  logger.error("Database connectstr is deprecated, please remove from config");
   process.exit(1);
 }
 
@@ -31,13 +32,27 @@ var pgConfig = {
   host: pgConfigValues.server,
   port: pgConfigValues.port,
   max: 10,
-  idleTimeoutMillis: 30000
+  connectionTimeoutMillis: 1000,
+  idleTimeoutMillis: 1000
 };
 
 // this initializes a connection pool
 // it will keep idle connections open for 30 seconds
 // and set a limit of maximum 10 idle clients
-let pool = new pg.Pool(pgConfig);
+let pool = null;
+
+function getPool() {
+  if (pool) return pool;
+  pool = new Pool(pgConfig);
+  pool.on("error", function(err, client) {
+    console.error("There is an error in PG Pool / Problem with database");
+    console.error(err);
+    console.error("-------- client ----------------------");
+    console.error(client);
+    process.exit(1);
+  });
+  return pool;
+}
 
 // export the query method for passing queries to the pool
 module.exports.query = function (text, values, callback) {
@@ -46,10 +61,11 @@ module.exports.query = function (text, values, callback) {
     values = undefined;
   }
   should.exist(callback);
+  should(typeof callback).eql("function");
 
   var startTime = new Date().getTime();
   sqldebug("SQL: start %s", text);
-  pool.query(text, values, function(err, result) {
+  function handleResult(err, result) {
     var endTime = new Date().getTime();
     if (err) {
       sqldebug("SQL: [" + (endTime - startTime) / 1000 + "]( Result: ERROR)" + text);
@@ -57,17 +73,13 @@ module.exports.query = function (text, values, callback) {
     }
     sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + ((result.rows) ? result.rows.length : 0) + " rows)" + text);
     return callback(null, result);
-  });
+  }
+  if (values === undefined) {
+    getPool().query(text, handleResult);
+  } else {
+    getPool().query(text, values, handleResult);
+  }
 };
 
-// the pool also supports checking out a client for
-// multiple operations, such as a transaction
-module.exports.connect = function (callback) {
-  return pool.connect(callback);
-};
 
-module.exports.fortestonly = {};
-module.exports.fortestonly.testpool = function rebindPool() {
-  let pool = new pg.Pool(pgConfig);
-  return pool;
-};
+module.exports.getPool = getPool;

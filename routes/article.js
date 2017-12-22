@@ -1,28 +1,34 @@
 "use strict";
 
-var express  = require("express");
-var async    = require("async");
-var router   = express.Router();
-var slackrouter = express.Router();
-var should   = require("should");
-var markdown = require("markdown-it")();
-var debug    = require("debug")("OSMBC:routes:article");
-var jade     = require("jade");
-var util     = require("../util/util.js");
-var path     = require("path");
+const express     = require("express");
+const async       = require("async");
+const should      = require("should");
+const markdown    = require("markdown-it")();
+const debug       = require("debug")("OSMBC:routes:article");
+const path        = require("path");
 
 
-var config    = require("../config.js");
-var logger    = require("../config.js").logger;
+const router      = express.Router();
+const slackrouter = express.Router();
+const jade        = require("jade");
 
-var BlogRenderer = require("../render/BlogRenderer.js");
 
-var articleModule = require("../model/article.js");
-var twitter       = require("../model/twitter.js");
-var blogModule    = require("../model/blog.js");
-var logModule     = require("../model/logModule.js");
-var configModule  = require("../model/config.js");
-var htmltitle     = require("../model/htmltitle.js");
+const util          = require("../util/util.js");
+const config        = require("../config.js");
+const logger        = require("../config.js").logger;
+
+const BlogRenderer  = require("../render/BlogRenderer.js");
+
+const articleModule = require("../model/article.js");
+const twitter       = require("../model/twitter.js");
+const blogModule    = require("../model/blog.js");
+const logModule     = require("../model/logModule.js");
+const configModule  = require("../model/config.js");
+const userModule    = require("../model/user.js");
+const htmltitle     = require("../model/htmltitle.js");
+
+const auth          = require("../routes/auth.js");
+
 
 require("jstransformer")(require("jstransformer-markdown-it"));
 
@@ -37,7 +43,7 @@ const deeplTranslate = require("deepl-translator");
 
 
 
-let htmlroot = config.getValue("htmlroot", {mustExist: true});
+let htmlroot = config.htmlRoot();
 
 // send info, that disableOldEditor is not needed any longer
 config.getValue("diableOldEditor", {deprecated: true});
@@ -90,6 +96,7 @@ function renderArticleId(req, res, next) {
   params.editComment = null;
   if (req.query.editComment) params.editComment = req.query.editComment;
   if (req.query.notranslation) params.notranslation = req.query.notranslation;
+  let collectedByGuest = false;
 
 
 
@@ -98,6 +105,16 @@ function renderArticleId(req, res, next) {
     // Find usage of Links in other articles
     articleReferences: article.calculateUsedLinks.bind(article, {ignoreStandard: true}),
     // Find the associated blog for this article
+
+    firstCollectorAccess: function (cb) {
+      userModule.find({OSMUser: article.firstCollector}, function (err, userArray) {
+        if (err) return cb(err);
+        let user = null;
+        if (userArray.length >= 0) user = userArray[0];
+        if (user && user.access === "guest") collectedByGuest = true;
+        return cb();
+      });
+    },
     blog:
     function findBlog(callback) {
       debug("renderArticleId->blog");
@@ -213,7 +230,8 @@ function renderArticleId(req, res, next) {
       articleReferences: result.articleReferences,
       usedLinks: result.usedLinks,
       categories: categories,
-      languageFlags: languageFlags});
+      languageFlags: languageFlags,
+      collectedByGuest: collectedByGuest});
   }
   );
 }
@@ -226,6 +244,7 @@ function renderArticleIdVotes(req, res, next) {
 
   var article = req.article;
   should.exist(article);
+
 
   async.auto({},
     function (err) {
@@ -250,9 +269,11 @@ function renderArticleIdCommentArea(req, res, next) {
 
   var article = req.article;
   should.exist(article);
+
   let params = {};
   params.editComment = null;
   if (req.query.editComment) params.editComment = req.query.editComment;
+
 
   async.auto({},
     function (err) {
@@ -293,9 +314,7 @@ function renderArticleIdVotesBlog(req, res, next) {
   should.exist(article);
   should.exist(vote);
 
-
-
-  async.auto({},
+  async.auto({ },
     function (err) {
       debug("renderArticleIdVotes->finalFunction");
 
@@ -315,8 +334,7 @@ function renderArticleIdVotesBlog(req, res, next) {
         v["#vote_" + voteName + "_" + article.id] = result;
         res.json(v);
       });
-    }
-  );
+    });
 }
 
 
@@ -378,7 +396,6 @@ function postArticle(req, res, next) {
   debug("postArticle");
 
   var noTranslation = req.query.notranslation;
-
 
 
   var article = req.article;
@@ -564,6 +581,10 @@ function postNewComment(req, res, next) {
 
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
+  if (req.user.access === "guest") {
+    if (article.firstCollector !== req.user.OSMUser) return next();
+  }
+
 
   article.addCommentFunction(req.user, comment, function(err) {
     debug("postNewComment->setValues->addComment");
@@ -649,7 +670,11 @@ function markCommentRead(req, res, next) {
       return;
     }
     let returnToUrl  = htmlroot + "/article/" + article.id;
-    returnToUrl = req.header("Referer") || returnToUrl;
+
+    // Do not loop with auth (can happen in tests)
+    if (req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
+      returnToUrl = req.header("Referer") || returnToUrl;
+    }
     if (req.query.reload === "false") {
       res.end("OK");
     } else {
@@ -928,32 +953,40 @@ function translate(req, res, next) {
 }
 
 
+function isFirstCollector(req, res, next) {
+  if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
+  if (!req.article) return next();
+  res.status(403).send("This article is not allowed for guests");
+}
+let allowFullAccess = auth.checkRole("full");
+let allowGuestAccess = auth.checkRole(["full", "guest"], [null, isFirstCollector]);
+
 
 // And configure router to use render Functions
-router.get("/list", renderList);
-router.get("/create", createArticle);
-router.get("/searchandcreate", searchAndCreate);
-router.get("/search", searchArticles);
-router.post("/create", postArticle);
-router.post("/:article_id/copyTo/:blog", copyArticle);
-router.post("/translate/:fromLang/:toLang", translate);
+router.get("/list", allowFullAccess, renderList);
+router.get("/create", allowGuestAccess, createArticle);
+router.get("/searchandcreate", allowFullAccess, searchAndCreate);
+router.get("/search", allowFullAccess, searchArticles);
+router.post("/create", allowGuestAccess, postArticle);
+router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);
+router.post("/translate/:fromLang/:toLang", allowFullAccess, translate);
 
 router.param("article_id", getArticleFromID);
 
-router.get("/:article_id", renderArticleId);
-router.get("/:article_id/votes", renderArticleIdVotes);
-router.get("/:article_id/commentArea", renderArticleIdCommentArea);
+router.get("/:article_id", allowGuestAccess, renderArticleId);
+router.get("/:article_id/votes", allowFullAccess, renderArticleIdVotes);
+router.get("/:article_id/commentArea", allowGuestAccess, renderArticleIdCommentArea);
 
-router.get("/:article_id/markCommentRead", markCommentRead);
-router.get("/:article_id/:action.:tag", doAction);
-router.get("/:article_id/:votename", renderArticleIdVotesBlog);
+router.get("/:article_id/markCommentRead", allowFullAccess, markCommentRead);
+router.get("/:article_id/:action.:tag", allowFullAccess, doAction);
+router.get("/:article_id/:votename", allowFullAccess, renderArticleIdVotesBlog);
 
 
-router.post("/:article_id/addComment", postNewComment);
-router.post("/:article_id/setMarkdown/:lang", postSetMarkdown);
-router.post("/:article_id/editComment/:number", postEditComment);
-router.post("/:article_id", postArticle);
-router.post("/:article_id/witholdvalues", postArticleWithOldValues);
+router.post("/:article_id/addComment", allowGuestAccess, postNewComment);
+router.post("/:article_id/setMarkdown/:lang", allowFullAccess, postSetMarkdown);
+router.post("/:article_id/editComment/:number", allowFullAccess, postEditComment);
+router.post("/:article_id", allowFullAccess, postArticle);
+router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldValues);
 
 
 

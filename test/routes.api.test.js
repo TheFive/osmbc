@@ -19,7 +19,7 @@ require("jstransformer-verbatim");
 describe("routes/api", function() {
   var baseLink;
   beforeEach(function(bddone) {
-    baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+    baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
     async.series([
       function(cb) { testutil.importData({clear: true, user: [{"OSMUser": "TheFive", "email": "simple@test.test",language:"DE","apiKey":"334433"}]}, cb); },
       testutil.startServer

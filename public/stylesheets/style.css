@@ -144,6 +144,10 @@ table {
   color:white;
   background-color:red;
 }
+.osmbclabel-guest {
+  color:white;
+  background-color:#e5720d;
+}
 
 .osmbclabel-openblog {
   color:white;

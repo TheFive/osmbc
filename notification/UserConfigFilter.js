@@ -1,12 +1,17 @@
 "use strict";
 
+const should = require("should");
+
 var debug = require("debug")("OSMBC:notification:messageFilter");
 
 
 function UserConfigFilter(user, receiver) {
   debug("UserConfigFilter");
+
   this.user = user;
   this.receiver = receiver;
+  should.exist(this.user.OSMUser);
+  should.exist(this.user.access);
 }
 
 UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, article, change, cb) {
@@ -14,13 +19,13 @@ UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, artic
   var sendMail = false;
 
   // check Collection
-  if (this.user.mailNewCollection === "true") {
+  if (this.user.mailNewCollection === "true" && this.user.access === "full") {
     if (change.collection && change.collection !== article.collection) {
       sendMail = true;
       debug("Mail sent because new Collection");
     }
   }
-  if (this.user.mailAllComment === "true") {
+  if (this.user.mailAllComment === "true" && this.user.access === "full") {
     if (change.comment && change.comment !== article.comment) {
       sendMail = true;
       debug("Mail send because changed comment");
@@ -28,6 +33,9 @@ UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, artic
   }
   var userList = [];
   if (this.user.mailComment) userList = this.user.mailComment;
+
+  // Guest are only informed about comments they are adressed to
+  if (this.user.access === "guest" && article.firstCollector === this.user.OSMUser) userList = [this.user.OSMUser];
   for (var i = 0; i < userList.length; i++) {
     if (change.comment && change.comment.search(new RegExp("@" + userList[i], "i")) >= 0) {
       sendMail = true;
@@ -68,6 +76,14 @@ UserConfigFilter.prototype.addComment = function ucfAddComment(user, article, co
       debug("Mail send because comment for @" + userList[i]);
     }
   }
+
+
+
+  if (this.user.access === "guest") {
+    sendMail = false;
+    if (article.firstCollector === this.user.OSMUser) sendMail = true;
+  }
+
   if (!sendMail) return cb();
   this.receiver.addComment(user, article, comment, cb);
 };
@@ -103,6 +119,10 @@ UserConfigFilter.prototype.editComment = function ucfEditComment(user, article, 
       debug("Mail send because comment for @" + userList[i]);
     }
   }
+  if (this.user.access === "guest") {
+    sendMail = false;
+    if (article.firstCollector === this.user.OSMUser) sendMail = true;
+  }
   if (!sendMail) return cb();
   this.receiver.editComment(user, article, index, comment, cb);
 };
@@ -118,6 +138,7 @@ UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, ch
       sendMail = true;
     }
   }
+  if (this.user.access === "guest") sendMail = false;
 
   if (!sendMail) return cb();
   this.receiver.updateBlog(user, blog, change, cb);
@@ -133,6 +154,7 @@ UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user
     var l = wnList[i];
     if (l === lang) sendMail = true;
   }
+  if (this.user.access === "guest") sendMail = false;
   if (!sendMail) return cb();
   debug("Send out mail");
   this.receiver.sendLanguageStatus(user, blog, lang, status, cb);
@@ -147,6 +169,7 @@ UserConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog
     var l = wnList[i];
     if (l === lang) sendMail = true;
   }
+  if (this.user.access === "guest") sendMail = false;
   if (!sendMail) return cb();
   debug("Send out mail");
   this.receiver.sendCloseStatus(user, blog, lang, status, cb);

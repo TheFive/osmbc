@@ -12,7 +12,7 @@ var markdown = require("markdown-it")()
 
 var token = null;
 
-let htmlroot = config.getValue("htmlroot", {mustExist: true});
+let htmlroot = config.htmlRoot();
 
 function initToken() {
   debug("initToken");

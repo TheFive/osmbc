@@ -32,33 +32,36 @@ block all
                 span.icon-bar
                 span.icon-bar
             .navbar-collapse.collapse
-              ul.nav.navbar-nav.navbar-left
-                li.dropdown
-                  a.dropdown-toggle(href='#', data-toggle='dropdown')
-                    | User
-                    span.caret
-                  ul.dropdown-menu(role='menu')
-                    li.dropdown-header List
-                    li
-                      a(href=layout.htmlroot+"/usert/create") Create
-                    li
-                      a(href=layout.htmlroot+"/usert/list?access=full") List Active
-                    li
-                      a(href=layout.htmlroot+"/usert/list?access=denied") List Denied
-                    li
-                      a(href=layout.htmlroot+"/usert/list") List All
-                    li
-                      a(href=layout.htmlroot+"/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
-                li.dropdown.hidden-xs
-                  a.dropdown-toggle(href='#', data-toggle='dropdown')
-                    | Tool
-                    span.caret
-                  ul.dropdown-menu(role='menu')
-                    li.dropdown-header Action
-                    li
-                      a(href=layout.htmlroot+"/createblog") Create Blog
-                li
-                  a(href=layout.htmlroot+"/osmbc/admin") Admin
+              if (layout.user.access === "full")
+                ul.nav.navbar-nav.navbar-left
+                  li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown')
+                      | User
+                      span.caret
+                    ul.dropdown-menu(role='menu')
+                      li.dropdown-header List
+                      li
+                        a(href=layout.htmlroot + "/usert/create") Create
+                      li
+                        a(href=layout.htmlroot + "/usert/list?access=full") List Active
+                      li
+                        a(href=layout.htmlroot + "/usert/list?access=guest") List Guest
+                      li
+                        a(href=layout.htmlroot + "/usert/list?access=denied") List Denied
+                      li
+                        a(href=layout.htmlroot + "/usert/list") List All
+                      li
+                        a(href=layout.htmlroot + "/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
+                  li.dropdown.hidden-xs
+                    a.dropdown-toggle(href='#', data-toggle='dropdown')
+                      | Tool
+                      span.caret
+                    ul.dropdown-menu(role='menu')
+                      li.dropdown-header Action
+                      li
+                        a(href=layout.htmlroot+"/createblog") Create Blog
+                  li
+                    a(href=layout.htmlroot+"/osmbc/admin") Admin
 
               ul.nav.navbar-nav.navbar-right
                 li.dropdown

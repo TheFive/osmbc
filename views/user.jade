@@ -45,8 +45,8 @@ block content
       +labeledSelect("Access",
                      "access",
                      usershown.access,
-                     ["full","read","denied"],
-                     ["full","read (not implemented yet)","denied"],
+                     ["full","guest","denied"],
+                     ["full","guest","denied"],
                      "Define Users Access to OSMBC")
       +labeledSelect("Mail a new Collection",
                      "mailNewCollection",
@@ -173,6 +173,8 @@ block content
       if (usershown.OSMUser === layout.user.OSMUser)
         p
           a(href=layout.htmlroot+"/logout") [logout user]
+        p
+          a(href=layout.htmlroot+"/usert/self?becomeGuest=true") [Switch to Guest]
 
 
 

@@ -99,6 +99,7 @@ function cacheOSMAvatarAll(callback) {
     }, function(err) { return callback(err); });
   });
 }
+
 if (process.env.NODE_ENV !== "test") {
   cacheOSMAvatarAll(function(err) { if (err) logger.error("Error during Cache of User Avatar " + err.message); });
 }
@@ -121,6 +122,7 @@ function getAvatar(osmuser) {
   debug("getAvatar");
   /* jshint -W040 */
   if (osmuser === undefined && this !== undefined) osmuser = this.OSMUser;
+  cacheOSMAvatar(osmuser, function() {});
   /* jshint +W040 */
   return avatarCache[osmuser];
 }
@@ -216,6 +218,8 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   var sendWelcomeEmail = false;
   // remove spaces from front and and of email adress
   if (data.email) data.email = data.email.trim();
+  if (data.OSMUser) data.OSMUser = data.OSMUser.trim();
+  if (data.OSMUser === "autocreate") return callback(new Error("User >autocreate< not allowed"));
 
   // check and react on Mail Change
   if (data.email && data.email.trim() !== "" && data.email !== self.email) {
@@ -378,6 +382,7 @@ User.prototype.createApiKey = function createApiKey(callback) {
 
 var _newUsers = null;
 let interval = config.getValue("WelcomeInterval", {mustExist: true});
+let welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", {mustExist: true});
 
 module.exports.getNewUsers = function getNewUsers(callback) {
   debug("getNewUsers");
@@ -386,10 +391,13 @@ module.exports.getNewUsers = function getNewUsers(callback) {
 
   pgMap.select("select data->>'user' as osmuser ,min(data->>'timestamp') as first from changes group by data->>'user' having ( min(data->>'timestamp')  )::timestamp with time zone  > current_timestamp - interval '" + interval + "'", function(err, result) {
     if (err) return callback(err);
+    if (result.indexOf("autocreate") >= 0) {
+      result = result.splice(result.indexOf("autocreate"), result.indexOf("autocreate") + 1);
+    }
     _newUsers = result;
     setTimeout(function() {
       _newUsers = null;
-    }, 10 * 60 * 1000);
+    }, welcomeRefresh * 1000);
     callback(null, result);
   });
 };

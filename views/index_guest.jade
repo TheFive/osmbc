@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  .row
+    .col-md-8
+      h2.hidden-xs
+        | Welcome to OSM BC
+      h2.visible-xs
+        | OSM BC
+      .row
+        p.osmbc-help-text
+          | You are logged in as guest.
+      h2="Your Articles"
+      table.table.table-condensed
+        for a in articles
+          tr
+            td=a.blog
+            td
+              p=a.categoryEN
+              p
+                a(href=layout.htmlroot+"/article/"+a.id)=a.displayTitle()
+              if (a.categoryEN ==="--unpublished--")
+                p="unpublish reason: "+a.unpublishReason+" ( "+a.unpublishReference+" ) "
+
+
+
+    .col-md-4
+      .row
+          h3="Current Status"
+
+        .row
+          +blogStatusTable
+
+  div.footer

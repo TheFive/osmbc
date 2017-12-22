@@ -1,16 +1,17 @@
 "use strict";
 
-var should = require("should");
-var debug = require("debug")("OSMBC:routes:index");
-var express = require("express");
-var async = require("async");
-var router = express.Router();
-var help = require("../routes/help.js");
-var config = require("../config.js");
-var logModule = require("../model/logModule.js");
-var userModule = require("../model/user.js");
-var moment = require("moment");
-
+const should = require("should");
+const debug = require("debug")("OSMBC:routes:index");
+const express = require("express");
+const async = require("async");
+const router = express.Router();
+const help = require("../routes/help.js");
+const config = require("../config.js");
+const logModule = require("../model/logModule.js");
+const userModule = require("../model/user.js");
+const articleModule = require("../model/article.js");
+const moment = require("moment");
+const auth = require("../routes/auth.js");
 
 
 
@@ -36,12 +37,43 @@ function renderHome(req, res, next) {
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
-    res.render("index", { title: appName,
+    let view = "index";
+    should(req.user.access).eql("full");
+
+
+    res.render(view, { title: appName,
       layout: res.rendervar.layout,
       activeUserList: result.activeUser,
       visitorsToday: result.visitorsToday,
       newUsers: result.newUsers,
       changes: result.historie});
+  }
+  );
+}
+
+function renderGuestHome(req, res, next) {
+  debug("renderGuestHome");
+  should.exist(res.rendervar.layout);
+  var date = new Date();
+  date.setTime(date.getTime() - 1000 * 60 * 10);
+
+  var todayStart = new Date();
+  todayStart.setHours(0);
+  todayStart.setMinutes(0);
+  todayStart.setSeconds(0);
+
+  async.auto({
+    "articles": articleModule.find.bind(articleModule, {firstCollector: req.user.OSMUser}, {column: "blog", desc: true})
+  }, function(err, result) {
+    if (err) return next(err);
+    res.set("content-type", "text/html");
+    let view = "index_guest";
+    should(req.user.access).eql("guest");
+
+    res.render(view, { title: appName,
+      articles: result.articles,
+      layout: res.rendervar.layout
+    });
   }
   );
 }
@@ -158,20 +190,21 @@ function renderChangelog(req, res, next) {
   });
 }
 
-var htmlRoot = config.getValue("htmlroot", {mustExist: true});
+var htmlRoot = config.htmlRoot();
 
 function redirectHome(req, res) {
   res.redirect(htmlRoot + "/");
 }
 
-router.get("/", renderHome);
+router.get("/", auth.hasRole(["full"]), renderHome);
+router.get("/", auth.checkRole(["guest"]), renderGuestHome);
 router.get("/osmbc.html", redirectHome);
 router.get("/osmbc", redirectHome);
-router.get("/osmbc/admin", renderAdminHome);
-router.get("/changelog", renderChangelog);
-router.get("/language", languageSwitcher);
-router.get("/userconfig", setUserConfig);
-router.get("/createblog", createBlog);
+router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
+router.get("/changelog", auth.checkRole(["full", "guest"]), renderChangelog);
+router.get("/language", auth.checkRole(["full", "guest"]), languageSwitcher);
+router.get("/userconfig", auth.checkRole(["full", "guest"]), setUserConfig);
+router.get("/createblog", auth.checkRole(["full"]), createBlog);
 
 
 

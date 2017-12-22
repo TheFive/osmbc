@@ -1,6 +1,7 @@
 extends layout
 
 block content
+  // Full Access Index Page
   .row
     .col-md-4
         h2.hidden-xs
@@ -15,33 +16,7 @@ block content
             a(href=layout.htmlroot+"/blog/list?status=IN('open','edit')") (more)
 
         .row
-          table.table.table-condensed
-            tr
-              td=""
-              for l in layout.activeLanguages
-                td=l
-
-            for openBlog in layout.listOfOpenBlog.slice(0).reverse()
-              tr
-                td
-                  a(href=layout.htmlroot+"/blog/#{openBlog.name}")=openBlog.name
-                for l in layout.activeLanguages
-                  td
-                    div.label.osmbclabel-openblog=openBlog._countUneditedMarkdown[l]
-
-            for editBlog in layout.editBlog.slice(0).reverse()
-              tr
-                td
-                  a(href=layout.htmlroot+"/blog/#{editBlog.name}")=editBlog.name
-                for l in layout.activeLanguages
-                  td
-                    if (editBlog["close" + l])
-                      div.label.osmbclabel-closedblog
-                        span.glyphicon.glyphicon-ok
-                    else if (editBlog["reviewComment"+l])
-                      div.label.osmbclabel-reviewblog=(editBlog["reviewComment"+l].length-1)
-                    else
-                      div.label.osmbclabel-editblog=editBlog._countUneditedMarkdown[l]
+          +blogStatusTable
 
 
 

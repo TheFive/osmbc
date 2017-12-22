@@ -20,9 +20,11 @@ var articleModule = require("../model/article.js");
 var configModule = require("../model/config.js");
 
 
+const checkRole        = require("../routes/auth.js").checkRole;
+
 var sizeOf = require("image-size");
 
-let htmlroot = config.getValue("htmlroot", {mustExist: true});
+let htmlroot = config.htmlRoot();
 let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
 
 
@@ -184,7 +186,7 @@ function renderCalendarAllLangAlternative(req, res, next) {
   request(options, function(error, response, body) {
     if (error) return next(error);
     if (response.statusCode !== 200) {
-      return next(Error("url: " + cc.url + " returns:\n" + body));
+      return next(Error("url: " + cc.url + " returns: \n" + response.statusCode + JSON.stringify(body)));
     }
     if (!body[cc.events]) return next("Missing events in calendar data");
     body[cc.events].forEach(function modifyItem(item) {
@@ -404,12 +406,13 @@ function renderPublicCalendar(req, res, next) {
   });
 }
 
-router.get("/calendar2markdown", renderCalendarAsMarkdown);
-router.post("/calendar2markdown", postCalendarAsMarkdown);
-router.get("/calendarAllLang", renderCalendarAllLang);
-router.get("/calendarAllLang/:calendar", renderCalendarAllLangAlternative);
-router.get("/picturetool", renderPictureTool);
-router.post("/picturetool", postPictureTool);
+
+router.get("/calendar2markdown", checkRole("full"), renderCalendarAsMarkdown);
+router.post("/calendar2markdown", checkRole("full"), postCalendarAsMarkdown);
+router.get("/calendarAllLang", checkRole("full"), renderCalendarAllLang);
+router.get("/calendarAllLang/:calendar", checkRole("full"), renderCalendarAllLangAlternative);
+router.get("/picturetool", checkRole("full"), renderPictureTool);
+router.post("/picturetool", checkRole("full"), postPictureTool);
 
 publicRouter.get("/calendar/preview", renderPublicCalendar);
 publicRouter.get("/calendarRefresh/:calendar", renderCalendarRefresh);

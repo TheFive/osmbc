@@ -20,7 +20,7 @@ var botName = config.getValue("AppName").toLowerCase();
 
 var Slack = require("../notification/SlackAPI");
 
-var osmbcUrl = config.getValue("url") + config.getValue("htmlroot");
+var osmbcUrl = config.getValue("url") + config.htmlRoot();
 var iconUrl = osmbcUrl + "/images/osmbc_im_logo.png";
 
 

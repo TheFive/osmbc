@@ -1,12 +1,13 @@
 "use strict";
 
 
-
 var should = require("should");
 var sinon  = require("sinon");
 var nock   = require("nock");
 var fs     = require("fs");
 var path   = require("path");
+var mockdate = require("mockdate");
+
 
 
 
@@ -67,21 +68,19 @@ describe("notification/mailReceiver", function() {
       articleModule.createNewArticle(function(err, article) {
         should.not.exist(err);
         article.setAndSave({OSMUser: "testuser"}, {version: 1, blog: "WN789", collection: "newtext", title: "Test Title"}, function(err) {
-          setTimeout(function () {
-            should.not.exist(err);
-            should(mailChecker.callCount).eql(1);
-            should(mailChecker.calledOnce).be.True();
-            var result = mailChecker.getCall(0).args[0];
-            var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">Test Title</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p><h3>title was added</h3><p>Test Title</p>';
-            should(result.html).eql(expectedMail);
-            should(mailChecker.getCall(0).args[0]).eql(
-              {from: "noreply@gmail.com",
-                to: "UserNewCollection@mail.bc",
-                subject: "[TESTBC] WN789 added: Test Title",
-                html: expectedMail,
-                text: "CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
-            bddone();
-          }, 900);
+          should.not.exist(err);
+          should(mailChecker.callCount).eql(1);
+          should(mailChecker.calledOnce).be.True();
+          var result = mailChecker.getCall(0).args[0];
+          var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">Test Title</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p><h3>title was added</h3><p>Test Title</p>';
+          should(result.html).eql(expectedMail);
+          should(mailChecker.getCall(0).args[0]).eql(
+            {from: "noreply@gmail.com",
+              to: "UserNewCollection@mail.bc",
+              subject: "[TESTBC] WN789 added: Test Title",
+              html: expectedMail,
+              text: "CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
+          bddone();
         });
       });
     });
@@ -243,12 +242,12 @@ describe("notification/mailReceiver", function() {
     var mailChecker;
     afterEach(function (bddone) {
       mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
-      this.clock.restore();
+      mockdate.reset();
       bddone();
     });
 
     beforeEach(function (bddone) {
-      this.clock = sinon.useFakeTimers();
+      mockdate.set(new Date("2016-05-25T20:00:00Z"));
       oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
       mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
       mailReceiver.for_test_only.transporter.sendMail = mailChecker;
@@ -266,8 +265,8 @@ describe("notification/mailReceiver", function() {
 
         should(mailChecker.calledTwice).be.True();
         var result = mailChecker.getCall(0).args[0];
-        var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table id=\"valuetable\"><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>1970-01-02T00:00:00.000Z</td></tr><tr><td>endDate</td><td>1970-01-08T00:00:00.000Z</td></tr></table>';
-        var expectedText = "BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKEY         VALUE                      \nname        WN251                      \nstatus      open                       \nstartDate   1970-01-02T00:00:00.000Z   \nendDate     1970-01-08T00:00:00.000Z";
+        var expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="https://testosm.bc/blog/WN251">WN251</a> was changed by testuser</p><table id=\"valuetable\"><tr><th>Key</th><th>Value</th></tr><tr><td>name</td><td>WN251</td></tr><tr><td>status</td><td>open</td></tr><tr><td>startDate</td><td>2016-05-26T20:00:00.000Z</td></tr><tr><td>endDate</td><td>2016-06-01T20:00:00.000Z</td></tr></table>';
+        var expectedText = "BLOG WN251 CHANGED.\nBlog WN251 [https://testosm.bc/blog/WN251] was changed by testuser\n\nKEY         VALUE                      \nname        WN251                      \nstatus      open                       \nstartDate   2016-05-26T20:00:00.000Z   \nendDate     2016-06-01T20:00:00.000Z";
 
         // result is not sorted, so have a preview, which argument is the right one.
         var mailList = {};

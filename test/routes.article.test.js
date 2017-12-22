@@ -1,6 +1,5 @@
 "use strict";
 
-
 var sinon   = require("sinon");
 var should  = require("should");
 var nock    = require("nock");
@@ -8,6 +7,7 @@ var request = require("request");
 var config  = require("../config.js");
 var mockdate = require("mockdate");
 var deeplTranslate = require("deepl-translator");
+var initialise = require("../util/initialise.js");
 
 var articleModule = require("../model/article.js");
 
@@ -15,23 +15,28 @@ var articleRouterForTestOnly = require("../routes/article.js").fortestonly;
 
 var testutil = require("./testutil.js");
 
-var baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 
-describe("router/article", function() {
-  this.timeout(this.timeout()*2);
+describe("routes/article", function() {
+  this.timeout(this.timeout() * 2);
   var id = 2;
+  let jar;
+
+  before(initialise.initialiseModules);
 
   after(function (bddone) {
     nock.cleanAll();
-    bddone();
+    testutil.stopServer();
     mockdate.reset();
+    bddone();
   });
 
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
-    mockdate.set(new Date("2016-05-25T20:00"));
+    mockdate.set(new Date("2016-05-25T20:00:00Z"));
+    jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
@@ -43,11 +48,11 @@ describe("router/article", function() {
         "user": [{"OSMUser": "TestUser", access: "full"},
           {OSMUser: "TestUserDenied", access: "denied"},
           { "OSMUser": "Hallo", access: "full"},
-          { "OSMUser": "UserWith3Lang", access: "full",languageCount:"three"},
-          { "OSMUser": "UserWith4Lang", access: "full",languageCount:"four"}
+          { "OSMUser": "UserWith3Lang", access: "full", languageCount: "three"},
+          { "OSMUser": "UserWith4Lang", access: "full", languageCount: "four"}
         ],
         "article": [
-          {"blog": "BLOG", "markdownDE": "* Dies ist ein kleiner Testartikel.", "category": "Mapping"},
+          {"blog": "BLOG", "markdownDE": "* Dies ist ein kleiner Testartikel.", "category": "Mapping",firstCollector:"TestUserNonExisting"},
           {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment"}]}],
         clear: true}, bddone);
   });
@@ -55,70 +60,79 @@ describe("router/article", function() {
     let url = baseLink + "/article/" + id;
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: url}, function(err, response, body) {
+        request.get({ url: url, jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>')).not.equal(-1);
+          body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
           bddone();
         });
       });
     });
     it("should run with full access user and 3 lang", function (bddone) {
       testutil.startServer("UserWith3Lang", function() {
-        request.get({ url: url}, function(err, response, body) {
+        request.get({ url: url, jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>')).not.equal(-1);
+          body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
           bddone();
         });
       });
     });
     it("should run with full access user and 4 lang", function (bddone) {
       testutil.startServer("UserWith4Lang", function() {
-        request.get({ url: url}, function(err, response, body) {
+        request.get({ url: url, jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>')).not.equal(-1);
+          body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
           bddone();
         });
       });
     });
     it("should run with full access user and missing article", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/999"}, function(err, response, body) {
+        request.get({ url: baseLink + "/article/999", jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("Article ID 999 does not exist")).not.equal(-1);
+          body.should.containEql("Article ID 999 does not exist");
           bddone();
         });
       });
     });
     it("should run with full access user and not numbered article ID", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/walo"}, function(err, response, body) {
+        request.get({ url: baseLink + "/article/walo", jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("Article ID walo does not exist (conversion error)")).not.equal(-1);
+          body.should.containEql("Article ID walo does not exist (conversion error)");
           bddone();
         });
       });
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          should(response.statusCode).eql(403);
+          bddone();
+        });
+      });
+    });
+    it("should allow non existing user for self collected", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: baseLink + "/article/1", jar: jar}, function (err, response,body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(200);
+          body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
           bddone();
         });
       });
@@ -128,13 +142,13 @@ describe("router/article", function() {
     let url = baseLink + "/article/" + id + "/votes";
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: url}, function(err, response, body) {
+        request.get({ url: url, jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           let json = JSON.parse(body);
 
-          should(json["#voteButtons"].indexOf("callAndRedraw(\'/article/2/setVote.unpublish\'")).not.equal(-1);
-          should(json["#voteButtonsList"].indexOf('<i class="fa-lg fa fa-thumbs-up">')).not.equal(-1);
+          json["#voteButtons"].should.containEql("callAndRedraw(\'/article/2/setVote.unpublish\'");
+          json["#voteButtonsList"].should.containEql('<i class="fa-lg fa fa-thumbs-up">');
 
           bddone();
         });
@@ -142,20 +156,20 @@ describe("router/article", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -165,12 +179,12 @@ describe("router/article", function() {
     let url = baseLink + "/article/" + id + "/commentArea";
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: url}, function(err, response, body) {
+        request.get({ url: url, jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           let json = JSON.parse(body);
 
-          should(json["#commentArea"].indexOf("Your comment is shared between all weekly teams.")).not.equal(-1);
+          json["#commentArea"].should.containEql("Your comment is shared between all weekly teams.");
 
           bddone();
         });
@@ -178,20 +192,20 @@ describe("router/article", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          should(response.statusCode).eql(403);
+          body.should.containEql("This article is not allowed for guests");
           bddone();
         });
       });
@@ -201,10 +215,10 @@ describe("router/article", function() {
     let url = baseLink + "/article/" + id + "/markCommentRead?index=0";
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: url}, function(err, response, body) {
+        request.get({ url: url, jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("Your comment is shared between all weekly teams.")).not.equal(-1);
+          body.should.containEql("Your comment is shared between all weekly teams.");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             should(article.commentRead.TestUser).eql("0");
@@ -215,20 +229,20 @@ describe("router/article", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -238,7 +252,7 @@ describe("router/article", function() {
     let url = baseLink + "/article/" + id + "/setTag.tag";
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: url}, function(err, response, body) {
+        request.get({ url: url, jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           should(body).equal("OK");
@@ -252,20 +266,20 @@ describe("router/article", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -275,11 +289,11 @@ describe("router/article", function() {
     let url = baseLink + "/article/" + id + "/pro";
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: url}, function(err, response, body) {
+        request.get({ url: url, jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           let json = JSON.parse(body);
-          should(json["#vote_pro_2"].indexOf('class="label osmbc-btn-not-voted"')).not.equal(-1);
+          json["#vote_pro_2"].should.containEql('class="label osmbc-btn-not-voted"');
 
           bddone();
         });
@@ -287,20 +301,20 @@ describe("router/article", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -309,30 +323,30 @@ describe("router/article", function() {
   describe("route GET /list", function() {
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/list"}, function(err, response, body) {
+        request.get({ url: baseLink + "/article/list", jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf('<td><a href="/article/2">BLOG</a></td>')).not.equal(-1);
+          body.should.containEql('<td><a href="/article/2">BLOG</a></td>');
           bddone();
         });
       });
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: baseLink + "/article/list"}, function (err, response, body) {
+        request.get({url: baseLink + "/article/list", jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/list"}, function (err, response, body) {
+        request.get({url: baseLink + "/article/list", jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -341,30 +355,30 @@ describe("router/article", function() {
   describe("route GET /create", function() {
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/create"}, function(err, response, body) {
+        request.get({ url: baseLink + "/article/create", jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf('<p align="center" class="osmbc-help-text">Please check your link for duplicates before   collecting.</p>')).not.equal(-1);
+          body.should.containEql('<p align="center" class="osmbc-help-text">Please check your link for duplicates before   collecting.</p>');
           bddone();
         });
       });
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: baseLink + "/article/create"}, function (err, response, body) {
+        request.get({url: baseLink + "/article/create", jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/create"}, function (err, response, body) {
+        request.get({url: baseLink + "/article/create", jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          should(response.statusCode).eql(200);
+          body.should.containEql('<p align="center" class="osmbc-help-text">Please check your link for duplicates before   collecting.</p>');
           bddone();
         });
       });
@@ -373,31 +387,31 @@ describe("router/article", function() {
   describe("route GET /searchandcreate", function() {
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/searchandcreate?search=hallo"}, function(err, response, body) {
+        request.get({ url: baseLink + "/article/searchandcreate?search=hallo", jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf('<p align="center" class="osmbc-help-text">Please check your link for duplicates before   collecting.</p>')).not.equal(-1);
-          should(body.indexOf('<input type="text" name="search" value="hallo" class="form-control">')).not.equal(-1);
+          body.should.containEql('<p align="center" class="osmbc-help-text">Please check your link for duplicates before   collecting.</p>');
+          body.should.containEql('<input type="text" name="search" value="hallo" class="form-control">');
           bddone();
         });
       });
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: baseLink + "/article/searchandcreate?search=hallo"}, function (err, response, body) {
+        request.get({url: baseLink + "/article/searchandcreate?search=hallo", jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/searchandcreate?search=hallo"}, function (err, response, body) {
+        request.get({url: baseLink + "/article/searchandcreate?search=hallo", jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -406,30 +420,30 @@ describe("router/article", function() {
   describe("route GET /search", function() {
     it("should run with full access user", function (bddone) {
       testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/search?search=hallo"}, function(err, response, body) {
+        request.get({ url: baseLink + "/article/search?search=hallo", jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf('<input type="text" name="search" value="hallo" class="form-control">')).not.equal(-1);
+          body.should.containEql('<input type="text" name="search" value="hallo" class="form-control">');
           bddone();
         });
       });
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: baseLink + "/article/search?search=hallo"}, function (err, response, body) {
+        request.get({url: baseLink + "/article/search?search=hallo", jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/search?search=hallo"}, function (err, response, body) {
+        request.get({url: baseLink + "/article/search?search=hallo", jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -448,11 +462,11 @@ describe("router/article", function() {
       unpublishReason: "unpublisnReason",
       unpublishReference: "unpublishReference"};
     it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({ url: url, form: params}, function(err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function() {
+        request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(302);
-          should(body).equal("Found. Redirecting to /article/3");
+          should(response.statusCode).eql(200);
+          body.should.containEql("unpublisnReason");
           articleModule.findById(3, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -477,22 +491,41 @@ describe("router/article", function() {
       });
     });
     it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserDenied",jar, function() {
+        request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
+        request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
-          bddone();
+          should(response.statusCode).eql(200);
+          body.should.containEql("unpublisnReason");
+          articleModule.findById(3, function (err, article) {
+            should.not.exist(err);
+            delete article._blog;
+            should(article).eql({
+              id: "3",
+              version: 3,
+              commentList: [{user: "TestUserNonExisting", timestamp: "2016-05-25T20:00:00.000Z", text: "addComment"}],
+              commentStatus: "open",
+              commentRead: {TestUserNonExisting: 0},
+              blog: "BLOG",
+              collection: "COLLECTION",
+              comment: "comment",
+              categoryEN: "categoryEN",
+              title: "title",
+              unpublishReason: "unpublisnReason",
+              unpublishReference: "unpublishReference",
+              firstCollector: "TestUserNonExisting"
+            });
+            bddone();
+          });
         });
       });
     });
@@ -504,11 +537,11 @@ describe("router/article", function() {
       version: 1,
       collection: "new collection"};
     it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({ url: url, form: params}, function(err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function() {
+        request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(302);
-          should(body).equal("Found. Redirecting to /article/2");
+          should(response.statusCode).eql(200);
+          body.should.containEql("new collection");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -534,20 +567,20 @@ describe("router/article", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
+        request.post({url: url, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -561,11 +594,11 @@ describe("router/article", function() {
       collection: "new collection",
       old_collection: ""};
     it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({ url: url, form: params}, function(err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function() {
+        request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(302);
-          should(body).equal("Found. Redirecting to /article/2");
+          should(response.statusCode).eql(200);
+          body.should.containEql("BLOG");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -590,15 +623,16 @@ describe("router/article", function() {
       });
     });
     it("should fail with wrong old Values", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({ url: url, form: {title: "new title", old_title: "old title"}}, function(err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar,function(err){
+        should.not.exist(err);
+        request.post({ url: url, form: {title: "new title", old_title: "old title"}, followAllRedirects: true, jar: jar}, function(err, response, body) {
           should.not.exist(err);
           // there should be an error, as old title is not the correct one
           should(response.statusCode).eql(500);
-          should(body.indexOf("Field title already changed in DB")).not.equal(-1);
+          body.should.containEql("Field title already changed in DB");
 
           // check, that object is not changed
-          articleModule.findById(2, function(err, article) {
+          articleModule.findById(2, function (err, article) {
             should.not.exist(err);
             delete article._blog;
             should(article).eql({
@@ -622,20 +656,20 @@ describe("router/article", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, form: params}, function (err, response, body) {
+        request.get({url: url, form: params, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, form: params}, function (err, response, body) {
+        request.get({url: url, form: params, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -648,11 +682,13 @@ describe("router/article", function() {
       oldMarkdown: "* Dies ist ein grosser Testartikel."
     };
     it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({ url: url, form: params}, function(err, response, body) {
+      testutil.startServerWithLogin("TestUser", jar,function() {
+        request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(302);
-          should(body).equal("Found. Redirecting to /");
+          should(response.statusCode).eql(200);
+          // ..setMarkdown/DE is redirecting to caller page, that is
+          // /osmbc in this case
+          body.should.containEql("OSMBC");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -676,12 +712,12 @@ describe("router/article", function() {
       });
     });
     it("should fail with wrong old Values", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({ url: url, form: {markdown: "new", oldMarkdown: "old"}}, function(err, response, body) {
+      testutil.startServerWithLogin("TestUser", jar,function() {
+        request.post({ url: url, form: {markdown: "new", oldMarkdown: "old"}, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
           // there should be an error, as old title is not the correct one
           should(response.statusCode).eql(500);
-          should(body.indexOf("Field markdownDE already changed in DB")).not.equal(-1);
+          body.should.containEql("Field markdownDE already changed in DB");
 
           // check, that object is not changed
           articleModule.findById(2, function(err, article) {
@@ -707,21 +743,21 @@ describe("router/article", function() {
       });
     });
     it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, form: params}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserDenied",jar, function () {
+        request.post({url: url, form: params, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, form: params}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
+        request.post({url: url, form: params, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -733,11 +769,11 @@ describe("router/article", function() {
       comment: "This comment will be added."
     };
     it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({ url: url, form: params}, function(err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function() {
+        request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(302);
-          should(body).equal("Found. Redirecting to /article/2");
+          should(response.statusCode).eql(200);
+          body.should.containEql("This comment will be added.");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -771,20 +807,20 @@ describe("router/article", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, form: params}, function (err, response, body) {
+        request.get({url: url, form: params, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, form: params}, function (err, response, body) {
+        request.get({url: url, form: params, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -796,11 +832,10 @@ describe("router/article", function() {
       comment: "This comment will be changed."
     };
     it("should run with full access user", function (bddone) {
-      testutil.startServer("Hallo", function() {
-        request.post({ url: url, form: params}, function(err, response, body) {
+      testutil.startServerWithLogin("Hallo",jar, function() {
+        request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(302);
-          should(body).equal("Found. Redirecting to /article/2");
+          body.should.containEql("This comment will be changed.");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -825,11 +860,11 @@ describe("router/article", function() {
       });
     });
     it("should fail if other user comment is edited", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({ url: url, form: params}, function(err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function() {
+        request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("Only Writer is allowed to change a commment")).not.equal(-1);
+          body.should.containEql("Only Writer is allowed to change a commment");
           articleModule.findById(2, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -854,20 +889,20 @@ describe("router/article", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, form: params}, function (err, response, body) {
+        request.get({url: url, form: params, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, form: params}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
+        request.post({url: url, form: params, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -876,12 +911,12 @@ describe("router/article", function() {
   describe("route POST /:article_id/copyto/:blog", function() {
     let url = baseLink + "/article/2/copyto/secondblog";
     it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({ url: url}, function(err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function() {
+        request.post({ url: url, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
+          body.should.containEql("secondblog");
 
-          should(response.statusCode).eql(302);
-          should(body).equal("Found. Redirecting to /");
+          should(response.statusCode).eql(200);
           articleModule.findById(3, function(err, article) {
             should.not.exist(err);
             delete article._blog;
@@ -900,20 +935,20 @@ describe("router/article", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
+        request.post({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -944,8 +979,8 @@ describe("router/article", function() {
     });
 
     it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.post({ url: url, form: form}, function(err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function() {
+        request.post({ url: url, form: form, jar: jar,followAllRedirects:true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           should(body).equal("This is an english text.");
@@ -954,22 +989,22 @@ describe("router/article", function() {
       });
     });
     it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, form: form}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserDenied",jar, function () {
+        request.post({url: url, form: form, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           should(stub.called).be.False();
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, form: form}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting", jar,function () {
+        request.post({url: url, form: form, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           should(stub.called).be.False();
           bddone();
         });

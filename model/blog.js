@@ -392,26 +392,26 @@ Blog.prototype.autoClose = function autoClose(cb) {
   } else cb();
 };
 
-var _autoCloseRunning = false;
+var _autoCloseRunning = 0;
 
 
 
 function autoCloseBlog(callback) {
   debug("autoCloseBlog");
   // Do not run this function twice !
-  if (_autoCloseRunning) return callback();
-  _autoCloseRunning = true;
+  if (_autoCloseRunning > 0) return callback();
+  _autoCloseRunning = _autoCloseRunning + 1;
 
 
 
 
   exports.find({status: "open"}, {column: "endDate", desc: false}, function(err, result) {
     if (err) {
-      _autoCloseRunning = false;
+      _autoCloseRunning = _autoCloseRunning - 1;
       return callback(err);
     }
     if (!result) {
-      _autoCloseRunning = false;
+      _autoCloseRunning = _autoCloseRunning - 1;
       return callback();
     }
     async.series([
@@ -431,7 +431,7 @@ function autoCloseBlog(callback) {
         });
       }
     ], function(err) {
-      _autoCloseRunning = false;
+      _autoCloseRunning = _autoCloseRunning - 1;
       callback(err);
     });
   });

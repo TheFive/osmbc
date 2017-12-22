@@ -1,20 +1,26 @@
 "use strict";
 
 const should = require("should");
+const async  = require("async");
 const config = require("../config.js");
 const request = require("request");
 const userModule = require("../model/user.js");
 const testutil = require("./testutil.js");
+var initialise = require("../util/initialise.js");
 
-const baseLink = "http://localhost:" + config.getServerPort() + config.getValue("htmlroot");
+const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 describe("router/user", function() {
   this.timeout(5000);
+  let jar = null;
   before(function(bddone){
-    testutil.clearDB(bddone);
+    async.series([
+      initialise.initialiseModules,
+      testutil.clearDB],bddone);
   });
   beforeEach(function(bddone) {
     config.initialise();
+    jar = request.jar();
     testutil.importData(
       {
         user: [{OSMUser: "TestUser", access: "full",version:"1",id:1,lastAccess:"20160102"},
@@ -24,34 +30,39 @@ describe("router/user", function() {
         clear:true
       },bddone);
   });
+  after(function(bddone){
+    testutil.stopServer();
+    bddone();
+  });
   describe("routes GET /inbox", function(){
     let url = baseLink + "/usert/inbox";
     it("should show the users inbox", function (bddone) {
       testutil.startServer("TestUser", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("<h2>Inbox Direct Mention:</h2>")).not.equal(-1);
+          body.should.containEql("<h2>Inbox Direct Mention:</h2>");
           bddone();
         });
       });
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          should(response.statusCode).eql(200);
+          body.should.not.containEql("<h2>Inbox Inirect Mention:</h2>");
+          body.should.containEql("<h2>Inbox Direct Mention:</h2>");
           bddone();
         });
       });
@@ -61,31 +72,31 @@ describe("router/user", function() {
     let url = baseLink + "/usert/list";
     it("should show list of users", function (bddone) {
       testutil.startServer("TestUser", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("<td><a href=\"/usert/1\">TestUser</a>")).not.equal(-1);
-          should(body.indexOf("<td><a href=\"/usert/2\">TestUserDenied</a>")).not.equal(-1);
+          body.should.containEql("<td><a href=\"/usert/1\">TestUser</a>");
+          body.should.containEql("<td><a href=\"/usert/2\">TestUserDenied</a>");
           bddone();
         });
       });
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
-    it("should deny non existing user", function (bddone) {
+    it("should deny non existing / guest user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -94,8 +105,8 @@ describe("router/user", function() {
   describe("routes GET /create", function(){
     let url = baseLink + "/usert/create";
     it("should create a new user", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.get({url: url,followRedirect:false}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function () {
+        request.get({url: url,followRedirect:false,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(302);
 
@@ -115,20 +126,20 @@ describe("router/user", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -137,8 +148,8 @@ describe("router/user", function() {
   describe("routes GET /createApiKey", function(){
     let url = baseLink + "/usert/createApiKey";
     it("should create a new user", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.get({url: url,followRedirect:false}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function () {
+        request.get({url: url,followRedirect:false,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(302);
           should(body).eql("Found. Redirecting to /");
@@ -153,20 +164,20 @@ describe("router/user", function() {
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
@@ -176,18 +187,18 @@ describe("router/user", function() {
     let url = baseLink + "/usert/1";
     it("should show user dafta by id", function (bddone) {
       testutil.startServer("TestUser", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf('<input name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly" class="form-control"/>')).not.equal(-1);
-          should(body.indexOf("<h1>TestUser Heatmap</h1>")).not.equal(-1);
+          body.should.containEql('<input name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly" class="form-control"/>');
+          body.should.containEql("<h1>TestUser Heatmap</h1>");
           bddone();
         });
       });
     });
     it("should show user data by SELF", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.get({url: baseLink + "/usert/self",followRedirect:false}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUser", jar,function () {
+        request.get({url: baseLink + "/usert/self",followRedirect:false,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(302);
           should(body).eql("Found. Redirecting to /usert/1");
@@ -196,31 +207,51 @@ describe("router/user", function() {
       });
     });
     it("should show user data by NAME", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.get({url: baseLink + "/usert/TestUserDenied",followRedirect:false}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUser",jar, function () {
+        request.get({url: baseLink + "/usert/TestUserDenied",followRedirect:false,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          should(body.indexOf("<h1>TestUserDenied Heatmap</h1>")).not.equal(-1);
+          body.should.containEql("<h1>TestUserDenied Heatmap</h1>");
+          bddone();
+        });
+      });
+    });
+    it("should show user data for fresh created guest user", function (bddone) {
+      testutil.startServerWithLogin("TestUserNewGuest",jar, function () {
+        request.get({url: baseLink + "/usert/TestUserNewGuest",followRedirect:false,jar:jar}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(200);
+          body.should.containEql("<h1>TestUserNewGuest Heatmap</h1>");
+          bddone();
+        });
+      });
+    });
+    it("should not show user data of other user for fresh created guest user", function (bddone) {
+      testutil.startServerWithLogin("TestUserNewGuest",jar, function () {
+        request.get({url: baseLink + "/usert/TestUserDenied",followRedirect:false,jar:jar}, function (err, response, body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(403);
+          body.should.containEql("Not allowed for guests.");
           bddone();
         });
       });
     });
     it("should deny denied access user", function (bddone) {
       testutil.startServer("TestUserDenied", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url}, function (err, response, body) {
+        request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          should(response.statusCode).eql(403);
+          body.should.containEql("Not allowed for guests.");
           bddone();
         });
       });
@@ -229,8 +260,8 @@ describe("router/user", function() {
   describe("routes POST /:user_id", function(){
     let url = baseLink + "/usert/2";
     it("should change user data", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.post({url: url,form:{color:"red",language:"ES"}}, function (err, response) {
+      testutil.startServerWithLogin("TestUser",jar, function () {
+        request.post({url: url,form:{color:"red",language:"ES"},jar:jar}, function (err, response) {
           should.not.exist(err);
           should(response.statusCode).eql(302);
           userModule.findById(2,function(err,user){
@@ -253,21 +284,21 @@ describe("router/user", function() {
       });
     });
     it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.post({url: url,form:{color:"red",language:"ES"}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserDenied",jar, function () {
+        request.post({url: url,form:{color:"red",language:"ES"},jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserDenied&lt; has no access rights")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
           bddone();
         });
       });
     });
     it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url,form:{color:"red",language:"ES"}}, function (err, response, body) {
+      testutil.startServerWithLogin("TestUserNonExisting",jar , function () {
+        request.post({url: url,form:{color:"red",language:"ES"},jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(500);
-          should(body.indexOf("OSM User &gt;TestUserNonExisting&lt; is not an OSMBC user.")).not.equal(-1);
+          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
           bddone();
         });
       });
