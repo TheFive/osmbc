@@ -1,8 +1,7 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.5...HEAD)
+## [3.0.0](https://github.com/TheFive/osmbc/tree/3.0.0) (2017-12-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.5...3.0.0)
 
 **Fixed bugs:**
 
