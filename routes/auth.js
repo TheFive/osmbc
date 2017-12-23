@@ -49,6 +49,10 @@ passport.deserializeUser(function (user, done) {
         return done(null, user);
       });
     }
+    if (result.length === 0) {
+      // no automatic guest creation
+      return done(new Error("User >" + user +"< does not exist"));
+    }
     if (result.length > 1) return done(null, null);
   });
 });
