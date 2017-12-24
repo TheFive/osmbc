@@ -48,10 +48,11 @@ passport.deserializeUser(function (user, done) {
         if (err) return done(null, null);
         return done(null, user);
       });
+      return;
     }
     if (result.length === 0) {
       // no automatic guest creation
-      return done(new Error("User >" + user +"< does not exist"));
+      return done(new Error("User >" + user + "< does not exist"));
     }
     if (result.length > 1) return done(null, null);
   });
