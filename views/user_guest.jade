@@ -6,6 +6,9 @@ extends adminlayout
 block content
 
   h1="Edit OSMBC User "+ usershown.OSMUser
+  if (usershown.temporaryGuest === true)
+    h1
+      .label.label-default="You are testing guest feature"
   form(name="input", action=layout.htmlroot+"/usert/#{usershown.id}", method="post")
     div.form-horizontal(role="form")
       +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
