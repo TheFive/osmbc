@@ -70,7 +70,22 @@
   "CalendarDateFormat":"L",
   "WelcomeInterval":"1 month",
   "userIsOldInDays":60,
-  "CalendarInterface":{},
+  "CalendarInterface":{
+    "fakeCalendar":{
+      "refreshurl":"this is a refresh url",
+      "url":"http://localhost:33333/fakeCalendar",
+      "events":"events",
+      "timestamp":"time",
+      "startDate":"start",
+      "endDate":"end",
+      "desc":"description",
+      "markdown": "description",
+      "text":"description",
+      "big":"Big",
+      "town": "town",
+      "country":"country"
+    }
+  },
   "PublicCalendarPage":"http://linktopubliccalendar.org",
   "WelcomeRefreshInSeconds":1,
   "createGuestUsersAutomatic":true

@@ -6,7 +6,6 @@ var nock = require("nock");
 var should  = require("should");
 var path = require("path");
 var mockdate = require("mockdate");
-var moment = require("moment");
 
 
 var userModule = require("../model/user.js");
@@ -46,51 +45,7 @@ describe("views/tools", function() {
   afterEach(function(bddone) {
     testutil.stopServer(bddone);
   });
-
-
-
-  it("should open calendar tool", function(bddone) {
-
-
-
-    async.series([
-      function setLanguage (cb) {
-        browser.visit("/osmbc.html", cb);
-      },
-      function setLanguage (cb) {
-        browser.visit("/language?lang=EN", cb);
-      },
-      function visitCalendar (cb) {
-        browser.visit("/tool/calendar2markdown", cb);
-      },
-      function fillValues(cb) {
-        let date = moment("2016-03-10").diff(moment("2015-11-05"), "days");
-        browser
-          .fill("date", date)
-          .fill("duration", "24")
-          .pressButton("OK", cb);
-      },
-      function clickDisabled(cb) {
-        browser.evaluate('document.getElementById("disable").checked=false');
-        cb();
-      }
-    ], function(err) {
-      should.not.exist(err);
-      should(browser.evaluate('document.getElementById("disable").checked')).be.False();
-
-      // first test the result
-      should(browser.evaluate("document.getElementById('markdown').value")).eql("|Where   |What                                                                                |When      |Country|\n|--------|------------------------------------------------------------------------------------|----------|-------|\n|Lüneburg|[Mappertreffen Lüneburg](https://wiki.openstreetmap.org/wiki/Lüneburg/Mappertreffen)|15/03/2016|Germany|\n|Bremen  |[Bremer Mappertreffen](https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen)  |28/03/2016|Germany|\n");
-
-      // now change the Markdown and check the result again, (spaces should be added)
-      browser.fill("markdown", "|Where   |What                                                                                      |When      |Country|\n|--------|------------------------------------------------------------------------------------------|----------|-------|\n|        |[Berlin-Brandenburg Stammtisch](https://wiki.openstreetmap.org/wiki/Berlin/Stammtisch)|10/03/2016|Germany|\n|Lüneburg|[Mappertreffen Lüneburg](https://wiki.openstreetmap.org/wiki/Lüneburg/Mappertreffen)      |15/03/2016|Germany|\n|        |[Stammtisch Karlsruhe](https://wiki.openstreetmap.org/wiki/Karlsruhe#Nächstes%20Treffen)  |16/03/2016|Germany|\n|Bremen  |[Bremer Mappertreffen](https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen)        |28/03/2016|Germany|\n");
-      browser.wait(100, function() {
-        should(browser.evaluate("document.getElementById('markdown').value")).eql("|Where   |What                                                                                    |When      |Country|\n|--------|----------------------------------------------------------------------------------------|----------|-------|\n|        |[Berlin-Brandenburg Stammtisch](https://wiki.openstreetmap.org/wiki/Berlin/Stammtisch)  |10/03/2016|Germany|\n|Lüneburg|[Mappertreffen Lüneburg](https://wiki.openstreetmap.org/wiki/Lüneburg/Mappertreffen)    |15/03/2016|Germany|\n|        |[Stammtisch Karlsruhe](https://wiki.openstreetmap.org/wiki/Karlsruhe#Nächstes%20Treffen)|16/03/2016|Germany|\n|Bremen  |[Bremer Mappertreffen](https://wiki.openstreetmap.org/wiki/Bremen/Veranstaltungen)      |28/03/2016|Germany|\n");
-
-        bddone();
-      });
-    });
-  });
-  it("should open new tool", function(bddone) {
+  it.skip("should open new tool", function(bddone) {
     async.series([
       function setLanguage (cb) {
         browser.visit("/osmbc.html", cb);

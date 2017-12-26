@@ -120,7 +120,7 @@ describe("routes/article", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response,body) {
+        request.get({url: url, jar: jar}, function (err, response) {
           should.not.exist(err);
           should(response.statusCode).eql(403);
           bddone();
