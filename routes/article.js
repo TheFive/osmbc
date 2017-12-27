@@ -965,7 +965,7 @@ let allowGuestAccess = auth.checkRole(["full", "guest"], [null, isFirstCollector
 // And configure router to use render Functions
 router.get("/list", allowFullAccess, renderList);
 router.get("/create", allowGuestAccess, createArticle);
-router.get("/searchandcreate", allowFullAccess, searchAndCreate);
+router.get("/searchandcreate", allowGuestAccess, searchAndCreate);
 router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);

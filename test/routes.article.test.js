@@ -120,7 +120,7 @@ describe("routes/article", function() {
     });
     it("should deny non existing user", function (bddone) {
       testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response,body) {
+        request.get({url: url, jar: jar}, function (err, response) {
           should.not.exist(err);
           should(response.statusCode).eql(403);
           bddone();
@@ -410,8 +410,9 @@ describe("routes/article", function() {
       testutil.startServer("TestUserNonExisting", function () {
         request.get({url: baseLink + "/article/searchandcreate?search=hallo", jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
+          should(response.statusCode).eql(200);
+          body.should.containEql('<p align="center" class="osmbc-help-text">Please check your link for duplicates before   collecting.</p>');
+          body.should.containEql('<input type="text" name="search" value="hallo" class="form-control">');
           bddone();
         });
       });
