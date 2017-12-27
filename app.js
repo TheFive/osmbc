@@ -99,8 +99,9 @@ app.use(auth.passport.session());
 
 morgan.token("OSMUser", function (req) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user"; });
 
-morgan.token("remote-addr", function (req) {
-  return req.headers["x-real-ip"] || req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+
+morgan.token('remote-addr', function (req) {
+  return req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 });
 
 if (app.get("env") !== "test") {
