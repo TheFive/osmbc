@@ -200,12 +200,19 @@ function postUserId(req, res, next) {
   if (["three", "four"].indexOf(changes.languageCount) < 0) changes.languageCount = "two";
   if (["new"].indexOf(changes.articleEditor) < 0) changes.articleEditor = "old";
   var user;
+  let allowedToChangeUser = true;
   async.series([
     function findUser(cb) {
       debug("findUser");
       userModule.findById(id, function(err, result) {
         if (err) return cb(err);
         user = result;
+        if (req.user.access === "guest") {
+          if (user.OSMUser !== req.user.OSMUser) {
+            allowedToChangeUser = false;
+            return cb(new Error("Not Allowed"));
+          }
+        }
         debug("findById");
         if (typeof (user.id) === "undefined") return cb(new Error("User ID >" + id + "< Not Found"));
         return cb();
@@ -219,6 +226,7 @@ function postUserId(req, res, next) {
     }
 
   ], function(err) {
+    if (!allowedToChangeUser) return res.status(403).send("Not Allowed To Post this user");
     if (err) return next(err);
     res.redirect(htmlroot + "/usert/" + id);
   });
@@ -257,7 +265,7 @@ router.get("/list", auth.checkRole("full"), renderList);
 router.get("/create", auth.checkRole("full"), createUser);
 router.get("/createApiKey", auth.checkRole("full"), createApiKey);
 router.get("/:user_id", auth.checkRole(["full", "guest"]), renderUserId);
-router.post("/:user_id", auth.checkRole("full"), postUserId);
+router.post("/:user_id", auth.checkRole(["full", "guest"]), postUserId);
 
 module.exports.createUser = createUser;
 module.exports.postUserId = postUserId;
