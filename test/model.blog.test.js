@@ -132,7 +132,7 @@ describe("model/blog", function() {
           });
         },
         function (cb2) {
-          should(newBlog.isEditable("DE")).be.False();
+          should(newBlog.isEditable("DE")).be.True();
           newBlog.closeBlog("DE", {OSMUser: "Test"}, true, cb2);
         },
         function (cb1) {

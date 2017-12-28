@@ -163,8 +163,6 @@ describe("views/blog", function() {
                 timestamp: "2016-05-25T19:00:00.000Z",
                 user: "TheFive"
               }]);
-              // in test mode review is done in WP in DE Language, so the export is set too
-              should(blog.exportedDE).be.True();
               cb();
             });
           });

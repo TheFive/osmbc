@@ -11,6 +11,8 @@ var winston  = require("winston");
 
 
 
+
+
 // Define simple first logger for winston
 
 var logger = winston;
@@ -82,7 +84,6 @@ exports.initialise = function initialise(callback) {
     configuration.moment_locale[lang] = lang;
   });
 
-  should(typeof (configuration.ReviewInWP)).equal("object");
   should(typeof (configuration.languages)).equal("object");
 
   // Do some corrections, e.g. the languages MUST contain an "EN"
@@ -152,4 +153,8 @@ exports.getCallbackUrl = function() {
 exports.env = env;
 exports.logger = logger;
 
+
+
+//deprecate Values
+exports.getValue("ReviewInWP",{deprecated:true});
 

@@ -105,6 +105,7 @@ Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
 
 
 
+
 Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, callback) {
   debug("reviewComment");
   var self = this;
@@ -141,17 +142,6 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
           // Start Review, check wether review is done in WP or not
           if (self[rc].length === 0) {
             self[rc].push({user: user.OSMUser, text: data, timestamp: date});
-          }
-          if (config.getValue("ReviewInWP").indexOf(lang) >= 0) {
-            self[exported] = true;
-            // Write Startreview to the review Array, do document Start in Blog
-
-
-            // Review is set on WP, so the blog can be marked as exoprted
-            messageCenter.global.sendLanguageStatus(user, self, lang, "markexported", cb);
-            // This is the old log, that has to be moved to the messageCenter
-            // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:"markexported"},cb);
-            return;
           }
           // nothing has to be written to the review comments
           return cb();
