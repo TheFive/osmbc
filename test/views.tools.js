@@ -9,6 +9,8 @@ var mockdate = require("mockdate");
 
 
 var userModule = require("../model/user.js");
+var blogModule = require("../model/blog.js");
+
 
 
 
@@ -21,7 +23,11 @@ describe("views/tools", function() {
   beforeEach(function(bddone) {
     async.series([
       testutil.clearDB,
-      function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full"}, cb); },
+      (cb) => { userModule.createNewUser({OSMUser: "TheFive", access: "full",language:"EN"}, cb); },
+      (cb) => { blogModule.createNewBlog(
+        {OSMUser: "TheFive", access: "full"},
+        {status:"edit"},
+        cb); },
       testutil.startServer.bind(null, "TheFive")
     ], function(err) {
       browser = testutil.getBrowser();
@@ -87,5 +93,23 @@ describe("views/tools", function() {
       should(browser.evaluate("document.getElementById('markdown').value")).eql("![AltText](https://blog.openstreetmap.org/picture.jpg =800x800)\ntest | Picture by test under [CC-BY-SA 3.0](https://creativecommons.org/licenses/by/3.0/)");
       bddone();
     });
+  });
+  it("should show calendar",function(bddone){
+    nock( "http://localhost:33333")
+      .get("/fakeCalendar")
+      .reply(200,{"copyright": "The data is taken from http://wiki.openstreetmap.org/wiki/Template:Calendar and follows its license rules.",
+
+        "events":
+          [{"Big": "true", "EventType": "Mapping Party", "country": "everywhere", "description": "PoliMappers' Adventures: One mapping quest each day", "end": "2015-11-22", "start": "2015-11-20", "state": "", "town": "online"},
+            {"Big": "", "EventType": "Conference", "country": "Germany", "description": "OpenStreetMap assembly", "end": "2015-11-10", "start": "2015-11-12", "state": "", "town": "Leipzig"}
+
+
+          ], "generator": "osmcalender", "time": "Friday, 29. December 2017 04:55PM", "version": 8});
+    async.series([
+      browser.visit.bind(browser, "/osmbc"),
+      (cb) => {browser.assert.text("li.dropdown#tool ul.dropdown-menu li:nth-child(2) a","Calendar Tool (fakeCalendar)");return cb();},
+      browser.click.bind(browser,"li.dropdown#tool ul.dropdown-menu li:nth-child(2) a"),
+      browser.assert.expectHtml.bind(browser, "calendartool.html")
+    ], bddone);
   });
 });

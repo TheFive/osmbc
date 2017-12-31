@@ -16,7 +16,8 @@ var blogModule    = require("../model/blog.js");
 var userModule    = require("../model/user.js");
 
 var htmlRoot      = config.htmlRoot();
-var bootstrap     = config.getValue("bootstrap", {mustExist: true});
+var bootstrap     = config.getValue("bootstrap", {type: "string"});
+var jquery        = config.getValue("jquery", {type: "string"});
 var appName       = config.getValue("AppName", {mustExist: true});
 
 
@@ -35,6 +36,9 @@ function calculateUnreadMessages(list, user) {
 
 
 function path(component) {
+  if (component === "bootstrap" && bootstrap) return bootstrap;
+  if (component === "jquery" && jquery) return jquery;
+
   let dist = "/dist";
   if (component === "font-awesome") dist = "";
   if (component === "d3") dist = "";
@@ -203,7 +207,6 @@ function prepareRenderLayout(req, res, next) {
       usedLanguages: usedLanguages,
       activeLanguages: activeLanguages,
       appName: appName,
-      bootstrap: bootstrap,
       osmbc_version: version.osmbc_version,
       style: style,
       title: appName,

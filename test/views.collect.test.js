@@ -28,7 +28,7 @@ describe("views/collect", function() {
   beforeEach(function(bddone) {
     async.series([
       testutil.clearDB,
-      (cb) => { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE",secondLang:"EN", articleEditor: "new"}, cb); },
+      (cb) => { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE",secondLang:"EN"}, cb); },
       (cb) => { blogModule.createNewBlog({OSMUser: "test"}, {name: "blog"}, cb); },
       (cb) => { articleModule.createNewArticle({blog: "blog", collection: "http://www.test.dä/holla", markdownDE: "[Text](http://www.test.dä/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.dä/holla) lerom upsim deloros."}, cb); },
       (cb) => { articleModule.createNewArticle({blog: "blog", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz."}, cb); },

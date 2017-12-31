@@ -274,7 +274,6 @@ describe("router/user", function() {
               mailComment:  [],
               color: 'red',
               language: 'ES',
-              articleEditor: 'old',
               languageCount: 'two',
               mailBlogLanguageStatusChange:  []
             });

@@ -46,7 +46,7 @@ mixin inboxMenu
          span.badge.osmbcbadge-lang2=layout.secondLangMentions
 
 mixin articleMenu
-  li.dropdown
+  li#article.dropdown
     a.dropdown-toggle(href='#', data-toggle='dropdown')
       | Lists
       span.caret
@@ -65,7 +65,7 @@ mixin articleMenu
           a(href=layout.htmlroot + '/article/list?blog=') No Blog
 
 mixin toolMenu
-  li.dropdown.hidden-xs
+  li.dropdown#tool.hidden-xs
     a.dropdown-toggle(href='#', data-toggle='dropdown')
       | Tool
       span.caret
@@ -217,7 +217,6 @@ block all
       // Bootstrap core JavaScript
       // ==================================================
       // Placed at the end of the document so the pages load faster
-      //link(rel='stylesheet', href='#{layout.bootstrap}/css/bootstrap.min.css')
       script(src=layout.path("jquery")+'/jquery.min.js')
       script(src=layout.path("bootstrap")+'/js/bootstrap.min.js')
 
