@@ -40,10 +40,11 @@ mixin inboxMenu
      a(href=layout.htmlroot + '/usert/inbox')="Inbox "
        if (layout.userMentions > 0)
          span.badge.osmbcbadge-user=layout.userMentions
-       if (layout.mainLangMentions > 0)
-         span.badge.osmbcbadge-lang=layout.mainLangMentions
-       if (layout.secondLangMentions > 0)
-         span.badge.osmbcbadge-lang2=layout.secondLangMentions
+       if (layout.user.access === "full")
+         if (layout.mainLangMentions > 0)
+           span.badge.osmbcbadge-lang=layout.mainLangMentions
+         if (layout.secondLangMentions > 0)
+           span.badge.osmbcbadge-lang2=layout.secondLangMentions
 
 mixin articleMenu
   li.dropdown
