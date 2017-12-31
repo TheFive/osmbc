@@ -51,7 +51,7 @@ describe("notification/mailReceiver", function() {
     });
 
     beforeEach(function (bddone) {
-      if (fs.existsSync(logFile)) fs.unlink(logFile);
+      if (fs.existsSync(logFile)) fs.unlinkSync(logFile);
       oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
       mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
       mailReceiver.for_test_only.transporter.sendMail = mailChecker;
