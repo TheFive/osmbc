@@ -18,23 +18,24 @@ mixin displayArticle(article,lang)
           if (article.commentList)
             .panel-body
                 each comment,i in article.commentList
-                  if (showRead || (i > upToComment))
-                    .row
-                      .col-md-12
-                        b
-                          if (i > upToComment)
-                            a(href=layout.htmlroot+"/article/#{article.id}/markCommentRead?index=#{i}")
-                              span.glyphicon.glyphicon-envelope
-                            span=" "
-                          span=comment.user
-                        span=" "
-                        span.text-muted.small=layout.moment(comment.timestamp).fromNow()
-                        if (comment.editstamp)
+                  if ((layout.user.access === "full") || (comment.text.indexOf("@" + layout.user.OSMUser) >= 0) || (comment.user === layout.user.OSMUser))
+                    if (showRead || (i > upToComment))
+                      .row
+                        .col-md-12
+                          b
+                            if (i > upToComment)
+                              a(href=layout.htmlroot+"/article/#{article.id}/markCommentRead?index=#{i}")
+                                span.glyphicon.glyphicon-envelope
+                              span=" "
+                            span=comment.user
                           span=" "
-                          i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
-                        p
-                          :verbatim
-                            !{layout.md_render(comment.text)}
+                          span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+                          if (comment.editstamp)
+                            span=" "
+                            i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
+                          p
+                            :verbatim
+                              !{layout.md_render(comment.text)}
 
 
 block content
