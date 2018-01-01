@@ -11,3 +11,6 @@ log/
 ch_av/
 
 package-lock.json
+test/access/stylesheets
+actual_fullArticlePage.html
+actual_tempresult.html
