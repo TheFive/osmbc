@@ -44,13 +44,33 @@ describe("us/guest visibility", function() {
 
 
   it("should do a use case",function(bddone){
+    let b = browser;
     async.series([
-      browser.visit.bind(browser, "/osmbc"),
-      browser.assert.expectHtml.bind(browser, "access" , "fullStartPage.html"),
-      browser.click.bind(browser,"a#adminlink"),
-      browser.click.bind(browser,"a#createblog"),
-      browser.click.bind(browser,"button.btn.btn-primary[type='button']"),
-      browser.assert.expectHtml.bind(browser, "access" , "fullBlogList.html"),
+      b.visit.bind(b, "/osmbc"),
+      b.assert.expectHtml.bind(b, "access" , "fullStartPage.html"),
+      b.click.bind(b,"a#adminlink"),
+      b.click.bind(b,"a#createblog"),
+      b.click.bind(b,"button.btn.btn-primary[type='button']"),
+      b.assert.expectHtml.bind(b, "access" , "fullBlogList.html"),
+      b.click.bind(b,"ul.nav.navbar-nav.pull-left li a"),
+      (cb)=>{b.fill("input#searchField","new Info");return cb();},
+      b.click.bind(b,"button[name='SearchNow']"),
+      b.assert.expectHtml.bind(b,"access","fullCollectPage.html"),
+      (cb)=>{
+        //b.fill("select#categoryEN","Mapping /");
+        b.fill("#title","This is a title of a full collected article");
+        b.fill("textarea[name='collection']","This is the collection text");
+        return cb();
+      },
+      b.click.bind(b,"input#OK"),
+      b.assert.expectHtml.bind(b,"access","fullArticlePage.html"),
+      b.click.bind(b,"option[value='Mapping']"),
+      (cb)=>{
+        b.fill("#title","This is a title of a full collected article");
+        b.fill("textarea[name='collection']");
+        return cb();
+      },
+      b.assert.expectHtml.bind(b,"access","tempresult.html")
     ], bddone);
   });
 });

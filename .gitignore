@@ -14,3 +14,5 @@ package-lock.json
 test/access/stylesheets
 actual_fullAdminPage.html
 actual_guestStartPage.html
+actual_fullArticlePage.html
+actual_tempresult.html
