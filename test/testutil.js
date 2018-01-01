@@ -416,10 +416,15 @@ exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
 // extend the Browser Assert API
 
 
-Browser.Assert.prototype.expectHtml = function expectHtml(name, cb) {
+Browser.Assert.prototype.expectHtml = function expectHtml(givenPath,name, cb) {
+  if (typeof name === "function") {
+    cb = name;
+    name = givenPath;
+    givenPath = "screens";
+  }
   let expected = "not read yet";
-  let expectedFile = path.join(__dirname, "screens", name);
-  let actualFile   = path.join(__dirname, "screens", "actual_" + name);
+  let expectedFile = path.join(__dirname, givenPath, name);
+  let actualFile   = path.join(__dirname, givenPath, "actual_" + name);
   let string = this.html();
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
