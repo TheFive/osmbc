@@ -14,7 +14,7 @@ block content
           .col-sm-2
             | 
           .col-sm-6
-            input(type="text",class="form-control",name ="search",value="#{search}")
+            input#searchField(type="text",class="form-control",name ="search",value="#{search}")
             if showCollect 
               p.osmbc-help-text(align="center") Please check your link for duplicates before   collecting.
 
@@ -102,7 +102,7 @@ block content
                   p.osmbc-help-text(id="categoryDisplay")
                 .col-md-5
                   input.btn.btn-large.btn-primary(type="submit", id="OK",value="OK")
-                  a(href=layout.htmlroot+"/article/searchandcreate?edit=false" class="btn btn-default" role="button") Cancel
+                  a(href=layout.htmlroot+`/article/searchandcreate?search=${search}` class="btn btn-default" role="button") Cancel
                   button.btn.btn-large.osmbcbadge-lang(id="OKLang",name="OKLang", onclick ="window.onbeforeunload=null; document.getElementById('input').action = '#{layout.htmlroot}/article/create?notranslation=true';document.getElementById('input').submit();") OK (only #{layout.user.mainLang})
 
             
