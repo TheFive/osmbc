@@ -146,7 +146,7 @@ function renderArticleId(req, res, next) {
     function (callback) {
       debug("renderArticleId->changes");
 
-      logModule.find(" where data->>'oid' ='" + article.id + "' and data->>'table' = 'article' and data->>'property' not like 'comment%' ", {column: "timestamp", desc: true}, function(err, result) {
+      logModule.find(" where data->>'oid' ='" + article.id + "' and data->>'table' = 'article' and data->>'property' not like 'comment%' ", {column: "id", desc: true}, function(err, result) {
         debug("renderArticleId->findLog");
 
         callback(err, result);
@@ -493,6 +493,7 @@ function postArticleWithOldValues(req, res, next) {
     title: req.body.old_title,
     unpublishReason: req.body.old_unpublishReason,
     unpublishReference: req.body.old_unpublishReference};
+
 
   var languages = config.getLanguages();
   for (var i = 0; i < languages.length; i++) {

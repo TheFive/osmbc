@@ -22,7 +22,7 @@
             <li><a href="/usert/inbox">Inbox </a></li>
           </ul>
           <ul class="nav navbar-nav pull-left visible-xs">
-            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">3</span></a></li>
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
           </ul>
         </div>
         <div class="navbar-header">
@@ -32,7 +32,7 @@
           <ul class="nav navbar-nav navbar-left">
             <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
             </li>
-            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">3</span></a></li>
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
             <li id="article" class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 <li class="dropdown-header">Articles</li>
@@ -111,12 +111,9 @@
                 <div class="col-md-2"></div>
               </div>
               <div class="row">
-                <div class="col-md-4"><span onclick="showRL('EN')" style="" class="label osmbclabel-collect">EN</span>
+                <div class="col-md-4"><span onclick="showRL('EN')" style="" class="label osmbclabel-markdown">EN</span>
                   <p class="osmbc-help-text">Click to change left lang</p>
                   <div id="notranslationArea">
-                    <p>
-                      <button type="button" onclick="window.onbeforeunload=null; setNoTranslation(); document.getElementById('input').submit();" class="btn btn-small btn-default">no translation to rest</button>
-                    </p>
                   </div>
                 </div>
                 <div class="col-md-1"></div>
@@ -144,14 +141,14 @@
                 <div class="form-group">
                   <label class="col-md-2">Category</label>
                   <div class="col-md-10">
-                    <textarea id="old_categoryEN" name="old_categoryEN" rows="1" hide="" class="hidden form-control">-- no category yet --</textarea>
-                    <select id="categoryEN" name="categoryEN" class="form-control af" style="background-color: rgb(253, 198, 171);">
-                      <option value="-- no category yet --" selected="">-- no category yet --</option>
+                    <textarea id="old_categoryEN" name="old_categoryEN" rows="1" hide="" class="hidden form-control">Mapping</textarea>
+                    <select id="categoryEN" name="categoryEN" class="form-control af" style="background-color: rgb(255, 255, 204);">
+                      <option value="-- no category yet --">-- no category yet --</option>
                       <option value="Picture">Picture</option>
                       <option value="[Actual Category]">[Actual Category]</option>
                       <option value="About us">About us</option>
                       <option value="Weekly exercise:">Weekly exercise:</option>
-                      <option value="Mapping">Mapping</option>
+                      <option value="Mapping" selected="">Mapping</option>
                       <option value="Community">Community</option>
                       <option value="Imports">Imports</option>
                       <option value="OpenStreetMap Foundation">OpenStreetMap Foundation</option>
@@ -175,7 +172,7 @@
               <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-10">
-                  <p id="categoryDisplay" class="osmbc-help-text">If you do not have any idea, which category to use.</p>
+                  <p id="categoryDisplay" class="osmbc-help-text">Quality assurance, editors, maps for mapper, tools for mapping, tagging</p>
                 </div>
               </div>
               <!-- Display Predecessor Row-->
@@ -258,16 +255,17 @@
               </div>
             </div>
             <div class="col-md-10"><span draggable="true" data-toggle="tooltip" data-placement="left" title="" ondragstart="ondragstartLangLabel(event,'EN');" class="label label-default osmbclabel-lang" data-original-title="Drag me for copy full text">  EN  </span><span style="" id="markdownEN_unsaved" class="label label-danger">unsaved</span>
-              <textarea id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide" class="hidden form-control"></textarea>
+              <textarea id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide" class="hidden form-control">This is the written text.</textarea>
               <textarea id="markdownEN" placeholder="1. Formulate not passive, but active.
 Sample: OpenCage data published an interview with David Overton, the doer behind the tissue map producing company Splashmaps. (via Twitter)
 2. People &amp; companies are information! So start an article with e person or a company!
 3. Decomplify your sentences.
 4. (Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008))
-" spellcheck="true" lang="EN" name="markdownEN" rows="6" class="markdownEdit form-control af" style="background-color: rgb(255, 255, 204);"></textarea>
+" spellcheck="true" lang="EN" name="markdownEN" rows="6" class="markdownEdit form-control af" style="background-color: rgb(255, 255, 204);">This is the written text.</textarea>
               <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
               <p id="textEN" lang="EN" style="display:none" class="markdownMessage bg-danger">Default Error Message</p>
-              <div id="previewEN" lang="EN" class="panel panel-default panel-body preview"><ul><li></li></ul></div>
+              <div id="previewEN" lang="EN" class="panel panel-default panel-body preview"><ul><li><p>This is the written text.</p>
+</li></ul></div>
             </div>
             <div class="col-md-1">
               <div class="row"><i id="languageFlagsShow" onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');" class="fa fa-flag fa-2x"></i>
@@ -362,33 +360,34 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
                 </thead>
                 <tbody>
                   <tr>
-                    <td><a href="/changes/5"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td><a href="/changes/11"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                     <td>TheFive</td>
-                    <td>blog</td>
+                    <td>markdownEN</td>
                     <td>
-<span class="osmbc-inserted">WN251</span>
+<span class="osmbc-inserted">This is the written text.</span>
 
 
                     </td>
                     <td>a few seconds ago</td>
                   </tr>
                   <tr>
-                    <td><a href="/changes/6"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td><a href="/changes/10"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                     <td>TheFive</td>
                     <td>categoryEN</td>
                     <td>
-<span class="osmbc-inserted">-- no category yet --</span>
+<span class="osmbc-deleted">-- no category yet --</span>
+<span class="osmbc-inserted">Mapping</span>
 
 
                     </td>
                     <td>a few seconds ago</td>
                   </tr>
                   <tr>
-                    <td><a href="/changes/7"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td><a href="/changes/9"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                     <td>TheFive</td>
-                    <td>collection</td>
+                    <td>firstCollector</td>
                     <td>
-<span class="osmbc-inserted">This is the collection text</span>
+<span class="osmbc-inserted">TheFive</span>
 
 
                     </td>
@@ -406,11 +405,33 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
                     <td>a few seconds ago</td>
                   </tr>
                   <tr>
-                    <td><a href="/changes/9"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td><a href="/changes/7"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                     <td>TheFive</td>
-                    <td>firstCollector</td>
+                    <td>categoryEN</td>
                     <td>
-<span class="osmbc-inserted">TheFive</span>
+<span class="osmbc-inserted">-- no category yet --</span>
+
+
+                    </td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/6"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>collection</td>
+                    <td>
+<span class="osmbc-inserted">This is the collection text</span>
+
+
+                    </td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/5"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>blog</td>
+                    <td>
+<span class="osmbc-inserted">WN251</span>
 
 
                     </td>

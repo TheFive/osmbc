@@ -331,6 +331,16 @@ exports.generateTests = function generateTests(datadir, fileregex, createTestFun
 var browser = null;
 var server = null;
 
+function fakeNextPassportLogin(userString) {
+  passport._strategies.openstreetmap._token_response = {
+    access_token: "at-1234",
+    expires_in: 3600
+  };
+
+  passport._strategies.openstreetmap._profile = {
+    displayName: userString
+  };
+}
 
 exports.startServer = function startServer(userString, callback) {
   debug("startServer");
@@ -345,25 +355,17 @@ exports.startServer = function startServer(userString, callback) {
     if (callback) return callback();
     return;
   }
-
-  passport._strategies.openstreetmap._token_response = {
-    access_token: 'at-1234',
-    expires_in: 3600
-  };
-
-  passport._strategies.openstreetmap._profile = {
-    displayName: userString
-  };
+  fakeNextPassportLogin(userString);
   return callback();
 };
 
 var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
-exports.startServerWithLogin = function(userString,jar,callback) {
+exports.startServerWithLogin = function(userString, jar, callback) {
   debug("startServerWithLogin");
-  exports.startServer(userString,function(err){
+  exports.startServer(userString, function(err) {
     if (err) return callback(err);
-    request.get({url:baseLink + "/osmbc",jar:jar},function(err){
+    request.get({url: baseLink + "/osmbc", jar: jar}, function(err) {
       return callback(err);
     });
   });
@@ -382,6 +384,12 @@ exports.getBrowser = function getBrowser() {
   return browser;
 };
 
+exports.getNewBrowser = function getNewBrowser(userString, cb) {
+  should.exist(userString);
+  let browser = new Browser({ maxWait: 20000,site: "http://localhost:" + config.getServerPort() });
+  fakeNextPassportLogin(userString);
+  browser.visit("/osmbc",function(err) {return cb(err,browser);});
+}
 
 
 exports.doATest = function doATest(dataBefore, test, dataAfter, callback) {
@@ -416,7 +424,7 @@ exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
 // extend the Browser Assert API
 
 
-Browser.Assert.prototype.expectHtml = function expectHtml(givenPath,name, cb) {
+Browser.Assert.prototype.expectHtml = function expectHtml(givenPath, name, cb) {
   if (typeof name === "function") {
     cb = name;
     name = givenPath;

@@ -25,7 +25,7 @@ LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) 
   var logblog = article.blog;
   if (change.blog) logblog = change.blog;
   var timestamp = new Date();
-  async.forEachOf(change, function setAndSaveEachOf(value, key, cbEachOf) {
+  async.forEachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
     // There is no Value for the key, so do nothing
     if (typeof (value) === "undefined") return cbEachOf();
 
