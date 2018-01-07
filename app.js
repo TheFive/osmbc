@@ -40,9 +40,9 @@ const auth         = require("./routes/auth.js");
 
 
 
-// Initialise config Module
+// Initialise config Module and variables
 config.initialise();
-var htmlRoot = config.htmlRoot();
+let htmlRoot = config.htmlRoot();
 logger.info("Express Routes set to: SERVER" + htmlRoot);
 
 
@@ -61,6 +61,52 @@ app.set("view engine", "jade");
 // compress all requests
 app.use(compression());
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
+
+
+
+
+// Initialise Morgan Logger, (and parser to log cookies)
+app.use(cookieParser());
+
+
+morgan.token("OSMUser", function (req) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user"; });
+
+
+morgan.token('remote-addr', function (req) {
+  return req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+});
+
+if (app.get("env") !== "test") {
+  app.use(morgan(":OSMUser :remote-addr :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"", { stream: logger.stream }));
+}
+if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
+  app.use(morgan(":OSMUser :remote-addr :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"", { immediate:true }));
+  app.use(function(req,res,next){
+    console.info("Cookies: ",req.cookies);
+    next();
+  });
+}
+
+
+// first register the unsecured path, with no cookie need.
+
+app.use(htmlRoot + "/bower_components", express.static(path.join(__dirname, "/bower_components")));
+app.use(htmlRoot, express.static(path.join(__dirname, "public")));
+
+app.use(htmlRoot, calendar);
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+app.use(htmlRoot + "/api", api);
+app.use(htmlRoot + "/slack", slackrouter);
+
+
+
+
+
+// Initialise Session Store and Cookie Max Age...
 
 
 var cookieMaxAge = config.getValue("cookieMaxAge");
@@ -87,35 +133,12 @@ app.use(session(
   }
 ));
 
-app.use(cookieParser());
-
 
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
 app.use(auth.passport.initialize());
 app.use(auth.passport.session());
 
-
-
-morgan.token("OSMUser", function (req) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user"; });
-
-
-morgan.token('remote-addr', function (req) {
-  return req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-});
-
-if (app.get("env") !== "test") {
-  app.use(morgan(":OSMUser :remote-addr :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"", { stream: logger.stream }));
-}
-if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
-  app.use(morgan(":OSMUser :remote-addr :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"", { immediate:true }));
-  app.use(function(req,res,next){
-    console.info("Cookies: ",req.cookies);
-    next();
-  });
-}
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 
 // GET /auth/openstreetmap
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -141,15 +164,6 @@ app.get(htmlRoot + "/logout", function(req, res) {
   req.logout();
   res.redirect(htmlRoot + "/osmbc.html");
 });
-
-// first register the unsecured path
-
-app.use(htmlRoot + "/bower_components", express.static(path.join(__dirname, "/bower_components")));
-app.use(htmlRoot, express.static(path.join(__dirname, "public")));
-
-app.use(htmlRoot, calendar);
-app.use(htmlRoot + "/api", api);
-app.use(htmlRoot + "/slack", slackrouter);
 
 // layout does not render, but prepares the res.rendervar variable fro
 // dynamic contend in layout.jade
