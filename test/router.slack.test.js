@@ -10,6 +10,7 @@ var testutil  = require("./testutil.js");
 
 var config    = require("../config.js");
 var app       = require("../app.js");
+var initialise      = require("../util/initialise.js");
 
 var slackRouter = require("../routes/slack.js");
 var articleModule = require("../model/article.js");
@@ -73,7 +74,7 @@ describe("router/slack", function() {
     testutil.nockHtmlPages();
 
     process.env.TZ = "Europe/Amsterdam";
-    return bddone();
+    initialise.initialiseModules(bddone);
   });
   after(function(bddone) {
     server.close();
