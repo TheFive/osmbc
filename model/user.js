@@ -40,27 +40,32 @@ function create (proto) {
 // avoid doublettes in OSMUser (osm account).
 function createNewUser (proto, callback) {
   debug("createNewUser");
-  if (typeof (proto) === "function") {
-    callback = proto;
-    proto = null;
-  }
-  if (proto) should.not.exist(proto.id);
-  var user = create(proto);
-  find({OSMUser: user.OSMUser}, function (err, result) {
-    if (err) return callback(err);
-    if (result && result.length > 0) {
-      return callback(new Error("User >" + user.OSMUser + "< already exists."));
+  return new Promise((resolve,reject) => {
+    if (typeof (proto) === "function") {
+      callback = proto;
+      proto = null;
     }
-    // set some defaults for the user
-    if (!proto) user.mailNewCollection = "false";
-    if (!proto) user.mailAllComment = "false";
-    if (!proto) user.mailComment = [];
-    if (!proto) user.mailBlogLanguageStatusChange = [];
-    // save data
-    user.save(function updateUser(err, result) {
-      if (err) return callback(err, result);
-      mailReceiver.updateUser(result);
-      callback(null, result);
+    if (proto) should.not.exist(proto.id);
+    var user = create(proto);
+    find({OSMUser: user.OSMUser}, function (err, result) {
+      if (err) return callback(err);
+      if (result && result.length > 0) {
+        let err = new Error("User >" + user.OSMUser + "< already exists.");
+        if (callback) return callback(err);
+        return reject(err);
+      }
+      // set some defaults for the user
+      if (!proto) user.mailNewCollection = "false";
+      if (!proto) user.mailAllComment = "false";
+      if (!proto) user.mailComment = [];
+      if (!proto) user.mailBlogLanguageStatusChange = [];
+      // save data
+      user.save(function updateUser(err, result) {
+        if (err) return callback(err, result);
+        mailReceiver.updateUser(result);
+        if (callback) return callback(null, result);
+        return resolve(result);
+      });
     });
   });
 }

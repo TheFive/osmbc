@@ -17,23 +17,16 @@ var articleModule = require("../../model/article.js");
 
 describe("us/guest visibility", function() {
   this.timeout(20000);
-  var browser;
   let article = null;
   let bTheFive = null;
   let bGuestUser = null;
-  beforeEach(function(bddone) {
-    async.series([
-      testutil.clearDB,
-      testutil.startServer.bind(null, "TheFive"),
-      (cb) => { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "EN"}, cb); },
-      (cb) => { userModule.createNewUser({OSMUser: "GuestUser", access: "guest", language: "EN"}, cb); },
-      (cb) => { testutil.getNewBrowser("TheFive", function(err, b) { should.not.exist(err); bTheFive = b; return cb(); }); },
-      (cb) => { testutil.getNewBrowser("GuestUser", function(err, b) { should.not.exist(err); bGuestUser = b; return cb(); }); }
-    ], function(err) {
-      browser = testutil.getBrowser();
-
-      bddone(err);
-    });
+  beforeEach(async function() {
+    await testutil.clearDB();
+    testutil.startServerSync("TheFive");
+    let theFive = await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "EN"});
+    let guestUser = await userModule.createNewUser({OSMUser: "GuestUser", access: "guest", language: "EN"});
+    bTheFive = await testutil.getNewBrowser("TheFive");
+    bGuestUser = await testutil.getNewBrowser("GuestUser");
   });
   before(function(bddone) {
     mockdate.set("2015-11-05");
@@ -48,117 +41,91 @@ describe("us/guest visibility", function() {
   });
 
 
-  it("should do a use case", function(bddone) {
+  it("should do a use case short async/await versino", async function() {
     let b = testutil.getBrowser();
     let homePage = "/osmbc";
     let adminLinkSelect = "a#adminlink";
+    await bTheFive.visit(homePage);
+    bTheFive.assert.expectHtmlSync("access", "fullStartPage.html");
 
-    async.series([
-
-      // Visit Homepage and compare what full user can see
-      b.visit.bind(bTheFive, homePage),
-      b.assert.expectHtml.bind(bTheFive, "access", "fullStartPage.html"),
-
-      // Click on admin link and compare what full user can see
-      b.click.bind(bTheFive, adminLinkSelect),
-      b.assert.expectHtml.bind(bTheFive, "access", "fullAdminPage.html"),
-
-      // create a new blog and compare bloglist
-      b.click.bind(bTheFive, "a#createblog"),
-      b.click.bind(bTheFive, "button.btn.btn-primary[type='button']"),
-      b.assert.expectHtml.bind(bTheFive, "access", "fullBlogList.html"),
-
-      // Collect an article, search input before
-      b.click.bind(bTheFive, "ul.nav.navbar-nav.pull-left li a"),
-      (cb) => { bTheFive.fill("input#searchField", "new Info"); return cb(); },
-      b.click.bind(bTheFive, "button[name='SearchNow']"),
-      b.assert.expectHtml.bind(bTheFive, "access", "fullCollectPage.html"),
-
-      // Fill out collect screen click OK
-      // add some further information on article screen
-      // and compare results
-      (cb) => {
-        // b.fill("select#categoryEN","Mapping /");
-        bTheFive.fill("#title", "This is a title of a full collected article");
-        bTheFive.fill("textarea[name='collection']", "This is the collection text");
-        return cb();
-      },
+    // Click on admin link and compare what full user can see
+    await bTheFive.click(adminLinkSelect);
+    bTheFive.assert.expectHtmlSync("access", "fullAdminPage.html");
 
 
+    // create a new blog and compare bloglist
+    await bTheFive.click("a#createblog");
+    await bTheFive.click("button.btn.btn-primary[type='button']");
+    bTheFive.assert.expectHtmlSync("access", "fullBlogList.html");
 
-      b.click.bind(bTheFive, "input#OK"),
-      (cb) => {
-        bTheFive.select("select#categoryEN", "Mapping"),
-        bTheFive.fill("#title", "This is a title of a full collected article");
-        bTheFive.fill("textarea[name='markdownEN']", "This is the written text.");
-        return cb();
-      },
-      b.click.bind(bTheFive, "button#saveButton"),
-      b.assert.expectHtml.bind(bTheFive, "access", "fullArticlePage.html"),
+    // Collect an article, search input before
+    await bTheFive.click("ul.nav.navbar-nav.pull-left li a");
+    bTheFive.fill("input#searchField", "new Info");
+    await bTheFive.click("button[name='SearchNow']");
+    bTheFive.assert.expectHtmlSync("access", "fullCollectPage.html");
+
+    // Fill out collect screen click OK
+    // add some further information on article screen
+    // and compare results
+
+    // b.fill("select#categoryEN","Mapping /");
+    bTheFive.fill("#title", "This is a title of a full collected article");
+    bTheFive.fill("textarea[name='collection']", "This is the collection text");
+
+    await bTheFive.click("input#OK");
+    bTheFive.select("select#categoryEN", "Mapping");
+    bTheFive.fill("#title", "This is a title of a full collected article");
+    bTheFive.fill("textarea[name='markdownEN']", "This is the written text.");
+
+    await bTheFive.click("button#saveButton");
+    bTheFive.assert.expectHtmlSync("access", "fullArticlePage.html");
 
 
 
 
-      // Add two comments, one for guest user, and one for @EN
-      (cb) => { bTheFive.fill("textarea#comment", "This is a comment for @EN"); return cb(); },
-      b.click.bind(bTheFive, "button[name='AddComment']"),
+    // Add two comments, one for guest user, and one for @EN
+    await bTheFive.fill("textarea#comment", "This is a comment for @EN");
+    await bTheFive.click("button[name='AddComment']");
 
 
-      (cb) => { bTheFive.fill("textarea#comment", "This is a comment for @GuestUser"); return cb(); },
-      b.click.bind(bTheFive, "button[name='AddComment']"),
-
-
-
-      // Guest user comes and collects an article
-      b.visit.bind(bGuestUser, "/osmbc"),
-      b.assert.expectHtml.bind(bGuestUser, "access", "guestStartPage.html"),
-
-      // Click on admin link and compare what full user can see
-      b.assert.elements.bind(bGuestUser, adminLinkSelect,0),
-
-    /*        // Collect an article, search input before
-            b.click.bind(bGuestUser, "ul.nav.navbar-nav.pull-left li a"),
-            (cb) => { bGuestUser.fill("input#searchField", "new Info"); return cb(); },
-            b.click.bind(bGuestUser, "button[name='SearchNow']"),
-            b.assert.expectHtml.bind(bGuestUser, "access", "guestCollectPage.html"),
-
-            // Fill out collect screen click OK
-            // add some further information on article screen
-            // and compare results
-            (cb) => {
-              // b.fill("select#categoryEN","Mapping /");
-              bGuestUser.fill("#title", "This is a title of a guest collected article");
-              bGuestUser.fill("textarea[name='collection']", "This is the collection text (guest collector)");
-              return cb();
-            },
+    bTheFive.fill("textarea#comment", "This is a comment for @GuestUser");
+    await bTheFive.click("button[name='AddComment']"),
 
 
 
-            b.click.bind(bGuestUser, "input#OK"),
-            (cb) => {
-              bGuestUser.select("select#categoryEN", "Mapping"),
-              bGuestUser.fill("#title", "This is a title of a full collected article");
-              bGuestUser.fill("textarea[name='markdownEN']", "This is the written text.");
-              return cb();
-            },
-            b.click.bind(bGuestUser, "button#saveButton"),
-            b.assert.expectHtml.bind(bGuestUser, "access", "guestArticlePage.html"),
+    // Guest user comes and collects an article
+    await bGuestUser.visit("/osmbc");
+    bGuestUser.assert.expectHtmlSync("access", "guestStartPage.html");
 
+    // Click on admin link and compare what full user can see
+    await bGuestUser.assert.elements(adminLinkSelect, 0);
 
+    // Collect an article, search input before
+    await bGuestUser.click("ul.nav.navbar-nav.pull-left li a");
+    bGuestUser.fill("input#searchField", "new Info");
+    await bGuestUser.click("button[name='SearchNow']");
+    bGuestUser.assert.expectHtmlSync("access", "guestCollectPage.html");
 
+    // Fill out collect screen click OK
+    // add some further information on article screen
+    // and compare results
+    // bGuestUser.fill("select#categoryEN","Mapping /");
+    bGuestUser.fill("#title", "This is a title of a guest collected article");
+    bGuestUser.fill("textarea[name='collection']", "This is the collection text (guest collector)");
+    await bGuestUser.click("input#OK");
+    bGuestUser.select("select#categoryEN", "Mapping");
+    bGuestUser.fill("#title", "This is a title of a full collected article");
+    bGuestUser.fill("textarea[name='markdownEN']", "This is the written text.");
+    await bGuestUser.click("button#saveButton");
+    bGuestUser.assert.expectHtmlSync("access", "guestArticlePage.html");
+    // Add two comments, one for guest user, and one for @EN
+    bGuestUser.fill("textarea#comment", "This is a comment for @EN");
+    await bGuestUser.click("button[name='AddComment']");
+    bGuestUser.fill("textarea#comment", "This is a comment for @TheFive");
+    await bGuestUser.click("button[name='AddComment']");
 
-            // Add two comments, one for guest user, and one for @EN
-            (cb) => { bGuestUser.fill("textarea#comment", "This is a comment for @EN"); return cb(); },
-            b.click.bind(bGuestUser, "button[name='AddComment']"),
+    // --------------------------------
 
-
-            (cb) => { bGuestUser.fill("textarea#comment", "This is a comment for @TheFive"); return cb(); },
-            b.click.bind(bGuestUser, "button[name='AddComment']"),
-
-
-
-
-            b.assert.expectHtml.bind(bGuestUser, "access", "tempresult.html") */
-    ], bddone);
+    // bGuestUser.assert.expectHtmlSync("access", "tempresult.html");
   });
 });

@@ -67,25 +67,28 @@ exports.findJSON = function findJSON(table, obj, cb) {
 
 exports.clearDB = function clearDB(done) {
   should(config.env).equal("test");
-  messageCenter.initialise();
-  should.exist(messageCenter.global);
+  return new Promise((resolve, reject) => {
+    messageCenter.initialise();
+    should.exist(messageCenter.global);
 
-  mailReceiver.initialise([]);
-  var pgOptions = {dropTables: true, createTables: true, dropIndex: true, createIndex: true, dropView: true, createView: true};
-  async.series([
-    function(done) { config.initialise(done); },
-    function(done) { pgMap.createTables(blogModule.pg, pgOptions, done); },
-    function(done) { pgMap.createTables(articleModule.pg, pgOptions, done); },
-    function(done) { pgMap.createTables(logModule.pg, pgOptions, done); },
-    function(done) { pgMap.createTables(userModule.pg, pgOptions, done); },
-    function(done) { pgMap.createTables(session.pg, pgOptions, done); },
-    function(done) { pgMap.createTables(configModule.pg, pgOptions, done); }
+    mailReceiver.initialise([]);
+    var pgOptions = {dropTables: true, createTables: true, dropIndex: true, createIndex: true, dropView: true, createView: true};
+    async.series([
+      function(done) { config.initialise(done); },
+      function(done) { pgMap.createTables(blogModule.pg, pgOptions, done); },
+      function(done) { pgMap.createTables(articleModule.pg, pgOptions, done); },
+      function(done) { pgMap.createTables(logModule.pg, pgOptions, done); },
+      function(done) { pgMap.createTables(userModule.pg, pgOptions, done); },
+      function(done) { pgMap.createTables(session.pg, pgOptions, done); },
+      function(done) { pgMap.createTables(configModule.pg, pgOptions, done); }
 
-  ], function(err) {
-    if (err) console.error(err);
-    should.not.exist(err);
-    configModule.initialiseConfigMap();
-    configModule.initialise(done);
+    ], function(err) {
+      if (err) console.error(err);
+      should.not.exist(err);
+      configModule.initialiseConfigMap();
+      if (done) return configModule.initialise(done);
+      configModule.initialise(resolve);
+    });
   });
 };
 
@@ -342,7 +345,7 @@ function fakeNextPassportLogin(userString) {
   };
 }
 
-exports.startServer = function startServer(userString, callback) {
+exports.startServerSync = function startServerSync(userString) {
   debug("startServer");
   if (typeof (userString) === "function") {
     callback = userString;
@@ -352,10 +355,14 @@ exports.startServer = function startServer(userString, callback) {
   server = http.createServer(app).listen(config.getServerPort());
 
   if (userString === null) {
-    if (callback) return callback();
     return;
   }
   fakeNextPassportLogin(userString);
+};
+
+exports.startServer = function startServer(userString, callback) {
+  console.warn("exports.startServer is deprecated");
+  exports.startServerSync(userString);
   return callback();
 };
 
@@ -385,11 +392,16 @@ exports.getBrowser = function getBrowser() {
 };
 
 exports.getNewBrowser = function getNewBrowser(userString, cb) {
-  should.exist(userString);
-  let browser = new Browser({ maxWait: 20000,site: "http://localhost:" + config.getServerPort() });
-  fakeNextPassportLogin(userString);
-  browser.visit("/osmbc",function(err) {return cb(err,browser);});
-}
+  return new Promise((resolve, reject) => {
+    should.exist(userString);
+    let browser = new Browser({ maxWait: 20000, site: "http://localhost:" + config.getServerPort() });
+    fakeNextPassportLogin(userString);
+    browser.visit("/osmbc", function(err) {
+      if (cb) return cb(err, browser);
+      resolve(browser);
+    });
+  });
+};
 
 
 exports.doATest = function doATest(dataBefore, test, dataAfter, callback) {
@@ -421,10 +433,35 @@ exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
 };
 
 
-// extend the Browser Assert API
+
+Browser.Assert.prototype.expectHtmlSync = function expectHtml(givenPath, name) {
+  let expected = "not read yet";
+  let expectedFile = path.join(__dirname, givenPath, name);
+  let actualFile   = path.join(__dirname, givenPath, "actual_" + name);
+  let string = this.browser.html();
+  try {
+    expected = fs.readFileSync(expectedFile, "UTF8");
+  } catch (err) {
+    console.error(err);
+  }
+  if (string === expected) {
+    // everything is fine, delete any existing actual file
+    try {
+      fs.unlinkSync(actualFile);
+    } catch (err) {}
+
+    return;
+  }
+  // there is a difference, so create the actual data as file
+  // do easier fix the test.
+  fs.writeFileSync(actualFile, string, "UTF8");
+  should(string).eql(expected, "HTML File " + name + " is different.");
+};
 
 
 Browser.Assert.prototype.expectHtml = function expectHtml(givenPath, name, cb) {
+  console.warn("Browser.Assert.prototype.expectHtml is deprecated");
+
   if (typeof name === "function") {
     cb = name;
     name = givenPath;
@@ -444,7 +481,6 @@ Browser.Assert.prototype.expectHtml = function expectHtml(givenPath, name, cb) {
     try {
       fs.unlinkSync(actualFile);
     } catch (err) {}
-
     return cb();
   }
   // there is a difference, so create the actual data as file
