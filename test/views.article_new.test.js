@@ -263,6 +263,7 @@ describe("views/article_new", function() {
   });
   describe("Article List",function(){
     it("should be called from index page",function(bddone){
+      this.timeout(maxTimer * 2);
       async.series([
         browser.visit.bind(browser, "/osmbc"),
         browser.click.bind(browser,"li.dropdown a"),
