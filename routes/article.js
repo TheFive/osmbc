@@ -957,8 +957,17 @@ function translate(req, res, next) {
 function isFirstCollector(req, res, next) {
   if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
   if (!req.article) return next();
+  let user = req.user.OSMUser;
+  let comments = req.article.commentList;
+  if (comments) {
+    for (let i = 0; i < comments.length; i++) {
+      let comment = comments[i];
+      if (comment.text.search(new RegExp("@" + user + "\\b", "i")) >= 0) return next();
+    }
+  }
   res.status(403).send("This article is not allowed for guests");
 }
+
 let allowFullAccess = auth.checkRole("full");
 let allowGuestAccess = auth.checkRole(["full", "guest"], [null, isFirstCollector]);
 

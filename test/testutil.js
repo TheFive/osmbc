@@ -67,7 +67,7 @@ exports.findJSON = function findJSON(table, obj, cb) {
 
 exports.clearDB = function clearDB(done) {
   should(config.env).equal("test");
-  return new Promise((resolve, reject) => {
+  function _clearDB(done) {
     messageCenter.initialise();
     should.exist(messageCenter.global);
 
@@ -83,12 +83,18 @@ exports.clearDB = function clearDB(done) {
       function(done) { pgMap.createTables(configModule.pg, pgOptions, done); }
 
     ], function(err) {
-      if (err) console.error(err);
-      should.not.exist(err);
+      if (err) {
+        return done(err);
+      }
       configModule.initialiseConfigMap();
-      if (done) return configModule.initialise(done);
-      configModule.initialise(resolve);
+      return configModule.initialise(done);
     });
+  }
+  if (done) {
+    return _clearDB(done);
+  }
+  return new Promise((resolve,reject) => {
+    _clearDB((err) => (err) ? reject(err): resolve());
   });
 };
 
@@ -148,11 +154,11 @@ exports.importData = function importData(data, callback) {
         async.eachSeries(data.blog, function importOneBlog(d, cb) {
           let id = d.id;
           delete d.id;
-          blogModule.createNewBlog({displayName: "test"}, d, function(err, blog) {
+          blogModule.createNewBlog({displayName: "test"}, d,true, function(err, blog) {
             if (err) return cb(err);
             if (typeof (id) !== "undefined") idReference.blog[id] = blog.id;
             cb();
-          }, true);
+          });
         }, cb2);
       } else cb2();
     },
@@ -347,10 +353,6 @@ function fakeNextPassportLogin(userString) {
 
 exports.startServerSync = function startServerSync(userString) {
   debug("startServer");
-  if (typeof (userString) === "function") {
-    callback = userString;
-    userString = null;
-  }
   if (server) exports.stopServer();
   server = http.createServer(app).listen(config.getServerPort());
 
@@ -361,7 +363,11 @@ exports.startServerSync = function startServerSync(userString) {
 };
 
 exports.startServer = function startServer(userString, callback) {
-  console.warn("exports.startServer is deprecated");
+  // console.warn("exports.startServer is deprecated");
+  if (typeof (userString) === "function") {
+    callback = userString;
+    userString = null;
+  }
   exports.startServerSync(userString);
   return callback();
 };
@@ -391,13 +397,13 @@ exports.getBrowser = function getBrowser() {
   return browser;
 };
 
-exports.getNewBrowser = function getNewBrowser(userString, cb) {
+exports.getNewBrowser = function getNewBrowser(userString) {
   return new Promise((resolve, reject) => {
     should.exist(userString);
     let browser = new Browser({ maxWait: 20000, site: "http://localhost:" + config.getServerPort() });
     fakeNextPassportLogin(userString);
     browser.visit("/osmbc", function(err) {
-      if (cb) return cb(err, browser);
+      if (err) return reject(err);
       resolve(browser);
     });
   });

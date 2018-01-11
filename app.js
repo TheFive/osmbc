@@ -37,9 +37,6 @@ const auth         = require("./routes/auth.js");
 
 
 
-
-
-
 // Initialise config Module and variables
 config.initialise();
 let htmlRoot = config.htmlRoot();

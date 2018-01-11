@@ -9,7 +9,7 @@ if !MIXIN_INCLUDE
         - if (!upToComment) upToComment = -1;
         h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
       each comment,i in article.commentList
-        if (   (layout.user.access === "full")|| (comment.text.indexOf("@"+layout.user.OSMUser)>=0)|| (comment.user === layout.user.OSMUser))
+        if (   (layout.user.access === "full")|| (comment.text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i"))>=0)|| (comment.text.user === layout.user.OSMUser))
           .row
             .col-xs-1
               img(src=layout.getAvatar(comment.user) style="height:40px;width:40px")

@@ -39,20 +39,21 @@ function create (proto) {
 // create a new user in the database
 // avoid doublettes in OSMUser (osm account).
 function createNewUser (proto, callback) {
-  debug("createNewUser");
-  return new Promise((resolve,reject) => {
-    if (typeof (proto) === "function") {
-      callback = proto;
-      proto = null;
+  if (typeof (proto) === "function") {
+    callback = proto;
+    proto = null;
+  }
+  function _createNewUser(proto, callback) {
+    debug("createNewUser");
+    if (proto && proto.id) {
+      return callback(new Error("user id exists"));
     }
-    if (proto) should.not.exist(proto.id);
     var user = create(proto);
     find({OSMUser: user.OSMUser}, function (err, result) {
       if (err) return callback(err);
       if (result && result.length > 0) {
         let err = new Error("User >" + user.OSMUser + "< already exists.");
-        if (callback) return callback(err);
-        return reject(err);
+        return callback(err);
       }
       // set some defaults for the user
       if (!proto) user.mailNewCollection = "false";
@@ -63,10 +64,15 @@ function createNewUser (proto, callback) {
       user.save(function updateUser(err, result) {
         if (err) return callback(err, result);
         mailReceiver.updateUser(result);
-        if (callback) return callback(null, result);
-        return resolve(result);
+        return callback(null, result);
       });
     });
+  }
+  if (callback) {
+    return _createNewUser(proto, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _createNewUser(proto, (err, user) => (err) ? reject(err) : resolve(user));
   });
 }
 

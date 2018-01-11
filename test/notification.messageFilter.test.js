@@ -51,7 +51,7 @@ describe("notification/messagefilter", function() {
         var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
         ucf.addComment({OSMUser: "TheFive"}, {firstCollector: "olli"}, "Comment for @TheFive test", function (err) {
           should.not.exist(err);
-          should(called).be.False();
+          should(called).be.True();
           bddone();
         });
       });
@@ -133,7 +133,7 @@ describe("notification/messagefilter", function() {
         var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
         ucf.editComment({OSMUser: "TheFive"}, {firstCollector: "olli"}, 0, "Comment for @TheFive test", function (err) {
           should.not.exist(err);
-          should(called).be.False();
+          should(called).be.True();
           bddone();
         });
       });

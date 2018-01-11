@@ -65,15 +65,23 @@ function create (proto) {
 
 
 function createNewArticle (proto, callback) {
-  debug("createNewArticle");
-  if (typeof (proto) === "function") {
-    callback = proto;
-    proto = null;
+  function _createNewArticle(proto, callback) {
+    debug("createNewArticle");
+    if (typeof (proto) === "function") {
+      callback = proto;
+      proto = null;
+    }
+    if (proto && proto.id) return callback(new Error("ProtoID Exists"));
+    var article = create(proto);
+    article.save(function (err) {
+      return callback(err, article);
+    });
   }
-  if (proto) should.not.exist(proto.id);
-  var article = create(proto);
-  article.save(function(err) {
-    return callback(err, article);
+  if (callback) {
+    return _createNewArticle(proto, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _createNewArticle(proto, (err, result) => err ? reject(err) : resolve(result));
   });
 }
 

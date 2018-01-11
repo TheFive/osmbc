@@ -1,6 +1,7 @@
 "use strict";
 
-var async = require("async");
+/* jshint ignore:start */
+
 var nock = require("nock");
 var should  = require("should");
 var path = require("path");
@@ -15,7 +16,7 @@ var articleModule = require("../../model/article.js");
 
 
 
-describe("us/guest visibility", function() {
+describe("uc/guest visibility", function() {
   this.timeout(20000);
   let article = null;
   let bTheFive = null;
@@ -114,7 +115,7 @@ describe("us/guest visibility", function() {
     bGuestUser.fill("textarea[name='collection']", "This is the collection text (guest collector)");
     await bGuestUser.click("input#OK");
     bGuestUser.select("select#categoryEN", "Mapping");
-    bGuestUser.fill("#title", "This is a title of a full collected article");
+    bGuestUser.fill("#title", "This is a title of a guest collected article");
     bGuestUser.fill("textarea[name='markdownEN']", "This is the written text.");
     await bGuestUser.click("button#saveButton");
     bGuestUser.assert.expectHtmlSync("access", "guestArticlePage.html");
@@ -126,6 +127,15 @@ describe("us/guest visibility", function() {
 
     // --------------------------------
 
+    await bTheFive.click("a#inbox");
+    bTheFive.assert.expectHtmlSync("access","fullUserInbox.html");
+    await bGuestUser.click("a#inbox");
+    bGuestUser.assert.expectHtmlSync("access","guestUserInbox.html");
+    await bGuestUser.visit("/article/3");
+    bGuestUser.assert.expectHtmlSync("access","guestArticle-id3-Page.html");
+
+
     // bGuestUser.assert.expectHtmlSync("access", "tempresult.html");
   });
 });
+/* jshint ignore:end */

@@ -53,8 +53,9 @@ describe("routes/article", function() {
         ],
         "article": [
           {"blog": "BLOG", "markdownDE": "* Dies ist ein kleiner Testartikel.", "category": "Mapping",firstCollector:"TestUserNonExisting"},
-          {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment"}]}],
-        clear: true}, bddone);
+          {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment"}]},
+          {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment for @TestUserNonExisting"}]}],
+    clear: true}, bddone);
   });
   describe("route GET /article/:id", function() {
     let url = baseLink + "/article/" + id;
@@ -133,6 +134,26 @@ describe("routes/article", function() {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
+          bddone();
+        });
+      });
+    });
+    it("should deny for guest user for non self collected", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: baseLink + "/article/2", jar: jar}, function (err, response,body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(403);
+          body.should.containEql('This article is not allowed for guests');
+          bddone();
+        });
+      });
+    });
+    it("should allow for guest user invited by comment", function (bddone) {
+      testutil.startServer("TestUserNonExisting", function () {
+        request.get({url: baseLink + "/article/3", jar: jar}, function (err, response,body) {
+          should.not.exist(err);
+          should(response.statusCode).eql(200);
+          body.should.containEql('<option value="BLOG" selected="selected">BLOG (Edit)</option>');
           bddone();
         });
       });
@@ -468,11 +489,11 @@ describe("routes/article", function() {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("unpublisnReason");
-          articleModule.findById(3, function(err, article) {
+          articleModule.findById(4, function(err, article) {
             should.not.exist(err);
             delete article._blog;
             should(article).eql({
-              id: "3",
+              id: "4",
               version: 3,
               commentList: [{user: "TestUser", timestamp: "2016-05-25T20:00:00.000Z", text: "addComment"}],
               commentStatus: "open",
@@ -507,11 +528,11 @@ describe("routes/article", function() {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           body.should.containEql("unpublisnReason");
-          articleModule.findById(3, function (err, article) {
+          articleModule.findById(4, function (err, article) {
             should.not.exist(err);
             delete article._blog;
             should(article).eql({
-              id: "3",
+              id: "4",
               version: 3,
               commentList: [{user: "TestUserNonExisting", timestamp: "2016-05-25T20:00:00.000Z", text: "addComment"}],
               commentStatus: "open",
@@ -918,12 +939,12 @@ describe("routes/article", function() {
           body.should.containEql("secondblog");
 
           should(response.statusCode).eql(200);
-          articleModule.findById(3, function(err, article) {
+          articleModule.findById(4, function(err, article) {
             should.not.exist(err);
             delete article._blog;
             should(article).eql({
               blog: "secondblog",
-              id: "3",
+              id: "4",
               markdownDE: "Former Text:\n\n* Dies ist ein grosser Testartikel.",
               title: "BLOG",
               originArticleId: "2",

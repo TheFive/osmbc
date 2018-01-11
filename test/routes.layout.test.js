@@ -13,9 +13,9 @@ var layout = require("../routes/layout.js");
 
 describe("routes/layout", function() {
   before(function(bddone) {
+    testutil.startServerSync();
     async.series([
-      testutil.clearDB,
-      testutil.startServer
+      testutil.clearDB
     ], bddone);
   });
   after(function(bddone) {

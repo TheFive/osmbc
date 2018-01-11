@@ -5,7 +5,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title>WN251#4/This is a title of a guest collected article</title>
+    <title>WN251#3/This is a title of a full collected article</title>
     <!-- Bootstrap core CSS-->
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -68,7 +68,7 @@
         </p><form id="textanalyseform" method="POST" action="http://wortliga.de/textanalyse/">
           <input type="hidden" name="text" id="textanalysefield" class="form-control">
         </form>
-        <form name="input" id="input" action="/article/4/witholdvalues" method="post">
+        <form name="input" id="input" action="/article/3/witholdvalues" method="post">
           <div class="row">
             <!-- Block for Buttons in the upper right corner and on the top in mobile-->
             <div class="col-md-6 col-md-push-6">
@@ -89,7 +89,7 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-4">
                   <button id="saveButton" type="button" onclick="disableUnchanged();document.getElementById('input').submit();" class="btn btn-large btn-primary">Save</button>
-                  <button type="button" onclick="disableUnchanged(); location.href='/article/4?edit=false';" class="btn btn-large btn-default">last Version</button>
+                  <button type="button" onclick="disableUnchanged(); location.href='/article/3?edit=false';" class="btn btn-large btn-default">last Version</button>
                 </div>
                 <!-- Parallel Blog for common article Attributes-->
               </div>
@@ -154,8 +154,8 @@
               <label class="col-md-1">Title</label>
               <div class="col-md-10">
                 <div id="title_unsaved" style="display:none" class="label label-danger">unsaved</div>
-                <textarea id="old_title" name="old_title" rows="1" hide="" class="hidden form-control">This is a title of a guest collected article</textarea>
-                <textarea id="title" name="title" rows="1" class="form-control af">This is a title of a guest collected article</textarea>
+                <textarea id="old_title" name="old_title" rows="1" hide="" class="hidden form-control">This is a title of a full collected article</textarea>
+                <textarea id="title" name="title" rows="1" class="form-control af">This is a title of a full collected article</textarea>
               </div>
             </div>
           </div>
@@ -191,8 +191,8 @@
               <label class="col-md-1">Collection</label>
               <div class="col-md-10">
                 <div id="collection_unsaved" style="display:none" class="label label-danger">unsaved</div>
-                <textarea id="collection" name="collection" rows="2" class="form-control af">This is the collection text (guest collector)</textarea>
-                <textarea id="old_collection" name="old_collection" rows="1" hide="" class="hidden form-control">This is the collection text (guest collector)</textarea>
+                <textarea id="collection" name="collection" rows="2" class="form-control af">This is the collection text</textarea>
+                <textarea id="old_collection" name="old_collection" rows="1" hide="" class="hidden form-control">This is the collection text</textarea>
               </div>
             </div>
           </div>
@@ -237,14 +237,28 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
           <div class="row">
             <div class="col-md-6">
               <div class="row">
-                <form target="iframeform" name="AddComment" id="AddComment" action="/article/4/addComment?reload=false" method="post">
+                <h3>Comments (open)</h3>
+              </div>
+              <div class="row">
+                <div class="col-xs-1"><img style="height:40px;width:40px"></div>
+                <div class="col-xs-11"><b><span onclick="window.callAndRedraw('/article/3/markCommentRead?index=1&amp;reload=false','/article/3/commentArea');" class="glyphicon glyphicon-envelope"></span><span> </span><span>TheFive</span></b><span> </span><span class="text-muted small">a few seconds ago</span>
+                  <p>
+</p><p>This is a comment for @GuestUser</p>
+
+
+
+                  <p></p>
+                </div>
+              </div>
+              <div class="row">
+                <form target="iframeform" name="AddComment" id="AddComment" action="/article/3/addComment?reload=false" method="post">
                   <textarea spellcheck="true" name="comment" id="comment" rows="7" placeholder="Your comment is shared between all weekly teams. 
 So please use english if possible. Do not hesitate to use your language and address your team with @LANG.
 To solve a comment use #solved, and to reopen #open in your text.
 Use @OSMUser to address any special editor." class="form-control"></textarea>
-                  <button name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/4/commentArea');" class="btn btn-large btn-primary">Add Comment</button>
-                  <button type="button" onclick="window.callAndRedraw(null,'/article/4/commentArea');" class="btn btn-large btn-default">Reload Comments</button>
-                  <button name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/4/commentArea');" class="btn btn-large btn-default">Solve Comment</button>
+                  <button name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/3/commentArea');" class="btn btn-large btn-primary">Add Comment</button>
+                  <button type="button" onclick="window.callAndRedraw(null,'/article/3/commentArea');" class="btn btn-large btn-default">Reload Comments</button>
+                  <button name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/3/commentArea');" class="btn btn-large btn-default">Solve Comment</button>
                 </form>
               </div>
             </div>

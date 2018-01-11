@@ -21,7 +21,7 @@ mixin firstBlogOfList(list,count,c)
 mixin collectMenu
   ul.nav.navbar-nav.pull-left
     li
-      a(href=layout.htmlroot + '/article/create') Collect
+      a#collect(href=layout.htmlroot + '/article/create') Collect
 
 mixin tbcMenu
   if blogNumber(layout.tbc, layout.language) > 0
@@ -37,7 +37,7 @@ mixin tbcMenu
 mixin inboxMenu
  ul.nav.navbar-nav.pull-left
    li
-     a(href=layout.htmlroot + '/usert/inbox')="Inbox "
+     a#inbox(href=layout.htmlroot + '/usert/inbox')="Inbox "
        if (layout.userMentions > 0)
          span.badge.osmbcbadge-user=layout.userMentions
        if (layout.user.access === "full")

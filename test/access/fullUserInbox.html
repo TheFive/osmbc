@@ -19,10 +19,10 @@
             <li><a id="collect" href="/article/create">Collect</a></li>
           </ul>
           <ul class="nav navbar-nav pull-left">
-            <li><a id="inbox" href="/usert/inbox">Inbox </a></li>
+            <li><a id="inbox" href="/usert/inbox">Inbox <span class="badge osmbcbadge-user">1</span></a></li>
           </ul>
           <ul class="nav navbar-nav pull-left visible-xs">
-            <li><a href="/blog/blog">blog<span class="badge osmbcbadge-lang">3</span><span class="badge osmbcbadge-lang2">4</span></a></li>
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
           </ul>
         </div>
         <div class="navbar-header">
@@ -32,14 +32,13 @@
           <ul class="nav navbar-nav navbar-left">
             <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
             </li>
-            <li><a href="/blog/blog">blog<span class="badge osmbcbadge-lang">3</span><span class="badge osmbcbadge-lang2">4</span></a></li>
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
             <li id="article" class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 <li class="dropdown-header">Articles</li>
                 <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Empty Collections</a></li>
                 <li class="dropdown-header">Orphaned Article
-                  </li><li><a href="/article/list?blog=undef blog">undef blog</a></li>
-                  <li><a href="/article/list?blog=">No Blog</a></li>
+                  </li><li><a href="/article/list?blog=">No Blog</a></li>
                 
               </ul>
             </li>
@@ -69,16 +68,14 @@
                 <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">DE<span class="caret"></span></a>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
-                <li><a href="/language?lang=DE">DE</a></li>
                 <li><a href="/language?lang=EN">EN</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">EN<span class="caret"></span></a>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 <li><a href="/language?lang2=none">none</a></li>
-                <li><a href="/language?lang2=DE">DE</a></li>
                 <li><a href="/language?lang2=EN">EN</a></li>
               </ul>
             </li>
@@ -91,30 +88,70 @@
     </div>
     <div class="container-fluid">
       <p>
-        <row>
-          </row></p><div>
-            <table class="table table-striped table-responsive">
-              <thead>
-                <tr> 
-                  <th>title</th>
-                  <th>blog</th>
-                  <th>category</th>
-                  <th>collection</th>
-                  <th>DE</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><a href="/article/5">http://www.tst.äd/holla</a></td>
-                  <td>undef blog</td>
-                  <td></td>
-                  <td>http://www.tst.äd/holla</td>
-                  <td>[Text](http://www.tst.äd/holla...</td>
-                </tr>
-              </tbody>
-            </table>
+        </p><div class="row">
+          <p class="osmbc-help-text">This is your inbox. All comments with mentions are shown here. Use the envelope in the article view to mark a comment as read.</p>
+        </div>
+        <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-11">
+            <h2>Inbox Direct Mention:</h2>
           </div>
-        
+        </div>
+        <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-11">
+            <h4>WN251 open</h4>
+            <p>User mentions: 1</p>
+          </div>
+          <div class="row">
+            <div class="col-md-1"><span class="glyphicon glyphicon-comment small-margin osmbccolor-user"></span><span class="glyphicon glyphicon-comment small-margin osmbccolor-lang"></span><span class="glyphicon glyphicon-envelope small-margin"></span><a href="/article/4"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </div>
+            <div class="col-md-11">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <ul>
+<li>This is a title of a guest collected article</li>
+
+
+                  </ul>
+                </div>
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-md-12"><b><a href="/article/4/markCommentRead?index=0"><span class="glyphicon glyphicon-envelope"></span></a><span> </span><span>GuestUser</span></b><span> </span><span class="text-muted small">a few seconds ago</span>
+                      <p>
+</p><p>This is a comment for @EN</p>
+
+
+
+
+                      <p></p>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12"><b><a href="/article/4/markCommentRead?index=1"><span class="glyphicon glyphicon-envelope"></span></a><span> </span><span>GuestUser</span></b><span> </span><span class="text-muted small">a few seconds ago</span>
+                      <p>
+</p><p>This is a comment for @TheFive</p>
+
+
+
+
+                      <p></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-11">
+            <h2>Inbox Indirect Mention:</h2>
+          </div>
+        </div>
+        <div class="row">
+          <h2>Options</h2><span style="white-space: nowrap"><span name="choose_showRead" onclick="location.href=&quot;/userconfig?view=inbox&amp;option=showRead&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show read messages</span></span>
+        </div>
       <p></p>
       <p></p>
     </div>
