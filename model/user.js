@@ -83,7 +83,10 @@ function cacheOSMAvatar(osmuser, callback) {
   if (process.env.NODE_ENV === "test") return callback();
   var requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
   request(requestString, function(err, response, body) {
-    if (err) return callback(err, null);
+    if (err) {
+      logger.error("error during request for "+requeststring);
+      return callback(err, null);
+    }
     if (body) {
       let c = cheerio.load(body);
       let avatarLink = c(".user_image").attr("src");
