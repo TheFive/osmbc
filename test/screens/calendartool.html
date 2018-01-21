@@ -1,0 +1,211 @@
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+    <title>TESTBC</title>
+    <!-- Bootstrap core CSS-->
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Fixed navbar-->
+    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header pull-left"><a href="/changelog" class="bg-success navbar-brand hidden-xs">Whats New?</a>
+          <ul class="nav navbar-nav pull-left">
+            <li><a id="collect" href="/article/create">Collect</a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-left">
+            <li><a id="inbox" href="/usert/inbox">Inbox </a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-left visible-xs">
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+          </ul>
+        </div>
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
+            </li>
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+            <li id="article" class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Articles</li>
+                <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Empty Collections</a></li>
+                <li class="dropdown-header">Orphaned Article
+                  </li><li><a href="/article/list?blog=">No Blog</a></li>
+                
+              </ul>
+            </li>
+            <li id="tool" class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Markdown Helper</li>
+                <li><a href="/tool/calendarAllLang/fakeCalendar">Calendar Tool (fakeCalendar)</a></li>
+                <li><a href="/tool/picturetool">Picture Tool</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">About The Team
+                  </li><li><a href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a></li>
+                
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">OSMBC</li>
+                <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">WeeklyOSM &amp; Wochennotiz</li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a></li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotitz in OSM Wiki</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="/language?lang=EN">EN</a></li>
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="/language?lang2=none">none</a></li>
+                <li><a href="/language?lang2=EN">EN</a></li>
+              </ul>
+            </li>
+            <li><img onclick="location.href='/usert/1';" style="height:50px;width:50px"></li>
+          </ul>
+          <!-- /.nav-collapse-->
+          
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <p>
+        </p><h1>Calendar Tool (fakeCalendar)</h1>
+        <p><span>Data from: Friday, 29. December 2017 04:55PM </span><a href="/calendarRefresh/fakeCalendar">Refresh Data</a>
+        </p>
+        <div class="row">
+          <div class="col-md-4">
+            <h4><span onclick="$('.lang').addClass('hidden');$('.lang-EN').removeClass('hidden');" class="add-info label label-default lang+EN">EN</span><span onclick="$('.add-info').toggle(1000);" class="label label-default">Draft/Final</span>
+            </h4>
+            <p class="osmbc-help-text">Click on language or Draft/Final to change view</p>
+          </div>
+          <div class="col-md-8">
+            <div class="lang lang-EN">
+              <div class="add-info">
+                <p>Language = EN</p>
+                <p>date 0</p>
+                <p>duration 14</p>
+                <p>big duration 50</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3 onclick="$('.editBlock').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-bottom editBlock"></span><span class="glyphicon glyphicon-triangle-right hidden editBlock"></span><span> Edit Block</span></h3>
+        <table class="table-condensed table-striped editBlock">
+          <tbody><tr>
+            <td>
+              <p><span>WN251</span><span> </span><a href="/article/1">Upcoming Events</a></p>
+              <p><span onclick="" style="" class="label osmbclabel-no-markdown">EN</span>
+              </p>
+            </td>
+            <td class="langXX langXX-EN">
+              <form name="EditArticle" id="EditArticle1EN" action="/article/1/setMarkdown/EN" method="post">
+                <textarea name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" class="hidden form-control">|Where  |What                                               |When                 |Country   |
+|-------|---------------------------------------------------|---------------------|----------|
+|online |PoliMappers' Adventures: One mapping quest each day|20/11/2015-22/11/2015|everywhere|
+|Leipzig|OpenStreetMap assembly                             |12/11/2015-10/11/2015|Germany   |
+</textarea>
+                <textarea name="oldMarkdown" id="oldMarkdown1" rows="7" class="hidden form-control"></textarea>
+                <button type="submit" class="btn btn-default">Save EN</button>
+              </form>
+            </td>
+          </tr>
+        </tbody></table>
+        <p class="osmbc-help-text editBlock"><span>The store button is available, if the blog is in edit mode and the event article is empty. </span><a href="https://osmbc.openstreetmap.de/osmww/wiki/Article%3A-The-Language-Indicator">Click here</a><span> for a more detailed info on the colors in the article indicator. Use upcoming events to jump direct to the article. </span><span>Please control the generated calendar for the language by clicking on the language direct under the New Calendar Title.</span></p>
+        <h3 onclick="$('.tablePreview').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right hidden tablePreview"></span><span class="glyphicon glyphicon-triangle-bottom tablePreview"></span><span> Table Preview</span></h3>
+        <table class="table-condensed tablePreview">
+          <colgroup>
+            <col class="col-md-3">
+            <col class="col-md-3">
+            <col class="col-md-3">
+            <col class="col-md-1">
+            <col class="col-md-1">
+            <col class="col-md-1">
+          </colgroup>
+          <tbody><tr>
+            <td>
+              <div class="add-info"><span class="label label-info">EN</span>
+              </div>
+            </td>
+            <td class="lang text-primary lang-EN"></td>
+            <td class="lang text-primary lang-EN">PoliMappers' Adventures: One mapping quest each day</td>
+            <td class="lang text-primary lang-EN">20/11/2015-22/11/2015</td>
+            <td class="lang text-primary lang-EN">
+              <div class="add-info">everywhere</div>
+            </td>
+            <td class="lang text-primary lang-EN">everywhere</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="add-info"><span class="label label-info">EN</span>
+              </div>
+            </td>
+            <td class="lang text-primary lang-EN"></td>
+            <td class="lang text-primary lang-EN">OpenStreetMap assembly</td>
+            <td class="lang text-primary lang-EN">12/11/2015-10/11/2015</td>
+            <td class="lang text-primary lang-EN">
+              <div class="add-info">Germany</div>
+            </td>
+            <td class="lang text-primary lang-EN"><img src="http://blog.openstreetmap.de/wp-uploads//2016/01/de.svg"></td>
+          </tr>
+        </tbody></table>
+        <h3 onclick="$('.markdownPreview').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right markdownPreview"></span><span class="glyphicon glyphicon-triangle-bottom hidden markdownPreview"></span><span> Markdown</span></h3>
+        <div class="hidden markdownPreview">
+          <pre class="lang lang-EN">|Where  |What                                               |When                 |Country   |
+|-------|---------------------------------------------------|---------------------|----------|
+|online |PoliMappers' Adventures: One mapping quest each day|20/11/2015-22/11/2015|everywhere|
+|Leipzig|OpenStreetMap assembly                             |12/11/2015-10/11/2015|Germany   |
+</pre>
+        </div>
+        <h3 onclick="$('.parserErrors').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right parserErrors"></span><span class="glyphicon glyphicon-triangle-bottom hidden parserErrors"></span><span> Parsing Problems</span></h3>
+        <pre class="hidden parserErrors"></pre><a href="https://osmbc.openstreetmap.de/calendar/preview" class="hidden parserErrors">Calendar Preview</a><span>    </span><a href="https://wiki.openstreetmap.org/wiki/Template:Calendar" class="hidden parserErrors">Edit Calendar in OSM Wiki</a>
+        <h3 onclick="$('.filteredEvents').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right filteredEvents"></span><span class="glyphicon glyphicon-triangle-bottom hidden filteredEvents"></span><span> Filtered Events</span></h3>
+        <table class="hidden filteredEvents table">
+          <tbody><tr>
+            <td>...</td>
+          </tr>
+        </tbody></table>
+      <p></p>
+      <p></p>
+    </div>
+    <!-- /container-->
+    <!-- Bootstrap core JavaScript-->
+    <!-- ==================================================-->
+    <!-- Placed at the end of the document so the pages load faster-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  
+
+
+  
+    <title></title>
+    <link rel="stylesheet" href="stylesheets/style.css">
+  
+  
+
+<script>
+  $(document).ready(function(){
+    var lang = "EN";
+  
+    $('.lang').addClass('hidden');
+    $('.lang-'+lang).removeClass('hidden');
+  });
+</script></body></html>

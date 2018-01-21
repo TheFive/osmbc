@@ -7,12 +7,13 @@ var debug         = require("debug")("OSMBC:notification:mailReceiver");
 var fs            = require("fs");
 var nodemailer    = require("nodemailer");
 var EmailTemplate = require("email-templates").EmailTemplate;
+var emailValidator = require("email-validator");
 
 var messageCenter = require("../notification/messageCenter.js");
 var articleModule = require("../model/article.js");
-var blogModule = require("../model/blog.js");
+var blogModule    = require("../model/blog.js");
 
-var htmlToText = require("html-to-text");
+var htmlToText    = require("html-to-text");
 
 
 
@@ -110,12 +111,15 @@ function sendMailWithLog(user, mailOptions, callback) {
 
 function MailReceiver(user) {
   debug("MailReceiver");
+  this.invalidMail = true;
   this.user = user;
+  if (emailValidator.validate(user.email)) {
+    this.invalidMail = false;
+  }
 }
 
 MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter, callback) {
   debug("MailReceiver.prototype.sendWelcomeMail");
-
 
   var self = this;
   var data = {user: this.user, inviter: inviter, layout: layout};
@@ -141,7 +145,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter, callb
 
 MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, callback) {
   debug("MailReceiver.prototype.sendLanguageStatus");
-
+  if (this.invalidMail) return callback();
   var self = this;
 
 
@@ -176,7 +180,7 @@ MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, bl
 
 MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, callback) {
   debug("MailReceiver.prototype.sendCloseStatus");
-
+  if (this.invalidMail) return callback();
   var self = this;
 
 
@@ -207,7 +211,7 @@ MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, la
 
 MailReceiver.prototype.updateArticle = function updateArticle(user, article, change, callback) {
   debug("MailReceiver.prototype.updateArticle");
-
+  if (this.invalidMail) return callback();
   should(typeof (change)).eql("object");
 
 
@@ -263,7 +267,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user, article, cha
 
 MailReceiver.prototype.addComment = function addComment(user, article, text, callback) {
   debug("MailReceiver.prototype.addComment");
-
+  if (this.invalidMail) return callback();
   should(typeof (text)).eql("string");
 
 
@@ -301,7 +305,7 @@ MailReceiver.prototype.addComment = function addComment(user, article, text, cal
 
 MailReceiver.prototype.editComment = function editComment(user, article, index, text, callback) {
   debug("MailReceiver.prototype.addComment");
-
+  if (this.invalidMail) return callback();
   should(typeof (text)).eql("string");
 
 
@@ -342,7 +346,7 @@ MailReceiver.prototype.editComment = function editComment(user, article, index, 
 
 MailReceiver.prototype.updateBlog = function updateBlog(user, blog, change, callback) {
   debug("MailReceiver.prototype.updateBlog");
-
+  if (this.invalidMail) return callback();
 
   var self = this;
   var newBlog = blogModule.create();
@@ -475,7 +479,7 @@ function initialise(userList) {
 function updateUser(user) {
   debug("updateUser");
   delete userReceiverMap[user.OSMUser];
-  if (user.access !== "full") return;
+  if (user.access !== "full" && user.access !== "guest") return;
   if (!user.email) return;
   if (user.email.trim() === "") return;
   userReceiverMap[user.OSMUser] = new UserConfigFilter(user, new MailReceiver(user));

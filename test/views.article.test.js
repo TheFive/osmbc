@@ -26,10 +26,12 @@ describe("views/article", function() {
       .reply(200, "ok");
     return bddone();
   });
+  let nockLoginPage;
   beforeEach(function(bddone) {
+    nockLoginPage = testutil.nockLoginPage();
     async.series([
       testutil.clearDB,
-      function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE"}, cb); },
+      (cb) => { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE"}, cb); },
       function createBlog(cb) { blogModule.createNewBlog({OSMUser: "test"}, {name: "blog"}, cb); },
       function createArticle(cb) { articleModule.createNewArticle({blog: "blog", collection: "http://www.test.dä/holla", markdownDE: "[Text](http://www.test.dä/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.dä/holla) lorem ipsum dolores."}, cb); },
       function createArticle(cb) {
@@ -45,6 +47,7 @@ describe("views/article", function() {
     });
   });
   afterEach(function(bddone) {
+    nock.removeInterceptor(nockLoginPage);
     testutil.stopServer(bddone);
   });
 

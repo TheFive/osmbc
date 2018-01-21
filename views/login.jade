@@ -1,2 +1,34 @@
-h1. 
-| Login with OSM
+
+extends layout
+
+block content
+  // Full Access Index Page
+  :markdown-it
+    # OSMBC
+    Welcome to OSMBC, the tool for the weeklyOSM / Wochennotizteam to collect, write and publish
+    OpenStreetMaps weekly news.
+
+    If you have already an account, please use the OSM Login button at the end of the page.
+
+    If you would like to report a post for the next issue, and are not an editor, you still can login
+    and use our guest module of OSMBC.
+    The guest module gives you access to all YOUR articles, including their translation in all languages.
+    It althoug offers the possiblity to keep you informed via email by comments for that article.
+
+    To register to OSMBC you just have to login with your OpenStreetMap user account, and you will be
+    added to our user database as guest.
+
+  a#login(href=htmlroot+"/auth/openstreetmap")="Login with OpenStreetMap"
+
+  :markdown-it
+    ## Data Protection Remark
+    All your changes are logged with your OSMBC user name, similar the logging of changesets in OpenStreetMap.
+
+
+
+
+
+
+
+
+  div.footer

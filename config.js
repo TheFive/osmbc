@@ -11,6 +11,8 @@ var winston  = require("winston");
 
 
 
+
+
 // Define simple first logger for winston
 
 var logger = winston;
@@ -82,7 +84,6 @@ exports.initialise = function initialise(callback) {
     configuration.moment_locale[lang] = lang;
   });
 
-  should(typeof (configuration.ReviewInWP)).equal("object");
   should(typeof (configuration.languages)).equal("object");
 
   // Do some corrections, e.g. the languages MUST contain an "EN"
@@ -114,6 +115,11 @@ exports.getValue = function(key, options) {
     logger.error("Missing Value in config.*.json. Name: '" + key + "'");
     process.exit(1);
   }
+  if (typeof result !== "undefined" && options && options.type && typeof result !== options.type) {
+    logger.error("Value '" + key + "' does not have type "+ options.type);
+    process.exit(1);
+  }
+
   if (options && options.deprecated && typeof result !== "undefined") {
     logger.error("Unnecessary Value in config.*.json. Name: '" + key + "'");
   }
@@ -152,4 +158,9 @@ exports.getCallbackUrl = function() {
 exports.env = env;
 exports.logger = logger;
 
+
+
+//deprecate Values
+exports.getValue("ReviewInWP",{deprecated:true});
+exports.getValue("diableOldEditor",{deprecated:true});
 

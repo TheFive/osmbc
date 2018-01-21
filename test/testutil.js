@@ -67,25 +67,34 @@ exports.findJSON = function findJSON(table, obj, cb) {
 
 exports.clearDB = function clearDB(done) {
   should(config.env).equal("test");
-  messageCenter.initialise();
-  should.exist(messageCenter.global);
+  function _clearDB(done) {
+    messageCenter.initialise();
+    should.exist(messageCenter.global);
 
-  mailReceiver.initialise([]);
-  var pgOptions = {dropTables: true, createTables: true, dropIndex: true, createIndex: true, dropView: true, createView: true};
-  async.series([
-    function(done) { config.initialise(done); },
-    function(done) { pgMap.createTables(blogModule.pg, pgOptions, done); },
-    function(done) { pgMap.createTables(articleModule.pg, pgOptions, done); },
-    function(done) { pgMap.createTables(logModule.pg, pgOptions, done); },
-    function(done) { pgMap.createTables(userModule.pg, pgOptions, done); },
-    function(done) { pgMap.createTables(session.pg, pgOptions, done); },
-    function(done) { pgMap.createTables(configModule.pg, pgOptions, done); }
+    mailReceiver.initialise([]);
+    var pgOptions = {dropTables: true, createTables: true, dropIndex: true, createIndex: true, dropView: true, createView: true};
+    async.series([
+      function(done) { config.initialise(done); },
+      function(done) { pgMap.createTables(blogModule.pg, pgOptions, done); },
+      function(done) { pgMap.createTables(articleModule.pg, pgOptions, done); },
+      function(done) { pgMap.createTables(logModule.pg, pgOptions, done); },
+      function(done) { pgMap.createTables(userModule.pg, pgOptions, done); },
+      function(done) { pgMap.createTables(session.pg, pgOptions, done); },
+      function(done) { pgMap.createTables(configModule.pg, pgOptions, done); }
 
-  ], function(err) {
-    if (err) console.error(err);
-    should.not.exist(err);
-    configModule.initialiseConfigMap();
-    configModule.initialise(done);
+    ], function(err) {
+      if (err) {
+        return done(err);
+      }
+      configModule.initialiseConfigMap();
+      return configModule.initialise(done);
+    });
+  }
+  if (done) {
+    return _clearDB(done);
+  }
+  return new Promise((resolve,reject) => {
+    _clearDB((err) => (err) ? reject(err): resolve());
   });
 };
 
@@ -145,11 +154,11 @@ exports.importData = function importData(data, callback) {
         async.eachSeries(data.blog, function importOneBlog(d, cb) {
           let id = d.id;
           delete d.id;
-          blogModule.createNewBlog({displayName: "test"}, d, function(err, blog) {
+          blogModule.createNewBlog({displayName: "test"}, d,true, function(err, blog) {
             if (err) return cb(err);
             if (typeof (id) !== "undefined") idReference.blog[id] = blog.id;
             cb();
-          }, true);
+          });
         }, cb2);
       } else cb2();
     },
@@ -331,39 +340,54 @@ exports.generateTests = function generateTests(datadir, fileregex, createTestFun
 var browser = null;
 var server = null;
 
-
-exports.startServer = function startServer(userString, callback) {
-  debug("startServer");
-  if (typeof (userString) === "function") {
-    callback = userString;
-    userString = null;
-  }
-  if (server) exports.stopServer();
-  server = http.createServer(app).listen(config.getServerPort());
-
-  if (userString === null) {
-    if (callback) return callback();
-    return;
-  }
-
+function fakeNextPassportLogin(userString) {
   passport._strategies.openstreetmap._token_response = {
-    access_token: 'at-1234',
+    access_token: "at-1234",
     expires_in: 3600
   };
 
   passport._strategies.openstreetmap._profile = {
     displayName: userString
   };
+}
+
+exports.startServerSync = function startServerSync(userString) {
+  debug("startServer");
+  if (server) exports.stopServer();
+  server = http.createServer(app).listen(config.getServerPort());
+
+  if (userString === null) {
+    return;
+  }
+  fakeNextPassportLogin(userString);
+};
+
+exports.startServer = function startServer(userString, callback) {
+  // console.warn("exports.startServer is deprecated");
+  if (typeof (userString) === "function") {
+    callback = userString;
+    userString = null;
+  }
+  exports.startServerSync(userString);
   return callback();
 };
 
+
+function nockLoginPage() {
+  return nock("http://localhost:35043",{allowUnmocked:true})
+    .get(config.htmlRoot()+"/login")
+    .reply(302,"redirect",{'Location':"http://localhost:35043"+config.htmlRoot()+"/auth/openstreetmap"});
+}
+
 var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
-exports.startServerWithLogin = function(userString,jar,callback) {
+exports.startServerWithLogin = function(userString, jar, callback) {
   debug("startServerWithLogin");
-  exports.startServer(userString,function(err){
+  exports.startServer(userString, function(err) {
     if (err) return callback(err);
-    request.get({url:baseLink + "/osmbc",jar:jar},function(err){
+    let nockLoginInterceptor = nockLoginPage();
+    request.get({url: baseLink + "/osmbc", jar: jar}, function(err) {
+      nock.removeInterceptor(nockLoginInterceptor);
       return callback(err);
     });
   });
@@ -382,6 +406,22 @@ exports.getBrowser = function getBrowser() {
   return browser;
 };
 
+exports.getNewBrowser = function getNewBrowser(userString) {
+  return new Promise((resolve, reject) => {
+    let browser = new Browser({ maxWait: 20000, site: "http://localhost:" + config.getServerPort() });
+    if (!userString) return resolve(browser);
+    should.exist(userString);
+    fakeNextPassportLogin(userString);
+    let nockLoginInterceptor = nockLoginPage();
+    browser.visit("/osmbc", function(err) {
+      nock.removeInterceptor(nockLoginInterceptor);
+      if (err) return reject(err);
+      resolve(browser);
+    });
+  });
+};
+
+exports.fakeNextPassportLogin = fakeNextPassportLogin;
 
 
 exports.doATest = function doATest(dataBefore, test, dataAfter, callback) {
@@ -413,14 +453,12 @@ exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
 };
 
 
-// extend the Browser Assert API
 
-
-Browser.Assert.prototype.expectHtml = function expectHtml(name, cb) {
+Browser.Assert.prototype.expectHtmlSync = function expectHtml(givenPath, name) {
   let expected = "not read yet";
-  let expectedFile = path.join(__dirname, "screens", name);
-  let actualFile   = path.join(__dirname, "screens", "actual_" + name);
-  let string = this.html();
+  let expectedFile = path.join(__dirname, givenPath, name);
+  let actualFile   = path.join(__dirname, givenPath, "actual_" + name);
+  let string = this.browser.html();
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
   } catch (err) {
@@ -432,6 +470,37 @@ Browser.Assert.prototype.expectHtml = function expectHtml(name, cb) {
       fs.unlinkSync(actualFile);
     } catch (err) {}
 
+    return;
+  }
+  // there is a difference, so create the actual data as file
+  // do easier fix the test.
+  fs.writeFileSync(actualFile, string, "UTF8");
+  should(string).eql(expected, "HTML File " + name + " is different.");
+};
+
+
+Browser.Assert.prototype.expectHtml = function expectHtml(givenPath, name, cb) {
+  console.warn("Browser.Assert.prototype.expectHtml is deprecated");
+
+  if (typeof name === "function") {
+    cb = name;
+    name = givenPath;
+    givenPath = "screens";
+  }
+  let expected = "not read yet";
+  let expectedFile = path.join(__dirname, givenPath, name);
+  let actualFile   = path.join(__dirname, givenPath, "actual_" + name);
+  let string = this.html();
+  try {
+    expected = fs.readFileSync(expectedFile, "UTF8");
+  } catch (err) {
+    console.error(err);
+  }
+  if (string === expected) {
+    // everything is fine, delete any existing actual file
+    try {
+      fs.unlinkSync(actualFile);
+    } catch (err) {}
     return cb();
   }
   // there is a difference, so create the actual data as file
@@ -447,3 +516,7 @@ process.on("unhandledRejection", (reason, p) => {
   console.error(reason.stack);
   // application specific logging, throwing an error, or other logic here
 });
+
+
+
+exports.nockLoginPage = nockLoginPage;

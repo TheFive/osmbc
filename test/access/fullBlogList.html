@@ -1,0 +1,146 @@
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+    <title>TESTBC</title>
+    <!-- Bootstrap core CSS-->
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Fixed navbar-->
+    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header pull-left"><a href="/changelog" class="bg-success navbar-brand hidden-xs">Whats New?</a>
+          <ul class="nav navbar-nav pull-left">
+            <li><a id="collect" href="/article/create">Collect</a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-left">
+            <li><a id="inbox" href="/usert/inbox">Inbox </a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-left visible-xs">
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+          </ul>
+        </div>
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
+            </li>
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+            <li id="article" class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Articles</li>
+                <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Empty Collections</a></li>
+                <li class="dropdown-header">Orphaned Article
+                  </li><li><a href="/article/list?blog=">No Blog</a></li>
+                
+              </ul>
+            </li>
+            <li id="tool" class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Markdown Helper</li>
+                <li><a href="/tool/calendarAllLang/fakeCalendar">Calendar Tool (fakeCalendar)</a></li>
+                <li><a href="/tool/picturetool">Picture Tool</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">About The Team
+                  </li><li><a href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a></li>
+                
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">OSMBC</li>
+                <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">WeeklyOSM &amp; Wochennotiz</li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a></li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotitz in OSM Wiki</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="/language?lang=EN">EN</a></li>
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="/language?lang2=none">none</a></li>
+                <li><a href="/language?lang2=EN">EN</a></li>
+              </ul>
+            </li>
+            <li><img onclick="location.href='/usert/1';" style="height:50px;width:50px"></li>
+          </ul>
+          <!-- /.nav-collapse-->
+          
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <p>
+        <row>
+          </row></p><div>
+            <table class="table table-striped table-responsive">
+              <thead>
+                <tr> 
+                  <th>name</th>
+                  <th>status</th>
+                  <th>EN</th>
+                  <th>service</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="/blog/WN251">WN251</a></td>
+                  <td>open</td>
+                  <td><a href="/article/list?markdownEN=&amp;category=!=--unpublished--&amp;blog=WN251"><span class="label label-default">2</span></a><a href="/article/list?markdownEN=&amp;category=!=--unpublished--&amp;blog=WN251"><span class="label osmbclabel-openblog">2</span></a>
+                  </td>
+                  <td><a href="/blog/WN251?setStatus=closed">Close Blog</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        
+        <row>
+          <p>Click on any label to edit the articles or view the blog.</p>
+          <p><span class="label label-default">missing</span><span class="label osmbclabel-closedblog">total</span> Closed Blog</p>
+          <p><span class="label label-default">missing</span><span class="label osmbclabel-reviewblog">total</span> Reviewed Blog</p>
+          <p><span class="label label-default">missing</span><span class="label osmbclabel-editblog">total</span> Edit Blog</p>
+          <p><span class="label label-default">missing</span><span class="label osmbclabel-openblog">total</span> Open Blog</p>
+        </row>
+        <p> (+3d): The number in brackets shows the blog closing for that language in days
+          </p><p>More bloglists</p>
+          <p><a href="/blog/list?status=open">(open) </a><a href="/blog/list?status=edit">(edit) </a><a href="/blog/list?status=closed">(closed) </a><a href="/blog/list?status=trash">(trash) </a></p><p></p>
+        <row class="hidden-xs">
+          <div id="additionalText">
+          </div>
+        </row>
+      <p></p>
+      <p></p>
+    </div>
+    <!-- /container-->
+    <!-- Bootstrap core JavaScript-->
+    <!-- ==================================================-->
+    <!-- Placed at the end of the document so the pages load faster-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  
+
+
+  
+    <title></title>
+    <link rel="stylesheet" href="stylesheets/style.css">
+  
+  
+</body></html>

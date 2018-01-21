@@ -20,9 +20,9 @@ describe("routes/api", function() {
   var baseLink;
   beforeEach(function(bddone) {
     baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
+    testutil.startServerSync();
     async.series([
-      function(cb) { testutil.importData({clear: true, user: [{"OSMUser": "TheFive", "email": "simple@test.test",language:"DE","apiKey":"334433"}]}, cb); },
-      testutil.startServer
+      function(cb) { testutil.importData({clear: true, user: [{"OSMUser": "TheFive", "email": "simple@test.test",language:"DE","apiKey":"334433"}]}, cb); }
     ], bddone);
   });
   afterEach(function(bddone) {

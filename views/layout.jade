@@ -1,8 +1,8 @@
 include mixins
 
 mixin homeButton(addclass)
-  if layout.osmbc_version === layout.user.lastChangeLogView
-    a(href=layout.htmlroot+'/osmbc.html' class=addclass) #{layout.appName}
+  if !layout || layout.osmbc_version === layout.user.lastChangeLogView
+    a(href=htmlroot+'/osmbc.html' class=addclass)=appName
   else
     a.bg-success(href=layout.htmlroot+'/changelog' class=addclass) Whats New?
 
@@ -21,7 +21,7 @@ mixin firstBlogOfList(list,count,c)
 mixin collectMenu
   ul.nav.navbar-nav.pull-left
     li
-      a(href=layout.htmlroot + '/article/create') Collect
+      a#collect(href=htmlroot + '/article/create') Collect
 
 mixin tbcMenu
   if blogNumber(layout.tbc, layout.language) > 0
@@ -37,7 +37,7 @@ mixin tbcMenu
 mixin inboxMenu
  ul.nav.navbar-nav.pull-left
    li
-     a(href=layout.htmlroot + '/usert/inbox')="Inbox "
+     a#inbox(href=layout.htmlroot + '/usert/inbox')="Inbox "
        if (layout.userMentions > 0)
          span.badge.osmbcbadge-user=layout.userMentions
        if (layout.user.access === "full")
@@ -47,7 +47,7 @@ mixin inboxMenu
            span.badge.osmbcbadge-lang2=layout.secondLangMentions
 
 mixin articleMenu
-  li.dropdown
+  li#article.dropdown
     a.dropdown-toggle(href='#', data-toggle='dropdown')
       | Lists
       span.caret
@@ -66,16 +66,13 @@ mixin articleMenu
           a(href=layout.htmlroot + '/article/list?blog=') No Blog
 
 mixin toolMenu
-  li.dropdown.hidden-xs
+  li.dropdown#tool.hidden-xs
     a.dropdown-toggle(href='#', data-toggle='dropdown')
       | Tool
       span.caret
     ul.dropdown-menu(role='menu')
       li.dropdown-header Markdown Helper
-      li
-        a(href=layout.htmlroot + "/tool/calendarAllLang") Calendar Tool (OSMBC)
-      for integration,name in layout.calendarInterface
-
+      for integration, name in layout.calendarInterface
         li
           a(href=layout.htmlroot + "/tool/calendarAllLang/" + name)="Calendar Tool (" + name + ")"
       li
@@ -151,10 +148,10 @@ block all
       meta(name='description', content='')
       meta(name='author', content='')
       link(rel='icon', href='/favicon.ico')
-      title=layout.title
+      title=appName
       // Bootstrap core CSS
-      link(href=layout.path("bootstrap")+'/css/bootstrap.min.css', rel='stylesheet')
-      link(href=layout.path("font-awesome")+"/css/font-awesome.min.css" rel='stylesheet')
+      link(href=path("bootstrap")+'/css/bootstrap.min.css', rel='stylesheet')
+      link(href=path("font-awesome")+"/css/font-awesome.min.css" rel='stylesheet')
 
     body
       - function blogNumber(blog,language) {return ((blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[language]:"?") }
@@ -166,17 +163,20 @@ block all
         .container-fluid
           .navbar-header.pull-left
             //- generate a list of all blogs for Menu
-            - var listall = [].concat(layout.listOfReviewBlog)
-            - listall = listall.concat(layout.listOfEditBlog)
-            - listall = listall.concat(layout.listOfOpenBlog)
+            - var listall = []
+            if (layout)
+              - listall = [].concat(layout.listOfReviewBlog)
+              - listall = listall.concat(layout.listOfEditBlog)
+              - listall = listall.concat(layout.listOfOpenBlog)
 
             +homeButton("navbar-brand hidden-xs")
             +collectMenu
-            if (layout.user.access === "full")
+            if (layout && layout.user.access === "full")
               +tbcMenu
-            +inboxMenu
+            if (layout)
+              +inboxMenu
 
-            if (layout.user.access === "full")
+            if (layout && layout.user.access === "full")
               ul.nav.navbar-nav.pull-left.visible-xs
                 +firstBlogOfList(listall)
 
@@ -194,17 +194,18 @@ block all
             ul.nav.navbar-nav.navbar-left
               li.show-xs
                 +homeButton("visible-xs")
-              if (layout.user.access === "full")
+              if (layout && layout.user.access === "full")
                 +firstBlogOfList(listall,2)
                 +articleMenu
                 +toolMenu
-            ul.nav.navbar-nav.navbar-right
-              +helpMenu
-              +langChooser("lang")
-              +langChooser("lang2")
-              - for (i = 3; params && params.columns && i<= params.columns;i++)
-                +langChooser("lang"+i)
-              +userAvatar
+            if (layout)
+              ul.nav.navbar-nav.navbar-right
+                +helpMenu
+                +langChooser("lang")
+                +langChooser("lang2")
+                - for (i = 3; params && params.columns && i<= params.columns;i++)
+                  +langChooser("lang"+i)
+                +userAvatar
 
 
             // /.nav-collapse
@@ -221,15 +222,14 @@ block all
       // Bootstrap core JavaScript
       // ==================================================
       // Placed at the end of the document so the pages load faster
-      //link(rel='stylesheet', href='#{layout.bootstrap}/css/bootstrap.min.css')
-      script(src=layout.path("jquery")+'/jquery.min.js')
-      script(src=layout.path("bootstrap")+'/js/bootstrap.min.js')
+      script(src=path("jquery")+'/jquery.min.js')
+      script(src=path("bootstrap")+'/js/bootstrap.min.js')
 
   doctype html
   html
     head
       title= title
-      link(rel='stylesheet', href='#{layout.htmlroot}#{layout.style}')
+      link(rel='stylesheet', href='#{htmlroot}#{stylesheet}')
     body
 
   block scripts

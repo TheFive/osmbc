@@ -159,7 +159,6 @@ function renderUserId(req, res, next) {
     res.render(view, {usershown: user,
       changes: changes,
       params: params,
-      oldEditorDisabled: config.getValue("diableOldEditor"),
       userHeatMapArray: userHeatMapArray,
       langlist: config.getLanguages(),
       layout: res.rendervar.layout});
@@ -174,7 +173,6 @@ function postUserId(req, res, next) {
     SlackUser: req.body.SlackUser,
     mdWeeklyAuthor: req.body.mdWeeklyAuthor,
     color: req.body.color,
-    articleEditor: req.body.articleEditor,
     languageCount: req.body.languageCount,
     language: req.body.language,
     mailAllComment: req.body.mailAllComment,
@@ -198,7 +196,6 @@ function postUserId(req, res, next) {
     changes.mailBlogLanguageStatusChange = [];
   }
   if (["three", "four"].indexOf(changes.languageCount) < 0) changes.languageCount = "two";
-  if (["new"].indexOf(changes.articleEditor) < 0) changes.articleEditor = "old";
   var user;
   let allowedToChangeUser = true;
   async.series([

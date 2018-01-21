@@ -4,6 +4,7 @@ var should  = require("should");
 var async   = require("async");
 var config  = require("../config.js");
 var request = require("request");
+var nock = require("nock");
 var testutil = require("./testutil.js");
 var initialise = require("../util/initialise.js");
 var userModule = require("../model/user.js");
@@ -31,6 +32,16 @@ describe("routes/index", function() {
   after(function() {
     mockdate.reset();
   });
+  let nockLoginPage;
+  beforeEach(function(bddone){
+    nockLoginPage = testutil.nockLoginPage();
+    return bddone();
+  });
+  afterEach(function(bddone){
+    nock.removeInterceptor(nockLoginPage);
+    return bddone();
+  });
+
   describe("route GET /", function() {
     let url = baseLink + "/";
     it("should show home page", function (bddone) {

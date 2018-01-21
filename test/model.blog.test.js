@@ -13,9 +13,9 @@ var blogModule    = require("../model/blog.js");
 describe("model/blog", function() {
   before(function (bddone) {
     nock("https://hooks.slack.com/")
-            .post(/\/services\/.*/)
-            .times(999)
-            .reply(200, "ok");
+      .post(/\/services\/.*/)
+      .times(999)
+      .reply(200, "ok");
 
     process.env.TZ = "Europe/Amsterdam";
     testutil.clearDB(bddone);
@@ -63,34 +63,33 @@ describe("model/blog", function() {
     });
     it("should createNewArticle with existing WN", function(bddone) {
       blogModule.createNewBlog({OSMUser: "test"},
-                               {name: "WN100", endDate: new Date("1.1.2000")},
-                               function(err, result) {
-                                 should.not.exist(err);
-                                 should.exist(result);
-                                 result.save(function(err) {
-                                   should.not.exist(err);
-                                   blogModule.createNewBlog({OSMUser: "test"}, function (err, result) {
-                                     should.not.exist(err);
-                                     var id = result.id;
-                                     testutil.getJsonWithId("blog", id, function(err, result) {
-                                       should.not.exist(err);
-                                       should.exist(result);
-                                       should(result.name).equal("WN101");
-                                       should(new Date(result.startDate).toLocaleDateString()).eql(new Date("2000-01-02").toLocaleDateString());
-                                       should(new Date(result.endDate).toLocaleDateString()).eql(new Date("2000-01-08").toLocaleDateString());
-                                       bddone();
-                                     });
-                                   });
-                                 });
-                               });
+        {name: "WN100", endDate: new Date("1.1.2000")},
+        function(err, result) {
+          should.not.exist(err);
+          should.exist(result);
+          result.save(function(err) {
+            should.not.exist(err);
+            blogModule.createNewBlog({OSMUser: "test"}, function (err, result) {
+              should.not.exist(err);
+              var id = result.id;
+              testutil.getJsonWithId("blog", id, function(err, result) {
+                should.not.exist(err);
+                should.exist(result);
+                should(result.name).equal("WN101");
+                should(new Date(result.startDate).toLocaleDateString()).eql(new Date("2000-01-02").toLocaleDateString());
+                should(new Date(result.endDate).toLocaleDateString()).eql(new Date("2000-01-08").toLocaleDateString());
+                bddone();
+              });
+            });
+          });
+        });
     });
     it("should create no New Article with ID", function(bddone) {
-      (function() {
-        blogModule.createNewBlog({OSMUser: "test"}, {id: 2, name: "test", status: "**"}, function () {
-
-        });
-      }).should.throw();
-      bddone();
+      blogModule.createNewBlog({OSMUser: "test"}, {id: 2, name: "test", status: "**"}, function (err) {
+        should.exist(err);
+        should(err.message).eql("Should not exist proto id");
+        bddone();
+      });
     });
   });
   describe("isEditable", function() {
@@ -132,7 +131,7 @@ describe("model/blog", function() {
           });
         },
         function (cb2) {
-          should(newBlog.isEditable("DE")).be.False();
+          should(newBlog.isEditable("DE")).be.True();
           newBlog.closeBlog("DE", {OSMUser: "Test"}, true, cb2);
         },
         function (cb1) {
@@ -395,11 +394,11 @@ describe("model/blog", function() {
         function c2(cb) { blogModule.createNewBlog({OSMUser: "test"}, {name: "WN2", status: "open", startDate: "2015-01-01", endDate: "2016-01-01"}, cb); },
         function c3(cb) {
           blogModule.createNewBlog({OSMUser: "test"}, {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"},
-                         function(err, result) {
-                           should.not.exist(err);
-                           idToFindLater = result.id;
-                           cb(err);
-                         });
+            function(err, result) {
+              should.not.exist(err);
+              idToFindLater = result.id;
+              cb(err);
+            });
         }
 
       ], function(err) {
@@ -467,14 +466,14 @@ describe("model/blog", function() {
     it("should close a blog and create a new", function(bddone) {
       var time = (new Date()).toISOString();
       var dataBefore = {blog: [
-              {name: "WN1", status: "open", startDate: "2015-01-01", endDate: time},
-              {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
-              {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
+        {name: "WN1", status: "open", startDate: "2015-01-01", endDate: time},
+        {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
+        {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
       var dataAfter = {blog: [
-              {name: "WN1", status: "edit", startDate: "2015-01-01", endDate: time},
-              {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
-              {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"},
-              {name: "WN4", status: "open", startDate: (new Date("2016-01-02")).toISOString(), endDate: (new Date("2016-01-08")).toISOString()}]};
+        {name: "WN1", status: "edit", startDate: "2015-01-01", endDate: time},
+        {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
+        {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"},
+        {name: "WN4", status: "open", startDate: (new Date("2016-01-02")).toISOString(), endDate: (new Date("2016-01-08")).toISOString()}]};
       var testFunction = function testFunction(cb) {
         blogModule.autoCloseBlog(cb);
       };
@@ -483,15 +482,15 @@ describe("model/blog", function() {
     it("should close 2 blog and not create new if there is one open and should not be started twice", function(bddone) {
       var time = (new Date()).toISOString();
       var dataBefore = {blog: [
-              {name: "WN0", status: "open", startDate: "2015-01-01", endDate: time},
-              {name: "WN1", status: "open", startDate: "2015-01-01", endDate: time},
-              {name: "WN2", status: "open", startDate: "2015-01-01", endDate: "2099-01-01"},
-              {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
+        {name: "WN0", status: "open", startDate: "2015-01-01", endDate: time},
+        {name: "WN1", status: "open", startDate: "2015-01-01", endDate: time},
+        {name: "WN2", status: "open", startDate: "2015-01-01", endDate: "2099-01-01"},
+        {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
       var dataAfter = {blog: [
-              {name: "WN0", status: "edit", startDate: "2015-01-01", endDate: time},
-              {name: "WN1", status: "edit", startDate: "2015-01-01", endDate: time},
-              {name: "WN2", status: "open", startDate: "2015-01-01", endDate: "2099-01-01"},
-              {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
+        {name: "WN0", status: "edit", startDate: "2015-01-01", endDate: time},
+        {name: "WN1", status: "edit", startDate: "2015-01-01", endDate: time},
+        {name: "WN2", status: "open", startDate: "2015-01-01", endDate: "2099-01-01"},
+        {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
       var testFunction = function testFunction(cb) {
         async.parallel([
           blogModule.autoCloseBlog,
@@ -508,13 +507,13 @@ describe("model/blog", function() {
       timein2sec.setTime(timein2sec.getTime() + 2000);
       var time = timein2sec.toISOString();
       var dataBefore = {blog: [
-              {name: "WN1", status: "open", startDate: "2015-01-01", endDate: time},
-              {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
-              {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
+        {name: "WN1", status: "open", startDate: "2015-01-01", endDate: time},
+        {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
+        {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
       var dataAfter = {blog: [
-              {name: "WN1", status: "open", startDate: "2015-01-01", endDate: time},
-              {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
-              {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
+        {name: "WN1", status: "open", startDate: "2015-01-01", endDate: time},
+        {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
+        {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
       var testFunction = function testFunction(cb) {
         blogModule.autoCloseBlog(cb);
       };
@@ -531,10 +530,10 @@ describe("model/blog", function() {
         {name: "WN1", status: "open", startDate: "2015-01-01", endDate: time},
         {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
         {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}],
-        change: [
+      change: [
         {oid: 1, blog: "WN1", property: "closeDE", timestamp: time},
         {oid: 1, blog: "WN1", property: "closeEN", timestamp: time2}
-        ]};
+      ]};
       var dataAfter = {};
       var testFunction = function testFunction(cb) {
         blogModule.findById(1, function(err, blog) {

@@ -4,36 +4,11 @@ var debug   = require("debug")("OSMBC:model:parseEvent");
 var should  = require("should");
 var moment  = require("moment");
 var request = require("request");
-var markdown = require("markdown-it")();
 var config = require("../config.js");
 var configModule = require("../model/config.js");
 var async = require("async");
-var https = require("https");
 
 let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
-
-
-// This page is delivering the calendar events
-var wikiEventPage = "https://wiki.openstreetmap.org/w/api.php?action=query&titles=Template:Calendar&prop=revisions&rvprop=content&format=json";
-
-
-
-var regexList = [ {regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *\[\[(.*)\]\] *, *\[\[(.*)\]\] *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
-  keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],
-  convert: ["%s", "%s", "%s", "%s", "[[%s]]", "[[%s]]", "%s"]},
-{regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *(.*) *, *\[\[(.*)\]\] *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
-  keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],
-  convert: ["%s", "%s", "%s", "%s", "%s", "[[%s]]", "%s"]},
-{regex: /\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|y=([0-9]*)\|([a-z 0-9|]*)\}\} *\|\| *<span[^>]*> *(.*) *, *(.*) *, *(.*) *<\/span> *\{\{SmallFlag\|(.*)\}\}/gi,
-  keys: ["type", "year", "date", "desc", "town", "country", "countryflag"],
-  convert: ["%s", "%s", "%s", "%s", "%s", "%s", "%s"]}
-//  {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\} *\{\{SmallFlag\|(.*)\}\}/gi,
-//  keys:[               "type",                "date",              "desc",       "country","wappenflag","countryflag"]},
-//  {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) *, *(.*) *\{\{SmallFlag\|(.*)\}\}/gi,
-//  keys:[               "type",                "date",              "desc",       "country","countryflag"]},
-//  {regex:/\| *\{\{cal\|([a-z]*)\}\}.*\{\{dm\|([a-z 0-9|]*)\}\} *\|\|(.*) */gi,
-//  keys:[               "type",                "date",              "desc"]},
-];
 
 
 
@@ -62,186 +37,7 @@ function convertGeoName(name, lang, callback) {
   });
 }
 
-function nextDate(string, year) {
-  // debug('nextDate');
-  if (!string) return null;
 
-
-
-  var result = new Date(string);
-  result = new Date(Date.UTC(parseInt(year), result.getMonth(), result.getDate()));
-
-  return result;
-}
-// for Test purposes exported
-exports.nextDate = nextDate;
-
-
-/* This function returns the start date of an event, based on a string like
-   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event */
-
-function parseStartDate(string, year) {
-  // debug('parseStartDate')
-  let datestart = string;
-  if (string.indexOf("|") >= 0) {
-    datestart = datestart.substring(0, datestart.indexOf("|"));
-  }
-  datestart = nextDate(datestart, year);
-  // dateend = nextDate(dateend);
-  return datestart;
-}
-
-/* This function returns the end date of an event, based on a string like
-   Jan 27|Jan 28 taken from {{dm|xxxxx}} substring of calendar event,
-   in the case of no enddate, the start date is returned */
-function parseEndDate(string, year) {
-  // debug('parseEndDate')
-  var datestart = string;
-  var dateend;
-
-  if (string.indexOf("|") >= 0) {
-    dateend = datestart.substring(datestart.indexOf("|") + 1, 99999);
-    datestart = datestart.substring(0, datestart.indexOf("|"));
-  }
-  datestart = nextDate(datestart, year);
-  dateend = nextDate(dateend, year);
-  if (dateend === null) dateend = datestart;
-  return dateend;
-}
-
-/* parseLine is parsing a calendar line, by applying the regex one by one
-   and putting the results into a json with the given keys.
-   If no regex is matching, null is returned */
-
-function parseLine(string) {
-  // debug('parseLine');
-  for (var i = 0; i < regexList.length; i++) {
-    var results = regexList[i].regex.exec(string);
-    let year = null;
-
-    if (results) {
-      var r = {};
-      for (var j = 0; j < regexList[i].keys.length; j++) {
-        var value = results[j + 1].trim();
-        var list  = regexList[i].keys;
-        var convert = regexList[i].convert;
-        if (list[j] === "year") year = value;
-        if (list[j] === "date") {
-          r.startDate = parseStartDate(value, year);
-          r.endDate = parseEndDate(value, year);
-        } else {
-          r[list[j]] = convert[j].replace("%s", value);
-        }
-      }
-      return r;
-    }
-  }
-  if (string.trim() === "|}") return null;
-  if (string.trim().substring(0, 2) === "|=") return null;
-  if (string.trim().substring(0, 1) !== "|") return null;
-  if (string.indexOf('style="width:16px"') >= 0) return null;
-  if (string.indexOf("{{cal|none}}") >= 0) return null;
-
-
-
-  if (string.trim().substring(0, 2) !== "|-" && string.trim().substring(0, 1) === "|") return string;
-  return null;
-}
-
-// exported for test reasons
-exports.parseLine = parseLine;
-
-
-
-function parseWikiInfo(description, options) {
-  debug("parseWikiInfo %s", description);
-  if (!options) options = {};
-  var result = "";
-  var end, next, desc, split;
-  var title, link;
-  while (description && description.trim() !== "") {
-    debug("parse %s", description);
-    next = description.indexOf("[[");
-    end = description.indexOf("]]");
-    if (description.indexOf("[") < next) next = -1;
-    if (next >= 0 && end >= 0) {
-      debug("found [[]] %s %s", next, end);
-      result += description.substring(0, next);
-      desc = description.substring(next + 2, end);
-      description = description.substring(end + 2);
-      split = desc.indexOf("|");
-      if (split < 0) {
-        title = desc;
-        link = "https://wiki.openstreetmap.org/wiki/" + desc;
-      } else {
-        title = desc.substring(split + 1, desc.length);
-
-        link = "https://wiki.openstreetmap.org/wiki/" + desc.substring(0, split);
-      }
-      while (link.indexOf(" ") >= 0) link = link.replace(" ", "%20");
-      if (options.dontLinkify) {
-        result += title;
-      } else {
-        result += "[" + title + "](" + link + ")";
-      }
-    } else {
-      next = description.indexOf("[");
-      end = description.indexOf("]");
-      if (next >= 0 && end >= 0) {
-        debug("found [] %s %s", next, end);
-        result += description.substring(0, next);
-        desc = description.substring(next + 1, end);
-        description = description.substring(end + 1);
-        split = desc.indexOf(" ");
-        if (split < 0) {
-          title = desc.substring(0, desc.length);
-          link = title;
-        } else {
-          title = desc.substring(split + 1, desc.length);
-          link = desc.substring(0, split);
-        }
-      } else {
-        title = description;
-        link = null;
-        description = "";
-      }
-      if (link) {
-        while (link.indexOf(" ") >= 0) link = link.replace(" ", "%20");
-        if (options.dontLinkify) {
-          result += title;
-        } else {
-          result += "[" + title + "](" + link + ")";
-        }
-      } else result += title;
-    }
-  }
-  while (result.search("<big>") >= 0) {
-    result = result.replace("<big>", "");
-  }
-  while (result.search("</big>") >= 0) {
-    result = result.replace("</big>", "");
-  }
-  while (result.search("'''") >= 0) {
-    result = result.replace("'''", "");
-  }
-  return result.trim();
-}
-
-var empty = "                                                                                  ";
-empty = empty + empty;
-empty = empty + empty;
-empty = empty + empty;
-var lineString = "---------------------------------------------------";
-lineString = lineString + lineString;
-lineString = lineString + lineString;
-lineString = lineString + lineString;
-
-function wl(string, length) {
-  return (string + empty).substring(0, length);
-}
-function ll(length) {
-  return lineString.substring(0, length);
-}
 
 function filterEvent(event, option) {
   var date = new moment();
@@ -287,16 +83,23 @@ function filterEvent(event, option) {
   return filtered;
 }
 
-function calendarToMarkdown2(countryFlags, ct, option, cb) {
-  debug("calendarToMarkdown2");
-  should(typeof (cb)).eql("function");
 
+var empty = "                                                                                  ";
+empty = empty + empty;
+empty = empty + empty;
+empty = empty + empty;
+var lineString = "---------------------------------------------------";
+lineString = lineString + lineString;
+lineString = lineString + lineString;
+lineString = lineString + lineString;
 
-  calendarToJSON({}, function(error, result) {
-    if (error) cb(error);
-    calendarJSONToMarkdown2(result, countryFlags, ct, option, cb);
-  });
+function wl(string, length) {
+  return (string + empty).substring(0, length);
 }
+function ll(length) {
+  return lineString.substring(0, length);
+}
+
 
 function calendarJSONToMarkdown2(json, countryFlags, ct, option, cb) {
   debug("calendarJSONToMarkdown2");
@@ -378,19 +181,6 @@ function calendarJSONToMarkdown2(json, countryFlags, ct, option, cb) {
   });
 }
 
-function calendarToMarkdown(options, cb) {
-  var calendarFlags = configModule.getConfig("calendarflags");
-  if (!calendarFlags) calendarFlags = {};
-  var ct = configModule.getConfig("calendartranslation");
-  if (!ct) ct = {};
-  if (!ct.town) ct.town = {};
-  if (!ct.title) ct.title = {};
-  if (!ct.date) ct.date = {};
-  if (!ct.country) ct.country = {};
-
-  calendarToMarkdown2(calendarFlags, ct, options, cb);
-}
-
 function calendarJSONToMarkdown(json, options, cb) {
   var calendarFlags = configModule.getConfig("calendarflags");
   if (!calendarFlags) calendarFlags = {};
@@ -404,115 +194,11 @@ function calendarJSONToMarkdown(json, options, cb) {
   calendarJSONToMarkdown2(json, calendarFlags, ct, options, cb);
 }
 
-let agentOptions = {
-
-  rejectUnauthorized: false
-};
-
-let agent = new https.Agent(agentOptions);
-
-function calendarToJSON(option, cb) {
-  debug("calendarToJSON");
-  should(typeof (cb)).eql("function");
-
-  var requestOptions = {
-    url: wikiEventPage,
-    agent: agent
-  };
-
-  request.get(requestOptions, function(error, response, body) {
-    if (error) return cb(error);
-    var json = JSON.parse(body);
-    // body = (json.query.pages[2567].revisions[0]["*"]);
-    if (!json.query) return cb(new Error("No Query Field in Wiki Page"));
-    body = json.query.pages;
-    for (var k in body) {
-      body = body[k];
-      break;
-    }
-    body = body.revisions[0]["*"];
-
-    var point = body.indexOf("\n");
-
-    var events = [];
-    var errors = "";
-
-    while (point >= 0) {
-      var line = body.substring(0, point);
-      body = body.substring(point + 1, 999999999);
-      point = body.indexOf("\n");
-      var result = parseLine(line);
-      result = parseLine(line);
-
-      if (typeof (result) === "string") {
-        if (!errors) errors = "\n\nUnrecognized\n";
-        errors += result + "\n";
-        result = null;
-      }
 
 
-
-      if (result) {
-        events.push(result);
-        result.markdown = parseWikiInfo(result.desc);
-        result.text = parseWikiInfo(result.desc, {dontLinkify: true});
-        result.town_md = parseWikiInfo(result.town, {dontLinkify: false});
-        result.town = parseWikiInfo(result.town, {dontLinkify: true});
-        result.country_md = parseWikiInfo(result.country, {dontLinkify: false});
-        result.country = parseWikiInfo(result.country, {dontLinkify: true});
-        result.big = (result.desc.indexOf("<big>") >= 0);
-
-        result.html = markdown.renderInline(result.markdown);
-        result.town_html = markdown.renderInline(result.town_md);
-        result.country_html = markdown.renderInline(result.country_md);
-      }
-    }
-
-    var returnJSON =
-      {
-        "version": "0.1",
-        "generator": "TheFive Wiki Calendar Parser",
-        "time": new Date(),
-
-        "copyright": "The data is taken from http://wiki.openstreetmap.org/wiki/Template:Calendar and follows its license rules.",
-        "events": events,
-        "errors": errors
-      };
-
-    cb(null, returnJSON);
-  });
-}
-
-function calendarToHtml(date, callback) {
-  debug("calendarToHtml");
-  if (typeof (date) === "function") {
-    callback = date;
-    date = new Date();
-    date.setDate(date.getDate() - 3);
-  }
-  calendarToMarkdown(date, function(err, t) {
-    debug("calendarToHtml:subfunction");
-
-    if (err) return callback(err);
-    debug("convert markdown to html");
-    var result = markdown.render(t);
-    return callback(null, result);
-  });
-}
 /* this function reads the content of the calendar wiki, and convertes it to a markdonw
    in the form |town|description|date|country| */
-exports.calendarToMarkdown = calendarToMarkdown;
 exports.calendarJSONToMarkdown = calendarJSONToMarkdown;
-exports.calendarToHtml = calendarToHtml;
-exports.calendarToJSON = calendarToJSON;
 exports.filterEvent = filterEvent;
 exports.convertGeoName = convertGeoName;
-
-/* parseWikiInfo convertes a string in wikimarkup to markup.
-   only links like [[]] [] are converted to [](),
-   the result is "trimmed" */
-exports.parseWikiInfo = parseWikiInfo;
-
-
-
 

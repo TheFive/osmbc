@@ -13,27 +13,28 @@ var blogModule = require("../model/blog.js");
 
 
 
-var maxTimer = 100000;
+var maxTimer = 15000;
 
 
 
 describe("views/article_new", function() {
   var browser;
   var articleId;
-  before(function(bddone) {
+  let nockLoginPage;
+
+  beforeEach(function(bddone) {
+    nockLoginPage = testutil.nockLoginPage();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
-    bddone();
-  });
-  beforeEach(function(bddone) {
     async.series([
       testutil.clearDB,
-      (cb) => { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE",secondLang:"EN", articleEditor: "new"}, cb); },
+      (cb) => { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE",secondLang:"EN"}, cb); },
       (cb) => { blogModule.createNewBlog({OSMUser: "test"}, {name: "blog"}, cb); },
       (cb) => { articleModule.createNewArticle({blog: "blog", collection: "http://www.test.dä/holla", markdownDE: "[Text](http://www.test.dä/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.dä/holla) lerom upsim deloros."}, cb); },
       (cb) => { articleModule.createNewArticle({blog: "blog", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz."}, cb); },
+      (cb) => { articleModule.createNewArticle({blog: "undef blog", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz."}, cb); },
       (cb) => {
         articleModule.createNewArticle({blog: "blog", collection: "Link1: http://www.test.dä/holla and other"}, function(err, article) {
           if (article) articleId = article.id;
@@ -47,11 +48,8 @@ describe("views/article_new", function() {
     });
   });
   afterEach(function(bddone) {
-    testutil.stopServer(bddone);
-  });
-  after(function(bddone) {
     nock.cleanAll();
-    bddone();
+    testutil.stopServer(bddone);
   });
   describe("Scripting Functions", function() {
     beforeEach(function(done) {
@@ -263,6 +261,17 @@ describe("views/article_new", function() {
           bddone();
         });
       });
+    });
+  });
+  describe("Article List",function(){
+    it("should be called from index page",function(bddone){
+      this.timeout(maxTimer * 2);
+      async.series([
+        browser.visit.bind(browser, "/osmbc"),
+        browser.click.bind(browser,"li.dropdown a"),
+        browser.click.bind(browser,"li#article ul.dropdown-menu li:nth-child(4) a"),
+        browser.assert.expectHtml.bind(browser, "articlelist.html")
+      ], bddone);
     });
   });
 });

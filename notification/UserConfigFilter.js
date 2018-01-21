@@ -78,10 +78,9 @@ UserConfigFilter.prototype.addComment = function ucfAddComment(user, article, co
   }
 
 
-
   if (this.user.access === "guest") {
     sendMail = false;
-    if (article.firstCollector === this.user.OSMUser) sendMail = true;
+    if (comment.search(new RegExp("@" + this.user.OSMUser + "\\b", "i")) >= 0) sendMail = true;
   }
 
   if (!sendMail) return cb();
@@ -121,7 +120,7 @@ UserConfigFilter.prototype.editComment = function ucfEditComment(user, article, 
   }
   if (this.user.access === "guest") {
     sendMail = false;
-    if (article.firstCollector === this.user.OSMUser) sendMail = true;
+    if (comment.search(new RegExp("@" + this.user.OSMUser + "\\b", "i")) >= 0) sendMail = true;
   }
   if (!sendMail) return cb();
   this.receiver.editComment(user, article, index, comment, cb);

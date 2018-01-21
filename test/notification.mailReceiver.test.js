@@ -25,16 +25,16 @@ var messageCenter = require("../notification/messageCenter.js");
 
 
 messageCenter.initialise();
-let logFile = path.join(__dirname,"..","maillogTest.log");
+let logFile = path.join(__dirname, "..", "maillogTest.log");
 
 
 describe("notification/mailReceiver", function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
     nock("https://hooks.slack.com/")
-            .post(/\/services\/.*/)
-            .times(999)
-            .reply(200, "ok");
+      .post(/\/services\/.*/)
+      .times(999)
+      .reply(200, "ok");
   });
 
   after(function (bddone) {
@@ -57,12 +57,13 @@ describe("notification/mailReceiver", function() {
       mailReceiver.for_test_only.transporter.sendMail = mailChecker;
       testutil.importData({clear: true,
         user: [{OSMUser: "UserNewCollection", email: "UserNewCollection@mail.bc", access: "full", mailNewCollection: "true"},
-                                 {OSMUser: "UserAllComment", email: "UserAllComment@mail.bc", access: "full", mailAllComment: "true"},
-                                 {OSMUser: "UserMailDeUser3", email: "UserMailDeUser3@mail.bc", access: "full", mailComment: ["DE", "UserMailDeUser3"]},
-                                 {OSMUser: "UserMailDeUser3General", email: "UserMailDeUser3General@mail.bc", access: "full", mailCommentGeneral: "true", mailComment: ["DE", "UserMailDeUser3General"]},
-                                 {OSMUser: "User4", email: "user4@mail.bc", access: "full",mailComment:["User4"]},
-                                 {OSMUser: "User5", access: "full", mailAllComment: "true"},
-                                 {OSMUser: "User6", access: "full", mailBlogStatusChange: "true"}]}, bddone);
+          {OSMUser: "UserAllComment", email: "UserAllComment@mail.bc", access: "full", mailAllComment: "true"},
+          {OSMUser: "UserMailDeUser3", email: "UserMailDeUser3@mail.bc", access: "full", mailComment: ["DE", "UserMailDeUser3"]},
+          {OSMUser: "UserMailDeUser3General", email: "UserMailDeUser3General@mail.bc", access: "full", mailCommentGeneral: "true", mailComment: ["DE", "UserMailDeUser3General"]},
+          {OSMUser: "User4", email: "user4@mail.bc", access: "full", mailComment: ["User4"]},
+          {OSMUser: "User5", access: "full", mailAllComment: "true"},
+          {OSMUser: "User6", access: "full", mailBlogStatusChange: "true"},
+          {OSMUser: "UserGuest", access: "guest",email:"user@guest.tol"}]}, bddone);
     });
     it("should send out mail, when collecting article", function (bddone) {
       articleModule.createNewArticle(function(err, article) {
@@ -93,7 +94,7 @@ describe("notification/mailReceiver", function() {
           // First Mail Check
           var result = mailChecker.getCall(0).args[0];
           var expectedMail = {
-            html:'<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>',
+            html: '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>',
             text: "CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for none",
             from: "noreply@gmail.com",
             to: "UserAllComment@mail.bc",
@@ -101,7 +102,6 @@ describe("notification/mailReceiver", function() {
           };
           should(result).eql(expectedMail);
           bddone();
-
         });
       });
     });
@@ -115,7 +115,7 @@ describe("notification/mailReceiver", function() {
           // First Mail Check
 
           var expectedMail = {
-            html:'<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for @User4 and @EN</p>',
+            html: '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for @User4 and @EN</p>',
             text: "CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for @User4 and @EN",
             from: "noreply@gmail.com",
             to: "UserAllComment@mail.bc",
@@ -131,6 +131,31 @@ describe("notification/mailReceiver", function() {
         });
       });
     });
+    it("should send out mail, when adding a comment for a guest user", function (bddone) {
+      articleModule.createNewArticle({blog: "WN278", title: "To Add A Comment"}, function(err, article) {
+        should.not.exist(err);
+        article.addCommentFunction({OSMUser: "testuser"}, "Information for @userguest", function(err) {
+          should.not.exist(err);
+          should(mailChecker.callCount).eql(2);
+          // First Mail Check
+
+          var expectedMail = {
+            html: '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for @userguest</p>',
+            text: "CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for @userguest",
+            from: "noreply@gmail.com",
+            to: "UserAllComment@mail.bc",
+            subject: "[TESTBC] WN278 comment: To Add A Comment"
+          };
+          var result = mailChecker.getCall(0).args[0];
+          should(result).eql(expectedMail);
+
+          result = mailChecker.getCall(1).args[0];
+          expectedMail.to = "user@guest.tol";
+          should(result).eql(expectedMail);
+          bddone();
+        });
+      });
+    });
 
     it("should send out mail, when adding a comment in general Mode (by mention)", function (bddone) {
       articleModule.createNewArticle({blog: "WN278", title: "To Add A Comment", commentList: [{user: "test", text: "@UserMailDeUser3General"}]}, function(err, article) {
@@ -139,7 +164,7 @@ describe("notification/mailReceiver", function() {
           should.not.exist(err);
 
           var expectedMail = {
-            html:'<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>',
+            html: '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>',
             text: "CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for none",
             from: "noreply@gmail.com",
             to: "UserAllComment@mail.bc",
@@ -427,7 +452,7 @@ describe("notification/mailReceiver", function() {
       userModule.findOne({OSMUser: "WelcomeMe"}, function(err, user) {
         should.not.exist(err);
         // First set a new EMail Adress for the WecomeMe user, by InviteYou.
-        user.setAndSave({OSMUser:"WelcomeMe"}, {email: "WelcomeMe@newemail.org"}, function (err) {
+        user.setAndSave({OSMUser: "WelcomeMe"}, {email: "WelcomeMe@newemail.org"}, function (err) {
           should.not.exist(err);
           setTimeout(function () {
             should(typeof (mailChecker)).eql("function");

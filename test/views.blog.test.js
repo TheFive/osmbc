@@ -8,10 +8,10 @@ var request   = require("request");
 var path = require("path");
 var fs = require("fs");
 var mockdate = require("mockdate");
+var initialise = require("../util/initialise.js");
 
 var config = require("../config.js");
 
-var configModule = require("../model/config.js");
 var blogModule   = require("../model/blog.js");
 var userModule   = require("../model/user.js");
 
@@ -21,36 +21,38 @@ var userModule   = require("../model/user.js");
 
 describe("views/blog", function() {
   this.timeout(100000);
-  let baseLink;
+  let baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
   var data;
   let jar  = null;
+  let nockLoginPage;
+  beforeEach(function(bddone) {
+    jar = request.jar();
+    nock("https://hooks.slack.com/")
+      .post(/\/services\/.*/)
+      .times(999)
+      .reply(200, "ok");
+    nockLoginPage = testutil.nockLoginPage();
+    process.env.TZ = "Europe/Amsterdam";
+    async.series([
+      initialise.initialiseModules,
+    ], bddone);
+  });
+  afterEach(function(bddone) {
+    nock.cleanAll();
+    testutil.stopServer(bddone);
+  });
 
   describe("export", function() {
-    before(function(bddone) {
-      testutil.clearDB(bddone);
-    });
     beforeEach(function(bddone) {
       var file =  path.resolve(__dirname, "data", "views.blog.export.1.json");
-      jar = request.jar();
       data = JSON.parse(fs.readFileSync(file));
-      baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
-      nock("https://hooks.slack.com/")
-        .post(/\/services\/.*/)
-        .times(999)
-        .reply(200, "ok");
-
-      process.env.TZ = "Europe/Amsterdam";
       async.series([
         testutil.importData.bind(null, data),
         testutil.startServer.bind(null, "USER1"),
-        configModule.initialise
       ], bddone);
     });
-    afterEach(function(bddone) {
-      nock.cleanAll();
-      testutil.stopServer(bddone);
-    });
     it("should generate preview as html", function(bddone) {
+      testutil.nockLoginPage();
       async.series([
         function(cb) {
           var opts = {
@@ -72,6 +74,7 @@ describe("views/blog", function() {
       ], bddone);
     });
     it("should generate preview as markdown", function(bddone) {
+      testutil.nockLoginPage();
       async.series([
 
         function(cb) {
@@ -96,24 +99,15 @@ describe("views/blog", function() {
   describe("status Functions", function() {
     beforeEach(function(bddone) {
       mockdate.set(new Date("2016-05-25T19:00:00Z"));
-      jar = request.jar();
-      baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
-      nock("https://hooks.slack.com/")
-        .post(/\/services\/.*/)
-        .times(999)
-        .reply(200, "ok");
 
-      process.env.TZ = "Europe/Amsterdam";
       async.series([
         testutil.importData.bind(null, {clear: true, blog: [{name: "blog"}], user: [{OSMUser: "TheFive", access: "full", mainLang: "DE"}]}),
-        testutil.startServerWithLogin.bind(null, "TheFive",jar),
-        configModule.initialise
+        testutil.startServerWithLogin.bind(null, "TheFive", jar)
       ], bddone);
     });
     afterEach(function(bddone) {
       mockdate.reset();
-      nock.cleanAll();
-      testutil.stopServer(bddone);
+      return bddone();
     });
     it("should close a blog", function(bddone) {
       async.series([
@@ -131,6 +125,7 @@ describe("views/blog", function() {
             should.not.exist(err);
             should(res.statusCode).eql(200);
             body.should.containEql("closed");
+
             blogModule.findOne({name: "blog"}, function(err, blog) {
               should.not.exist(err);
               should(blog.status).eql("closed");
@@ -141,12 +136,14 @@ describe("views/blog", function() {
       ], bddone);
     });
     it("should start a review", function(bddone) {
+      testutil.nockLoginPage();
       async.series([
 
         function(cb) {
           var opts = {
             url: baseLink + "/blog/blog/setReviewComment",
             jar: jar,
+            followRedirect: true,
             form: {lang: "DE", text: "startreview"},
             headers: {
               Referer: baseLink + "/blog/blog"
@@ -163,8 +160,6 @@ describe("views/blog", function() {
                 timestamp: "2016-05-25T19:00:00.000Z",
                 user: "TheFive"
               }]);
-              // in test mode review is done in WP in DE Language, so the export is set too
-              should(blog.exportedDE).be.True();
               cb();
             });
           });
@@ -175,12 +170,7 @@ describe("views/blog", function() {
   describe("browser tests", function() {
     var browser;
     beforeEach(function(bddone) {
-      process.env.TZ = "Europe/Amsterdam";
       mockdate.set(new Date("2016-05-25T19:00:00Z"));
-      nock("https://hooks.slack.com/")
-        .post(/\/services\/.*/)
-        .times(999)
-        .reply(200, "ok");
       async.series([
         testutil.importData.bind(null, JSON.parse(fs.readFileSync(path.join(__dirname, "data", "DataWN290.json"), "UTF8"))),
         function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN"}, cb); },
@@ -192,7 +182,7 @@ describe("views/blog", function() {
     });
     afterEach(function(bddone) {
       mockdate.reset();
-      testutil.stopServer(bddone);
+      return bddone();
     });
     describe("Blog Display", function() {
       it("should show Overview with some configurations", function(bddone) {

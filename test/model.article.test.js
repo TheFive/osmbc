@@ -125,11 +125,11 @@ describe("model/article", function() {
       });
     });
     it("should create no New Article with ID", function(bddone) {
-      (function() {
-        articleModule.createNewArticle({id: 2, blog: "test", markdownDE: "**"}, function () {
-        });
-      }).should.throw();
-      bddone();
+      articleModule.createNewArticle({id: 2, blog: "test", markdownDE: "**"}, function (err) {
+        bddone();
+        should.exist(err);
+        should(err.message).eql("adfadf");
+      });
     });
   });
   describe("save", function() {
@@ -961,7 +961,6 @@ describe("model/article", function() {
         change: [{blog: "WN1", oid: 1, table: "article", property: "comment0", from: "a comment", to: "a changed comment", user: "Test", timestamp: timestamp2.toISOString()}]};
       var testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
-
           should.not.exist(err);
           article.editComment({OSMUser: "Test"}, 0, "a changed comment", cb);
         });
@@ -991,7 +990,6 @@ describe("model/article", function() {
       };
       var testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
-
           should.not.exist(err);
           article.markCommentRead({OSMUser: "Test"}, 1, cb);
         });
@@ -1017,7 +1015,6 @@ describe("model/article", function() {
         change: []};
       var testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
-
           should.not.exist(err);
           article.editComment({OSMUser: "Test"}, 0, " ", function checkErr(err) {
             should.exist(err);
@@ -1045,8 +1042,6 @@ describe("model/article", function() {
           commentList: [{user: "Test", timestamp: timestampIso, text: "a comment"}]}]};
       var testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
-
-
           should.not.exist(err);
           article.editComment({OSMUser: "Test2"}, 0, "a changed comment", function (err) {
             should(err).eql(new Error("Only Writer is allowed to change a commment"));

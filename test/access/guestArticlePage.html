@@ -1,0 +1,811 @@
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+    <title>TESTBC</title>
+    <!-- Bootstrap core CSS-->
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Fixed navbar-->
+    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header pull-left"><a href="/changelog" class="bg-success navbar-brand hidden-xs">Whats New?</a>
+          <ul class="nav navbar-nav pull-left">
+            <li><a id="collect" href="/article/create">Collect</a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-left">
+            <li><a id="inbox" href="/usert/inbox">Inbox <span class="badge osmbcbadge-user">1</span></a></li>
+          </ul>
+        </div>
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">OSMBC</li>
+                <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">WeeklyOSM &amp; Wochennotiz</li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a></li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotitz in OSM Wiki</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="/language?lang=EN">EN</a></li>
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="/language?lang2=none">none</a></li>
+                <li><a href="/language?lang2=EN">EN</a></li>
+              </ul>
+            </li>
+            <li><img onclick="location.href='/usert/2';" style="height:50px;width:50px"></li>
+          </ul>
+          <!-- /.nav-collapse-->
+          
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <p>
+        <!-- FullAccessArticleView-->
+        </p><form id="textanalyseform" method="POST" action="http://wortliga.de/textanalyse/">
+          <input type="hidden" name="text" id="textanalysefield" class="form-control">
+        </form>
+        <form name="input" id="input" action="/article/4/witholdvalues" method="post">
+          <div class="row">
+            <!-- Block for Buttons in the upper right corner and on the top in mobile-->
+            <div class="col-md-6 col-md-push-6">
+              <div class="row">
+                <div id="voteButtons" class="col-md-4">
+                </div>
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2"></div>
+              </div>
+              <div class="row">
+                <div class="col-md-4"><span onclick="showRL('EN')" style="" class="label osmbclabel-markdown">EN</span>
+                  <p class="osmbc-help-text">Click to change left lang</p>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-4">
+                  <button id="saveButton" type="button" onclick="disableUnchanged();document.getElementById('input').submit();" class="btn btn-large btn-primary">Save</button>
+                  <button type="button" onclick="disableUnchanged(); location.href='/article/4?edit=false';" class="btn btn-large btn-default">last Version</button>
+                </div>
+                <!-- Parallel Blog for common article Attributes-->
+              </div>
+            </div>
+            <div class="col-md-6 col-md-pull-6">
+              <div class="row">
+                <div class="form-group">
+                  <label class="col-md-2">Blog</label>
+                  <div class="col-md-10">
+                    <select id="blog" name="blog" class="form-control af" style="background-color: rgb(255, 255, 204);">
+                      <option value="WN251" selected="selected">WN251 </option>
+                      <option value="Future" disabled="disabled">Future </option>
+                    </select>
+                    <textarea id="old_blog" name="old_blog" rows="1" hide="" class="hidden form-control">WN251</textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group">
+                  <label class="col-md-2">Category</label>
+                  <div class="col-md-10">
+                    <textarea id="old_categoryEN" name="old_categoryEN" rows="1" hide="" class="hidden form-control">Mapping</textarea>
+                    <select id="categoryEN" name="categoryEN" class="form-control af" style="background-color: rgb(255, 255, 204);">
+                      <option value="-- no category yet --">-- no category yet --</option>
+                      <option value="Picture">Picture</option>
+                      <option value="[Actual Category]">[Actual Category]</option>
+                      <option value="About us">About us</option>
+                      <option value="Weekly exercise:">Weekly exercise:</option>
+                      <option value="Mapping" selected="">Mapping</option>
+                      <option value="Community">Community</option>
+                      <option value="Imports">Imports</option>
+                      <option value="OpenStreetMap Foundation">OpenStreetMap Foundation</option>
+                      <option value="Events">Events</option>
+                      <option value="Humanitarian OSM">Humanitarian OSM</option>
+                      <option value="Maps">Maps</option>
+                      <option value="switch2OSM">switch2OSM</option>
+                      <option value="Open Data">Open Data</option>
+                      <option value="Licences">Licences</option>
+                      <option value="Software">Software</option>
+                      <option value="Programming">Programming</option>
+                      <option value="Releases">Releases</option>
+                      <option value="Did you know …">Did you know …</option>
+                      <option value="Other “geo” things">Other “geo” things</option>
+                      <option value="Upcoming Events">Upcoming Events</option>
+                      <option value="--unpublished--">--unpublished--</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                  <p id="categoryDisplay" class="osmbc-help-text">Quality assurance, editors, maps for mapper, tools for mapping, tagging</p>
+                </div>
+              </div>
+              <!-- Display Predecessor Row-->
+            </div>
+          </div>
+          <!-- Display Title Row-->
+          <div class="row">
+            <div class="form-group">
+              <label class="col-md-1">Title</label>
+              <div class="col-md-10">
+                <div id="title_unsaved" style="display:none" class="label label-danger">unsaved</div>
+                <textarea id="old_title" name="old_title" rows="1" hide="" class="hidden form-control">This is a title of a guest collected article</textarea>
+                <textarea id="title" name="title" rows="1" class="form-control af">This is a title of a guest collected article</textarea>
+              </div>
+            </div>
+          </div>
+          <!-- Display Unpublish Reason Row-->
+          <div id="unpublishReasonRow" class="row hidden">
+            <div class="form-group">
+              <label class="col-md-1">Unpublish Reason</label>
+              <div class="col-md-5">
+                <textarea id="old_unpublishReason" name="old_unpublishReason" rows="1" hide="" class="hidden form-control"></textarea>
+                <select id="unpublishReason" name="unpublishReason" class="form-control af">
+                  <option value=""></option>
+                  <option value="old">old</option>
+                  <option value="doublette">doublette</option>
+                  <option value="not relevant">not relevant</option>
+                  <option value="merged into">merged into</option>
+                  <option value="reported earlier">reported earlier</option>
+                </select>
+              </div>
+              <div class="col-md-5">
+                <textarea id="old_unpublishReference" name="old_unpublishReference" rows="1" hide="" class="hidden form-control"></textarea>
+                <textarea id="unpublishReference" name="unpublishReference" rows="1" class="form-control af"></textarea>
+              </div>
+            </div>
+          </div>
+          <!-- Display Collection Row-->
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-11">
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group">
+              <label class="col-md-1">Collection</label>
+              <div class="col-md-10">
+                <div id="collection_unsaved" style="display:none" class="label label-danger">unsaved</div>
+                <textarea id="collection" name="collection" rows="2" class="form-control af">This is the collection text (guest collector)</textarea>
+                <textarea id="old_collection" name="old_collection" rows="1" hide="" class="hidden form-control">This is the collection text (guest collector)</textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-6">
+              <div id="linkArea" class="div"><p></p></div>
+            </div>
+            <div class="col-md-4">
+              <p class="osmbc-help-text">Drag me to a markdown field, or paste an URL into selected text to create an markdown link.</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1">
+              <div class="form-group">
+                <label>Markdown + Preview</label>
+              </div>
+            </div>
+            <div class="col-md-10"><span draggable="true" data-toggle="tooltip" data-placement="left" title="" ondragstart="ondragstartLangLabel(event,'EN');" class="label label-default osmbclabel-lang" data-original-title="Drag me for copy full text">  EN  </span><span style="" id="markdownEN_unsaved" class="label label-danger">unsaved</span>
+              <textarea id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide" class="hidden form-control">This is the written text.</textarea>
+              <textarea id="markdownEN" placeholder="1. Formulate not passive, but active.
+Sample: OpenCage data published an interview with David Overton, the doer behind the tissue map producing company Splashmaps. (via Twitter)
+2. People &amp; companies are information! So start an article with e person or a company!
+3. Decomplify your sentences.
+4. (Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008))
+" spellcheck="true" lang="EN" name="markdownEN" rows="6" class="markdownEdit form-control af" style="background-color: rgb(255, 255, 204);">This is the written text.</textarea>
+              <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
+              <p id="textEN" lang="EN" style="display:none" class="markdownMessage bg-danger">Default Error Message</p>
+              <div id="previewEN" lang="EN" class="panel panel-default panel-body preview"><ul><li><p>This is the written text.</p>
+</li></ul></div>
+            </div>
+            <div class="col-md-1">
+              <div class="row"><i id="languageFlagsShow" onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');" class="fa fa-flag fa-2x"></i>
+                <div id="languageFlags" class="row hidden"><img id="Japanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Japanisch"><img id="Französisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Französisch"><img id="Spanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Spanisch"><img id="Tschechisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Tschechisch"><img id="Russisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Russisch"><img id="Rumänisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Rumänisch"><img id="Niederländisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Niederländisch"><img id="Brasilianisches Portugiesisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Brasilianisches Portugiesisch"><img id="Polish" src="http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Polish">
+                  <p class="osmbc-help-text">Click to copy to clipboard, or use drag and drop.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div id="commentArea" class="div">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="row">
+                <form target="iframeform" name="AddComment" id="AddComment" action="/article/4/addComment?reload=false" method="post">
+                  <textarea spellcheck="true" name="comment" id="comment" rows="7" placeholder="Your comment is shared between all weekly teams. 
+So please use english if possible. Do not hesitate to use your language and address your team with @LANG.
+To solve a comment use #solved, and to reopen #open in your text.
+Use @OSMUser to address any special editor." class="form-control"></textarea>
+                  <button name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/4/commentArea');" class="btn btn-large btn-primary">Add Comment</button>
+                  <button type="button" onclick="window.callAndRedraw(null,'/article/4/commentArea');" class="btn btn-large btn-default">Reload Comments</button>
+                  <button name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/4/commentArea');" class="btn btn-large btn-default">Solve Comment</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <iframe name="iframeform" class="hidden"></iframe>
+        </div>
+        <div id="doublettes" class="row">
+        </div>
+      <p></p>
+      <p></p>
+    </div>
+    <!-- /container-->
+    <!-- Bootstrap core JavaScript-->
+    <!-- ==================================================-->
+    <!-- Placed at the end of the document so the pages load faster-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  
+
+
+  
+    <title></title>
+    <link rel="stylesheet" href="stylesheets/style.css">
+  
+  
+
+<script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
+<script>
+  // Init This Window with jQuery ready Callback
+  $(document).ready(init);
+  
+  
+  // set Constant for Window with JADE Variables
+  googleTranslateText = JSON.parse('{"DE":"(automatische [Übersetzung](##link##))","EN":"(automatic [translation](##link##))","ES":"(automatic [translation](##link##))","FR":"(automatic [translation](##link##))","CZ":"(automatic [translation](##link##))","PT":"(automatic [translation](##link##))","RU":"(automatic [translation](##link##))","JP":"(automatic [translation](##link##))","ID":"(automatic [translation](##link##))","TR":"(automatic [translation](##link##))"}');
+  activeLanguages = JSON.parse('["EN"]');
+  leftLang = "EN";
+  rightLang = "";
+  lang3 = "";
+  lang4 = "";
+  placeholder = {"-- no category yet --":"If you do not have any idea, which category to use.","[Actual Category]":"This category does not have to exist in every blog. Use this category for actual events like SOTM","About us":"Use seldom, then on the top","Weekly exerciseEN:":"Category for the German weekly exercise","Mapping":"Quality assurance, editors, maps for mapper, tools for mapping, tagging","Community":"articles from the community, that does not fit in any other category","Imports":"discussions, announcements about imports","OpenStreetMap Foundation":"articles about the OSMF or local OpenStreetMap chapter","Events":"Announcements, reports about an event","Humanitarian OSM":"Information about HOT & Missing maps","Maps":"Changes on osm.org and osm.de maps, osm based special maps, no 08/15 map!","#switch2OSM":"Information about well known websites or traffic rich websites, a good new rendering style, (commercial sites) companies having own (big geo) data, more features for displaying maps are offered\n","Open Data":"Information about open data","Licences":"Information about juridicial topics","Software":"Programs for non programmers (without OSM editors)","Programming":"Information about software development","Did you know …":"Any thing which is interesting for OSM User. No longer known article and beginner tools.","Other “geo” things":"Information, that mostly have nothing to do with OSM...","Not Translated":"...","--unpublished--":"Articles, that should not be published, but keep their relation to the blog (otherwise use the trash)"}
+  var catArray = [{"EN":"-- no category yet --","DE":"-- noch keine Kategorie --","ES":"-- no category yet --","FR":"-- no category yet --","CZ":"-- no category yet --","PT":"-- no category yet --","RU":"-- no category yet --","JP":"-- no category yet --","ID":"-- no category yet --","TR":"-- no category yet --"},{"EN":"Picture","DE":"Bild","ES":"Picture","FR":"Picture","CZ":"Picture","PT":"Picture","JP":"Picture","ID":"Picture","TR":"Picture"},{"EN":"[Actual Category]","DE":"[Aktuelle Kategorie]","ES":"[Corriente]","FR":"[Actualité]","CZ":"[Actual Category]","PT":"[Categoria atual]","RU":"[Текущая категория]","JP":"[Actual Category]","ID":"[Actual Category]","TR":"[Actual Category]"},{"EN":"About us","DE":"In eigener Sache","ES":"Acerca de nosotros","FR":"À notre propos","CZ":"About us","PT":"Sobre nós","RU":"О нас","JP":"私たちについて","ID":"Tentang kami","TR":"Hakkımızda"},{"EN":"Weekly exercise:","DE":"Wochenaufruf","ES":"Not Translated","FR":"Not Translated","CZ":"Not Translated","PT":"Não traduzido","RU":"Еженедельные заданияАнгл","JP":"Not Translated","ID":"Not Translated","TR":"Not Translated"},{"EN":"Mapping","DE":"Mapping","ES":"Mapeando","FR":"Cartographie","CZ":"Mapování","PT":"Mapeamento","RU":"Картографирование","JP":"マッピング","ID":"Pemetaan","TR":"Haritalama"},{"EN":"Community","DE":"Community","ES":"Comunidad","FR":"Communauté","CZ":"Komunita","PT":"Comunidade","RU":"Сообщество","JP":"コミュニティ","ID":"Komunitas","TR":"Topluluk"},{"EN":"Imports","DE":"Importe","ES":"Importaciones","FR":"Importation","CZ":"Imports","PT":"Importações","RU":"Импорты","JP":"インポート","ID":"Imports","TR":"İçe Aktarımlar"},{"EN":"OpenStreetMap Foundation","DE":"OpenStreetMap Foundation","ES":"Fundación OpenStreetMap","FR":"Fondation OpenStreetMap","CZ":"OpenStreetMap Foundation","PT":"Fundação OpenStreetMap","RU":"Фонд OpenStreetMap","JP":"OpenStreetMap Foundation","ID":"Yayasan OpenStreetMap","TR":"OpenStreetMap Foundation"},{"EN":"Events","DE":"Veranstaltungen","ES":"Eventos","FR":"Événements","CZ":"Události","PT":"Eventos","RU":"События","JP":"イベント","ID":"Kegiatan","TR":"Etkinlikler"},{"EN":"Humanitarian OSM","DE":"Humanitarian OSM","ES":"OSM Humanitario","FR":"OSM et l'humanitaire","CZ":"Humanitární OSM","PT":"OSM Humanitário","RU":"Гуманитарный OSM","JP":"OSM人道支援","ID":"OSM untuk Kemanusiaann","TR":"İnsani OSM"},{"EN":"Maps","DE":"Karten","ES":"Mapas","FR":"Cartes","CZ":"Mapy","PT":"Mapas","RU":"Карты","JP":"地図","ID":"Peta","TR":"Haritalar"},{"EN":"switch2OSM","DE":"switch2OSM","ES":"switch2OSM","FR":"switch2OSM","CZ":"switch2OSM","PT":"switch2OSM","RU":"switch2OSM","JP":"switch2OSM","ID":"switch2OSM","TR":"switch2OSM"},{"EN":"Open Data","DE":"Open-Data","ES":"Datos Abiertos","FR":"Ouverture des données","CZ":"Otevřená Data","PT":"Dados abertos","RU":"Открытые данные","JP":"オープンデータ","ID":"Open Data","TR":"Özgür Veri"},{"EN":"Licences","DE":"Lizenzen","ES":"Licencias","FR":"Licences","CZ":"Licences","PT":"Licenças","RU":"Лицензии","JP":"ライセンス","ID":"Lisensi","TR":"Lisanslar"},{"EN":"Software","DE":"Programme","ES":"Software","FR":"Applications","CZ":"Software","PT":"Software","RU":"Программы","JP":"ソフトウェア","ID":"Software","TR":"Yazılım"},{"EN":"Programming","DE":"Programmierung","ES":"Software","FR":"Applications","CZ":"Programming","PT":"Desenvolvimento","RU":"Программирование","JP":"プログラミング","ID":"Software","TR":"Programlama"},{"EN":"Releases","DE":"Releases","ES":"Releases","FR":"Releases","CZ":"Releases","PT":"Releases","RU":"Releases","JP":"Releases","ID":"Releases","TR":"Releases"},{"EN":"Did you know …","DE":"Kennst du schon …","ES":"Sabías que …","FR":"Connaissez-vous …","CZ":"Věděli jste …","PT":"Você sabia...","RU":"А вы знаете … ","JP":"…ご存知でしたか？","ID":"Apakah anda tahu …","TR":"Biliyor muydunuz?…"},{"EN":"Other “geo” things","DE":"Weitere Themen mit Geo-Bezug","ES":"Otras cosas “geo”","FR":"Autres sujets géographiques","CZ":"Ostatní “geo” záležitosti","PT":"Outras coisas “geo”","RU":"Другие “гео” события","JP":"その他の “ジオ” な事柄","ID":"Berita “geo” lainnya","TR":"Diğer “yersel” şeyler"},{"EN":"Upcoming Events","DE":"Wochenvorschau","ES":"Próximos eventos","FR":"Upcoming Events","CZ":"blížící se akce","PT":"Próximos eventos","RU":"Предстоящие события","JP":"今後のイベント","ID":"Upcoming Events","TR":"Gelecek etkinlikler"},{"EN":"--unpublished--","DE":"--unveröffentlicht--","ES":"--unpublished--","FR":"--unpublished--","CZ":"--unpublished--","PT":"--não publicado--","RU":"--не опубликовано--","JP":"--未発表--","ID":"--unpublished--","TR":"--unpublished--"}];
+  var articleReferences = {"count":0};
+  var noCategorie = "no categorie";
+  if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
+  
+  
+  
+  // unlaodWindow Handler, to generate messages that form is left unsaved
+  function unloadWindowWarning(event) {
+    let dialogText = "Oops, it looks like you have forgotten to save your work."
+    event.returnValue = dialogText;
+    return dialogText;
+  };
+  
+  
+  // initialise all callbacks with jQuery
+  function init() {
+  
+    $(".markdownEdit")
+            .change(convertMinusNoTranslation)
+            .change(previewMarkdown)
+            .change(showModified)
+            .change(FitToContent)
+            .focusout(convertMinusNoTranslation)
+            .keyup(previewMarkdown)
+            .keyup(checkForTable)
+            .keyup(FitToContent)
+            .keyup(checkMarkdownError)
+            .keyup(showModified)
+            .on("paste",pasteEvent)
+            .on("drop",pasteEvent)
+            .trigger("change");
+    $("#collection")
+            .change(onchangeCollection)
+            .change(FitToContent)
+            .keyup(onchangeCollection)
+            .keyup(FitToContent)
+            .keyup(showModified)
+            .trigger("change");
+    $("#title")
+            .keyup(showModified)
+    $("#predecessorId")
+            .change(showModified)
+    $("#blog")
+            .change(showHideUnpublishReason)
+            .change(showModified)
+            .trigger("change");
+    $("#comment")
+            .change(FitToContent)
+            .keyup(FitToContent)
+            .trigger("change");
+    $("#categoryEN")
+            .change(showModified)
+            .change(syncPlaceholder)
+            .change(showHideUnpublishReason)
+  
+            .trigger("change");
+    $("#AddComment")
+            .change(FitToContent)
+            .keyup(FitToContent)
+            .trigger("change");
+    $("#editComment")
+            .change(FitToContent)
+            .keyup(FitToContent)
+            .trigger("change");
+    resizePictures();
+    $('[data-toggle="tooltip"]').tooltip();
+    window.submitAndRedraw = submitAndRedraw;
+  
+  }
+  
+  
+  
+  
+  // Check, wether value of field is "-" and set it to "no translation"
+  // Install as onleave event handler
+  function convertMinusNoTranslation() {
+    var object = $(this)
+    var md = object.val();
+    if (md && md.trim() == "-") {
+      object.val("no translation");
+      object.trigger("change");
+    }
+  }
+  
+  // Resize Pictures Handler
+  // Call in init phase, and during preview calculation of markdown
+  function resizePictures() {
+    $(".preview img").css("max-width","50%","max-height","50%");
+  
+  }
+  
+  
+  
+  // Function to convert markdown into html
+  // Add the Blog typic list element to preview, but only
+  // for specific types, (Missing: configuring this by user.)
+  function convert(text) {
+    converter = new window.markdownit({breaks:true});
+  
+    // The cut at the beginning is a little bit "historic" from the
+    // OSMBC startup, so only used for emotional motivation of the developer :-)
+    if (text.substring(0,2)=="* ") text = text.substring(2,999999);
+  
+  
+    // convert md to html
+    text = converter.render(text);
+  
+    // Display as list, this should depend on type
+  
+    var cat = $("#categoryEN").val();
+    if (cat != "Picture" && cat != "Events" && cat != "Releases") {
+      text = '<ul><li>'+text+'</li></ul>';
+    }
+    return text;
+  }
+  
+  // Test, wether a text is an url or not
+  // based on regex.
+  function isURL(t) {
+  
+    var isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/
+    if (t) return isUrlRegex.test(t);
+    return isUrlRegex;
+  }
+  
+  // Try to copy text to the clipboard
+  // if it fails, alert an error and offer the possibility to copy manual
+  function clip(text) {
+    var copyElement = document.createElement('input');
+    copyElement.setAttribute('type', 'text');
+    copyElement.setAttribute('value', text);
+    copyElement = document.body.appendChild(copyElement);
+    copyElement.select();
+    try {
+      if (!document.execCommand('copy')) throw 'Not allowed.';
+    } catch (e) {
+      copyElement.remove();
+      prompt('Copy not supported, use your mobile to copy and press enter', text);
+    } finally {
+      if (typeof e == 'undefined') {
+        copyElement.remove();
+      }
+    }
+  }
+  
+  // Function that generates a markdown link in the case a
+  // url is pasted or drag'n dropped to a markdown textfield
+  //
+  function generateMarkdownLink2(par1,par2) {
+  
+    // tb == Text Before Selection
+    // ta == Text Afer Selection
+    var tb = par1.text.substring(0,par1.startselection);
+    var ta = par1.text.substring(par1.endselection,99999);
+  
+    // beforeSnip == selected Text before paste
+    // afterSnip == selected Text after Insert
+    var beforeSnip = par1.text.substring(par1.startselection,par1.endselection);
+    var afterSnip = par2.text.substring(par1.startselection,par2.endselection);
+  
+    // only in the case, the "afterSnip" variable contains an URL, something
+    // has to be done
+    if (isURL(afterSnip.trim())) {
+  
+      afterSnip = afterSnip.trim();
+  
+      // Check, wether, the url is pasted into brackets ()
+      // then nothing has to be done
+      var alreadyMarkdowned = false;
+      if (tb!="" && tb.charAt(tb.length-1)=="(") alreadyMarkdowned= true;
+      if (ta!="" && tb.charAt(0)==")") alreadyMarkdowned= true;
+      if (!alreadyMarkdowned) {
+  
+        // combine the new text
+        var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
+  
+        // calculate the position to point to
+        // for the new text
+        // Between [] in the case, that only a link was added
+        // after the [link](http://somewhere) in case the link has already a "display" word
+        var c ;
+        if (beforeSnip == "") {
+          c = (tb+"[").length;
+        } else {
+          c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
+        }
+        return {text:r,pos:c};
+      }
+    }
+    return null;
+  }
+  
+  // Event Handler for pasting text to markdown field
+  function pasteEvent() {
+    var mf = this;
+  
+    // Generate a triple of text, start selection and end selection BEFORE Pasting new text
+    var before = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
+  
+    setTimeout(function () {
+      // Generate a triple of text, start selection and end selection AFTER Pasting new text
+      var after = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
+  
+      // And use the result, to generate the markdown link
+      var r = generateMarkdownLink2(before, after);
+  
+      if (r) {
+        mf.value = r.text;
+        mf.selectionStart = mf.selectionEnd = r.pos;
+      }
+      // just for the case, that a " " war added by some browsers between [] and ()
+      // of the markdown link throw it away
+      mf.value = (mf.value).replace(/] \(/g, "](");
+      $(mf).trigger("change");
+    }, 1); // End of setTimeout function call
+  }
+  
+  
+  // Check, wether a markdown field contains a table
+  // and set the texttype to monospace
+  function checkForTable() {
+    var md = this.value;
+    if (md.indexOf("|----")>= 0) {
+      $(this).wrap = 'off';
+      $(this).css("fontFamily","monospace");
+      }
+    else {
+      $(this).wrap = 'soft';
+      $(this).css("fontFamily","");
+      }
+  }
+  
+  // Event handler to calculate the fresh markdown preview
+  function previewMarkdown() {
+    var md = this.value;
+    preview = $(".preview[lang=" + this.lang + "]");
+    preview.html(convert(md));
+    resizePictures();
+  }
+  
+  
+  // Event Handler to check markdown for every error
+  // For Now
+  // * long markdown links
+  //
+  // Can be extended: Valid Urls, ...
+  function checkMarkdownError() {
+    var md = this.value;
+    text = $(".markdownMessage[lang=" + this.lang + "]");
+    var errorOccured= false;
+  
+    // Check for long links
+    var longLink = md.search(/\[[^\]]{40,}\]/g);
+    if (longLink>=0) {
+      text.show(400);
+      text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
+      errorOccured = true
+      }
+  
+    if (!errorOccured) {
+       //preview.style.backgroundColor="";
+        text.hide(400);
+      }
+  }
+  
+  // Generate the automatic google translate link for an url
+  // and a given language, used to show it in edit mode
+  function generateGoogleTranslateLink(link,lang) {
+    var googlelang = lang;
+    if (lang === "JP") googlelang = "JA";
+    if (lang === "CZ") googlelang = "CS";
+    var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
+  
+  
+    var gtlMarkdown = "(automatic [translation](##link##))";
+    if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
+  
+  
+    gtlMarkdown = gtlMarkdown.replace("##link##",gtl);
+  
+    var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
+  
+    return '<a href="'+gtl+'" target="_blank" ondragstart="'+dragstartFunction+'" >'+lang+'</a>';
+  }
+  
+  
+  // Eventhandler to start drag & drop
+  function dragstart(event,text) {
+    event.dataTransfer.setData("TEXT", text);
+  }
+  
+  // Collection is changed, so create a linkList
+  // for the linkArea
+  
+  function onchangeCollection() {
+    var cl = $("#collection").val();
+    var linkArea = $("#linkArea");
+    var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
+    var linkList;
+    var result = "";
+  
+  
+    while( (linkList = regexToken.exec(cl)) != null ) {
+      var link = linkList[0];
+      if (articleReferences[link] && (articleReferences[link]).length >0) {
+        result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+link+'</a>\n';
+      }
+      else result += '<a class="label label-default" href="'+link+'" target="_blank" >'+link+'</a>\n';
+      result += " "+generateGoogleTranslateLink(link,leftLang);
+      if (rightLang !== "--" && rightLang !== "") {
+        result += " "+generateGoogleTranslateLink(link,rightLang);
+      }
+      if (lang3 !== "--" && lang3 !== "") {
+        result += " " + generateGoogleTranslateLink(link, lang3);
+      }
+      if (lang4 !== "--" && lang4 !== "") {
+        result += " " + generateGoogleTranslateLink(link, lang4);
+      }
+  
+      result +="<br>\n";
+    }
+    result = '<p>'+result+'</p>';
+  
+    if (linkArea) linkArea.html(result);
+  
+  }
+  
+  
+  // click on a flag Event
+  // Copy the flag related information to the clipboard as markdown link
+  var myclick = function (id) {
+  
+    src = $("#"+id).attr("src");
+  
+  
+    src = "![("+id+")]("+src+")";
+    clip(src);
+    alert(id+ " flag is copied to clipboard");
+  }
+  
+  
+  // dragStart Event
+  function ondragstartflag (event,id) {
+    image = document.getElementById(id);
+    src = image.src;
+    src = "![(" + id + ")](" + src + ")";
+    event.dataTransfer.setData("TEXT", src);
+  }
+  
+  function ondragstartLangLabel( event,lang) {
+    var v = $("#markdown" + lang).val();
+    event.dataTransfer.setData("TEXT", v)
+  }
+  
+  
+  // Fit to content event
+  // justify the size of the textfield to the shown content
+  function FitToContent()
+  {
+    if (!this) return;
+    textfield=this;
+    textfield.style.height = textfield.style.minHeight;
+    var adjustedHeight = Math.max(textfield.scrollHeight, textfield.clientHeight);
+    if ( adjustedHeight > textfield.clientHeight ) {
+      textfield.style.height = adjustedHeight + "px";
+    }
+  }
+  
+  // Enable & Disable the different languages
+  function showRL(what) {
+    $(".RL").addClass("hidden");
+    $(".RLOFF").removeClass("hidden");
+    if (what == "EN") what = "";
+    $(".RL-"+what).removeClass("hidden");
+    $(".RLOFF-"+what).addClass("hidden");
+  }
+  
+  
+  function syncPlaceholder() {
+    var c = $("#categoryEN").val();
+    if (placeholder[c]) {
+       $("#categoryDisplay").html(placeholder[c]);
+      }
+    else {
+      $("#categoryDisplay").html("Missing Category Description");
+    }
+  }
+  
+  function showModified() {
+  
+    var modified = false;
+  
+    var newVal = $(this).val();
+    var oldVal = $("#old_" + this.name + ":hidden").val();
+  
+    var modifiedColor = "#ffffcc";
+    var normalColor = ""
+    if (this.name==="categoryEN" && newVal === noCategorie) {
+      normalColor = "#FDC6CD";
+      modifiedColor = "#FDC6AB";
+    }
+  
+    if (oldVal != newVal) {
+      $(this).css("backgroundColor", modifiedColor);
+      $("#" + this.name + "_unsaved").show()
+    } else {
+      $(this).css("backgroundColor", normalColor);
+      $("#" + this.name + "_unsaved").hide()
+    }
+  
+    $(".af").each(function(index,object){
+  
+      var newVal = $(this).val();
+      var oldVal = $("#old_" + this.name + ":hidden").val();
+  
+      if (oldVal != newVal) {
+        modified = true;
+      }
+    });
+    $("#saveButton").prop("disabled",!modified);
+    if (modified) {
+      $(window).on("beforeunload",unloadWindowWarning);
+    } else {
+      $(window).off("beforeunload",unloadWindowWarning);
+    }
+  
+  }
+  
+  function showHideUnpublishReason() {
+  
+    var c = $("#categoryEN").val();
+    var b = $("#blog").val();
+  
+    var hidden = true;
+    if (c==="--unpublished--") hidden = false;
+    if (b==="Trash") hidden = false;
+  
+    if (hidden) $("#unpublishReasonRow").addClass("hidden");
+      else $("#unpublishReasonRow").removeClass("hidden");
+  }
+  
+  
+  function redrawFunc(redraw) {
+    let j = $.getJSON("" + redraw, function (json) {
+      for (k in json) {
+        $(k).html(json[k]);
+      }
+    });
+  }
+  // This Function calls "call" url, if given
+  // after that it callse the "redraw" url, parses
+  // the json and redraws it content in the html
+  function callAndRedraw(call, redraw) {
+    if (call) {
+      $.get("" + call,function(){redrawFunc(redraw);});
+    } else {
+      redrawFunc(redraw);
+    }
+  
+  }
+  
+  function disableUnchanged() {
+    activeLanguages.forEach(function(lang){
+      if ($("#markdown"+lang).val() === $("#old_markdown"+lang).val()) {
+        $("#markdown"+lang).prop("disabled",true);
+        $("#old_markdown"+lang).prop("disabled",true);
+      }
+    });
+    $(window).off("beforeunload",unloadWindowWarning);
+  
+  }
+  
+  function submitAndRedraw(form,redraw) {
+    var jqForm = $(form);
+    var url = jqForm.attr('action');
+  
+    var toPost = jqForm.serialize();
+  
+  
+    // clean unchanged values, to reduce post overhead.
+    for (var k in toPost) {
+      if (toPost[k]===toPost["old_"+k]) {
+        delete toPost[k];
+        delete toPost["old_"+k];
+      }
+    }
+  
+    $.post(url, toPost , function (data) {
+        if (data === "OK") {
+          if (redraw) redrawFunc(redraw);
+        }
+      },
+      'text' // I expect a JSON response
+    ).fail( function(err){console.error(err);});
+  }
+  
+  
+  function setNoTranslation(){
+    $('.markdownEdit').each(function(item){
+  
+      if (this.value=="" && !this.readOnly ) this.value = "no translation";
+    });
+  }
+  
+  function translate(langFrom, langTo) {
+    document.getElementById("translate" + langFrom + langTo).classList.add("hidden");
+    document.getElementById("translateWait" + langFrom + langTo).classList.remove("hidden");
+    var from =  langFrom.toLowerCase();
+    var to = langTo.toLowerCase();
+    var originalText = document.getElementById("markdown" + langFrom).value;
+    jQuery.post("/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
+      console.info("Translation received");
+      data = data.replace(/] \(/g, "](");
+      document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
+      $("#markdown" + langTo).val(data).trigger("change");
+    }).fail(function (err) {
+      console.error("Translation failed");
+      console.error(err);
+      document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
+      document.getElementById("translateError" + langFrom + langTo).classList.remove("hidden");
+    });
+  }
+</script></body></html>

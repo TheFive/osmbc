@@ -5,9 +5,9 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title>blog/list</title>
+    <title>TESTBC</title>
     <!-- Bootstrap core CSS-->
-    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   </head>
   <body>
@@ -16,10 +16,10 @@
       <div class="container-fluid">
         <div class="navbar-header pull-left"><a href="/changelog" class="bg-success navbar-brand hidden-xs">Whats New?</a>
           <ul class="nav navbar-nav pull-left">
-            <li><a href="/article/create">Collect</a></li>
+            <li><a id="collect" href="/article/create">Collect</a></li>
           </ul>
           <ul class="nav navbar-nav pull-left">
-            <li><a href="/usert/inbox">Inbox <span class="badge osmbcbadge-lang">1</span></a></li>
+            <li><a id="inbox" href="/usert/inbox">Inbox <span class="badge osmbcbadge-lang">1</span></a></li>
           </ul>
           <ul class="nav navbar-nav pull-left visible-xs">
             <li><a href="/blog/WN290">WN290<span class="badge osmbcbadge-lang">0</span><span class="badge osmbcbadge-lang2">0</span></a></li>
@@ -33,7 +33,7 @@
             <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
             </li>
             <li><a href="/blog/WN290">WN290<span class="badge osmbcbadge-lang">0</span><span class="badge osmbcbadge-lang2">0</span></a></li>
-            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
+            <li id="article" class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 <li class="dropdown-header">Articles</li>
                 <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Empty Collections</a></li>
@@ -43,10 +43,10 @@
                 
               </ul>
             </li>
-            <li class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
+            <li id="tool" class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 <li class="dropdown-header">Markdown Helper</li>
-                <li><a href="/tool/calendarAllLang">Calendar Tool (OSMBC)</a></li>
+                <li><a href="/tool/calendarAllLang/fakeCalendar">Calendar Tool (fakeCalendar)</a></li>
                 <li><a href="/tool/picturetool">Picture Tool</a></li>
                 <li class="divider"></li>
                 <li class="dropdown-header">About The Team
@@ -147,9 +147,8 @@
     <!-- Bootstrap core JavaScript-->
     <!-- ==================================================-->
     <!-- Placed at the end of the document so the pages load faster-->
-    <!--link(rel='stylesheet', href='#{layout.bootstrap}/css/bootstrap.min.css')-->
-    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   
 
 

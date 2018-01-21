@@ -29,47 +29,6 @@ let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
 
 
 
-function renderCalendarAsMarkdown(req, res, next) {
-  debug("renderCalendarAsMarkdown");
-
-  var disablePrettify = false;
-  var useGeoNames = false;
-  var countries = "";
-  var enableCountryFlags = false;
-  var date = "";
-  var duration = "";
-  var sessionData = req.session.calendarTool;
-
-  if (sessionData) {
-    disablePrettify = sessionData.disablePrettify;
-    enableCountryFlags = sessionData.enableCountryFlags;
-    date = sessionData.date;
-
-    duration = sessionData.duration;
-    if (sessionData.countries) countries = sessionData.countries;
-    if (sessionData.useGeoNames) useGeoNames = sessionData.useGeoNames;
-  }
-
-  parseEvent.calendarToMarkdown(
-    {lang: req.user.getMainLang(),
-      enableCountryFlags: enableCountryFlags,
-      duration: duration,
-      countries: countries,
-      date: date,
-      useGeoNames: useGeoNames}, function(err, result, errors) {
-      if (err) return next(err);
-      res.set("content-type", "text/html");
-      res.render("calendarAsMarkdown", {calendarAsMarkdown: result,
-        disablePrettify: disablePrettify,
-        useGeoNames: useGeoNames,
-        enableCountryFlags: enableCountryFlags,
-        date: date,
-        countries: countries,
-        duration: duration,
-        errors: errors,
-        layout: res.rendervar.layout});
-    });
-}
 
 function eventDateFormat(e, lang) {
   var sd = moment(e.startDate);
@@ -158,15 +117,6 @@ function renderEvents(result, req, res, next) {
   );
 }
 
-function renderCalendarAllLang(req, res, next) {
-  debug("renderCalendarAllLang");
-  parseEvent.calendarToJSON({}, function(err, result) {
-    if (err) return next(err);
-    result.discontinue = true;
-    result.serviceProvider = "OSMBC";
-    renderEvents(result, req, res, next);
-  });
-}
 
 let alternativeCalendarData = config.getValue("CalendarInterface", {mustExist: true});
 
@@ -188,7 +138,7 @@ function renderCalendarAllLangAlternative(req, res, next) {
     if (response.statusCode !== 200) {
       return next(Error("url: " + cc.url + " returns: \n" + response.statusCode + JSON.stringify(body)));
     }
-    if (!body[cc.events]) return next("Missing events in calendar data");
+    if (!body[cc.events]) return next(new Error("Missing events in calendar data"));
     body[cc.events].forEach(function modifyItem(item) {
       let i = {};
       i.desc = item[cc.desc];
@@ -213,7 +163,7 @@ function renderCalendarAllLangAlternative(req, res, next) {
 }
 
 function renderCalendarRefresh(req, res, next) {
-  debug("renderCalendarAllLang");
+  debug("renderCalendarRefresh");
 
   let par = req.params.calendar;
 
@@ -235,26 +185,6 @@ function renderCalendarRefresh(req, res, next) {
   });
 }
 
-
-function postCalendarAsMarkdown(req, res, next) {
-  debug("postCalendarAsMarkdown");
-  var disablePrettify = (req.body.disablePrettify === "true");
-  var enableCountryFlags = req.body.enableCountryFlags;
-  var useGeoNames = req.body.useGeoNames;
-  var duration = req.body.duration;
-
-  var date = req.body.date;
-
-  req.session.calendarTool = {disablePrettify: disablePrettify,
-    date: date,
-    duration: duration,
-    useGeoNames: useGeoNames,
-    enableCountryFlags: enableCountryFlags};
-  req.session.save(function(err) {
-    if (err) return next(err);
-    res.redirect(htmlroot + "/tool/calendar2markdown");
-  });
-}
 
 function generateCCLicense(license, lang, author) {
   debug("generateCCLicense");
@@ -407,9 +337,6 @@ function renderPublicCalendar(req, res, next) {
 }
 
 
-router.get("/calendar2markdown", checkRole("full"), renderCalendarAsMarkdown);
-router.post("/calendar2markdown", checkRole("full"), postCalendarAsMarkdown);
-router.get("/calendarAllLang", checkRole("full"), renderCalendarAllLang);
 router.get("/calendarAllLang/:calendar", checkRole("full"), renderCalendarAllLangAlternative);
 router.get("/picturetool", checkRole("full"), renderPictureTool);
 router.post("/picturetool", checkRole("full"), postPictureTool);

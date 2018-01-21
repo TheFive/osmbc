@@ -18,7 +18,7 @@ mixin displayArticle(article,lang)
           if (article.commentList)
             .panel-body
                 each comment,i in article.commentList
-                  if ((layout.user.access === "full") || (comment.text.indexOf("@" + layout.user.OSMUser) >= 0) || (comment.user === layout.user.OSMUser))
+                  if ((layout.user.access === "full") || (comment.text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i")) >= 0) || (comment.text.user === layout.user.OSMUser))
                     if (showRead || (i > upToComment))
                       .row
                         .col-md-12

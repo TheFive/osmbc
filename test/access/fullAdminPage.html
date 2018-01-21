@@ -1,0 +1,188 @@
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+    <title>TESTBC</title>
+    <!-- Bootstrap core CSS-->
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Fixed navbar-->
+    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header pull-left"><a href="/changelog" class="navbar-brand bg-success">Whats New?</a>
+        </div>
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">User<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">List</li>
+                <li><a href="/usert/create">Create</a></li>
+                <li><a href="/usert/list?access=full">List Active</a></li>
+                <li><a href="/usert/list?access=guest">List Guest</a></li>
+                <li><a href="/usert/list?temporaryGuest=true">List Full User Testing Guest</a></li>
+                <li><a href="/usert/list?access=denied">List Denied</a></li>
+                <li><a href="/usert/list">List All</a></li>
+                <li><a href="/usert/list?access=full&amp;sort=lastAccess&amp;desc=true&amp;lastAccess=!=never">Who Is Online</a></li>
+              </ul>
+            </li>
+            <li class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Action</li>
+                <li><a id="createblog" href="/createblog">Create Blog</a></li>
+              </ul>
+            </li>
+            <li><a href="/osmbc/admin">Admin</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
+                <li class="divider"></li>
+                <li><a href="/help/OSMBC">OSMBC</a></li>
+                <li><a href="/help/How To Integrate A Picture">How To Integrate A Picture</a></li>
+                <li><a href="/help/Notification">Using OSMBC Notifications</a></li>
+                <li><a href="/help/The Blog Views">The Blog Views</a></li>
+                <li><a href="/help/Beginner's How To">Beginner's How To</a></li>
+                <li><a href="/help/Categories">Which Category to use ?</a></li>
+                <li class="divider"></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotitz in OSM Wiki</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a href="/language?lang=DE">DE</a></li>
+                <li><a href="/language?lang=EN">EN</a></li>
+                <li><a href="/language?lang=ES">ES</a></li>
+              </ul>
+            </li>
+            <li><img onclick="location.href='/usert/1';" style="width:50px;height:50px"></li>
+          </ul>
+        </div>
+        <!-- /.nav-collapse-->
+        
+      </div>
+    </div>
+    <div class="container-fluid">
+      <p>
+        </p><div class="row">
+          <div class="col-md-4">
+            <h1>Configuration</h1>
+            <h3>Calendar</h3>
+            <div class="row">
+              <div class="col-md-6">
+                <p><a href="/config/calendartranslation"> Calendar Translation Texts</a></p>
+                <p><a href="/config/calendarflags"> Flags for calendar</a></p>
+              </div>
+              <div class="col-md-6">
+                <p><a href="/config/eventsfilter"> Filter for calendar</a></p>
+              </div>
+            </div>
+            <h3>Editor Info</h3>
+            <div class="row">
+              <div class="col-md-6">
+                <p><a href="/config/formulation_tipDE"> Formulation Hint for DE</a></p>
+                <p><a href="/config/formulation_tipEN"> Formulation Hint for EN</a></p>
+              </div>
+              <div class="col-md-6">
+                <p><a href="/config/categorydescription"> Descriptions for Categories</a></p>
+                <p><a href="/config/languageflags">Language Indicator Icons</a></p>
+              </div>
+            </div>
+            <h3>Pictures</h3>
+            <p><a href="/config/licenses">Picture Licensing</a></p>
+            <h3>Blog</h3>
+            <div class="row">
+              <div class="col-md-6">
+                <p><a href="/config/editorstrings">Author Documentation</a></p>
+              </div>
+              <div class="col-md-6">
+                <p><a href="/config/categorytranslation">Category Translation</a></p>
+              </div>
+            </div>
+            <h3>Article</h3>
+            <div class="row">
+              <div class="col-md-6">
+                <p><a href="/config/automatictranslatetext">Text for Translate Links</a></p>
+                <p><a href="/config/ignoreforsearch">Not a Doublette Link</a></p>
+              </div>
+              <div class="col-md-6">
+                <p><a href="/config/votes">Votes For Articles</a></p>
+              </div>
+            </div>
+            <h3>IM Notification</h3>
+            <p><a href="/config/slacknotification">Configuration of IM Channel (Slack,MM)</a></p>
+          </div>
+          <div class="col-md-8 visible-xs">
+            <p><br><a href="/changes/log?table=config&amp;date=2015-11">[changes]</a>
+            </p>
+          </div>
+          <div class="col-md-8 hidden-xs">
+            <div class="row">
+              <h4>Long Absent</h4>
+              <p>
+                </p><table class="table">
+                  <tbody><tr>
+                    <td>
+                    </td>
+                  </tr>
+                </tbody></table>
+              <p></p>
+            </div>
+            <div class="row">
+              <h4>Last Changes <a href="/changes/log?date=2015-11"> (more)</a></h4>
+              <div>
+                <table class="table table-striped table-condensed table-responsive">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>blog</th>
+                      <th>user</th>
+                      <th>table</th>
+                      <th>what</th>
+                      <th>Change</th>
+                      <th>when</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <p>only displaying changes<span class="osmbc-inserted">inserted text</span><span class="osmbc-deleted">removed text</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-8"></div>
+          <div class="col-md-4"><a href="/osmbc.html?tempstyleOff=true">Switch Development Color off for this session.</a>
+          </div>
+        </div>
+        <div class="footer"></div>
+      <p></p>
+      <p></p>
+    </div>
+    <!-- /container-->
+    <!-- Bootstrap core JavaScript-->
+    <!-- ==================================================-->
+    <!-- Placed at the end of the document so the pages load faster-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  
+
+
+  
+    <title>TESTBC</title>
+    <link rel="stylesheet" href="stylesheets/style.css">
+  
+  
+</body></html>

@@ -146,7 +146,7 @@ function renderArticleId(req, res, next) {
     function (callback) {
       debug("renderArticleId->changes");
 
-      logModule.find(" where data->>'oid' ='" + article.id + "' and data->>'table' = 'article' and data->>'property' not like 'comment%' ", {column: "timestamp", desc: true}, function(err, result) {
+      logModule.find(" where data->>'oid' ='" + article.id + "' and data->>'table' = 'article' and data->>'property' not like 'comment%' ", {column: "id", desc: true}, function(err, result) {
         debug("renderArticleId->findLog");
 
         callback(err, result);
@@ -493,6 +493,7 @@ function postArticleWithOldValues(req, res, next) {
     title: req.body.old_title,
     unpublishReason: req.body.old_unpublishReason,
     unpublishReference: req.body.old_unpublishReference};
+
 
   var languages = config.getLanguages();
   for (var i = 0; i < languages.length; i++) {
@@ -956,8 +957,17 @@ function translate(req, res, next) {
 function isFirstCollector(req, res, next) {
   if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
   if (!req.article) return next();
+  let user = req.user.OSMUser;
+  let comments = req.article.commentList;
+  if (comments) {
+    for (let i = 0; i < comments.length; i++) {
+      let comment = comments[i];
+      if (comment.text.search(new RegExp("@" + user + "\\b", "i")) >= 0) return next();
+    }
+  }
   res.status(403).send("This article is not allowed for guests");
 }
+
 let allowFullAccess = auth.checkRole("full");
 let allowGuestAccess = auth.checkRole(["full", "guest"], [null, isFirstCollector]);
 

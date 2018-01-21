@@ -50,8 +50,8 @@
   "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
   "htmlroot":"",
   "style":"stylesheets/style.css",
-  "bootstrap":{"css":"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css",
-    "js":"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js"},
+  "bootstrap":"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5",
+  "jquery":"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1",
   "ReviewInWP":["DE"],
   "EmailSender":"noreply@gmail.com",
   "url":"https://testosm.bc",
@@ -70,8 +70,23 @@
   "CalendarDateFormat":"L",
   "WelcomeInterval":"1 month",
   "userIsOldInDays":60,
-  "CalendarInterface":{},
+  "CalendarInterface":{
+    "fakeCalendar":{
+      "refreshurl":"this is a refresh url",
+      "url":"http://localhost:33333/fakeCalendar",
+      "events":"events",
+      "timestamp":"time",
+      "startDate":"start",
+      "endDate":"end",
+      "desc":"description",
+      "markdown": "description",
+      "text":"description",
+      "big":"Big",
+      "town": "town",
+      "country":"country"
+    }
+  },
   "PublicCalendarPage":"http://linktopubliccalendar.org",
-  "WelcomeRefreshInSeconds":1,
+  "WelcomeRefreshInSeconds":0,
   "createGuestUsersAutomatic":true
 }

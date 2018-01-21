@@ -2,6 +2,7 @@
 
 const should = require("should");
 const async  = require("async");
+const nock   = require("nock");
 const config = require("../config.js");
 const request = require("request");
 const userModule = require("../model/user.js");
@@ -18,8 +19,14 @@ describe("router/user", function() {
       initialise.initialiseModules,
       testutil.clearDB],bddone);
   });
+  let nockLoginPage;
+  afterEach(function(bddone){
+    nock.removeInterceptor(nockLoginPage);
+    return bddone();
+  });
   beforeEach(function(bddone) {
     config.initialise();
+    nockLoginPage = testutil.nockLoginPage();
     jar = request.jar();
     testutil.importData(
       {
@@ -274,7 +281,6 @@ describe("router/user", function() {
               mailComment:  [],
               color: 'red',
               language: 'ES',
-              articleEditor: 'old',
               languageCount: 'two',
               mailBlogLanguageStatusChange:  []
             });

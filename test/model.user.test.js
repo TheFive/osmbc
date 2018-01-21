@@ -43,11 +43,11 @@ describe("model/user", function() {
       });
     });
     it("should create no New User with ID", function(bddone) {
-      (function() {
-        userModule.createNewUser({id: 2, OSMUser: "me again"}, function () {
-        });
-      }).should.throw();
-      bddone();
+      userModule.createNewUser({id: 2, OSMUser: "me again"}, function (err) {
+        should.exist(err);
+        should(err.message).eql("user id exists");
+        bddone();
+      });
     });
     it("should create no New User with existing name", function(bddone) {
       userModule.createNewUser({OSMUser: "TestUser"}, function (err) {

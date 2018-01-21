@@ -61,7 +61,7 @@ block all
                     ul.dropdown-menu(role='menu')
                       li.dropdown-header Action
                       li
-                        a(href=layout.htmlroot+"/createblog") Create Blog
+                        a#createblog(href=layout.htmlroot+"/createblog") Create Blog
                   li
                     a(href=layout.htmlroot+"/osmbc/admin") Admin
 
@@ -120,7 +120,6 @@ block all
         // Bootstrap core JavaScript
         // ==================================================
         // Placed at the end of the document so the pages load faster
-        //link(rel='stylesheet', href='#{layout.bootstrap}/css/bootstrap.min.css')
 
         script(src=layout.path("jquery")+'/jquery.min.js')
         script(src=layout.path("bootstrap")+'/js/bootstrap.min.js')

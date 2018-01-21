@@ -2,8 +2,9 @@
 
 var should  = require("should");
 var async   = require("async");
-var config  = require("../config.js");
+var nock    = require("nock");
 var request = require("request");
+var config  = require("../config.js");
 var testutil = require("./testutil.js");
 var initialise = require("../util/initialise.js");
 
@@ -18,8 +19,18 @@ describe("routes/tool", function() {
       initialise.initialiseModules,
       testutil.clearDB],bddone);
   });
+  after(function(bddone){
+    testutil.stopServer(bddone);
+  });
+  let nockLoginPage;
+  afterEach(function(bddone){
+    nock.removeInterceptor(nockLoginPage);
+    return bddone();
+  });
+
   beforeEach(function(bddone) {
     config.initialise();
+    nockLoginPage = testutil.nockLoginPage();
     jar = request.jar();
     testutil.importData(
       {
@@ -30,60 +41,20 @@ describe("routes/tool", function() {
         clear:true
       },bddone);
   });
-  describe("route GET  /tool/calendar2markdown",function(){
-    let url = baseLink + "/tool/calendar2markdown";
-    it("should show calendar", function (bddone) {
-      testutil.startServer("TestUser", function () {
-        request.get({url: url,jar:jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql("<h1>Current OSM Wiki Calendar as Markdown</h1>");
-          bddone();
-        });
-      });
-    });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url,jar:jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url,jar:jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
-  });
-  describe("route POST /tool/calendar2markdown",function(){
-    it("should redirect to /",function(bddone){
-      testutil.startServerWithLogin("TestUser",jar, function () {
-        request.post({url: baseLink + "/tool/calendar2markdown",form:{},followRedirect:false,jar:jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(302);
-          should(body).eql("Found. Redirecting to /tool/calendar2markdown");
-          // this function is changing the session, don't know how to test it from here
-          bddone();
-        });
-      });
-    });
-  });
   describe("route GET  /tool/calendarAllLang",function(){
-    let url = baseLink + "/tool/calendarAllLang";
+    before(function(bddone){
+      nock('http://localhost:33333')
+        .get('/fakeCalendar')
+        .reply(200,{events:[]});
+      bddone();
+    });
+    let url = baseLink + "/tool/calendarAllLang/fakeCalendar";
     it("should show calendar", function (bddone) {
       testutil.startServer("TestUser", function () {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql(" <h1>Calendar Tool (OSMBC)</h1>");
+          body.should.containEql("<h1>Calendar Tool (fakeCalendar)</h1>");
           bddone();
         });
       });
