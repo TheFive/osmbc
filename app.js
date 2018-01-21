@@ -50,7 +50,7 @@ var app = express();
 
 app.locals.htmlroot = config.htmlRoot();
 app.locals.appName  = config.getValue("AppName", {mustExist: true});
-app.locals.path     = require("./routes/layout").path
+app.locals.path     = require("./routes/layout").path;
 app.locals.stylesheet = config.getValue("style");
 
 
@@ -143,7 +143,7 @@ app.use(session(
 app.use(auth.passport.initialize());
 app.use(auth.passport.session());
 
-function renderLogin(req, res, next) {
+function renderLogin(req, res) {
   debug("renderLogin");
   res.render("login");
 }

@@ -51,6 +51,15 @@ describe("views/index", function() {
       mockdate.reset();
       testutil.stopServer(bddone);
     });
+    let nockLoginPage;
+    beforeEach(function(bddone){
+      nockLoginPage = testutil.nockLoginPage();
+      return bddone();
+    });
+    afterEach(function(bddone){
+      nock.removeInterceptor(nockLoginPage);
+      return bddone();
+    });
 
 
     describe("Homepage", function() {

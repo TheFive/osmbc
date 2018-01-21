@@ -26,7 +26,9 @@ describe("views/article", function() {
       .reply(200, "ok");
     return bddone();
   });
+  let nockLoginPage;
   beforeEach(function(bddone) {
+    nockLoginPage = testutil.nockLoginPage();
     async.series([
       testutil.clearDB,
       (cb) => { userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE"}, cb); },
@@ -45,6 +47,7 @@ describe("views/article", function() {
     });
   });
   afterEach(function(bddone) {
+    nock.removeInterceptor(nockLoginPage);
     testutil.stopServer(bddone);
   });
 

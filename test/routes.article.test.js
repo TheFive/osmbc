@@ -23,6 +23,7 @@ describe("routes/article", function() {
   this.timeout(this.timeout() * 2);
   var id = 2;
   let jar;
+  var nockLogin;
 
   before(initialise.initialiseModules);
 
@@ -36,6 +37,7 @@ describe("routes/article", function() {
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00:00Z"));
+    nockLogin = testutil.nockLoginPage();
     jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
@@ -56,6 +58,10 @@ describe("routes/article", function() {
           {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment"}]},
           {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment for @TestUserNonExisting"}]}],
     clear: true}, bddone);
+  });
+  afterEach(function(bddone){
+    nock.removeInterceptor(nockLogin);
+    return bddone();
   });
   describe("route GET /article/:id", function() {
     let url = baseLink + "/article/" + id;

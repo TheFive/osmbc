@@ -165,7 +165,7 @@ block all
             //- generate a list of all blogs for Menu
             - var listall = []
             if (layout)
-              - concat(layout.listOfReviewBlog)
+              - listall = [].concat(layout.listOfReviewBlog)
               - listall = listall.concat(layout.listOfEditBlog)
               - listall = listall.concat(layout.listOfOpenBlog)
 

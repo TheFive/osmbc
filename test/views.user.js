@@ -3,6 +3,7 @@
 var async = require("async");
 var testutil = require("./testutil.js");
 var should  = require("should");
+var nock = require("nock");
 
 var userModule = require("../model/user.js");
 var articleModule = require("../model/article.js");
@@ -15,7 +16,9 @@ var passportStub = require("./passport-stub.js");
 describe("views/user", function() {
   this.timeout(100000);
   var browser;
+  var nockLogin;
   beforeEach(function(bddone) {
+    nockLogin = testutil.nockLoginPage();
     async.series([
       testutil.clearDB,
       function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full"}, cb); },
@@ -31,6 +34,7 @@ describe("views/user", function() {
     });
   });
   afterEach(function(bddone) {
+    nock.removeInterceptor(nockLogin);
     testutil.stopServer(bddone);
   });
 

@@ -20,8 +20,10 @@ var maxTimer = 15000;
 describe("views/article_new", function() {
   var browser;
   var articleId;
+  let nockLoginPage;
 
   beforeEach(function(bddone) {
+    nockLoginPage = testutil.nockLoginPage();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)

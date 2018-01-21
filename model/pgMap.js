@@ -462,10 +462,14 @@ module.exports.count = function count(sql, callback) {
   });
 };
 
-module.exports.select = function select(sql, callback) {
+module.exports.select = function select(sql, data, callback) {
   debug("select");
+  if (typeof data === "function") {
+    callback = data;
+    data = undefined;
+  }
   var result = [];
-  db.query(sql, function (err, pgResult) {
+  db.query(sql, data, function (err, pgResult) {
     if (err) return callback(err);
     for (var i = 0; i < pgResult.rows.length; i++) {
       let item = {};
