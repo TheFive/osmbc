@@ -83,7 +83,9 @@ function cacheOSMAvatar(osmuser, callback) {
   if (process.env.NODE_ENV === "test") return callback();
   var requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
   request(requestString, function(err, response, body) {
-    if (err) return callback(err, null);
+    if (err) {
+      return callback(err, null);
+    }
     if (body) {
       let c = cheerio.load(body);
       let avatarLink = c(".user_image").attr("src");
@@ -397,18 +399,21 @@ let welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", {mustExist: true
 
 module.exports.getNewUsers = function getNewUsers(callback) {
   debug("getNewUsers");
-  if (_newUsers) return callback(null, _newUsers);
+
+  if (welcomeRefresh > 0 && _newUsers) return callback(null, _newUsers);
 
 
-  pgMap.select("select data->>'user' as osmuser ,min(data->>'timestamp') as first from changes group by data->>'user' having ( min(data->>'timestamp')  )::timestamp with time zone  > current_timestamp - interval '" + interval + "'", function(err, result) {
+  pgMap.select("select data->>'user' as osmuser ,min(data->>'timestamp') as first from changes group by data->>'user' having ( min(data->>'timestamp')  )::timestamp with time zone  > ($1)::timestamp with time zone - interval '" + interval + "'", [new Date().toISOString()], function(err, result) {
     if (err) return callback(err);
     if (result.indexOf("autocreate") >= 0) {
       result = result.splice(result.indexOf("autocreate"), result.indexOf("autocreate") + 1);
     }
-    _newUsers = result;
-    setTimeout(function() {
-      _newUsers = null;
-    }, welcomeRefresh * 1000);
+    if (welcomeRefresh > 0) {
+      _newUsers = result;
+      setTimeout(function() {
+        _newUsers = null;
+      }, welcomeRefresh * 1000);
+    }
     callback(null, result);
   });
 };

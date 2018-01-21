@@ -1,9 +1,9 @@
 "use strict";
 
-var async = require("async");
+var async    = require("async");
 var testutil = require("./testutil.js");
-var should  = require("should");
-
+var should   = require("should");
+var nock = require("nock");
 var userModule = require("../model/user.js");
 
 
@@ -15,7 +15,9 @@ var maxTimer = 50000;
 describe("views/config", function() {
   this.timeout(maxTimer);
   var browser;
+  let nockLoginPage;
   beforeEach(function(bddone) {
+    nockLoginPage = testutil.nockLoginPage();
     async.series([
       testutil.clearDB,
       function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full", "language": "DE"}, cb); },
@@ -26,6 +28,7 @@ describe("views/config", function() {
     });
   });
   afterEach(function(bddone) {
+    nock.removeInterceptor(nockLoginPage);
     testutil.stopServer(bddone);
   });
 

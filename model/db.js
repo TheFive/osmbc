@@ -68,6 +68,9 @@ module.exports.query = function (text, values, callback) {
   function handleResult(err, result) {
     var endTime = new Date().getTime();
     if (err) {
+      if (err.message.indexOf("connect ECONNREFUSED") >= 0) {
+        err.message = "\nError connecting to PSQL, is database started ? \n" + err.message;
+      }
       sqldebug("SQL: [" + (endTime - startTime) / 1000 + "]( Result: ERROR)" + text);
       return callback(err);
     }

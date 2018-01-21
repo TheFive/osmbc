@@ -21,6 +21,7 @@ describe("uc/guest visibility", function() {
   let article = null;
   let bTheFive = null;
   let bGuestUser = null;
+  var nockLogin;
   beforeEach(async function() {
     await testutil.clearDB();
     testutil.startServerSync("TheFive");
@@ -38,11 +39,12 @@ describe("uc/guest visibility", function() {
     return bddone();
   });
   afterEach(function(bddone) {
+    nock.cleanAll();
     testutil.stopServer(bddone);
   });
 
 
-  it("should do a use case short async/await versino", async function() {
+  it("should do a use case short async/await version", async function() {
     let b = testutil.getBrowser();
     let homePage = "/osmbc";
     let adminLinkSelect = "a#adminlink";
@@ -136,6 +138,33 @@ describe("uc/guest visibility", function() {
 
 
     // bGuestUser.assert.expectHtmlSync("access", "tempresult.html");
+  });
+  it("should create a new guest user, if he logs in",async function(){
+    let browser = await  testutil.getNewBrowser();
+    // visiting /osmbc with unkown user shoud show login page
+    await  browser.visit("/osmbc");
+    browser.assert.expectHtmlSync("access", "loginPage.html");
+    testutil.fakeNextPassportLogin("UnkownGuest");
+    await  browser.click("#login");
+    browser.assert.expectHtmlSync("access", "UnkownGuestStartPage.html");
+
+    // Collect an article, search input before
+    await browser.click("ul.nav.navbar-nav.pull-left li a");
+    browser.fill("input#searchField", "new Info");
+    await browser.click("button[name='SearchNow']");
+
+    // Fill out collect screen click OK
+    // add some further information on article screen
+    // and compare results
+    // bGuestUser.fill("select#categoryEN","Mapping /");
+    browser.fill("#title", "This is a title of a guest collected article");
+    browser.fill("textarea[name='collection']", "This is the collection text (guest collector)");
+    await browser.click("input#OK");
+
+
+    // check with TheFive user, wether guest is registered
+    await bTheFive.visit("/osmbc");
+    bTheFive.assert.expectHtmlSync("access","Home Page with Unknowm Guest.html");
   });
 });
 /* jshint ignore:end */

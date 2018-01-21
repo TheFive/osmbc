@@ -22,6 +22,7 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 describe("routes/blog", function() {
   this.timeout(30000);
   let jar = null;
+  var nockLogin;
 
   after(function (bddone) {
     nock.cleanAll();
@@ -33,6 +34,7 @@ describe("routes/blog", function() {
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00:00Z"));
+    nockLogin = testutil.nockLoginPage();
     jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
@@ -50,6 +52,10 @@ describe("routes/blog", function() {
           {"blog": "WN333", "markdownDE": "* Dies ist ein kleiner Testartikel.", "category": "Mapping"},
           {"blog": "BLOG", "title": "BLOG", "markdownDE": "* Dies ist ein grosser Testartikel.", "category": "Keine", commentList: [{user: "Hallo", text: "comment"}]}],
         clear: true}, bddone);
+  });
+  afterEach(function(bddone){
+    nock.removeInterceptor(nockLogin);
+    return bddone();
   });
   describe("route GET /blog/edit/:blog_id", function() {
     let url = baseLink + "/blog/edit/WN333";
@@ -428,7 +434,7 @@ describe("routes/blog", function() {
         request.get({url:url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql("<title>WN333/overview</title>");
+          body.should.containEql("<h2><span class=\"hidden-xs\">Weekly </span>WN333<span class=\"hidden-xs\"> (edit)</span></h2>");
           bddone();
         });
       });
@@ -461,7 +467,7 @@ describe("routes/blog", function() {
         request.get({url:url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql("<title>WN333/statistic</title>");
+          body.should.containEql("<h1>Blog Statistics for WN333</h1>");
           bddone();
         });
       });
@@ -567,7 +573,7 @@ describe("routes/blog", function() {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql("<title>WN333/full</title>");
+          body.should.containEql("<h2><span class=\"hidden-xs\">Weekly </span>WN333<span class=\"hidden-xs\"> (edit)</span></h2>");
           bddone();
         });
       });

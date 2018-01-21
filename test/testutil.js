@@ -372,13 +372,22 @@ exports.startServer = function startServer(userString, callback) {
   return callback();
 };
 
+
+function nockLoginPage() {
+  return nock("http://localhost:35043",{allowUnmocked:true})
+    .get(config.htmlRoot()+"/login")
+    .reply(302,"redirect",{'Location':"http://localhost:35043"+config.htmlRoot()+"/auth/openstreetmap"});
+}
+
 var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 exports.startServerWithLogin = function(userString, jar, callback) {
   debug("startServerWithLogin");
   exports.startServer(userString, function(err) {
     if (err) return callback(err);
+    let nockLoginInterceptor = nockLoginPage();
     request.get({url: baseLink + "/osmbc", jar: jar}, function(err) {
+      nock.removeInterceptor(nockLoginInterceptor);
       return callback(err);
     });
   });
@@ -399,15 +408,20 @@ exports.getBrowser = function getBrowser() {
 
 exports.getNewBrowser = function getNewBrowser(userString) {
   return new Promise((resolve, reject) => {
-    should.exist(userString);
     let browser = new Browser({ maxWait: 20000, site: "http://localhost:" + config.getServerPort() });
+    if (!userString) return resolve(browser);
+    should.exist(userString);
     fakeNextPassportLogin(userString);
+    let nockLoginInterceptor = nockLoginPage();
     browser.visit("/osmbc", function(err) {
+      nock.removeInterceptor(nockLoginInterceptor);
       if (err) return reject(err);
       resolve(browser);
     });
   });
 };
+
+exports.fakeNextPassportLogin = fakeNextPassportLogin;
 
 
 exports.doATest = function doATest(dataBefore, test, dataAfter, callback) {
@@ -502,3 +516,7 @@ process.on("unhandledRejection", (reason, p) => {
   console.error(reason.stack);
   // application specific logging, throwing an error, or other logic here
 });
+
+
+
+exports.nockLoginPage = nockLoginPage;

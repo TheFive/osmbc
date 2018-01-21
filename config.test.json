@@ -87,6 +87,6 @@
     }
   },
   "PublicCalendarPage":"http://linktopubliccalendar.org",
-  "WelcomeRefreshInSeconds":1,
+  "WelcomeRefreshInSeconds":0,
   "createGuestUsersAutomatic":true
 }

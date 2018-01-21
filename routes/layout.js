@@ -46,6 +46,8 @@ function path(component) {
   if (component === "moment") dist = "";
   return htmlRoot + "/bower_components/" + component + dist;
 }
+module.path = path;
+
 
 let calendarInterface = config.getValue("CalendarInterface", {mustExist: true});
 

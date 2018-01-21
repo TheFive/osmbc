@@ -22,8 +22,15 @@ describe("routes/tool", function() {
   after(function(bddone){
     testutil.stopServer(bddone);
   });
+  let nockLoginPage;
+  afterEach(function(bddone){
+    nock.removeInterceptor(nockLoginPage);
+    return bddone();
+  });
+
   beforeEach(function(bddone) {
     config.initialise();
+    nockLoginPage = testutil.nockLoginPage();
     jar = request.jar();
     testutil.importData(
       {
