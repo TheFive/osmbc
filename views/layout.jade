@@ -148,7 +148,7 @@ block all
       meta(name='description', content='')
       meta(name='author', content='')
       link(rel='icon', href='/favicon.ico')
-      title=appName
+      title=(layout)?layout.title:appName
       // Bootstrap core CSS
       link(href=path("bootstrap")+'/css/bootstrap.min.css', rel='stylesheet')
       link(href=path("font-awesome")+"/css/font-awesome.min.css" rel='stylesheet')
