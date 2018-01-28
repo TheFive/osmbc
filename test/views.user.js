@@ -15,180 +15,98 @@ var passportStub = require("./passport-stub.js");
 
 describe("views/user", function() {
   this.timeout(100000);
-  var browser;
-  var nockLogin;
-  beforeEach(function(bddone) {
-    nockLogin = testutil.nockLoginPage();
-    async.series([
-      testutil.clearDB,
-      function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full"}, cb); },
-      function createArticle(cb) {
-        articleModule.createNewArticle({blog: "blog", collection: "test"}, function(err) {
-          cb(err);
-        });
-      },
-      testutil.startServer.bind(null, "TheFive")
-    ], function(err) {
-      browser = testutil.getBrowser();
-      bddone(err);
-    });
+  let browser;
+  let nockLogin;
+  beforeEach(async function() {
+    await testutil.clearDB();
+    await userModule.createNewUser({OSMUser: "TheFive", access: "full"});
+    await articleModule.createNewArticle({blog: "blog", collection: "test"});
+    testutil.startServerSync();
+    browser = await testutil.getNewBrowser("TheFive");
   });
   afterEach(function(bddone) {
-    nock.removeInterceptor(nockLogin);
     testutil.stopServer(bddone);
   });
 
 
-  it("should not change username, if user logged in", function(bddone) {
-    async.series([
-      function createUser(cb) {
-        userModule.createNewUser({OSMUser: "test", lastAccess: (new Date()).toISOString()}, cb);
-      },
-      function visitUser (cb) {
-        browser.visit("/usert/1", cb);
-      },
-      function waitALittle(cb) {
-        browser.wait(100, cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      browser.assert.text('input[readonly="readonly"][name="OSMUser"]');
-      bddone();
-    });
+  it("should not change username, if user logged in", async function() {
+    await userModule.createNewUser({OSMUser: "test", lastAccess: (new Date()).toISOString()});
+    await browser.visit("/usert/1");
+    await browser.wait(100);
+    browser.assert.text('input[readonly="readonly"][name="OSMUser"]');
   });
-  it("should have bootstrap.js loaded", function(bddone) {
-    browser.visit("/osmbc", function(err) {
-      should.not.exist(err);
+  it("should have bootstrap.js loaded", async function() {
+    await browser.visit("/osmbc");
+    should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
+  });
+  it("should save userdata and calculate WN User", async function() {
+    await browser.visit("/usert/create");
+    await browser
+      .fill("OSMUser", "TestUser")
+      .fill("EMail", "")
+      .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
+      .pressButton("OK");
+    let result = await userModule.findById(2);
+    should(result.OSMUser).eql("TestUser");
+    should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
+    should(result.mailComment).eql([]);
+    should(result.mailBlogLanguageStatusChange).eql([]);
+  });
+  it("should save single Options for Mail & Blog Notifications", async function() {
+    await browser.visit("/usert/create");
+    browser.evaluate("document.getElementById('mailComment_DE').checked = true");
+    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
+    await browser
+      .fill("OSMUser", "TestUser")
+      .fill("EMail", "")
+      .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
+      .pressButton("OK");
+    let result = await userModule.findById(2);
+    should(result.OSMUser).eql("TestUser");
+    should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
+    should(result.mailComment).eql(["DE"]);
+    should(result.mailBlogLanguageStatusChange).eql(["DE"]);
+  });
+  it("should save two Options for Mail & Blog Notifications", async function() {
+    await browser.visit("/usert/create");
+    browser.evaluate("document.getElementById('mailComment_DE').checked = true");
+    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
+    browser.evaluate("document.getElementById('mailComment_EN').checked = true");
+    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_EN').checked = true");
+    await browser
+      .fill("OSMUser", "TestUser")
+      .fill("EMail", "")
+      .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
+      .pressButton("OK");
+    let result = await userModule.findById(2);
+    should(result.OSMUser).eql("TestUser");
+    should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
+    should(result.mailComment).eql(["DE", "EN"]);
+    should(result.mailBlogLanguageStatusChange).eql(["DE", "EN"]);
+  });
+  it("should not validate a usermail if wrong user logged in", async function() {
+    await userModule.createNewUser({OSMUser: "TestValidate", emailInvalidation: "test@test.org", emailValidationKey: "123456789"});
+    try {
+      await browser.visit("/usert/2?validation=123456789");
+    } catch(err) {
+      // catch, as server is throwing 500 er error.
+    }
+    should(browser.html("body")).match(/Wrong User: expected &gt;TestValidate&lt; given &gt;TheFive&lt;/);
+  });
+  it("should validate a usermail if correct user logged in", async function() {
+    let result = await userModule.find({OSMUser: "TheFive"});
+    let user = result[0];
+    user.emailInvalidation = "test@test.org";
+    user.emailValidationKey = "123456789";
 
-      // test wether bootstrap.js is loaded or not
-      // see http://stackoverflow.com/questions/13933000/how-to-check-if-twitter-bootstrap-is-loaded
-      should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
-      bddone();
-    });
-  });
-  it("should save userdata and calculate WN User", function(bddone) {
-    async.series([
-      function visitUser (cb) {
-        browser.visit("/usert/create", cb);
-      },
-      function fillForm (cb) {
-        browser
-          .fill("OSMUser", "TestUser")
-          .fill("EMail", "")
-          .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
-          .pressButton("OK", cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      userModule.findById(2, function(err, result) {
-        should.not.exist(err);
-        should(result.OSMUser).eql("TestUser");
-        should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
-        should(result.mailComment).eql([]);
-        should(result.mailBlogLanguageStatusChange).eql([]);
-        bddone();
-      });
-    });
-  });
-  it("should save single Options for Mail & Blog Notifications", function(bddone) {
-    async.series([
-      function visitUser (cb) {
-        browser.visit("/usert/create", cb);
-      },
-      function fillForm (cb) {
-        browser.evaluate("document.getElementById('mailComment_DE').checked = true");
-        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
-        browser
-          .fill("OSMUser", "TestUser")
-          .fill("EMail", "")
-          .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
-          .pressButton("OK", cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      userModule.findById(2, function(err, result) {
-        should.not.exist(err);
-        should(result.OSMUser).eql("TestUser");
-        should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
-        should(result.mailComment).eql(["DE"]);
-        should(result.mailBlogLanguageStatusChange).eql(["DE"]);
-        bddone();
-      });
-    });
-  });
-  it("should save two Options for Mail & Blog Notifications", function(bddone) {
-    async.series([
-      function visitUser (cb) {
-        browser.visit("/usert/create", cb);
-      },
-      function fillForm (cb) {
-        browser.evaluate("document.getElementById('mailComment_DE').checked = true");
-        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
-        browser.evaluate("document.getElementById('mailComment_EN').checked = true");
-        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_EN').checked = true");
-        browser
-          .fill("OSMUser", "TestUser")
-          .fill("EMail", "")
-          .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
-          .pressButton("OK", cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      userModule.findById(2, function(err, result) {
-        should.not.exist(err);
-        should(result.OSMUser).eql("TestUser");
-        should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
-        should(result.mailComment).eql(["DE", "EN"]);
-        should(result.mailBlogLanguageStatusChange).eql(["DE", "EN"]);
-        bddone();
-      });
-    });
-  });
-
-  it("should not validate a usermail if wrong user logged in", function(bddone) {
-    async.series([
-      function createUser(cb) {
-        userModule.createNewUser({OSMUser: "TestValidate", emailInvalidation: "test@test.org", emailValidationKey: "123456789"}, cb);
-      },
-      function visitUser (cb) {
-        browser.visit("/usert/2?validation=123456789", cb);
-      }
-    ], function(err) {
-      should.exist(err);
-      should(browser.html("body")).match(/Wrong User: expected &gt;TestValidate&lt; given &gt;TheFive&lt;/);
-      bddone();
-    });
-  });
-  it("should validate a usermail if correct user logged in", function(bddone) {
-    let user = null;
-    async.series([
-      function createUser(cb) {
-        userModule.find({OSMUser: "TheFive"}, function(err, result) {
-          should.not.exist(err);
-          user = result[0];
-          user.emailInvalidation = "test@test.org";
-          user.emailValidationKey = "123456789";
-          user.save(cb);
-        });
-      },
-      function (cb) {
-        // loging in user again, because passportStub does not reload user now.
-        passportStub.login(user);
-        cb();
-      },
-      function visitUser (cb) {
-        browser.visit("/usert/1?validation=123456789", cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      userModule.findById(1, function(err, result) {
-        should.not.exist(err);
-        should(result.OSMUser).eql("TheFive");
-        should(result.email).eql("test@test.org");
-        should.not.exist(result.emailInvalidation);
-        bddone();
-      });
-    });
+    // save is not async await save !!!!!!!!!!!!!!!!
+    ###############################################
+    await user.save();
+    await browser.visit("/usert/1?validation=123456789");
+    result = await userModule.findById(1);
+    should(result.OSMUser).eql("TheFive");
+    should(result.email).eql("test@test.org");
+    should.not.exist(result.emailInvalidation);
   });
   it("should display & sort userlist", function(bddone) {
     async.series([
