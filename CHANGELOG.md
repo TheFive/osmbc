@@ -1,5 +1,30 @@
 # Change Log
 
+## [3.1.0](https://github.com/TheFive/osmbc/tree/3.1.0) (2018-01-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1e...3.1.0)
+
+## [3.0.1e](https://github.com/TheFive/osmbc/tree/3.0.1e) (2018-01-07)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1d...3.0.1e)
+
+## [3.0.1d](https://github.com/TheFive/osmbc/tree/3.0.1d) (2018-01-02)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1c...3.0.1d)
+
+## [3.0.1c](https://github.com/TheFive/osmbc/tree/3.0.1c) (2018-01-01)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1b...3.0.1c)
+
+## [3.0.1b](https://github.com/TheFive/osmbc/tree/3.0.1b) (2017-12-31)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1a...3.0.1b)
+
+## [3.0.1a](https://github.com/TheFive/osmbc/tree/3.0.1a) (2017-12-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1...3.0.1a)
+
+## [3.0.1](https://github.com/TheFive/osmbc/tree/3.0.1) (2017-12-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.0...3.0.1)
+
+**Closed issues:**
+
+- Remove Calendar Parsing Source from OSMBC [\#716](https://github.com/TheFive/osmbc/issues/716)
+
 ## [3.0.0](https://github.com/TheFive/osmbc/tree/3.0.0) (2017-12-23)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.5...3.0.0)
 
@@ -871,13 +896,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 

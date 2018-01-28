@@ -20,28 +20,10 @@ The system is active used since Wochennotiz 272 in September 2015.
 The running instance for the editors is: https://thefive.sabic.uberspace.de/osmbc.html  
 For tests, use the development instance: http://thefive.sabic.uberspace.de/devosmbc/osmbc.html
 
-## Next Steps & Progress
-
-[![Stories in Ready](https://badge.waffle.io/TheFive/osmbc.png?label=ready&title=Ready)](https://waffle.io/TheFive/osmbc)
-[![Stories in Progress](https://badge.waffle.io/TheFive/osmbc.png?label=in progress&title=In Progress)](https://waffle.io/TheFive/osmbc)
-
-[![Throughput Graph](https://graphs.waffle.io/TheFive/osmbc/throughput.svg)](https://waffle.io/TheFive/osmbc/metrics)
 
 ## Software Build Status
 
-Master:   | develop:
-----------|----------------------
-[![Build Status](https://travis-ci.org/TheFive/osmbc.svg?branch=master)](https://travis-ci.org/TheFive/osmbc) | [![Build Status](https://travis-ci.org/TheFive/osmbc.svg?branch=develop)](https://travis-ci.org/TheFive/osmbc)
-[![codecov.io](https://codecov.io/github/TheFive/osmbc/coverage.svg?branch=master)](https://codecov.io/github/TheFive/osmbc/branch/master) | [![codecov.io](https://codecov.io/github/TheFive/osmbc/coverage.svg?branch=develop)](https://codecov.io/github/TheFive/osmbc/branch/develop)
-
-Timeline for code coverage on development branch:
-(Every dot is a month)
-![codecov.io](http://codecov.io/github/TheFive/osmbc/branch.svg?branch=develop&agg=month&hg=on&vg=on&legend=on)
-
-Timeline for code coverage on master branch:
-(Every dot is a month)
-![codecov.io](http://codecov.io/github/TheFive/osmbc/branch.svg?branch=master&agg=month&hg=on&vg=on&legend=on)
-
+I have stopped to use Travis-CI as CI Plattform to test OSMBC on a neutral environment. Will be back sometimes, somewhere in summertime :-)
 
 ## Tooling
 
