@@ -248,7 +248,7 @@ module.exports.find = function find(module, obj, order, callback) {
   } else if (typeof (order) === "function") {
     callback = order;
     order = null;
-  } else if (typeof(order) === "undefined") {
+  } else if (typeof (order) === "undefined") {
     order = null;
   } else {
     should(typeof (order)).equal("object");
