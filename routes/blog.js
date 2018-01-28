@@ -162,7 +162,7 @@ function renderBlogList(req, res, next) {
       });
     },
     count: ["blogs", function(result, callback) {
-      async.each(result.blogs, function(item, cb) {
+      async.eachLimit(result.blogs, 2, function(item, cb) {
         async.parallel([
           item.calculateDerived.bind(item, req.user),
           item.calculateTimeToClose.bind(item)
