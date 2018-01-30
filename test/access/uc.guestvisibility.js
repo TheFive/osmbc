@@ -3,30 +3,25 @@
 /* jshint ignore:start */
 
 var nock = require("nock");
-var should  = require("should");
-var path = require("path");
 var mockdate = require("mockdate");
 var testutil = require("../testutil.js");
 
 
 var userModule = require("../../model/user.js");
-var blogModule = require("../../model/blog.js");
-var articleModule = require("../../model/article.js");
 
 
 
 
 describe("uc/guest visibility", function() {
   this.timeout(20000);
-  let article = null;
   let bTheFive = null;
   let bGuestUser = null;
   var nockLogin;
   beforeEach(async function() {
     await testutil.clearDB();
     testutil.startServerSync("TheFive");
-    let theFive = await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "EN"});
-    let guestUser = await userModule.createNewUser({OSMUser: "GuestUser", access: "guest", language: "EN"});
+    await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "EN"});
+    await userModule.createNewUser({OSMUser: "GuestUser", access: "guest", language: "EN"});
     bTheFive = await testutil.getNewBrowser("TheFive");
     bGuestUser = await testutil.getNewBrowser("GuestUser");
   });

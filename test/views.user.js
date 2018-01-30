@@ -1,13 +1,14 @@
 "use strict";
 
-var async = require("async");
-var testutil = require("./testutil.js");
-var should  = require("should");
-var nock = require("nock");
+/* jshint ignore:start */
 
-var userModule = require("../model/user.js");
-var articleModule = require("../model/article.js");
-var passportStub = require("./passport-stub.js");
+const testutil = require("./testutil.js");
+const should  = require("should");
+const sinon = require("sinon");
+
+const userModule = require("../model/user.js");
+const articleModule = require("../model/article.js");
+const mailReceiver = require("../notification/mailReceiver.js");
 
 
 
@@ -15,284 +16,117 @@ var passportStub = require("./passport-stub.js");
 
 describe("views/user", function() {
   this.timeout(100000);
-  var browser;
-  var nockLogin;
-  beforeEach(function(bddone) {
-    nockLogin = testutil.nockLoginPage();
-    async.series([
-      testutil.clearDB,
-      function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full"}, cb); },
-      function createArticle(cb) {
-        articleModule.createNewArticle({blog: "blog", collection: "test"}, function(err) {
-          cb(err);
-        });
-      },
-      testutil.startServer.bind(null, "TheFive")
-    ], function(err) {
-      browser = testutil.getBrowser();
-      bddone(err);
-    });
+  let browser;
+  let nockLogin;
+  let mailChecker;
+  beforeEach(async function() {
+    mailChecker = sinon.stub( mailReceiver.for_test_only.transporter,"sendMail")
+      .callsFake(function(obj, doit) { return doit(null, {response: "t"}); })
+    await testutil.clearDB();
+    await userModule.createNewUser({OSMUser: "TheFive", access: "full"});
+    await articleModule.createNewArticle({blog: "blog", collection: "test"});
+    testutil.startServerSync();
+    browser = await testutil.getNewBrowser("TheFive");
   });
   afterEach(function(bddone) {
-    nock.removeInterceptor(nockLogin);
+    mailChecker.restore();
     testutil.stopServer(bddone);
   });
 
 
-  it("should not change username, if user logged in", function(bddone) {
-    async.series([
-      function createUser(cb) {
-        userModule.createNewUser({OSMUser: "test", lastAccess: (new Date()).toISOString()}, cb);
-      },
-      function visitUser (cb) {
-        browser.visit("/usert/1", cb);
-      },
-      function waitALittle(cb) {
-        browser.wait(100, cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      browser.assert.text('input[readonly="readonly"][name="OSMUser"]');
-      bddone();
-    });
+  it("should not change username, if user logged in", async function() {
+    await userModule.createNewUser({OSMUser: "test", lastAccess: (new Date()).toISOString()});
+    await browser.visit("/usert/1");
+    await browser.wait(100);
+    browser.assert.text('input[readonly="readonly"][name="OSMUser"]');
   });
-  it("should have bootstrap.js loaded", function(bddone) {
-    browser.visit("/osmbc", function(err) {
-      should.not.exist(err);
+  it("should have bootstrap.js loaded", async function() {
+    await browser.visit("/osmbc");
+    should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
+  });
+  it("should save userdata and calculate WN User", async function() {
+    await browser.visit("/usert/create");
+    await browser
+      .fill("OSMUser", "TestUser")
+      .fill("EMail", "")
+      .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
+      .pressButton("OK");
+    let result = await userModule.findById(2);
+    should(result.OSMUser).eql("TestUser");
+    should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
+    should(result.mailComment).eql([]);
+    should(result.mailBlogLanguageStatusChange).eql([]);
+  });
+  it("should save single Options for Mail & Blog Notifications", async function() {
+    await browser.visit("/usert/create");
+    browser.evaluate("document.getElementById('mailComment_DE').checked = true");
+    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
+    await browser
+      .fill("OSMUser", "TestUser")
+      .fill("EMail", "")
+      .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
+      .pressButton("OK");
+    let result = await userModule.findById(2);
+    should(result.OSMUser).eql("TestUser");
+    should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
+    should(result.mailComment).eql(["DE"]);
+    should(result.mailBlogLanguageStatusChange).eql(["DE"]);
+  });
+  it("should save two Options for Mail & Blog Notifications", async function() {
+    await browser.visit("/usert/create");
+    browser.evaluate("document.getElementById('mailComment_DE').checked = true");
+    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
+    browser.evaluate("document.getElementById('mailComment_EN').checked = true");
+    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_EN').checked = true");
+    await browser
+      .fill("OSMUser", "TestUser")
+      .fill("EMail", "")
+      .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
+      .pressButton("OK");
+    let result = await userModule.findById(2);
+    should(result.OSMUser).eql("TestUser");
+    should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
+    should(result.mailComment).eql(["DE", "EN"]);
+    should(result.mailBlogLanguageStatusChange).eql(["DE", "EN"]);
+  });
+  it("should not validate a usermail if wrong user logged in", async function() {
+    await userModule.createNewUser({OSMUser: "TestValidate", emailInvalidation: "test@test.org", emailValidationKey: "123456789"});
+    try {
+      await browser.visit("/usert/2?validation=123456789");
+    } catch(err) {
+      // catch, as server is throwing 500 er error.
+    }
+    should(browser.html("body")).match(/Wrong User: expected &gt;TestValidate&lt; given &gt;TheFive&lt;/);
+  });
+  it("should validate a usermail if correct user logged in", async function() {
+    let result = await userModule.find({OSMUser: "TheFive"});
+    await browser.visit("/usert/1");
+    browser.fill("EMail","test@test.org");
+    await browser.click("#save");
 
-      // test wether bootstrap.js is loaded or not
-      // see http://stackoverflow.com/questions/13933000/how-to-check-if-twitter-bootstrap-is-loaded
-      should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
-      bddone();
-    });
-  });
-  it("should save userdata and calculate WN User", function(bddone) {
-    async.series([
-      function visitUser (cb) {
-        browser.visit("/usert/create", cb);
-      },
-      function fillForm (cb) {
-        browser
-          .fill("OSMUser", "TestUser")
-          .fill("EMail", "")
-          .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
-          .pressButton("OK", cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      userModule.findById(2, function(err, result) {
-        should.not.exist(err);
-        should(result.OSMUser).eql("TestUser");
-        should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
-        should(result.mailComment).eql([]);
-        should(result.mailBlogLanguageStatusChange).eql([]);
-        bddone();
-      });
-    });
-  });
-  it("should save single Options for Mail & Blog Notifications", function(bddone) {
-    async.series([
-      function visitUser (cb) {
-        browser.visit("/usert/create", cb);
-      },
-      function fillForm (cb) {
-        browser.evaluate("document.getElementById('mailComment_DE').checked = true");
-        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
-        browser
-          .fill("OSMUser", "TestUser")
-          .fill("EMail", "")
-          .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
-          .pressButton("OK", cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      userModule.findById(2, function(err, result) {
-        should.not.exist(err);
-        should(result.OSMUser).eql("TestUser");
-        should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
-        should(result.mailComment).eql(["DE"]);
-        should(result.mailBlogLanguageStatusChange).eql(["DE"]);
-        bddone();
-      });
-    });
-  });
-  it("should save two Options for Mail & Blog Notifications", function(bddone) {
-    async.series([
-      function visitUser (cb) {
-        browser.visit("/usert/create", cb);
-      },
-      function fillForm (cb) {
-        browser.evaluate("document.getElementById('mailComment_DE').checked = true");
-        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
-        browser.evaluate("document.getElementById('mailComment_EN').checked = true");
-        browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_EN').checked = true");
-        browser
-          .fill("OSMUser", "TestUser")
-          .fill("EMail", "")
-          .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
-          .pressButton("OK", cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      userModule.findById(2, function(err, result) {
-        should.not.exist(err);
-        should(result.OSMUser).eql("TestUser");
-        should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
-        should(result.mailComment).eql(["DE", "EN"]);
-        should(result.mailBlogLanguageStatusChange).eql(["DE", "EN"]);
-        bddone();
-      });
-    });
-  });
+    should(mailChecker.calledOnce);
 
-  it("should not validate a usermail if wrong user logged in", function(bddone) {
-    async.series([
-      function createUser(cb) {
-        userModule.createNewUser({OSMUser: "TestValidate", emailInvalidation: "test@test.org", emailValidationKey: "123456789"}, cb);
-      },
-      function visitUser (cb) {
-        browser.visit("/usert/2?validation=123456789", cb);
-      }
-    ], function(err) {
-      should.exist(err);
-      should(browser.html("body")).match(/Wrong User: expected &gt;TestValidate&lt; given &gt;TheFive&lt;/);
-      bddone();
-    });
-  });
-  it("should validate a usermail if correct user logged in", function(bddone) {
-    let user = null;
-    async.series([
-      function createUser(cb) {
-        userModule.find({OSMUser: "TheFive"}, function(err, result) {
-          should.not.exist(err);
-          user = result[0];
-          user.emailInvalidation = "test@test.org";
-          user.emailValidationKey = "123456789";
-          user.save(cb);
-        });
-      },
-      function (cb) {
-        // loging in user again, because passportStub does not reload user now.
-        passportStub.login(user);
-        cb();
-      },
-      function visitUser (cb) {
-        browser.visit("/usert/1?validation=123456789", cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      userModule.findById(1, function(err, result) {
-        should.not.exist(err);
-        should(result.OSMUser).eql("TheFive");
-        should(result.email).eql("test@test.org");
-        should.not.exist(result.emailInvalidation);
-        bddone();
-      });
-    });
-  });
-  it("should display & sort userlist", function(bddone) {
-    async.series([
-      function createUser1(cb) { userModule.createNewUser({OSMUser: "Test1", access: "full", mdWeeklyAuthor: "b", color: "green"}, cb); },
-      function createUser2(cb) { userModule.createNewUser({OSMUser: "Test2", access: "full", mdWeeklyAuthor: "[a](https://a.a)", color: "blue"}, cb); },
-      function createUser2(cb) { userModule.createNewUser({OSMUser: "Test3", access: "denied"}, cb); },
-      function visitUser (cb) {
-        browser.visit("/usert/list?access=full", cb);
-      },
-      function clickOnwnWeeklyAuthor(cb) {
-        browser.click('a[id="sortWeeklyAuthor"]', cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      var r = browser.html();
-      r = r.substring(r.indexOf("<table"), r.indexOf("</table"));
-      should(testutil.equalHtml(r, '<table class="table table-striped table-responsive">\n' +
-        "              <thead>\n" +
-        "                <tr>\n" +
-        "                  <th>color</th>\n" +
-        '                  <th><a href="/usert/list?access=full&amp;sort=OSMUser">Name</a></th>\n' +
-        "                  <th>OSM</th>\n" +
-        '                  <th><a id="sortWeeklyAuthor" href="/usert/list?access=full&amp;sort=mdWeeklyAuthor">WeeklyAuthor</a></th>\n' +
-        '                  <th><a id="sortOSMBCChanges" href="/usert/list?access=full&amp;sort=OSMBC-changes">OSMBC Changes</a></th>\n' +
-        "                  <th>Email</th>\n" +
-        "                  <th>Collection</th>\n" +
-        "                  <th>AllComment</th>\n" +
-        "                  <th>Comment</th>\n" +
-        "                  <th>Status</th>\n" +
-        '                  <th><a href="/usert/list?access=full&amp;sort=language">Language</a></th>\n' +
-        "                  <th>access</th>\n" +
-        '                  <th><a href="/usert/list?access=full&amp;sort=lastAccess&amp;desc=true">lastAccess</a></th>\n' +
-        "                </tr>\n" +
-        "              </thead>\n" +
-        "              <tbody>\n" +
-        "                <tr>\n" +
-        '                  <td><span style="background-color:blue" class="label osmbclabel-collect">Test2</span></td>\n' +
-        '                  <td><a href="/usert/3">Test2</a>\n' +
-        "                  </td>\n" +
-        '                  <td><a href="http://www.openstreetmap.org/user/Test2">[OSM]</a></td>\n' +
-        '                  <td><a href="https://a.a">a</a>\n' +
-        "                  </td>\n" +
-        '                  <td><a href="/changes/log?user=Test2">(0)</a></td>\n' +
-        "                  <td>\n" +
-        "                  </td>\n" +
-        "                  <td>\n" +
-        "                    <p> </p>\n" +
-        "                  </td>\n" +
-        "                  <td>\n" +
-        "                    <p> </p>\n" +
-        "                  </td>\n" +
-        "                  <td></td>\n" +
-        "                  <td></td>\n" +
-        "                  <td></td>\n" +
-        "                  <td>full</td>\n" +
-        "                  <td>Never</td>\n" +
-        "                </tr>\n" +
-        "                <tr>\n" +
-        '                  <td><span style="background-color:green" class="label osmbclabel-collect">Test1</span></td>\n' +
-        '                  <td><a href="/usert/2">Test1</a>\n' +
-        "                  </td>\n" +
-        '                  <td><a href="http://www.openstreetmap.org/user/Test1">[OSM]</a></td>\n' +
-        "                  <td>b\n" +
-        "                  </td>\n" +
-        '                  <td><a href="/changes/log?user=Test1">(0)</a></td>\n' +
-        "                  <td>\n" +
-        "                  </td>\n" +
-        "                  <td>\n" +
-        "                    <p> </p>\n" +
-        "                  </td>\n" +
-        "                  <td>\n" +
-        "                    <p> </p>\n" +
-        "                  </td>\n" +
-        "                  <td></td>\n" +
-        "                  <td></td>\n" +
-        "                  <td></td>\n" +
-        "                  <td>full</td>\n" +
-        "                  <td>Never</td>\n" +
-        "                </tr>\n" +
-        "                <tr>\n" +
-        '                  <td><span style="background-color:undefined" class="label osmbclabel-collect">TheFive</span></td>\n' +
-        '                  <td><a href="/usert/1">TheFive</a>\n' +
-        "                  </td>\n" +
-        '                  <td><a href="http://www.openstreetmap.org/user/TheFive">[OSM]</a></td>\n' +
-        "                  <td>\n" +
-        "                  </td>\n" +
-        '                  <td><a href="/changes/log?user=TheFive">(0)</a></td>\n' +
-        "                  <td>\n" +
-        "                  </td>\n" +
-        "                  <td>\n" +
-        "                    <p> </p>\n" +
-        "                  </td>\n" +
-        "                  <td>\n" +
-        "                    <p> </p>\n" +
-        "                  </td>\n" +
-        "                  <td></td>\n" +
-        "                  <td></td>\n" +
-        "                  <td></td>\n" +
-        "                  <td>full</td>\n" +
-        "                  <td>a few seconds ago</td>\n" +
-        "                </tr>\n" +
-        "              </tbody>")).be.True();
+    // find valication link in email
+    let mail = mailChecker.getCall(0).args[0].text;
+    let link = mail.substring(mail.indexOf("/usert"),mail.indexOf("]. This"));
 
-      bddone();
-    });
+    await browser.visit(link);
+    result = await userModule.findById(1);
+
+    // check that validation of email was done
+    should(result.OSMUser).eql("TheFive");
+    should(result.email).eql("test@test.org");
+    should.not.exist(result.emailInvalidation);
+  });
+  it("should display & sort userlist", async function() {
+    await userModule.createNewUser({OSMUser: "Test1", access: "full", mdWeeklyAuthor: "b", color: "green"});
+    await userModule.createNewUser({OSMUser: "Test2", access: "full", mdWeeklyAuthor: "[a](https://a.a)", color: "blue"});
+    await userModule.createNewUser({OSMUser: "Test3", access: "denied"});
+    await browser.visit("/usert/list?access=full");
+    await browser.click('a[id="sortWeeklyAuthor"]');
+    browser.assert.expectHtmlSync("views","userList.html");
   });
 });
+
+
+/* jshint ignore:end */

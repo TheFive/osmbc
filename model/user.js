@@ -148,12 +148,34 @@ module.exports.getAvatar = getAvatar;
 User.prototype.remove = pgMap.remove;
 
 function find(obj, ord, callback) {
-  debug("find");
-  pgMap.find({table: "usert", create: create}, obj, ord, callback);
+  if (typeof ord === "function") {
+    callback = ord;
+    ord = undefined;
+  }
+  function _find(obj, ord, callback) {
+    debug("find");
+    pgMap.find({table: "usert", create: create}, obj, ord, callback);
+  }
+  if (callback) return _find(obj, ord, callback);
+  return new Promise(function(resolve, reject) {
+    _find(obj, ord, function(err, result) {
+      if (err) return reject(err);
+      return resolve(result);
+    });
+  });
 }
 function findById(id, callback) {
-  debug("findById %s", id);
-  pgMap.findById(id, {table: "usert", create: create}, callback);
+  function _findById(id, callback) {
+    debug("findById %s", id);
+    pgMap.findById(id, {table: "usert", create: create}, callback);
+  }
+  if (callback) return _findById(id, callback);
+  return new Promise(function(resolve, reject) {
+    _findById(id, function(err, result) {
+      if (err) return reject(err);
+      return resolve(result);
+    });
+  });
 }
 
 function findOne(obj1, obj2, callback) {
@@ -403,7 +425,7 @@ module.exports.getNewUsers = function getNewUsers(callback) {
   if (welcomeRefresh > 0 && _newUsers) return callback(null, _newUsers);
 
 
-  pgMap.select("select data->>'user' as osmuser ,min(data->>'timestamp') as first from changes group by data->>'user' having ( min(data->>'timestamp')  )::timestamp with time zone  > ($1)::timestamp with time zone - interval '" + interval + "'", [new Date().toISOString()], function(err, result) {
+  pgMap.select("select changes.data->>'user' as osmuser ,min(changes.data->>'timestamp') as first, usert.data->>'access' as access from changes inner join usert on changes.data->>'user' = usert.data->>'OSMUser' group by changes.data->>'user',usert.data->>'access' having ( min(changes.data->>'timestamp')  )::timestamp with time zone  > ($1)::timestamp with time zone - interval '" + interval + "'", [new Date().toISOString()], function(err, result) {
     if (err) return callback(err);
     if (result.indexOf("autocreate") >= 0) {
       result = result.splice(result.indexOf("autocreate"), result.indexOf("autocreate") + 1);
