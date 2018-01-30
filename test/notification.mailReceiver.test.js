@@ -43,18 +43,17 @@ describe("notification/mailReceiver", function() {
   });
 
   describe("articles", function() {
-    var oldtransporter;
-    var mailChecker;
+    let mailChecker;
     afterEach(function (bddone) {
-      mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+
+      mailChecker.restore();
       bddone();
     });
 
     beforeEach(function (bddone) {
       if (fs.existsSync(logFile)) fs.unlinkSync(logFile);
-      oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
-      mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
-      mailReceiver.for_test_only.transporter.sendMail = mailChecker;
+      mailChecker = sinon.stub( mailReceiver.for_test_only.transporter,"sendMail")
+        .callsFake(function(obj, doit) { return doit(null, {response: "t"}); });
       testutil.importData({clear: true,
         user: [{OSMUser: "UserNewCollection", email: "UserNewCollection@mail.bc", access: "full", mailNewCollection: "true"},
           {OSMUser: "UserAllComment", email: "UserAllComment@mail.bc", access: "full", mailAllComment: "true"},

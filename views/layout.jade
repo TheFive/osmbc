@@ -23,6 +23,12 @@ mixin collectMenu
     li
       a#collect(href=htmlroot + '/article/create') Collect
 
+mixin myGuestArticleMenu
+  ul.nav.navbar-nav.pull-left
+    li
+      a#myArticles(href=htmlroot + '/osmbc.html') My Articles
+
+
 mixin tbcMenu
   if blogNumber(layout.tbc, layout.language) > 0
     - dynamicHide = ""
@@ -175,6 +181,8 @@ block all
               +tbcMenu
             if (layout)
               +inboxMenu
+            if (layout && layout.user.access === "guest")
+              +myGuestArticleMenu
 
             if (layout && layout.user.access === "full")
               ul.nav.navbar-nav.pull-left.visible-xs
