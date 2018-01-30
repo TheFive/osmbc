@@ -1,5 +1,16 @@
 # Change Log
 
+## [3.1.2](https://github.com/TheFive/osmbc/tree/3.1.2) (2018-01-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.1...3.1.2)
+
+**Implemented enhancements:**
+
+- Welcome To The Team, Mark Guests as Guest and Editors as Editors. [\#722](https://github.com/TheFive/osmbc/issues/722)
+
+**Fixed bugs:**
+
+- Browser Tabs \<title\> Tag is broken and only OSMBC [\#719](https://github.com/TheFive/osmbc/issues/719)
+
 ## [3.1.1](https://github.com/TheFive/osmbc/tree/3.1.1) (2018-01-28)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.0...3.1.1)
 
