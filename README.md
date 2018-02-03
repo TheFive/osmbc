@@ -50,3 +50,8 @@ I am happy to do any bug fixes for the system. But please make sure, that your e
 6. "is not working" or "is broken" obvious does not full fill 3. and 3. .
 
 The rules does support the developer to come quicker to the point. Sometimes you are using other ways in OSMBC to come to your result and the way coming to a result is important for bug fixing.
+
+# Acknowledgment
+
+Thanks to [JetBrains](https://www.jetbrains.com) by supporting the development with an OpenSource License.
+
