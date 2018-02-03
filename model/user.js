@@ -294,7 +294,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
     cacheOSMAvatar.bind(null, data.OSMUser)
   ], function finalFunction(err) {
     if (err) return callback(err);
-    async.forEachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
+    async.forEachOfSeries(data, function setAndSaveEachOf(value, key, cbEachOf) {
       // There is no Value for the key, so do nothing
       if (typeof (value) === "undefined") return cbEachOf();
 
@@ -309,6 +309,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
       debug("Old Value Was >>%s<<", self[key]);
 
 
+      let timestamp = new Date();
       async.series([
         function(cb) {
           // do not log validation key in logfile
@@ -316,7 +317,14 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
           // Hide Validation Key not to show to all users
           if (key === "emailValidationKey") return cb();
 
-          messageCenter.global.sendInfo({oid: self.id, user: user.OSMUser, table: "usert", property: key, from: self[key], to: toValue}, cb);
+          messageCenter.global.sendInfo({
+            oid: self.id,
+            user: user.OSMUser,
+            table: "usert",
+            property: key,
+            from: self[key],
+            timestamp:timestamp,
+            to: toValue}, cb);
         },
         function(cb) {
           self[key] = value;

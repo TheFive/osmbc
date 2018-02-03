@@ -2,13 +2,13 @@
 
 /* jshint ignore:start */
 
-const testutil = require("./testutil.js");
+const testutil = require("../testutil.js");
 const should  = require("should");
 const sinon = require("sinon");
 
-const userModule = require("../model/user.js");
-const articleModule = require("../model/article.js");
-const mailReceiver = require("../notification/mailReceiver.js");
+const userModule = require("../../model/user.js");
+const articleModule = require("../../model/article.js");
+const mailReceiver = require("../../notification/mailReceiver.js");
 
 
 
@@ -38,7 +38,7 @@ describe("views/user", function() {
     await userModule.createNewUser({OSMUser: "test", lastAccess: (new Date()).toISOString()});
     await browser.visit("/usert/1");
     await browser.wait(100);
-    browser.assert.text('input[readonly="readonly"][name="OSMUser"]');
+    browser.assert.expectHtmlSync("user","userNoNameChange.html");
   });
   it("should have bootstrap.js loaded", async function() {
     await browser.visit("/osmbc");
@@ -52,6 +52,7 @@ describe("views/user", function() {
       .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
       .pressButton("OK");
     let result = await userModule.findById(2);
+    browser.assert.expectHtmlSync("user","freshCretedUser.html")
     should(result.OSMUser).eql("TestUser");
     should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
     should(result.mailComment).eql([]);
@@ -124,7 +125,7 @@ describe("views/user", function() {
     await userModule.createNewUser({OSMUser: "Test3", access: "denied"});
     await browser.visit("/usert/list?access=full");
     await browser.click('a[id="sortWeeklyAuthor"]');
-    browser.assert.expectHtmlSync("views","userList.html");
+    browser.assert.expectHtmlSync("user","userList.html");
   });
 });
 
