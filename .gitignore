@@ -19,3 +19,4 @@ actual_fullArticlePage.html
 maillogTest.log
 actual_freshCretedUser.html
 actual_userNoNameChange.html
+yarn.lock

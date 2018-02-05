@@ -1,6 +1,6 @@
 "use strict";
 
-function calendarHeatmap() {
+function calendarHeatmap(actualDate) {
   // defaults
   var width = 750;
   var height = 110;
@@ -12,14 +12,15 @@ function calendarHeatmap() {
   var SQUARE_PADDING = 2;
   var MONTH_LABEL_PADDING = 6;
   var now = moment().endOf('day').toDate();
-  var yearAgo = moment().startOf('day').subtract(1, 'year').toDate();
+  if (actualDate) now = moment(actualDate).endOf('day').toDate();
+
+  var yearAgo = moment(now).startOf('day').subtract(1, 'year').toDate();
   var data = [];
   var colorRange = ['#D8E6E7', '#218380'];
   var tooltipEnabled = true;
   var tooltipUnit = 'contribution';
   var legendEnabled = true;
   var onClick = null;
-
   // setters and getters
   chart.data = function (value) {
     if (!arguments.length) { return data; }

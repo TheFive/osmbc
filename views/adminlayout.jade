@@ -39,9 +39,9 @@ block all
                       | User
                       span.caret
                     ul.dropdown-menu(role='menu')
-                      li.dropdown-header List
                       li
-                        a(href=layout.htmlroot + "/usert/create") Create
+                        a#createUser(href=layout.htmlroot + "/usert/create") Create
+                      li.dropdown-header Lists
                       li
                         a(href=layout.htmlroot + "/usert/list?access=full") List Active
                       li

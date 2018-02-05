@@ -2,9 +2,9 @@
 
 /* jshint ignore:start */
 
-var nock = require("nock");
-var mockdate = require("mockdate");
-var testutil = require("../testutil.js");
+const nock = require("nock");
+const mockdate = require("mockdate");
+const testutil = require("../testutil.js");
 
 
 var userModule = require("../../model/user.js");
@@ -16,7 +16,6 @@ describe("uc/guest visibility", function() {
   this.timeout(20000);
   let bTheFive = null;
   let bGuestUser = null;
-  var nockLogin;
   beforeEach(async function() {
     await testutil.clearDB();
     testutil.startServerSync("TheFive");

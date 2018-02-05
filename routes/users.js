@@ -1,25 +1,25 @@
 "use strict";
 
-var should   = require("should");
-var async    = require("async");
-var debug = require("debug")("OSMBC:routes:users");
+const should   = require("should");
+const async    = require("async");
+const debug = require("debug")("OSMBC:routes:users");
 
 
-var express    = require("express");
-var router     = express.Router();
-const auth        = require("../routes/auth.js");
+const express    = require("express");
+const router     = express.Router();
+const auth       = require("../routes/auth.js");
+var HttpError  = require("standard-http-error");
 
 
+const config = require("../config.js");
+const logger = require("../config.js").logger;
 
-var config = require("../config.js");
-var logger = require("../config.js").logger;
-
-var userModule = require("../model/user.js");
-var logModule = require("../model/logModule.js");
-var blogRenderer = require("../render/BlogRenderer.js");
+const userModule = require("../model/user.js");
+const logModule = require("../model/logModule.js");
+const blogRenderer = require("../render/BlogRenderer.js");
 
 
-var htmlroot = config.htmlRoot();
+const htmlroot = config.htmlRoot();
 
 function renderList(req, res, next) {
   debug("renderList");
@@ -224,6 +224,10 @@ function postUserId(req, res, next) {
 
   ], function(err) {
     if (!allowedToChangeUser) return res.status(403).send("Not Allowed To Post this user");
+    if (err && (err instanceof HttpError)) {
+      res.status(err.code).send(err.message);
+    }
+
     if (err) return next(err);
     res.redirect(htmlroot + "/usert/" + id);
   });

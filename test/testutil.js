@@ -454,7 +454,14 @@ exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
 
 
 
-Browser.Assert.prototype.expectHtmlSync = function expectHtml(givenPath, name) {
+Browser.Assert.prototype.expectHtmlSync = function expectHtml(errorList, givenPath, name) {
+  let stopOnError = false;
+  if (!Array.isArray(errorList)) {
+    stopOnError = true;
+    name = givenPath;
+    givenPath = errorList;
+    errorList = undefined;
+  }
   let expected = "not read yet";
   let expectedFile = path.join(__dirname, givenPath, name);
   let actualFile   = path.join(__dirname, givenPath, "actual_" + name);
@@ -475,7 +482,14 @@ Browser.Assert.prototype.expectHtmlSync = function expectHtml(givenPath, name) {
   // there is a difference, so create the actual data as file
   // do easier fix the test.
   fs.writeFileSync(actualFile, string, "UTF8");
-  should(string).eql(expected, "HTML File " + name + " is different.");
+  if (stopOnError) {
+    should(string).eql(expected, "HTML File " + name + " is different.");
+  } else {
+    if (string !== expected) {
+      errorList.push("HTML File " + name + " is different.");
+    }
+  }
+
 };
 
 

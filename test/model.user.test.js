@@ -6,6 +6,7 @@ var should = require("should");
 var sinon  = require("sinon");
 
 var testutil = require("./testutil.js");
+var HttpError = require("standard-http-error");
 
 var userModule = require("../model/user.js");
 var logModule = require("../model/logModule.js");
@@ -70,11 +71,11 @@ describe("model/user", function() {
         function c2(cb) { userModule.createNewUser({OSMUser: "Test", access: "denied"}, cb); },
         function c3(cb) {
           userModule.createNewUser({OSMUser: "Test2", access: "full"},
-                         function(err, result) {
-                           should.not.exist(err);
-                           idToFindLater = result.id;
-                           cb(err);
-                         });
+            function(err, result) {
+              should.not.exist(err);
+              idToFindLater = result.id;
+              cb(err);
+            });
         }
 
       ], function(err) {
@@ -130,7 +131,7 @@ describe("model/user", function() {
       mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
       testutil.importData({clear: true,
         user: [{OSMUser: "WelcomeMe", email: "none", lastAccess: (new Date()).toISOString()},
-                                  {OSMUser: "InviteYou", email: "invite@mail.org"}]}, bddone);
+          {OSMUser: "InviteYou", email: "invite@mail.org"}]}, bddone);
     });
     afterEach(function (bddone) {
       mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
@@ -143,7 +144,7 @@ describe("model/user", function() {
         newUser = result;
         var id = result.id;
         newUser.access = "not logged";
-        newUser.setAndSave({OSMUser:"user"}, {version: 1, OSMUser: "Test2", access: "not logged"}, function(err) {
+        newUser.setAndSave({OSMUser: "user"}, {version: 1, OSMUser: "Test2", access: "not logged"}, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("usert", id, function(err, result) {
             should.not.exist(err);
@@ -181,7 +182,7 @@ describe("model/user", function() {
         changeValues.OSMUser = newUser.OSMUser;
         changeValues.access = newUser.access;
         changeValues.version = 1;
-        newUser.setAndSave({OSMUser:"user"}, changeValues, function(err) {
+        newUser.setAndSave({OSMUser: "user"}, changeValues, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("usert", id, function(err, result) {
             should.not.exist(err);
@@ -210,7 +211,7 @@ describe("model/user", function() {
         changeValues.OSMUser = " Untrimmed Username ";
         changeValues.access = newUser.access;
         changeValues.version = 1;
-        newUser.setAndSave({OSMUser:"user"}, changeValues, function(err) {
+        newUser.setAndSave({OSMUser: "user"}, changeValues, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("usert", id, function(err, result) {
             should.not.exist(err);
@@ -233,8 +234,9 @@ describe("model/user", function() {
       userModule.findOne({OSMUser: "WelcomeMe"}, function(err, user) {
         should.not.exist(err);
         // First set a new EMail Address for the WelcomeMe user, by InviteYou.
-        user.setAndSave({OSMUser:"InviteYou"}, {email: "WelcomeMe@newemail.org"}, function (err) {
-          should(err).eql(new Error("EMail address can only be changed by the user himself, after he has logged in."));
+        user.setAndSave({OSMUser: "InviteYou"}, {email: "WelcomeMe@newemail.org"}, function (err) {
+          should(err).eql(
+            new HttpError(401, "EMail address can only be changed by the user himself, after he has logged in."));
           bddone();
         });
       });
@@ -243,7 +245,7 @@ describe("model/user", function() {
       userModule.findOne({OSMUser: "WelcomeMe"}, function(err, user) {
         should.not.exist(err);
         // First set a new EMail Address for the WelcomeMe user, by InviteYou.
-        user.setAndSave({OSMUser:"WelcomeMe"}, {email: " NewEmail@newemail.org ", OSMUser: "WelcomeMe"}, function (err) {
+        user.setAndSave({OSMUser: "WelcomeMe"}, {email: " NewEmail@newemail.org ", OSMUser: "WelcomeMe"}, function (err) {
           should.not.exist(err);
           testutil.getJsonWithId("usert", user.id, function(err, result) {
             should.not.exist(err);
@@ -257,8 +259,9 @@ describe("model/user", function() {
       userModule.findOne({OSMUser: "WelcomeMe"}, function(err, user) {
         should.not.exist(err);
         // First set a new EMail Address for the WelcomeMe user, by InviteYou.
-        user.setAndSave({OSMUser:"InviteYou"}, {OSMUser: "NameChange"}, function (err) {
-          should(err).eql(new Error(">" + user.OSMUser + "< already has logged in, change in name not possible."));
+        user.setAndSave({OSMUser: "InviteYou"}, {OSMUser: "NameChange"}, function (err) {
+          should(err).eql(
+            new HttpError(403,">" + user.OSMUser + "< already has logged in, change in name not possible."));
           bddone();
         });
       });

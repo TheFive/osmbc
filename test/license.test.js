@@ -71,7 +71,8 @@ let allowedLicensesProd = ["MIT",
   "BSD*",
   "MIT/X11",
   "Apache-2.0",
-  "Apache*"];
+  "Apache*",
+  "LAGPL"];
 
 let allowedLicensesDev = allowedLicensesProd.concat([
   "LGPL-2.1+","CC-BY-3.0"
