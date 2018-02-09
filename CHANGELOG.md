@@ -1,5 +1,11 @@
 # Change Log
 
+## [3.1.2b](https://github.com/TheFive/osmbc/tree/3.1.2b) (2018-02-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2a...3.1.2b)
+
+## [3.1.2a](https://github.com/TheFive/osmbc/tree/3.1.2a) (2018-02-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2...3.1.2a)
+
 ## [3.1.2](https://github.com/TheFive/osmbc/tree/3.1.2) (2018-01-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.1...3.1.2)
 
