@@ -29,18 +29,20 @@ function renderHome(req, res, next) {
   todayStart.setMinutes(0);
   todayStart.setSeconds(0);
 
+
+
   async.auto({
     "historie": logModule.find.bind(logModule, {table: "IN('blog','article')"}, {column: "id", desc: true, limit: 20}),
     "activeUser": userModule.find.bind(userModule, {lastAccess: ">" + date.toISOString()}, {column: "lastAccess", desc: true}),
     "visitorsToday": userModule.find.bind(userModule, {lastAccess: ">" + todayStart.toISOString()}, {column: "OSMUser", desc: false}),
     "newUsers": userModule.getNewUsers.bind(userModule)
   }, function(err, result) {
+
     if (err) return next(err);
+
     res.set("content-type", "text/html");
     let view = "index";
     should(req.user.access).eql("full");
-
-
     res.render(view, { title: appName,
       layout: res.rendervar.layout,
       activeUserList: result.activeUser,

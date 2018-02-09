@@ -77,7 +77,7 @@ function prepareRenderLayout(req, res, next) {
   var mainLangMentions = 0;
   var secondLangMentions = 0;
   var usedLanguages = {};
-  usedLanguages[req.user.language] = true;
+  if (req.user.language) usedLanguages[req.user.language] = true;
 
   // Used for display changes
 

@@ -13,7 +13,6 @@ const userModule = require("../../model/user.js");
 const articleModule = require("../../model/article.js");
 const mailReceiver = require("../../notification/mailReceiver.js");
 
-const moment = require("moment");
 
 
 
@@ -41,14 +40,19 @@ describe("views/user", function() {
   });
 
   it("should not be allowed creating a user twice", async function() {
+    // TheFive logs in and creates user Test
     await browser.visit("/osmbc/admin");
     await browser.click("#createUser");
     await browser.fill("OSMUser","test")
       .select("language","DE")
       .select("access","full")
       .click("#save");
+
+    // TheFive creates the user test a second time
     await browser.visit("/osmbc/admin");
     await browser.click("#createUser");
+
+    // clicking SAVE should result in an error
     try {
       await browser.fill("OSMUser","test")
         .select("language","DE")
@@ -61,16 +65,25 @@ describe("views/user", function() {
   });
 
   it("should not change username, if user logged in", async function() {
+
+    // TheFive creates an user test
     await browser.visit("/osmbc/admin");
     await browser.click("#createUser");
     await browser.fill("OSMUser","test")
       .select("language","DE")
       .select("access","full")
       .click("#save");
-    await browser.visit("/usert/1");
+
+
+    // looking at user test shows, that username can be changed
+    await browser.visit("/usert/2");
     browser.assert.expectHtmlSync("user","userNameChange.html");
+
+    // Testuser logs in and looks at homepage
     let testBrowser = await testutil.getNewBrowser("test");
     await testBrowser.visit("/osmbc");
+    // reload test user page should show username unchangable
+    await browser.visit("/usert/2");
     browser.assert.expectHtmlSync("user","userNoNameChange.html");
   });
   it("should save userdata and calculate WN User", async function() {

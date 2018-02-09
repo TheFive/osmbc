@@ -2,7 +2,6 @@
 
 /* jshint ignore:start */
 
-const nock = require("nock");
 const mockdate = require("mockdate");
 const testutil = require("../testutil.js");
 
@@ -33,7 +32,6 @@ describe("uc/guest visibility", function() {
     return bddone();
   });
   afterEach(function(bddone) {
-    nock.cleanAll();
     testutil.stopServer(bddone);
   });
 

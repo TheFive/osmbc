@@ -22,6 +22,7 @@ LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) 
   should.exist(article.id);
   should(article.id).not.equal(0);
   should(typeof (user)).eql("object");
+  should(typeof user.OSMUser).eql("string");
   var logblog = article.blog;
   if (change.blog) logblog = change.blog;
   var timestamp = new Date();
@@ -57,8 +58,9 @@ LogModuleReceiver.prototype.updateBlog = function(user, blog, change, cb) {
   should.exist(blog.id);
   should(blog.id).not.equal(0);
   should(typeof (user)).eql("object");
+  should(typeof user.OSMUser).eql("string");
   var timestamp = new Date();
-  async.forEachOf(change, function setAndSaveEachOf(value, key, cbEachOf) {
+  async.forEachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
     debug("setAndSaveEachOf");
     // There is no Value for the key, so do nothing
 
@@ -97,6 +99,7 @@ LogModuleReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(use
   should.exist(blog.id);
   should(blog.id).not.equal(0);
   should(typeof (user)).eql("object");
+  should(typeof user.OSMUser).eql("string");
   should.exist(user.OSMUser);
   var timestamp = new Date();
   logModule.log({oid: blog.id,
@@ -113,6 +116,7 @@ LogModuleReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blo
   should.exist(blog.id);
   should(blog.id).not.equal(0);
   should(typeof (user)).eql("object");
+  should(typeof user.OSMUser).eql("string");
   should.exist(user.OSMUser);
   var timestamp = new Date();
   logModule.log({oid: blog.id,
@@ -129,6 +133,7 @@ LogModuleReceiver.prototype.editComment = function editComment(user, article, in
   should.exist(article.id);
   should(article.id).not.equal(0);
   should(typeof (user)).eql("object");
+  should(typeof user.OSMUser).eql("string");
   should.exist(user.OSMUser);
   var timestamp = new Date();
   logModule.log({oid: article.id,
@@ -146,6 +151,7 @@ LogModuleReceiver.prototype.addComment = function addComment(user, article, text
   should.exist(article.id);
   should(article.id).not.equal(0);
   should(typeof (user)).eql("object");
+  should(typeof user.OSMUser).eql("string");
   should.exist(user.OSMUser);
   var timestamp = new Date();
   logModule.log({oid: article.id,

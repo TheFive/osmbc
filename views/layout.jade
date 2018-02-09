@@ -130,11 +130,11 @@ mixin langChooser(langString)
     ul.dropdown-menu(role='menu')
       if (langString !== "lang")
         li
-          a(href=layout.htmlroot + '/language?'+langString+'=none') none
+          a(id=langString+"_none" href=layout.htmlroot + '/language?'+langString+'=none') none
       each litem in layout.languages
         if layout.usedLanguages[litem]
           li
-            a(href=layout.htmlroot + '/language?'+langString+'=#{litem}') #{litem}
+            a(id=langString+"_"+litem href=layout.htmlroot + '/language?'+langString+'=#{litem}') #{litem}
 
 mixin userAvatar
   if layout.user
