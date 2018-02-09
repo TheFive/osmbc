@@ -34,7 +34,8 @@ function renderHome(req, res, next) {
   async.auto({
     "historie": logModule.find.bind(logModule, {table: "IN('blog','article')"}, {column: "id", desc: true, limit: 20}),
     "activeUser": userModule.find.bind(userModule, {lastAccess: ">" + date.toISOString()}, {column: "lastAccess", desc: true}),
-    "visitorsToday": userModule.find.bind(userModule, {lastAccess: ">" + todayStart.toISOString()}, {column: "OSMUser", desc: false}),
+    "fullVisitorsToday": userModule.find.bind(userModule, {lastAccess: ">" + todayStart.toISOString(), access: "full"}, {column: "OSMUser", desc: false}),
+    "guestVisitorsToday": userModule.find.bind(userModule, {lastAccess: ">" + todayStart.toISOString(), access: "guest"}, {column: "OSMUser", desc: false}),
     "newUsers": userModule.getNewUsers.bind(userModule)
   }, function(err, result) {
 
@@ -46,7 +47,8 @@ function renderHome(req, res, next) {
     res.render(view, { title: appName,
       layout: res.rendervar.layout,
       activeUserList: result.activeUser,
-      visitorsToday: result.visitorsToday,
+      fullVisitorsToday: result.fullVisitorsToday,
+      guestVisitorsToday: result.guestVisitorsToday,
       newUsers: result.newUsers,
       changes: result.historie});
   }

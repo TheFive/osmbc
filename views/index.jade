@@ -31,15 +31,26 @@ block content
                   td=user.OSMUser +" "
                   td.text-muted=layout.moment(user.lastAccess).fromNow()
         .row
-          h4="Visitors Today"
-          p
-            table.table
-              tr
-                td
-                  for user,i in visitorsToday
-                    span
-                      a(href=layout.htmlroot+"/usert/"+user.OSMUser)=user.OSMUser
-                      span=", "
+          if (fullVisitorsToday && fullVisitorsToday.length>0)
+            h4="Full Visitors Today"
+            p
+              table.table
+                tr
+                  td
+                    for user,i in fullVisitorsToday
+                      span
+                        a(href=layout.htmlroot+"/usert/"+user.OSMUser)=user.OSMUser
+                        span=", "
+          if (guestVisitorsToday && guestVisitorsToday.length>0)
+            h4="Guest Visitors Today"
+            p
+              table.table
+                tr
+                  td
+                    for user,i in guestVisitorsToday
+                      span
+                        a(href=layout.htmlroot + "/usert/" + user.OSMUser)=user.OSMUser
+                        span=", "
         if (newUsers && newUsers.length>0)
           .row
             h4="Welcome To The Team"
