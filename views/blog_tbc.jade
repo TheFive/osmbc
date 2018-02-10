@@ -57,13 +57,13 @@ block content
                   if (b !== layout.user.OSMUser)
                     span.label.osmbclabel-collect.small-margin=b
                   else
-                    span.label.osmbclabel-user.small-margin=b
+                    span.label.osmbclabel-user-self.small-margin=b
               if (showEditor && a.author && a.author["markdown"+lang])
                 each b in a.author["markdown"+lang].split(",")
                   if (b !== layout.user.OSMUser)
                     span.label.osmbclabel-markdown.small-margin=b
                   else
-                    span.label.osmbclabel-user.small-margin=b
+                    span.label.osmbclabel-user-self.small-margin=b
 
 
 

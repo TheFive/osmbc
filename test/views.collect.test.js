@@ -15,7 +15,7 @@ var blogModule = require("../model/blog.js");
 
 
 describe("views/collect", function() {
-  this.timeout(100000);
+  this.timeout(120000);
   var browser;
   var articleId;
   before(function(bddone) {

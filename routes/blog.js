@@ -27,7 +27,7 @@ const htmlroot = config.htmlRoot();
 // Additional the fix blog name TBC is recognised.
 function findBlogByRouteId(id, user, callback) {
   debug("findBlogByRouteId(%s)", id);
-  var blog;
+  let blog;
   should(typeof (user)).eql("object");
   should(typeof (callback)).eql("function");
 
@@ -89,10 +89,10 @@ function renderBlogStat(req, res, next) {
   let blog = req.blog;
   if (!blog) return next();
 
-  var name = blog.name;
-  var logs = {};
-  var editors = {};
-
+  let name = blog.name;
+  let logs = {};
+  let editors = {};
+  let userMap = {};
 
   async.series([
     function readLogs(callback) {
@@ -124,6 +124,16 @@ function renderBlogStat(req, res, next) {
         editors[lang].sort();
       }
       callback();
+    },
+    function(callback) {
+      debug("userColors");
+      userModule.find({}, function (err, userlist) {
+        if (err) return callback(err);
+        for (let i = 0; i < userlist.length; i++) {
+          userMap[userlist[i].OSMUser] = userlist[i];
+        }
+        return callback(null);
+      });
     }
   ],
   function (err) {
@@ -135,6 +145,7 @@ function renderBlogStat(req, res, next) {
       logs: logs,
       blog: blog,
       editors: editors,
+      userMap: userMap,
       languages: config.getLanguages()});
   }
   );

@@ -2,12 +2,22 @@ extends layout
 
 
 mixin userLabel(user,style)
+  - bgColor = ""
   if (user == layout.user.OSMUser)
-    - style = "osmbclabel-user"
-  if showColoredUser && userMap[user]
-    span.label.small-margin(class=style,style="background-color:#{userMap[user].color}")=user
+    - style = "osmbclabel-user-self"
+  if (showColoredUser)
+    - style = "osmbclabel-user-guest"
+    if (userMap[user] && userMap[user])
+      - style = "osmbclabel-user-"+userMap[user].access
+    if (user === layout.user.OSMUser)
+      - style = "osmbclabel-user-self"
+    if (userMap[user] && userMap[user].access === "full" && typeof userMap[user].color === "string")
+      - bgColor =  "background-color:"+ userMap[user].color
+  if (bgColor !== "")
+    span.label.small-margin(class=style,style=bgColor)=user
   else
     span.label.small-margin(class=style)=user
+
 
 
 //- Mixin to display the reviewBlog left and right
