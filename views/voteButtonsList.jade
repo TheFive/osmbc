@@ -16,6 +16,6 @@ table.table.table-condensed
           if article.votes && article.votes[vote.name]
             - labelclass = "osmbclabel-collect"
             each user in article.votes[vote.name]
-              - if (layout.user.OSMUser === user) labelclass = "osmbclabel-user"
+              - if (layout.user.OSMUser === user) labelclass = "osmbclabel-user-self"
               span.label.small-margin(class=labelclass)=user
         td.col-md-5=vote.description

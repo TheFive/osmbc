@@ -13871,5 +13871,6 @@
     "to": "closed",
     "timestamp": "2016-04-16T14:52:52.599Z",
     "id": "58124"
-  }]
+  }],
+  "user": [{"OSMUser":"wambacher","access":"full","color":"green"}]
 }

@@ -1,10 +1,32 @@
 extends layout
 
+mixin userTable(userList)
 
+    table.table.table-header-rotated(style="width:auto")
+      thead
+        tr
+          th
+          each u in userList
+            th.column.criterion.rotate-45
+              div
+                span=u
+      tbody
+        for v in field
+          - rowNeeded = false;
+          each u in userList
+            - if (logs[v]) rowNeeded = true;
+          if rowNeeded
+            tr
+              th.row-header=v
+              each u in userList
+                if logs[v]
+                  td
+                    a(href=layout.htmlroot + "/article/list?blog=#{blog.name}&user=#{u}&property=#{v}%") #{logs[v][u]}
+                else
+                  td=""
 
 
 block content
-
 
   h1
     | Progress Overview
@@ -33,38 +55,28 @@ block content
  
 
   .row
-    h1
-      | Table of Collections, Edits & Review Counts
     - var field = ["collection","comment"]
     for lang in languages
       if layout.usedLanguages[lang]
         - field.push("markdown"+lang)
         - field.push("reviewComment"+lang)
-    - userlist = [];
+    - userListFull = [];
+    - userListGuest = [];
 
     for v in field
       - for (u in logs[v])
-        -   if (userlist.indexOf(u)<0) userlist.push(u)
-    - userlist.sort()
-    table.table.table-striped
-      thead
-        tr
-          th
-            
-          each u in userlist
-            th=u
-      tbody
-        
-        for v in field
-          tr
-            th=v
-            each u in userlist
-              if logs[v]
-                td
-                  a(href=layout.htmlroot+"/article/list?blog=#{blog.name}&user=#{u}&property=#{v}%") #{logs[v][u]}
-              else
-                td
-                  | 
+        - ul = userListFull;
+        - if (userMap[u] && userMap[u].access === "guest") ul = userListGuest;
+        -   if (ul.indexOf(u)<0) ul.push(u)
+    - userListFull.sort()
+    - userListGuest.sort();
+    h1="Table of Collections, Edits & Review Counts Full User"
+    +userTable(userListFull)
+    h1="Table of Collections, Edits & Review Counts Guests"
+    +userTable(userListGuest)
+
+
+
 
   row
     h2
