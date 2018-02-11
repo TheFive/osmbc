@@ -20,5 +20,7 @@ maillogTest.log
 actual_freshCretedUser.html
 actual_userNoNameChange.html
 yarn.lock
-actual_wusel.html
 switchedToEnglishAndEnglish.html
+actual_fullStartPage.html
+actual_loginPage.html
+actual_actual.html

@@ -154,7 +154,7 @@ exports.importData = function importData(data, callback) {
         async.eachSeries(data.blog, function importOneBlog(d, cb) {
           let id = d.id;
           delete d.id;
-          blogModule.createNewBlog({displayName: "test"}, d,true, function(err, blog) {
+          blogModule.createNewBlog({OSMUser: "test"}, d,true, function(err, blog) {
             if (err) return cb(err);
             if (typeof (id) !== "undefined") idReference.blog[id] = blog.id;
             cb();
@@ -415,7 +415,7 @@ exports.getNewBrowser = function getNewBrowser(userString) {
     let nockLoginInterceptor = nockLoginPage();
     browser.visit("/osmbc", function(err) {
       nock.removeInterceptor(nockLoginInterceptor);
-      if (err) return reject(err);
+      // ignore any error and return the given browser.
       resolve(browser);
     });
   });

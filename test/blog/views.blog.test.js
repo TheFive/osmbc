@@ -1,19 +1,19 @@
 "use strict";
 
-var async = require("async");
-var testutil = require("./testutil.js");
-var nock = require("nock");
-var should  = require("should");
-var request   = require("request");
-var path = require("path");
-var fs = require("fs");
-var mockdate = require("mockdate");
-var initialise = require("../util/initialise.js");
+const async = require("async");
+const testutil = require("../testutil.js");
+const nock = require("nock");
+const should  = require("should");
+const request   = require("request");
+const path = require("path");
+const fs = require("fs");
+const mockdate = require("mockdate");
+const initialise = require("../../util/initialise.js");
 
-var config = require("../config.js");
+const config = require("../../config.js");
 
-var blogModule   = require("../model/blog.js");
-var userModule   = require("../model/user.js");
+const blogModule   = require("../../model/blog.js");
+const userModule   = require("../../model/user.js");
 
 
 
@@ -25,7 +25,7 @@ describe("views/blog", function() {
   var data;
   let jar  = null;
   let nockLoginPage;
-  beforeEach(function(bddone) {
+  beforeEach(async function() {
     jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
@@ -33,23 +33,20 @@ describe("views/blog", function() {
       .reply(200, "ok");
     nockLoginPage = testutil.nockLoginPage();
     process.env.TZ = "Europe/Amsterdam";
-    async.series([
-      initialise.initialiseModules,
-    ], bddone);
+    await initialise.initialiseModules();
+    testutil.startServerSync();
   });
-  afterEach(function(bddone) {
+  afterEach(async function() {
     nock.cleanAll();
-    testutil.stopServer(bddone);
+    testutil.stopServer();
   });
 
   describe("export", function() {
-    beforeEach(function(bddone) {
-      var file =  path.resolve(__dirname, "data", "views.blog.export.1.json");
+    beforeEach(async function() {
+      var file =  path.resolve(__dirname, "views.blog.export.1.json");
       data = JSON.parse(fs.readFileSync(file));
-      async.series([
-        testutil.importData.bind(null, data),
-        testutil.startServer.bind(null, "USER1"),
-      ], bddone);
+      await testutil.importData(data);
+      testutil.startServerSync();
     });
     it("should generate preview as html", function(bddone) {
       testutil.nockLoginPage();
@@ -63,7 +60,7 @@ describe("views/blog", function() {
           request(opts, function (err, res, body) {
             should.not.exist(err);
             should(res.statusCode).eql(200);
-            let file =  path.resolve(__dirname, "data", "views.blog.export.1.html");
+            let file =  path.resolve(__dirname, "views.blog.export.1.html");
             let expectation =  fs.readFileSync(file, "UTF8");
 
             should(testutil.equalHtml(body, expectation)).be.True();
@@ -86,7 +83,7 @@ describe("views/blog", function() {
           request(opts, function (err, res, body) {
             should.not.exist(err);
             should(res.statusCode).eql(200);
-            let file =  path.resolve(__dirname, "data", "views.blog.export.1.md");
+            let file =  path.resolve(__dirname, "views.blog.export.1.md");
             let expectation =  fs.readFileSync(file, "UTF8");
 
             should(body).eql(expectation);
@@ -108,6 +105,42 @@ describe("views/blog", function() {
     afterEach(function(bddone) {
       mockdate.reset();
       return bddone();
+    });
+    it("should be able to manage a blog lifetime",async function(){
+      let b = await testutil.getNewBrowser("TheFive");
+
+      await b.visit("/osmbc");
+
+      // go to admin page and create a new blog
+      await b.click("a#adminlink");
+
+
+      await b.click("a#createblog");
+      // Confirm that you really want to create a blog
+      await b.click("button#createBlog");
+
+      // click on the second blog in the table (thats the WN251 new created)
+      await b.click("tbody>tr:nth-child(2)>td>a");
+
+      // Have a look at the blog
+      b.assert.expectHtmlSync("blog","WN251OpenMode.html");
+
+      // Edit the blog, select EDIT status and stave it
+      await b.click("a#editBlogDetail");
+      await b.click("a.btn.btn-primary#edit");
+      await b.select("status","edit");
+      await b.click("input[value='OK']");
+
+      // go to the blog view with the articles
+      await b.click("a[href='/blog/WN251']");
+
+
+
+
+      b.assert.expectHtmlSync("blog","actual.html");
+
+
+
     });
     it("should close a blog", function(bddone) {
       async.series([
@@ -172,7 +205,7 @@ describe("views/blog", function() {
     beforeEach(function(bddone) {
       mockdate.set(new Date("2016-05-25T19:00:00Z"));
       async.series([
-        testutil.importData.bind(null, JSON.parse(fs.readFileSync(path.join(__dirname, "data", "DataWN290.json"), "UTF8"))),
+        testutil.importData.bind(null, JSON.parse(fs.readFileSync(path.join(__dirname, "DataWN290.json"), "UTF8"))),
         function createUser(cb) { userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN"}, cb); },
         testutil.startServer.bind(null, "TheFive")
       ], function(err) {
@@ -185,28 +218,26 @@ describe("views/blog", function() {
       return bddone();
     });
     describe("Blog Display", function() {
-      it("should show Overview with some configurations", function(bddone) {
-        async.series([
-          browser.visit.bind(browser, "/blog/WN290"),
-          browser.assert.expectHtml.bind(browser, "blog_wn290_overview.html"),
-          browser.click.bind(browser, 'span[name="choose_showNumbers"]'),
-          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
-          browser.click.bind(browser, 'span[name="choose_showMail"]'),
-          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
-          browser.click.bind(browser, 'span[name="choose_showVisibleLanguages"]'),
-          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
-          browser.click.bind(browser, 'span[name="choose_showCollector"]'),
-          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
-          browser.click.bind(browser, 'span[name="choose_showEditor"]'),
-          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
-          browser.click.bind(browser, 'span[name="choose_showColoredUser"]'),
-          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
-          browser.click.bind(browser, 'span[name="choose_showLanguages"]'),
-          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
-          browser.visit.bind(browser, "/blog/WN290"),
-          browser.visit.bind(browser, "/blog/WN290"), // just call again to set zombie.js referer correct
-          browser.assert.expectHtml.bind(browser, "blog_wn290_overview_withglab.html")
-        ], bddone);
+      it("should show Overview with some configurations", async function() {
+        await browser.visit("/blog/WN290");
+        browser.assert.expectHtmlSync("blog", "blog_wn290_overview.html"),
+        await browser.click('span[name="choose_showNumbers"]'),
+        await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
+        await browser.click( 'span[name="choose_showMail"]'),
+        await browser.visit( "/blog/WN290"), // just call again to set zombie.js referer correct
+        await browser.click( 'span[name="choose_showVisibleLanguages"]'),
+        await browser.visit( "/blog/WN290"), // just call again to set zombie.js referer correct
+        await browser.click( 'span[name="choose_showCollector"]'),
+        await browser.visit( "/blog/WN290"), // just call again to set zombie.js referer correct
+        await browser.click( 'span[name="choose_showEditor"]'),
+        await browser.visit( "/blog/WN290"), // just call again to set zombie.js referer correct
+        await browser.click( 'span[name="choose_showColoredUser"]'),
+        await browser.visit( "/blog/WN290"), // just call again to set zombie.js referer correct
+        await browser.click( 'span[name="choose_showLanguages"]'),
+        await browser.visit( "/blog/WN290"), // just call again to set zombie.js referer correct
+        await browser.visit( "/blog/WN290"),
+        await browser.visit( "/blog/WN290"), // just call again to set zombie.js referer correct
+        browser.assert.expectHtmlSync("blog", "blog_wn290_overview_withglab.html");
       });
       it("should show Full View", function(bddone) {
         async.series([

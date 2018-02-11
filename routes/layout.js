@@ -18,6 +18,7 @@ var userModule    = require("../model/user.js");
 var htmlRoot      = config.htmlRoot();
 var bootstrap     = config.getValue("bootstrap", {type: "string"});
 var jquery        = config.getValue("jquery", {type: "string"});
+var font_awesome  = config.getValue("font_awesome", {type: "string"});
 var appName       = config.getValue("AppName", {mustExist: true});
 
 
@@ -38,6 +39,7 @@ function calculateUnreadMessages(list, user) {
 function path(component) {
   if (component === "bootstrap" && bootstrap) return bootstrap;
   if (component === "jquery" && jquery) return jquery;
+  if (component === "font-awesome" && font_awesome) return font_awesome;
 
   let dist = "/dist";
   if (component === "font-awesome") dist = "";

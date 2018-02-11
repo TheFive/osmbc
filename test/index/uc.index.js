@@ -16,7 +16,7 @@ var mockdate = require("mockdate");
 
 
 
-describe("views/index", function() {
+describe("uc/index", function() {
   this.timeout(12000);
   var browser;
   beforeEach(async function() {
@@ -104,12 +104,14 @@ describe("views/index", function() {
     it("should throw an error if user is denied", async function() {
       try {
         browser = await testutil.getNewBrowser("OldUserAway");
-        //await browser.visit("/osmbc");
+        await browser.visit("/osmbc");
       } catch (err) {
-        should.not.exist(err);
+        // ignore error, expect is a 403 error, but the
+        // browser html has to be tested
+
       }
-      browser.assert.expectHtmlSync("index","wusel.html")
-      browser.html().should.containEql("OSM User >OldUserAway< has no access rights");
+      browser.assert.expectHtmlSync("index","denied user.html")
+      browser.html().should.containEql("OSM User &gt;OldUserAway&lt; has no access rights");
     });
   });
 });

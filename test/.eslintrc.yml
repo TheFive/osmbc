@@ -25,3 +25,6 @@ rules:
    mocha/no-identical-title: error
    mocha/max-top-level-suites: ["error",1]
    mocha/no-nested-tests: error
+
+parserOptions:
+   ecmaVersion: 2017

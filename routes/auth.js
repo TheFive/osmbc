@@ -144,11 +144,9 @@ function ensureAuthenticated (req, res, next) {
       return next();
     }
     if (req.user && req.user.access === "denied") {
-      let err = new Error("OSM User >" + req.user.OSMUser + "< has no access rights");
-      return next(err);
+      return res.status(403).send("OSM User >" + req.user.OSMUser + "< has no access rights");
     }
-    let err = new Error("OSM User >" + req.user.OSMUser + "< is not an OSMBC user.");
-    return next(err);
+    return res.status(403).send("OSM User >" + req.user.OSMUser + "< is not an OSMBC user.");
   }
   // is not authenticated
   debug("ensureAuthenticated: Not OK");

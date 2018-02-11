@@ -22,7 +22,7 @@
             <li><a id="inbox" href="/usert/inbox">Inbox </a></li>
           </ul>
           <ul class="nav navbar-nav pull-left visible-xs">
-            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+            <li><a href="/blog/blog">blog<span class="badge osmbcbadge-lang">3</span><span class="badge osmbcbadge-lang2">4</span></a></li>
           </ul>
         </div>
         <div class="navbar-header">
@@ -32,7 +32,7 @@
           <ul class="nav navbar-nav navbar-left">
             <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
             </li>
-            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+            <li><a href="/blog/blog">blog<span class="badge osmbcbadge-lang">3</span><span class="badge osmbcbadge-lang2">4</span></a></li>
             <li id="article" class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 <li class="dropdown-header">Articles</li>
@@ -68,14 +68,16 @@
                 <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">DE<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
+                <li><a id="lang_DE" href="/language?lang=DE">DE</a></li>
                 <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--<span class="caret"></span></a>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">EN<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
+                <li><a id="lang2_DE" href="/language?lang2=DE">DE</a></li>
                 <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
               </ul>
             </li>
@@ -94,7 +96,7 @@
               <div class="form-group">
                 <div class="col-sm-2"> </div>
                 <div class="col-sm-6">
-                  <input id="searchField" type="text" name="search" value="new Info" class="form-control">
+                  <input id="searchField" type="text" name="search" value="http://www.test.dä/holla" class="form-control">
                   <p align="center" class="osmbc-help-text">Please check your link for duplicates before   collecting.</p>
                 </div>
                 <div class="col-sm-2">
@@ -105,11 +107,63 @@
           <p></p>
         </div>
         <div class="row">
-          <p><a style="color:Gray">
+          <p id="articleCounter"><a style="color:Gray">
                
-              No Articles found for search 'new Info'</a></p>
+              Display 2 of 2 articles.</a>
+          </p>
+          <table class="table table-striped table-condensed table-responsive">
+            <thead>
+              <tr> 
+                <th>Blog</th>
+                <th>Title</th>
+                <th class="hidden-xs">Cat (EN)</th>
+                <th class="hidden-xs">collection</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tbody><tr onclick="$('.class_3').toggleClass('hidden');">
+              <td><span class="glyphicon glyphicon-triangle-right class_3"></span><span class="glyphicon glyphicon-triangle-bottom hidden class_3"></span><a href="/blog/blog">blog</a></td>
+              <td><a href="/article/3">No Title</a></td>
+              <td class="hidden-xs"></td>
+              <td class="pre">http://www.test.dä/holla</td>
+            </tr>
+            <tr class="class_3 hidden">
+              <td></td>
+              <td colspan="1">
+<p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lorem ipsum dolores.</p>
+
+
+              </td>
+              <td colspan="2">
+<p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lerom upsim deloros.</p>
+
+
+
+
+              </td>
+            </tr>
+            <tr onclick="$('.class_5').toggleClass('hidden');">
+              <td><span class="glyphicon glyphicon-triangle-right class_5"></span><span class="glyphicon glyphicon-triangle-bottom hidden class_5"></span><a href="/blog/blog">blog</a></td>
+              <td><a href="/article/5">No Title</a></td>
+              <td class="hidden-xs"></td>
+              <td class="pre">Link1: http://www.test.dä/holla and other</td>
+            </tr>
+            <tr class="class_5 hidden">
+              <td></td>
+              <td colspan="1">
+
+
+              </td>
+              <td colspan="2">
+
+
+
+
+              </td>
+            </tr>
+          </tbody></table>
           <form name="input" id="input" action="/article/create" method="post">
-            <input name="languages" value="{&quot;EN&quot;:true}" class="hidden">
+            <input name="languages" value="{&quot;DE&quot;:true,&quot;EN&quot;:true}" class="hidden">
             <h2>
                
               Create Article 
@@ -121,7 +175,7 @@
                     <div class="col-md-2">Blog <br></div>
                     <div class="col-md-10">
                       <select id="blog" name="blog" class="form-control af">
-                        <option value="WN251">WN251 </option>
+                        <option value="blog">blog (Edit)</option>
                         <option value="Future">Future </option>
                       </select>
                     </div>
@@ -130,28 +184,28 @@
                     <div class="col-md-2">Category <br></div>
                     <div class="col-md-10">
                       <select id="categoryEN" name="categoryEN" class="form-control" style="background-color: rgb(253, 198, 205);">
-                        <option value="-- no category yet --">-- no category yet -- / </option>
-                        <option value="Picture">Picture / </option>
-                        <option value="[Actual Category]">[Actual Category] / </option>
-                        <option value="About us">About us / </option>
-                        <option value="Weekly exercise:">Weekly exercise: / </option>
-                        <option value="Mapping">Mapping / </option>
-                        <option value="Community">Community / </option>
-                        <option value="Imports">Imports / </option>
-                        <option value="OpenStreetMap Foundation">OpenStreetMap Foundation / </option>
-                        <option value="Events">Events / </option>
-                        <option value="Humanitarian OSM">Humanitarian OSM / </option>
-                        <option value="Maps">Maps / </option>
-                        <option value="switch2OSM">switch2OSM / </option>
-                        <option value="Open Data">Open Data / </option>
-                        <option value="Licences">Licences / </option>
-                        <option value="Software">Software / </option>
-                        <option value="Programming">Programming / </option>
-                        <option value="Releases">Releases / </option>
-                        <option value="Did you know …">Did you know … / </option>
-                        <option value="Other “geo” things">Other “geo” things / </option>
-                        <option value="Upcoming Events">Upcoming Events / </option>
-                        <option value="--unpublished--">--unpublished-- / </option>
+                        <option value="-- no category yet --">-- noch keine Kategorie -- / -- no category yet --</option>
+                        <option value="Picture">Bild / Picture</option>
+                        <option value="[Actual Category]">[Aktuelle Kategorie] / [Actual Category]</option>
+                        <option value="About us">In eigener Sache / About us</option>
+                        <option value="Weekly exercise:">Wochenaufruf / Weekly exercise:</option>
+                        <option value="Mapping">Mapping / Mapping</option>
+                        <option value="Community">Community / Community</option>
+                        <option value="Imports">Importe / Imports</option>
+                        <option value="OpenStreetMap Foundation">OpenStreetMap Foundation / OpenStreetMap Foundation</option>
+                        <option value="Events">Veranstaltungen / Events</option>
+                        <option value="Humanitarian OSM">Humanitarian OSM / Humanitarian OSM</option>
+                        <option value="Maps">Karten / Maps</option>
+                        <option value="switch2OSM">switch2OSM / switch2OSM</option>
+                        <option value="Open Data">Open-Data / Open Data</option>
+                        <option value="Licences">Lizenzen / Licences</option>
+                        <option value="Software">Programme / Software</option>
+                        <option value="Programming">Programmierung / Programming</option>
+                        <option value="Releases">Releases / Releases</option>
+                        <option value="Did you know …">Kennst du schon … / Did you know …</option>
+                        <option value="Other “geo” things">Weitere Themen mit Geo-Bezug / Other “geo” things</option>
+                        <option value="Upcoming Events">Wochenvorschau / Upcoming Events</option>
+                        <option value="--unpublished--">--unveröffentlicht-- / --unpublished--</option>
                       </select>
                     </div>
                   </div>
@@ -163,8 +217,8 @@
                     <p id="categoryDisplay" class="osmbc-help-text">If you do not have any idea, which category to use.</p>
                   </div>
                   <div class="col-md-5">
-                    <input type="submit" id="OK" value="OK" class="btn btn-large btn-primary" disabled="true"><a href="/article/create" role="button" class="btn btn-default">Cancel</a>
-                    <button id="OKLang" name="OKLang" onclick="window.onbeforeunload=null; document.getElementById('input').action = '/article/create?notranslation=true';document.getElementById('input').submit();" class="btn btn-large osmbcbadge-lang" disabled="true">OK (only )</button>
+                    <input type="submit" id="OK" value="OK" class="btn btn-large btn-primary"><a href="/article/create" role="button" class="btn btn-default">Cancel</a>
+                    <button id="OKLang" name="OKLang" onclick="window.onbeforeunload=null; document.getElementById('input').action = '/article/create?notranslation=true';document.getElementById('input').submit();" class="btn btn-large osmbcbadge-lang">OK (only DE)</button>
                   </div>
                 </div>
               </div>
@@ -172,13 +226,13 @@
             <div class="row">
               <div class="col-md-1">Title <br></div>
               <div class="col-md-11">
-                <textarea id="title" name="title" placeholder="Please enter a title with at last 6 characters" rows="1" autofocus="" class="form-control"></textarea>
+                <textarea id="title" name="title" placeholder="Please enter a title with at last 6 characters" rows="1" autofocus="" class="form-control">Page not Found</textarea>
               </div>
             </div>
             <div class="row">
               <div class="col-md-1">Collection <br></div>
               <div class="col-md-11">
-                <textarea name="collection" rows="7" placeholder="put your link or info here" class="form-control">new Info</textarea>
+                <textarea name="collection" rows="7" placeholder="put your link or info here" class="form-control">http://www.test.dä/holla</textarea>
               </div>
             </div>
           </form>
@@ -196,7 +250,7 @@
 
 
   
-    <title></title>
+    <title>Page not Found</title>
     <link rel="stylesheet" href="stylesheets/style.css">
   
   

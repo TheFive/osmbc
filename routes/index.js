@@ -38,7 +38,6 @@ function renderHome(req, res, next) {
     "guestVisitorsToday": userModule.find.bind(userModule, {lastAccess: ">" + todayStart.toISOString(), access: "guest"}, {column: "OSMUser", desc: false}),
     "newUsers": userModule.getNewUsers.bind(userModule)
   }, function(err, result) {
-
     if (err) return next(err);
 
     res.set("content-type", "text/html");

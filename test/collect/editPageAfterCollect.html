@@ -5,7 +5,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title>WN251#4/This is a title of a guest collected article</title>
+    <title>blog#6/Test Title for Article</title>
     <!-- Bootstrap core CSS-->
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -19,10 +19,10 @@
             <li><a id="collect" href="/article/create">Collect</a></li>
           </ul>
           <ul class="nav navbar-nav pull-left">
-            <li><a id="inbox" href="/usert/inbox">Inbox <span class="badge osmbcbadge-user">1</span></a></li>
+            <li><a id="inbox" href="/usert/inbox">Inbox </a></li>
           </ul>
-          <ul class="nav navbar-nav pull-left">
-            <li><a id="myArticles" href="/osmbc.html">My Articles</a></li>
+          <ul class="nav navbar-nav pull-left visible-xs">
+            <li><a href="/blog/blog">blog<span class="badge osmbcbadge-lang">4</span><span class="badge osmbcbadge-lang2">5</span></a></li>
           </ul>
         </div>
         <div class="navbar-header">
@@ -31,6 +31,27 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left">
             <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
+            </li>
+            <li><a href="/blog/blog">blog<span class="badge osmbcbadge-lang">4</span><span class="badge osmbcbadge-lang2">5</span></a></li>
+            <li id="article" class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Articles</li>
+                <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Empty Collections</a></li>
+                <li class="dropdown-header">Orphaned Article
+                  </li><li><a href="/article/list?blog=">No Blog</a></li>
+                
+              </ul>
+            </li>
+            <li id="tool" class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Markdown Helper</li>
+                <li><a href="/tool/calendarAllLang/fakeCalendar">Calendar Tool (fakeCalendar)</a></li>
+                <li><a href="/tool/picturetool">Picture Tool</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">About The Team
+                  </li><li><a href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a></li>
+                
+              </ul>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
@@ -47,18 +68,20 @@
                 <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">DE<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
+                <li><a id="lang_DE" href="/language?lang=DE">DE</a></li>
                 <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--<span class="caret"></span></a>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">EN<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
+                <li><a id="lang2_DE" href="/language?lang2=DE">DE</a></li>
                 <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
               </ul>
             </li>
-            <li><img onclick="location.href='/usert/2';" style="height:50px;width:50px"></li>
+            <li><img onclick="location.href='/usert/1';" style="height:50px;width:50px"></li>
           </ul>
           <!-- /.nav-collapse-->
           
@@ -71,12 +94,16 @@
         </p><form id="textanalyseform" method="POST" action="http://wortliga.de/textanalyse/">
           <input type="hidden" name="text" id="textanalysefield" class="form-control">
         </form>
-        <form name="input" id="input" action="/article/4/witholdvalues" method="post">
+        <form name="input" id="input" action="/article/6/witholdvalues" method="post">
           <div class="row">
             <!-- Block for Buttons in the upper right corner and on the top in mobile-->
             <div class="col-md-6 col-md-push-6">
               <div class="row">
                 <div id="voteButtons" class="col-md-4">
+                  <button type="button" onclick="callAndRedraw('/article/6/setVote.pro','/article/6/votes')" style="" class="btn osmbc-btn-not-voted"><i class="fa-lg fa fa-thumbs-up"></i><span>  0</span>
+                  </button>
+                  <button type="button" onclick="callAndRedraw('/article/6/setVote.unpublish','/article/6/votes')" style="" class="btn osmbc-btn-not-voted"><i class="fa-lg fa fa-thumbs-down"></i><span>  0</span>
+                  </button>
                 </div>
                 <div class="col-md-1">
                 </div>
@@ -86,13 +113,18 @@
                 <div class="col-md-2"></div>
               </div>
               <div class="row">
-                <div class="col-md-4"><span onclick="showRL('EN')" style="" class="label osmbclabel-markdown">EN</span>
+                <div class="col-md-4"><span onclick="showRL('DE')" style="" class="label osmbclabel-collect">DE</span><span onclick="showRL('EN')" style="" class="label osmbclabel-collect">EN</span>
                   <p class="osmbc-help-text">Click to change left lang</p>
+                  <div id="notranslationArea">
+                    <p>
+                      <button type="button" onclick="window.onbeforeunload=null; setNoTranslation(); document.getElementById('input').submit();" class="btn btn-small btn-default">no translation to rest</button>
+                    </p>
+                  </div>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-4">
                   <button id="saveButton" type="button" onclick="disableUnchanged();document.getElementById('input').submit();" class="btn btn-large btn-primary">Save</button>
-                  <button type="button" onclick="disableUnchanged(); location.href='/article/4?edit=false';" class="btn btn-large btn-default">last Version</button>
+                  <button type="button" onclick="disableUnchanged(); location.href='/article/6?edit=false';" class="btn btn-large btn-default">last Version</button>
                 </div>
                 <!-- Parallel Blog for common article Attributes-->
               </div>
@@ -103,10 +135,10 @@
                   <label class="col-md-2">Blog</label>
                   <div class="col-md-10">
                     <select id="blog" name="blog" class="form-control af" style="background-color: rgb(255, 255, 204);">
-                      <option value="WN251" selected="selected">WN251 </option>
-                      <option value="Future" disabled="disabled">Future </option>
+                      <option value="blog" selected="selected">blog (Edit)</option>
+                      <option value="Future">Future </option>
                     </select>
-                    <textarea id="old_blog" name="old_blog" rows="1" hide="" class="hidden form-control">WN251</textarea>
+                    <textarea id="old_blog" name="old_blog" rows="1" hide="" class="hidden form-control">blog</textarea>
                   </div>
                 </div>
               </div>
@@ -114,30 +146,30 @@
                 <div class="form-group">
                   <label class="col-md-2">Category</label>
                   <div class="col-md-10">
-                    <textarea id="old_categoryEN" name="old_categoryEN" rows="1" hide="" class="hidden form-control">Mapping</textarea>
-                    <select id="categoryEN" name="categoryEN" class="form-control af" style="background-color: rgb(255, 255, 204);">
-                      <option value="-- no category yet --">-- no category yet --</option>
-                      <option value="Picture">Picture</option>
-                      <option value="[Actual Category]">[Actual Category]</option>
-                      <option value="About us">About us</option>
-                      <option value="Weekly exercise:">Weekly exercise:</option>
-                      <option value="Mapping" selected="">Mapping</option>
-                      <option value="Community">Community</option>
-                      <option value="Imports">Imports</option>
-                      <option value="OpenStreetMap Foundation">OpenStreetMap Foundation</option>
-                      <option value="Events">Events</option>
-                      <option value="Humanitarian OSM">Humanitarian OSM</option>
-                      <option value="Maps">Maps</option>
-                      <option value="switch2OSM">switch2OSM</option>
-                      <option value="Open Data">Open Data</option>
-                      <option value="Licences">Licences</option>
-                      <option value="Software">Software</option>
-                      <option value="Programming">Programming</option>
-                      <option value="Releases">Releases</option>
-                      <option value="Did you know …">Did you know …</option>
-                      <option value="Other “geo” things">Other “geo” things</option>
-                      <option value="Upcoming Events">Upcoming Events</option>
-                      <option value="--unpublished--">--unpublished--</option>
+                    <textarea id="old_categoryEN" name="old_categoryEN" rows="1" hide="" class="hidden form-control">-- no category yet --</textarea>
+                    <select id="categoryEN" name="categoryEN" class="form-control af" style="background-color: rgb(253, 198, 171);">
+                      <option value="-- no category yet --" selected="">-- noch keine Kategorie -- / -- no category yet --</option>
+                      <option value="Picture">Bild / Picture</option>
+                      <option value="[Actual Category]">[Aktuelle Kategorie] / [Actual Category]</option>
+                      <option value="About us">In eigener Sache / About us</option>
+                      <option value="Weekly exercise:">Wochenaufruf / Weekly exercise:</option>
+                      <option value="Mapping">Mapping / Mapping</option>
+                      <option value="Community">Community / Community</option>
+                      <option value="Imports">Importe / Imports</option>
+                      <option value="OpenStreetMap Foundation">OpenStreetMap Foundation / OpenStreetMap Foundation</option>
+                      <option value="Events">Veranstaltungen / Events</option>
+                      <option value="Humanitarian OSM">Humanitarian OSM / Humanitarian OSM</option>
+                      <option value="Maps">Karten / Maps</option>
+                      <option value="switch2OSM">switch2OSM / switch2OSM</option>
+                      <option value="Open Data">Open-Data / Open Data</option>
+                      <option value="Licences">Lizenzen / Licences</option>
+                      <option value="Software">Programme / Software</option>
+                      <option value="Programming">Programmierung / Programming</option>
+                      <option value="Releases">Releases / Releases</option>
+                      <option value="Did you know …">Kennst du schon … / Did you know …</option>
+                      <option value="Other “geo” things">Weitere Themen mit Geo-Bezug / Other “geo” things</option>
+                      <option value="Upcoming Events">Wochenvorschau / Upcoming Events</option>
+                      <option value="--unpublished--">--unveröffentlicht-- / --unpublished--</option>
                     </select>
                   </div>
                 </div>
@@ -145,10 +177,23 @@
               <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-10">
-                  <p id="categoryDisplay" class="osmbc-help-text">Quality assurance, editors, maps for mapper, tools for mapping, tagging</p>
+                  <p id="categoryDisplay" class="osmbc-help-text">If you do not have any idea, which category to use.</p>
                 </div>
               </div>
               <!-- Display Predecessor Row-->
+              <div class="row">
+                <div class="form-group">
+                  <label class="col-md-2">Predecessor</label>
+                  <div class="col-md-10">
+                    <textarea id="old_predecessorId" name="old_predecessorId" rows="1" hide="" class="hidden form-control"></textarea>
+                    <select id="predecessorId" name="predecessorId" class="form-control af">
+                      <option value="" selected="">None</option>
+                      <option value="0">First</option>
+                      <option value="6">Test Title for Article</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <!-- Display Title Row-->
@@ -157,8 +202,8 @@
               <label class="col-md-1">Title</label>
               <div class="col-md-10">
                 <div id="title_unsaved" style="display:none" class="label label-danger">unsaved</div>
-                <textarea id="old_title" name="old_title" rows="1" hide="" class="hidden form-control">This is a title of a guest collected article</textarea>
-                <textarea id="title" name="title" rows="1" class="form-control af">This is a title of a guest collected article</textarea>
+                <textarea id="old_title" name="old_title" rows="1" hide="" class="hidden form-control">Test Title for Article</textarea>
+                <textarea id="title" name="title" rows="1" class="form-control af">Test Title for Article</textarea>
               </div>
             </div>
           </div>
@@ -194,8 +239,8 @@
               <label class="col-md-1">Collection</label>
               <div class="col-md-10">
                 <div id="collection_unsaved" style="display:none" class="label label-danger">unsaved</div>
-                <textarea id="collection" name="collection" rows="2" class="form-control af">This is the collection text (guest collector)</textarea>
-                <textarea id="old_collection" name="old_collection" rows="1" hide="" class="hidden form-control">This is the collection text (guest collector)</textarea>
+                <textarea id="collection" name="collection" rows="2" class="form-control af">searchfor</textarea>
+                <textarea id="old_collection" name="old_collection" rows="1" hide="" class="hidden form-control">searchfor</textarea>
               </div>
             </div>
           </div>
@@ -209,29 +254,69 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-1">
-              <div class="form-group">
-                <label>Markdown + Preview</label>
+            <div class="row">
+              <div class="col-md-6"><span id="left_lang" draggable="true" data-toggle="tooltip" data-placement="left" title="" ondragstart="ondragstartLangLabel(event,'DE');" class="label label-default osmbclabel-lang" data-original-title="Drag me for copy full text">  DE  </span><span style="" id="markdownDE_unsaved" class="label label-danger">unsaved</span>
+                <textarea id="markdownDE" placeholder="1. Nicht Passiv, sondern Aktiv formulieren
+Beispiel: OpenCage Data veröffentlicht ein Interview mit David Overton, dem Macher hinter der Stoffkarten produzierenden Firma Splashmaps. (via Twitter)
+2. Personen/Unternehmen sind Nachrichten! Deshalb ... möglichst immer mit einer Person/Unternehmen beginnen!
+3. Eine komplexe Meldung lieber in zwei Sätze aufteilen, statt mit Nebensätzen zu arbeiten.
+4. Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008)" spellcheck="true" lang="DE" name="markdownDE" rows="6" class="markdownEdit form-control af" style="background-color: rgb(255, 255, 204);"></textarea>
+                <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
+                <p id="textDE" lang="DE" style="display:none" class="markdownMessage bg-danger">Default Error Message</p>
+                <div id="previewDE" lang="DE" class="panel panel-default panel-body preview"><ul><li></li></ul></div>
               </div>
-            </div>
-            <div class="col-md-10"><span draggable="true" data-toggle="tooltip" data-placement="left" title="" ondragstart="ondragstartLangLabel(event,'EN');" class="label label-default osmbclabel-lang" data-original-title="Drag me for copy full text">  EN  </span><span style="" id="markdownEN_unsaved" class="label label-danger">unsaved</span>
-              <textarea id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide" class="hidden form-control">This is the written text.</textarea>
-              <textarea id="markdownEN" placeholder="1. Formulate not passive, but active.
+              <div class="col-md-6"><span draggable="true" data-toggle="tooltip" data-placement="left" title="" ondragstart="ondragstartLangLabel(event,'DE');" class="label label-default RL hidden RL-DE" data-original-title="Drag me for copy full text">DE</span><span class="label label-default RLOFF RLOFF-DE">-</span><span style="display:none" id="markdownDE_unsaved" class="label label-danger">unsaved: DE</span><span draggable="true" data-toggle="tooltip" data-placement="left" title="" ondragstart="ondragstartLangLabel(event,'EN');" class="label osmbclabel-lang2 RL RL-EN" data-original-title="Drag me for copy full text">EN</span><span data-toggle="tooltip" data-placement="left" title="" class="label label-default RLOFF hidden RLOFF-EN" data-original-title="Click on language display to enable">.</span><span style="" id="markdownEN_unsaved" class="label label-danger">unsaved: EN</span>
+                <textarea id="old_markdownDE" name="old_markdownDE" rows="1" hide="" class="hidden form-control"></textarea>
+                <textarea id="old_markdownEN" name="old_markdownEN" rows="1" hide="" class="hidden form-control"></textarea>
+                <div class="RL RL-EN">
+                  <textarea id="markdownEN" placeholder="1. Formulate not passive, but active.
 Sample: OpenCage data published an interview with David Overton, the doer behind the tissue map producing company Splashmaps. (via Twitter)
 2. People &amp; companies are information! So start an article with e person or a company!
 3. Decomplify your sentences.
 4. (Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008))
-" spellcheck="true" lang="EN" name="markdownEN" rows="6" class="markdownEdit form-control af" style="background-color: rgb(255, 255, 204);">This is the written text.</textarea>
-              <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
-              <p id="textEN" lang="EN" style="display:none" class="markdownMessage bg-danger">Default Error Message</p>
-              <div id="previewEN" lang="EN" class="panel panel-default panel-body preview"><ul><li><p>This is the written text.</p>
-</li></ul></div>
-            </div>
-            <div class="col-md-1">
-              <div class="row"><i id="languageFlagsShow" onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');" class="fa fa-flag fa-2x"></i>
-                <div id="languageFlags" class="row hidden"><img id="Japanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Japanisch"><img id="Französisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Französisch"><img id="Spanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Spanisch"><img id="Tschechisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Tschechisch"><img id="Russisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Russisch"><img id="Rumänisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Rumänisch"><img id="Niederländisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Niederländisch"><img id="Brasilianisches Portugiesisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Brasilianisches Portugiesisch"><img id="Polish" src="http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Polish">
-                  <p class="osmbc-help-text">Click to copy to clipboard, or use drag and drop.</p>
+" spellcheck="true" lang="EN" name="markdownEN" rows="6" class="markdownEdit form-control af" style="background-color: rgb(255, 255, 204);"></textarea>
+                  <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
+                  <p id="textEN" lang="EN" style="display:none" class="markdownMessage bg-danger">Default Error Message</p>
                 </div>
+                <div class="RL hidden RL-DE">
+                  <div id="previewDE" lang="DE" class="panel panel-default panel-body preview"><ul><li></li></ul></div>
+                </div>
+                <div class="RL RL-EN">
+                  <div id="previewEN" lang="EN" class="panel panel-default panel-body preview"><ul><li></li></ul></div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6"><i id="languageFlagsShow" onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');" class="fa fa-flag fa-2x"></i></div>
+            </div>
+            <div id="languageFlags" class="row hidden">
+              <div class="col-md-6"><img id="Japanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Japanisch"><img id="Französisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Französisch"><img id="Spanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Spanisch"><img id="Tschechisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Tschechisch"><img id="Russisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Russisch"><img id="Rumänisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Rumänisch"><img id="Niederländisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Niederländisch"><img id="Brasilianisches Portugiesisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Brasilianisches Portugiesisch"><img id="Polish" src="http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Polish">
+                <p class="osmbc-help-text">Click to copy to clipboard, or use drag and drop.</p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-5">
+              <p>
+              </p>
+              <p class="RL RL-DE hidden">
+              </p>
+              <p class="RL RL-EN">
+              </p>
+            </div>
+            <div class="col-md-5">
+              <div class="RL RL-DE hidden">
+                <p>
+                </p>
+                <p>
+                </p>
+              </div>
+              <div class="RL RL-EN">
+                <p>
+                </p>
+                <p>
+                </p>
               </div>
             </div>
           </div>
@@ -240,21 +325,147 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
           <div class="row">
             <div class="col-md-6">
               <div class="row">
-                <form target="iframeform" name="AddComment" id="AddComment" action="/article/4/addComment?reload=false" method="post">
+                <form target="iframeform" name="AddComment" id="AddComment" action="/article/6/addComment?reload=false" method="post">
                   <textarea spellcheck="true" name="comment" id="comment" rows="7" placeholder="Your comment is shared between all weekly teams. 
 So please use english if possible. Do not hesitate to use your language and address your team with @LANG.
 To solve a comment use #solved, and to reopen #open in your text.
 Use @OSMUser to address any special editor." class="form-control"></textarea>
-                  <button name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/4/commentArea');" class="btn btn-large btn-primary">Add Comment</button>
-                  <button type="button" onclick="window.callAndRedraw(null,'/article/4/commentArea');" class="btn btn-large btn-default">Reload Comments</button>
-                  <button name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/4/commentArea');" class="btn btn-large btn-default">Solve Comment</button>
+                  <button name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/6/commentArea');" class="btn btn-large btn-primary">Add Comment</button>
+                  <button type="button" onclick="window.callAndRedraw(null,'/article/6/commentArea');" class="btn btn-large btn-default">Reload Comments</button>
+                  <button name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/6/commentArea');" class="btn btn-large btn-default">Solve Comment</button>
                 </form>
               </div>
             </div>
           </div>
           <iframe name="iframeform" class="hidden"></iframe>
         </div>
+        <div id="voteButtonsList" class="row">
+          <h3>Votes &amp; Tags ...</h3>
+          <table class="table table-condensed">
+            <tbody>
+              <tr>
+                <td class="col-md-1">
+                  <button type="button" onclick="callAndRedraw('/article/6/setVote.pro','/article/6/votes')" style="" class="btn osmbc-btn-not-voted"><i class="fa-lg fa fa-thumbs-up"></i><span>  0</span>
+                  </button>
+                </td>
+                <td class="col-md-1">pro</td>
+                <td class="col-md-5">
+                </td>
+                <td class="col-md-5">Use this to show your interest publishing this article</td>
+              </tr>
+              <tr>
+                <td class="col-md-1">
+                  <button type="button" onclick="callAndRedraw('/article/6/setVote.unpublish','/article/6/votes')" style="" class="btn osmbc-btn-not-voted"><i class="fa-lg fa fa-thumbs-down"></i><span>  0</span>
+                  </button>
+                </td>
+                <td class="col-md-1">unpublish</td>
+                <td class="col-md-5">
+                </td>
+                <td class="col-md-5">Use to vote for unpublishing this article</td>
+              </tr>
+              <tr>
+                <td class="col-md-1">
+                  <button type="button" onclick="callAndRedraw('/article/6/setVote.fav','/article/6/votes')" style="" class="btn osmbc-btn-not-voted"><i class="glyphicon glyphicon-star"></i><span>  0</span>
+                  </button>
+                </td>
+                <td class="col-md-1">fav</td>
+                <td class="col-md-5">
+                </td>
+                <td class="col-md-5">Favs will be shown in the weeklyOSM ecxerpt of the issue.</td>
+              </tr>
+              <tr>
+                <td class="col-md-1">
+                  <button type="button" onclick="callAndRedraw('/article/6/setVote.doit','/article/6/votes')" style="" class="btn osmbc-btn-not-voted"><i></i><span>doit</span><span>  0</span>
+                  </button>
+                </td>
+                <td class="col-md-1">doit</td>
+                <td class="col-md-5">
+                </td>
+                <td class="col-md-5"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div id="doublettes" class="row">
+          <div class="row visible-xs">
+            <p><br><a href="/changes/log?table=article&amp;oid=6">[changes]</a></p>
+          </div>
+          <div class="row hidden-xs">
+            <h3>History</h3>
+            <div>
+              <table class="table table-striped table-responsive">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>user</th>
+                    <th>what</th>
+                    <th>change</th>
+                    <th>when</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a href="/changes/9"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>firstCollector</td>
+                    <td>
+<span class="osmbc-inserted">TheFive</span>
+
+
+                    </td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/8"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>title</td>
+                    <td>
+<span class="osmbc-inserted">Test Title for Article</span>
+
+
+                    </td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/7"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>categoryEN</td>
+                    <td>
+<span class="osmbc-inserted">-- no category yet --</span>
+
+
+                    </td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/6"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>collection</td>
+                    <td>
+<span class="osmbc-inserted">searchfor</span>
+
+
+                    </td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/5"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>blog</td>
+                    <td>
+<span class="osmbc-inserted">blog</span>
+
+
+                    </td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <p>only displaying changes<span class="osmbc-inserted">inserted text</span><span class="osmbc-deleted">removed text</span></p>
+            </div>
+          </div>
         </div>
       <p></p>
       <p></p>
@@ -282,9 +493,9 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
   
   // set Constant for Window with JADE Variables
   googleTranslateText = JSON.parse('{"DE":"(automatische [Übersetzung](##link##))","EN":"(automatic [translation](##link##))","ES":"(automatic [translation](##link##))","FR":"(automatic [translation](##link##))","CZ":"(automatic [translation](##link##))","PT":"(automatic [translation](##link##))","RU":"(automatic [translation](##link##))","JP":"(automatic [translation](##link##))","ID":"(automatic [translation](##link##))","TR":"(automatic [translation](##link##))"}');
-  activeLanguages = JSON.parse('["EN"]');
-  leftLang = "EN";
-  rightLang = "";
+  activeLanguages = JSON.parse('["DE","EN"]');
+  leftLang = "DE";
+  rightLang = "EN";
   lang3 = "";
   lang4 = "";
   placeholder = {"-- no category yet --":"If you do not have any idea, which category to use.","[Actual Category]":"This category does not have to exist in every blog. Use this category for actual events like SOTM","About us":"Use seldom, then on the top","Weekly exerciseEN:":"Category for the German weekly exercise","Mapping":"Quality assurance, editors, maps for mapper, tools for mapping, tagging","Community":"articles from the community, that does not fit in any other category","Imports":"discussions, announcements about imports","OpenStreetMap Foundation":"articles about the OSMF or local OpenStreetMap chapter","Events":"Announcements, reports about an event","Humanitarian OSM":"Information about HOT & Missing maps","Maps":"Changes on osm.org and osm.de maps, osm based special maps, no 08/15 map!","#switch2OSM":"Information about well known websites or traffic rich websites, a good new rendering style, (commercial sites) companies having own (big geo) data, more features for displaying maps are offered\n","Open Data":"Information about open data","Licences":"Information about juridicial topics","Software":"Programs for non programmers (without OSM editors)","Programming":"Information about software development","Did you know …":"Any thing which is interesting for OSM User. No longer known article and beginner tools.","Other “geo” things":"Information, that mostly have nothing to do with OSM...","Not Translated":"...","--unpublished--":"Articles, that should not be published, but keep their relation to the blog (otherwise use the trash)"}
@@ -661,7 +872,7 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
   function showRL(what) {
     $(".RL").addClass("hidden");
     $(".RLOFF").removeClass("hidden");
-    if (what == "EN") what = "";
+    if (what == "DE") what = "EN";
     $(".RL-"+what).removeClass("hidden");
     $(".RLOFF-"+what).addClass("hidden");
   }
