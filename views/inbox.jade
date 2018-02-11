@@ -5,6 +5,9 @@ mixin displayArticle(article,lang)
   - upToComment = null
   - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
   - if (!upToComment) upToComment = -1;
+  - for ( i=parseInt(upToComment)+1;i<article.commentList.length;i++) {
+  -  if ((layout.user.access === "guest") && (article.commentList[i].text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i")) < 0) ) upToComment = i;
+  - }
   if ((upToComment < article.commentList.length - 1) || showRead)
     .row
       .col-md-1
