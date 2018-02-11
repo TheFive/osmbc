@@ -268,16 +268,11 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
         // put email to validation email, and generate a key.
         data.emailInvalidation = data.email;
         data.emailValidationKey = random.generate();
-        delete data.email;
         sendWelcomeEmail = true;
+        delete data.email;
       }
     }
     if (data.email === "resend") {
-      // resend case.
-      sendWelcomeEmail = true;
-      delete data.email;
-    }
-    if (data.email === "none") {
       // resend case.
       sendWelcomeEmail = true;
       delete data.email;
