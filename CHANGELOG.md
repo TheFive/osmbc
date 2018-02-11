@@ -1,5 +1,19 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2c...HEAD)
+
+**Fixed bugs:**
+
+- No possibility to skip a email verification process. [\#733](https://github.com/TheFive/osmbc/issues/733)
+- Empty Article displayed in guest inbox [\#732](https://github.com/TheFive/osmbc/issues/732)
+- Guest's Inbox doesn't show incoming messages [\#729](https://github.com/TheFive/osmbc/issues/729)
+
+**Closed issues:**
+
+- guests are not allowed to mark comments as read  [\#731](https://github.com/TheFive/osmbc/issues/731)
+
 ## [3.1.2c](https://github.com/TheFive/osmbc/tree/3.1.2c) (2018-02-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2b...3.1.2c)
 
@@ -785,19 +799,7 @@
 - remove ''' from generated calendar [\#501](https://github.com/TheFive/osmbc/issues/501)
 
 ## [1.8.8b](https://github.com/TheFive/osmbc/tree/1.8.8b) (2016-08-09)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.8...1.8.8b)
-
-**Implemented enhancements:**
-
-- Disable Add Comment in Edit mode [\#497](https://github.com/TheFive/osmbc/issues/497)
-
-**Fixed bugs:**
-
-- Empty unpublished article blocks export [\#500](https://github.com/TheFive/osmbc/issues/500)
-
-**Closed issues:**
-
-- Check and test user names with space in comment mentioning. [\#498](https://github.com/TheFive/osmbc/issues/498)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.8b...1.8.8b)
 
 ## [1.8.8](https://github.com/TheFive/osmbc/tree/1.8.8) (2016-08-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.7a...1.8.8)
@@ -928,13 +930,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
