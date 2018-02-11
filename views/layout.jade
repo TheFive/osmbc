@@ -220,10 +220,16 @@ block all
 
 
       .container-fluid
+        if (layout && layout.user && layout.user.emailInvalidation)
 
           p
-           block content
-          p
+          div.alert.alert-danger
+            span="Your Email Adress is waiting for verification, check your "
+            a.alert-link(href=layout.htmlroot+"/usert/self") User Configuration
+
+        p
+         block content
+        p
 
       // /container
 

@@ -259,7 +259,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   // check and react on Mail Change
   if (data.email && data.email.trim() !== "" && data.email !== self.email) {
     if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) return callback(new Error("EMail address can only be changed by the user himself, after he has logged in."));
-    if (data.email !== "resend") {
+    if (data.email !== "resend" && data.email !== "none") {
       if (!emailValidator.validate(data.email)) {
         var error = new Error("Invalid Email Address: " + data.email);
         return callback(error);
@@ -269,12 +269,19 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
         data.emailInvalidation = data.email;
         data.emailValidationKey = random.generate();
         delete data.email;
+        sendWelcomeEmail = true;
       }
-    } else {
+    }
+    if (data.email === "resend") {
       // resend case.
+      sendWelcomeEmail = true;
       delete data.email;
     }
-    sendWelcomeEmail = true;
+    if (data.email === "none") {
+      // resend case.
+      sendWelcomeEmail = true;
+      delete data.email;
+    }
   }
   // Check Change of OSMUser Name.
   if (data.OSMUser !== self.OSMUser) {
@@ -319,6 +326,12 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
           messageCenter.global.sendInfo({oid: self.id, user: user.OSMUser, table: "usert", property: key, from: self[key], to: toValue}, cb);
         },
         function(cb) {
+          if (key === "email" && value === "none") {
+            delete self.email;
+            delete self.emailValidationKey;
+            delete self.emailInvalidation;
+            return cb();
+          }
           self[key] = value;
           cb();
         }
