@@ -268,8 +268,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserNonExisting", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("This article is not allowed for guests");
           bddone();
         });
       });

@@ -987,7 +987,7 @@ router.get("/:article_id", allowGuestAccess, renderArticleId);
 router.get("/:article_id/votes", allowFullAccess, renderArticleIdVotes);
 router.get("/:article_id/commentArea", allowGuestAccess, renderArticleIdCommentArea);
 
-router.get("/:article_id/markCommentRead", allowFullAccess, markCommentRead);
+router.get("/:article_id/markCommentRead", allowGuestAccess, markCommentRead);
 router.get("/:article_id/:action.:tag", allowFullAccess, doAction);
 router.get("/:article_id/:votename", allowFullAccess, renderArticleIdVotesBlog);
 

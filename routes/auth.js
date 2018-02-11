@@ -40,6 +40,7 @@ passport.deserializeUser(function (user, done) {
       let overWriteRole = config.getValue("DefineRole");
       if (overWriteRole && overWriteRole[result[0].OSMUser]) {
         result[0].access = overWriteRole[result[0].OSMUser];
+        logger.error("DefineRole Overwrite: Switching user " + result[0].OSMUser + " to access " + overWriteRole[result[0].OSMUser]);
       }
       return done(null, result[0]);
     }

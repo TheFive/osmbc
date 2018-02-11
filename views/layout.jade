@@ -220,10 +220,16 @@ block all
 
 
       .container-fluid
+        if (layout && layout.user && layout.user.emailInvalidation)
 
           p
-           block content
-          p
+          div.alert.alert-danger
+            span="Waiting for email verification, have a look at the mail with the title '[OSMBC] Welcome to OSMBC' in your inbox or change the request in your "
+            a.alert-link(href=layout.htmlroot+"/usert/self") User Configuration
+
+        p
+         block content
+        p
 
       // /container
 

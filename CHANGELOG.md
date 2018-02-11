@@ -1,5 +1,23 @@
 # Change Log
 
+## [3.1.2c](https://github.com/TheFive/osmbc/tree/3.1.2c) (2018-02-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2b...3.1.2c)
+
+**Implemented enhancements:**
+
+- Show guests in blog colored user view in a separate style. [\#728](https://github.com/TheFive/osmbc/issues/728)
+- Differentiate blog statistics by guest and full users. [\#727](https://github.com/TheFive/osmbc/issues/727)
+
+**Closed issues:**
+
+- Short Explanaition of Blog Status Box on Guest Main Page [\#725](https://github.com/TheFive/osmbc/issues/725)
+
+## [3.1.2b](https://github.com/TheFive/osmbc/tree/3.1.2b) (2018-02-09)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2a...3.1.2b)
+
+## [3.1.2a](https://github.com/TheFive/osmbc/tree/3.1.2a) (2018-02-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2...3.1.2a)
+
 ## [3.1.2](https://github.com/TheFive/osmbc/tree/3.1.2) (2018-01-30)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.1...3.1.2)
 
