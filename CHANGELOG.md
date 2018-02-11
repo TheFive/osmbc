@@ -2,13 +2,19 @@
 
 ## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2c...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2d...HEAD)
+
+**Implemented enhancements:**
+
+- Put a Red MISSING EMAIL VALIDATION [\#724](https://github.com/TheFive/osmbc/issues/724)
+
+## [3.1.2d](https://github.com/TheFive/osmbc/tree/3.1.2d) (2018-02-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2c...3.1.2d)
 
 **Fixed bugs:**
 
 - No possibility to skip a email verification process. [\#733](https://github.com/TheFive/osmbc/issues/733)
 - Empty Article displayed in guest inbox [\#732](https://github.com/TheFive/osmbc/issues/732)
-- Guest's Inbox doesn't show incoming messages [\#729](https://github.com/TheFive/osmbc/issues/729)
 
 **Closed issues:**
 
@@ -799,7 +805,19 @@
 - remove ''' from generated calendar [\#501](https://github.com/TheFive/osmbc/issues/501)
 
 ## [1.8.8b](https://github.com/TheFive/osmbc/tree/1.8.8b) (2016-08-09)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.8b...1.8.8b)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.8...1.8.8b)
+
+**Implemented enhancements:**
+
+- Disable Add Comment in Edit mode [\#497](https://github.com/TheFive/osmbc/issues/497)
+
+**Fixed bugs:**
+
+- Empty unpublished article blocks export [\#500](https://github.com/TheFive/osmbc/issues/500)
+
+**Closed issues:**
+
+- Check and test user names with space in comment mentioning. [\#498](https://github.com/TheFive/osmbc/issues/498)
 
 ## [1.8.8](https://github.com/TheFive/osmbc/tree/1.8.8) (2016-08-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.7a...1.8.8)
