@@ -270,7 +270,7 @@ describe("views/article_new", function() {
         browser.visit.bind(browser, "/osmbc"),
         browser.click.bind(browser,"li.dropdown a"),
         browser.click.bind(browser,"li#article ul.dropdown-menu li:nth-child(4) a"),
-        browser.assert.expectHtml.bind(browser, "articlelist.html")
+        browser.assert.expectHtml.bind(browser, "articlelist")
       ], bddone);
     });
   });

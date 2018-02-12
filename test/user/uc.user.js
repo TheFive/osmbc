@@ -66,6 +66,7 @@ describe("views/user", function() {
 
   it("should not change username, if user logged in", async function() {
 
+    let errors = [];
     // TheFive creates an user test
     await browser.visit("/osmbc/admin");
     await browser.click("#createUser");
@@ -77,14 +78,15 @@ describe("views/user", function() {
 
     // looking at user test shows, that username can be changed
     await browser.visit("/usert/2");
-    browser.assert.expectHtmlSync("user","userNameChange.html");
+    browser.assert.expectHtmlSync(errors,"user","userNameChange");
 
     // Testuser logs in and looks at homepage
     let testBrowser = await testutil.getNewBrowser("test");
     await testBrowser.visit("/osmbc");
     // reload test user page should show username unchangable
     await browser.visit("/usert/2");
-    browser.assert.expectHtmlSync("user","userNoNameChange.html");
+    browser.assert.expectHtmlSync(errors,"user","userNoNameChange");
+    should(errors).eql([]);
   });
   it("should save userdata and calculate WN User", async function() {
     await browser.visit("/usert/create");
@@ -94,7 +96,7 @@ describe("views/user", function() {
       .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
       .click("#save");
     let result = await userModule.findById(2);
-    browser.assert.expectHtmlSync("user","freshCreatedUser.html");
+    browser.assert.expectHtmlSync("user","freshCreatedUser");
     should(result.OSMUser).eql("TestUser");
     should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
     should(result.mailComment).eql([]);
@@ -167,7 +169,7 @@ describe("views/user", function() {
     await userModule.createNewUser({OSMUser: "Test3", access: "denied"});
     await browser.visit("/usert/list?access=full");
     await browser.click('a[id="sortWeeklyAuthor"]');
-    browser.assert.expectHtmlSync("user","userList.html");
+    browser.assert.expectHtmlSync("user","userList");
   });
 });
 

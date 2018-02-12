@@ -54,7 +54,7 @@ describe("views/tools", function() {
       }
     ], function(err) {
       should.not.exist(err);
-      browser.assert.expectHtml.call(browser, "calendarAllMarkdown.html", bddone);
+      browser.assert.expectHtml.call(browser, "calendarAllMarkdown", bddone);
     });
   });
   it("should use picture tool", async function() {
@@ -91,6 +91,6 @@ describe("views/tools", function() {
 
     browser.assert.text("li.dropdown#tool ul.dropdown-menu li:nth-child(2) a", "Calendar Tool (fakeCalendar)");
     await browser.click("li.dropdown#tool ul.dropdown-menu li:nth-child(2) a");
-    browser.assert.expectHtmlSync("tools", "calendartool.html");
+    browser.assert.expectHtmlSync("tools", "calendartool");
   });
 });

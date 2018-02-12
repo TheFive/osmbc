@@ -14,7 +14,7 @@ const blogModule = require("../../model/blog.js");
 
 
 
-describe("views/collect", function() {
+describe("uc/collect", function() {
   this.timeout(120000);
   let browser;
   let nockLoginPage;
@@ -70,14 +70,14 @@ describe("views/collect", function() {
       await browser
         .fill("title", "Test Title for Article")
         .pressButton("OK");
-      browser.assert.expectHtmlSync("collect","editPageAfterCollect.html");
+      browser.assert.expectHtmlSync("collect","editPageAfterCollect");
     });
     it("should search and find existing article", async function() {
       await browser.visit("/article/create");
       await browser
         .fill("search", "http://www.test.dä/holla")
         .pressButton("SearchNow");
-      browser.assert.expectHtmlSync("collect","foundAnArticle.html");
+      browser.assert.expectHtmlSync("collect","foundAnArticle");
     });
     it("should search and store collected article for one language", async function() {
       await browser.visit("/osmbc");
@@ -90,7 +90,7 @@ describe("views/collect", function() {
       await  browser
         .fill("title", "Test Title for Article")
         .click("button[id=OKLang]");
-      browser.assert.expectHtmlSync("collect","editPageWithOneLanguage.html");
+      browser.assert.expectHtmlSync("collect","editPageWithOneLanguage");
 
 
     });

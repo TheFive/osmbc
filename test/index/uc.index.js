@@ -59,7 +59,7 @@ describe("uc/index", function() {
     describe("Admin Homepage", function() {
       it("should show it", async function() {
         await browser.visit("/osmbc/admin");
-        browser.assert.expectHtmlSync("index", "admin_home.html")
+        browser.assert.expectHtmlSync("index", "admin_home")
       });
     });
     describe("Not Defined Page", function() {
@@ -80,7 +80,7 @@ describe("uc/index", function() {
         // with 2 calls to a link going back to referrer in seriex
         await browser.visit("/osmbc");
         await browser.click("a#lang2_DE");
-        browser.assert.expectHtmlSync("index", "switchedToEnglishAndGerman.html");
+        browser.assert.expectHtmlSync("index", "switchedToEnglishAndGerman");
       });
       it("should set the language both equal", async function() {
         await browser.visit("/osmbc");
@@ -89,7 +89,7 @@ describe("uc/index", function() {
         // with 2 calls to a link going back to referrer in seriex
         await browser.visit("/osmbc");
         await browser.click("a#lang2_EN");
-        browser.assert.expectHtmlSync("index", "switchedToEnglishAndEnglish.html");
+        browser.assert.expectHtmlSync("index", "switchedToEnglishAndEnglish");
       });
     });
   });
@@ -110,7 +110,7 @@ describe("uc/index", function() {
         // browser html has to be tested
 
       }
-      browser.assert.expectHtmlSync("index","denied user.html")
+      browser.assert.expectHtmlSync("index","denied user")
       browser.html().should.containEql("OSM User &gt;OldUserAway&lt; has no access rights");
     });
   });

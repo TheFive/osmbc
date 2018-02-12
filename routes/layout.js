@@ -1,32 +1,32 @@
 "use strict";
 
-var express       = require("express");
-var async         = require("async");
-var moment        = require("moment-timezone");
-var router        = express.Router();
-var debug         = require("debug")("OSMBC:routes:layout");
+const express       = require("express");
+const async         = require("async");
+const moment        = require("moment-timezone");
+const router        = express.Router();
+const debug         = require("debug")("OSMBC:routes:layout");
 
-var util          = require("../util/util.js");
-var config        = require("../config.js");
-var version       = require("../version.js");
-var markdown      = require("markdown-it")();
+const util          = require("../util/util.js");
+const config        = require("../config.js");
+const version       = require("../version.js");
+const markdown      = require("markdown-it")();
 
-var articleModule = require("../model/article.js");
-var blogModule    = require("../model/blog.js");
-var userModule    = require("../model/user.js");
+const articleModule = require("../model/article.js");
+const blogModule    = require("../model/blog.js");
+const userModule    = require("../model/user.js");
 
-var htmlRoot      = config.htmlRoot();
-var bootstrap     = config.getValue("bootstrap", {type: "string"});
-var jquery        = config.getValue("jquery", {type: "string"});
-var font_awesome  = config.getValue("font_awesome", {type: "string"});
-var appName       = config.getValue("AppName", {mustExist: true});
+const htmlRoot      = config.htmlRoot();
+const bootstrap     = config.getValue("bootstrap", {type: "string"});
+const jquery        = config.getValue("jquery", {type: "string"});
+const fontAwesome   = config.getValue("font_awesome", {type: "string"});
+const appName       = config.getValue("AppName", {mustExist: true});
 
 
 
 let url = config.getValue("url");
 
 function calculateUnreadMessages(list, user) {
-  var result = 0;
+  let result = 0;
   for (let k = 0; k < list.length; k++) {
     let a = list[k];
     if (a.commentRead && a.commentRead[user] >= a.commentList.length - 1) continue;
@@ -39,7 +39,7 @@ function calculateUnreadMessages(list, user) {
 function path(component) {
   if (component === "bootstrap" && bootstrap) return bootstrap;
   if (component === "jquery" && jquery) return jquery;
-  if (component === "font-awesome" && font_awesome) return font_awesome;
+  if (component === "font-awesome" && fontAwesome) return fontAwesome;
 
   let dist = "/dist";
   if (component === "font-awesome") dist = "";
@@ -63,7 +63,7 @@ function prepareRenderLayout(req, res, next) {
   // Variables for rendering purposes
 
   // ListOfOrphanBlog is used to show all orphanedBlog to assign an article to
-  var style = "/stylesheets/style.css";
+  let style = "/stylesheets/style.css";
   if (req.query.tempstyleOff === "true") req.session.tempstyle = true;
   if (req.query.tempstyleOff === "false") delete req.session.tempstyle;
   if (!req.session.tempstyle && config.getValue("style")) style = config.getValue("style");
@@ -71,14 +71,14 @@ function prepareRenderLayout(req, res, next) {
 
 
 
-  var languages = [];
+  let languages = [];
   if (config.getLanguages()) languages = config.getLanguages();
 
 
-  var userMentions = 0;
-  var mainLangMentions = 0;
-  var secondLangMentions = 0;
-  var usedLanguages = {};
+  let userMentions = 0;
+  let mainLangMentions = 0;
+  let secondLangMentions = 0;
+  let usedLanguages = {};
   if (req.user.language) usedLanguages[req.user.language] = true;
 
   // Used for display changes
@@ -104,8 +104,8 @@ function prepareRenderLayout(req, res, next) {
     function (callback) {
       blogModule.find({status: "open"}, function(err, result) {
         if (err) return callback(err);
-        var list = [];
-        for (var i = 0; i < result.length; i++) {
+        let list = [];
+        for (let i = 0; i < result.length; i++) {
           list.push(result[i]);
         }
         async.each(list, function(item, cb) {
@@ -136,7 +136,7 @@ function prepareRenderLayout(req, res, next) {
     },
     listOfEditBlog: ["editBlog",
       function (param, callback) {
-        var list = [];
+        let list = [];
         for (let i = 0; i < param.editBlog.length; i++) {
           if (!(param.editBlog[i]["reviewComment" + req.user.getMainLang()])) {
             list.push(param.editBlog[i]);
@@ -153,7 +153,7 @@ function prepareRenderLayout(req, res, next) {
       }],
     listOfReviewBlog: ["editBlog",
       function (param, callback) {
-        var list = [];
+        let list = [];
         for (let i = 0; i < param.editBlog.length; i++) {
           if ((param.editBlog[i]["reviewComment" + req.user.getMainLang()]) &&
               !(param.editBlog[i]["close" + req.user.getMainLang()])) {

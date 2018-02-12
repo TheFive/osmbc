@@ -103,7 +103,7 @@ mixin reviewBlog(reviewComments,lang)
                   button.btn.btn-large.btn-primary(id="reviewButton" + lang type="submit") Start Personal Review
 
 mixin blogReviewButtons(lang)
-  if !(blog["close"+lang])
+  if (!(blog["close"+lang])) && (lang !== null)
     - _rc = blog["reviewComment"+lang];
     if (_rc)
       .row

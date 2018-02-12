@@ -1,0 +1,507 @@
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+    <title>WN251/overview</title>
+    <!-- Bootstrap core CSS-->
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Fixed navbar-->
+    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header pull-left"><a href="/changelog" class="bg-success navbar-brand hidden-xs">Whats New?</a>
+          <ul class="nav navbar-nav pull-left">
+            <li><a id="collect" href="/article/create">Collect</a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-left">
+            <li><a id="inbox" href="/usert/inbox">Inbox </a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-left visible-xs">
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+          </ul>
+        </div>
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
+            </li>
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+            <li><a href="/blog/blog">blog<span class="badge osmbcbadge-lang">0</span></a></li>
+            <li id="article" class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Articles</li>
+                <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Empty Collections</a></li>
+                <li class="dropdown-header">Orphaned Article
+                  </li><li><a href="/article/list?blog=">No Blog</a></li>
+                
+              </ul>
+            </li>
+            <li id="tool" class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Markdown Helper</li>
+                <li><a href="/tool/calendarAllLang/fakeCalendar">Calendar Tool (fakeCalendar)</a></li>
+                <li><a href="/tool/picturetool">Picture Tool</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">About The Team
+                  </li><li><a href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a></li>
+                
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">OSMBC</li>
+                <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">WeeklyOSM &amp; Wochennotiz</li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a></li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotitz in OSM Wiki</a></li>
+                <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">DE<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+              </ul>
+            </li>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
+              </ul>
+            </li>
+            <li><img onclick="location.href='/usert/1';" style="height:50px;width:50px"></li>
+          </ul>
+          <!-- /.nav-collapse-->
+          
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <p>
+        </p><div class="row"> 
+        </div>
+        <div class="row">
+          <div class="col-md-1">
+            <div class="label osmbclabel-lang">DE</div><span class="badge osmbclabel-markdown">0(*)</span>
+          </div>
+          <div class="col-md-11">
+            <div style="margin-bottom:2px" class="progress">
+              <div style="width:0%" class="progress-bar osmbclabel-markdown">0</div>
+              <div style="width:100%" class="progress-bar osmbclabel-no-markdown">2</div>
+              <div style="width:0%" class="progress-bar osmbclabel-no-translation">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="hidden-xs">
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <h2><span class="hidden-xs">Wochennotiz </span>WN251<span class="hidden-xs"> (Export DE)</span></h2>
+          </div>
+          <div class="col-md-3">
+            <div class="row">
+              <div class="col-md-12">
+                <form id="startReview" name="startReview" action="/blog/WN251/setLangStatus" method="post">
+                  <input type="text" name="lang" value="DE" class="hidden">
+                  <input type="text" name="action" value="closelang" class="hidden">
+                  <button id="closebutton" type="submit" class="btn btn-large btn-warning">Close WN251(DE)</button>
+                </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="alert bg-danger text-center bold"><strong>Blog is exported, please do the last Review in WordPress</strong></div>
+            </div>
+          </div>
+          <div class="col-md-3">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <div class="panel-title"><span>Review DE</span><span class="text-muted small"> (enabled by TheFive</span><span class="text-muted small"> a few seconds ago</span><span class="text-muted small">) </span><a href="/changes/log?blog=WN251&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z" class="text-muted small">[changes]</a>
+                </div>
+              </div>
+              <div class="panel-body">
+                <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><i class="text-muted small">Edit: a few seconds ago</i><span> </span><a onclick="document.getElementById('editReviewDE1').classList.remove('hidden');document.getElementById('reviewLeftTextDE1').classList.add('hidden');"><span class="glyphicon glyphicon-pencil"></span></a><span> </span><a href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z" class="text-muted small">[changes]</a>
+                </p>
+                <p id="reviewLeftTextDE1">1rst Review Text for DE</p>
+                <div id="editReviewDE1" class="hidden">
+                  <form id="editreviewDE1" name="reviewDE1" action="/blog/WN251/editReviewComment/1" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentDE1" value="1rst Review Text for DE" class="form-control">
+                      <input type="text" name="lang" value="DE" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonDE1" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
+                </div>
+                <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><a onclick="document.getElementById('editReviewDE2').classList.remove('hidden');document.getElementById('reviewLeftTextDE2').classList.add('hidden');"><span class="glyphicon glyphicon-pencil"></span></a><span> </span><a href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z" class="text-muted small">[changes]</a>
+                </p>
+                <p id="reviewLeftTextDE2">2nd Review Text for DE</p>
+                <div id="editReviewDE2" class="hidden">
+                  <form id="editreviewDE2" name="reviewDE2" action="/blog/WN251/editReviewComment/2" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentDE2" value="2nd Review Text for DE" class="form-control">
+                      <input type="text" name="lang" value="DE" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonDE2" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
+                </div>
+                <div class="form-group">
+                  <form id="reviewDE" name="reviewDE" action="/blog/WN251/setReviewComment" method="post" class="form-horizontal">
+                    <div class="col-md-8">
+                      <input type="text" name="text" value="reviewing..." id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').value === '');" class="hidden form-control">
+                      <input type="text" name="lang" value="DE" class="hidden">
+                    </div>
+                    <div class="col-md-4">
+                      <button id="reviewButtonDE" type="submit" class="btn btn-large btn-primary">Start Personal Review</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="hidden-xs hidden">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <ul class="nav nav-tabs">
+              <li role="presentation"><a href="#filter"><span class="glyphicon glyphicon-filter"></span></a></li>
+              <li class="active"><a href="/blog/WN251/Overview">Overview</a></li>
+              <li class="hidden-xs"><a href="/blog/WN251/Full">Full</a></li>
+              <li><a href="/blog/WN251/Review">Review</a></li>
+              <!--
+              - v = 0
+              while layout.user["blogSetting"+v]
+                if layout.user["blogSetting"+v]!="-"
+                  - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
+                  +navbutton(style0,style)
+                - v++
+              -->
+              <li class="hidden-xs"><a href="/blog/WN251/preview?lang=DE"><span class="glyphicon glyphicon-export"></span>DE<span> </span><span class="glyphicon glyphicon-alert"></span></a></li>
+              <li class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="glyphicon glyphicon-export"></span></a>
+                <ul role="menu" class="dropdown-menu">
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <table>
+          <tbody><tr>
+            <td></td>
+            <td></td>
+            <td>
+<br><br>
+<p>26.05.2016-01.06.2016</p>
+
+
+            </td>
+          </tr>
+          <!-- first display all Categories of the blog-->
+          <tr>
+            <td></td>
+            <td class="hidden-xs"></td>
+            <td>
+<!--         place picture here              -->
+
+
+            </td>
+            <td class="hidden-xs"></td>
+            <td class="hidden-xs"></td>
+          </tr>
+          <tr>
+            <td><a href="/article/2"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td class="hidden-xs"><span id="voteLabels2"></span>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div2');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div class="mark">
+                  <ul class="no-margin">
+<li>WN251 Picture</li>
+
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td class="hidden-xs">
+            </td>
+            <td class="hidden-xs">
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="hidden-xs"></td>
+            <td>
+              <div id="div2" class="panel panel-default hidden">
+                <div class="panel-heading">
+                  <ul id="preview2"></ul>
+                </div>
+                <div class="panel-body">
+                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post">
+                    <textarea name="markdown" id="markdown2" rows="7" onchange="onLeaveText(2);" onkeyup="onchangeMarkdown(2)" spellcheck="true" lang="DE" class="form-control"></textarea>
+                    <textarea name="oldMarkdown" id="oldMarkdown2" rows="7" class="hidden form-control"></textarea>
+                  </form>
+                  <p>
+                  </p>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="hidden-xs"></td>
+            <td>
+<h2 id="wn251_wochenvorschau">Wochenvorschau</h2>
+
+
+            </td>
+            <td class="hidden-xs"></td>
+            <td class="hidden-xs"></td>
+          </tr>
+          <tr>
+            <td><a href="/article/1"><span class="glyphicon glyphicon-open small-margin"></span></a>
+            </td>
+            <td class="hidden-xs"><span id="voteLabels1"></span>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div1');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
+                <div class="mark">
+                  <ul class="no-margin">
+<li>WN251 Upcoming Events</li>
+
+
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td class="hidden-xs">
+            </td>
+            <td class="hidden-xs">
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="hidden-xs"></td>
+            <td>
+              <div id="div1" class="panel panel-default hidden">
+                <div class="panel-heading">
+                  <ul id="preview1"></ul>
+                </div>
+                <div class="panel-body">
+                  <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post">
+                    <textarea name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE" class="form-control"></textarea>
+                    <textarea name="oldMarkdown" id="oldMarkdown1" rows="7" class="hidden form-control"></textarea>
+                  </form>
+                  <p>
+                  </p>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <!-- Now display the undefined categories in the blog-->
+          <tr>
+            <td></td>
+            <td class="hidden-xs"></td>
+            <td>
+              <h1>Future Articles</h1>
+            </td>
+          </tr>
+        </tbody></table>
+        <div id="filter" class="row">
+          <h2>Options</h2>
+          <div class="row">
+            <div class="col-md-1">
+              <p>Left Col.: </p>
+            </div>
+            <div class="col-md-11">
+              <div class="hidden-xs"><span style="white-space: nowrap"><span name="choose_showNumbers" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showNumbers&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show editor numbers, </span></span>
+              </div><span style="white-space: nowrap"><span name="choose_showMail" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showMail&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show mail, </span></span>
+              <div class="hidden-xs"><span style="white-space: nowrap"><span name="choose_showVisibleLanguages" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVisibleLanguages&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show languages(short)</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="row hidden-xs">
+            <div class="col-md-1">
+              <p>Right Col.:</p>
+            </div>
+            <div class="col-md-11"><span style="white-space: nowrap"><span name="choose_showCollector" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showCollector&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show collector, </span></span><span style="white-space: nowrap"><span name="choose_showEditor" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showEditor&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show editor , </span></span><span style="white-space: nowrap"><span name="choose_showColoredUser" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showColoredUser&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show users colored, </span></span><span style="white-space: nowrap"><span name="choose_showLanguages" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showLanguages&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show languages</span></span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1">
+              <p>Display Votes</p>
+            </div>
+            <div class="col-md-11"><span style="white-space: nowrap"><span name="choose_showVote_pro" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_pro&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show pro, </span></span><span style="white-space: nowrap"><span name="choose_showVote_unpublish" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_unpublish&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show unpublish, </span></span><span style="white-space: nowrap"><span name="choose_showVote_fav" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_fav&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show fav, </span></span><span style="white-space: nowrap"><span name="choose_showVote_doit" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_doit&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> show doit, </span></span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1">
+              <p>Filter: </p>
+            </div>
+            <div class="col-md-11"><span style="white-space: nowrap"><span name="choose_disableWritten" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableWritten&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> disable written articles, </span></span><span style="white-space: nowrap"><span name="choose_disableNewerMarkdown" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableNewerMarkdown&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> disable more actual edits, </span></span><span style="white-space: nowrap"><span name="choose_disableOwnCollection" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableOwnCollection&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> disable own collections, </span></span><span style="white-space: nowrap"><span name="choose_disableOtherCollection" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableOtherCollection&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> disable other collections, </span></span><span style="white-space: nowrap"><span name="choose_disableSolvedComments" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableSolvedComments&amp;value=true&quot;;" class="glyphicon glyphicon-unchecked"></span><span> disable No or Solved Comments</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <h2>Symbol Legend</h2>
+          <p><span class="label osmbclabel-collect small-margin">X</span><span> = number of collectors </span></p>
+          <p><span class="label osmbclabel-collect small-margin">username</span><span> = collector of article </span></p>
+          <p><span class="label osmbclabel-markdown small-margin">X</span><span> = number of editors in shown language</span></p>
+          <p><span class="label osmbclabel-markdown small-margin">username</span><span> = Editor of article</span></p>
+          <p><span style="color:blue" class="glyphicon glyphicon-comment small-margin"></span><span> = there is a comment in the article</span></p>
+          <p><span style="color:red" class="glyphicon glyphicon-comment small-margin"></span><span> = there is a comment with personal mention in the article</span></p>
+          <p><span style="color:orange" class="glyphicon glyphicon-comment small-margin"></span><span> = there is a comment with language mention in the article</span></p>
+          <p><a href="#" target="_blank"><span class="glyphicon glyphicon-open small-margin"></span></a><span> open the article in a new tab</span></p>
+          <p><span class="glyphicon glyphicon-pushpin small-margin"></span><span> this article is successfully linked to predecessor</span></p>
+          <p><span class="glyphicon glyphicon-stop small-margin text-warning"></span><span> this article contains a non working predecessor link.</span></p>
+          <p><span>(*)</span><span> Number of unsolved comments for a language (ignoring no translation comments)</span></p>
+          <h2>Filter Explanation</h2>
+          <h4>Disable Written Articles</h4>
+          <p>
+            This filter disables all articles, that have already a text in the main (=left) language.
+            Use this filter to come quick to the articles, that needs to be written to be published.
+          </p>
+          <h4>Disable More Actual Edits</h4>
+          <p>
+            This filter disables all articles, where the markdown on the left hand is newer than the markdown on the right hand.
+            Use this, to check wether there are relevant changes in the markdown on the right column during translation.
+          </p>
+          <h4>Disable Own Collections</h4>
+          <p>Use this to disable all collections, where you have contributed to.</p>
+          <h4>Disable Other Collections</h4>
+          <p>
+            This can be used to focus on your own collections, so that you can easily add your
+            Ideas from collection process.
+          </p>
+        </div>
+        <div class="row">
+          <div class="col-md-8"></div>
+          <div class="col-md-1">
+            <p><a href="/changes/log?blog=WN251&amp;table=blog">[changes]</a></p>
+          </div>
+          <div class="col-md-1">
+            <p><a href="/blog/WN251/stat">[Statistic]</a></p>
+          </div>
+          <div class="col-md-2">
+            <p><a id="editBlogDetail" href="/blog/edit/WN251">[Edit Blog Detail]</a></p>
+          </div>
+        </div>
+      <p></p>
+      <p></p>
+    </div>
+    <!-- /container-->
+    <!-- Bootstrap core JavaScript-->
+    <!-- ==================================================-->
+    <!-- Placed at the end of the document so the pages load faster-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  
+
+
+  
+    <title></title>
+    <link rel="stylesheet" href="file://users/Users/TheFive.osm/development/osmbc/public/stylesheets/style.css">
+  
+  
+
+<script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
+<script>
+  var openEditor = null;
+  
+  window.onload = function () {
+  
+    if (typeof(Storage) !== "undefined") {
+      if (window.sessionStorage.blogUrl !== window.location.href) return;
+      var x = window.sessionStorage.blogX;
+      var y = window.sessionStorage.blogY;
+      window.scrollTo(x, y);
+    }
+  }
+  
+  
+  
+  window.onbeforeunload = function (event) {
+    // store the scroll Position in the local Store
+    s = {x: window.scrollX, y: window.scrollY};
+  
+    if (typeof(Storage) !== "undefined") {
+  
+      window.sessionStorage.blogUrl = window.location.href;
+      window.sessionStorage.blogX = s.x;
+      window.sessionStorage.blogY = s.y;
+    }
+  };
+  
+  
+  
+  function onLeaveText(id,column) {
+    if (!column) column="";
+  
+    var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
+    var newValue = document.getElementById(column + "markdown" + id).value;
+    if (oldValue === newValue) return;
+    form = document.getElementById(column + 'EditArticle' + id);
+    form.submit();
+  }
+  
+  
+  function convert(text) {
+    converter = new window.markdownit({breaks: true});
+  
+    // generate the OSMBlog Style List
+    if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
+    // convert md to html
+    text = converter.render(text);
+    // skip <ul> and </ul> at start and end
+  
+  
+    text = '<li>' + text + '</li>';
+  
+  
+    return text;
+  
+  }
+  function onchangeMarkdown(id,column) {
+    if (!column) column="";
+    var markdownField = document.getElementById(column + "markdown" + id);
+    var md = markdownField.value;
+    var pv = document.getElementById(column+"preview"+id);
+  
+  
+    pv.innerHTML = convert(md);
+  
+  }
+  
+  function callAndRedraw(call, redraw) {
+    $.get("" + call, function (data) {
+      let j = $.getJSON("" + redraw, function (json) {
+        for (k in json) {
+          var el = document.createElement("div");
+  
+          el.innerHTML = json[k];
+  
+          $(k).replaceWith(el.children[0]);
+          el.remove();
+  
+        }
+      });
+    });
+  
+  }
+</script></body></html>
