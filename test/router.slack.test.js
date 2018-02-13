@@ -12,7 +12,6 @@ var config    = require("../config.js");
 var app       = require("../app.js");
 var initialise      = require("../util/initialise.js");
 
-var slackRouter = require("../routes/slack.js");
 var articleModule = require("../model/article.js");
 var logModule = require("../model/logModule.js");
 
@@ -94,26 +93,6 @@ describe("router/slack", function() {
       })
     ], bddone);
   });
-  describe("searchUrlInSlack", function() {
-    it("should extract different urls", function(bddone) {
-      let s = slackRouter.fortestonly.searchUrlInSlack;
-      should(s("<https://www.google.de>")).eql("https://www.google.de");
-      should(s("text before <https://www.google.de> after")).eql("https://www.google.de");
-      should(s("<https://www.google.de> only text after")).eql("https://www.google.de");
-      should(s("<https://twitter.com/pascal_n/status/726503865298894849>")).eql("https://twitter.com/pascal_n/status/726503865298894849");
-      should(s("<https://linkExists.org/already>")).eql("https://linkExists.org/already");
-      return bddone();
-    });
-  });
-  describe("extractTextWithoutUrl", function() {
-    it("should extract different texts", function(bddone) {
-      let s = slackRouter.fortestonly.extractTextWithoutUrl;
-      should(s("<https://www.google.de>")).eql("");
-      should(s("text before <https://www.google.de> after")).eql("text before  after");
-      should(s("<https://www.google.de> only text after")).eql(" only text after");
-      bddone();
-    });
-  });
   describe("unauthorised access", function() {
     it("should ignore request with wrong API Key", function (bddone) {
       var opts = {url: link, method: "post"};
@@ -140,7 +119,7 @@ describe("router/slack", function() {
       userName = "TestSlackUseTBC";
       userId = "55";
       async.series([
-        talk.bind(null, "<http://forum.openstreetmap.org/viewtopic.php?id=53173>", "<https://testosm.bc/article/1|Internationale Admingrenzen 2016 / users: Germany> created.\n"),
+        talk.bind(null, "http://forum.openstreetmap.org/viewtopic.php?id=53173", "Article: [Internationale Admingrenzen 2016 / users: Germany](https://testosm.bc/article/1) created in your TBC Folder.\n"),
 
         // search for the already exists article, that only should exist ONCE
         findArticle.bind(null, {title: "Internationale Admingrenzen 2016 / users: Germany", collection: "http://forum.openstreetmap.org/viewtopic.php?id=53173", blog: "TBC"})
@@ -150,12 +129,7 @@ describe("router/slack", function() {
       userName = "TestSlackUseTBC";
       userId = "55";
       async.series([
-        talk.bind(null, "This text comes with a title <http://forum.openstreetmap.org/viewtopic.php?id=53173>", "<https://testosm.bc/article/1|This text comes with a title> created.\n"),
-
-        // search for the already exists article, that only should exist ONCE
-        findArticle.bind(null, {title: "This text comes with a title", collection: "http://forum.openstreetmap.org/viewtopic.php?id=53173", blog: "TBC"}),
-        findLog.bind(null, {table: "article", user: "TestUseTBC", property: "collection", to: "http://forum.openstreetmap.org/viewtopic.php?id=53173"}),
-        findLog.bind(null, {table: "article", user: "TestUseTBC", property: "title", to: "This text comes with a title"})
+        talk.bind(null, "mixed http://forum.openstreetmap.org/viewtopic.php?id=53173", "@TestSlackUseTBC Please enter an url.")
       ], bddone);
     });
     it("should store only store urls", function(bddone) {
