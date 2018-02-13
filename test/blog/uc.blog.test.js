@@ -121,25 +121,41 @@ describe("uc/blog", function() {
     });
     describe("Blog Display", function() {
       it("should show Overview with some configurations", async function() {
+        let errors=[];
         await browser.visit("/blog/WN290");
-        browser.assert.expectHtmlSync("blog", "blog_wn290_overview"),
+        browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview"),
         await browser.click('span[name="choose_showNumbers"]'),
-        await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
+        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showMail"]'),
-        await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
+        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showVisibleLanguages"]'),
-        await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
+        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showCollector"]'),
-        await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
+        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showEditor"]'),
-        await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
+        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showColoredUser"]'),
-        await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
+        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showLanguages"]'),
-        await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
-        await browser.visit("/blog/WN290"),
-        await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
-        browser.assert.expectHtmlSync("blog", "blog_wn290_overview_withglab");
+        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
+        //await browser.visit("/blog/WN290"),
+        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
+        browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview_withglab");
+
+        //
+        let selector = "table>tbody>tr:nth-child(11)>td:nth-child(3)>div>div>ul>li";
+        // ensure that selector shows correct article
+        browser.assert.text(selector,"jeden Tag...");
+        // Open the edit box
+        await browser.click(selector);
+        browser.assert.text(selector,"jeden Tag...");
+        browser.dump();
+        browser.assert.element("textarea#markdown24");
+        browser.fill("textarea#markdown24","Fixed Text");
+        browser.assert.element(selector);
+        browser.assert.text(selector,"jeden Tag...");
+        await browser.click(selector);
+        should(errors).eql([]);
       });
       it("should show Full View", async function() {
         await browser.visit("/blog/WN290?tab=full");

@@ -548,5 +548,13 @@ process.on("unhandledRejection", (reason, p) => {
 });
 
 
+Browser.extend(function(browser) {
+  browser.on('request', function (req) {
+    if (browser.location) {
+      req.headers.set("Referer", browser.location.href);
+    }
+  });
+});
+
 
 exports.nockLoginPage = nockLoginPage;
