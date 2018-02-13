@@ -7,6 +7,7 @@ var debug    = require("debug")("OSMBC:routes:slack");
 
 var config   = require("../config.js");
 var logger   = require("../config.js").logger;
+var util     = require("../util/util.js");
 
 
 var userModule     = require("../model/user.js");
@@ -20,7 +21,7 @@ var osmbcUrl = config.getValue("url", {mustExist: true}) + config.htmlRoot();
 
 function articleNameSlack(article) {
   debug("articleNameSlack");
-  return "<" + osmbcUrl + "/article/" + article.id + "|" + article.title + ">";
+  return "[" + article.title + "](" + osmbcUrl + "/article/" + article.id + ")";
 }
 
 function ensureAuthentificated(req, res, next) {
@@ -115,14 +116,13 @@ function postSlackCreateUseTBC(req, res, next) {
   obj.text = req.body.text;
   obj.username = botName;
 
-  let url = searchUrlInSlack(obj.text);
-  let title = extractTextWithoutUrl(obj.text);
+  let url = null;
+  if (util.isURL(obj.text)) url = obj.text;
+
+  let title;
   let blog = "TBC";
 
   if (typeof (url) === "undefined" || url === "" || url === null) {
-    // The following text was used for Slack
-    // obj.text = "<@" + req.body.user_id + "> Please enter an url.";
-
     // This is the mattermost variant
     obj.text = "@" + req.body.user_name + " Please enter an url.";
     res.json(obj);
@@ -150,7 +150,7 @@ function postSlackCreateUseTBC(req, res, next) {
 
       result.setAndSave(req.user, changes, function(err) {
         if (err) return next(err);
-        obj.text = articleNameSlack(result) + " created.\n";
+        obj.text = "Article: " + articleNameSlack(result) + " created in your TBC Folder.\n";
         res.json(obj);
       });
     });
