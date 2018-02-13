@@ -37,8 +37,8 @@ mixin tbcMenu
     ul.nav.navbar-nav.pull-left(class=dynamicHide)
       li
         a(href=layout.htmlroot+'/blog/TBC')=layout.tbc.name
-        if (layout.tbc._tbcOwnArticleNumber > 0)
-          span.badge.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
+          if (layout.tbc._tbcOwnArticleNumber > 0)
+            span.badge.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
 
 mixin inboxMenu
  ul.nav.navbar-nav.pull-left
