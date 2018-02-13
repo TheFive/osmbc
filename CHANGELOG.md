@@ -8,6 +8,10 @@
 
 - Put a Red MISSING EMAIL VALIDATION [\#724](https://github.com/TheFive/osmbc/issues/724)
 
+**Fixed bugs:**
+
+- TBC Icon is placed wrong [\#735](https://github.com/TheFive/osmbc/issues/735)
+
 **Closed issues:**
 
 - Switch Slack API to Mattermost format for mobile collecting. [\#734](https://github.com/TheFive/osmbc/issues/734)
