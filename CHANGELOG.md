@@ -8,6 +8,10 @@
 
 - Put a Red MISSING EMAIL VALIDATION [\#724](https://github.com/TheFive/osmbc/issues/724)
 
+**Closed issues:**
+
+- Switch Slack API to Mattermost format for mobile collecting. [\#734](https://github.com/TheFive/osmbc/issues/734)
+
 ## [3.1.2d](https://github.com/TheFive/osmbc/tree/3.1.2d) (2018-02-11)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2c...3.1.2d)
 
