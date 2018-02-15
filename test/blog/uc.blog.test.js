@@ -5,14 +5,10 @@ const testutil = require("../testutil.js");
 const nock = require("nock");
 const should  = require("should");
 const request   = require("request");
-const path = require("path");
-const fs = require("fs");
 const mockdate = require("mockdate");
 const initialise = require("../../util/initialise.js");
 
-const config = require("../../config.js");
 
-const blogModule   = require("../../model/blog.js");
 const userModule   = require("../../model/user.js");
 
 
@@ -125,21 +121,12 @@ describe("uc/blog", function() {
         await browser.visit("/blog/WN290");
         browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview"),
         await browser.click('span[name="choose_showNumbers"]'),
-        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showMail"]'),
-        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showVisibleLanguages"]'),
-        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showCollector"]'),
-        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showEditor"]'),
-        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showColoredUser"]'),
-        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         await browser.click('span[name="choose_showLanguages"]'),
-        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
-        //await browser.visit("/blog/WN290"),
-        //await browser.visit("/blog/WN290"), // just call again to set zombie.js referer correct
         browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview_withglab");
 
         //
@@ -149,21 +136,57 @@ describe("uc/blog", function() {
         // Open the edit box
         await browser.click(selector);
         browser.assert.text(selector,"jeden Tag...");
-        browser.dump();
-        browser.assert.element("textarea#markdown24");
-        browser.fill("textarea#markdown24","Fixed Text");
-        browser.assert.element(selector);
-        browser.assert.text(selector,"jeden Tag...");
-        await browser.click(selector);
+
+        // set value of textfield and trigger onchange
+        // with browsers asnyc fire function
+        browser.query("textarea#markdown24").value ="Changed Text";
+        await browser.fire("textarea#markdown24","change");
+
+
+        // reload page again
+        await browser.visit("/blog/WN290");
+        browser.assert.text("textarea#markdown24","Changed Text");
         should(errors).eql([]);
       });
       it("should show Full View", async function() {
-        await browser.visit("/blog/WN290?tab=full");
+        await browser.visit("/blog/WN290");
+        await browser.click("a[href='/blog/WN290/Full']")
         browser.assert.expectHtmlSync("blog","blog_wn290_full");
+
+        let selector = "li#wn290_24";
+        // ensure that selector shows correct article
+        browser.assert.text(selector,"Ben Spaulding resümiert über seinen Mappingvorsatz für Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant. Ben Spaulding summarises the goals he had set for mapping for the month of January 2016. Though he didn't fully succeed in mapping for at least 15 minutes, but he still got some mapping done and his experiences are interesting none the less.");
+        // Open the edit box
+        await browser.click(selector);
+
+        // set value of textfield and trigger onchange
+        // with browsers asnyc fire function
+
+        browser.query("textarea#lmarkdown24").value ="Changed Text in full review";
+        await browser.fire("textarea#lmarkdown24","change");
+
+        await browser.visit("/blog/WN290");
+        browser.assert.text("textarea#lmarkdown24","Changed Text in full review");
       });
       it("should show Review View",async function() {
         await browser.visit("/blog/WN290?tab=review");
         browser.assert.expectHtmlSync("blog","blog_wn290_review");
+
+        let selector = "li#wn290_24";
+        // ensure that selector shows correct article
+        browser.assert.text(selector,"Ben Spaulding resümiert über seinen Mappingvorsatz für Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant.");
+        // Open the edit box
+        await browser.click(selector);
+
+        // set value of textfield and trigger onchange
+        // with browsers asnyc fire function
+
+        browser.query("textarea#markdown24").value ="Changed Text in review mode";
+        await browser.fire("textarea#markdown24","change");
+
+        await browser.visit("/blog/WN290");
+        browser.assert.text("textarea#markdown24","Changed Text in review mode");
+
       });
       it("should show Statistic View", async function() {
         await browser.visit("/blog/WN290/stat");
