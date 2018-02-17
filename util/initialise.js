@@ -30,15 +30,11 @@ function startMailReceiver(callback) {
   });
 }
 
-
-
 function startSlackReceiver(param,callback) {
   debug("startSlackReceiver");
 
   slackReceiver.initialise(callback);
 }
-
-
 
 
 exports.initialiseModules = function(callback) {
@@ -50,8 +46,3 @@ exports.initialiseModules = function(callback) {
     startSlackReceiver:["configModule",startSlackReceiver]
   },callback);
 };
-function startSlackReceiver(param,callback) {
-  debug("startSlackReceiver");
-
-  slackReceiver.initialise(callback);
-}

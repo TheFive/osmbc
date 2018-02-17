@@ -582,6 +582,28 @@ describe("routes/blog", function() {
         });
       });
     });
+    it("should give an error for a blog preview with empty articles  in markdown", function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"}, {
+        name: "WN334",
+        startDate: "2015-12-12T00:00:00",
+        endDate: "2015-12-13T00:00:00"
+      }, function (err) {
+        should.not.exist(err);
+        testutil.startServer("TestUser", function () {
+          request.get({
+            url: baseLink + "/blog/WN334/preview?lang=DE&markdown=true&download=true",
+            jar: jar
+          }, function (err, res, body) {
+            should.not.exist(err);
+            should(res.statusCode).eql(200);
+            should(body).containEql("12.12.2015-13.12.2015");
+            should(body).containEql("Warning: This export contains empty Articles");
+            bddone();
+          });
+        });
+      });
+    });
+
     it("should call next if blog id not exist", function (bddone) {
       testutil.startServer("TestUser", function () {
         request.get({url: baseLink + "/blog/WN999/preview?lang=DE", jar: jar}, function (err, res) {
@@ -623,7 +645,7 @@ describe("routes/blog", function() {
           request.get(opts, function (err, res, body) {
             should.not.exist(err);
             should(res.statusCode).eql(200);
-            let file = path.resolve(__dirname, "data","views.blog.export.1.md");
+            let file = path.resolve(__dirname, "data", "views.blog.export.1.md");
             let expectation = fs.readFileSync(file, "UTF8");
 
             should(body).eql(expectation);

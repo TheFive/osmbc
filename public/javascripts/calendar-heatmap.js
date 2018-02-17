@@ -1,5 +1,7 @@
 "use strict";
 
+/* jshint ignore:start */
+
 function calendarHeatmap(actualDate) {
   // defaults
   var width = 750;

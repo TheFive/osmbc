@@ -20,6 +20,10 @@ describe("util", function() {
       should(util.shorten(t, 25)).equal("");
       bddone();
     });
+    it("should not shorten numbers",function(bddone){
+      should(util.shorten(9)).eql(9);
+      bddone();
+    });
     it("should not shorten small strings", function(bddone) {
       should(util.shorten("Short Test String")).equal("Short Test String");
       should(util.shorten("Short Test String", 20)).equal("Short Test String");
@@ -100,11 +104,18 @@ describe("util", function() {
     });
   });
   describe("linkify", function() {
+    it("should handle undefined values",function(bddone){
+      should(util.linkify(undefined)).eql("undefined");
+      bddone();
+    });
     it("should convert the links correct", function() {
       should(util.linkify("#WN271_Titel Des Artikels")).equal("#wn271_titel_des_artikels");
     });
   });
   describe("md_render", function() {
+    it("should render emty texts",function(){
+      should(util.md_render(null)).eql("");
+    });
     it("should convert a simple link", function() {
       var r = util.md_render("http://www.google.de/hallo");
       should(r).eql('<p><a target="_blank" href="http://www.google.de/hallo">http://www.google.de/hallo</a></p>\n');

@@ -463,6 +463,22 @@ describe("model/blog", function() {
 
 
   describe("autoCloseBlog", function() {
+    it("should do nothing if nothing to do", function(bddone) {
+      var time = (new Date()).toISOString();
+      var dataBefore = {blog: [
+          {name: "WN1", status: "edit", startDate: "2015-01-01", endDate: time},
+          {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
+          {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"}]};
+      var dataAfter = {blog: [
+          {name: "WN1", status: "edit", startDate: "2015-01-01", endDate: time},
+          {name: "WN2", status: "edit", startDate: "2015-01-01", endDate: "2016-01-01"},
+          {name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01"},
+          {name: "WN4", status: "open", startDate: (new Date("2016-01-02")).toISOString(), endDate: (new Date("2016-01-08")).toISOString()}]};
+      var testFunction = function testFunction(cb) {
+        blogModule.autoCloseBlog(cb);
+      };
+      testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
+    });
     it("should close a blog and create a new", function(bddone) {
       var time = (new Date()).toISOString();
       var dataBefore = {blog: [

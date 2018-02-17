@@ -1,14 +1,10 @@
 "use strict";
 
 var db = require("../model/db.js");
-var async = require("async");
 var config = require("../config.js");
 var pgMap = require("../model/pgMap.js");
 var debug = require("debug")("OSMBC:model:logModule");
 
-var articleModule = require("../model/article.js");
-var blogModule = require("../model/blog.js");
-var userModule = require("../model/user.js");
 
 var jsdiff = require("diff");
 
@@ -30,43 +26,10 @@ function create(proto) {
 }
 module.exports.log = function log(object, callback) {
   debug("log");
-  async.series([
-    function checkOid(oidcb) {
-      debug("checkOid");
-      // this is the normal case
-      if (typeof (object.oid) !== "object") return oidcb();
-
-      // this part is used, when data is imported.
-      var table = object.oid.table;
-      var reference = object.oid;
-      delete reference.table;
-      var module = {table: table};
-
-
-      switch (table) {
-        case "article": module = {table: table, create: articleModule.create}; break;
-        case "blog": module = {table: table, create: blogModule.create}; break;
-        case "user": module = {table: table, create: userModule.create}; break;
-        default: module = null;
-      }
-      pgMap.find(module, reference, function findObject(err, result) {
-        debug("findObject");
-        if (err) return callback(err);
-        if (result === null) return callback(new Error("Object Id Not Found in Log Module"));
-        if (result.length !== 1) return callback(new Error("Object Reference nicht eindeutig"));
-        object.oid = result[0].id;
-        oidcb();
-      });
-    },
-    function saveData(savecb) {
-      debug("saveData");
-      if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
-      db.query("insert into changes (data) values ($1) ", [object], function(err) {
-        return savecb(err);
-      });
-    }],
-  function(err) { callback(err); }
-  );
+  if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
+  db.query("insert into changes (data) values ($1) ", [object], function(err) {
+    return callback(err);
+  });
 };
 
 
