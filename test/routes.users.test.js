@@ -57,8 +57,8 @@ describe("router/user", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -92,8 +92,8 @@ describe("router/user", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -135,8 +135,8 @@ describe("router/user", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -173,8 +173,8 @@ describe("router/user", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -247,8 +247,8 @@ describe("router/user", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -293,8 +293,8 @@ describe("router/user", function() {
       testutil.startServerWithLogin("TestUserDenied",jar, function () {
         request.post({url: url,form:{color:"red",language:"ES"},jar:jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });

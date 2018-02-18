@@ -2,13 +2,17 @@
 
 /* jshint ignore:start */
 
-const testutil = require("./testutil.js");
+const testutil = require("../testutil.js");
 const should  = require("should");
 const sinon = require("sinon");
+const mockdate = require("mockdate");
+const fs = require("fs");
 
-const userModule = require("../model/user.js");
-const articleModule = require("../model/article.js");
-const mailReceiver = require("../notification/mailReceiver.js");
+
+const userModule = require("../../model/user.js");
+const articleModule = require("../../model/article.js");
+const mailReceiver = require("../../notification/mailReceiver.js");
+
 
 
 
@@ -17,9 +21,9 @@ const mailReceiver = require("../notification/mailReceiver.js");
 describe("views/user", function() {
   this.timeout(100000);
   let browser;
-  let nockLogin;
   let mailChecker;
   beforeEach(async function() {
+    mockdate.set("2015-11-05");
     mailChecker = sinon.stub( mailReceiver.for_test_only.transporter,"sendMail")
       .callsFake(function(obj, doit) { return doit(null, {response: "t"}); })
     await testutil.clearDB();
@@ -27,22 +31,62 @@ describe("views/user", function() {
     await articleModule.createNewArticle({blog: "blog", collection: "test"});
     testutil.startServerSync();
     browser = await testutil.getNewBrowser("TheFive");
+    browser.evaluate(fs.readFileSync("./node_modules/timemachine/timemachine.js","UTF8"));
   });
   afterEach(function(bddone) {
+    mockdate.reset();
     mailChecker.restore();
     testutil.stopServer(bddone);
   });
 
+  it("should not be allowed creating a user twice", async function() {
+    // TheFive logs in and creates user Test
+    await browser.visit("/osmbc/admin");
+    await browser.click("#createUser");
+    await browser.fill("OSMUser","test")
+      .select("language","DE")
+      .select("access","full")
+      .click("#save");
+
+    // TheFive creates the user test a second time
+    await browser.visit("/osmbc/admin");
+    await browser.click("#createUser");
+
+    // clicking SAVE should result in an error
+    try {
+      await browser.fill("OSMUser","test")
+        .select("language","DE")
+        .select("access","full")
+        .click("#save");
+    } catch(err) {
+      should(err.cause.message).eql("Server returned status code 409 from http://localhost:35043/usert/3");
+      should(browser.html()).containEql("User &gt;test&lt; already exists");
+    }
+  });
 
   it("should not change username, if user logged in", async function() {
-    await userModule.createNewUser({OSMUser: "test", lastAccess: (new Date()).toISOString()});
-    await browser.visit("/usert/1");
-    await browser.wait(100);
-    browser.assert.text('input[readonly="readonly"][name="OSMUser"]');
-  });
-  it("should have bootstrap.js loaded", async function() {
-    await browser.visit("/osmbc");
-    should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
+
+    let errors = [];
+    // TheFive creates an user test
+    await browser.visit("/osmbc/admin");
+    await browser.click("#createUser");
+    await browser.fill("OSMUser","test")
+      .select("language","DE")
+      .select("access","full")
+      .click("#save");
+
+
+    // looking at user test shows, that username can be changed
+    await browser.visit("/usert/2");
+    browser.assert.expectHtmlSync(errors,"user","userNameChange");
+
+    // Testuser logs in and looks at homepage
+    let testBrowser = await testutil.getNewBrowser("test");
+    await testBrowser.visit("/osmbc");
+    // reload test user page should show username unchangable
+    await browser.visit("/usert/2");
+    browser.assert.expectHtmlSync(errors,"user","userNoNameChange");
+    should(errors).eql([]);
   });
   it("should save userdata and calculate WN User", async function() {
     await browser.visit("/usert/create");
@@ -50,8 +94,9 @@ describe("views/user", function() {
       .fill("OSMUser", "TestUser")
       .fill("EMail", "")
       .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
-      .pressButton("OK");
+      .click("#save");
     let result = await userModule.findById(2);
+    browser.assert.expectHtmlSync("user","freshCreatedUser");
     should(result.OSMUser).eql("TestUser");
     should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
     should(result.mailComment).eql([]);
@@ -124,7 +169,7 @@ describe("views/user", function() {
     await userModule.createNewUser({OSMUser: "Test3", access: "denied"});
     await browser.visit("/usert/list?access=full");
     await browser.click('a[id="sortWeeklyAuthor"]');
-    browser.assert.expectHtmlSync("views","userList.html");
+    browser.assert.expectHtmlSync("user","userList");
   });
 });
 

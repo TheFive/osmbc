@@ -93,8 +93,8 @@ exports.clearDB = function clearDB(done) {
   if (done) {
     return _clearDB(done);
   }
-  return new Promise((resolve,reject) => {
-    _clearDB((err) => (err) ? reject(err): resolve());
+  return new Promise((resolve, reject) => {
+    _clearDB((err) => (err) ? reject(err) : resolve());
   });
 };
 
@@ -107,96 +107,107 @@ exports.clearDB = function clearDB(done) {
 
 exports.importData = function importData(data, callback) {
   debug("importData");
+  if (typeof data === "string") {
+    data = JSON.parse(fs.readFileSync(path.resolve(__dirname, data), "UTF8"));
+  }
   var idReference = {blog: {}, article: {}, user: {}};
 
-  async.series([
-    function initialiseDB(cb0) {
-      debug("initialiseDB");
-      if (data.initialise) {
-        articleModule.removeOpenBlogCache();
-        exports.clearDB(cb0);
-      } else cb0();
-    },
-    function clearDB(cb0a) {
-      debug("clearDB");
-      if (data.clear) {
-        articleModule.removeOpenBlogCache();
-        async.series([
-          db.query.bind(null, "delete from usert;"),
-          db.query.bind(null, "delete from blog;"),
-          db.query.bind(null, "delete from article;"),
-          db.query.bind(null, "delete from changes;"),
-          db.query.bind(null, "ALTER SEQUENCE usert_id_seq RESTART WITH 1;"),
-          db.query.bind(null, "ALTER SEQUENCE blog_id_seq RESTART WITH 1;"),
-          db.query.bind(null, "ALTER SEQUENCE article_id_seq RESTART WITH 1;"),
-          db.query.bind(null, "ALTER SEQUENCE changes_id_seq RESTART WITH 1;")
-        ], cb0a);
-      } else return cb0a();
-    },
-    function importAllUsers(cb1) {
-      debug("importAllUsers");
-      if (typeof (data.user) !== "undefined") {
-        async.eachSeries(data.user, function importOneUser(d, cb) {
-          let id = d.id;
-          delete d.id;
-          userModule.createNewUser(d, function up(err, user) {
-            if (err) return cb(err);
-            if (typeof (id) !== "undefined") idReference.user[id] = user.id;
-            mailReceiver.updateUser(user);
-            return cb();
-          });
-        }, cb1);
-      } else cb1();
-    },
-    function importAllBlogs(cb2) {
-      debug("importAllBlogs");
-      if (typeof (data.blog) !== "undefined") {
-        async.eachSeries(data.blog, function importOneBlog(d, cb) {
-          let id = d.id;
-          delete d.id;
-          blogModule.createNewBlog({displayName: "test"}, d,true, function(err, blog) {
-            if (err) return cb(err);
-            if (typeof (id) !== "undefined") idReference.blog[id] = blog.id;
-            cb();
-          });
-        }, cb2);
-      } else cb2();
-    },
-    function importAllArticles(cb3) {
-      debug("importAllArticles");
-      if (typeof (data.article) !== "undefined") {
-        async.eachSeries(data.article, function importOneArticle(d, cb) {
-          let id = d.id;
-          delete d.id;
-          articleModule.createNewArticle(d, function(err, article) {
-            if (err) return cb(err);
-            if (typeof (id) !== "undefined") idReference.article[id] = article.id;
-            cb();
-          });
-        }, cb3);
-      } else cb3();
-    },
-    function importAllChanges(cb4) {
-      debug("importAllChanges");
-      if (typeof (data.change) !== "undefined") {
-        async.eachSeries(data.change, function importOneChange(d, cb) {
-          let id;
-          if (d.table === "article") id = idReference.article[d.oid];
-          if (d.table === "blog") id = idReference.blog[d.oid];
-          if (d.table === "user") id = idReference.user[d.oid];
-          d.oid = id;
-          if (d._oid) {
-            d.oid = d._oid;
-            delete d._oid;
-          }
-          logModule.log(d, function waitShort() { setTimeout(cb, 1); });
-        }, cb4);
-      } else cb4();
-    }
+  function _importData(data, callback) {
+    async.series([
+      function initialiseDB(cb0) {
+        debug("initialiseDB");
+        if (data.initialise) {
+          articleModule.removeOpenBlogCache();
+          exports.clearDB(cb0);
+        } else cb0();
+      },
+      function clearDB(cb0a) {
+        debug("clearDB");
+        if (data.clear) {
+          articleModule.removeOpenBlogCache();
+          async.series([
+            db.query.bind(null, "delete from usert;"),
+            db.query.bind(null, "delete from blog;"),
+            db.query.bind(null, "delete from article;"),
+            db.query.bind(null, "delete from changes;"),
+            db.query.bind(null, "ALTER SEQUENCE usert_id_seq RESTART WITH 1;"),
+            db.query.bind(null, "ALTER SEQUENCE blog_id_seq RESTART WITH 1;"),
+            db.query.bind(null, "ALTER SEQUENCE article_id_seq RESTART WITH 1;"),
+            db.query.bind(null, "ALTER SEQUENCE changes_id_seq RESTART WITH 1;")
+          ], cb0a);
+        } else return cb0a();
+      },
+      function importAllUsers(cb1) {
+        debug("importAllUsers");
+        if (typeof (data.user) !== "undefined") {
+          async.eachSeries(data.user, function importOneUser(d, cb) {
+            let id = d.id;
+            delete d.id;
+            userModule.createNewUser(d, function up(err, user) {
+              if (err) return cb(err);
+              if (typeof (id) !== "undefined") idReference.user[id] = user.id;
+              mailReceiver.updateUser(user);
+              return cb();
+            });
+          }, cb1);
+        } else cb1();
+      },
+      function importAllBlogs(cb2) {
+        debug("importAllBlogs");
+        if (typeof (data.blog) !== "undefined") {
+          async.eachSeries(data.blog, function importOneBlog(d, cb) {
+            let id = d.id;
+            delete d.id;
+            blogModule.createNewBlog({OSMUser: "test"}, d, true, function(err, blog) {
+              if (err) return cb(err);
+              if (typeof (id) !== "undefined") idReference.blog[id] = blog.id;
+              cb();
+            });
+          }, cb2);
+        } else cb2();
+      },
+      function importAllArticles(cb3) {
+        debug("importAllArticles");
+        if (typeof (data.article) !== "undefined") {
+          async.eachSeries(data.article, function importOneArticle(d, cb) {
+            let id = d.id;
+            delete d.id;
+            articleModule.createNewArticle(d, function(err, article) {
+              if (err) return cb(err);
+              if (typeof (id) !== "undefined") idReference.article[id] = article.id;
+              cb();
+            });
+          }, cb3);
+        } else cb3();
+      },
+      function importAllChanges(cb4) {
+        debug("importAllChanges");
+        if (typeof (data.change) !== "undefined") {
+          async.eachSeries(data.change, function importOneChange(d, cb) {
+            let id;
+            if (d.table === "article") id = idReference.article[d.oid];
+            if (d.table === "blog") id = idReference.blog[d.oid];
+            if (d.table === "user") id = idReference.user[d.oid];
+            d.oid = id;
+            if (d._oid) {
+              d.oid = d._oid;
+              delete d._oid;
+            }
+            logModule.log(d, function waitShort() { setTimeout(cb, 1); });
+          }, cb4);
+        } else cb4();
+      }
 
-  ], function(err) {
-    debug("importData->final");
-    callback(err, data);
+    ], function(err) {
+      debug("importData->final");
+      callback(err, data);
+    });
+  }
+  if (callback) {
+    return _importData(data, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _importData(data, (err) => (err) ? reject(err) : resolve());
   });
 };
 
@@ -374,9 +385,9 @@ exports.startServer = function startServer(userString, callback) {
 
 
 function nockLoginPage() {
-  return nock("http://localhost:35043",{allowUnmocked:true})
-    .get(config.htmlRoot()+"/login")
-    .reply(302,"redirect",{'Location':"http://localhost:35043"+config.htmlRoot()+"/auth/openstreetmap"});
+  return nock("http://localhost:35043", {allowUnmocked: true})
+    .get(config.htmlRoot() + "/login")
+    .reply(302, "redirect", {"Location": "http://localhost:35043" + config.htmlRoot() + "/auth/openstreetmap"});
 }
 
 var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
@@ -415,7 +426,7 @@ exports.getNewBrowser = function getNewBrowser(userString) {
     let nockLoginInterceptor = nockLoginPage();
     browser.visit("/osmbc", function(err) {
       nock.removeInterceptor(nockLoginInterceptor);
-      if (err) return reject(err);
+      // ignore any error and return the given browser.
       resolve(browser);
     });
   });
@@ -452,12 +463,25 @@ exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
   nock.cleanAll();
 };
 
+Browser.prototype.keyUp = function(targetSelector, keyCode) {
+  let event = this.window.document.createEvent("HTMLEvents");
+  event.initEvent("keyup", true, true);
+  event.which = keyCode;
+  let target = this.window.document.querySelector(targetSelector);
+  target && target.dispatchEvent(event);
+};
 
-
-Browser.Assert.prototype.expectHtmlSync = function expectHtml(givenPath, name) {
+Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, givenPath, name) {
+  let stopOnError = false;
+  if (!Array.isArray(errorList)) {
+    stopOnError = true;
+    name = givenPath;
+    givenPath = errorList;
+    errorList = undefined;
+  }
   let expected = "not read yet";
-  let expectedFile = path.join(__dirname, givenPath, name);
-  let actualFile   = path.join(__dirname, givenPath, "actual_" + name);
+  let expectedFile = path.join(__dirname, givenPath, name + ".html");
+  let actualFile   = path.join(__dirname, givenPath, name + "_actual.html");
   let string = this.browser.html();
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
@@ -475,7 +499,13 @@ Browser.Assert.prototype.expectHtmlSync = function expectHtml(givenPath, name) {
   // there is a difference, so create the actual data as file
   // do easier fix the test.
   fs.writeFileSync(actualFile, string, "UTF8");
-  should(string).eql(expected, "HTML File " + name + " is different.");
+  if (stopOnError) {
+    should(string).eql(expected, "HTML File " + name + " is different.");
+  } else {
+    if (string !== expected) {
+      errorList.push("HTML File " + name + " is different.");
+    }
+  }
 };
 
 
@@ -488,8 +518,8 @@ Browser.Assert.prototype.expectHtml = function expectHtml(givenPath, name, cb) {
     givenPath = "screens";
   }
   let expected = "not read yet";
-  let expectedFile = path.join(__dirname, givenPath, name);
-  let actualFile   = path.join(__dirname, givenPath, "actual_" + name);
+  let expectedFile = path.join(__dirname, givenPath, name + ".html");
+  let actualFile   = path.join(__dirname, givenPath, name + "_actual.html");
   let string = this.html();
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
@@ -517,6 +547,14 @@ process.on("unhandledRejection", (reason, p) => {
   // application specific logging, throwing an error, or other logic here
 });
 
+
+Browser.extend(function(browser) {
+  browser.on('request', function (req) {
+    if (browser.location) {
+      req.headers.set("Referer", browser.location.href);
+    }
+  });
+});
 
 
 exports.nockLoginPage = nockLoginPage;

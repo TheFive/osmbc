@@ -7,6 +7,7 @@ var nock   = require("nock");
 var fs     = require("fs");
 var path   = require("path");
 var mockdate = require("mockdate");
+var HttpError = require("standard-http-error");
 
 
 
@@ -473,10 +474,12 @@ describe("notification/mailReceiver", function() {
 
             // Email is send out, now check email Verification first with wrong code
             user.validateEmail({OSMUser: "WelcomeMe"}, "wrong code", function(err) {
-              should(err).eql(new Error("Wrong Validation Code for EMail for user >WelcomeMe<"));
+              should(err).eql(
+                new HttpError(409,"Wrong Validation Code for EMail for user >WelcomeMe<"));
 
               user.validateEmail({OSMUser: "Not Me"}, code, function(err) {
-                should(err).eql(new Error("Wrong User: expected >WelcomeMe< given >Not Me<"));
+                should(err).eql(
+                  new HttpError(409,"Wrong User: expected >WelcomeMe< given >Not Me<"));
                 // and now with correct code
                 user.validateEmail({OSMUser: "WelcomeMe"}, code, function(err) {
                   should.not.exist(err);

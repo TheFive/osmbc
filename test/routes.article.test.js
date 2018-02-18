@@ -119,8 +119,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -185,8 +185,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -221,8 +221,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -258,8 +258,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -295,8 +295,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -330,8 +330,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -362,8 +362,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: baseLink + "/article/list", jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -394,8 +394,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: baseLink + "/article/create", jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -427,8 +427,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: baseLink + "/article/searchandcreate?search=hallo", jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -460,8 +460,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: baseLink + "/article/search?search=hallo", jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -522,8 +522,8 @@ describe("routes/article", function() {
       testutil.startServerWithLogin("TestUserDenied",jar, function() {
         request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -597,8 +597,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -686,8 +686,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, form: params, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -774,8 +774,8 @@ describe("routes/article", function() {
       testutil.startServerWithLogin("TestUserDenied",jar, function () {
         request.post({url: url, form: params, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -837,8 +837,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, form: params, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -919,8 +919,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, form: params, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -965,8 +965,8 @@ describe("routes/article", function() {
       testutil.startServer("TestUserDenied", function () {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           bddone();
         });
       });
@@ -1020,8 +1020,8 @@ describe("routes/article", function() {
       testutil.startServerWithLogin("TestUserDenied",jar, function () {
         request.post({url: url, form: form, jar: jar,followAllRedirects:true}, function (err, response, body) {
           should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserDenied&lt; has no access rights");
+          should(response.statusCode).eql(403);
+          body.should.containEql("OSM User >TestUserDenied< has no access rights");
           should(stub.called).be.False();
           bddone();
         });

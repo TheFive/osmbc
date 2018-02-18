@@ -8,7 +8,7 @@
     <title>WN290/review</title>
     <!-- Bootstrap core CSS-->
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   </head>
   <body>
     <!-- Fixed navbar-->
@@ -71,17 +71,17 @@
             </li>
             <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">DE<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
-                <li><a href="/language?lang=DE">DE</a></li>
-                <li><a href="/language?lang=EN">EN</a></li>
-                <li><a href="/language?lang=ES">ES</a></li>
+                <li><a id="lang_DE" href="/language?lang=DE">DE</a></li>
+                <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
+                <li><a id="lang_ES" href="/language?lang=ES">ES</a></li>
               </ul>
             </li>
             <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">EN<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
-                <li><a href="/language?lang2=none">none</a></li>
-                <li><a href="/language?lang2=DE">DE</a></li>
-                <li><a href="/language?lang2=EN">EN</a></li>
-                <li><a href="/language?lang2=ES">ES</a></li>
+                <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
+                <li><a id="lang2_DE" href="/language?lang2=DE">DE</a></li>
+                <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
+                <li><a id="lang2_ES" href="/language?lang2=ES">ES</a></li>
               </ul>
             </li>
             <li><img onclick="location.href='/usert/2';" style="height:50px;width:50px"></li>
@@ -123,23 +123,29 @@
         </div>
         <div class="row">
           <div class="col-md-6">
-            <h2><span class="hidden-xs">Wochennotiz </span>WN290<span class="hidden-xs"> (Export DE)</span></h2>
+            <h2><span class="hidden-xs">Wochennotiz </span>WN290<span class="hidden-xs"> (Review DE)</span></h2>
           </div>
           <div class="col-md-3">
             <div class="row">
               <div class="col-md-12">
                 <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
                   <input type="text" name="lang" value="DE" class="hidden">
-                  <input type="text" name="action" value="closelang" class="hidden">
-                  <button id="closebutton" type="submit" class="btn btn-large btn-warning">Close WN290(DE)</button>
+                  <input type="text" name="action" value="markexported" class="hidden">
+                  <button id="didexport" type="submit" class="btn btn-large btn-warning">Did Export (DE)</button>
                 </form>
               </div>
             </div>
-            <div class="row">
-              <div class="alert bg-danger text-center bold"><strong>Blog is exported, please do the last Review in WordPress</strong></div>
-            </div>
           </div>
           <div class="col-md-3">
+            <div class="row">
+              <div class="col-md-12">
+                <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
+                  <input type="text" name="lang" value="EN" class="hidden">
+                  <input type="text" name="action" value="closelang" class="hidden">
+                  <button id="closebutton" type="submit" class="btn btn-large btn-warning">Close WN290(EN)</button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -259,23 +265,68 @@
                 </p>
                 <p id="reviewLeftTextEN0">Reviwed by Bogus Zaba 10-02-16. Minor typos and edits done. Graphic needs a caption.</p>
                 <div id="editReviewEN0" class="hidden">
+                  <form id="editreviewEN0" name="reviewEN0" action="/blog/WN290/editReviewComment/0" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentEN0" value="Reviwed by Bogus Zaba 10-02-16. Minor typos and edits done. Graphic needs a caption." class="form-control">
+                      <input type="text" name="lang" value="EN" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonEN0" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
                 </div>
                 <p><b class="span">elpbatista</b><span> </span><span class="text-muted small">3 months ago</span>
                 </p>
                 <p id="reviewLeftTextEN1">elpbatista</p>
                 <div id="editReviewEN1" class="hidden">
+                  <form id="editreviewEN1" name="reviewEN1" action="/blog/WN290/editReviewComment/1" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentEN1" value="elpbatista" class="form-control">
+                      <input type="text" name="lang" value="EN" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonEN1" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
                 </div>
                 <p><b class="span">derFred</b><span> </span><span class="text-muted small">3 months ago</span>
                 </p>
                 <p id="reviewLeftTextEN2">errata: elpbatista made the review of the Spanish 290</p>
                 <div id="editReviewEN2" class="hidden">
+                  <form id="editreviewEN2" name="reviewEN2" action="/blog/WN290/editReviewComment/2" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentEN2" value="errata: elpbatista made the review of the Spanish 290" class="form-control">
+                      <input type="text" name="lang" value="EN" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonEN2" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
                 </div>
                 <p><b class="span">jinalfoflia</b><span> </span><span class="text-muted small">3 months ago</span>
                 </p>
                 <p id="reviewLeftTextEN3">Reviewed English version #290</p>
                 <div id="editReviewEN3" class="hidden">
+                  <form id="editreviewEN3" name="reviewEN3" action="/blog/WN290/editReviewComment/3" method="post" class="form-horizontal">
+                    <div class="col-md-10">
+                      <input type="text" name="text" id="reviewCommentEN3" value="Reviewed English version #290" class="form-control">
+                      <input type="text" name="lang" value="EN" class="hidden">
+                    </div>
+                    <div class="col-md-2">
+                      <button id="reviewButtonEN3" type="submit" class="btn btn-large btn-primary">Change</button>
+                    </div>
+                  </form>
                 </div>
                 <div class="form-group">
+                  <form id="reviewEN" name="reviewEN" action="/blog/WN290/setReviewComment" method="post" class="form-horizontal">
+                    <div class="col-md-8">
+                      <input type="text" name="text" value="reviewing..." id="reviewCommentEN" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonEN').disabled = (document.getElementById('reviewCommentEN').value === '');" class="hidden form-control">
+                      <input type="text" name="lang" value="EN" class="hidden">
+                    </div>
+                    <div class="col-md-4">
+                      <button id="reviewButtonEN" type="submit" class="btn btn-large btn-primary">Start Personal Review</button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -2255,7 +2306,7 @@ Segeltörn
             <p><a href="/blog/WN290/stat">[Statistic]</a></p>
           </div>
           <div class="col-md-2">
-            <p><a href="/blog/edit/WN290">[Edit Blog Detail]</a></p>
+            <p><a id="editBlogDetail" href="/blog/edit/WN290">[Edit Blog Detail]</a></p>
           </div>
         </div>
       <p></p>
@@ -2272,7 +2323,7 @@ Segeltörn
 
   
     <title></title>
-    <link rel="stylesheet" href="stylesheets/style.css">
+    <link rel="stylesheet" href="file://users/Users/TheFive.osm/development/osmbc/public/stylesheets/style.css">
   
   
 

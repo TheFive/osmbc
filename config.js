@@ -161,6 +161,5 @@ exports.logger = logger;
 
 
 //deprecate Values
-exports.getValue("ReviewInWP",{deprecated:true});
 exports.getValue("diableOldEditor",{deprecated:true});
 

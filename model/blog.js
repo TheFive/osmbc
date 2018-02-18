@@ -1,31 +1,26 @@
 "use strict";
 // Exported Functions and prototypes are defined at end of file
 
-var async    = require("async");
-var config   = require("../config.js");
-var logger   = require("../config.js").logger;
-var util     = require("../util/util.js");
+const async    = require("async");
+const config   = require("../config.js");
+const util     = require("../util/util.js");
 
-var markdown = require("markdown-it")()
+const markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
   .use(require("markdown-it-imsize"), { autofill: true });
 
-var should   = require("should");
-var moment   = require("moment");
+const should   = require("should");
+const moment   = require("moment");
 
-var articleModule       = require("../model/article.js");
-var configModule        = require("../model/config.js");
-var logModule           = require("../model/logModule.js");
-var messageCenter       = require("../notification/messageCenter.js");
-var userModule          = require("../model/user.js");
-var schedule            = require("node-schedule");
+const articleModule       = require("../model/article.js");
+const configModule        = require("../model/config.js");
+const logModule           = require("../model/logModule.js");
+const messageCenter       = require("../notification/messageCenter.js");
+const userModule          = require("../model/user.js");
+const schedule            = require("node-schedule");
 
-var pgMap = require("./pgMap.js");
-var debug = require("debug")("OSMBC:model:blog");
-
-
-
-
+const pgMap = require("./pgMap.js");
+const debug = require("debug")("OSMBC:model:blog");
 
 
 
@@ -37,7 +32,7 @@ function Blog(proto) {
     this.categories = configModule.getConfig("categorytranslation");
   }
   if (proto) {
-    for (var k in proto) {
+    for (let k in proto) {
       this[k] = proto[k];
     }
   }
@@ -64,31 +59,19 @@ function create (proto) {
 Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
-  var self = this;
+  let self = this;
   delete self.lock;
   articleModule.removeOpenBlogCache();
+  should.exist(self.id);
   async.series([
-    function checkID(cb) {
-      if (self.id === 0) {
-        self.save(cb);
-      } else cb();
-    },
-    function logit(cb) {
-      messageCenter.global.updateBlog(user, self, data, cb);
-    },
-
-    function(cb) {
-      should.exist(self.id);
+    messageCenter.global.updateBlog.bind(messageCenter.global, user, self, data),
+    function copyDataToBlog(cb) {
       should(self.id).not.equal(0);
-      for (var key in data) {
-        var value = data[key];
+      for (let key in data) {
+        let value = data[key];
         if (typeof (value) === "undefined") continue;
         if (value === self[key]) continue;
         if (value === "" && typeof (self[key]) === "undefined") continue;
-        if (Blog.prototype.hasOwnProperty(key)) {
-          logger.info("WARNING: Do not store " + data[key] + " for property " + key + " for Blog ID " + self.id);
-          continue;
-        }
         if (typeof (value) === "object") {
           if (JSON.stringify(value) === JSON.stringify(self[key])) continue;
         }
@@ -99,8 +82,7 @@ Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
     if (err) return callback(err);
     self.startCloseTimer();
     self.save(callback);
-  }
-  );
+  });
 };
 
 
@@ -108,115 +90,99 @@ Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
 
 Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, callback) {
   debug("reviewComment");
-  var self = this;
-  var rc = "reviewComment" + lang;
-  var exported = "exported" + lang;
+  let self = this;
+  let rc = "reviewComment" + lang;
+  let exported = "exported" + lang;
   should(typeof (user)).eql("object");
+  should.exist(self.id);
+  should(self.id).not.equal(0);
+  if (typeof (data) === "undefined") return callback();
+  if (typeof (self[rc]) === "undefined" || self[rc] === null) {
+    self[rc] = [];
+  }
+  for (let i = 0; i < self[rc].length; i++) {
+    if (self[rc][i].user === user && self[rc][i].text === data) return callback();
+  }
   async.series([
-    function checkID(cb) {
-      if (self.id === 0) {
-        self.save(cb);
-      } else cb();
-    }
-  ], function() {
-    should.exist(self.id);
-    should(self.id).not.equal(0);
-    if (typeof (data) === "undefined") return callback();
-    if (typeof (self[rc]) === "undefined" || self[rc] === null) {
-      self[rc] = [];
-    }
-    for (var i = 0; i < self[rc].length; i++) {
-      if (self[rc][i].user === user && self[rc][i].text === data) return callback();
-    }
-    async.series([
-      function logInformation(cb) {
-        debug("setReviewComment->logInformation");
-        messageCenter.global.sendLanguageStatus(user, self, lang, data, cb);
-        // This is the old log and has to be moved to the messageCenter (logReceiver)
-        // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
-      },
-      function checkSpecialCommands(cb) {
-        debug("setReviewComment->checkSpecialCommands");
-        var date = new Date();
-        if (data === "startreview") {
-          // Start Review, check wether review is done in WP or not
-          if (self[rc].length === 0) {
-            self[rc].push({user: user.OSMUser, text: data, timestamp: date});
-          }
-          // nothing has to be written to the review comments
-          return cb();
+    function logInformation(cb) {
+      debug("setReviewComment->logInformation");
+      messageCenter.global.sendLanguageStatus(user, self, lang, data, cb);
+      // This is the old log and has to be moved to the messageCenter (logReceiver)
+      // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
+    },
+    function checkSpecialCommands(cb) {
+      debug("setReviewComment->checkSpecialCommands");
+      let date = new Date();
+      if (data === "startreview") {
+        // Start Review, check wether review is done in WP or not
+        if (self[rc].length === 0) {
+          self[rc].push({user: user.OSMUser, text: data, timestamp: date});
         }
-        if (data === "markexported") {
-          self[exported] = true;
-          // nothing has to be written to review Comment
-          return cb();
-        }
-        for (let i = 0; i < self[rc].length; i++) {
-          if (self[rc][i].text === "reviewing..." && self[rc][i].user === user.OSMUser) {
-            self[rc][i].text = data;
-            self[rc][i].editstamp = date;
-            return cb();
-          }
-        }
-        self[rc].push({user: user.OSMUser, text: data, timestamp: date});
+        // nothing has to be written to the review comments
         return cb();
       }
-    ], function(err) {
-      debug("setReviewComment->FinalFunction");
-      if (err) return callback(err);
-      self.save(callback);
-    });
+      if (data === "markexported") {
+        self[exported] = true;
+        // nothing has to be written to review Comment
+        return cb();
+      }
+      for (let i = 0; i < self[rc].length; i++) {
+        if (self[rc][i].text === "reviewing..." && self[rc][i].user === user.OSMUser) {
+          self[rc][i].text = data;
+          self[rc][i].editstamp = date;
+          return cb();
+        }
+      }
+      self[rc].push({user: user.OSMUser, text: data, timestamp: date});
+      return cb();
+    }
+  ], function(err) {
+    debug("setReviewComment->FinalFunction");
+    if (err) return callback(err);
+    self.save(callback);
   });
 };
 
 
 Blog.prototype.editReviewComment = function editReviewComment(lang, user, index, data, callback) {
   debug("reviewComment");
-  var self = this;
-  var rc = "reviewComment" + lang;
+  let self = this;
+  let rc = "reviewComment" + lang;
   should(typeof (user)).eql("object");
+  should.exist(self.id);
+  should(self.id).not.equal(0);
+  if (typeof (data) === "undefined") return callback();
+  if (typeof (self[rc]) === "undefined" || self[rc] === null) {
+    self[rc] = [];
+  }
+  // Index out of range, just
+  if (index < 0 || index >= self[rc].length) return callback(new Error("Edit Review Comment, Index out of Range"));
+
+
+  if (self[rc][index].user !== user.OSMUser) return callback(new Error(">" + user.OSMUser + "< is not allowed to change review"));
+
+  // nothing to change.
+  if (self[rc][index].text === data) return callback();
+
   async.series([
-    function checkID(cb) {
-      if (self.id === 0) {
-        self.save(cb);
-      } else cb();
+    function logInformation(cb) {
+      debug("editReviewComment->logInformation");
+      messageCenter.global.sendLanguageStatus(user, self, lang, data, cb);
+      // This is the old log and has to be moved to the messageCenter (logReceiver)
+      // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
+    },
+    function setValues(cb) {
+      debug("editReviewComment->setValues");
+      let date = new Date();
+
+      self[rc][index].text = data;
+      self[rc][index].editstamp = date;
+      return cb();
     }
-  ], function() {
-    should.exist(self.id);
-    should(self.id).not.equal(0);
-    if (typeof (data) === "undefined") return callback();
-    if (typeof (self[rc]) === "undefined" || self[rc] === null) {
-      self[rc] = [];
-    }
-    // Index out of range, just
-    if (index < 0 || index >= self[rc].length) return callback(new Error("Edit Review Comment, Index out of Range"));
-
-
-    if (self[rc][index].user !== user.OSMUser) return callback(new Error(">" + user.OSMUser + "< is not allowed to change review"));
-
-    // nothing to change.
-    if (self[rc][index].text === data) return callback();
-
-    async.series([
-      function logInformation(cb) {
-        debug("editReviewComment->logInformation");
-        messageCenter.global.sendLanguageStatus(user, self, lang, data, cb);
-        // This is the old log and has to be moved to the messageCenter (logReceiver)
-        // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
-      },
-      function setValues(cb) {
-        debug("editReviewComment->setValues");
-        var date = new Date();
-
-        self[rc][index].text = data;
-        self[rc][index].editstamp = date;
-        return cb();
-      }
-    ], function(err) {
-      debug("setReviewComment->FinalFunction");
-      if (err) return callback(err);
-      self.save(callback);
-    });
+  ], function(err) {
+    debug("setReviewComment->FinalFunction");
+    if (err) return callback(err);
+    self.save(callback);
   });
 };
 
@@ -224,49 +190,41 @@ Blog.prototype.editReviewComment = function editReviewComment(lang, user, index,
 Blog.prototype.closeBlog = function closeBlog(lang, user, status, callback) {
   debug("closeBlog");
   should(typeof (user)).eql("object");
-  var self = this;
-  var closeField = "close" + lang;
+  let self = this;
+  let closeField = "close" + lang;
 
   if (self[closeField] === status) return callback();
+  should.exist(self.id);
+  should(self.id).not.equal(0);
   async.series([
-    function checkID(cb) {
-      if (self.id === 0) {
-        self.save(cb);
-      } else cb();
-    }
-  ], function() {
-    should.exist(self.id);
-    should(self.id).not.equal(0);
-    async.series([
-      function logEntry(callback) {
-        messageCenter.global.sendCloseStatus(user, self, lang, status, callback);
-      },
-      function setCloseField(callback) {
-        self[closeField] = status;
-        callback();
-      },
-      function removeReview(callback) {
-        // Blog is reopened, so delete any review information
-        // e.g. that review is started.
-        // if there is some "substantial" review information (a review comment),
-        // keep it and do not delete anythingx
-        if (status === false) {
-          if (self["reviewComment" + lang] && self["reviewComment" + lang].length === 0) {
+    function logEntry(callback) {
+      messageCenter.global.sendCloseStatus(user, self, lang, status, callback);
+    },
+    function setCloseField(callback) {
+      self[closeField] = status;
+      callback();
+    },
+    function removeReview(callback) {
+      // Blog is reopened, so delete any review information
+      // e.g. that review is started.
+      // if there is some "substantial" review information (a review comment),
+      // keep it and do not delete anythingx
+      if (status === false) {
+        if (self["reviewComment" + lang] && self["reviewComment" + lang].length === 0) {
+          delete self["reviewComment" + lang];
+        }
+        if (self["reviewComment" + lang] && self["reviewComment" + lang].length === 1) {
+          if (self["reviewComment" + lang][0].text === "startreview") {
             delete self["reviewComment" + lang];
           }
-          if (self["reviewComment" + lang] && self["reviewComment" + lang].length === 1) {
-            if (self["reviewComment" + lang][0].text === "startreview") {
-              delete self["reviewComment" + lang];
-            }
-          }
-          self["exported" + lang] = false;
         }
-        callback();
+        self["exported" + lang] = false;
       }
-    ], function finalFunction(err) {
-      if (err) return callback(err);
-      self.save(callback);
-    });
+      callback();
+    }
+  ], function finalFunction(err) {
+    if (err) return callback(err);
+    self.save(callback);
   });
 };
 
@@ -304,7 +262,7 @@ function createNewBlog(user, proto, noArticle, callback) {
     noArticle = null;
   }
   if (typeof (noArticle) === "function") {
-    if (typeof callback !== "undefined") return noArticle(new Error("Wrong Parameter"));
+    should(typeof callback === "undefined");
     callback = noArticle;
     noArticle = null;
   }
@@ -315,9 +273,9 @@ function createNewBlog(user, proto, noArticle, callback) {
 
     exports.findOne(" where data->>'name' like 'WN%'", {column: "name", desc: true}, function(err, result) {
       if (err) return callback(err);
-      var blog = create();
-      var name = "WN250";
-      var endDate = new Date();
+      let blog = create();
+      let name = "WN250";
+      let endDate = new Date();
       if (result) {
         if (result.name.substring(0, 2) === "WN") {
           name = result.name;
@@ -327,26 +285,26 @@ function createNewBlog(user, proto, noArticle, callback) {
         }
       }
       debug("Maximum Blog Name in DB: %s", name);
-      var wnId = name.substring(2, 99);
-      var newWnId = parseInt(wnId) + 1;
-      var newName = "WN" + newWnId;
-      var startDate = new Date(endDate);
+      let wnId = name.substring(2, 99);
+      let newWnId = parseInt(wnId) + 1;
+      let newName = "WN" + newWnId;
+      let startDate = new Date(endDate);
       startDate.setDate(startDate.getDate() + 1);
       endDate.setDate(endDate.getDate() + 7);
       blog.name = newName;
       blog.status = "open";
       blog.startDate = startDate.toISOString();
       blog.endDate = endDate.toISOString();
-      for (var k in proto) {
+      for (let k in proto) {
         blog[k] = proto[k];
       }
-      var change = {};
+      let change = {};
       change.name = blog.name;
       change.status = blog.status;
       change.startDate = blog.startDate;
       change.endDate = blog.endDate;
       // create an Empty blog and simualte an id != 0
-      var emptyBlog = exports.create();
+      let emptyBlog = exports.create();
       emptyBlog.id = -1;
 
       async.series([
@@ -386,17 +344,17 @@ Blog.prototype.autoClose = function autoClose(cb) {
   debug("autoClose");
   if (!this.endDate) return cb();
 
-  var time = new Date().getTime();
-  var endDateBlog = (new Date(this.endDate)).getTime();
+  let time = new Date().getTime();
+  let endDateBlog = (new Date(this.endDate)).getTime();
   if (endDateBlog <= time) {
-    var changes = {status: "edit"};
+    let changes = {status: "edit"};
     this.setAndSave({OSMUser: "autoclose"}, changes, function(err) {
       cb(err);
     });
   } else cb();
 };
 
-var _autoCloseRunning = 0;
+let _autoCloseRunning = 0;
 
 
 
@@ -414,10 +372,7 @@ function autoCloseBlog(callback) {
       _autoCloseRunning = _autoCloseRunning - 1;
       return callback(err);
     }
-    if (!result) {
-      _autoCloseRunning = _autoCloseRunning - 1;
-      return callback();
-    }
+    should(Array.isArray(result)).be.True();
     async.series([
       function closeAllBlogs(cb) {
         async.each(result, function(data, cb) {
@@ -443,9 +398,9 @@ function autoCloseBlog(callback) {
 
 function convertLogsToTeamString(logs, lang, users) {
   debug("convertLogsToTeamString");
-  var editors = [];
+  let editors = [];
   function addEditors(property, min) {
-    for (var user in logs[property]) {
+    for (let user in logs[property]) {
       if (logs[property][user] >= min) {
         if (editors.indexOf(user) < 0) {
           editors.push(user);
@@ -458,8 +413,8 @@ function convertLogsToTeamString(logs, lang, users) {
   addEditors("reviewComment" + lang, 1);
   editors.sort();
 
-  for (var i = 0; i < editors.length; i++) {
-    for (var j = 0; j < users.length; j++) {
+  for (let i = 0; i < editors.length; i++) {
+    for (let j = 0; j < users.length; j++) {
       if (editors[i] === users[j].OSMUser) {
         // Ignore the editor, if he wants to be anonymous
         if (users[j].mdWeeklyAuthor && users[j].mdWeeklyAuthor === "anonymous") {
@@ -479,13 +434,13 @@ function convertLogsToTeamString(logs, lang, users) {
     }
   }
 
-  var editorsString = "";
+  let editorsString = "";
   if (editors.length >= 1) editorsString = editors[0];
-  for (var i2 = 1; i2 < editors.length; i2++) {
+  for (let i2 = 1; i2 < editors.length; i2++) {
     editorsString += ", " + editors[i2];
   }
 
-  var editorStrings = configModule.getConfig("editorstrings");
+  let editorStrings = configModule.getConfig("editorstrings");
   if (editorStrings[lang]) return editorStrings[lang].replace("##team##", editorsString);
   return "";
 }
@@ -495,9 +450,9 @@ Blog.prototype.createTeamString = function createTeamString(lang, callback) {
   debug("createTeamString");
   should(typeof (lang)).eql("string");
   should(typeof (callback)).eql("function");
-  var self = this;
-  var logs;
-  var users = null;
+  let self = this;
+  let logs;
+  let users = null;
   async.series([
     function readLogs(cb) {
       logModule.countLogsForBlog(self.name, function (err, result) {
@@ -513,7 +468,7 @@ Blog.prototype.createTeamString = function createTeamString(lang, callback) {
       });
     }], function finalFunction(err) {
     if (err) return callback(err);
-    var result = convertLogsToTeamString(logs, lang, users);
+    let result = convertLogsToTeamString(logs, lang, users);
     return callback(null, result);
   });
 };
@@ -529,8 +484,8 @@ Output: an array of articles.
  */
 function sortArticles(listOfArticles) {
   debug("sortArticles");
-  var result = [];
-  var laterUse = [];
+  let result = [];
+  let laterUse = [];
   listOfArticles.sort(function(a, b) {
     return ((a.title) ? a.title : "").localeCompare((b.title) ? b.title : "");
   });
@@ -585,17 +540,17 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
   debug("getPreviewData");
   should(typeof (options)).eql("object");
   should(typeof (callback)).eql("function");
-  var lang = options.lang;
-  var self = this;
+  let lang = options.lang;
+  let self = this;
 
 
-  var articles = {};
-  var teamString = "";
+  let articles = {};
+  let teamString = "";
 
-  var futureArticles;
+  let futureArticles;
 
-  var articleList = null;
-  var containsEmptyArticlesWarning = false;
+  let articleList = null;
+  let containsEmptyArticlesWarning = false;
 
   async.series([
     function readFuture(cb) {
@@ -627,16 +582,12 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
 
 
 
-      var i; // often used iterator, declared here because there is no block scope in JS.
+      let i; // often used iterator, declared here because there is no block scope in JS.
       for (i = 0; i < articleList.length; i++) {
-        var r = articleList[i];
+        let r = articleList[i];
 
         // remove no translation article, if wanted
         if (options.disableNotranslation && r["markdown" + options.lang] === "no translation") continue;
-        if (options.errorOnEmptyMarkdown && r.categoryEN !== "--unpublished--" &&
-          (!r["markdown" + options.lang] || r["markdown" + options.lang].trim() === "")) {
-          return cb(new Error("Article >>" + r.title + "<< contains no text for language " + options.lang + "."));
-        }
         if (options.warningOnEmptyMarkdown && r.categoryEN !== "--unpublished--" &&
           (!r["markdown" + options.lang] || r["markdown" + options.lang].trim() === "")) {
           containsEmptyArticlesWarning = true;
@@ -667,7 +618,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
     debug("finalFunction");
 
     if (err) return callback(err);
-    var result = {};
+    let result = {};
     result.teamString = teamString;
     result.articles = articles;
     result.futureArticles = {};
@@ -684,16 +635,16 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
 Blog.prototype.calculateTimeToClose = function calculateTimeToClose(callback) {
   debug("Blog.prototype.calculateTimeToClose");
   if (this._timeToClose) return callback();
-  var self = this;
+  let self = this;
   self._timeToClose = {};
   logModule.find(" where data->>'blog' ='" + self.name + "' and data->>'property' like 'close%'", function(err, result) {
     if (err) return callback(err);
     if (!result) return callback();
-    var endDate = moment(self.endDate);
-    for (var i = 0; i < result.length; i++) {
-      var lang = (result[i].property).substring(5, 7);
-      var time = moment(result[i].timestamp);
-      var timeToClose = time.diff(endDate, "days");
+    let endDate = moment(self.endDate);
+    for (let i = 0; i < result.length; i++) {
+      let lang = (result[i].property).substring(5, 7);
+      let time = moment(result[i].timestamp);
+      let timeToClose = time.diff(endDate, "days");
       if (!self._timeToClose[lang] || timeToClose > self._timeToClose[lang]) self._timeToClose[lang] = timeToClose;
     }
     return callback();
@@ -705,7 +656,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
   should.exist(user);
   // already done, nothing to do.
   if (this._countUneditedMarkdown) return callback();
-  var self = this;
+  let self = this;
 
   self._countUneditedMarkdown = {};
   self._countExpectedMarkdown = {};
@@ -721,45 +672,40 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
 
   self._usedLanguages = {};
   self._upcomingEvents = null;
-  var mainLang = user.mainLang;
-  var secondLang = user.secondLang;
-  var i, j;
+  let mainLang = user.mainLang;
+  let secondLang = user.secondLang;
+  let i, j;
 
   articleModule.find({blog: self}, function (err, result) {
     if (err) return callback(err);
+    should(Array.isArray(result)).be.True();
 
 
     for (i = 0; i < config.getLanguages().length; i++) {
-      var l = config.getLanguages()[i];
-      if (!result) {
-        self._countUneditedMarkdown[l] = 99;
-        self._countExpectedMarkdown[l] = 99;
-        self._countNoTranslateMarkdown[l] = 99;
-        self._unsolvedComments[l] = 99;
-      } else {
-        self._countUneditedMarkdown[l] = 0;
-        self._countExpectedMarkdown[l] = 0;
-        self._countNoTranslateMarkdown[l] = 0;
-        self._unsolvedComments[l] = 0;
-        for (j = 0; j < result.length; j++) {
-          let article = result[j];
-          var c = article.categoryEN;
-          if (c === "Upcoming Events") self._upcomingEvents = article;
-          if (c === "--unpublished--") continue;
-          self._countExpectedMarkdown[l] += 1;
-          var m = article["markdown" + l];
-          if (m === "no translation") {
-            self._countNoTranslateMarkdown[l] += 1;
-          } else {
-            if (!m || m === "" || c === "-- no category yet --") {
-              self._countUneditedMarkdown[l] += 1;
-            }
+      let l = config.getLanguages()[i];
+
+      self._countUneditedMarkdown[l] = 0;
+      self._countExpectedMarkdown[l] = 0;
+      self._countNoTranslateMarkdown[l] = 0;
+      self._unsolvedComments[l] = 0;
+      for (j = 0; j < result.length; j++) {
+        let article = result[j];
+        let c = article.categoryEN;
+        if (c === "Upcoming Events") self._upcomingEvents = article;
+        if (c === "--unpublished--") continue;
+        self._countExpectedMarkdown[l] += 1;
+        let m = article["markdown" + l];
+        if (m === "no translation") {
+          self._countNoTranslateMarkdown[l] += 1;
+        } else {
+          if (!m || m === "" || c === "-- no category yet --") {
+            self._countUneditedMarkdown[l] += 1;
           }
-          // check, wether language is used in blog
-          if (m && m !== "no translation") self._usedLanguages[l] = true;
-          if (article.commentList && article.commentStatus === "open") {
-            if (!m || m !== "no translation") self._unsolvedComments[l] += 1;
-          }
+        }
+        // check, wether language is used in blog
+        if (m && m !== "no translation") self._usedLanguages[l] = true;
+        if (article.commentList && article.commentStatus === "open") {
+          if (!m || m !== "no translation") self._unsolvedComments[l] += 1;
         }
       }
     }
@@ -773,7 +719,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
       if (result[i].commentList) {
         if (result[i].commentStatus === "solved") continue;
         for (j = 0; j < result[i].commentList.length; j++) {
-          var comment = result[i].commentList[j].text;
+          let comment = result[i].commentList[j].text;
 
           if (comment.search(new RegExp("@" + user.OSMUser, "i")) >= 0) {
             self._userMention.push(result[i]);
@@ -801,11 +747,11 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
 
 function translateCategories(cat) {
   debug("translateCategories");
-  var languages = config.getLanguages();
-  var categoryTranslation = configModule.getConfig("categorytranslation");
-  for (var i = 0; i < cat.length; i++) {
-    for (var l = 0; l < languages.length; l++) {
-      var lang = languages[l];
+  let languages = config.getLanguages();
+  let categoryTranslation = configModule.getConfig("categorytranslation");
+  for (let i = 0; i < cat.length; i++) {
+    for (let l = 0; l < languages.length; l++) {
+      let lang = languages[l];
       if (cat[i][lang]) continue;
       if (categoryTranslation[cat[i].EN]) {
         cat[i][lang] = categoryTranslation[cat[i].EN][lang];
@@ -825,7 +771,7 @@ function getGlobalCategories() {
 Blog.prototype.getCategories = function getCategories() {
   debug("getCategories");
 
-  var result = getGlobalCategories();
+  let result = getGlobalCategories();
   if (this.categories) {
     translateCategories(this.categories);
     result = this.categories;
@@ -836,7 +782,7 @@ Blog.prototype.getCategories = function getCategories() {
 
 
 
-var pgObject = {};
+let pgObject = {};
 
 pgObject.createString = "CREATE TABLE blog (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT blog_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);";
@@ -854,11 +800,11 @@ module.exports.pg = pgObject;
 
 Blog.prototype.isEditable = function isEditable(lang) {
   debug("isEditabe");
-  var result = true;
+  let result = true;
   if (this["exported" + lang]) {
     result = false;
   }
-  var closeLANG = this["close" + lang];
+  let closeLANG = this["close" + lang];
   if (typeof (closeLANG) !== "undefined") {
     if (closeLANG) result = false;
   }
@@ -867,7 +813,7 @@ Blog.prototype.isEditable = function isEditable(lang) {
 };
 
 
-var _allTimer = {};
+let _allTimer = {};
 
 Blog.prototype.startCloseTimer = function startCloseTimer() {
   debug("startCloseTimer");
@@ -879,7 +825,7 @@ Blog.prototype.startCloseTimer = function startCloseTimer() {
   }
   if (this.status !== "open") return;
   if (this.endDate) {
-    var date = new Date(this.endDate);
+    let date = new Date(this.endDate);
     _allTimer[this.id] = schedule.scheduleJob(date, function() {
       exports.autoCloseBlog(function() {});
     });
@@ -892,7 +838,7 @@ exports.startAllTimers = function startAllTimers(callback) {
     if (err && err.message === "relation \"blog\" does not exist") return callback();
     if (err) return callback(err);
     if (!result) return callback();
-    for (var i = 0; i < result.length; i++) {
+    for (let i = 0; i < result.length; i++) {
       result[i].startCloseTimer();
     }
     exports.autoCloseBlog(callback);

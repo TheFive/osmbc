@@ -27,7 +27,7 @@ should.config.checkProtoEql = false;
 
 
 describe("model/article", function() {
-  var testUser = {displayName: "user", OSMUser: "user"};
+  var testUser = { OSMUser: "user"};
   before(function (bddone) {
     // nock all slack messages
     nock("https://hooks.slack.com/")
@@ -330,9 +330,9 @@ describe("model/article", function() {
           should.not.exist(err);
           var alternativeArticle = result;
 
-          newArticle.setAndSave({displayName: "TEST"}, {version: "1", blog: "TESTNEW"}, function(err) {
+          newArticle.setAndSave({OSMUser: "TEST"}, {version: "1", blog: "TESTNEW"}, function(err) {
             should.not.exist(err);
-            alternativeArticle.setAndSave({displayName: "TEST"}, {version: "1", blog: "TESTALTERNATIVE"}, function(err) {
+            alternativeArticle.setAndSave({OSMUser: "TEST"}, {version: "1", blog: "TESTALTERNATIVE"}, function(err) {
               // debug(err);
               // should.exist(err);
               should(err).eql(Error("Version Number Differs"));

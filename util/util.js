@@ -20,7 +20,6 @@ function shorten(string, maxlength) {
   if (typeof (string) === "number") return string;
   if (typeof (maxlength) === "undefined") maxlength = 30;
   if (typeof (string) === "undefined") return "";
-  if (typeof (string) === "number") return string;
   if (!string) return "";
   var newstring = string;
   if (typeof (string) === "object") newstring = JSON.stringify(string);

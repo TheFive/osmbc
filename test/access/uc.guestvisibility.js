@@ -2,9 +2,8 @@
 
 /* jshint ignore:start */
 
-var nock = require("nock");
-var mockdate = require("mockdate");
-var testutil = require("../testutil.js");
+const mockdate = require("mockdate");
+const testutil = require("../testutil.js");
 
 
 var userModule = require("../../model/user.js");
@@ -16,7 +15,6 @@ describe("uc/guest visibility", function() {
   this.timeout(20000);
   let bTheFive = null;
   let bGuestUser = null;
-  var nockLogin;
   beforeEach(async function() {
     await testutil.clearDB();
     testutil.startServerSync("TheFive");
@@ -34,33 +32,33 @@ describe("uc/guest visibility", function() {
     return bddone();
   });
   afterEach(function(bddone) {
-    nock.cleanAll();
     testutil.stopServer(bddone);
   });
 
 
   it("should do a use case short async/await version", async function() {
+    let errors = [];
     let b = testutil.getBrowser();
     let homePage = "/osmbc";
     let adminLinkSelect = "a#adminlink";
     await bTheFive.visit(homePage);
-    bTheFive.assert.expectHtmlSync("access", "fullStartPage.html");
+    bTheFive.assert.expectHtmlSync(errors, "access", "fullStartPage");
 
     // Click on admin link and compare what full user can see
     await bTheFive.click(adminLinkSelect);
-    bTheFive.assert.expectHtmlSync("access", "fullAdminPage.html");
+    bTheFive.assert.expectHtmlSync(errors, "access", "fullAdminPage");
 
 
     // create a new blog and compare bloglist
     await bTheFive.click("a#createblog");
     await bTheFive.click("button.btn.btn-primary[type='button']");
-    bTheFive.assert.expectHtmlSync("access", "fullBlogList.html");
+    bTheFive.assert.expectHtmlSync(errors, "access", "fullBlogList");
 
     // Collect an article, search input before
     await bTheFive.click("ul.nav.navbar-nav.pull-left li a");
     bTheFive.fill("input#searchField", "new Info");
     await bTheFive.click("button[name='SearchNow']");
-    bTheFive.assert.expectHtmlSync("access", "fullCollectPage.html");
+    bTheFive.assert.expectHtmlSync(errors, "access", "fullCollectPage");
 
     // Fill out collect screen click OK
     // add some further information on article screen
@@ -76,7 +74,7 @@ describe("uc/guest visibility", function() {
     bTheFive.fill("textarea[name='markdownEN']", "This is the written text.");
 
     await bTheFive.click("button#saveButton");
-    bTheFive.assert.expectHtmlSync("access", "fullArticlePage.html");
+    bTheFive.assert.expectHtmlSync(errors, "access", "fullArticlePage");
 
 
 
@@ -93,7 +91,7 @@ describe("uc/guest visibility", function() {
 
     // Guest user comes and collects an article
     await bGuestUser.visit("/osmbc");
-    bGuestUser.assert.expectHtmlSync("access", "guestStartPage.html");
+    bGuestUser.assert.expectHtmlSync(errors, "access", "guestStartPage");
 
     // Click on admin link and compare what full user can see
     await bGuestUser.assert.elements(adminLinkSelect, 0);
@@ -102,7 +100,7 @@ describe("uc/guest visibility", function() {
     await bGuestUser.click("ul.nav.navbar-nav.pull-left li a");
     bGuestUser.fill("input#searchField", "new Info");
     await bGuestUser.click("button[name='SearchNow']");
-    bGuestUser.assert.expectHtmlSync("access", "guestCollectPage.html");
+    bGuestUser.assert.expectHtmlSync(errors, "access", "guestCollectPage");
 
     // Fill out collect screen click OK
     // add some further information on article screen
@@ -115,7 +113,7 @@ describe("uc/guest visibility", function() {
     bGuestUser.fill("#title", "This is a title of a guest collected article");
     bGuestUser.fill("textarea[name='markdownEN']", "This is the written text.");
     await bGuestUser.click("button#saveButton");
-    bGuestUser.assert.expectHtmlSync("access", "guestArticlePage.html");
+    bGuestUser.assert.expectHtmlSync(errors, "access", "guestArticlePage");
     // Add two comments, one for guest user, and one for @EN
     bGuestUser.fill("textarea#comment", "This is a comment for @EN");
     await bGuestUser.click("button[name='AddComment']");
@@ -125,23 +123,22 @@ describe("uc/guest visibility", function() {
     // --------------------------------
 
     await bTheFive.click("a#inbox");
-    bTheFive.assert.expectHtmlSync("access","fullUserInbox.html");
+    bTheFive.assert.expectHtmlSync(errors, "access","fullUserInbox");
     await bGuestUser.click("a#inbox");
-    bGuestUser.assert.expectHtmlSync("access","guestUserInbox.html");
+    bGuestUser.assert.expectHtmlSync(errors, "access","guestUserInbox");
     await bGuestUser.visit("/article/3");
-    bGuestUser.assert.expectHtmlSync("access","guestArticle-id3-Page.html");
-
-
-    // bGuestUser.assert.expectHtmlSync("access", "tempresult.html");
+    bGuestUser.assert.expectHtmlSync(errors, "access","guestArticle-id3-Page");
+    should(errors).eql([]);
   });
   it("should create a new guest user, if he logs in",async function(){
+    let errors=[];
     let browser = await  testutil.getNewBrowser();
     // visiting /osmbc with unkown user shoud show login page
     await  browser.visit("/osmbc");
-    browser.assert.expectHtmlSync("access", "loginPage.html");
+    browser.assert.expectHtmlSync(errors, "access", "loginPage");
     testutil.fakeNextPassportLogin("UnkownGuest");
     await  browser.click("#login");
-    browser.assert.expectHtmlSync("access", "UnkownGuestStartPage.html");
+    browser.assert.expectHtmlSync(errors, "access", "UnkownGuestStartPage");
 
     // Collect an article, search input before
     await browser.click("ul.nav.navbar-nav.pull-left li a");
@@ -159,7 +156,8 @@ describe("uc/guest visibility", function() {
 
     // check with TheFive user, wether guest is registered
     await bTheFive.visit("/osmbc");
-    bTheFive.assert.expectHtmlSync("access","Home Page with Unknowm Guest.html");
+    bTheFive.assert.expectHtmlSync(errors, "access","Home Page with Unknowm Guest");
+    should(errors).eql([]);
   });
 });
 /* jshint ignore:end */

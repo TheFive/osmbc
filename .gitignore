@@ -12,13 +12,8 @@ ch_av/
 
 package-lock.json
 test/access/stylesheets
-actual_fullAdminPage.html
-actual_guestStartPage.html
-actual_tempresult.html
-actual_fullArticlePage.html
-actual_freshCretedUser.html
-actual_userNoNameChange.html
-actual_wusel.html
+maillogTest.log
 yarn.lock
-actual_actual.html
+
+# Ignore all temporary files for comparison
 *_actual.html

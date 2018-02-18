@@ -8,7 +8,6 @@ const debug    = require("debug")("OSMBC:model:article");
 
 
 const config    = require("../config.js");
-const logger    = require("../config.js").logger;
 const util      = require("../util/util.js");
 
 const messageCenter  = require("../notification/messageCenter.js");
@@ -304,17 +303,12 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
     async.series(
       [function logIt (cb) {
-        var oa = create(self);
+        let oa = create(self);
         // do not wait on email, so put empty callback handler
         messageCenter.global.updateArticle(user, oa, data, cb);
       },
       function putValues (cb) {
         for (k in data) {
-          // do not overwrite any existing Prototype Function with a value.
-          if (Article.prototype.hasOwnProperty(k)) {
-            logger.info("WARNING: Do not store " + data[k] + " for property " + k + " for Article ID " + self.id);
-            continue;
-          }
           if (typeof (data[k]) !== "undefined") self[k] = data[k];
         }
         cb();
