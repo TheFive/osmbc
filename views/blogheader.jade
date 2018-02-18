@@ -111,7 +111,7 @@ mixin blogReviewButtons(lang)
           form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/#{blog.name}/setLangStatus", method="post")
             input.hidden(type="text",name="lang" value = lang)
 
-            if (blog["exported"+lang])
+            if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
               input.hidden(type="text",name ="action" value = "closelang")
               button.btn.btn-large.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
             else

@@ -3,7 +3,6 @@
 
 const async    = require("async");
 const config   = require("../config.js");
-const logger   = require("../config.js").logger;
 const util     = require("../util/util.js");
 
 const markdown = require("markdown-it")()
@@ -22,10 +21,6 @@ const schedule            = require("node-schedule");
 
 const pgMap = require("./pgMap.js");
 const debug = require("debug")("OSMBC:model:blog");
-
-
-
-
 
 
 
@@ -69,21 +64,14 @@ Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
   articleModule.removeOpenBlogCache();
   should.exist(self.id);
   async.series([
-    function logit(cb) {
-      messageCenter.global.updateBlog(user, self, data, cb);
-    },
-
-    function(cb) {
+    messageCenter.global.updateBlog.bind(messageCenter.global, user, self, data),
+    function copyDataToBlog(cb) {
       should(self.id).not.equal(0);
       for (let key in data) {
         let value = data[key];
         if (typeof (value) === "undefined") continue;
         if (value === self[key]) continue;
         if (value === "" && typeof (self[key]) === "undefined") continue;
-        if (Blog.prototype.hasOwnProperty(key)) {
-          logger.info("WARNING: Do not store " + data[key] + " for property " + key + " for Blog ID " + self.id);
-          continue;
-        }
         if (typeof (value) === "object") {
           if (JSON.stringify(value) === JSON.stringify(self[key])) continue;
         }
@@ -94,8 +82,7 @@ Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
     if (err) return callback(err);
     self.startCloseTimer();
     self.save(callback);
-  }
-  );
+  });
 };
 
 

@@ -22,6 +22,8 @@ const auth        = require("../routes/auth.js");
 
 const htmlroot = config.htmlRoot();
 
+const reviewInWP = config.getValue("ReviewInWP", {default: []});
+
 // Internal Function to find a blog by an ID
 // it accepts an internal Blog ID of OSMBC and a blog name
 // Additional the fix blog name TBC is recognised.
@@ -106,8 +108,8 @@ function renderBlogStat(req, res, next) {
         callback();
       });
     }, function calculateEditors(callback) {
-      var addEditors = function (property, min) {
-        for (var user in logs[property]) {
+      let addEditors = function (lang, property, min) {
+        for (let user in logs[property]) {
           if (logs[property][user] >= min) {
             if (editors[lang].indexOf(user) < 0) {
               editors[lang].push(user);
@@ -115,12 +117,12 @@ function renderBlogStat(req, res, next) {
           }
         }
       };
-      for (var i = 0; i < config.getLanguages().length; i++) {
-        var lang = config.getLanguages()[i];
+      for (let i = 0; i < config.getLanguages().length; i++) {
+        let lang = config.getLanguages()[i];
         editors[lang] = [];
-        addEditors("collection", 3);
-        addEditors("markdown" + lang, 2);
-        addEditors("review" + lang, 1);
+        addEditors(lang, "collection", 3);
+        addEditors(lang, "markdown" + lang, 2);
+        addEditors(lang, "review" + lang, 1);
         editors[lang].sort();
       }
       callback();
@@ -154,9 +156,9 @@ function renderBlogStat(req, res, next) {
 
 function renderBlogList(req, res, next) {
   debug("renderBlogList");
-  var status = req.query.status;
-  var query = {};
-  var additionalText;
+  let status = req.query.status;
+  let query = {};
+  let additionalText;
 
   if (typeof (status) !== "undefined") {
     query.status = status;
@@ -203,13 +205,13 @@ function renderBlogPreview(req, res, next) {
   if (!blog) return next();
 
 
-  var lang = req.query.lang;
-  var asMarkdown = (req.query.markdown === "true");
+  let lang = req.query.lang;
+  let asMarkdown = (req.query.markdown === "true");
   if (typeof (lang) === "undefined") lang = "DE";
   if (config.getLanguages().indexOf(lang) < 0) lang = "DE";
 
 
-  var returnToUrl = req.session.articleReturnTo;
+  let returnToUrl = req.session.articleReturnTo;
 
 
 
@@ -260,9 +262,9 @@ function renderBlogPreview(req, res, next) {
 function setReviewComment(req, res, next) {
   debug("setReviewComment");
 
-  var lang = req.body.lang;
-  var user = req.user;
-  var data = req.body.text;
+  let lang = req.body.lang;
+  let user = req.user;
+  let data = req.body.text;
 
 
   if (!req.blog) return next();
@@ -276,10 +278,10 @@ function setReviewComment(req, res, next) {
 function editReviewComment(req, res, next) {
   debug("editReviewComment");
 
-  var lang = req.body.lang;
-  var user = req.user;
-  var data = req.body.text;
-  var index = req.params.index;
+  let lang = req.body.lang;
+  let user = req.user;
+  let data = req.body.text;
+  let index = req.params.index;
 
 
   if (!req.blog) return next();
@@ -293,8 +295,8 @@ function editReviewComment(req, res, next) {
 function setBlogStatus(req, res, next) {
   debug("setBlogStatus");
 
-  var lang = req.body.lang;
-  var user = req.user;
+  let lang = req.body.lang;
+  let user = req.user;
   if (!req.blog) return next();
 
   function finalFunction(err) {
@@ -320,7 +322,7 @@ function setBlogStatus(req, res, next) {
   if (req.body.action === "editlang") {
     return req.blog.closeBlog(lang, user, false, finalFunction);
   }
-  return next(new Error("Unkown Status Combination, Please Contact the Author"));
+  return next(new Error("Unknown Status Combination, Please Contact the Author"));
 }
 
 function renderBlogTab(req, res, next) {
@@ -329,11 +331,11 @@ function renderBlogTab(req, res, next) {
   let blog = req.blog;
   if (!blog) return next();
 
-  var tab = req.query.tab;
+  let tab = req.query.tab;
   if (!tab) tab = req.params.tab;
 
 
-  var votes = configModule.getConfig("votes");
+  let votes = configModule.getConfig("votes");
 
   if (!tab) tab = req.session.lasttab;
   if (!tab) tab = "Overview";
@@ -344,7 +346,7 @@ function renderBlogTab(req, res, next) {
 
   if (req.params.blog_id === "TBC") tab = "TBC";
 
-  var lang = req.user.getMainLang();
+  let lang = req.user.getMainLang();
   if (typeof (lang) === "undefined") lang = "DE";
 
 
@@ -377,7 +379,7 @@ function renderBlogTab(req, res, next) {
     setStatus: function (callback) {
       if (typeof (req.query.setStatus) !== "undefined") {
         clearParams = true;
-        var changes = {status: req.query.setStatus};
+        let changes = {status: req.query.setStatus};
         blog.setAndSave(req.user, changes, function(err) {
           if (err) return callback(err);
           let referer =  "/";
@@ -401,14 +403,14 @@ function renderBlogTab(req, res, next) {
     if (err) return next(err);
     should.exist(res.rendervar);
     if (clearParams) {
-      var url = htmlroot + "/blog/" + blog.name;
-      var styleParam = "";
+      let url = htmlroot + "/blog/" + blog.name;
+      let styleParam = "";
       if (req.param.style) styleParam = "?style=" + styleParam;
       res.redirect(url + styleParam);
       return;
     }
 
-    var renderer = new blogRenderer.HtmlRenderer(blog);
+    let renderer = new blogRenderer.HtmlRenderer(blog);
     res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
     res.render("blog_" + tab.toLowerCase(), {layout: res.rendervar.layout,
       blog: blog,
@@ -422,6 +424,7 @@ function renderBlogTab(req, res, next) {
       left_lang: req.user.getMainLang(),
       right_lang: req.user.getSecondLang(),
       renderer: renderer,
+      reviewInWP: reviewInWP,
       categories: blog.getCategories()});
   }
   );
@@ -439,10 +442,10 @@ function createBlog(req, res, next) {
 
 function editBlogId(req, res) {
   debug("editBlogId");
-  var blog = req.blog;
+  let blog = req.blog;
   should.exist(res.rendervar);
   should.exist(blog);
-  var params = {};
+  let params = {};
   if (req.query.edit) params.edit = req.query.edit;
   if (params.edit && params.edit === "false") {
     res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
@@ -457,16 +460,16 @@ function editBlogId(req, res) {
 
 function postBlogId(req, res, next) {
   debug("postBlogId");
-  var blog = req.blog;
+  let blog = req.blog;
   if (!blog) return next();
 
-  var categories = null;
+  let categories = null;
   try {
     if (req.body.categories_yaml) categories = yaml.load(req.body.categories_yaml);
   } catch (err) {
     return next(err);
   }
-  var changes = {name: req.body.name,
+  let changes = {name: req.body.name,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     status: req.body.status,

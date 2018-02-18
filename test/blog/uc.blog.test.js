@@ -1,5 +1,8 @@
 "use strict";
 
+/* jshint ignore:start */
+
+
 const async = require("async");
 const testutil = require("../testutil.js");
 const nock = require("nock");
@@ -40,7 +43,11 @@ describe("uc/blog", function() {
       mockdate.set(new Date("2016-05-25T19:00:00Z"));
 
       async.series([
-        testutil.importData.bind(null, {clear: true, blog: [{name: "blog"}], user: [{OSMUser: "TheFive", access: "full", mainLang: "DE"}]}),
+        testutil.importData.bind(null,
+          {clear: true,
+            blog: [{name: "blog"}],
+            user: [{OSMUser: "TheFive", access: "full", mainLang: "DE"},
+              {OSMUser: "TheOther", access: "full", mainLang: "EN"}]}),
         testutil.startServerWithLogin.bind(null, "TheFive", jar)
       ], bddone);
     });
@@ -50,6 +57,7 @@ describe("uc/blog", function() {
     });
     it("should be able to manage a blog lifetime", async function() {
       let b = await testutil.getNewBrowser("TheFive");
+      let b2 = await testutil.getNewBrowser("TheOther");
 
       await b.visit("/osmbc");
 
@@ -101,6 +109,24 @@ describe("uc/blog", function() {
       await b.click("button#closebutton");
 
       b.assert.expectHtmlSync("blog", "WN251Closed");
+
+      await b2.visit("/blog/WN251");
+      // Start Review for blog in english
+      await b2.click("button#readyreview");
+
+
+      // start personal review
+      await b2.click("button#reviewButtonEN");
+
+      b2.fill("input#reviewCommentEN", "1rst Review Text for EN");
+      // simulate keyup to enable button for click.
+      b2.keyUp("input#reviewCommentEN", 30);
+      await b2.click("button#reviewButtonEN");
+
+      // in difference to DE language, here no export should appear.
+      b2.assert.element("button#closebutton");
+
+
     });
   });
   describe("browser tests", function() {
@@ -203,3 +229,6 @@ describe("uc/blog", function() {
     });
   });
 });
+
+/* jshint ignore:end */
+

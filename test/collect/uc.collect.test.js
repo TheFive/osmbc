@@ -1,5 +1,8 @@
 "use strict";
 
+/* jshint ignore:start */
+
+
 const async = require("async");
 const nock = require("nock");
 const cheerio = require("cheerio");
@@ -96,3 +99,6 @@ describe("uc/collect", function() {
     });
   });
 });
+
+/* jshint ignore:end */
+

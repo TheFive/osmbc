@@ -1,5 +1,8 @@
 "use strict";
 
+/* jshint ignore:start */
+
+
 const testutil = require("../testutil.js");
 const should   = require("should");
 const nock = require("nock");
@@ -48,3 +51,7 @@ describe("uc/config", function() {
     browser.assert.text("table#resulttable", "WW WA WNN LL Munich OpenStreetMap Default Meeting 2015-12-15 Germany");
   });
 });
+
+
+/* jshint ignore:end */
+

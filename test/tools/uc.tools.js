@@ -1,5 +1,7 @@
 "use strict";
 
+/* jshint ignore:start */
+
 const async = require("async");
 const testutil = require("../testutil.js");
 const nock = require("nock");
@@ -94,3 +96,5 @@ describe("views/tools", function() {
     browser.assert.expectHtmlSync("tools", "calendartool");
   });
 });
+
+/* jshint ignore:end */
