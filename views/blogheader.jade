@@ -71,7 +71,7 @@ mixin reviewBlog(reviewComments,lang)
             h3
               div.label.label-warning
                 b.span=comment.user
-                span=" is reviewing since "+layout.moment(comment.editstamp).fromNow()
+                span=" is reviewing since "+layout.moment(comment.timestamp).fromNow()
 
 
         .form-group
