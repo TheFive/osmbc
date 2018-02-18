@@ -1,2 +1,11 @@
 test/NockedPages/* linguist-documentation
 test/screens/* linguist-documentation
+test/* linguist-documentation
+test/access/* linguist-documentation
+test/blog/* linguist-documentation
+test/collect/* linguist-documentation
+test/config/* linguist-documentation
+test/data/* linguist-documentation
+test/index/* linguist-documentation
+test/tools/* linguist-documentation
+test/user/* linguist-documentation
