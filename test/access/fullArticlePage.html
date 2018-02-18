@@ -464,6 +464,8 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
   
 
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
+<script src="/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js"></script>
+<script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
 <script>
   // Init This Window with jQuery ready Callback
   $(document).ready(init);
@@ -494,6 +496,9 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
   
   // initialise all callbacks with jQuery
   function init() {
+    md_render = window.markdownit();
+    md_render.use(window.markdownitSup)
+    md_render.use(window["markdown-it-imsize.js"])
   
     $(".markdownEdit")
             .change(convertMinusNoTranslation)
@@ -542,7 +547,6 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
             .change(FitToContent)
             .keyup(FitToContent)
             .trigger("change");
-    resizePictures();
     $('[data-toggle="tooltip"]').tooltip();
     window.submitAndRedraw = submitAndRedraw;
   
@@ -562,12 +566,6 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
     }
   }
   
-  // Resize Pictures Handler
-  // Call in init phase, and during preview calculation of markdown
-  function resizePictures() {
-    $(".preview img").css("max-width","50%","max-height","50%");
-  
-  }
   
   
   
@@ -575,7 +573,6 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
   // Add the Blog typic list element to preview, but only
   // for specific types, (Missing: configuring this by user.)
   function convert(text) {
-    converter = new window.markdownit({breaks:true});
   
     // The cut at the beginning is a little bit "historic" from the
     // OSMBC startup, so only used for emotional motivation of the developer :-)
@@ -583,7 +580,8 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
   
   
     // convert md to html
-    text = converter.render(text);
+    text = md_render.render(text);
+  
   
     // Display as list, this should depend on type
   
@@ -715,7 +713,6 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
     var md = this.value;
     preview = $(".preview[lang=" + this.lang + "]");
     preview.html(convert(md));
-    resizePictures();
   }
   
   

@@ -269,3 +269,20 @@ table {
   text-align: left;
   /* white-space: nowrap; *//*whether to display in one line or not*/
 }
+
+/* This style is used in article editor preview to limit size of pictures */
+.preview > p > img {
+  max-height: 350px;
+  max-width: 300px;
+  object-fit: cover;
+}
+/* This style is used in blog full view to limit size of pictures */
+.preview > div.wp-caption > p.wp-caption-text > img {
+  max-height: 350px;
+  max-width: 300px;
+  object-fit: cover;
+}
+/* This style is used in blog full view to limit size of picture caption */
+.preview > div.wp-caption  {
+  max-width: 320px;
+}

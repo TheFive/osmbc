@@ -110,7 +110,7 @@ block blogcontent
                 div(class=columnLeftSize)
                   div(onclick="if (!openEditor) {openEditor = document.getElementById('ldiv#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
                     div(class=(a["markdown" + lang]) ? "" : "mark")
-                      ul(id="lpreview#{a.id}")
+                      ul.preview(id="lpreview#{a.id}")
                         :verbatim
                           !{renderer.renderArticle(left_lang,a)}
                   div.hidden(id="ldiv#{a.id}")
@@ -134,7 +134,7 @@ block blogcontent
                   if right_lang
                     div(onclick="if (!openEditor) {openEditor = document.getElementById('rdiv#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
                       div(class=(a["markdown" + right_lang]) ? "" : "mark")
-                        ul(id="rpreview#{a.id}")
+                        ul.preview(id="rpreview#{a.id}")
                           :verbatim
                             !{renderer.renderArticle(right_lang,a)}
                     div.hidden(id="rdiv#{a.id}")
