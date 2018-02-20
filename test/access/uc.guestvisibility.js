@@ -113,12 +113,12 @@ describe("uc/guest visibility", function() {
     bGuestUser.fill("#title", "This is a title of a guest collected article");
     bGuestUser.fill("textarea[name='markdownEN']", "This is the written text.");
     await bGuestUser.click("button#saveButton");
-    bGuestUser.assert.expectHtmlSync(errors, "access", "guestArticlePage");
     // Add two comments, one for guest user, and one for @EN
     bGuestUser.fill("textarea#comment", "This is a comment for @EN");
     await bGuestUser.click("button[name='AddComment']");
     bGuestUser.fill("textarea#comment", "This is a comment for @TheFive");
     await bGuestUser.click("button[name='AddComment']");
+    bGuestUser.assert.expectHtmlSync(errors, "access", "guestArticlePage");
 
     // --------------------------------
 
