@@ -1,5 +1,12 @@
 # Change Log
 
+## [3.1.3a](https://github.com/TheFive/osmbc/tree/3.1.3a) (2018-02-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.3...3.1.3a)
+
+**Fixed bugs:**
+
+- Guest is not able to see his own comments [\#742](https://github.com/TheFive/osmbc/issues/742)
+
 ## [3.1.3](https://github.com/TheFive/osmbc/tree/3.1.3) (2018-02-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2e...3.1.3)
 
