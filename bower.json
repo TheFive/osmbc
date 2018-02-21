@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "font-awesome": "^5.0.6",
+    "font-awesome": "^4.7.0",
     "d3": "~3.5.0",
     "moment": "~2.20.1",
     "markdown-it": "^8.4.1",
