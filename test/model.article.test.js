@@ -873,6 +873,31 @@ describe("model/article", function() {
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
+    it("should add a comment with article link", function(bddone) {
+      var timestamp = new Date();
+      var timestampIso = timestamp.toISOString();
+      var dataBefore = {
+        clear: true,
+        article: [{blog: "WN1", collection: "something", title: "test"}]};
+      var dataAfter = {
+        article: [{blog: "WN1",
+          collection: "something",
+          title: "test",
+          id: "1",
+          version: 2,
+          commentList: [{user: "Test", timestamp: timestampIso, text: "a comment #99"}],
+          commentStatus: "open",
+          commentRead: {Test: 0}}],
+        change: [{blog: "WN1", oid: 1, table: "article", from: "", to: "a comment #99", user: "Test", timestamp: timestampIso}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1, function(err, article) {
+          should.not.exist(err);
+          should.exist(article);
+          article.addCommentFunction({OSMUser: "Test"}, "a comment https://testosm.bc/article/99", cb);
+        });
+      };
+      testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
+    });
     it("should not add a empty comment", function(bddone) {
       var dataBefore = {
         clear: true,
@@ -947,6 +972,33 @@ describe("model/article", function() {
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
+    it("should edit a comment with article link", function(bddone) {
+      var timestamp = new Date();
+      var timestamp2 = new Date();
+      timestamp2.setTime(timestamp2.getTime());
+      var dataBefore = {
+        clear: true,
+        article: [{blog: "WN1",
+          collection: "something",
+          title: "test",
+          commentList: [{user: "Test", timestamp: timestamp, text: "a comment"}]}]};
+      var dataAfter = {
+        article: [{blog: "WN1",
+          collection: "something",
+          title: "test",
+          commentList: [{user: "Test",
+            timestamp: timestamp.toISOString(),
+            editstamp: timestamp2.toISOString(),
+            text: "a comment #99"}]}],
+        change: [{blog: "WN1", oid: 1, table: "article", property: "comment0", from: "a comment", to: "a comment #99", user: "Test", timestamp: timestamp2.toISOString()}]};
+      var testFunction = function testFunction(cb) {
+        articleModule.findById(1, function(err, article) {
+          should.not.exist(err);
+          article.editComment({OSMUser: "Test"}, 0, "a comment https://testosm.bc/article/99", cb);
+        });
+      };
+      testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
+    });
     it("should mark a comment as read", function(bddone) {
       var timestamp = new Date();
       var timestamp2 = new Date();
@@ -975,7 +1027,8 @@ describe("model/article", function() {
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
-    }); it("should not edit a comment with blank", function(bddone) {
+    });
+    it("should not edit a comment with blank", function(bddone) {
       var timestamp = new Date();
       var timestamp2 = new Date();
       timestamp2.setTime(timestamp2.getTime() + 200);

@@ -116,7 +116,7 @@ exports.getValue = function(key, options) {
     process.exit(1);
   }
   if (typeof result !== "undefined" && options && options.type && typeof result !== options.type) {
-    logger.error("Value '" + key + "' does not have type "+ options.type);
+    logger.error("Value '" + key + "' does not have type " + options.type);
     process.exit(1);
   }
 
@@ -128,8 +128,9 @@ exports.getValue = function(key, options) {
 };
 
 
-let languages = exports.getValue("languages", {mustExist: true});
-let htmlRoot = exports.getValue("htmlroot", {mustExist: true});
+const languages = exports.getValue("languages", {mustExist: true});
+const htmlRoot = exports.getValue("htmlroot", {mustExist: true});
+const url = exports.getValue("url", {mustExist: true});
 
 
 exports.getLanguages = function() {
@@ -137,6 +138,7 @@ exports.getLanguages = function() {
 };
 
 exports.htmlRoot = function() { return htmlRoot; };
+exports.url = function() { return url; };
 
 exports.moment_locale = function(lang) {
   return configuration.moment_locale[lang];
@@ -160,6 +162,6 @@ exports.logger = logger;
 
 
 
-//deprecate Values
-exports.getValue("diableOldEditor",{deprecated:true});
+// deprecate Values
+exports.getValue("diableOldEditor", {deprecated: true});
 

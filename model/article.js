@@ -20,7 +20,11 @@ const twitter        = require("../model/twitter.js");
 
 
 
-var listOfOrphanBlog = null;
+let listOfOrphanBlog = null;
+
+const htmlRoot      = config.htmlRoot();
+const url = config.url();
+
 
 
 function getListOfOrphanBlog(callback) {
@@ -549,6 +553,13 @@ Article.prototype.getCategory = function getCategory(lang) {
   return result;
 };
 
+function normaliseArticleNumber(comment) {
+  let result = comment;
+  while (result.indexOf(url + htmlRoot + "/article/") >= 0) {
+    result = result.replace(url + htmlRoot + "/article/", "#");
+  }
+  return result;
+}
 
 Article.prototype.addCommentFunction = function addCommentFunction(user, text, callback) {
   debug("Article.prototype.addCommentFunction");
@@ -559,6 +570,8 @@ Article.prototype.addCommentFunction = function addCommentFunction(user, text, c
   // check on empty comment
   if (text.trim() === "") return callback(new Error("Empty Comment Added"));
   var self = this;
+
+  text = normaliseArticleNumber(text);
 
   // Add the new comment with User to the comment list object
   if (!self.commentList) self.commentList = [];
@@ -601,6 +614,7 @@ Article.prototype.editComment = function editComment(user, index, text, callback
   should(typeof (text)).eql("string");
   should(typeof (callback)).eql("function");
   if (text.trim() === "") return callback(new Error("Empty Comment Added"));
+  text = normaliseArticleNumber(text);
   var self = this;
 
   if (!self.commentList) self.commentList = [];
