@@ -16,5 +16,13 @@ p
         h3
           | #{prop} was added
       p=newArticle[prop]
+if (addedComment)
+  h3
+    | comment was added
+  p=addedComment
+if (editedComment)
+  h3
+    | comment was changed
+  p=editedComment
 
 

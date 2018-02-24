@@ -198,6 +198,8 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   var self = this;
   delete self.lock;
 
+  if (data.addComment) return callback(new Error("addCommment in article setAndSave is unsupported"));
+  if (data.comment) return callback(new Error("comment in article setAndSave is unsupported"));
 
   debug("Version of Article %s", self.version);
   debug("Version of dataset %s", data.version);
@@ -252,16 +254,6 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
         self._blog = result;
         return cb();
       });
-    },
-
-
-    function addCommentWhenGiven(cb) {
-      debug("addCommentWhenGiven");
-      let addComment = data.addComment;
-      delete data.addComment;
-      if (addComment && addComment.trim() !== "") {
-        self.addCommentFunction(user, addComment, cb);
-      } else cb();
     },
     function addCommentWhenUnpublished(cb) {
       debug("addCommentWhenUnpublished");

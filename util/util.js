@@ -67,6 +67,7 @@ function md_render(text) {
     text = text.replace("<a href=", '<a target="_blank" href=');
   }
 
+
   return text;
 }
 

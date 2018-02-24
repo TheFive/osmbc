@@ -237,12 +237,6 @@ MailReceiver.prototype.updateArticle = function updateArticle(user, article, cha
   if (article.collection && change.collection) {
     subject = logblog + " changed: " + newArticle.title;
   }
-  if (!article.comment && change.comment) {
-    subject = logblog + " comment: " + newArticle.title;
-  }
-  if (article.comment && change.comment) {
-    subject = logblog + " comment: " + newArticle.title;
-  }
 
 
   var data = {user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog};
@@ -277,13 +271,12 @@ MailReceiver.prototype.addComment = function addComment(user, article, text, cal
   for (k in article) {
     newArticle[k] = article[k];
   }
-  newArticle.comment = text;
 
   var logblog = article.blog;
   var subject = logblog + " comment: " + newArticle.title;
 
 
-  var data = {user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog};
+  var data = {user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog, addedComment: text};
 
   infomail.render(data, function infomailRender(err, results) {
     debug("infomailRender");
@@ -317,14 +310,12 @@ MailReceiver.prototype.editComment = function editComment(user, article, index, 
     newArticle[k] = article[k];
     oldArticle[k] = article[k];
   }
-  newArticle.comment = text;
-  oldArticle.comment = article.commentList[index];
 
   var logblog = article.blog;
   var subject = logblog + " comment: " + newArticle.title;
 
 
-  var data = {user: this.user, changeby: user, article: oldArticle, newArticle: newArticle, layout: layout, logblog: logblog};
+  var data = {user: this.user, changeby: user, article: oldArticle, newArticle: newArticle, layout: layout, logblog: logblog, editedComment: text};
 
   infomail.render(data, function infomailRender(err, results) {
     debug("infomailRender");

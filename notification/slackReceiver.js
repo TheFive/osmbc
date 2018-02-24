@@ -155,12 +155,6 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user, article, ch
   if (article.collection && change.collection) {
     text += articleTitle + " changed collection" + "\n";
   }
-  if (!article.comment && change.comment) {
-    text += articleTitle + " added comment" + "\n";
-  }
-  if (article.comment && change.comment) {
-    text += articleTitle + " changed comment" + "\n";
-  }
   debug("Sending subject " + text);
   var username = botName + "(" + user.OSMUser + ")";
 
