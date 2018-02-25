@@ -45,7 +45,7 @@ block content
         th 
          | oid
         td
-          a(href='#{layout.htmlroot}/#{change.table}/' + change.oid) #{change.oid} 
+          a(href=`${layout.htmlroot}/${change.table}/${change.oid}`)=change.oid
         td
           | Click here to go to changed object
       tr

@@ -61,17 +61,17 @@ block blogcontent
                   +voteDisplay(a,showVotes)
 
             div(class=secondColSize)
-              div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
+              div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
 
                 ul
-                  div(id="preview#{a.id}")
+                  div(id="preview" + a.id)
                     :verbatim
                       !{renderer.renderArticle(lang,a)}
 
-              div.hidden(id="div#{a.id}")
-                form(name="EditArticle",id="EditArticle#{a.id}", action=layout.htmlroot+"/article/#{a.id}/setMarkdown/#{lang}", method="post")
-                  textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(#{a.id});" onkeyup="onchangeMarkdown(#{a.id})" spellcheck = "true" lang="#{lang}") #{a["markdown"+lang]}
-                  textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
+              div.hidden(id="div" + a.id)
+                form(name="EditArticle",id="EditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + lang, method="post")
+                  textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(" + a.id + ");" onkeyup="onchangeMarkdown(" + a.id + ")" spellcheck = "true" lang="#{lang}") #{a["markdown"+lang]}
+                  textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
                 p
                   if a.author && a.author.collection
                     span="Collected: "

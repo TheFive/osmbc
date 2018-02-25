@@ -21,7 +21,7 @@ mixin userTable(userList)
               each u in userList
                 if logs[v]
                   td
-                    a(href=layout.htmlroot + "/article/list?blog=#{blog.name}&user=#{u}&property=#{v}%") #{logs[v][u]}
+                    a(href=`${layout.htmlroot}/article/list?blog=${blog.name}&user=${u}&property=${v}%`)=logs[v][u]
                 else
                   td=""
 
@@ -44,9 +44,9 @@ block content
           div.label.label-default(style="color:white")=l
         .col-md-11
           div.progress(style="margin-bottom:2px")
-            div.progress-bar.progress-bar-success(style="width:#{parseInt(100*ready/total)}%")=ready
-            div.progress-bar.progress-bar-danger(style="width:#{parseInt(100*unedited/total)}%")=unedited
-            div.progress-bar.progress-bar-info(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
+            div.progress-bar.progress-bar-success(style=`width:${parseInt(100*ready/total)}%`)=ready
+            div.progress-bar.progress-bar-danger(style=`width:${parseInt(100*unedited/total)}%`)=unedited
+            div.progress-bar.progress-bar-info(style=`width:${parseInt(100*notranslate/total)}%`)=notranslate
 
 
   .row

@@ -22,7 +22,7 @@ block all
           .container-fluid
             .navbar-header.pull-left
               if layout.osmbc_version === layout.user.lastChangeLogView
-                a.navbar-brand(href=layout.htmlroot+'/osmbc.html') #{layout.appName}
+                a.navbar-brand(href=layout.htmlroot+'/osmbc.html')=layout.appName
               else
                 a.navbar-brand.bg-success(href=layout.htmlroot+'/changelog') Whats New?
             .navbar-header
@@ -72,7 +72,7 @@ block all
                     span.caret
                   ul.dropdown-menu(role='menu')
                     li
-                      a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md") Version #{layout.osmbc_version}
+                      a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md")="Version "+layout.osmbc_version
                     li.divider
                     li
                       a(href=layout.htmlroot+"/help/OSMBC") OSMBC
@@ -99,10 +99,10 @@ block all
                   ul.dropdown-menu(role='menu')
                     each l in layout.languages
                       li
-                        a(href=layout.htmlroot+'/language?lang=#{l}') #{l}
+                        a(href=layout.htmlroot+'/language?lang=' +l)=l
                 if layout.user
                   li
-                    img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/#{layout.user.id}';" style="width:50px;height:50px")
+                    img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';" style="width:50px;height:50px")
                 else
                   li
                     a(href='./') Anonymous
@@ -128,7 +128,7 @@ block all
   html
     head
       title= title
-      link(rel='stylesheet', href='#{layout.htmlroot}#{layout.style}')
+      link(rel='stylesheet', href=`${layout.htmlroot}${layout.style}`)
     body
 
   block scripts

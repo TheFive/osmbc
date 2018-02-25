@@ -6,7 +6,7 @@ block content
   .row
     h1
       |Edit Configuration
-    form(name="input", action="#{layout.htmlroot}/config/#{config.name}", method="post")
+    form(name="input", action=`${layout.htmlroot}/config/${config.name}`, method="post")
       div.form-horizontal(role="form")
         - sizeLabel = 0
         - sizeInput = 11
@@ -17,14 +17,14 @@ block content
           h2=config.name
         if config.type == "yaml"
           div.form-group
-            div(class="col-sm-#{sizeInput}")
-              textarea.form-control(name="yaml",id="yaml", rows=14, wrap="off" style="font-family:monospace") #{config.yaml}
-            div.text-muted(class="col-sm-#{sizeExplanation}") Use YAML Markup Language and formatting.
+            div(class="col-sm-" + sizeInput)
+              textarea.form-control(name="yaml",id="yaml", rows=14, wrap="off" style="font-family:monospace")=config.yaml
+            div.text-muted(class="col-sm-" +sizeExplanation ) Use YAML Markup Language and formatting.
         if config.type == "text"
           div.form-group
-            div(class="col-sm-#{sizeInput}")
-              textarea.form-control(name="text",id="text", rows=14, wrap="off" style="font-family:monospace") #{config.text}
-            div.text-muted(class="col-sm-#{sizeExplanation}") This is plain text.
+            div(class="col-sm-" + sizeInput)
+              textarea.form-control(name="text",id="text", rows=14, wrap="off" style="font-family:monospace")=config.text
+            div.text-muted(class="col-sm-" + sizeExplanation) This is plain text.
 
 
 
@@ -68,7 +68,7 @@ block content
             each change, i in changes
               tr
                 td
-                  a(href='#{layout.htmlroot}/changes/' + change.id) #{change.id} 
+                  a(href=layout.htmlroot + '/changes/' + change.id)=change.id
                 td= change.user
                 td= change.property
                 td
