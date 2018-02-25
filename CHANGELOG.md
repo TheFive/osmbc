@@ -7,6 +7,7 @@
 **Implemented enhancements:**
 
 - Color correct mentions in comments [\#499](https://github.com/TheFive/osmbc/issues/499)
+- Warn if a link is used in markdown, that is not in collection. [\#484](https://github.com/TheFive/osmbc/issues/484)
 
 ## [3.1.4](https://github.com/TheFive/osmbc/tree/3.1.4) (2018-02-25)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.3a...3.1.4)
@@ -812,11 +813,7 @@
 - Some links results in crash when getting title of page \(collect\) [\#516](https://github.com/TheFive/osmbc/issues/516)
 
 ## [1.9.2c](https://github.com/TheFive/osmbc/tree/1.9.2c) (2016-09-01)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2...1.9.2c)
-
-**Fixed bugs:**
-
-- Encoding Problems at Parsing Titles of Other Websites [\#508](https://github.com/TheFive/osmbc/issues/508)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2c...1.9.2c)
 
 ## [1.9.2](https://github.com/TheFive/osmbc/tree/1.9.2) (2016-08-18)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.1...1.9.2)
