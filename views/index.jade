@@ -16,7 +16,7 @@ block content
             a(href=layout.htmlroot+"/blog/list?status=IN('open','edit')") (more)
 
         .row
-          +blogStatusTable
+          +blogStatusTable(true)
 
 
 
@@ -24,7 +24,7 @@ block content
           h4="Current Users"
           p
             table.table
-              for user,i in activeUserList
+              for user, i in activeUserList
                 tr
                   td
                     img(src=layout.getAvatar(user.OSMUser) style="height:25px;width:25px")

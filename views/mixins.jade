@@ -253,7 +253,7 @@ mixin voteButtonList(votes)
     if (vote.displayAtTop)
       +voteButton(vote,article)
 
-mixin blogStatusTable
+mixin blogStatusTable(blogWithLink)
   table.table.table-condensed
     tr
       td=""
@@ -262,14 +262,22 @@ mixin blogStatusTable
 
     for openBlog in layout.listOfOpenBlog.slice(0).reverse()
       tr
-        td=openBlog.name
+        if (blogWithLink)
+          td
+            a(href=layout.htmlroot+'/blog/' + openBlog.name)=openBlog.name
+        else
+          td=openBlog.name
         for l in layout.activeLanguages
           td
             div.label.osmbclabel-openblog=openBlog._countUneditedMarkdown[l]
 
     for editBlog in layout.editBlog.slice(0).reverse()
       tr
-        td=editBlog.name
+        if (blogWithLink)
+          td
+            a(href=layout.htmlroot+'/blog/' + editBlog.name)=editBlog.name
+        else
+          td=editBlog.name
         for l in layout.activeLanguages
           td
             if (editBlog["close" + l])
