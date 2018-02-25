@@ -481,35 +481,30 @@ describe("routes/article", function() {
     let url = baseLink + "/article/create";
     let params = {blog: "BLOG",
       collection: "COLLECTION",
-      comment: "comment",
       categoryEN: "categoryEN",
       version: "1",
       title: "title",
-      addComment: "addComment",
       commentStatus: "close",
-      unpublishReason: "unpublisnReason",
+      unpublishReason: "unpublishReason",
       unpublishReference: "unpublishReference"};
     it("should run with full access user", function (bddone) {
       testutil.startServerWithLogin("TestUser",jar, function() {
         request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql("unpublisnReason");
+          body.should.containEql("unpublishReason");
           articleModule.findById(4, function(err, article) {
             should.not.exist(err);
             delete article._blog;
             should(article).eql({
               id: "4",
-              version: 3,
-              commentList: [{user: "TestUser", timestamp: "2016-05-25T20:00:00.000Z", text: "addComment"}],
-              commentStatus: "open",
-              commentRead: { TestUser: 0 },
+              version: 2,
+              commentStatus: "close",
               blog: "BLOG",
               collection: "COLLECTION",
-              comment: "comment",
               categoryEN: "categoryEN",
               title: "title",
-              unpublishReason: "unpublisnReason",
+              unpublishReason: "unpublishReason",
               unpublishReference: "unpublishReference",
               firstCollector: "TestUser"
             });
@@ -533,22 +528,19 @@ describe("routes/article", function() {
         request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql("unpublisnReason");
+          body.should.containEql("unpublishReason");
           articleModule.findById(4, function (err, article) {
             should.not.exist(err);
             delete article._blog;
             should(article).eql({
               id: "4",
-              version: 3,
-              commentList: [{user: "TestUserNonExisting", timestamp: "2016-05-25T20:00:00.000Z", text: "addComment"}],
-              commentStatus: "open",
-              commentRead: {TestUserNonExisting: 0},
+              version: 2,
+              commentStatus: "close",
               blog: "BLOG",
               collection: "COLLECTION",
-              comment: "comment",
               categoryEN: "categoryEN",
               title: "title",
-              unpublishReason: "unpublisnReason",
+              unpublishReason: "unpublishReason",
               unpublishReference: "unpublishReference",
               firstCollector: "TestUserNonExisting"
             });

@@ -38,20 +38,6 @@ ConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, article, 
       debug("Notification because new collection");
     }
   }
-  if (util.isTrue(this.config.notifyAllComment)) {
-    if (change.comment && change.comment !== article.comment) {
-      notify = true;
-      debug("Notification because changed comment");
-    }
-  }
-  var userList = [];
-  if (this.config.notifyComment) userList = this.config.notifyComment;
-  for (var i = 0; i < userList.length; i++) {
-    if (change.comment && change.comment.search(new RegExp("@" + userList[i], "i")) >= 0) {
-      notify = true;
-      debug("Notification because comment for @" + userList[i]);
-    }
-  }
   if (!notify) return cb();
   this.receiver.updateArticle(user, article, change, cb);
 };

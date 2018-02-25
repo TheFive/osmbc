@@ -25,23 +25,8 @@ UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, artic
       debug("Mail sent because new Collection");
     }
   }
-  if (this.user.mailAllComment === "true" && this.user.access === "full") {
-    if (change.comment && change.comment !== article.comment) {
-      sendMail = true;
-      debug("Mail send because changed comment");
-    }
-  }
-  var userList = [];
-  if (this.user.mailComment) userList = this.user.mailComment;
 
   // Guest are only informed about comments they are adressed to
-  if (this.user.access === "guest" && article.firstCollector === this.user.OSMUser) userList = [this.user.OSMUser];
-  for (var i = 0; i < userList.length; i++) {
-    if (change.comment && change.comment.search(new RegExp("@" + userList[i], "i")) >= 0) {
-      sendMail = true;
-      debug("Mail send because comment for @" + userList[i]);
-    }
-  }
   if (!sendMail) return cb();
   this.receiver.updateArticle(user, article, change, cb);
 };

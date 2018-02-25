@@ -128,5 +128,13 @@ describe("util", function() {
       var r = util.md_render("http://www.google.de/hallo is a synonym for [this](https://www.google.de/hallo2)");
       should(r).eql('<p><a target="_blank" href="http://www.google.de/hallo">http://www.google.de/hallo</a> is a synonym for <a target="_blank" href="https://www.google.de/hallo2">this</a></p>\n');
     });
+    it("should render a shorted link",function(){
+      let r = util.md_render("this is a link #1928 to an article");
+      should(r).eql("<p>this is a link <a target=\"_blank\" href=\"https://testosm.bc/article/1928\">#1928</a> to an article</p>\n");
+    });
+    it("should render user names",function(){
+      let r = util.md_render("@thefive is telling @user1 about @user2",{TheFive:"full",user1:"denied",user2:"guest"});
+      should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/TheFive>@TheFive</a> is telling <a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
+    });
   });
 });

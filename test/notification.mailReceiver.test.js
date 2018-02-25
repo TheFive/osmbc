@@ -63,7 +63,8 @@ describe("notification/mailReceiver", function() {
           {OSMUser: "User4", email: "user4@mail.bc", access: "full", mailComment: ["User4"]},
           {OSMUser: "User5", access: "full", mailAllComment: "true"},
           {OSMUser: "User6", access: "full", mailBlogStatusChange: "true"},
-          {OSMUser: "UserGuest", access: "guest",email:"user@guest.tol"}]}, bddone);
+          {OSMUser: "UserGuest", access: "guest",email:"user@guest.tol"},
+          {OSMUser: "forename surname",access:"full",email:"forename.surname@mail.com",mailComment:["forename surname"]}]}, bddone);
     });
     it("should send out mail, when collecting article", function (bddone) {
       articleModule.createNewArticle(function(err, article) {
@@ -126,6 +127,31 @@ describe("notification/mailReceiver", function() {
 
           result = mailChecker.getCall(1).args[0];
           expectedMail.to = "user4@mail.bc";
+          should(result).eql(expectedMail);
+          bddone();
+        });
+      });
+    });
+    it("should send out mail, when adding a comment for a user with space in name", function (bddone) {
+      articleModule.createNewArticle({blog: "WN278", title: "To Add A Comment"}, function(err, article) {
+        should.not.exist(err);
+        article.addCommentFunction({OSMUser: "testuser"}, "Information for @forename surname and @EN", function(err) {
+          should.not.exist(err);
+          should(mailChecker.callCount).eql(2);
+          // First Mail Check
+
+          var expectedMail = {
+            html: '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for @forename surname and @EN</p>',
+            text: "CHANGE IN ARTICLE OF WN278\nArticle To Add A Comment [https://testosm.bc/article/1] was changed by testuser \n\nCOMMENT WAS ADDED\nInformation for @forename surname and @EN",
+            from: "noreply@gmail.com",
+            to: "UserAllComment@mail.bc",
+            subject: "[TESTBC] WN278 comment: To Add A Comment"
+          };
+          var result = mailChecker.getCall(0).args[0];
+          should(result).eql(expectedMail);
+
+          result = mailChecker.getCall(1).args[0];
+          expectedMail.to = "forename.surname@mail.com";
           should(result).eql(expectedMail);
           bddone();
         });

@@ -20,7 +20,11 @@ const twitter        = require("../model/twitter.js");
 
 
 
-var listOfOrphanBlog = null;
+let listOfOrphanBlog = null;
+
+const htmlRoot      = config.htmlRoot();
+const url = config.url();
+
 
 
 function getListOfOrphanBlog(callback) {
@@ -198,6 +202,8 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   var self = this;
   delete self.lock;
 
+  if (data.addComment) return callback(new Error("addCommment in article setAndSave is unsupported"));
+  if (data.comment) return callback(new Error("comment in article setAndSave is unsupported"));
 
   debug("Version of Article %s", self.version);
   debug("Version of dataset %s", data.version);
@@ -252,16 +258,6 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
         self._blog = result;
         return cb();
       });
-    },
-
-
-    function addCommentWhenGiven(cb) {
-      debug("addCommentWhenGiven");
-      let addComment = data.addComment;
-      delete data.addComment;
-      if (addComment && addComment.trim() !== "") {
-        self.addCommentFunction(user, addComment, cb);
-      } else cb();
     },
     function addCommentWhenUnpublished(cb) {
       debug("addCommentWhenUnpublished");
@@ -557,6 +553,13 @@ Article.prototype.getCategory = function getCategory(lang) {
   return result;
 };
 
+function normaliseArticleNumber(comment) {
+  let result = comment;
+  while (result.indexOf(url + htmlRoot + "/article/") >= 0) {
+    result = result.replace(url + htmlRoot + "/article/", "#");
+  }
+  return result;
+}
 
 Article.prototype.addCommentFunction = function addCommentFunction(user, text, callback) {
   debug("Article.prototype.addCommentFunction");
@@ -567,6 +570,8 @@ Article.prototype.addCommentFunction = function addCommentFunction(user, text, c
   // check on empty comment
   if (text.trim() === "") return callback(new Error("Empty Comment Added"));
   var self = this;
+
+  text = normaliseArticleNumber(text);
 
   // Add the new comment with User to the comment list object
   if (!self.commentList) self.commentList = [];
@@ -609,6 +614,7 @@ Article.prototype.editComment = function editComment(user, index, text, callback
   should(typeof (text)).eql("string");
   should(typeof (callback)).eql("function");
   if (text.trim() === "") return callback(new Error("Empty Comment Added"));
+  text = normaliseArticleNumber(text);
   var self = this;
 
   if (!self.commentList) self.commentList = [];
