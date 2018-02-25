@@ -36,7 +36,7 @@ if !MIXIN_INCLUDE
               else
                 p
                   :verbatim
-                    !{layout.md_render(comment.text)}
+                    !{layout.md_render(comment.text,accessMap)}
 
     .row
       if (!params.editComment)

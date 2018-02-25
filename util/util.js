@@ -55,7 +55,7 @@ function linkify(string) {
 }
 
 
-function md_render(text) {
+function md_render(text, accessMap) {
   if (typeof text === "undefined") text = "";
   if (text === null) text = "";
 
@@ -68,6 +68,16 @@ function md_render(text) {
   text = markdown.render(text);
   while (text.search("<a href=") >= 0) {
     text = text.replace("<a href=", '<a target="_blank" href=');
+  }
+  if (accessMap) {
+    for (let user in accessMap) {
+      let mention = "@" + user;
+      let cl = "bg-success";
+      if (accessMap[user] === "guest") cl = "bg-warning";
+      if (accessMap[user] === "denied") cl = "bg-danger";
+      let userUrl = user.replace(" ", "%20");
+      text = text.replace(new RegExp(mention, "i"), "<a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a>");
+    }
   }
 
 

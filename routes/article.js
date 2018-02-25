@@ -67,6 +67,21 @@ function getArticleFromID(req, res, next, id) {
   });
 }
 
+/* Read all users and map OSMOser on Access Right
+May be optimised later for performance reasons */
+
+function accessMap(cb) {
+  debug("accessMap");
+  userModule.find({}, function(err, userArray) {
+    if (err) return cb(err);
+    let accessMap = {};
+    userArray.forEach(function(user) {
+      accessMap[user.OSMUser] = user.access;
+    });
+    return cb(null, accessMap);
+  });
+}
+
 
 // renderArticleId prepares the view for displaying an article
 function renderArticleId(req, res, next) {
@@ -115,6 +130,7 @@ function renderArticleId(req, res, next) {
         return cb();
       });
     },
+    accessMap: accessMap,
     blog:
     function findBlog(callback) {
       debug("renderArticleId->blog");
@@ -231,6 +247,7 @@ function renderArticleId(req, res, next) {
       usedLinks: result.usedLinks,
       categories: categories,
       languageFlags: languageFlags,
+      accessMap: result.accessMap,
       collectedByGuest: collectedByGuest});
   }
   );
@@ -275,22 +292,26 @@ function renderArticleIdCommentArea(req, res, next) {
   if (req.query.editComment) params.editComment = req.query.editComment;
 
 
-  async.auto({},
-    function (err) {
-      debug("renderArticleCommentArea->finalFunction");
+  async.auto({
+    accessMap: accessMap
+  },
+  function (err, result) {
+    debug("renderArticleCommentArea->finalFunction");
+    if (err) return next(err);
+
+
+    let rendervars = {layout: res.rendervar.layout,
+      article: article,
+      params: params,
+      accessMap: result.accessMap
+
+    };
+    jade.renderFile(path.resolve(__dirname, "..", "views", "article", "commentArea.jade"), rendervars, function(err, commentArea) {
+      if (err) logger.error(err);
       if (err) return next(err);
-
-
-      let rendervars = {layout: res.rendervar.layout,
-        article: article,
-        params: params
-      };
-      jade.renderFile(path.resolve(__dirname, "..", "views", "article", "commentArea.jade"), rendervars, function(err, commentArea) {
-        if (err) logger.error(err);
-        if (err) return next(err);
-        res.json({"#commentArea": commentArea});
-      });
-    }
+      res.json({"#commentArea": commentArea});
+    });
+  }
   );
 }
 
