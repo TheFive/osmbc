@@ -263,7 +263,7 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
 4. (Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008))
 " spellcheck="true" lang="EN" name="markdownEN" rows="6" class="markdownEdit form-control af" style="background-color: rgb(255, 255, 204);">This is the written text.</textarea>
               <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
-              <p id="textEN" lang="EN" style="display:none" class="markdownMessage bg-danger">Default Error Message</p>
+              <div id="textEN" lang="EN" style="display:none" class="alert markdownMessage alert-danger">Default Error Message</div>
               <div id="previewEN" lang="EN" class="panel panel-default panel-body preview"><ul><li><p>This is the written text.</p>
 </li></ul></div>
             </div>
@@ -733,7 +733,29 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
       text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
       errorOccured = true
       }
-  
+    // check for no links in article
+    if (md !== "" && md !== "no translation" && md.search("http://") && md.search("https://") <0) {
+      text.show(400);
+      text.html("Please add links from collection e.g. with drag & drop");
+      errorOccured = true;
+    }
+    var linkList;
+    var allLinksFound = true;
+    var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
+    while( (linkList = regexToken.exec(md)) != null ) {
+      link = linkList[0];
+      var linkFound = false
+      if (linkFound === null) linkFound = false;
+      for (var i=0;i<window.linklist.length;i++) {
+        if (window.linklist[i]===link) linkFound = true;
+      }
+      if (!linkFound) allLinksFound = false;
+    }
+    if (linkFound=== false) {
+      text.show(400);
+      text.html("Please check links, some looks not to be in collection, nor be a translation link");
+      errorOccured = true;
+    }
     if (!errorOccured) {
        //preview.style.backgroundColor="";
         text.hide(400);
@@ -747,7 +769,7 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
     if (lang === "JP") googlelang = "JA";
     if (lang === "CZ") googlelang = "CS";
     var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
-  
+    window.linklist.push(gtl);
   
     var gtlMarkdown = "(automatic [translation](##link##))";
     if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
@@ -774,11 +796,13 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
     var linkArea = $("#linkArea");
     var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
     var linkList;
+    window.linklist = [];
     var result = "";
   
   
     while( (linkList = regexToken.exec(cl)) != null ) {
       var link = linkList[0];
+      window.linklist.push(link);
       if (articleReferences[link] && (articleReferences[link]).length >0) {
         result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+link+'</a>\n';
       }

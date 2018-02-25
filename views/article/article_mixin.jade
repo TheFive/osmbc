@@ -36,7 +36,7 @@ mixin articleMarkdown(lang,disabled)
     - p = placeholder.markdown[lang];
   textarea.markdownEdit.form-control.af(id="markdown#{lang}" placeholder = "#{p}" spellcheck = "true" lang="#{lang}" name = "markdown#{lang}" rows = 6 readonly = d) #{article["markdown" + lang]}
   p.osmbc-help-text="'no translation' or '-' to specify no translation wanted."
-  p.markdownMessage.bg-danger(id="text"+lang lang="#{lang}" style="display:none" )="Default Error Message"
+  div.alert.markdownMessage.alert-danger(id="text"+lang lang="#{lang}" style="display:none" )="Default Error Message"
 
 
 mixin articlePreview(lang)
@@ -382,7 +382,29 @@ block scripts
         text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
         errorOccured = true
         }
-
+      // check for no links in article
+      if (md !== "" && md !== "no translation" && md.search("http://") && md.search("https://") <0) {
+        text.show(400);
+        text.html("Please add links from collection e.g. with drag & drop");
+        errorOccured = true;
+      }
+      var linkList;
+      var allLinksFound = true;
+      var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
+      while( (linkList = regexToken.exec(md)) != null ) {
+        link = linkList[0];
+        var linkFound = false
+        if (linkFound === null) linkFound = false;
+        for (var i=0;i<window.linklist.length;i++) {
+          if (window.linklist[i]===link) linkFound = true;
+        }
+        if (!linkFound) allLinksFound = false;
+      }
+      if (linkFound=== false) {
+        text.show(400);
+        text.html("Please check links, some looks not to be in collection, nor be a translation link");
+        errorOccured = true;
+      }
       if (!errorOccured) {
          //preview.style.backgroundColor="";
           text.hide(400);
@@ -396,7 +418,7 @@ block scripts
       if (lang === "JP") googlelang = "JA";
       if (lang === "CZ") googlelang = "CS";
       var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
-
+      window.linklist.push(gtl);
 
       var gtlMarkdown = "(automatic [translation](##link##))";
       if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
@@ -423,11 +445,13 @@ block scripts
       var linkArea = $("#linkArea");
       var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
       var linkList;
+      window.linklist = [];
       var result = "";
 
 
       while( (linkList = regexToken.exec(cl)) != null ) {
         var link = linkList[0];
+        window.linklist.push(link);
         if (articleReferences[link] && (articleReferences[link]).length >0) {
           result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+link+'</a>\n';
         }
