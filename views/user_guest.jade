@@ -9,7 +9,7 @@ block content
   if (usershown.temporaryGuest === true)
     h1
       .label.label-default="You are testing guest feature"
-  form(name="input", action=layout.htmlroot+"/usert/#{usershown.id}", method="post")
+  form(name="input", action=`${layout.htmlroot}/usert/${usershown.id}`, method="post")
     div.form-horizontal(role="form")
       +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
       +labeledInput("EMail","email",usershown.email,"This mail is used for information about changes. To delete the email just submit a space for this field.")

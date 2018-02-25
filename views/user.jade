@@ -9,7 +9,7 @@ block content
   if (usershown.temporaryGuest===true)
     h1
       .label.label-default="User is testing guest mode"
-  form(name="input", action=layout.htmlroot+"/usert/#{usershown.id}", method="post")
+  form(name="input", action=`${layout.htmlroot}/usert/${usershown.id}`, method="post")
     div.form-horizontal(role="form")
       if (usershown.hasLoggedIn())
         +labeledText("OSMUser","OSMUser",usershown.OSMUser,"User already logged in, namechange not possible.")
@@ -97,8 +97,8 @@ block content
         label.control-label.col-sm-2(for="Color")="Color"
         div(class="col-sm-4")
           div.input-group(style="width: 100%;")
-            input.form-control(name="color",id="color}",value = "#{usershown.color}")
-            span.input-group-addon(style="background-color:#{usershown.color};width: 50px;")
+            input.form-control(name="color",id="color",value = usershown.color)
+            span.input-group-addon(style=`background-color:${usershown.color};width: 50px;`)
         div.text-muted(class="col-sm-6")
           p
             span="Color for colored lists in OSMBC. Use a html colorpicker to define. ("
@@ -139,7 +139,7 @@ block content
             |   };
             |request.send(null);
         p="If you are using Firefox, you can add this link to your bookmarks. Please disable Open in Sidebar Option for this bookmark. "
-          a(href="javascript: var request = new XMLHttpRequest();request.open('GET', '#{layout.url}#{layout.htmlroot}/api/collect/#{usershown.apiKey}?collection='+document.location, true);request.onreadystatechange = function(){var done = 4, ok = 200;if (request.readyState == done && request.status == ok){if (request.responseText && request.responseText.substring(0,4)=='http') {if (window.confirm('Send to OSMBCs TBC, open Editor?')){window.location.href=request.responseText}}else {alert.request.responseText}}if (request.readyState == done && request.status != ok) alert('An Error occured '+request.responseText);};request.send(null);" rel="sidebar" title="OSMBC TBC") Add TBC Link to Firefox
+          a(href=`javascript: var request = new XMLHttpRequest();request.open('GET', '${layout.url}#{layout.htmlroot}/api/collect/#{usershown.apiKey}?collection='+document.location, true);request.onreadystatechange = function(){var done = 4, ok = 200;if (request.readyState == done && request.status == ok){if (request.responseText && request.responseText.substring(0,4)=='http') {if (window.confirm('Send to OSMBCs TBC, open Editor?')){window.location.href=request.responseText}}else {alert.request.responseText}}if (request.readyState == done && request.status != ok) alert('An Error occured '+request.responseText);};request.send(null);` rel="sidebar" title="OSMBC TBC") Add TBC Link to Firefox
 
       else
         a(href=layout.htmlroot+"/usert/createApiKey")="Generate Key"
@@ -200,7 +200,7 @@ block content
             each change, i in changes
               tr
                 td
-                  a(href=layout.htmlroot+'/changes/' + change.id) #{change.id}
+                  a(href=layout.htmlroot+'/changes/' + change.id)=change.id
                 td= change.user
                 td= change.property
                 td= layout.util.shorten(change.from)
