@@ -290,7 +290,7 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
               <div class="col-md-6"><i id="languageFlagsShow" onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');" class="fa fa-flag fa-2x"></i></div>
             </div>
             <div id="languageFlags" class="row hidden">
-              <div class="col-md-6"><img id="Japanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Japanisch"><img id="Französisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Französisch"><img id="Spanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Spanisch"><img id="Tschechisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Tschechisch"><img id="Russisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Russisch"><img id="Rumänisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Rumänisch"><img id="Niederländisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Niederländisch"><img id="Brasilianisches Portugiesisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Brasilianisches Portugiesisch"><img id="Polish" src="http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="img-thumbnail" data-original-title="Polish">
+              <div class="col-md-6"><img id="Japanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Japanisch"><img id="Französisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Französisch"><img id="Spanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Spanisch"><img id="Tschechisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Tschechisch"><img id="Russisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Russisch"><img id="Rumänisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Rumänisch"><img id="Niederländisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Niederländisch"><img id="Brasilianisches Portugiesisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Brasilianisches Portugiesisch"><img id="Polish" src="http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Polish">
                 <p class="osmbc-help-text">Click to copy to clipboard, or use drag and drop.</p>
               </div>
             </div>
@@ -527,6 +527,7 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
             .change(previewMarkdown)
             .change(showModified)
             .change(FitToContent)
+            .change(checkMarkdownError)
             .focusout(convertMinusNoTranslation)
             .keyup(previewMarkdown)
             .keyup(checkForTable)
@@ -745,6 +746,7 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
   // Can be extended: Valid Urls, ...
   function checkMarkdownError() {
     var md = this.value;
+    if (!window.linklist) window.linklist = [];
     text = $(".markdownMessage[lang=" + this.lang + "]");
     var errorOccured= false;
   
@@ -755,29 +757,34 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
       text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
       errorOccured = true
       }
-    // check for no links in article
-    if (md !== "" && md !== "no translation" && md.search("http://") && md.search("https://") <0) {
-      text.show(400);
-      text.html("Please add links from collection e.g. with drag & drop");
-      errorOccured = true;
-    }
+  
     var linkList;
     var allLinksFound = true;
+    var linkFromCollectionFound = false;
+  
     var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
     while( (linkList = regexToken.exec(md)) != null ) {
       link = linkList[0];
       var linkFound = false
-      if (linkFound === null) linkFound = false;
       for (var i=0;i<window.linklist.length;i++) {
         if (window.linklist[i]===link) linkFound = true;
       }
+      if (linkFound) linkFromCollectionFound = true;
+      // check Language Flags
+      if ($("img.flag[src='" + link + "']").length>0) linkFound = true;
       if (!linkFound) allLinksFound = false;
     }
-    if (linkFound=== false) {
+    if (allLinksFound === false) {
       text.show(400);
       text.html("Please check links, some looks not to be in collection, nor be a translation link");
       errorOccured = true;
     }
+    if (linkFromCollectionFound === false && md !== "" && md!=="no translation") {
+      text.show(400);
+      text.html("Please use a link from collection in article.");
+      errorOccured = true;
+    }
+  
     if (!errorOccured) {
        //preview.style.backgroundColor="";
         text.hide(400);
