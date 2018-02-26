@@ -27,7 +27,7 @@ block markdownArea
 
   .row#languageFlags.hidden
     - for (lang in languageFlags)
-      img(id=lang,
+      img.flag(id=lang,
         src=languageFlags[lang],
         class="img-thumbnail" ,
         width = 40,

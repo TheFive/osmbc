@@ -154,6 +154,7 @@ block scripts
               .change(previewMarkdown)
               .change(showModified)
               .change(FitToContent)
+              .change(checkMarkdownError)
               .focusout(convertMinusNoTranslation)
               .keyup(previewMarkdown)
               .keyup(checkForTable)
@@ -372,6 +373,7 @@ block scripts
     // Can be extended: Valid Urls, ...
     function checkMarkdownError() {
       var md = this.value;
+      if (!window.linklist) window.linklist = [];
       text = $(".markdownMessage[lang=" + this.lang + "]");
       var errorOccured= false;
 
@@ -382,29 +384,34 @@ block scripts
         text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
         errorOccured = true
         }
-      // check for no links in article
-      if (md !== "" && md !== "no translation" && md.search("http://") && md.search("https://") <0) {
-        text.show(400);
-        text.html("Please add links from collection e.g. with drag & drop");
-        errorOccured = true;
-      }
+
       var linkList;
       var allLinksFound = true;
+      var linkFromCollectionFound = false;
+
       var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
       while( (linkList = regexToken.exec(md)) != null ) {
         link = linkList[0];
         var linkFound = false
-        if (linkFound === null) linkFound = false;
         for (var i=0;i<window.linklist.length;i++) {
           if (window.linklist[i]===link) linkFound = true;
         }
+        if (linkFound) linkFromCollectionFound = true;
+        // check Language Flags
+        if ($("img.flag[src='" + link + "']").length>0) linkFound = true;
         if (!linkFound) allLinksFound = false;
       }
-      if (linkFound=== false) {
+      if (allLinksFound === false) {
         text.show(400);
         text.html("Please check links, some looks not to be in collection, nor be a translation link");
         errorOccured = true;
       }
+      if (linkFromCollectionFound === false && md !== "" && md!=="no translation") {
+        text.show(400);
+        text.html("Please use a link from collection in article.");
+        errorOccured = true;
+      }
+
       if (!errorOccured) {
          //preview.style.backgroundColor="";
           text.hide(400);
