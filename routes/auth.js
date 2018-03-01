@@ -45,7 +45,7 @@ passport.deserializeUser(function (user, done) {
       return done(null, result[0]);
     }
     if (createGuestUsersAutomatic && result.length === 0) {
-      userModule.createNewUser({OSMUser: user, access: "guest"}, function(err, user) {
+      userModule.createNewUser({OSMUser: user, access: "guest", mdWeeklyAuthor: "anonymous"}, function(err, user) {
         if (err) return done(null, null);
         return done(null, user);
       });

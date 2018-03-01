@@ -206,6 +206,7 @@ describe("routes/index", function() {
             lastAccess: "2016-05-25T20:00:00.000Z",
             mainLang: "ES",
             secondLang: "EN",
+            mdWeeklyAuthor: "anonymous",
             lang3: null,
             lang4: null
           });
