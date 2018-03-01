@@ -62,6 +62,12 @@ block content
                       img(src=layout.getAvatar(user.osmuser) style="height:25px;width:25px")
                     td
                       a(href=layout.htmlroot+"/usert/"+user.osmuser)=user.osmuser
+                    td
+                      a(href="https://www.openstreetmap.org/user/"+user.osmuser)
+                        i.fa.fa-map.text-muted
+                    td
+                      a(href="https://hdyc.neis-one.org/?"+user.osmuser)
+                        i.fa.fa-line-chart.text-muted
                     td=user.access
 
 
