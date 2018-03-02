@@ -6,9 +6,18 @@ extends adminlayout
 block content
 
   h1="Edit OSMBC User "+ usershown.OSMUser
+
+  p="OpenStreetMap User Links: "
+    a(href="https://www.openstreetmap.org/user/" + usershown.OSMUser)
+      i.fa.fa-map.text-muted
+    span=" "
+    a(href="https://hdyc.neis-one.org/?" + usershown.OSMUser)
+      i.fa.fa-line-chart.text-muted
+
   if (usershown.temporaryGuest===true)
     h1
       .label.label-default="User is testing guest mode"
+
   form(name="input", action=`${layout.htmlroot}/usert/${usershown.id}`, method="post")
     div.form-horizontal(role="form")
       if (usershown.hasLoggedIn())
