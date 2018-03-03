@@ -8,11 +8,12 @@ block showContentOfConfig
       .col-md-6
         h2="Blog"
         ul
-          li="Some Demo Text"
+          li="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et"
+          li="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et"
 
         p
           if (config.json[lang])
             :verbatim
               !{config.json[lang].replace("##team##","Person1, Person2, Person3")}
           else
-            | No String for language #{lang}
+            div.alert.alert-danger="No String for language "+lang
