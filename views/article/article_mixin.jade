@@ -179,6 +179,13 @@ block scripts
       md_render.use(window.markdownitSup)
       md_render.use(window["markdown-it-imsize.js"])
 
+      $("#collection")
+              .change(onchangeCollection)
+              .change(FitToContent)
+              .keyup(onchangeCollection)
+              .keyup(FitToContent)
+              .keyup(showModified)
+              .trigger("change");
       $(".markdownEdit")
               .change(convertMinusNoTranslation)
               .change(previewMarkdown)
@@ -191,15 +198,8 @@ block scripts
               .keyup(FitToContent)
               .keyup(checkMarkdownError)
               .keyup(showModified)
-              .on("paste",pasteEvent)
-              .on("drop",pasteEvent)
-              .trigger("change");
-      $("#collection")
-              .change(onchangeCollection)
-              .change(FitToContent)
-              .keyup(onchangeCollection)
-              .keyup(FitToContent)
-              .keyup(showModified)
+              .on("paste", pasteEvent)
+              .on("drop", pasteEvent)
               .trigger("change");
       $("#title")
               .keyup(showModified)
