@@ -62,6 +62,19 @@ mixin articleTranslateButton(langFrom,langTo)
     button.btn.btn-small.btn-danger.hidden(id="translateError"+langFrom+langTo)
       span="Error occured"
 
+mixin articleTranslateMenu(langFrom,langTo)
+  if (article["markdown" + langFrom] && !article["markdown" + langTo])
+    li
+      a(
+        id="translate"+langFrom+langTo name = "translate"+langFrom+langTo
+        onClick ="window.translate('#{langFrom}','#{langTo}');return false;"
+        ) Translate #{langFrom} -> #{langTo}
+    li.bg-warning.hidden(id="translateWait" + langFrom + langTo)
+      a=" Please Wait"
+    li.bg-danger.hidden(id="translateError" + langFrom + langTo)
+      a="Error occured"
+
+
 mixin saveButton
   button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="disableUnchanged();document.getElementById('input').submit();") Save
 
@@ -103,6 +116,18 @@ mixin markdownWithPreview(lang)
   +articleMarkdown(lang,!article.isChangeAllowed("markdown" + lang))
   +articlePreview(lang)
   +articleTextanalyse(lang)
+
+mixin translationMenu
+  li.dropdown#translation.hidden-xs
+    a.dropdown-toggle(href='#', data-toggle='dropdown')
+      | Translate
+      span.caret
+    ul.dropdown-menu(role='menu')
+      - list = [params.left_lang,params.right_lang,params.lang3,params.lang4]
+      each a in list
+        each b in list
+          if (a!==b && a!== null && b!== null)
+            +articleTranslateMenu(a,b)
 
 
 

@@ -20,7 +20,7 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 describe("routes/article", function() {
-  this.timeout(this.timeout() * 2);
+  this.timeout(this.timeout() * 3);
   var id = 2;
   let jar;
   var nockLogin;

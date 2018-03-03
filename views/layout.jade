@@ -13,7 +13,7 @@ mixin firstBlogOfList(list,count,c)
     each blog,i in list
       if i<count
         li
-          a(href=layout.htmlroot+'/blog/#{blog.name}')=blog.name
+          a(href=`${layout.htmlroot}/blog/${blog.name}`)=blog.name
             span.badge.osmbcbadge-lang=blogNumber(blog, layout.language)
             if layout.language2
               span.badge.osmbcbadge-lang2=blogNumber(blog, layout.language2)
@@ -67,7 +67,7 @@ mixin articleMenu
         for blog in layout.listOfOrphanBlog
           if blog
             li
-              a(href=layout.htmlroot + "/article/list?blog=#{blog}") #{blog}
+              a(href=`${layout.htmlroot}/article/list?blog=${blog}`)=blog
         li
           a(href=layout.htmlroot + '/article/list?blog=') No Blog
 
@@ -96,7 +96,7 @@ mixin helpMenu
     ul.dropdown-menu(role='menu')
       li.dropdown-header OSMBC
       li
-        a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md") Version #{layout.osmbc_version}
+        a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md")="Version "+layout.osmbc_version
       li
         a(href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help") Help
       li.divider
@@ -124,8 +124,7 @@ mixin langChooser(langString)
     - label = "label-default"
 
   li.dropdown
-    a.btn.dropdown-toggle(class=label, href='#', style="color:white", data-toggle='dropdown')
-      |#{(layout[l])?layout[l]:"--"}
+    a.btn.dropdown-toggle(class=label, href='#', style="color:white", data-toggle='dropdown')=(layout[l])?layout[l]:"--"
       span.caret
     ul.dropdown-menu(role='menu')
       if (langString !== "lang")
@@ -134,12 +133,12 @@ mixin langChooser(langString)
       each litem in layout.languages
         if layout.usedLanguages[litem]
           li
-            a(id=langString+"_"+litem href=layout.htmlroot + '/language?'+langString+'=#{litem}') #{litem}
+            a(id=langString+"_"+litem href=layout.htmlroot + '/language?'+langString+'=' +litem)=litem
 
 mixin userAvatar
   if layout.user
     li
-      img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/#{layout.user.id}';" style="height:50px;width:50px")
+      img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';" style="height:50px;width:50px")
   else
     li
       a(href='./') Anonymous
@@ -206,6 +205,7 @@ block all
                 +firstBlogOfList(listall,2)
                 +articleMenu
                 +toolMenu
+                block additionalMenu
             if (layout)
               ul.nav.navbar-nav.navbar-right
                 +helpMenu
@@ -243,7 +243,7 @@ block all
   html
     head
       title= title
-      link(rel='stylesheet', href='#{htmlroot}#{stylesheet}')
+      link(rel='stylesheet', href=`${htmlroot}${stylesheet}`)
     body
 
   block scripts
