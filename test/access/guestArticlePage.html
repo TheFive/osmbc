@@ -305,6 +305,13 @@ Use @OSMUser to address any special editor." class="form-control"></textarea><bu
     md_render.use(window.markdownitSup)
     md_render.use(window["markdown-it-imsize.js"])
   
+    $("#collection")
+            .change(onchangeCollection)
+            .change(FitToContent)
+            .keyup(onchangeCollection)
+            .keyup(FitToContent)
+            .keyup(showModified)
+            .trigger("change");
     $(".markdownEdit")
             .change(convertMinusNoTranslation)
             .change(previewMarkdown)
@@ -317,15 +324,8 @@ Use @OSMUser to address any special editor." class="form-control"></textarea><bu
             .keyup(FitToContent)
             .keyup(checkMarkdownError)
             .keyup(showModified)
-            .on("paste",pasteEvent)
-            .on("drop",pasteEvent)
-            .trigger("change");
-    $("#collection")
-            .change(onchangeCollection)
-            .change(FitToContent)
-            .keyup(onchangeCollection)
-            .keyup(FitToContent)
-            .keyup(showModified)
+            .on("paste", pasteEvent)
+            .on("drop", pasteEvent)
             .trigger("change");
     $("#title")
             .keyup(showModified)
@@ -816,21 +816,22 @@ Use @OSMUser to address any special editor." class="form-control"></textarea><bu
   }
   
   function translate(langFrom, langTo) {
-    document.getElementById("translate" + langFrom + langTo).classList.add("hidden");
-    document.getElementById("translateWait" + langFrom + langTo).classList.remove("hidden");
+    $(".translate" + langFrom + langTo).addClass("hidden");
+    $(".translateWait" + langFrom + langTo).removeClass("hidden");
     var from =  langFrom.toLowerCase();
     var to = langTo.toLowerCase();
     var originalText = document.getElementById("markdown" + langFrom).value;
     jQuery.post("/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
       console.info("Translation received");
       data = data.replace(/] \(/g, "](");
-      document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
+      $(".translateWait" + langFrom + langTo).addClass("hidden");
+      $(".translateDone" + langFrom + langTo).removeClass("hidden");
       $("#markdown" + langTo).val(data).trigger("change");
     }).fail(function (err) {
       console.error("Translation failed");
       console.error(err);
-      document.getElementById("translateWait" + langFrom + langTo).classList.add("hidden");
-      document.getElementById("translateError" + langFrom + langTo).classList.remove("hidden");
+      $(".translateWait" + langFrom + langTo).addClass("hidden");
+      $(".translateError" + langFrom + langTo).removeClass("hidden");
     });
   }
 </script></body></html>

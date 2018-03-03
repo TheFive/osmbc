@@ -1,12 +1,73 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [3.1.6](https://github.com/TheFive/osmbc/tree/3.1.6) (2018-03-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.5a...3.1.6)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2d...HEAD)
+**Implemented enhancements:**
+
+- Enable Translation button for 4 language Editor. [\#726](https://github.com/TheFive/osmbc/issues/726)
+
+## [3.1.5a](https://github.com/TheFive/osmbc/tree/3.1.5a) (2018-03-01)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.5...3.1.5a)
+
+**Implemented enhancements:**
+
+- the "Welcome To The Team" table could have more info about the guest  [\#746](https://github.com/TheFive/osmbc/issues/746)
+
+**Closed issues:**
+
+- Disable Guest for editor strings, until a better solution is found [\#745](https://github.com/TheFive/osmbc/issues/745)
+
+## [3.1.5](https://github.com/TheFive/osmbc/tree/3.1.5) (2018-02-25)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.4...3.1.5)
+
+**Implemented enhancements:**
+
+- Color correct mentions in comments [\#499](https://github.com/TheFive/osmbc/issues/499)
+- Warn if a link is used in markdown, that is not in collection. [\#484](https://github.com/TheFive/osmbc/issues/484)
+- Warn if a markdown does not contain a link in article editor [\#482](https://github.com/TheFive/osmbc/issues/482)
+
+## [3.1.4](https://github.com/TheFive/osmbc/tree/3.1.4) (2018-02-25)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.3a...3.1.4)
+
+**Implemented enhancements:**
+
+- shorten internal links [\#446](https://github.com/TheFive/osmbc/issues/446)
+
+## [3.1.3a](https://github.com/TheFive/osmbc/tree/3.1.3a) (2018-02-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.3...3.1.3a)
+
+**Fixed bugs:**
+
+- Guest is not able to see his own comments [\#742](https://github.com/TheFive/osmbc/issues/742)
+
+## [3.1.3](https://github.com/TheFive/osmbc/tree/3.1.3) (2018-02-18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2e...3.1.3)
+
+**Implemented enhancements:**
+
+- improve resizing of pictures in blog and article previews [\#740](https://github.com/TheFive/osmbc/issues/740)
+- combine Did export and Close [\#739](https://github.com/TheFive/osmbc/issues/739)
+
+**Fixed bugs:**
+
+- Markdown INterpreter in Article Editor does not support Superscript [\#737](https://github.com/TheFive/osmbc/issues/737)
+- Review Status Time Calculation [\#736](https://github.com/TheFive/osmbc/issues/736)
+
+## [3.1.2e](https://github.com/TheFive/osmbc/tree/3.1.2e) (2018-02-13)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2d...3.1.2e)
 
 **Implemented enhancements:**
 
 - Put a Red MISSING EMAIL VALIDATION [\#724](https://github.com/TheFive/osmbc/issues/724)
+
+**Fixed bugs:**
+
+- TBC Icon is placed wrong [\#735](https://github.com/TheFive/osmbc/issues/735)
+
+**Closed issues:**
+
+- Switch Slack API to Mattermost format for mobile collecting. [\#734](https://github.com/TheFive/osmbc/issues/734)
 
 ## [3.1.2d](https://github.com/TheFive/osmbc/tree/3.1.2d) (2018-02-11)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2c...3.1.2d)
@@ -2462,17 +2523,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
