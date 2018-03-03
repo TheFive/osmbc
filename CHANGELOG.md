@@ -1,5 +1,12 @@
 # Change Log
 
+## [3.1.6](https://github.com/TheFive/osmbc/tree/3.1.6) (2018-03-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.5a...3.1.6)
+
+**Implemented enhancements:**
+
+- Enable Translation button for 4 language Editor. [\#726](https://github.com/TheFive/osmbc/issues/726)
+
 ## [3.1.5a](https://github.com/TheFive/osmbc/tree/3.1.5a) (2018-03-01)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.5...3.1.5a)
 
@@ -1002,13 +1009,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
