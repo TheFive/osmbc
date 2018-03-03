@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.6...HEAD)
+
+**Closed issues:**
+
+- The link check against collection fails under some conditions [\#747](https://github.com/TheFive/osmbc/issues/747)
+
 ## [3.1.6](https://github.com/TheFive/osmbc/tree/3.1.6) (2018-03-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.5a...3.1.6)
 
