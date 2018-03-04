@@ -16,5 +16,12 @@
                 "http://www.google.de/test?param=ADSFASF&amp;d=asdfa",
                 "http://www.openstreetmap.org/user/Severák/diary/37681",
                 "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE",
-                "https://www.google.de/maps/place/Fehlerbereich,+01067+Dresden/@51.0515917,13.7388822,19z/data=!3m1!4b1!4m2!3m1!1s0x4709cf67e58aaa97:0xf782605d9ac23f2c"]
+                "https://www.google.de/maps/place/Fehlerbereich,+01067+Dresden/@51.0515917,13.7388822,19z/data=!3m1!4b1!4m2!3m1!1s0x4709cf67e58aaa97:0xf782605d9ac23f2c"],
+  "isURLArrayDisplay":["https://www.google.de",
+    "http://www.google.de/test",
+    "https://productforums.google.com/forum/# . . . v-kzE",
+    "http://www.google.de/test?param=ADSFASF&amp;d=asdfa",
+    "http://www.openstreetmap.org/user/Severá . . . 37681",
+    "https://productforums.google.com/forum/# . . . v-kzE",
+    "https://www.google.de/maps/place/Fehlerb . . . 23f2c"]
 }

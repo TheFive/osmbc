@@ -833,15 +833,19 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
     var linkList;
     window.linklist = [];
     var result = "";
+    function linkShortener(link) {
+      if (link.length <50) return link;
+      return link.substr(0,40)+" . . . "+link.substr(link.length-5,5);
+    }
   
   
     while( (linkList = regexToken.exec(cl)) != null ) {
       var link = linkList[0];
       window.linklist.push(link);
       if (articleReferences[link] && (articleReferences[link]).length >0) {
-        result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+link+'</a>\n';
+        result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+linkShortener(link)+'</a>\n';
       }
-      else result += '<a class="label label-default" href="'+link+'" target="_blank" >'+link+'</a>\n';
+      else result += '<a class="label label-default" href="'+link+'" target="_blank" >'+linkShortener(link)+'</a>\n';
       result += " "+generateGoogleTranslateLink(link,leftLang);
       if (rightLang !== "--" && rightLang !== "") {
         result += " "+generateGoogleTranslateLink(link,rightLang);
