@@ -943,8 +943,8 @@ function translateGOOGLEOLD(req, res, next) {
   }).catch(function(err) { next(err); });
 } */
 
-function translate(req, res, next) {
-  debug("translate");
+function translateDeepl(req, res, next) {
+  debug("translateDeepl");
 
   let fromLang = req.params.fromLang;
   let toLang = req.params.toLang;
@@ -956,7 +956,26 @@ function translate(req, res, next) {
   if (fromLang === "cz") { fromLang = "cs"; }
   if (toLang === "cz") { toLang = "cs"; }
 
-  /*
+
+  deeplTranslate.translate(text, toLang.toUpperCase(), fromLang.toUpperCase())
+    .then(result => res.end(result.translation))
+    .catch(err => { next(err); });
+}
+
+function translateBing(req, res, next) {
+  debug("translateBing");
+
+  let fromLang = req.params.fromLang;
+  let toLang = req.params.toLang;
+  let text = req.body.text;
+
+  if (fromLang === "jp") { fromLang = "ja"; }
+  if (toLang === "jp") { toLang = "ja"; }
+
+  if (fromLang === "cz") { fromLang = "cs"; }
+  if (toLang === "cz") { toLang = "cs"; }
+
+
   var params = {
     text: text,
     from: fromLang,
@@ -967,11 +986,7 @@ function translate(req, res, next) {
   msTransClient.translate(params, function (err, result) {
     if (err) return next(err);
     res.end(result);
-  }); */
-
-  deeplTranslate.translate(text, toLang.toUpperCase(), fromLang.toUpperCase())
-    .then(result => res.end(result.translation))
-    .catch(err => { next(err); });
+  });
 }
 
 
@@ -1000,7 +1015,8 @@ router.get("/searchandcreate", allowGuestAccess, searchAndCreate);
 router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);
-router.post("/translate/:fromLang/:toLang", allowFullAccess, translate);
+router.post("/translate/deepl/:fromLang/:toLang", allowFullAccess, translateDeepl);
+router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateBing);
 
 router.param("article_id", getArticleFromID);
 

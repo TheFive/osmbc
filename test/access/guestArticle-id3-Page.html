@@ -835,17 +835,17 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
     });
   }
   
-  function translate(langFrom, langTo) {
+  function translate(langFrom, langTo,service) {
     $(".translate" + langFrom + langTo).addClass("hidden");
     $(".translateWait" + langFrom + langTo).removeClass("hidden");
     var from =  langFrom.toLowerCase();
     var to = langTo.toLowerCase();
     var originalText = document.getElementById("markdown" + langFrom).value;
-    jQuery.post("/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
+    jQuery.post("/article/translate/"+service+"/" + from + "/" + to, {text: originalText}, function (data) {
       console.info("Translation received");
       data = data.replace(/] \(/g, "](");
       $(".translateWait" + langFrom + langTo).addClass("hidden");
-      $(".translateDone" + langFrom + langTo).removeClass("hidden");
+      $(".translateDone" + langFrom + langTo+"."+service).removeClass("hidden");
       $("#markdown" + langTo).val(data).trigger("change");
     }).fail(function (err) {
       console.error("Translation failed");

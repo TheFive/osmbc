@@ -55,11 +55,16 @@
             </li>
             <li id="translation" class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Translate<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
-                <li class="dropdown-header">Possible:</li>
-                <li><a name="translateENDE" onclick="window.translate('EN','DE');return false;" class="translateENDE">Translate EN-&gt;DE</a></li>
+                <li class="dropdown-header">Use Deepl:</li>
+                <li><a name="translateENDE" onclick="window.translate('EN','DE','deepl');return false;" class="translateENDE">Translate EN-&gt;DE</a></li>
                 <li class="bg-warning hidden translateWaitENDE"><a> Please Wait</a></li>
                 <li class="bg-danger hidden translateErrorENDE"><a>Translate EN-&gt;DE <span class="glyphicon glyphicon-remove"></span></a></li>
-                <li class="hidden translateDoneENDE"><a>Translate EN-&gt;DE <span class="glyphicon glyphicon-ok"></span></a></li>
+                <li class="hidden translateDoneENDE deepl"><a>Translate EN-&gt;DE <span class="glyphicon glyphicon-ok"></span></a></li>
+                <li class="dropdown-header">Use Bing:</li>
+                <li><a name="translateENDE" onclick="window.translate('EN','DE','bing');return false;" class="translateENDE">Translate EN-&gt;DE</a></li>
+                <li class="bg-warning hidden translateWaitENDE"><a> Please Wait</a></li>
+                <li class="bg-danger hidden translateErrorENDE"><a>Translate EN-&gt;DE <span class="glyphicon glyphicon-remove"></span></a></li>
+                <li class="hidden translateDoneENDE bing"><a>Translate EN-&gt;DE <span class="glyphicon glyphicon-ok"></span></a></li>
               </ul>
             </li>
           </ul>
@@ -326,7 +331,7 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
                 <p>
                 </p>
                 <p>
-                  <button id="translateENDE" name="translateENDE" onclick="window.translate('EN','DE');return false;" class="btn btn-small btn-primary">Translate EN -&gt; DE</button>
+                  <button name="translateENDE" onclick="window.translate('EN','DE','deepl');return false;" class="btn btn-small btn-primary translateENDE">Translate EN -&gt; DE</button>
                   <button class="btn btn-small btn-warning hidden translateWaitENDE"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span><span> Please Wait</span></button>
                   <button class="btn btn-small btn-danger hidden translateErrorENDE"><span>Error occured</span></button>
                 </p>
@@ -1056,17 +1061,17 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
     });
   }
   
-  function translate(langFrom, langTo) {
+  function translate(langFrom, langTo,service) {
     $(".translate" + langFrom + langTo).addClass("hidden");
     $(".translateWait" + langFrom + langTo).removeClass("hidden");
     var from =  langFrom.toLowerCase();
     var to = langTo.toLowerCase();
     var originalText = document.getElementById("markdown" + langFrom).value;
-    jQuery.post("/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
+    jQuery.post("/article/translate/"+service+"/" + from + "/" + to, {text: originalText}, function (data) {
       console.info("Translation received");
       data = data.replace(/] \(/g, "](");
       $(".translateWait" + langFrom + langTo).addClass("hidden");
-      $(".translateDone" + langFrom + langTo).removeClass("hidden");
+      $(".translateDone" + langFrom + langTo+"."+service).removeClass("hidden");
       $("#markdown" + langTo).val(data).trigger("change");
     }).fail(function (err) {
       console.error("Translation failed");

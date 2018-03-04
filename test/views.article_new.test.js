@@ -252,7 +252,7 @@ describe("views/article_new", function() {
       browser.visit("/article/4", function(err) {
         should.not.exist(err);
         nock("http://localhost:" + config.getServerPort(),{allowUnmocked: false})
-          .post("/article/translate/de/en","text=%5BText%5D(http%3A%2F%2Fwww.tst.%C3%A4d%2Fholla)+ist+eine+gute+Referenz.")
+          .post("/article/translate/deepl/de/en","text=%5BText%5D(http%3A%2F%2Fwww.tst.%C3%A4d%2Fholla)+ist+eine+gute+Referenz.")
           .reply(200,"[Text](http://www.test.de/holla) is a good reference.");
         browser.pressButton("translateDEEN",function(err){
           should.not.exist(err);
