@@ -1,8 +1,15 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [3.1.7](https://github.com/TheFive/osmbc/tree/3.1.7) (2018-03-04)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.6a...3.1.7)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.6...HEAD)
+**Implemented enhancements:**
+
+- Shorten links labels under collection field. [\#749](https://github.com/TheFive/osmbc/issues/749)
+- Add Bing as translation alternative to article editor menu [\#748](https://github.com/TheFive/osmbc/issues/748)
+
+## [3.1.6a](https://github.com/TheFive/osmbc/tree/3.1.6a) (2018-03-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.6...3.1.6a)
 
 **Closed issues:**
 
@@ -1017,13 +1024,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
