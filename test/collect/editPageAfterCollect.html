@@ -55,7 +55,8 @@
             </li>
             <li id="translation" class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Translate<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
-                <li class="dropdown-header">Possible:</li>
+                <li class="dropdown-header">Use Deepl:</li>
+                <li class="dropdown-header">Use Bing:</li>
               </ul>
             </li>
           </ul>
@@ -832,15 +833,19 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
     var linkList;
     window.linklist = [];
     var result = "";
+    function linkShortener(link) {
+      if (link.length <50) return link;
+      return link.substr(0,40)+" . . . "+link.substr(link.length-5,5);
+    }
   
   
     while( (linkList = regexToken.exec(cl)) != null ) {
       var link = linkList[0];
       window.linklist.push(link);
       if (articleReferences[link] && (articleReferences[link]).length >0) {
-        result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+link+'</a>\n';
+        result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+linkShortener(link)+'</a>\n';
       }
-      else result += '<a class="label label-default" href="'+link+'" target="_blank" >'+link+'</a>\n';
+      else result += '<a class="label label-default" href="'+link+'" target="_blank" >'+linkShortener(link)+'</a>\n';
       result += " "+generateGoogleTranslateLink(link,leftLang);
       if (rightLang !== "--" && rightLang !== "") {
         result += " "+generateGoogleTranslateLink(link,rightLang);
@@ -1037,17 +1042,17 @@ Use @OSMUser to address any special editor." class="form-control"></textarea>
     });
   }
   
-  function translate(langFrom, langTo) {
+  function translate(langFrom, langTo,service) {
     $(".translate" + langFrom + langTo).addClass("hidden");
     $(".translateWait" + langFrom + langTo).removeClass("hidden");
     var from =  langFrom.toLowerCase();
     var to = langTo.toLowerCase();
     var originalText = document.getElementById("markdown" + langFrom).value;
-    jQuery.post("/article/translate/" + from + "/" + to, {text: originalText}, function (data) {
+    jQuery.post("/article/translate/"+service+"/" + from + "/" + to, {text: originalText}, function (data) {
       console.info("Translation received");
       data = data.replace(/] \(/g, "](");
       $(".translateWait" + langFrom + langTo).addClass("hidden");
-      $(".translateDone" + langFrom + langTo).removeClass("hidden");
+      $(".translateDone" + langFrom + langTo+"."+service).removeClass("hidden");
       $("#markdown" + langTo).val(data).trigger("change");
     }).fail(function (err) {
       console.error("Translation failed");

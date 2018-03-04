@@ -974,8 +974,8 @@ describe("routes/article", function() {
       });
     });
   });
-  describe("route POST /translate/:fromLang/:toLang", function() {
-    let url = baseLink + "/article/translate/DE/EN";
+  describe("route POST /translate/deepl/:fromLang/:toLang", function() {
+    let url = baseLink + "/article/translate/deepl/DE/EN";
     let form = {text: "Dies ist ein deutscher Text."};
     let stub;
     let stub2;

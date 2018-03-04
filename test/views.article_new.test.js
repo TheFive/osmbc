@@ -146,13 +146,14 @@ describe("views/article_new", function() {
       browser.assert.text("#collection", "Link1: http://www.test.dä/holla and other");
       return bddone();
     });
-    function checkLink(link,langVisible, langTranslation) {
+    function checkLink(link,langVisible, langTranslation,displayLink) {
       if (!langTranslation) langTranslation = langVisible;
+      if (!displayLink) displayLink = link;
       let transText = "MISSING TRANSTEXT in TEST";
       if (langVisible === "DE") transText = "automatische [Übersetzung]";
       if (langVisible === "EN") transText = "automatic [translation]";
       // Check the visible Link
-      browser.assert.text('#linkArea a[href="'+link+'"]', link);
+      browser.assert.text('#linkArea a[href="'+link+'"]', displayLink);
 
       // Check the translation
       browser.assert.text('#linkArea a[href="https://translate.google.com/translate?sl=auto&tl='+langTranslation+'&u='+link+'"]', langVisible);
@@ -179,11 +180,11 @@ describe("views/article_new", function() {
       // Change collection with two links
       browser.fill("collection", "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");
 
-      checkLink("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE","DE");
-      checkLink("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE","EN");
+      checkLink("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE","DE","DE","https://productforums.google.com/forum/# . . . v-kzE");
+      checkLink("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE","EN","EN","https://productforums.google.com/forum/# . . . v-kzE");
 
-      checkLink("http://www.openstreetmap.org/user/Severák/diary/37681","DE");
-      checkLink("http://www.openstreetmap.org/user/Severák/diary/37681","EN");
+      checkLink("http://www.openstreetmap.org/user/Severák/diary/37681","DE","DE","http://www.openstreetmap.org/user/Severá . . . 37681");
+      checkLink("http://www.openstreetmap.org/user/Severák/diary/37681","EN","EN","http://www.openstreetmap.org/user/Severá . . . 37681");
 
       bddone();
     });
@@ -252,7 +253,7 @@ describe("views/article_new", function() {
       browser.visit("/article/4", function(err) {
         should.not.exist(err);
         nock("http://localhost:" + config.getServerPort(),{allowUnmocked: false})
-          .post("/article/translate/de/en","text=%5BText%5D(http%3A%2F%2Fwww.tst.%C3%A4d%2Fholla)+ist+eine+gute+Referenz.")
+          .post("/article/translate/deepl/de/en","text=%5BText%5D(http%3A%2F%2Fwww.tst.%C3%A4d%2Fholla)+ist+eine+gute+Referenz.")
           .reply(200,"[Text](http://www.test.de/holla) is a good reference.");
         browser.pressButton("translateDEEN",function(err){
           should.not.exist(err);
