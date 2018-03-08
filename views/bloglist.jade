@@ -29,7 +29,7 @@ block content
             tr
               if (onlyhelp || blog.status != "help")
                 td
-                  a(href=layout.htmlroot+'/blog/' + blog.name) #{blog.name}
+                  a(href=layout.htmlroot+'/blog/' + blog.name)=blog.name
                 td= blog.status
                 for lang in layout.languages
                   if layout.usedLanguages[lang]
@@ -50,18 +50,18 @@ block content
                             - labeltype = "osmbclabel-openblog"
                           - urlblog = layout.htmlroot+"/article/list?markdown"+lang+"=&category=!=--unpublished--&blog="+blog.name
 
-                      a(href="#{urlblog}")
+                      a(href=urlblog)
                         span.label.label-default
                           |#{blogNumber(blog,lang)}
-                      a(href="#{urlblog}")
-                        span.label(class="#{labeltype}")
+                      a(href=urlblog)
+                        span.label(class=labeltype)
                          |#{blogCount(blog,lang)}
                       if blog._timeToClose[lang]
                         bold.span=" (+"+blog._timeToClose[lang]+"d)"
 
                 td
                   if blog.status != "closed"
-                    a(href=layout.htmlroot+"/blog/#{blog.name}?setStatus=closed") Close Blog
+                    a(href=layout.htmlroot+"/blog/" + blog.name +"?setStatus=closed") Close Blog
                   else
                     |-
   row

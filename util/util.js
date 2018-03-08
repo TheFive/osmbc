@@ -109,6 +109,8 @@ function requireTypes(vars, types) {
     should(typeof vars[i]).eql(types[i]);
   }
 }
+
+
 // shorten shorten a string up to maxlength
 // default is 30. If a string is shortenend, "..." is appendet
 exports.shorten = shorten;

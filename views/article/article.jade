@@ -44,7 +44,7 @@ block content
             label.col-md-2="Blog"
             div.col-md-10
               +blogSelector(article,layout.user.access !== "full" || !article.isChangeAllowed("blog"))
-              textarea.hidden.form-control(id="old_blog" name="old_blog",rows=1,hide=true) #{article.blog}
+              textarea.hidden.form-control(id="old_blog" name="old_blog",rows=1,hide=true)=article.blog
 
 
 
@@ -52,15 +52,15 @@ block content
           .form-group
             label.col-md-2="Category"
             div.col-md-10
-              textarea.hidden.form-control(id="old_categoryEN" name="old_categoryEN",rows=1,hide=true) #{article.categoryEN}
+              textarea.hidden.form-control(id="old_categoryEN" name="old_categoryEN",rows=1,hide=true)=article.categoryEN
               select(id="categoryEN",name="categoryEN" ).form-control.af
                 for category in categories
                   - option = category[params.left_lang]
                   - if (params.right_lang !== null) option += " / "+category[params.right_lang]
                   if (category.EN == article.categoryEN)
-                    option(value="#{category.EN}" selected ) #{option}
+                    option(value=category.EN selected )=option
                   else
-                    option(value="#{category.EN}" disabled=!article.isChangeAllowed("categoryEN")) #{option}
+                    option(value=category.EN disabled=!article.isChangeAllowed("categoryEN"))=option
         .row
           .col-md-2
           .col-md-10
@@ -71,7 +71,7 @@ block content
             .form-group
               label.col-md-2="Predecessor"
               .col-md-10
-                textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true) #{article.predecessorId}
+                textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true)=article.predecessorId
                 select(id="predecessorId",name="predecessorId" ).form-control.af
                   if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
                     option(value="" selected) None
@@ -104,8 +104,8 @@ block content
         label.col-md-1="Title"
         .col-md-10
           div.label.label-danger#title_unsaved(style="display:none")="unsaved"
-          textarea.hidden.form-control(id="old_title" name="old_title",rows=1,hide=true) #{article.title}
-          textarea.form-control.af(id="title" name="title",rows=1 readonly=!article.isChangeAllowed("title")) #{article.title}
+          textarea.hidden.form-control(id="old_title" name="old_title",rows=1,hide=true)=article.title
+          textarea.form-control.af(id="title" name="title",rows=1 readonly=!article.isChangeAllowed("title"))=article.title
 
 
     // Display Unpublish Reason Row
@@ -113,16 +113,16 @@ block content
       .form-group
         label.col-md-1="Unpublish Reason"
         .col-md-5
-          textarea.hidden.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true) #{article.unpublishReason}
+          textarea.hidden.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true)=article.unpublishReason
           select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control.af
             for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
               if (reason == article.unpublishReason)
-                option(value="#{reason}" selected ) #{reason}
+                option(value=reason selected )=reason
               else
-                option(value="#{reason}" ) #{reason}
+                option(value=reason )=reason
         .col-md-5
-          textarea.hidden.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true) #{article.unpublishReference}
-          textarea.form-control.af(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference")) #{article.unpublishReference}
+          textarea.hidden.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true)=article.unpublishReference
+          textarea.form-control.af(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference"))=article.unpublishReference
 
 
     // Display Collection Row
@@ -137,8 +137,8 @@ block content
         label.col-md-1="Collection"
         .col-md-10
           div.label.label-danger#collection_unsaved(style="display:none")="unsaved"
-          textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection")) #{article.collection}
-          textarea.hidden.form-control(id="old_collection" name="old_collection",rows=1,hide=true) #{article.collection}
+          textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection"))=article.collection
+          textarea.hidden.form-control(id="old_collection" name="old_collection",rows=1,hide=true)=article.collection
     .row
       .col-md-1
 
@@ -184,15 +184,15 @@ block content
                   if (articleItem.id != article.id) && (index <5)
                     tr
                       td
-                        a(href='#{link}') #{link.substring(0,80)+((link.length>80)?" ....":"")}
+                        a(href=link) #{link.substring(0,80)+((link.length>80)?" ....":"")}
                       td
-                        a(href=layout.htmlroot+'/article/'+articleItem.id) #{articleItem.displayTitle()}
+                        a(href=layout.htmlroot+'/article/'+articleItem.id)=articleItem.displayTitle()
                       td= articleItem.categoryEN
                       td= articleItem.blog
                   if (index == 8)
                     tr
                       td
-                        a(href='#{link}') #{link}
+                        a(href=link)=link
                       td
                         |And #{array.length-5} further articles.
 
@@ -202,7 +202,7 @@ block content
       .row.visible-xs
         p
           br
-          a(href=layout.htmlroot+"/changes/log?table=article&oid=#{article.id}") [changes]
+          a(href=layout.htmlroot+"/changes/log?table=article&oid=" +article.id) [changes]
       .row.hidden-xs
         if changes
           h3

@@ -9,12 +9,12 @@ block content
     - var action = layout.htmlroot+"/article/searchandcreate";
     - if (!showCollect) action = layout.htmlroot+"/article/search";
     p
-      form.form-horizontal(name="search", action="#{action}", method="get")
+      form.form-horizontal(name="search", action=action, method="get")
         .form-group
           .col-sm-2
             | 
           .col-sm-6
-            input#searchField(type="text",class="form-control",name ="search",value="#{search}")
+            input#searchField(type="text",class="form-control",name ="search",value=search)
             if showCollect 
               p.osmbc-help-text(align="center") Please check your link for duplicates before   collecting.
 
@@ -32,7 +32,7 @@ block content
           a(style={color:'Gray'}) 
             | Display #{(show>foundArticles.length)?foundArticles.length:show} of #{foundArticles.length} articles.
           if (show < foundArticles.length)
-            a(href="#{action}?search=#{search}&show=all&edit=#{showCollect}")   Show All
+            a(href=action + "?search=" + search + "&show=all&edit=showCollect")   Show All
         table.table.table-striped.table-condensed.table-responsive
           thead
             tr 
@@ -48,16 +48,16 @@ block content
 
           each  article,count in foundArticles
             if (count < show)
-              tr(onclick="$('.class_#{article.id}').toggleClass('hidden');")
+              tr(onclick=`$('.class_${article.id}').toggleClass('hidden');`)
                 td
-                  span.glyphicon.glyphicon-triangle-right(class="class_#{article.id}")
-                  span.glyphicon.glyphicon-triangle-bottom.hidden(class="class_#{article.id}")
-                  a(href=layout.htmlroot+"/blog/#{article.blog}") #{article.blog}
+                  span.glyphicon.glyphicon-triangle-right(class="class_" + article.id)
+                  span.glyphicon.glyphicon-triangle-bottom.hidden(class="class_" + article.id)
+                  a(href=layout.htmlroot+"/blog/" + article.blog)=article.blog
                 td
-                  a(href=layout.htmlroot+"/article/#{article.id}") #{(article.title)?article.title:"No Title"}
+                  a(href=layout.htmlroot+"/article/" + article.id)=((article.title)?article.title:"No Title")
                 td.hidden-xs=article.categoryEN
                 td.pre=article.collection
-              tr(class="class_#{article.id}").hidden
+              tr(class="class_" + article.id).hidden
                 td
                 td(colspan=1)
                   :verbatim
@@ -74,7 +74,7 @@ block content
       if (showCollect)
         form(name="input",id="input" action=layout.htmlroot+"/article/create", method="post")
           - var langs = JSON.stringify(layout.usedLanguages)
-          input.hidden(name="languages" value="#{langs}")
+          input.hidden(name="languages" value=langs)
           h2 
             | Create Article 
           .row
@@ -92,7 +92,7 @@ block content
                   .col-md-10
                     select(id="categoryEN",name="categoryEN").form-control
                       for category in categories
-                        option(value="#{category.EN}" ) #{category[layout.language]} / #{category[layout.language2]}
+                        option(value=category.EN ) #{category[layout.language]} / #{category[layout.language2]}
           
      
 
@@ -103,20 +103,20 @@ block content
                 .col-md-5
                   input.btn.btn-large.btn-primary(type="submit", id="OK",value="OK")
                   a(href=layout.htmlroot+`/article/create` class="btn btn-default" role="button") Cancel
-                  button.btn.btn-large.osmbcbadge-lang(id="OKLang",name="OKLang", onclick ="window.onbeforeunload=null; document.getElementById('input').action = '#{layout.htmlroot}/article/create?notranslation=true';document.getElementById('input').submit();") OK (only #{layout.user.mainLang})
+                  button.btn.btn-large.osmbcbadge-lang(id="OKLang",name="OKLang", onclick =`window.onbeforeunload=null; document.getElementById('input').action = '${layout.htmlroot}/article/create?notranslation=true';document.getElementById('input').submit();`) OK (only #{layout.user.mainLang})
 
             
           .row
             .col-md-1
               | Title <br>
             .col-md-11
-              textarea.form-control(id = "title",name="title",placeholder="Please enter a title with at last 6 characters",rows=1, autofocus) #{title}
+              textarea.form-control(id = "title",name="title",placeholder="Please enter a title with at last 6 characters",rows=1, autofocus)=title
                  
           .row
             .col-md-1
               | Collection <br>
             .col-md-11
-              textarea.form-control(name="collection",rows=7,placeholder="put your link or info here") #{collection}
+              textarea.form-control(name="collection",rows=7,placeholder="put your link or info here")=collection
 
 block scripts                
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')

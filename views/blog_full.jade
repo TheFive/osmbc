@@ -31,30 +31,30 @@ block blogcontent
 
   if disableOwnCollection
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=full&option=disableOwnCollection&value=false";') &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=full&option=disableOwnCollection&value=false";`) &times
       span.glyphicon.glyphicon-filter
       span=" Collections of " + layout.user.OSMUser + " are disabled"
 
   if disableOtherCollection
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=full&option=disableOtherCollection&value=false";') &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=full&option=disableOtherCollection&value=false";`) &times
       span.glyphicon.glyphicon-filter
       span=" Collections not done by " + layout.user.OSMUser + " are disabled"
   if disableWritten
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=full&option=disableWritten&value=false";') &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=full&option=disableWritten&value=false";`) &times
       span.glyphicon.glyphicon-filter
       span=" Written markdown is disabled"
 
   if disableNewerMarkdown
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=full&option=disableNewerMarkdown&value=false";') &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=full&option=disableNewerMarkdown&value=false";`) &times
       span.glyphicon.glyphicon-filter
       span=" Disable, if left lang article is newer than right lang article"
 
   if disableSolvedComments
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=full&option=disableSolvedComments&value=false";') &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=full&option=disableSolvedComments&value=false";`) &times
       span.glyphicon.glyphicon-filter
       span=" No & Solved Comments are disabled"
   .row
@@ -108,15 +108,15 @@ block blogcontent
             div(class=secondColSize)
               .row
                 div(class=columnLeftSize)
-                  div(onclick="if (!openEditor) {openEditor = document.getElementById('ldiv#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
+                  div(onclick=`if (!openEditor) {openEditor = document.getElementById('ldiv${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
                     div(class=(a["markdown" + lang]) ? "" : "mark")
                       ul.preview(id="lpreview" + a.id)
                         :verbatim
                           !{renderer.renderArticle(left_lang,a)}
                   div.hidden(id="ldiv" + a.id)
-                    form(name="lEditArticle",id="lEditArticle#{a.id}", action=layout.htmlroot+"/article/#{a.id}/setMarkdown/#{left_lang}", method="post")
-                      textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange="onLeaveText(#{a.id},'l');" onkeyup="onchangeMarkdown(#{a.id},'l');" spellcheck = "true" lang="#{left_lang}") #{a["markdown" + left_lang]}
-                      textarea.hidden.form-control(name="oldMarkdown"  id="loldMarkdown#{a.id}" rows=7 ) #{a["markdown" + left_lang]}
+                    form(name="lEditArticle",id="lEditArticle" +a.id, action=layout.htmlroot+"/article/" + a.id +"/setMarkdown/" + left_lang, method="post")
+                      textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'l');` onkeyup=`onchangeMarkdown(${a.id},'l');` spellcheck = "true" lang=left_lang)=a["markdown" + left_lang]
+                      textarea.hidden.form-control(name="oldMarkdown"  id="loldMarkdown" +a.id rows=7 )=a["markdown" + left_lang]
                     p
                       if a.author && a.author.collection
                         span="Collected: "
@@ -132,14 +132,14 @@ block blogcontent
 
                 div(class=columnRightSize)
                   if right_lang
-                    div(onclick="if (!openEditor) {openEditor = document.getElementById('rdiv#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
+                    div(onclick=`if (!openEditor) {openEditor = document.getElementById('rdiv${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
                       div(class=(a["markdown" + right_lang]) ? "" : "mark")
                         ul.preview(id="rpreview" + a.id)
                           :verbatim
                             !{renderer.renderArticle(right_lang,a)}
                     div.hidden(id="rdiv" + a.id )
                       form(name="rEditArticle",id="rEditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + right_lang, method="post")
-                        textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'r');` onkeyup="onchangeMarkdown(#{a.id},'r');" spellcheck="true" lang="#{right_lang}") #{a["markdown" + right_lang]}
+                        textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'r');` onkeyup=`onchangeMarkdown(${a.id},'r');` spellcheck="true" lang=right_lang)=a["markdown" + right_lang]
                         textarea.hidden.form-control(name="oldMarkdown"  id="roldMarkdown" + a.id rows=7 )=a["markdown" + right_lang]
                       p
                         if a.author && a.author.collection

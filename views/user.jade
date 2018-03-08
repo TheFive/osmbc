@@ -148,7 +148,7 @@ block content
             |   };
             |request.send(null);
         p="If you are using Firefox, you can add this link to your bookmarks. Please disable Open in Sidebar Option for this bookmark. "
-          a(href=`javascript: var request = new XMLHttpRequest();request.open('GET', '${layout.url}#{layout.htmlroot}/api/collect/#{usershown.apiKey}?collection='+document.location, true);request.onreadystatechange = function(){var done = 4, ok = 200;if (request.readyState == done && request.status == ok){if (request.responseText && request.responseText.substring(0,4)=='http') {if (window.confirm('Send to OSMBCs TBC, open Editor?')){window.location.href=request.responseText}}else {alert.request.responseText}}if (request.readyState == done && request.status != ok) alert('An Error occured '+request.responseText);};request.send(null);` rel="sidebar" title="OSMBC TBC") Add TBC Link to Firefox
+          a(href=`javascript: var request = new XMLHttpRequest();request.open('GET', '${layout.url}${layout.htmlroot}/api/collect/${usershown.apiKey}?collection='+document.location, true);request.onreadystatechange = function(){var done = 4, ok = 200;if (request.readyState == done && request.status == ok){if (request.responseText && request.responseText.substring(0,4)=='http') {if (window.confirm('Send to OSMBCs TBC, open Editor?')){window.location.href=request.responseText}}else {alert.request.responseText}}if (request.readyState == done && request.status != ok) alert('An Error occured '+request.responseText);};request.send(null);` rel="sidebar" title="OSMBC TBC") Add TBC Link to Firefox
 
       else
         a(href=layout.htmlroot+"/usert/createApiKey")="Generate Key"

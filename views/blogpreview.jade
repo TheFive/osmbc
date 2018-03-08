@@ -13,11 +13,11 @@ block content
           h1= "Preview " + blog.name
     .col-md-4
       div.btn-group(role="group" class="pull-right")
-        button.btn.btn-default(onclick ="location.href='#{returnToUrl}';") Edit
+        button.btn.btn-default(onclick =`location.href='${returnToUrl}';`) Edit
         if (asMarkdown)
-          button.btn.btn-default(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}/preview?download=true&lang=#{lang}&markdown=true';") Download
+          button.btn.btn-default(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&markdown=true';`) Download
         else
-          button.btn.btn-default(onclick ="location.href='#{layout.htmlroot}/blog/#{blog.name}/preview?download=true&lang=#{lang}';") Download
+          button.btn.btn-default(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`) Download
 
   row
     .col-md-12
@@ -32,10 +32,10 @@ block content
     .col-md-3
       if (asMarkdown)
         p
-          a(href=layout.htmlroot+"/blog/#{blog.name}/preview?lang=#{lang}") #{blog.name} as html
+          a(href=layout.htmlroot+"/blog/" + blog.name+"/preview?lang=" +lang)=blog.name+" as html"
       else
         p
-          a(href=layout.htmlroot+"/blog/#{blog.name}/preview?lang=#{lang}&markdown=true") #{blog.name} as markdown
+          a(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang +"&markdown=true")=blog.name + " as markdown"
 
 
 

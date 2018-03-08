@@ -7,11 +7,11 @@ h2
 p
   if status
     | Blog 
-    a(href="#{layout.url}#{layout.htmlroot}/blog/#{blog.name}") #{(blog.name)?blog.name:"MISSING NAME"}
+    a(href=layout.url + layout.htmlroot +"/blog/" + blog.name)=((blog.name)?blog.name:"MISSING NAME")
     |(#{lang}) was closed by #{user.OSMUser}.
   else
     | Blog 
-    a(href="#{layout.url}#{layout.htmlroot}/blog/#{blog.name}") #{(blog.name)?blog.name:"MISSING NAME"}
+    a(href=layout.url + layout.htmlroot +"/blog/" + blog.name )=((blog.name)?blog.name:"MISSING NAME")
     |(#{lang}) was reopened by #{user.OSMUser}.
 
 

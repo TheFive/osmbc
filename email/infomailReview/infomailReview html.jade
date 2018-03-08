@@ -3,7 +3,7 @@ h2
 
 p
   | Blog 
-  a(href="#{layout.url}#{layout.htmlroot}/blog/#{blog.name}") #{(blog.name)?blog.name:"MISSING NAME"}
+  a(href=layout.url + layout.htmlroot +"/blog/" + blog.name)=((blog.name)?blog.name:"MISSING NAME")
   |  was changed by #{user.OSMUser}
 
 

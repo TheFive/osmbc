@@ -41,21 +41,21 @@ block content
           each user in users
             tr
               td
-                span.label.osmbclabel-collect(style="background-color:#{user.color}")=user.OSMUser
+                span.label.osmbclabel-collect(style="background-color:" + user.color)=user.OSMUser
 
               td
                 if (user.OSMUser  && user.OSMUser != '')
-                  a(href=layout.htmlroot+'/usert/#{user.id}') #{user.OSMUser}
+                  a(href=layout.htmlroot+'/usert/' + user.id)=user.OSMUser
                 else
-                  a(href=layout.htmlroot+'/usert/#{user.id}') Missing Name
+                  a(href=layout.htmlroot+'/usert/' user.id) Missing Name
               td
-                 a(href='http://www.openstreetmap.org/user/#{user.OSMUser}') [OSM]
+                 a(href='http://www.openstreetmap.org/user/' + user.OSMUser) [OSM]
               td
                 if user.mdWeeklyAuthor
 
                   |!{layout.markdown.renderInline(user.mdWeeklyAuthor)}
               td
-                a(href=layout.htmlroot+'/changes/log?user=#{user.OSMUser}') (#{user._countChanges})
+                a(href=layout.htmlroot+'/changes/log?user=' + user.OSMUser) (#{user._countChanges})
               td
                 if user.email
                   span.glyphicon.glyphicon-ok

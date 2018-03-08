@@ -3,24 +3,24 @@ extends layout
 
 mixin eventRowLang(lang,event)
   if (event[lang].filtered)
-    td.hidden.lang.text-muted(class="lang-#{lang}")
+    td.hidden.lang.text-muted(class="lang-" + lang)
       span.add-info=event.town
-    td.hidden.lang.text-muted(class="lang-#{lang}")
+    td.hidden.lang.text-muted(class="lang-" + lang)
       span.add-info=event.text
-    td.hidden.lang.text-muted(class="lang-#{lang}")
+    td.hidden.lang.text-muted(class="lang-" + lang)
       span.add-info=eventDateFormat(event,lang)
-    td.hidden.lang.text-muted(class="lang-#{lang}")
+    td.hidden.lang.text-muted(class="lang-" + lang)
       span.add-info=event.country
-    td.hidden.lang.text-muted(class="lang-#{lang}")
+    td.hidden.lang.text-muted(class="lang-" + lang)
       div.add-info
         |!{flag(event.country,calendarFlags)}
   else
-    td.hidden.lang.text-primary(class="lang-#{lang}")=event[lang].town
-    td.hidden.lang.text-primary(class="lang-#{lang}")=event.text
-    td.hidden.lang.text-primary(class="lang-#{lang}")=eventDateFormat(event,lang)
-    td.hidden.lang.text-primary(class="lang-#{lang}")
+    td.hidden.lang.text-primary(class="lang-" + lang)=event[lang].town
+    td.hidden.lang.text-primary(class="lang-" + lang)=event.text
+    td.hidden.lang.text-primary(class="lang-" + lang)=eventDateFormat(event,lang)
+    td.hidden.lang.text-primary(class="lang-" + lang)
       div.add-info=event.country
-    td.hidden.lang.text-primary(class="lang-#{lang}")
+    td.hidden.lang.text-primary(class="lang-" + lang)
       |!{flag(event.country,calendarFlags)}
 
 
@@ -36,12 +36,12 @@ block content
     .col-md-4
       h4
         for lang in layout.activeLanguages
-          span.add-info.label.label-default( class="lang+#{lang}" onclick="$('.lang').addClass('hidden');$('.lang-#{lang}').removeClass('hidden');")=lang
+          span.add-info.label.label-default( class="lang+"+ lang onclick="$('.lang').addClass('hidden');$('.lang-" + lang +"').removeClass('hidden');")=lang
         span.label.label-default(  onclick="$('.add-info').toggle(1000);")="Draft/Final"
       p.osmbc-help-text="Click on language or Draft/Final to change view"
     .col-md-8
       for lang in layout.activeLanguages
-        div.hidden.lang(class="lang-#{lang}")
+        div.hidden.lang(class="lang-" + lang)
           div.add-info
             p="Language = "+lang
             if eventsfilter[lang]
@@ -71,15 +71,15 @@ block content
             p
               span=blog.name
               span=" "
-              a(href=layout.htmlroot+"/article/#{article.id}")="Upcoming Events"
+              a(href=layout.htmlroot+"/article/" + article.id)="Upcoming Events"
             p
               +languageDisplay(article)
           for lang in layout.activeLanguages
-            td.langXX(class="langXX-#{lang}")
+            td.langXX(class="langXX-" + lang)
               if (!(article["markdown" + lang]) && blog.isEditable(lang))
-                form(name="EditArticle",id="EditArticle#{article.id}#{lang}", action=layout.htmlroot+"/article/#{article.id}/setMarkdown/#{lang}", method="post")
-                  textarea.hidden.form-control(name="markdown" id="markdown" + article.id rows=7 onchange="onLeaveText(#{article.id});")=markdown[lang]
-                  textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{article.id}" rows=7 )=""
+                form(name="EditArticle",id="EditArticle" + article.id + lang, action=layout.htmlroot+"/article/" + article.id +"/setMarkdown/" + lang, method="post")
+                  textarea.hidden.form-control(name="markdown" id="markdown" + article.id rows=7 onchange=`onLeaveText(${article.id});`)=markdown[lang]
+                  textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown" +article.id rows=7 )=""
                   button.btn.btn-default(type="submit")="Save " + lang
   p.osmbc-help-text.editBlock
     span="The store button is available, if the blog is in edit mode and the event article is empty. "
@@ -120,7 +120,7 @@ block content
     span=" Markdown"
   div.hidden.markdownPreview
     for lang in layout.activeLanguages
-      pre.lang(class="lang-#{lang}")=markdown[lang]
+      pre.lang(class="lang-" + lang)=markdown[lang]
   h3(onclick="$('.parserErrors').toggleClass('hidden')")
     span.glyphicon.glyphicon-triangle-right.parserErrors
     span.glyphicon.glyphicon-triangle-bottom.hidden.parserErrors

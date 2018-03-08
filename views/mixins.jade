@@ -17,7 +17,7 @@ mixin voteButton(vote,article)
   - if (vb_listVotes && vb_listVotes.length>0)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  button.btn(type="button" class = vb_displayClass onclick="callAndRedraw('/article/#{article.id}/#{vb_voteAction}.#{vote.name}','/article/#{article.id}/votes')" style=vb_voteStyle)
+  button.btn(type="button" class = vb_displayClass onclick="callAndRedraw('/article/" + article.id + "/" + vb_voteAction +"." + vote.name + "','/article/" + article.id +"/votes')" style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
@@ -37,7 +37,7 @@ mixin voteLabel(vote,article)
   - if (vb_listVotes && vb_listVotes.length>0)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  span.label(id = "vote_#{vote.name}_#{article.id}" class = vb_displayClass onclick="callAndRedraw('/article/#{article.id}/#{vb_voteAction}.#{vote.name}','/article/#{article.id}/#{vote.name}')" style=vb_voteStyle)
+  span.label(id = "vote_" + vote.name + "_"  + article.id class = vb_displayClass onclick="callAndRedraw('/article/" + article.id +"/" + vb_voteAction +"." + vote.name +"','/article/" + article.id +"/" + vote.name +"')" style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
@@ -47,46 +47,46 @@ mixin voteLabel(vote,article)
 mixin labeledInput(label,name,value,explanation)
     - if (!value) value =""
     div.form-group
-        label.control-label(class="col-sm-#{sizeLabel}" for="#{name}")=label
-        div(class="col-sm-#{sizeInput}")
-            input.form-control(name="#{name}",id="#{name}",value = "#{value}")
-        div.text-muted(class="col-sm-#{sizeExplanation}")=explanation
+        label.control-label(class="col-sm-" + sizeLabel for=name)=label
+        div(class="col-sm-" + sizeInput)
+            input.form-control(name=name,id=name,value = value)
+        div.text-muted(class="col-sm-" + sizeExplanation)=explanation
 mixin labeledSelect(label,name,value,values,displayValues,explanation)
     - if (!value) value =""
     div.form-group
-        label.control-label(class="col-sm-#{sizeLabel}" for="#{name}")=label
-        div(class="col-sm-#{sizeInput}")
-            select(id="#{name}",name="#{name}").form-control
+        label.control-label(class="col-sm-" + sizeLabel for=name)=label
+        div(class="col-sm-" + sizeInput)
+            select(id=name,name=name).form-control
                 each v,i in values
                     if (value ==v)
-                        option(value="#{v}" selected) #{displayValues[i]}
+                        option(value=v selected)=displayValues[i]
                     else
-                        option(value="#{v}" ) #{displayValues[i]}
-        div.text-muted(class="col-sm-#{sizeExplanation}")=explanation
+                        option(value=v )=displayValues[i]
+        div.text-muted(class="col-sm-" + sizeExplanation)=explanation
 mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
     - if (!value) value =""
     div.form-group
-        label.control-label(class="col-sm-#{sizeLabel}" for="#{name}")=label
-        div(class="col-sm-#{sizeInput}")
+        label.control-label(class="col-sm-" + sizeLabel for=name)=label
+        div(class="col-sm-" + sizeInput)
             each v,i in values
                 if (value.indexOf(v)>=0)
                     label.checkbox-inline
-                        input(type="checkbox" value="#{v}" name="#{name}" id="#{name}_#{v}" checked="checked")
+                        input(type="checkbox" value=v name=name id=name +"_" + v checked="checked")
                         |#{displayValues[i]}
                 else
                     label.checkbox-inline
-                        input(type="checkbox" name="#{name}" id="#{name}_#{v}" value="#{v}")
+                        input(type="checkbox" name=name id=name +"_" + v value=v)
                         |#{displayValues[i]}
-        div.text-muted(class="col-sm-#{sizeExplanation}")=explanation
+        div.text-muted(class="col-sm-" + sizeExplanation)=explanation
 
 
 mixin labeledText(label,name,value,explanation)
     - if (!value) value =""
     div.form-group
-        label.control-label(class="col-sm-#{sizeLabel}" for="#{name}")=label
-        div(class="col-sm-#{sizeInput}")
-            input.form-control(name="#{name}",id="#{name}",value = "#{value}" readonly)
-        div.text-muted(class="col-sm-#{sizeExplanation}")=explanation
+        label.control-label(class="col-sm-" + sizeLabel for=name)=label
+        div(class="col-sm-" + sizeInput)
+            input.form-control(name=name,id=name,value = value readonly)
+        div.text-muted(class="col-sm-" + sizeExplanation)=explanation
 
 
 
@@ -144,7 +144,7 @@ mixin articleIcons(a,options)
         span.glyphicon.glyphicon-comment.small-margin(style="color:grey")
       if !a.getCommentRead(layout.user.OSMUser)
         span.glyphicon.glyphicon-envelope.small-margin
-  a(href=layout.htmlroot+"/article/#{a.id}")
+  a(href=layout.htmlroot+"/article/" + a.id)
     span.glyphicon.glyphicon-open.small-margin
   if a.predecessorId
     if (a.predecessorId === options.predecessorId)
@@ -155,9 +155,9 @@ mixin articleIcons(a,options)
 
 mixin navbutton(tab,activetab,addClass)
   if (tab == activetab)
-    li.active(class="#{addClass}"):  a(href=layout.htmlroot+"/blog/#{blog.name}/#{tab}") #{tab}
+    li.active(class=addClass):  a(href=layout.htmlroot+"/blog/" + blog.name + "/" + tab)=tab
   else
-    li(class="#{addClass}"):  a(href=layout.htmlroot+"/blog/#{blog.name}/#{tab}") #{tab}
+    li(class=addClass):  a(href=layout.htmlroot+"/blog/" + blog.name +"/"+ tab)=tab
 
 
 mixin articleIconLegend(view)
@@ -228,10 +228,10 @@ mixin userConfigOption(view,option,variable,userdesc)
 mixin blogSelection(list,missingList,blogtype,readonly)
   for blog in list
     if article && blog.name == article.blog
-      option(value="#{blog.name}" selected) #{blog.name} #{blogtype}
+      option(value=blog.name selected) #{blog.name} #{blogtype}
       - missingList.splice(0,missingList.length)
     else
-      option(value="#{blog.name}" disabled=readonly) #{blog.name} #{blogtype}
+      option(value=blog.name disabled=readonly) #{blog.name} #{blogtype}
 
 mixin blogSelector(article,readonly)
     - if (readonly !== true) readonly = false

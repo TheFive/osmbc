@@ -21,7 +21,7 @@ mixin displayOverviewRow(a)
 
 
       td
-        div(onclick="if (!openEditor) {openEditor = document.getElementById('div#{a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;")
+        div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
           div(class=(a["markdown" + lang]) ? "" : "mark")
             ul.no-margin
               :verbatim
@@ -44,13 +44,13 @@ mixin displayOverviewRow(a)
       td
       td.hidden-xs
       td
-        div.panel.panel-default.hidden(id="div#{a.id}")
+        div.panel.panel-default.hidden(id="div" + a.id)
           div.panel-heading
-            ul(id="preview#{a.id}")
+            ul(id="preview" + a.id)
           div.panel-body
-            form(name="EditArticle",id="EditArticle#{a.id}", action="#{layout.htmlroot}/article/#{a.id}/setMarkdown/#{lang}", method="post")
-              textarea.form-control(name="markdown" id="markdown" + a.id rows=7 onchange="onLeaveText(#{a.id});" onkeyup="onchangeMarkdown(#{a.id})" spellcheck = "true" lang="#{lang}") #{a["markdown" + lang]}
-              textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown#{a.id}" rows=7 ) #{a["markdown" + lang]}
+            form(name="EditArticle",id="EditArticle" + a.id, action=`${layout.htmlroot}/article/${a.id}/setMarkdown/${lang}`, method="post")
+              textarea.form-control(name="markdown" id="markdown" + a.id rows=7 onchange=`onLeaveText(${a.id});` onkeyup=`onchangeMarkdown(${a.id})` spellcheck = "true" lang=lang)=a["markdown" + lang]
+              textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
             p
               if a.author && a.author.collection
                 span="Collected: "
@@ -84,28 +84,28 @@ block blogcontent
 
   if disableOwnCollection
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=overview&option=disableOwnCollection&value=false";') &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=overview&option=disableOwnCollection&value=false";`) &times
       span.glyphicon.glyphicon-filter
       span=" Collections of "+layout.user.OSMUser+" are disabled"
 
   if disableOtherCollection
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=overview&option=disableOtherCollection&value=false";') &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=overview&option=disableOtherCollection&value=false";`) &times
       span.glyphicon.glyphicon-filter
       span=" Collections not done by "+layout.user.OSMUser+" are disabled"
   if disableWritten
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=overview&option=disableWritten&value=false";') &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=overview&option=disableWritten&value=false";`) &times
       span.glyphicon.glyphicon-filter
       span=" Written markdown is disabled"
   if disableNewerMarkdown
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=overview&option=disableNewerMarkdown&value=false";') &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=overview&option=disableNewerMarkdown&value=false";`) &times
       span.glyphicon.glyphicon-filter
       span=" Disable, if left lang article is newer than right lang article"
   if disableSolvedComments
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick='location.href="#{layout.htmlroot}/userconfig?view=overview&option=disableSolvedComments&value=false";') &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=overview&option=disableSolvedComments&value=false";`) &times
       span.glyphicon.glyphicon-filter
       span=" No & Solved Comments are disabled"
 

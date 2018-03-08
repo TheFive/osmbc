@@ -35,7 +35,7 @@ mixin reviewBlog(reviewComments,lang)
             span.text-muted.small=" (enabled by "+reviewStarter
             span.text-muted.small=" "+layout.moment(reviewComments[0].timestamp).fromNow()
             span.text-muted.small=") "
-            a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=#{blog.name}&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
+            a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
       .panel-body
         - personalReviewStarted=false
         each comment,i in reviewComments
@@ -49,17 +49,17 @@ mixin reviewBlog(reviewComments,lang)
                 i.text-muted.small="Edit: "+layout.moment(comment.editstamp).fromNow()
               if layout.user.OSMUser === comment.user && (!blog["close"+lang])
                 span=" "
-                a(onclick="document.getElementById('editReview#{lang}#{i}').classList.remove('hidden');document.getElementById('reviewLeftText#{lang}#{i}').classList.add('hidden');")
+                a(onclick=`document.getElementById('editReview${lang}${i}').classList.remove('hidden');document.getElementById('reviewLeftText${lang}${i}').classList.add('hidden');`)
                   span.glyphicon.glyphicon-pencil
               if reviewStartTime
                 span=" "
-                a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=#{blog.name}&user="+comment.user+"&table=article&property=markdown"+lang+"&date=>="+reviewStartTime) [changes]
+                a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&user="+comment.user+"&table=article&property=markdown"+lang+"&date=>="+reviewStartTime) [changes]
             p(id="reviewLeftText"+lang+i)=comment.text
             if (!comment.text)
               p.text-muted.small="Empty Comment"
             div.hidden(id="editReview"+lang+i)
               if (!blog["close"+lang])
-                form.form-horizontal(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/#{blog.name}/editReviewComment/"+i, method="post")
+                form.form-horizontal(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
                   .col-md-10
                     input(type="text",class="form-control",name ="text",id="reviewComment"+lang+i,value=comment.text)
                     input.hidden(type="text",name="lang" value = lang)
@@ -77,19 +77,19 @@ mixin reviewBlog(reviewComments,lang)
         .form-group
           if (!blog["close"+lang])
             if personalReviewStarted
-              form.form-horizontal(id="review"+lang name="review"+lang, action=layout.htmlroot+"/blog/#{blog.name}/setReviewComment", method="post")
+              form.form-horizontal(id="review"+lang name="review"+lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
                 .col-md-10
                   input(type="text",
                         class="form-control",
                         name ="text",
                         id="reviewComment"+lang
                         placeholder="Please Type your Review here"
-                        onkeyup="document.getElementById('reviewButton#{lang}').disabled = (document.getElementById('reviewComment#{lang}').value === '');")
+                        onkeyup="document.getElementById('reviewButton" + lang +"').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
                   input.hidden(type="text",name="lang" value = lang)
                 .col-md-2
                   button.btn.btn-large.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
             else
-              form.form-horizontal(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/#{blog.name}/setReviewComment", method="post")
+              form.form-horizontal(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
                 .col-md-8
                   input.hidden(type="text",
                   class="form-control",
@@ -97,7 +97,7 @@ mixin reviewBlog(reviewComments,lang)
                   value ="reviewing..."
                   id="reviewComment" + lang
                   placeholder="Please Type your Review here"
-                  onkeyup="document.getElementById('reviewButton#{lang}').disabled = (document.getElementById('reviewComment#{lang}').value === '');")
+                  onkeyup="document.getElementById('reviewButton" + lang + "').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
                   input.hidden(type="text",name="lang" value = lang)
                 .col-md-4
                   button.btn.btn-large.btn-primary(id="reviewButton" + lang type="submit") Start Personal Review
@@ -108,7 +108,7 @@ mixin blogReviewButtons(lang)
     if (_rc)
       .row
         .col-md-12
-          form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/#{blog.name}/setLangStatus", method="post")
+          form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
             input.hidden(type="text",name="lang" value = lang)
 
             if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
@@ -125,7 +125,7 @@ mixin blogReviewButtons(lang)
 
     else
       if blog.status != "open"
-        form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/#{blog.name}/setLangStatus", method="post")
+        form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
           input.hidden(type="text",name ="action" value = "startreview")
           input.hidden(type="text",name="lang" value = lang)
           button.btn.btn-large.btn-primary(id="readyreview" type="submit") Set #{blog.name}(#{lang}) ready for review
@@ -147,9 +147,9 @@ block content
         span.badge.osmbclabel-markdown="0(*)"
     .col-md-11
      div.progress(style="margin-bottom:2px")
-      div.progress-bar.osmbclabel-markdown(style="width:#{parseInt(100*ready/total)}%")=ready
-      div.progress-bar.osmbclabel-no-markdown(style="width:#{parseInt(100*unedited/total)}%")=unedited
-      div.progress-bar.osmbclabel-no-translation(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
+      div.progress-bar.osmbclabel-markdown(style="width:" +parseInt(100*ready/total)+"%")=ready
+      div.progress-bar.osmbclabel-no-markdown(style="width:" + parseInt(100*unedited/total) + "%")=unedited
+      div.progress-bar.osmbclabel-no-translation(style="width:" + parseInt(100*notranslate/total)+"%")=notranslate
   div.hidden-xs
     if (right_lang!= "--" && right_lang != null)
       .row
@@ -166,9 +166,9 @@ block content
             span.badge.osmbclabel-markdown="0(*)"
         .col-md-11
          div.progress(style="margin-bottom:10px")
-          div.progress-bar.osmbclabel-markdown(style="width:#{parseInt(100*ready/total)}%")=ready
-          div.progress-bar.osmbclabel-no-markdown(style="width:#{parseInt(100*unedited/total)}%")=unedited
-          div.progress-bar.osmbclabel-no-translation(style="width:#{parseInt(100*notranslate/total)}%")=notranslate
+          div.progress-bar.osmbclabel-markdown(style="width:" + parseInt(100*ready/total)+"%")=ready
+          div.progress-bar.osmbclabel-no-markdown(style="width:" +parseInt(100*unedited/total)+"%")=unedited
+          div.progress-bar.osmbclabel-no-translation(style="width:" +parseInt(100*notranslate/total)+"%")=notranslate
 
 
   .row
@@ -213,7 +213,7 @@ block content
               +navbutton(style0,style)
             - v++
         li.hidden-xs
-          a(href=layout.htmlroot+"/blog/#{blog.name}/preview?lang=#{left_lang}")
+          a(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" +left_lang)
             span.glyphicon.glyphicon-export
             | #{left_lang}
             if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[left_lang] == 0)
@@ -221,7 +221,7 @@ block content
               span.glyphicon.glyphicon-alert
         if (right_lang != "--" && right_lang != null)
           li.hidden-xs
-            a(href=layout.htmlroot+"/blog/#{blog.name}/preview?lang=#{right_lang}")
+            a(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" + right_lang)
               span.glyphicon.glyphicon-export
               | #{right_lang}
               if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[right_lang] == 0)
@@ -236,7 +236,7 @@ block content
             for lang in layout.languages
               if layout.usedLanguages[lang]
                 li
-                  a(href=layout.htmlroot+"/blog/#{blog.name}/preview?lang=#{lang}")
+                  a(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang)
                     span="Export "+ lang
                     if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
                       span=" "
@@ -251,14 +251,14 @@ block content
     .col-md-8
     .col-md-1
       p
-        a(href=layout.htmlroot+"/changes/log?blog=#{blog.name}&table=blog") [changes]
+        a(href=layout.htmlroot+"/changes/log?blog=" + blog.name +"&table=blog") [changes]
     .col-md-1
       p
-        a(href=layout.htmlroot+"/blog/#{blog.name}/stat") [Statistic]
+        a(href=layout.htmlroot+"/blog/" + blog.name +"/stat") [Statistic]
 
     .col-md-2
       p
-        a#editBlogDetail(href=layout.htmlroot+"/blog/edit/#{blog.name}") [Edit Blog Detail]
+        a#editBlogDetail(href=layout.htmlroot+"/blog/edit/" + blog.name) [Edit Blog Detail]
 
 
 
