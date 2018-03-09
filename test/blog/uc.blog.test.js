@@ -56,6 +56,7 @@ describe("uc/blog", function() {
       return bddone();
     });
     it("should be able to manage a blog lifetime", async function() {
+      let errors = [];
       let b = await testutil.getNewBrowser("TheFive");
       let b2 = await testutil.getNewBrowser("TheOther");
 
@@ -73,7 +74,7 @@ describe("uc/blog", function() {
       await b.click("tbody>tr:nth-child(2)>td>a");
 
       // Have a look at the blog
-      b.assert.expectHtmlSync("blog", "WN251OpenMode");
+      b.assert.expectHtmlSync(errors, "blog", "WN251OpenMode");
 
       // Edit the blog, select EDIT status and stave it
       await b.click("a#editBlogDetail");
@@ -83,7 +84,7 @@ describe("uc/blog", function() {
 
       // go to the blog view with the articles
       await b.click("a[href='/blog/WN251']");
-      b.assert.expectHtmlSync("blog", "WN251EditMode");
+      b.assert.expectHtmlSync(errors, "blog", "WN251EditMode");
 
       // Start Review for blog
       await b.click("button#readyreview");
@@ -100,15 +101,15 @@ describe("uc/blog", function() {
       // simulate keyup to enable button for click.
       b.keyUp("input#reviewCommentDE", 30);
       await b.click("button#reviewButtonDE");
-      b.assert.expectHtmlSync("blog", "WN251Reviewed");
+      b.assert.expectHtmlSync(errors, "blog", "WN251Reviewed");
 
       await b.click("button#didexport");
 
-      b.assert.expectHtmlSync("blog", "WN251Exported");
+      b.assert.expectHtmlSync(errors, "blog", "WN251Exported");
 
       await b.click("button#closebutton");
 
-      b.assert.expectHtmlSync("blog", "WN251Closed");
+      b.assert.expectHtmlSync(errors, "blog", "WN251Closed");
 
       await b2.visit("/blog/WN251");
       // Start Review for blog in english
@@ -125,8 +126,7 @@ describe("uc/blog", function() {
 
       // in difference to DE language, here no export should appear.
       b2.assert.element("button#closebutton");
-
-
+      should(errors).eql([]);
     });
   });
   describe("browser tests", function() {
@@ -143,7 +143,7 @@ describe("uc/blog", function() {
     });
     describe("Blog Display", function() {
       it("should show Overview with some configurations", async function() {
-        let errors=[];
+        let errors = [];
         await browser.visit("/blog/WN290");
         browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview"),
         await browser.click('span[name="choose_showNumbers"]'),
@@ -158,73 +158,72 @@ describe("uc/blog", function() {
         //
         let selector = "table>tbody>tr:nth-child(11)>td:nth-child(3)>div>div>ul>li";
         // ensure that selector shows correct article
-        browser.assert.text(selector,"jeden Tag...");
+        browser.assert.text(selector, "jeden Tag...");
         // Open the edit box
         await browser.click(selector);
-        browser.assert.text(selector,"jeden Tag...");
+        browser.assert.text(selector, "jeden Tag...");
 
         // set value of textfield and trigger onchange
         // with browsers asnyc fire function
-        browser.query("textarea#markdown24").value ="Changed Text";
-        await browser.fire("textarea#markdown24","change");
+        browser.query("textarea#markdown24").value = "Changed Text";
+        await browser.fire("textarea#markdown24", "change");
 
 
         // reload page again
         await browser.visit("/blog/WN290");
-        browser.assert.text("textarea#markdown24","Changed Text");
+        browser.assert.text("textarea#markdown24", "Changed Text");
         should(errors).eql([]);
       });
       it("should show Full View", async function() {
         await browser.visit("/blog/WN290");
-        await browser.click("a[href='/blog/WN290/Full']")
-        browser.assert.expectHtmlSync("blog","blog_wn290_full");
+        await browser.click("a[href='/blog/WN290/Full']");
+        browser.assert.expectHtmlSync("blog", "blog_wn290_full");
 
         let selector = "li#wn290_24";
         // ensure that selector shows correct article
-        browser.assert.text(selector,"Ben Spaulding resümiert über seinen Mappingvorsatz für Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant. Ben Spaulding summarises the goals he had set for mapping for the month of January 2016. Though he didn't fully succeed in mapping for at least 15 minutes, but he still got some mapping done and his experiences are interesting none the less.");
+        browser.assert.text(selector, "Ben Spaulding resümiert über seinen Mappingvorsatz für Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant. Ben Spaulding summarises the goals he had set for mapping for the month of January 2016. Though he didn't fully succeed in mapping for at least 15 minutes, but he still got some mapping done and his experiences are interesting none the less.");
         // Open the edit box
         await browser.click(selector);
 
         // set value of textfield and trigger onchange
         // with browsers asnyc fire function
 
-        browser.query("textarea#lmarkdown24").value ="Changed Text in full review";
-        await browser.fire("textarea#lmarkdown24","change");
+        browser.query("textarea#lmarkdown24").value = "Changed Text in full review";
+        await browser.fire("textarea#lmarkdown24", "change");
 
         await browser.visit("/blog/WN290");
-        browser.assert.text("textarea#lmarkdown24","Changed Text in full review");
+        browser.assert.text("textarea#lmarkdown24", "Changed Text in full review");
       });
-      it("should show Review View",async function() {
+      it("should show Review View", async function() {
         await browser.visit("/blog/WN290?tab=review");
-        browser.assert.expectHtmlSync("blog","blog_wn290_review");
+        browser.assert.expectHtmlSync("blog", "blog_wn290_review");
 
         let selector = "li#wn290_24";
         // ensure that selector shows correct article
-        browser.assert.text(selector,"Ben Spaulding resümiert über seinen Mappingvorsatz für Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant.");
+        browser.assert.text(selector, "Ben Spaulding resümiert über seinen Mappingvorsatz für Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant.");
         // Open the edit box
         await browser.click(selector);
 
         // set value of textfield and trigger onchange
         // with browsers asnyc fire function
 
-        browser.query("textarea#markdown24").value ="Changed Text in review mode";
-        await browser.fire("textarea#markdown24","change");
+        browser.query("textarea#markdown24").value = "Changed Text in review mode";
+        await browser.fire("textarea#markdown24", "change");
 
         await browser.visit("/blog/WN290");
-        browser.assert.text("textarea#markdown24","Changed Text in review mode");
-
+        browser.assert.text("textarea#markdown24", "Changed Text in review mode");
       });
       it("should show Statistic View", async function() {
         await browser.visit("/blog/WN290/stat");
-        browser.assert.expectHtmlSync("blog","blog_wn290_stat");
+        browser.assert.expectHtmlSync("blog", "blog_wn290_stat");
       });
       it("should show edit View", async function() {
         await browser.visit("/blog/edit/WN290");
-        browser.assert.expectHtmlSync("blog","blog_wn290_edit");
+        browser.assert.expectHtmlSync("blog", "blog_wn290_edit");
       });
       it("should show the Blog List", async function() {
         await browser.visit("/blog/list?status=edit");
-        browser.assert.expectHtmlSync("blog","blog_list");
+        browser.assert.expectHtmlSync("blog", "blog_list");
       });
     });
   });
