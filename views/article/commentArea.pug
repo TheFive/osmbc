@@ -35,8 +35,7 @@ if !MIXIN_INCLUDE
                   button.btn.btn-large.btn-default(type = "button" onclick ="window.callAndRedraw(null,'/article/#{article.id}/commentArea');") Cancel
               else
                 p
-                  :verbatim
-                    !{layout.md_render(comment.text,accessMap)}
+                  |!{layout.md_render(comment.text,accessMap)}
 
     .row
       if (!params.editComment)

@@ -72,8 +72,7 @@ block content
                 td= change.user
                 td= change.property
                 td
-                  :verbatim
-                    !{change.htmlDiffText()}
+                  |!{change.htmlDiffText()}
 
                 td= layout.moment(change.timestamp).fromNow() 
                 

@@ -16,8 +16,7 @@ mixin displayArticle(article,lang)
         .panel.panel-default
           .panel-heading
             ul
-              :verbatim
-                !{renderer.articleTitle(lang,article)}
+              |!{renderer.articleTitle(lang,article)}
           if (article.commentList)
             .panel-body
                 each comment,i in article.commentList
@@ -37,8 +36,7 @@ mixin displayArticle(article,lang)
                             span=" "
                             i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
                           p
-                            :verbatim
-                              !{layout.md_render(comment.text)}
+                            |!{layout.md_render(comment.text)}
 
 
 block content

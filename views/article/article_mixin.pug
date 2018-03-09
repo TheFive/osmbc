@@ -41,8 +41,7 @@ mixin articleMarkdown(lang,disabled)
 
 mixin articlePreview(lang)
   .panel.panel-default.panel-body.preview(id="preview" + lang, lang = lang)
-    :verbatim
-      !{article["textHtml"+lang]}
+    |!{article["textHtml"+lang]}
 
 
 
@@ -90,7 +89,7 @@ mixin doublettesButton
 
 
 mixin cancelButton
-  button.btn.btn-large.btn-default(type = "button" onclick ="disableUnchanged(); location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
+  button.btn.btn-large.btn-default(type = "button" onclick =`disableUnchanged(); location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';`) last Version
 
 
 mixin noTranslationButton

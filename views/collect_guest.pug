@@ -60,11 +60,9 @@ block content
               tr(class="class_" + article.id).hidden
                 td
                 td(colspan=1)
-                  :verbatim
-                    !{layout.md_render(article["markdown"+layout.language])}
+                  |!{layout.md_render(article["markdown"+layout.language])}
                 td(colspan=2)
-                  :verbatim
-                    !{layout.md_render(article["markdown"+layout.language2])}
+                  |!{layout.md_render(article["markdown"+layout.language2])}
 
            
       else
