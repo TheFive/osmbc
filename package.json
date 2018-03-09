@@ -48,6 +48,7 @@
     "passport-openstreetmap": "^0.1.2",
     "pg": "^7.4.1",
     "progress": "^2.0.0",
+    "pug": "^2.0.1",
     "randomstring": "^1.1.4",
     "request": "^2.79.0",
     "serve-favicon": "~2.4.1",
