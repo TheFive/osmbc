@@ -12,9 +12,9 @@
   </head>
   <body>
     <!-- Fixed navbar-->
-    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
-        <div class="navbar-header pull-left"><a href="/changelog" class="bg-success navbar-brand hidden-xs">Whats New?</a>
+        <div class="navbar-header pull-left"><a class="bg-success navbar-brand hidden-xs" href="/changelog">Whats New?</a>
           <ul class="nav navbar-nav pull-left">
             <li><a id="collect" href="/article/create">Collect</a></li>
           </ul>
@@ -26,15 +26,15 @@
           </ul>
         </div>
         <div class="navbar-header">
-          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+          <button class="navbar-toggle pull-right" type="button" data-toggle="collapse" data-target=".navbar-collapse"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left">
-            <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
+            <li class="show-xs"><a class="bg-success visible-xs" href="/changelog">Whats New?</a>
             </li>
             <li><a href="/blog/WN290">WN290<span class="badge osmbcbadge-lang">0</span><span class="badge osmbcbadge-lang2">0</span></a></li>
-            <li id="article" class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown" id="article"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Lists<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">Articles</li>
                 <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Empty Collections</a></li>
                 <li class="dropdown-header">Orphaned Article
@@ -43,8 +43,8 @@
                 
               </ul>
             </li>
-            <li id="tool" class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown hidden-xs" id="tool"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Tool<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">Markdown Helper</li>
                 <li><a href="/tool/calendarAllLang/fakeCalendar">Calendar Tool (fakeCalendar)</a></li>
                 <li><a href="/tool/picturetool">Picture Tool</a></li>
@@ -56,8 +56,8 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Help<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">OSMBC</li>
                 <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
                 <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a></li>
@@ -69,15 +69,15 @@
                 <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">DE<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">DE<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a id="lang_DE" href="/language?lang=DE">DE</a></li>
                 <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
                 <li><a id="lang_ES" href="/language?lang=ES">ES</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">EN<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
                 <li><a id="lang2_DE" href="/language?lang2=DE">DE</a></li>
                 <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
@@ -87,7 +87,6 @@
             <li><img onclick="location.href='/usert/2';" style="height:50px;width:50px"></li>
           </ul>
           <!-- /.nav-collapse-->
-          
         </div>
       </div>
     </div>
@@ -96,37 +95,37 @@
         </p><h1>Progress Overview</h1>
         <div class="row">
           <div class="col-md-1">
-            <div style="color:white" class="label label-default">DE</div>
+            <div class="label label-default" style="color:white">DE</div>
           </div>
           <div class="col-md-11">
-            <div style="margin-bottom:2px" class="progress">
-              <div style="width:95%" class="progress-bar progress-bar-success">60</div>
-              <div style="width:0%" class="progress-bar progress-bar-danger">0</div>
-              <div style="width:4%" class="progress-bar progress-bar-info">3</div>
+            <div class="progress" style="margin-bottom:2px">
+              <div class="progress-bar progress-bar-success" style="width:95%">60</div>
+              <div class="progress-bar progress-bar-danger" style="width:0%">0</div>
+              <div class="progress-bar progress-bar-info" style="width:4%">3</div>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-md-1">
-            <div style="color:white" class="label label-default">EN</div>
+            <div class="label label-default" style="color:white">EN</div>
           </div>
           <div class="col-md-11">
-            <div style="margin-bottom:2px" class="progress">
-              <div style="width:79%" class="progress-bar progress-bar-success">50</div>
-              <div style="width:0%" class="progress-bar progress-bar-danger">0</div>
-              <div style="width:20%" class="progress-bar progress-bar-info">13</div>
+            <div class="progress" style="margin-bottom:2px">
+              <div class="progress-bar progress-bar-success" style="width:79%">50</div>
+              <div class="progress-bar progress-bar-danger" style="width:0%">0</div>
+              <div class="progress-bar progress-bar-info" style="width:20%">13</div>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-md-1">
-            <div style="color:white" class="label label-default">ES</div>
+            <div class="label label-default" style="color:white">ES</div>
           </div>
           <div class="col-md-11">
-            <div style="margin-bottom:2px" class="progress">
-              <div style="width:79%" class="progress-bar progress-bar-success">50</div>
-              <div style="width:0%" class="progress-bar progress-bar-danger">0</div>
-              <div style="width:20%" class="progress-bar progress-bar-info">13</div>
+            <div class="progress" style="margin-bottom:2px">
+              <div class="progress-bar progress-bar-success" style="width:79%">50</div>
+              <div class="progress-bar progress-bar-danger" style="width:0%">0</div>
+              <div class="progress-bar progress-bar-info" style="width:20%">13</div>
             </div>
           </div>
         </div>
@@ -135,7 +134,7 @@
         </div>
         <div class="row">
           <h1>Table of Collections, Edits &amp; Review Counts Full User</h1>
-          <table style="width:auto" class="table table-header-rotated">
+          <table class="table table-header-rotated" style="width:auto">
             <thead>
               <tr>
                 <th></th>
@@ -389,7 +388,7 @@
             </tbody>
           </table>
           <h1>Table of Collections, Edits &amp; Review Counts Guests</h1>
-          <table style="width:auto" class="table table-header-rotated">
+          <table class="table table-header-rotated" style="width:auto">
             <thead>
               <tr>
                 <th></th>

@@ -27,17 +27,15 @@ block blogcontent
   .row
     div(class=firstColSize)
     div(class=secondColSize)
-      :verbatim
         <br><br>
-        !{renderer.subtitle(lang)}
+        |!{renderer.subtitle(lang)}
   for c in categories
     if (articles[c.EN])
       - predecessorId = "0"
       .row
         div(class=firstColSize)
         div(class=secondColSize)
-          :verbatim
-            !{renderer.categoryTitle(lang,c)}
+           |!{renderer.categoryTitle(lang,c)}
       for a in articles[c.EN]
         if a["markdown"+lang]!=="no translation"
           .row
@@ -65,8 +63,7 @@ block blogcontent
 
                 ul
                   div(id="preview" + a.id)
-                    :verbatim
-                      !{renderer.renderArticle(lang,a)}
+                    |!{renderer.renderArticle(lang,a)}
 
               div.hidden(id="div" + a.id)
                 form(name="EditArticle",id="EditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + lang, method="post")

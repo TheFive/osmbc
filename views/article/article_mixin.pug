@@ -41,8 +41,7 @@ mixin articleMarkdown(lang,disabled)
 
 mixin articlePreview(lang)
   .panel.panel-default.panel-body.preview(id="preview" + lang, lang = lang)
-    :verbatim
-      !{article["textHtml"+lang]}
+    |!{article["textHtml"+lang]}
 
 
 
@@ -54,7 +53,7 @@ mixin articleTranslateButton(langFrom,langTo)
   if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
     button.btn.btn-small.btn-primary(
          class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
-         onClick ="window.translate('#{langFrom}','#{langTo}','deepl');return false;"
+         onClick =`window.translate('${langFrom}','${langTo}','deepl');return false;`
        ) Translate #{langFrom} -> #{langTo}
     button.btn.btn-small.btn-warning.hidden(class="translateWait"+langFrom+langTo)
       span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
@@ -67,7 +66,7 @@ mixin articleTranslateMenu(langFrom,langTo,service)
     li
       a(
         class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
-        onClick ="window.translate('#{langFrom}','#{langTo}','#{service}');return false;"
+        onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
         )="Translate " + langFrom+  "->" +langTo
     li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
       a=" Please Wait"
@@ -90,7 +89,7 @@ mixin doublettesButton
 
 
 mixin cancelButton
-  button.btn.btn-large.btn-default(type = "button" onclick ="disableUnchanged(); location.href='#{layout.htmlroot}/article/#{article.id}?edit=false';") last Version
+  button.btn.btn-large.btn-default(type = "button" onclick =`disableUnchanged(); location.href='${layout.htmlroot}/article/${article.id}?edit=false';`) last Version
 
 
 mixin noTranslationButton
@@ -109,14 +108,14 @@ mixin markdownWithPreview(lang)
   - if (params.left_lang === lang) labelClass = "osmbclabel-lang";
   - if (params.right_lang === lang) labelClass = "osmbclabel-lang2";
   span.label.label-default(
-      class="#{labelClass}"
+      class=labelClass
       draggable="true"
       data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
-      ondragstart="ondragstartLangLabel(event,'#{lang}');")="  " + lang + "  "
+      ondragstart=`ondragstartLangLabel(event,'${lang}');`)="  " + lang + "  "
   span.label.label-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
 
 
-  textarea.hidden.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true) #{article["markdown" + lang]}
+  textarea.hidden.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true)=article["markdown" + lang]
   +articleMarkdown(lang,!article.isChangeAllowed("markdown" + lang))
   +articlePreview(lang)
   +articleTextanalyse(lang)

@@ -35,8 +35,7 @@ block content
       .row
         .col-md-1
         .col-md-6
-          :verbatim
-            !{renderer.categoryTitle(lang,c)}
+          |!{renderer.categoryTitle(lang,c)}
       for a in articles[c.EN]
         - enable = true;
         - if (disableWritten  && a["markdown"+lang]) enable = false;
@@ -49,8 +48,7 @@ block content
 
             .col-md-6
               ul.no-margin
-                :verbatim
-                  !{renderer.articleTitle(lang,a)}
+                |!{renderer.articleTitle(lang,a)}
             .col-md-5
               if (showCollector && a.author && a.author.collection)
                 each b in a.author.collection.split(",")

@@ -58,7 +58,7 @@ app.use(helmet());
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
+app.set("view engine", "pug");
 
 
 
@@ -174,8 +174,8 @@ app.get(htmlRoot + "/logout", function(req, res) {
   res.redirect(htmlRoot + "/osmbc.html");
 });
 
-// layout does not render, but prepares the res.rendervar variable fro
-// dynamic contend in layout.jade
+// layout does not render, but prepares the res.rendervar variable for
+// dynamic contend in layout.pug
 app.use(htmlRoot + "/", auth.ensureAuthenticated, layout);
 app.use(htmlRoot + "/", index);
 app.use(htmlRoot + "/usert", users);

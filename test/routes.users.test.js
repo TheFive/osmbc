@@ -197,7 +197,7 @@ describe("router/user", function() {
         request.get({url: url,jar:jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql('<input name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly" class="form-control"/>');
+          body.should.containEql('<input class="form-control" name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly"/>');
           body.should.containEql("<h1>TestUser Heatmap</h1>");
           bddone();
         });

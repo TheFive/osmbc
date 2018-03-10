@@ -71,8 +71,7 @@ block content
         th
           | Changes
         td
-          :verbatim
-            !{coloredChange}
+          |!{coloredChange}
         td
           p
             |changes 
@@ -84,13 +83,11 @@ block content
         tr
           th="Preview From"
           td
-            :verbatim
-              !{layout.md_render(change.from)}
+            |!{layout.md_render(change.from)}
         tr
           th="Preview To"
           td
-            :verbatim
-              !{layout.md_render(change.to)}
+            |!{layout.md_render(change.to)}
 
 
 

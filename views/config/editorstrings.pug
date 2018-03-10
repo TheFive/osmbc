@@ -13,7 +13,6 @@ block showContentOfConfig
 
         p
           if (config.json[lang])
-            :verbatim
-              !{config.json[lang].replace("##team##","Person1, Person2, Person3")}
+            |!{config.json[lang].replace("##team##","Person1, Person2, Person3")}
           else
             div.alert.alert-danger="No String for language "+lang

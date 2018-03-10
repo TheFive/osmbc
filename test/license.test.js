@@ -10,7 +10,11 @@ let licenses= {
   "uglify-js@2.2.5": "BSD-2-Clause",
   "vow-fs@0.3.1": "MIT",
   "vow@0.4.3": "MIT",
-  "tweetnacl@0.14.3" : "Unlicense"
+  "tweetnacl@0.14.3" : "Unlicense",
+  "colors@0.6.2":"MIT",
+  "domcompare@0.2.3":"MIT",
+  "xmldom@0.1.16":"MIT",
+  "xmldom@0.1.27":"MIT"
 };
 
 
