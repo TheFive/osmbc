@@ -12,17 +12,17 @@
   </head>
   <body>
     <!-- Fixed navbar-->
-    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
-        <div class="navbar-header pull-left"><a href="/changelog" class="navbar-brand bg-success">Whats New?</a>
+        <div class="navbar-header pull-left"><a class="navbar-brand bg-success" href="/changelog">Whats New?</a>
         </div>
         <div class="navbar-header">
-          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+          <button class="navbar-toggle pull-right" type="button" data-toggle="collapse" data-target=".navbar-collapse"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left">
-            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">User<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown">User<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a id="createUser" href="/usert/create">Create</a></li>
                 <li class="dropdown-header">Lists</li>
                 <li><a href="/usert/list?access=full">List Active</a></li>
@@ -33,8 +33,8 @@
                 <li><a href="/usert/list?access=full&amp;sort=lastAccess&amp;desc=true&amp;lastAccess=!=never">Who Is Online</a></li>
               </ul>
             </li>
-            <li class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown hidden-xs"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Tool<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">Action</li>
                 <li><a id="createblog" href="/createblog">Create Blog</a></li>
               </ul>
@@ -42,8 +42,8 @@
             <li><a href="/osmbc/admin">Admin</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Help<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
                 <li class="divider"></li>
                 <li><a href="/help/OSMBC">OSMBC</a></li>
@@ -57,8 +57,8 @@
                 <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a href="/language?lang=DE">DE</a></li>
                 <li><a href="/language?lang=EN">EN</a></li>
                 <li><a href="/language?lang=ES">ES</a></li>
@@ -68,7 +68,6 @@
           </ul>
         </div>
         <!-- /.nav-collapse-->
-        
       </div>
     </div>
     <div class="container-fluid">
@@ -76,25 +75,25 @@
         </p><h1>Edit OSMBC User TestUser</h1>
         <p>OpenStreetMap User Links: <a href="https://www.openstreetmap.org/user/TestUser"><i class="fa fa-map text-muted"></i></a><span> </span><a href="https://hdyc.neis-one.org/?TestUser"><i class="fa fa-line-chart text-muted"></i></a></p>
         <form name="input" action="/usert/2" method="post">
-          <div role="form" class="form-horizontal">
+          <div class="form-horizontal" role="form">
             <div class="form-group">
-              <label for="OSMUser" class="control-label col-sm-2">OSMUser</label>
+              <label class="control-label col-sm-2" for="OSMUser">OSMUser</label>
               <div class="col-sm-4">
-                <input name="OSMUser" id="OSMUser" value="TestUser" class="form-control">
+                <input class="form-control" name="OSMUser" id="OSMUser" value="TestUser">
               </div>
               <div class="text-muted col-sm-6">The OpenStreetMap user name</div>
             </div>
             <div class="form-group">
-              <label for="email" class="control-label col-sm-2">EMail</label>
+              <label class="control-label col-sm-2" for="email">EMail</label>
               <div class="col-sm-4">
-                <input name="email" id="email" value="" class="form-control">
+                <input class="form-control" name="email" id="email" value="">
               </div>
               <div class="text-muted col-sm-6">This mail is used for information about changes. To delete the email just submit a space for this field.</div>
             </div>
             <div class="form-group">
-              <label for="mdWeeklyAuthor" class="control-label col-sm-2">Author for Blog</label>
+              <label class="control-label col-sm-2" for="mdWeeklyAuthor">Author for Blog</label>
               <div class="col-sm-4">
-                <input name="mdWeeklyAuthor" id="mdWeeklyAuthor" value="mdWeeklyAuthor" class="form-control">
+                <input class="form-control" name="mdWeeklyAuthor" id="mdWeeklyAuthor" value="mdWeeklyAuthor">
               </div>
               <div class="text-muted col-sm-6">Use anonymous to skip mentioning. Markdown for any link (e.g. [OSM User](https://www.openstreetmap.org/user/OSM%20User)</div>
             </div>
@@ -102,9 +101,9 @@
               <p>Public Author name is mdWeeklyAuthor</p>
             </div>
             <div class="form-group">
-              <label for="language" class="control-label col-sm-2">Language</label>
+              <label class="control-label col-sm-2" for="language">Language</label>
               <div class="col-sm-4">
-                <select id="language" name="language" class="form-control">
+                <select class="form-control" id="language" name="language">
                   <option value="DE" selected="selected">DE</option>
                   <option value="EN">EN</option>
                   <option value="ES">ES</option>
@@ -113,9 +112,9 @@
               <div class="text-muted col-sm-6">Main Language for the user, used for default values.</div>
             </div>
             <div class="form-group">
-              <label for="access" class="control-label col-sm-2">Access</label>
+              <label class="control-label col-sm-2" for="access">Access</label>
               <div class="col-sm-4">
-                <select id="access" name="access" class="form-control">
+                <select class="form-control" id="access" name="access">
                   <option value="full" selected="selected">full</option>
                   <option value="guest">guest</option>
                   <option value="denied">denied</option>
@@ -124,9 +123,9 @@
               <div class="text-muted col-sm-6">Define Users Access to OSMBC</div>
             </div>
             <div class="form-group">
-              <label for="mailNewCollection" class="control-label col-sm-2">Mail a new Collection</label>
+              <label class="control-label col-sm-2" for="mailNewCollection">Mail a new Collection</label>
               <div class="col-sm-4">
-                <select id="mailNewCollection" name="mailNewCollection" class="form-control">
+                <select class="form-control" id="mailNewCollection" name="mailNewCollection">
                   <option value="true" selected="selected">on</option>
                   <option value="false">off</option>
                 </select>
@@ -134,9 +133,9 @@
               <div class="text-muted col-sm-6">Send a mail for every new Collect. If you are interested in new Articles, you should send this to ON.</div>
             </div>
             <div class="form-group">
-              <label for="mailAllComment" class="control-label col-sm-2">Mail All Comments</label>
+              <label class="control-label col-sm-2" for="mailAllComment">Mail All Comments</label>
               <div class="col-sm-4">
-                <select id="mailAllComment" name="mailAllComment" class="form-control">
+                <select class="form-control" id="mailAllComment" name="mailAllComment">
                   <option value="true" selected="selected">on</option>
                   <option value="false">off</option>
                 </select>
@@ -144,7 +143,7 @@
               <div class="text-muted col-sm-6">Send a mail for every change of a comment. I recommend to use OFF, but sometimes you may be interested in anything written in comments, than - and only then - you should use ON</div>
             </div>
             <div class="form-group">
-              <label for="mailComment" class="control-label col-sm-2">Mail defined comments</label>
+              <label class="control-label col-sm-2" for="mailComment">Mail defined comments</label>
               <div class="col-sm-4">
                 <label class="checkbox-inline">
                   <input type="checkbox" name="mailComment" id="mailComment_DE" value="DE">DE
@@ -162,9 +161,9 @@
               <div class="text-muted col-sm-6">Please check comments you are interested in. Recommendation is as minimum to enable your user, so that you receive via mail that someone is mentioning you in a comment.</div>
             </div>
             <div class="form-group">
-              <label for="mailCommentGeneral" class="control-label col-sm-2">Thread Mentioning</label>
+              <label class="control-label col-sm-2" for="mailCommentGeneral">Thread Mentioning</label>
               <div class="col-sm-4">
-                <select id="mailCommentGeneral" name="mailCommentGeneral" class="form-control">
+                <select class="form-control" id="mailCommentGeneral" name="mailCommentGeneral">
                   <option value="false" selected="selected">off</option>
                   <option value="true">on</option>
                 </select>
@@ -172,7 +171,7 @@
               <div class="text-muted col-sm-6">Set this to ON, if you are interested in all threads, where you (or people you are interested in) have once participated.</div>
             </div>
             <div class="form-group">
-              <label for="mailBlogLanguageStatusChange" class="control-label col-sm-2">Mail Status Change</label>
+              <label class="control-label col-sm-2" for="mailBlogLanguageStatusChange">Mail Status Change</label>
               <div class="col-sm-4">
                 <label class="checkbox-inline">
                   <input type="checkbox" name="mailBlogLanguageStatusChange" id="mailBlogLanguageStatusChange_DE" value="DE">DE
@@ -187,16 +186,16 @@
               <div class="text-muted col-sm-6">Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.</div>
             </div>
             <div class="form-group">
-              <label for="SlackUser" class="control-label col-sm-2">Mattermost User</label>
+              <label class="control-label col-sm-2" for="SlackUser">Mattermost User</label>
               <div class="col-sm-4">
-                <input name="SlackUser" id="SlackUser" value="" class="form-control">
+                <input class="form-control" name="SlackUser" id="SlackUser" value="">
               </div>
               <div class="text-muted col-sm-6">Username in the slack for using the collect feature.</div>
             </div>
             <div class="form-group">
-              <label for="languageCount" class="control-label col-sm-2">Num Languages</label>
+              <label class="control-label col-sm-2" for="languageCount">Num Languages</label>
               <div class="col-sm-4">
-                <select id="languageCount" name="languageCount" class="form-control">
+                <select class="form-control" id="languageCount" name="languageCount">
                   <option value="two" selected="selected">two</option>
                   <option value="three">three</option>
                   <option value="four">four</option>
@@ -205,10 +204,10 @@
               <div class="text-muted col-sm-6">Set this to 3 if you would like to see the new article editor with 3 languages.</div>
             </div>
             <div class="form-group">
-              <label for="Color" class="control-label col-sm-2">Color</label>
+              <label class="control-label col-sm-2" for="Color">Color</label>
               <div class="col-sm-4">
-                <div style="width: 100%;" class="input-group">
-                  <input name="color" id="color" class="form-control"><span style="background-color:undefined;width: 50px;" class="input-group-addon"></span>
+                <div class="input-group" style="width: 100%;">
+                  <input class="form-control" name="color" id="color"><span class="input-group-addon" style="background-color:undefined;width: 50px;"></span>
                 </div>
               </div>
               <div class="text-muted col-sm-6">
@@ -217,7 +216,7 @@
             </div>
             <form-group>
               <div class="col-sm-offset-2 col-sm-10">
-                <input id="save" name="OK" type="submit" value="OK" class="btn btn-primary">
+                <input class="btn btn-primary" id="save" name="OK" type="submit" value="OK">
               </div>
             </form-group>
           </div>

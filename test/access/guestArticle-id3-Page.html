@@ -12,9 +12,9 @@
   </head>
   <body>
     <!-- Fixed navbar-->
-    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
-        <div class="navbar-header pull-left"><a href="/changelog" class="bg-success navbar-brand hidden-xs">Whats New?</a>
+        <div class="navbar-header pull-left"><a class="bg-success navbar-brand hidden-xs" href="/changelog">Whats New?</a>
           <ul class="nav navbar-nav pull-left">
             <li><a id="collect" href="/article/create">Collect</a></li>
           </ul>
@@ -26,16 +26,16 @@
           </ul>
         </div>
         <div class="navbar-header">
-          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+          <button class="navbar-toggle pull-right" type="button" data-toggle="collapse" data-target=".navbar-collapse"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left">
-            <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
+            <li class="show-xs"><a class="bg-success visible-xs" href="/changelog">Whats New?</a>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Help<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">OSMBC</li>
                 <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
                 <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a></li>
@@ -47,13 +47,13 @@
                 <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">--<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
                 <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
               </ul>
@@ -61,7 +61,6 @@
             <li><img onclick="location.href='/usert/2';" style="height:50px;width:50px"></li>
           </ul>
           <!-- /.nav-collapse-->
-          
         </div>
       </div>
     </div>
@@ -69,14 +68,14 @@
       <p>
         <!-- FullAccessArticleView-->
         </p><form id="textanalyseform" method="POST" action="http://wortliga.de/textanalyse/">
-          <input type="hidden" name="text" id="textanalysefield" class="form-control">
+          <input class="form-control" type="hidden" name="text" id="textanalysefield">
         </form>
         <form name="input" id="input" action="/article/3/witholdvalues" method="post">
           <div class="row">
             <!-- Block for Buttons in the upper right corner and on the top in mobile-->
             <div class="col-md-6 col-md-push-6">
               <div class="row">
-                <div id="voteButtons" class="col-md-4">
+                <div class="col-md-4" id="voteButtons">
                 </div>
                 <div class="col-md-1">
                 </div>
@@ -86,13 +85,13 @@
                 <div class="col-md-2"></div>
               </div>
               <div class="row">
-                <div class="col-md-4"><span onclick="showRL('EN')" style="" class="label osmbclabel-markdown">EN</span>
+                <div class="col-md-4"><span class="label osmbclabel-markdown" onclick="showRL('EN')">EN</span>
                   <p class="osmbc-help-text">Click to change left lang</p>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-4">
-                  <button id="saveButton" type="button" onclick="disableUnchanged();document.getElementById('input').submit();" class="btn btn-large btn-primary">Save</button>
-                  <button type="button" onclick="disableUnchanged(); location.href='/article/3?edit=false';" class="btn btn-large btn-default">last Version</button>
+                  <button class="btn btn-large btn-primary" id="saveButton" type="button" onclick="disableUnchanged();document.getElementById('input').submit();">Save</button>
+                  <button class="btn btn-large btn-default" type="button" onclick="disableUnchanged(); location.href='/article/3?edit=false';">last Version</button>
                 </div>
                 <!-- Parallel Blog for common article Attributes-->
               </div>
@@ -102,11 +101,11 @@
                 <div class="form-group">
                   <label class="col-md-2">Blog</label>
                   <div class="col-md-10">
-                    <select id="blog" name="blog" class="form-control af" style="background-color: rgb(255, 255, 204);">
+                    <select class="form-control af" id="blog" name="blog" style="background-color: rgb(255, 255, 204);">
                       <option value="WN251" selected="selected">WN251 </option>
                       <option value="Future" disabled="disabled">Future </option>
                     </select>
-                    <textarea id="old_blog" name="old_blog" rows="1" hide="" class="hidden form-control">WN251</textarea>
+                    <textarea class="hidden form-control" id="old_blog" name="old_blog" rows="1" hide="">WN251</textarea>
                   </div>
                 </div>
               </div>
@@ -114,8 +113,8 @@
                 <div class="form-group">
                   <label class="col-md-2">Category</label>
                   <div class="col-md-10">
-                    <textarea id="old_categoryEN" name="old_categoryEN" rows="1" hide="" class="hidden form-control">Mapping</textarea>
-                    <select id="categoryEN" name="categoryEN" class="form-control af" style="background-color: rgb(255, 255, 204);">
+                    <textarea class="hidden form-control" id="old_categoryEN" name="old_categoryEN" rows="1" hide="">Mapping</textarea>
+                    <select class="form-control af" id="categoryEN" name="categoryEN" style="background-color: rgb(255, 255, 204);">
                       <option value="-- no category yet --">-- no category yet --</option>
                       <option value="Picture">Picture</option>
                       <option value="[Actual Category]">[Actual Category]</option>
@@ -145,7 +144,7 @@
               <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-10">
-                  <p id="categoryDisplay" class="osmbc-help-text">Quality assurance, editors, maps for mapper, tools for mapping, tagging</p>
+                  <p class="osmbc-help-text" id="categoryDisplay">Quality assurance, editors, maps for mapper, tools for mapping, tagging</p>
                 </div>
               </div>
               <!-- Display Predecessor Row-->
@@ -156,19 +155,19 @@
             <div class="form-group">
               <label class="col-md-1">Title</label>
               <div class="col-md-10">
-                <div id="title_unsaved" style="display:none" class="label label-danger">unsaved</div>
-                <textarea id="old_title" name="old_title" rows="1" hide="" class="hidden form-control">This is a title of a full collected article</textarea>
-                <textarea id="title" name="title" rows="1" class="form-control af">This is a title of a full collected article</textarea>
+                <div class="label label-danger" id="title_unsaved" style="display:none">unsaved</div>
+                <textarea class="hidden form-control" id="old_title" name="old_title" rows="1" hide="">This is a title of a full collected article</textarea>
+                <textarea class="form-control af" id="title" name="title" rows="1">This is a title of a full collected article</textarea>
               </div>
             </div>
           </div>
           <!-- Display Unpublish Reason Row-->
-          <div id="unpublishReasonRow" class="row hidden">
+          <div class="row hidden" id="unpublishReasonRow">
             <div class="form-group">
               <label class="col-md-1">Unpublish Reason</label>
               <div class="col-md-5">
-                <textarea id="old_unpublishReason" name="old_unpublishReason" rows="1" hide="" class="hidden form-control"></textarea>
-                <select id="unpublishReason" name="unpublishReason" class="form-control af">
+                <textarea class="hidden form-control" id="old_unpublishReason" name="old_unpublishReason" rows="1" hide=""></textarea>
+                <select class="form-control af" id="unpublishReason" name="unpublishReason">
                   <option value=""></option>
                   <option value="old">old</option>
                   <option value="doublette">doublette</option>
@@ -178,8 +177,8 @@
                 </select>
               </div>
               <div class="col-md-5">
-                <textarea id="old_unpublishReference" name="old_unpublishReference" rows="1" hide="" class="hidden form-control"></textarea>
-                <textarea id="unpublishReference" name="unpublishReference" rows="1" class="form-control af"></textarea>
+                <textarea class="hidden form-control" id="old_unpublishReference" name="old_unpublishReference" rows="1" hide=""></textarea>
+                <textarea class="form-control af" id="unpublishReference" name="unpublishReference" rows="1"></textarea>
               </div>
             </div>
           </div>
@@ -193,16 +192,16 @@
             <div class="form-group">
               <label class="col-md-1">Collection</label>
               <div class="col-md-10">
-                <div id="collection_unsaved" style="display:none" class="label label-danger">unsaved</div>
-                <textarea id="collection" name="collection" rows="2" class="form-control af">This is the collection text</textarea>
-                <textarea id="old_collection" name="old_collection" rows="1" hide="" class="hidden form-control">This is the collection text</textarea>
+                <div class="label label-danger" id="collection_unsaved" style="display:none">unsaved</div>
+                <textarea class="form-control af" id="collection" name="collection" rows="2">This is the collection text</textarea>
+                <textarea class="hidden form-control" id="old_collection" name="old_collection" rows="1" hide="">This is the collection text</textarea>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-md-1"></div>
             <div class="col-md-6">
-              <div id="linkArea" class="div"><p></p></div>
+              <div class="div" id="linkArea"><p></p></div>
             </div>
             <div class="col-md-4">
               <p class="osmbc-help-text">Drag me to a markdown field, or paste an URL into selected text to create an markdown link.</p>
@@ -214,29 +213,29 @@
                 <label>Markdown + Preview</label>
               </div>
             </div>
-            <div class="col-md-10"><span draggable="true" data-toggle="tooltip" data-placement="left" title="" ondragstart="ondragstartLangLabel(event,'EN');" class="label label-default osmbclabel-lang" data-original-title="Drag me for copy full text">  EN  </span><span style="" id="markdownEN_unsaved" class="label label-danger">unsaved</span>
-              <textarea id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide" class="hidden form-control">This is the written text.</textarea>
-              <textarea id="markdownEN" placeholder="1. Formulate not passive, but active.
+            <div class="col-md-10"><span class="label label-default osmbclabel-lang" draggable="true" data-toggle="tooltip" data-placement="left" title="" ondragstart="ondragstartLangLabel(event,'EN');" data-original-title="Drag me for copy full text">  EN  </span><span class="label label-danger" style="" id="markdownEN_unsaved">unsaved</span>
+              <textarea class="hidden form-control" id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide">This is the written text.</textarea>
+              <textarea class="markdownEdit form-control af" id="markdownEN" placeholder="1. Formulate not passive, but active.
 Sample: OpenCage data published an interview with David Overton, the doer behind the tissue map producing company Splashmaps. (via Twitter)
 2. People &amp; companies are information! So start an article with e person or a company!
 3. Decomplify your sentences.
 4. (Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008))
-" spellcheck="true" lang="EN" name="markdownEN" rows="6" class="markdownEdit form-control af" style="background-color: rgb(255, 255, 204);">This is the written text.</textarea>
+" spellcheck="true" lang="EN" name="markdownEN" rows="6" style="background-color: rgb(255, 255, 204);">This is the written text.</textarea>
               <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
-              <div id="textEN" lang="EN" style="margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px;" class="alert markdownMessage alert-danger">Please use a link from collection in article.</div>
-              <div id="previewEN" lang="EN" class="panel panel-default panel-body preview"><ul><li><p>This is the written text.</p>
+              <div class="alert markdownMessage alert-danger" id="textEN" lang="EN" style="margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px;">Please use a link from collection in article.</div>
+              <div class="panel panel-default panel-body preview" id="previewEN" lang="EN"><ul><li><p>This is the written text.</p>
 </li></ul></div>
             </div>
             <div class="col-md-1">
-              <div class="row"><i id="languageFlagsShow" onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');" class="fa fa-flag fa-2x"></i>
-                <div id="languageFlags" class="row hidden"><img id="Japanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Japanisch"><img id="Französisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Französisch"><img id="Spanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Spanisch"><img id="Tschechisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Tschechisch"><img id="Russisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Russisch"><img id="Rumänisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Rumänisch"><img id="Niederländisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Niederländisch"><img id="Brasilianisches Portugiesisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Brasilianisches Portugiesisch"><img id="Polish" src="http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" class="flag img-thumbnail" data-original-title="Polish">
+              <div class="row"><i class="fa fa-flag fa-2x" id="languageFlagsShow" onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');"></i>
+                <div class="row hidden" id="languageFlags"><img class="flag img-thumbnail" id="Japanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/jp.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" data-original-title="Japanisch"><img class="flag img-thumbnail" id="Französisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/fr.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" data-original-title="Französisch"><img class="flag img-thumbnail" id="Spanisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/es.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" data-original-title="Spanisch"><img class="flag img-thumbnail" id="Tschechisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/cz.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" data-original-title="Tschechisch"><img class="flag img-thumbnail" id="Russisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/ru.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" data-original-title="Russisch"><img class="flag img-thumbnail" id="Rumänisch" src="http://blog.openstreetmap.de/wp-uploads//2015/10/ro.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" data-original-title="Rumänisch"><img class="flag img-thumbnail" id="Niederländisch" src="http://blog.openstreetmap.de/wp-uploads//2015/07/nl.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" data-original-title="Niederländisch"><img class="flag img-thumbnail" id="Brasilianisches Portugiesisch" src="http://blog.openstreetmap.de/wp-uploads//2015/01/pt-br.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" data-original-title="Brasilianisches Portugiesisch"><img class="flag img-thumbnail" id="Polish" src="http://blog.openstreetmap.de/wp-uploads//2015/10/pl.svg" width="40" data-toggle="tooltip" data-placement="left" title="" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);" data-original-title="Polish">
                   <p class="osmbc-help-text">Click to copy to clipboard, or use drag and drop.</p>
                 </div>
               </div>
             </div>
           </div>
         </form>
-        <div id="commentArea" class="div">
+        <div class="div" id="commentArea">
           <div class="row">
             <div class="col-md-6">
               <div class="row">
@@ -244,31 +243,27 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
               </div>
               <div class="row">
                 <div class="col-xs-1"><img style="height:40px;width:40px"></div>
-                <div class="col-xs-11"><b><span onclick="window.callAndRedraw('/article/3/markCommentRead?index=1&amp;reload=false','/article/3/commentArea');" class="glyphicon glyphicon-envelope"></span><span> </span><span>TheFive</span></b><span> </span><span class="text-muted small">a few seconds ago</span>
-                  <p>
-</p><p>This is a comment for <a class="bg-warning" style="color:black" href="/usert/GuestUser">@GuestUser</a></p>
-
-
-
-                  <p></p>
+                <div class="col-xs-11"><b><span class="glyphicon glyphicon-envelope" onclick="window.callAndRedraw('/article/3/markCommentRead?index=1&amp;reload=false','/article/3/commentArea');"></span><span> </span><span>TheFive</span></b><span> </span><span class="text-muted small">a few seconds ago</span>
+                  <p></p><p>This is a comment for <a class="bg-warning" style="color:black" href="/usert/GuestUser">@GuestUser</a></p>
+<p></p>
                 </div>
               </div>
               <div class="row">
                 <form target="iframeform" name="AddComment" id="AddComment" action="/article/3/addComment?reload=false" method="post">
-                  <textarea spellcheck="true" name="comment" id="comment" rows="7" placeholder="Your comment is shared between all weekly teams. 
+                  <textarea class="form-control" spellcheck="true" name="comment" id="comment" rows="7" placeholder="Your comment is shared between all weekly teams. 
 So please use english if possible. Do not hesitate to use your language and address your team with @LANG.
 To solve a comment use #solved, and to reopen #open in your text.
-Use @OSMUser to address any special editor." class="form-control"></textarea>
-                  <button name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/3/commentArea');" class="btn btn-large btn-primary">Add Comment</button>
-                  <button type="button" onclick="window.callAndRedraw(null,'/article/3/commentArea');" class="btn btn-large btn-default">Reload Comments</button>
-                  <button name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/3/commentArea');" class="btn btn-large btn-default">Solve Comment</button>
+Use @OSMUser to address any special editor."></textarea>
+                  <button class="btn btn-large btn-primary" name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Add Comment</button>
+                  <button class="btn btn-large btn-default" type="button" onclick="window.callAndRedraw(null,'/article/3/commentArea');">Reload Comments</button>
+                  <button class="btn btn-large btn-default" name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Solve Comment</button>
                 </form>
               </div>
             </div>
           </div>
-          <iframe name="iframeform" class="hidden"></iframe>
+          <iframe class="hidden" name="iframeform"></iframe>
         </div>
-        <div id="doublettes" class="row">
+        <div class="row" id="doublettes">
         </div>
       <p></p>
       <p></p>

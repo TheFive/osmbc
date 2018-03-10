@@ -100,7 +100,7 @@ function renderEvents(result, req, res, next) {
   ], function(err) {
     if (err) return next(err);
 
-    res.render("calendarAllLang.jade", {
+    res.render("calendarAllLang", {
       layout: res.rendervar.layout,
       events: result.events,
       errors: result.errors,
