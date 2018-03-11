@@ -18,6 +18,28 @@ var testutil = require("./testutil.js");
 var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
+describe("routes/articleInternal",function(){
+  let fixMarkdownLinks = articleRouterForTestOnly.fixMarkdownLinks;
+  describe("fixMarkdownLinks",function(){
+    it("should do not change without error",function(bddone){
+      should(fixMarkdownLinks("Simple Text")).eql("Simple Text");
+      should(fixMarkdownLinks("Simple Text with a [link](links.links).")).eql("Simple Text with a [link](links.links).");
+      bddone();
+    });
+    it("should fix missing leading space",function(bddone){
+      should(fixMarkdownLinks("Simple Text with a[link](links.links)")).eql("Simple Text with a [link](links.links)");
+      bddone();
+    });
+    it("should fix missing ending space",function(bddone){
+      should(fixMarkdownLinks("Simple Text with a [link](links.links)written.")).eql("Simple Text with a [link](links.links) written.");
+      bddone();
+    });
+    it("should fix a space in link",function(bddone){
+      should(fixMarkdownLinks("Simple Text with a [link] (links.links).")).eql("Simple Text with a [link](links.links).");
+      bddone();
+    });
+  });
+});
 
 describe("routes/article", function() {
   this.timeout(this.timeout() * 3);

@@ -227,7 +227,7 @@
               <label class="col-md-1">Unpublish Reason</label>
               <div class="col-md-5">
                 <textarea class="hidden form-control" id="old_unpublishReason" name="old_unpublishReason" rows="1" hide=""></textarea>
-                <select class="form-control af" id="unpublishReason" name="unpublishReason">
+                <select class="form-control af" id="unpublishReason" name="unpublishReason" style="background-color: rgb(255, 255, 204);">
                   <option value=""></option>
                   <option value="old">old</option>
                   <option value="doublette">doublette</option>
@@ -563,9 +563,11 @@ Use @OSMUser to address any special editor."></textarea>
             .change(showHideUnpublishReason)
             .change(showModified)
             .trigger("change");
-    $("#comment")
-            .change(FitToContent)
-            .keyup(FitToContent)
+    $("#unpublishReason")
+            .change(showModified)
+            .trigger("change");
+    $("#unpublishReference")
+            .keyup(showModified)
             .trigger("change");
     $("#categoryEN")
             .change(showModified)
