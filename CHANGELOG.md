@@ -1,5 +1,16 @@
 # Change Log
 
+## [3.2.1](https://github.com/TheFive/osmbc/tree/3.2.1) (2018-03-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.0...3.2.1)
+
+**Implemented enhancements:**
+
+- missing space before \[ [\#757](https://github.com/TheFive/osmbc/issues/757)
+
+**Fixed bugs:**
+
+- save changed comments during save of article. [\#750](https://github.com/TheFive/osmbc/issues/750)
+
 ## [3.2.0](https://github.com/TheFive/osmbc/tree/3.2.0) (2018-03-11)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.7...3.2.0)
 
