@@ -137,7 +137,7 @@
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-4">
-                  <button class="btn btn-large btn-primary" id="saveButton" type="button" onclick="disableUnchanged();document.getElementById('input').submit();">Save</button>
+                  <button class="btn btn-large btn-primary" id="saveButton" type="button" onclick="window.saveButton()">Save</button>
                   <button class="btn btn-large btn-default" type="button" onclick="disableUnchanged(); location.href='/article/6?edit=false';">last Version</button>
                 </div>
                 <!-- Parallel Blog for common article Attributes-->
@@ -585,7 +585,29 @@ Use @OSMUser to address any special editor."></textarea>
             .trigger("change");
     $('[data-toggle="tooltip"]').tooltip();
     window.submitAndRedraw = submitAndRedraw;
+    window.saveButton = saveButton;
   
+  }
+  
+  function saveButton() {
+    function save() {
+      disableUnchanged();document.getElementById('input').submit();
+    }
+    if (document.getElementById('comment').value.trim()==='') return save();
+  
+    var jqForm = $('form#AddComment');
+    var url = jqForm.attr('action');
+    var toPost = jqForm.serialize();
+  
+    $.post(url, toPost, function (data) {
+        if (data === "OK") {
+          save();
+        }
+      },
+      'text' // I expect a JSON response
+    ).fail(function (err) {
+      console.error(err);
+    });
   }
   
   
