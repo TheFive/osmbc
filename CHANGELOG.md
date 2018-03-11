@@ -1,5 +1,22 @@
 # Change Log
 
+## [3.2.0](https://github.com/TheFive/osmbc/tree/3.2.0) (2018-03-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.7...3.2.0)
+
+**Implemented enhancements:**
+
+- Add Public Calendar Link to tools in OSMBC [\#755](https://github.com/TheFive/osmbc/issues/755)
+- avoid double display of links under collection field \(e.g. when collecting tweets\) [\#753](https://github.com/TheFive/osmbc/issues/753)
+- please color @DE @all @... for all languages similar to full editors. [\#752](https://github.com/TheFive/osmbc/issues/752)
+
+**Fixed bugs:**
+
+- Changing a doublet reason does not change save button status. [\#751](https://github.com/TheFive/osmbc/issues/751)
+
+**Closed issues:**
+
+- Switch from JADE to PUG [\#756](https://github.com/TheFive/osmbc/issues/756)
+
 ## [3.1.7](https://github.com/TheFive/osmbc/tree/3.1.7) (2018-03-04)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.6a...3.1.7)
 
