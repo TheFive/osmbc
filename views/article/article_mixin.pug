@@ -214,9 +214,11 @@ block scripts
               .change(showHideUnpublishReason)
               .change(showModified)
               .trigger("change");
-      $("#comment")
-              .change(FitToContent)
-              .keyup(FitToContent)
+      $("#unpublishReason")
+              .change(showModified)
+              .trigger("change");
+      $("#unpublishReference")
+              .keyup(showModified)
               .trigger("change");
       $("#categoryEN")
               .change(showModified)
