@@ -79,7 +79,7 @@ mixin articleTranslateMenu(langFrom,langTo,service)
 
 
 mixin saveButton
-  button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="disableUnchanged();document.getElementById('input').submit();") Save
+  button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="window.saveButton()") Save
 
 mixin doublettesButton
   if articleReferences.count >= 1
@@ -236,7 +236,29 @@ block scripts
               .trigger("change");
       $('[data-toggle="tooltip"]').tooltip();
       window.submitAndRedraw = submitAndRedraw;
+      window.saveButton = saveButton;
 
+    }
+
+    function saveButton() {
+      function save() {
+        disableUnchanged();document.getElementById('input').submit();
+      }
+      if (document.getElementById('comment').value.trim()==='') return save();
+
+      var jqForm = $('form#AddComment');
+      var url = jqForm.attr('action');
+      var toPost = jqForm.serialize();
+
+      $.post(url, toPost, function (data) {
+          if (data === "OK") {
+            save();
+          }
+        },
+        'text' // I expect a JSON response
+      ).fail(function (err) {
+        console.error(err);
+      });
     }
 
 

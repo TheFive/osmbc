@@ -952,6 +952,14 @@ function translateGOOGLEOLD(req, res, next) {
   }).catch(function(err) { next(err); });
 } */
 
+function fixMarkdownLinks(string) {
+  let r = string;
+  r = r.replace(/(\b)\[/g, "$1 \[");
+  r = r.replace(/\)(\b)/g, "\) $1");
+  r = r.replace(/\] \(/g, "\]\(");
+  return r;
+}
+
 function translateDeepl(req, res, next) {
   debug("translateDeepl");
 
@@ -967,7 +975,7 @@ function translateDeepl(req, res, next) {
 
 
   deeplTranslate.translate(text, toLang.toUpperCase(), fromLang.toUpperCase())
-    .then(result => res.end(result.translation))
+    .then(result => res.end(fixMarkdownLinks(result.translation)))
     .catch(err => { next(err); });
 }
 
@@ -1054,3 +1062,4 @@ module.exports.slackrouter = slackrouter;
 module.exports.fortestonly = {};
 module.exports.fortestonly.getArticleFromID = getArticleFromID;
 module.exports.fortestonly.msTransClient = msTransClient;
+module.exports.fortestonly.fixMarkdownLinks = fixMarkdownLinks;
