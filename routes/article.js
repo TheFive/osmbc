@@ -70,18 +70,27 @@ function getArticleFromID(req, res, next, id) {
 /* Read all users and map OSMOser on Access Right
 May be optimised later for performance reasons */
 
-function accessMap(cb) {
-  debug("accessMap");
-  userModule.find({}, function(err, userArray) {
-    if (err) return cb(err);
-    let accessMap = {};
-    userArray.forEach(function(user) {
-      accessMap[user.OSMUser] = user.access;
-    });
-    return cb(null, accessMap);
-  });
-}
 
+function createAccessMapFn(activeLanguages) {
+  return function(cb) {
+    debug("accessMap");
+    userModule.find({}, function(err, userArray) {
+      if (err) return cb(err);
+      let accessMap = {};
+      userArray.forEach(function(user) {
+        accessMap[user.OSMUser] = user.access;
+      });
+      activeLanguages.forEach(function(l) {
+        accessMap[l] = "full";
+      });
+      config.getLanguages().forEach(function(l) {
+        if (!accessMap[l]) accessMap[l] = "denied";
+      });
+      accessMap.all = "full";
+      return cb(null, accessMap);
+    });
+  };
+}
 
 // renderArticleId prepares the view for displaying an article
 function renderArticleId(req, res, next) {
@@ -130,7 +139,7 @@ function renderArticleId(req, res, next) {
         return cb();
       });
     },
-    accessMap: accessMap,
+    accessMap: createAccessMapFn(res.rendervar.layout.activeLanguages),
     blog:
     function findBlog(callback) {
       debug("renderArticleId->blog");
@@ -293,7 +302,7 @@ function renderArticleIdCommentArea(req, res, next) {
 
 
   async.auto({
-    accessMap: accessMap
+    accessMap: createAccessMapFn(res.rendervar.layout.activeLanguages)
   },
   function (err, result) {
     debug("renderArticleCommentArea->finalFunction");
