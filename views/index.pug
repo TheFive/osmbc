@@ -1,0 +1,126 @@
+extends layout
+
+block content
+  // Full Access Index Page
+  .row
+    .col-md-4
+        h2.hidden-xs
+          | Welcome to OSM BC
+        h2.visible-xs
+          | OSM BC
+        .row 
+          p.osmbc-help-text
+            | See recent blogs to work on below. If you just want to collect an article or an idea, use the collect menu on in the navbar.
+        .row
+          h3="Blogs to work on "
+            a(href=layout.htmlroot+"/blog/list?status=IN('open','edit')") (more)
+
+        .row
+          +blogStatusTable(true)
+
+
+
+        .row
+          h4="Current Users"
+          p
+            table.table
+              for user, i in activeUserList
+                tr
+                  td
+                    img(src=layout.getAvatar(user.OSMUser) style="height:25px;width:25px")
+                  td=user.OSMUser +" "
+                  td.text-muted=layout.moment(user.lastAccess).fromNow()
+        .row
+          if (fullVisitorsToday && fullVisitorsToday.length>0)
+            h4="Full Visitors Today"
+            p
+              table.table
+                tr
+                  td
+                    for user,i in fullVisitorsToday
+                      span
+                        a(href=layout.htmlroot+"/usert/"+user.OSMUser)=user.OSMUser
+                        span=", "
+          if (guestVisitorsToday && guestVisitorsToday.length>0)
+            h4="Guest Visitors Today"
+            p
+              table.table
+                tr
+                  td
+                    for user,i in guestVisitorsToday
+                      span
+                        a(href=layout.htmlroot + "/usert/" + user.OSMUser)=user.OSMUser
+                        span=", "
+        if (newUsers && newUsers.length>0)
+          .row
+            h4="Welcome To The Team"
+            p
+              table.table
+                for user,i in newUsers
+                  tr
+                    td
+                      img(src=layout.getAvatar(user.osmuser) style="height:25px;width:25px")
+                    td
+                      a(href=layout.htmlroot+"/usert/"+user.osmuser)=user.osmuser
+                    td
+                      a(href="https://www.openstreetmap.org/user/"+user.osmuser)
+                        i.fa.fa-map.text-muted
+                    td
+                      a(href="https://hdyc.neis-one.org/?"+user.osmuser)
+                        i.fa.fa-line-chart.text-muted
+                    td=user.access
+
+
+
+
+        .row
+          h4="Admin View"
+          a#adminlink(href=layout.htmlroot+"/osmbc/admin") click here
+    .col-md-8.hidden-xs
+      if changes
+        h4="Last Changes "
+          - var d = new Date();
+          - d= d.toISOString();
+          - d= d.substring(0,7);
+          a(href=layout.htmlroot+"/changes/log?date="+d)  (more)
+        div
+          table.table.table-striped.table-condensed.table-responsive
+            thead
+              tr 
+                th
+                 | 
+                th
+                 | blog
+                th
+                 | user
+                th
+                 | table
+                th
+                 | what
+                th
+                 | Change
+                th
+                 | when
+            tbody
+              each change, i in changes
+                tr
+                  td
+                    a(href=layout.htmlroot+'/changes/' + change.id)
+                      span.glyphicon.glyphicon-info-sign
+                  td= change.blog
+                  td= change.user
+                  td= change.table
+                  td= change.property
+                  td
+                    |!{change.htmlDiffText(40)}
+                  td= layout.moment(change.timestamp).fromNow()
+        div
+          p.osmbc-help-text
+            |only displaying changes:
+            span.osmbc-inserted
+              | This is inserted text
+            span=" "
+            span.osmbc-deleted
+              | and this is removed text
+
+  div.footer

@@ -1,0 +1,360 @@
+extends layout
+
+
+mixin userLabel(user,style)
+  - bgColor = ""
+  if (user == layout.user.OSMUser)
+    - style = "osmbclabel-user-self"
+  if (showColoredUser)
+    - style = "osmbclabel-user-guest"
+    if (userMap[user] && userMap[user])
+      - style = "osmbclabel-user-"+userMap[user].access
+    if (user === layout.user.OSMUser)
+      - style = "osmbclabel-user-self"
+    if (userMap[user] && userMap[user].access === "full" && typeof userMap[user].color === "string")
+      - bgColor =  "background-color:"+ userMap[user].color
+  if (bgColor !== "")
+    span.label.small-margin(class=style,style=bgColor)=user
+  else
+    span.label.small-margin(class=style)=user
+
+
+
+//- Mixin to display the reviewBlog left and right
+    It allows Editing a review comment, adding new ones, and is asking for
+    at last non empty comments.
+mixin reviewBlog(reviewComments,lang)
+  if reviewComments
+    .panel.panel-default
+      .panel-heading
+        .panel-title
+          span="Review "+lang
+          if (reviewComments.length>0 && reviewComments[0].text=="startreview")
+            - var reviewStarter= reviewComments[0].user
+            - var reviewStartTime = reviewComments[0].timestamp
+            span.text-muted.small=" (enabled by "+reviewStarter
+            span.text-muted.small=" "+layout.moment(reviewComments[0].timestamp).fromNow()
+            span.text-muted.small=") "
+            a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
+      .panel-body
+        - personalReviewStarted=false
+        each comment,i in reviewComments
+          if comment.text!="startreview" && comment.text != "reviewing..."
+            p
+              b.span=comment.user
+              span=" "
+              span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+              if comment.editstamp
+                span=" "
+                i.text-muted.small="Edit: "+layout.moment(comment.editstamp).fromNow()
+              if layout.user.OSMUser === comment.user && (!blog["close"+lang])
+                span=" "
+                a(onclick=`document.getElementById('editReview${lang}${i}').classList.remove('hidden');document.getElementById('reviewLeftText${lang}${i}').classList.add('hidden');`)
+                  span.glyphicon.glyphicon-pencil
+              if reviewStartTime
+                span=" "
+                a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&user="+comment.user+"&table=article&property=markdown"+lang+"&date=>="+reviewStartTime) [changes]
+            p(id="reviewLeftText"+lang+i)=comment.text
+            if (!comment.text)
+              p.text-muted.small="Empty Comment"
+            div.hidden(id="editReview"+lang+i)
+              if (!blog["close"+lang])
+                form.form-horizontal(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
+                  .col-md-10
+                    input(type="text",class="form-control",name ="text",id="reviewComment"+lang+i,value=comment.text)
+                    input.hidden(type="text",name="lang" value = lang)
+                  .col-md-2
+                    button.btn.btn-large.btn-primary(id="reviewButton"+lang+i type="submit") Change
+          if comment.text == "reviewing..."
+            if layout.user.OSMUser === comment.user
+              - personalReviewStarted = true
+            h3
+              div.label.label-warning
+                b.span=comment.user
+                span=" is reviewing since "+layout.moment(comment.timestamp).fromNow()
+
+
+        .form-group
+          if (!blog["close"+lang])
+            if personalReviewStarted
+              form.form-horizontal(id="review"+lang name="review"+lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
+                .col-md-10
+                  input(type="text",
+                        class="form-control",
+                        name ="text",
+                        id="reviewComment"+lang
+                        placeholder="Please Type your Review here"
+                        onkeyup="document.getElementById('reviewButton" + lang +"').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
+                  input.hidden(type="text",name="lang" value = lang)
+                .col-md-2
+                  button.btn.btn-large.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
+            else
+              form.form-horizontal(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
+                .col-md-8
+                  input.hidden(type="text",
+                  class="form-control",
+                  name ="text",
+                  value ="reviewing..."
+                  id="reviewComment" + lang
+                  placeholder="Please Type your Review here"
+                  onkeyup="document.getElementById('reviewButton" + lang + "').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
+                  input.hidden(type="text",name="lang" value = lang)
+                .col-md-4
+                  button.btn.btn-large.btn-primary(id="reviewButton" + lang type="submit") Start Personal Review
+
+mixin blogReviewButtons(lang)
+  if (!(blog["close"+lang])) && (lang !== null)
+    - _rc = blog["reviewComment"+lang];
+    if (_rc)
+      .row
+        .col-md-12
+          form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
+            input.hidden(type="text",name="lang" value = lang)
+
+            if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
+              input.hidden(type="text",name ="action" value = "closelang")
+              button.btn.btn-large.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
+            else
+              input.hidden(type="text",name ="action" value = "markexported")
+              button.btn.btn-large.btn-warning(id="didexport" type = "submit" ) Did Export (#{lang})
+
+      if (blog["exported"+lang])
+        .row
+          .alert.bg-danger.text-center.bold
+            | <strong>Blog is exported, please do the last Review in WordPress</strong>
+
+    else
+      if blog.status != "open"
+        form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
+          input.hidden(type="text",name ="action" value = "startreview")
+          input.hidden(type="text",name="lang" value = lang)
+          button.btn.btn-large.btn-primary(id="readyreview" type="submit") Set #{blog.name}(#{lang}) ready for review
+
+
+block content
+  .row 
+    - unedited = blog._countUneditedMarkdown[left_lang];
+    - notranslate = blog._countNoTranslateMarkdown[left_lang];
+    - total = blog._countExpectedMarkdown[left_lang] 
+    - ready = (total-unedited - notranslate)
+    - if (total == 0) total = 1
+  .row
+    .col-md-1
+      div.label.osmbclabel-lang=left_lang
+      if blog._unsolvedComments[left_lang] > 0
+        span.badge.osmbclabel-no-markdown=blog._unsolvedComments[left_lang]+"(*)"
+      else
+        span.badge.osmbclabel-markdown="0(*)"
+    .col-md-11
+     div.progress(style="margin-bottom:2px")
+      div.progress-bar.osmbclabel-markdown(style="width:" +parseInt(100*ready/total)+"%")=ready
+      div.progress-bar.osmbclabel-no-markdown(style="width:" + parseInt(100*unedited/total) + "%")=unedited
+      div.progress-bar.osmbclabel-no-translation(style="width:" + parseInt(100*notranslate/total)+"%")=notranslate
+  div.hidden-xs
+    if (right_lang!= "--" && right_lang != null)
+      .row
+        - unedited = blog._countUneditedMarkdown[right_lang];
+        - notranslate = blog._countNoTranslateMarkdown[right_lang];
+        - total = blog._countExpectedMarkdown[right_lang];
+        - ready = (total-unedited - notranslate)
+        - if (total == 0) total = 1
+        .col-md-1
+          div.label.label-info.osmbclabel-lang2=right_lang
+          if blog._unsolvedComments[right_lang] > 0
+            span.badge.osmbclabel-no-markdown=blog._unsolvedComments[right_lang] + "(*)"
+          else
+            span.badge.osmbclabel-markdown="0(*)"
+        .col-md-11
+         div.progress(style="margin-bottom:10px")
+          div.progress-bar.osmbclabel-markdown(style="width:" + parseInt(100*ready/total)+"%")=ready
+          div.progress-bar.osmbclabel-no-markdown(style="width:" +parseInt(100*unedited/total)+"%")=unedited
+          div.progress-bar.osmbclabel-no-translation(style="width:" +parseInt(100*notranslate/total)+"%")=notranslate
+
+
+  .row
+    - columnLeftSize = "col-md-6"
+    - columnRightSize = "col-md-6"
+    - if (right_lang== "--" || right_lang == null)  {columnLeftSize = "col-md-12";columnRightSize = "hidden";}
+    .col-md-6
+      h2
+        span.hidden-xs=blog.getBlogName(left_lang)+" "
+        |#{blog.name}
+        span.hidden-xs=" ("+blog.getStatus(left_lang)+")"
+
+      
+    .col-md-3
+      +blogReviewButtons(left_lang)
+    .col-md-3
+      +blogReviewButtons(right_lang)
+
+  .row
+    div(class=columnLeftSize)
+      +reviewBlog(blog["reviewComment"+left_lang],left_lang)
+    div.hidden-xs(class=columnRightSize)
+      +reviewBlog(blog["reviewComment"+right_lang],right_lang)
+
+
+
+  .row
+    .col-md-12
+      ul.nav.nav-tabs
+        li(role="presentation")
+          a(href="#filter")
+            span.glyphicon.glyphicon-filter
+        +navbutton("Overview",tab,"")
+        +navbutton("Full",tab,"hidden-xs")
+        +navbutton("Review",tab,"")
+
+        //
+          - v = 0
+          while layout.user["blogSetting"+v]
+            if layout.user["blogSetting"+v]!="-"
+              - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
+              +navbutton(style0,style)
+            - v++
+        li.hidden-xs
+          a(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" +left_lang)
+            span.glyphicon.glyphicon-export
+            | #{left_lang}
+            if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[left_lang] == 0)
+              span=" "
+              span.glyphicon.glyphicon-alert
+        if (right_lang != "--" && right_lang != null)
+          li.hidden-xs
+            a(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" + right_lang)
+              span.glyphicon.glyphicon-export
+              | #{right_lang}
+              if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[right_lang] == 0)
+                span=" "
+                span.glyphicon.glyphicon-alert
+
+        li.dropdown.hidden-xs
+          a.dropdown-toggle(href='#', data-toggle='dropdown')
+            span.glyphicon.glyphicon-export
+          ul.dropdown-menu(role='menu')
+            -  var noShown = true;
+            for lang in layout.languages
+              if layout.usedLanguages[lang]
+                li
+                  a(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang)
+                    span="Export "+ lang
+                    if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
+                      span=" "
+                      span.glyphicon.glyphicon-alert
+
+
+
+
+
+  block blogcontent
+  .row
+    .col-md-8
+    .col-md-1
+      p
+        a(href=layout.htmlroot+"/changes/log?blog=" + blog.name +"&table=blog") [changes]
+    .col-md-1
+      p
+        a(href=layout.htmlroot+"/blog/" + blog.name +"/stat") [Statistic]
+
+    .col-md-2
+      p
+        a#editBlogDetail(href=layout.htmlroot+"/blog/edit/" + blog.name) [Edit Blog Detail]
+
+
+
+
+block scripts
+  script(src=layout.path("markdown-it")+'/markdown-it.min.js')
+  script.
+
+    var openEditor = null;
+
+    window.onload = function () {
+
+      if (typeof(Storage) !== "undefined") {
+        if (window.sessionStorage.blogUrl !== window.location.href) return;
+        var x = window.sessionStorage.blogX;
+        var y = window.sessionStorage.blogY;
+        window.scrollTo(x, y);
+      }
+    }
+
+
+
+    window.onbeforeunload = function (event) {
+      // store the scroll Position in the local Store
+      s = {x: window.scrollX, y: window.scrollY};
+
+      if (typeof(Storage) !== "undefined") {
+
+        window.sessionStorage.blogUrl = window.location.href;
+        window.sessionStorage.blogX = s.x;
+        window.sessionStorage.blogY = s.y;
+      }
+    };
+
+
+
+    function onLeaveText(id,column) {
+      if (!column) column="";
+
+      var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
+      var newValue = document.getElementById(column + "markdown" + id).value;
+      if (oldValue === newValue) return;
+      form = document.getElementById(column + 'EditArticle' + id);
+      form.submit();
+    }
+
+
+    function convert(text) {
+      converter = new window.markdownit({breaks: true});
+
+      // generate the OSMBlog Style List
+      if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
+      // convert md to html
+      text = converter.render(text);
+      // skip <ul> and </ul> at start and end
+
+
+      text = '<li>' + text + '</li>';
+
+
+      return text;
+
+    }
+    function onchangeMarkdown(id,column) {
+      if (!column) column="";
+      var markdownField = document.getElementById(column + "markdown" + id);
+      var md = markdownField.value;
+      var pv = document.getElementById(column+"preview"+id);
+
+
+      pv.innerHTML = convert(md);
+
+    }
+
+    function callAndRedraw(call, redraw) {
+      $.get("!{layout.htmlroot}" + call, function (data) {
+        let j = $.getJSON("!{layout.htmlroot}" + redraw, function (json) {
+          for (k in json) {
+            var el = document.createElement("div");
+
+            el.innerHTML = json[k];
+
+            $(k).replaceWith(el.children[0]);
+            el.remove();
+
+          }
+        });
+      });
+
+    }
+
+  
+
+
+
+
+ 
+
+

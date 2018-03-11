@@ -1,0 +1,244 @@
+extends adminlayout
+
+
+
+
+block content
+
+  h1="Edit OSMBC User "+ usershown.OSMUser
+
+  p="OpenStreetMap User Links: "
+    a(href="https://www.openstreetmap.org/user/" + usershown.OSMUser)
+      i.fa.fa-map.text-muted
+    span=" "
+    a(href="https://hdyc.neis-one.org/?" + usershown.OSMUser)
+      i.fa.fa-line-chart.text-muted
+
+  if (usershown.temporaryGuest===true)
+    h1
+      .label.label-default="User is testing guest mode"
+
+  form(name="input", action=`${layout.htmlroot}/usert/${usershown.id}`, method="post")
+    div.form-horizontal(role="form")
+      if (usershown.hasLoggedIn())
+        +labeledText("OSMUser","OSMUser",usershown.OSMUser,"User already logged in, namechange not possible.")
+      else
+        +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
+      +labeledInput("EMail","email",usershown.email,"This mail is used for information about changes. To delete the email just submit a space for this field.")
+
+      if (usershown.emailInvalidation)
+        div.form-group
+          div.col-sm-offset-2.col-sm-4
+            p
+              span
+                |Waiting for validation of EMail
+              span.bg-info=usershown.emailInvalidation
+          div.col-sm-6
+            button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
+            button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='none';document.input.submit()") delete email
+
+
+      +labeledInput("Author for Blog","mdWeeklyAuthor",usershown.mdWeeklyAuthor,"Use anonymous to skip mentioning. Markdown for any link (e.g. [OSM User](https://www.openstreetmap.org/user/OSM%20User)")
+      if (usershown.mdWeeklyAuthor)
+        div.col-sm-offset-2.col-sm-10
+          if (usershown.mdWeeklyAuthor === "anonymous")
+            p="User is not displayed in Weekly Author Footer"
+          else
+            p
+              | Public Author name is !{layout.markdown.renderInline(usershown.mdWeeklyAuthor,true)}
+
+
+
+      +labeledSelect("Language",
+                    "language",
+                     usershown.language,
+                     langlist,
+                     langlist,
+                     "Main Language for the user, used for default values.")
+      +labeledSelect("Access",
+                     "access",
+                     usershown.access,
+                     ["full","guest","denied"],
+                     ["full","guest","denied"],
+                     "Define Users Access to OSMBC")
+      +labeledSelect("Mail a new Collection",
+                     "mailNewCollection",
+                     usershown.mailNewCollection,
+                     ["true","false"],
+                     ["on","off"],
+                     "Send a mail for every new Collect. If you are interested in new Articles, you should send this to ON.")
+      +labeledSelect("Mail All Comments",
+                     "mailAllComment",
+                     usershown.mailAllComment,
+                     ["true","false"],
+                     ["on","off"],
+                     "Send a mail for every change of a comment. I recommend to use OFF, but sometimes you may be interested in anything written in comments, than - and only then - you should use ON")
+
+
+      - var langlistWithUser = langlist.concat(usershown.OSMUser)
+
+      +labeledMultiSelect("Mail defined comments",
+                     "mailComment",
+                     usershown.mailComment,
+                     langlistWithUser,
+                     langlistWithUser,
+                     "Please check comments you are interested in. Recommendation is as minimum to enable your user, so that you receive via mail that someone is mentioning you in a comment.")
+      +labeledSelect( "Thread Mentioning",
+                      "mailCommentGeneral",
+                      usershown.mailCommentGeneral,
+                      ["false","true"],
+                      ["off","on" ],
+                      "Set this to ON, if you are interested in all threads, where you (or people you are interested in) have once participated.")
+      +labeledMultiSelect("Mail Status Change",
+                     "mailBlogLanguageStatusChange",
+                     usershown.mailBlogLanguageStatusChange,
+                     langlist,
+                     langlist,
+                     "Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.")
+      +labeledInput("Mattermost User","SlackUser",usershown.SlackUser,"Username in the slack for using the collect feature.")
+      +labeledSelect( "Num Languages",
+                "languageCount",
+                usershown.languageCount,
+                ["two", "three","four"],
+                ["two", "three","four"],
+                "Set this to 3 if you would like to see the new article editor with 3 languages.")
+      div.form-group
+        label.control-label.col-sm-2(for="Color")="Color"
+        div(class="col-sm-4")
+          div.input-group(style="width: 100%;")
+            input.form-control(name="color",id="color",value = usershown.color)
+            span.input-group-addon(style=`background-color:${usershown.color};width: 50px;`)
+        div.text-muted(class="col-sm-6")
+          p
+            span="Color for colored lists in OSMBC. Use a html colorpicker to define. ("
+            a(href="http://www.w3schools.com/colors/colors_picker.asp")="Color Picker"
+            span=","
+            a(href="http://www.w3schools.com/colors/colors_names.asp")="Color Names"
+            span=")"
+
+
+
+
+
+
+
+      form-group
+        div.col-sm-offset-2.col-sm-10
+          input#save(name="OK" type="submit", class="btn btn-primary",value="OK")
+
+  if (usershown.OSMUser === layout.user.OSMUser)
+    .row
+      h1="Using Bookmarklets as Collect Support"
+      h3="Using the TBC (To Be Collected Feature) with your personal API Key. (Collect and check later)"
+      if (usershown.apiKey)
+        p="Your api key is: "+usershown.apiKey+". "
+          span="If you have to change your key, press "
+          a(href=layout.htmlroot+"/usert/createApiKey")="Change Key"
+        p="Please create a bookmarklet with a name of your choice and the following javascript code as 'link':"
+          pre
+            |javascript: var request = new XMLHttpRequest();
+            |request.open("GET", "#{layout.url}#{layout.htmlroot}/api/collect/#{usershown.apiKey}?collection="+document.location, true);
+            |request.onreadystatechange = function()
+            |  {var done = 4, ok = 200;
+            |   if (request.readyState == done && request.status == ok)
+            |    {if (request.responseText && request.responseText.substring(0,4)=="http") {if (window.confirm("Send to OSMBC's TBC, open Editor?")){window.location.href=request.responseText}}
+            |     else {alert.request.responseText}
+            |    }
+            |    if (request.readyState == done && request.status != ok) alert("An Error occured "+request.responseText);
+            |   };
+            |request.send(null);
+        p="If you are using Firefox, you can add this link to your bookmarks. Please disable Open in Sidebar Option for this bookmark. "
+          a(href=`javascript: var request = new XMLHttpRequest();request.open('GET', '${layout.url}${layout.htmlroot}/api/collect/${usershown.apiKey}?collection='+document.location, true);request.onreadystatechange = function(){var done = 4, ok = 200;if (request.readyState == done && request.status == ok){if (request.responseText && request.responseText.substring(0,4)=='http') {if (window.confirm('Send to OSMBCs TBC, open Editor?')){window.location.href=request.responseText}}else {alert.request.responseText}}if (request.readyState == done && request.status != ok) alert('An Error occured '+request.responseText);};request.send(null);` rel="sidebar" title="OSMBC TBC") Add TBC Link to Firefox
+
+      else
+        a(href=layout.htmlroot+"/usert/createApiKey")="Generate Key"
+      h3="Using the OSMBC Search Function"
+      p="Please create a bookmarklet with a name of your choice and the following javascript code as 'link':"
+        pre
+          | javascript: window.location.href='https://osmbc.openstreetmap.de/article/searchandcreate?search='+document.location+'&SearchNow='
+
+      p="If you are using Firefox, you can add this link to your bookmarks. Please disable Open in Sidebar Option"
+      a(href="javascript: window.location.href='https://osmbc.openstreetmap.de/article/searchandcreate?search='+document.location+'&SearchNow='" rel="sidebar" title="OSMBC Search") Add OSMBC Search Link to Firefox
+
+
+
+
+
+
+
+
+
+
+  .row
+    h1=usershown.OSMUser + " Heatmap"
+    p#heatmap
+
+  .row
+    .col-md-10
+    .col-md-2
+      if (usershown.OSMUser === layout.user.OSMUser)
+        p
+          a(href=layout.htmlroot+"/logout") [logout user]
+        p
+          a(href=layout.htmlroot+"/usert/self?becomeGuest=true") [Switch to Guest]
+
+
+
+
+  .row
+    if changes
+      h2
+        | History
+      div
+        table.table.table-striped.table-responsive
+          thead
+            tr 
+              th
+               | id
+              th
+               | user
+              th
+               | what
+              th
+               | from
+              th
+               |  to
+              th
+               | when
+          tbody
+            each change, i in changes
+              tr
+                td
+                  a(href=layout.htmlroot+'/changes/' + change.id)=change.id
+                td= change.user
+                td= change.property
+                td= layout.util.shorten(change.from)
+                td= layout.util.shorten(change.to)
+                td= layout.moment(change.timestamp).fromNow()
+
+
+
+
+
+block scripts
+
+  link(rel="stylesheet" type="text/css" href=layout.htmlroot+"/stylesheets/calendar-heatmap.css")
+  script(src=layout.path("d3")+"/d3.min.js")
+  script(src=layout.htmlroot+"/javascripts/calendar-heatmap.js")
+  script(src=layout.path("moment") + "/min/moment.min.js")
+
+
+  script.
+    // chart data example
+    var chartData = JSON.parse('!{JSON.stringify(userHeatMapArray)}');
+    for (var i=0;i<chartData.length;i++) {
+      chartData[i].date = new Date(chartData[i].date)
+    }
+    var now = new Date('!{new Date().toISOString()}')
+    var chart1 = calendarHeatmap(now)
+            .data(chartData)
+            .selector('#heatmap')
+            .colorRange(['#D8E6E7', '#218380'])
+            .tooltipEnabled(true);
+    chart1();  // render the chart
+

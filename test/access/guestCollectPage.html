@@ -12,9 +12,9 @@
   </head>
   <body>
     <!-- Fixed navbar-->
-    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
-        <div class="navbar-header pull-left"><a href="/changelog" class="bg-success navbar-brand hidden-xs">Whats New?</a>
+        <div class="navbar-header pull-left"><a class="bg-success navbar-brand hidden-xs" href="/changelog">Whats New?</a>
           <ul class="nav navbar-nav pull-left">
             <li><a id="collect" href="/article/create">Collect</a></li>
           </ul>
@@ -26,16 +26,16 @@
           </ul>
         </div>
         <div class="navbar-header">
-          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+          <button class="navbar-toggle pull-right" type="button" data-toggle="collapse" data-target=".navbar-collapse"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left">
-            <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
+            <li class="show-xs"><a class="bg-success visible-xs" href="/changelog">Whats New?</a>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Help<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">OSMBC</li>
                 <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
                 <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a></li>
@@ -47,13 +47,13 @@
                 <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">--<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">--<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
                 <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
               </ul>
@@ -61,7 +61,6 @@
             <li><img onclick="location.href='/usert/2';" style="height:50px;width:50px"></li>
           </ul>
           <!-- /.nav-collapse-->
-          
         </div>
       </div>
     </div>
@@ -69,37 +68,34 @@
       <p>
         </p><div>
           <p>
-            </p><form name="search" action="/article/searchandcreate" method="get" class="form-horizontal">
+            </p><form class="form-horizontal" name="search" action="/article/searchandcreate" method="get">
               <div class="form-group">
                 <div class="col-sm-2"> </div>
                 <div class="col-sm-6">
-                  <input id="searchField" type="text" name="search" value="new Info" class="form-control">
-                  <p align="center" class="osmbc-help-text">Please check your link for duplicates before   collecting.</p>
+                  <input class="form-control" id="searchField" type="text" name="search" value="new Info">
+                  <p class="osmbc-help-text" align="center">Please check your link for duplicates before   collecting.</p>
                 </div>
                 <div class="col-sm-2">
-                  <button name="SearchNow" type="submit" class="btn btn-large btn-primary">Search</button>
+                  <button class="btn btn-large btn-primary" name="SearchNow" type="submit">Search</button>
                 </div>
               </div>
             </form>
           <p></p>
         </div>
         <div class="row">
-          <p><a style="color:Gray">
-               
-              No Articles found for search 'new Info'</a></p>
+          <p><a style="color:Gray;">
+               No Articles found for search 'new Info'</a></p>
           <form name="input" id="input" action="/article/create" method="post">
-            <input name="languages" value="{&quot;EN&quot;:true}" class="hidden">
+            <input class="hidden" name="languages" value="{&quot;EN&quot;:true}">
             <h2>
-               
-              Create Article 
-            </h2>
+               Create Article </h2>
             <div class="row">
               <div class="col-md-6">
                 <div> 
                   <div class="row">
                     <div class="col-md-2">Blog <br></div>
                     <div class="col-md-10">
-                      <select id="blog" name="blog" class="form-control af">
+                      <select class="form-control af" id="blog" name="blog">
                         <option value="WN251">WN251 </option>
                         <option value="Future">Future </option>
                       </select>
@@ -108,7 +104,7 @@
                   <div class="row">
                     <div class="col-md-2">Category <br></div>
                     <div class="col-md-10">
-                      <select id="categoryEN" name="categoryEN" class="form-control" style="background-color: rgb(253, 198, 205);">
+                      <select class="form-control" id="categoryEN" name="categoryEN" style="background-color: rgb(253, 198, 205);">
                         <option value="-- no category yet --">-- no category yet -- / </option>
                         <option value="Picture">Picture / </option>
                         <option value="[Actual Category]">[Actual Category] / </option>
@@ -139,11 +135,11 @@
               <div class="col-md-6">
                 <div class="row">
                   <div class="col-md-7">
-                    <p id="categoryDisplay" class="osmbc-help-text">If you do not have any idea, which category to use.</p>
+                    <p class="osmbc-help-text" id="categoryDisplay">If you do not have any idea, which category to use.</p>
                   </div>
                   <div class="col-md-5">
-                    <input type="submit" id="OK" value="OK" class="btn btn-large btn-primary" disabled="true"><a href="/article/create" role="button" class="btn btn-default">Cancel</a>
-                    <button id="OKLang" name="OKLang" onclick="window.onbeforeunload=null; document.getElementById('input').action = '/article/create?notranslation=true';document.getElementById('input').submit();" class="btn btn-large osmbcbadge-lang" disabled="true">OK (only )</button>
+                    <input class="btn btn-large btn-primary" type="submit" id="OK" value="OK" disabled="true"><a class="btn btn-default" href="/article/create" role="button">Cancel</a>
+                    <button class="btn btn-large osmbcbadge-lang" id="OKLang" name="OKLang" onclick="window.onbeforeunload=null; document.getElementById('input').action = '/article/create?notranslation=true';document.getElementById('input').submit();" disabled="true">OK (only )</button>
                   </div>
                 </div>
               </div>
@@ -151,13 +147,13 @@
             <div class="row">
               <div class="col-md-1">Title <br></div>
               <div class="col-md-11">
-                <textarea id="title" name="title" placeholder="Please enter a title with at last 6 characters" rows="1" autofocus="" class="form-control"></textarea>
+                <textarea class="form-control" id="title" name="title" placeholder="Please enter a title with at last 6 characters" rows="1" autofocus=""></textarea>
               </div>
             </div>
             <div class="row">
               <div class="col-md-1">Collection <br></div>
               <div class="col-md-11">
-                <textarea name="collection" rows="7" placeholder="put your link or info here" class="form-control">new Info</textarea>
+                <textarea class="form-control" name="collection" rows="7" placeholder="put your link or info here">new Info</textarea>
               </div>
             </div>
           </form>

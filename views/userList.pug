@@ -1,0 +1,89 @@
+extends adminlayout
+
+
+
+
+block content
+
+  row
+    div
+      table.table.table-striped.table-responsive
+        - var params="?";
+        - for (k in query) params+=k+"="+query[k]+"&";
+        thead
+          tr
+            th="color"
+            th
+              a(href=layout.htmlroot+"/usert/list"+params+"sort=OSMUser") Name
+            th="OSM"
+            th
+              a(id="sortWeeklyAuthor" href=layout.htmlroot+"/usert/list"+params+"sort=mdWeeklyAuthor") WeeklyAuthor
+            th
+              a(id="sortOSMBCChanges" href=layout.htmlroot+"/usert/list"+params+"sort=OSMBC-changes")="OSMBC Changes"
+            th
+              | Email
+            th
+              | Collection
+            th
+              | AllComment
+            th
+              | Comment
+            th
+              | Status
+            th
+              a(href=layout.htmlroot+"/usert/list"+params+"sort=language") Language
+            th
+              | access
+            th
+              a(href=layout.htmlroot+"/usert/list"+params+"sort=lastAccess&desc=true") lastAccess
+
+        tbody
+          each user in users
+            tr
+              td
+                span.label.osmbclabel-collect(style="background-color:" + user.color)=user.OSMUser
+
+              td
+                if (user.OSMUser  && user.OSMUser != '')
+                  a(href=layout.htmlroot+'/usert/' + user.id)=user.OSMUser
+                else
+                  a(href=layout.htmlroot+'/usert/' user.id) Missing Name
+              td
+                 a(href='http://www.openstreetmap.org/user/' + user.OSMUser) [OSM]
+              td
+                if user.mdWeeklyAuthor
+
+                  |!{layout.markdown.renderInline(user.mdWeeklyAuthor)}
+              td
+                a(href=layout.htmlroot+'/changes/log?user=' + user.OSMUser) (#{user._countChanges})
+              td
+                if user.email
+                  span.glyphicon.glyphicon-ok
+                else if user.emailInvalidation
+                  span.glyphicon.glyphicon-question-sign
+              td
+                if user.mailNewCollection==="true" && user.email
+                  span.glyphicon.glyphicon-ok
+                else
+                  p=" "
+              td
+                if user.mailAllComment==="true" && user.email
+                  span.glyphicon.glyphicon-ok
+                else
+                  p=" "
+              td= (user.email)?user.mailComment:""
+              td= (user.email)?user.mailBlogLanguageStatusChange:""
+
+
+
+              td= user.language
+              td= user.access
+              if (user.lastAccess)
+                td= layout.moment(user.lastAccess).fromNow()
+              else 
+                td
+                  | Never
+
+
+
+  

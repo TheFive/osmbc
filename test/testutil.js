@@ -29,6 +29,10 @@ var mailReceiver   = require("../notification/mailReceiver.js");
 var messageCenter  = require("../notification/messageCenter.js");
 var passport = require("passport");
 
+var xmldom = require("xmldom");
+var domparser = new (xmldom.DOMParser)();
+var domcompare = require("domcompare").compare;
+
 
 // set Test Standard to ignore prototypes for should
 should.config.checkProtoEql = false;
@@ -418,13 +422,13 @@ exports.getBrowser = function getBrowser() {
 };
 
 exports.getNewBrowser = function getNewBrowser(userString) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve ) => {
     let browser = new Browser({ maxWait: 20000, site: "http://localhost:" + config.getServerPort() });
     if (!userString) return resolve(browser);
     should.exist(userString);
     fakeNextPassportLogin(userString);
     let nockLoginInterceptor = nockLoginPage();
-    browser.visit("/osmbc", function(err) {
+    browser.visit("/osmbc", function() {
       nock.removeInterceptor(nockLoginInterceptor);
       // ignore any error and return the given browser.
       resolve(browser);
@@ -468,7 +472,7 @@ Browser.prototype.keyUp = function(targetSelector, keyCode) {
   event.initEvent("keyup", true, true);
   event.which = keyCode;
   let target = this.window.document.querySelector(targetSelector);
-  target && target.dispatchEvent(event);
+  if (target)  target.dispatchEvent(event);
 };
 
 Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, givenPath, name) {
@@ -494,6 +498,19 @@ Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, giv
       fs.unlinkSync(actualFile);
     } catch (err) {}
 
+    return;
+  }
+  let expectedDom = domparser.parseFromString(expected);
+  let actualDom = domparser.parseFromString(string);
+
+  let result = domcompare(expectedDom,actualDom);
+  if (result.getResult()) {
+    // files are different, but dom equal
+    fs.writeFileSync(actualFile+".dceql", string, "UTF8");
+    try {
+      fs.unlinkSync(actualFile);
+    } catch (err) {}
+    console.info(expectedFile+" is domequal to result");
     return;
   }
   // there is a difference, so create the actual data as file

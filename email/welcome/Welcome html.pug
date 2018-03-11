@@ -1,0 +1,21 @@
+h2
+  | Welcome #{user.displayName}
+
+p
+  | You have entered your email adress in OSMBC.
+p
+  | If you would like to use this email address for OSMBC click on this link: 
+  a(href=layout.url + layout.htmlroot +"/usert/" + user.id +"?validation="+ user.emailValidationKey) LINK TO VALIDATE YOUR EMAIL
+  |. This will lead you to your user settings.
+p
+  | If you would like to check your User Settings without accepting the new email go to 
+  a(href=layout.url + layout.htmlroot + "/usert/"+ user.id) User Settings
+  | .
+p
+  | OSMBC has a wide range of email settings, read the description carefully, not to overfill your mail box.
+p
+  | Thanks for supporting weeklyOSM & Wochennotiz.
+p
+  | Have fun with OSMBC. 
+p
+  | Christoph (TheFive).

@@ -1,0 +1,122 @@
+extends layout
+
+
+
+
+block content
+  h1="TBC"
+    span.hidden-xs="(To be Collected)"
+  p.osmbc-help-text="Find here the article you have created by external integration (e.g. via Slack). Please check them on doublet and assign them to the correct blog."
+  p.osmbc-help-text="You can disable the collection of others at the end."
+  - showNumbers = false;
+  - showMail    = false;
+  - showCollector =true;
+  - showEditor = false;
+  - showLanguages = false;
+  - showVisibleLanguages = false;
+  - disableOwnCollection = false
+  - disableOtherCollection = (layout.user.getOption("tbc","disableOtherCollection")=="true")
+  - disableWritten = false;
+
+  if disableOwnCollection
+    p.bg-danger
+      | Collections of #{layout.user.OSMUser} are disabled
+  if disableOtherCollection
+    p.bg-danger
+      | Collections not done by #{layout.user.OSMUser} are disabled
+  if disableWritten
+    p.bg-danger
+      | Written markdown is disabled
+
+
+  for c in categories
+    - predecessorId = "0"
+    if (articles[c.EN])
+      .row
+        .col-md-1
+        .col-md-6
+          |!{renderer.categoryTitle(lang,c)}
+      for a in articles[c.EN]
+        - enable = true;
+        - if (disableWritten  && a["markdown"+lang]) enable = false;
+        - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
+        - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
+        if enable
+          .row
+            .col-md-1
+              +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
+
+            .col-md-6
+              ul.no-margin
+                |!{renderer.articleTitle(lang,a)}
+            .col-md-5
+              if (showCollector && a.author && a.author.collection)
+                each b in a.author.collection.split(",")
+                  if (b !== layout.user.OSMUser)
+                    span.label.osmbclabel-collect.small-margin=b
+                  else
+                    span.label.osmbclabel-user-self.small-margin=b
+              if (showEditor && a.author && a.author["markdown"+lang])
+                each b in a.author["markdown"+lang].split(",")
+                  if (b !== layout.user.OSMUser)
+                    span.label.osmbclabel-markdown.small-margin=b
+                  else
+                    span.label.osmbclabel-user-self.small-margin=b
+
+
+
+
+
+
+  .row
+    h2="Options"
+
+
+    p
+      +userConfigOption("tbc","disableOtherCollection",disableOtherCollection," disable other collections")
+
+
+
+
+
+
+
+block scripts
+  script(src=layout.path("markdown-it")+'/markdown-it.min.js')
+
+  script.
+    var openEditor = null;
+    window.onload = function() {
+      
+      if (typeof(Storage)!=="undefined") {
+        if (window.sessionStorage.blogUrl !== window.location.href) return;
+        var x = window.sessionStorage.blogX;
+        var y = window.sessionStorage.blogY;
+        window.scrollTo(x,y);
+      }
+    }
+
+
+    window.onbeforeunload = function(event) {
+      // store the scroll Position in the local Store
+      s = {x:window.scrollX,y:window.scrollY};
+
+      if (typeof(Storage)!=="undefined") {
+
+        window.sessionStorage.blogUrl = window.location.href;
+        window.sessionStorage.blogX = s.x;
+        window.sessionStorage.blogY = s.y;
+      }
+    };
+
+    function onLeaveText(id) {
+
+      var oldValue = document.getElementById("oldMarkdown"+id).value;
+      var newValue = document.getElementById("markdown"+id).value;
+      if (oldValue === newValue) return;
+      document.getElementById('EditArticle'+id).submit();
+    }
+
+
+
+

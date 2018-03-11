@@ -1,0 +1,114 @@
+extends layout
+
+
+
+
+block content
+
+
+
+
+  row
+    div
+      table.table.table-striped.table-responsive
+        thead
+          tr 
+            th name
+            th status
+            for lang in layout.languages
+              if layout.usedLanguages[lang]
+                th= lang
+            th service
+        tbody
+          - var onlyhelp = true
+          each blog in blogs
+            if blog.status != help
+              -onlyhelp = false
+
+          each blog, i in blogs
+            tr
+              if (onlyhelp || blog.status != "help")
+                td
+                  a(href=layout.htmlroot+'/blog/' + blog.name)=blog.name
+                td= blog.status
+                for lang in layout.languages
+                  if layout.usedLanguages[lang]
+                    td
+                      if blog["close"+lang]
+                        - labeltype = "osmbclabel-closedblog"
+                        - urlblog = layout.htmlroot+"/blog/"+blog.name
+
+                      else
+                        if blog["reviewComment"+lang]
+                          - labeltype = "osmbclabel-reviewblog"
+                          - urlblog =  layout.htmlroot+"/blog/"+blog.name
+
+                        else
+                          if (blog.status === "edit")
+                            - labeltype = "osmbclabel-editblog"
+                          else
+                            - labeltype = "osmbclabel-openblog"
+                          - urlblog = layout.htmlroot+"/article/list?markdown"+lang+"=&category=!=--unpublished--&blog="+blog.name
+
+                      a(href=urlblog)
+                        span.label.label-default
+                          |#{blogNumber(blog,lang)}
+                      a(href=urlblog)
+                        span.label(class=labeltype)
+                         |#{blogCount(blog,lang)}
+                      if blog._timeToClose[lang]
+                        bold.span=" (+"+blog._timeToClose[lang]+"d)"
+
+                td
+                  if blog.status != "closed"
+                    a(href=layout.htmlroot+"/blog/" + blog.name +"?setStatus=closed") Close Blog
+                  else
+                    |-
+  row
+    p
+      | Click on any label to edit the articles or view the blog.
+    p
+      span.label.label-default
+        | missing
+      span.label.osmbclabel-closedblog
+        | total
+      |  Closed Blog
+
+    p
+      span.label.label-default
+        | missing
+      span.label.osmbclabel-reviewblog
+        | total
+      |  Reviewed Blog
+    p
+      span.label.label-default
+        | missing
+      span.label.osmbclabel-editblog
+        | total
+      |  Edit Blog
+    p
+      span.label.label-default
+        | missing
+      span.label.osmbclabel-openblog
+        | total
+      |  Open Blog
+
+
+  p=" (+3d): The number in brackets shows the blog closing for that language in days"
+    p
+      | More bloglists
+    p
+       a(href=layout.htmlroot+"/blog/list?status=open")="(open) "
+       a(href=layout.htmlroot+"/blog/list?status=edit")="(edit) "
+       a(href=layout.htmlroot+"/blog/list?status=closed")="(closed) "
+       a(href=layout.htmlroot+"/blog/list?status=trash")="(trash) "
+  row.hidden-xs
+    div(id="additionalText")
+      if additionalText
+        |!{additionalText}
+
+
+          
+
+
+  

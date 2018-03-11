@@ -10,7 +10,7 @@ const path        = require("path");
 
 const router      = express.Router();
 const slackrouter = express.Router();
-const jade        = require("jade");
+const pug         = require("pug");
 
 
 const util          = require("../util/util.js");
@@ -70,18 +70,27 @@ function getArticleFromID(req, res, next, id) {
 /* Read all users and map OSMOser on Access Right
 May be optimised later for performance reasons */
 
-function accessMap(cb) {
-  debug("accessMap");
-  userModule.find({}, function(err, userArray) {
-    if (err) return cb(err);
-    let accessMap = {};
-    userArray.forEach(function(user) {
-      accessMap[user.OSMUser] = user.access;
-    });
-    return cb(null, accessMap);
-  });
-}
 
+function createAccessMapFn(activeLanguages) {
+  return function(cb) {
+    debug("accessMap");
+    userModule.find({}, function(err, userArray) {
+      if (err) return cb(err);
+      let accessMap = {};
+      userArray.forEach(function(user) {
+        accessMap[user.OSMUser] = user.access;
+      });
+      activeLanguages.forEach(function(l) {
+        accessMap[l] = "full";
+      });
+      config.getLanguages().forEach(function(l) {
+        if (!accessMap[l]) accessMap[l] = "denied";
+      });
+      accessMap.all = "full";
+      return cb(null, accessMap);
+    });
+  };
+}
 
 // renderArticleId prepares the view for displaying an article
 function renderArticleId(req, res, next) {
@@ -130,7 +139,7 @@ function renderArticleId(req, res, next) {
         return cb();
       });
     },
-    accessMap: accessMap,
+    accessMap: createAccessMapFn(res.rendervar.layout.activeLanguages),
     blog:
     function findBlog(callback) {
       debug("renderArticleId->blog");
@@ -213,26 +222,26 @@ function renderArticleId(req, res, next) {
     res.set("content-type", "text/html");
     // change title of page
     res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
-    let jadeFile = "article/article_twocolumn";
-    if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
+    let pugFile = "article/article_twocolumn";
+    if (req.user.getSecondLang() === null) pugFile = "article/article_onecolumn";
 
     if (req.user.languageCount === "three") {
-      jadeFile = "article/article_threecolumn";
-      if (req.user.getLang3() === "--") jadeFile = "article/article_twocolumn";
-      if (req.user.getSecondLang() === "--") jadeFile = "article/article_onecolumn";
+      pugFile = "article/article_threecolumn";
+      if (req.user.getLang3() === "--") pugFile = "article/article_twocolumn";
+      if (req.user.getSecondLang() === "--") pugFile = "article/article_onecolumn";
 
       params.columns = 3;
     }
     if (req.user.languageCount === "four") {
-      jadeFile = "article/article_fourcolumn";
-      if (req.user.getLang4() === null) jadeFile = "article/article_threecolumn";
-      if (req.user.getLang3() === null) jadeFile = "article/article_twocolumn";
-      if (req.user.getSecondLang() === null) jadeFile = "article/article_onecolumn";
+      pugFile = "article/article_fourcolumn";
+      if (req.user.getLang4() === null) pugFile = "article/article_threecolumn";
+      if (req.user.getLang3() === null) pugFile = "article/article_twocolumn";
+      if (req.user.getSecondLang() === null) pugFile = "article/article_onecolumn";
       params.columns = 4;
     }
 
 
-    res.render(jadeFile, {layout: res.rendervar.layout,
+    res.render(pugFile, {layout: res.rendervar.layout,
       article: article,
       googleTranslateText: configModule.getConfig("automatictranslatetext"),
       params: params,
@@ -273,8 +282,8 @@ function renderArticleIdVotes(req, res, next) {
         article: article,
         votes: votes
       };
-      let voteButtons = jade.renderFile(path.resolve(__dirname, "..", "views", "voteButtons.jade"), rendervars);
-      let voteButtonsList = jade.renderFile(path.resolve(__dirname, "..", "views", "voteButtonsList.jade"), rendervars);
+      let voteButtons = pug.renderFile(path.resolve(__dirname, "..", "views", "voteButtons.pug"), rendervars);
+      let voteButtonsList = pug.renderFile(path.resolve(__dirname, "..", "views", "voteButtonsList.pug"), rendervars);
       res.json({"#voteButtons": voteButtons, "#voteButtonsList": voteButtonsList});
     }
   );
@@ -293,7 +302,7 @@ function renderArticleIdCommentArea(req, res, next) {
 
 
   async.auto({
-    accessMap: accessMap
+    accessMap: createAccessMapFn(res.rendervar.layout.activeLanguages)
   },
   function (err, result) {
     debug("renderArticleCommentArea->finalFunction");
@@ -306,7 +315,7 @@ function renderArticleIdCommentArea(req, res, next) {
       accessMap: result.accessMap
 
     };
-    jade.renderFile(path.resolve(__dirname, "..", "views", "article", "commentArea.jade"), rendervars, function(err, commentArea) {
+    pug.renderFile(path.resolve(__dirname, "..", "views", "article", "commentArea.pug"), rendervars, function(err, commentArea) {
       if (err) logger.error(err);
       if (err) return next(err);
       res.json({"#commentArea": commentArea});
@@ -348,7 +357,7 @@ function renderArticleIdVotesBlog(req, res, next) {
         vote: vote
       };
 
-      jade.renderFile(path.resolve(__dirname, "..", "views", "voteLabel.jade"), rendervars, function(err, result) {
+      pug.renderFile(path.resolve(__dirname, "..", "views", "voteLabel.pug"), rendervars, function(err, result) {
         if (err) logger.error(err);
         if (err) return next(err);
         let v = {};

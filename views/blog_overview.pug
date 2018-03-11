@@ -1,0 +1,205 @@
+extends blogheader
+
+mixin displayOverviewRow(a)
+  - enable = true;
+  - if (disableWritten  && a["markdown"+lang]) enable = false;
+  - if (a.author && a.author.collection &&  disableOwnCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)>=0) enable = false;
+  - if (a.author && a.author.collection && disableOtherCollection && a.author.collection.split(",").indexOf(layout.user.OSMUser)<0) enable = false;
+  - if (disableNewerMarkdown && a._lastChange && a._lastChange["markdown"+left_lang] && a._lastChange["markdown"+right_lang] && (a._lastChange["markdown"+left_lang] >= a._lastChange["markdown"+right_lang])) enable = false;
+  - if (disableNewerMarkdown && a["markdown"+left_lang] && !a["markdown"+right_lang]) enable = false;
+  - if (disableSolvedComments && (typeof a.commentStatus == 'undefined' || a.commentStatus == 'solved')) enable = false;
+  if enable
+    tr
+      td
+        +articleIcons(a,{showNumbers: showNumbers, showMail: showMail, predecessorId: predecessorId})
+        - predecessorId = a.id
+      td.hidden-xs
+        if showVisibleLanguages
+          +languageDisplay(a,{short: true})
+        span(id="voteLabels"+ a.id)
+          +voteDisplay(a,showVotes)
+
+
+      td
+        div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
+          div(class=(a["markdown" + lang]) ? "" : "mark")
+            ul.no-margin
+              |!{renderer.articleTitle(lang,a)}
+      td.hidden-xs
+        if (showCollector && a.author && a.author.collection)
+          each b in a.author.collection.split(",")
+            +userLabel(b,"osmbclabel-collect")
+        if (showEditor && a.author && a.author["markdown" + lang])
+          each b in a.author["markdown"+lang].split(",")
+            +userLabel(b,"osmbclabel-markdown")
+
+      td.hidden-xs
+        if (showLanguages)
+          +languageDisplay(a)
+
+
+
+    tr
+      td
+      td.hidden-xs
+      td
+        div.panel.panel-default.hidden(id="div" + a.id)
+          div.panel-heading
+            ul(id="preview" + a.id)
+          div.panel-body
+            form(name="EditArticle",id="EditArticle" + a.id, action=`${layout.htmlroot}/article/${a.id}/setMarkdown/${lang}`, method="post")
+              textarea.form-control(name="markdown" id="markdown" + a.id rows=7 onchange=`onLeaveText(${a.id});` onkeyup=`onchangeMarkdown(${a.id})` spellcheck = "true" lang=lang)=a["markdown" + lang]
+              textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
+            p
+              if a.author && a.author.collection
+                span="Collected: "
+                each collector in a.author.collection.split(",")
+                  +userLabel(collector,"osmbclabel-collect")
+              if a.author && a.author["markdown" + lang]
+                span=" Edited: "
+                each author in a.author["markdown"+lang].split(",")
+                  +userLabel(author,"osmbclabel-markdown")
+              if a._lastChange && a._lastChange["markdown" + lang]
+                span=" Time: " + layout.moment(a._lastChange["markdown" + lang]).fromNow()
+
+block blogcontent
+
+  - showColoredUser = (layout.user.getOption("overview","showColoredUser")=="true")
+  - showNumbers = (layout.user.getOption("overview","showNumbers")=="true")
+  - showMail    = (layout.user.getOption("overview","showMail")=="true")
+  - showCollector = (layout.user.getOption("overview","showCollector")=="true")
+  - showEditor = (layout.user.getOption("overview","showEditor")=="true")
+  - showLanguages = (layout.user.getOption("overview","showLanguages")=="true")
+  - showVisibleLanguages = (layout.user.getOption("overview","showVisibleLanguages")=="true")
+  - disableOwnCollection = (layout.user.getOption("overview","disableOwnCollection")=="true")
+  - disableOtherCollection = (layout.user.getOption("overview","disableOtherCollection")=="true")
+  - disableWritten = (layout.user.getOption("overview","disableWritten")=="true")
+  - disableNewerMarkdown = (layout.user.getOption("overview","disableNewerMarkdown")=="true")
+  - disableSolvedComments = (layout.user.getOption("overview","disableSolvedComments")=="true")
+  - showVotes = {}
+  each vote in votes
+    - showVotes[vote.name] = (layout.user.getOption("overview","showVote_"+vote.name)=="true")
+  - showCopies = {}
+
+  if disableOwnCollection
+    div.alert.alert-warning
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=overview&option=disableOwnCollection&value=false";`) &times
+      span.glyphicon.glyphicon-filter
+      span=" Collections of "+layout.user.OSMUser+" are disabled"
+
+  if disableOtherCollection
+    div.alert.alert-warning
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=overview&option=disableOtherCollection&value=false";`) &times
+      span.glyphicon.glyphicon-filter
+      span=" Collections not done by "+layout.user.OSMUser+" are disabled"
+  if disableWritten
+    div.alert.alert-warning
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=overview&option=disableWritten&value=false";`) &times
+      span.glyphicon.glyphicon-filter
+      span=" Written markdown is disabled"
+  if disableNewerMarkdown
+    div.alert.alert-warning
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=overview&option=disableNewerMarkdown&value=false";`) &times
+      span.glyphicon.glyphicon-filter
+      span=" Disable, if left lang article is newer than right lang article"
+  if disableSolvedComments
+    div.alert.alert-warning
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=overview&option=disableSolvedComments&value=false";`) &times
+      span.glyphicon.glyphicon-filter
+      span=" No & Solved Comments are disabled"
+
+  table
+    tr
+      td
+      td
+      td
+        <br><br>
+        |!{renderer.subtitle(lang)}
+    // first display all Categories of the blog
+    for c in categories
+      - predecessorId = "0"
+      if (articles[c.EN])
+        tr
+          td
+          td.hidden-xs
+          td
+            |!{renderer.categoryTitle(lang,c)}
+          td.hidden-xs
+          td.hidden-xs
+        for a in articles[c.EN]
+          +displayOverviewRow(a)
+        - delete articles[c.EN]
+    // Now display the undefined categories in the blog
+    - for(c in articles)
+      tr
+        td
+        td.hidden-xs
+          h1="Wrong Categorie "+c
+      for a in articles[c]
+        +displayOverviewRow(a)
+
+    if futureArticles
+      tr
+        td
+        td.hidden-xs
+        td
+          h1="Future Articles"
+      for c,k in futureArticles
+
+        tr
+          td
+          td.hidden-xs
+          td
+            h4(style="color:grey")=k
+        each a in futureArticles[k]
+          +displayOverviewRow(a)
+
+
+
+  .row#filter
+    h2="Options"
+
+
+    .row
+      .col-md-1
+        p="Left Col.: "
+      .col-md-11
+        div.hidden-xs
+          +userConfigOption("overview","showNumbers",showNumbers," show editor numbers, ")
+        +userConfigOption("overview","showMail",showMail," show mail, ")
+        div.hidden-xs
+          +userConfigOption("overview","showVisibleLanguages",showVisibleLanguages," show languages(short)" )
+    .row.hidden-xs
+      .col-md-1
+        p="Right Col.:"
+      .col-md-11
+        +userConfigOption("overview","showCollector",showCollector," show collector, " )
+        +userConfigOption("overview","showEditor",showEditor," show editor , ")
+        +userConfigOption("overview","showColoredUser",showColoredUser," show users colored, ")
+        +userConfigOption("overview","showLanguages",showLanguages," show languages")
+    .row
+      .col-md-1
+        p="Display Votes"
+      .col-md-11
+        each vote in votes
+          +userConfigOption("overview","showVote_"+vote.name,showVotes[vote.name]," show "+vote.name+", " )
+    .row
+      .col-md-1
+        p="Filter: "
+      .col-md-11
+        +userConfigOption("overview","disableWritten",disableWritten," disable written articles, ")
+        +userConfigOption("overview","disableNewerMarkdown",disableNewerMarkdown," disable more actual edits, ")
+        +userConfigOption("overview","disableOwnCollection",disableOwnCollection," disable own collections, ")
+        +userConfigOption("overview","disableOtherCollection",disableOtherCollection," disable other collections, ")
+        +userConfigOption("overview","disableSolvedComments",disableSolvedComments," disable No or Solved Comments")
+
+
+
+
+  .row
+    +articleIconLegend
+
+
+
+
+

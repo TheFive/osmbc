@@ -1,0 +1,91 @@
+extends layout
+
+
+block content
+  h1
+    | History
+  row
+      table.table
+        thead
+          tr
+            - date ="";
+            - if (params.date)  date = "/"+date;
+            form.form-horizontal(action=layout.htmlroot+'/changes/log' + date,method='get',id='form')
+              div.form-group
+                input.col-sm-2(type='text',id='user',name='user',placeholder='user',value=params.user)
+                input.col-sm-2(type='text',id='blog',name='blog',placeholder='blog',value=params.blog)
+                input.col-sm-2(type='text',id='table',name='table',placeholder='table',value=params.table)
+                input.col-sm-2(type='text',id='oid',name='oid',placeholder='Object Id' value=params.oid)
+                input.col-sm-2(type='text',id='property',name='property',placeholder='property' value=params.property)
+                input.col-sm-2(type='text',id='date',name='date',placeholder='date' value=params.date  )
+                input(type='submit',class='btn btn-default')
+      p
+        |only displaying changes
+        span.osmbc-inserted
+          |  inserted text
+        span.osmbc-deleted
+          |  removed text
+        |  use the % sql like notation e.g. WN29% for all WN starting with 29.
+        |  click on a markdown?? line to open a preview of the change.
+      table.table
+        thead
+          tr
+            th=""
+            th=""
+            th user
+            th blog
+            th table
+            th oid
+            th property
+            th what
+            th when
+
+
+        tbody
+          if (history)
+            each change in history
+
+             tr(onclick="$('.class_" + change.id + "').toggleClass('hidden');")
+               td
+                 if change.property && change.property.substring(0, 8) === "markdown"
+                   span.glyphicon.glyphicon-triangle-right(class="class_" + change.id)
+                   span.glyphicon.glyphicon-triangle-bottom.hidden(class="class_" + change.id)
+               td
+                 a(href=layout.htmlroot+'/changes/' + change.id)
+                   span.glyphicon.glyphicon-info-sign
+               td=change.user
+               td
+                 if change.table == "blog"
+                   a(href=layout.htmlroot+"/blog/" + change.oid)=change.blog
+                 else
+                   span=change.blog
+               td=change.table
+               td
+                 if change.table == "article"
+                   a(href=layout.htmlroot+"/article/" + change.oid)=change.oid
+                 else
+                   if change.table == "usert"
+                     a(href=layout.htmlroot+"/usert/" + change.oid)=change.oid
+                   else
+                     if change.table == "blog"
+                     else
+                       span=change.oid
+               td=change.property
+               td
+                 |!{change.htmlDiffText(60)}
+               td=layout.moment(change.timestamp).locale(layout.user_locale).format("L")
+             if change.property && change.property.substring(0,8)==="markdown"
+               tr(class="class_" + change.id).hidden
+                 td
+                 td
+                 td(colspan=4).bg-info
+                   |!{layout.md_render(change.from)}
+                 td.bg-warning
+                   |!{layout.md_render(change.to)}
+
+
+
+          
+
+
+  

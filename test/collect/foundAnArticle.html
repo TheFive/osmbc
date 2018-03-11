@@ -12,9 +12,9 @@
   </head>
   <body>
     <!-- Fixed navbar-->
-    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
-        <div class="navbar-header pull-left"><a href="/changelog" class="bg-success navbar-brand hidden-xs">Whats New?</a>
+        <div class="navbar-header pull-left"><a class="bg-success navbar-brand hidden-xs" href="/changelog">Whats New?</a>
           <ul class="nav navbar-nav pull-left">
             <li><a id="collect" href="/article/create">Collect</a></li>
           </ul>
@@ -26,15 +26,15 @@
           </ul>
         </div>
         <div class="navbar-header">
-          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle pull-right"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+          <button class="navbar-toggle pull-right" type="button" data-toggle="collapse" data-target=".navbar-collapse"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left">
-            <li class="show-xs"><a href="/changelog" class="bg-success visible-xs">Whats New?</a>
+            <li class="show-xs"><a class="bg-success visible-xs" href="/changelog">Whats New?</a>
             </li>
             <li><a href="/blog/blog">blog<span class="badge osmbcbadge-lang">3</span><span class="badge osmbcbadge-lang2">4</span></a></li>
-            <li id="article" class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Lists<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown" id="article"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Lists<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">Articles</li>
                 <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Empty Collections</a></li>
                 <li class="dropdown-header">Orphaned Article
@@ -42,11 +42,12 @@
                 
               </ul>
             </li>
-            <li id="tool" class="dropdown hidden-xs"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Tool<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown hidden-xs" id="tool"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Tool<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">Markdown Helper</li>
                 <li><a href="/tool/calendarAllLang/fakeCalendar">Calendar Tool (fakeCalendar)</a></li>
                 <li><a href="/tool/picturetool">Picture Tool</a></li>
+                <li><a href="/calendar/preview">Public Calendar Check</a></li>
                 <li class="divider"></li>
                 <li class="dropdown-header">About The Team
                   </li><li><a href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a></li>
@@ -55,8 +56,8 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Help<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Help<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">OSMBC</li>
                 <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
                 <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a></li>
@@ -68,14 +69,14 @@
                 <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">DE<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">DE<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a id="lang_DE" href="/language?lang=DE">DE</a></li>
                 <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang2">EN<span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
+            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
                 <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
                 <li><a id="lang2_DE" href="/language?lang2=DE">DE</a></li>
                 <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
@@ -84,7 +85,6 @@
             <li><img onclick="location.href='/usert/1';" style="height:50px;width:50px"></li>
           </ul>
           <!-- /.nav-collapse-->
-          
         </div>
       </div>
     </div>
@@ -92,24 +92,23 @@
       <p>
         </p><div>
           <p>
-            </p><form name="search" action="/article/searchandcreate" method="get" class="form-horizontal">
+            </p><form class="form-horizontal" name="search" action="/article/searchandcreate" method="get">
               <div class="form-group">
                 <div class="col-sm-2"> </div>
                 <div class="col-sm-6">
-                  <input id="searchField" type="text" name="search" value="http://www.test.dä/holla" class="form-control">
-                  <p align="center" class="osmbc-help-text">Please check your link for duplicates before   collecting.</p>
+                  <input class="form-control" id="searchField" type="text" name="search" value="http://www.test.dä/holla">
+                  <p class="osmbc-help-text" align="center">Please check your link for duplicates before   collecting.</p>
                 </div>
                 <div class="col-sm-2">
-                  <button name="SearchNow" type="submit" class="btn btn-large btn-primary">Search</button>
+                  <button class="btn btn-large btn-primary" name="SearchNow" type="submit">Search</button>
                 </div>
               </div>
             </form>
           <p></p>
         </div>
         <div class="row">
-          <p id="articleCounter"><a style="color:Gray">
-               
-              Display 2 of 2 articles.</a>
+          <p id="articleCounter"><a style="color:Gray;">
+               Display 2 of 2 articles.</a>
           </p>
           <table class="table table-striped table-condensed table-responsive">
             <thead>
@@ -129,18 +128,10 @@
             </tr>
             <tr class="class_3 hidden">
               <td></td>
-              <td colspan="1">
-<p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lorem ipsum dolores.</p>
-
-
-              </td>
-              <td colspan="2">
-<p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lerom upsim deloros.</p>
-
-
-
-
-              </td>
+              <td colspan="1"><p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lorem ipsum dolores.</p>
+</td>
+              <td colspan="2"><p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lerom upsim deloros.</p>
+</td>
             </tr>
             <tr onclick="$('.class_5').toggleClass('hidden');">
               <td><span class="glyphicon glyphicon-triangle-right class_5"></span><span class="glyphicon glyphicon-triangle-bottom hidden class_5"></span><a href="/blog/blog">blog</a></td>
@@ -150,31 +141,21 @@
             </tr>
             <tr class="class_5 hidden">
               <td></td>
-              <td colspan="1">
-
-
-              </td>
-              <td colspan="2">
-
-
-
-
-              </td>
+              <td colspan="1"></td>
+              <td colspan="2"></td>
             </tr>
           </tbody></table>
           <form name="input" id="input" action="/article/create" method="post">
-            <input name="languages" value="{&quot;DE&quot;:true,&quot;EN&quot;:true}" class="hidden">
+            <input class="hidden" name="languages" value="{&quot;DE&quot;:true,&quot;EN&quot;:true}">
             <h2>
-               
-              Create Article 
-            </h2>
+               Create Article </h2>
             <div class="row">
               <div class="col-md-6">
                 <div> 
                   <div class="row">
                     <div class="col-md-2">Blog <br></div>
                     <div class="col-md-10">
-                      <select id="blog" name="blog" class="form-control af">
+                      <select class="form-control af" id="blog" name="blog">
                         <option value="blog">blog (Edit)</option>
                         <option value="Future">Future </option>
                       </select>
@@ -183,7 +164,7 @@
                   <div class="row">
                     <div class="col-md-2">Category <br></div>
                     <div class="col-md-10">
-                      <select id="categoryEN" name="categoryEN" class="form-control" style="background-color: rgb(253, 198, 205);">
+                      <select class="form-control" id="categoryEN" name="categoryEN" style="background-color: rgb(253, 198, 205);">
                         <option value="-- no category yet --">-- noch keine Kategorie -- / -- no category yet --</option>
                         <option value="Picture">Bild / Picture</option>
                         <option value="[Actual Category]">[Aktuelle Kategorie] / [Actual Category]</option>
@@ -214,11 +195,11 @@
               <div class="col-md-6">
                 <div class="row">
                   <div class="col-md-7">
-                    <p id="categoryDisplay" class="osmbc-help-text">If you do not have any idea, which category to use.</p>
+                    <p class="osmbc-help-text" id="categoryDisplay">If you do not have any idea, which category to use.</p>
                   </div>
                   <div class="col-md-5">
-                    <input type="submit" id="OK" value="OK" class="btn btn-large btn-primary"><a href="/article/create" role="button" class="btn btn-default">Cancel</a>
-                    <button id="OKLang" name="OKLang" onclick="window.onbeforeunload=null; document.getElementById('input').action = '/article/create?notranslation=true';document.getElementById('input').submit();" class="btn btn-large osmbcbadge-lang">OK (only DE)</button>
+                    <input class="btn btn-large btn-primary" type="submit" id="OK" value="OK"><a class="btn btn-default" href="/article/create" role="button">Cancel</a>
+                    <button class="btn btn-large osmbcbadge-lang" id="OKLang" name="OKLang" onclick="window.onbeforeunload=null; document.getElementById('input').action = '/article/create?notranslation=true';document.getElementById('input').submit();">OK (only DE)</button>
                   </div>
                 </div>
               </div>
@@ -226,13 +207,13 @@
             <div class="row">
               <div class="col-md-1">Title <br></div>
               <div class="col-md-11">
-                <textarea id="title" name="title" placeholder="Please enter a title with at last 6 characters" rows="1" autofocus="" class="form-control">Page not Found</textarea>
+                <textarea class="form-control" id="title" name="title" placeholder="Please enter a title with at last 6 characters" rows="1" autofocus="">Page not Found</textarea>
               </div>
             </div>
             <div class="row">
               <div class="col-md-1">Collection <br></div>
               <div class="col-md-11">
-                <textarea name="collection" rows="7" placeholder="put your link or info here" class="form-control">http://www.test.dä/holla</textarea>
+                <textarea class="form-control" name="collection" rows="7" placeholder="put your link or info here">http://www.test.dä/holla</textarea>
               </div>
             </div>
           </form>

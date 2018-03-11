@@ -1,0 +1,121 @@
+extends blogheader
+
+
+
+
+block blogcontent
+
+  - showNumbers = (layout.user.getOption("review","showNumbers")=="true")
+  - showMail    = (layout.user.getOption("review","showMail")=="true")
+  - showCollector = (layout.user.getOption("review","showCollector")=="true")
+  - showEditor = (layout.user.getOption("review","showEditor")=="true")
+  - showLanguages = (layout.user.getOption("review","showLanguages")=="true")
+  - showColoredUser = (layout.user.getOption("review","showColoredUser")=="true")
+  - showVotes = {}
+  - voteIsDisplayed=0
+  each vote in votes
+    - showVotes[vote.name] = (layout.user.getOption("review","showVote_"+vote.name)=="true")
+    - if (showVotes[vote.name])  voteIsDisplayed=voteIsDisplayed+1
+
+  - firstColSize = "col-md-1"
+  - secondColSize = "col-md-11"
+
+  if showLanguages || showEditor || showCollector || voteIsDisplayed>2
+    - firstColSize = "col-md-2"
+    - secondColSize = "col-md-10"
+
+  .row
+    div(class=firstColSize)
+    div(class=secondColSize)
+        <br><br>
+        |!{renderer.subtitle(lang)}
+  for c in categories
+    if (articles[c.EN])
+      - predecessorId = "0"
+      .row
+        div(class=firstColSize)
+        div(class=secondColSize)
+           |!{renderer.categoryTitle(lang,c)}
+      for a in articles[c.EN]
+        if a["markdown"+lang]!=="no translation"
+          .row
+            div(class=firstColSize)
+              span
+                +articleIcons(a,{showNumbers: showNumbers, showMail: showMail,predecessorId:predecessorId})
+                - predecessorId = a.id
+              span.hidden-xs
+                if (showCollector && a.author && a.author.collection)
+                  each b in a.author.collection.split(",")
+                    +userLabel(b,"osmbclabel-collect")
+
+                if (showEditor && a.author && a.author["markdown" + lang])
+                  each b in a.author["markdown"+lang].split(",")
+                    +userLabel(b,"osmbclabel-markdown")
+
+              span.hidden-xs
+                if (showLanguages)
+                  +languageDisplay(a)
+                span(id="voteLabels" + a.id)
+                  +voteDisplay(a,showVotes)
+
+            div(class=secondColSize)
+              div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
+
+                ul
+                  div(id="preview" + a.id)
+                    |!{renderer.renderArticle(lang,a)}
+
+              div.hidden(id="div" + a.id)
+                form(name="EditArticle",id="EditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + lang, method="post")
+                  textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(" + a.id + ");" onkeyup="onchangeMarkdown(" + a.id + ")" spellcheck = "true" lang=lang)=a["markdown"+lang]
+                  textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
+                p
+                  if a.author && a.author.collection
+                    span="Collected: "
+                    each collector in a.author.collection.split(",")
+                      +userLabel(collector,"osmbclabel-collect")
+
+                  if a.author && a.author["markdown" + lang]
+                    span=" Edited: "
+                    each author in a.author["markdown"+lang].split(",")
+                      +userLabel(author,"osmbclabel-markdown")
+
+
+  .row#filter
+    h2="Options"
+
+
+    .row
+      .col-md-1
+        p="Left Column:"
+      .col-md-11
+        div.hidden-xs
+          +userConfigOption("review","showNumbers",showNumbers," show editor numbers, ")
+        +userConfigOption("review","showMail",showMail," show mail, ")
+        div.hidden-xs
+          +userConfigOption("review","showCollector",showCollector," show collector, " )
+          +userConfigOption("review","showEditor",showEditor," show editor , ")
+          +userConfigOption("review","showLanguages",showLanguages," show languages, ")
+    .row
+      .col-md-1
+        p="Display Votes"
+      .col-md-11
+        each vote in votes
+          +userConfigOption("review","showVote_" + vote.name,showVotes[vote.name]," show " + vote.name + ", " )
+
+    .row.hidden-xs
+      .col-md-1
+        p="Options:"
+      .col-md-11
+        +userConfigOption("review","showColoredUser",showColoredUser," show users colored")
+
+
+  .row
+    +articleIconLegend
+
+
+
+
+
+
+

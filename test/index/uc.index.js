@@ -1,5 +1,7 @@
 "use strict";
 
+/* jshint ignore:start */
+
 var async = require("async");
 var testutil = require("../testutil.js");
 var should  = require("should");
@@ -108,10 +110,10 @@ describe("uc/index", function() {
       } catch (err) {
         // ignore error, expect is a 403 error, but the
         // browser html has to be tested
-
       }
       browser.assert.expectHtmlSync("index","denied user")
       browser.html().should.containEql("OSM User &gt;OldUserAway&lt; has no access rights");
     });
   });
 });
+/* jshint ignore:end */
