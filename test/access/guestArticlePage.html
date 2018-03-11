@@ -611,6 +611,11 @@ Use @OSMUser to address any special editor."></textarea><button class="btn btn-l
   
     while( (linkList = regexToken.exec(cl)) != null ) {
       var link = linkList[0];
+      var found = false;
+      window.linklist.forEach(function(l){
+        if (l=== link) found = true;
+      });
+      if (found) continue;
       window.linklist.push(link);
       if (articleReferences[link] && (articleReferences[link]).length >0) {
         result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+linkShortener(link)+'</a>\n';
