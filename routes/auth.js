@@ -145,7 +145,7 @@ function ensureAuthenticated (req, res, next) {
       return next();
     }
     if (req.user && req.user.access === "denied") {
-      return res.status(403).send("OSM User >" + req.user.OSMUser + "< has no access rights");
+      return res.status(403).send("OSM User >" + req.user.OSMUser + "< has no access rights. Please contact weeklyOSM Team to enable your account.");
     }
     return res.status(403).send("OSM User >" + req.user.OSMUser + "< is not an OSMBC user.");
   }
