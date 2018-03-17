@@ -1,5 +1,16 @@
 # Change Log
 
+## [3.2.1a](https://github.com/TheFive/osmbc/tree/3.2.1a) (2018-03-17)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.1...3.2.1a)
+
+**Fixed bugs:**
+
+- Mention @en and OSM Mapper @ende leads to conflicts in rendering comments. [\#761](https://github.com/TheFive/osmbc/issues/761)
+
+**Closed issues:**
+
+- Login via OSM account -  no access rights [\#759](https://github.com/TheFive/osmbc/issues/759)
+
 ## [3.2.1](https://github.com/TheFive/osmbc/tree/3.2.1) (2018-03-11)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.0...3.2.1)
 
@@ -1052,13 +1063,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
