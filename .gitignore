@@ -17,3 +17,4 @@ yarn.lock
 
 # Ignore all temporary files for comparison
 *_actual.html
+*_actual.html.dceql

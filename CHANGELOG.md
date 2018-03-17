@@ -1,5 +1,48 @@
 # Change Log
 
+## [3.2.1](https://github.com/TheFive/osmbc/tree/3.2.1) (2018-03-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.0...3.2.1)
+
+**Implemented enhancements:**
+
+- missing space before \[ [\#757](https://github.com/TheFive/osmbc/issues/757)
+
+**Fixed bugs:**
+
+- save changed comments during save of article. [\#750](https://github.com/TheFive/osmbc/issues/750)
+
+## [3.2.0](https://github.com/TheFive/osmbc/tree/3.2.0) (2018-03-11)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.7...3.2.0)
+
+**Implemented enhancements:**
+
+- Add Public Calendar Link to tools in OSMBC [\#755](https://github.com/TheFive/osmbc/issues/755)
+- avoid double display of links under collection field \(e.g. when collecting tweets\) [\#753](https://github.com/TheFive/osmbc/issues/753)
+- please color @DE @all @... for all languages similar to full editors. [\#752](https://github.com/TheFive/osmbc/issues/752)
+
+**Fixed bugs:**
+
+- Changing a doublet reason does not change save button status. [\#751](https://github.com/TheFive/osmbc/issues/751)
+
+**Closed issues:**
+
+- Switch from JADE to PUG [\#756](https://github.com/TheFive/osmbc/issues/756)
+
+## [3.1.7](https://github.com/TheFive/osmbc/tree/3.1.7) (2018-03-04)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.6a...3.1.7)
+
+**Implemented enhancements:**
+
+- Shorten links labels under collection field. [\#749](https://github.com/TheFive/osmbc/issues/749)
+- Add Bing as translation alternative to article editor menu [\#748](https://github.com/TheFive/osmbc/issues/748)
+
+## [3.1.6a](https://github.com/TheFive/osmbc/tree/3.1.6a) (2018-03-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.6...3.1.6a)
+
+**Closed issues:**
+
+- The link check against collection fails under some conditions [\#747](https://github.com/TheFive/osmbc/issues/747)
+
 ## [3.1.6](https://github.com/TheFive/osmbc/tree/3.1.6) (2018-03-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.5a...3.1.6)
 
@@ -1009,13 +1052,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
