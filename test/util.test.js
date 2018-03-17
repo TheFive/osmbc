@@ -136,5 +136,10 @@ describe("util", function() {
       let r = util.md_render("@thefive is telling @user1 about @user2",{TheFive:"full",user1:"denied",user2:"guest"});
       should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/TheFive>@TheFive</a> is telling <a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
     });
+    it("should not conflict with if username / language is contained in other username",function(){
+      let r = util.md_render("@ende is telling @user1 about @user2",{ende:"full",user1:"denied",user2:"guest",en:"full"});
+      should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/ende>@ende</a> is telling <a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
+
+    });
   });
 });
