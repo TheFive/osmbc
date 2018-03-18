@@ -19,7 +19,8 @@ module.exports = function(session) {
     let pool = db.getPool();
     should.exist(pool);
     sessionStore = new PgSession({
-      pool: pool // Use global pg-module
+      pool: pool, // Use global pg-module
+      pruneSessionInterval: 180
     });
   }
   return sessionStore;

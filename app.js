@@ -110,16 +110,11 @@ app.use(htmlRoot + "/slack", slackrouter);
 
 
 
-// Initialise Session Store and Cookie Max Age...
 
 
-var cookieMaxAge = config.getValue("cookieMaxAge");
+// maxAge for not logged in user cookies is 10 minutes
+let cookieMaxAge = 1000*60*10;
 
-if (isNaN(cookieMaxAge)) {
-  cookieMaxAge = null;
-} else {
-  cookieMaxAge = cookieMaxAge * 1000 * 60 * 60 * 24;
-}
 
 
 logger.info("Set Max Age of cookies to " + ((!cookieMaxAge) ? "default" : (cookieMaxAge / (1000 * 60 * 60 * 24) + " days")));
