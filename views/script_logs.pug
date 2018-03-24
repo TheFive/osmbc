@@ -1,0 +1,31 @@
+extends layout
+
+
+
+
+block content
+
+
+
+
+  row
+    div
+      table.table.table-striped.table-responsive
+        thead
+          tr 
+            th log
+        tbody
+          if files.length === 0
+            tr
+              td="no log files exist"
+          tr
+            each file in files
+              tr
+                td
+                  a(href=layout.htmlroot+"/tool/scripts/log/"+_path.basename(file))=_path.basename(file)
+
+
+          
+
+
+  

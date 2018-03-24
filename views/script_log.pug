@@ -1,0 +1,19 @@
+extends layout
+
+
+
+
+block content
+
+  if (reload)
+    meta(http-equiv="refresh" content="2" )
+
+  h1="Display Script Results"
+  h2=file
+  if (reload)
+    pre(style="background-color:black;color:white;")=text
+  else
+    pre=text
+
+
+  

@@ -186,6 +186,8 @@ function prepareRenderLayout(req, res, next) {
     if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
     if (!result.listOfOrphanBlog) result.listOfOrphanBlog = [];
 
+    let scriptUser = config.getValue("scripts").user;
+
     if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
     res.rendervar.layout = {user: req.user,
       listOfOrphanBlog: result.listOfOrphanBlog,
@@ -220,7 +222,8 @@ function prepareRenderLayout(req, res, next) {
       md_render: util.md_render,
       md_renderInline: markdown.renderInline,
       getAvatar: userModule.getAvatar,
-      calendarInterface: calendarInterface
+      calendarInterface: calendarInterface,
+      scriptUser: scriptUser
 
     };
     next();

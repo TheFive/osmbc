@@ -1,0 +1,28 @@
+extends layout
+
+
+
+
+block content
+
+  h1="Choose your script to execute"
+
+  row
+    div
+      table.table.table-striped.table-responsive
+        thead
+        tbody
+          if files.length === 0
+            tr
+              td="there are no scripts"
+          tr
+            each file in files
+              tr
+                td
+                  a.btn.btn-default(href=layout.htmlroot + "/tool/scripts/execute/" + _path.basename(file))=_path.basename(file)
+
+
+          
+
+
+  
