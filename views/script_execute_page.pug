@@ -10,13 +10,13 @@ block content
     h2="Information about script"
     p=configuration.help
     h2="Parameter for Scripts"
-    form(action=layout.htmlroot +"/tool/scripts/execute/"+file method="post")
+    form(action=layout.htmlroot +"/tool/scripts/execute/"+file  encType="multipart/form-data" method="post")
       div.hidden
         input(name="count" value=configuration.params.length)
       each param,i in configuration.params
-
-        div.form-group
-          label(for="param"+i)=i + ") " + param.title
-          p.osmbc-help-text=param.help
-          input.form-control(name="param"+i type=param.type)
+        div.form-group.row
+          label.col-sm-3(for=param.title)=i + ") " + param.title
+          div.col-sm-5
+            input.form-control(name=param.title type=param.type value=param.value required=param.required)
+          p.col-sm-4.osmbc-help-text=param.help
       button.btn.btn-default(type="submit") Execute

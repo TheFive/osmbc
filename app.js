@@ -31,6 +31,7 @@ const configRouter = require("./routes/config").router;
 const logger       = require("./config.js").logger;
 const auth         = require("./routes/auth.js");
 
+const fileUpload = require('express-fileupload');
 
 
 
@@ -55,6 +56,8 @@ app.locals.stylesheet = config.getValue("style");
 app.locals._path = path;
 
 
+
+
 app.use(helmet());
 
 // view engine setup
@@ -70,8 +73,12 @@ app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 
 
 
+
 // Initialise Morgan Logger, (and parser to log cookies)
 app.use(cookieParser());
+
+
+app.use(fileUpload({safeFileNames:true,preserveExtension:true,abortOnLimit:true,limits: { fileSize: 50 * 1024 * 1024 }}));
 
 
 morgan.token("OSMUser", function (req) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user"; });

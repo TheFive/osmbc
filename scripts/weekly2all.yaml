@@ -1,0 +1,43 @@
+help: This is just a script to show integration of the script plugin.
+execute: weekly2all.sh
+name: test
+params:
+  - title: Use Twitter
+    flag: --twitter
+    type: checkbox
+  - title: Use mail
+    flag: --mail
+    type: checkbox
+  - title: TwitterPicture
+    help: Please upload the picture for Twitter here
+    type: file
+    flag: --twpic
+  - title: Context
+    help: Give the context for your SPAM
+    value: TEST
+    type: text
+    required: true
+  - title:  Language
+    help:  Should be DE, ES, ...
+    value: EN
+    type: text
+  - title: Post
+    help: This is the number of the Issue
+    value: WN399
+    type: text
+  - title: Url Number
+    help: This is the number of the Issue
+    value: 999
+    type: number
+    required: true
+  - title: Year
+    value: 2018
+    type: number
+    required: true
+  - title: Month
+    type: number
+  - title: Date From
+    type: text
+    required: true
+  - title: Date To
+    type: text

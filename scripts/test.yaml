@@ -2,11 +2,21 @@ help: This is just a script to show integration of the script plugin.
 execute: test.sh
 name: test
 params:
-  - title: link
-    help: Please enter a link to the ... here
-    type: url
-  - title: language
-    help: two charactor ISO Langauge specifier
+  - title: Use Twitter
+    flag: -twitter
+    type: checkbox
+  - title: Use mail
+    flag: -mail
+    type: checkbox
+  - title: Twitter Picture
+    help: Please upload the picture for Twitter here
+    type: file
+  - title: Context
+    help: Give the context for your SPAM
     type: text
-  - title:  number
-    type:  number
+  - title:  Language
+    help:  Should be DE, ES, ...
+    type: text
+  - title: Url Number
+    help: This is the number of the Issue
+    type: number

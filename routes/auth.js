@@ -114,6 +114,20 @@ function checkRole(role, functions) {
   };
 }
 
+function checkUser(user) {
+  let userArray = user;
+  if (typeof user === "string") userArray = [user];
+  return function checkAuthentificationUser (req, res, next) {
+    debug("checkAuthentificationUser");
+    if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
+    let accessIndex = userArray.indexOf(req.user.OSMUser);
+    if (accessIndex >= 0) {
+      return next();
+    }
+    return next(new Error("OSM User >" + req.user.OSMUser + "< has not enough access rights"));
+  };
+}
+
 function hasRole(role) {
   let roleArray = role;
   if (typeof role === "string") roleArray = [role];
@@ -180,5 +194,6 @@ function ensureAuthenticated (req, res, next) {
 
 module.exports.passport = passport;
 module.exports.checkRole = checkRole;
+module.exports.checkUser = checkUser;
 module.exports.hasRole = hasRole;
 module.exports.ensureAuthenticated = ensureAuthenticated;

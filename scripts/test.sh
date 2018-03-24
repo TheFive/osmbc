@@ -3,6 +3,8 @@
 NOW=$(date +"%F-%T")
 
 
+echo "All parameters:"
+echo $@
 
 echo "Script is called parameter 1 $1"
 

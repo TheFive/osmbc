@@ -24,6 +24,7 @@
     "email-templates": "^2.3.0",
     "email-validator": "^1.0.4",
     "express": "^4.14.0",
+    "express-fileupload": "^0.4.0",
     "express-session": "^1.13.0",
     "glob": "^7.1.2",
     "helmet": "^3.12.0",

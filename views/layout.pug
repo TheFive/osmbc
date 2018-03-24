@@ -85,12 +85,13 @@ mixin toolMenu
         a(href=layout.htmlroot + "/tool/picturetool") Picture Tool
       li
         a(href=layout.htmlroot + "/calendar/preview") Public Calendar Check
-      li.divider
-      li.dropdown-header="Script Plugins"
-        li
-          a(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
-        li
-          a(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
+      if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
+        li.divider
+        li.dropdown-header="Script Plugins (TEST PHASE)"
+          li
+            a(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
+          li
+            a(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
 
 
       li.divider
