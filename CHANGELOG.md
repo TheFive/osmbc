@@ -1,7 +1,23 @@
 # Change Log
 
+## [3.3.0](https://github.com/TheFive/osmbc/tree/3.3.0) (2018-03-24)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.1a...3.3.0)
+
+**Implemented enhancements:**
+
+- Implement Interface to call Scripts. [\#763](https://github.com/TheFive/osmbc/issues/763)
+- Disallow Guests collecting in Blogs, that are not open. [\#762](https://github.com/TheFive/osmbc/issues/762)
+
+**Fixed bugs:**
+
+- Evaluate session store with no bind user data. [\#721](https://github.com/TheFive/osmbc/issues/721)
+
 ## [3.2.1a](https://github.com/TheFive/osmbc/tree/3.2.1a) (2018-03-17)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.1...3.2.1a)
+
+**Implemented enhancements:**
+
+- Access Denied, please add information to "contact the team" [\#760](https://github.com/TheFive/osmbc/issues/760)
 
 **Fixed bugs:**
 
