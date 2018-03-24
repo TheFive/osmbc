@@ -31,6 +31,7 @@ const configRouter = require("./routes/config").router;
 const logger       = require("./config.js").logger;
 const auth         = require("./routes/auth.js");
 
+const fileUpload = require('express-fileupload');
 
 
 
@@ -52,6 +53,9 @@ app.locals.htmlroot = config.htmlRoot();
 app.locals.appName  = config.getValue("AppName", {mustExist: true});
 app.locals.path     = require("./routes/layout").path;
 app.locals.stylesheet = config.getValue("style");
+app.locals._path = path;
+
+
 
 
 app.use(helmet());
@@ -69,8 +73,12 @@ app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 
 
 
+
 // Initialise Morgan Logger, (and parser to log cookies)
 app.use(cookieParser());
+
+
+app.use(fileUpload({safeFileNames:true,preserveExtension:true,abortOnLimit:true,limits: { fileSize: 50 * 1024 * 1024 }}));
 
 
 morgan.token("OSMUser", function (req) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user"; });
@@ -110,16 +118,11 @@ app.use(htmlRoot + "/slack", slackrouter);
 
 
 
-// Initialise Session Store and Cookie Max Age...
 
 
-var cookieMaxAge = config.getValue("cookieMaxAge");
+// maxAge for not logged in user cookies is 10 minutes
+let cookieMaxAge = 1000*60*10;
 
-if (isNaN(cookieMaxAge)) {
-  cookieMaxAge = null;
-} else {
-  cookieMaxAge = cookieMaxAge * 1000 * 60 * 60 * 24;
-}
 
 
 logger.info("Set Max Age of cookies to " + ((!cookieMaxAge) ? "default" : (cookieMaxAge / (1000 * 60 * 60 * 24) + " days")));

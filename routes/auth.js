@@ -114,6 +114,20 @@ function checkRole(role, functions) {
   };
 }
 
+function checkUser(user) {
+  let userArray = user;
+  if (typeof user === "string") userArray = [user];
+  return function checkAuthentificationUser (req, res, next) {
+    debug("checkAuthentificationUser");
+    if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
+    let accessIndex = userArray.indexOf(req.user.OSMUser);
+    if (accessIndex >= 0) {
+      return next();
+    }
+    return next(new Error("OSM User >" + req.user.OSMUser + "< has not enough access rights"));
+  };
+}
+
 function hasRole(role) {
   let roleArray = role;
   if (typeof role === "string") roleArray = [role];
@@ -125,19 +139,30 @@ function hasRole(role) {
   };
 }
 
+let cookieMaxAge = config.getValue("cookieMaxAge");
+
+if (isNaN(cookieMaxAge)) {
+  cookieMaxAge = null;
+} else {
+  cookieMaxAge = cookieMaxAge * 1000 * 60 * 60 * 24;
+}
+
 
 function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated");
   if (req.isAuthenticated()) {
     debug("ensureAuthenticated: OK");
     if (req.user && req.user.access && req.user.access !== "denied") {
+      if (!req.session.prolonged) {
+        req.session.cookie.maxAge = cookieMaxAge;
+        req.session.prolonged = true;
+      }
       var date = new Date();
       var lastStore = new Date(req.user.lastAccess);
       // only store last access when GETting something, not in POSTs.
       if (req.method === "GET" && (!req.user.lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 5)) {
         let stamp = new Date();
         req.user.lastAccess = stamp;
-        req.session.lastAccess = stamp;
         req.user.save({noVersionIncrease: true}, function (err) {
           if (err) return next(err);
         });
@@ -145,7 +170,7 @@ function ensureAuthenticated (req, res, next) {
       return next();
     }
     if (req.user && req.user.access === "denied") {
-      return res.status(403).send("OSM User >" + req.user.OSMUser + "< has no access rights");
+      return res.status(403).send("OSM User >" + req.user.OSMUser + "< has no access rights. Please contact weeklyOSM Team to enable your account.");
     }
     return res.status(403).send("OSM User >" + req.user.OSMUser + "< is not an OSMBC user.");
   }
@@ -169,5 +194,6 @@ function ensureAuthenticated (req, res, next) {
 
 module.exports.passport = passport;
 module.exports.checkRole = checkRole;
+module.exports.checkUser = checkUser;
 module.exports.hasRole = hasRole;
 module.exports.ensureAuthenticated = ensureAuthenticated;

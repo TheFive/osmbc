@@ -90,5 +90,6 @@
   "PublicCalendarPage":"http://linktopubliccalendar.org",
   "WelcomeRefreshInSeconds":0,
   "createGuestUsersAutomatic":true,
-  "ReviewInWP":["DE"]
+  "ReviewInWP":["DE"],
+  "scripts":{}
 }

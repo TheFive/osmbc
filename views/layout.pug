@@ -85,10 +85,20 @@ mixin toolMenu
         a(href=layout.htmlroot + "/tool/picturetool") Picture Tool
       li
         a(href=layout.htmlroot + "/calendar/preview") Public Calendar Check
+      if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
+        li.divider
+        li.dropdown-header="Script Plugins (TEST PHASE)"
+          li
+            a(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
+          li
+            a(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
+
+
       li.divider
       li.dropdown-header About The Team
         li
           a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
+
 
 mixin helpMenu
   li.dropdown

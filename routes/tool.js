@@ -1,26 +1,32 @@
 "use strict";
 
-var debug = require("debug")("OSMBC:routes:tool");
-var express = require("express");
-var router = express.Router();
-var publicRouter = express.Router();
-var config = require("../config.js");
-var url = require("url");
-var http = require("http");
-var https = require("https");
-var moment = require("moment");
-var async = require("async");
-var request = require("request");
-var BlogRenderer = require("../render/BlogRenderer.js");
+const debug = require("debug")("OSMBC:routes:tool");
+const express = require("express");
+const router = express.Router();
+const publicRouter = express.Router();
+const config = require("../config.js");
+const url = require("url");
+const glob = require("glob");
+const fs = require("fs");
+const path = require("path");
+const http = require("http");
+const https = require("https");
+const moment = require("moment");
+const async = require("async");
+const request = require("request");
+const yaml     = require("js-yaml");
+const BlogRenderer = require("../render/BlogRenderer.js");
+const childProcess = require("child_process");
 
 
-var parseEvent = require("../model/parseEvent.js");
+const parseEvent = require("../model/parseEvent.js");
 
-var articleModule = require("../model/article.js");
-var configModule = require("../model/config.js");
+const articleModule = require("../model/article.js");
+const configModule = require("../model/config.js");
 
 
 const checkRole        = require("../routes/auth.js").checkRole;
+const checkUser       = require("../routes/auth.js").checkUser;
 
 var sizeOf = require("image-size");
 
@@ -336,6 +342,186 @@ function renderPublicCalendar(req, res, next) {
   });
 }
 
+let logFilePath = config.getValue("scripts").logFilePath;
+let scriptFilePath = config.getValue("scripts").scriptFilePath;
+let logFileFilter = config.getValue("scripts").logFileFilter;
+let scriptFileFilter = config.getValue("scripts").scriptFileFilter;
+
+function renderScriptLogs(req, res) {
+  glob(logFilePath + "/" + logFileFilter, function(error, data) {
+    if (data) data.sort();
+    if (error) {
+      res.status(500).send(error);
+      return;
+    }
+    res.render("script_logs",
+      {"files": data,
+        layout: res.rendervar.layout});
+  });
+}
+
+const fileTypeRunning = " (running).log";
+const fileTypeOk = " (done).log";
+
+function renderScriptLog(req, res) {
+  let file = req.params.filename;
+  let text = null;
+  let reload = false;
+
+  async.series([
+    (cb) => {
+      fs.readFile(path.join(logFilePath, file), (err, data) => {
+        if (!err) {
+          text = data;
+        }
+        cb(null);
+      });
+    },
+    (cb) => {
+      if (text) return cb();
+      fs.readFile(path.join(logFilePath, file + fileTypeRunning), (err, data) => {
+        if (!err) {
+          text = data;
+          reload = true;
+        }
+        cb(null);
+      });
+    },
+    (cb) => {
+      if (text) return cb();
+      fs.readFile(path.join(logFilePath, file + fileTypeOk), (err, data) => {
+        if (!err) text = data;
+        cb(err);
+      });
+    }
+  ], (err) => {
+    console.error(err);
+    if (err) return res.render("script_log", {layout: res.rendervar.layout, text: "The file " + file + " could not be found.", file: file});
+    res.render("script_log",
+      {layout: res.rendervar.layout,
+        text: text,
+        file: file,
+        reload: reload});
+  });
+}
+
+
+function renderScripts(req, res) {
+  glob(scriptFilePath + "/" + scriptFileFilter, function(error, data) {
+    if (data) data.sort();
+    if (error) {
+      res.status(500).send(error);
+      return;
+    }
+    res.render("script_execute",
+      {layout: res.rendervar.layout,
+        "files": data});
+  });
+}
+
+function renderScript(req, res) {
+  let file = req.params.filename;
+
+  fs.readFile(path.join(scriptFilePath, file), function(err, text) {
+    if (err) return res.status(500).send(err);
+    let configuration = yaml.safeLoad(text);
+    res.render("script_execute_page", {
+      layout: res.rendervar.layout,
+      configuration: configuration,
+      file: file
+    });
+  });
+}
+
+
+
+function executeScript(req, res, next) {
+  let file = req.params.filename;
+
+  fs.readFile(path.join(scriptFilePath, file), function(err, text) {
+    if (err) return res.status(500).send(err);
+    let configuration = yaml.safeLoad(text);
+
+    let logFileBase = configuration.name + " " + req.user.OSMUser + " " + moment().format("YYYY-MM-DD HH:mm:ss");
+    let logFileRunning = path.join(logFilePath, logFileBase + fileTypeRunning);
+    let logFileOk = path.join(logFilePath, logFileBase + fileTypeOk);
+
+    let script = path.join(scriptFilePath, configuration.execute);
+
+    let pictureFile = null;
+
+    let doThingsBeforeScript = function(err, callback) {
+      if (err) return callback(err);
+      return callback();
+    };
+
+    let args = [];
+    configuration.params.forEach(function(param) {
+      if (param.type === "checkbox" && req.body[param.title] === "on") {
+        args.push(param.flag);
+      }
+      if (param.type === "file" && req.files && req.files[param.title]) {
+        if (pictureFile) return next(new Error("Two Pictures not allowed"));
+        pictureFile = path.join(logFilePath, req.files[param.title].name);
+        doThingsBeforeScript = function(err, callback) {
+          if (err) return callback(err);
+          req.files[param.title].mv(pictureFile, callback);
+        };
+        if (param.flag) args.push(param.flag);
+        if (pictureFile) args.push('"' + pictureFile + '"');
+      }
+      if (param.type === "text" && req.body[param.title]) {
+        args.push('"' + req.body[param.title] + '"');
+      }
+      if (param.type === "number" && req.body[param.title]) {
+        args.push('"' + req.body[param.title] + '"');
+      }
+    });
+
+    let options = {cwd: scriptFilePath, env: {OSMUser: req.user.OSMUser}};
+    if (config.getValue("scripts").uid) {
+      options.uid = config.getValue("scripts").uid;
+    }
+
+    doThingsBeforeScript(null, function() {
+      let cp = childProcess.execFile(script, args, options);
+      cp.on("error", (error) => {
+        fs.appendFile(logFileRunning, "error: " + error.message, (err) => { console.error(err); });
+        console.error("Script " + file + " generates error");
+        console.error(error);
+      });
+      function logError(err) {
+        if (err) console.error(err);
+        if (pictureFile) fs.unlink(pictureFile, function() {});
+      }
+      cp.stdout.on("data", (data) => {
+        fs.appendFile(logFileRunning, data, logError);
+      });
+      cp.stderr.on("data", (data) => {
+        fs.appendFile(logFileRunning, "error: " + data, logError);
+      });
+      cp.on("close", () => {
+        fs.rename(logFileRunning, logFileOk, logError);
+        if (pictureFile) fs.unlink(pictureFile, function() {});
+      });
+      fs.appendFile(logFileRunning, "Script Started:\n", function(err) {
+        if (err) return res.status(500).send(err.message);
+        res.redirect(htmlroot + "/tool/scripts/log/" + logFileBase);
+      });
+    });
+  });
+}
+
+let userList = config.getValue("scripts").user;
+let checkScriptRights = checkRole("full");
+
+if (userList !== "full") checkScriptRights = checkUser(userList);
+
+router.get("/scripts/log", checkScriptRights, renderScriptLogs);
+router.get("/scripts/log/:filename", checkScriptRights, renderScriptLog);
+router.get("/scripts/execute", checkScriptRights, renderScripts);
+router.get("/scripts/execute/:filename", checkScriptRights, renderScript);
+router.post("/scripts/execute/:filename", checkScriptRights, executeScript);
 
 router.get("/calendarAllLang/:calendar", checkRole("full"), renderCalendarAllLangAlternative);
 router.get("/picturetool", checkRole("full"), renderPictureTool);

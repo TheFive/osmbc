@@ -161,7 +161,7 @@ describe("routes/article", function() {
         request.get({url: baseLink + "/article/1", jar: jar}, function (err, response,body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
+          body.should.containEql('<option value="BLOG" selected="selected">BLOG </option>');
           bddone();
         });
       });
@@ -181,7 +181,7 @@ describe("routes/article", function() {
         request.get({url: baseLink + "/article/3", jar: jar}, function (err, response,body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql('<option value="BLOG" selected="selected">BLOG (Edit)</option>');
+          body.should.containEql('<option value="BLOG" selected="selected">BLOG </option>');
           bddone();
         });
       });
