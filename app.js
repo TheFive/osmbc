@@ -52,6 +52,7 @@ app.locals.htmlroot = config.htmlRoot();
 app.locals.appName  = config.getValue("AppName", {mustExist: true});
 app.locals.path     = require("./routes/layout").path;
 app.locals.stylesheet = config.getValue("style");
+app.locals._path = path;
 
 
 app.use(helmet());

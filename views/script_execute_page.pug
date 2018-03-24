@@ -1,0 +1,22 @@
+extends layout
+
+
+
+
+block content
+
+  div
+    h1=file
+    h2="Information about script"
+    p=configuration.help
+    h2="Parameter for Scripts"
+    form(action=layout.htmlroot +"/tool/scripts/execute/"+file method="post")
+      div.hidden
+        input(name="count" value=configuration.params.length)
+      each param,i in configuration.params
+
+        div.form-group
+          label(for="param"+i)=i + ") " + param.title
+          p.osmbc-help-text=param.help
+          input.form-control(name="param"+i type=param.type)
+      button.btn.btn-default(type="submit") Execute

@@ -1,0 +1,12 @@
+help: This is just a script to show integration of the script plugin.
+execute: test.sh
+name: test
+params:
+  - title: link
+    help: Please enter a link to the ... here
+    type: url
+  - title: language
+    help: two charactor ISO Langauge specifier
+    type: text
+  - title:  number
+    type:  number
