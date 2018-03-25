@@ -372,14 +372,14 @@ function readScriptConfig(script, callback) {
       let configuration = yaml.safeLoad(text);
       return callback(null, configuration);
     } catch (err) {
-      let error = "Error Parsing YAML File: " + script +"\n---"+err.message;
+      let error = "Error Parsing YAML File: " + script + "\n---" + err.message;
       return callback(new Error(error));
     }
   });
 }
 
-function quoteParam(param,quote) {
-  if (quote) return '"' + param +'"';
+function quoteParam(param, quote) {
+  if (quote) return '"' + param + '"';
   return param;
 }
 
@@ -508,13 +508,13 @@ function executeScript(req, res, next) {
           req.files[param.title].mv(pictureFile, callback);
         };
         if (param.flag) args.push(param.flag);
-        if (pictureFile) args.push(qouteParam(pictureFile,param.quote));
+        if (pictureFile) args.push(quoteParam(pictureFile, param.quote));
       }
       if (param.type === "text" && req.body[param.title]) {
-        args.push(quoteParam(req.body[param.title],param.quote));
+        args.push(quoteParam(req.body[param.title], param.quote));
       }
       if (param.type === "number" && req.body[param.title]) {
-        args.push(quoteParam(req.body[param.title],param.quote));
+        args.push(quoteParam(req.body[param.title], param.quote));
       }
     });
 
@@ -531,12 +531,16 @@ function executeScript(req, res, next) {
     }
 
     doThingsBeforeScript(null, function() {
-      let cp = null
+      let cp = null;
       try {
         cp = childProcess.execFile(script, args, options);
       } catch (err) {
         logger.error(err);
         return res.status(500).send(err);
+      }
+      function logError(err) {
+        if (err) logger.error(err);
+        if (pictureFile) fs.unlink(pictureFile, function() {});
       }
       try {
         cp.on("error", (error) => {
@@ -544,10 +548,7 @@ function executeScript(req, res, next) {
           logger.error("Script " + file + " generates error");
           logger.error(error);
         });
-        function logError(err) {
-          if (err) logger.error(err);
-          if (pictureFile) fs.unlink(pictureFile, function() {});
-        }
+
         cp.stdout.on("data", (data) => {
           fs.appendFile(logFileRunning, data, logError);
         });
