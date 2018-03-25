@@ -32,8 +32,14 @@ passport.serializeUser(function (user, done) {
 });
 
 let createGuestUsersAutomatic = config.getValue("createGuestUsersAutomatic", {mustExist: true});
+
 passport.deserializeUser(function (user, done) {
   debug("passport.deserializeUser CB");
+  if (typeof user !== "string") {
+    logger.error("deserialise user with object called, expected string");
+    logger.error(JSON.stringify(user, null, 2));
+    return done(null, null);
+  }
   userModule.find({OSMUser: user}, function(err, result) {
     if (err) return done(null, null);
     if (result.length === 1) {
