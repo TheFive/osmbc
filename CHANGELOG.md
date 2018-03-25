@@ -1,5 +1,16 @@
 # Change Log
 
+## [3.3.1](https://github.com/TheFive/osmbc/tree/3.3.1) (2018-03-25)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.0...3.3.1)
+
+**Implemented enhancements:**
+
+- Add LOG\_PATH and SCRIPT\_PATH as environment Variables to bash API call. [\#765](https://github.com/TheFive/osmbc/issues/765)
+
+**Fixed bugs:**
+
+- Users that are logged in to OSMWW generates \[object object\] guests in OSMBC. [\#764](https://github.com/TheFive/osmbc/issues/764)
+
 ## [3.3.0](https://github.com/TheFive/osmbc/tree/3.3.0) (2018-03-24)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.1a...3.3.0)
 
@@ -2593,17 +2604,17 @@
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
-
 ## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
+
+## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
