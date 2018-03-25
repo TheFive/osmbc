@@ -9,7 +9,7 @@ block content
 
   row
     div
-      table.table.table-striped.table-responsive
+      table.table.table-responsive
         thead
         tbody
           if files.length === 0
@@ -19,7 +19,9 @@ block content
             each file in files
               tr
                 td
-                  a.btn.btn-default(href=layout.htmlroot + "/tool/scripts/execute/" + _path.basename(file))=_path.basename(file)
+                  a.btn.btn-default(href=layout.htmlroot + "/tool/scripts/execute/" + file)=configTable[file].name
+                td
+                  div.osmbc-help-text=configTable[file].help
 
 
           

@@ -17,6 +17,8 @@ const request = require("request");
 const yaml     = require("js-yaml");
 const BlogRenderer = require("../render/BlogRenderer.js");
 const childProcess = require("child_process");
+const logger = require("../config.js").logger;
+
 
 
 const parseEvent = require("../model/parseEvent.js");
@@ -363,6 +365,24 @@ function renderScriptLogs(req, res) {
 const fileTypeRunning = " (running).log";
 const fileTypeOk = " (done).log";
 
+function readScriptConfig(script, callback) {
+  fs.readFile(path.join(scriptFilePath, script), function(err, text) {
+    if (err) return callback(err);
+    try {
+      let configuration = yaml.safeLoad(text);
+      return callback(null, configuration);
+    } catch (err) {
+      let error = "Error Parsing YAML File: " + script +"\n---"+err.message;
+      return callback(new Error(error));
+    }
+  });
+}
+
+function quoteParam(param,quote) {
+  if (quote) return '"' + param +'"';
+  return param;
+}
+
 function renderScriptLog(req, res) {
   let file = req.params.filename;
   let text = null;
@@ -370,6 +390,8 @@ function renderScriptLog(req, res) {
 
   async.series([
     (cb) => {
+      // First check if given file exists
+      // load it and display it without reload
       fs.readFile(path.join(logFilePath, file), (err, data) => {
         if (!err) {
           text = data;
@@ -378,6 +400,8 @@ function renderScriptLog(req, res) {
       });
     },
     (cb) => {
+      // now check wether a "running" log exists
+      // display it with automated reload
       if (text) return cb();
       fs.readFile(path.join(logFilePath, file + fileTypeRunning), (err, data) => {
         if (!err) {
@@ -388,6 +412,8 @@ function renderScriptLog(req, res) {
       });
     },
     (cb) => {
+      // if the file exists with done flag, than
+      // show it but disable reload
       if (text) return cb();
       fs.readFile(path.join(logFilePath, file + fileTypeOk), (err, data) => {
         if (!err) text = data;
@@ -395,7 +421,7 @@ function renderScriptLog(req, res) {
       });
     }
   ], (err) => {
-    console.error(err);
+    logger.error(err);
     if (err) return res.render("script_log", {layout: res.rendervar.layout, text: "The file " + file + " could not be found.", file: file});
     res.render("script_log",
       {layout: res.rendervar.layout,
@@ -413,18 +439,33 @@ function renderScripts(req, res) {
       res.status(500).send(error);
       return;
     }
-    res.render("script_execute",
-      {layout: res.rendervar.layout,
-        "files": data});
+    if (!data) data = [];
+    for (let i = 0; i < data.length; i++) { data[i] = path.basename(data[i]); }
+    let configTable = {};
+    async.eachLimit(data, 3,
+      function(item, callback) {
+        readScriptConfig(item, function(err, config) {
+          if (err) return callback(err);
+          configTable[item] = config;
+          return callback();
+        });
+      },
+      function(err) {
+        if (err) return res.status(500).send(err.message);
+        res.render("script_execute",
+          {layout: res.rendervar.layout,
+            files: data,
+            configTable: configTable});
+      }
+    );
   });
 }
 
 function renderScript(req, res) {
   let file = req.params.filename;
 
-  fs.readFile(path.join(scriptFilePath, file), function(err, text) {
+  readScriptConfig(file, function(err, configuration) {
     if (err) return res.status(500).send(err);
-    let configuration = yaml.safeLoad(text);
     res.render("script_execute_page", {
       layout: res.rendervar.layout,
       configuration: configuration,
@@ -438,9 +479,8 @@ function renderScript(req, res) {
 function executeScript(req, res, next) {
   let file = req.params.filename;
 
-  fs.readFile(path.join(scriptFilePath, file), function(err, text) {
+  readScriptConfig(file, function(err, configuration) {
     if (err) return res.status(500).send(err);
-    let configuration = yaml.safeLoad(text);
 
     let logFileBase = configuration.name + " " + req.user.OSMUser + " " + moment().format("YYYY-MM-DD HH:mm:ss");
     let logFileRunning = path.join(logFilePath, logFileBase + fileTypeRunning);
@@ -468,44 +508,61 @@ function executeScript(req, res, next) {
           req.files[param.title].mv(pictureFile, callback);
         };
         if (param.flag) args.push(param.flag);
-        if (pictureFile) args.push('"' + pictureFile + '"');
+        if (pictureFile) args.push(qouteParam(pictureFile,param.quote));
       }
       if (param.type === "text" && req.body[param.title]) {
-        args.push('"' + req.body[param.title] + '"');
+        args.push(quoteParam(req.body[param.title],param.quote));
       }
       if (param.type === "number" && req.body[param.title]) {
-        args.push('"' + req.body[param.title] + '"');
+        args.push(quoteParam(req.body[param.title],param.quote));
       }
     });
 
-    let options = {cwd: scriptFilePath, env: {OSMUser: req.user.OSMUser}};
+    let options = {
+      cwd: scriptFilePath,
+      env: {
+        OSMUSER: req.user.OSMUser,
+        SCRIPT_PATH: scriptFilePath,
+        LOG_PATH: logFilePath
+      }
+    };
     if (config.getValue("scripts").uid) {
       options.uid = config.getValue("scripts").uid;
     }
 
     doThingsBeforeScript(null, function() {
-      let cp = childProcess.execFile(script, args, options);
-      cp.on("error", (error) => {
-        fs.appendFile(logFileRunning, "error: " + error.message, (err) => { console.error(err); });
-        console.error("Script " + file + " generates error");
-        console.error(error);
-      });
-      function logError(err) {
-        if (err) console.error(err);
-        if (pictureFile) fs.unlink(pictureFile, function() {});
+      let cp = null
+      try {
+        cp = childProcess.execFile(script, args, options);
+      } catch (err) {
+        logger.error(err);
+        return res.status(500).send(err);
       }
-      cp.stdout.on("data", (data) => {
-        fs.appendFile(logFileRunning, data, logError);
-      });
-      cp.stderr.on("data", (data) => {
-        fs.appendFile(logFileRunning, "error: " + data, logError);
-      });
-      cp.on("close", () => {
-        fs.rename(logFileRunning, logFileOk, logError);
-        if (pictureFile) fs.unlink(pictureFile, function() {});
-      });
+      try {
+        cp.on("error", (error) => {
+          fs.appendFile(logFileRunning, "error: " + error.message, (err) => { logger.error(err); });
+          logger.error("Script " + file + " generates error");
+          logger.error(error);
+        });
+        function logError(err) {
+          if (err) logger.error(err);
+          if (pictureFile) fs.unlink(pictureFile, function() {});
+        }
+        cp.stdout.on("data", (data) => {
+          fs.appendFile(logFileRunning, data, logError);
+        });
+        cp.stderr.on("data", (data) => {
+          fs.appendFile(logFileRunning, "error: " + data, logError);
+        });
+        cp.on("close", () => {
+          fs.rename(logFileRunning, logFileOk, logError);
+          if (pictureFile) fs.unlink(pictureFile, function() {});
+        });
+      } catch (err) {
+        return next(err);
+      }
       fs.appendFile(logFileRunning, "Script Started:\n", function(err) {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(500).send(err);
         res.redirect(htmlroot + "/tool/scripts/log/" + logFileBase);
       });
     });

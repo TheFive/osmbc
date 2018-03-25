@@ -1,6 +1,6 @@
 help: This is just a script to show integration of the script plugin.
 execute: test.sh
-name: test
+name: Test Script to demonstrate Integration Possiblities
 params:
   - title: Use Twitter
     flag: -twitter

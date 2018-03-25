@@ -12,8 +12,10 @@ block content
   h2=file
   if (reload)
     pre(style="background-color:black;color:white;")=text
+    p="Please wait, Script is running ..."
   else
     pre=text
+    a(href=layout.htmlroot + "/tool/scripts/log")="All Script Results"
 
 
   
