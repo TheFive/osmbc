@@ -6,6 +6,7 @@ const async    = require("async");
 const should   = require("should");
 const debug    = require("debug")("OSMBC:routes:blog");
 const config   = require("../config.js");
+const util     = require("../util/util.js");
 const moment   = require("moment");
 const help     = require("../routes/help.js");
 const yaml     = require("js-yaml");
@@ -336,6 +337,9 @@ function renderBlogTab(req, res, next) {
 
 
   let votes = configModule.getConfig("votes");
+  let reviewScripts = {};
+  let scripts = config.getValue("scripts");
+  if (scripts && scripts.review) reviewScripts = scripts.review;
 
   if (!tab) tab = req.session.lasttab;
   if (!tab) tab = "Overview";
@@ -425,6 +429,8 @@ function renderBlogTab(req, res, next) {
       right_lang: req.user.getSecondLang(),
       renderer: renderer,
       reviewInWP: reviewInWP,
+      reviewScripts: reviewScripts,
+      util: util,
       categories: blog.getCategories()});
   }
   );

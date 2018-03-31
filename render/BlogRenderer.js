@@ -28,7 +28,7 @@ HtmlRenderer.prototype.subtitle = function htmlSubtitle(lang) {
   let blog = this.blog;
   should(config.getLanguages()).containEql(lang);
   if (blog.startDate && blog.endDate) {
-    return "<p>" + moment(blog.startDate).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L") + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L") + "</p>\n";
+    return "<p>" + util.dateFormat(blog.startDate, lang) + "-" + util.dateFormat(blog.endDate, lang) + "</p>\n";
   } else return "<p> missing date </p>\n";
 };
 

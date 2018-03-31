@@ -10,13 +10,32 @@ block content
     h2="Information about script"
     p=configuration.help
     h2="Parameter for Scripts"
-    form(action=layout.htmlroot +"/tool/scripts/execute/"+file  encType="multipart/form-data" method="post")
-      div.hidden
-        input(name="count" value=configuration.params.length)
+    form(id="data" action=layout.htmlroot +"/tool/scripts/execute/"+file  encType="multipart/form-data" method="post")
       each param,i in configuration.params
-        div.form-group.row
-          label.col-sm-3(for=param.title)=i + ") " + param.title
-          div.col-sm-5
-            input.form-control(name=param.title type=param.type value=param.value required=param.required)
-          p.col-sm-4.osmbc-help-text=param.help
+        if (param.type !== "static")
+          if (param.valueByQuery && query[param.valueByQuery])
+            - param.value = query[param.valueByQuery]
+          - cl = ""
+          if (param.hidden)
+            - cl = "hidden"
+            div.row
+              div.col-sm-4
+              p.col-sm-5= param.title + " -> " + param.value
+
+          div.form-group.row(class=cl)
+            label.col-sm-3(for=param.title)=i + ") " + param.title
+            div.col-sm-5
+              if (param.type === "editblog")
+                - param.type = "select"
+                - param.options = []
+                each blog in layout.listOfEditBlog
+                  - param.options.push(blog.name)
+                  - param.value = blog.name
+              if (param.type === "select")
+                select.form-control(id=param.title name=param.title form="data")
+                  each option in param.options
+                    option(value=option selected=(param.value.toUpperCase() === option.toUpperCase()) )=option
+              else
+                input.form-control(name=param.title type=param.type value=param.value required=param.required)
+            p.col-sm-4.osmbc-help-text=param.help
       button.btn.btn-default(type="submit") Execute
