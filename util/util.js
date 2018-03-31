@@ -2,6 +2,8 @@
 
 const debug = require("debug")("OSMBC:util:util");
 const should = require("should");
+const moment = require("moment");
+const config = require("../config.js");
 
 
 const htmlRoot = require("../config").htmlRoot();
@@ -54,7 +56,7 @@ function linkify(string) {
   return result;
 }
 
-
+// eslint-disable-next-line camelcase
 function md_render(text, accessMap) {
   if (typeof text === "undefined") text = "";
   if (text === null) text = "";
@@ -76,9 +78,9 @@ function md_render(text, accessMap) {
       if (accessMap[user] === "guest") cl = "bg-warning";
       if (accessMap[user] === "denied") cl = "bg-danger";
       let userUrl = user.replace(" ", "%20");
-      text = text.replace(new RegExp(" "+mention+" ", "i"), " <a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a> ");
-      text = text.replace(new RegExp(" "+mention+"</p>", "i"), " <a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a></p>");
-      text = text.replace(new RegExp("<p>"+mention+" ", "i"), "<p><a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a> ");
+      text = text.replace(new RegExp(" " + mention + " ", "i"), " <a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a> ");
+      text = text.replace(new RegExp(" " + mention + "</p>", "i"), " <a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a></p>");
+      text = text.replace(new RegExp("<p>" + mention + " ", "i"), "<p><a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a> ");
     }
   }
 
@@ -113,6 +115,10 @@ function requireTypes(vars, types) {
   }
 }
 
+function dateFormat(date, lang) {
+  return moment(date).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L");
+}
+
 
 // shorten shorten a string up to maxlength
 // default is 30. If a string is shortenend, "..." is appendet
@@ -123,6 +129,8 @@ exports.getAllURL = getAllURL;
 exports.requireTypes = requireTypes;
 exports.linkify = linkify;
 exports.isTrue = isTrue;
+exports.dateFormat = dateFormat;
 
 // Convert MD to HTML, and mark all http(s) links as hyperlinks.
+// eslint-disable-next-line camelcase
 exports.md_render = md_render;

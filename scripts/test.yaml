@@ -1,6 +1,31 @@
+# Configure parameters from you bash script, to call it from OSMBC
+
+# Help: Show some help call page of the script
+# execute: name of the script, path is relative to the script dir from OSMBC
+#          or an absolute path starting with /
+# name: Name of the script (e.g. for Button and log files
+
 help: This is just a script to show integration of the script plugin.
 execute: test.sh
 name: Test Script to demonstrate Integration Possiblities
+
+# params give all params for the script
+# type: static, checkbox, file, select, number
+#    static: no user input, direct put as parameter (e.g. path of a python script to execute(
+#    text: classic text box (html5 text)
+#    number: number box (html5 number)
+#    select: selection (html5 select) use options with string array for values
+#    file: File Upload possiblity (only one per script)
+#    editblog: List of all blogs in edit mode
+# flag: parameter is optionals and uses an flag before parameter
+# title: title for input form
+# help: help for input form
+# value: default value
+# required: value is required (user is asked to put in a value)
+# valueByQuery: if a link from review mode is used OSMBC offers blog, startDate and endDate
+#               as queryValue.  valueByQuery: startDate overwrites the default value if
+#               given by query
+
 params:
   - title: Use Twitter
     flag: -twitter
@@ -16,7 +41,13 @@ params:
     type: text
   - title:  Language
     help:  Should be DE, ES, ...
-    type: text
+    type: select
+    options:
+      - DE
+      - EN
+    value: EN
   - title: Url Number
     help: This is the number of the Issue
     type: number
+  - title: Blog
+    type: editblog

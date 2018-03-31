@@ -380,6 +380,7 @@ function readScriptConfig(script, callback) {
 
 function quoteParam(param, quote) {
   if (quote) return '"' + param + '"';
+  // if (quote) return "'" + param + "'";
   return param;
 }
 
@@ -469,7 +470,8 @@ function renderScript(req, res) {
     res.render("script_execute_page", {
       layout: res.rendervar.layout,
       configuration: configuration,
-      file: file
+      file: file,
+      query: req.query
     });
   });
 }
@@ -487,6 +489,7 @@ function executeScript(req, res, next) {
     let logFileOk = path.join(logFilePath, logFileBase + fileTypeOk);
 
     let script = path.join(scriptFilePath, configuration.execute);
+    if (configuration.execute.substring(0, 1) === "/") script = configuration.execute;
 
     let pictureFile = null;
 
@@ -497,12 +500,16 @@ function executeScript(req, res, next) {
 
     let args = [];
     configuration.params.forEach(function(param) {
+      if (param.type === "static") {
+        args.push(quoteParam(param.value, param.quote));
+      }
       if (param.type === "checkbox" && req.body[param.title] === "on") {
         args.push(param.flag);
       }
       if (param.type === "file" && req.files && req.files[param.title]) {
         if (pictureFile) return next(new Error("Two Pictures not allowed"));
-        pictureFile = path.join(logFilePath, req.files[param.title].name);
+        let fn = req.files[param.title].name.replace(/\s+/g, "_");
+        pictureFile = path.join(logFilePath, fn);
         doThingsBeforeScript = function(err, callback) {
           if (err) return callback(err);
           req.files[param.title].mv(pictureFile, callback);
@@ -511,6 +518,9 @@ function executeScript(req, res, next) {
         if (pictureFile) args.push(quoteParam(pictureFile, param.quote));
       }
       if (param.type === "text" && req.body[param.title]) {
+        args.push(quoteParam(req.body[param.title], param.quote));
+      }
+      if (param.type === "select") {
         args.push(quoteParam(req.body[param.title], param.quote));
       }
       if (param.type === "number" && req.body[param.title]) {

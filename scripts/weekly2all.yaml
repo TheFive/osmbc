@@ -1,7 +1,9 @@
 help: This is just a script to show integration of the script plugin.
-execute: weekly2all.sh
+execute: /usr/bin/python
 name: Test Script for integration of Weekly OSM Script
 params:
+  - type: static
+    value: /Users/TheFive.osm/development/osmbc/scripts/weekly2all.py
   - title: Use Twitter
     flag: --twitter
     type: checkbox
@@ -14,30 +16,51 @@ params:
     flag: --twpic
   - title: Context
     help: Give the context for your SPAM
+    options:
+      - WNOTIZ
+      - WEEKLY
+      - WEEKLYTWTEST
+      - EMAILTEST
     value: TEST
-    type: text
+    type: select
     required: true
+    valueByQuery: context
   - title:  Language
     help:  Should be DE, ES, ...
-    value: EN
-    type: text
+    options:
+       - de
+       - en
+       - pb
+       - fr
+       - ""
+    value: en
+    type: select
+    valueByQuery: l
+    quote: false
   - title: Post
     help: This is the number of the Issue
     value: WN399
     type: text
+    valueByQuery: blog
+    quote: true
   - title: Url Number
     help: This is the number of the Issue
     value: 999
     type: number
     required: true
   - title: Year
-    value: 2018
+    value: 0
     type: number
     required: true
+    hidden: true
   - title: Month
     type: number
+    value: 0
+    hidden: true
   - title: Date From
     type: text
     required: true
+    valueByQuery: startDate
   - title: Date To
     type: text
+    valueByQuery: endDate

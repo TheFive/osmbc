@@ -114,6 +114,8 @@ mixin blogReviewButtons(lang)
             if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
               input.hidden(type="text",name ="action" value = "closelang")
               button.btn.btn-large.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
+              if (reviewScripts[lang])
+                div.btn.btn-large.btn-info(onclick=`location.href="${reviewScripts[lang]}?blog=${blog.name}&startDate=${util.dateFormat(blog.startDate,lang)}&endDate=${util.dateFormat(blog.endDate,lang)}&l=${lang}"`) Advertise #{blog.name}(#{lang})
             else
               input.hidden(type="text",name ="action" value = "markexported")
               button.btn.btn-large.btn-warning(id="didexport" type = "submit" ) Did Export (#{lang})
