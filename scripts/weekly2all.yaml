@@ -55,7 +55,7 @@ params:
     hidden: true
   - title: Month
     type: number
-    value: 0
+    value:
     hidden: true
   - title: Date From
     type: text
