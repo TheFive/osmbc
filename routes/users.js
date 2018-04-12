@@ -29,6 +29,7 @@ function renderList(req, res, next) {
   if (req.query.access) query.access = req.query.access;
   if (req.query.sort && req.query.sort !== "OSMBC-changes") sort.column = req.query.sort;
   if (req.query.desc) sort.desc = true;
+  if (req.query.email) query.email = req.query.email;
   if (req.query.lastAccess) query.lastAccess = req.query.lastAccess;
   if (req.query.temporaryGuest) {
     if (req.query.temporaryGuest === "true") query.temporaryGuest = true;
