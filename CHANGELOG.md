@@ -1,5 +1,12 @@
 # Change Log
 
+## [3.3.1b](https://github.com/TheFive/osmbc/tree/3.3.1b) (2018-04-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1a...3.3.1b)
+
+**Closed issues:**
+
+- Filter for Calendar [\#766](https://github.com/TheFive/osmbc/issues/766)
+
 ## [3.3.1a](https://github.com/TheFive/osmbc/tree/3.3.1a) (2018-03-31)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1...3.3.1a)
 
