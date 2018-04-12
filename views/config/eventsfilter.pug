@@ -3,7 +3,7 @@ extends config
 mixin fieldRow(field)
   tr
     td=field
-    - each lang in layout.activeLanguages
+    each lang in layout.activeLanguages
       - var li = config.getJSON()[lang]
       if li
         td=li[field]
@@ -13,7 +13,7 @@ mixin fieldRow(field)
 mixin countryRow(country)
   tr
     td=country
-    - each lang in layout.activeLanguages
+    each lang in layout.activeLanguages
       - li = config.getJSON()[lang]
       if li
         if li.excludeCountries && li.excludeCountries.toLowerCase().indexOf(country.toLowerCase())>=0
@@ -33,20 +33,20 @@ block showContentOfConfig
   - var countries = {}
   if config.getJSON()
 
-    - each l in layout.activeLanguages
+    each l in layout.activeLanguages
       if config.getJSON()[l] && config.getJSON()[l].excludeCountries
-        - each c in config.getJSON()[l].excludeCountries.split(",")
+        each c in config.getJSON()[l].excludeCountries.split(",")
           - countries[c]="exclude"
       if config.getJSON()[l] && config.getJSON()[l].includeCountries
-        - each c in config.getJSON()[l].includeCountries.split(",")
+        each c in config.getJSON()[l].includeCountries.split(",")
           - countries[c]="include"
 
   .row
-      table.table.table-condensed
+      table#resulttable.table.table-condensed
         thead
           tr
             th="Value"
-            - each lang in layout.activeLanguages
+            each lang in layout.activeLanguages
               th=lang
         tbody
 
@@ -55,7 +55,7 @@ block showContentOfConfig
           +fieldRow("big_duration")
           +fieldRow("useGeoNames")
           +fieldRow("enableCountryFlags")
-          - each l,c in countries
+          each l,c in countries
             +countryRow(c)
 
 
