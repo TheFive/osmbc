@@ -50,6 +50,10 @@ describe("uc/config", function() {
       .pressButton("OK");
     browser.assert.text("table#resulttable", "WW WA WNN LL Munich OpenStreetMap Default Meeting 2015-12-15 Germany");
   });
+  it("should open and save eventsfilter", async function() {
+    await browser.visit("/config/eventsfilter");
+    browser.assert.text("table#resulttable", "Value DE date 0 duration 14 big_duration 21 useGeoNames enableCountryFlags USA");
+  });
 });
 
 
