@@ -139,6 +139,10 @@ describe("util", function() {
     it("should not conflict with if username / language is contained in other username",function(){
       let r = util.md_render("@ende is telling @user1 about @user2",{ende:"full",user1:"denied",user2:"guest",en:"full"});
       should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/ende>@ende</a> is telling <a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
+    });
+    it("should do colour mentions after a linebreak",function(){
+      let r = util.md_render("@ende is telling \n@user1 about @user2\n",{ende:"full",user1:"denied",user2:"guest",en:"full"});
+      should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/ende>@ende</a> is telling\n<a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
 
     });
   });

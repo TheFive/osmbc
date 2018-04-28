@@ -78,14 +78,9 @@ function md_render(text, accessMap) {
       if (accessMap[user] === "guest") cl = "bg-warning";
       if (accessMap[user] === "denied") cl = "bg-danger";
       let userUrl = user.replace(" ", "%20");
-      text = text.replace(new RegExp(" " + mention + " ", "i"), " <a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a> ");
-      text = text.replace(new RegExp(" " + mention + "</p>", "i"), " <a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a></p>");
-      text = text.replace(new RegExp("<p>" + mention + " ", "i"), "<p><a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a> ");
+      text = text.replace(new RegExp("( |\n|<p>)" + mention + "( |\n|</p>)", "i"), "$1<a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a>$2");
     }
   }
-
-
-
   return text;
 }
 
