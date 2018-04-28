@@ -572,7 +572,7 @@ function executeScript(req, res, next) {
       } catch (err) {
         return next(err);
       }
-      fs.appendFile(logFileRunning, "Script Started: " + script + " "+JSON.stringify(args), function(err) {
+      fs.appendFile(logFileRunning, "Script Started: " + script + " " + JSON.stringify(args), function(err) {
         if (err) return res.status(500).send(err);
         res.redirect(htmlroot + "/tool/scripts/log/" + logFileBase);
       });
