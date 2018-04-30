@@ -1,5 +1,12 @@
 # Change Log
 
+## [3.3.2](https://github.com/TheFive/osmbc/tree/3.3.2) (2018-04-30)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1b...3.3.2)
+
+**Implemented enhancements:**
+
+- Create a link from Welcome to the team to the changes history filtered by user [\#768](https://github.com/TheFive/osmbc/issues/768)
+
 ## [3.3.1b](https://github.com/TheFive/osmbc/tree/3.3.1b) (2018-04-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1a...3.3.1b)
 
