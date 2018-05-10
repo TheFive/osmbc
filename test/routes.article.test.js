@@ -407,7 +407,7 @@ describe("routes/article", function() {
         request.get({ url: baseLink + "/article/create", jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before   collecting.</p>');
+          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
           bddone();
         });
       });
@@ -427,7 +427,7 @@ describe("routes/article", function() {
         request.get({url: baseLink + "/article/create", jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before   collecting.</p>');
+          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before submit it.</p>');
           bddone();
         });
       });
@@ -439,7 +439,7 @@ describe("routes/article", function() {
         request.get({ url: baseLink + "/article/searchandcreate?search=hallo", jar: jar}, function(err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before   collecting.</p>');
+          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
           body.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
           bddone();
         });
@@ -460,7 +460,7 @@ describe("routes/article", function() {
         request.get({url: baseLink + "/article/searchandcreate?search=hallo", jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before   collecting.</p>');
+          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before submit it.</p>');
           body.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
           bddone();
         });

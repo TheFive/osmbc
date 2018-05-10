@@ -61,7 +61,7 @@ describe("uc/collect", function() {
       await browser.visit("/article/search");
       browser.fill("search", "http://www.test.dä/holla");
       await browser.pressButton("SearchNow");
-      browser.assert.text("p#articleCounter", "Display 2 of 2 articles.");
+      browser.assert.text("p#articleCounter", "Displaying 2 of 2 results.");
     });
   });
   describe("Collect", function() {

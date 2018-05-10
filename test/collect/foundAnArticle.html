@@ -14,9 +14,10 @@
     <!-- Fixed navbar-->
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
-        <div class="navbar-header pull-left"><a class="bg-success navbar-brand hidden-xs" href="/changelog">Whats New?</a>
+        <div class="navbar-header pull-left"><a class="bg-success navbar-brand hidden-xs" href="/changelog">What's New?</a>
           <ul class="nav navbar-nav pull-left">
-            <li><a id="collect" href="/article/create">Collect</a></li>
+            <li><a id="collect" href="/article/create">Collect</a>
+            </li>
           </ul>
           <ul class="nav navbar-nav pull-left">
             <li><a id="inbox" href="/usert/inbox">Inbox </a></li>
@@ -30,7 +31,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left">
-            <li class="show-xs"><a class="bg-success visible-xs" href="/changelog">Whats New?</a>
+            <li class="show-xs"><a class="bg-success visible-xs" href="/changelog">What's New?</a>
             </li>
             <li><a href="/blog/blog">blog<span class="badge osmbcbadge-lang">3</span><span class="badge osmbcbadge-lang2">4</span></a></li>
             <li class="dropdown" id="article"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Lists<span class="caret"></span></a>
@@ -97,7 +98,7 @@
                 <div class="col-sm-2"> </div>
                 <div class="col-sm-6">
                   <input class="form-control" id="searchField" type="text" name="search" value="http://www.test.dä/holla">
-                  <p class="osmbc-help-text" align="center">Please check your link for duplicates before   collecting.</p>
+                  <p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>
                 </div>
                 <div class="col-sm-2">
                   <button class="btn btn-large btn-primary" name="SearchNow" type="submit">Search</button>
@@ -108,7 +109,7 @@
         </div>
         <div class="row">
           <p id="articleCounter"><a style="color:Gray;">
-               Display 2 of 2 articles.</a>
+               Displaying 2 of 2 results.</a>
           </p>
           <table class="table table-striped table-condensed table-responsive">
             <thead>
@@ -116,35 +117,36 @@
                 <th>Blog</th>
                 <th>Title</th>
                 <th class="hidden-xs">Cat (EN)</th>
-                <th class="hidden-xs">collection</th>
+                <th class="hidden-xs">Collection</th>
               </tr>
             </thead>
-            <tbody></tbody>
-            <tbody><tr onclick="$('.class_3').toggleClass('hidden');">
-              <td><span class="glyphicon glyphicon-triangle-right class_3"></span><span class="glyphicon glyphicon-triangle-bottom hidden class_3"></span><a href="/blog/blog">blog</a></td>
-              <td><a href="/article/3">No Title</a></td>
-              <td class="hidden-xs"></td>
-              <td class="pre">http://www.test.dä/holla</td>
-            </tr>
-            <tr class="class_3 hidden">
-              <td></td>
-              <td colspan="1"><p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lorem ipsum dolores.</p>
+            <tbody>
+              <tr onclick="$('.class_3').toggleClass('hidden');">
+                <td><span class="glyphicon glyphicon-triangle-right class_3"></span><span class="glyphicon glyphicon-triangle-bottom hidden class_3"></span><a href="/blog/blog">blog</a></td>
+                <td><a href="/article/3">No Title</a></td>
+                <td class="hidden-xs"></td>
+                <td class="pre">http://www.test.dä/holla</td>
+              </tr>
+              <tr class="class_3 hidden">
+                <td></td>
+                <td colspan="1"><p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lorem ipsum dolores.</p>
 </td>
-              <td colspan="2"><p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lerom upsim deloros.</p>
+                <td colspan="2"><p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lerom upsim deloros.</p>
 </td>
-            </tr>
-            <tr onclick="$('.class_5').toggleClass('hidden');">
-              <td><span class="glyphicon glyphicon-triangle-right class_5"></span><span class="glyphicon glyphicon-triangle-bottom hidden class_5"></span><a href="/blog/blog">blog</a></td>
-              <td><a href="/article/5">No Title</a></td>
-              <td class="hidden-xs"></td>
-              <td class="pre">Link1: http://www.test.dä/holla and other</td>
-            </tr>
-            <tr class="class_5 hidden">
-              <td></td>
-              <td colspan="1"></td>
-              <td colspan="2"></td>
-            </tr>
-          </tbody></table>
+              </tr>
+              <tr onclick="$('.class_5').toggleClass('hidden');">
+                <td><span class="glyphicon glyphicon-triangle-right class_5"></span><span class="glyphicon glyphicon-triangle-bottom hidden class_5"></span><a href="/blog/blog">blog</a></td>
+                <td><a href="/article/5">No Title</a></td>
+                <td class="hidden-xs"></td>
+                <td class="pre">Link1: http://www.test.dä/holla and other</td>
+              </tr>
+              <tr class="class_5 hidden">
+                <td></td>
+                <td colspan="1"></td>
+                <td colspan="2"></td>
+              </tr>
+            </tbody>
+          </table>
           <form name="input" id="input" action="/article/create" method="post">
             <input class="hidden" name="languages" value="{&quot;DE&quot;:true,&quot;EN&quot;:true}">
             <h2>
@@ -211,7 +213,8 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-1">Collection <br></div>
+              <div class="col-md-1">Collection <br>
+              </div>
               <div class="col-md-11">
                 <textarea class="form-control" name="collection" rows="7" placeholder="put your link or info here">http://www.test.dä/holla</textarea>
               </div>

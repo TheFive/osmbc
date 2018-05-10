@@ -1,6 +1,6 @@
 # OSMBC
 
-Open Street Map Blog Collector, a tool for editing the weekly news in OpenStreetMap.
+OpenStreetMap Blog Collector, a tool for editing the weekly news in OpenStreetMap.
 
 
 ## Summary

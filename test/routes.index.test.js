@@ -108,7 +108,7 @@ describe("routes/index", function() {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql("<h1>Change Log</h1>");
+          body.should.containEql("<h1>Changelog</h1>");
           userModule.findById(1, function(err, user) {
             should(user).eql({
               id: "1",
@@ -138,7 +138,7 @@ describe("routes/index", function() {
         request.get({url: url, jar: jar}, function (err, response, body) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
-          body.should.containEql("<h1>Change Log</h1>");
+          body.should.containEql("<h1>Changelog</h1>");
           bddone();
         });
       });

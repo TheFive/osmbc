@@ -4,7 +4,7 @@ mixin homeButton(addclass)
   if !layout || layout.osmbc_version === layout.user.lastChangeLogView
     a(href=htmlroot+'/osmbc.html' class=addclass)=appName
   else
-    a.bg-success(href=layout.htmlroot+'/changelog' class=addclass) Whats New?
+    a.bg-success(href=layout.htmlroot+'/changelog' class=addclass) What's New?
 
 
 mixin firstBlogOfList(list,count,c)
@@ -21,7 +21,10 @@ mixin firstBlogOfList(list,count,c)
 mixin collectMenu
   ul.nav.navbar-nav.pull-left
     li
-      a#collect(href=htmlroot + '/article/create') Collect
+      if (layout && layout.user.access === "guest")
+        a#collect(href=htmlroot + '/article/create') Submit Article
+      else
+        a#collect(href=htmlroot + '/article/create') Collect
 
 mixin myGuestArticleMenu
   ul.nav.navbar-nav.pull-left
