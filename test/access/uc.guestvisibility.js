@@ -12,7 +12,7 @@ var userModule = require("../../model/user.js");
 
 
 describe("uc/guest visibility", function() {
-  this.timeout(20000);
+  this.timeout(24000);
   let bTheFive = null;
   let bGuestUser = null;
   beforeEach(async function() {
