@@ -15,8 +15,11 @@ block content
             | 
           .col-sm-6
             input#searchField(type="text",class="form-control",name ="search",value=search)
-            if showCollect 
-              p.osmbc-help-text(align="center") Please check your link for duplicates before   collecting.
+            if showCollect
+              if (layout && layout.user.access === "guest")
+                p.osmbc-help-text(align="center") Please check your link for duplicates before submit it.
+              else
+                p.osmbc-help-text(align="center") Please check your link for duplicates before collect it.
 
           .col-sm-2
             button.btn.btn-large.btn-primary(name="SearchNow" type="submit") Search
@@ -30,39 +33,37 @@ block content
       if (foundArticles.length>0)
         p#articleCounter
           a(style={color:'Gray'}) 
-            | Display #{(show>foundArticles.length)?foundArticles.length:show} of #{foundArticles.length} articles.
+            | Displaying #{(show>foundArticles.length)?foundArticles.length:show} of #{foundArticles.length} results.
           if (show < foundArticles.length)
             a(href=action + "?search=" + search + "&show=all&edit=showCollect")   Show All
         table.table.table-striped.table-condensed.table-responsive
           thead
             tr 
-              th
-                |Blog
-              th
-                |Title
-              th.hidden-xs
-                |Cat (EN)
-              th.hidden-xs
-                |collection
+              th="Blog"
+              th="Title"
+              th.hidden-xs="Cat (EN)"
+              if (layout && layout.user.access === "guest")
+                th.hidden-xs="Submission"
+              else
+                th.hidden-xs="Collection"
           tbody
-
-          each  article,count in foundArticles
-            if (count < show)
-              tr(onclick=`$('.class_${article.id}').toggleClass('hidden');`)
-                td
-                  span.glyphicon.glyphicon-triangle-right(class="class_" + article.id)
-                  span.glyphicon.glyphicon-triangle-bottom.hidden(class="class_" + article.id)
-                  a(href=layout.htmlroot+"/blog/" + article.blog)=article.blog
-                td
-                  a(href=layout.htmlroot+"/article/" + article.id)=((article.title)?article.title:"No Title")
-                td.hidden-xs=article.categoryEN
-                td.pre=article.collection
-              tr(class="class_" + article.id).hidden
-                td
-                td(colspan=1)
-                  |!{layout.md_render(article["markdown"+layout.language])}
-                td(colspan=2)
-                  |!{layout.md_render(article["markdown"+layout.language2])}
+            each  article,count in foundArticles
+              if (count < show)
+                tr(onclick=`$('.class_${article.id}').toggleClass('hidden');`)
+                  td
+                    span.glyphicon.glyphicon-triangle-right(class="class_" + article.id)
+                    span.glyphicon.glyphicon-triangle-bottom.hidden(class="class_" + article.id)
+                    a(href=layout.htmlroot+"/blog/" + article.blog)=article.blog
+                  td
+                    a(href=layout.htmlroot+"/article/" + article.id)=((article.title)?article.title:"No Title")
+                  td.hidden-xs=article.categoryEN
+                  td.pre=article.collection
+                tr(class="class_" + article.id).hidden
+                  td
+                  td(colspan=1)
+                    |!{layout.md_render(article["markdown"+layout.language])}
+                  td(colspan=2)
+                    |!{layout.md_render(article["markdown"+layout.language2])}
 
            
       else
@@ -112,7 +113,10 @@ block content
                  
           .row
             .col-md-1
-              | Collection <br>
+              if (layout && layout.user.access === "guest")
+                | Submission <br>
+              else
+                | Collection <br>
             .col-md-11
               textarea.form-control(name="collection",rows=7,placeholder="put your link or info here")=collection
 

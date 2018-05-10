@@ -134,7 +134,10 @@ block content
 
     .row
       .form-group
-        label.col-md-1="Collection"
+        if (layout && layout.user.access === "guest")
+          label.col-md-1="Submission"
+        else
+          label.col-md-1="Collection"
         .col-md-10
           div.label.label-danger#collection_unsaved(style="display:none")="unsaved"
           textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection"))=article.collection
