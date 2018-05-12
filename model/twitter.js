@@ -66,9 +66,9 @@ function expandTwitterUrl(collection, callback) {
       if (err) {
         console.error("Error while expanding twitter url"+"/statuses/show/" + twitID);
         console.error(err);
-        return callback(null);
+        return callback(null,collection);
       }
-      if (!result) return callback(null);
+      if (!result) return callback(null,collection);
 
       let tweetAsText = result.full_text;
 
