@@ -63,8 +63,8 @@ function expandTwitterUrl(collection, callback) {
       collExtension[index] = "";
 
       // Error, ignore and do not expand
-      if (err) return callback(null);
-      if (!result) return callback(null);
+      if (err) return callback(null, collection);
+      if (!result) return callback(null, collection);
 
       let tweetAsText = result.full_text;
 
