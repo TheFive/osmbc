@@ -533,7 +533,8 @@ function executeScript(req, res, next) {
       env: {
         OSMUSER: req.user.OSMUser,
         SCRIPT_PATH: scriptFilePath,
-        LOG_PATH: logFilePath
+        LOG_PATH: logFilePath,
+        LC_CTYPE: "de_DE.UTF-8"
       }
     };
     if (config.getValue("scripts").uid) {
