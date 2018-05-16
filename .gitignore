@@ -21,3 +21,4 @@ script_logs
 *_actual.html.dceql
 weekly2all.py
 data.json
+!/package-lock.json
