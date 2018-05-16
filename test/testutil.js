@@ -518,7 +518,7 @@ Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, giv
       try {
         fs.unlinkSync(actualFile);
       } catch (err) {}
-      console.info(expectedFile+" is domequal to result");
+      console.info(expectedFile+" is domequal to result. Use TEST_RENAME_DOMEQUAL=TRUE to modify expected file.");
       return;
     }
   }
