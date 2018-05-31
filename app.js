@@ -88,11 +88,13 @@ morgan.token('remote-addr', function (req) {
   return req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 });
 
+let logInfoTemplate = config.getValue("logInfoTemplate",{mustExist: true});
+
 if (app.get("env") !== "test") {
-  app.use(morgan(":OSMUser :remote-addr :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"", { stream: logger.stream }));
+  app.use(morgan(logInfoTemplate, { stream: logger.stream }));
 }
 if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
-  app.use(morgan(":OSMUser :remote-addr :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\"", { immediate:true }));
+  app.use(morgan(logInfoTemplate, { immediate:true }));
   app.use(function(req,res,next){
     console.info("Cookies: ",req.cookies);
     next();

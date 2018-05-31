@@ -39,6 +39,7 @@
       }
     }
   },
+  "logInfoTemplate":":OSMUser [:date[clf]] ':method :url HTTP/:http-version' :status :res[content-length] ':referrer' ':user-agent'",
   "SessionSecret":"keyboard cat",
   "SessionName":"session name",
   "AppName":"TESTBC",
