@@ -60,7 +60,7 @@
     "timemachine": "^0.3.0",
     "twit": "^2.2.3",
     "winston": "^2.4.2",
-    "winston-daily-rotate-file": "^1.4.4"
+    "winston-daily-rotate-file": "^3.1.0"
   },
   "devDependencies": {
     "domcompare": "^0.2.3",
