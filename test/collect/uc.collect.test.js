@@ -79,19 +79,6 @@ describe("uc/collect", function() {
       await browser.pressButton("SearchNow");
       browser.assert.expectHtmlSync("collect","foundAnArticle");
     });
-    it("should search and store collected article for one language", async function() {
-      await browser.visit("/osmbc");
-      await browser.click("a#lang2_EN");
-      await browser.visit("/article/create");
-      browser.fill("search", "searchfor");
-      await browser.pressButton("SearchNow");
-      browser.fill("title", "Test Title for Article");
-
-      await browser.click("button[id=OKLang]");
-      browser.assert.expectHtmlSync("collect","editPageWithOneLanguage");
-
-
-    });
   });
 });
 

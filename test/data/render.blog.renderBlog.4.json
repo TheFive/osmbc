@@ -5,5 +5,5 @@
               "categoryEN":"not exist"}],
   "testBlogName":"BLOG",
   "lang":"EN",
-  "testBlogResultHtml":"<p>01/02/2015-08/02/2015</p>\n<h2> Blog Missing Cat: not exist</h2>\n<p> Please use [edit blog detail] to enter category</p>\n<p> Or edit The Articles  <a href=\"/article/1\">1</a> </p>\n<p align=\"right\"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\"> produced</a> by .</i></p>\n"
+  "testBlogResultHtml":"<meta charset=\"utf-8\"/>\n<p>01/02/2015-08/02/2015</p>\n<h2> Blog Missing Cat: not exist</h2>\n<p> Please use [edit blog detail] to enter category</p>\n<p> Or edit The Articles  <a href=\"/article/1\">1</a> </p>\n<p align=\"right\"><i>This weekly was <a href=\"https://wiki.openstreetmap.org/wiki/WeeklyOSM#Languages\"> produced</a> by .</i></p>\n"
 }
