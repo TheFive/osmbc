@@ -1,5 +1,26 @@
 # Change Log
 
+## [3.3.3](https://github.com/TheFive/osmbc/tree/3.3.3) (2018-07-24)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.2c...3.3.3)
+
+**Implemented enhancements:**
+
+- Remove OK \(Only for LANGUAGE\) from Collect Window. [\#775](https://github.com/TheFive/osmbc/issues/775)
+- Make Logfile configurable [\#774](https://github.com/TheFive/osmbc/issues/774)
+- somewhere on the front page another click to MM? :\) [\#771](https://github.com/TheFive/osmbc/issues/771)
+
+**Fixed bugs:**
+
+- Fix passport openstreetnap https refirection issue [\#772](https://github.com/TheFive/osmbc/issues/772)
+- Mentioning in Article Comments is not coloured, if the mentioned name is at a beginning of a line. [\#767](https://github.com/TheFive/osmbc/issues/767)
+
+**Closed issues:**
+
+- Add encoding to Content-type header to /blog/$issue/preview?download=true [\#776](https://github.com/TheFive/osmbc/issues/776)
+
+## [3.3.2c](https://github.com/TheFive/osmbc/tree/3.3.2c) (2018-05-12)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.2b...3.3.2c)
+
 ## [3.3.2b](https://github.com/TheFive/osmbc/tree/3.3.2b) (2018-05-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.2...3.3.2b)
 
