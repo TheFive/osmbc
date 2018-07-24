@@ -19,7 +19,7 @@ const userModule   = require("../../model/user.js");
 
 
 describe("uc/blog", function() {
-  this.timeout(100000);
+  this.timeout(150000);
   let jar  = null;
   let nockLoginPage;
   beforeEach(async function() {
