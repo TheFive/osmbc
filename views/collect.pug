@@ -102,9 +102,7 @@ block content
                 .col-md-5
                   input.btn.btn-large.btn-primary(type="submit", id="OK",value="OK")
                   a(href=layout.htmlroot+`/article/create` class="btn btn-default" role="button") Cancel
-                  button.btn.btn-large.osmbcbadge-lang(id="OKLang",name="OKLang", onclick =`window.onbeforeunload=null; document.getElementById('input').action = '${layout.htmlroot}/article/create?notranslation=true';document.getElementById('input').submit();`) OK (only #{layout.user.mainLang})
 
-            
           .row
             .col-md-1
               | Title <br>
@@ -138,7 +136,6 @@ block scripts
       categoryEN = document.getElementById("categoryEN");
       if (categoryEN) categoryEN.onchange = onchangeCategory;
       okButton = document.getElementById("OK");
-      okButtonlang = document.getElementById("OKLang");
       title = document.getElementById("title");
       if (title) title.onchange = onchangeTitle;
       if (title) title.onkeyup = onchangeTitle;
@@ -164,10 +161,8 @@ block scripts
       if (!title) return;
       var t = title.value;
       okButton.disabled = true;
-      okButtonlang.disabled = true;
       if (t.length>5) {
         okButton.disabled=false;
-        okButtonlang.disabled=false;
       }
     }
    

@@ -166,7 +166,6 @@
                   </div>
                   <div class="col-md-5">
                     <input class="btn btn-large btn-primary" type="submit" id="OK" value="OK" disabled="true"><a class="btn btn-default" href="/article/create" role="button">Cancel</a>
-                    <button class="btn btn-large osmbcbadge-lang" id="OKLang" name="OKLang" onclick="window.onbeforeunload=null; document.getElementById('input').action = '/article/create?notranslation=true';document.getElementById('input').submit();" disabled="true">OK (only )</button>
                   </div>
                 </div>
               </div>
@@ -220,7 +219,6 @@
     categoryEN = document.getElementById("categoryEN");
     if (categoryEN) categoryEN.onchange = onchangeCategory;
     okButton = document.getElementById("OK");
-    okButtonlang = document.getElementById("OKLang");
     title = document.getElementById("title");
     if (title) title.onchange = onchangeTitle;
     if (title) title.onkeyup = onchangeTitle;
@@ -246,10 +244,8 @@
     if (!title) return;
     var t = title.value;
     okButton.disabled = true;
-    okButtonlang.disabled = true;
     if (t.length>5) {
       okButton.disabled=false;
-      okButtonlang.disabled=false;
     }
   }
   

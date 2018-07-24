@@ -176,13 +176,23 @@ MarkdownRenderer.prototype.formatTeamString = function formatTeamString2() {
   return "";
 };
 
+
+HtmlRenderer.prototype.charSetString = function charSetString() {
+  return "<meta charset=\"utf-8\"/>\n";
+};
+
+MarkdownRenderer.prototype.charSetString = function charSetString2() {
+  return "";
+};
+
+
 function renderBlogStructure(lang, articleData) {
   /* jshint validthis: true */
   debug("htmlBlog");
 
   let articles = articleData.articles;
   let teamString = articleData.teamString;
-  let preview = "";
+  let preview = this.charSetString();
   let blog = this.blog;
   let i, j; // often used iterator, declared here because there is no block scope in JS.
   preview += this.subtitle(lang);

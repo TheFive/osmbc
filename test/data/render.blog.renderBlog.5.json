@@ -8,5 +8,5 @@
   "testBlogName":"BLOG",
   "lang":"DE",
   "testBlogResultMarkdownDE":"## Mapping\n* Dies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.\n",
-  "testBlogResultHtml":"<p>02.02.2015-03.03.2015</p>\n<p align=\"right\"><i>Diese Wochennotiz wurde erstellt von TESTER.</i></p>\n"
+  "testBlogResultHtml":"<meta charset=\"utf-8\"/>\n<p>02.02.2015-03.03.2015</p>\n<p align=\"right\"><i>Diese Wochennotiz wurde erstellt von TESTER.</i></p>\n"
 }
