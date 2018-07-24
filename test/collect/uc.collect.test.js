@@ -67,35 +67,17 @@ describe("uc/collect", function() {
   describe("Collect", function() {
     it("should search and store collected article", async function() {
       await browser.visit("/article/create");
-      await browser
-        .fill("search", "searchfor")
-        .pressButton("SearchNow");
-      await browser
-        .fill("title", "Test Title for Article")
-        .pressButton("OK");
+      browser.fill("search", "searchfor");
+      await browser.pressButton("SearchNow");
+      browser.fill("title", "Test Title for Article");
+      await browser.pressButton("OK");
       browser.assert.expectHtmlSync("collect","editPageAfterCollect");
     });
     it("should search and find existing article", async function() {
       await browser.visit("/article/create");
-      await browser
-        .fill("search", "http://www.test.dä/holla")
-        .pressButton("SearchNow");
+      browser.fill("search", "http://www.test.dä/holla")
+      await browser.pressButton("SearchNow");
       browser.assert.expectHtmlSync("collect","foundAnArticle");
-    });
-    it("should search and store collected article for one language", async function() {
-      await browser.visit("/osmbc");
-      await browser.click("a#lang2_EN");
-      await browser.visit("/article/create");
-      await browser
-        .fill("search", "searchfor")
-        .pressButton("SearchNow");
-
-      await  browser
-        .fill("title", "Test Title for Article")
-        .click("button[id=OKLang]");
-      browser.assert.expectHtmlSync("collect","editPageWithOneLanguage");
-
-
     });
   });
 });

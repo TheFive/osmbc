@@ -505,13 +505,22 @@ Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, giv
 
   let result = domcompare(expectedDom,actualDom);
   if (result.getResult()) {
-    // files are different, but dom equal
-    fs.writeFileSync(actualFile+".dceql", string, "UTF8");
-    try {
-      fs.unlinkSync(actualFile);
-    } catch (err) {}
-    console.info(expectedFile+" is domequal to result");
-    return;
+    if (process.env.TEST_RENAME_DOMEQUAL === "TRUE") {
+      fs.writeFileSync(expectedFile, string, "UTF8");
+      try {
+        fs.unlinkSync(actualFile+".dceql");
+      } catch (err) {}
+      console.info(expectedFile+" is domequal to result, original was changed.");
+      return;
+    } else {
+      // files are different, but dom equal
+      fs.writeFileSync(actualFile+".dceql", string, "UTF8");
+      try {
+        fs.unlinkSync(actualFile);
+      } catch (err) {}
+      console.info(expectedFile+" is domequal to result. Use TEST_RENAME_DOMEQUAL=TRUE to modify expected file.");
+      return;
+    }
   }
   // there is a difference, so create the actual data as file
   // do easier fix the test.

@@ -39,6 +39,7 @@
       }
     }
   },
+  "logInfoTemplate":":OSMUser [:date[clf]] ':method :url HTTP/:http-version' :status :res[content-length] ':referrer' ':user-agent'",
   "SessionSecret":"keyboard cat",
   "SessionName":"session name",
   "AppName":"TESTBC",
@@ -65,8 +66,8 @@
     "testapikey.TBC":"TBC Collections"
   },
   "maillog_directory":".",
-  "maillog_prefix":"maillogTest",
-  "maillog_dateformat":".log",
+  "maillog_prefix":"maillogTest%DATE%.log",
+  "maillog_dateformat":"[]",
   "MS_TranslateApiKey":"hidden",
   "CalendarDateFormat":"L",
   "WelcomeInterval":"1 month",

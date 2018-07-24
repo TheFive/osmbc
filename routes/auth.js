@@ -83,7 +83,10 @@ passport.use(new Strategy({
   name: "openstreetmap",
   consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY", {mustExist: true}),
   consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET", {mustExist: true}),
-  callbackURL: config.getValue("callbackUrl", {mustExist: true})
+  callbackURL: config.getValue("callbackUrl", {mustExist: true}),
+  requestTokenURL: "https://www.openstreetmap.org/oauth/request_token",
+  accessTokenURL: "https://www.openstreetmap.org/oauth/access_token",
+  userAuthorizationURL: "https://www.openstreetmap.org/oauth/authorize"
 },
 function (token, tokenSecret, profile, done) {
   debug("passport.use Token Function");

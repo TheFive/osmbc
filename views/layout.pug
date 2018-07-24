@@ -21,10 +21,10 @@ mixin firstBlogOfList(list,count,c)
 mixin collectMenu
   ul.nav.navbar-nav.pull-left
     li
-      if (layout && layout.user.access === "guest")
-        a#collect(href=htmlroot + '/article/create') Submit Article
-      else
+      if (layout && layout.user.access === "full")
         a#collect(href=htmlroot + '/article/create') Collect
+      else
+        a#collect(href=htmlroot + '/article/create') Submit Article
 
 mixin myGuestArticleMenu
   ul.nav.navbar-nav.pull-left
@@ -95,6 +95,11 @@ mixin toolMenu
             a(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
           li
             a(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
+
+      li.divider
+      li.dropdown-header Editorial Tools
+        li
+          a(href="https://mattermost.openstreetmap.de") Mattermost for Editorial Team
 
 
       li.divider
