@@ -323,6 +323,9 @@ function setBlogStatus(req, res, next) {
   if (req.body.action === "editlang") {
     return req.blog.closeBlog(lang, user, false, finalFunction);
   }
+  if (req.body.action === "deletereview") {
+    return req.blog.setReviewComment(lang, user, "deletereview", finalFunction);
+  }
   return next(new Error("Unknown Status Combination, Please Contact the Author"));
 }
 

@@ -135,26 +135,48 @@
                   <th>review</th>
                   <th>exported</th>
                   <th>close</th>
+                  <th>action</th>
                 </tr>
                 <tr>
                   <td>DE</td>
                   <td>review</td>
                   <td>-</td>
-                  <td>-
+                  <td>-</td>
+                  <td>-</td>
+                  <td>
+                    <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
+                      <input class="hidden" type="text" name="lang" value="DE">
+                      <input class="hidden" type="text" name="action" value="deletereview">
+                      <button class="btn btn-xs btn-warning" id="deletereviewbutton" type="submit">Delete Review</button>
+                    </form>
                   </td>
                 </tr>
                 <tr>
                   <td>EN</td>
                   <td>review</td>
                   <td>-</td>
-                  <td>-
+                  <td>-</td>
+                  <td>-</td>
+                  <td>
+                    <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
+                      <input class="hidden" type="text" name="lang" value="EN">
+                      <input class="hidden" type="text" name="action" value="deletereview">
+                      <button class="btn btn-xs btn-warning" id="deletereviewbutton" type="submit">Delete Review</button>
+                    </form>
                   </td>
                 </tr>
                 <tr>
                   <td>ES</td>
                   <td>review</td>
                   <td>-</td>
-                  <td>-
+                  <td>-</td>
+                  <td>-</td>
+                  <td>
+                    <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
+                      <input class="hidden" type="text" name="lang" value="ES">
+                      <input class="hidden" type="text" name="action" value="deletereview">
+                      <button class="btn btn-xs btn-warning" id="deletereviewbutton" type="submit">Delete Review</button>
+                    </form>
                   </td>
                 </tr>
               </tbody></table>
