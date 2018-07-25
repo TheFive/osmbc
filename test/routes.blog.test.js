@@ -329,7 +329,6 @@ describe("routes/blog", function() {
           jar: jar
         }, function (err, res, body) {
           should.not.exist(err);
-          console.log(body);
           should(res.statusCode).eql(302);
           should(body).eql("Found. Redirecting to /");
           blogModule.findOne({name: "secondblog"}, function (err, blog) {
