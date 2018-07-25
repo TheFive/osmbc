@@ -241,11 +241,15 @@ block all
 
       .container-fluid
         if (layout && layout.user && layout.user.emailInvalidation)
-
           p
-          div.alert.alert-danger
-            span="Waiting for email verification, have a look at the mail with the title '[OSMBC] Welcome to OSMBC' in your inbox or change the request in your "
-            a.alert-link(href=layout.htmlroot+"/usert/self") User Configuration
+            div.alert.alert-danger.text-center
+              span="Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox."
+              a.alert-link(href=layout.htmlroot+"/usert/self")=" Goto User Configuration"
+        if (layout && layout.user && !layout.user.email && !layout.user.emailInvalidation)
+          p
+            div.alert.alert-danger.text-center
+              span="Please enter your email to receive comments and feedback here:"
+              a.alert-link(href=layout.htmlroot + "/usert/self")=" Goto User Configuration"
 
         p
          block content

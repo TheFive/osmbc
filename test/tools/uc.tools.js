@@ -24,7 +24,7 @@ describe("views/tools", function() {
   var browser;
   beforeEach(async function() {
     await testutil.clearDB();
-    await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "EN"});
+    await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "EN",email:"a@b.c"});
     await blogModule.createNewBlog({OSMUser: "TheFive", access: "full"}, {status: "edit"});
     testutil.startServerSync();
     browser = await testutil.getNewBrowser("TheFive");

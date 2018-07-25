@@ -46,8 +46,8 @@ describe("uc/blog", function() {
         testutil.importData.bind(null,
           {clear: true,
             blog: [{name: "blog"}],
-            user: [{OSMUser: "TheFive", access: "full", mainLang: "DE"},
-              {OSMUser: "TheOther", access: "full", mainLang: "EN"}]}),
+            user: [{OSMUser: "TheFive", access: "full", mainLang: "DE",email:"a@b.c"},
+              {OSMUser: "TheOther", access: "full", mainLang: "EN",email:"d@e.f"}]}),
         testutil.startServerWithLogin.bind(null, "TheFive", jar)
       ], bddone);
     });
@@ -134,7 +134,7 @@ describe("uc/blog", function() {
     beforeEach(async function() {
       mockdate.set(new Date("2016-05-25T19:00:00Z"));
       await testutil.importData("blog/DataWN290.json");
-      await userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN"});
+      await userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN",email:"a@b.c"});
       testutil.startServerSync();
       browser = await testutil.getNewBrowser("TheFive");
     });

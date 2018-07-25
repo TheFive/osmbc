@@ -28,9 +28,9 @@ describe("uc/index", function() {
       .times(999)
       .reply(200, "ok");
     await testutil.clearDB();
-    await userModule.createNewUser({OSMUser: "TheFive", access: "full",language:"DE"});
-    await userModule.createNewUser({OSMUser: "OldUser", access: "full",lang:"EN",lastAccess:"2016-02-25T20:00"});
-    await userModule.createNewUser({OSMUser: "OldUserAway", access: "denied",lastAccess:"2016-02-25T20:00"});
+    await userModule.createNewUser({OSMUser: "TheFive", access: "full",language:"DE",email:"a@b.c"});
+    await userModule.createNewUser({OSMUser: "OldUser", access: "full",lang:"EN",email:"d@e.f",lastAccess:"2016-02-25T20:00"});
+    await userModule.createNewUser({OSMUser: "OldUserAway", access: "denied",email:"g@h.i",lastAccess:"2016-02-25T20:00"});
     testutil.startServerSync();
 
     browser = await testutil.getNewBrowser("TheFive");

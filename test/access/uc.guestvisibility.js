@@ -18,7 +18,7 @@ describe("uc/guest visibility", function() {
   beforeEach(async function() {
     await testutil.clearDB();
     testutil.startServerSync("TheFive");
-    await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "EN"});
+    await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "EN",email:"a@g.c"});
     await userModule.createNewUser({OSMUser: "GuestUser", access: "guest", language: "EN"});
     bTheFive = await testutil.getNewBrowser("TheFive");
     bGuestUser = await testutil.getNewBrowser("GuestUser");
