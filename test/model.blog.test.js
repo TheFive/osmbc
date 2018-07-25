@@ -364,8 +364,8 @@ describe("model/blog", function() {
         });
       });
     });
-    it("should not allow other edit a review", function (bddone) {
-      blogModule.createNewBlog({OSMUser: "test"}, {name: "Title", status: "TEST"}, function(err, newBlog) {
+    it("should reset a review process", function (bddone) {
+      blogModule.createNewBlog({OSMUser: "test"}, {name: "Title", status: "EDIT"}, function(err, newBlog) {
         should.not.exist(err);
         should.exist(newBlog);
         var id = newBlog.id;
@@ -374,10 +374,14 @@ describe("model/blog", function() {
 
           blogModule.findById(id, function(err, blog) {
             should.not.exist(err);
-            blog.editReviewComment("DE", {OSMUser: "user2"}, 0, "is nearly approved.", function(err) {
-              should.exist(err);
-              should(err.message).eql(">user2< is not allowed to change review");
-              bddone();
+            should(blog.getStatus("DE")).eql("Review DE");
+            blog.setReviewComment("DE", {OSMUser: "user2"}, "deletereview", function(err) {
+              should.not.exist(err);
+              blogModule.findById(id, function(err, blog) {
+                should.not.exist(err);
+                should(blog.getStatus("DE")).eql("EDIT");
+                bddone();
+              });
             });
           });
         });
