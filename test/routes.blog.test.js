@@ -321,6 +321,24 @@ describe("routes/blog", function() {
         });
       });
     });
+    it("should  clear review when deleting a review process", function (bddone) {
+      testutil.startServerWithLogin("TestUser", jar, function () {
+        request.post({
+          url: baseLink + "/blog/secondblog/setLangStatus",
+          form: {lang: "DE", action: "deletereview"},
+          jar: jar
+        }, function (err, res, body) {
+          should.not.exist(err);
+          should(res.statusCode).eql(302);
+          should(body).eql("Found. Redirecting to /");
+          blogModule.findOne({name: "secondblog"}, function (err, blog) {
+            should.not.exist(err);
+            should(blog.reviewCommentDE).is.undefined();
+            bddone();
+          });
+        });
+      });
+    });
     it("should close a language", function (bddone) {
       testutil.startServerWithLogin("TestUser", jar, function () {
         request.post({

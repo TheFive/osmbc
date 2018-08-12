@@ -144,7 +144,15 @@ describe("views/user", function() {
     should(browser.html("body")).match(/Wrong User: expected &gt;TestValidate&lt; given &gt;TheFive&lt;/);
   });
   it("should validate a usermail if correct user logged in", async function() {
+    let errors = [];
     let result = await userModule.find({OSMUser: "TheFive"});
+    should(result.email).is.undefined();
+
+    // Check Homepage for Missing Email Warning
+    await browser.visit("/osmbc");
+    browser.assert.expectHtmlSync(errors,"user","home missing email");
+
+
     await browser.visit("/usert/1");
     browser.fill("EMail","test@test.org");
     await browser.click("#save");
@@ -155,6 +163,11 @@ describe("views/user", function() {
     let mail = mailChecker.getCall(0).args[0].text;
     let link = mail.substring(mail.indexOf("/usert"),mail.indexOf("]. This"));
 
+    // Check Homepage for Missing Verification Warning
+    await browser.visit("/osmbc");
+    browser.assert.expectHtmlSync(errors,"user","home missing verification");
+
+
     await browser.visit(link);
     result = await userModule.findById(1);
 
@@ -162,6 +175,12 @@ describe("views/user", function() {
     should(result.OSMUser).eql("TheFive");
     should(result.email).eql("test@test.org");
     should.not.exist(result.emailInvalidation);
+
+    // Check Homepage for no Warning
+    await browser.visit("/osmbc");
+    browser.assert.expectHtmlSync(errors,"user","home no warning");
+    should(errors).eql([]);
+
   });
   it("should display & sort userlist", async function() {
     await userModule.createNewUser({OSMUser: "Test1", access: "full", mdWeeklyAuthor: "b", color: "green"});

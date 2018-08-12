@@ -97,27 +97,27 @@ block content
               th review
               th exported
               th close
+              th action
             each lang in layout.languages
               tr
+                td=lang
+                td=( (blog["reviewComment"+lang]) ? "review":"-")
+                td=( (blog["exported"+lang]) ? "exported":"-")
+                td=( (blog["exported"+lang]) ? "exported":"-")
+                td=( (blog["close"+lang]) ? "close":"-")
                 td
-                 | #{lang}
-                td
-                 | #{(blog["reviewComment"+lang])?"review":"-"}
-                td
-                 | #{(blog["exported"+lang])?"exported":"-"}
-                td
-                  if blog["close"+lang]
-                    | close  
-                    td
-                      form(id="startReview" name="reopenlang", action=layout.htmlroot + "/blog/" + blog.name +"/setLangStatus", method="post")
-                        input.hidden(type="text",name="lang" value = lang)
-                        input.hidden(type="text",name ="action" value = "editlang")
-                        button.btn.btn-xs.btn-warning(id="closebutton" type = "submit" ) Reopen
+                  if (blog["close" + lang])
+                    form(id="startReview" name="reopenlang", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
+                      input.hidden(type="text",name="lang" value = lang)
+                      input.hidden(type="text",name ="action" value = "editlang")
+                      button.btn.btn-xs.btn-warning(id="closebutton" type = "submit" ) Reopen
+                  else if (blog["reviewComment" + lang])
+                    form(id="deleteReview" name="deleteReview", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
+                      input.hidden(type="text",name="lang" value = lang)
+                      input.hidden(type="text",name ="action" value = "deletereview")
+                      button.btn.btn-xs.btn-warning(id="deletereviewbutton" type = "submit" ) Delete Review
 
 
-                  else 
-                    | -
-                
 
       .row
         .col-md-2

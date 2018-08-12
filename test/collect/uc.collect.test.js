@@ -31,8 +31,8 @@ describe("uc/collect", function() {
   beforeEach(async function() {
     nockLoginPage = testutil.nockLoginPage();
     await testutil.clearDB();
-    await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE", secondLang: "EN"});
-    await blogModule.createNewBlog({OSMUser: "test"}, {name: "blog",status:"edit"});
+    await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE", secondLang: "EN",email:"a@b.c"});
+    await blogModule.createNewBlog({OSMUser: "test",email:"d@e.f"}, {name: "blog",status:"edit"});
     await articleModule.createNewArticle({
       blog: "blog",
       collection: "http://www.test.dä/holla",

@@ -126,6 +126,12 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
         // nothing has to be written to review Comment
         return cb();
       }
+      if (data === "deletereview") {
+        // review moduls has to be cancled.
+        // delete all reviews done
+        delete self[rc];
+        return cb();
+      }
       for (let i = 0; i < self[rc].length; i++) {
         if (self[rc][i].text === "reviewing..." && self[rc][i].user === user.OSMUser) {
           self[rc][i].text = data;
