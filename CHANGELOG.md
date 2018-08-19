@@ -1,17 +1,5 @@
 # Change Log
 
-## [3.3.5](https://github.com/TheFive/osmbc/tree/3.3.5) (2018-08-19)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.4...3.3.5)
-
-**Implemented enhancements:**
-
-- Better Integration of \(only\)reviewer in production flow [\#773](https://github.com/TheFive/osmbc/issues/773)
-
-**Closed issues:**
-
-- Collecting new article links on mobile [\#781](https://github.com/TheFive/osmbc/issues/781)
-- EMAIL for Guest on the first page [\#780](https://github.com/TheFive/osmbc/issues/780)
-
 ## [3.3.4](https://github.com/TheFive/osmbc/tree/3.3.4) (2018-08-12)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.3...3.3.4)
 
@@ -1159,13 +1147,13 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
