@@ -36,8 +36,8 @@ ArticleCollectFilter.prototype.editComment = function editComment(user, article,
 };
 
 
-ArticleCollectFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, cb) {
-  debug("ArticleCollectFilter.prototype.sendLanguageStatus");
+ArticleCollectFilter.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, cb) {
+  debug("ArticleCollectFilter.prototype.sendReviewStatus");
   return cb();
 };
 ArticleCollectFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {

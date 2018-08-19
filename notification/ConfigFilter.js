@@ -99,8 +99,8 @@ ConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, change
 };
 
 
-ConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, cb) {
-  debug("ConfigFilter.prototype.sendLanguageStatus");
+ConfigFilter.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, cb) {
+  debug("ConfigFilter.prototype.sendReviewStatus");
   var wnList = [];
   var notify = false;
   if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
@@ -110,7 +110,7 @@ ConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user, bl
   }
   if (!notify) return cb();
   debug("Send out notification");
-  this.receiver.sendLanguageStatus(user, blog, lang, status, cb);
+  this.receiver.sendReviewStatus(user, blog, lang, status, cb);
 };
 
 ConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {

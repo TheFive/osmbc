@@ -129,8 +129,8 @@ UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, ch
 };
 
 
-UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, cb) {
-  debug("UserConfigFilter.prototype.sendLanguageStatus");
+UserConfigFilter.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, cb) {
+  debug("UserConfigFilter.prototype.sendReviewStatus");
   var wnList = [];
   var sendMail = false;
   if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange;
@@ -141,7 +141,7 @@ UserConfigFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user
   if (this.user.access === "guest") sendMail = false;
   if (!sendMail) return cb();
   debug("Send out mail");
-  this.receiver.sendLanguageStatus(user, blog, lang, status, cb);
+  this.receiver.sendReviewStatus(user, blog, lang, status, cb);
 };
 
 UserConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {

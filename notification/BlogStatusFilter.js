@@ -42,14 +42,14 @@ BlogStatusFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, ch
 };
 
 
-BlogStatusFilter.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, cb) {
-  debug("BlogStatusFilter.prototype.sendLanguageStatus");
+BlogStatusFilter.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, cb) {
+  debug("BlogStatusFilter.prototype.sendReviewStatus");
   if (this.languages.indexOf(lang) >= 0) {
-    this.receiver.sendLanguageStatus(user, blog, lang, status, cb);
+    this.receiver.sendReviewStatus(user, blog, lang, status, cb);
   } else return cb();
 };
 BlogStatusFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {
-  debug("BlogStatusFilter.prototype.sendLanguageStatus");
+  debug("BlogStatusFilter.prototype.sendCloseStatus");
   if (this.languages.indexOf(lang) >= 0) {
     this.receiver.sendCloseStatus(user, blog, lang, status, cb);
   } else return cb();
