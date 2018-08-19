@@ -94,8 +94,8 @@ LogModuleReceiver.prototype.updateBlog = function(user, blog, change, cb) {
   }, function finalFunction(err) { cb(err); });
 };
 
-LogModuleReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, cb) {
-  debug("LogModuleReceiver.prototype.sendLanguageStatus");
+LogModuleReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, cb) {
+  debug("LogModuleReceiver.prototype.sendReviewStatus");
   should.exist(blog.id);
   should(blog.id).not.equal(0);
   should(typeof (user)).eql("object");

@@ -9,10 +9,10 @@ function IteratorReceiver(receiverMap) {
   this.receiverMap = receiverMap;
 }
 
-IteratorReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, callback) {
-  debug("IteratorReceiver.prototype.sendLanguageStatus");
+IteratorReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, callback) {
+  debug("IteratorReceiver.prototype.sendReviewStatus");
   async.forEachOf(this.receiverMap, function(value, key, cb) {
-    value.sendLanguageStatus(user, blog, lang, status, cb);
+    value.sendReviewStatus(user, blog, lang, status, cb);
   }, function(err) {
     return callback(err);
   });

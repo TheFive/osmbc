@@ -106,7 +106,7 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
   async.series([
     function logInformation(cb) {
       debug("setReviewComment->logInformation");
-      messageCenter.global.sendLanguageStatus(user, self, lang, data, cb);
+      messageCenter.global.sendReviewStatus(user, self, lang, data, cb);
       // This is the old log and has to be moved to the messageCenter (logReceiver)
       // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
     },
@@ -173,7 +173,7 @@ Blog.prototype.editReviewComment = function editReviewComment(lang, user, index,
   async.series([
     function logInformation(cb) {
       debug("editReviewComment->logInformation");
-      messageCenter.global.sendLanguageStatus(user, self, lang, data, cb);
+      messageCenter.global.sendReviewStatus(user, self, lang, data, cb);
       // This is the old log and has to be moved to the messageCenter (logReceiver)
       // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
     },

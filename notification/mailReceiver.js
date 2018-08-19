@@ -143,15 +143,15 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter, callb
   });
 };
 
-MailReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, callback) {
-  debug("MailReceiver.prototype.sendLanguageStatus");
+MailReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, callback) {
+  debug("MailReceiver.prototype.sendReviewStatus");
   if (this.invalidMail) return callback();
   var self = this;
 
 
   var subject = blog.name + "(" + lang + ") has been reviewed by user " + user.OSMUser;
   if (status === "startreview") {
-    subject = blog.name + "(" + lang + ") review has been started";
+    subject = blog.name + "(" + lang + ") is ready for proofreading";
   }
   if (status === "markexported") {
     subject = blog.name + "(" + lang + ") is exported to WordPress";
@@ -389,10 +389,10 @@ function MailUserReceiver() {
   debug('MailUserReceiver');
 }
 
-MailUserReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user,blog,lang,status,callback) {
-  debug('MailUserReceiver.prototype.sendLanguageStatus');
+MailUserReceiver.prototype.sendReviewStatus = function sendReviewStatus(user,blog,lang,status,callback) {
+  debug('MailUserReceiver.prototype.sendReviewStatus');
   async.forEachOf(userReceiverMap,function(value,key,cb) {
-    value.sendLanguageStatus(user,blog,lang,status,cb);
+    value.sendReviewStatus(user,blog,lang,status,cb);
   },function(err) {
     return callback(err);
   });

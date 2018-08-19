@@ -31,10 +31,10 @@ MessageCenter.prototype.updateBlog = function (user, blog, change, callback) {
     element.updateBlog(user, blog, change, cb);
   }, function final(err) { callback(err); });
 };
-MessageCenter.prototype.sendLanguageStatus = function(user, blog, lang, status, callback) {
-  debug("MessageCenter.prototype.sendLanguageStatus");
+MessageCenter.prototype.sendReviewStatus = function(user, blog, lang, status, callback) {
+  debug("MessageCenter.prototype.sendReviewStatus");
   async.each(this.receiverList, function sendIt(element, cb) {
-    element.sendLanguageStatus(user, blog, lang, status, cb);
+    element.sendReviewStatus(user, blog, lang, status, cb);
   }, function final(err) { callback(err); });
 };
 MessageCenter.prototype.sendCloseStatus = function(user, blog, lang, status, callback) {

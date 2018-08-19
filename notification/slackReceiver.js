@@ -72,8 +72,8 @@ SlackReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter, call
   return callback();
 };
 
-SlackReceiver.prototype.sendLanguageStatus = function sendLanguageStatus(user, blog, lang, status, callback) {
-  debug("SlackReceiver::sendLanguageStatus %s", this.name);
+SlackReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, callback) {
+  debug("SlackReceiver::sendReviewStatus %s", this.name);
 
   var subject = blogNameSlack(blog.name);
 

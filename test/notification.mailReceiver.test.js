@@ -392,8 +392,13 @@ describe("notification/mailReceiver", function() {
 
           should(mailChecker.calledOnce).be.True();
           var result = mailChecker.getCall(0).args[0];
-          var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to I have reviewed</p>';
-          var expectedText = "BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to I have reviewed";
+          var expectedMail = '<h2>Blog blog(ES) was reviewed by testuser</h2><p><span>Blog </span><a href="https://testosm.bc/blog/blog">blog</a><span> was changed by testuser</span></p><p>Review comment is:</p><p>I have reviewed</p>';
+          var expectedText = "BLOG BLOG(ES) WAS REVIEWED BY TESTUSER\n" +
+            "Blog blog [https://testosm.bc/blog/blog] was changed by testuser\n" +
+            "\n" +
+            "Review comment is:\n" +
+            "\n" +
+            "I have reviewed";
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);
           should(mailChecker.getCall(0).args[0]).eql(
@@ -417,8 +422,9 @@ describe("notification/mailReceiver", function() {
 
           should(mailChecker.calledOnce).be.True();
           var result = mailChecker.getCall(0).args[0];
-          var expectedMail = '<h2>Blog blog changed status for ES.</h2><p>Blog <a href="https://testosm.bc/blog/blog">blog</a> was changed by testuser</p><p>Review status was set to exported.</p>';
-          var expectedText = "BLOG BLOG CHANGED STATUS FOR ES.\nBlog blog [https://testosm.bc/blog/blog] was changed by testuser\n\nReview status was set to exported.";
+          var expectedMail = '<h2>Blog blog(ES) has finished review.</h2><p>testuser has finished review for Blog<a href="https://testosm.bc/blog/blog">blog</a></p>';
+          var expectedText = "BLOG BLOG(ES) HAS FINISHED REVIEW.\n" +
+            "testuser has finished review for Blogblog [https://testosm.bc/blog/blog]";
 
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);

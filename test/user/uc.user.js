@@ -19,7 +19,7 @@ const mailReceiver = require("../../notification/mailReceiver.js");
 
 
 describe("views/user", function() {
-  this.timeout(150000);
+  this.timeout(250000);
   let browser;
   let mailChecker;
   beforeEach(async function() {

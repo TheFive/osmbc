@@ -242,14 +242,16 @@ block all
       .container-fluid
         if (layout && layout.user && layout.user.emailInvalidation)
           p
-            div.alert.alert-danger.text-center
-              span="Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox."
-              a.alert-link(href=layout.htmlroot+"/usert/self")=" Goto User Configuration"
+            div.alert.alert-danger.text-center#mailalert
+              p="Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox."
+              p
+                a.alert-link(href=layout.htmlroot+"/usert/self")=" Goto User Configuration"
         if (layout && layout.user && !layout.user.email && !layout.user.emailInvalidation)
           p
-            div.alert.alert-danger.text-center
-              span="Please enter your email to receive comments and feedback here:"
-              a.alert-link(href=layout.htmlroot + "/usert/self")=" Goto User Configuration"
+            div.alert.alert-danger.text-center#mailalert
+              p="Please enter your email to receive comments and feedback here:"
+              p
+                a.alert-link(href=layout.htmlroot + "/usert/self")=" Goto User Configuration"
 
         p
          block content
@@ -269,7 +271,15 @@ block all
       title= title
       link(rel='stylesheet', href=`${htmlroot}${stylesheet}`)
     body
+  script.
+
+    // Init This Window with jQuery ready Callback
+    $(document).ready(init2);
+    function init2() {
+      $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
+    }
 
   block scripts
+
 
 
