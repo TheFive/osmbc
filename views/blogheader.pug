@@ -60,11 +60,9 @@ mixin reviewBlog(reviewComments,lang)
             div.hidden(id="editReview"+lang+i)
               if (!blog["close"+lang])
                 form.form-horizontal(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
-                  .col-md-10
-                    input(type="text",class="form-control",name ="text",id="reviewComment"+lang+i,value=comment.text)
-                    input.hidden(type="text",name="lang" value = lang)
-                  .col-md-2
-                    button.btn.btn-large.btn-primary(id="reviewButton"+lang+i type="submit") Change
+                  textarea(rows=5,class="form-control",name ="text",id="reviewComment"+lang+i)=comment.text
+                  input.hidden(type="text",name="lang" value = lang)
+                  button.btn.btn-large.btn-primary(id="reviewButton"+lang+i type="submit") Change
           if comment.text == "reviewing..."
             if layout.user.OSMUser === comment.user
               - personalReviewStarted = true
@@ -78,15 +76,15 @@ mixin reviewBlog(reviewComments,lang)
           if (!blog["close"+lang])
             if personalReviewStarted
               form.form-horizontal(id="review"+lang name="review"+lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
-                .col-md-10
-                  input(type="text",
+
+                  textarea(rows=5,
                         class="form-control",
                         name ="text",
                         id="reviewComment"+lang
                         placeholder="Please Type your Review here"
                         onkeyup="document.getElementById('reviewButton" + lang +"').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
                   input.hidden(type="text",name="lang" value = lang)
-                .col-md-2
+
                   button.btn.btn-large.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
             else
               form.form-horizontal(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")

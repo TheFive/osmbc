@@ -92,15 +92,17 @@ describe("uc/blog", function() {
       // start personal review
       await b.click("button#reviewButtonDE");
 
-      b.fill("input#reviewCommentDE", "1rst Review Text for DE");
+      b.fill("textarea#reviewCommentDE", "1rst Review Text for DE");
       // simulate keyup to enable button for click.
-      b.keyUp("input#reviewCommentDE", 30);
+      b.keyUp("textarea#reviewCommentDE", 30);
+      await b.click("button#reviewButtonDE:enabled");
+
       await b.click("button#reviewButtonDE");
 
-      b.fill("input#reviewCommentDE", "2nd Review Text for DE");
+      b.fill("textarea#reviewCommentDE", "2nd Review Text for DE");
       // simulate keyup to enable button for click.
-      b.keyUp("input#reviewCommentDE", 30);
-      await b.click("button#reviewButtonDE");
+      b.keyUp("textarea#reviewCommentDE", 30);
+      await b.click("button#reviewButtonDE:enabled");
       b.assert.expectHtmlSync(errors, "blog", "WN251Reviewed");
 
       await b.click("button#didexport");
@@ -119,9 +121,9 @@ describe("uc/blog", function() {
       // start personal review
       await b2.click("button#reviewButtonEN");
 
-      b2.fill("input#reviewCommentEN", "1rst Review Text for EN");
+      b2.fill("textarea#reviewCommentEN", "1rst Review Text for EN");
       // simulate keyup to enable button for click.
-      b2.keyUp("input#reviewCommentEN", 30);
+      b2.keyUp("textarea#reviewCommentEN", 30);
       await b2.click("button#reviewButtonEN");
 
       // in difference to DE language, here no export should appear.
