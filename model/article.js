@@ -15,38 +15,15 @@ const blogModule     = require("../model/blog.js");
 const logModule      = require("../model/logModule.js");
 const configModule   = require("../model/config.js");
 const pgMap          = require("../model/pgMap.js");
-const db          = require("../model/db.js");
 const twitter        = require("../model/twitter.js");
 
 
 
-let listOfOrphanBlog = null;
 
 const htmlRoot      = config.htmlRoot();
 const url = config.url();
 
 
-
-function getListOfOrphanBlog(callback) {
-  debug("getListOfOrphanBlog");
-  util.requireTypes([callback], ["function"]);
-
-  if (process.env.NODE_ENV === "test") listOfOrphanBlog = null;
-  if (listOfOrphanBlog) return callback(null, listOfOrphanBlog);
-  let loob = [];
-  listOfOrphanBlog = [];
-  var query = 'select name from "OpenBlogWithArticle" order by name';
-  db.query(query, function(err, result) {
-    if (err) return callback(err);
-    if (result) {
-      result.rows.forEach(function(item) {
-        loob.push(item.name);
-      });
-    }
-    listOfOrphanBlog = loob;
-    callback(null, listOfOrphanBlog);
-  });
-}
 
 
 function Article (proto) {
@@ -197,7 +174,6 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
 Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
-  listOfOrphanBlog = null;
 
   var self = this;
   delete self.lock;
@@ -472,12 +448,7 @@ pgObject.indexDefinition = {
 
 };
 pgObject.viewDefinition = {
-  "OpenBlogWithArticle": "CREATE VIEW \"OpenBlogWithArticle\" AS \
-             SELECT DISTINCT article.data ->> 'blog'::text AS name \
-               FROM article \
-                 LEFT JOIN blog ON (article.data ->> 'blog'::text) = (blog.data ->> 'name'::text) \
-              WHERE blog.data IS NULL \
-              ORDER BY article.data ->> 'blog'::text;"
+
 };
 module.exports.pg = pgObject;
 
@@ -929,17 +900,6 @@ module.exports.fullTextSearch = fullTextSearch;
 // Find one Object (similar to find, but returns first result)
 module.exports.findOne = findOne;
 
-// Return an String Array, with all blog references in Article
-// that does not have a "finished" Blog in database
-module.exports.getListOfOrphanBlog = getListOfOrphanBlog;
-
-
-// Internal function to reset OpenBlogCash
-// has to be called, when a blog is changed
-module.exports.removeOpenBlogCache = function() {
-  debug("removeOpenBlogCache");
-  listOfOrphanBlog = null;
-};
 
 module.exports.Class = Article;
 

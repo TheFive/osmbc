@@ -7,6 +7,8 @@ var sqldebug  = require("debug")("OSMBC:model:sql");
 
 
 let pgConfigValues = config.getValue("postgres", {mustexist: true});
+let logTime = config.getValue("postgresLogStatements", {default: 1000});
+
 
 should.exist(pgConfigValues.username);
 should.exist(pgConfigValues.database);
@@ -67,6 +69,11 @@ module.exports.query = function (text, values, callback) {
   sqldebug("SQL: start %s", text);
   function handleResult(err, result) {
     var endTime = new Date().getTime();
+    if (endTime - startTime > logTime) {
+      logger.info("SQL: [" + (endTime - startTime) / 1000 + "] ------ \n" + text + "\n");
+      if (values) logger.info("VALUES: " + JSON.stringify(values));
+      logger.info("     -----------------------------");
+    }
     if (err) {
       if (err.message.indexOf("connect ECONNREFUSED") >= 0) {
         err.message = "\nError connecting to PSQL, is database started ? \n" + err.message;

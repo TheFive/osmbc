@@ -4,7 +4,7 @@ extends article_mixin
 
 block content
   // FullAccessArticleView
-  form#textanalyseform( method="POST",action="http://wortliga.de/textanalyse/" )
+  form#textanalyseform( method="POST",action="https://wortliga.de/textanalyse/" )
     input.form-control(type="hidden" name = "text" id ="textanalysefield")
   form(name="input",id="input", action=`${layout.htmlroot}/article/${article.id}/witholdvalues`, method="post")
     .row

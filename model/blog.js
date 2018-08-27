@@ -61,7 +61,6 @@ Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
   let self = this;
   delete self.lock;
-  articleModule.removeOpenBlogCache();
   should.exist(self.id);
   async.series([
     messageCenter.global.updateBlog.bind(messageCenter.global, user, self, data),
@@ -794,7 +793,8 @@ pgObject.createString = "CREATE TABLE blog (  id bigserial NOT NULL,  data json,
                   CONSTRAINT blog_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);";
 
 pgObject.indexDefinition = {
-  "blog_status_idx": "CREATE INDEX blog_status_idx ON blog USING btree (((data ->> 'status'::text)))"
+  "blog_status_idx": "CREATE INDEX blog_status_idx ON blog USING btree (((data ->> 'status'::text)))",
+  "blog_name_idx": "CREATE INDEX blog_name_idx ON blog USING btree (((data ->> 'name'::text)))"
 };
 
 pgObject.viewDefinition = {};

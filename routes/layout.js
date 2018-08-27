@@ -11,7 +11,6 @@ const config        = require("../config.js");
 const version       = require("../version.js");
 const markdown      = require("markdown-it")();
 
-const articleModule = require("../model/article.js");
 const blogModule    = require("../model/blog.js");
 const userModule    = require("../model/user.js");
 
@@ -62,7 +61,6 @@ function prepareRenderLayout(req, res, next) {
 
   // Variables for rendering purposes
 
-  // ListOfOrphanBlog is used to show all orphanedBlog to assign an article to
   let style = "/stylesheets/style.css";
   if (req.query.tempstyleOff === "true") req.session.tempstyle = true;
   if (req.query.tempstyleOff === "false") delete req.session.tempstyle;
@@ -87,12 +85,6 @@ function prepareRenderLayout(req, res, next) {
 
   async.auto({
 
-    listOfOrphanBlog:
-    function (callback) {
-      articleModule.getListOfOrphanBlog(function(err, result) {
-        callback(err, result);
-      });
-    },
     tbc: function (callback) {
       let blog = blogModule.getTBC();
       blog.calculateDerived(req.user, function(err) {
@@ -184,13 +176,11 @@ function prepareRenderLayout(req, res, next) {
     if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
     if (!result.listOfEditBlog) result.listOfEditBlog = [];
     if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
-    if (!result.listOfOrphanBlog) result.listOfOrphanBlog = [];
 
     let scriptUser = config.getValue("scripts").user;
 
     if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
     res.rendervar.layout = {user: req.user,
-      listOfOrphanBlog: result.listOfOrphanBlog,
       htmlroot: htmlRoot,
       url: url,
       languages: languages,

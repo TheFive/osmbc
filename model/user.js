@@ -190,7 +190,9 @@ let pgObject = {};
 pgObject.createString = "CREATE TABLE usert (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT user_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);";
 pgObject.indexDefinition = {
-  "user_id_idx": "CREATE INDEX user_id_idx ON usert USING btree (((data ->> 'OSMUser'::text)))"
+  "user_id_idx": "CREATE INDEX user_id_idx ON usert USING btree (((data ->> 'OSMUser'::text)))",
+  "user_id2_idx": "CREATE INDEX user_id2_idx ON usert USING btree (id)"
+
 
 };
 pgObject.viewDefinition = {};
