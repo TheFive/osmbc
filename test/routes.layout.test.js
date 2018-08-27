@@ -30,7 +30,6 @@ describe("routes/layout", function() {
     layout.prepareRenderLayout(req, res, function done() {
       let l = res.rendervar.layout;
       should(typeof l.user).eql("object");
-      should(Array.isArray(l.listOfOrphanBlog)).be.True();
       should(Array.isArray(l.listOfOpenBlog)).be.True();
       should(Array.isArray(l.listOfEditBlog)).be.True();
       should(Array.isArray(l.listOfReviewBlog)).be.True();

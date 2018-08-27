@@ -121,14 +121,12 @@ exports.importData = function importData(data, callback) {
       function initialiseDB(cb0) {
         debug("initialiseDB");
         if (data.initialise) {
-          articleModule.removeOpenBlogCache();
           exports.clearDB(cb0);
         } else cb0();
       },
       function clearDB(cb0a) {
         debug("clearDB");
         if (data.clear) {
-          articleModule.removeOpenBlogCache();
           async.series([
             db.query.bind(null, "delete from usert;"),
             db.query.bind(null, "delete from blog;"),

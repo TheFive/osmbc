@@ -656,41 +656,6 @@ describe("model/article", function() {
       return bddone();
     });
   });
-  describe("getListOfOrphanBlog", function() {
-    beforeEach(function (bddone) {
-      // Initialise some Test Data for the find functions
-      async.series([
-        testutil.clearDB,
-        function c1(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test1", collection: "col1", category: "catA"}, cb); },
-        function c2(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test2", collection: "col2", category: "catB"}, cb); },
-        function c3(cb) { articleModule.createNewArticle({blog: "WN2", markdownDE: "test3", collection: "col3", category: "catA"}, cb); },
-        function b1(cb) { blogModule.createNewBlog({OSMUser: "test"}, {name: "WN2", status: "open"}, cb); }
-
-      ], function(err) {
-        should.not.exist(err);
-        bddone();
-      });
-    });
-    it("should return orphanBlogs", function(bddone) {
-      articleModule.getListOfOrphanBlog(function(err, result) {
-        should.not.exist(err);
-        should.exist(result);
-        should(result).eql(["WN1"]);
-        blogModule.findOne({name: "WN2"}, {column: "name"}, function(err, blog) {
-          should.not.exist(err);
-          should.exist(blog);
-          blog.setAndSave(testUser, {status: "published"}, function () {
-            articleModule.getListOfOrphanBlog(function(err, result) {
-              should.not.exist(err);
-              should.exist(result);
-              should(result).eql(["WN1"]);
-              bddone();
-            });
-          });
-        });
-      });
-    });
-  });
   describe("remove", function() {
     var idToFindLater;
     before(function (bddone) {

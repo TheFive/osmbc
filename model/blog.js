@@ -61,7 +61,6 @@ Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
   let self = this;
   delete self.lock;
-  articleModule.removeOpenBlogCache();
   should.exist(self.id);
   async.series([
     messageCenter.global.updateBlog.bind(messageCenter.global, user, self, data),
