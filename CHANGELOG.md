@@ -1,5 +1,17 @@
 # Change Log
 
+## [3.3.6](https://github.com/TheFive/osmbc/tree/3.3.6) (2018-08-27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.5...3.3.6)
+
+**Implemented enhancements:**
+
+- Insert feature to log sql statements with poor performance [\#784](https://github.com/TheFive/osmbc/issues/784)
+
+**Fixed bugs:**
+
+- Wortliga Textanalyse \(german blog\) link is not working \(http issue\) [\#783](https://github.com/TheFive/osmbc/issues/783)
+- The Review Comment field is to small. [\#782](https://github.com/TheFive/osmbc/issues/782)
+
 ## [3.3.5](https://github.com/TheFive/osmbc/tree/3.3.5) (2018-08-19)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.4...3.3.5)
 
