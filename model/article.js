@@ -198,8 +198,12 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       }
       if (!data.old || typeof (data.old[k]) === "undefined") return callback(new Error("No Version and no History Value for <" + k + "> given"));
 
-      if (self[k] && self[k] !== data.old[k]) return callback(new Error("Field " + k + " already changed in DB"));
-      if (typeof (self[k]) === "undefined" && data.old[k] !== "") return callback(new Error("Field " + k + " already changed in DB"));
+      if ((self[k] && self[k] !== data.old[k]) || (typeof (self[k]) === "undefined" && data.old[k] !== ""))
+      {
+        let error = new Error("Field " + k + " already changed in DB");
+        error.detail = {oldValue:data.old[k],databaseValue:self[k],newValue:data[k]};
+        return callback(error);
+      }
     }
     delete data.old;
   }

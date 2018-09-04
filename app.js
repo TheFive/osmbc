@@ -253,8 +253,8 @@ if (app.get("env") === "test") {
 app.use(function(err, req, res, next) {
   debug("Set production error hander");
   debug("app.use status function");
-  logger.info("dError Occured");
-  logger.error(JSON.stringify(err));
+  logger.info("Express Error Handler Function: Error Occured");
+  logger.info("error object:" + JSON.stringify(err));
   res.status(err.status || 500);
   if (err.type && err.type === "API") return res.send(err.message);
   res.render("error", {

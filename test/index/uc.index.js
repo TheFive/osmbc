@@ -28,31 +28,28 @@ describe("uc/index", function() {
       .times(999)
       .reply(200, "ok");
     await testutil.clearDB();
-    await userModule.createNewUser({OSMUser: "TheFive", access: "full",language:"DE",email:"a@b.c"});
-    await userModule.createNewUser({OSMUser: "OldUser", access: "full",lang:"EN",email:"d@e.f",lastAccess:"2016-02-25T20:00"});
-    await userModule.createNewUser({OSMUser: "OldUserAway", access: "denied",email:"g@h.i",lastAccess:"2016-02-25T20:00"});
+    await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", email: "a@b.c"});
+    await userModule.createNewUser({OSMUser: "OldUser", access: "full", lang: "EN", email: "d@e.f", lastAccess: "2016-02-25T20:00"});
+    await userModule.createNewUser({OSMUser: "OldUserAway", access: "denied", email: "g@h.i", lastAccess: "2016-02-25T20:00"});
     testutil.startServerSync();
 
     browser = await testutil.getNewBrowser("TheFive");
     await articleModule.createNewArticle({blog: "blog", collection: "test", markdownEN: "test"});
-    await blogModule.createNewBlog({OSMUser:"test"},{name: "blog", status: "edit"});
+    await blogModule.createNewBlog({OSMUser: "test"}, {name: "blog", status: "edit"});
   });
 
-  afterEach(function(bddone){
+  afterEach(function(bddone) {
     mockdate.reset();
     testutil.stopServer(bddone);
   });
 
   describe("Known User", function() {
-
-
-
     describe("Homepage", function() {
       it("should find welcome text on Homepage", async function() {
         await browser.visit("/osmbc");
         browser.assert.text("h2", "Welcome to OSM BCOSM BC");
       });
-      it("should have bootstrap.js loaded",async function() {
+      it("should have bootstrap.js loaded", async function() {
         this.timeout(6000);
         await browser.visit("/osmbc");
         should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
@@ -61,7 +58,7 @@ describe("uc/index", function() {
     describe("Admin Homepage", function() {
       it("should show it", async function() {
         await browser.visit("/osmbc/admin");
-        browser.assert.expectHtmlSync("index", "admin_home")
+        browser.assert.expectHtmlSync("index", "admin_home");
       });
     });
     describe("Not Defined Page", function() {
@@ -97,7 +94,6 @@ describe("uc/index", function() {
   });
   describe("Unkown User", function() {
     it("should throw an error if user not exits", async function() {
-
       browser = await testutil.getNewBrowser("TheFiveNotExist");
 
       await browser.visit("/osmbc");
@@ -111,7 +107,7 @@ describe("uc/index", function() {
         // ignore error, expect is a 403 error, but the
         // browser html has to be tested
       }
-      browser.assert.expectHtmlSync("index","denied user")
+      browser.assert.expectHtmlSync("index", "denied user");
       browser.html().should.containEql("OSM User &gt;OldUserAway&lt; has no access rights");
     });
   });
