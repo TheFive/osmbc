@@ -259,7 +259,7 @@ app.use(function(err, req, res, next) {
   if (err.type && err.type === "API") return res.send(err.message);
   res.render("error", {
     message: err.message,
-    error: {},
+    error: { detail: error.detail},
     layout: {htmlroot: htmlRoot}
   });
 });
