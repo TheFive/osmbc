@@ -56,6 +56,7 @@ function getPool() {
   return pool;
 }
 
+let deep = 0;
 // export the query method for passing queries to the pool
 module.exports.query = function (text, values, callback) {
   if (typeof values === "function") {
@@ -68,11 +69,12 @@ module.exports.query = function (text, values, callback) {
   var startTime = new Date().getTime();
   sqldebug("SQL: start %s", text);
   function handleResult(err, result) {
+    deep = deep - 1;
     var endTime = new Date().getTime();
     if (endTime - startTime > logTime) {
-      logger.info("SQL: [" + (endTime - startTime) / 1000 + "] ------ \n" + text + "\n");
-      if (values) logger.info("VALUES: " + JSON.stringify(values));
-      logger.info("     -----------------------------");
+      logger.info("SQL: >>>>>>>>>> [" + (endTime - startTime) / 1000 + "] \n" + text + "\n");
+      if (values) logger.info("SQL: VALUES " + JSON.stringify(values));
+      logger.info("SQL: <<<<<<<<<< (" + deep + ")");
     }
     if (err) {
       if (err.message.indexOf("connect ECONNREFUSED") >= 0) {
@@ -84,6 +86,7 @@ module.exports.query = function (text, values, callback) {
     sqldebug("SQL: [" + (endTime - startTime) / 1000 + "](" + ((result.rows) ? result.rows.length : 0) + " rows)" + text);
     return callback(null, result);
   }
+  deep = deep + 1;
   if (values === undefined) {
     getPool().query(text, handleResult);
   } else {

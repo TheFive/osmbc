@@ -5,6 +5,8 @@ block content
   h1= message
   h2= error.status
   pre= error.stack
+  if (error.detail)
+    pre=JSON.stringify(error.detail,null,2)
 
   button(type="button" onclick=`location.href='${layout.htmlroot}/osmbc.html'`) OSMBC Home
   button(type="button" onclick="goBack()")="Go Back"

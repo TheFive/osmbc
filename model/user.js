@@ -82,6 +82,7 @@ let avatarCache = {};
 function cacheOSMAvatar(osmuser, callback) {
   debug("cacheOSMAvatar %s", osmuser);
   if (process.env.NODE_ENV === "test") return callback();
+  if (avatarCache[osmuser]) return callback();
   let requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
   request(requestString, function(err, response, body) {
     if (err) {
@@ -96,7 +97,7 @@ function cacheOSMAvatar(osmuser, callback) {
       request(avatarLink)
         .pipe(animated())
         .on("animated", function() {
-          console.error(osmuser + " uses animated gif, will be exchanged by a default");
+          console.info(osmuser + " uses animated gif, will be exchanged by a default");
           avatarCache[osmuser] = "https://www.openstreetmap.org/assets/users/images/large-afe7442b856c223cca92b1a16d96a3266ec0c86cac8031269e90ef93562adb72.png";
         });
     }
@@ -115,7 +116,7 @@ function cacheOSMAvatarAll(callback) {
 }
 
 if (process.env.NODE_ENV !== "test") {
-  cacheOSMAvatarAll(function(err) { if (err) logger.error("Error during Cache of User Avatar " + err.message); });
+  cacheOSMAvatarAll(function(err) { if (err) logger.info("Error during Cache of User Avatar " + err.message); });
 }
 
 // Calculate derived values
@@ -438,8 +439,14 @@ let _newUsers = null;
 let interval = config.getValue("WelcomeInterval", {mustExist: true});
 let welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", {mustExist: true});
 
+
+function calculateNewUsers(callback) {
+
+}
 module.exports.getNewUsers = function getNewUsers(callback) {
   debug("getNewUsers");
+
+
 
   if (welcomeRefresh > 0 && _newUsers) return callback(null, _newUsers);
 
