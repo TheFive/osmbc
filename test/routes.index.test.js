@@ -32,13 +32,10 @@ describe("routes/index", function() {
   after(function() {
     mockdate.reset();
   });
-  let nockLoginPage;
   beforeEach(function(bddone){
-    nockLoginPage = testutil.nockLoginPage();
     return bddone();
   });
   afterEach(function(bddone){
-    nock.removeInterceptor(nockLoginPage);
     return bddone();
   });
 

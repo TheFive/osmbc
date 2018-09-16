@@ -133,6 +133,25 @@ describe("model/article", function() {
     });
   });
   describe("save", function() {
+    it("Should do save with a Promise", async function () {
+      // Generate an article for test
+      var newArticle;
+      newArticle = await articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"});
+      var id = newArticle.id;
+
+      // get a second copy of the article (use Database for Copy)
+      var alternativeArticle = await articleModule.findById(id);
+
+      newArticle.blog = "TESTNEW";
+      await newArticle.save();
+      alternativeArticle.blog = "TESTALTERNATIVE";
+      try {
+        await alternativeArticle.save();
+      } catch (err) {
+        should(err).eql(new Error( 'Version Number Differs'));
+      }
+
+    });
     it("should report a conflict, if version number differs", function (bddone) {
       // Generate an article for test
       var newArticle;

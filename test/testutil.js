@@ -76,6 +76,7 @@ exports.clearDB = function clearDB(done) {
     should.exist(messageCenter.global);
 
     mailReceiver.initialise([]);
+
     var pgOptions = {dropTables: true, createTables: true, dropIndex: true, createIndex: true, dropView: true, createView: true};
     async.series([
       function(done) { config.initialise(done); },
@@ -421,7 +422,7 @@ exports.getBrowser = function getBrowser() {
 
 exports.getNewBrowser = function getNewBrowser(userString) {
   return new Promise((resolve ) => {
-    let browser = new Browser({ maxWait: 20000, site: "http://localhost:" + config.getServerPort() });
+    let browser = new Browser({ maxWait: 30000, site: "http://localhost:" + config.getServerPort() });
     if (!userString) return resolve(browser);
     should.exist(userString);
     fakeNextPassportLogin(userString);

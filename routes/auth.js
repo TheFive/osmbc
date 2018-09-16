@@ -106,6 +106,7 @@ function (token, tokenSecret, profile, done) {
 
 
 function checkRole(role, functions) {
+  debug("checkRole");
   let roleArray = role;
   let functionsArray = functions;
   if (typeof role === "string") roleArray = [role];
@@ -124,6 +125,7 @@ function checkRole(role, functions) {
 }
 
 function checkUser(user) {
+  debug("checkUser");
   let userArray = user;
   if (typeof user === "string") userArray = [user];
   return function checkAuthentificationUser (req, res, next) {
@@ -138,6 +140,7 @@ function checkUser(user) {
 }
 
 function hasRole(role) {
+  debug("hasRole");
   let roleArray = role;
   if (typeof role === "string") roleArray = [role];
   return function checkAuthentification (req, res, next) {

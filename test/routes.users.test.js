@@ -7,26 +7,24 @@ const config = require("../config.js");
 const request = require("request");
 const userModule = require("../model/user.js");
 const testutil = require("./testutil.js");
-var initialise = require("../util/initialise.js");
+const initialise = require("../util/initialise.js");
 
 const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 describe("router/user", function() {
-  this.timeout(5000);
+  this.timeout(10000);
   let jar = null;
   before(function(bddone){
     async.series([
       initialise.initialiseModules,
       testutil.clearDB],bddone);
   });
-  let nockLoginPage;
   afterEach(function(bddone){
-    nock.removeInterceptor(nockLoginPage);
+    testutil.stopServer();
     return bddone();
   });
   beforeEach(function(bddone) {
     config.initialise();
-    nockLoginPage = testutil.nockLoginPage();
     jar = request.jar();
     testutil.importData(
       {
@@ -36,10 +34,6 @@ describe("router/user", function() {
         ],
         clear:true
       },bddone);
-  });
-  after(function(bddone){
-    testutil.stopServer();
-    bddone();
   });
   describe("routes GET /inbox", function(){
     let url = baseLink + "/usert/inbox";

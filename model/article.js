@@ -45,12 +45,12 @@ function create (proto) {
 
 
 function createNewArticle (proto, callback) {
+  if (typeof (proto) === "function") {
+    callback = proto;
+    proto = null;
+  }
   function _createNewArticle(proto, callback) {
     debug("createNewArticle");
-    if (typeof (proto) === "function") {
-      callback = proto;
-      proto = null;
-    }
     if (proto && proto.id) return callback(new Error("ProtoID Exists"));
     var article = create(proto);
     article.save(function (err) {
@@ -198,10 +198,9 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       }
       if (!data.old || typeof (data.old[k]) === "undefined") return callback(new Error("No Version and no History Value for <" + k + "> given"));
 
-      if ((self[k] && self[k] !== data.old[k]) || (typeof (self[k]) === "undefined" && data.old[k] !== ""))
-      {
+      if ((self[k] && self[k] !== data.old[k]) || (typeof (self[k]) === "undefined" && data.old[k] !== "")) {
         let error = new Error("Field " + k + " already changed in DB");
-        error.detail = {oldValue:data.old[k],databaseValue:self[k],newValue:data[k]};
+        error.detail = {oldValue: data.old[k], databaseValue: self[k], newValue: data[k]};
         return callback(error);
       }
     }
@@ -323,18 +322,27 @@ function find(obj, order, callback) {
 }
 
 function findById(id, callback) {
-  debug("findById %s", id);
-  pgMap.findById(id, {table: "article", create: create}, function(err, result) {
-    if (err) callback(err);
-    if (!result) return callback(null, result);
+  function _findById(id, callback) {
+    debug("findById %s", id);
+    pgMap.findById(id, {table: "article", create: create}, function(err, result) {
+      if (err) callback(err);
+      if (!result) return callback(null, result);
 
-    blogModule.findOne({name: result.blog}, function(err, blog) {
-      result._blog = blog;
+      blogModule.findOne({name: result.blog}, function(err, blog) {
+        result._blog = blog;
 
-      return callback(err, result);
+        return callback(err, result);
+      });
     });
+  }
+  if (callback) {
+    return _findById(id, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findById(id, (err, result) => err ? reject(err) : resolve(result));
   });
 }
+
 
 function findOne(obj1, obj2, callback) {
   debug("findOne");

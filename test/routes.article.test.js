@@ -42,10 +42,9 @@ describe("routes/articleInternal",function(){
 });
 
 describe("routes/article", function() {
-  this.timeout(this.timeout() * 3);
+  this.timeout(this.timeout() * 10);
   var id = 2;
   let jar;
-  var nockLogin;
 
   before(initialise.initialiseModules);
 
@@ -59,7 +58,6 @@ describe("routes/article", function() {
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00:00Z"));
-    nockLogin = testutil.nockLoginPage();
     jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
@@ -82,7 +80,6 @@ describe("routes/article", function() {
     clear: true}, bddone);
   });
   afterEach(function(bddone){
-    nock.removeInterceptor(nockLogin);
     return bddone();
   });
   describe("route GET /article/:id", function() {

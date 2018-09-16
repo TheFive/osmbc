@@ -106,89 +106,98 @@ function generateQuery(table, obj, order) {
 
 
 module.exports.save = function(options, callback) {
-  debug("save");
   if (typeof options === "function") {
     callback = options;
     options = null;
   }
   let self = this;
-  var table = self.getTable();
+  function _save(options, callback) {
+    debug("save");
 
-  // store blog Reference not to loose it.
-  let blog = self._blog;
+    var table = self.getTable();
 
-  // clean property's with "_"
-  for (var k in self) {
-    if (k.substring(0, 1) === "_") delete self[k];
-  }
-  // id must be >= 0;
-  if (self.id === -1) {
-    return callback(new Error("Virtual Object can not be saved"));
-  }
+    // store blog Reference not to loose it.
+    let blog = self._blog;
 
-  // first check, wether ID is known or not
-  if (self.id === 0) {
-    // we have to create the object
-    debug("Object has to be created");
-
-    // store first version in database
-    self.version = 1;
-    var sqlquery = "insert into " + table + "(data) values ($1) returning id";
-    sqldebug("Query %s", sqlquery);
-    db.query(sqlquery, [self], function(err, result) {
-      if (err) return callback(err);
-      should.exist(result.rows);
-      self.id = result.rows[0].id;
-      return callback(null, self);
-    });
-  } else {
-    debug("Object will be updated, current version is %s", self.version);
-    async.series([
-      function(cb) {
-        debug("Check version of object");
-        var versionsEqual = false;
-        var startTime = new Date().getTime();
-
-        db.query("select (data->>'version')::int as version from " + table + " where id = $1",
-          [self.id], function(err, result) {
-            if (err) return cb(err);
-            let row = null;
-            if (result && result.rows) row = result.rows[0];
-            if (row.version === null) {
-              // No Data in Database, so no conflict.
-              versionsEqual = true;
-            } else if (row.version === self.version) {
-              debug("No Error");
-              versionsEqual = true;
-            }
-            debug("end");
-            err = null;
-            var endTime = new Date().getTime();
-            sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
-            if (!versionsEqual) {
-              debug("send error");
-              err = new Error("Version Number Differs");
-            }
-            return cb(err);
-          });
-      }
-    ],
-    function finalFunction(err) {
-      debug("final Function save");
-      if (err) {
-        debug("Forward Error");
-        debug(err);
-
-        return callback(err);
-      }
-      if (!options || !options.noVersionIncrease) self.version += 1;
-      db.query("update " + table + " set data = $2 where id = $1", [self.id, self], function(err) {
-        if (typeof blog !== "undefined") self._blog = blog;
-        return callback(err, self);
-      });
+    // clean property's with "_"
+    for (var k in self) {
+      if (k.substring(0, 1) === "_") delete self[k];
     }
-    );
+    // id must be >= 0;
+    if (self.id === -1) {
+      return callback(new Error("Virtual Object can not be saved"));
+    }
+
+    // first check, wether ID is known or not
+    if (self.id === 0) {
+      // we have to create the object
+      debug("Object has to be created");
+
+      // store first version in database
+      self.version = 1;
+      var sqlquery = "insert into " + table + "(data) values ($1) returning id";
+      sqldebug("Query %s", sqlquery);
+      db.query(sqlquery, [self], function(err, result) {
+        if (err) return callback(err);
+        should.exist(result.rows);
+        self.id = result.rows[0].id;
+        return callback(null, self);
+      });
+    } else {
+      debug("Object will be updated, current version is %s", self.version);
+      async.series([
+        function(cb) {
+          debug("Check version of object");
+          var versionsEqual = false;
+          var startTime = new Date().getTime();
+
+          db.query("select (data->>'version')::int as version from " + table + " where id = $1",
+            [self.id], function(err, result) {
+              if (err) return cb(err);
+              let row = null;
+              if (result && result.rows) row = result.rows[0];
+              if (row.version === null) {
+                // No Data in Database, so no conflict.
+                versionsEqual = true;
+              } else if (row.version === self.version) {
+                debug("No Error");
+                versionsEqual = true;
+              }
+              debug("end");
+              err = null;
+              var endTime = new Date().getTime();
+              sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
+              if (!versionsEqual) {
+                debug("send error");
+                err = new Error("Version Number Differs");
+              }
+              return cb(err);
+            });
+        }
+      ],
+      function finalFunction(err) {
+        debug("final Function save");
+        if (err) {
+          debug("Forward Error");
+          debug(err);
+
+          return callback(err);
+        }
+        if (!options || !options.noVersionIncrease) self.version += 1;
+        db.query("update " + table + " set data = $2 where id = $1", [self.id, self], function(err) {
+          if (typeof blog !== "undefined") self._blog = blog;
+          return callback(err, self);
+        });
+      }
+      );
+    }
   }
+  if (callback) {
+    return _save(options, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _save(options, (err, result) => err ? reject(err) : resolve(result));
+  });
 };
 
 module.exports.remove = function(callback) {
@@ -322,16 +331,21 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
 
 
 module.exports.findById = function findById(id, module, callback) {
-  debug("findById %s", id);
-  var table = module.table;
+  function _findById(id, module, callback) {
+    debug("findById %s", id);
+    var table = module.table;
 
-  var idToSearch = 0;
+    var idToSearch = 0;
 
-  if (id % 1 === 0) idToSearch = id;
-
-
-
-  db.query("select id,data from " + table + " where id = $1", [idToSearch], convertOneResultFunction(module, callback));
+    if (id % 1 === 0) idToSearch = id;
+    db.query("select id,data from " + table + " where id = $1", [idToSearch], convertOneResultFunction(module, callback));
+  }
+  if (callback) {
+    return _findById(id, module, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findById(id, module, (err, result) => err ? reject(err) : resolve(result));
+  });
 };
 
 module.exports.findOne = function findOne(module, obj, order, callback) {

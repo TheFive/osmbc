@@ -196,6 +196,7 @@ function renderChangelog(req, res, next) {
 var htmlRoot = config.htmlRoot();
 
 function redirectHome(req, res) {
+  debug("redirectHome");
   res.redirect(htmlRoot + "/");
 }
 

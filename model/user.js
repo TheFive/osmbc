@@ -441,7 +441,7 @@ let welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", {mustExist: true
 
 
 function calculateNewUsers(callback) {
-
+  return callback();
 }
 module.exports.getNewUsers = function getNewUsers(callback) {
   debug("getNewUsers");

@@ -31,16 +31,13 @@ describe("routes/changes", function() {
     bddone();
     mockdate.reset();
   });
-  let nockLoginPage;
   afterEach(function(bddone){
-    nock.removeInterceptor(nockLoginPage);
     return bddone();
   });
 
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00"));
-    nockLoginPage = testutil.nockLoginPage();
     jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)

@@ -24,7 +24,6 @@ var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 describe("routes/blog", function() {
   this.timeout(30000);
   let jar = null;
-  var nockLogin;
 
   after(function (bddone) {
     nock.cleanAll();
@@ -36,7 +35,7 @@ describe("routes/blog", function() {
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00:00Z"));
-    nockLogin = testutil.nockLoginPage();
+
     jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
@@ -63,7 +62,6 @@ describe("routes/blog", function() {
       }, bddone);
   });
   afterEach(function (bddone) {
-    nock.removeInterceptor(nockLogin);
     return bddone();
   });
   describe("route GET /blog/edit/:blog_id", function () {
