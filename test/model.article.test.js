@@ -1061,7 +1061,9 @@ describe("model/article", function() {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           article.editComment({OSMUser: "Test2"}, 0, "a changed comment", function (err) {
-            should(err).eql(new Error("Only Writer is allowed to change a commment"));
+            let e = new Error("Only Writer is allowed to change a commment");
+            e.status = 409;
+            should(err).eql(e);
             return cb();
           });
         });

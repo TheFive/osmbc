@@ -2,9 +2,10 @@
 // Exported Functions and prototypes are defined at end of file
 
 
-const async    = require("async");
-const should   = require("should");
-const debug    = require("debug")("OSMBC:model:article");
+const async      = require("async");
+const should     = require("should");
+const debug      = require("debug")("OSMBC:model:article");
+const HttpStatus = require("http-status-codes");
 
 
 const config    = require("../config.js");
@@ -200,6 +201,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
       if ((self[k] && self[k] !== data.old[k]) || (typeof (self[k]) === "undefined" && data.old[k] !== "")) {
         let error = new Error("Field " + k + " already changed in DB");
+        error.status = HttpStatus.CONFLICT;
         error.detail = {oldValue: data.old[k], databaseValue: self[k], newValue: data[k]};
         return callback(error);
       }
@@ -603,7 +605,9 @@ Article.prototype.editComment = function editComment(user, index, text, callback
   if (!self.commentList) self.commentList = [];
   should(index).within(0, self.commentList.length - 1);
   if (user.OSMUser !== self.commentList[index].user) {
-    return callback(new Error("Only Writer is allowed to change a commment"));
+    let error = new Error("Only Writer is allowed to change a commment");
+    error.status = HttpStatus.CONFLICT;
+    return callback(error);
   }
   async.series([
     function sendit(cb) {

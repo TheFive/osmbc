@@ -39,17 +39,13 @@ describe("uc/blog", function() {
   });
 
   describe("status Functions", function() {
-    beforeEach(function(bddone) {
+    beforeEach(async function() {
       mockdate.set(new Date("2016-05-25T19:00:00Z"));
-
-      async.series([
-        testutil.importData.bind(null,
-          {clear: true,
-            blog: [{name: "blog"}],
-            user: [{OSMUser: "TheFive", access: "full", mainLang: "DE",email:"a@b.c"},
-              {OSMUser: "TheOther", access: "full", mainLang: "EN",email:"d@e.f"}]}),
-        testutil.startServerWithLogin.bind(null, "TheFive", jar)
-      ], bddone);
+      await testutil.importData({clear: true,
+        blog: [{name: "blog"}],
+        user: [{OSMUser: "TheFive", access: "full", mainLang: "DE",email:"a@b.c"},
+          {OSMUser: "TheOther", access: "full", mainLang: "EN",email:"d@e.f"}]});
+      testutil.startServerSync();
     });
     afterEach(function(bddone) {
       mockdate.reset();

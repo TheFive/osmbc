@@ -1,7 +1,8 @@
 "use strict";
 
-const debug = require("debug")("OSMBC:routes:auth");
-const async = require("async");
+const debug      = require("debug")("OSMBC:routes:auth");
+const async      = require("async");
+const HttpStatus = require("http-status-codes");
 
 const config = require("../config.js");
 const logger = require("../config.js").logger;
@@ -108,6 +109,7 @@ function (token, tokenSecret, profile, done) {
 function checkRole(role, functions) {
   debug("checkRole");
   let roleArray = role;
+
   let functionsArray = functions;
   if (typeof role === "string") roleArray = [role];
   if (typeof functions === "function") functionsArray = [functions];
@@ -120,7 +122,7 @@ function checkRole(role, functions) {
       if (!functionsArray[accessIndex]) return next();
       return functionsArray[accessIndex](req, res, next);
     }
-    return next(new Error("OSM User >" + req.user.OSMUser + "< has not enough access rights"));
+    return res.status(HttpStatus.FORBIDDEN).send("OSM User >" + req.user.OSMUser + "< has not enough access rights");
   };
 }
 
@@ -135,7 +137,7 @@ function checkUser(user) {
     if (accessIndex >= 0) {
       return next();
     }
-    return next(new Error("OSM User >" + req.user.OSMUser + "< has not enough access rights"));
+    return res.status(HttpStatus.FORBIDDEN).send("OSM User >" + req.user.OSMUser + "< has not enough access rights");
   };
 }
 
