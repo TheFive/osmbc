@@ -1,5 +1,8 @@
 "use strict";
 
+/* jshint ignore:start */
+
+
 var async  = require("async");
 var should = require("should");
 var nock   = require("nock");
@@ -1356,3 +1359,4 @@ describe("model/article", function() {
     });
   });
 });
+/* jshint ignore:end */

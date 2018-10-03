@@ -1,5 +1,8 @@
 "use strict";
 
+/* jshint ignore:start */
+
+
 const nock       = require("nock");
 const should     = require("should");
 const fs         = require("fs");
@@ -533,5 +536,8 @@ describe("routes/blog", function() {
 
   });
 });
+
+
+/* jshint ignore:end */
 
 

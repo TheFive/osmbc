@@ -1,5 +1,8 @@
 "use strict";
 
+/* jshint ignore:start */
+
+
 const should  = require("should");
 const async   = require("async");
 const config  = require("../config.js");
@@ -277,3 +280,5 @@ describe("routes/index", function() {
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"}));
   });
 });
+
+/* jshint ignore:end */

@@ -1,5 +1,7 @@
 "use strict";
 
+/* jshint ignore:start */
+
 
 const nock  = require("nock");
 const should = require("should");
@@ -141,6 +143,8 @@ describe("routes/changes", function() {
   });
 });
 
+
+/* jshint ignore:end */
 
 
 

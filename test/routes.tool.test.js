@@ -1,5 +1,9 @@
 "use strict";
 
+/* jshint ignore:start */
+
+
+
 var should  = require("should");
 var async   = require("async");
 var nock    = require("nock");
@@ -140,3 +144,4 @@ describe("routes/tool", function() {
 });
 
 
+/* jshint ignore:end */

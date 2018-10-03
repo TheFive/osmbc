@@ -19,7 +19,7 @@ describe("uc.access", function() {
   beforeEach(async function() {
     await testutil.clearDB();
     await initialise.initialiseModules();
-    testutil.startServerSync("TheFive");
+    testutil.startServerSync();
     await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "EN",email:"a@g.c"});
     await userModule.createNewUser({OSMUser: "GuestUser", access: "guest", language: "EN"});
     bTheFive = await testutil.getNewBrowser("TheFive");

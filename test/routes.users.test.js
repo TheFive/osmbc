@@ -1,5 +1,8 @@
 "use strict";
 
+/* jshint ignore:start */
+
+
 const should = require("should");
 const async  = require("async");
 const nock   = require("nock");
@@ -230,3 +233,6 @@ describe("router/user", function() {
     });
   });
 });
+
+
+/* jshint ignore:end */

@@ -373,7 +373,7 @@ exports.startServerSync = function startServerSync(userString) {
   if (typeof userString === "undefined") {
     return;
   }
-  console.warn("startServerSync(userString) is deprecated. see routes.article tests.")
+  console.warn("startServerSync(userString) is deprecated. see routes.article tests.");
   fakeNextPassportLogin(userString);
 };
 

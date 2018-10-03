@@ -1,5 +1,8 @@
 "use strict";
 
+/* jshint ignore:start */
+
+
 const sinon   = require("sinon");
 const should  = require("should");
 const nock    = require("nock");
@@ -853,3 +856,6 @@ describe("routes/article", function() {
       }));
   });
 });
+
+
+/* jshint ignore:end */
