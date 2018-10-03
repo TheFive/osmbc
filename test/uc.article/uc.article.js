@@ -27,7 +27,7 @@ describe("uc.article", function() {
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
-    testutil.startServerSync("TheFive");
+    testutil.startServerSync();
     await testutil.clearDB();
 
     await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE",secondLang:"EN",email:"a@b.c"});
