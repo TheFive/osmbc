@@ -1,23 +1,22 @@
 "use strict";
 
-var sinon   = require("sinon");
-var should  = require("should");
-var nock    = require("nock");
-var request = require("request");
-var config  = require("../config.js");
-var mockdate = require("mockdate");
-var HttpStatus = require('http-status-codes');
-var deeplTranslate = require("deepl-translator");
-var initialise = require("../util/initialise.js");
-var rp = require("request-promise-native");
+const sinon   = require("sinon");
+const should  = require("should");
+const nock    = require("nock");
+const config  = require("../config.js");
+const mockdate = require("mockdate");
+const HttpStatus = require('http-status-codes');
+const deeplTranslate = require("deepl-translator");
+const initialise = require("../util/initialise.js");
+const rp = require("request-promise-native");
 
-var articleModule = require("../model/article.js");
+const articleModule = require("../model/article.js");
 
-var articleRouterForTestOnly = require("../routes/article.js").fortestonly;
+const articleRouterForTestOnly = require("../routes/article.js").fortestonly;
 
-var testutil = require("./testutil.js");
+const testutil = require("./testutil.js");
 
-var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
+const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 describe("routes/articleInternal",function(){
@@ -57,6 +56,7 @@ describe("routes/article", function() {
     jar.testUserDenied = await testutil.getUserJar("TestUserDenied");
     jar.testUserNonExisting = await testutil.getUserJar("TestUserNonExisting");
     jar.hallo = await testutil.getUserJar("Hallo");
+    jar.testUserNonExisting = await testutil.getUserJar("TestUserNonExisting");
   });
 
   after(function (bddone) {
@@ -173,6 +173,7 @@ describe("routes/article", function() {
     return async function()
     {
       should.exist(options.user);
+      should.exist(jar[options.user]);
       should.exist(options.url);
       should.exist(options.expectedMessage);
       should.exist(options.expectedStatusCode);
@@ -186,6 +187,7 @@ describe("routes/article", function() {
     return async function()
     {
       should.exist(options.user);
+      should.exist(jar[options.user]);
       should.exist(options.url);
       should.exist(options.form);
       should.exist(options.expectedMessage);
@@ -486,9 +488,9 @@ describe("routes/article", function() {
       postUrlWithJar({
         url: url,
         form: params,
-        user: "TestUserNonExisting",
-        expectedStatusCode: HttpStatus.MOVED_TEMPORARILY,
-        expectedMessage: "Found. Redirecting to /login"
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
   });
   describe("route POST /:article_id/witholdvalues", function() {

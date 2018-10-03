@@ -180,11 +180,23 @@ function findById(id, callback) {
   });
 }
 
-function findOne(obj1, obj2, callback) {
-  debug("findOne");
-  pgMap.findOne({table: "usert", create: create}, obj1, obj2, callback);
-}
 
+function findOne(obj1, obj2, callback) {
+  if (typeof obj2 === "function") {
+    callback = obj2;
+    obj2 = null;
+  }
+  function _findOne(obj1, obj2, callback) {
+    debug("findOne");
+    pgMap.findOne({table: "usert", create: create}, obj1, obj2, callback);
+  }
+  if (callback) {
+    return _findOne(obj1, obj2, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findOne(obj1, obj2, (err, result) => err ? reject(err) : resolve(result));
+  });
+}
 
 
 let pgObject = {};
@@ -440,9 +452,6 @@ let interval = config.getValue("WelcomeInterval", {mustExist: true});
 let welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", {mustExist: true});
 
 
-function calculateNewUsers(callback) {
-  return callback();
-}
 module.exports.getNewUsers = function getNewUsers(callback) {
   debug("getNewUsers");
 

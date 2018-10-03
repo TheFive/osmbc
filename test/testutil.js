@@ -370,7 +370,7 @@ exports.startServerSync = function startServerSync(userString) {
   if (server) exports.stopServer();
   server = http.createServer(app).listen(config.getServerPort());
 
-  if (userString === null) {
+  if (typeof userString === "undefined") {
     return;
   }
   console.warn("startServerSync(userString) is deprecated. see routes.article tests.")
