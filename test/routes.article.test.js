@@ -1,21 +1,25 @@
 "use strict";
 
-var sinon   = require("sinon");
-var should  = require("should");
-var nock    = require("nock");
-var request = require("request");
-var config  = require("../config.js");
-var mockdate = require("mockdate");
-var deeplTranslate = require("deepl-translator");
-var initialise = require("../util/initialise.js");
+/* jshint ignore:start */
 
-var articleModule = require("../model/article.js");
 
-var articleRouterForTestOnly = require("../routes/article.js").fortestonly;
+const sinon   = require("sinon");
+const should  = require("should");
+const nock    = require("nock");
+const config  = require("../config.js");
+const mockdate = require("mockdate");
+const HttpStatus = require('http-status-codes');
+const deeplTranslate = require("deepl-translator");
+const initialise = require("../util/initialise.js");
+const rp = require("request-promise-native");
 
-var testutil = require("./testutil.js");
+const articleModule = require("../model/article.js");
 
-var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
+const articleRouterForTestOnly = require("../routes/article.js").fortestonly;
+
+const testutil = require("./testutil.js");
+
+const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 describe("routes/articleInternal",function(){
@@ -42,12 +46,21 @@ describe("routes/articleInternal",function(){
 });
 
 describe("routes/article", function() {
-  this.timeout(this.timeout() * 3);
+  this.timeout(this.timeout() * 10);
   var id = 2;
-  let jar;
-  var nockLogin;
+  let jar={};
 
-  before(initialise.initialiseModules);
+  before( async function () {
+    await initialise.initialiseModules();
+    testutil.startServerSync();
+    jar.testUser = await testutil.getUserJar("TestUser");
+    jar.userWith3Lang  = await testutil.getUserJar("UserWith3Lang");
+    jar.userWith4Lang = await testutil.getUserJar("UserWith4Lang");
+    jar.testUserDenied = await testutil.getUserJar("TestUserDenied");
+    jar.testUserNonExisting = await testutil.getUserJar("TestUserNonExisting");
+    jar.hallo = await testutil.getUserJar("Hallo");
+    jar.testUserNonExisting = await testutil.getUserJar("TestUserNonExisting");
+  });
 
   after(function (bddone) {
     nock.cleanAll();
@@ -59,12 +72,10 @@ describe("routes/article", function() {
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00:00Z"));
-    nockLogin = testutil.nockLoginPage();
-    jar = request.jar();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
-      .reply(200, "ok");
+      .reply(HttpStatus.OK, "ok");
     testutil.importData(
       {
         "blog": [{name: "BLOG", status: "edit"},
@@ -82,422 +93,309 @@ describe("routes/article", function() {
     clear: true}, bddone);
   });
   afterEach(function(bddone){
-    nock.removeInterceptor(nockLogin);
     return bddone();
   });
   describe("route GET /article/:id", function() {
     let url = baseLink + "/article/" + id;
-    it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: url, jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
-          bddone();
-        });
-      });
+    it("should run with full access user", async function () {
+      let body = await rp.get({ url: url, jar: jar.testUser});
+      should(body).containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
     });
-    it("should run with full access user and 3 lang", function (bddone) {
-      testutil.startServer("UserWith3Lang", function() {
-        request.get({ url: url, jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
-          bddone();
-        });
-      });
+    it("should run with full access user and 3 lang", async function() {
+      let body = await rp.get({ url: url, jar: jar.userWith3Lang});
+      body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
     });
-    it("should run with full access user and 4 lang", function (bddone) {
-      testutil.startServer("UserWith4Lang", function() {
-        request.get({ url: url, jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
-          bddone();
-        });
-      });
+    it("should run with full access user and 4 lang", async function () {
+      let body = await rp.get({ url: url, jar: jar.userWith4Lang});
+      body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
     });
-    it("should run with full access user and missing article", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/999", jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("Article ID 999 does not exist");
-          bddone();
-        });
-      });
+    it("should run with full access user and missing article", async function () {
+
+      let response = await rp.get({
+        url: baseLink + "/article/999",
+        jar: jar.testUser,
+        simple: false,
+        resolveWithFullResponse: true});
+      should(response.statusCode).eql(HttpStatus.NOT_FOUND);
+      response.body.should.containEql("Article ID 999 does not exist");
     });
-    it("should run with full access user and not numbered article ID", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/walo", jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("Article ID walo does not exist (conversion error)");
-          bddone();
-        });
-      });
+    it("should run with full access user and not numbered article ID", async function () {
+      let response = await rp.get({
+        url: baseLink + "/article/walo",
+        jar: jar.testUser,
+        simple: false,
+        resolveWithFullResponse: true});
+      should(response.statusCode).eql(HttpStatus.NOT_FOUND);
+      response.body.should.containEql("Article ID walo does not exist (conversion error)");
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
+    it("should deny denied access user", async function () {
+      let response = await rp.get({
+        url: url,
+        jar: jar.testUserDenied,
+        simple: false,
+        resolveWithFullResponse: true});
+      should(response.statusCode).eql(HttpStatus.FORBIDDEN);
+      response.body.should.containEql("OSM User >TestUserDenied< has no access rights");
     });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          bddone();
-        });
-      });
+    it("should deny non existing user", async function () {
+      let response = await rp.get({
+        url: url,
+        jar: jar.testUserNonExisting,
+        simple: false,
+        resolveWithFullResponse: true});
+      should(response.statusCode).eql(HttpStatus.FORBIDDEN);
+      response.body.should.containEql("This article is not allowed for guests");
+
     });
-    it("should allow non existing user for self collected", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/1", jar: jar}, function (err, response,body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<option value="BLOG" selected="selected">BLOG </option>');
-          bddone();
-        });
-      });
+    it("should allow non existing user for self collected", async function () {
+      let response = await rp.get({
+        url: baseLink + "/article/1",
+        jar: jar.testUserNonExisting,
+        simple: false,
+        resolveWithFullResponse: true});
+      should(response.statusCode).eql(HttpStatus.OK);
+      response.body.should.containEql('<option value="BLOG" selected="selected">BLOG </option>');
     });
-    it("should deny for guest user for non self collected", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/2", jar: jar}, function (err, response,body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql('This article is not allowed for guests');
-          bddone();
-        });
-      });
+    it("should deny for guest user for non self collected", async function () {
+      let response = await rp.get({
+        url: baseLink + "/article/2",
+        jar: jar.testUserNonExisting,
+        simple: false,
+        resolveWithFullResponse: true});
+      should(response.statusCode).eql(HttpStatus.FORBIDDEN);
+      response.body.should.containEql('This article is not allowed for guests');
     });
-    it("should allow for guest user invited by comment", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/3", jar: jar}, function (err, response,body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<option value="BLOG" selected="selected">BLOG </option>');
-          bddone();
-        });
-      });
+    it("should allow for guest user invited by comment", async function () {
+      let body = await rp.get({url: baseLink + "/article/3", jar: jar.testUserNonExisting});
+      body.should.containEql('<option value="BLOG" selected="selected">BLOG </option>');
     });
   });
+
+  function checkUrlWithJar(options) {
+
+    return async function()
+    {
+      should.exist(options.user);
+      should.exist(jar[options.user]);
+      should.exist(options.url);
+      should.exist(options.expectedMessage);
+      should.exist(options.expectedStatusCode);
+      let response = await rp.get({url: options.url, jar: jar[options.user], simple: false, resolveWithFullResponse: true});
+      response.body.should.containEql(options.expectedMessage);
+      should(response.statusCode).eql(options.expectedStatusCode);
+    }
+  }
+  function postUrlWithJar(options) {
+
+    return async function()
+    {
+      should.exist(options.user);
+      should.exist(jar[options.user]);
+      should.exist(options.url);
+      should.exist(options.form);
+      should.exist(options.expectedMessage);
+      should.exist(options.expectedStatusCode);
+      let response = await rp.post({url: options.url, form: options.form, jar: jar[options.user], simple: false, resolveWithFullResponse: true});
+      response.body.should.containEql(options.expectedMessage);
+      should(response.statusCode).eql(options.expectedStatusCode);
+    }
+  }
   describe("route GET /article/:id/votes", function() {
     let url = baseLink + "/article/" + id + "/votes";
-    it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: url, jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          let json = JSON.parse(body);
-
-          json["#voteButtons"].should.containEql("callAndRedraw(\'/article/2/setVote.unpublish\'");
-          json["#voteButtonsList"].should.containEql('<i class="fa-lg fa fa-thumbs-up">');
-
-          bddone();
-        });
-      });
+    it("should run with full access user", async function () {
+      let body = await rp.get({ url: url, jar: jar.testUser});
+      let json = JSON.parse(body);
+      json["#voteButtons"].should.containEql("callAndRedraw(\'/article/2/setVote.unpublish\'");
+      json["#voteButtonsList"].should.containEql('<i class="fa-lg fa fa-thumbs-up">');
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      checkUrlWithJar ({
+        url:url,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+    it("should deny non existing user",
+      checkUrlWithJar ({
+          url: url,
+          user: "testUserNonExisting",
+          expectedStatusCode: HttpStatus.FORBIDDEN,
+          expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+        }));
   });
   describe("route GET /article/:id/commentArea", function() {
     let url = baseLink + "/article/" + id + "/commentArea";
-    it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: url, jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          let json = JSON.parse(body);
-
-          json["#commentArea"].should.containEql("Your comment is shared between all weekly teams.");
-
-          bddone();
-        });
-      });
+    it("should run with full access user", async function () {
+      let body = await rp.get({ url: url, jar: jar.testUser});
+      let json = JSON.parse(body);
+      json["#commentArea"].should.containEql("Your comment is shared between all weekly teams.");
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("This article is not allowed for guests");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      checkUrlWithJar ({
+          url: url,
+          user: "testUserDenied",
+          expectedStatusCode: HttpStatus.FORBIDDEN,
+          expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
+    it("should deny non existing user new",
+      checkUrlWithJar ({
+        url: url,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "This article is not allowed for guests"}));
   });
   describe("route GET /article/:id/markCommentRead", function() {
     let url = baseLink + "/article/" + id + "/markCommentRead?index=0";
-    it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: url, jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql("Your comment is shared between all weekly teams.");
-          articleModule.findById(2, function(err, article) {
-            should.not.exist(err);
-            should(article.commentRead.TestUser).eql("0");
-            bddone();
-          });
-        });
-      });
+    it("should run with full access user", async function () {
+      let body = await rp.get({ url: url, jar: jar.testUser});
+      body.should.containEql("Your comment is shared between all weekly teams.");
+      let article = await articleModule.findById(2);
+      should(article.commentRead.TestUser).eql("0");
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("This article is not allowed for guests");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny denied access user",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "This article is not allowed for guests"
+      }));
   });
-  describe("route GET /article/:id/:action.:tag", function() {
+  describe("route GET /article/:id/:action.:tag",  function() {
     let url = baseLink + "/article/" + id + "/setTag.tag";
-    it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: url, jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          should(body).equal("OK");
-          articleModule.findById(2, function(err, article) {
-            should.not.exist(err);
-            should(article.tags).eql([ "tag" ]);
-            bddone();
-          });
-        });
-      });
+    it("should run with full access user", async function () {
+      let body = await rp.get({url: url, jar: jar.testUser});
+      should(body).equal("OK");
+      let article = await articleModule.findById(2);
+      should(article.tags).eql([ "tag" ]);
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+
+    it("should deny denied access user",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny denied non existing ",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route GET /article/:id/:votename", function() {
     let url = baseLink + "/article/" + id + "/pro";
-    it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: url, jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          let json = JSON.parse(body);
-          json["#vote_pro_2"].should.containEql('class="label osmbc-btn-not-voted"');
+    it("should run with full access user", async function () {
+      let body = await rp.get({url: url, jar: jar.testUser});
+      let json = JSON.parse(body);
+      json["#vote_pro_2"].should.containEql('class="label osmbc-btn-not-voted"');
+    });
 
-          bddone();
-        });
-      });
-    });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny denied non existing ",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route GET /list", function() {
-    it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/list", jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<td><a href="/article/2">BLOG</a></td>');
-          bddone();
-        });
-      });
+    let url = baseLink + "/article/list";
+    it("should run with full access user", async function () {
+      let body = await rp.get({url: url, jar: jar.testUser});
+      body.should.containEql('<td><a href="/article/2">BLOG</a></td>');
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: baseLink + "/article/list", jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/list", jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny denied non existing ",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route GET /create", function() {
-    it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/create", jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
-          bddone();
-        });
-      });
+    let url = baseLink + "/article/create";
+    it("should run with full access user", async function () {
+      let body = await rp.get({url: url, jar: jar.testUser});
+      body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: baseLink + "/article/create", jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/create", jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before submit it.</p>');
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny denied non existing ",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.OK,
+        expectedMessage: "<p class=\"osmbc-help-text\" align=\"center\">Please check your link for duplicates before submit it.</p>"
+      }));
   });
   describe("route GET /searchandcreate", function() {
-    it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/searchandcreate?search=hallo", jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
-          body.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
-          bddone();
-        });
-      });
+    let url = baseLink + "/article/searchandcreate?search=hallo"
+    it("should run with full access user", async function () {
+      let body = await rp.get({url: url, jar: jar.testUser});
+      body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
+      body.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: baseLink + "/article/searchandcreate?search=hallo", jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/searchandcreate?search=hallo", jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before submit it.</p>');
-          body.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny denied non existing ",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.OK,
+        expectedMessage: "<p class=\"osmbc-help-text\" align=\"center\">Please check your link for duplicates before submit it.</p>"
+      }));
   });
   describe("route GET /search", function() {
-    it("should run with full access user", function (bddone) {
-      testutil.startServer("TestUser", function() {
-        request.get({ url: baseLink + "/article/search?search=hallo", jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
-          bddone();
-        });
-      });
+    let url = baseLink + "/article/search?search=hallo";
+    it("should run with full access user", async function () {
+      let body = await rp.get({url: url, jar: jar.testUser});
+      body.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: baseLink + "/article/search?search=hallo", jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: baseLink + "/article/search?search=hallo", jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny denied non existing ",
+      checkUrlWithJar({
+        url: url,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route POST /create", function() {
     let url = baseLink + "/article/create";
@@ -509,16 +407,12 @@ describe("routes/article", function() {
       commentStatus: "close",
       unpublishReason: "unpublishReason",
       unpublishReference: "unpublishReference"};
-    it("should run with full access user", function (bddone) {
-      testutil.startServerWithLogin("TestUser",jar, function() {
-        request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql("unpublishReason");
-          articleModule.findById(4, function(err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
+    it("should run with full access user", async function () {
+      let body = await rp.post({url: url, form: params, jar: jar.testUser, followAllRedirects: true});
+      body.should.containEql("unpublishReason");
+      let article = await articleModule.findById(4);
+      delete article._blog;
+      should(article).eql({
               id: "4",
               version: 2,
               commentStatus: "close",
@@ -530,45 +424,31 @@ describe("routes/article", function() {
               unpublishReference: "unpublishReference",
               firstCollector: "TestUser"
             });
-            bddone();
-          });
-        });
-      });
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServerWithLogin("TestUserDenied",jar, function() {
-        request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
-        request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql("unpublishReason");
-          articleModule.findById(4, function (err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
-              id: "4",
-              version: 2,
-              commentStatus: "close",
-              blog: "BLOG",
-              collection: "COLLECTION",
-              categoryEN: "categoryEN",
-              title: "title",
-              unpublishReason: "unpublishReason",
-              unpublishReference: "unpublishReference",
-              firstCollector: "TestUserNonExisting"
-            });
-            bddone();
-          });
-        });
+    it("should deny denied access user",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny non existing user", async function () {
+      let body = await rp.post({url: url, form: params, jar: jar.testUserNonExisting, followAllRedirects: true});
+      body.should.containEql("unpublishReason");
+      let article = await articleModule.findById(4);
+      delete article._blog;
+      should(article).eql({
+        id: "4",
+        version: 2,
+        commentStatus: "close",
+        blog: "BLOG",
+        collection: "COLLECTION",
+        categoryEN: "categoryEN",
+        title: "title",
+        unpublishReason: "unpublishReason",
+        unpublishReference: "unpublishReference",
+        firstCollector: "TestUserNonExisting"
       });
     });
   });
@@ -578,55 +458,43 @@ describe("routes/article", function() {
       title: "new title",
       version: 1,
       collection: "new collection"};
-    it("should run with full access user", function (bddone) {
-      testutil.startServerWithLogin("TestUser",jar, function() {
-        request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql("new collection");
-          articleModule.findById(2, function(err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
-              "blog": "BLOG",
-              "category": "Keine",
-              "collection": "new collection",
-              "commentList": [
-                {
-                  "text": "comment",
-                  "user": "Hallo"
-                }
-              ],
-              "id": "2",
-              "markdownDE": "* Dies ist ein grosser Testartikel.",
-              "title": "new title",
-              "version": 2
-            });
-            bddone();
-          });
-        });
+    it("should run with full access user", async function () {
+      let body = await rp.post({url: url, form: params, jar: jar.testUser,followAllRedirects:true});
+      body.should.containEql("new collection");
+      let article = await articleModule.findById(2);
+      delete article._blog;
+      should(article).eql({
+        "blog": "BLOG",
+        "category": "Keine",
+        "collection": "new collection",
+        "commentList": [
+          {
+            "text": "comment",
+            "user": "Hallo"
+          }
+        ],
+        "id": "2",
+        "markdownDE": "* Dies ist ein grosser Testartikel.",
+        "title": "new title",
+        "version": 2
       });
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
-        request.post({url: url, jar: jar,followAllRedirects:true}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny denied non Existing user",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route POST /:article_id/witholdvalues", function() {
     let url = baseLink + "/article/2/witholdvalues";
@@ -635,87 +503,74 @@ describe("routes/article", function() {
       old_title: "BLOG",
       collection: "new collection",
       old_collection: ""};
-    it("should run with full access user", function (bddone) {
-      testutil.startServerWithLogin("TestUser",jar, function() {
-        request.post({ url: url, form: params, jar: jar, followAllRedirects: true}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql("BLOG");
-          articleModule.findById(2, function(err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
-              "blog": "BLOG",
-              "category": "Keine",
-              "collection": "new collection",
-              "commentList": [
-                {
-                  "text": "comment",
-                  "user": "Hallo"
-                }
-              ],
-              "id": "2",
-              "markdownDE": "* Dies ist ein grosser Testartikel.",
-              "title": "new title2",
-              "version": 2
-            });
-            bddone();
-          });
-        });
+    it("should run with full access user", async function () {
+      let body = await rp.post({url: url, jar: jar.testUser, followAllRedirects: true, form: params});
+      body.should.containEql("BLOG");
+      let article = await articleModule.findById(2);
+      delete article._blog;
+      should(article).eql({
+        "blog": "BLOG",
+        "category": "Keine",
+        "collection": "new collection",
+        "commentList": [
+          {
+            "text": "comment",
+            "user": "Hallo"
+          }
+        ],
+        "id": "2",
+        "markdownDE": "* Dies ist ein grosser Testartikel.",
+        "title": "new title2",
+        "version": 2
       });
     });
-    it("should fail with wrong old Values", function (bddone) {
-      testutil.startServerWithLogin("TestUser",jar,function(err){
-        should.not.exist(err);
-        request.post({ url: url, form: {title: "new title", old_title: "old title"}, followAllRedirects: true, jar: jar}, function(err, response, body) {
-          should.not.exist(err);
-          // there should be an error, as old title is not the correct one
-          should(response.statusCode).eql(500);
-          body.should.containEql("Field title already changed in DB");
+    it("should fail with wrong old Values", async function () {
+      let response = await rp.post({
+        url: url,
+        form: {title: "new title", old_title: "old title"},
+        simple: false,
+        followAllRedirects: true,
+        jar: jar.testUser,
+        resolveWithFullResponse: true
+      });
+      should(response.statusCode).eql(HttpStatus.CONFLICT);
+      response.body.should.containEql("Field title already changed in DB");
 
-          // check, that object is not changed
-          articleModule.findById(2, function (err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
-              "blog": "BLOG",
-              "category": "Keine",
-              "commentList": [
-                {
-                  "text": "comment",
-                  "user": "Hallo"
-                }
-              ],
-              "id": "2",
-              "markdownDE": "* Dies ist ein grosser Testartikel.",
-              "title": "BLOG",
-              "version": 1
-            });
-            bddone();
-          });
-        });
+      // check, that object is not changed
+      let article = await articleModule.findById(2);
+
+      delete article._blog;
+      should(article).eql({
+        "blog": "BLOG",
+        "category": "Keine",
+        "commentList": [
+          {
+            "text": "comment",
+            "user": "Hallo"
+          }
+        ],
+        "id": "2",
+        "markdownDE": "* Dies ist ein grosser Testartikel.",
+        "title": "BLOG",
+        "version": 1
       });
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, form: params, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, form: params, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny non existing users 2",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "This article is not allowed for guests"
+      }));
   });
   describe("route POST /:article_id/setMarkdown/:lang", function() {
     let url = baseLink + "/article/2/setMarkdown/DE";
@@ -723,278 +578,237 @@ describe("routes/article", function() {
       markdown: "new Content",
       oldMarkdown: "* Dies ist ein grosser Testartikel."
     };
-    it("should run with full access user", function (bddone) {
-      testutil.startServerWithLogin("TestUser", jar,function() {
-        request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          // ..setMarkdown/DE is redirecting to caller page, that is
-          // /osmbc in this case
-          body.should.containEql("OSMBC");
-          articleModule.findById(2, function(err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
-              "blog": "BLOG",
-              "category": "Keine",
-              "commentList": [
-                {
-                  "text": "comment",
-                  "user": "Hallo"
-                }
-              ],
-              "id": "2",
-              "markdownDE": "new Content",
-              "title": "BLOG",
-              "version": 2
-            });
-            bddone();
-          });
-        });
-      });
-    });
-    it("should fail with wrong old Values", function (bddone) {
-      testutil.startServerWithLogin("TestUser", jar,function() {
-        request.post({ url: url, form: {markdown: "new", oldMarkdown: "old"}, jar: jar,followAllRedirects:true}, function(err, response, body) {
-          should.not.exist(err);
-          // there should be an error, as old title is not the correct one
-          should(response.statusCode).eql(500);
-          body.should.containEql("Field markdownDE already changed in DB");
+    it("should run with full access user", async function () {
+      let body = await rp.post({ url: url, form: params, jar: jar.testUser,followAllRedirects:true});
+      // ..setMarkdown/DE is redirecting to caller page, that is
+      // /osmbc in this case
+      body.should.containEql("OSMBC");
+      let article = await articleModule.findById(2);
 
-          // check, that object is not changed
-          articleModule.findById(2, function(err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
-              "blog": "BLOG",
-              "category": "Keine",
-              "commentList": [
-                {
-                  "text": "comment",
-                  "user": "Hallo"
-                }
-              ],
-              "id": "2",
-              "markdownDE": "* Dies ist ein grosser Testartikel.",
-              "title": "BLOG",
-              "version": 1
-            });
-            bddone();
-          });
-        });
+      delete article._blog;
+      should(article).eql({
+        "blog": "BLOG",
+        "category": "Keine",
+        "commentList": [
+          {
+            "text": "comment",
+            "user": "Hallo"
+          }
+        ],
+        "id": "2",
+        "markdownDE": "new Content",
+        "title": "BLOG",
+        "version": 2
       });
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServerWithLogin("TestUserDenied",jar, function () {
-        request.post({url: url, form: params, jar: jar,followAllRedirects:true}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
+    it("should fail with wrong old Values", async function () {
+      let response = await rp.post({
+        url: url,
+        form: {markdown: "new", oldMarkdown: "old"},
+        jar: jar.testUser,
+        followAllRedirects:true,
+        simple: false,
+        resolveWithFullResponse: true
+      });
+      // there should be an error, as old title is not the correct one
+      should(response.statusCode).eql(HttpStatus.CONFLICT);
+      response.body.should.containEql("Field markdownDE already changed in DB");
+
+      // check, that object is not changed
+      let article = await articleModule.findById(2);
+
+      delete article._blog;
+      should(article).eql({
+        "blog": "BLOG",
+        "category": "Keine",
+        "commentList": [
+          {
+            "text": "comment",
+            "user": "Hallo"
+          }
+        ],
+        "id": "2",
+        "markdownDE": "* Dies ist ein grosser Testartikel.",
+        "title": "BLOG",
+        "version": 1
       });
     });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
-        request.post({url: url, form: params, jar: jar,followAllRedirects:true}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny non existing users",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route POST /:article_id/addComment/", function() {
     let url = baseLink + "/article/2/addComment";
     let params = {
       comment: "This comment will be added."
     };
-    it("should run with full access user", function (bddone) {
-      testutil.startServerWithLogin("TestUser",jar, function() {
-        request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          body.should.containEql("This comment will be added.");
-          articleModule.findById(2, function(err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
-              "blog": "BLOG",
-              "category": "Keine",
-              "commentList": [
-                {
-                  "text": "comment",
-                  "user": "Hallo"
-                },
-                {
-                  "text": "This comment will be added.",
-                  "timestamp": "2016-05-25T20:00:00.000Z",
-                  "user": "TestUser"
-                }
-              ],
-              "commentRead": {
-                "TestUser": 1
-              },
-              commentStatus: "open",
-              "id": "2",
-              "markdownDE": "* Dies ist ein grosser Testartikel.",
-              "title": "BLOG",
-              "version": 2
-            });
-            bddone();
-          });
-        });
+    it("should run with full access user", async function () {
+      let body = await rp.post({ url: url, form: params, jar: jar.testUser,followAllRedirects:true});
+      body.should.containEql("This comment will be added.");
+      let article = await articleModule.findById(2);
+
+      delete article._blog;
+      should(article).eql({
+        "blog": "BLOG",
+        "category": "Keine",
+        "commentList": [
+          {
+            "text": "comment",
+            "user": "Hallo"
+          },
+          {
+            "text": "This comment will be added.",
+            "timestamp": "2016-05-25T20:00:00.000Z",
+            "user": "TestUser"
+          }
+        ],
+        "commentRead": {
+          "TestUser": 1
+        },
+        commentStatus: "open",
+        "id": "2",
+        "markdownDE": "* Dies ist ein grosser Testartikel.",
+        "title": "BLOG",
+        "version": 2
       });
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, form: params, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServer("TestUserNonExisting", function () {
-        request.get({url: url, form: params, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny non existing users",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "This article is not allowed for guests"
+      }));
   });
   describe("route POST /:article_id/editComment/", function() {
     let url = baseLink + "/article/2/editComment/0";
     let params = {
       comment: "This comment will be changed."
     };
-    it("should run with full access user", function (bddone) {
-      testutil.startServerWithLogin("Hallo",jar, function() {
-        request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
-          should.not.exist(err);
-          body.should.containEql("This comment will be changed.");
-          articleModule.findById(2, function(err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
-              "blog": "BLOG",
-              "category": "Keine",
-              "commentList": [
-                {
-                  "text": "This comment will be changed.",
-                  "editstamp": "2016-05-25T20:00:00.000Z",
-                  "user": "Hallo"
-                }
-              ],
-              "id": "2",
-              "markdownDE": "* Dies ist ein grosser Testartikel.",
-              "title": "BLOG",
-              "version": 2
-            });
-            bddone();
-          });
-        });
+    it("should run with full access user", async function () {
+      let body = await rp.post({ url: url, form: params, jar: jar.hallo,followAllRedirects:true});
+      body.should.containEql("This comment will be changed.");
+      let article = await articleModule.findById(2);
+
+      delete article._blog;
+      should(article).eql({
+        "blog": "BLOG",
+        "category": "Keine",
+        "commentList": [
+          {
+            "text": "This comment will be changed.",
+            "editstamp": "2016-05-25T20:00:00.000Z",
+            "user": "Hallo"
+          }
+        ],
+        "id": "2",
+        "markdownDE": "* Dies ist ein grosser Testartikel.",
+        "title": "BLOG",
+        "version": 2
       });
     });
-    it("should fail if other user comment is edited", function (bddone) {
-      testutil.startServerWithLogin("TestUser",jar, function() {
-        request.post({ url: url, form: params, jar: jar,followAllRedirects:true}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("Only Writer is allowed to change a commment");
-          articleModule.findById(2, function(err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
-              "blog": "BLOG",
-              "category": "Keine",
-              "commentList": [
-                {
-                  "text": "comment",
-                  "user": "Hallo"
-                }
-              ],
-              "id": "2",
-              "markdownDE": "* Dies ist ein grosser Testartikel.",
-              "title": "BLOG",
-              "version": 1
-            });
-            bddone();
-          });
-        });
+    it("should fail if other user comment is edited", async function () {
+      let response = await rp.post({
+        url: url,
+        form: params,
+        jar: jar.testUser,
+        followAllRedirects:true,
+        simple: false,
+        resolveWithFullResponse: true
+      });
+      should(response.statusCode).eql(HttpStatus.CONFLICT);
+      response.body.should.containEql("Only Writer is allowed to change a commment");
+      let article = await articleModule.findById(2);
+
+      delete article._blog;
+      should(article).eql({
+        "blog": "BLOG",
+        "category": "Keine",
+        "commentList": [
+          {
+            "text": "comment",
+            "user": "Hallo"
+          }
+        ],
+        "id": "2",
+        "markdownDE": "* Dies ist ein grosser Testartikel.",
+        "title": "BLOG",
+        "version": 1
       });
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, form: params, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
-        request.post({url: url, form: params, jar: jar,followAllRedirects:true}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny non existing users",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route POST /:article_id/copyto/:blog", function() {
     let url = baseLink + "/article/2/copyto/secondblog";
-    it("should run with full access user", function (bddone) {
-      testutil.startServerWithLogin("TestUser",jar, function() {
-        request.post({ url: url, jar: jar,followAllRedirects:true}, function(err, response, body) {
-          should.not.exist(err);
-          body.should.containEql("secondblog");
+    let form = {};
+    it("should run with full access user", async function () {
+      let body = await rp.post({ url: url, jar: jar.testUser,followAllRedirects:true});
+      body.should.containEql("secondblog");
+      let article = await articleModule.findById(4);
 
-          should(response.statusCode).eql(200);
-          articleModule.findById(4, function(err, article) {
-            should.not.exist(err);
-            delete article._blog;
-            should(article).eql({
-              blog: "secondblog",
-              id: "4",
-              markdownDE: "Former Text:\n\n* Dies ist ein grosser Testartikel.",
-              title: "BLOG",
-              originArticleId: "2",
-              version: 1
-            });
-            bddone();
-          });
-        });
+      delete article._blog;
+      should(article).eql({
+        blog: "secondblog",
+        id: "4",
+        markdownDE: "Former Text:\n\n* Dies ist ein grosser Testartikel.",
+        title: "BLOG",
+        originArticleId: "2",
+        version: 1
       });
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServer("TestUserDenied", function () {
-        request.get({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServerWithLogin("TestUserNonExisting",jar, function () {
-        request.post({url: url, jar: jar}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      postUrlWithJar({
+        url: url,
+        form: form,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny non existing users",
+      postUrlWithJar({
+        url: url,
+        form: form,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route POST /translate/deepl/:fromLang/:toLang", function() {
     let url = baseLink + "/article/translate/deepl/DE/EN";
@@ -1020,37 +834,28 @@ describe("routes/article", function() {
       stub2.restore();
     });
 
-    it("should run with full access user", function (bddone) {
-      testutil.startServerWithLogin("TestUser",jar, function() {
-        request.post({ url: url, form: form, jar: jar,followAllRedirects:true}, function(err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          should(body).equal("This is an english text.");
-          bddone();
-        });
-      });
+    it("should run with full access user", async function () {
+      let body = await rp.post({ url: url, form: form, jar: jar.testUser,followAllRedirects:true});
+      should(body).equal("This is an english text.");
     });
-    it("should deny denied access user", function (bddone) {
-      testutil.startServerWithLogin("TestUserDenied",jar, function () {
-        request.post({url: url, form: form, jar: jar,followAllRedirects:true}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(403);
-          body.should.containEql("OSM User >TestUserDenied< has no access rights");
-          should(stub.called).be.False();
-          bddone();
-        });
-      });
-    });
-    it("should deny non existing user", function (bddone) {
-      testutil.startServerWithLogin("TestUserNonExisting", jar,function () {
-        request.post({url: url, form: form, jar: jar,followAllRedirects:true}, function (err, response, body) {
-          should.not.exist(err);
-          should(response.statusCode).eql(500);
-          body.should.containEql("OSM User &gt;TestUserNonExisting&lt; has not enough access rights");
-          should(stub.called).be.False();
-          bddone();
-        });
-      });
-    });
+    it("should deny denied access user",
+      postUrlWithJar({
+        url: url,
+        form: form,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny non existing users",
+      postUrlWithJar({
+        url: url,
+        form: form,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
 });
+
+
+/* jshint ignore:end */

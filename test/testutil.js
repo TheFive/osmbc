@@ -76,6 +76,7 @@ exports.clearDB = function clearDB(done) {
     should.exist(messageCenter.global);
 
     mailReceiver.initialise([]);
+
     var pgOptions = {dropTables: true, createTables: true, dropIndex: true, createIndex: true, dropView: true, createView: true};
     async.series([
       function(done) { config.initialise(done); },
@@ -369,9 +370,10 @@ exports.startServerSync = function startServerSync(userString) {
   if (server) exports.stopServer();
   server = http.createServer(app).listen(config.getServerPort());
 
-  if (userString === null) {
+  if (typeof userString === "undefined") {
     return;
   }
+  console.warn("startServerSync(userString) is deprecated. see routes.article tests.");
   fakeNextPassportLogin(userString);
 };
 
@@ -394,15 +396,23 @@ function nockLoginPage() {
 
 var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
-exports.startServerWithLogin = function(userString, jar, callback) {
-  debug("startServerWithLogin");
-  exports.startServer(userString, function(err) {
-    if (err) return callback(err);
+
+exports.getUserJar = function(userString, callback) {
+  should(typeof userString).eql("string");
+  function _getUserJar(userString, callback) {
     let nockLoginInterceptor = nockLoginPage();
+    fakeNextPassportLogin(userString);
+    let jar = request.jar();
     request.get({url: baseLink + "/osmbc", jar: jar}, function(err) {
       nock.removeInterceptor(nockLoginInterceptor);
-      return callback(err);
+      return callback(err, jar);
     });
+  }
+  if (callback) {
+    return _getUserJar(userString, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _getUserJar(userString, (err, jar) => (err) ? reject(err) : resolve(jar));
   });
 };
 
@@ -420,8 +430,8 @@ exports.getBrowser = function getBrowser() {
 };
 
 exports.getNewBrowser = function getNewBrowser(userString) {
-  return new Promise((resolve ) => {
-    let browser = new Browser({ maxWait: 20000, site: "http://localhost:" + config.getServerPort() });
+  return new Promise((resolve) => {
+    let browser = new Browser({ maxWait: 30000, site: "http://localhost:" + config.getServerPort() });
     if (!userString) return resolve(browser);
     should.exist(userString);
     fakeNextPassportLogin(userString);
@@ -470,7 +480,7 @@ Browser.prototype.keyUp = function(targetSelector, keyCode) {
   event.initEvent("keyup", true, true);
   event.which = keyCode;
   let target = this.window.document.querySelector(targetSelector);
-  if (target)  target.dispatchEvent(event);
+  if (target) target.dispatchEvent(event);
 };
 
 Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, givenPath, name) {
@@ -501,22 +511,22 @@ Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, giv
   let expectedDom = domparser.parseFromString(expected);
   let actualDom = domparser.parseFromString(string);
 
-  let result = domcompare(expectedDom,actualDom);
+  let result = domcompare(expectedDom, actualDom);
   if (result.getResult()) {
     if (process.env.TEST_RENAME_DOMEQUAL === "TRUE") {
       fs.writeFileSync(expectedFile, string, "UTF8");
       try {
-        fs.unlinkSync(actualFile+".dceql");
+        fs.unlinkSync(actualFile + ".dceql");
       } catch (err) {}
-      console.info(expectedFile+" is domequal to result, original was changed.");
+      console.info(expectedFile + " is domequal to result, original was changed.");
       return;
     } else {
       // files are different, but dom equal
-      fs.writeFileSync(actualFile+".dceql", string, "UTF8");
+      fs.writeFileSync(actualFile + ".dceql", string, "UTF8");
       try {
         fs.unlinkSync(actualFile);
       } catch (err) {}
-      console.info(expectedFile+" is domequal to result. Use TEST_RENAME_DOMEQUAL=TRUE to modify expected file.");
+      console.info(expectedFile + " is domequal to result. Use TEST_RENAME_DOMEQUAL=TRUE to modify expected file.");
       return;
     }
   }
@@ -573,7 +583,7 @@ process.on("unhandledRejection", (reason, p) => {
 
 
 Browser.extend(function(browser) {
-  browser.on('request', function (req) {
+  browser.on("request", function (req) {
     if (browser.location) {
       req.headers.set("Referer", browser.location.href);
     }

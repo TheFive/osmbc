@@ -74,7 +74,7 @@ module.exports.query = function (text, values, callback) {
     if (endTime - startTime > logTime) {
       logger.info("SQL: >>>>>>>>>> [" + (endTime - startTime) / 1000 + "] \n" + text + "\n");
       if (values) logger.info("SQL: VALUES " + JSON.stringify(values));
-      logger.info("SQL: <<<<<<<<<< (" + deep +")");
+      logger.info("SQL: <<<<<<<<<< (" + deep + ")");
     }
     if (err) {
       if (err.message.indexOf("connect ECONNREFUSED") >= 0) {

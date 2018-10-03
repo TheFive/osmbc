@@ -17,7 +17,8 @@
   "unused": true,
   "multistr": true,
   "mocha":true,
-  "strict":"imlied"  
+  "strict":"imlied"  ,
+  "jquery":"true"
 
 
 }

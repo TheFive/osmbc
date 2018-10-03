@@ -11,7 +11,7 @@ log/
 ch_av/
 
 package-lock.json
-test/access/stylesheets
+test/uc.access/stylesheets
 maillogTest.log
 yarn.lock
 script_logs

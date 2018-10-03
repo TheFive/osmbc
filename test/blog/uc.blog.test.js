@@ -3,57 +3,51 @@
 /* jshint ignore:start */
 
 
-const async = require("async");
-const testutil = require("../testutil.js");
-const nock = require("nock");
-const should  = require("should");
-const request   = require("request");
-const mockdate = require("mockdate");
+const nock       = require("nock");
+const should     = require("should");
+const request    = require("request");
+const mockdate   = require("mockdate");
+
+const testutil   = require("../testutil.js");
+
 const initialise = require("../../util/initialise.js");
-
-
-const userModule   = require("../../model/user.js");
+const userModule  = require("../../model/user.js");
 
 
 
 
 
 describe("uc/blog", function() {
-  this.timeout(150000);
-  let jar  = null;
+  this.timeout(200000);
   let nockLoginPage;
-  beforeEach(async function() {
-    jar = request.jar();
+
+  before(async function(){
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
-    nockLoginPage = testutil.nockLoginPage();
     process.env.TZ = "Europe/Amsterdam";
+    mockdate.set(new Date("2016-05-25T19:00:00Z"));
     await initialise.initialiseModules();
     testutil.startServerSync();
+  })
+  after(async function(){
+    mockdate.reset();
+    testutil.stopServer();
+  })
+  beforeEach(async function() {
+    nockLoginPage = testutil.nockLoginPage();
   });
   afterEach(async function() {
     nock.cleanAll();
-    testutil.stopServer();
   });
 
   describe("status Functions", function() {
-    beforeEach(function(bddone) {
-      mockdate.set(new Date("2016-05-25T19:00:00Z"));
-
-      async.series([
-        testutil.importData.bind(null,
-          {clear: true,
-            blog: [{name: "blog"}],
-            user: [{OSMUser: "TheFive", access: "full", mainLang: "DE",email:"a@b.c"},
-              {OSMUser: "TheOther", access: "full", mainLang: "EN",email:"d@e.f"}]}),
-        testutil.startServerWithLogin.bind(null, "TheFive", jar)
-      ], bddone);
-    });
-    afterEach(function(bddone) {
-      mockdate.reset();
-      return bddone();
+    beforeEach(async function() {
+      await testutil.importData({clear: true,
+        blog: [{name: "blog"}],
+        user: [{OSMUser: "TheFive", access: "full", mainLang: "DE",email:"a@b.c"},
+          {OSMUser: "TheOther", access: "full", mainLang: "EN",email:"d@e.f"}]});
     });
     it("should be able to manage a blog lifetime", async function() {
       let errors = [];
@@ -134,14 +128,10 @@ describe("uc/blog", function() {
   describe("browser tests", function() {
     var browser;
     beforeEach(async function() {
-      mockdate.set(new Date("2016-05-25T19:00:00Z"));
+
       await testutil.importData("blog/DataWN290.json");
       await userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN",email:"a@b.c"});
-      testutil.startServerSync();
       browser = await testutil.getNewBrowser("TheFive");
-    });
-    afterEach(async function() {
-      mockdate.reset();
     });
     describe("Blog Display", function() {
       it("should show Overview with some configurations", async function() {
