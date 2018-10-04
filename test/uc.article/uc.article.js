@@ -1,5 +1,7 @@
 "use strict";
 
+/* jshint ignore:start */
+
 var async = require("async");
 var path = require("path");
 var fs = require("fs");
@@ -274,3 +276,5 @@ describe("uc.article", function() {
     });
   });
 });
+
+/* jshint ignore:end */
