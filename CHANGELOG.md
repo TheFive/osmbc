@@ -1,5 +1,12 @@
 # Change Log
 
+## [3.3.6a](https://github.com/TheFive/osmbc/tree/3.3.6a) (2018-10-06)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6...3.3.6a)
+
+**Closed issues:**
+
+- Guest mode: Please change "Submit Article" to "Submit Link"  [\#792](https://github.com/TheFive/osmbc/issues/792)
+
 ## [3.3.6](https://github.com/TheFive/osmbc/tree/3.3.6) (2018-08-27)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.5...3.3.6)
 
