@@ -202,7 +202,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       if ((self[k] && self[k] !== data.old[k]) || (typeof (self[k]) === "undefined" && data.old[k] !== "")) {
         let error = new Error("Field " + k + " already changed in DB");
         error.status = HttpStatus.CONFLICT;
-        error.detail = {oldValue: data.old[k], databaseValue: self[k], newValue: data[k]};
+        error.detail = { oldValue: data.old[k], databaseValue: self[k], newValue: data[k]};
         return callback(error);
       }
     }
