@@ -86,6 +86,11 @@ mixin reviewBlog(reviewComments,lang)
                   input.hidden(type="text",name="lang" value = lang)
 
                   button.btn.btn-large.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
+                  button.btn.btn-large.btn-default(
+                    id="reviewButtonCancel"+lang
+                    type="button"
+                    onclick="document.getElementById('reviewComment" + lang +"').value='delete';\
+                       document.getElementById('review" +  lang + "').submit();") cancel
             else
               form.form-horizontal(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
                 .col-md-8

@@ -375,7 +375,7 @@ describe("model/blog", function() {
           blogModule.findById(id, function(err, blog) {
             should.not.exist(err);
             should(blog.getStatus("DE")).eql("Review DE");
-            blog.setReviewComment("DE", {OSMUser: "user2"}, "deletereview", function(err) {
+            blog.setReviewComment("DE", {OSMUser: "user2"}, "deleteallreviews", function(err) {
               should.not.exist(err);
               blogModule.findById(id, function(err, blog) {
                 should.not.exist(err);

@@ -126,16 +126,20 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
         // nothing has to be written to review Comment
         return cb();
       }
-      if (data === "deletereview") {
-        // review moduls has to be cancled.
+      if (data === "deleteallreviews") {
+        // review moduls has to be canceled.
         // delete all reviews done
         delete self[rc];
         return cb();
       }
       for (let i = 0; i < self[rc].length; i++) {
         if (self[rc][i].text === "reviewing..." && self[rc][i].user === user.OSMUser) {
-          self[rc][i].text = data;
-          self[rc][i].editstamp = date;
+          if (data === "delete") {
+            self[rc].splice(i,1);
+          } else {
+            self[rc][i].text = data;
+            self[rc][i].editstamp = date;
+          }
           return cb();
         }
       }

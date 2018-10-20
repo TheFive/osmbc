@@ -51,61 +51,65 @@ describe("uc/blog", function() {
     });
     it("should be able to manage a blog lifetime", async function() {
       let errors = [];
-      let b = await testutil.getNewBrowser("TheFive");
+      let browserTheFive = await testutil.getNewBrowser("TheFive");
       let b2 = await testutil.getNewBrowser("TheOther");
 
-      await b.visit("/osmbc");
+      await browserTheFive.visit("/osmbc");
 
       // go to admin page and create a new blog
-      await b.click("a#adminlink");
+      await browserTheFive.click("a#adminlink");
 
 
-      await b.click("a#createblog");
+      await browserTheFive.click("a#createblog");
       // Confirm that you really want to create a blog
-      await b.click("button#createBlog");
+      await browserTheFive.click("button#createBlog");
 
       // click on the second blog in the table (thats the WN251 new created)
-      await b.click("tbody>tr:nth-child(2)>td>a");
+      await browserTheFive.click("tbody>tr:nth-child(2)>td>a");
 
       // Have a look at the blog
-      b.assert.expectHtmlSync(errors, "blog", "WN251OpenMode");
+      browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251OpenMode");
 
       // Edit the blog, select EDIT status and stave it
-      await b.click("a#editBlogDetail");
-      await b.click("a.btn.btn-primary#edit");
-      await b.select("status", "edit");
-      await b.click("input[value='OK']");
+      await browserTheFive.click("a#editBlogDetail");
+      await browserTheFive.click("a.btn.btn-primary#edit");
+      await browserTheFive.select("status", "edit");
+      await browserTheFive.click("input[value='OK']");
 
       // go to the blog view with the articles
-      await b.click("a[href='/blog/WN251']");
-      b.assert.expectHtmlSync(errors, "blog", "WN251EditMode");
+      await browserTheFive.click("a[href='/blog/WN251']");
+      browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251EditMode");
 
       // Start Review for blog
-      await b.click("button#readyreview");
+      await browserTheFive.click("button#readyreview");
 
       // start personal review
-      await b.click("button#reviewButtonDE");
+      await browserTheFive.click("button#reviewButtonDE");
 
-      b.fill("textarea#reviewCommentDE", "1rst Review Text for DE");
+      // Do a first review comment
+
+      browserTheFive.fill("textarea#reviewCommentDE", "1rst Review Text for DE");
       // simulate keyup to enable button for click.
-      b.keyUp("textarea#reviewCommentDE", 30);
-      await b.click("button#reviewButtonDE:enabled");
+      browserTheFive.keyUp("textarea#reviewCommentDE", 30);
+      await browserTheFive.click("button#reviewButtonDE:enabled");
 
-      await b.click("button#reviewButtonDE");
+      await browserTheFive.click("button#reviewButtonDE");
 
-      b.fill("textarea#reviewCommentDE", "2nd Review Text for DE");
+      // do a second review comment, and cancel that
+
+      browserTheFive.fill("textarea#reviewCommentDE", "2nd Review Text for DE");
       // simulate keyup to enable button for click.
-      b.keyUp("textarea#reviewCommentDE", 30);
-      await b.click("button#reviewButtonDE:enabled");
-      b.assert.expectHtmlSync(errors, "blog", "WN251Reviewed");
+      browserTheFive.keyUp("textarea#reviewCommentDE", 30);
+      await browserTheFive.click("button#reviewButtonCancelDE:enabled");
+      browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Reviewed");
 
-      await b.click("button#didexport");
+      await browserTheFive.click("button#didexport");
 
-      b.assert.expectHtmlSync(errors, "blog", "WN251Exported");
+      browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Exported");
 
-      await b.click("button#closebutton");
+      await browserTheFive.click("button#closebutton");
 
-      b.assert.expectHtmlSync(errors, "blog", "WN251Closed");
+      browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Closed");
 
       await b2.visit("/blog/WN251");
       // Start Review for blog in english
@@ -125,7 +129,7 @@ describe("uc/blog", function() {
       should(errors).eql([]);
     });
   });
-  describe("browser tests", function() {
+  describe("Test with Blog Data", function() {
     var browser;
     beforeEach(async function() {
 

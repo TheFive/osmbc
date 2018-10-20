@@ -114,7 +114,7 @@ block content
                   else if (blog["reviewComment" + lang])
                     form(id="deleteReview" name="deleteReview", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
                       input.hidden(type="text",name="lang" value = lang)
-                      input.hidden(type="text",name ="action" value = "deletereview")
+                      input.hidden(type="text",name ="action" value = "deleteallreviews")
                       button.btn.btn-xs.btn-warning(id="deletereviewbutton" type = "submit" ) Delete Review
 
 

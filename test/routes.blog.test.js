@@ -295,7 +295,7 @@ describe("routes/blog", function() {
     it("should  clear review when deleting a review process", async function () {
       let response = await rp.post({
         url:  baseLink + "/blog/secondblog/setLangStatus",
-        form: {lang: "DE", action: "deletereview"},
+        form: {lang: "DE", action: "deleteallreviews"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
       should(response.statusCode).eql(302);
       should(response.body).eql("Found. Redirecting to /");
