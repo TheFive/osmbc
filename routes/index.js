@@ -4,6 +4,8 @@ const should = require("should");
 const debug = require("debug")("OSMBC:routes:index");
 const express = require("express");
 const async = require("async");
+const HttpStatus = require("http-status-codes");
+
 const router = express.Router();
 const help = require("../routes/help.js");
 const config = require("../config.js");
@@ -161,9 +163,21 @@ function setUserConfig(req, res, next) {
   debug("setUserConfig");
 
   var user = req.user;
-  if (!req.query.view) return next(new Error("missing view in option"));
-  if (!req.query.option) return next(new Error("missing option in option"));
-  if (!req.query.value) return next(new Error("missing value in option"));
+  if (!req.query.view) {
+    let err = new Error("missing view in option");
+    err.status = HttpStatus.BAD_REQUEST;
+    return next(err);
+  }
+  if (!req.query.option) {
+    let err = new Error("missing option in option");
+    err.status = HttpStatus.BAD_REQUEST;
+    return next(err);
+  }
+  if (!req.query.value) {
+    let err = new Error("missing value in option");
+    err.status = HttpStatus.BAD_REQUEST;
+    return next(err);
+  }
 
   user.setOption(req.query.view, req.query.option, req.query.value);
 
@@ -196,6 +210,7 @@ function renderChangelog(req, res, next) {
 var htmlRoot = config.htmlRoot();
 
 function redirectHome(req, res) {
+  debug("redirectHome");
   res.redirect(htmlRoot + "/");
 }
 

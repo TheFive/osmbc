@@ -2,9 +2,10 @@
 // Exported Functions and prototypes are defined at end of file
 
 
-const async    = require("async");
-const should   = require("should");
-const debug    = require("debug")("OSMBC:model:article");
+const async      = require("async");
+const should     = require("should");
+const debug      = require("debug")("OSMBC:model:article");
+const HttpStatus = require("http-status-codes");
 
 
 const config    = require("../config.js");
@@ -45,12 +46,12 @@ function create (proto) {
 
 
 function createNewArticle (proto, callback) {
+  if (typeof (proto) === "function") {
+    callback = proto;
+    proto = null;
+  }
   function _createNewArticle(proto, callback) {
     debug("createNewArticle");
-    if (typeof (proto) === "function") {
-      callback = proto;
-      proto = null;
-    }
     if (proto && proto.id) return callback(new Error("ProtoID Exists"));
     var article = create(proto);
     article.save(function (err) {
@@ -200,7 +201,8 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
       if ((self[k] && self[k] !== data.old[k]) || (typeof (self[k]) === "undefined" && data.old[k] !== "")) {
         let error = new Error("Field " + k + " already changed in DB");
-        error.detail = { oldValue: data.old[k], databaseValue: self[k], newValue: data[k]};
+        error.status = HttpStatus.CONFLICT;
+        error.detail = {oldValue: data.old[k], databaseValue: self[k], newValue: data[k]};
         return callback(error);
       }
     }
@@ -322,18 +324,27 @@ function find(obj, order, callback) {
 }
 
 function findById(id, callback) {
-  debug("findById %s", id);
-  pgMap.findById(id, {table: "article", create: create}, function(err, result) {
-    if (err) callback(err);
-    if (!result) return callback(null, result);
+  function _findById(id, callback) {
+    debug("findById %s", id);
+    pgMap.findById(id, {table: "article", create: create}, function(err, result) {
+      if (err) callback(err);
+      if (!result) return callback(null, result);
 
-    blogModule.findOne({name: result.blog}, function(err, blog) {
-      result._blog = blog;
+      blogModule.findOne({name: result.blog}, function(err, blog) {
+        result._blog = blog;
 
-      return callback(err, result);
+        return callback(err, result);
+      });
     });
+  }
+  if (callback) {
+    return _findById(id, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findById(id, (err, result) => err ? reject(err) : resolve(result));
   });
 }
+
 
 function findOne(obj1, obj2, callback) {
   debug("findOne");
@@ -594,7 +605,9 @@ Article.prototype.editComment = function editComment(user, index, text, callback
   if (!self.commentList) self.commentList = [];
   should(index).within(0, self.commentList.length - 1);
   if (user.OSMUser !== self.commentList[index].user) {
-    return callback(new Error("Only Writer is allowed to change a commment"));
+    let error = new Error("Only Writer is allowed to change a commment");
+    error.status = HttpStatus.CONFLICT;
+    return callback(error);
   }
   async.series([
     function sendit(cb) {

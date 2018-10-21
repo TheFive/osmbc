@@ -6,6 +6,7 @@ const should      = require("should");
 const markdown    = require("markdown-it")();
 const debug       = require("debug")("OSMBC:routes:article");
 const path        = require("path");
+const HttpStatus  = require("http-status-codes");
 
 
 const router      = express.Router();
@@ -57,11 +58,15 @@ function getArticleFromID(req, res, next, id) {
   req.article = null;
   should.exist(id);
   let idNumber = Number(id);
-  if ("" + idNumber !== id) return next(new Error("Article ID " + id + " does not exist (conversion error)"));
+  if ("" + idNumber !== id) {
+    return res.status(HttpStatus.NOT_FOUND).send("Article ID " + id + " does not exist (conversion error)");
+  }
   articleModule.findById(idNumber, function(err, result) {
     debug("getArticleFromID->findById");
     if (err) return next(err);
-    if (!result) return next(new Error("Article ID " + id + " does not exist"));
+    if (!result) {
+      return res.status(HttpStatus.NOT_FOUND).send("Article ID " + id + " does not exist");
+    }
     req.article = result;
     next();
   });
@@ -703,7 +708,7 @@ function markCommentRead(req, res, next) {
     let returnToUrl  = htmlroot + "/article/" + article.id;
 
     // Do not loop with auth (can happen in tests)
-    if (req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
+    if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
       returnToUrl = req.header("Referer") || returnToUrl;
     }
     if (req.query.reload === "false") {
@@ -1018,7 +1023,7 @@ function isFirstCollector(req, res, next) {
       if (comment.text.search(new RegExp("@" + user + "\\b", "i")) >= 0) return next();
     }
   }
-  res.status(403).send("This article is not allowed for guests");
+  res.status(HttpStatus.FORBIDDEN).send("This article is not allowed for guests");
 }
 
 let allowFullAccess = auth.checkRole("full");

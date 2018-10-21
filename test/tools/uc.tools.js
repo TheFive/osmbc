@@ -20,7 +20,7 @@ const blogModule = require("../../model/blog.js");
 
 
 describe("views/tools", function() {
-  this.timeout(22000);
+  this.timeout(50000);
   var browser;
   beforeEach(async function() {
     await testutil.clearDB();

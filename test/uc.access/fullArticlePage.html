@@ -16,14 +16,14 @@
       <div class="container-fluid">
         <div class="navbar-header pull-left"><a class="bg-success navbar-brand hidden-xs" href="/changelog">What's New?</a>
           <ul class="nav navbar-nav pull-left">
-            <li><a id="collect" href="/article/create">Submit Link</a>
+            <li><a id="collect" href="/article/create">Collect</a>
             </li>
           </ul>
           <ul class="nav navbar-nav pull-left">
-            <li><a id="inbox" href="/usert/inbox">Inbox <span class="badge osmbcbadge-user">1</span></a></li>
+            <li><a id="inbox" href="/usert/inbox">Inbox </a></li>
           </ul>
-          <ul class="nav navbar-nav pull-left">
-            <li><a id="myArticles" href="/osmbc.html">My Articles</a></li>
+          <ul class="nav navbar-nav pull-left visible-xs">
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
           </ul>
         </div>
         <div class="navbar-header">
@@ -32,6 +32,35 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left">
             <li class="show-xs"><a class="bg-success visible-xs" href="/changelog">What's New?</a>
+            </li>
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+            <li class="dropdown" id="article"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Lists<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header">Articles</li>
+                <li><a href="/article/search">Search</a><a href="/article/list?myArticles=true">My Empty Collections</a></li>
+                <li class="dropdown-header">Orphaned Article
+                  </li><li><a href="/article/list?blog=Trash">Trash</a></li>
+                  <li><a href="/article/list?blog=TBC">TBC</a></li>
+                  <li><a href="/article/list?blog=Future">Future</a></li>
+                  <li><a href="/article/list?blog=">No Blog</a></li>
+                
+              </ul>
+            </li>
+            <li class="dropdown hidden-xs" id="tool"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Tool<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header">Markdown Helper</li>
+                <li><a href="/tool/calendarAllLang/fakeCalendar">Calendar Tool (fakeCalendar)</a></li>
+                <li><a href="/tool/picturetool">Picture Tool</a></li>
+                <li><a href="/calendar/preview">Public Calendar Check</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Editorial Tools
+                  </li><li><a href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a></li>
+                
+                <li class="divider"></li>
+                <li class="dropdown-header">About The Team
+                  </li><li><a href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a></li>
+                
+              </ul>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
@@ -59,19 +88,13 @@
                 <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
               </ul>
             </li>
-            <li><img onclick="location.href='/usert/2';" style="height:50px;width:50px"></li>
+            <li><img onclick="location.href='/usert/1';" style="height:50px;width:50px"></li>
           </ul>
           <!-- /.nav-collapse-->
         </div>
       </div>
     </div>
     <div class="container-fluid">
-      <p>
-        </p><div class="alert alert-danger text-center" id="mailalert" style="height: 200px; font-size: 40px;">
-          <p>Please enter your email to receive comments and feedback here:</p>
-          <p><a class="alert-link" href="/usert/self"> Goto User Configuration</a></p>
-        </div>
-      <p></p>
       <p>
         <!-- FullAccessArticleView-->
         </p><form id="textanalyseform" method="POST" action="https://wortliga.de/textanalyse/">
@@ -83,6 +106,10 @@
             <div class="col-md-6 col-md-push-6">
               <div class="row">
                 <div class="col-md-4" id="voteButtons">
+                  <button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.pro','/article/3/votes')"><i class="fa-lg fa fa-thumbs-up"></i><span>  0</span>
+                  </button>
+                  <button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.unpublish','/article/3/votes')"><i class="fa-lg fa fa-thumbs-down"></i><span>  0</span>
+                  </button>
                 </div>
                 <div class="col-md-1">
                 </div>
@@ -94,6 +121,8 @@
               <div class="row">
                 <div class="col-md-4"><span class="label osmbclabel-markdown" onclick="showRL('EN')">EN</span>
                   <p class="osmbc-help-text">Click to change left lang</p>
+                  <div id="notranslationArea">
+                  </div>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-4">
@@ -110,7 +139,7 @@
                   <div class="col-md-10">
                     <select class="form-control af" id="blog" name="blog" style="background-color: rgb(255, 255, 204);">
                       <option value="WN251" selected="selected">WN251 </option>
-                      <option value="Future" disabled="disabled">Future </option>
+                      <option value="Future">Future </option>
                     </select>
                     <textarea class="hidden form-control" id="old_blog" name="old_blog" rows="1" hide="">WN251</textarea>
                   </div>
@@ -155,6 +184,19 @@
                 </div>
               </div>
               <!-- Display Predecessor Row-->
+              <div class="row">
+                <div class="form-group">
+                  <label class="col-md-2">Predecessor</label>
+                  <div class="col-md-10">
+                    <textarea class="hidden form-control" id="old_predecessorId" name="old_predecessorId" rows="1" hide=""></textarea>
+                    <select class="form-control af" id="predecessorId" name="predecessorId">
+                      <option value="" selected="">None</option>
+                      <option value="0">First</option>
+                      <option value="3">This is a title of a full collected article</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <!-- Display Title Row-->
@@ -197,7 +239,7 @@
           </div>
           <div class="row">
             <div class="form-group">
-              <label class="col-md-1">Submission</label>
+              <label class="col-md-1">Collection</label>
               <div class="col-md-10">
                 <div class="label label-danger" id="collection_unsaved" style="display:none">unsaved</div>
                 <textarea class="form-control af" id="collection" name="collection" rows="2">This is the collection text</textarea>
@@ -246,16 +288,6 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
           <div class="row">
             <div class="col-md-6">
               <div class="row">
-                <h3>Comments (open)</h3>
-              </div>
-              <div class="row">
-                <div class="col-xs-1"><img style="height:40px;width:40px"></div>
-                <div class="col-xs-11"><b><span class="glyphicon glyphicon-envelope" onclick="window.callAndRedraw('/article/3/markCommentRead?index=1&amp;reload=false','/article/3/commentArea');"></span><span> </span><span>TheFive</span></b><span> </span><span class="text-muted small">a few seconds ago</span>
-                  <p></p><p>This is a comment for <a class="bg-warning" style="color:black" href="/usert/GuestUser">@GuestUser</a></p>
-<p></p>
-                </div>
-              </div>
-              <div class="row">
                 <form target="iframeform" name="AddComment" id="AddComment" action="/article/3/addComment?reload=false" method="post">
                   <textarea class="form-control" spellcheck="true" name="comment" id="comment" rows="7" placeholder="Your comment is shared between all weekly teams. 
 So please use english if possible. Do not hesitate to use your language and address your team with @LANG.
@@ -270,7 +302,135 @@ Use @OSMUser to address any special editor."></textarea>
           </div>
           <iframe class="hidden" name="iframeform"></iframe>
         </div>
+        <div class="row" id="voteButtonsList">
+          <h3>Votes &amp; Tags ...</h3>
+          <table class="table table-condensed">
+            <tbody>
+              <tr>
+                <td class="col-md-1">
+                  <button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.pro','/article/3/votes')"><i class="fa-lg fa fa-thumbs-up"></i><span>  0</span>
+                  </button>
+                </td>
+                <td class="col-md-1">pro</td>
+                <td class="col-md-5">
+                </td>
+                <td class="col-md-5">Use this to show your interest publishing this article</td>
+              </tr>
+              <tr>
+                <td class="col-md-1">
+                  <button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.unpublish','/article/3/votes')"><i class="fa-lg fa fa-thumbs-down"></i><span>  0</span>
+                  </button>
+                </td>
+                <td class="col-md-1">unpublish</td>
+                <td class="col-md-5">
+                </td>
+                <td class="col-md-5">Use to vote for unpublishing this article</td>
+              </tr>
+              <tr>
+                <td class="col-md-1">
+                  <button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.fav','/article/3/votes')"><i class="glyphicon glyphicon-star"></i><span>  0</span>
+                  </button>
+                </td>
+                <td class="col-md-1">fav</td>
+                <td class="col-md-5">
+                </td>
+                <td class="col-md-5">Favs will be shown in the weeklyOSM ecxerpt of the issue.</td>
+              </tr>
+              <tr>
+                <td class="col-md-1">
+                  <button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.doit','/article/3/votes')"><i></i><span>doit</span><span>  0</span>
+                  </button>
+                </td>
+                <td class="col-md-1">doit</td>
+                <td class="col-md-5">
+                </td>
+                <td class="col-md-5"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div class="row" id="doublettes">
+          <div class="row visible-xs">
+            <p><br><a href="/changes/log?table=article&amp;oid=3">[changes]</a></p>
+          </div>
+          <div class="row hidden-xs">
+            <h3>History</h3>
+            <div>
+              <table class="table table-striped table-responsive">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>user</th>
+                    <th>what</th>
+                    <th>change</th>
+                    <th>when</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a href="/changes/11"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>markdownEN</td>
+                    <td><span class="osmbc-inserted">This is the written text.</span>
+</td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/10"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>categoryEN</td>
+                    <td><span class="osmbc-deleted">-- no category yet --</span>
+<span class="osmbc-inserted">Mapping</span>
+</td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/9"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>firstCollector</td>
+                    <td><span class="osmbc-inserted">TheFive</span>
+</td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/8"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>title</td>
+                    <td><span class="osmbc-inserted">This is a title of a full collected article</span>
+</td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/7"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>categoryEN</td>
+                    <td><span class="osmbc-inserted">-- no category yet --</span>
+</td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/6"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>collection</td>
+                    <td><span class="osmbc-inserted">This is the collection text</span>
+</td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/changes/5"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                    <td>TheFive</td>
+                    <td>blog</td>
+                    <td><span class="osmbc-inserted">WN251</span>
+</td>
+                    <td>a few seconds ago</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <p>only displaying changes<span class="osmbc-inserted">inserted text</span><span class="osmbc-deleted">removed text</span></p>
+            </div>
+          </div>
         </div>
       <p></p>
       <p></p>
@@ -301,11 +461,8 @@ Use @OSMUser to address any special editor."></textarea>
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
 <script src="/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js"></script>
 <script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
+<script src="/javascripts/article_view.js"></script>
 <script>
-  // Init This Window with jQuery ready Callback
-  $(document).ready(init);
-  
-  
   // set Constant for Window with JADE Variables
   googleTranslateText = JSON.parse('{"DE":"(automatische [Übersetzung](##link##))","EN":"(automatic [translation](##link##))","ES":"(automatic [translation](##link##))","FR":"(automatic [translation](##link##))","CZ":"(automatic [translation](##link##))","PT":"(automatic [translation](##link##))","RU":"(automatic [translation](##link##))","JP":"(automatic [translation](##link##))","ID":"(automatic [translation](##link##))","TR":"(automatic [translation](##link##))"}');
   activeLanguages = JSON.parse('["EN"]');
@@ -313,588 +470,10 @@ Use @OSMUser to address any special editor."></textarea>
   rightLang = "";
   lang3 = "";
   lang4 = "";
+  htmlroot = "";
   placeholder = {"-- no category yet --":"If you do not have any idea, which category to use.","[Actual Category]":"This category does not have to exist in every blog. Use this category for actual events like SOTM","About us":"Use seldom, then on the top","Weekly exerciseEN:":"Category for the German weekly exercise","Mapping":"Quality assurance, editors, maps for mapper, tools for mapping, tagging","Community":"articles from the community, that does not fit in any other category","Imports":"discussions, announcements about imports","OpenStreetMap Foundation":"articles about the OSMF or local OpenStreetMap chapter","Events":"Announcements, reports about an event","Humanitarian OSM":"Information about HOT & Missing maps","Maps":"Changes on osm.org and osm.de maps, osm based special maps, no 08/15 map!","#switch2OSM":"Information about well known websites or traffic rich websites, a good new rendering style, (commercial sites) companies having own (big geo) data, more features for displaying maps are offered\n","Open Data":"Information about open data","Licences":"Information about juridicial topics","Software":"Programs for non programmers (without OSM editors)","Programming":"Information about software development","Did you know …":"Any thing which is interesting for OSM User. No longer known article and beginner tools.","Other “geo” things":"Information, that mostly have nothing to do with OSM...","Not Translated":"...","--unpublished--":"Articles, that should not be published, but keep their relation to the blog (otherwise use the trash)"}
   var catArray = [{"EN":"-- no category yet --","DE":"-- noch keine Kategorie --","ES":"-- no category yet --","FR":"-- no category yet --","CZ":"-- no category yet --","PT":"-- no category yet --","RU":"-- no category yet --","JP":"-- no category yet --","ID":"-- no category yet --","TR":"-- no category yet --"},{"EN":"Picture","DE":"Bild","ES":"Picture","FR":"Picture","CZ":"Picture","PT":"Picture","JP":"Picture","ID":"Picture","TR":"Picture"},{"EN":"[Actual Category]","DE":"[Aktuelle Kategorie]","ES":"[Corriente]","FR":"[Actualité]","CZ":"[Actual Category]","PT":"[Categoria atual]","RU":"[Текущая категория]","JP":"[Actual Category]","ID":"[Actual Category]","TR":"[Actual Category]"},{"EN":"About us","DE":"In eigener Sache","ES":"Acerca de nosotros","FR":"À notre propos","CZ":"About us","PT":"Sobre nós","RU":"О нас","JP":"私たちについて","ID":"Tentang kami","TR":"Hakkımızda"},{"EN":"Weekly exercise:","DE":"Wochenaufruf","ES":"Not Translated","FR":"Not Translated","CZ":"Not Translated","PT":"Não traduzido","RU":"Еженедельные заданияАнгл","JP":"Not Translated","ID":"Not Translated","TR":"Not Translated"},{"EN":"Mapping","DE":"Mapping","ES":"Mapeando","FR":"Cartographie","CZ":"Mapování","PT":"Mapeamento","RU":"Картографирование","JP":"マッピング","ID":"Pemetaan","TR":"Haritalama"},{"EN":"Community","DE":"Community","ES":"Comunidad","FR":"Communauté","CZ":"Komunita","PT":"Comunidade","RU":"Сообщество","JP":"コミュニティ","ID":"Komunitas","TR":"Topluluk"},{"EN":"Imports","DE":"Importe","ES":"Importaciones","FR":"Importation","CZ":"Imports","PT":"Importações","RU":"Импорты","JP":"インポート","ID":"Imports","TR":"İçe Aktarımlar"},{"EN":"OpenStreetMap Foundation","DE":"OpenStreetMap Foundation","ES":"Fundación OpenStreetMap","FR":"Fondation OpenStreetMap","CZ":"OpenStreetMap Foundation","PT":"Fundação OpenStreetMap","RU":"Фонд OpenStreetMap","JP":"OpenStreetMap Foundation","ID":"Yayasan OpenStreetMap","TR":"OpenStreetMap Foundation"},{"EN":"Events","DE":"Veranstaltungen","ES":"Eventos","FR":"Événements","CZ":"Události","PT":"Eventos","RU":"События","JP":"イベント","ID":"Kegiatan","TR":"Etkinlikler"},{"EN":"Humanitarian OSM","DE":"Humanitarian OSM","ES":"OSM Humanitario","FR":"OSM et l'humanitaire","CZ":"Humanitární OSM","PT":"OSM Humanitário","RU":"Гуманитарный OSM","JP":"OSM人道支援","ID":"OSM untuk Kemanusiaann","TR":"İnsani OSM"},{"EN":"Maps","DE":"Karten","ES":"Mapas","FR":"Cartes","CZ":"Mapy","PT":"Mapas","RU":"Карты","JP":"地図","ID":"Peta","TR":"Haritalar"},{"EN":"switch2OSM","DE":"switch2OSM","ES":"switch2OSM","FR":"switch2OSM","CZ":"switch2OSM","PT":"switch2OSM","RU":"switch2OSM","JP":"switch2OSM","ID":"switch2OSM","TR":"switch2OSM"},{"EN":"Open Data","DE":"Open-Data","ES":"Datos Abiertos","FR":"Ouverture des données","CZ":"Otevřená Data","PT":"Dados abertos","RU":"Открытые данные","JP":"オープンデータ","ID":"Open Data","TR":"Özgür Veri"},{"EN":"Licences","DE":"Lizenzen","ES":"Licencias","FR":"Licences","CZ":"Licences","PT":"Licenças","RU":"Лицензии","JP":"ライセンス","ID":"Lisensi","TR":"Lisanslar"},{"EN":"Software","DE":"Programme","ES":"Software","FR":"Applications","CZ":"Software","PT":"Software","RU":"Программы","JP":"ソフトウェア","ID":"Software","TR":"Yazılım"},{"EN":"Programming","DE":"Programmierung","ES":"Software","FR":"Applications","CZ":"Programming","PT":"Desenvolvimento","RU":"Программирование","JP":"プログラミング","ID":"Software","TR":"Programlama"},{"EN":"Releases","DE":"Releases","ES":"Releases","FR":"Releases","CZ":"Releases","PT":"Releases","RU":"Releases","JP":"Releases","ID":"Releases","TR":"Releases"},{"EN":"Did you know …","DE":"Kennst du schon …","ES":"Sabías que …","FR":"Connaissez-vous …","CZ":"Věděli jste …","PT":"Você sabia...","RU":"А вы знаете … ","JP":"…ご存知でしたか？","ID":"Apakah anda tahu …","TR":"Biliyor muydunuz?…"},{"EN":"Other “geo” things","DE":"Weitere Themen mit Geo-Bezug","ES":"Otras cosas “geo”","FR":"Autres sujets géographiques","CZ":"Ostatní “geo” záležitosti","PT":"Outras coisas “geo”","RU":"Другие “гео” события","JP":"その他の “ジオ” な事柄","ID":"Berita “geo” lainnya","TR":"Diğer “yersel” şeyler"},{"EN":"Upcoming Events","DE":"Wochenvorschau","ES":"Próximos eventos","FR":"Upcoming Events","CZ":"blížící se akce","PT":"Próximos eventos","RU":"Предстоящие события","JP":"今後のイベント","ID":"Upcoming Events","TR":"Gelecek etkinlikler"},{"EN":"--unpublished--","DE":"--unveröffentlicht--","ES":"--unpublished--","FR":"--unpublished--","CZ":"--unpublished--","PT":"--não publicado--","RU":"--не опубликовано--","JP":"--未発表--","ID":"--unpublished--","TR":"--unpublished--"}];
   var articleReferences = {"count":0};
   var noCategorie = "no categorie";
   if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
-  
-  
-  
-  // unlaodWindow Handler, to generate messages that form is left unsaved
-  function unloadWindowWarning(event) {
-    let dialogText = "Oops, it looks like you have forgotten to save your work."
-    event.returnValue = dialogText;
-    return dialogText;
-  };
-  
-  
-  // initialise all callbacks with jQuery
-  function init() {
-    md_render = window.markdownit();
-    md_render.use(window.markdownitSup)
-    md_render.use(window["markdown-it-imsize.js"])
-  
-    $("#collection")
-            .change(onchangeCollection)
-            .change(FitToContent)
-            .keyup(onchangeCollection)
-            .keyup(FitToContent)
-            .keyup(showModified)
-            .trigger("change");
-    $(".markdownEdit")
-            .change(convertMinusNoTranslation)
-            .change(previewMarkdown)
-            .change(showModified)
-            .change(FitToContent)
-            .change(checkMarkdownError)
-            .focusout(convertMinusNoTranslation)
-            .keyup(previewMarkdown)
-            .keyup(checkForTable)
-            .keyup(FitToContent)
-            .keyup(checkMarkdownError)
-            .keyup(showModified)
-            .on("paste", pasteEvent)
-            .on("drop", pasteEvent)
-            .trigger("change");
-    $("#title")
-            .keyup(showModified)
-    $("#predecessorId")
-            .change(showModified)
-    $("#blog")
-            .change(showHideUnpublishReason)
-            .change(showModified)
-            .trigger("change");
-    $("#unpublishReason")
-            .change(showModified)
-            .trigger("change");
-    $("#unpublishReference")
-            .keyup(showModified)
-            .trigger("change");
-    $("#categoryEN")
-            .change(showModified)
-            .change(syncPlaceholder)
-            .change(showHideUnpublishReason)
-  
-            .trigger("change");
-    $("#AddComment")
-            .change(FitToContent)
-            .keyup(FitToContent)
-            .trigger("change");
-    $("#editComment")
-            .change(FitToContent)
-            .keyup(FitToContent)
-            .trigger("change");
-    $('[data-toggle="tooltip"]').tooltip();
-    window.submitAndRedraw = submitAndRedraw;
-    window.saveButton = saveButton;
-  
-  }
-  
-  function saveButton() {
-    function save() {
-      disableUnchanged();document.getElementById('input').submit();
-    }
-    if (document.getElementById('comment').value.trim()==='') return save();
-  
-    var jqForm = $('form#AddComment');
-    var url = jqForm.attr('action');
-    var toPost = jqForm.serialize();
-  
-    $.post(url, toPost, function (data) {
-        if (data === "OK") {
-          save();
-        }
-      },
-      'text' // I expect a JSON response
-    ).fail(function (err) {
-      console.error(err);
-    });
-  }
-  
-  
-  
-  
-  // Check, wether value of field is "-" and set it to "no translation"
-  // Install as onleave event handler
-  function convertMinusNoTranslation() {
-    var object = $(this)
-    var md = object.val();
-    if (md && md.trim() == "-") {
-      object.val("no translation");
-      object.trigger("change");
-    }
-  }
-  
-  
-  
-  
-  // Function to convert markdown into html
-  // Add the Blog typic list element to preview, but only
-  // for specific types, (Missing: configuring this by user.)
-  function convert(text) {
-  
-    // The cut at the beginning is a little bit "historic" from the
-    // OSMBC startup, so only used for emotional motivation of the developer :-)
-    if (text.substring(0,2)=="* ") text = text.substring(2,999999);
-  
-  
-    // convert md to html
-    text = md_render.render(text);
-  
-  
-    // Display as list, this should depend on type
-  
-    var cat = $("#categoryEN").val();
-    if (cat != "Picture" && cat != "Events" && cat != "Releases") {
-      text = '<ul><li>'+text+'</li></ul>';
-    }
-    return text;
-  }
-  
-  // Test, wether a text is an url or not
-  // based on regex.
-  function isURL(t) {
-  
-    var isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/
-    if (t) return isUrlRegex.test(t);
-    return isUrlRegex;
-  }
-  
-  // Try to copy text to the clipboard
-  // if it fails, alert an error and offer the possibility to copy manual
-  function clip(text) {
-    var copyElement = document.createElement('input');
-    copyElement.setAttribute('type', 'text');
-    copyElement.setAttribute('value', text);
-    copyElement = document.body.appendChild(copyElement);
-    copyElement.select();
-    try {
-      if (!document.execCommand('copy')) throw 'Not allowed.';
-    } catch (e) {
-      copyElement.remove();
-      prompt('Copy not supported, use your mobile to copy and press enter', text);
-    } finally {
-      if (typeof e == 'undefined') {
-        copyElement.remove();
-      }
-    }
-  }
-  
-  // Function that generates a markdown link in the case a
-  // url is pasted or drag'n dropped to a markdown textfield
-  //
-  function generateMarkdownLink2(par1,par2) {
-  
-    // tb == Text Before Selection
-    // ta == Text Afer Selection
-    var tb = par1.text.substring(0,par1.startselection);
-    var ta = par1.text.substring(par1.endselection,99999);
-  
-    // beforeSnip == selected Text before paste
-    // afterSnip == selected Text after Insert
-    var beforeSnip = par1.text.substring(par1.startselection,par1.endselection);
-    var afterSnip = par2.text.substring(par1.startselection,par2.endselection);
-  
-    // only in the case, the "afterSnip" variable contains an URL, something
-    // has to be done
-    if (isURL(afterSnip.trim())) {
-  
-      afterSnip = afterSnip.trim();
-  
-      // Check, wether, the url is pasted into brackets ()
-      // then nothing has to be done
-      var alreadyMarkdowned = false;
-      if (tb!="" && tb.charAt(tb.length-1)=="(") alreadyMarkdowned= true;
-      if (ta!="" && tb.charAt(0)==")") alreadyMarkdowned= true;
-      if (!alreadyMarkdowned) {
-  
-        // combine the new text
-        var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
-  
-        // calculate the position to point to
-        // for the new text
-        // Between [] in the case, that only a link was added
-        // after the [link](http://somewhere) in case the link has already a "display" word
-        var c ;
-        if (beforeSnip == "") {
-          c = (tb+"[").length;
-        } else {
-          c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
-        }
-        return {text:r,pos:c};
-      }
-    }
-    return null;
-  }
-  
-  // Event Handler for pasting text to markdown field
-  function pasteEvent() {
-    var mf = this;
-  
-    // Generate a triple of text, start selection and end selection BEFORE Pasting new text
-    var before = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
-  
-    setTimeout(function () {
-      // Generate a triple of text, start selection and end selection AFTER Pasting new text
-      var after = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
-  
-      // And use the result, to generate the markdown link
-      var r = generateMarkdownLink2(before, after);
-  
-      if (r) {
-        mf.value = r.text;
-        mf.selectionStart = mf.selectionEnd = r.pos;
-      }
-      // just for the case, that a " " war added by some browsers between [] and ()
-      // of the markdown link throw it away
-      mf.value = (mf.value).replace(/] \(/g, "](");
-      $(mf).trigger("change");
-    }, 1); // End of setTimeout function call
-  }
-  
-  
-  // Check, wether a markdown field contains a table
-  // and set the texttype to monospace
-  function checkForTable() {
-    var md = this.value;
-    if (md.indexOf("|----")>= 0) {
-      $(this).wrap = 'off';
-      $(this).css("fontFamily","monospace");
-      }
-    else {
-      $(this).wrap = 'soft';
-      $(this).css("fontFamily","");
-      }
-  }
-  
-  // Event handler to calculate the fresh markdown preview
-  function previewMarkdown() {
-    var md = this.value;
-    preview = $(".preview[lang=" + this.lang + "]");
-    preview.html(convert(md));
-  }
-  
-  
-  // Event Handler to check markdown for every error
-  // For Now
-  // * long markdown links
-  //
-  // Can be extended: Valid Urls, ...
-  function checkMarkdownError() {
-    var md = this.value;
-    if (!window.linklist) window.linklist = [];
-    text = $(".markdownMessage[lang=" + this.lang + "]");
-    var errorOccured= false;
-  
-    // Check for long links
-    var longLink = md.search(/\[[^\]]{40,}\]/g);
-    if (longLink>=0) {
-      text.show(400);
-      text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
-      errorOccured = true
-      }
-  
-    var linkList;
-    var allLinksFound = true;
-    var linkFromCollectionFound = false;
-  
-    var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
-    while( (linkList = regexToken.exec(md)) != null ) {
-      link = linkList[0];
-      var linkFound = false
-      for (var i=0;i<window.linklist.length;i++) {
-        if (window.linklist[i]===link) linkFound = true;
-      }
-      if (linkFound) linkFromCollectionFound = true;
-      // check Language Flags
-      if ($("img.flag[src='" + link + "']").length>0) linkFound = true;
-      if (!linkFound) allLinksFound = false;
-    }
-    if (allLinksFound === false) {
-      text.show(400);
-      text.html("Please check links, some looks not to be in collection, nor be a translation link");
-      errorOccured = true;
-    }
-    if (linkFromCollectionFound === false && md !== "" && md!=="no translation") {
-      text.show(400);
-      text.html("Please use a link from collection in article.");
-      errorOccured = true;
-    }
-  
-    if (!errorOccured) {
-       //preview.style.backgroundColor="";
-        text.hide(400);
-      }
-  }
-  
-  // Generate the automatic google translate link for an url
-  // and a given language, used to show it in edit mode
-  function generateGoogleTranslateLink(link,lang) {
-    var googlelang = lang;
-    if (lang === "JP") googlelang = "JA";
-    if (lang === "CZ") googlelang = "CS";
-    var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
-    window.linklist.push(gtl);
-  
-    var gtlMarkdown = "(automatic [translation](##link##))";
-    if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
-  
-  
-    gtlMarkdown = gtlMarkdown.replace("##link##",gtl);
-  
-    var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
-  
-    return '<a href="'+gtl+'" target="_blank" ondragstart="'+dragstartFunction+'" >'+lang+'</a>';
-  }
-  
-  
-  // Eventhandler to start drag & drop
-  function dragstart(event,text) {
-    event.dataTransfer.setData("TEXT", text);
-  }
-  
-  // Collection is changed, so create a linkList
-  // for the linkArea
-  
-  function onchangeCollection() {
-    var cl = $("#collection").val();
-    var linkArea = $("#linkArea");
-    var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
-    var linkList;
-    window.linklist = [];
-    var result = "";
-    function linkShortener(link) {
-      if (link.length <50) return link;
-      return link.substr(0,40)+" . . . "+link.substr(link.length-5,5);
-    }
-  
-  
-    while( (linkList = regexToken.exec(cl)) != null ) {
-      var link = linkList[0];
-      var found = false;
-      window.linklist.forEach(function(l){
-        if (l=== link) found = true;
-      });
-      if (found) continue;
-      window.linklist.push(link);
-      if (articleReferences[link] && (articleReferences[link]).length >0) {
-        result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+linkShortener(link)+'</a>\n';
-      }
-      else result += '<a class="label label-default" href="'+link+'" target="_blank" >'+linkShortener(link)+'</a>\n';
-      result += " "+generateGoogleTranslateLink(link,leftLang);
-      if (rightLang !== "--" && rightLang !== "") {
-        result += " "+generateGoogleTranslateLink(link,rightLang);
-      }
-      if (lang3 !== "--" && lang3 !== "") {
-        result += " " + generateGoogleTranslateLink(link, lang3);
-      }
-      if (lang4 !== "--" && lang4 !== "") {
-        result += " " + generateGoogleTranslateLink(link, lang4);
-      }
-  
-      result +="<br>\n";
-    }
-    result = '<p>'+result+'</p>';
-  
-    if (linkArea) linkArea.html(result);
-  
-  }
-  
-  
-  // click on a flag Event
-  // Copy the flag related information to the clipboard as markdown link
-  var myclick = function (id) {
-  
-    src = $("#"+id).attr("src");
-  
-  
-    src = "![("+id+")]("+src+")";
-    clip(src);
-    alert(id+ " flag is copied to clipboard");
-  }
-  
-  
-  // dragStart Event
-  function ondragstartflag (event,id) {
-    image = document.getElementById(id);
-    src = image.src;
-    src = "![(" + id + ")](" + src + ")";
-    event.dataTransfer.setData("TEXT", src);
-  }
-  
-  function ondragstartLangLabel( event,lang) {
-    var v = $("#markdown" + lang).val();
-    event.dataTransfer.setData("TEXT", v)
-  }
-  
-  
-  // Fit to content event
-  // justify the size of the textfield to the shown content
-  function FitToContent()
-  {
-    if (!this) return;
-    textfield=this;
-    textfield.style.height = textfield.style.minHeight;
-    var adjustedHeight = Math.max(textfield.scrollHeight, textfield.clientHeight);
-    if ( adjustedHeight > textfield.clientHeight ) {
-      textfield.style.height = adjustedHeight + "px";
-    }
-  }
-  
-  // Enable & Disable the different languages
-  function showRL(what) {
-    $(".RL").addClass("hidden");
-    $(".RLOFF").removeClass("hidden");
-    if (what == "EN") what = "";
-    $(".RL-"+what).removeClass("hidden");
-    $(".RLOFF-"+what).addClass("hidden");
-  }
-  
-  
-  function syncPlaceholder() {
-    var c = $("#categoryEN").val();
-    if (placeholder[c]) {
-       $("#categoryDisplay").html(placeholder[c]);
-      }
-    else {
-      $("#categoryDisplay").html("Missing Category Description");
-    }
-  }
-  
-  function showModified() {
-  
-    var modified = false;
-  
-    var newVal = $(this).val();
-    var oldVal = $("#old_" + this.name + ":hidden").val();
-  
-    var modifiedColor = "#ffffcc";
-    var normalColor = ""
-    if (this.name==="categoryEN" && newVal === noCategorie) {
-      normalColor = "#FDC6CD";
-      modifiedColor = "#FDC6AB";
-    }
-  
-    if (oldVal != newVal) {
-      $(this).css("backgroundColor", modifiedColor);
-      $("#" + this.name + "_unsaved").show()
-    } else {
-      $(this).css("backgroundColor", normalColor);
-      $("#" + this.name + "_unsaved").hide()
-    }
-  
-    $(".af").each(function(index,object){
-  
-      var newVal = $(this).val();
-      var oldVal = $("#old_" + this.name + ":hidden").val();
-  
-      if (oldVal != newVal) {
-        modified = true;
-      }
-    });
-    $("#saveButton").prop("disabled",!modified);
-    if (modified) {
-      $(window).on("beforeunload",unloadWindowWarning);
-    } else {
-      $(window).off("beforeunload",unloadWindowWarning);
-    }
-  
-  }
-  
-  function showHideUnpublishReason() {
-  
-    var c = $("#categoryEN").val();
-    var b = $("#blog").val();
-  
-    var hidden = true;
-    if (c==="--unpublished--") hidden = false;
-    if (b==="Trash") hidden = false;
-  
-    if (hidden) $("#unpublishReasonRow").addClass("hidden");
-      else $("#unpublishReasonRow").removeClass("hidden");
-  }
-  
-  
-  function redrawFunc(redraw) {
-    let j = $.getJSON("" + redraw, function (json) {
-      for (k in json) {
-        $(k).html(json[k]);
-      }
-    });
-  }
-  // This Function calls "call" url, if given
-  // after that it callse the "redraw" url, parses
-  // the json and redraws it content in the html
-  function callAndRedraw(call, redraw) {
-    if (call) {
-      $.get("" + call,function(){redrawFunc(redraw);});
-    } else {
-      redrawFunc(redraw);
-    }
-  
-  }
-  
-  function disableUnchanged() {
-    activeLanguages.forEach(function(lang){
-      if ($("#markdown"+lang).val() === $("#old_markdown"+lang).val()) {
-        $("#markdown"+lang).prop("disabled",true);
-        $("#old_markdown"+lang).prop("disabled",true);
-      }
-    });
-    $(window).off("beforeunload",unloadWindowWarning);
-  
-  }
-  
-  function submitAndRedraw(form,redraw) {
-    var jqForm = $(form);
-    var url = jqForm.attr('action');
-  
-    var toPost = jqForm.serialize();
-  
-  
-    // clean unchanged values, to reduce post overhead.
-    for (var k in toPost) {
-      if (toPost[k]===toPost["old_"+k]) {
-        delete toPost[k];
-        delete toPost["old_"+k];
-      }
-    }
-  
-    $.post(url, toPost , function (data) {
-        if (data === "OK") {
-          if (redraw) redrawFunc(redraw);
-        }
-      },
-      'text' // I expect a JSON response
-    ).fail( function(err){console.error(err);});
-  }
-  
-  
-  function setNoTranslation(){
-    $('.markdownEdit').each(function(item){
-  
-      if (this.value=="" && !this.readOnly ) this.value = "no translation";
-    });
-  }
-  
-  function translate(langFrom, langTo,service) {
-    $(".translate" + langFrom + langTo).addClass("hidden");
-    $(".translateWait" + langFrom + langTo).removeClass("hidden");
-    var from =  langFrom.toLowerCase();
-    var to = langTo.toLowerCase();
-    var originalText = document.getElementById("markdown" + langFrom).value;
-    jQuery.post("/article/translate/"+service+"/" + from + "/" + to, {text: originalText}, function (data) {
-      console.info("Translation received");
-      data = data.replace(/] \(/g, "](");
-      $(".translateWait" + langFrom + langTo).addClass("hidden");
-      $(".translateDone" + langFrom + langTo+"."+service).removeClass("hidden");
-      $("#markdown" + langTo).val(data).trigger("change");
-    }).fail(function (err) {
-      console.error("Translation failed");
-      console.error(err);
-      $(".translateWait" + langFrom + langTo).addClass("hidden");
-      $(".translateError" + langFrom + langTo).removeClass("hidden");
-    });
-  }
 </script></body></html>

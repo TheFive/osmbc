@@ -4,6 +4,7 @@
 const async    = require("async");
 const config   = require("../config.js");
 const util     = require("../util/util.js");
+const HttpStatus = require("http-status-codes");
 
 const markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
@@ -125,16 +126,20 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
         // nothing has to be written to review Comment
         return cb();
       }
-      if (data === "deletereview") {
-        // review moduls has to be cancled.
+      if (data === "deleteallreviews") {
+        // review moduls has to be canceled.
         // delete all reviews done
         delete self[rc];
         return cb();
       }
       for (let i = 0; i < self[rc].length; i++) {
         if (self[rc][i].text === "reviewing..." && self[rc][i].user === user.OSMUser) {
-          self[rc][i].text = data;
-          self[rc][i].editstamp = date;
+          if (data === "delete") {
+            self[rc].splice(i, 1);
+          } else {
+            self[rc][i].text = data;
+            self[rc][i].editstamp = date;
+          }
           return cb();
         }
       }
@@ -164,7 +169,11 @@ Blog.prototype.editReviewComment = function editReviewComment(lang, user, index,
   if (index < 0 || index >= self[rc].length) return callback(new Error("Edit Review Comment, Index out of Range"));
 
 
-  if (self[rc][index].user !== user.OSMUser) return callback(new Error(">" + user.OSMUser + "< is not allowed to change review"));
+  if (self[rc][index].user !== user.OSMUser) {
+    let error = new Error(">" + user.OSMUser + "< is not allowed to change review");
+    error.status = HttpStatus.FORBIDDEN;
+    return callback(error);
+  }
 
   // nothing to change.
   if (self[rc][index].text === data) return callback();
@@ -243,15 +252,39 @@ module.exports.find = function find(obj1, obj2, callback) {
 
 // find(id,callback)
 // id find Objects with ID
+
 module.exports.findById = function findById(id, callback) {
-  debug("findById %s", id);
-  pgMap.findById(id, {table: "blog", create: create}, callback);
+  function _findById(id, callback) {
+    debug("findById %s", id);
+    pgMap.findById(id, {table: "blog", create: create}, function(err, result) {
+      if (err) callback(err);
+      return callback(null, result);
+    });
+  }
+  if (callback) {
+    return _findById(id, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findById(id, (err, result) => err ? reject(err) : resolve(result));
+  });
 };
 
 // findOne(object,order,callback)
 module.exports.findOne = function findOne(obj1, obj2, callback) {
-  debug("findOne");
-  pgMap.findOne({table: "blog", create: create}, obj1, obj2, callback);
+  if (typeof obj2 === "function") {
+    callback = obj2;
+    obj2 = null;
+  }
+  function _findOne(obj1, obj2, callback) {
+    debug("findOne");
+    pgMap.findOne({table: "blog", create: create}, obj1, obj2, callback);
+  }
+  if (callback) {
+    return _findOne(obj1, obj2, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findOne(obj1, obj2, (err, result) => err ? reject(err) : resolve(result));
+  });
 };
 
 // Create a blog in the database,
