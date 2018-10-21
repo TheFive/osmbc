@@ -227,6 +227,19 @@ describe("uc.article", function() {
     });
   });
 
+  describe("onchangeMarkdown", function() {
+    this.timeout(maxTimer * 3);
+    beforeEach(async function() {
+      await browser.visit("/language?lang2=none");
+      await browser.visit("/article/" + articleId);
+    });
+    it("should warn on double links", async function() {
+      browser.fill("#markdownDE","https://a.link is referenced tiwce https://a.link");
+      await browser.keyUp("#markdownDE", 30);
+      should(browser.document.getElementById("textDE").innerHTML).equal("Link https://a.link is used twice in markdown");
+    });
+  });
+
   describe("Comments", function() {
     it("should add and change a comment of an article", async function() {
       this.timeout(maxTimer * 2);
