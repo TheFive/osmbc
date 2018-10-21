@@ -289,10 +289,17 @@ function checkMarkdownError() {
   var linkList;
   var allLinksFound = true;
   var linkFromCollectionFound = false;
+  var allLinks = [];
+  var errorLinkTwice = null;
 
   var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
   while( (linkList = regexToken.exec(md)) != null ) {
     var link = linkList[0];
+    if (allLinks.indexOf(link) >= 0) {
+      errorLinkTwice = link;
+    }
+    allLinks.push(link);
+
     var linkFound = false;
     for (var i=0;i<window.linklist.length;i++) {
       if (window.linklist[i]===link) linkFound = true;
@@ -310,6 +317,11 @@ function checkMarkdownError() {
   if (linkFromCollectionFound === false && md !== "" && md!=="no translation") {
     text.show(400);
     text.html("Please use a link from collection in article.");
+    errorOccured = true;
+  }
+  if (errorLinkTwice) {
+    text.show(400);
+    text.html("Link " + errorLinkTwice + " is used twice in markdown");
     errorOccured = true;
   }
 
