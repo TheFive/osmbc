@@ -23,7 +23,7 @@ const auth        = require("../routes/auth.js");
 
 const htmlroot = config.htmlRoot();
 
-const reviewInWP = config.getValue("ReviewInWP", {default: []});
+const reviewInWP = config.getValue("ReviewInWP", { default: [] });
 
 // Internal Function to find a blog by an ID
 // it accepts an internal Blog ID of OSMBC and a blog name
@@ -56,7 +56,7 @@ function findBlogByRouteId(id, user, callback) {
       debug("findBlogByRouteId->findByName");
       // Check and return blog by name
       if (blog) return cb();
-      blogModule.find({name: id}, function(err, r) {
+      blogModule.find({ name: id }, function(err, r) {
         if (err) return cb(err);
         if (r.length === 0) return cb();
         if (r.length > 1) return cb(new Error("Blog >" + id + "< exists twice, internal id of first: " + r[0].id));
@@ -144,12 +144,12 @@ function renderBlogStat(req, res, next) {
     if (err) return next(err);
     res.set("content-type", "text/html");
     res.rendervar.layout.title = blog.name + "/statistic";
-    res.render("blogstat", {layout: res.rendervar.layout,
+    res.render("blogstat", { layout: res.rendervar.layout,
       logs: logs,
       blog: blog,
       editors: editors,
       userMap: userMap,
-      languages: config.getLanguages()});
+      languages: config.getLanguages() });
   }
   );
 }
@@ -171,7 +171,7 @@ function renderBlogList(req, res, next) {
 
   async.auto({
     blogs: function(callback) {
-      blogModule.find(query, {column: "name", desc: true}, function(err, blogs) {
+      blogModule.find(query, { column: "name", desc: true }, function(err, blogs) {
         callback(err, blogs);
       });
     },
@@ -190,9 +190,9 @@ function renderBlogList(req, res, next) {
     if (err) return next(err);
     res.set("content-type", "text/html");
     res.rendervar.layout.title = "blog/list";
-    res.render("bloglist", {layout: res.rendervar.layout,
+    res.render("bloglist", { layout: res.rendervar.layout,
       additionalText: additionalText,
-      blogs: result.blogs});
+      blogs: result.blogs });
   });
 }
 
@@ -222,7 +222,7 @@ function renderBlogPreview(req, res, next) {
   async.auto({
     converter: function(callback) {
       debug("converter function");
-      blog.getPreviewData({lang: lang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true}, function(err, data) {
+      blog.getPreviewData({ lang: lang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
         if (err) return callback(err);
         let renderer = new BlogRenderer.HtmlRenderer(blog);
         if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
@@ -248,13 +248,13 @@ function renderBlogPreview(req, res, next) {
     } else {
       should.exist(res.rendervar);
       res.rendervar.layout.title = blog.name + "/preview";
-      res.render("blogpreview", {layout: res.rendervar.layout,
+      res.render("blogpreview", { layout: res.rendervar.layout,
         blog: blog,
         asMarkdown: asMarkdown,
         preview: result.converter,
         lang: lang,
         returnToUrl: returnToUrl,
-        categories: blog.getCategories()});
+        categories: blog.getCategories() });
     }
   }
   );
@@ -363,7 +363,7 @@ function renderBlogTab(req, res, next) {
   async.auto({
     dataCollect: function(callback) {
       debug("converter function");
-      blog.getPreviewData({lang: lang, collectors: true}, function(err, result) {
+      blog.getPreviewData({ lang: lang, collectors: true }, function(err, result) {
         return callback(err, result);
       });
     },
@@ -386,7 +386,7 @@ function renderBlogTab(req, res, next) {
     setStatus: function (callback) {
       if (typeof (req.query.setStatus) !== "undefined") {
         clearParams = true;
-        let changes = {status: req.query.setStatus};
+        let changes = { status: req.query.setStatus };
         blog.setAndSave(req.user, changes, function(err) {
           if (err) return callback(err);
           let referer =  "/";
@@ -419,7 +419,7 @@ function renderBlogTab(req, res, next) {
 
     let renderer = new blogRenderer.HtmlRenderer(blog);
     res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
-    res.render("blog_" + tab.toLowerCase(), {layout: res.rendervar.layout,
+    res.render("blog_" + tab.toLowerCase(), { layout: res.rendervar.layout,
       blog: blog,
       articles: result.dataCollect.articles,
       futureArticles: result.dataCollect.futureArticles,
@@ -434,7 +434,7 @@ function renderBlogTab(req, res, next) {
       reviewInWP: reviewInWP,
       reviewScripts: reviewScripts,
       util: util,
-      categories: blog.getCategories()});
+      categories: blog.getCategories() });
   }
   );
 }
@@ -461,10 +461,10 @@ function editBlogId(req, res) {
   }
   blog._categories_yaml = yaml.safeDump(blog.categories);
   res.set("content-type", "text/html");
-  res.render("editblog", {layout: res.rendervar.layout,
+  res.render("editblog", { layout: res.rendervar.layout,
     blog: blog,
     params: params,
-    categories: blog.getCategories()});
+    categories: blog.getCategories() });
 }
 
 function postBlogId(req, res, next) {
@@ -478,12 +478,12 @@ function postBlogId(req, res, next) {
   } catch (err) {
     return next(err);
   }
-  let changes = {name: req.body.name,
+  let changes = { name: req.body.name,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     status: req.body.status,
     markdownImage: req.body.markdownImage,
-    categories: categories};
+    categories: categories };
   blog.setAndSave(req.user, changes, function(err) {
     if (err) {
       return next(err);

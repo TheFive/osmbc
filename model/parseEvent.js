@@ -8,7 +8,7 @@ var config = require("../config.js");
 var configModule = require("../model/config.js");
 var async = require("async");
 
-let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
+let osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
 
 
 

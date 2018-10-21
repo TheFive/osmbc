@@ -116,7 +116,7 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
       if (data === "startreview") {
         // Start Review, check wether review is done in WP or not
         if (self[rc].length === 0) {
-          self[rc].push({user: user.OSMUser, text: data, timestamp: date});
+          self[rc].push({ user: user.OSMUser, text: data, timestamp: date });
         }
         // nothing has to be written to the review comments
         return cb();
@@ -143,7 +143,7 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
           return cb();
         }
       }
-      self[rc].push({user: user.OSMUser, text: data, timestamp: date});
+      self[rc].push({ user: user.OSMUser, text: data, timestamp: date });
       return cb();
     }
   ], function(err) {
@@ -247,7 +247,7 @@ Blog.prototype.closeBlog = function closeBlog(lang, user, status, callback) {
 // order (optional)  field to sort by
 module.exports.find = function find(obj1, obj2, callback) {
   debug("find");
-  pgMap.find({table: "blog", create: create}, obj1, obj2, callback);
+  pgMap.find({ table: "blog", create: create }, obj1, obj2, callback);
 };
 
 // find(id,callback)
@@ -256,7 +256,7 @@ module.exports.find = function find(obj1, obj2, callback) {
 module.exports.findById = function findById(id, callback) {
   function _findById(id, callback) {
     debug("findById %s", id);
-    pgMap.findById(id, {table: "blog", create: create}, function(err, result) {
+    pgMap.findById(id, { table: "blog", create: create }, function(err, result) {
       if (err) callback(err);
       return callback(null, result);
     });
@@ -277,7 +277,7 @@ module.exports.findOne = function findOne(obj1, obj2, callback) {
   }
   function _findOne(obj1, obj2, callback) {
     debug("findOne");
-    pgMap.findOne({table: "blog", create: create}, obj1, obj2, callback);
+    pgMap.findOne({ table: "blog", create: create }, obj1, obj2, callback);
   }
   if (callback) {
     return _findOne(obj1, obj2, callback);
@@ -309,7 +309,7 @@ function createNewBlog(user, proto, noArticle, callback) {
     debug("createNewBlog");
     if (proto && proto.id) return callback(new Error("Should not exist proto id"));
 
-    exports.findOne(" where data->>'name' like 'WN%'", {column: "name", desc: true}, function(err, result) {
+    exports.findOne(" where data->>'name' like 'WN%'", { column: "name", desc: true }, function(err, result) {
       if (err) return callback(err);
       let blog = create();
       let name = "WN250";
@@ -348,11 +348,11 @@ function createNewBlog(user, proto, noArticle, callback) {
       async.series([
         function createCalendar(cb) {
           if (noArticle) return cb();
-          articleModule.createNewArticle({blog: blog.name, categoryEN: "Upcoming Events", title: blog.name + " Upcoming Events"}, cb);
+          articleModule.createNewArticle({ blog: blog.name, categoryEN: "Upcoming Events", title: blog.name + " Upcoming Events" }, cb);
         },
         function createCalendar(cb) {
           if (noArticle) return cb();
-          articleModule.createNewArticle({blog: blog.name, categoryEN: "Picture", title: blog.name + " Picture"}, cb);
+          articleModule.createNewArticle({ blog: blog.name, categoryEN: "Picture", title: blog.name + " Picture" }, cb);
         }
       ],
       function finalFunction(err) {
@@ -385,8 +385,8 @@ Blog.prototype.autoClose = function autoClose(cb) {
   let time = new Date().getTime();
   let endDateBlog = (new Date(this.endDate)).getTime();
   if (endDateBlog <= time) {
-    let changes = {status: "edit"};
-    this.setAndSave({OSMUser: "autoclose"}, changes, function(err) {
+    let changes = { status: "edit" };
+    this.setAndSave({ OSMUser: "autoclose" }, changes, function(err) {
       cb(err);
     });
   } else cb();
@@ -405,7 +405,7 @@ function autoCloseBlog(callback) {
 
 
 
-  exports.find({status: "open"}, {column: "endDate", desc: false}, function(err, result) {
+  exports.find({ status: "open" }, { column: "endDate", desc: false }, function(err, result) {
     if (err) {
       _autoCloseRunning = _autoCloseRunning - 1;
       return callback(err);
@@ -418,10 +418,10 @@ function autoCloseBlog(callback) {
         }, function finish() { cb(); });
       },
       function createNewBlog(cb) {
-        exports.findOne({status: "open"}, function(err, result) {
+        exports.findOne({ status: "open" }, function(err, result) {
           if (err) return cb(err);
           if (!result) {
-            exports.createNewBlog({OSMUser: "autocreate"}, cb);
+            exports.createNewBlog({ OSMUser: "autocreate" }, cb);
             return;
           }
           cb();
@@ -593,7 +593,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
   async.series([
     function readFuture(cb) {
       debug("readFuture");
-      articleModule.find({blog: "Future"}, {column: "title"}, function(err, result) {
+      articleModule.find({ blog: "Future" }, { column: "title" }, function(err, result) {
         if (err) return cb(err);
         if (result) futureArticles = result;
         return cb();
@@ -601,7 +601,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
     },
     function readArticlesWithCollector(cb) {
       debug("readArticlesWithCollector");
-      articleModule.find({blog: self}, {column: "title"}, function (err, result) {
+      articleModule.find({ blog: self }, { column: "title" }, function (err, result) {
         if (err) return cb(err);
         if (options.collectors) {
           async.each(result, calculateDependend, function finalFunction(err) {
@@ -714,7 +714,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
   let secondLang = user.secondLang;
   let i, j;
 
-  articleModule.find({blog: self}, function (err, result) {
+  articleModule.find({ blog: self }, function (err, result) {
     if (err) return callback(err);
     should(Array.isArray(result)).be.True();
 
@@ -873,7 +873,7 @@ Blog.prototype.startCloseTimer = function startCloseTimer() {
 
 exports.startAllTimers = function startAllTimers(callback) {
   debug("startAllTimers");
-  exports.find({status: "open"}, function(err, result) {
+  exports.find({ status: "open" }, function(err, result) {
     if (err && err.message === "relation \"blog\" does not exist") return callback();
     if (err) return callback(err);
     if (!result) return callback();
@@ -887,7 +887,7 @@ exports.startAllTimers = function startAllTimers(callback) {
 
 module.exports.getTBC = function() {
   debug("getTBC");
-  let blog = create({name: "TBC", version: -1, status: "Action List"});
+  let blog = create({ name: "TBC", version: -1, status: "Action List" });
   return blog;
 };
 

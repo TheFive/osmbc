@@ -372,7 +372,7 @@ exports.createTables = function(pgObject, options, analyse, callback) {
   should(typeof (options)).equal("object");
   if (typeof (analyse) === "function") {
     callback = analyse;
-    analyse = {foundNOK: {}, expected: {}};
+    analyse = { foundNOK: {}, expected: {} };
   }
   should(typeof (analyse)).equal("object");
 

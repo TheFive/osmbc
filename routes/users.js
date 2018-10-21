@@ -25,7 +25,7 @@ function renderList(req, res, next) {
   debug("renderList");
   var users;
   var query = {};
-  var sort = {column: "OSMUser"};
+  var sort = { column: "OSMUser" };
   if (req.query.access) query.access = req.query.access;
   if (req.query.sort && req.query.sort !== "OSMBC-changes") sort.column = req.query.sort;
   if (req.query.desc) sort.desc = true;
@@ -55,9 +55,9 @@ function renderList(req, res, next) {
     if (error) return next(error);
     should.exist(res.rendervar);
     res.set("content-type", "text/html");
-    res.render("userList", {layout: res.rendervar.layout,
+    res.render("userList", { layout: res.rendervar.layout,
       query: query,
-      users: users});
+      users: users });
   }
   );
 }
@@ -74,7 +74,7 @@ function renderUserId(req, res, next) {
     logger.info("Switch user " + req.user.OSMUser + " to guest");
     req.user.access = "guest";
     req.user.temporaryGuest = true;
-    req.user.save({noVersionIncrease: true}, function(err) {
+    req.user.save({ noVersionIncrease: true }, function(err) {
       if (err) return next(err);
       res.redirect(htmlroot + "/usert/self");
     });
@@ -83,7 +83,7 @@ function renderUserId(req, res, next) {
   if (req.query.becomeFull === "true" && req.user.access === "guest" && req.user.temporaryGuest === true) {
     req.user.access = "full";
     delete req.user.temporaryGuest;
-    req.user.save({noVersionIncrease: true}, function(err) {
+    req.user.save({ noVersionIncrease: true }, function(err) {
       if (err) return next(err);
       res.redirect(htmlroot + "/usert/self");
     });
@@ -106,7 +106,7 @@ function renderUserId(req, res, next) {
   async.series([
     function findAndLoaduserByName(cb) {
       debug("findAndLoaduserByName");
-      userModule.findOne({OSMUser: id}, function findAndLoaduserCB(err, result) {
+      userModule.findOne({ OSMUser: id }, function findAndLoaduserCB(err, result) {
         debug("findAndLoaduser_CB");
         if (err) return cb(err);
         user = result;
@@ -133,7 +133,7 @@ function renderUserId(req, res, next) {
     },
     function findAndLoadChanges(cb) {
       debug("findAndLoadChanges");
-      logModule.find({table: "usert", oid: id}, {column: "timestamp", desc: true}, function findAndLoadChangesCB(err, result) {
+      logModule.find({ table: "usert", oid: id }, { column: "timestamp", desc: true }, function findAndLoadChangesCB(err, result) {
         debug("findAndLoadChanges_CB");
         if (err) return cb(err);
         changes = result;
@@ -157,12 +157,12 @@ function renderUserId(req, res, next) {
     let view = "user";
     if (req.user.access === "guest") view = "user_guest";
     res.set("content-type", "text/html");
-    res.render(view, {usershown: user,
+    res.render(view, { usershown: user,
       changes: changes,
       params: params,
       userHeatMapArray: userHeatMapArray,
       langlist: config.getLanguages(),
-      layout: res.rendervar.layout});
+      layout: res.rendervar.layout });
   }
   );
 }
@@ -170,7 +170,7 @@ function renderUserId(req, res, next) {
 function postUserId(req, res, next) {
   debug("postUserId");
   var id = req.params.user_id;
-  var changes = {OSMUser: req.body.OSMUser,
+  var changes = { OSMUser: req.body.OSMUser,
     SlackUser: req.body.SlackUser,
     mdWeeklyAuthor: req.body.mdWeeklyAuthor,
     color: req.body.color,
@@ -182,7 +182,7 @@ function postUserId(req, res, next) {
     mailBlogLanguageStatusChange: req.body.mailBlogLanguageStatusChange,
     mailCommentGeneral: req.body.mailCommentGeneral,
     email: req.body.email,
-    access: req.body.access};
+    access: req.body.access };
 
   if (typeof (changes.mailComment) === "string") {
     changes.mailComment = [changes.mailComment];
@@ -239,7 +239,7 @@ function inbox (req, res) {
   var renderer = new blogRenderer.HtmlRenderer(null);
   req.session.articleReturnTo = req.originalUrl;
   res.set("content-type", "text/html");
-  res.render("inbox", {layout: res.rendervar.layout, renderer: renderer});
+  res.render("inbox", { layout: res.rendervar.layout, renderer: renderer });
 }
 
 function createUser(req, res, next) {

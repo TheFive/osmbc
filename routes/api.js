@@ -11,7 +11,7 @@ var articleModule = require("../model/article.js");
 var config        = require("../config.js");
 
 
-let apiKeys = config.getValue("apiKeys", {mustExist: true});
+let apiKeys = config.getValue("apiKeys", { mustExist: true });
 
 function checkApiKey(req, res, next) {
   debug("checkApiKey");
@@ -22,7 +22,7 @@ function checkApiKey(req, res, next) {
     return next();
   }
 
-  userModule.findOne({apiKey: req.params.apiKey}, function(err, user) {
+  userModule.findOne({ apiKey: req.params.apiKey }, function(err, user) {
     if (err || !user) {
       let err = new Error("Not Authorised");
       err.status = 401;
@@ -44,7 +44,7 @@ function isServerUp(req, res) {
 // and check, wether there is a postgres error
 function isPostgresUp(req, res) {
   debug("isPostgresUp");
-  userModule.find({OSMUser: "test"}, function(err) {
+  userModule.find({ OSMUser: "test" }, function(err) {
     if (err) return res.end("Postgres Error");
     res.end("OK");
   });

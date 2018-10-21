@@ -44,7 +44,7 @@ function renderHistoryLog(req, res, next) {
   var property = req.query.property;
   var oid = req.query.oid;
 
-  var params = {date: date, oid: oid, user: user, table: table, blog: blog, property: property};
+  var params = { date: date, oid: oid, user: user, table: table, blog: blog, property: property };
 
 
   var search = {};
@@ -65,11 +65,11 @@ function renderHistoryLog(req, res, next) {
   if (oid) search.oid = oid;
 
 
-  logModule.find(search, {column: "timestamp", desc: true, limit: 150}, function (err, result) {
+  logModule.find(search, { column: "timestamp", desc: true, limit: 150 }, function (err, result) {
     debug("logModule.find");
     if (err) return next(err);
     res.set("content-type", "text/html");
-    res.render("history", {history: result, layout: res.rendervar.layout, params: params});
+    res.render("history", { history: result, layout: res.rendervar.layout, params: params });
   });
 }
 
@@ -82,9 +82,9 @@ function renderChangeId(req, res, next) {
     if (!change || typeof (change.id) === "undefined") return next(new Error("Change id >" + id + "< not found."));
     should.exist(res.rendervar);
     res.set("content-type", "text/html");
-    res.render("change", {change: change,
+    res.render("change", { change: change,
       coloredChange: generateHTMLDiff(change.from, change.to),
-      layout: res.rendervar.layout});
+      layout: res.rendervar.layout });
   });
 }
 
