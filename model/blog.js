@@ -135,7 +135,7 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
       for (let i = 0; i < self[rc].length; i++) {
         if (self[rc][i].text === "reviewing..." && self[rc][i].user === user.OSMUser) {
           if (data === "delete") {
-            self[rc].splice(i,1);
+            self[rc].splice(i, 1);
           } else {
             self[rc][i].text = data;
             self[rc][i].editstamp = date;
