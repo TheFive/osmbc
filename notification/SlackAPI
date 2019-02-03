@@ -1,14 +1,14 @@
 "use strict";
 
-var request  = require('request');
-var deferred = require('deferred');
-var https = require('https');
+var request  = require("request");
+var deferred = require("deferred");
+var https = require("https");
 var logger    = require("../config.js").logger;
 
 
 let agentOptions = {
 
-   rejectUnauthorized: false
+  rejectUnauthorized: false
 };
 
 let agent = new https.Agent(agentOptions);
@@ -21,13 +21,13 @@ function SlackAPI(hook_url, http_proxy_options) {
 
 SlackAPI.prototype.send = function(message, cb) {
   if (!message.text) {
-    if (cb) cb.call(null,{message:'No text specified'},null);
+    if (cb) cb.call(null, { message: "No text specified" }, null);
     return;
   }
 
   var command = this.hook_url;
   var body = {
-    text:     message.text,
+    text: message.text
   };
 
   if (message.username) { body.username = message.username; }
@@ -40,27 +40,27 @@ SlackAPI.prototype.send = function(message, cb) {
 
   var option = {
     proxy: (this.http_proxy_options && this.http_proxy_options.proxy) || process.env.https_proxy || process.env.http_proxy,
-    url:   command,
-    body:  JSON.stringify(body),
-    agent:agent
+    url: command,
+    body: JSON.stringify(body),
+    agent: agent
   };
 
-  if(!cb) var d = deferred();
+  if (!cb) var d = deferred();
 
 
   var req = request.post(option, function(err, res, body) {
-    if (!err && body!='ok') {
-      err = {message: body};
+    if (!err && body != "ok") {
+      err = { message: body };
       body = null;
     }
     if (err) {
       logger.error(err);
       logger.error("While sending");
       logger.error(message);
-      logger.error("To Hook: "+command);
+      logger.error("To Hook: " + command);
       err = null;
     }
-    if (d) return err ? d.reject(err) : d.resolve({res: res, body: body});
+    if (d) return err ? d.reject(err) : d.resolve({ res: res, body: body });
     if (cb) return cb.call(null, err, body);
     return null;
   });
@@ -69,7 +69,7 @@ SlackAPI.prototype.send = function(message, cb) {
 };
 
 
-SlackAPI.prototype.respond = function(query,cb) {
+SlackAPI.prototype.respond = function(query, cb) {
   var obj = {};
 
   obj.token = query.token;
@@ -82,9 +82,9 @@ SlackAPI.prototype.respond = function(query,cb) {
   obj.text = query.text;
 
   if (!cb) {
-    return {text:''};
+    return { text: "" };
   } else {
-    return cb.call(null,obj);
+    return cb.call(null, obj);
   }
 };
 

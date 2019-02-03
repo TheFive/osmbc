@@ -55,7 +55,7 @@ function createNewConfig (proto, callback) {
     return callback(new Error("Config >" + config.name + "< already exists."));
   }
   actualiseConfigMap(config);
-  find({name: config.name}, function (err, result) {
+  find({ name: config.name }, function (err, result) {
     if (err) return callback(err);
     if (result && result.length > 0) {
       return callback(new Error("Config >" + config.name + "< already exists."));
@@ -81,7 +81,7 @@ Config.prototype.getJSON = function getJSON() {
       if (this.name === "votes") this.json = freshupVotes(this.json);
       return this.json;
     } catch (err) {
-      return {error: "YAML convert error for: " + this.name + " ", errorMessage: err};
+      return { error: "YAML convert error for: " + this.name + " ", errorMessage: err };
     }
   }
 };
@@ -95,12 +95,12 @@ Config.prototype.getValue = function getValue() {
 
 function find(obj, ord, callback) {
   debug("find");
-  pgMap.find({table: "config", create: create}, obj, ord, callback);
+  pgMap.find({ table: "config", create: create }, obj, ord, callback);
 }
 
 function findOne(obj1, obj2, callback) {
   debug("findOne");
-  pgMap.findOne({table: "config", create: create}, obj1, obj2, callback);
+  pgMap.findOne({ table: "config", create: create }, obj1, obj2, callback);
 }
 
 
@@ -142,7 +142,7 @@ function defaultConfigObject(text, callback) {
 
 function getConfigObject(text, callback) {
   debug("getConfigObject %s", text);
-  findOne({name: text}, function _doGetConfigObject(err, result) {
+  findOne({ name: text }, function _doGetConfigObject(err, result) {
     debug("_doGetConfigObject %s", text);
     if (err) return callback(err);
     if (result) should.exist(result.type);
@@ -277,7 +277,7 @@ Config.prototype.setAndSave = function setAndSave(user, data, callback) {
         // do not log validation key in logfile
         var toValue = value;
 
-        messageCenter.global.sendInfo({oid: self.id, user: user.OSMUser, table: "config", property: key, from: self[key], to: toValue}, cb);
+        messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "config", property: key, from: self[key], to: toValue }, cb);
       },
       function(cb) {
         self[key] = value;
@@ -409,7 +409,7 @@ module.exports.getPlaceholder = function getPlaceholder() {
   var phEN = exports.getConfig("formulation_tipEN");
   var phDE = exports.getConfig("formulation_tipDE");
   var cat = exports.getConfig("categorydescription");
-  var result = {markdown: {EN: phEN, DE: phDE}, categories: cat};
+  var result = { markdown: { EN: phEN, DE: phDE }, categories: cat };
   for (let i = 0; i < config.getLanguages().length; i++) {
     let lang = config.getLanguages()[i];
     if (lang === "DE") continue;

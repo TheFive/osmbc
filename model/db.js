@@ -1,13 +1,13 @@
 "use strict";
 
-const {Pool} = require("pg");
+const { Pool } = require("pg");
 var config = require("../config.js");
 var should = require("should");
 var sqldebug  = require("debug")("OSMBC:model:sql");
 
 
-let pgConfigValues = config.getValue("postgres", {mustexist: true});
-let logTime = config.getValue("postgresLogStatements", {default: 1000});
+let pgConfigValues = config.getValue("postgres", { mustexist: true });
+let logTime = config.getValue("postgresLogStatements", { default: 1000 });
 
 
 should.exist(pgConfigValues.username);

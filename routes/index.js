@@ -17,7 +17,7 @@ const auth = require("../routes/auth.js");
 
 
 
-let appName = config.getValue("AppName", {mustExist: true});
+let appName = config.getValue("AppName", { mustExist: true });
 /* GET home page. */
 
 function renderHome(req, res, next) {
@@ -34,10 +34,10 @@ function renderHome(req, res, next) {
 
 
   async.auto({
-    "historie": logModule.find.bind(logModule, {table: "IN('blog','article')"}, {column: "id", desc: true, limit: 20}),
-    "activeUser": userModule.find.bind(userModule, {lastAccess: ">" + date.toISOString()}, {column: "lastAccess", desc: true}),
-    "fullVisitorsToday": userModule.find.bind(userModule, {lastAccess: ">" + todayStart.toISOString(), access: "full"}, {column: "OSMUser", desc: false}),
-    "guestVisitorsToday": userModule.find.bind(userModule, {lastAccess: ">" + todayStart.toISOString(), access: "guest"}, {column: "OSMUser", desc: false}),
+    "historie": logModule.find.bind(logModule, { table: "IN('blog','article')" }, { column: "id", desc: true, limit: 20 }),
+    "activeUser": userModule.find.bind(userModule, { lastAccess: ">" + date.toISOString() }, { column: "lastAccess", desc: true }),
+    "fullVisitorsToday": userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "full" }, { column: "OSMUser", desc: false }),
+    "guestVisitorsToday": userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "guest" }, { column: "OSMUser", desc: false }),
     "newUsers": userModule.getNewUsers.bind(userModule)
   }, function(err, result) {
     if (err) return next(err);
@@ -51,7 +51,7 @@ function renderHome(req, res, next) {
       fullVisitorsToday: result.fullVisitorsToday,
       guestVisitorsToday: result.guestVisitorsToday,
       newUsers: result.newUsers,
-      changes: result.historie});
+      changes: result.historie });
   }
   );
 }
@@ -68,7 +68,7 @@ function renderGuestHome(req, res, next) {
   todayStart.setSeconds(0);
 
   async.auto({
-    "articles": articleModule.find.bind(articleModule, {firstCollector: req.user.OSMUser}, {column: "blog", desc: true})
+    "articles": articleModule.find.bind(articleModule, { firstCollector: req.user.OSMUser }, { column: "blog", desc: true })
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
@@ -83,7 +83,7 @@ function renderGuestHome(req, res, next) {
   );
 }
 
-let userIsOldInDays = config.getValue("userIsOldInDays", {mustExist: true});
+let userIsOldInDays = config.getValue("userIsOldInDays", { mustExist: true });
 
 function renderAdminHome(req, res, next) {
   debug("renderAdminHome");
@@ -93,15 +93,15 @@ function renderAdminHome(req, res, next) {
 
 
   async.auto({
-    "historie": logModule.find.bind(logModule, {table: "IN('usert','config')"}, {column: "id", desc: true, limit: 20}),
-    "longAbsent": userModule.find.bind(userModule, {lastAccess: "<" + date, access: "full"})
+    "historie": logModule.find.bind(logModule, { table: "IN('usert','config')" }, { column: "id", desc: true, limit: 20 }),
+    "longAbsent": userModule.find.bind(userModule, { lastAccess: "<" + date, access: "full" })
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
     res.render("adminindex", { title: appName,
       layout: res.rendervar.layout,
       longAbsent: result.longAbsent,
-      changes: result.historie});
+      changes: result.historie });
   }
   );
 }
@@ -191,7 +191,7 @@ function setUserConfig(req, res, next) {
 function createBlog(req, res) {
   debug("createBlog");
   should.exist(res.rendervar.layout);
-  res.render("createblog", {layout: res.rendervar.layout});
+  res.render("createblog", { layout: res.rendervar.layout });
 }
 
 
@@ -203,7 +203,7 @@ function renderChangelog(req, res, next) {
   req.user.save(function(err) {
     if (err) return next(err);
     res.set("content-type", "text/html");
-    res.render("help", {layout: res.rendervar.layout, text: text});
+    res.render("help", { layout: res.rendervar.layout, text: text });
   });
 }
 

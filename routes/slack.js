@@ -15,9 +15,9 @@ var htmltitle     = require("../model/htmltitle.js");
 var articleModule     = require("../model/article.js");
 
 
-var botName = config.getValue("AppName", {mustExist: true}).toLowerCase();
+var botName = config.getValue("AppName", { mustExist: true }).toLowerCase();
 
-var osmbcUrl = config.getValue("url", {mustExist: true}) + config.htmlRoot();
+var osmbcUrl = config.getValue("url", { mustExist: true }) + config.htmlRoot();
 
 function articleNameSlack(article) {
   debug("articleNameSlack");
@@ -41,7 +41,7 @@ function ensureAuthentificated(req, res, next) {
     res.json({});
     return;
   }
-  userModule.find({SlackUser: req.body.user_name}, function(err, user) {
+  userModule.find({ SlackUser: req.body.user_name }, function(err, user) {
     if (err) {
       logger.error(err);
       return next(err);
@@ -139,11 +139,11 @@ function postSlackCreateUseTBC(req, res, next) {
     } else return cb();
   }], function createArticle(err) {
     if (err) return next(err);
-    let changes = {title: title,
+    let changes = { title: title,
       collection: url,
       firstCollector: req.user.OSMUser,
       categoryEN: "-- no category yet --",
-      blog: blog};
+      blog: blog };
     articleModule.createNewArticle(function(err, result) {
       if (err) return next(err);
       changes.version = result.version;

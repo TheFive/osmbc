@@ -55,7 +55,7 @@ function expandTwitterUrl(collection, callback) {
 
 
   async.eachOf(twitIDs, function(twitID, index, cbEachID) {
-    client.get("/statuses/show/" + twitID, {tweet_mode: "extended"}, function(err, result) {
+    client.get("/statuses/show/" + twitID, { tweet_mode: "extended" }, function(err, result) {
       debug("client.get");
       // fs.writeFileSync("TwitterStatus-"+id+".json",JSON.stringify(result,null,2));
       // not working, ignore error
@@ -110,4 +110,4 @@ function expandTwitterUrl(collection, callback) {
 
 module.exports.expandTwitterUrl = expandTwitterUrl;
 
-module.exports.for_debug_only = {twitterClient: client};
+module.exports.for_debug_only = { twitterClient: client };

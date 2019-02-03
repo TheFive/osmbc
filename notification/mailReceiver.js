@@ -6,7 +6,7 @@ var should        = require("should");
 var debug         = require("debug")("OSMBC:notification:mailReceiver");
 var fs            = require("fs");
 var nodemailer    = require("nodemailer");
-var EmailTemplate = require("email-templates").EmailTemplate;
+var Email         = require("email-templates");
 var emailValidator = require("email-validator");
 
 var messageCenter = require("../notification/messageCenter.js");
@@ -20,9 +20,9 @@ var htmlToText    = require("html-to-text");
 var winston = require("winston");
 require("winston-daily-rotate-file");
 
-let logDir = config.getValue("maillog_directory", {mustExist: true});
-let logNamePrefix = config.getValue("maillog_prefix", {mustExist: true});
-let logNameDateFormat = config.getValue("maillog_dateformat", {mustExist: true});
+let logDir = config.getValue("maillog_directory", { mustExist: true });
+let logNamePrefix = config.getValue("maillog_prefix", { mustExist: true });
+let logNameDateFormat = config.getValue("maillog_dateformat", { mustExist: true });
 if (logDir === ".") logDir = path.join(__dirname, "..");
 
 
@@ -40,7 +40,7 @@ var transport = new winston.transports.DailyRotateFile({
   level: process.env.ENV === "development" ? "debug" : "info"
 });
 
-var logger = new (winston.Logger)({
+var logger =  winston.createLogger({
   transports: [
     transport
   ]
@@ -55,19 +55,25 @@ var IteratorReceiver = require("../notification/IteratorReceiver.js");
 
 
 var infoMailtemplateDir = path.join(__dirname, "..", "email", "infomail");
-var infomail = new EmailTemplate(infoMailtemplateDir);
+var infomail = new Email({
+  views: { root: infoMailtemplateDir }
+});
 
 var infoMailBlogtemplateDir = path.join(__dirname, "..", "email", "infomailBlog");
-var infomailBlog = new EmailTemplate(infoMailBlogtemplateDir);
+var infomailBlog = new Email({
+  views: { root: infoMailBlogtemplateDir } });
 
 var infoMailReviewtemplateDir = path.join(__dirname, "..", "email", "infomailReview");
-var infomailReview = new EmailTemplate(infoMailReviewtemplateDir);
+var infomailReview = new Email({
+  views: { root: infoMailReviewtemplateDir } });
 
 var infoMailClosetemplateDir = path.join(__dirname, "..", "email", "infomailClose");
-var infomailClose = new EmailTemplate(infoMailClosetemplateDir);
+var infomailClose = new Email({
+  views: { root: infoMailClosetemplateDir } });
 
 var welcomeMailtemplateDir = path.join(__dirname, "..", "email", "welcome");
-var welcomemail = new EmailTemplate(welcomeMailtemplateDir);
+var welcomemail = new Email({
+  views: { root: welcomeMailtemplateDir } });
 
 var transporter = nodemailer.createTransport(config.getValue("SMTP"));
 
@@ -95,13 +101,13 @@ function sendMailWithLog(user, mailOptions, callback) {
       response: (info) ? info.response : "no response"
     };
 
-    logger.info({user: logObject.user, to: logObject.to, message: logObject.subject, error: logObject.error, response: logObject.response});
+    logger.info({ user: logObject.user, to: logObject.to, message: logObject.subject, error: logObject.error, response: logObject.response });
     callback();
   }
   // for development Reasons, filter Mail Address
   var allowedMailAddresses = config.getValue("AllowedMailAddresses");
   if (allowedMailAddresses) {
-    if (allowedMailAddresses.indexOf(mailOptions.to) < 0) return logMail(null, {response: "Blocked by " + config.getValue("AppName")});
+    if (allowedMailAddresses.indexOf(mailOptions.to) < 0) return logMail(null, { response: "Blocked by " + config.getValue("AppName") });
   }
 
   var appName = config.getValue("AppName");
@@ -122,25 +128,24 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter, callb
   debug("MailReceiver.prototype.sendWelcomeMail");
 
   var self = this;
-  var data = {user: this.user, inviter: inviter, layout: layout};
+  var data = { user: this.user, inviter: inviter, layout: layout };
 
-  welcomemail.render(data, function welcomemailRender (err, results) {
+  welcomemail.render("welcome html.pug", data).then(function welcomemailRender(result) {
     debug("welcomemailRender");
-    if (err) return callback(err);
 
-    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
+    let text = htmlToText.fromString(result, { tables: ["#valuetable"] });
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
       to: self.user.emailInvalidation, // list of receivers
       subject: "Welcome to OSMBC", // Subject line
-      text: results.text,
-      html: results.html
+      text: text,
+      html: result
     };
 
     // send mail with defined transport object
     sendMailWithLog(self.user, mailOptions, callback);
-  });
+  }).catch(callback);
 };
 
 MailReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, callback) {
@@ -158,24 +163,24 @@ MailReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, 
   }
   if (status === "reviewing...") return callback();
 
-  var data = {user: user, blog: blog, status: status, lang: lang, layout: layout};
+  var data = { user: user, blog: blog, status: status, lang: lang, layout: layout };
 
-  infomailReview.render(data, function infomailRenderBlog(err, results) {
+  infomailReview.render("infomailReview html.pug", data).then(function infomailRenderBlog(result) {
     debug("infomailRenderInfo");
-    if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
+
+    let text = htmlToText.fromString(result, { tables: ["#valuetable"] });
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
       to: self.user.email, // list of receivers
       subject: subject, // Subject line
-      text: results.text,
-      html: results.html
+      text: text,
+      html: result
     };
 
     // send mail with defined transport object
     sendMailWithLog(self.user, mailOptions, callback);
-  });
+  }).catch(callback);
 };
 
 MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, callback) {
@@ -189,24 +194,24 @@ MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, la
     subject = blog.name + "(" + lang + ") has been reopened by " + user.OSMUser;
   }
 
-  var data = {user: user, blog: blog, status: status, lang: lang, layout: layout};
+  var data = { user: user, blog: blog, status: status, lang: lang, layout: layout };
 
-  infomailClose.render(data, function infomailRenderClose(err, results) {
+  infomailClose.render("infomailClose html.pug", data).then(function infomailRenderClose(result) {
     debug("infomailRenderClose");
-    if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
+
+    let text = htmlToText.fromString(result, { tables: ["#valuetable"] });
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
       to: self.user.email, // list of receivers
       subject: subject, // Subject line
-      text: results.text,
-      html: results.html
+      text: text,
+      html: result
     };
 
     // send mail with defined transport object
     sendMailWithLog(self.user, mailOptions, callback);
-  });
+  }).catch(callback);
 };
 
 MailReceiver.prototype.updateArticle = function updateArticle(user, article, change, callback) {
@@ -239,24 +244,23 @@ MailReceiver.prototype.updateArticle = function updateArticle(user, article, cha
   }
 
 
-  var data = {user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog};
+  var data = { user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog };
 
-  infomail.render(data, function infomailRender(err, results) {
+  infomail.render("infomail html.pug", data).then(function infomailRender(result) {
     debug("infomailRender");
-    if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
+    let text = htmlToText.fromString(result, { tables: ["#valuetable"] });
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
       to: self.user.email, // list of receivers
       subject: subject, // Subject line
-      text: results.text,
-      html: results.html
+      text: text,
+      html: result
     };
 
     // send mail with defined transport object
     sendMailWithLog(self.user, mailOptions, callback);
-  });
+  }).catch(callback);
 };
 
 MailReceiver.prototype.addComment = function addComment(user, article, text, callback) {
@@ -276,24 +280,23 @@ MailReceiver.prototype.addComment = function addComment(user, article, text, cal
   var subject = logblog + " comment: " + newArticle.title;
 
 
-  var data = {user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog, addedComment: text};
+  var data = { user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog, addedComment: text };
 
-  infomail.render(data, function infomailRender(err, results) {
+  infomail.render("infomail html.pug", data).then(function infomailRender(result) {
     debug("infomailRender");
-    if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
+    let text = htmlToText.fromString(result, { tables: ["#valuetable"] });
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
       to: self.user.email, // list of receivers
       subject: subject, // Subject line
-      text: results.text,
-      html: results.html
+      text: text,
+      html: result
     };
 
     // send mail with defined transport object
     sendMailWithLog(self.user, mailOptions, callback);
-  });
+  }).catch(callback);
 };
 
 MailReceiver.prototype.editComment = function editComment(user, article, index, text, callback) {
@@ -315,24 +318,23 @@ MailReceiver.prototype.editComment = function editComment(user, article, index, 
   var subject = logblog + " comment: " + newArticle.title;
 
 
-  var data = {user: this.user, changeby: user, article: oldArticle, newArticle: newArticle, layout: layout, logblog: logblog, editedComment: text};
+  var data = { user: this.user, changeby: user, article: oldArticle, newArticle: newArticle, layout: layout, logblog: logblog, editedComment: text };
 
-  infomail.render(data, function infomailRender(err, results) {
+  infomail.render("infomail html.pug", data).then(function infomailRender(result) {
     debug("infomailRender");
-    if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
+    let text = htmlToText.fromString(result, { tables: ["#valuetable"] });
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
       to: self.user.email, // list of receivers
       subject: subject, // Subject line
-      text: results.text,
-      html: results.html
+      text: text,
+      html: result
     };
 
     // send mail with defined transport object
     sendMailWithLog(self.user, mailOptions, callback);
-  });
+  }).catch(callback);
 };
 
 MailReceiver.prototype.updateBlog = function updateBlog(user, blog, change, callback) {
@@ -362,24 +364,23 @@ MailReceiver.prototype.updateBlog = function updateBlog(user, blog, change, call
   }
 
 
-  var data = {user: this.user, changeby: user, blog: blog, newBlog: newBlog, layout: layout, blogName: blogName};
+  var data = { user: this.user, changeby: user, blog: blog, newBlog: newBlog, layout: layout, blogName: blogName };
 
-  infomailBlog.render(data, function infomailRenderBlog(err, results) {
+  infomailBlog.render("infomailBlog html.pug", data).then(function infomailRenderBlog(result) {
     debug("infomailRenderBlog");
-    if (err) return callback(err);
-    results.text = htmlToText.fromString(results.html, {tables: ["#valuetable"]});
+    let text = htmlToText.fromString(result, { tables: ["#valuetable"] });
 
     var mailOptions = {
       from: config.getValue("EmailSender"), // sender address
       to: self.user.email, // list of receivers
       subject: subject, // Subject line
-      text: results.text,
-      html: results.html
+      text: text,
+      html: result
     };
 
     // send mail with defined transport object
     sendMailWithLog(self.user, mailOptions, callback);
-  });
+  }).catch(callback);
 };
 var iteratorReceiver = new IteratorReceiver({});
 var userReceiverMap = {};
@@ -482,7 +483,7 @@ module.exports.MailReceiver = MailReceiver;
 module.exports.initialise = initialise;
 module.exports.updateUser = updateUser;
 
-module.exports.for_test_only = {transporter: transporter, logger: logger};
+module.exports.for_test_only = { transporter: transporter, logger: logger };
 
 
 // setup e-mail data with unicode symbols

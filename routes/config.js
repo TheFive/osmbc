@@ -42,7 +42,7 @@ function renderConfigName(req, res, next) {
     },
     function findAndLoadChanges(cb) {
       debug("findAndLoadChanges");
-      logModule.find({table: "config", oid: config.id}, {column: "timestamp", desc: true}, function findAndLoadChangesCB(err, result) {
+      logModule.find({ table: "config", oid: config.id }, { column: "timestamp", desc: true }, function findAndLoadChangesCB(err, result) {
         debug("findAndLoadChanges_CB");
         if (err) return cb(err);
         changes = result;
@@ -67,10 +67,10 @@ function renderConfigName(req, res, next) {
     if (name === "eventsfilter") jadeFile = name;
     if (name === "ignoreforsearch") jadeFile = "config";
     res.set("content-type", "text/html");
-    res.render("config/" + jadeFile, {config: config,
+    res.render("config/" + jadeFile, { config: config,
       changes: changes,
       params: params,
-      layout: res.rendervar.layout});
+      layout: res.rendervar.layout });
   }
   );
 }
@@ -78,7 +78,7 @@ function renderConfigName(req, res, next) {
 function postConfigId(req, res, next) {
   debug("postUserId");
   var name = req.params.name;
-  var changes = {yaml: req.body.yaml, type: req.body.type, name: req.body.name, text: req.body.text};
+  var changes = { yaml: req.body.yaml, type: req.body.type, name: req.body.name, text: req.body.text };
   var configData;
   async.series([
     function findUser(cb) {

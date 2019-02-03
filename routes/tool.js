@@ -33,7 +33,7 @@ const checkUser       = require("../routes/auth.js").checkUser;
 var sizeOf = require("image-size");
 
 let htmlroot = config.htmlRoot();
-let osmbcDateFormat = config.getValue("CalendarDateFormat", {mustExist: true});
+let osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
 
 
 
@@ -120,13 +120,13 @@ function renderEvents(result, req, res, next) {
       markdown: markdown,
       eventsfilter: eventsfilter,
       calendarFlags: calendarFlags,
-      eventDateFormat: eventDateFormat});
+      eventDateFormat: eventDateFormat });
   }
   );
 }
 
 
-let alternativeCalendarData = config.getValue("CalendarInterface", {mustExist: true});
+let alternativeCalendarData = config.getValue("CalendarInterface", { mustExist: true });
 
 function renderCalendarAllLangAlternative(req, res, next) {
   debug("renderCalendarAllLang");
@@ -140,7 +140,7 @@ function renderCalendarAllLangAlternative(req, res, next) {
     method: "GET",
     json: true
   };
-  let result = {events: []};
+  let result = { events: [] };
   request(options, function(error, response, body) {
     if (error) return next(error);
     if (response.statusCode !== 200) {
@@ -274,7 +274,7 @@ function renderPictureTool(req, res) {
       var preview = renderer.renderArticle(pictureLanguage, article);
       var licenses = configModule.getConfig("licenses");
       res.set("content-type", "text/html");
-      res.render("pictureTool", {warning: warning,
+      res.render("pictureTool", { warning: warning,
         genMarkup: genMarkup,
         licenses: licenses,
         preview: preview,
@@ -284,7 +284,7 @@ function renderPictureTool(req, res) {
         pictureAText: pictureAText,
         pictureAuthor: pictureAuthor,
         pictureLicense: pictureLicense,
-        layout: res.rendervar.layout});
+        layout: res.rendervar.layout });
     });
   });
 
@@ -294,7 +294,7 @@ function renderPictureTool(req, res) {
     warning.push(">" + pictureURL + "< pictureURL not found");
     var licenses = configModule.getConfig("licenses");
     res.set("content-type", "text/html");
-    res.render("pictureTool", {genMarkup: "picture not found",
+    res.render("pictureTool", { genMarkup: "picture not found",
       warning: warning,
       preview: "<p> Error,please try again</p>",
       pictureLanguage: pictureLanguage,
@@ -304,7 +304,7 @@ function renderPictureTool(req, res) {
       pictureAText: pictureAText,
       pictureLicense: pictureLicense,
       pictureAuthor: pictureAuthor,
-      layout: res.rendervar.layout});
+      layout: res.rendervar.layout });
   });
   request.end();
 }
@@ -318,24 +318,24 @@ function postPictureTool(req, res, next) {
   var pictureLicense = req.body.pictureLicense;
   var pictureAuthor = req.body.pictureAuthor;
 
-  req.session.pictureTool = {pictureLanguage: pictureLanguage,
+  req.session.pictureTool = { pictureLanguage: pictureLanguage,
     pictureURL: pictureURL,
     pictureMarkup: pictureMarkup,
     pictureLicense: pictureLicense,
     pictureAuthor: pictureAuthor,
 
-    pictureAText: pictureAText};
+    pictureAText: pictureAText };
   req.session.save(function(err) {
     if (err) return next(err);
     res.redirect(htmlroot + "/tool/picturetool");
   });
 }
 
-let publicCalendarPage = config.getValue("PublicCalendarPage", {mustExist: true});
+let publicCalendarPage = config.getValue("PublicCalendarPage", { mustExist: true });
 
 function renderPublicCalendar(req, res, next) {
   debug("renderPublicCalendar");
-  request.get({url: publicCalendarPage}, function(err, response, body) {
+  request.get({ url: publicCalendarPage }, function(err, response, body) {
     if (err) return next(err);
     if (response.statusCode !== 200) return next(new Error("Public Calendar returned status " + response.statusCode));
 
@@ -357,8 +357,8 @@ function renderScriptLogs(req, res) {
       return;
     }
     res.render("script_logs",
-      {"files": data,
-        layout: res.rendervar.layout});
+      { "files": data,
+        layout: res.rendervar.layout });
   });
 }
 
@@ -423,12 +423,12 @@ function renderScriptLog(req, res) {
     }
   ], (err) => {
     logger.error(err);
-    if (err) return res.render("script_log", {layout: res.rendervar.layout, text: "The file " + file + " could not be found.", file: file});
+    if (err) return res.render("script_log", { layout: res.rendervar.layout, text: "The file " + file + " could not be found.", file: file });
     res.render("script_log",
-      {layout: res.rendervar.layout,
+      { layout: res.rendervar.layout,
         text: text,
         file: file,
-        reload: reload});
+        reload: reload });
   });
 }
 
@@ -454,9 +454,9 @@ function renderScripts(req, res) {
       function(err) {
         if (err) return res.status(500).send(err.message);
         res.render("script_execute",
-          {layout: res.rendervar.layout,
+          { layout: res.rendervar.layout,
             files: data,
-            configTable: configTable});
+            configTable: configTable });
       }
     );
   });

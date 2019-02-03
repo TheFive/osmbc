@@ -50,7 +50,7 @@ function createNewUser (proto, callback) {
       return callback(new HttpError(409, "user id exists"));
     }
     let user = create(proto);
-    find({OSMUser: user.OSMUser}, function (err, result) {
+    find({ OSMUser: user.OSMUser }, function (err, result) {
       if (err) return callback(err);
       if (result && result.length > 0) {
         let err = new HttpError(409, "User >" + user.OSMUser + "< already exists.");
@@ -156,7 +156,7 @@ function find(obj, ord, callback) {
   }
   function _find(obj, ord, callback) {
     debug("find");
-    pgMap.find({table: "usert", create: create}, obj, ord, callback);
+    pgMap.find({ table: "usert", create: create }, obj, ord, callback);
   }
   if (callback) return _find(obj, ord, callback);
   return new Promise(function(resolve, reject) {
@@ -169,7 +169,7 @@ function find(obj, ord, callback) {
 function findById(id, callback) {
   function _findById(id, callback) {
     debug("findById %s", id);
-    pgMap.findById(id, {table: "usert", create: create}, callback);
+    pgMap.findById(id, { table: "usert", create: create }, callback);
   }
   if (callback) return _findById(id, callback);
   return new Promise(function(resolve, reject) {
@@ -188,7 +188,7 @@ function findOne(obj1, obj2, callback) {
   }
   function _findOne(obj1, obj2, callback) {
     debug("findOne");
-    pgMap.findOne({table: "usert", create: create}, obj1, obj2, callback);
+    pgMap.findOne({ table: "usert", create: create }, obj1, obj2, callback);
   }
   if (callback) {
     return _findOne(obj1, obj2, callback);
@@ -235,7 +235,7 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
   if (validationCode !== self.emailValidationKey) {
     debug("Validation Code is wrong");
     err = new HttpError(409, "Wrong Validation Code for EMail for user >" + self.OSMUser + "<");
-    messageCenter.global.sendInfo({oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: null, to: "Validation Failed"}, function() {
+    messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: null, to: "Validation Failed" }, function() {
       return callback(err);
     });
     return;
@@ -248,7 +248,7 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
   self.save(function logit(err) {
     mailReceiver.updateUser(self);
     if (err) return callback(err);
-    messageCenter.global.sendInfo({oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: oldmail, to: self.email}, function() {
+    messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: oldmail, to: self.email }, function() {
       return callback(err);
     });
   });
@@ -301,7 +301,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   async.series([
     function checkUserName(cb) {
       if (data.OSMUser && data.OSMUser !== self.OSMUser) {
-        find({OSMUser: data.OSMUser}, function(err, result) {
+        find({ OSMUser: data.OSMUser }, function(err, result) {
           if (err) return callback(err);
           if (result && result.length) {
             return cb(new HttpError(409, "User >" + data.OSMUser + "< already exists."));
@@ -342,7 +342,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
             property: key,
             from: self[key],
             timestamp: timestamp,
-            to: toValue}, cb);
+            to: toValue }, cb);
         },
         function(cb) {
           if (key === "email" && value === "none") {
@@ -438,7 +438,7 @@ User.prototype.getOption = function getOption(view, option) {
 
 User.prototype.createApiKey = function createApiKey(callback) {
   debug("createApiKey");
-  let apiKey = random.generate({length: 10});
+  let apiKey = random.generate({ length: 10 });
   this.apiKey = apiKey;
   this.save(callback);
 };
@@ -448,8 +448,8 @@ User.prototype.createApiKey = function createApiKey(callback) {
 // Users that have done their first edit in the last month
 
 let _newUsers = null;
-let interval = config.getValue("WelcomeInterval", {mustExist: true});
-let welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", {mustExist: true});
+let interval = config.getValue("WelcomeInterval", { mustExist: true });
+let welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", { mustExist: true });
 
 
 module.exports.getNewUsers = function getNewUsers(callback) {
