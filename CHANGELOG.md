@@ -1,9 +1,28 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7...HEAD)
+
+**Implemented enhancements:**
+
+- Add Possibility to cancel started review [\#793](https://github.com/TheFive/osmbc/issues/793)
+
+**Closed issues:**
+
+- Find double links in ONE article.  [\#789](https://github.com/TheFive/osmbc/issues/789)
+
+## [3.3.7](https://github.com/TheFive/osmbc/tree/3.3.7) (2018-10-21)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6a...3.3.7)
+
+**Closed issues:**
+
+- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
+
 ## [3.3.6a](https://github.com/TheFive/osmbc/tree/3.3.6a) (2018-10-06)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6...3.3.6a)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - Guest mode: Please change "Submit Article" to "Submit Link"  [\#792](https://github.com/TheFive/osmbc/issues/792)
 

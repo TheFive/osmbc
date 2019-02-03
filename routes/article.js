@@ -34,11 +34,9 @@ const auth          = require("../routes/auth.js");
 require("jstransformer")(require("jstransformer-markdown-it"));
 
 
-var MsTranslator = require("mstranslator");
-var msTransClient = new MsTranslator({
-  api_key: config.getValue("MS_TranslateApiKey", { mustExist: true })
-}, true);
-
+const request = require("request");
+const uuidv4 = require("uuid/v4");
+const subscriptionKey = config.getValue("MS_TranslateApiKey", { mustExist: true });
 
 const deeplTranslate = require("deepl-translator");
 
@@ -984,6 +982,34 @@ function translateDeepl(req, res, next) {
     .catch(err => { next(err); });
 }
 
+let msTranslate = {
+  translate: function(from, to, text, callback) {
+    let options = {
+      method: "POST",
+      baseUrl: "https://api.cognitive.microsofttranslator.com/",
+      url: "translate",
+      qs: {
+        "api-version": "3.0",
+        "from": from,
+        "to": to
+      },
+      headers: {
+        "Ocp-Apim-Subscription-Key": subscriptionKey,
+        "Content-type": "application/json",
+        "X-ClientTraceId": uuidv4().toString()
+      },
+      body: [{
+        "text": text
+      }],
+      json: true
+    };
+
+    request(options, function(err, response, body) {
+      callback(err, body[0].translations[0].text);
+    });
+  }
+};
+
 function translateBing(req, res, next) {
   debug("translateBing");
 
@@ -997,17 +1023,9 @@ function translateBing(req, res, next) {
   if (fromLang === "cz") { fromLang = "cs"; }
   if (toLang === "cz") { toLang = "cs"; }
 
-
-  var params = {
-    text: text,
-    from: fromLang,
-    to: toLang
-  };
-
-
-  msTransClient.translate(params, function (err, result) {
+  msTranslate.translate(fromLang, toLang, text, function(err, translation) {
     if (err) return next(err);
-    res.end(result);
+    res.end(translation);
   });
 }
 
@@ -1066,5 +1084,5 @@ module.exports.slackrouter = slackrouter;
 
 module.exports.fortestonly = {};
 module.exports.fortestonly.getArticleFromID = getArticleFromID;
-module.exports.fortestonly.msTransClient = msTransClient;
+module.exports.fortestonly.msTransClient = msTranslate;
 module.exports.fortestonly.fixMarkdownLinks = fixMarkdownLinks;
