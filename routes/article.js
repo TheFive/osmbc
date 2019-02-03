@@ -34,11 +34,9 @@ const auth          = require("../routes/auth.js");
 require("jstransformer")(require("jstransformer-markdown-it"));
 
 
-var MsTranslator = require("mstranslator");
-var msTransClient = new MsTranslator({
-  api_key: config.getValue("MS_TranslateApiKey", {mustExist: true})
-}, true);
-
+const request = require('request');
+const uuidv4 = require('uuid/v4');
+const subscriptionKey =config.getValue("MS_TranslateApiKey", {mustExist: true});
 
 const deeplTranslate = require("deepl-translator");
 
@@ -998,14 +996,28 @@ function translateBing(req, res, next) {
   if (toLang === "cz") { toLang = "cs"; }
 
 
-  var params = {
-    text: text,
-    from: fromLang,
-    to: toLang
+
+  let options = {
+    method: 'POST',
+    baseUrl: 'https://api.cognitive.microsofttranslator.com/',
+    url: 'translate',
+    qs: {
+      'api-version': '3.0',
+      'from': fromLang,
+      'to': toLang
+    },
+    headers: {
+      'Ocp-Apim-Subscription-Key': subscriptionKey,
+      'Content-type': 'application/json',
+      'X-ClientTraceId': uuidv4().toString()
+    },
+    body: [{
+      'text': text
+    }],
+    json: true,
   };
 
-
-  msTransClient.translate(params, function (err, result) {
+  request(options, function(err, res, body){
     if (err) return next(err);
     res.end(result);
   });
