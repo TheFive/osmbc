@@ -34,9 +34,9 @@ const auth          = require("../routes/auth.js");
 require("jstransformer")(require("jstransformer-markdown-it"));
 
 
-const request = require('request');
-const uuidv4 = require('uuid/v4');
-const subscriptionKey =config.getValue("MS_TranslateApiKey", {mustExist: true});
+const request = require("request");
+const uuidv4 = require("uuid/v4");
+const subscriptionKey = config.getValue("MS_TranslateApiKey", { mustExist: true });
 
 const deeplTranslate = require("deepl-translator");
 
@@ -982,6 +982,34 @@ function translateDeepl(req, res, next) {
     .catch(err => { next(err); });
 }
 
+let msTranslate = {
+  translate: function(from, to, text, callback) {
+    let options = {
+      method: "POST",
+      baseUrl: "https://api.cognitive.microsofttranslator.com/",
+      url: "translate",
+      qs: {
+        "api-version": "3.0",
+        "from": from,
+        "to": to
+      },
+      headers: {
+        "Ocp-Apim-Subscription-Key": subscriptionKey,
+        "Content-type": "application/json",
+        "X-ClientTraceId": uuidv4().toString()
+      },
+      body: [{
+        "text": text
+      }],
+      json: true
+    };
+
+    request(options, function(err, response, body) {
+      callback(err, body[0].translations[0].text);
+    });
+  }
+};
+
 function translateBing(req, res, next) {
   debug("translateBing");
 
@@ -995,31 +1023,9 @@ function translateBing(req, res, next) {
   if (fromLang === "cz") { fromLang = "cs"; }
   if (toLang === "cz") { toLang = "cs"; }
 
-
-
-  let options = {
-    method: 'POST',
-    baseUrl: 'https://api.cognitive.microsofttranslator.com/',
-    url: 'translate',
-    qs: {
-      'api-version': '3.0',
-      'from': fromLang,
-      'to': toLang
-    },
-    headers: {
-      'Ocp-Apim-Subscription-Key': subscriptionKey,
-      'Content-type': 'application/json',
-      'X-ClientTraceId': uuidv4().toString()
-    },
-    body: [{
-      'text': text
-    }],
-    json: true,
-  };
-
-  request(options, function(err, response, body){
+  msTranslate.translate(fromLang, toLang, text, function(err, translation) {
     if (err) return next(err);
-    res.end(body[0].translations[0].text);
+    res.end(translation);
   });
 }
 
@@ -1078,4 +1084,5 @@ module.exports.slackrouter = slackrouter;
 
 module.exports.fortestonly = {};
 module.exports.fortestonly.getArticleFromID = getArticleFromID;
+module.exports.fortestonly.msTransClient = msTranslate;
 module.exports.fortestonly.fixMarkdownLinks = fixMarkdownLinks;
