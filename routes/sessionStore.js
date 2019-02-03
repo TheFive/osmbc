@@ -10,10 +10,10 @@ const db           = require("../model/db.js");
 
 module.exports = function(session) {
   let sessionStore = null;
-  if (config.getValue("sessionStore", {mustExist: true}) === "session-file-store") {
+  if (config.getValue("sessionStore", { mustExist: true }) === "session-file-store") {
     var FileStore    = require("session-file-store")(session);
     sessionStore = new FileStore();
-  } else if (config.getValue("sessionStore", {mustExist: true}) === "connect-pg-simple") {
+  } else if (config.getValue("sessionStore", { mustExist: true }) === "connect-pg-simple") {
     var PgSession = require("connect-pg-simple")(session);
 
     let pool = db.getPool();

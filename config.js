@@ -15,11 +15,27 @@ var winston  = require("winston");
 
 // Define simple first logger for winston
 
-var logger = winston;
+var logger;
 
+
+// in test mode let transporter stream into nothing, as logging is not
+// tested yet
 if (process.env.NODE_ENV === "test" && process.env.TEST_LOG !== "TRUE") {
-  logger = new winston.Logger({level: "info", transports: []});
+  logger = winston.createLogger({
+    level: "info",
+    transports: [
+      new winston.transports.Stream({stream: fs.createWriteStream('/dev/null')})
+    ]});
+  } else {
+  logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json()});
+
+    logger.add(new winston.transports.Console({
+      format: winston.format.simple()}));
+
 }
+
 
 logger.stream = {
   write: function(message) {

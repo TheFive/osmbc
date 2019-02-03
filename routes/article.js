@@ -45,7 +45,7 @@ const deeplTranslate = require("deepl-translator");
 let htmlroot = config.htmlRoot();
 
 // send info, that disableOldEditor is not needed any longer
-config.getValue("diableOldEditor", {deprecated: true});
+config.getValue("diableOldEditor", { deprecated: true });
 
 // This Function converts the ID (used as :article_id in the routes) to
 // an article and stores the object in the request
@@ -130,11 +130,11 @@ function renderArticleId(req, res, next) {
   var placeholder = configModule.getPlaceholder();
   async.auto({
     // Find usage of Links in other articles
-    articleReferences: article.calculateUsedLinks.bind(article, {ignoreStandard: true}),
+    articleReferences: article.calculateUsedLinks.bind(article, { ignoreStandard: true }),
     // Find the associated blog for this article
 
     firstCollectorAccess: function (cb) {
-      userModule.find({OSMUser: article.firstCollector}, function (err, userArray) {
+      userModule.find({ OSMUser: article.firstCollector }, function (err, userArray) {
         if (err) return cb(err);
         let user = null;
         if (userArray.length >= 0) user = userArray[0];
@@ -147,7 +147,7 @@ function renderArticleId(req, res, next) {
     function findBlog(callback) {
       debug("renderArticleId->blog");
 
-      blogModule.findOne({name: article.blog}, function(err, blog) {
+      blogModule.findOne({ name: article.blog }, function(err, blog) {
         debug("renderArticleId->findOne");
         if (blog) {
           categories = blog.getCategories();
@@ -165,7 +165,7 @@ function renderArticleId(req, res, next) {
     },
     originBlog: ["originArticle", function findOriginBlog(results, callback) {
       if (results.originArticle) {
-        blogModule.findOne({name: results.originArticle.blog}, callback);
+        blogModule.findOne({ name: results.originArticle.blog }, callback);
       } else return callback(null, null);
     }],
 
@@ -174,7 +174,7 @@ function renderArticleId(req, res, next) {
     function (callback) {
       debug("renderArticleId->changes");
 
-      logModule.find(" where data->>'oid' ='" + article.id + "' and data->>'table' = 'article' and data->>'property' not like 'comment%' ", {column: "id", desc: true}, function(err, result) {
+      logModule.find(" where data->>'oid' ='" + article.id + "' and data->>'table' = 'article' and data->>'property' not like 'comment%' ", { column: "id", desc: true }, function(err, result) {
         debug("renderArticleId->findLog");
 
         callback(err, result);
@@ -183,7 +183,7 @@ function renderArticleId(req, res, next) {
     articleForSort:
     function articleForSort(callback) {
       debug("renderArticleId->articleForSort");
-      articleModule.find({blog: article.blog, categoryEN: article.categoryEN}, function(err, result) {
+      articleModule.find({ blog: article.blog, categoryEN: article.categoryEN }, function(err, result) {
         if (err) return callback(err);
         callback(null, result);
       });
@@ -200,7 +200,7 @@ function renderArticleId(req, res, next) {
               callback(null, returnToUrl);
             });
           } else return callback();
-        }},
+        } },
   function (err, result) {
     debug("renderArticleId->finalFunction");
     if (err) return next(err);
@@ -244,7 +244,7 @@ function renderArticleId(req, res, next) {
     }
 
 
-    res.render(pugFile, {layout: res.rendervar.layout,
+    res.render(pugFile, { layout: res.rendervar.layout,
       article: article,
       googleTranslateText: configModule.getConfig("automatictranslatetext"),
       params: params,
@@ -260,7 +260,7 @@ function renderArticleId(req, res, next) {
       categories: categories,
       languageFlags: languageFlags,
       accessMap: result.accessMap,
-      collectedByGuest: collectedByGuest});
+      collectedByGuest: collectedByGuest });
   }
   );
 }
@@ -281,13 +281,13 @@ function renderArticleIdVotes(req, res, next) {
       if (err) return next(err);
 
 
-      let rendervars = {layout: res.rendervar.layout,
+      let rendervars = { layout: res.rendervar.layout,
         article: article,
         votes: votes
       };
       let voteButtons = pug.renderFile(path.resolve(__dirname, "..", "views", "voteButtons.pug"), rendervars);
       let voteButtonsList = pug.renderFile(path.resolve(__dirname, "..", "views", "voteButtonsList.pug"), rendervars);
-      res.json({"#voteButtons": voteButtons, "#voteButtonsList": voteButtonsList});
+      res.json({ "#voteButtons": voteButtons, "#voteButtonsList": voteButtonsList });
     }
   );
 }
@@ -312,7 +312,7 @@ function renderArticleIdCommentArea(req, res, next) {
     if (err) return next(err);
 
 
-    let rendervars = {layout: res.rendervar.layout,
+    let rendervars = { layout: res.rendervar.layout,
       article: article,
       params: params,
       accessMap: result.accessMap
@@ -321,7 +321,7 @@ function renderArticleIdCommentArea(req, res, next) {
     pug.renderFile(path.resolve(__dirname, "..", "views", "article", "commentArea.pug"), rendervars, function(err, commentArea) {
       if (err) logger.error(err);
       if (err) return next(err);
-      res.json({"#commentArea": commentArea});
+      res.json({ "#commentArea": commentArea });
     });
   }
   );
@@ -402,7 +402,7 @@ function searchAndCreate(req, res, next) {
     }
   ], function (err) {
     if (err) return next(err);
-    articleModule.fullTextSearch(search, {column: "blog", desc: true}, function (err, result) {
+    articleModule.fullTextSearch(search, { column: "blog", desc: true }, function (err, result) {
       debug("searchAndCreate->fullTextSearch");
       if (err) return next(err);
       let renderer = new BlogRenderer.HtmlRenderer(null);
@@ -434,7 +434,7 @@ function postArticle(req, res, next) {
   var article = req.article;
   // If article exists, everything is fine, if article NOT exist, it has to be created.
 
-  var changes = {blog: req.body.blog,
+  var changes = { blog: req.body.blog,
     collection: req.body.collection,
     comment: req.body.comment,
     predecessorId: req.body.predecessorId,
@@ -444,7 +444,7 @@ function postArticle(req, res, next) {
     addComment: req.body.addComment,
     commentStatus: req.body.commentStatus,
     unpublishReason: req.body.unpublishReason,
-    unpublishReference: req.body.unpublishReference};
+    unpublishReference: req.body.unpublishReference };
 
   var languages = config.getLanguages();
   for (var i = 0; i < languages.length; i++) {
@@ -511,21 +511,21 @@ function postArticleWithOldValues(req, res, next) {
   var article = req.article;
   // If article exists, everything is fine, if article NOT exist, it has to be created.
 
-  var changes = {blog: req.body.blog,
+  var changes = { blog: req.body.blog,
     collection: req.body.collection,
     predecessorId: req.body.predecessorId,
     categoryEN: req.body.categoryEN,
     title: req.body.title,
     unpublishReason: req.body.unpublishReason,
-    unpublishReference: req.body.unpublishReference};
+    unpublishReference: req.body.unpublishReference };
 
-  changes.old = {blog: req.body.old_blog,
+  changes.old = { blog: req.body.old_blog,
     collection: req.body.old_collection,
     predecessorId: req.body.old_predecessorId,
     categoryEN: req.body.old_categoryEN,
     title: req.body.old_title,
     unpublishReason: req.body.old_unpublishReason,
-    unpublishReference: req.body.old_unpublishReference};
+    unpublishReference: req.body.old_unpublishReference };
 
 
   var languages = config.getLanguages();
@@ -759,7 +759,7 @@ function createArticle(req, res, next) {
       debug("createArticle->calculatenWN");
       // Blog Name is defined, so nothing to calculate
       if (proto.blog) return callback();
-      blogModule.findOne({status: "open"}, {column: "name", desc: false},
+      blogModule.findOne({ status: "open" }, { column: "name", desc: false },
         function calculateWNResult(err, blog) {
           if (err) return callback(err);
           debug("createArticle->calculateWNResult");
@@ -777,11 +777,11 @@ function createArticle(req, res, next) {
     if (err) return next(err);
     should.exist(res.rendervar);
     res.set("content-type", "text/html");
-    res.render("collect", {layout: res.rendervar.layout,
+    res.render("collect", { layout: res.rendervar.layout,
       search: "",
       placeholder: placeholder,
       showCollect: true,
-      categories: blogModule.getCategories()});
+      categories: blogModule.getCategories() });
   }
   );
 }
@@ -801,7 +801,7 @@ function searchArticles(req, res, next) {
     function doSearch(cb) {
       debug("search->doSearch");
       if (search !== "") {
-        articleModule.fullTextSearch(search, {column: "blog", desc: true}, function(err, r) {
+        articleModule.fullTextSearch(search, { column: "blog", desc: true }, function(err, r) {
           debug("search->doSearch->fullTextSearch");
           if (err) return cb(err);
           result = r;
@@ -815,14 +815,14 @@ function searchArticles(req, res, next) {
     if (err) return next(err);
     should.exist(res.rendervar);
     let renderer = new BlogRenderer.HtmlRenderer(null);
-    res.render("collect", {layout: res.rendervar.layout,
+    res.render("collect", { layout: res.rendervar.layout,
       search: search,
       show: show,
       foundArticles: result,
       renderer: renderer,
-      placeholder: {categories: {}},
+      placeholder: { categories: {} },
       showCollect: false,
-      categories: blogModule.getCategories()});
+      categories: blogModule.getCategories() });
   }
   );
 }
@@ -850,8 +850,8 @@ function renderList(req, res, next) {
       if (typeof (blog) !== "undefined") {
         query.blog = blog;
       }
-      let order = {column: "title"};
-      if (blog === "Trash") order = {column: "id", desc: true};
+      let order = { column: "title" };
+      if (blog === "Trash") order = { column: "id", desc: true };
       articleModule.find(query, order, function(err, result) {
         debug("renderList->findArticleFunction->find");
         if (err) return callback(err);
@@ -890,8 +890,8 @@ function renderList(req, res, next) {
     if (error) return next(error);
     should.exist(res.rendervar);
     res.set("content-type", "text/html");
-    res.render("articlelist", {layout: res.rendervar.layout,
-      articles: articles});
+    res.render("articlelist", { layout: res.rendervar.layout,
+      articles: articles });
   }
   );
 }
@@ -1017,9 +1017,9 @@ function translateBing(req, res, next) {
     json: true,
   };
 
-  request(options, function(err, res, body){
+  request(options, function(err, response, body){
     if (err) return next(err);
-    res.end(result);
+    res.end(body[0].translations[0].text);
   });
 }
 
@@ -1078,5 +1078,4 @@ module.exports.slackrouter = slackrouter;
 
 module.exports.fortestonly = {};
 module.exports.fortestonly.getArticleFromID = getArticleFromID;
-module.exports.fortestonly.msTransClient = msTransClient;
 module.exports.fortestonly.fixMarkdownLinks = fixMarkdownLinks;

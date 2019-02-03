@@ -15,10 +15,10 @@ const blogModule    = require("../model/blog.js");
 const userModule    = require("../model/user.js");
 
 const htmlRoot      = config.htmlRoot();
-const bootstrap     = config.getValue("bootstrap", {type: "string"});
-const jquery        = config.getValue("jquery", {type: "string"});
-const fontAwesome   = config.getValue("font_awesome", {type: "string"});
-const appName       = config.getValue("AppName", {mustExist: true});
+const bootstrap     = config.getValue("bootstrap", { type: "string" });
+const jquery        = config.getValue("jquery", { type: "string" });
+const fontAwesome   = config.getValue("font_awesome", { type: "string" });
+const appName       = config.getValue("AppName", { mustExist: true });
 
 
 
@@ -50,7 +50,7 @@ function path(component) {
 module.path = path;
 
 
-let calendarInterface = config.getValue("CalendarInterface", {mustExist: true});
+let calendarInterface = config.getValue("CalendarInterface", { mustExist: true });
 
 
 function prepareRenderLayout(req, res, next) {
@@ -94,7 +94,7 @@ function prepareRenderLayout(req, res, next) {
     },
     listOfOpenBlog:
     function (callback) {
-      blogModule.find({status: "open"}, function(err, result) {
+      blogModule.find({ status: "open" }, function(err, result) {
         if (err) return callback(err);
         let list = [];
         for (let i = 0; i < result.length; i++) {
@@ -115,7 +115,7 @@ function prepareRenderLayout(req, res, next) {
       });
     },
     editBlog: function (callback) {
-      blogModule.find({status: "edit"}, function(err, list) {
+      blogModule.find({ status: "edit" }, function(err, list) {
         if (err) return callback(err);
         async.each(list, function(item, cb) {
           item.calculateDerived(req.user, function(err) {
@@ -180,7 +180,7 @@ function prepareRenderLayout(req, res, next) {
     let scriptUser = config.getValue("scripts").user;
 
     if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
-    res.rendervar.layout = {user: req.user,
+    res.rendervar.layout = { user: req.user,
       htmlroot: htmlRoot,
       url: url,
       languages: languages,

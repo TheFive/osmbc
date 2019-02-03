@@ -202,7 +202,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       if ((self[k] && self[k] !== data.old[k]) || (typeof (self[k]) === "undefined" && data.old[k] !== "")) {
         let error = new Error("Field " + k + " already changed in DB");
         error.status = HttpStatus.CONFLICT;
-        error.detail = {oldValue: data.old[k], databaseValue: self[k], newValue: data[k]};
+        error.detail = { oldValue: data.old[k], databaseValue: self[k], newValue: data[k] };
         return callback(error);
       }
     }
@@ -234,7 +234,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
     },
     function loadBlog(cb) {
       if (self._blog) return cb();
-      blogModule.findOne({name: self.blog}, function(err, result) {
+      blogModule.findOne({ name: self.blog }, function(err, result) {
         if (err) cb(err);
         self._blog = result;
         return cb();
@@ -309,28 +309,28 @@ function find(obj, order, callback) {
     let blog = obj.blog;
     obj.blog = blog.name;
     createFunction = function() {
-      return create({_blog: blog});
+      return create({ _blog: blog });
     };
   }
   if (typeof obj.blog === "string") {
     if ((obj.blog === "Future") || (obj.blog === "TBC") || (obj.blog === "Trash")) {
       createFunction = function() {
-        return create({_blog: null});
+        return create({ _blog: null });
       };
     }
   }
   should.exist(createFunction);
-  pgMap.find({table: "article", create: createFunction}, obj, order, callback);
+  pgMap.find({ table: "article", create: createFunction }, obj, order, callback);
 }
 
 function findById(id, callback) {
   function _findById(id, callback) {
     debug("findById %s", id);
-    pgMap.findById(id, {table: "article", create: create}, function(err, result) {
+    pgMap.findById(id, { table: "article", create: create }, function(err, result) {
       if (err) callback(err);
       if (!result) return callback(null, result);
 
-      blogModule.findOne({name: result.blog}, function(err, blog) {
+      blogModule.findOne({ name: result.blog }, function(err, blog) {
         result._blog = blog;
 
         return callback(err, result);
@@ -348,12 +348,12 @@ function findById(id, callback) {
 
 function findOne(obj1, obj2, callback) {
   debug("findOne");
-  pgMap.findOne({table: "article", create: create}, obj1, obj2, callback);
+  pgMap.findOne({ table: "article", create: create }, obj1, obj2, callback);
 }
 
 function fullTextSearch(search, order, callback) {
   debug("fullTextSearch");
-  pgMap.fullTextSearch({table: "article", create: create}, search, order, callback);
+  pgMap.fullTextSearch({ table: "article", create: create }, search, order, callback);
 }
 
 function findEmptyUserCollectedArticles(lang, user, callback) {
@@ -369,7 +369,7 @@ function findEmptyUserCollectedArticles(lang, user, callback) {
            and ((blog.data->'exported" + lang + "') is null or blog.data->>'exorted" + lang + "'!='true') \
            and ((article.data->'markdown" + lang + "') is null or article.data->>'markdown" + lang + "' = '')";
 
-  pgMap.find({table: "article", create: create}, query, callback);
+  pgMap.find({ table: "article", create: create }, query, callback);
 }
 
 function findUserEditFieldsArticles(blog, user, field, callback) {
@@ -380,7 +380,7 @@ function findUserEditFieldsArticles(blog, user, field, callback) {
            and changes.data->>'user' = '" + user + "' \
            and changes.data->>'property' like '" + field + "'";
 
-  pgMap.find({table: "article", create: create}, query, callback);
+  pgMap.find({ table: "article", create: create }, query, callback);
 }
 
 // Calculate all links in markdown (final Text) and collection
@@ -503,7 +503,7 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(options, call
       // if (reference.substring(0,4) == "http") reference = reference.substring(4,999);
 
       // search in the full Module for the link
-      fullTextSearch(reference, {column: "blog", desc: true}, function(err, result) {
+      fullTextSearch(reference, { column: "blog", desc: true }, function(err, result) {
         debug("fullTextSearch Result");
         if (err) return cb(err);
         if (result) {
@@ -561,7 +561,7 @@ Article.prototype.addCommentFunction = function addCommentFunction(user, text, c
   // Add the new comment with User to the comment list object
   if (!self.commentList) self.commentList = [];
   self.commentStatus = "open";
-  var commentObject = {user: user.OSMUser, timestamp: new Date(), text: text};
+  var commentObject = { user: user.OSMUser, timestamp: new Date(), text: text };
   self.commentList.push(commentObject);
 
   // Set the self written comment (and all before) to be read by OSMUser
@@ -770,7 +770,7 @@ Article.prototype.addNotranslate = function addNotranslate(user, shownLang, call
   util.requireTypes([user, shownLang, callback], ["object", "object", "function"]);
 
   var self = this;
-  var change = {version: self.version};
+  var change = { version: self.version };
   for (var i = 0; i < config.getLanguages().length; i++) {
     var lang = config.getLanguages()[i];
     if (shownLang[lang] && ((typeof (self["markdown" + lang]) === "undefined") || (self["markdown" + lang] === ""))) {
@@ -797,8 +797,8 @@ Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromCha
 
   // search all logentries for this article
   logModule.find(
-    {table: "article", oid: self.id},
-    {column: "timestamp", desc: true},
+    { table: "article", oid: self.id },
+    { column: "timestamp", desc: true },
     function (err, result) {
       if (err) return cb(err);
       if (result && result.length > 0) {
@@ -852,7 +852,7 @@ Article.prototype.calculateDerivedFromSourceId = function calculateDerivedFromSo
     },
     function loadBlog(callback) {
       if (!self._originArticle) return callback();
-      blogModule.findOne({name: self._originArticle.blog}, function(err, blog) {
+      blogModule.findOne({ name: self._originArticle.blog }, function(err, blog) {
         if (err) return callback(err);
         self._originBlog = blog;
         return callback();

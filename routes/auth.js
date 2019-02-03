@@ -32,7 +32,7 @@ passport.serializeUser(function (user, done) {
   done(null, username);
 });
 
-let createGuestUsersAutomatic = config.getValue("createGuestUsersAutomatic", {mustExist: true});
+let createGuestUsersAutomatic = config.getValue("createGuestUsersAutomatic", { mustExist: true });
 
 passport.deserializeUser(function (user, done) {
   debug("passport.deserializeUser CB");
@@ -41,7 +41,7 @@ passport.deserializeUser(function (user, done) {
     logger.error(JSON.stringify(user, null, 2));
     return done(null, null);
   }
-  userModule.find({OSMUser: user}, function(err, result) {
+  userModule.find({ OSMUser: user }, function(err, result) {
     if (err) return done(null, null);
     if (result.length === 1) {
       let overWriteRole = config.getValue("DefineRole");
@@ -52,7 +52,7 @@ passport.deserializeUser(function (user, done) {
       return done(null, result[0]);
     }
     if (createGuestUsersAutomatic && result.length === 0) {
-      userModule.createNewUser({OSMUser: user, access: "guest", mdWeeklyAuthor: "anonymous"}, function(err, user) {
+      userModule.createNewUser({ OSMUser: user, access: "guest", mdWeeklyAuthor: "anonymous" }, function(err, user) {
         if (err) return done(null, null);
         return done(null, user);
       });
@@ -82,9 +82,9 @@ if (process.env.NODE_ENV === "test") {
 
 passport.use(new Strategy({
   name: "openstreetmap",
-  consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY", {mustExist: true}),
-  consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET", {mustExist: true}),
-  callbackURL: config.getValue("callbackUrl", {mustExist: true}),
+  consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY", { mustExist: true }),
+  consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET", { mustExist: true }),
+  callbackURL: config.getValue("callbackUrl", { mustExist: true }),
   requestTokenURL: "https://www.openstreetmap.org/oauth/request_token",
   accessTokenURL: "https://www.openstreetmap.org/oauth/access_token",
   userAuthorizationURL: "https://www.openstreetmap.org/oauth/authorize"
@@ -177,7 +177,7 @@ function ensureAuthenticated (req, res, next) {
       if (req.method === "GET" && (!req.user.lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 5)) {
         let stamp = new Date();
         req.user.lastAccess = stamp;
-        req.user.save({noVersionIncrease: true}, function (err) {
+        req.user.save({ noVersionIncrease: true }, function (err) {
           if (err) return next(err);
         });
       }
