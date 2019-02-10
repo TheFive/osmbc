@@ -1,8 +1,7 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7...HEAD)
+## [Bing_Translate_30](https://github.com/TheFive/osmbc/tree/Bing_Translate_30) (2019-02-03)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7...Bing_Translate_30)
 
 **Implemented enhancements:**
 

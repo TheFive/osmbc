@@ -232,7 +232,7 @@ function renderPictureTool(req, res) {
   var warning = [];
 
 
-  var options = url.parse(pictureURL);
+  var options = new url.URL(pictureURL);
 
   var p = http;
   if (pictureURL.substring(0, 5) === "https") p = https;
