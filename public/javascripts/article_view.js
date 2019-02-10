@@ -153,7 +153,7 @@ function clip(text) {
   copyElement = document.body.appendChild(copyElement);
   copyElement.select();
   try {
-    if (!document.execCommand("copy")) throw "Not allowed.";
+    if (!document.execCommand("copy")) throw new Error("Not allowed.");
   } catch (e) {
     copyElement.remove();
     prompt("Copy not supported, use your mobile to copy and press enter", text);
@@ -297,9 +297,9 @@ function checkMarkdownError() {
     for (var i = 0; i < window.linklist.length; i++) {
       if (window.linklist[i] === link) linkFound = true;
     }
-    if (linkFound) linkFromCollectionFound = true;
     // check Language Flags
     if ($("img.flag[src='" + link + "']").length > 0) linkFound = true;
+    if (linkFound) linkFromCollectionFound = true;
     if (!linkFound) allLinksFound = false;
   }
   if (allLinksFound === false) {
@@ -334,7 +334,7 @@ function generateGoogleTranslateLink(link, lang) {
   window.linklist.push(gtl);
 
   var gtlMarkdown = "(automatic [translation](##link##))";
-  if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
+  if (window.googleTranslateText[lang]) gtlMarkdown = window.googleTranslateText[lang];
 
 
   gtlMarkdown = gtlMarkdown.replace("##link##", gtl);
@@ -374,18 +374,18 @@ function onchangeCollection() {
     });
     if (found) continue;
     window.linklist.push(link);
-    if (articleReferences[link] && (articleReferences[link]).length > 0) {
+    if (window.articleReferences[link] && (window.articleReferences[link]).length > 0) {
       result += '<a class="label label-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
     } else result += '<a class="label label-default" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
-    result += " " + generateGoogleTranslateLink(link, leftLang);
-    if (rightLang !== "--" && rightLang !== "") {
-      result += " " + generateGoogleTranslateLink(link, rightLang);
+    result += " " + generateGoogleTranslateLink(link, window.leftLang);
+    if (window.rightLang !== "--" && window.rightLang !== "") {
+      result += " " + generateGoogleTranslateLink(link, window.rightLang);
     }
-    if (lang3 !== "--" && lang3 !== "") {
-      result += " " + generateGoogleTranslateLink(link, lang3);
+    if (window.lang3 !== "--" && window.lang3 !== "") {
+      result += " " + generateGoogleTranslateLink(link, window.lang3);
     }
-    if (lang4 !== "--" && lang4 !== "") {
-      result += " " + generateGoogleTranslateLink(link, lang4);
+    if (window.lang4 !== "--" && window.lang4 !== "") {
+      result += " " + generateGoogleTranslateLink(link, window.lang4);
     }
 
     result += "<br>\n";
@@ -398,8 +398,8 @@ function onchangeCollection() {
 
 // click on a flag Event
 // Copy the flag related information to the clipboard as markdown link
-var myclick = function (id) {
-  src = $("#" + id).attr("src");
+function myclick(id) {
+  var src = $("#" + id).attr("src");
 
 
   src = "![(" + id + ")](" + src + ")";
@@ -410,8 +410,8 @@ var myclick = function (id) {
 
 // dragStart Event
 function ondragstartflag (event, id) {
-  image = document.getElementById(id);
-  src = image.src;
+  let image = document.getElementById(id);
+  let src = image.src;
   src = "![(" + id + ")](" + src + ")";
   event.dataTransfer.setData("TEXT", src);
 }
@@ -439,7 +439,7 @@ function FitToContent() {
 function showRL(what) {
   $(".RL").addClass("hidden");
   $(".RLOFF").removeClass("hidden");
-  if (what === leftLang) what = rightLang;
+  if (what === window.leftLang) what = window.rightLang;
   $(".RL-" + what).removeClass("hidden");
   $(".RLOFF-" + what).addClass("hidden");
 }
@@ -447,8 +447,8 @@ function showRL(what) {
 
 function syncPlaceholder() {
   var c = $("#categoryEN").val();
-  if (placeholder[c]) {
-    $("#categoryDisplay").html(placeholder[c]);
+  if (window.placeholder[c]) {
+    $("#categoryDisplay").html(window.placeholder[c]);
   } else {
     $("#categoryDisplay").html("Missing Category Description");
   }
@@ -464,12 +464,12 @@ function showModified() {
 
   var modifiedColor = "#ffffcc";
   var normalColor = "";
-  if (this.name === "categoryEN" && newVal === noCategorie) {
+  if (this.name === "categoryEN" && newVal === window.noCategorie) {
     normalColor = "#FDC6CD";
     modifiedColor = "#FDC6AB";
   }
 
-  if (oldVal !==newVal) {
+  if (oldVal !== newVal) {
     $(this).css("backgroundColor", modifiedColor);
     $("#" + this.name + "_unsaved").show();
   } else {
@@ -508,7 +508,7 @@ function showHideUnpublishReason() {
 
 function redrawFunc(redraw) {
   var k;
-  let j = $.getJSON(htmlroot + redraw, function (json) {
+  $.getJSON(window.htmlroot + redraw, function (json) {
     for (k in json) {
       $(k).html(json[k]);
     }
@@ -519,14 +519,14 @@ function redrawFunc(redraw) {
 // the json and redraws it content in the html
 function callAndRedraw(call, redraw) {
   if (call) {
-    $.get(htmlroot + call, function() { redrawFunc(redraw); });
+    $.get(window.htmlroot + call, function() { redrawFunc(redraw); });
   } else {
     redrawFunc(redraw);
   }
 }
 
 function disableUnchanged() {
-  activeLanguages.forEach(function(lang) {
+  window.activeLanguages.forEach(function(lang) {
     if ($("#markdown" + lang).val() === $("#old_markdown" + lang).val()) {
       $("#markdown" + lang).prop("disabled", true);
       $("#old_markdown" + lang).prop("disabled", true);
@@ -564,7 +564,7 @@ function setNoTranslation() {
   /* jshint validthis: true */
 
   $(".markdownEdit").each(function(item) {
-    if (this.value == "" && !this.readOnly) this.value = "no translation";
+    if (this.value === "" && !this.readOnly) this.value = "no translation";
   });
 }
 
@@ -574,7 +574,7 @@ function translate(langFrom, langTo, service) {
   var from =  langFrom.toLowerCase();
   var to = langTo.toLowerCase();
   var originalText = document.getElementById("markdown" + langFrom).value;
-  jQuery.post(htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
+  jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
     console.info("Translation received");
     data = data.replace(/] \(/g, "](");
     $(".translateWait" + langFrom + langTo).addClass("hidden");
