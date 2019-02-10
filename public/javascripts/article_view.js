@@ -13,12 +13,12 @@ function unloadWindowWarning(event) {
   return dialogText;
 }
 
-var md_render;
+var mdRender;
 // initialise all callbacks with jQuery
 function init() {
-  md_render = window.markdownit();
-  md_render.use(window.markdownitSup);
-  md_render.use(window["markdown-it-imsize.js"]);
+  mdRender = window.markdownit();
+  mdRender.use(window.markdownitSup);
+  mdRender.use(window["markdown-it-imsize.js"]);
 
   $("#collection")
     .change(onchangeCollection)
@@ -73,25 +73,24 @@ function init() {
   $('[data-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;
-
 }
 
 function saveButton() {
   function save() {
-    disableUnchanged();document.getElementById('input').submit();
+    disableUnchanged(); document.getElementById("input").submit();
   }
-  if (document.getElementById('comment').value.trim()==='') return save();
+  if (document.getElementById("comment").value.trim() === "") return save();
 
-  var jqForm = $('form#AddComment');
-  var url = jqForm.attr('action');
+  var jqForm = $("form#AddComment");
+  var url = jqForm.attr("action");
   var toPost = jqForm.serialize();
 
   $.post(url, toPost, function (data) {
-      if (data === "OK") {
-        save();
-      }
-    },
-    'text' // I expect a JSON response
+    if (data === "OK") {
+      save();
+    }
+  },
+  "text" // I expect a JSON response
   ).fail(function (err) {
     console.error(err);
   });
@@ -106,7 +105,7 @@ function convertMinusNoTranslation() {
   /* jshint validthis: true */
   var object = $(this);
   var md = object.val();
-  if (md && md.trim() == "-") {
+  if (md && md.trim() === "-") {
     object.val("no translation");
     object.trigger("change");
   }
@@ -119,21 +118,20 @@ function convertMinusNoTranslation() {
 // Add the Blog typic list element to preview, but only
 // for specific types, (Missing: configuring this by user.)
 function convert(text) {
-
   // The cut at the beginning is a little bit "historic" from the
   // OSMBC startup, so only used for emotional motivation of the developer :-)
-  if (text.substring(0,2)=="* ") text = text.substring(2,999999);
+  if (text.substring(0, 2) === "* ") text = text.substring(2, 999999);
 
 
   // convert md to html
-  text = md_render.render(text);
+  text = mdRender.render(text);
 
 
   // Display as list, this should depend on type
 
   var cat = $("#categoryEN").val();
-  if (cat != "Picture" && cat != "Events" && cat != "Releases") {
-    text = '<ul><li>'+text+'</li></ul>';
+  if (cat !== "Picture" && cat !== "Events" && cat !== "Releases") {
+    text = "<ul><li>" + text + "</li></ul>";
   }
   return text;
 }
@@ -141,7 +139,6 @@ function convert(text) {
 // Test, wether a text is an url or not
 // based on regex.
 function isURL(t) {
-
   var isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
   if (t) return isUrlRegex.test(t);
   return isUrlRegex;
@@ -150,18 +147,18 @@ function isURL(t) {
 // Try to copy text to the clipboard
 // if it fails, alert an error and offer the possibility to copy manual
 function clip(text) {
-  var copyElement = document.createElement('input');
-  copyElement.setAttribute('type', 'text');
-  copyElement.setAttribute('value', text);
+  var copyElement = document.createElement("input");
+  copyElement.setAttribute("type", "text");
+  copyElement.setAttribute("value", text);
   copyElement = document.body.appendChild(copyElement);
   copyElement.select();
   try {
-    if (!document.execCommand('copy')) throw 'Not allowed.';
+    if (!document.execCommand("copy")) throw "Not allowed.";
   } catch (e) {
     copyElement.remove();
-    prompt('Copy not supported, use your mobile to copy and press enter', text);
+    prompt("Copy not supported, use your mobile to copy and press enter", text);
   } finally {
-    if (typeof e == 'undefined') {
+    if (typeof e === "undefined") {
       copyElement.remove();
     }
   }
@@ -170,45 +167,42 @@ function clip(text) {
 // Function that generates a markdown link in the case a
 // url is pasted or drag'n dropped to a markdown textfield
 //
-function generateMarkdownLink2(par1,par2) {
-
+function generateMarkdownLink2(par1, par2) {
   // tb == Text Before Selection
   // ta == Text Afer Selection
-  var tb = par1.text.substring(0,par1.startselection);
-  var ta = par1.text.substring(par1.endselection,99999);
+  var tb = par1.text.substring(0, par1.startselection);
+  var ta = par1.text.substring(par1.endselection, 99999);
 
   // beforeSnip == selected Text before paste
   // afterSnip == selected Text after Insert
-  var beforeSnip = par1.text.substring(par1.startselection,par1.endselection);
-  var afterSnip = par2.text.substring(par1.startselection,par2.endselection);
+  var beforeSnip = par1.text.substring(par1.startselection, par1.endselection);
+  var afterSnip = par2.text.substring(par1.startselection, par2.endselection);
 
   // only in the case, the "afterSnip" variable contains an URL, something
   // has to be done
   if (isURL(afterSnip.trim())) {
-
     afterSnip = afterSnip.trim();
 
     // Check, wether, the url is pasted into brackets ()
     // then nothing has to be done
     var alreadyMarkdowned = false;
-    if (tb!="" && tb.charAt(tb.length-1)=="(") alreadyMarkdowned= true;
-    if (ta!="" && tb.charAt(0)==")") alreadyMarkdowned= true;
+    if (tb !== "" && tb.charAt(tb.length - 1) === "(") alreadyMarkdowned = true;
+    if (ta !== "" && tb.charAt(0) === ")") alreadyMarkdowned = true;
     if (!alreadyMarkdowned) {
-
       // combine the new text
-      var r = tb+"["+beforeSnip+"]("+afterSnip+")"+ta;
+      var r = tb + "[" + beforeSnip + "](" + afterSnip + ")" + ta;
 
       // calculate the position to point to
       // for the new text
       // Between [] in the case, that only a link was added
       // after the [link](http://somewhere) in case the link has already a "display" word
-      var c ;
-      if (beforeSnip == "") {
-        c = (tb+"[").length;
+      var c;
+      if (beforeSnip === "") {
+        c = (tb + "[").length;
       } else {
-        c = (tb+"["+beforeSnip+"]("+afterSnip+")").length;
+        c = (tb + "[" + beforeSnip + "](" + afterSnip + ")").length;
       }
-      return {text:r,pos:c};
+      return { text: r, pos: c };
     }
   }
   return null;
@@ -221,11 +215,11 @@ function pasteEvent() {
   var mf = this;
 
   // Generate a triple of text, start selection and end selection BEFORE Pasting new text
-  var before = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
+  var before = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
 
   setTimeout(function () {
     // Generate a triple of text, start selection and end selection AFTER Pasting new text
-    var after = {text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd};
+    var after = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
 
     // And use the result, to generate the markdown link
     var r = generateMarkdownLink2(before, after);
@@ -247,13 +241,12 @@ function pasteEvent() {
 function checkForTable() {
   /* jshint validthis: true */
   var md = this.value;
-  if (md.indexOf("|----")>= 0) {
-    $(this).wrap = 'off';
-    $(this).css("fontFamily","monospace");
-  }
-  else {
-    $(this).wrap = 'soft';
-    $(this).css("fontFamily","");
+  if (md.indexOf("|----") >= 0) {
+    $(this).wrap = "off";
+    $(this).css("fontFamily", "monospace");
+  } else {
+    $(this).wrap = "soft";
+    $(this).css("fontFamily", "");
   }
 }
 
@@ -276,13 +269,13 @@ function checkMarkdownError() {
   var md = this.value;
   if (!window.linklist) window.linklist = [];
   var text = $(".markdownMessage[lang=" + this.lang + "]");
-  var errorOccured= false;
+  var errorOccured = false;
 
   // Check for long links
   var longLink = md.search(/\[[^\]]{40,}\]/g);
-  if (longLink>=0) {
+  if (longLink >= 0) {
     text.show(400);
-    text.html( "Please shorten ["+md.substring(longLink+1,longLink+40)+"...]");
+    text.html("Please shorten [" + md.substring(longLink + 1, longLink + 40) + "...]");
     errorOccured = true;
   }
 
@@ -293,7 +286,7 @@ function checkMarkdownError() {
   var errorLinkTwice = null;
 
   var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
-  while( (linkList = regexToken.exec(md)) != null ) {
+  while ((linkList = regexToken.exec(md)) !== null) {
     var link = linkList[0];
     if (allLinks.indexOf(link) >= 0) {
       errorLinkTwice = link;
@@ -301,12 +294,12 @@ function checkMarkdownError() {
     allLinks.push(link);
 
     var linkFound = false;
-    for (var i=0;i<window.linklist.length;i++) {
-      if (window.linklist[i]===link) linkFound = true;
+    for (var i = 0; i < window.linklist.length; i++) {
+      if (window.linklist[i] === link) linkFound = true;
     }
     if (linkFound) linkFromCollectionFound = true;
     // check Language Flags
-    if ($("img.flag[src='" + link + "']").length>0) linkFound = true;
+    if ($("img.flag[src='" + link + "']").length > 0) linkFound = true;
     if (!linkFound) allLinksFound = false;
   }
   if (allLinksFound === false) {
@@ -314,7 +307,7 @@ function checkMarkdownError() {
     text.html("Please check links, some looks not to be in collection, nor be a translation link");
     errorOccured = true;
   }
-  if (linkFromCollectionFound === false && md !== "" && md!=="no translation") {
+  if (linkFromCollectionFound === false && md !== "" && md !== "no translation") {
     text.show(400);
     text.html("Please use a link from collection in article.");
     errorOccured = true;
@@ -326,34 +319,34 @@ function checkMarkdownError() {
   }
 
   if (!errorOccured) {
-    //preview.style.backgroundColor="";
+    // preview.style.backgroundColor="";
     text.hide(400);
   }
 }
 
 // Generate the automatic google translate link for an url
 // and a given language, used to show it in edit mode
-function generateGoogleTranslateLink(link,lang) {
+function generateGoogleTranslateLink(link, lang) {
   var googlelang = lang;
   if (lang === "JP") googlelang = "JA";
   if (lang === "CZ") googlelang = "CS";
-  var gtl = "https://translate.google.com/translate?sl=auto&tl="+googlelang+"&u="+link;
+  var gtl = "https://translate.google.com/translate?sl=auto&tl=" + googlelang + "&u=" + link;
   window.linklist.push(gtl);
 
   var gtlMarkdown = "(automatic [translation](##link##))";
   if (googleTranslateText[lang]) gtlMarkdown = googleTranslateText[lang];
 
 
-  gtlMarkdown = gtlMarkdown.replace("##link##",gtl);
+  gtlMarkdown = gtlMarkdown.replace("##link##", gtl);
 
-  var dragstartFunction = "dragstart(event,'"+gtlMarkdown+"');";
+  var dragstartFunction = "dragstart(event,'" + gtlMarkdown + "');";
 
-  return '<a href="'+gtl+'" target="_blank" ondragstart="'+dragstartFunction+'" >'+lang+'</a>';
+  return '<a href="' + gtl + '" target="_blank" ondragstart="' + dragstartFunction + '" >' + lang + "</a>";
 }
 
 
 // Eventhandler to start drag & drop
-function dragstart(event,text) {
+function dragstart(event, text) {
   event.dataTransfer.setData("TEXT", text);
 }
 
@@ -368,26 +361,25 @@ function onchangeCollection() {
   window.linklist = [];
   var result = "";
   function linkShortener(link) {
-    if (link.length <50) return link;
-    return link.substr(0,40)+" . . . "+link.substr(link.length-5,5);
+    if (link.length < 50) return link;
+    return link.substr(0, 40) + " . . . " + link.substr(link.length - 5, 5);
   }
 
 
-  while( (linkList = regexToken.exec(cl)) != null ) {
+  while ((linkList = regexToken.exec(cl)) !== null) {
     var link = linkList[0];
     var found = false;
-    window.linklist.forEach(function(l){
-      if (l=== link) found = true;
+    window.linklist.forEach(function(l) {
+      if (l === link) found = true;
     });
     if (found) continue;
     window.linklist.push(link);
-    if (articleReferences[link] && (articleReferences[link]).length >0) {
-      result += '<a class="label label-danger" href="'+link+'" target="_blank" >'+linkShortener(link)+'</a>\n';
-    }
-    else result += '<a class="label label-default" href="'+link+'" target="_blank" >'+linkShortener(link)+'</a>\n';
-    result += " "+generateGoogleTranslateLink(link,leftLang);
+    if (articleReferences[link] && (articleReferences[link]).length > 0) {
+      result += '<a class="label label-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
+    } else result += '<a class="label label-default" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
+    result += " " + generateGoogleTranslateLink(link, leftLang);
     if (rightLang !== "--" && rightLang !== "") {
-      result += " "+generateGoogleTranslateLink(link,rightLang);
+      result += " " + generateGoogleTranslateLink(link, rightLang);
     }
     if (lang3 !== "--" && lang3 !== "") {
       result += " " + generateGoogleTranslateLink(link, lang3);
@@ -396,37 +388,35 @@ function onchangeCollection() {
       result += " " + generateGoogleTranslateLink(link, lang4);
     }
 
-    result +="<br>\n";
+    result += "<br>\n";
   }
-  result = '<p>'+result+'</p>';
+  result = "<p>" + result + "</p>";
 
   if (linkArea) linkArea.html(result);
-
 }
 
 
 // click on a flag Event
 // Copy the flag related information to the clipboard as markdown link
 var myclick = function (id) {
+  src = $("#" + id).attr("src");
 
-  src = $("#"+id).attr("src");
 
-
-  src = "![("+id+")]("+src+")";
+  src = "![(" + id + ")](" + src + ")";
   clip(src);
-  alert(id+ " flag is copied to clipboard");
+  alert(id + " flag is copied to clipboard");
 };
 
 
 // dragStart Event
-function ondragstartflag (event,id) {
+function ondragstartflag (event, id) {
   image = document.getElementById(id);
   src = image.src;
   src = "![(" + id + ")](" + src + ")";
   event.dataTransfer.setData("TEXT", src);
 }
 
-function ondragstartLangLabel( event,lang) {
+function ondragstartLangLabel(event, lang) {
   var v = $("#markdown" + lang).val();
   event.dataTransfer.setData("TEXT", v);
 }
@@ -434,14 +424,13 @@ function ondragstartLangLabel( event,lang) {
 
 // Fit to content event
 // justify the size of the textfield to the shown content
-function FitToContent()
-{
+function FitToContent() {
   /* jshint validthis: true */
   if (!this) return;
-  var textfield=this;
+  var textfield = this;
   textfield.style.height = textfield.style.minHeight;
   var adjustedHeight = Math.max(textfield.scrollHeight, textfield.clientHeight);
-  if ( adjustedHeight > textfield.clientHeight ) {
+  if (adjustedHeight > textfield.clientHeight) {
     textfield.style.height = adjustedHeight + "px";
   }
 }
@@ -450,9 +439,9 @@ function FitToContent()
 function showRL(what) {
   $(".RL").addClass("hidden");
   $(".RLOFF").removeClass("hidden");
-  if (what == leftLang) what = rightLang;
-  $(".RL-"+what).removeClass("hidden");
-  $(".RLOFF-"+what).addClass("hidden");
+  if (what === leftLang) what = rightLang;
+  $(".RL-" + what).removeClass("hidden");
+  $(".RLOFF-" + what).addClass("hidden");
 }
 
 
@@ -460,8 +449,7 @@ function syncPlaceholder() {
   var c = $("#categoryEN").val();
   if (placeholder[c]) {
     $("#categoryDisplay").html(placeholder[c]);
-  }
-  else {
+  } else {
     $("#categoryDisplay").html("Missing Category Description");
   }
 }
@@ -476,12 +464,12 @@ function showModified() {
 
   var modifiedColor = "#ffffcc";
   var normalColor = "";
-  if (this.name==="categoryEN" && newVal === noCategorie) {
+  if (this.name === "categoryEN" && newVal === noCategorie) {
     normalColor = "#FDC6CD";
     modifiedColor = "#FDC6AB";
   }
 
-  if (oldVal != newVal) {
+  if (oldVal !==newVal) {
     $(this).css("backgroundColor", modifiedColor);
     $("#" + this.name + "_unsaved").show();
   } else {
@@ -489,32 +477,29 @@ function showModified() {
     $("#" + this.name + "_unsaved").hide();
   }
 
-  $(".af").each(function(index, object){
-
+  $(".af").each(function(index, object) {
     var newVal = $(this).val();
     var oldVal = $("#old_" + this.name + ":hidden").val();
 
-    if (oldVal != newVal) {
+    if (oldVal !== newVal) {
       modified = true;
     }
   });
-  $("#saveButton").prop("disabled",!modified);
+  $("#saveButton").prop("disabled", !modified);
   if (modified) {
-    $(window).on("beforeunload",unloadWindowWarning);
+    $(window).on("beforeunload", unloadWindowWarning);
   } else {
-    $(window).off("beforeunload",unloadWindowWarning);
+    $(window).off("beforeunload", unloadWindowWarning);
   }
-
 }
 
 function showHideUnpublishReason() {
-
   var c = $("#categoryEN").val();
   var b = $("#blog").val();
 
   var hidden = true;
-  if (c==="--unpublished--") hidden = false;
-  if (b==="Trash") hidden = false;
+  if (c === "--unpublished--") hidden = false;
+  if (b === "Trash") hidden = false;
 
   if (hidden) $("#unpublishReasonRow").addClass("hidden");
   else $("#unpublishReasonRow").removeClass("hidden");
@@ -534,69 +519,66 @@ function redrawFunc(redraw) {
 // the json and redraws it content in the html
 function callAndRedraw(call, redraw) {
   if (call) {
-    $.get(htmlroot + call,function(){redrawFunc(redraw);});
+    $.get(htmlroot + call, function() { redrawFunc(redraw); });
   } else {
     redrawFunc(redraw);
   }
-
 }
 
 function disableUnchanged() {
-  activeLanguages.forEach(function(lang){
-    if ($("#markdown"+lang).val() === $("#old_markdown"+lang).val()) {
-      $("#markdown"+lang).prop("disabled",true);
-      $("#old_markdown"+lang).prop("disabled",true);
+  activeLanguages.forEach(function(lang) {
+    if ($("#markdown" + lang).val() === $("#old_markdown" + lang).val()) {
+      $("#markdown" + lang).prop("disabled", true);
+      $("#old_markdown" + lang).prop("disabled", true);
     }
   });
-  $(window).off("beforeunload",unloadWindowWarning);
-
+  $(window).off("beforeunload", unloadWindowWarning);
 }
 
-function submitAndRedraw(form,redraw) {
+function submitAndRedraw(form, redraw) {
   var jqForm = $(form);
-  var url = jqForm.attr('action');
+  var url = jqForm.attr("action");
 
   var toPost = jqForm.serialize();
 
 
   // clean unchanged values, to reduce post overhead.
   for (var k in toPost) {
-    if (toPost[k]===toPost["old_"+k]) {
+    if (toPost[k] === toPost["old_" + k]) {
       delete toPost[k];
-      delete toPost["old_"+k];
+      delete toPost["old_" + k];
     }
   }
 
-  $.post(url, toPost , function (data) {
-      if (data === "OK") {
-        if (redraw) redrawFunc(redraw);
-      }
-    },
-    'text' // I expect a JSON response
-  ).fail( function(err){console.error(err);});
+  $.post(url, toPost, function (data) {
+    if (data === "OK") {
+      if (redraw) redrawFunc(redraw);
+    }
+  },
+  "text" // I expect a JSON response
+  ).fail(function(err) { console.error(err); });
 }
 
 
-function setNoTranslation(){
+function setNoTranslation() {
   /* jshint validthis: true */
 
-  $('.markdownEdit').each(function(item){
-
-    if (this.value=="" && !this.readOnly ) this.value = "no translation";
+  $(".markdownEdit").each(function(item) {
+    if (this.value == "" && !this.readOnly) this.value = "no translation";
   });
 }
 
-function translate(langFrom, langTo,service) {
+function translate(langFrom, langTo, service) {
   $(".translate" + langFrom + langTo).addClass("hidden");
   $(".translateWait" + langFrom + langTo).removeClass("hidden");
   var from =  langFrom.toLowerCase();
   var to = langTo.toLowerCase();
   var originalText = document.getElementById("markdown" + langFrom).value;
-  jQuery.post( htmlroot +"/article/translate/"+service+"/" + from + "/" + to, {text: originalText}, function (data) {
+  jQuery.post(htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
     console.info("Translation received");
     data = data.replace(/] \(/g, "](");
     $(".translateWait" + langFrom + langTo).addClass("hidden");
-    $(".translateDone" + langFrom + langTo+"."+service).removeClass("hidden");
+    $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
     $("#markdown" + langTo).val(data).trigger("change");
   }).fail(function (err) {
     console.error("Translation failed");
