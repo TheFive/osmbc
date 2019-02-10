@@ -1,7 +1,7 @@
 # Change Log
 
-## [Bing_Translate_30](https://github.com/TheFive/osmbc/tree/Bing_Translate_30) (2019-02-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7...Bing_Translate_30)
+## [3.3.7b](https://github.com/TheFive/osmbc/tree/3.3.7b) (2019-02-10)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7...3.3.7b)
 
 **Implemented enhancements:**
 
@@ -9,6 +9,7 @@
 
 **Closed issues:**
 
+- Twitter collection leads to "already changed in DB error" [\#798](https://github.com/TheFive/osmbc/issues/798)
 - Find double links in ONE article.  [\#789](https://github.com/TheFive/osmbc/issues/789)
 
 ## [3.3.7](https://github.com/TheFive/osmbc/tree/3.3.7) (2018-10-21)
