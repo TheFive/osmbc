@@ -1,5 +1,8 @@
 "use strict";
 
+/* eslint no-unused-vars: 0 */
+
+
 // Init This Window with jQuery ready Callback
 $(document).ready(init);
 
@@ -405,8 +408,7 @@ function myclick(id) {
   src = "![(" + id + ")](" + src + ")";
   clip(src);
   alert(id + " flag is copied to clipboard");
-};
-
+}
 
 // dragStart Event
 function ondragstartflag (event, id) {

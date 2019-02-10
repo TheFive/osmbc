@@ -6,8 +6,8 @@ plugins:
 env:
   jquery: true
   browser: true
-  commonjs: true
-  es6: true
+  node: true
+
 
 rules:
    quotes: [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }]
