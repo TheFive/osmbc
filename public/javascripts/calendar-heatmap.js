@@ -1,6 +1,7 @@
 "use strict";
 
 /* jshint ignore:start */
+/* eslint-disable */
 
 function calendarHeatmap(actualDate) {
   // defaults

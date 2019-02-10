@@ -91,9 +91,9 @@ function expandTwitterUrl(collection, callback) {
         // tweet is already expanded
         if (collection.replace(/\r/g, "").indexOf(tweetAsText) > 0) return cbEachID(null);
 
-        collExtension[index] = "Tweet by **" + result.user.name + "**\n";
-        collExtension[index] += tweetAsText + "\n";
-        collExtension[index] += "(Retweets: **" + result.retweet_count + "** Favs: **" + result.favorite_count + "**)\n";
+        collExtension[index] = "Tweet by **" + result.user.name + "**\r\n";
+        collExtension[index] += tweetAsText + "\r\n";
+        collExtension[index] += "(Retweets: **" + result.retweet_count + "** Favs: **" + result.favorite_count + "**)\r\n";
 
         return cbEachID(null);
       });
@@ -102,7 +102,7 @@ function expandTwitterUrl(collection, callback) {
     if (err) return callback(err, null);
     let result = collection;
     collExtension.forEach(function(item) {
-      if (item.length > 0) result = result + "\n\n" + item;
+      if (item.length > 0) result = result + "\r\n\r\n" + item;
     });
     callback(null, result);
   });

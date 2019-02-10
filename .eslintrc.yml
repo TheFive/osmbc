@@ -3,6 +3,11 @@ plugins:
   - standard
   - promise
 
+env:
+  jquery: true
+  browser: true
+  node: true
+
 
 rules:
    quotes: [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }]

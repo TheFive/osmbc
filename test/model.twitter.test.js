@@ -33,7 +33,7 @@ describe("model/twitter", function() {
   it("should expand a twitter collection url with no url in tweet", function (bddone) {
     twitter.expandTwitterUrl("https://twitter.com/simonecortesi/status/692635300867092480", function(err, result) {
       should.not.exist(err);
-      should(result).eql("https://twitter.com/simonecortesi/status/692635300867092480\n\nTweet by **Simone Cortesi**\nStarting today @WikimediaItalia is the official Local Chapter for Italy for @openstreetmap. Long live OSM!\n(Retweets: **22** Favs: **24**)\n");
+      should(result).eql("https://twitter.com/simonecortesi/status/692635300867092480\r\n\r\nTweet by **Simone Cortesi**\r\nStarting today @WikimediaItalia is the official Local Chapter for Italy for @openstreetmap. Long live OSM!\r\n(Retweets: **22** Favs: **24**)\r\n");
       bddone();
     });
   });
@@ -48,14 +48,14 @@ describe("model/twitter", function() {
 
     twitter.expandTwitterUrl("https://twitter.com/mangomap/status/695426961548574722", function(err, result) {
       should.not.exist(err);
-      should(result).eql("https://twitter.com/mangomap/status/695426961548574722\n\nTweet by **MangoMap**\nHave you enrolled in our #QGIS for Beginners course on @discoverspatial? It's free! http://discoverspatial.com/courses/qgis-for-beginners\n(Retweets: **10** Favs: **5**)\n");
+      should(result).eql("https://twitter.com/mangomap/status/695426961548574722\r\n\r\nTweet by **MangoMap**\r\nHave you enrolled in our #QGIS for Beginners course on @discoverspatial? It's free! http://discoverspatial.com/courses/qgis-for-beginners\r\n(Retweets: **10** Favs: **5**)\r\n");
       bddone();
     });
   });
   it("should expand a twitter collection url with no twitter reference", function (bddone) {
     twitter.expandTwitterUrl("https://twitter.com/OSMBuildings/status/669252548600139776", function(err, result) {
       should.not.exist(err);
-      should(result).eql("https://twitter.com/OSMBuildings/status/669252548600139776\n\nTweet by **OSM Buildings**\nJust saw the ArcGIS city viewer at #ddj meetup. How many working hours were spent for that slow thing?\n(Retweets: **2** Favs: **3**)\n");
+      should(result).eql("https://twitter.com/OSMBuildings/status/669252548600139776\r\n\r\nTweet by **OSM Buildings**\r\nJust saw the ArcGIS city viewer at #ddj meetup. How many working hours were spent for that slow thing?\r\n(Retweets: **2** Favs: **3**)\r\n");
       bddone();
     });
   });
@@ -84,7 +84,7 @@ describe("model/twitter", function() {
 
     twitter.expandTwitterUrl("https://twitter.com/mangomap/status/695426961548574722?s=09 https://twitter.com/OSMBuildings/status/669252548600139776", function(err, result) {
       should.not.exist(err);
-      should(result).eql("https://twitter.com/mangomap/status/695426961548574722?s=09 https://twitter.com/OSMBuildings/status/669252548600139776\n\nTweet by **MangoMap**\nHave you enrolled in our #QGIS for Beginners course on @discoverspatial? It's free! http://discoverspatial.com/courses/qgis-for-beginners\n(Retweets: **10** Favs: **5**)\n\n\nTweet by **OSM Buildings**\nJust saw the ArcGIS city viewer at #ddj meetup. How many working hours were spent for that slow thing?\n(Retweets: **2** Favs: **3**)\n");
+      should(result).eql("https://twitter.com/mangomap/status/695426961548574722?s=09 https://twitter.com/OSMBuildings/status/669252548600139776\r\n\r\nTweet by **MangoMap**\r\nHave you enrolled in our #QGIS for Beginners course on @discoverspatial? It's free! http://discoverspatial.com/courses/qgis-for-beginners\r\n(Retweets: **10** Favs: **5**)\r\n\r\n\r\nTweet by **OSM Buildings**\r\nJust saw the ArcGIS city viewer at #ddj meetup. How many working hours were spent for that slow thing?\r\n(Retweets: **2** Favs: **3**)\r\n");
       bddone();
     });
   });
@@ -112,9 +112,9 @@ describe("model/twitter", function() {
       .intercept("/courses/qgis-for-beginners", "HEAD")
       .reply(200, "OK");
 
-    twitter.expandTwitterUrl("https://twitter.com/mangomap/status/695426961548574722?s=09 https://twitter.com/OSMBuildings/status/669252548600139776\n\nTweet by **MangoMap**\nHave you enrolled in our #QGIS for Beginners course on @discoverspatial? It's free! http://discoverspatial.com/courses/qgis-for-beginners https://t.co/p2UjgWVTUa\n(Retweets: **10** Favs: **5**)\n", function(err, result) {
+    twitter.expandTwitterUrl("https://twitter.com/mangomap/status/695426961548574722?s=09 https://twitter.com/OSMBuildings/status/669252548600139776\r\n\r\nTweet by **MangoMap**\r\nHave you enrolled in our #QGIS for Beginners course on @discoverspatial? It's free! http://discoverspatial.com/courses/qgis-for-beginners https://t.co/p2UjgWVTUa\r\n(Retweets: **10** Favs: **5**)\r\n", function(err, result) {
       should.not.exist(err);
-      should(result).eql("https://twitter.com/mangomap/status/695426961548574722?s=09 https://twitter.com/OSMBuildings/status/669252548600139776\n\nTweet by **MangoMap**\nHave you enrolled in our #QGIS for Beginners course on @discoverspatial? It's free! http://discoverspatial.com/courses/qgis-for-beginners https://t.co/p2UjgWVTUa\n(Retweets: **10** Favs: **5**)\n\n\nTweet by **OSM Buildings**\nJust saw the ArcGIS city viewer at #ddj meetup. How many working hours were spent for that slow thing?\n(Retweets: **2** Favs: **3**)\n");
+      should(result).eql("https://twitter.com/mangomap/status/695426961548574722?s=09 https://twitter.com/OSMBuildings/status/669252548600139776\r\n\r\nTweet by **MangoMap**\r\nHave you enrolled in our #QGIS for Beginners course on @discoverspatial? It's free! http://discoverspatial.com/courses/qgis-for-beginners https://t.co/p2UjgWVTUa\r\n(Retweets: **10** Favs: **5**)\r\n\r\n\r\nTweet by **OSM Buildings**\r\nJust saw the ArcGIS city viewer at #ddj meetup. How many working hours were spent for that slow thing?\r\n(Retweets: **2** Favs: **3**)\r\n");
       bddone();
     });
   });
