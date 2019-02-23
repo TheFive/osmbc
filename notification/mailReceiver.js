@@ -27,7 +27,7 @@ if (logDir === ".") logDir = path.join(__dirname, "..");
 
 
 if (!(fs.existsSync(logDir))) {
-  console.err("Missing Directory (maillog_directory) %s", logDir);
+  console.error("Missing Directory (maillog_directory) %s", logDir);
   process.exit(1);
 }
 
@@ -37,7 +37,7 @@ var transport = new winston.transports.DailyRotateFile({
   filename: logNamePrefix,
   dirname: logDir,
   datePattern: logNameDateFormat,
-  level: process.env.ENV === "development" ? "debug" : "info"
+  level: process.env.ENV === "development" ? "info" : "info"
 });
 
 var logger =  winston.createLogger({
