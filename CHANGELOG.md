@@ -1,5 +1,16 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7c...HEAD)
+
+**Closed issues:**
+
+- Switch to BING 3.0 Translation [\#799](https://github.com/TheFive/osmbc/issues/799)
+
+## [3.3.7c](https://github.com/TheFive/osmbc/tree/3.3.7c) (2019-02-23)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7b...3.3.7c)
+
 ## [3.3.7b](https://github.com/TheFive/osmbc/tree/3.3.7b) (2019-02-10)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7...3.3.7b)
 
