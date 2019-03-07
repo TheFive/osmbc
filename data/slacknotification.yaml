@@ -18,5 +18,5 @@
 - slack: theweeklyosm
   channel: "#osmbcblog"
   notifyBlogStatusChange: true
-  notifyBlogLanguageStatusChange: ["ES","EN"]
+  notifyBlogLanguageStatusChange: ["ES","EN","PT-PT"]
 

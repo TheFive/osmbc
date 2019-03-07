@@ -43,7 +43,7 @@
   "SessionSecret":"keyboard cat",
   "SessionName":"session name",
   "AppName":"TESTBC",
-  "languages":["DE","EN","ES"],
+  "languages":["DE","EN","ES","PT-PT"],
   "moment_locale":{
     "EN":"en-gb"},
   "callbackUrl":"http://localhost:35043/auth/openstreetmap/callback",
