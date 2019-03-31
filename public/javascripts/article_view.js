@@ -189,7 +189,7 @@ function generateMarkdownLink2(par1, par2) {
     // Check, wether, the url is pasted into brackets ()
     // then nothing has to be done
     var alreadyMarkdowned = false;
-    if (tb !== "" && tb.charAt(tb.length - 1) === "(") alreadyMarkdowned = true;
+    if (tb.length > 2 && tb.charAt(tb.length - 1) === "(" && tb.charAt(tb.length - 2) === "]") alreadyMarkdowned = true;
     if (ta !== "" && tb.charAt(0) === ")") alreadyMarkdowned = true;
     if (!alreadyMarkdowned) {
       // combine the new text
