@@ -37,6 +37,7 @@
     "jstransformer": "^1.0.0",
     "jstransformer-markdown-it": "^2.1.0",
     "jstransformer-verbatim": "^1.1.1",
+    "lru-cache": "^5.1.1",
     "markdown-it": "^8.4.2",
     "markdown-it-imsize": "^2.0.1",
     "markdown-it-sup": "^1.0.0",
