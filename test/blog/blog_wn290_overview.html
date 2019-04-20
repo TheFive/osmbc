@@ -3156,14 +3156,16 @@ Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autóno
   
   window.onload = function () {
   
+    $(".preview").change(highlightWrongLinks);
+    $(".preview").each(highlightWrongLinks);
+  
+  
     if (typeof(Storage) !== "undefined") {
       if (window.sessionStorage.blogUrl !== window.location.href) return;
       var x = window.sessionStorage.blogX;
       var y = window.sessionStorage.blogY;
       window.scrollTo(x, y);
     }
-    $(".preview").change(highlightWrongLinks);
-    $(".preview").each(highlightWrongLinks);
   }
   
   

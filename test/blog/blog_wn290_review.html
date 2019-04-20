@@ -2008,14 +2008,16 @@ Segeltörn
   
   window.onload = function () {
   
+    $(".preview").change(highlightWrongLinks);
+    $(".preview").each(highlightWrongLinks);
+  
+  
     if (typeof(Storage) !== "undefined") {
       if (window.sessionStorage.blogUrl !== window.location.href) return;
       var x = window.sessionStorage.blogX;
       var y = window.sessionStorage.blogY;
       window.scrollTo(x, y);
     }
-    $(".preview").change(highlightWrongLinks);
-    $(".preview").each(highlightWrongLinks);
   }
   
   

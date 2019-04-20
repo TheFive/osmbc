@@ -853,7 +853,9 @@ function urlExist(req, res, next) {
     } else if (!err && response.statusCode > 200) {
       res.end(response.statusCode.toString());
     } else {
-      res.end("NOK");
+      let m = "NOK";
+      if (typeof err.message === "string") m = err.message;
+      res.end(m);
     }
   });
 }

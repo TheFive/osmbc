@@ -874,14 +874,25 @@ describe("routes/article", function() {
       should(sitecall.isDone()).be.true();
     });
 
-    it("should run with full access user non existing site", async function () {
+    it("should run with full access user with error", async function () {
       let form = {url: "https://www.site.ort2/apage"};
       let sitecall = nock("https://www.site.ort2")
         .get("/apage")
         .replyWithError({message:"not found"});
       let response = await rp.post({url: url, form: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true});
 
-      response.body.should.eql("NOK");
+      response.body.should.eql("not found");
+      should(response.statusCode).eql(HttpStatus.OK);
+      should(sitecall.isDone()).be.true();
+    });
+    it("should run with full access user with http error", async function () {
+      let form = {url: "https://www.site.ort2/apage"};
+      let sitecall = nock("https://www.site.ort2")
+        .get("/apage")
+        .reply(404,"something went wrong");
+      let response = await rp.post({url: url, form: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true});
+
+      response.body.should.eql("404");
       should(response.statusCode).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });

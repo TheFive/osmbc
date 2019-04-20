@@ -2345,7 +2345,7 @@ Benutzer <a href="http://www.openstreetmap.org/user/ruthmaben">ruthmaben</a> <a 
                 <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv1');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
                   <div>
                     <ul class="preview" id="rpreview1"><li id="wn290_1">
-User <a href="http://www.openstreetmap.org/user/ruthmaben">ruthmaben</a> writes about a tool called <a href="(http://www.openstreetmap.org/user/ruthmaben/diary/37865)" class="nonexist">POI Finder #NOK</a> she helped to develop. The tool uses the Overpass API to show all amenities in a given area or between two or more points. The result is a <a href="http://oini.github.io/poi-finder/">map</a> which shows POI all around the world. Serious drawback: it works only for nodes, not for POI which are mapped on closed ways like buildings. <a href="https://github.com/oini/poi-buffer">The source code</a> is available for download on github.
+User <a href="http://www.openstreetmap.org/user/ruthmaben">ruthmaben</a> writes about a tool called <a href="(http://www.openstreetmap.org/user/ruthmaben/diary/37865)" class="nonexist">POI Finder #Invalid URI "(http://www.openstreetmap.org/user/ruthmaben/diary/37865)"</a> she helped to develop. The tool uses the Overpass API to show all amenities in a given area or between two or more points. The result is a <a href="http://oini.github.io/poi-finder/">map</a> which shows POI all around the world. Serious drawback: it works only for nodes, not for POI which are mapped on closed ways like buildings. <a href="https://github.com/oini/poi-buffer">The source code</a> is available for download on github.
 </li>
 </ul>
                   </div>
@@ -4002,14 +4002,16 @@ Google is Future, isn't it ?
   
   window.onload = function () {
   
+    $(".preview").change(highlightWrongLinks);
+    $(".preview").each(highlightWrongLinks);
+  
+  
     if (typeof(Storage) !== "undefined") {
       if (window.sessionStorage.blogUrl !== window.location.href) return;
       var x = window.sessionStorage.blogX;
       var y = window.sessionStorage.blogY;
       window.scrollTo(x, y);
     }
-    $(".preview").change(highlightWrongLinks);
-    $(".preview").each(highlightWrongLinks);
   }
   
   
