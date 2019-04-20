@@ -3149,8 +3149,10 @@ Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autóno
   
 </script>
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
+<script src="/javascripts/osmbc_staff.js"></script>
 <script>
   var openEditor = null;
+  htmlroot = "";
   
   window.onload = function () {
   
@@ -3160,6 +3162,8 @@ Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autóno
       var y = window.sessionStorage.blogY;
       window.scrollTo(x, y);
     }
+    $(".preview").change(highlightWrongLinks);
+    $(".preview").each(highlightWrongLinks);
   }
   
   
@@ -3213,6 +3217,7 @@ Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autóno
   
   
     pv.innerHTML = convert(md);
+    $(pv).trigger("change");
   
   }
   

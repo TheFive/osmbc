@@ -431,7 +431,7 @@ exports.getBrowser = function getBrowser() {
 
 exports.getNewBrowser = function getNewBrowser(userString) {
   return new Promise((resolve) => {
-    let browser = new Browser({ maxWait: 30000, site: "http://localhost:" + config.getServerPort() });
+    let browser = new Browser({ maxWait: 120000, site: "http://localhost:" + config.getServerPort() });
     if (!userString) return resolve(browser);
     should.exist(userString);
     fakeNextPassportLogin(userString);

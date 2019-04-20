@@ -270,9 +270,12 @@ block content
 
 block scripts
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
+  script(src=layout.htmlroot + "/javascripts/osmbc_staff.js")
+
   script.
 
     var openEditor = null;
+    htmlroot = "!{layout.htmlroot}";
 
     window.onload = function () {
 
@@ -282,6 +285,8 @@ block scripts
         var y = window.sessionStorage.blogY;
         window.scrollTo(x, y);
       }
+      $(".preview").change(highlightWrongLinks);
+      $(".preview").each(highlightWrongLinks);
     }
 
 
@@ -335,6 +340,7 @@ block scripts
 
 
       pv.innerHTML = convert(md);
+      $(pv).trigger("change");
 
     }
 

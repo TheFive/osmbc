@@ -1,6 +1,5 @@
 "use strict";
 
-/* eslint no-unused-vars: 0 */
 
 
 // Init This Window with jQuery ready Callback
@@ -22,7 +21,10 @@ function init() {
   mdRender = window.markdownit();
   mdRender.use(window.markdownitSup);
   mdRender.use(window["markdown-it-imsize.js"]);
-
+  $("#linkArea")
+    .change(highlightWrongLinks);
+  $(".preview")
+    .change(highlightWrongLinks);
   $("#collection")
     .change(onchangeCollection)
     .change(FitToContent)
@@ -259,6 +261,7 @@ function previewMarkdown() {
   var md = this.value;
   var preview = $(".preview[lang=" + this.lang + "]");
   preview.html(convert(md));
+  preview.trigger("change");
 }
 
 
@@ -395,7 +398,10 @@ function onchangeCollection() {
   }
   result = "<p>" + result + "</p>";
 
-  if (linkArea) linkArea.html(result);
+  if (linkArea) {
+    linkArea.html(result);
+    linkArea.trigger("change");
+  }
 }
 
 
