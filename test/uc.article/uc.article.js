@@ -29,15 +29,24 @@ describe("uc.article", function() {
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
+
+    // nock the test data here, so that nock is known
+    // when instancing browser
+    nock("http://www.test.de")
+      .get("/holla")
+      .times(5)
+      .reply(200,"OK");
+
+
     testutil.startServerSync();
     await testutil.clearDB();
 
     await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE",secondLang:"EN",email:"a@b.c"});
     await blogModule.createNewBlog({OSMUser: "test"}, {name: "blog"});
-    await articleModule.createNewArticle({blog: "blog", collection: "http://www.test.dä/holla", markdownDE: "[Text](http://www.test.dä/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.dä/holla) lerom upsim deloros."});
+    await articleModule.createNewArticle({blog: "blog", collection: "http://www.test.de/holla", markdownDE: "[Text](http://www.test.de/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.de/holla) lerom upsim deloros."});
     await articleModule.createNewArticle({blog: "blog", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz."});
     await articleModule.createNewArticle({blog: "undef blog", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz."});
-    let article = await articleModule.createNewArticle({blog: "blog", collection: "Link1: http://www.test.dä/holla and other"});
+    let article = await articleModule.createNewArticle({blog: "blog", collection: "Link1: http://www.test.de/holla and other"});
     articleId = article.id;
     browser = await testutil.getNewBrowser("TheFive");
   });
@@ -51,7 +60,7 @@ describe("uc.article", function() {
       await browser.visit("/article/" + articleId);
     });
     it("should have converted collection correct", function() {
-      browser.assert.text("#collection", "Link1: http://www.test.dä/holla and other");
+      browser.assert.text("#collection", "Link1: http://www.test.de/holla and other");
     });
     it("should isURL work on page", function(bddone) {
       var file =  path.resolve(__dirname, ".." , "data", "util.data.json");
@@ -134,7 +143,7 @@ describe("uc.article", function() {
       await browser.visit("/article/" + articleId);
     });
     it("should have converted collection correct", async function() {
-      browser.assert.text("#collection", "Link1: http://www.test.dä/holla and other");
+      browser.assert.text("#collection", "Link1: http://www.test.de/holla and other");
     });
     function checkLink(link,langVisible, langTranslation,displayLink) {
       if (!langTranslation) langTranslation = langVisible;
@@ -162,8 +171,9 @@ describe("uc.article", function() {
     });
     it("should show multiple links from collection", async function() {
 
-      checkLink("http://www.test.dä/holla","DE");
-      checkLink("http://www.test.dä/holla","EN");
+
+      checkLink("http://www.test.de/holla","DE");
+      checkLink("http://www.test.de/holla","EN");
 
       // Change collection with two links
       browser.fill("collection", "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");

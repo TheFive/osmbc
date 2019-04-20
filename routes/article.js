@@ -40,6 +40,10 @@ const subscriptionKey = config.getValue("MS_TranslateApiKey", { mustExist: true 
 
 const deeplTranslate = require("deepl-translator");
 
+const LRU = require("lru-cache");
+
+let linkCache = new LRU({ max: 300, maxage: 1000 * 60 * 60 * 5 });
+
 
 
 let htmlroot = config.htmlRoot();
@@ -828,6 +832,34 @@ function searchArticles(req, res, next) {
 }
 
 
+function urlExist(req, res, next) {
+  debug("urlExists");
+
+  var url = req.body.url;
+  if (!url || url === 0 || url === "") {
+    res.end("Missing Link");
+    return;
+  }
+
+
+  if (linkCache.get(url) === "OK") {
+    return res.end("OK");
+  }
+
+  request.get(url, function(err, response, body) {
+    if (!err && response.statusCode === 200) {
+      linkCache.set(url, "OK");
+      res.end("OK");
+    } else if (!err && response.statusCode > 200) {
+      res.end(response.statusCode.toString());
+    } else {
+      let m = "NOK";
+      if (typeof err.message === "string") m = err.message;
+      res.end(m);
+    }
+  });
+}
+
 
 function renderList(req, res, next) {
   debug("renderList");
@@ -1057,6 +1089,7 @@ router.post("/create", allowGuestAccess, postArticle);
 router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);
 router.post("/translate/deepl/:fromLang/:toLang", allowFullAccess, translateDeepl);
 router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateBing);
+router.post("/urlexist", allowGuestAccess, urlExist);
 
 router.param("article_id", getArticleFromID);
 

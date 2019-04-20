@@ -400,10 +400,16 @@
   
 </script>
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
+<script src="/javascripts/osmbc_staff.js"></script>
 <script>
   var openEditor = null;
+  htmlroot = "";
   
   window.onload = function () {
+  
+    $(".preview").change(highlightWrongLinks);
+    $(".preview").each(highlightWrongLinks);
+  
   
     if (typeof(Storage) !== "undefined") {
       if (window.sessionStorage.blogUrl !== window.location.href) return;
@@ -464,6 +470,7 @@
   
   
     pv.innerHTML = convert(md);
+    $(pv).trigger("change");
   
   }
   

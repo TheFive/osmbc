@@ -1,6 +1,5 @@
 "use strict";
 
-/* eslint no-unused-vars: 0 */
 
 
 // Init This Window with jQuery ready Callback
@@ -22,7 +21,10 @@ function init() {
   mdRender = window.markdownit();
   mdRender.use(window.markdownitSup);
   mdRender.use(window["markdown-it-imsize.js"]);
-
+  $("#linkArea")
+    .change(highlightWrongLinks);
+  $(".preview")
+    .change(highlightWrongLinks);
   $("#collection")
     .change(onchangeCollection)
     .change(FitToContent)
@@ -189,7 +191,7 @@ function generateMarkdownLink2(par1, par2) {
     // Check, wether, the url is pasted into brackets ()
     // then nothing has to be done
     var alreadyMarkdowned = false;
-    if (tb !== "" && tb.charAt(tb.length - 1) === "(") alreadyMarkdowned = true;
+    if (tb.length > 2 && tb.charAt(tb.length - 1) === "(" && tb.charAt(tb.length - 2) === "]") alreadyMarkdowned = true;
     if (ta !== "" && tb.charAt(0) === ")") alreadyMarkdowned = true;
     if (!alreadyMarkdowned) {
       // combine the new text
@@ -259,6 +261,7 @@ function previewMarkdown() {
   var md = this.value;
   var preview = $(".preview[lang=" + this.lang + "]");
   preview.html(convert(md));
+  preview.trigger("change");
 }
 
 
@@ -395,7 +398,10 @@ function onchangeCollection() {
   }
   result = "<p>" + result + "</p>";
 
-  if (linkArea) linkArea.html(result);
+  if (linkArea) {
+    linkArea.html(result);
+    linkArea.trigger("change");
+  }
 }
 
 

@@ -62,7 +62,7 @@ block blogcontent
               div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
 
                 ul
-                  div(id="preview" + a.id)
+                  div.preview(id="preview" + a.id)
                     |!{renderer.renderArticle(lang,a)}
 
               div.hidden(id="div" + a.id)

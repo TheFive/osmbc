@@ -81,17 +81,23 @@ let avatarCache = {};
 
 function cacheOSMAvatar(osmuser, callback) {
   debug("cacheOSMAvatar %s", osmuser);
+  if (osmuser === undefined) return callback();
   if (process.env.NODE_ENV === "test") return callback();
   if (avatarCache[osmuser]) return callback();
   let requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
-  request(requestString, function(err, response, body) {
-    if (err) {
-      return callback(err, null);
+  request({ url: requestString, timeout: 10000, followRedirect: false }, function(err, response, body) {
+    if (err && err.message !== "ETIMEDOUT") {
+      let error = new Error("User " + osmuser + " avatar could not be loaded.");
+      return callback(error, null);
     }
     if (body) {
       let c = cheerio.load(body);
       let avatarLink = c(".user_image").attr("src");
-      if (avatarLink === undefined) return callback();
+      let title = c("title").text();
+      if (title === "No such user | OpenStreetMap") return callback();
+      if (avatarLink === undefined) {
+        return callback();
+      }
       if (avatarLink.substring(0, 1) === "/") avatarLink = "https://www.openstreetmap.org" + avatarLink;
       avatarCache[osmuser] = avatarLink;
       request(avatarLink)
@@ -111,12 +117,16 @@ function cacheOSMAvatarAll(callback) {
     if (err) return callback(err);
     async.eachLimit(users, 4, function (item, cb) {
       cacheOSMAvatar(item.OSMUser, cb);
-    }, function(err) { return callback(err); });
+    }, function(err) {
+      return callback(err);
+    });
   });
 }
 
 if (process.env.NODE_ENV !== "test") {
-  cacheOSMAvatarAll(function(err) { if (err) logger.info("Error during Cache of User Avatar " + err.message); });
+  cacheOSMAvatarAll(function(err) {
+    if (err) logger.info("Error during Cache of User Avatar " + err.message);
+  });
 }
 
 // Calculate derived values

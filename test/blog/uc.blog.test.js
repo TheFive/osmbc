@@ -7,8 +7,13 @@ const nock       = require("nock");
 const should     = require("should");
 const request    = require("request");
 const mockdate   = require("mockdate");
+const yaml       = require("js-yaml");
+const fs         = require("fs");
+const path       = require("path");
+const URL        = require("url").URL;
 
 const testutil   = require("../testutil.js");
+
 
 const initialise = require("../../util/initialise.js");
 const userModule  = require("../../model/user.js");
@@ -17,8 +22,9 @@ const userModule  = require("../../model/user.js");
 
 
 
+
 describe("uc/blog", function() {
-  this.timeout(200000);
+  this.timeout(1000*60);
   let nockLoginPage;
 
   before(async function(){
@@ -35,8 +41,21 @@ describe("uc/blog", function() {
     mockdate.reset();
     testutil.stopServer();
   })
+  let nocklist = []
   beforeEach(async function() {
     nockLoginPage = testutil.nockLoginPage();
+    let list = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "..", "blog","DataWN290LinkList.txt"), "UTF8"));
+    list.forEach(function(item){
+      let url = new URL(item);
+      let path = url.pathname;
+      if (url.search) path = path + url.search;
+
+      let n = nock(url.protocol+"//"+url.host)
+        .get(path)
+        .times(99)
+        .reply(200,"OK");
+      nocklist.push(n);
+    });
   });
   afterEach(async function() {
     nock.cleanAll();

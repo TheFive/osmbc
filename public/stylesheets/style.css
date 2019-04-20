@@ -7,8 +7,18 @@ body {
 li {
   margin: 2px;
 }
+
 a {
   color: #00B7FF;
+}
+
+a.nonexist {
+  color: white ;
+  background-color: OrangeRed ;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: 7px;
+  padding-left: 7px
 }
 
 mark {

@@ -59,6 +59,7 @@ describe("routes/article", function() {
     jar.testUserDenied = await testutil.getUserJar("TestUserDenied");
     jar.testUserNonExisting = await testutil.getUserJar("TestUserNonExisting");
     jar.hallo = await testutil.getUserJar("Hallo");
+    jar.guestUser = await testutil.getUserJar("guestUser");
     jar.testUserNonExisting = await testutil.getUserJar("TestUserNonExisting");
   });
 
@@ -84,6 +85,7 @@ describe("routes/article", function() {
           {OSMUser: "TestUserDenied", access: "denied"},
           { "OSMUser": "Hallo", access: "full"},
           { "OSMUser": "UserWith3Lang", access: "full", languageCount: "three"},
+          { "OSMUser": "guestUser", access: "guest", languageCount: "three"},
           { "OSMUser": "UserWith4Lang", access: "full", languageCount: "four"}
         ],
         "article": [
@@ -854,6 +856,109 @@ describe("routes/article", function() {
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
+  });
+
+  describe("route POST /article/urlexist", function() {
+    let url = baseLink + "/article/urlexist";
+    let form = {url: "https://www.site.ort/apage"};
+
+    it("should run with full access user existing site", async function () {
+      let sitecall = nock("https://www.site.ort")
+        .get("/apage")
+        .reply(200,"OK");
+
+      let response = await rp.post({url: url, form: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true});
+
+      response.body.should.eql("OK");
+      should(response.statusCode).eql(HttpStatus.OK);
+      should(sitecall.isDone()).be.true();
+    });
+
+    it("should run with full access user with error", async function () {
+      let form = {url: "https://www.site.ort2/apage"};
+      let sitecall = nock("https://www.site.ort2")
+        .get("/apage")
+        .replyWithError({message:"not found"});
+      let response = await rp.post({url: url, form: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true});
+
+      response.body.should.eql("not found");
+      should(response.statusCode).eql(HttpStatus.OK);
+      should(sitecall.isDone()).be.true();
+    });
+    it("should run with full access user with http error", async function () {
+      let form = {url: "https://www.site.ort2/apage"};
+      let sitecall = nock("https://www.site.ort2")
+        .get("/apage")
+        .reply(404,"something went wrong");
+      let response = await rp.post({url: url, form: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true});
+
+      response.body.should.eql("404");
+      should(response.statusCode).eql(HttpStatus.OK);
+      should(sitecall.isDone()).be.true();
+    });
+
+    it("should run with guest access user", async function () {
+      let form = {url: "https://www.site.ort3/apage"};
+      let sitecall = nock("https://www.site.ort3")
+        .get("/apage")
+        .reply(200,"OK");
+      let response = await rp.post(
+        {
+          url: url,
+          form: form,
+          jar: jar.guestUser,
+          simple: false,
+          resolveWithFullResponse: true,
+          followAllRedirects: true});
+
+      response.body.should.eql("OK");
+      should(response.statusCode).eql(HttpStatus.OK);
+      should(sitecall.isDone()).be.true();
+
+      // Try a second time, url should be cached and not called
+      sitecall = nock("https://www.site.ort3")
+        .get("/apage")
+        .reply(200,"OK");
+      response = await rp.post(
+        {
+          url: url,
+          form: form,
+          jar: jar.guestUser,
+          simple: false,
+          resolveWithFullResponse: true,
+          followAllRedirects: true});
+
+      response.body.should.eql("OK");
+      should(response.statusCode).eql(HttpStatus.OK);
+      should(sitecall.isDone()).be.false();
+    });
+
+    it("should deny denied access user",
+      postUrlWithJar({
+        url: url,
+        form: form,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should use guest user for non existing users",async function () {
+      let form = {url: "https://www.site.ort4/apage"};
+      let sitecall = nock("https://www.site.ort4")
+        .get("/apage")
+        .reply(200,"OK");
+      let response = await rp.post(
+        {
+          url: url,
+          form: form,
+          jar: jar.testUserNonExisting,
+          simple: false,
+          resolveWithFullResponse: true,
+          followAllRedirects: true});
+
+      response.body.should.eql("OK");
+      should(response.statusCode).eql(HttpStatus.OK);
+      should(sitecall.isDone()).be.true();
+    });
   });
 });
 

@@ -29,7 +29,7 @@ describe("config", function() {
   });
   describe("getLanguages", function() {
     it("should return Standard Values", function(bddone) {
-      should((config.getLanguages())).eql(["DE", "EN", "ES"]);
+      should((config.getLanguages())).eql(["DE", "EN", "ES","PT-PT"]);
       bddone();
     });
   });

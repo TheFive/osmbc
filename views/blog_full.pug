@@ -107,8 +107,9 @@ block blogcontent
                 div(class=columnLeftSize)
                   div(onclick=`if (!openEditor) {openEditor = document.getElementById('ldiv${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
                     div(class=(a["markdown" + lang]) ? "" : "mark")
-                      ul.preview(id="lpreview" + a.id)
-                        |!{renderer.renderArticle(left_lang,a)}
+                      ul
+                        div.preview(id="lpreview" + a.id)
+                          |!{renderer.renderArticle(left_lang,a)}
                   div.hidden(id="ldiv" + a.id)
                     form(name="lEditArticle",id="lEditArticle" +a.id, action=layout.htmlroot+"/article/" + a.id +"/setMarkdown/" + left_lang, method="post")
                       textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'l');` onkeyup=`onchangeMarkdown(${a.id},'l');` spellcheck = "true" lang=left_lang)=a["markdown" + left_lang]
