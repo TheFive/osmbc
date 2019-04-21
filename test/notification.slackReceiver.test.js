@@ -363,7 +363,7 @@ describe("notification/slackReceiver", function() {
               "channel": "#osmbcblog" }))
           .reply(200, "ok");
         should.not.exist(err);
-        blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: "true" }, function(err) {
+        blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: true }, function(err) {
           should.not.exist(err);
           should(slack1a.isDone()).is.True();
           should(slack1b.isDone()).is.True();
