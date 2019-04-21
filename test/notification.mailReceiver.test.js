@@ -443,7 +443,7 @@ describe("notification/mailReceiver", function() {
         // reset sinon spy:
         var mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
         mailReceiver.for_test_only.transporter.sendMail = mailChecker;
-        blog.closeBlog({ lang: "ES", user: { OSMUser: "testuser" }, status: "true" }, function(err) {
+        blog.closeBlog({ lang: "ES", user: { OSMUser: "testuser" }, status: true }, function(err) {
           should.not.exist(err);
           should(mailChecker.calledOnce).be.True();
           var result = mailChecker.getCall(0).args[0];

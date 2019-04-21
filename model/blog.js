@@ -205,10 +205,11 @@ Blog.prototype.closeBlog = function closeBlog(options, callback) {
   debug("closeBlog");
   should(typeof (options.user)).eql("object");
   should(typeof (options.lang)).eql("string");
+  should(typeof (options.status)).eql("boolean");
 
   let self = this;
   let closeField = "close" + options.lang;
-  let reviewField = "reviewComment" + options.lang
+  let reviewField = "reviewComment" + options.lang;
 
   if (self[closeField] === options.status) return callback();
   should.exist(self.id);

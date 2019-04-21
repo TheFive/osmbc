@@ -150,7 +150,7 @@ describe("model/blog", function() {
       }
       );
     });
-    it("should handle an review by error with reopening (without review in WP)", function(cb) {
+    it("should handle reopen Blog with existing reviews with reopening (without review in WP)", function(cb) {
       // Please ensure, that "EN" is not in ReviewInWP in config
       var newBlog = blogModule.create({ name: "test", status: "**" });
       async.series([
@@ -159,6 +159,9 @@ describe("model/blog", function() {
         function (cb1) {
           should(newBlog.isEditable("EN")).be.True();
           newBlog.setReviewComment("EN", { OSMUser: "Test" }, "startreview", cb1);
+        },
+        function (cb1) {
+          newBlog.setReviewComment("EN", { OSMUser: "Test" }, "I have done a review", cb1);
         },
         function (cb1) { blogModule.findOne({ name: "test" }, function(err, result) { newBlog = result; cb1(err); }); },
         function (cb2) {
@@ -180,7 +183,7 @@ describe("model/blog", function() {
       ], function final(err) {
         should.not.exist(err);
         should(newBlog.isEditable("EN")).be.True();
-        should.not.exist(newBlog.reviewCommentDE);
+        should.exist(newBlog.reviewCommentEN);
         cb();
       }
       );
