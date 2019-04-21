@@ -317,11 +317,11 @@ function setBlogStatus(req, res, next) {
 
   // Close Language
   if (req.body.action === "closelang") {
-    return req.blog.closeBlog(lang, user, true, finalFunction);
+    return req.blog.closeBlog({lang:lang, user:user, status:true}, finalFunction);
   }
   // reopen Language
   if (req.body.action === "editlang") {
-    return req.blog.closeBlog(lang, user, false, finalFunction);
+    return req.blog.closeBlog({lang:lang, user:user, status:false}, finalFunction);
   }
   if (req.body.action === "deleteallreviews") {
     return req.blog.setReviewComment(lang, user, "deleteallreviews", finalFunction);
