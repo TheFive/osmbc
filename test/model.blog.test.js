@@ -8,6 +8,8 @@ var testutil = require("./testutil.js");
 
 var logModule     = require("../model/logModule.js");
 var blogModule    = require("../model/blog.js");
+var articleModule = require("../model/article.js");
+var logModule = require("../model/logModule.js");
 
 
 describe("model/blog", function() {
@@ -138,7 +140,7 @@ describe("model/blog", function() {
           should(newBlog.isEditable("DE")).be.False();
           blogModule.findOne({ name: "test" }, function(err, result) { newBlog = result; cb1(err); });
         },
-        function (cb3) { newBlog.closeBlog({lang:"DE",user: { OSMUser: "Test" }, status:false}, cb3); },
+        function (cb3) { newBlog.closeBlog({ lang: "DE", user: { OSMUser: "Test" }, status: false }, cb3); },
         function (cb1) {
           blogModule.findOne({ name: "test" }, function(err, result) { newBlog = result; cb1(err); });
         }
@@ -614,5 +616,59 @@ describe("model/blog", function() {
       should(result).eql([{ id: 11209 }, { id: 11205, predecessorId: 11209 }, { id: 11201, predecessorId: 11205 }, { id: 11244, predecessorId: 11201 }, { id: 11231 }, { id: 11206 }, { id: 11200 }]);
     });
     /* eslint-enable mocha/no-synchronous-tests */
+  });
+  describe("copyAllArticles", function () {
+    beforeEach(function(bddone) {
+      testutil.importData({ clear: true,
+        blog: [{ name: "WN1", status: "edit" }],
+        article: [{ blog: "WN1", title: "first", id: 1, markdownDE: "DE Text" },
+          { blog: "WN1", title: "first", id: 2, markdownDE: "DE Text", markdownEN: "EN Text" },
+          { blog: "WN1", title: "first", id: 3, markdownEN: "EN Text" },
+          { blog: "WN1", title: "first", id: 4 }
+        ] }, bddone);
+    });
+    it("should copy article and write changelog", function(bddone) {
+      blogModule.findOne({name:"WN1"},function(err,blog){
+        should.not.exist(err);
+        should.exist(blog);
+        blog.copyAllArticles({OSMUser:"Test"},"DE","EN",function(err){
+          should.not.exist(err);
+
+          articleModule.find({},function(err,result){
+            should.not.exist(err);
+            should(result.length).eql(4);
+            should(result[0].version).eql(2);
+            should(result[0].markdownEN).eql("DE Text");
+            should(result[1].version).eql(1);
+            should(result[1].markdownEN).eql("EN Text");
+            should(result[2].version).eql(1);
+            should(result[2].markdownEN).eql("EN Text");
+            should(result[3].version).eql(1);
+            should(result[3].markdownEN).eql(undefined);
+            logModule.find({table:"article"},function(err,result){
+              should(result.length).eql(1);
+              should(result[0].blog).eql("WN1");
+              should(result[0].user).eql("Test");
+              should(result[0].to).eql("DE Text");
+              bddone();
+            });
+          });
+        });
+      });
+    });
+    it("should copy article fail when closed", function(bddone) {
+      blogModule.findOne({name:"WN1"},function(err,blog){
+        should.not.exist(err);
+        should.exist(blog);
+        blog.closeBlog({user:{OSMUser:"Test"},lang:"EN",status:true},function(err){
+          should.not.exist(err);
+          blog.copyAllArticles({OSMUser:"Test"},"DE","EN",function(err){
+            should.exist(err);
+            should(err.message).eql("EN can not be edited");
+            bddone();
+          });
+        });
+      });
+    });
   });
 });

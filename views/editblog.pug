@@ -116,6 +116,10 @@ block content
                       input.hidden(type="text",name="lang" value = lang)
                       input.hidden(type="text",name ="action" value = "deleteallreviews")
                       button.btn.btn-xs.btn-warning(id="deletereviewbutton" type = "submit" ) Delete Review
+                  else if (copyLanguageFromAnother[lang])
+                    form(id="copyArticle" name="copyArticle", action=layout.htmlroot + "/blog/" + blog.name + "/copy/"+copyLanguageFromAnother[lang]+"/"+lang, method="post")
+                      button.btn.btn-xs.btn-warning(id="copyArticlebutton" type = "submit" )="Copy From " + copyLanguageFromAnother[lang]
+
 
 
 
