@@ -346,6 +346,34 @@ describe("routes/blog", function() {
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
   });
+  describe("route POST /blog/:blog_id/copy/:lang/:lang", function () {
+    let url = baseLink + "/blog/WN333/copy/DE/EN";
+    let form =  {};
+    it("should call copy", async function () {
+      let response = await rp.post({url: url, form: form, jar: jar.testUser,simple: false, resolveWithFullResponse: true });
+      should(response.statusCode).eql(302);
+      should(response.body).eql("Found. Redirecting to /");
+    });
+
+
+
+
+
+    it("should deny denied access user",
+      postUrlWithJar ({
+        url: url,
+        form: form,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+    it("should deny non existing user",
+      postUrlWithJar ({
+        url: url,
+        form: form,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
+  });
   describe("route GET /blog/create", function () {
     let url = baseLink + "/blog/create";
     it("should create a new blog", async function () {

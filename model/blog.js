@@ -577,6 +577,47 @@ function calculateDependend(article, cb) {
     article.calculateDerivedFromSourceId.bind(article)
   ], cb);
 }
+
+
+Blog.prototype.copyAllArticles = function copyAllArticles(user,fromLang, toLang, callback) {
+  debug("copyAllArticles");
+  should(typeof (user)).eql("object");
+  should(typeof (fromLang)).eql("string");
+  should(typeof (toLang)).eql("string");
+
+  if (!this.isEditable(toLang)) return callback(new Error(toLang + " can not be edited"));
+
+  let blogName = this.name;
+  let articleList = [];
+
+  async.series([
+    function readArticlesWithCollector(cb) {
+      debug("readArticlesWithCollector");
+      articleModule.find({ blog: blogName }, { column: "title" }, function (err, result) {
+        if (err) return cb(err);
+        articleList = result;
+        return cb();
+      });
+    },
+    function copyArticles(cb) {
+      async.forEach(articleList,function(article,cb2){
+        // to lang already defined
+        if (article["markdown"+toLang] && article["markdown"+toLang].length>0) return cb2();
+        if (!article["markdown"+fromLang]) return cb2();
+
+        let data ={};
+        data["markdown"+toLang] = article["markdown"+fromLang];
+        data.old = {};
+        data.old["markdown"+toLang] = "";
+
+        article.setAndSave(user,data,cb2);
+      },cb);
+    }
+  ], callback);
+};
+
+
+
 // Generate Articles and Category for rendering a preview by a JADE Template
 Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
   debug("getPreviewData");

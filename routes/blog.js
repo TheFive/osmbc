@@ -317,11 +317,11 @@ function setBlogStatus(req, res, next) {
 
   // Close Language
   if (req.body.action === "closelang") {
-    return req.blog.closeBlog({lang:lang, user:user, status:true}, finalFunction);
+    return req.blog.closeBlog({ lang: lang, user: user, status: true }, finalFunction);
   }
   // reopen Language
   if (req.body.action === "editlang") {
-    return req.blog.closeBlog({lang:lang, user:user, status:false}, finalFunction);
+    return req.blog.closeBlog({ lang: lang, user: user, status: false }, finalFunction);
   }
   if (req.body.action === "deleteallreviews") {
     return req.blog.setReviewComment(lang, user, "deleteallreviews", finalFunction);
@@ -439,6 +439,24 @@ function renderBlogTab(req, res, next) {
   );
 }
 
+function copyAllArticles(req, res, next) {
+  debug("copyCompleteLang");
+
+  let blog = req.blog;
+  if (!blog) return next();
+
+  let user = req.user;
+
+  let fromLang = req.params.fromLang;
+  let toLang = req.params.toLang;
+
+  blog.copyAllArticles(user,fromLang, toLang, function (err) {
+    if (err) return next(err);
+    let referer = req.header("Referer") || "/";
+    res.redirect(referer);
+  });
+}
+
 function createBlog(req, res, next) {
   debug("createBlog");
 
@@ -461,9 +479,12 @@ function editBlogId(req, res) {
   }
   blog._categories_yaml = yaml.safeDump(blog.categories);
   res.set("content-type", "text/html");
+  let copyLanguageFromAnother = config.getValue("copyLanguageFromAnother");
+  if (!copyLanguageFromAnother) copyLanguageFromAnother = {};
   res.render("editblog", { layout: res.rendervar.layout,
     blog: blog,
     params: params,
+    copyLanguageFromAnother: copyLanguageFromAnother,
     categories: blog.getCategories() });
 }
 
@@ -501,6 +522,7 @@ router.post("/edit/:blog_id", auth.checkRole(["full"]), postBlogId);
 router.post("/:blog_id/setReviewComment", auth.checkRole(["full"]), setReviewComment);
 router.post("/:blog_id/editReviewComment/:index", auth.checkRole(["full"]), editReviewComment);
 router.post("/:blog_id/setLangStatus", auth.checkRole(["full"]), setBlogStatus);
+router.post("/:blog_id/copy/:fromLang/:toLang", auth.checkRole(["full"]), copyAllArticles);
 
 
 router.get("/create", auth.checkRole(["full"]), createBlog);
