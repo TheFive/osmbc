@@ -1,5 +1,14 @@
 # Change Log
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.8...HEAD)
+
+**Implemented enhancements:**
+
+- copy the whole content from one language to an other language [\#805](https://github.com/TheFive/osmbc/issues/805)
+- Highlight non existing links in blog review [\#802](https://github.com/TheFive/osmbc/issues/802)
+
 ## [3.3.8](https://github.com/TheFive/osmbc/tree/3.3.8) (2019-04-20)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7d...3.3.8)
 
