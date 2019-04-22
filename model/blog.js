@@ -201,21 +201,25 @@ Blog.prototype.editReviewComment = function editReviewComment(lang, user, index,
 };
 
 
-Blog.prototype.closeBlog = function closeBlog(lang, user, status, callback) {
+Blog.prototype.closeBlog = function closeBlog(options, callback) {
   debug("closeBlog");
-  should(typeof (user)).eql("object");
-  let self = this;
-  let closeField = "close" + lang;
+  should(typeof (options.user)).eql("object");
+  should(typeof (options.lang)).eql("string");
+  should(typeof (options.status)).eql("boolean");
 
-  if (self[closeField] === status) return callback();
+  let self = this;
+  let closeField = "close" + options.lang;
+  let reviewField = "reviewComment" + options.lang;
+
+  if (self[closeField] === options.status) return callback();
   should.exist(self.id);
   should(self.id).not.equal(0);
   async.series([
     function logEntry(callback) {
-      messageCenter.global.sendCloseStatus(user, self, lang, status, callback);
+      messageCenter.global.sendCloseStatus(options.user, self, options.lang, options.status, callback);
     },
     function setCloseField(callback) {
-      self[closeField] = status;
+      self[closeField] = options.status;
       callback();
     },
     function removeReview(callback) {
@@ -223,16 +227,16 @@ Blog.prototype.closeBlog = function closeBlog(lang, user, status, callback) {
       // e.g. that review is started.
       // if there is some "substantial" review information (a review comment),
       // keep it and do not delete anythingx
-      if (status === false) {
-        if (self["reviewComment" + lang] && self["reviewComment" + lang].length === 0) {
-          delete self["reviewComment" + lang];
+      if (options.status === false) {
+        if (self[reviewField] && self[reviewField].length === 0) {
+          delete self[reviewField];
         }
-        if (self["reviewComment" + lang] && self["reviewComment" + lang].length === 1) {
-          if (self["reviewComment" + lang][0].text === "startreview") {
-            delete self["reviewComment" + lang];
+        if (self[reviewField] && self[reviewField].length === 1) {
+          if (self[reviewField][0].text === "startreview") {
+            delete self[reviewField];
           }
         }
-        self["exported" + lang] = false;
+        self["exported" + options.lang] = false;
       }
       callback();
     }
@@ -573,6 +577,47 @@ function calculateDependend(article, cb) {
     article.calculateDerivedFromSourceId.bind(article)
   ], cb);
 }
+
+
+Blog.prototype.copyAllArticles = function copyAllArticles(user,fromLang, toLang, callback) {
+  debug("copyAllArticles");
+  should(typeof (user)).eql("object");
+  should(typeof (fromLang)).eql("string");
+  should(typeof (toLang)).eql("string");
+
+  if (!this.isEditable(toLang)) return callback(new Error(toLang + " can not be edited"));
+
+  let blogName = this.name;
+  let articleList = [];
+
+  async.series([
+    function readArticlesWithCollector(cb) {
+      debug("readArticlesWithCollector");
+      articleModule.find({ blog: blogName }, { column: "title" }, function (err, result) {
+        if (err) return cb(err);
+        articleList = result;
+        return cb();
+      });
+    },
+    function copyArticles(cb) {
+      async.forEach(articleList,function(article,cb2){
+        // to lang already defined
+        if (article["markdown"+toLang] && article["markdown"+toLang].length>0) return cb2();
+        if (!article["markdown"+fromLang]) return cb2();
+
+        let data ={};
+        data["markdown"+toLang] = article["markdown"+fromLang];
+        data.old = {};
+        data.old["markdown"+toLang] = "";
+
+        article.setAndSave(user,data,cb2);
+      },cb);
+    }
+  ], callback);
+};
+
+
+
 // Generate Articles and Category for rendering a preview by a JADE Template
 Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
   debug("getPreviewData");

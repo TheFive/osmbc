@@ -46,30 +46,29 @@ describe("notification/mailReceiver", function() {
   describe("articles", function() {
     let mailChecker;
     afterEach(function (bddone) {
-
       mailChecker.restore();
       bddone();
     });
 
     beforeEach(function (bddone) {
       if (fs.existsSync(logFile)) fs.unlinkSync(logFile);
-      mailChecker = sinon.stub( mailReceiver.for_test_only.transporter,"sendMail")
-        .callsFake(function(obj, doit) { return doit(null, {response: "t"}); });
-      testutil.importData({clear: true,
-        user: [{OSMUser: "UserNewCollection", email: "UserNewCollection@mail.bc", access: "full", mailNewCollection: "true"},
-          {OSMUser: "UserAllComment", email: "UserAllComment@mail.bc", access: "full", mailAllComment: "true"},
-          {OSMUser: "UserMailDeUser3", email: "UserMailDeUser3@mail.bc", access: "full", mailComment: ["DE", "UserMailDeUser3"]},
-          {OSMUser: "UserMailDeUser3General", email: "UserMailDeUser3General@mail.bc", access: "full", mailCommentGeneral: "true", mailComment: ["DE", "UserMailDeUser3General"]},
-          {OSMUser: "User4", email: "user4@mail.bc", access: "full", mailComment: ["User4"]},
-          {OSMUser: "User5", access: "full", mailAllComment: "true"},
-          {OSMUser: "User6", access: "full", mailBlogStatusChange: "true"},
-          {OSMUser: "UserGuest", access: "guest",email:"user@guest.tol"},
-          {OSMUser: "forename surname",access:"full",email:"forename.surname@mail.com",mailComment:["forename surname"]}]}, bddone);
+      mailChecker = sinon.stub(mailReceiver.for_test_only.transporter, "sendMail")
+        .callsFake(function(obj, doit) { return doit(null, { response: "t" }); });
+      testutil.importData({ clear: true,
+        user: [{ OSMUser: "UserNewCollection", email: "UserNewCollection@mail.bc", access: "full", mailNewCollection: "true" },
+          { OSMUser: "UserAllComment", email: "UserAllComment@mail.bc", access: "full", mailAllComment: "true" },
+          { OSMUser: "UserMailDeUser3", email: "UserMailDeUser3@mail.bc", access: "full", mailComment: ["DE", "UserMailDeUser3"] },
+          { OSMUser: "UserMailDeUser3General", email: "UserMailDeUser3General@mail.bc", access: "full", mailCommentGeneral: "true", mailComment: ["DE", "UserMailDeUser3General"] },
+          { OSMUser: "User4", email: "user4@mail.bc", access: "full", mailComment: ["User4"] },
+          { OSMUser: "User5", access: "full", mailAllComment: "true" },
+          { OSMUser: "User6", access: "full", mailBlogStatusChange: "true" },
+          { OSMUser: "UserGuest", access: "guest", email: "user@guest.tol" },
+          { OSMUser: "forename surname", access: "full", email: "forename.surname@mail.com", mailComment: ["forename surname"] }] }, bddone);
     });
     it("should send out mail, when collecting article", function (bddone) {
       articleModule.createNewArticle(function(err, article) {
         should.not.exist(err);
-        article.setAndSave({OSMUser: "testuser"}, {version: 1, blog: "WN789", collection: "newtext", title: "Test Title"}, function(err) {
+        article.setAndSave({ OSMUser: "testuser" }, { version: 1, blog: "WN789", collection: "newtext", title: "Test Title" }, function(err) {
           should.not.exist(err);
           should(mailChecker.callCount).eql(1);
           should(mailChecker.calledOnce).be.True();
@@ -77,19 +76,19 @@ describe("notification/mailReceiver", function() {
           var expectedMail = '<h2>Change in article of WN789</h2><p>Article <a href="https://testosm.bc/article/1">Test Title</a> was changed by testuser </p><h3>blog was added</h3><p>WN789</p><h3>collection was added</h3><p>newtext</p><h3>title was added</h3><p>Test Title</p>';
           should(result.html).eql(expectedMail);
           should(mailChecker.getCall(0).args[0]).eql(
-            {from: "noreply@gmail.com",
+            { from: "noreply@gmail.com",
               to: "UserNewCollection@mail.bc",
               subject: "[TESTBC] WN789 added: Test Title",
               html: expectedMail,
-              text: "CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title"});
+              text: "CHANGE IN ARTICLE OF WN789\nArticle Test Title [https://testosm.bc/article/1] was changed by testuser \n\nBLOG WAS ADDED\nWN789\n\nCOLLECTION WAS ADDED\nnewtext\n\nTITLE WAS ADDED\nTest Title" });
           bddone();
         });
       });
     });
     it("should send out mail, when adding a comment", function (bddone) {
-      articleModule.createNewArticle({blog: "WN278", title: "To Add A Comment"}, function(err, article) {
+      articleModule.createNewArticle({ blog: "WN278", title: "To Add A Comment" }, function(err, article) {
         should.not.exist(err);
-        article.addCommentFunction({OSMUser: "testuser"}, "Information for none", function(err) {
+        article.addCommentFunction({ OSMUser: "testuser" }, "Information for none", function(err) {
           should.not.exist(err);
           should(mailChecker.callCount).eql(1);
           // First Mail Check
@@ -108,9 +107,9 @@ describe("notification/mailReceiver", function() {
     });
 
     it("should send out mail, when adding a comment for a user", function (bddone) {
-      articleModule.createNewArticle({blog: "WN278", title: "To Add A Comment"}, function(err, article) {
+      articleModule.createNewArticle({ blog: "WN278", title: "To Add A Comment" }, function(err, article) {
         should.not.exist(err);
-        article.addCommentFunction({OSMUser: "testuser"}, "Information for @User4 and @EN", function(err) {
+        article.addCommentFunction({ OSMUser: "testuser" }, "Information for @User4 and @EN", function(err) {
           should.not.exist(err);
           should(mailChecker.callCount).eql(2);
           // First Mail Check
@@ -133,9 +132,9 @@ describe("notification/mailReceiver", function() {
       });
     });
     it("should send out mail, when adding a comment for a user with space in name", function (bddone) {
-      articleModule.createNewArticle({blog: "WN278", title: "To Add A Comment"}, function(err, article) {
+      articleModule.createNewArticle({ blog: "WN278", title: "To Add A Comment" }, function(err, article) {
         should.not.exist(err);
-        article.addCommentFunction({OSMUser: "testuser"}, "Information for @forename surname and @EN", function(err) {
+        article.addCommentFunction({ OSMUser: "testuser" }, "Information for @forename surname and @EN", function(err) {
           should.not.exist(err);
           should(mailChecker.callCount).eql(2);
           // First Mail Check
@@ -158,9 +157,9 @@ describe("notification/mailReceiver", function() {
       });
     });
     it("should send out mail, when adding a comment for a guest user", function (bddone) {
-      articleModule.createNewArticle({blog: "WN278", title: "To Add A Comment"}, function(err, article) {
+      articleModule.createNewArticle({ blog: "WN278", title: "To Add A Comment" }, function(err, article) {
         should.not.exist(err);
-        article.addCommentFunction({OSMUser: "testuser"}, "Information for @userguest", function(err) {
+        article.addCommentFunction({ OSMUser: "testuser" }, "Information for @userguest", function(err) {
           should.not.exist(err);
           should(mailChecker.callCount).eql(2);
           // First Mail Check
@@ -184,9 +183,9 @@ describe("notification/mailReceiver", function() {
     });
 
     it("should send out mail, when adding a comment in general Mode (by mention)", function (bddone) {
-      articleModule.createNewArticle({blog: "WN278", title: "To Add A Comment", commentList: [{user: "test", text: "@UserMailDeUser3General"}]}, function(err, article) {
+      articleModule.createNewArticle({ blog: "WN278", title: "To Add A Comment", commentList: [{ user: "test", text: "@UserMailDeUser3General" }] }, function(err, article) {
         should.not.exist(err);
-        article.addCommentFunction({OSMUser: "testuser"}, "Information for none", function(err) {
+        article.addCommentFunction({ OSMUser: "testuser" }, "Information for none", function(err) {
           should.not.exist(err);
 
           var expectedMail = {
@@ -212,9 +211,9 @@ describe("notification/mailReceiver", function() {
       });
     });
     it("should send out mail, when adding a comment in general Mode (by participation)", function (bddone) {
-      articleModule.createNewArticle({blog: "WN278", title: "To Add A Comment", commentList: [{user: "UserMailDeUser3General", text: "First Comment text"}]}, function(err, article) {
+      articleModule.createNewArticle({ blog: "WN278", title: "To Add A Comment", commentList: [{ user: "UserMailDeUser3General", text: "First Comment text" }] }, function(err, article) {
         should.not.exist(err);
-        article.addCommentFunction({OSMUser: "testuser"}, "Information for none", function(err) {
+        article.addCommentFunction({ OSMUser: "testuser" }, "Information for none", function(err) {
           should.not.exist(err);
 
           should(mailChecker.callCount).eql(2);
@@ -226,11 +225,11 @@ describe("notification/mailReceiver", function() {
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);
           should(result).eql(
-            {from: "noreply@gmail.com",
+            { from: "noreply@gmail.com",
               to: "UserAllComment@mail.bc",
               subject: "[TESTBC] WN278 comment: To Add A Comment",
               html: expectedMail,
-              text: expectedText});
+              text: expectedText });
           // Second Mail Check
           result = mailChecker.getCall(1).args[0];
           expectedMail = '<h2>Change in article of WN278</h2><p>Article <a href="https://testosm.bc/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>';
@@ -238,21 +237,21 @@ describe("notification/mailReceiver", function() {
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);
           should(result).eql(
-            {from: "noreply@gmail.com",
+            { from: "noreply@gmail.com",
               to: "UserMailDeUser3General@mail.bc",
               subject: "[TESTBC] WN278 comment: To Add A Comment",
               html: expectedMail,
-              text: expectedText});
+              text: expectedText });
           bddone();
         });
       });
     });
     it("should send out mail, when changing a comment", function (bddone) {
-      articleModule.createNewArticle({blog: "WN278", title: "To Add A Comment"}, function(err, article) {
+      articleModule.createNewArticle({ blog: "WN278", title: "To Add A Comment" }, function(err, article) {
         should.not.exist(err);
-        article.addCommentFunction({OSMUser: "testuser"}, "Information for none", function(err) {
+        article.addCommentFunction({ OSMUser: "testuser" }, "Information for none", function(err) {
           should.not.exist(err);
-          article.editComment({OSMUser: "testuser"}, 0, "Information for @UserMailDeUser3", function(err) {
+          article.editComment({ OSMUser: "testuser" }, 0, "Information for @UserMailDeUser3", function(err) {
             should.not.exist(err);
 
             let expectedMail = {
@@ -300,17 +299,17 @@ describe("notification/mailReceiver", function() {
     beforeEach(function (bddone) {
       mockdate.set(new Date("2016-05-25T20:00:00Z"));
       oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
-      mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
+      mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
       mailReceiver.for_test_only.transporter.sendMail = mailChecker;
-      testutil.importData({clear: true,
-        user: [{OSMUser: "User1", email: "user1@mail.bc", access: "full", mailBlogStatusChange: "true"},
-          {OSMUser: "User2", email: "user2@mail.bc", access: "full", mailBlogStatusChange: "true"},
-          {OSMUser: "User3", email: "user3@mail.bc", access: "full", mailBlogLanguageStatusChange: ["EN", "ES"]},
-          {OSMUser: "User4", email: "user4@mail.bc", access: "full"},
-          {OSMUser: "User5", access: "full", mailBlogStatusChange: "true"}]}, bddone);
+      testutil.importData({ clear: true,
+        user: [{ OSMUser: "User1", email: "user1@mail.bc", access: "full", mailBlogStatusChange: "true" },
+          { OSMUser: "User2", email: "user2@mail.bc", access: "full", mailBlogStatusChange: "true" },
+          { OSMUser: "User3", email: "user3@mail.bc", access: "full", mailBlogLanguageStatusChange: ["EN", "ES"] },
+          { OSMUser: "User4", email: "user4@mail.bc", access: "full" },
+          { OSMUser: "User5", access: "full", mailBlogStatusChange: "true" }] }, bddone);
     });
     it("should send out mail when creating a blog", function (bddone) {
-      blogModule.createNewBlog({OSMUser: "testuser"}, function(err) {
+      blogModule.createNewBlog({ OSMUser: "testuser" }, function(err) {
         should.not.exist(err);
 
 
@@ -323,7 +322,7 @@ describe("notification/mailReceiver", function() {
         var mailList = {};
         mailList[mailChecker.getCall(0).args[0].to] = "-";
         mailList[mailChecker.getCall(1).args[0].to] = "-";
-        should(mailList).eql({"user1@mail.bc": "-", "user2@mail.bc": "-"});
+        should(mailList).eql({ "user1@mail.bc": "-", "user2@mail.bc": "-" });
         delete mailChecker.getCall(0).args[0].to;
         delete mailChecker.getCall(1).args[0].to;
 
@@ -333,25 +332,25 @@ describe("notification/mailReceiver", function() {
         should(result.html).eql(expectedMail);
         should(result.text).eql(expectedText);
         should(mailChecker.getCall(0).args[0]).eql(
-          {from: "noreply@gmail.com",
+          { from: "noreply@gmail.com",
             subject: "[TESTBC] WN251 was created",
             html: expectedMail,
-            text: expectedText});
+            text: expectedText });
         should(mailChecker.getCall(1).args[0]).eql(
-          {from: "noreply@gmail.com",
+          { from: "noreply@gmail.com",
             subject: "[TESTBC] WN251 was created",
             html: expectedMail,
-            text: expectedText});
+            text: expectedText });
         bddone();
       });
     });
     it("should send out mail when change blog status", function (bddone) {
-      blogModule.createNewBlog({OSMUser: "testuser"}, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "testuser" }, function(err, blog) {
         should.not.exist(err);
         // reset sinon spy:
-        var mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
+        var mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
         mailReceiver.for_test_only.transporter.sendMail = mailChecker;
-        blog.setAndSave({OSMUser: "testuser"}, {status: "edit"}, function(err) {
+        blog.setAndSave({ OSMUser: "testuser" }, { status: "edit" }, function(err) {
           should.not.exist(err);
 
           should(mailChecker.calledTwice).be.True();
@@ -364,30 +363,30 @@ describe("notification/mailReceiver", function() {
           var mailList = {};
           mailList[mailChecker.getCall(0).args[0].to] = "-";
           mailList[mailChecker.getCall(1).args[0].to] = "-";
-          should(mailList).eql({"user1@mail.bc": "-", "user2@mail.bc": "-"});
+          should(mailList).eql({ "user1@mail.bc": "-", "user2@mail.bc": "-" });
           delete mailChecker.getCall(0).args[0].to;
           delete mailChecker.getCall(1).args[0].to;
           should(mailChecker.getCall(0).args[0]).eql(
-            {from: "noreply@gmail.com",
+            { from: "noreply@gmail.com",
               subject: "[TESTBC] WN251 changed status to edit",
               html: expectedMail,
-              text: expectedText});
+              text: expectedText });
           should(mailChecker.getCall(1).args[0]).eql(
-            {from: "noreply@gmail.com",
+            { from: "noreply@gmail.com",
               subject: "[TESTBC] WN251 changed status to edit",
               html: expectedMail,
-              text: expectedText});
+              text: expectedText });
           bddone();
         });
       });
     });
     it("should send out mail when review status is set", function (bddone) {
-      blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit"}, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
         should.not.exist(err);
         // reset sinon spy:
-        var mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
+        var mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
         mailReceiver.for_test_only.transporter.sendMail = mailChecker;
-        blog.setReviewComment("ES", {OSMUser: "testuser"}, "I have reviewed", function(err) {
+        blog.setReviewComment("ES", { OSMUser: "testuser" }, "I have reviewed", function(err) {
           should.not.exist(err);
 
           should(mailChecker.calledOnce).be.True();
@@ -402,22 +401,22 @@ describe("notification/mailReceiver", function() {
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);
           should(mailChecker.getCall(0).args[0]).eql(
-            {from: "noreply@gmail.com",
+            { from: "noreply@gmail.com",
               to: "user3@mail.bc",
               subject: "[TESTBC] blog(ES) has been reviewed by user testuser",
               html: expectedMail,
-              text: expectedText});
+              text: expectedText });
           bddone();
         });
       });
     });
     it("should send out mail when review is marked as exported", function (bddone) {
-      blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit"}, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
         should.not.exist(err);
         // reset sinon spy:
-        var mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
+        var mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
         mailReceiver.for_test_only.transporter.sendMail = mailChecker;
-        blog.setReviewComment("ES", {OSMUser: "testuser"}, "markexported", function(err) {
+        blog.setReviewComment("ES", { OSMUser: "testuser" }, "markexported", function(err) {
           should.not.exist(err);
 
           should(mailChecker.calledOnce).be.True();
@@ -429,22 +428,22 @@ describe("notification/mailReceiver", function() {
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);
           should(mailChecker.getCall(0).args[0]).eql(
-            {from: "noreply@gmail.com",
+            { from: "noreply@gmail.com",
               to: "user3@mail.bc",
               subject: "[TESTBC] blog(ES) is exported to WordPress",
               html: expectedMail,
-              text: expectedText});
+              text: expectedText });
           bddone();
         });
       });
     });
     it("should send out mail when blog is closed", function (bddone) {
-      blogModule.createNewBlog({OSMUser: "testuser"}, {name: "blog", status: "edit"}, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
         should.not.exist(err);
         // reset sinon spy:
-        var mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
+        var mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
         mailReceiver.for_test_only.transporter.sendMail = mailChecker;
-        blog.closeBlog("ES", {OSMUser: "testuser"}, "true", function(err) {
+        blog.closeBlog({ lang: "ES", user: { OSMUser: "testuser" }, status: true }, function(err) {
           should.not.exist(err);
           should(mailChecker.calledOnce).be.True();
           var result = mailChecker.getCall(0).args[0];
@@ -453,11 +452,11 @@ describe("notification/mailReceiver", function() {
           should(result.html).eql(expectedMail);
           should(result.text).eql(expectedText);
           should(mailChecker.getCall(0).args[0]).eql(
-            {from: "noreply@gmail.com",
+            { from: "noreply@gmail.com",
               to: "user3@mail.bc",
               subject: "[TESTBC] blog(ES) has been closed by user testuser",
               html: expectedMail,
-              text: expectedText});
+              text: expectedText });
           bddone();
         });
       });
@@ -467,24 +466,24 @@ describe("notification/mailReceiver", function() {
     var oldtransporter;
     beforeEach(function (bddone) {
       oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
-      var mailChecker = sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
+      var mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
       mailReceiver.for_test_only.transporter.sendMail = mailChecker;
-      testutil.importData({clear: true,
-        user: [{OSMUser: "WelcomeMe", email: "none"},
-          {OSMUser: "InviteYou", email: "invite@mail.org"}]}, bddone);
+      testutil.importData({ clear: true,
+        user: [{ OSMUser: "WelcomeMe", email: "none" },
+          { OSMUser: "InviteYou", email: "invite@mail.org" }] }, bddone);
     });
     afterEach(function (bddone) {
       mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
       bddone();
     });
     it("should send out an email when changing email", function (bddone) {
-      var mailChecker =  sinon.spy(function(obj, doit) { return doit(null, {response: "t"}); });
+      var mailChecker =  sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
       mailReceiver.for_test_only.transporter.sendMail = mailChecker;
 
-      userModule.findOne({OSMUser: "WelcomeMe"}, function(err, user) {
+      userModule.findOne({ OSMUser: "WelcomeMe" }, function(err, user) {
         should.not.exist(err);
         // First set a new EMail Adress for the WecomeMe user, by InviteYou.
-        user.setAndSave({OSMUser: "WelcomeMe"}, {email: "WelcomeMe@newemail.org"}, function (err) {
+        user.setAndSave({ OSMUser: "WelcomeMe" }, { email: "WelcomeMe@newemail.org" }, function (err) {
           should.not.exist(err);
           setTimeout(function () {
             should(typeof (mailChecker)).eql("function");
@@ -498,22 +497,22 @@ describe("notification/mailReceiver", function() {
             should(result.html).eql(expectedMail);
             should(result.text).eql(expectedText);
             should(mailChecker.getCall(0).args[0]).eql(
-              {from: "noreply@gmail.com",
+              { from: "noreply@gmail.com",
                 to: "WelcomeMe@newemail.org",
                 subject: "[TESTBC] Welcome to OSMBC",
                 html: expectedMail,
-                text: expectedText});
+                text: expectedText });
 
             // Email is send out, now check email Verification first with wrong code
-            user.validateEmail({OSMUser: "WelcomeMe"}, "wrong code", function(err) {
+            user.validateEmail({ OSMUser: "WelcomeMe" }, "wrong code", function(err) {
               should(err).eql(
-                new HttpError(409,"Wrong Validation Code for EMail for user >WelcomeMe<"));
+                new HttpError(409, "Wrong Validation Code for EMail for user >WelcomeMe<"));
 
-              user.validateEmail({OSMUser: "Not Me"}, code, function(err) {
+              user.validateEmail({ OSMUser: "Not Me" }, code, function(err) {
                 should(err).eql(
-                  new HttpError(409,"Wrong User: expected >WelcomeMe< given >Not Me<"));
+                  new HttpError(409, "Wrong User: expected >WelcomeMe< given >Not Me<"));
                 // and now with correct code
-                user.validateEmail({OSMUser: "WelcomeMe"}, code, function(err) {
+                user.validateEmail({ OSMUser: "WelcomeMe" }, code, function(err) {
                   should.not.exist(err);
                   should(user.email).eql("WelcomeMe@newemail.org");
                   should.not.exist(user.emailValidationKey);
