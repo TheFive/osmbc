@@ -1,8 +1,18 @@
 # Change Log
 
-## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [3.3.8](https://github.com/TheFive/osmbc/tree/3.3.8) (2019-04-20)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7d...3.3.8)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7c...HEAD)
+**Implemented enhancements:**
+
+- Warn if a link does not exist in article editor. [\#483](https://github.com/TheFive/osmbc/issues/483)
+
+**Closed issues:**
+
+- Pasting a link on a word in brackets does not generate correct markdown links [\#803](https://github.com/TheFive/osmbc/issues/803)
+
+## [3.3.7d](https://github.com/TheFive/osmbc/tree/3.3.7d) (2019-03-05)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7c...3.3.7d)
 
 **Closed issues:**
 
