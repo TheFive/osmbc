@@ -1,0 +1,14 @@
+{
+  "browser": true,
+  "globals": {},
+  "globalstrict": true,
+  "quotmark": false, // Have to find a solution for mixed quotemarks, to Lint this too.
+  "undef": true,
+  "unused": true,
+  "multistr": true,
+  "strict":"imlied"  ,
+  "jquery":true,
+  "devel": true
+
+
+}
