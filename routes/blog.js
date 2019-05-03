@@ -450,7 +450,7 @@ function copyAllArticles(req, res, next) {
   let fromLang = req.params.fromLang;
   let toLang = req.params.toLang;
 
-  blog.copyAllArticles(user,fromLang, toLang, function (err) {
+  blog.copyAllArticles(user, fromLang, toLang, function (err) {
     if (err) return next(err);
     let referer = req.header("Referer") || "/";
     res.redirect(referer);

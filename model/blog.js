@@ -579,7 +579,7 @@ function calculateDependend(article, cb) {
 }
 
 
-Blog.prototype.copyAllArticles = function copyAllArticles(user,fromLang, toLang, callback) {
+Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang, callback) {
   debug("copyAllArticles");
   should(typeof (user)).eql("object");
   should(typeof (fromLang)).eql("string");
@@ -600,18 +600,24 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user,fromLang, toLang,
       });
     },
     function copyArticles(cb) {
-      async.forEach(articleList,function(article,cb2){
+      async.forEach(articleList, function(article, cb2) {
         // to lang already defined
-        if (article["markdown"+toLang] && article["markdown"+toLang].length>0) return cb2();
-        if (!article["markdown"+fromLang]) return cb2();
+        if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
+        if ((fromLang !== "no_translation") && (!article["markdown" + fromLang])) return cb2();
 
-        let data ={};
-        data["markdown"+toLang] = article["markdown"+fromLang];
+        let source = "";
+        if (fromLang === "no_translation") {
+          source = "no translation";
+        } else {
+          source = article["markdown" + fromLang];
+        }
+        let data = {};
+        data["markdown" + toLang] = source;
         data.old = {};
-        data.old["markdown"+toLang] = "";
+        data.old["markdown" + toLang] = "";
 
-        article.setAndSave(user,data,cb2);
-      },cb);
+        article.setAndSave(user, data, cb2);
+      }, cb);
     }
   ], callback);
 };
