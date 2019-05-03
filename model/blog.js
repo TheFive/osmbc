@@ -603,10 +603,16 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang
       async.forEach(articleList, function(article, cb2) {
         // to lang already defined
         if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
-        if (!article["markdown" + fromLang]) return cb2();
+        if ((fromLang !== "no_translation") && (!article["markdown" + fromLang])) return cb2();
 
+        let source = "";
+        if (fromLang === "no_translation") {
+          source = "no translation";
+        } else {
+          source = article["markdown" + fromLang];
+        }
         let data = {};
-        data["markdown" + toLang] = article["markdown" + fromLang];
+        data["markdown" + toLang] = source;
         data.old = {};
         data.old["markdown" + toLang] = "";
 
