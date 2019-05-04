@@ -588,7 +588,7 @@ function translate(langFrom, langTo, service) {
   $(".translateWait" + langFrom + langTo).removeClass("hidden");
   var from =  langFrom.toLowerCase();
   var to = langTo.toLowerCase();
-  var originalText = document.getElementById("markdown" + langFrom).value;
+  var originalText = document.getElementById("preview" + langFrom).innerText;
   if (service !== "deepl") {
     jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
       console.info("Translation received");
