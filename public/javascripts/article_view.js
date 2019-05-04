@@ -1,5 +1,10 @@
 "use strict";
 
+/* eslint-env browser:true, node:false, jquery:true, commonjs:false */
+/* global highlightWrongLinks */
+
+/* exported dragstart, myclick, ondragstartflag, ondragstartLangLabel, showRL */
+/* exported callAndRedraw, setNoTranslation, translate */
 
 
 // Init This Window with jQuery ready Callback
@@ -10,7 +15,7 @@ $(document).ready(init);
 
 // unlaodWindow Handler, to generate messages that form is left unsaved
 function unloadWindowWarning(event) {
-  let dialogText = "Oops, it looks like you have forgotten to save your work.";
+  var dialogText = "Oops, it looks like you have forgotten to save your work.";
   event.returnValue = dialogText;
   return dialogText;
 }
@@ -161,7 +166,7 @@ function clip(text) {
     if (!document.execCommand("copy")) throw new Error("Not allowed.");
   } catch (e) {
     copyElement.remove();
-    prompt("Copy not supported, use your mobile to copy and press enter", text);
+    alert("Copy not supported, use your mobile to copy and press enter", text);
   } finally {
     if (typeof e === "undefined") {
       copyElement.remove();
@@ -375,7 +380,9 @@ function onchangeCollection() {
   while ((linkList = regexToken.exec(cl)) !== null) {
     var link = linkList[0];
     var found = false;
-    window.linklist.forEach(function(l) {
+
+
+    window.linklist.forEach(function (l) { // jshint ignore:line
       if (l === link) found = true;
     });
     if (found) continue;
@@ -418,8 +425,8 @@ function myclick(id) {
 
 // dragStart Event
 function ondragstartflag (event, id) {
-  let image = document.getElementById(id);
-  let src = image.src;
+  var image = document.getElementById(id);
+  var src = image.src;
   src = "![(" + id + ")](" + src + ")";
   event.dataTransfer.setData("TEXT", src);
 }
@@ -485,7 +492,7 @@ function showModified() {
     $("#" + this.name + "_unsaved").hide();
   }
 
-  $(".af").each(function(index, object) {
+  $(".af").each(function() {
     var newVal = $(this).val();
     var oldVal = $("#old_" + this.name + ":hidden").val();
 
@@ -571,7 +578,7 @@ function submitAndRedraw(form, redraw) {
 function setNoTranslation() {
   /* jshint validthis: true */
 
-  $(".markdownEdit").each(function(item) {
+  $(".markdownEdit").each(function() {
     if (this.value === "" && !this.readOnly) this.value = "no translation";
   });
 }
@@ -581,7 +588,7 @@ function translate(langFrom, langTo, service) {
   $(".translateWait" + langFrom + langTo).removeClass("hidden");
   var from =  langFrom.toLowerCase();
   var to = langTo.toLowerCase();
-  var originalText = document.getElementById("markdown" + langFrom).value;
+  var originalText = document.getElementById("preview" + langFrom).innerText;
   if (service !== "deepl") {
     jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
       console.info("Translation received");
