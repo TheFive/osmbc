@@ -45,7 +45,7 @@ mixin displayOverviewRow(a)
       td
         div.panel.panel-default.hidden(id="div" + a.id)
           div.panel-heading
-            ul(id="preview" + a.id)
+            ul.preview(id="preview" + a.id)
           div.panel-body
             form(name="EditArticle",id="EditArticle" + a.id, action=`${layout.htmlroot}/article/${a.id}/setMarkdown/${lang}`, method="post")
               textarea.form-control(name="markdown" id="markdown" + a.id rows=7 onchange=`onLeaveText(${a.id});` onkeyup=`onchangeMarkdown(${a.id})` spellcheck = "true" lang=lang)=a["markdown" + lang]
