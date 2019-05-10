@@ -92,5 +92,6 @@
   "WelcomeRefreshInSeconds":0,
   "createGuestUsersAutomatic":true,
   "ReviewInWP":["DE"],
-  "scripts":{}
+  "scripts":{},
+  "User-Agent": "Hello i am Kitty"
 }

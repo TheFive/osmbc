@@ -37,6 +37,7 @@ require("jstransformer")(require("jstransformer-markdown-it"));
 const request = require("request");
 const uuidv4 = require("uuid/v4");
 const subscriptionKey = config.getValue("MS_TranslateApiKey", { mustExist: true });
+const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 const deeplTranslate = require("deepl-translator");
 
@@ -846,7 +847,7 @@ function urlExist(req, res, next) {
     return res.end("OK");
   }
 
-  request.get(url, function(err, response, body) {
+  request.get(url,  {headers: { 'User-Agent': userAgent } }, function(err, response, body) {
     if (!err && response.statusCode === 200) {
       linkCache.set(url, "OK");
       res.end("OK");
