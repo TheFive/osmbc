@@ -89,13 +89,13 @@ function findBlogId(req, res, next, id) {
 
 function renderBlogStat(req, res, next) {
   debug("renderBlogStat");
-  let blog = req.blog;
+  const blog = req.blog;
   if (!blog) return next();
 
-  let name = blog.name;
+  const name = blog.name;
   let logs = {};
-  let editors = {};
-  let userMap = {};
+  const editors = {};
+  const userMap = {};
 
   async.series([
     function readLogs(callback) {
@@ -109,8 +109,8 @@ function renderBlogStat(req, res, next) {
         callback();
       });
     }, function calculateEditors(callback) {
-      let addEditors = function (lang, property, min) {
-        for (let user in logs[property]) {
+      const addEditors = function (lang, property, min) {
+        for (const user in logs[property]) {
           if (logs[property][user] >= min) {
             if (editors[lang].indexOf(user) < 0) {
               editors[lang].push(user);
@@ -119,7 +119,7 @@ function renderBlogStat(req, res, next) {
         }
       };
       for (let i = 0; i < config.getLanguages().length; i++) {
-        let lang = config.getLanguages()[i];
+        const lang = config.getLanguages()[i];
         editors[lang] = [];
         addEditors(lang, "collection", 3);
         addEditors(lang, "markdown" + lang, 2);
@@ -157,8 +157,8 @@ function renderBlogStat(req, res, next) {
 
 function renderBlogList(req, res, next) {
   debug("renderBlogList");
-  let status = req.query.status;
-  let query = {};
+  const status = req.query.status;
+  const query = {};
   let additionalText;
 
   if (typeof (status) !== "undefined") {
@@ -202,17 +202,17 @@ function renderBlogList(req, res, next) {
 function renderBlogPreview(req, res, next) {
   debug("renderBlogPreview");
   req.session.articleReturnTo = req.originalUrl;
-  let blog = req.blog;
+  const blog = req.blog;
   if (!blog) return next();
 
 
   let lang = req.query.lang;
-  let asMarkdown = (req.query.markdown === "true");
+  const asMarkdown = (req.query.markdown === "true");
   if (typeof (lang) === "undefined") lang = "DE";
   if (config.getLanguages().indexOf(lang) < 0) lang = "DE";
 
 
-  let returnToUrl = req.session.articleReturnTo;
+  const returnToUrl = req.session.articleReturnTo;
 
 
 
@@ -226,7 +226,7 @@ function renderBlogPreview(req, res, next) {
         if (err) return callback(err);
         let renderer = new BlogRenderer.HtmlRenderer(blog);
         if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
-        let result = renderer.renderBlog(lang, data);
+        const result = renderer.renderBlog(lang, data);
         return callback(null, result);
       });
     }
@@ -263,15 +263,15 @@ function renderBlogPreview(req, res, next) {
 function setReviewComment(req, res, next) {
   debug("setReviewComment");
 
-  let lang = req.body.lang;
-  let user = req.user;
-  let data = req.body.text;
+  const lang = req.body.lang;
+  const user = req.user;
+  const data = req.body.text;
 
 
   if (!req.blog) return next();
   req.blog.setReviewComment(lang, user, data, function(err) {
     if (err) return next(err);
-    let referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || "/";
     res.redirect(referer);
   });
 }
@@ -279,16 +279,16 @@ function setReviewComment(req, res, next) {
 function editReviewComment(req, res, next) {
   debug("editReviewComment");
 
-  let lang = req.body.lang;
-  let user = req.user;
-  let data = req.body.text;
-  let index = req.params.index;
+  const lang = req.body.lang;
+  const user = req.user;
+  const data = req.body.text;
+  const index = req.params.index;
 
 
   if (!req.blog) return next();
   req.blog.editReviewComment(lang, user, index, data, function(err) {
     if (err) return next(err);
-    let referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || "/";
     res.redirect(referer);
   });
 }
@@ -296,13 +296,13 @@ function editReviewComment(req, res, next) {
 function setBlogStatus(req, res, next) {
   debug("setBlogStatus");
 
-  let lang = req.body.lang;
-  let user = req.user;
+  const lang = req.body.lang;
+  const user = req.user;
   if (!req.blog) return next();
 
   function finalFunction(err) {
     if (err) return next(err);
-    let referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || "/";
     res.redirect(referer);
   }
 
@@ -332,16 +332,16 @@ function setBlogStatus(req, res, next) {
 function renderBlogTab(req, res, next) {
   debug("renderBlogTab");
 
-  let blog = req.blog;
+  const blog = req.blog;
   if (!blog) return next();
 
   let tab = req.query.tab;
   if (!tab) tab = req.params.tab;
 
 
-  let votes = configModule.getConfig("votes");
+  const votes = configModule.getConfig("votes");
   let reviewScripts = {};
-  let scripts = config.getValue("scripts");
+  const scripts = config.getValue("scripts");
   if (scripts && scripts.review) reviewScripts = scripts.review;
 
   if (!tab) tab = req.session.lasttab;
@@ -369,7 +369,7 @@ function renderBlogTab(req, res, next) {
     },
     userMap: function(callback) {
       debug("userColors");
-      let userMap = {};
+      const userMap = {};
       userModule.find({}, function(err, userlist) {
         if (err) return callback(err);
         for (let i = 0; i < userlist.length; i++) {
@@ -386,7 +386,7 @@ function renderBlogTab(req, res, next) {
     setStatus: function (callback) {
       if (typeof (req.query.setStatus) !== "undefined") {
         clearParams = true;
-        let changes = { status: req.query.setStatus };
+        const changes = { status: req.query.setStatus };
         blog.setAndSave(req.user, changes, function(err) {
           if (err) return callback(err);
           let referer =  "/";
@@ -410,14 +410,14 @@ function renderBlogTab(req, res, next) {
     if (err) return next(err);
     should.exist(res.rendervar);
     if (clearParams) {
-      let url = htmlroot + "/blog/" + blog.name;
+      const url = htmlroot + "/blog/" + blog.name;
       let styleParam = "";
       if (req.param.style) styleParam = "?style=" + styleParam;
       res.redirect(url + styleParam);
       return;
     }
 
-    let renderer = new blogRenderer.HtmlRenderer(blog);
+    const renderer = new blogRenderer.HtmlRenderer(blog);
     res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
     res.render("blog_" + tab.toLowerCase(), { layout: res.rendervar.layout,
       blog: blog,
@@ -442,17 +442,17 @@ function renderBlogTab(req, res, next) {
 function copyAllArticles(req, res, next) {
   debug("copyCompleteLang");
 
-  let blog = req.blog;
+  const blog = req.blog;
   if (!blog) return next();
 
-  let user = req.user;
+  const user = req.user;
 
-  let fromLang = req.params.fromLang;
-  let toLang = req.params.toLang;
+  const fromLang = req.params.fromLang;
+  const toLang = req.params.toLang;
 
   blog.copyAllArticles(user, fromLang, toLang, function (err) {
     if (err) return next(err);
-    let referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || "/";
     res.redirect(referer);
   });
 }
@@ -469,10 +469,10 @@ function createBlog(req, res, next) {
 
 function editBlogId(req, res) {
   debug("editBlogId");
-  let blog = req.blog;
+  const blog = req.blog;
   should.exist(res.rendervar);
   should.exist(blog);
-  let params = {};
+  const params = {};
   if (req.query.edit) params.edit = req.query.edit;
   if (params.edit && params.edit === "false") {
     res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
@@ -490,7 +490,7 @@ function editBlogId(req, res) {
 
 function postBlogId(req, res, next) {
   debug("postBlogId");
-  let blog = req.blog;
+  const blog = req.blog;
   if (!blog) return next();
 
   let categories = null;
@@ -499,7 +499,7 @@ function postBlogId(req, res, next) {
   } catch (err) {
     return next(err);
   }
-  let changes = { name: req.body.name,
+  const changes = { name: req.body.name,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     status: req.body.status,

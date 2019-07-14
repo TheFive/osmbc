@@ -33,7 +33,7 @@ function expandTwitterUrl(collection, callback) {
 
   const getAllTwitterIds = /https?:\/\/twitter\.com\/[^\/ ]*\/status\/([0-9]*)/g;
 
-  let twitIDs = [];
+  const twitIDs = [];
 
   let m;
 
@@ -51,7 +51,7 @@ function expandTwitterUrl(collection, callback) {
   }
 
   if (twitIDs.length === 0) return callback(null, collection);
-  let collExtension = [];
+  const collExtension = [];
 
 
   async.eachOf(twitIDs, function(twitID, index, cbEachID) {

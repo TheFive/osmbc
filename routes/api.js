@@ -11,7 +11,7 @@ var articleModule = require("../model/article.js");
 var config        = require("../config.js");
 
 
-let apiKeys = config.getValue("apiKeys", { mustExist: true });
+const apiKeys = config.getValue("apiKeys", { mustExist: true });
 
 function checkApiKey(req, res, next) {
   debug("checkApiKey");
@@ -24,7 +24,7 @@ function checkApiKey(req, res, next) {
 
   userModule.findOne({ apiKey: req.params.apiKey }, function(err, user) {
     if (err || !user) {
-      let err = new Error("Not Authorised");
+      const err = new Error("Not Authorised");
       err.status = 401;
       err.type = "API";
       return next(err);
@@ -52,7 +52,7 @@ function isPostgresUp(req, res) {
 
 function collectArticle(req, res, next) {
   debug("collectArticle");
-  let changes = {};
+  const changes = {};
   changes.categoryEN = "-- no category yet --";
   if (req.body.categoryEN) {
     changes.categoryEN = req.body.categoryEN;
@@ -90,19 +90,19 @@ function collectArticle(req, res, next) {
         changes.collection = req.body.collection;
         return cb();
       } else {
-        let error = new Error("Missing Collection");
+        const error = new Error("Missing Collection");
         error.status = 422;
         error.type = "API";
         return cb(error);
       }
     },
     function getOSMuser(cb) {
-      let query = {};
+      const query = {};
       if (req.body.OSMUser) {
         query.OSMUser = req.body.OSMUser;
       } else {
         if (!req.body.email) {
-          let err = new Error("No OSMUser && EMail given");
+          const err = new Error("No OSMUser && EMail given");
           err.type = "API";
           err.status = 422;
           return cb(err);
@@ -111,7 +111,7 @@ function collectArticle(req, res, next) {
       }
       userModule.findOne(query, function(err, userFound) {
         if (err || !userFound) {
-          let err = new Error("No OSMUser given, could not resolve email address");
+          const err = new Error("No OSMUser given, could not resolve email address");
           err.type = "API";
           err.status = 422;
           return cb(err);
@@ -143,10 +143,10 @@ function collectArticle(req, res, next) {
 
 function collectArticleLink(req, res, next) {
   debug("collectArticleLink");
-  let changes = {};
+  const changes = {};
   changes.categoryEN = "-- no category yet --";
   changes.blog = "TBC";
-  let collection = encodeURI(req.query.collection);
+  const collection = encodeURI(req.query.collection);
   if (!req.user) return next(new Error("for collect not defined"));
   changes.firstCollector = req.user.OSMUser;
   async.series([
@@ -173,7 +173,7 @@ function collectArticleLink(req, res, next) {
         changes.collection = collection;
         return cb();
       } else {
-        let error = new Error("Missing Collection");
+        const error = new Error("Missing Collection");
         error.status = 422;
         error.type = "API";
         return cb(error);

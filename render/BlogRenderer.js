@@ -25,7 +25,7 @@ function MarkdownRenderer(blog) {
 
 HtmlRenderer.prototype.subtitle = function htmlSubtitle(lang) {
   debug("HtmlRenderer.prototype.subtitle %s", lang);
-  let blog = this.blog;
+  const blog = this.blog;
   should(config.getLanguages()).containEql(lang);
   if (blog.startDate && blog.endDate) {
     return "<p>" + util.dateFormat(blog.startDate, lang) + "-" + util.dateFormat(blog.endDate, lang) + "</p>\n";
@@ -34,7 +34,7 @@ HtmlRenderer.prototype.subtitle = function htmlSubtitle(lang) {
 
 MarkdownRenderer.prototype.subtitle = function markdownSubtitle(lang) {
   debug("MarkdownRenderer.prototype.subtitle %s", lang);
-  let blog = this.blog;
+  const blog = this.blog;
   if (blog.startDate && blog.endDate) {
     return moment(blog.startDate).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L") + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L") + "\n\n";
   } else return "missing date\n";
@@ -65,7 +65,7 @@ MarkdownRenderer.prototype.categoryTitle = function markdownCatTitle(lang, categ
 HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
   debug("HtmlRenderer.prototype.article");
 
-  let calendarTranslation = configModule.getConfig("calendartranslation");
+  const calendarTranslation = configModule.getConfig("calendartranslation");
 
 
 
@@ -74,8 +74,8 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
 
   let blogRef = article.blog;
   if (!blogRef) blogRef = "undefined";
-  let titleRef = article.id;
-  let pageLink = util.linkify(blogRef + "_" + titleRef);
+  const titleRef = article.id;
+  const pageLink = util.linkify(blogRef + "_" + titleRef);
 
 
 
@@ -114,7 +114,7 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
     if (article.categoryEN === "Picture") {
       if (liON.indexOf("##width##") >= 0) {
         // it is a picture, try to calculate the size.
-        let width = parseInt(text.substring(text.indexOf('width="') + 7)) + 10;
+        const width = parseInt(text.substring(text.indexOf('width="') + 7)) + 10;
 
         liON = liON.replace("##width##", width);
       }
@@ -190,13 +190,13 @@ function renderBlogStructure(lang, articleData) {
   /* jshint validthis: true */
   debug("htmlBlog");
 
-  let articles = articleData.articles;
-  let teamString = articleData.teamString;
+  const articles = articleData.articles;
+  const teamString = articleData.teamString;
   let preview = this.charSetString();
-  let blog = this.blog;
+  const blog = this.blog;
   let i, j; // often used iterator, declared here because there is no block scope in JS.
   preview += this.subtitle(lang);
-  let clist = blog.getCategories();
+  const clist = blog.getCategories();
 
   if (articleData.containsEmptyArticlesWarning) {
     preview += this.containsEmptyArticlesWarning(lang);
@@ -205,7 +205,7 @@ function renderBlogStructure(lang, articleData) {
 
   // Generate the blog result along the categories
   for (i = 0; i < clist.length; i++) {
-    let category = clist[i].EN;
+    const category = clist[i].EN;
 
     // ignore any "unpublished" category not in edit mode
     if (category === "--unpublished--") continue;
@@ -217,13 +217,13 @@ function renderBlogStructure(lang, articleData) {
       let htmlForCategory = "";
 
       for (j = 0; j < articles[category].length; j++) {
-        let row = articles[category][j];
+        const row = articles[category][j];
 
-        let articleMarkdown = this.renderArticle(lang, row);
+        const articleMarkdown = this.renderArticle(lang, row);
 
         htmlForCategory += articleMarkdown + "\n\n";
       }
-      let header = this.categoryTitle(lang, clist[i]);
+      const header = this.categoryTitle(lang, clist[i]);
 
 
       htmlForCategory = header + this.listAroundArticles(htmlForCategory);
@@ -235,7 +235,7 @@ function renderBlogStructure(lang, articleData) {
   }
 
   delete articles["--unpublished--"];
-  for (let k in articles) {
+  for (const k in articles) {
     preview += "<h2> Blog Missing Cat: " + k + "</h2>\n";
     preview += "<p> Please use [edit blog detail] to enter category</p>\n";
     preview += "<p> Or edit The Articles ";

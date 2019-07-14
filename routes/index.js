@@ -17,7 +17,7 @@ const auth = require("../routes/auth.js");
 
 
 
-let appName = config.getValue("AppName", { mustExist: true });
+const appName = config.getValue("AppName", { mustExist: true });
 /* GET home page. */
 
 function renderHome(req, res, next) {
@@ -34,16 +34,16 @@ function renderHome(req, res, next) {
 
 
   async.auto({
-    "historie": logModule.find.bind(logModule, { table: "IN('blog','article')" }, { column: "id", desc: true, limit: 20 }),
-    "activeUser": userModule.find.bind(userModule, { lastAccess: ">" + date.toISOString() }, { column: "lastAccess", desc: true }),
-    "fullVisitorsToday": userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "full" }, { column: "OSMUser", desc: false }),
-    "guestVisitorsToday": userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "guest" }, { column: "OSMUser", desc: false }),
-    "newUsers": userModule.getNewUsers.bind(userModule)
+    historie: logModule.find.bind(logModule, { table: "IN('blog','article')" }, { column: "id", desc: true, limit: 20 }),
+    activeUser: userModule.find.bind(userModule, { lastAccess: ">" + date.toISOString() }, { column: "lastAccess", desc: true }),
+    fullVisitorsToday: userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "full" }, { column: "OSMUser", desc: false }),
+    guestVisitorsToday: userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "guest" }, { column: "OSMUser", desc: false }),
+    newUsers: userModule.getNewUsers.bind(userModule)
   }, function(err, result) {
     if (err) return next(err);
 
     res.set("content-type", "text/html");
-    let view = "index";
+    const view = "index";
     should(req.user.access).eql("full");
     res.render(view, { title: appName,
       layout: res.rendervar.layout,
@@ -68,11 +68,11 @@ function renderGuestHome(req, res, next) {
   todayStart.setSeconds(0);
 
   async.auto({
-    "articles": articleModule.find.bind(articleModule, { firstCollector: req.user.OSMUser }, { column: "blog", desc: true })
+    articles: articleModule.find.bind(articleModule, { firstCollector: req.user.OSMUser }, { column: "blog", desc: true })
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
-    let view = "index_guest";
+    const view = "index_guest";
     should(req.user.access).eql("guest");
 
     res.render(view, { title: appName,
@@ -83,7 +83,7 @@ function renderGuestHome(req, res, next) {
   );
 }
 
-let userIsOldInDays = config.getValue("userIsOldInDays", { mustExist: true });
+const userIsOldInDays = config.getValue("userIsOldInDays", { mustExist: true });
 
 function renderAdminHome(req, res, next) {
   debug("renderAdminHome");
@@ -93,8 +93,8 @@ function renderAdminHome(req, res, next) {
 
 
   async.auto({
-    "historie": logModule.find.bind(logModule, { table: "IN('usert','config')" }, { column: "id", desc: true, limit: 20 }),
-    "longAbsent": userModule.find.bind(userModule, { lastAccess: "<" + date, access: "full" })
+    historie: logModule.find.bind(logModule, { table: "IN('usert','config')" }, { column: "id", desc: true, limit: 20 }),
+    longAbsent: userModule.find.bind(userModule, { lastAccess: "<" + date, access: "full" })
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
@@ -164,17 +164,17 @@ function setUserConfig(req, res, next) {
 
   var user = req.user;
   if (!req.query.view) {
-    let err = new Error("missing view in option");
+    const err = new Error("missing view in option");
     err.status = HttpStatus.BAD_REQUEST;
     return next(err);
   }
   if (!req.query.option) {
-    let err = new Error("missing option in option");
+    const err = new Error("missing option in option");
     err.status = HttpStatus.BAD_REQUEST;
     return next(err);
   }
   if (!req.query.value) {
-    let err = new Error("missing value in option");
+    const err = new Error("missing value in option");
     err.status = HttpStatus.BAD_REQUEST;
     return next(err);
   }

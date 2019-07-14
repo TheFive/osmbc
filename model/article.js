@@ -129,9 +129,9 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
   if (this._blog === null) return true;
   should.exist(this._blog);
   should(this.blog).eql(this._blog.name);
-  let langlist = config.getLanguages();
+  const langlist = config.getLanguages();
   let result = true;
-  let self = this;
+  const self = this;
 
   switch (property) {
     case "title":
@@ -200,7 +200,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       if (!data.old || typeof (data.old[k]) === "undefined") return callback(new Error("No Version and no History Value for <" + k + "> given"));
 
       if ((self[k] && self[k] !== data.old[k]) || (typeof (self[k]) === "undefined" && data.old[k] !== "")) {
-        let error = new Error("Field " + k + " already changed in DB");
+        const error = new Error("Field " + k + " already changed in DB");
         error.status = HttpStatus.CONFLICT;
         error.detail = { oldValue: data.old[k], databaseValue: self[k], newValue: data[k] };
         return callback(error);
@@ -280,7 +280,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
     async.series(
       [function logIt (cb) {
-        let oa = create(self);
+        const oa = create(self);
         // do not wait on email, so put empty callback handler
         messageCenter.global.updateArticle(user, oa, data, cb);
       },
@@ -306,7 +306,7 @@ function find(obj, order, callback) {
   let createFunction = create;
 
   if (typeof obj.blog === "object") {
-    let blog = obj.blog;
+    const blog = obj.blog;
     obj.blog = blog.name;
     createFunction = function() {
       return create({ _blog: blog });
@@ -449,13 +449,13 @@ pgObject.table = "article";
 pgObject.createString = "CREATE TABLE article (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT article_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);";
 pgObject.indexDefinition = {
-  "article_blog_idx": "CREATE INDEX article_blog_idx ON article USING btree (((data ->> 'blog'::text)))",
-  "article_text_idx": "CREATE INDEX article_text_idx ON article USING gin  \
+  article_blog_idx: "CREATE INDEX article_blog_idx ON article USING btree (((data ->> 'blog'::text)))",
+  article_text_idx: "CREATE INDEX article_text_idx ON article USING gin  \
                       (to_tsvector('german'::regconfig,   \
                           ((((COALESCE((data ->> 'title'::text), ''::text) || ' '::text) ||  \
                             COALESCE((data ->> 'collection'::text), ''::text)) || ' '::text) || \
                             COALESCE((data ->> 'markdownDE'::text), ''::text))))",
-  "article_texten_idx": "CREATE INDEX article_texten_idx ON article USING gin \
+  article_texten_idx: "CREATE INDEX article_texten_idx ON article USING gin \
                 (to_tsvector('english'::regconfig, \
                   ((COALESCE((data ->> 'collection'::text), ''::text) || ' '::text) || \
                   COALESCE((data ->> 'markdownEN'::text), ''::text))))"
@@ -605,7 +605,7 @@ Article.prototype.editComment = function editComment(user, index, text, callback
   if (!self.commentList) self.commentList = [];
   should(index).within(0, self.commentList.length - 1);
   if (user.OSMUser !== self.commentList[index].user) {
-    let error = new Error("Only Writer is allowed to change a commment");
+    const error = new Error("Only Writer is allowed to change a commment");
     error.status = HttpStatus.CONFLICT;
     return callback(error);
   }
@@ -638,8 +638,8 @@ Article.prototype.editComment = function editComment(user, index, text, callback
 
 Article.prototype.copyToBlog = function copToBlog(blogName, languages, callback) {
   debug("Article.prototype.copyToBlog");
-  let newArticle = {};
-  let self = this;
+  const newArticle = {};
+  const self = this;
   newArticle.collection = self.collection;
   newArticle.categoryEN = self.categoryEN;
   newArticle.title = self.title;
@@ -722,7 +722,7 @@ Article.prototype.unsetVote = function unsetVote(user, tag, callback) {
 
   if (!self.votes) self.votes = {};
   if (!self.votes[tag]) self.votes[tag] = [];
-  let index = self.votes[tag].indexOf(user.OSMUser);
+  const index = self.votes[tag].indexOf(user.OSMUser);
   if (index >= 0) {
     self.votes[tag].splice(index, 1);
 
@@ -756,7 +756,7 @@ Article.prototype.unsetTag = function unsetTag(user, tag, callback) {
   var self = this;
 
   if (!self.tags) self.tags = [];
-  let index = self.tags.indexOf(tag);
+  const index = self.tags.indexOf(tag);
   if (index >= 0) {
     self.tags.splice(index, 1);
     self.save(callback);
@@ -790,7 +790,7 @@ article.author.collection all collectors.
 Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromChanges(cb) {
   debug("Article.prototype.calculateDerivedFromChanges");
 
-  let self = this;
+  const self = this;
 
   // does info already exist, then return
   if (self._lastChange) return cb();
@@ -806,7 +806,7 @@ Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromCha
         self._lastChange = {};
         for (var i = 0; i < result.length; i++) {
           var r = result[i];
-          let prop = r.property;
+          const prop = r.property;
           if (!list[prop]) list[prop] = {};
 
           // Mark the User for the current property
@@ -840,7 +840,7 @@ Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromCha
 Article.prototype.calculateDerivedFromSourceId = function calculateDerivedFromSourceId(cb) {
   debug("Article.prototype.calculateDerivedFromSourceId");
 
-  let self = this;
+  const self = this;
   if (!self.originArticleId) return cb();
   async.series([
     function loadArticle(callback) {

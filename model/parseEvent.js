@@ -8,7 +8,7 @@ var config = require("../config.js");
 var configModule = require("../model/config.js");
 var async = require("async");
 
-let osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
+const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
 
 
 
@@ -21,7 +21,7 @@ var _geonamesUser = null;
 function convertGeoName(name, lang, callback) {
   if (lang === "JP") lang = "JA";
   if (!_geonamesUser) _geonamesUser = config.getValue("GeonamesUser");
-  let key = lang + "_" + name;
+  const key = lang + "_" + name;
   if (_cache[key]) return callback(null, _cache[key]);
   var requestString = "http://api.geonames.org/searchJSON?q=" + encodeURI(name) + "&username=" + _geonamesUser + "&maxRows=1&lang=" + lang;
   request(requestString, function(err, response, body) {
@@ -49,7 +49,7 @@ function filterEvent(event, option) {
   if (typeof event.endDate !== "undefined") endDate = moment(event.endDate);
 
   let diff = -3;
-  let optionDiff = parseInt(option.date);
+  const optionDiff = parseInt(option.date);
   if (!Number.isNaN(optionDiff)) {
     diff = optionDiff;
   }
@@ -122,7 +122,7 @@ function calendarJSONToMarkdown2(json, countryFlags, ct, option, cb) {
   // events.sort(function cmpEvent(a,b){return a.startDate - b.startDate;});
 
   async.eachSeries(result.events, function(event, callback) {
-    let e = {};
+    const e = {};
     e.country = event.country;
     e.town = event.town;
     e.startDate = event.startDate;

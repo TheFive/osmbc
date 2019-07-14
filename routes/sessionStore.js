@@ -16,7 +16,7 @@ module.exports = function(session) {
   } else if (config.getValue("sessionStore", { mustExist: true }) === "connect-pg-simple") {
     var PgSession = require("connect-pg-simple")(session);
 
-    let pool = db.getPool();
+    const pool = db.getPool();
     should.exist(pool);
     sessionStore = new PgSession({
       pool: pool, // Use global pg-module

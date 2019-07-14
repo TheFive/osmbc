@@ -32,8 +32,8 @@ const checkUser       = require("../routes/auth.js").checkUser;
 
 var sizeOf = require("image-size");
 
-let htmlroot = config.htmlRoot();
-let osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
+const htmlroot = config.htmlRoot();
+const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
 
 
 
@@ -58,16 +58,16 @@ function eventDateFormat(e, lang) {
 
 function flag(country, cf) {
   if (!country) country = "";
-  let c = country.toLowerCase();
+  const c = country.toLowerCase();
   if (cf[c]) return "<img src='" + cf[c] + "'></img>";
   return country;
 }
 
 function renderEvents(result, req, res, next) {
-  let languages = res.rendervar.layout.activeLanguages;
-  let eventsfilter = configModule.getConfig("eventsfilter");
-  let calendarFlags = configModule.getConfig("calendarflags");
-  let markdown = {};
+  const languages = res.rendervar.layout.activeLanguages;
+  const eventsfilter = configModule.getConfig("eventsfilter");
+  const calendarFlags = configModule.getConfig("calendarflags");
+  const markdown = {};
 
   async.parallel([
     function para1(cbPara1) {
@@ -126,21 +126,21 @@ function renderEvents(result, req, res, next) {
 }
 
 
-let alternativeCalendarData = config.getValue("CalendarInterface", { mustExist: true });
+const alternativeCalendarData = config.getValue("CalendarInterface", { mustExist: true });
 
 function renderCalendarAllLangAlternative(req, res, next) {
   debug("renderCalendarAllLang");
 
-  let par = req.params.calendar;
+  const par = req.params.calendar;
 
-  let cc = alternativeCalendarData[par];
+  const cc = alternativeCalendarData[par];
 
   var options = {
     url: cc.url,
     method: "GET",
     json: true
   };
-  let result = { events: [] };
+  const result = { events: [] };
   request(options, function(error, response, body) {
     if (error) return next(error);
     if (response.statusCode !== 200) {
@@ -148,7 +148,7 @@ function renderCalendarAllLangAlternative(req, res, next) {
     }
     if (!body[cc.events]) return next(new Error("Missing events in calendar data"));
     body[cc.events].forEach(function modifyItem(item) {
-      let i = {};
+      const i = {};
       i.desc = item[cc.desc];
       i.startDate = new Date(item[cc.startDate]);
       i.endDate = new Date(item[cc.endDate]);
@@ -173,9 +173,9 @@ function renderCalendarAllLangAlternative(req, res, next) {
 function renderCalendarRefresh(req, res, next) {
   debug("renderCalendarRefresh");
 
-  let par = req.params.calendar;
+  const par = req.params.calendar;
 
-  let cc = alternativeCalendarData[par];
+  const cc = alternativeCalendarData[par];
 
   if (!cc.refreshurl) return next(new Error("Refreshurl missing"));
 
@@ -188,7 +188,7 @@ function renderCalendarRefresh(req, res, next) {
     if (response.statusCode !== 200) {
       return next(Error("url: " + cc.url + " returns:\n" + body));
     }
-    let referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || "/";
     res.redirect(referer);
   });
 }
@@ -270,7 +270,7 @@ function renderPictureTool(req, res) {
       var article = articleModule.create();
       article["markdown" + pictureLanguage] = genMarkup;
       article.categoryEN = "Picture";
-      let renderer = new BlogRenderer.HtmlRenderer(null);
+      const renderer = new BlogRenderer.HtmlRenderer(null);
       var preview = renderer.renderArticle(pictureLanguage, article);
       var licenses = configModule.getConfig("licenses");
       res.set("content-type", "text/html");
@@ -331,7 +331,7 @@ function postPictureTool(req, res, next) {
   });
 }
 
-let publicCalendarPage = config.getValue("PublicCalendarPage", { mustExist: true });
+const publicCalendarPage = config.getValue("PublicCalendarPage", { mustExist: true });
 
 function renderPublicCalendar(req, res, next) {
   debug("renderPublicCalendar");
@@ -344,10 +344,10 @@ function renderPublicCalendar(req, res, next) {
   });
 }
 
-let logFilePath = config.getValue("scripts").logFilePath;
-let scriptFilePath = config.getValue("scripts").scriptFilePath;
-let logFileFilter = config.getValue("scripts").logFileFilter;
-let scriptFileFilter = config.getValue("scripts").scriptFileFilter;
+const logFilePath = config.getValue("scripts").logFilePath;
+const scriptFilePath = config.getValue("scripts").scriptFilePath;
+const logFileFilter = config.getValue("scripts").logFileFilter;
+const scriptFileFilter = config.getValue("scripts").scriptFileFilter;
 
 function renderScriptLogs(req, res) {
   glob(logFilePath + "/" + logFileFilter, function(error, data) {
@@ -357,7 +357,7 @@ function renderScriptLogs(req, res) {
       return;
     }
     res.render("script_logs",
-      { "files": data,
+      { files: data,
         layout: res.rendervar.layout });
   });
 }
@@ -369,10 +369,10 @@ function readScriptConfig(script, callback) {
   fs.readFile(path.join(scriptFilePath, script), function(err, text) {
     if (err) return callback(err);
     try {
-      let configuration = yaml.safeLoad(text);
+      const configuration = yaml.safeLoad(text);
       return callback(null, configuration);
     } catch (err) {
-      let error = "Error Parsing YAML File: " + script + "\n---" + err.message;
+      const error = "Error Parsing YAML File: " + script + "\n---" + err.message;
       return callback(new Error(error));
     }
   });
@@ -385,7 +385,7 @@ function quoteParam(param, quote) {
 }
 
 function renderScriptLog(req, res) {
-  let file = req.params.filename;
+  const file = req.params.filename;
   let text = null;
   let reload = false;
 
@@ -442,7 +442,7 @@ function renderScripts(req, res) {
     }
     if (!data) data = [];
     for (let i = 0; i < data.length; i++) { data[i] = path.basename(data[i]); }
-    let configTable = {};
+    const configTable = {};
     async.eachLimit(data, 3,
       function(item, callback) {
         readScriptConfig(item, function(err, config) {
@@ -463,7 +463,7 @@ function renderScripts(req, res) {
 }
 
 function renderScript(req, res) {
-  let file = req.params.filename;
+  const file = req.params.filename;
 
   readScriptConfig(file, function(err, configuration) {
     if (err) return res.status(500).send(err);
@@ -479,14 +479,14 @@ function renderScript(req, res) {
 
 
 function executeScript(req, res, next) {
-  let file = req.params.filename;
+  const file = req.params.filename;
 
   readScriptConfig(file, function(err, configuration) {
     if (err) return res.status(500).send(err);
 
-    let logFileBase = configuration.name + " " + req.user.OSMUser + " " + moment().format("YYYY-MM-DD HH:mm:ss");
-    let logFileRunning = path.join(logFilePath, logFileBase + fileTypeRunning);
-    let logFileOk = path.join(logFilePath, logFileBase + fileTypeOk);
+    const logFileBase = configuration.name + " " + req.user.OSMUser + " " + moment().format("YYYY-MM-DD HH:mm:ss");
+    const logFileRunning = path.join(logFilePath, logFileBase + fileTypeRunning);
+    const logFileOk = path.join(logFilePath, logFileBase + fileTypeOk);
 
     let script = path.join(scriptFilePath, configuration.execute);
     if (configuration.execute.substring(0, 1) === "/") script = configuration.execute;
@@ -498,7 +498,7 @@ function executeScript(req, res, next) {
       return callback();
     };
 
-    let args = [];
+    const args = [];
     configuration.params.forEach(function(param) {
       if (param.type === "static") {
         args.push(quoteParam(param.value, param.quote));
@@ -508,7 +508,7 @@ function executeScript(req, res, next) {
       }
       if (param.type === "file" && req.files && req.files[param.title]) {
         if (pictureFile) return next(new Error("Two Pictures not allowed"));
-        let fn = req.files[param.title].name.replace(/\s+/g, "_");
+        const fn = req.files[param.title].name.replace(/\s+/g, "_");
         pictureFile = path.join(logFilePath, fn);
         doThingsBeforeScript = function(err, callback) {
           if (err) return callback(err);
@@ -528,7 +528,7 @@ function executeScript(req, res, next) {
       }
     });
 
-    let options = {
+    const options = {
       cwd: scriptFilePath,
       env: {
         OSMUSER: req.user.OSMUser,
@@ -581,7 +581,7 @@ function executeScript(req, res, next) {
   });
 }
 
-let userList = config.getValue("scripts").user;
+const userList = config.getValue("scripts").user;
 let checkScriptRights = checkRole("full");
 
 if (userList !== "full") checkScriptRights = checkUser(userList);

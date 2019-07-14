@@ -21,7 +21,7 @@ function freshupVotes(json) {
   if (typeof json !== "object") return [];
   if (!Array.isArray(json)) return [];
   for (let i = 0; i < json.length; i++) {
-    let item = json[i];
+    const item = json[i];
     if (item.icon && item.icon.substring(0, 3) === "fa-") item.iconClass = "fa-lg fa " + item.icon;
     if (item.icon && item.icon.substring(0, 10) === "glyphicon-") item.iconClass = "glyphicon " + item.icon;
   }
@@ -169,9 +169,9 @@ module.exports.pg = pgObject;
 
 
 var checkAndRepair = {
-  "formulation_tipEN": function () {},
-  "formulation_tipDE": function () {},
-  "calendartranslation": function (c) {
+  formulation_tipEN: function () {},
+  formulation_tipDE: function () {},
+  calendartranslation: function (c) {
     var ct = c.getJSON();
     if (!ct) ct = {};
     if (!ct.town) ct.town = {};
@@ -181,59 +181,59 @@ var checkAndRepair = {
     if (!ct.footer) ct.footer = {};
     c.json = ct;
   },
-  "categorydescription": function(c) {
+  categorydescription: function(c) {
     var cd = c.getJSON();
     if (!cd) cd = {};
     c.json = cd;
   },
-  "languageflags": function(c) {
+  languageflags: function(c) {
     var lf = c.getJSON();
     if (!lf) lf = {};
     c.json = lf;
   },
-  "automatictranslatetext": function(c) {
+  automatictranslatetext: function(c) {
     var lf = c.getJSON();
     if (!lf) lf = {};
     c.json = lf;
   },
-  "calendarflags": function(c) {
+  calendarflags: function(c) {
     var cf = c.getJSON();
     if (!cf) cf = {};
     c.json = cf;
   },
-  "ignoreforsearch": function(c) {
+  ignoreforsearch: function(c) {
     var cf = c.getJSON();
     if (!cf) cf = [];
     c.json = cf;
   },
-  "slacknotification": function(c) {
+  slacknotification: function(c) {
     var cf = c.getJSON();
     if (!cf) cf = {};
     c.json = cf;
   },
-  "licenses": function(c) {
+  licenses: function(c) {
     var l = c.getJSON();
     if (!l) l = {};
     if (!l.CC0) l.CC0 = "";
     c.json = l;
   },
 
-  "categorytranslation": function(c) {
+  categorytranslation: function(c) {
     var ct = c.getJSON();
     if (!ct) ct = [];
     c.json = ct;
   },
-  "editorstrings": function (c) {
+  editorstrings: function (c) {
     var es = c.getJSON();
     if (!es) es = {};
     c.json = es;
   },
-  "votes": function (c) {
+  votes: function (c) {
     var v = c.getJSON();
     if (!v) v = [];
     c.json = v;
   },
-  "eventsfilter": function (c) {
+  eventsfilter: function (c) {
     var v = c.getJSON();
     if (!v) v = [];
     c.json = v;
@@ -385,8 +385,8 @@ module.exports.getConfigObject = function(text, callback) {
   if (configMap[text]) {
     config = configMap[text];
   } else {
-    for (let key in configMap) {
-      let c = configMap[key];
+    for (const key in configMap) {
+      const c = configMap[key];
       if (c.id === text) {
         config = c;
         break;
@@ -411,7 +411,7 @@ module.exports.getPlaceholder = function getPlaceholder() {
   var cat = exports.getConfig("categorydescription");
   var result = { markdown: { EN: phEN, DE: phDE }, categories: cat };
   for (let i = 0; i < config.getLanguages().length; i++) {
-    let lang = config.getLanguages()[i];
+    const lang = config.getLanguages()[i];
     if (lang === "DE") continue;
     if (lang === "EN") continue;
     result.markdown[lang] = phEN;
