@@ -110,14 +110,14 @@ module.exports.save = function(options, callback) {
     callback = options;
     options = null;
   }
-  let self = this;
+  const self = this;
   function _save(options, callback) {
     debug("save");
 
     var table = self.getTable();
 
     // store blog Reference not to loose it.
-    let blog = self._blog;
+    const blog = self._blog;
 
     // clean property's with "_"
     for (var k in self) {
@@ -219,7 +219,7 @@ module.exports.remove = function(callback) {
 function convertResultFunction(module, callback) {
   should.exist(callback);
   return function crs(err, pgResult) {
-    let result = [];
+    const result = [];
     if (err) return callback(err);
     pgResult.rows.forEach(function(row) {
       var r = module.create();
@@ -238,7 +238,7 @@ function convertOneResultFunction(module, callback) {
   return function crs(err, pgResult) {
     if (err) return callback(err);
     if (pgResult.rows.length === 0) return callback(null, null);
-    let row = pgResult.rows[0];
+    const row = pgResult.rows[0];
     var r = module.create();
     for (var k in row.data) {
       r[k] = row.data[k];
@@ -488,7 +488,7 @@ module.exports.select = function select(sql, data, callback) {
   db.query(sql, data, function (err, pgResult) {
     if (err) return callback(err);
     for (var i = 0; i < pgResult.rows.length; i++) {
-      let item = {};
+      const item = {};
       for (var k in pgResult.rows[i]) {
         item[k] = pgResult.rows[i][k];
       }

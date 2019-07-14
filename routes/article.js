@@ -42,11 +42,11 @@ const deeplTranslate = require("deepl-translator");
 
 const LRU = require("lru-cache");
 
-let linkCache = new LRU({ max: 300, maxage: 1000 * 60 * 60 * 5 });
+const linkCache = new LRU({ max: 300, maxage: 1000 * 60 * 60 * 5 });
 
 
 
-let htmlroot = config.htmlRoot();
+const htmlroot = config.htmlRoot();
 
 // send info, that disableOldEditor is not needed any longer
 config.getValue("diableOldEditor", { deprecated: true });
@@ -59,7 +59,7 @@ function getArticleFromID(req, res, next, id) {
   debug("getArticleFromID");
   req.article = null;
   should.exist(id);
-  let idNumber = Number(id);
+  const idNumber = Number(id);
   if ("" + idNumber !== id) {
     return res.status(HttpStatus.NOT_FOUND).send("Article ID " + id + " does not exist (conversion error)");
   }
@@ -83,7 +83,7 @@ function createAccessMapFn(activeLanguages) {
     debug("accessMap");
     userModule.find({}, function(err, userArray) {
       if (err) return cb(err);
-      let accessMap = {};
+      const accessMap = {};
       userArray.forEach(function(user) {
         accessMap[user.OSMUser] = user.access;
       });
@@ -209,7 +209,7 @@ function renderArticleId(req, res, next) {
     debug("renderArticleId->finalFunction");
     if (err) return next(err);
     if (result.notranslate) return res.redirect(result.notranslate);
-    let renderer = new BlogRenderer.HtmlRenderer();
+    const renderer = new BlogRenderer.HtmlRenderer();
 
 
 
@@ -285,12 +285,12 @@ function renderArticleIdVotes(req, res, next) {
       if (err) return next(err);
 
 
-      let rendervars = { layout: res.rendervar.layout,
+      const rendervars = { layout: res.rendervar.layout,
         article: article,
         votes: votes
       };
-      let voteButtons = pug.renderFile(path.resolve(__dirname, "..", "views", "voteButtons.pug"), rendervars);
-      let voteButtonsList = pug.renderFile(path.resolve(__dirname, "..", "views", "voteButtonsList.pug"), rendervars);
+      const voteButtons = pug.renderFile(path.resolve(__dirname, "..", "views", "voteButtons.pug"), rendervars);
+      const voteButtonsList = pug.renderFile(path.resolve(__dirname, "..", "views", "voteButtonsList.pug"), rendervars);
       res.json({ "#voteButtons": voteButtons, "#voteButtonsList": voteButtonsList });
     }
   );
@@ -303,7 +303,7 @@ function renderArticleIdCommentArea(req, res, next) {
   var article = req.article;
   should.exist(article);
 
-  let params = {};
+  const params = {};
   params.editComment = null;
   if (req.query.editComment) params.editComment = req.query.editComment;
 
@@ -316,7 +316,7 @@ function renderArticleIdCommentArea(req, res, next) {
     if (err) return next(err);
 
 
-    let rendervars = { layout: res.rendervar.layout,
+    const rendervars = { layout: res.rendervar.layout,
       article: article,
       params: params,
       accessMap: result.accessMap
@@ -358,7 +358,7 @@ function renderArticleIdVotesBlog(req, res, next) {
       if (err) return next(err);
 
 
-      let rendervars = {
+      const rendervars = {
         layout: res.rendervar.layout,
         article: article,
         vote: vote
@@ -367,7 +367,7 @@ function renderArticleIdVotesBlog(req, res, next) {
       pug.renderFile(path.resolve(__dirname, "..", "views", "voteLabel.pug"), rendervars, function(err, result) {
         if (err) logger.error(err);
         if (err) return next(err);
-        let v = {};
+        const v = {};
         v["#vote_" + voteName + "_" + article.id] = result;
         res.json(v);
       });
@@ -409,7 +409,7 @@ function searchAndCreate(req, res, next) {
     articleModule.fullTextSearch(search, { column: "blog", desc: true }, function (err, result) {
       debug("searchAndCreate->fullTextSearch");
       if (err) return next(err);
-      let renderer = new BlogRenderer.HtmlRenderer(null);
+      const renderer = new BlogRenderer.HtmlRenderer(null);
       should.exist(res.rendervar);
       res.set("content-type", "text/html");
       res.render("collect", {
@@ -480,7 +480,7 @@ function postArticle(req, res, next) {
     if (err) { return next(err); }
     should.exist(article);
     if (noTranslation === "true") {
-      let showLangs = JSON.parse(req.body.languages);
+      const showLangs = JSON.parse(req.body.languages);
       var languages = config.getLanguages();
       for (var i = 0; i < languages.length; i++) {
         var lang = languages[i];
@@ -565,7 +565,7 @@ function postArticleWithOldValues(req, res, next) {
     if (err) { return next(err); }
     should.exist(article);
     if (noTranslation === "true") {
-      let showLangs = JSON.parse(req.body.languages);
+      const showLangs = JSON.parse(req.body.languages);
       var languages = config.getLanguages();
       for (var i = 0; i < languages.length; i++) {
         var lang = languages[i];
@@ -605,7 +605,7 @@ function copyArticle(req, res, next) {
 
   article.copyToBlog(newBlog, languages, function(err) {
     if (err) return next(err);
-    let referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || "/";
     res.redirect(referer);
   });
 }
@@ -661,7 +661,7 @@ function postSetMarkdown(req, res, next) {
   article.setAndSave(req.user, change, function(err) {
     if (err) return next(err);
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
-    let referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || "/";
     res.redirect(referer);
   });
 }
@@ -818,7 +818,7 @@ function searchArticles(req, res, next) {
     debug("search->finalFunction");
     if (err) return next(err);
     should.exist(res.rendervar);
-    let renderer = new BlogRenderer.HtmlRenderer(null);
+    const renderer = new BlogRenderer.HtmlRenderer(null);
     res.render("collect", { layout: res.rendervar.layout,
       search: search,
       show: show,
@@ -832,7 +832,7 @@ function searchArticles(req, res, next) {
 }
 
 
-function urlExist(req, res, next) {
+function urlExist(req, res) {
   debug("urlExists");
 
   var url = req.body.url;
@@ -846,7 +846,7 @@ function urlExist(req, res, next) {
     return res.end("OK");
   }
 
-  request.get(url, function(err, response, body) {
+  request.get(url, function(err, response) {
     if (!err && response.statusCode === 200) {
       linkCache.set(url, "OK");
       res.end("OK");
@@ -1000,7 +1000,7 @@ function translateDeepl(req, res, next) {
 
   let fromLang = req.params.fromLang;
   let toLang = req.params.toLang;
-  let text = req.body.text;
+  const text = req.body.text;
 
   if (fromLang === "jp") { fromLang = "ja"; }
   if (toLang === "jp") { toLang = "ja"; }
@@ -1014,16 +1014,16 @@ function translateDeepl(req, res, next) {
     .catch(err => { next(err); });
 }
 
-let msTranslate = {
+const msTranslate = {
   translate: function(from, to, text, callback) {
-    let options = {
+    const options = {
       method: "POST",
       baseUrl: "https://api.cognitive.microsofttranslator.com/",
       url: "translate",
       qs: {
         "api-version": "3.0",
-        "from": from,
-        "to": to
+        from: from,
+        to: to
       },
       headers: {
         "Ocp-Apim-Subscription-Key": subscriptionKey,
@@ -1031,7 +1031,7 @@ let msTranslate = {
         "X-ClientTraceId": uuidv4().toString()
       },
       body: [{
-        "text": text
+        text: text
       }],
       json: true
     };
@@ -1047,7 +1047,7 @@ function translateBing(req, res, next) {
 
   let fromLang = req.params.fromLang;
   let toLang = req.params.toLang;
-  let text = req.body.text;
+  const text = req.body.text;
 
   if (fromLang === "jp") { fromLang = "ja"; }
   if (toLang === "jp") { toLang = "ja"; }
@@ -1065,19 +1065,19 @@ function translateBing(req, res, next) {
 function isFirstCollector(req, res, next) {
   if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
   if (!req.article) return next();
-  let user = req.user.OSMUser;
-  let comments = req.article.commentList;
+  const user = req.user.OSMUser;
+  const comments = req.article.commentList;
   if (comments) {
     for (let i = 0; i < comments.length; i++) {
-      let comment = comments[i];
+      const comment = comments[i];
       if (comment.text.search(new RegExp("@" + user + "\\b", "i")) >= 0) return next();
     }
   }
   res.status(HttpStatus.FORBIDDEN).send("This article is not allowed for guests");
 }
 
-let allowFullAccess = auth.checkRole("full");
-let allowGuestAccess = auth.checkRole(["full", "guest"], [null, isFirstCollector]);
+const allowFullAccess = auth.checkRole("full");
+const allowGuestAccess = auth.checkRole(["full", "guest"], [null, isFirstCollector]);
 
 
 // And configure router to use render Functions

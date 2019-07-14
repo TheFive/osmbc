@@ -6,12 +6,12 @@ var https = require("https");
 var logger    = require("../config.js").logger;
 
 
-let agentOptions = {
+const agentOptions = {
 
   rejectUnauthorized: false
 };
 
-let agent = new https.Agent(agentOptions);
+const agent = new https.Agent(agentOptions);
 
 
 function SlackAPI(hook_url, http_proxy_options) {

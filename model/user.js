@@ -23,7 +23,7 @@ function User (proto) {
   debug("User");
   debug("Prototype %s", JSON.stringify(proto));
   this.id = 0;
-  for (let k in proto) {
+  for (const k in proto) {
     this[k] = proto[k];
   }
 }
@@ -49,11 +49,11 @@ function createNewUser (proto, callback) {
     if (proto && proto.id) {
       return callback(new HttpError(409, "user id exists"));
     }
-    let user = create(proto);
+    const user = create(proto);
     find({ OSMUser: user.OSMUser }, function (err, result) {
       if (err) return callback(err);
       if (result && result.length > 0) {
-        let err = new HttpError(409, "User >" + user.OSMUser + "< already exists.");
+        const err = new HttpError(409, "User >" + user.OSMUser + "< already exists.");
         return callback(err);
       }
       // set some defaults for the user
@@ -77,23 +77,23 @@ function createNewUser (proto, callback) {
   });
 }
 
-let avatarCache = {};
+const avatarCache = {};
 
 function cacheOSMAvatar(osmuser, callback) {
   debug("cacheOSMAvatar %s", osmuser);
   if (osmuser === undefined) return callback();
   if (process.env.NODE_ENV === "test") return callback();
   if (avatarCache[osmuser]) return callback();
-  let requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
+  const requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
   request({ url: requestString, timeout: 10000, followRedirect: false }, function(err, response, body) {
     if (err && err.message !== "ETIMEDOUT") {
-      let error = new Error("User " + osmuser + " avatar could not be loaded.");
+      const error = new Error("User " + osmuser + " avatar could not be loaded.");
       return callback(error, null);
     }
     if (body) {
-      let c = cheerio.load(body);
+      const c = cheerio.load(body);
       let avatarLink = c(".user_image").attr("src");
-      let title = c("title").text();
+      const title = c("title").text();
       if (title === "No such user | OpenStreetMap") return callback();
       if (avatarLink === undefined) {
         return callback();
@@ -133,7 +133,7 @@ if (process.env.NODE_ENV !== "test") {
 // now: Calculate only number of changes
 User.prototype.calculateChanges = function calculateChanges(callback) {
   debug("User.prototype.calculateChanges");
-  let self = this;
+  const self = this;
   if (self._countChanges) return;
   pgMap.count("select count(*) as count from changes where data->>'user'='" + this.OSMUser + "' and data->>'table'='article'", function(err, result) {
     if (err) return callback(err);
@@ -209,12 +209,12 @@ function findOne(obj1, obj2, callback) {
 }
 
 
-let pgObject = {};
+const pgObject = {};
 pgObject.createString = "CREATE TABLE usert (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT user_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);";
 pgObject.indexDefinition = {
-  "user_id_idx": "CREATE INDEX user_id_idx ON usert USING btree (((data ->> 'OSMUser'::text)))",
-  "user_id2_idx": "CREATE INDEX user_id2_idx ON usert USING btree (id)"
+  user_id_idx: "CREATE INDEX user_id_idx ON usert USING btree (((data ->> 'OSMUser'::text)))",
+  user_id2_idx: "CREATE INDEX user_id2_idx ON usert USING btree (id)"
 
 
 };
@@ -230,7 +230,7 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
   should(typeof (user)).eql("object");
   should(typeof (validationCode)).eql("string");
   should(typeof (callback)).eql("function");
-  let self = this;
+  const self = this;
   let err;
   if (self.OSMUser !== user.OSMUser) {
     debug("User is wrong");
@@ -251,7 +251,7 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
     return;
   }
   debug("Email Validation OK saving User");
-  let oldmail = self.email;
+  const oldmail = self.email;
   self.email = self.emailInvalidation;
   delete self.emailInvalidation;
   delete self.emailValidationKey;
@@ -274,7 +274,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
   // reset cache
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
-  let self = this;
+  const self = this;
   delete self.lock;
   let sendWelcomeEmail = false;
   // remove spaces from front and and of email adress
@@ -287,7 +287,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
     if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) return callback(new HttpError(401, "EMail address can only be changed by the user himself, after he has logged in."));
     if (data.email !== "resend" && data.email !== "none") {
       if (!emailValidator.validate(data.email)) {
-        let error = new HttpError(409, "Invalid Email Address: " + data.email);
+        const error = new HttpError(409, "Invalid Email Address: " + data.email);
         return callback(error);
       }
       if (data.email !== "") {
@@ -337,11 +337,11 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
       debug("Old Value Was >>%s<<", self[key]);
 
 
-      let timestamp = new Date();
+      const timestamp = new Date();
       async.series([
         function(cb) {
           // do not log validation key in logfile
-          let toValue = value;
+          const toValue = value;
           // Hide Validation Key not to show to all users
           if (key === "emailValidationKey") return cb();
 
@@ -376,7 +376,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
         // tell mail receiver to update the information about the users
         mailReceiver.updateUser(self);
         if (sendWelcomeEmail) {
-          let m = new mailReceiver.MailReceiver(self);
+          const m = new mailReceiver.MailReceiver(self);
           // do not wait for mail to go out.
           // mail is logged in outgoing mail list
           m.sendWelcomeMail(user.OSMUser, function () {});
@@ -436,7 +436,7 @@ User.prototype.setOption = function setOption(view, option, value) {
 };
 
 
-let defaultOption = {};
+const defaultOption = {};
 
 User.prototype.getOption = function getOption(view, option) {
   debug("User.protoype.getOption");
@@ -448,7 +448,7 @@ User.prototype.getOption = function getOption(view, option) {
 
 User.prototype.createApiKey = function createApiKey(callback) {
   debug("createApiKey");
-  let apiKey = random.generate({ length: 10 });
+  const apiKey = random.generate({ length: 10 });
   this.apiKey = apiKey;
   this.save(callback);
 };
@@ -458,8 +458,8 @@ User.prototype.createApiKey = function createApiKey(callback) {
 // Users that have done their first edit in the last month
 
 let _newUsers = null;
-let interval = config.getValue("WelcomeInterval", { mustExist: true });
-let welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", { mustExist: true });
+const interval = config.getValue("WelcomeInterval", { mustExist: true });
+const welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", { mustExist: true });
 
 
 module.exports.getNewUsers = function getNewUsers(callback) {

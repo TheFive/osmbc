@@ -28,11 +28,11 @@ var htmlRoot = config.htmlRoot();
 // if there will be a user database, this has to be integrated here
 passport.serializeUser(function (user, done) {
   debug("passport.serializeUser CB");
-  let username = (user.displayName) ? user.displayName : "";
+  const username = (user.displayName) ? user.displayName : "";
   done(null, username);
 });
 
-let createGuestUsersAutomatic = config.getValue("createGuestUsersAutomatic", { mustExist: true });
+const createGuestUsersAutomatic = config.getValue("createGuestUsersAutomatic", { mustExist: true });
 
 passport.deserializeUser(function (user, done) {
   debug("passport.deserializeUser CB");
@@ -44,7 +44,7 @@ passport.deserializeUser(function (user, done) {
   userModule.find({ OSMUser: user }, function(err, result) {
     if (err) return done(null, null);
     if (result.length === 1) {
-      let overWriteRole = config.getValue("DefineRole");
+      const overWriteRole = config.getValue("DefineRole");
       if (overWriteRole && overWriteRole[result[0].OSMUser]) {
         result[0].access = overWriteRole[result[0].OSMUser];
         logger.error("DefineRole Overwrite: Switching user " + result[0].OSMUser + " to access " + overWriteRole[result[0].OSMUser]);
@@ -116,7 +116,7 @@ function checkRole(role, functions) {
   return function checkAuthentification (req, res, next) {
     debug("checkAuthentification");
     if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
-    let accessIndex = roleArray.indexOf(req.user.access);
+    const accessIndex = roleArray.indexOf(req.user.access);
     if (accessIndex >= 0) {
       if (!functionsArray) return next();
       if (!functionsArray[accessIndex]) return next();
@@ -133,7 +133,7 @@ function checkUser(user) {
   return function checkAuthentificationUser (req, res, next) {
     debug("checkAuthentificationUser");
     if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
-    let accessIndex = userArray.indexOf(req.user.OSMUser);
+    const accessIndex = userArray.indexOf(req.user.OSMUser);
     if (accessIndex >= 0) {
       return next();
     }
@@ -175,7 +175,7 @@ function ensureAuthenticated (req, res, next) {
       var lastStore = new Date(req.user.lastAccess);
       // only store last access when GETting something, not in POSTs.
       if (req.method === "GET" && (!req.user.lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 5)) {
-        let stamp = new Date();
+        const stamp = new Date();
         req.user.lastAccess = stamp;
         req.user.save({ noVersionIncrease: true }, function (err) {
           if (err) return next(err);
