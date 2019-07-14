@@ -77,8 +77,8 @@ function ensureAuthentificated(req, res, next) {
 function searchUrlInSlack(text) {
   debug("searchUrlInSlack");
   if (text.search("<") >= 0) {
-    let from = text.search("<");
-    let to = text.search(">");
+    const from = text.search("<");
+    const to = text.search(">");
     if (from < to) {
       return text.substring(from + 1, to);
     }
@@ -88,7 +88,7 @@ function searchUrlInSlack(text) {
 
 function extractTextWithoutUrl(text) {
   debug("extractTextWithoutUrl");
-  let url = searchUrlInSlack(text);
+  const url = searchUrlInSlack(text);
   if (url) text = text.replace("<" + url + ">", "");
   return text;
 }
@@ -120,7 +120,7 @@ function postSlackCreateUseTBC(req, res, next) {
   if (util.isURL(obj.text)) url = obj.text;
 
   let title;
-  let blog = "TBC";
+  const blog = "TBC";
 
   if (typeof (url) === "undefined" || url === "" || url === null) {
     // This is the mattermost variant
@@ -139,7 +139,7 @@ function postSlackCreateUseTBC(req, res, next) {
     } else return cb();
   }], function createArticle(err) {
     if (err) return next(err);
-    let changes = { title: title,
+    const changes = { title: title,
       collection: url,
       firstCollector: req.user.OSMUser,
       categoryEN: "-- no category yet --",

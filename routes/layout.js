@@ -22,12 +22,12 @@ const appName       = config.getValue("AppName", { mustExist: true });
 
 
 
-let url = config.getValue("url");
+const url = config.getValue("url");
 
 function calculateUnreadMessages(list, user) {
   let result = 0;
   for (let k = 0; k < list.length; k++) {
-    let a = list[k];
+    const a = list[k];
     if (a.commentRead && a.commentRead[user] >= a.commentList.length - 1) continue;
     result += 1;
   }
@@ -50,7 +50,7 @@ function path(component) {
 module.path = path;
 
 
-let calendarInterface = config.getValue("CalendarInterface", { mustExist: true });
+const calendarInterface = config.getValue("CalendarInterface", { mustExist: true });
 
 
 function prepareRenderLayout(req, res, next) {
@@ -76,7 +76,7 @@ function prepareRenderLayout(req, res, next) {
   let userMentions = 0;
   let mainLangMentions = 0;
   let secondLangMentions = 0;
-  let usedLanguages = {};
+  const usedLanguages = {};
   if (req.user.language) usedLanguages[req.user.language] = true;
 
   // Used for display changes
@@ -86,7 +86,7 @@ function prepareRenderLayout(req, res, next) {
   async.auto({
 
     tbc: function (callback) {
-      let blog = blogModule.getTBC();
+      const blog = blogModule.getTBC();
       blog.calculateDerived(req.user, function(err) {
         if (err) return callback(err);
         callback(null, blog);
@@ -96,7 +96,7 @@ function prepareRenderLayout(req, res, next) {
     function (callback) {
       blogModule.find({ status: "open" }, function(err, result) {
         if (err) return callback(err);
-        let list = [];
+        const list = [];
         for (let i = 0; i < result.length; i++) {
           list.push(result[i]);
         }
@@ -106,7 +106,7 @@ function prepareRenderLayout(req, res, next) {
             userMentions += calculateUnreadMessages(item._userMention, req.user.OSMUser);
             mainLangMentions += calculateUnreadMessages(item._mainLangMention, req.user.OSMUser);
             secondLangMentions += calculateUnreadMessages(item._secondLangMention, req.user.OSMUser);
-            for (let k in item._usedLanguages) usedLanguages[k] = true;
+            for (const k in item._usedLanguages) usedLanguages[k] = true;
             cb();
           });
         }, function(err) {
@@ -120,7 +120,7 @@ function prepareRenderLayout(req, res, next) {
         async.each(list, function(item, cb) {
           item.calculateDerived(req.user, function(err) {
             if (err) return cb(err);
-            for (let k in item._usedLanguages) usedLanguages[k] = true;
+            for (const k in item._usedLanguages) usedLanguages[k] = true;
             cb();
           });
         }, function(err) { callback(err, list); });
@@ -128,14 +128,14 @@ function prepareRenderLayout(req, res, next) {
     },
     listOfEditBlog: ["editBlog",
       function (param, callback) {
-        let list = [];
+        const list = [];
         for (let i = 0; i < param.editBlog.length; i++) {
           if (!(param.editBlog[i]["reviewComment" + req.user.getMainLang()])) {
             list.push(param.editBlog[i]);
           }
         }
         for (let i = 0; i < list.length; i++) {
-          let item = list[i];
+          const item = list[i];
           userMentions += calculateUnreadMessages(item._userMention, req.user.OSMUser);
           mainLangMentions += calculateUnreadMessages(item._mainLangMention, req.user.OSMUser);
           secondLangMentions += calculateUnreadMessages(item._secondLangMention, req.user.OSMUser);
@@ -145,7 +145,7 @@ function prepareRenderLayout(req, res, next) {
       }],
     listOfReviewBlog: ["editBlog",
       function (param, callback) {
-        let list = [];
+        const list = [];
         for (let i = 0; i < param.editBlog.length; i++) {
           if ((param.editBlog[i]["reviewComment" + req.user.getMainLang()]) &&
               !(param.editBlog[i]["close" + req.user.getMainLang()])) {
@@ -153,7 +153,7 @@ function prepareRenderLayout(req, res, next) {
           }
         }
         for (let i = 0; i < list.length; i++) {
-          let item = list[i];
+          const item = list[i];
           userMentions += calculateUnreadMessages(item._userMention, req.user.OSMUser);
           mainLangMentions += calculateUnreadMessages(item._mainLangMention, req.user.OSMUser);
           secondLangMentions += calculateUnreadMessages(item._secondLangMention, req.user.OSMUser);
@@ -168,7 +168,7 @@ function prepareRenderLayout(req, res, next) {
       debug(JSON.stringify(err));
       return next(err);
     }
-    let activeLanguages = [];
+    const activeLanguages = [];
     languages.forEach(function(item) {
       if (usedLanguages[item]) activeLanguages.push(item);
     });
@@ -177,7 +177,7 @@ function prepareRenderLayout(req, res, next) {
     if (!result.listOfEditBlog) result.listOfEditBlog = [];
     if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
 
-    let scriptUser = config.getValue("scripts").user;
+    const scriptUser = config.getValue("scripts").user;
 
     if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
     res.rendervar.layout = { user: req.user,

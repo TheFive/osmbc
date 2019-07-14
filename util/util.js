@@ -72,12 +72,12 @@ function md_render(text, accessMap) {
     text = text.replace("<a href=", '<a target="_blank" href=');
   }
   if (accessMap) {
-    for (let user in accessMap) {
-      let mention = "\\@" + user;
+    for (const user in accessMap) {
+      const mention = "\\@" + user;
       let cl = "bg-success";
       if (accessMap[user] === "guest") cl = "bg-warning";
       if (accessMap[user] === "denied") cl = "bg-danger";
-      let userUrl = user.replace(" ", "%20");
+      const userUrl = user.replace(" ", "%20");
       text = text.replace(new RegExp("( |\n|<p>)" + mention + "( |\n|</p>)", "i"), "$1<a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a>$2");
     }
   }
@@ -99,7 +99,7 @@ function isURL(t) {
 }
 
 function getAllURL(t) {
-  let r = t.match(getAllUrlRegex);
+  const r = t.match(getAllUrlRegex);
   if (r === null) return [];
   return r;
 }

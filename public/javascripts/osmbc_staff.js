@@ -13,7 +13,7 @@ function highlightWrongLinks() {
     if (o.attr("href").charAt(0) === "#") return;
     $.post(
       window.htmlroot + "/article/urlexist",
-      { "url": o.attr("href") },
+      { url: o.attr("href") },
 
       function(data) {
         if (data !== "OK") {

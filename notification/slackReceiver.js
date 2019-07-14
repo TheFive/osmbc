@@ -82,7 +82,7 @@ SlackReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog,
   let reviewChangesWithUserLink = "";
 
   if (blog["reviewComment" + lang] && blog["reviewComment" + lang][0]) {
-    let baselink = osmbcUrl + "/changes/log?blog=" + blog.name + "&table=article&property=markdown" + lang + "&date=GE:" + blog["reviewComment" + lang][0].timestamp;
+    const baselink = osmbcUrl + "/changes/log?blog=" + blog.name + "&table=article&property=markdown" + lang + "&date=GE:" + blog["reviewComment" + lang][0].timestamp;
     reviewChangesLink = "<" + baselink + "|Full Review>";
     reviewChangesWithUserLink = "<" + baselink + "&user=" + user.OSMUser + "|User Review>";
   }
@@ -249,7 +249,7 @@ function initialise(callback) {
   debug("initialise");
   slackhook = config.getValue("slacktool");
   messageCenter.initialise();
-  let channelList = configModule.getConfigObject("slacknotification").getJSON();
+  const channelList = configModule.getConfigObject("slacknotification").getJSON();
 
   channelReceiverMap = {};
   for (var i = 0; i < channelList.length; i++) {

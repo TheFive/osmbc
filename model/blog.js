@@ -33,7 +33,7 @@ function Blog(proto) {
     this.categories = configModule.getConfig("categorytranslation");
   }
   if (proto) {
-    for (let k in proto) {
+    for (const k in proto) {
       this[k] = proto[k];
     }
   }
@@ -60,15 +60,15 @@ function create (proto) {
 Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
-  let self = this;
+  const self = this;
   delete self.lock;
   should.exist(self.id);
   async.series([
     messageCenter.global.updateBlog.bind(messageCenter.global, user, self, data),
     function copyDataToBlog(cb) {
       should(self.id).not.equal(0);
-      for (let key in data) {
-        let value = data[key];
+      for (const key in data) {
+        const value = data[key];
         if (typeof (value) === "undefined") continue;
         if (value === self[key]) continue;
         if (value === "" && typeof (self[key]) === "undefined") continue;
@@ -90,9 +90,9 @@ Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
 
 Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, callback) {
   debug("reviewComment");
-  let self = this;
-  let rc = "reviewComment" + lang;
-  let exported = "exported" + lang;
+  const self = this;
+  const rc = "reviewComment" + lang;
+  const exported = "exported" + lang;
   should(typeof (user)).eql("object");
   should.exist(self.id);
   should(self.id).not.equal(0);
@@ -112,7 +112,7 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
     },
     function checkSpecialCommands(cb) {
       debug("setReviewComment->checkSpecialCommands");
-      let date = new Date();
+      const date = new Date();
       if (data === "startreview") {
         // Start Review, check wether review is done in WP or not
         if (self[rc].length === 0) {
@@ -156,8 +156,8 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
 
 Blog.prototype.editReviewComment = function editReviewComment(lang, user, index, data, callback) {
   debug("reviewComment");
-  let self = this;
-  let rc = "reviewComment" + lang;
+  const self = this;
+  const rc = "reviewComment" + lang;
   should(typeof (user)).eql("object");
   should.exist(self.id);
   should(self.id).not.equal(0);
@@ -170,7 +170,7 @@ Blog.prototype.editReviewComment = function editReviewComment(lang, user, index,
 
 
   if (self[rc][index].user !== user.OSMUser) {
-    let error = new Error(">" + user.OSMUser + "< is not allowed to change review");
+    const error = new Error(">" + user.OSMUser + "< is not allowed to change review");
     error.status = HttpStatus.FORBIDDEN;
     return callback(error);
   }
@@ -187,7 +187,7 @@ Blog.prototype.editReviewComment = function editReviewComment(lang, user, index,
     },
     function setValues(cb) {
       debug("editReviewComment->setValues");
-      let date = new Date();
+      const date = new Date();
 
       self[rc][index].text = data;
       self[rc][index].editstamp = date;
@@ -207,9 +207,9 @@ Blog.prototype.closeBlog = function closeBlog(options, callback) {
   should(typeof (options.lang)).eql("string");
   should(typeof (options.status)).eql("boolean");
 
-  let self = this;
-  let closeField = "close" + options.lang;
-  let reviewField = "reviewComment" + options.lang;
+  const self = this;
+  const closeField = "close" + options.lang;
+  const reviewField = "reviewComment" + options.lang;
 
   if (self[closeField] === options.status) return callback();
   should.exist(self.id);
@@ -315,7 +315,7 @@ function createNewBlog(user, proto, noArticle, callback) {
 
     exports.findOne(" where data->>'name' like 'WN%'", { column: "name", desc: true }, function(err, result) {
       if (err) return callback(err);
-      let blog = create();
+      const blog = create();
       let name = "WN250";
       let endDate = new Date();
       if (result) {
@@ -327,26 +327,26 @@ function createNewBlog(user, proto, noArticle, callback) {
         }
       }
       debug("Maximum Blog Name in DB: %s", name);
-      let wnId = name.substring(2, 99);
-      let newWnId = parseInt(wnId) + 1;
-      let newName = "WN" + newWnId;
-      let startDate = new Date(endDate);
+      const wnId = name.substring(2, 99);
+      const newWnId = parseInt(wnId) + 1;
+      const newName = "WN" + newWnId;
+      const startDate = new Date(endDate);
       startDate.setDate(startDate.getDate() + 1);
       endDate.setDate(endDate.getDate() + 7);
       blog.name = newName;
       blog.status = "open";
       blog.startDate = startDate.toISOString();
       blog.endDate = endDate.toISOString();
-      for (let k in proto) {
+      for (const k in proto) {
         blog[k] = proto[k];
       }
-      let change = {};
+      const change = {};
       change.name = blog.name;
       change.status = blog.status;
       change.startDate = blog.startDate;
       change.endDate = blog.endDate;
       // create an Empty blog and simualte an id != 0
-      let emptyBlog = exports.create();
+      const emptyBlog = exports.create();
       emptyBlog.id = -1;
 
       async.series([
@@ -386,10 +386,10 @@ Blog.prototype.autoClose = function autoClose(cb) {
   debug("autoClose");
   if (!this.endDate) return cb();
 
-  let time = new Date().getTime();
-  let endDateBlog = (new Date(this.endDate)).getTime();
+  const time = new Date().getTime();
+  const endDateBlog = (new Date(this.endDate)).getTime();
   if (endDateBlog <= time) {
-    let changes = { status: "edit" };
+    const changes = { status: "edit" };
     this.setAndSave({ OSMUser: "autoclose" }, changes, function(err) {
       cb(err);
     });
@@ -440,9 +440,9 @@ function autoCloseBlog(callback) {
 
 function convertLogsToTeamString(logs, lang, users) {
   debug("convertLogsToTeamString");
-  let editors = [];
+  const editors = [];
   function addEditors(property, min) {
-    for (let user in logs[property]) {
+    for (const user in logs[property]) {
       if (logs[property][user] >= min) {
         if (editors.indexOf(user) < 0) {
           editors.push(user);
@@ -482,7 +482,7 @@ function convertLogsToTeamString(logs, lang, users) {
     editorsString += ", " + editors[i2];
   }
 
-  let editorStrings = configModule.getConfig("editorstrings");
+  const editorStrings = configModule.getConfig("editorstrings");
   if (editorStrings[lang]) return editorStrings[lang].replace("##team##", editorsString);
   return "";
 }
@@ -492,7 +492,7 @@ Blog.prototype.createTeamString = function createTeamString(lang, callback) {
   debug("createTeamString");
   should(typeof (lang)).eql("string");
   should(typeof (callback)).eql("function");
-  let self = this;
+  const self = this;
   let logs;
   let users = null;
   async.series([
@@ -510,7 +510,7 @@ Blog.prototype.createTeamString = function createTeamString(lang, callback) {
       });
     }], function finalFunction(err) {
     if (err) return callback(err);
-    let result = convertLogsToTeamString(logs, lang, users);
+    const result = convertLogsToTeamString(logs, lang, users);
     return callback(null, result);
   });
 };
@@ -526,8 +526,8 @@ Output: an array of articles.
  */
 function sortArticles(listOfArticles) {
   debug("sortArticles");
-  let result = [];
-  let laterUse = [];
+  const result = [];
+  const laterUse = [];
   listOfArticles.sort(function(a, b) {
     return ((a.title) ? a.title : "").localeCompare((b.title) ? b.title : "");
   });
@@ -542,7 +542,7 @@ function sortArticles(listOfArticles) {
     let found = false;
     for (let p = 0; p < listOfArticles.length; p++) {
       if (listOfArticles[p].predecessorId === searchfor) {
-        let a = listOfArticles[p];
+        const a = listOfArticles[p];
         listOfArticles.splice(p, 1);
         result.push(a);
         found = true;
@@ -552,7 +552,7 @@ function sortArticles(listOfArticles) {
     if (!found) {
       for (let p = 0; p < listOfArticles.length; p++) {
         if (laterUse.indexOf(listOfArticles[p].id) < 0) {
-          let a = listOfArticles[p];
+          const a = listOfArticles[p];
           listOfArticles.splice(p, 1);
           result.push(a);
           found = true;
@@ -561,7 +561,7 @@ function sortArticles(listOfArticles) {
       }
     }
     if (!found) {
-      let a = listOfArticles[0];
+      const a = listOfArticles[0];
       listOfArticles.splice(0, 1);
       result.push(a);
     }
@@ -587,7 +587,7 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang
 
   if (!this.isEditable(toLang)) return callback(new Error(toLang + " can not be edited"));
 
-  let blogName = this.name;
+  const blogName = this.name;
   let articleList = [];
 
   async.series([
@@ -611,7 +611,7 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang
         } else {
           source = article["markdown" + fromLang];
         }
-        let data = {};
+        const data = {};
         data["markdown" + toLang] = source;
         data.old = {};
         data.old["markdown" + toLang] = "";
@@ -629,11 +629,11 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
   debug("getPreviewData");
   should(typeof (options)).eql("object");
   should(typeof (callback)).eql("function");
-  let lang = options.lang;
-  let self = this;
+  const lang = options.lang;
+  const self = this;
 
 
-  let articles = {};
+  const articles = {};
   let teamString = "";
 
   let futureArticles;
@@ -673,7 +673,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
 
       let i; // often used iterator, declared here because there is no block scope in JS.
       for (i = 0; i < articleList.length; i++) {
-        let r = articleList[i];
+        const r = articleList[i];
 
         // remove no translation article, if wanted
         if (options.disableNotranslation && r["markdown" + options.lang] === "no translation") continue;
@@ -686,8 +686,8 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
         }
         articles[r.categoryEN].push(r);
       }
-      for (let c in articles) {
-        let r = sortArticles(articles[c]);
+      for (const c in articles) {
+        const r = sortArticles(articles[c]);
         articles[c] = r;
       }
       cb(null);
@@ -707,7 +707,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
     debug("finalFunction");
 
     if (err) return callback(err);
-    let result = {};
+    const result = {};
     result.teamString = teamString;
     result.articles = articles;
     result.futureArticles = {};
@@ -724,16 +724,16 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
 Blog.prototype.calculateTimeToClose = function calculateTimeToClose(callback) {
   debug("Blog.prototype.calculateTimeToClose");
   if (this._timeToClose) return callback();
-  let self = this;
+  const self = this;
   self._timeToClose = {};
   logModule.find(" where data->>'blog' ='" + self.name + "' and data->>'property' like 'close%'", function(err, result) {
     if (err) return callback(err);
     if (!result) return callback();
-    let endDate = moment(self.endDate);
+    const endDate = moment(self.endDate);
     for (let i = 0; i < result.length; i++) {
-      let lang = (result[i].property).substring(5, 7);
-      let time = moment(result[i].timestamp);
-      let timeToClose = time.diff(endDate, "days");
+      const lang = (result[i].property).substring(5, 7);
+      const time = moment(result[i].timestamp);
+      const timeToClose = time.diff(endDate, "days");
       if (!self._timeToClose[lang] || timeToClose > self._timeToClose[lang]) self._timeToClose[lang] = timeToClose;
     }
     return callback();
@@ -745,7 +745,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
   should.exist(user);
   // already done, nothing to do.
   if (this._countUneditedMarkdown) return callback();
-  let self = this;
+  const self = this;
 
   self._countUneditedMarkdown = {};
   self._countExpectedMarkdown = {};
@@ -761,8 +761,8 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
 
   self._usedLanguages = {};
   self._upcomingEvents = null;
-  let mainLang = user.mainLang;
-  let secondLang = user.secondLang;
+  const mainLang = user.mainLang;
+  const secondLang = user.secondLang;
   let i, j;
 
   articleModule.find({ blog: self }, function (err, result) {
@@ -771,19 +771,19 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
 
 
     for (i = 0; i < config.getLanguages().length; i++) {
-      let l = config.getLanguages()[i];
+      const l = config.getLanguages()[i];
 
       self._countUneditedMarkdown[l] = 0;
       self._countExpectedMarkdown[l] = 0;
       self._countNoTranslateMarkdown[l] = 0;
       self._unsolvedComments[l] = 0;
       for (j = 0; j < result.length; j++) {
-        let article = result[j];
-        let c = article.categoryEN;
+        const article = result[j];
+        const c = article.categoryEN;
         if (c === "Upcoming Events") self._upcomingEvents = article;
         if (c === "--unpublished--") continue;
         self._countExpectedMarkdown[l] += 1;
-        let m = article["markdown" + l];
+        const m = article["markdown" + l];
         if (m === "no translation") {
           self._countNoTranslateMarkdown[l] += 1;
         } else {
@@ -808,7 +808,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
       if (result[i].commentList) {
         if (result[i].commentStatus === "solved") continue;
         for (j = 0; j < result[i].commentList.length; j++) {
-          let comment = result[i].commentList[j].text;
+          const comment = result[i].commentList[j].text;
 
           if (comment.search(new RegExp("@" + user.OSMUser, "i")) >= 0) {
             self._userMention.push(result[i]);
@@ -836,11 +836,11 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
 
 function translateCategories(cat) {
   debug("translateCategories");
-  let languages = config.getLanguages();
-  let categoryTranslation = configModule.getConfig("categorytranslation");
+  const languages = config.getLanguages();
+  const categoryTranslation = configModule.getConfig("categorytranslation");
   for (let i = 0; i < cat.length; i++) {
     for (let l = 0; l < languages.length; l++) {
-      let lang = languages[l];
+      const lang = languages[l];
       if (cat[i][lang]) continue;
       if (categoryTranslation[cat[i].EN]) {
         cat[i][lang] = categoryTranslation[cat[i].EN][lang];
@@ -871,14 +871,14 @@ Blog.prototype.getCategories = function getCategories() {
 
 
 
-let pgObject = {};
+const pgObject = {};
 
 pgObject.createString = "CREATE TABLE blog (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT blog_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);";
 
 pgObject.indexDefinition = {
-  "blog_status_idx": "CREATE INDEX blog_status_idx ON blog USING btree (((data ->> 'status'::text)))",
-  "blog_name_idx": "CREATE INDEX blog_name_idx ON blog USING btree (((data ->> 'name'::text)))"
+  blog_status_idx: "CREATE INDEX blog_status_idx ON blog USING btree (((data ->> 'status'::text)))",
+  blog_name_idx: "CREATE INDEX blog_name_idx ON blog USING btree (((data ->> 'name'::text)))"
 };
 
 pgObject.viewDefinition = {};
@@ -894,7 +894,7 @@ Blog.prototype.isEditable = function isEditable(lang) {
   if (this["exported" + lang]) {
     result = false;
   }
-  let closeLANG = this["close" + lang];
+  const closeLANG = this["close" + lang];
   if (typeof (closeLANG) !== "undefined") {
     if (closeLANG) result = false;
   }
@@ -903,7 +903,7 @@ Blog.prototype.isEditable = function isEditable(lang) {
 };
 
 
-let _allTimer = {};
+const _allTimer = {};
 
 Blog.prototype.startCloseTimer = function startCloseTimer() {
   debug("startCloseTimer");
@@ -915,7 +915,7 @@ Blog.prototype.startCloseTimer = function startCloseTimer() {
   }
   if (this.status !== "open") return;
   if (this.endDate) {
-    let date = new Date(this.endDate);
+    const date = new Date(this.endDate);
     _allTimer[this.id] = schedule.scheduleJob(date, function() {
       exports.autoCloseBlog(function() {});
     });
@@ -938,7 +938,7 @@ exports.startAllTimers = function startAllTimers(callback) {
 
 module.exports.getTBC = function() {
   debug("getTBC");
-  let blog = create({ name: "TBC", version: -1, status: "Action List" });
+  const blog = create({ name: "TBC", version: -1, status: "Action List" });
   return blog;
 };
 

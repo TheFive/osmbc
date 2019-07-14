@@ -14,8 +14,8 @@ function linkFrom(url, page) {
 
 function retrieveForum(body, url) {
   if (linkFrom(url, "forum.openstreetmap.org")) {
-    let c = cheerio.load(body);
-    let title = c("title").text().replace(" / OpenStreetMap Forum", "");
+    const c = cheerio.load(body);
+    const title = c("title").text().replace(" / OpenStreetMap Forum", "");
     return title;
   }
   return null;
@@ -23,8 +23,8 @@ function retrieveForum(body, url) {
 
 function retrieveOsmBlog(body, url) {
   if (linkFrom(url, "www.openstreetmap.org")) {
-    let c = cheerio.load(body);
-    let title = c("title").text().replace("OpenStreetMap | ", "");
+    const c = cheerio.load(body);
+    const title = c("title").text().replace("OpenStreetMap | ", "");
     return title;
   }
   return null;
@@ -32,7 +32,7 @@ function retrieveOsmBlog(body, url) {
 
 function retrieveTwitter(body, url) {
   if (linkFrom(url, "twitter.com")) {
-    let c = cheerio.load(body);
+    const c = cheerio.load(body);
     let title = c('meta[property="og:description"]').attr("content");
 
     // Only replace Twitter Url, if it exists.
@@ -43,8 +43,8 @@ function retrieveTwitter(body, url) {
 }
 
 function retrieveTitle(body) {
-  let c = cheerio.load(body);
-  let title = c("title").text();
+  const c = cheerio.load(body);
+  const title = c("title").text();
   return title;
 }
 
@@ -72,15 +72,15 @@ function getTitle(url, callback) {
 
       // if not exist, try to get charset from Headers (version 2)
       if (!fromcharset) {
-        let ct = response.headers["content-type"];
+        const ct = response.headers["content-type"];
         if (ct) {
-          let r = ct.match(/.*?charset=([^"']+)/);
+          const r = ct.match(/.*?charset=([^"']+)/);
           if (r)fromcharset = r[1];
         }
       }
       // if not exist, try to parse html page for charset in text
       if (!fromcharset) {
-        let r = body.toString("utf-8").match((/<meta.*?charset=([^"']+)/));
+        const r = body.toString("utf-8").match((/<meta.*?charset=([^"']+)/));
         if (r) fromcharset = r[1];
       }
 

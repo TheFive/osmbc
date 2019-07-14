@@ -17,7 +17,7 @@ var configModule = require("../model/config.js");
 var logModule = require("../model/logModule.js");
 
 
-let htmlroot = config.htmlRoot();
+const htmlroot = config.htmlRoot();
 
 
 

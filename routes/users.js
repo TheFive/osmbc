@@ -255,7 +255,7 @@ function createApiKey(req, res, next) {
   debug("createApiKey");
   req.user.createApiKey(function(err) {
     if (err) return next(err);
-    let referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || "/";
     res.redirect(referer);
   });
 }
