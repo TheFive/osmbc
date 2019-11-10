@@ -15,7 +15,7 @@
     "colors": "^1.4.0",
     "commander": "^2.20.3",
     "compression": "^1.7.4",
-    "connect-pg-simple": "^5.0.0",
+    "connect-pg-simple": "^6.0.1",
     "cookie-parser": "^1.4.4",
     "debug": "^4.1.1",
     "deepl-translator": "^1.2.1",
