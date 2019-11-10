@@ -23,3 +23,5 @@ weekly2all.py
 data.json
 !package-lock.json
 profile_logs
+
+coverage/

@@ -1,11 +1,13 @@
 # Change Log
 
+## [3.3.9c](https://github.com/TheFive/osmbc/tree/3.3.9c) (2019-07-14)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.9b...3.3.9c)
+
 ## [3.3.9b](https://github.com/TheFive/osmbc/tree/3.3.9b) (2019-05-04)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.9a...3.3.9b)
 
 ## [3.3.9a](https://github.com/TheFive/osmbc/tree/3.3.9a) (2019-05-03)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.9...3.3.9a)
-
 
 ## [3.3.9](https://github.com/TheFive/osmbc/tree/3.3.9) (2019-04-22)
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.8...3.3.9)
