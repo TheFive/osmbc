@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "NODE_ENV=development node ./bin/www",
-    "test": "NODE_ENV=test ./test.sh"
+    "test": "NODE_ENV=test mocha"
   },
   "dependencies": {
     "animated-gif-detector": "^1.2.0",
@@ -15,7 +15,7 @@
     "colors": "^1.4.0",
     "commander": "^2.20.3",
     "compression": "^1.7.4",
-    "connect-pg-simple": "^5.0.0",
+    "connect-pg-simple": "^6.0.x",
     "cookie-parser": "^1.4.4",
     "debug": "^4.1.1",
     "deepl-translator": "^1.2.1",
@@ -29,10 +29,10 @@
     "glob": "^7.1.6",
     "helmet": "^3.21.2",
     "html-to-text": "^5.1.1",
-    "htmlparser2": "^3.10.1",
+    "htmlparser2": "^4.0.x",
     "http-status-codes": "^1.4.0",
     "iconv-lite": "^0.5.0",
-    "image-size": "^0.7.5",
+    "image-size": "^0.8.x",
     "js-yaml": "^3.13.1",
     "jstransformer": "^1.0.0",
     "jstransformer-markdown-it": "^2.1.0",
@@ -68,14 +68,13 @@
   "devDependencies": {
     "domcompare": "^0.2.3",
     "eslint": "^6.6.0",
-    "eslint-config-standard": "^13.0.1",
+    "eslint-config-standard": "14.1.x",
     "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-mocha": "^5.3.0",
-    "eslint-plugin-node": "^9.2.0",
+    "eslint-plugin-mocha": "^6.2.x",
+    "eslint-plugin-node": "^10.0.x",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "html-differ": "^1.4.0",
-    "istanbul": "^0.4.5",
     "jshint": "^2.10.3",
     "license-checker": "^25.0.1",
     "mocha": "^6.2.2",

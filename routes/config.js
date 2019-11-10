@@ -67,10 +67,12 @@ function renderConfigName(req, res, next) {
     if (name === "eventsfilter") jadeFile = name;
     if (name === "ignoreforsearch") jadeFile = "config";
     res.set("content-type", "text/html");
-    res.render("config/" + jadeFile, { config: config,
+    res.render("config/" + jadeFile, {
+      config: config,
       changes: changes,
       params: params,
-      layout: res.rendervar.layout });
+      layout: res.rendervar.layout
+    });
   }
   );
 }

@@ -45,13 +45,15 @@ function renderHome(req, res, next) {
     res.set("content-type", "text/html");
     const view = "index";
     should(req.user.access).eql("full");
-    res.render(view, { title: appName,
+    res.render(view, {
+      title: appName,
       layout: res.rendervar.layout,
       activeUserList: result.activeUser,
       fullVisitorsToday: result.fullVisitorsToday,
       guestVisitorsToday: result.guestVisitorsToday,
       newUsers: result.newUsers,
-      changes: result.historie });
+      changes: result.historie
+    });
   }
   );
 }
@@ -75,7 +77,8 @@ function renderGuestHome(req, res, next) {
     const view = "index_guest";
     should(req.user.access).eql("guest");
 
-    res.render(view, { title: appName,
+    res.render(view, {
+      title: appName,
       articles: result.articles,
       layout: res.rendervar.layout
     });
@@ -98,10 +101,12 @@ function renderAdminHome(req, res, next) {
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
-    res.render("adminindex", { title: appName,
+    res.render("adminindex", {
+      title: appName,
       layout: res.rendervar.layout,
       longAbsent: result.longAbsent,
-      changes: result.historie });
+      changes: result.historie
+    });
   }
   );
 }

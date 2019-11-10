@@ -352,7 +352,9 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
             property: key,
             from: self[key],
             timestamp: timestamp,
-            to: toValue }, cb);
+            to: toValue
+          },
+          cb);
         },
         function(cb) {
           if (key === "email" && value === "none") {

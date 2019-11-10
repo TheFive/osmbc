@@ -37,14 +37,16 @@ LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) 
     if (typeof (article[key]) === "undefined" && value === "") return cbEachOf();
     async.series([
       function(cb) {
-        logModule.log({ oid: article.id,
+        logModule.log({
+          oid: article.id,
           blog: logblog,
           user: user.OSMUser,
           table: "article",
           property: key,
           from: article[key],
           to: value,
-          timestamp: timestamp }, cb);
+          timestamp: timestamp
+        }, cb);
       }
     ], function(err) {
       cbEachOf(err);
@@ -79,14 +81,16 @@ LogModuleReceiver.prototype.updateBlog = function(user, blog, change, cb) {
     async.series([
       function writeLog(cb) {
         debug("writeLog");
-        logModule.log({ oid: blog.id,
+        logModule.log({
+          oid: blog.id,
           blog: blog.name,
           user: user.OSMUser,
           table: "blog",
           property: key,
           from: blog[key],
           to: value,
-          timestamp: timestamp }, cb);
+          timestamp: timestamp
+        }, cb);
       }
     ], function(err) {
       cbEachOf(err);
@@ -102,14 +106,16 @@ LogModuleReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, b
   should(typeof user.OSMUser).eql("string");
   should.exist(user.OSMUser);
   var timestamp = new Date();
-  logModule.log({ oid: blog.id,
+  logModule.log({
+    oid: blog.id,
     blog: blog.name,
     user: user.OSMUser,
     table: "blog",
     property: "reviewComment" + lang,
     from: "Add",
     to: status,
-    timestamp: timestamp }, cb);
+    timestamp: timestamp
+  }, cb);
 };
 LogModuleReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {
   debug("LogModuleReceiver.prototype.sendCloseStatus");
@@ -119,13 +125,15 @@ LogModuleReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blo
   should(typeof user.OSMUser).eql("string");
   should.exist(user.OSMUser);
   var timestamp = new Date();
-  logModule.log({ oid: blog.id,
+  logModule.log({
+    oid: blog.id,
     blog: blog.name,
     user: user.OSMUser,
     table: "blog",
     property: "close" + lang,
     to: status,
-    timestamp: timestamp }, cb);
+    timestamp: timestamp
+  }, cb);
 };
 
 LogModuleReceiver.prototype.editComment = function editComment(user, article, index, text, callback) {
@@ -136,14 +144,16 @@ LogModuleReceiver.prototype.editComment = function editComment(user, article, in
   should(typeof user.OSMUser).eql("string");
   should.exist(user.OSMUser);
   var timestamp = new Date();
-  logModule.log({ oid: article.id,
+  logModule.log({
+    oid: article.id,
     blog: article.blog,
     user: user.OSMUser,
     table: "article",
     property: "comment" + index,
     from: article.commentList[index].text,
     to: text,
-    timestamp: timestamp }, callback);
+    timestamp: timestamp
+  }, callback);
 };
 
 LogModuleReceiver.prototype.addComment = function addComment(user, article, text, callback) {
@@ -154,14 +164,16 @@ LogModuleReceiver.prototype.addComment = function addComment(user, article, text
   should(typeof user.OSMUser).eql("string");
   should.exist(user.OSMUser);
   var timestamp = new Date();
-  logModule.log({ oid: article.id,
+  logModule.log({
+    oid: article.id,
     blog: article.blog,
     user: user.OSMUser,
     table: "article",
     property: "comment" + article.commentList.length,
     from: "",
     to: text,
-    timestamp: timestamp }, callback);
+    timestamp: timestamp
+  }, callback);
 };
 
 module.exports = LogModuleReceiver;

@@ -60,20 +60,16 @@ var infomail = new Email({
 });
 
 var infoMailBlogtemplateDir = path.join(__dirname, "..", "email", "infomailBlog");
-var infomailBlog = new Email({
-  views: { root: infoMailBlogtemplateDir } });
+var infomailBlog = new Email({ views: { root: infoMailBlogtemplateDir } });
 
 var infoMailReviewtemplateDir = path.join(__dirname, "..", "email", "infomailReview");
-var infomailReview = new Email({
-  views: { root: infoMailReviewtemplateDir } });
+var infomailReview = new Email({ views: { root: infoMailReviewtemplateDir } });
 
 var infoMailClosetemplateDir = path.join(__dirname, "..", "email", "infomailClose");
-var infomailClose = new Email({
-  views: { root: infoMailClosetemplateDir } });
+var infomailClose = new Email({ views: { root: infoMailClosetemplateDir } });
 
 var welcomeMailtemplateDir = path.join(__dirname, "..", "email", "welcome");
-var welcomemail = new Email({
-  views: { root: welcomeMailtemplateDir } });
+var welcomemail = new Email({ views: { root: welcomeMailtemplateDir } });
 
 var transporter = nodemailer.createTransport(config.getValue("SMTP"));
 

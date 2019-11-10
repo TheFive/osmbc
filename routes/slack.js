@@ -139,11 +139,13 @@ function postSlackCreateUseTBC(req, res, next) {
     } else return cb();
   }], function createArticle(err) {
     if (err) return next(err);
-    const changes = { title: title,
+    const changes = {
+      title: title,
       collection: url,
       firstCollector: req.user.OSMUser,
       categoryEN: "-- no category yet --",
-      blog: blog };
+      blog: blog
+    };
     articleModule.createNewArticle(function(err, result) {
       if (err) return next(err);
       changes.version = result.version;
