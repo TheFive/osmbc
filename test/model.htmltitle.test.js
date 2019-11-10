@@ -81,9 +81,7 @@ describe("model/htmltitle", function() {
     nock("https://www.test.test")
       .get("/testdd")
       .socketDelay(3000)
-      .reply(function() {
-        return "Ok";
-      });
+      .reply(200,"OK");
     htmltitle.getTitle("https://www.test.test/testdd", function(err, result) {
       should.not.exist(err);
       should(result).eql("https://www.test.test/testdd TIMEOUT");
