@@ -78,10 +78,11 @@ let allowedLicensesProd = ["MIT",
   "Apache-2.0",
   "Apache*",
   "LAGPL",
-  "(Unlicense OR Apache-2.0)"];
+  "(Unlicense OR Apache-2.0)",
+  "(MIT OR EUPL-1.1+)"];
 
 let allowedLicensesDev = allowedLicensesProd.concat([
-  "LGPL-2.1+","CC-BY-3.0"
+  "LGPL-2.1+","CC-BY-3.0","LGPL"
 ]);
 
 function shouldNotUseGPL(usedLicenses){
@@ -132,6 +133,3 @@ describe("license-check",function(){
     });
   });
 });
-
-
-
