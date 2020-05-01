@@ -37,6 +37,7 @@ require("jstransformer")(require("jstransformer-markdown-it"));
 const request = require("request");
 const uuidv4 = require("uuid/v4");
 const subscriptionKey = config.getValue("MS_TranslateApiKey", { mustExist: true });
+const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 const deeplTranslate = require("deepl-translator");
 
@@ -204,7 +205,8 @@ function renderArticleId(req, res, next) {
               callback(null, returnToUrl);
             });
           } else return callback();
-        } },
+        }
+  },
   function (err, result) {
     debug("renderArticleId->finalFunction");
     if (err) return next(err);
@@ -248,7 +250,8 @@ function renderArticleId(req, res, next) {
     }
 
 
-    res.render(pugFile, { layout: res.rendervar.layout,
+    res.render(pugFile, {
+      layout: res.rendervar.layout,
       article: article,
       googleTranslateText: configModule.getConfig("automatictranslatetext"),
       params: params,
@@ -264,7 +267,8 @@ function renderArticleId(req, res, next) {
       categories: categories,
       languageFlags: languageFlags,
       accessMap: result.accessMap,
-      collectedByGuest: collectedByGuest });
+      collectedByGuest: collectedByGuest
+    });
   }
   );
 }
@@ -285,7 +289,8 @@ function renderArticleIdVotes(req, res, next) {
       if (err) return next(err);
 
 
-      const rendervars = { layout: res.rendervar.layout,
+      const rendervars = {
+        layout: res.rendervar.layout,
         article: article,
         votes: votes
       };
@@ -316,7 +321,8 @@ function renderArticleIdCommentArea(req, res, next) {
     if (err) return next(err);
 
 
-    const rendervars = { layout: res.rendervar.layout,
+    const rendervars = {
+      layout: res.rendervar.layout,
       article: article,
       params: params,
       accessMap: result.accessMap
@@ -438,7 +444,8 @@ function postArticle(req, res, next) {
   var article = req.article;
   // If article exists, everything is fine, if article NOT exist, it has to be created.
 
-  var changes = { blog: req.body.blog,
+  var changes = {
+    blog: req.body.blog,
     collection: req.body.collection,
     comment: req.body.comment,
     predecessorId: req.body.predecessorId,
@@ -448,7 +455,8 @@ function postArticle(req, res, next) {
     addComment: req.body.addComment,
     commentStatus: req.body.commentStatus,
     unpublishReason: req.body.unpublishReason,
-    unpublishReference: req.body.unpublishReference };
+    unpublishReference: req.body.unpublishReference
+  };
 
   var languages = config.getLanguages();
   for (var i = 0; i < languages.length; i++) {
@@ -515,21 +523,25 @@ function postArticleWithOldValues(req, res, next) {
   var article = req.article;
   // If article exists, everything is fine, if article NOT exist, it has to be created.
 
-  var changes = { blog: req.body.blog,
+  var changes = {
+    blog: req.body.blog,
     collection: req.body.collection,
     predecessorId: req.body.predecessorId,
     categoryEN: req.body.categoryEN,
     title: req.body.title,
     unpublishReason: req.body.unpublishReason,
-    unpublishReference: req.body.unpublishReference };
+    unpublishReference: req.body.unpublishReference
+  };
 
-  changes.old = { blog: req.body.old_blog,
+  changes.old = {
+    blog: req.body.old_blog,
     collection: req.body.old_collection,
     predecessorId: req.body.old_predecessorId,
     categoryEN: req.body.old_categoryEN,
     title: req.body.old_title,
     unpublishReason: req.body.old_unpublishReason,
-    unpublishReference: req.body.old_unpublishReference };
+    unpublishReference: req.body.old_unpublishReference
+  };
 
 
   var languages = config.getLanguages();
@@ -781,11 +793,13 @@ function createArticle(req, res, next) {
     if (err) return next(err);
     should.exist(res.rendervar);
     res.set("content-type", "text/html");
-    res.render("collect", { layout: res.rendervar.layout,
+    res.render("collect", {
+      layout: res.rendervar.layout,
       search: "",
       placeholder: placeholder,
       showCollect: true,
-      categories: blogModule.getCategories() });
+      categories: blogModule.getCategories()
+    });
   }
   );
 }
@@ -819,14 +833,16 @@ function searchArticles(req, res, next) {
     if (err) return next(err);
     should.exist(res.rendervar);
     const renderer = new BlogRenderer.HtmlRenderer(null);
-    res.render("collect", { layout: res.rendervar.layout,
+    res.render("collect", {
+      layout: res.rendervar.layout,
       search: search,
       show: show,
       foundArticles: result,
       renderer: renderer,
       placeholder: { categories: {} },
       showCollect: false,
-      categories: blogModule.getCategories() });
+      categories: blogModule.getCategories()
+    });
   }
   );
 }
@@ -846,7 +862,7 @@ function urlExist(req, res) {
     return res.end("OK");
   }
 
-  request.get(url, function(err, response) {
+  request.get(url, { headers: { "User-Agent": userAgent } }, function(err, response) {
     if (!err && response.statusCode === 200) {
       linkCache.set(url, "OK");
       res.end("OK");
@@ -922,8 +938,10 @@ function renderList(req, res, next) {
     if (error) return next(error);
     should.exist(res.rendervar);
     res.set("content-type", "text/html");
-    res.render("articlelist", { layout: res.rendervar.layout,
-      articles: articles });
+    res.render("articlelist", {
+      layout: res.rendervar.layout,
+      articles: articles
+    });
   }
   );
 }

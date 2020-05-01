@@ -388,7 +388,7 @@ function onchangeCollection() {
     if (found) continue;
     window.linklist.push(link);
     if (window.articleReferences[link] && (window.articleReferences[link]).length > 0) {
-      result += '<a class="label label-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
+      result += '<a class="label label-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
     } else result += '<a class="label label-default" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
     result += " " + generateGoogleTranslateLink(link, window.leftLang);
     if (window.rightLang !== "--" && window.rightLang !== "") {

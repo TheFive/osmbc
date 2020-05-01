@@ -180,7 +180,8 @@ function prepareRenderLayout(req, res, next) {
     const scriptUser = config.getValue("scripts").user;
 
     if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
-    res.rendervar.layout = { user: req.user,
+    res.rendervar.layout = {
+      user: req.user,
       htmlroot: htmlRoot,
       url: url,
       languages: languages,

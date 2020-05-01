@@ -172,8 +172,8 @@ describe("uc.article", function() {
     it("should show multiple links from collection", async function() {
 
 
-      checkLink("http://www.test.de/holla","DE");
-      checkLink("http://www.test.de/holla","EN");
+      checkLink("http://www.test.de/holla","DE","DE","http://www.test.de/holla #(Check for Doublette)");
+      checkLink("http://www.test.de/holla","EN","EN", "http://www.test.de/holla #(Check for Doublette)");
 
       // Change collection with two links
       browser.fill("collection", "https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");

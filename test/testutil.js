@@ -31,7 +31,7 @@ var passport = require("passport");
 
 var xmldom = require("xmldom");
 var domparser = new (xmldom.DOMParser)();
-var domcompare = require("domcompare").compare;
+var domcompare = require("dom-compare").compare;
 
 
 // set Test Standard to ignore prototypes for should

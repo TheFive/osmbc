@@ -55,9 +55,11 @@ function renderList(req, res, next) {
     if (error) return next(error);
     should.exist(res.rendervar);
     res.set("content-type", "text/html");
-    res.render("userList", { layout: res.rendervar.layout,
+    res.render("userList", {
+      layout: res.rendervar.layout,
       query: query,
-      users: users });
+      users: users
+    });
   }
   );
 }
@@ -157,12 +159,14 @@ function renderUserId(req, res, next) {
     let view = "user";
     if (req.user.access === "guest") view = "user_guest";
     res.set("content-type", "text/html");
-    res.render(view, { usershown: user,
+    res.render(view, {
+      usershown: user,
       changes: changes,
       params: params,
       userHeatMapArray: userHeatMapArray,
       langlist: config.getLanguages(),
-      layout: res.rendervar.layout });
+      layout: res.rendervar.layout
+    });
   }
   );
 }
@@ -170,7 +174,8 @@ function renderUserId(req, res, next) {
 function postUserId(req, res, next) {
   debug("postUserId");
   var id = req.params.user_id;
-  var changes = { OSMUser: req.body.OSMUser,
+  var changes = {
+    OSMUser: req.body.OSMUser,
     SlackUser: req.body.SlackUser,
     mdWeeklyAuthor: req.body.mdWeeklyAuthor,
     color: req.body.color,
@@ -182,7 +187,8 @@ function postUserId(req, res, next) {
     mailBlogLanguageStatusChange: req.body.mailBlogLanguageStatusChange,
     mailCommentGeneral: req.body.mailCommentGeneral,
     email: req.body.email,
-    access: req.body.access };
+    access: req.body.access
+  };
 
   if (typeof (changes.mailComment) === "string") {
     changes.mailComment = [changes.mailComment];

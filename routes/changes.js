@@ -82,9 +82,11 @@ function renderChangeId(req, res, next) {
     if (!change || typeof (change.id) === "undefined") return next(new Error("Change id >" + id + "< not found."));
     should.exist(res.rendervar);
     res.set("content-type", "text/html");
-    res.render("change", { change: change,
+    res.render("change", {
+      change: change,
       coloredChange: generateHTMLDiff(change.from, change.to),
-      layout: res.rendervar.layout });
+      layout: res.rendervar.layout
+    });
   });
 }
 
