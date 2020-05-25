@@ -93,5 +93,6 @@
   "createGuestUsersAutomatic":true,
   "ReviewInWP":["DE"],
   "scripts":{},
-  "User-Agent": "Hello i am Kitty"
+  "User-Agent": "Hello i am Kitty",
+  "DeeplAPIKey":"Test Key Fake"
 }

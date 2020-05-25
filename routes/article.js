@@ -39,7 +39,7 @@ const uuidv4 = require("uuid/v4");
 const subscriptionKey = config.getValue("MS_TranslateApiKey", { mustExist: true });
 const userAgent = config.getValue("User-Agent", { mustExist: true });
 
-const deeplTranslate = require("deepl-translator");
+const deeplClient = require("deepl-client");
 
 const LRU = require("lru-cache");
 
@@ -1013,8 +1013,15 @@ function fixMarkdownLinks(string) {
   return r;
 }
 
+const deeplAuthKey = config.getValue("DeeplAPIKey");
+
 function translateDeepl(req, res, next) {
   debug("translateDeepl");
+
+  if (typeof deeplAuthKey === "undefined") {
+    res.end("No license for DEEPL configured");
+    return;
+  }
 
   let fromLang = req.params.fromLang;
   let toLang = req.params.toLang;
@@ -1027,8 +1034,15 @@ function translateDeepl(req, res, next) {
   if (toLang === "cz") { toLang = "cs"; }
 
 
-  deeplTranslate.translate(text, toLang.toUpperCase(), fromLang.toUpperCase())
-    .then(result => res.end(fixMarkdownLinks(result.translation)))
+  deeplClient.translate(
+    {
+
+      text: text,
+      source_lang: fromLang.toUpperCase(),
+      destination_lang: toLang.toUpperCase(),
+      auth_key: deeplAuthKey
+    })
+    .then(result => res.end(fixMarkdownLinks(result.translations[0].text)))
     .catch(err => { next(err); });
 }
 

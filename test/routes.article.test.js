@@ -9,7 +9,7 @@ const nock    = require("nock");
 const config  = require("../config.js");
 const mockdate = require("mockdate");
 const HttpStatus = require('http-status-codes');
-const deeplTranslate = require("deepl-translator");
+const deeplClient = require("deepl-client");
 const initialise = require("../util/initialise.js");
 const rp = require("request-promise-native");
 
@@ -824,11 +824,16 @@ describe("routes/article", function() {
         should(params.text).eql("Dies ist ein deutscher Text.");
         return callback(null, "This is an english text.");
       });
-      stub2 = sinon.stub(deeplTranslate, "translate").callsFake(function(text, to, from) {
-        should(from).eql("DE");
-        should(to).eql("EN");
-        should(text).eql("Dies ist ein deutscher Text.");
-        return new Promise((resolve) => { resolve({translation: "This is an english text."}); });
+      stub2 = sinon.stub(deeplClient, "translate").callsFake(function(option) {
+        should(option.source_lang).eql("DE");
+        should(option.destination_lang).eql("EN");
+        should(option.text).eql("Dies ist ein deutscher Text.");
+        should(option.auth_key).eql("Test Key Fake");
+        let result = {};
+        result.translations = [];
+        result.translations[0] = {text:"This is an english text.",source_lang: "DE", destination_lang:"EN"};
+
+        return new Promise((resolve) => { resolve(result); });
       });
     });
     afterEach(function() {
