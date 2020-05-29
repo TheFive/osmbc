@@ -1,29 +1,26 @@
 language: node_js
 
 node_js:
- - "6"
+ - "11"
 
 
 before_install:
- - npm i npm@2.14.4 --global
- - npm install -g bower
+ - npm i npm --global
  - export TRAVIS=TRUE
 
 
 install:
  - npm install
- - npm install codecov.io --save
- - bower install
 
 services:
 
 
 addons:
-  postgresql: "9.6"
+  postgresql: "11"
   apt:
     sources:
       - ubuntu-toolchain-r-test
-  
+
 
 env:
 
@@ -36,4 +33,3 @@ before_script:
 
 script:
   - npm test
-
