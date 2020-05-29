@@ -76,7 +76,7 @@ describe("views/tools", function() {
     should(browser.evaluate("document.getElementById('markdown').value")).eql("![AltText](https://blog.openstreetmap.org/picture.jpg =800x800)\ntest | Picture by test under [CC-BY-SA 3.0](https://creativecommons.org/licenses/by/3.0/)");
   });
   it("should show calendar", async function() {
-    nock("http://localhost:33333")
+    nock("http://127.0.0.1:33333")
       .get("/fakeCalendar")
       .reply(200, {"copyright": "The data is taken from http://wiki.openstreetmap.org/wiki/Template:Calendar and follows its license rules.",
 

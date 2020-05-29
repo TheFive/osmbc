@@ -17,7 +17,7 @@ var testutil = require("./testutil.js");
 var initialise = require("../util/initialise.js");
 
 
-var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
+var baseLink = "http://127.0.0.1:" + config.getServerPort() + config.htmlRoot();
 
 
 describe("routes/tool", function() {
@@ -69,7 +69,7 @@ describe("routes/tool", function() {
   });
   describe("route GET  /tool/calendarAllLang",function(){
     before(function(bddone){
-      nock('http://localhost:33333')
+      nock('http://127.0.0.1:33333')
         .get('/fakeCalendar')
         .reply(200,{events:[]});
       bddone();
