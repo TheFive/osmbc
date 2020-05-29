@@ -52,6 +52,7 @@ describe("routes/article", function() {
 
   before( async function () {
     await initialise.initialiseModules();
+    await testutil.clearDB();
     testutil.startServerSync();
     jar.testUser = await testutil.getUserJar("TestUser");
     jar.userWith3Lang  = await testutil.getUserJar("UserWith3Lang");
@@ -827,7 +828,7 @@ describe("routes/article", function() {
       stub2 = sinon.stub(deeplClient, "translate").callsFake(function(option) {
         should(option.source_lang).eql("DE");
         should(option.destination_lang).eql("EN");
-        should(option.text).eql("Dies ist ein deutscher Text.");
+        should(option.text).eql("<p>Dies ist ein deutscher Text.</p>\n");
         should(option.auth_key).eql("Test Key Fake");
         let result = {};
         result.translations = [];

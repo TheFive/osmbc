@@ -7,7 +7,7 @@ const markdown    = require("markdown-it")();
 const debug       = require("debug")("OSMBC:routes:article");
 const path        = require("path");
 const HttpStatus  = require("http-status-codes");
-var TurndownService = require('turndown')
+const TurndownService = require("turndown");
 
 const router      = express.Router();
 const slackrouter = express.Router();
@@ -1037,7 +1037,7 @@ function translateDeepl(req, res, next) {
 
   deeplClient.translate(
     {
-      text: text,
+      text: htmltext,
       source_lang: fromLang.toUpperCase(),
       destination_lang: toLang.toUpperCase(),
       auth_key: deeplAuthKey,
@@ -1045,7 +1045,7 @@ function translateDeepl(req, res, next) {
     })
     .then(result => {
       var htmlresult = result.translations[0].text;
-      var turndownService = new TurndownService()
+      var turndownService = new TurndownService();
       var mdresult = turndownService.turndown(htmlresult);
       res.end(mdresult);
     })
