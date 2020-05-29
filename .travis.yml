@@ -13,10 +13,11 @@ install:
  - npm install
 
 services:
+  - postgresql
 
 
 addons:
-  postgresql: "11"
+
   apt:
     sources:
       - ubuntu-toolchain-r-test
