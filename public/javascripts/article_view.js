@@ -19,6 +19,7 @@ function unloadWindowWarning(event) {
   event.returnValue = dialogText;
   return dialogText;
 }
+var window;
 
 var mdRender;
 // initialise all callbacks with jQuery
@@ -608,5 +609,3 @@ function translate(langFrom, langTo, service) {
     $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
   }
 }
-
-
