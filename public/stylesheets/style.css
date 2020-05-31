@@ -64,8 +64,8 @@ border: 0 none;
   margin: 5px;
 }
 pre-code {
-    word-wrap: normal;
-    white-space: pre;
+  word-wrap: normal;
+  white-space: pre;
 }
 
 
@@ -296,4 +296,3 @@ table {
 .preview > div.wp-caption  {
   max-width: 320px;
 }
-
