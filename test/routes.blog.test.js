@@ -471,7 +471,7 @@ describe("routes/blog", function() {
         url: baseLink + "/blog/WN999",
         jar: jar.testUser, simple: false, resolveWithFullResponse: true});
       should(response.statusCode).eql(404);
-      response.body.should.containEql("<h1>Not Found</h1>");
+      response.body.should.containEql("<h1>Page Not Found</h1>");
     });
     it("should call next if blog exists twice", async function () {
       await blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"});

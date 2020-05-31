@@ -813,8 +813,8 @@ describe("routes/article", function() {
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
   });
-  describe("route POST /translate/deepl/:fromLang/:toLang", function() {
-    let url = baseLink + "/article/translate/deepl/DE/EN";
+  describe("route POST /translate/deeplPro/:fromLang/:toLang", function() {
+    let url = baseLink + "/article/translate/deeplPro/DE/EN";
     let form = {text: "Dies ist ein deutscher Text."};
     let stub;
     let stub2;

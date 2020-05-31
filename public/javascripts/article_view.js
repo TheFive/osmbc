@@ -19,7 +19,6 @@ function unloadWindowWarning(event) {
   event.returnValue = dialogText;
   return dialogText;
 }
-var window;
 
 var mdRender;
 // initialise all callbacks with jQuery

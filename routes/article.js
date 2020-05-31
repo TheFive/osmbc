@@ -1024,8 +1024,8 @@ function fixMarkdownLinks(string) {
 
 const deeplAuthKey = config.getValue("DeeplAPIKey");
 
-function translateDeepl(req, res, next) {
-  debug("translateDeepl");
+function translateDeeplPro(req, res, next) {
+  debug("translateDeeplPro");
 
   if (typeof deeplAuthKey === "undefined") {
     res.end("No license for DEEPL configured");
@@ -1134,7 +1134,7 @@ router.get("/searchandcreate", allowGuestAccess, searchAndCreate);
 router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);
-router.post("/translate/deepl/:fromLang/:toLang", allowFullAccess, translateDeepl);
+router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateDeeplPro);
 router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateBing);
 router.post("/urlexist", allowGuestAccess, urlExist);
 
