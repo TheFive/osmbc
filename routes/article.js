@@ -126,6 +126,13 @@ function renderArticleId(req, res, next) {
   params.lang3 = req.user.getLang3();
   params.lang4 = req.user.getLang4();
   params.editComment = null;
+  var mainTranslationService = "deepl";
+  var translationServices = ["bing", "deepl"];
+  if (config.getValue("DeeplAPIKey")) {
+    mainTranslationService = "deeplPro";
+    translationServices.push("deeplPro");
+  }
+
   if (req.query.editComment) params.editComment = req.query.editComment;
   if (req.query.notranslation) params.notranslation = req.query.notranslation;
   let collectedByGuest = false;
@@ -267,7 +274,9 @@ function renderArticleId(req, res, next) {
       categories: categories,
       languageFlags: languageFlags,
       accessMap: result.accessMap,
-      collectedByGuest: collectedByGuest
+      collectedByGuest: collectedByGuest,
+      mainTranslationService: mainTranslationService,
+      translationServices: translationServices
     });
   }
   );
@@ -1035,14 +1044,14 @@ function translateDeepl(req, res, next) {
 
   var htmltext = markdown.render(text);
 
-  deeplClient.translate(
-    {
-      text: htmltext,
-      source_lang: fromLang.toUpperCase(),
-      destination_lang: toLang.toUpperCase(),
-      auth_key: deeplAuthKey,
-      tag_handling: "xml"
-    })
+  var deeplParams = {};
+  deeplParams.text = htmltext;
+  deeplParams.source_lang = fromLang.toUpperCase();
+  deeplParams.target_lang = toLang.toUpperCase();
+  deeplParams.auth_key = deeplAuthKey;
+  deeplParams.tag_handling = "xml";
+
+  deeplClient.translate(deeplParams)
     .then(result => {
       var htmlresult = result.translations[0].text;
       var turndownService = new TurndownService();

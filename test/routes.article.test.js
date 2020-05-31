@@ -827,12 +827,12 @@ describe("routes/article", function() {
       });
       stub2 = sinon.stub(deeplClient, "translate").callsFake(function(option) {
         should(option.source_lang).eql("DE");
-        should(option.destination_lang).eql("EN");
+        should(option.target_lang).eql("EN");
         should(option.text).eql("<p>Dies ist ein deutscher Text.</p>\n");
         should(option.auth_key).eql("Test Key Fake");
         let result = {};
         result.translations = [];
-        result.translations[0] = {text:"This is an english text.",source_lang: "DE", destination_lang:"EN"};
+        result.translations[0] = {text:"This is an english text.",source_lang: "DE", target_lang:"EN"};
 
         return new Promise((resolve) => { resolve(result); });
       });
