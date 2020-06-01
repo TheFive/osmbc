@@ -1,0 +1,127 @@
+"use strict";
+
+const request = require("request");
+const uuidv4 = require("uuid/v4");
+
+const markdown    = require("markdown-it")();
+
+const TurndownService = require("turndown");
+
+const config    = require("../config.js");
+
+const debug       = require("debug")("OSMBC:model:translator");
+
+
+const deeplClient = require("deepl-client");
+
+function normLanguage(lang) {
+  if (lang === "cz") lang = "cs";
+  if (lang === "jp") lang = "ja";
+  return lang;
+}
+
+const deeplAuthKey = config.getValue("DeeplAPIKey");
+
+function translateDeeplPro(options, callback) {
+  debug("translateDeeplPro");
+
+  if (typeof deeplAuthKey === "undefined") {
+    return new Error("No Deepl Pro Version registered");
+  }
+
+  const fromLang = normLanguage(options.fromLang);
+  const toLang = normLanguage(options.toLang);
+  const text = options.text;
+
+  var htmltext = markdown.render(text);
+
+  var deeplParams = {};
+  deeplParams.text = htmltext;
+  deeplParams.source_lang = fromLang.toUpperCase();
+  deeplParams.target_lang = toLang.toUpperCase();
+  deeplParams.auth_key = deeplAuthKey;
+  deeplParams.tag_handling = "xml";
+
+  deeplClient.translate(deeplParams)
+    .then(result => {
+      var htmlresult = result.translations[0].text;
+      var turndownService = new TurndownService();
+      var mdresult = turndownService.turndown(htmlresult);
+      return callback(null, mdresult);
+    })
+    .catch(err => { return callback(err); });
+}
+function deeplProActive () {
+  return (typeof deeplAuthKey === "string");
+}
+
+const subscriptionKey = config.getValue("MS_TranslateApiKey");
+
+const msTranslate = {
+  translate: function(from, to, text, callback) {
+    const options = {
+      method: "POST",
+      baseUrl: "https://api.cognitive.microsofttranslator.com/",
+      url: "translate",
+      qs: {
+        "api-version": "3.0",
+        from: from,
+        to: to
+      },
+      headers: {
+        "Ocp-Apim-Subscription-Key": subscriptionKey,
+        "Content-type": "application/json",
+        "X-ClientTraceId": uuidv4().toString()
+      },
+      body: [{
+        text: text
+      }],
+      json: true
+    };
+
+    request(options, function(err, response, body) {
+      callback(err, body[0].translations[0].text);
+    });
+  }
+};
+
+function bingProActive () {
+  return (typeof subscriptionKey === "string");
+}
+
+function translateBingPro(options, callback) {
+  debug("translateBingPro");
+
+  if (typeof subscriptionKey === "undefined") {
+    return new Error("No Bing Pro Version registered");
+  }
+
+  const fromLang = normLanguage(options.fromLang);
+  const toLang = normLanguage(options.toLang);
+  const text = options.text;
+
+  var htmltext = markdown.render(text);
+
+  msTranslate.translate(fromLang, toLang, htmltext, function(err, translation) {
+    if (err) return callback(err);
+    var turndownService = new TurndownService();
+    var mdresult = turndownService.turndown(translation);
+    return callback(null, mdresult);
+  });
+}
+
+
+
+module.exports.deeplPro = {};
+module.exports.bingPro = {};
+module.exports.fortestonly = {};
+
+module.exports.deeplPro.translate = translateDeeplPro;
+module.exports.deeplPro.active = deeplProActive;
+module.exports.deeplPro.name = "DeepLPro";
+
+module.exports.bingPro.translate = translateBingPro;
+module.exports.bingPro.active = bingProActive;
+module.exports.bingPro.name = "BingPro";
+
+module.exports.fortestonly.msTransClient = msTranslate;

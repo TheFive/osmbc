@@ -7,7 +7,7 @@ const markdown    = require("markdown-it")();
 const debug       = require("debug")("OSMBC:routes:article");
 const path        = require("path");
 const HttpStatus  = require("http-status-codes");
-const TurndownService = require("turndown");
+
 
 const router      = express.Router();
 const slackrouter = express.Router();
@@ -27,6 +27,7 @@ const logModule     = require("../model/logModule.js");
 const configModule  = require("../model/config.js");
 const userModule    = require("../model/user.js");
 const htmltitle     = require("../model/htmltitle.js");
+const translator    = require("../model/translator.js");
 
 const auth          = require("../routes/auth.js");
 
@@ -35,11 +36,10 @@ require("jstransformer")(require("jstransformer-markdown-it"));
 
 
 const request = require("request");
-const uuidv4 = require("uuid/v4");
-const subscriptionKey = config.getValue("MS_TranslateApiKey", { mustExist: true });
+
+
 const userAgent = config.getValue("User-Agent", { mustExist: true });
 
-const deeplClient = require("deepl-client");
 
 const LRU = require("lru-cache");
 
@@ -128,7 +128,7 @@ function renderArticleId(req, res, next) {
   params.editComment = null;
   var mainTranslationService = "deepl";
   var translationServices = ["bing", "deepl"];
-  if (config.getValue("DeeplAPIKey")) {
+  if (translator.deeplPro.active()) {
     mainTranslationService = "deeplPro";
     translationServices.push("deeplPro");
   }
@@ -1022,92 +1022,29 @@ function fixMarkdownLinks(string) {
   return r;
 }
 
-const deeplAuthKey = config.getValue("DeeplAPIKey");
 
-function translateDeeplPro(req, res, next) {
-  debug("translateDeeplPro");
+function translateWithPlugin(translatePlugin) {
+  return function(req, res) {
+    debug("translateWithPlugin %s", translatePlugin);
 
-  if (typeof deeplAuthKey === "undefined") {
-    res.end("No license for DEEPL configured");
-    return;
-  }
+    if (!translator[translatePlugin].active()) {
+      res.end("No license for " + translator[translatePlugin].name + " configured");
+      return;
+    }
 
-  let fromLang = req.params.fromLang;
-  let toLang = req.params.toLang;
-  const text = req.body.text;
-
-  if (fromLang === "jp") { fromLang = "ja"; }
-  if (toLang === "jp") { toLang = "ja"; }
-
-  if (fromLang === "cz") { fromLang = "cs"; }
-  if (toLang === "cz") { toLang = "cs"; }
-
-  var htmltext = markdown.render(text);
-
-  var deeplParams = {};
-  deeplParams.text = htmltext;
-  deeplParams.source_lang = fromLang.toUpperCase();
-  deeplParams.target_lang = toLang.toUpperCase();
-  deeplParams.auth_key = deeplAuthKey;
-  deeplParams.tag_handling = "xml";
-
-  deeplClient.translate(deeplParams)
-    .then(result => {
-      var htmlresult = result.translations[0].text;
-      var turndownService = new TurndownService();
-      var mdresult = turndownService.turndown(htmlresult);
-      res.end(mdresult);
-    })
-    .catch(err => { next(err); });
-}
-
-const msTranslate = {
-  translate: function(from, to, text, callback) {
-    const options = {
-      method: "POST",
-      baseUrl: "https://api.cognitive.microsofttranslator.com/",
-      url: "translate",
-      qs: {
-        "api-version": "3.0",
-        from: from,
-        to: to
-      },
-      headers: {
-        "Ocp-Apim-Subscription-Key": subscriptionKey,
-        "Content-type": "application/json",
-        "X-ClientTraceId": uuidv4().toString()
-      },
-      body: [{
-        text: text
-      }],
-      json: true
+    var options = {
+      fromLang: req.params.fromLang,
+      toLang: req.params.toLang,
+      text: req.body.text
     };
-
-    request(options, function(err, response, body) {
-      callback(err, body[0].translations[0].text);
+    translator[translatePlugin].translate(options, function(err, result) {
+      if (err) {
+        return res.end(err.message);
+      }
+      return res.end(result);
     });
-  }
-};
-
-function translateBing(req, res, next) {
-  debug("translateBing");
-
-  let fromLang = req.params.fromLang;
-  let toLang = req.params.toLang;
-  const text = req.body.text;
-
-  if (fromLang === "jp") { fromLang = "ja"; }
-  if (toLang === "jp") { toLang = "ja"; }
-
-  if (fromLang === "cz") { fromLang = "cs"; }
-  if (toLang === "cz") { toLang = "cs"; }
-
-  msTranslate.translate(fromLang, toLang, text, function(err, translation) {
-    if (err) return next(err);
-    res.end(translation);
-  });
+  };
 }
-
 
 function isFirstCollector(req, res, next) {
   if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
@@ -1134,8 +1071,8 @@ router.get("/searchandcreate", allowGuestAccess, searchAndCreate);
 router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);
-router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateDeeplPro);
-router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateBing);
+router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
+router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateWithPlugin("bingPro"));
 router.post("/urlexist", allowGuestAccess, urlExist);
 
 router.param("article_id", getArticleFromID);
@@ -1164,5 +1101,4 @@ module.exports.slackrouter = slackrouter;
 
 module.exports.fortestonly = {};
 module.exports.fortestonly.getArticleFromID = getArticleFromID;
-module.exports.fortestonly.msTransClient = msTranslate;
 module.exports.fortestonly.fixMarkdownLinks = fixMarkdownLinks;
