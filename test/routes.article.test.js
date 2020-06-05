@@ -16,6 +16,7 @@ const rp = require("request-promise-native");
 const articleModule = require("../model/article.js");
 
 const articleRouterForTestOnly = require("../routes/article.js").fortestonly;
+const bingTranslatorForTestOnly = require("../model/translator.js").fortestonly;
 
 const testutil = require("./testutil.js");
 
@@ -819,7 +820,7 @@ describe("routes/article", function() {
     let stub;
     let stub2;
     beforeEach(function() {
-      stub = sinon.stub(articleRouterForTestOnly.msTransClient, "translate").callsFake(function(params, callback) {
+      stub = sinon.stub(bingTranslatorForTestOnly.msTransClient, "translate").callsFake(function(params, callback) {
         should(params.from).eql("DE");
         should(params.to).eql("EN");
         should(params.text).eql("Dies ist ein deutscher Text.");

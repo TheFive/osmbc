@@ -590,14 +590,14 @@ function translate(langFrom, langTo, service) {
   var to = langTo.toLowerCase();
   var originalText = document.getElementById("preview" + langFrom).innerText;
 
-  if (service === "deeplPro") {
+  if (service === "deeplPro" || service === "bing") {
     originalText = document.getElementById("markdown" + langFrom).value;
   }
 
   if (service !== "deepl") {
     jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
       console.info("Translation received");
-      data = data.replace(/] \(/g, "](");
+      // data = data.replace(/] \(/g, "](");
       $(".translateWait" + langFrom + langTo).addClass("hidden");
       $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
       $("#markdown" + langTo).val(data).trigger("change");
