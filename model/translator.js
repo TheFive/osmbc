@@ -3,7 +3,9 @@
 const request = require("request");
 const uuidv4 = require("uuid/v4");
 
-const markdown    = require("markdown-it")();
+const markdown = require("markdown-it")()
+  .use(require("markdown-it-sup"))
+  .use(require("markdown-it-imsize"), { autofill: true });
 
 const TurndownService = require("turndown");
 
@@ -19,6 +21,12 @@ function normLanguage(lang) {
   if (lang === "jp") lang = "ja";
   return lang;
 }
+
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
+
 
 const deeplAuthKey = config.getValue("DeeplAPIKey");
 
@@ -47,6 +55,16 @@ function translateDeeplPro(options, callback) {
       var htmlresult = result.translations[0].text;
       var turndownService = new TurndownService();
       var mdresult = turndownService.turndown(htmlresult);
+      mdresult = mdresult.replace(
+        RegExp(
+          escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang), "g"),
+        "https://translate.google.com/translate?sl=auto&tl=" + toLang
+      );
+      mdresult = mdresult.replace(
+        RegExp(
+          escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang.toUpperCase()), "g"),
+        "https://translate.google.com/translate?sl=auto&tl=" + toLang.toUpperCase()
+      );
       return callback(null, mdresult);
     })
     .catch(err => { return callback(err); });
@@ -66,7 +84,8 @@ const msTranslate = {
       qs: {
         "api-version": "3.0",
         from: from,
-        to: to
+        to: to,
+        textType: "html"
       },
       headers: {
         "Ocp-Apim-Subscription-Key": subscriptionKey,
@@ -80,10 +99,13 @@ const msTranslate = {
     };
 
     request(options, function(err, response, body) {
-      callback(err, body[0].translations[0].text);
+      if (body && body.error) err = new Error(body.error.message);
+      if (err) return callback(err);
+      callback(null, body[0].translations[0].text);
     });
   }
 };
+
 
 function bingProActive () {
   return (typeof subscriptionKey === "string");
@@ -102,10 +124,19 @@ function translateBingPro(options, callback) {
 
   var htmltext = markdown.render(text);
 
+
   msTranslate.translate(fromLang, toLang, htmltext, function(err, translation) {
     if (err) return callback(err);
     var turndownService = new TurndownService();
     var mdresult = turndownService.turndown(translation);
+    mdresult = mdresult.replace(
+      RegExp(
+        escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang), "g"),
+      "https://translate.google.com/translate?sl=auto&tl=" + toLang);
+    mdresult = mdresult.replace(
+      RegExp(
+        escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang.toUpperCase()), "g"),
+      "https://translate.google.com/translate?sl=auto&tl=" + toLang.toUpperCase());
     return callback(null, mdresult);
   });
 }
