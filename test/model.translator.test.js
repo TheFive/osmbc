@@ -79,7 +79,7 @@ describe("model/translator", function() {
 
   it("should translate a simple text with deepl", function (bddone) {
     const originTextMd = "Originaler Text";
-    const originTextHtml = "<p>Originaler Text</p>\n";
+    // const originTextHtml = "<p>Originaler Text</p>\n";
     const translatedTextHtml = "<p>This is the translated Text<p>\n";
     const translatedTextMd = "This is the translated Text";
 
@@ -102,7 +102,7 @@ describe("model/translator", function() {
 
   it("should translate a text with link with deepl", function (bddone) {
     const originTextMd = "Originaler Text mit [Markdown](https://markdown.link/demo) Link";
-    const originTextHtml = '<p>Originaler Text mit <a href="https://markdown.link/demo">Markdown</a> Link</p>\n';
+    // const originTextHtml = '<p>Originaler Text mit <a href="https://markdown.link/demo">Markdown</a> Link</p>\n';
     const translatedTextHtml = '<p>Translated Text with <a href="https://markdown.link/demo">Markdown</a> Link</p>\n';
     const translatedTextMd = "Translated Text with [Markdown](https://markdown.link/demo) Link";
 
@@ -125,7 +125,7 @@ describe("model/translator", function() {
 
   it("should translate a text with two automatic Links with deepl", function (bddone) {
     const originTextMd = "Link (automatische [Übersetzung](https://translate.google.com/translate?sl=auto&tl=DE&u=https://forum.openstreetmap.org/viewtopic.php?pid=786827#p786827)) und zweiter LInk (automatische [Übersetzung](https://translate.google.com/translate?sl=auto&tl=DE&u=https://hide.webhop.me/mapsme/daily/))";
-    const originTextHtml = '<p>Link (automatische <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://forum.openstreetmap.org/viewtopic.php?pid=786827#p786827">Übersetzung</a>) und zweiter LInk (automatische <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://hide.webhop.me/mapsme/daily/">Übersetzung</a>)</p>\n';
+    // const originTextHtml = '<p>Link (automatische <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://forum.openstreetmap.org/viewtopic.php?pid=786827#p786827">Übersetzung</a>) und zweiter LInk (automatische <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://hide.webhop.me/mapsme/daily/">Übersetzung</a>)</p>\n';
     const translatedTextHtml = '<p>Lien <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://forum.openstreetmap.org/viewtopic.php?pid=786827#p786827">(traduction automatique)</a>et deuxième LInk <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://hide.webhop.me/mapsme/daily/">(traduction automatique)</a></p>\n';
     const translatedTextMd = "Lien [(traduction automatique)](https://translate.google.com/translate?sl=auto&tl=FR&u=https://forum.openstreetmap.org/viewtopic.php?pid=786827#p786827)et deuxième LInk [(traduction automatique)](https://translate.google.com/translate?sl=auto&tl=FR&u=https://hide.webhop.me/mapsme/daily/)";
 
