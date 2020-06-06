@@ -62,6 +62,30 @@
                 
               </ul>
             </li>
+            <li class="dropdown hidden-xs" id="translation"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Translate<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header">Use deeplPro:
+                  </li><li><a class="translateDEEN" name="translateDEEN" onclick="window.translate('DE','EN','deeplPro');return false;">Translate DE-&gt;EN</a></li>
+                  <li class="bg-warning hidden translateWaitDEEN"><a> Please Wait</a></li>
+                  <li class="bg-danger hidden translateErrorDEEN"><a>Translate DE-&gt;EN <span class="glyphicon glyphicon-remove"></span></a></li>
+                  <li class="hidden translateDoneDEEN deeplPro"><a>Translate DE-&gt;EN <span class="glyphicon glyphicon-ok"></span></a></li>
+                  <li><a class="translateENDE" name="translateENDE" onclick="window.translate('EN','DE','deeplPro');return false;">Translate EN-&gt;DE</a></li>
+                  <li class="bg-warning hidden translateWaitENDE"><a> Please Wait</a></li>
+                  <li class="bg-danger hidden translateErrorENDE"><a>Translate EN-&gt;DE <span class="glyphicon glyphicon-remove"></span></a></li>
+                  <li class="hidden translateDoneENDE deeplPro"><a>Translate EN-&gt;DE <span class="glyphicon glyphicon-ok"></span></a></li>
+                
+                <li class="dropdown-header">Use bing:
+                  </li><li><a class="translateDEEN" name="translateDEEN" onclick="window.translate('DE','EN','bing');return false;">Translate DE-&gt;EN</a></li>
+                  <li class="bg-warning hidden translateWaitDEEN"><a> Please Wait</a></li>
+                  <li class="bg-danger hidden translateErrorDEEN"><a>Translate DE-&gt;EN <span class="glyphicon glyphicon-remove"></span></a></li>
+                  <li class="hidden translateDoneDEEN bing"><a>Translate DE-&gt;EN <span class="glyphicon glyphicon-ok"></span></a></li>
+                  <li><a class="translateENDE" name="translateENDE" onclick="window.translate('EN','DE','bing');return false;">Translate EN-&gt;DE</a></li>
+                  <li class="bg-warning hidden translateWaitENDE"><a> Please Wait</a></li>
+                  <li class="bg-danger hidden translateErrorENDE"><a>Translate EN-&gt;DE <span class="glyphicon glyphicon-remove"></span></a></li>
+                  <li class="hidden translateDoneENDE bing"><a>Translate EN-&gt;DE <span class="glyphicon glyphicon-ok"></span></a></li>
+                
+              </ul>
+            </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Help<span class="caret"></span></a>
@@ -3238,5 +3262,25 @@ Los invitamos a la 1ra. Jornada de Mapeo Libre #OpenStreetMap en la Univ Autóno
       });
     });
   
+  }
+  
+  function translate(langFrom, langTo, service) {
+    $(".translate" + langFrom + langTo).addClass("hidden");
+    $(".translateWait" + langFrom + langTo).removeClass("hidden");
+    var from =  langFrom.toLowerCase();
+    var to = langTo.toLowerCase();
+  
+    let url =window.htmlroot + "/blog/WN290/translate/" + service + "/" + from + "/" + to;
+  
+  
+  
+    jQuery.post(window.htmlroot + "/blog/WN290/translate/" + service + "/" + from + "/" + to, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Translation failed");
+      console.error(err);
+      $(".translateWait" + langFrom + langTo).addClass("hidden");
+      $(".translateError" + langFrom + langTo).removeClass("hidden");
+    });
   }
 </script></body></html>

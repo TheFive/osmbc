@@ -634,6 +634,12 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
 
   fromLang = fromLang.toUpperCase();
   toLang = toLang.toUpperCase();
+  if (fromLang === "DE-LESS") fromLang = "DE-Less";
+  if (toLang === "DE-LESS") toLang = "DE-Less";
+
+  if (fromLang === "DE-MORE") fromLang = "DE-More";
+  if (toLang === "DE-MORE") toLang = "DE-More";
+
 
   if (!this.isEditable(toLang)) return callback(new Error(toLang + " can not be edited"));
 
@@ -665,7 +671,6 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
 
 
         const options = { fromLang: fromLang, toLang: toLang, text: source };
-
 
         if (translator[service] && translator[service].active) {
           translator[service].translate(options, function(err, text) {

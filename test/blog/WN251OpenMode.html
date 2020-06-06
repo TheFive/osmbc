@@ -63,6 +63,14 @@
                 
               </ul>
             </li>
+            <li class="dropdown hidden-xs" id="translation"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Translate<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header">Use deeplPro:
+                </li>
+                <li class="dropdown-header">Use bing:
+                </li>
+              </ul>
+            </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Help<span class="caret"></span></a>
@@ -451,5 +459,25 @@
       });
     });
   
+  }
+  
+  function translate(langFrom, langTo, service) {
+    $(".translate" + langFrom + langTo).addClass("hidden");
+    $(".translateWait" + langFrom + langTo).removeClass("hidden");
+    var from =  langFrom.toLowerCase();
+    var to = langTo.toLowerCase();
+  
+    let url =window.htmlroot + "/blog/WN251/translate/" + service + "/" + from + "/" + to;
+  
+  
+  
+    jQuery.post(window.htmlroot + "/blog/WN251/translate/" + service + "/" + from + "/" + to, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Translation failed");
+      console.error(err);
+      $(".translateWait" + langFrom + langTo).addClass("hidden");
+      $(".translateError" + langFrom + langTo).removeClass("hidden");
+    });
   }
 </script></body></html>
