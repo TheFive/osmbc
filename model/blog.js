@@ -18,6 +18,7 @@ const configModule        = require("../model/config.js");
 const logModule           = require("../model/logModule.js");
 const messageCenter       = require("../notification/messageCenter.js");
 const userModule          = require("../model/user.js");
+const translator          = require("../model/translator.js");
 const schedule            = require("node-schedule");
 
 const pgMap = require("./pgMap.js");
@@ -624,9 +625,11 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang
 
 Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLang, toLang, service, callback) {
   debug("translateAllArticles");
-  should(typeof (user)).eql("object");
-  should(typeof (fromLang)).eql("string");
-  should(typeof (toLang)).eql("string");
+  should(typeof user).eql("object");
+  should(typeof fromLang).eql("string");
+  should(typeof toLang).eql("string");
+  should(typeof service).eql("string");
+  should(typeof callback).eql("function");
 
   if (!this.isEditable(toLang)) return callback(new Error(toLang + " can not be edited"));
 
@@ -643,27 +646,33 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
       });
     },
     function copyArticles(cb) {
+      debug("copyArticles");
       async.forEach(articleList, function(article, cb2) {
+        debug("copyArticles.forEach");
+
         // to lang already defined
+
         if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
         if (!article["markdown" + fromLang]) return cb2();
 
-
-        let source = article["markdown" + fromLang];
+        const source = article["markdown" + fromLang];
 
         if (source === "no translation") return cb2();
 
-        let options = {fromLang: fromLang, toLang: toLang, text: source};
+        const options = { fromLang: fromLang, toLang: toLang, text: source };
 
-        if (translator[service] && translator[service].active)
-          translator[service].translate(options, function(err, text){
+        if (translator[service] && translator[service].active) {
+          translator[service].translate(options, function(err, text) {
+            if (err) return cb2(err);
             const data = {};
             data["markdown" + toLang] = text;
             data.old = {};
             data.old["markdown" + toLang] = "";
+            debug("copyArticles.forEach.setAndSave");
 
             article.setAndSave(user, data, cb2);
           });
+        } else return cb2();
       }, cb);
     }
   ], callback);
@@ -1023,4 +1032,3 @@ module.exports.autoCloseBlog = autoCloseBlog;
 
 // sort article
 module.exports.sortArticles = sortArticles;
-
