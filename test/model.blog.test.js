@@ -671,4 +671,62 @@ describe("model/blog", function() {
       });
     });
   });
+  describe("translateAllArticles", function () {
+    beforeEach(function(bddone) {
+      testutil.importData({ clear: true,
+        blog: [{ name: "WN1", status: "edit" }],
+        article: [{ blog: "WN1", title: "first", id: 1, markdownDE: "Deutscher *Text*" },
+          { blog: "WN1", title: "first", id: 2, markdownDE: "Deutscher *Text*", markdownEN: "English Text already translated." },
+          { blog: "WN1", title: "first", id: 3, markdownEN: "English Text, no german one." },
+          { blog: "WN1", title: "first", id: 4 }
+        ] }, bddone);
+    });
+    it("should translate article and write changelog", function(bddone) {
+      nock("https://api.deepl.com/v2/usage")
+        .get(uri => uri.includes('/v2/translate?auth_key=Test%20Key%20Fake&source_lang=DE&tag_handling=xml&target_lang=EN&text=%3Cp%3EDeutscher%20%3Cem%3EText%3C%2Fem%3E%3C%2Fp%3E%0A'))
+        .reply(200, {translations: [{ detected_source_language: "EN",text: "<p>English <b>text</b></p>"}]
+      });
+      blogModule.findOne({name:"WN1"},function(err,blog){
+        should.not.exist(err);
+        should.exist(blog);
+        blog.translateAllArticles({OSMUser:"Test"},"DE","EN","deeplPro",function(err){
+          should.not.exist(err);
+
+          articleModule.find({},function(err,result){
+            should.not.exist(err);
+            should(result.length).eql(4);
+            should(result[0].version).eql(2);
+            should(result[0].markdownEN).eql("English **text**");
+            should(result[1].version).eql(1);
+            should(result[1].markdownEN).eql("English Text already translated.");
+            should(result[2].version).eql(1);
+            should(result[2].markdownEN).eql("English Text, no german one.");
+            should(result[3].version).eql(1);
+            should(result[3].markdownEN).eql(undefined);
+            logModule.find({table:"article"},function(err,result){
+              should(result.length).eql(1);
+              should(result[0].blog).eql("WN1");
+              should(result[0].user).eql("Test");
+              should(result[0].to).eql("English **text**");
+              bddone();
+            });
+          });
+        });
+      });
+    });
+    it("should copy article fail when closed", function(bddone) {
+      blogModule.findOne({name:"WN1"},function(err,blog){
+        should.not.exist(err);
+        should.exist(blog);
+        blog.closeBlog({user:{OSMUser:"Test"},lang:"EN",status:true},function(err){
+          should.not.exist(err);
+          blog.copyAllArticles({OSMUser:"Test"},"DE","EN",function(err){
+            should.exist(err);
+            should(err.message).eql("EN can not be edited");
+            bddone();
+          });
+        });
+      });
+    });
+  });
 });

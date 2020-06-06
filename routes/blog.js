@@ -18,6 +18,7 @@ const blogModule     = require("../model/blog.js");
 const blogRenderer   = require("../render/BlogRenderer.js");
 const logModule      = require("../model/logModule.js");
 const userModule     = require("../model/user.js");
+const translator     = require("../model/translator.js");
 
 const auth        = require("../routes/auth.js");
 
@@ -423,6 +424,21 @@ function renderBlogTab(req, res, next) {
       return;
     }
 
+    var translationServices = [];
+    if (translator.deeplPro.active()) {
+      translationServices.push("deeplPro");
+    }
+    if (translator.bingPro.active()) {
+      translationServices.push("bing");
+    }
+    var params = {};
+    params.edit = req.query.edit;
+    params.left_lang = req.user.getMainLang();
+    params.right_lang = req.user.getSecondLang();
+    params.lang3 = req.user.getLang3();
+    params.lang4 = req.user.getLang4();
+    params.editComment = null;
+
     const renderer = new blogRenderer.HtmlRenderer(blog);
     res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
     res.render("blog_" + tab.toLowerCase(), {
@@ -441,7 +457,9 @@ function renderBlogTab(req, res, next) {
       reviewInWP: reviewInWP,
       reviewScripts: reviewScripts,
       util: util,
-      categories: blog.getCategories()
+      categories: blog.getCategories(),
+      translationServices: translationServices,
+      params: params
     });
   }
   );
@@ -459,6 +477,25 @@ function copyAllArticles(req, res, next) {
   const toLang = req.params.toLang;
 
   blog.copyAllArticles(user, fromLang, toLang, function (err) {
+    if (err) return next(err);
+    const referer = req.header("Referer") || "/";
+    res.redirect(referer);
+  });
+}
+
+function translateAllArticles(req, res, next) {
+  debug("translateAllArticles");
+
+  const blog = req.blog;
+  if (!blog) return next();
+
+  const user = req.user;
+
+  const fromLang = req.params.fromLang;
+  const toLang = req.params.toLang;
+  const service = req.params.service;
+
+  blog.translateAllArticles(user, fromLang, toLang, service, function (err) {
     if (err) return next(err);
     const referer = req.header("Referer") || "/";
     res.redirect(referer);
@@ -535,6 +572,7 @@ router.post("/:blog_id/setReviewComment", auth.checkRole(["full"]), setReviewCom
 router.post("/:blog_id/editReviewComment/:index", auth.checkRole(["full"]), editReviewComment);
 router.post("/:blog_id/setLangStatus", auth.checkRole(["full"]), setBlogStatus);
 router.post("/:blog_id/copy/:fromLang/:toLang", auth.checkRole(["full"]), copyAllArticles);
+router.post("/:blog_id/translate/:service/:fromLang/:toLang/", auth.checkRole(["full"]), translateAllArticles);
 
 
 router.get("/create", auth.checkRole(["full"]), createBlog);
@@ -547,4 +585,3 @@ router.get("/:blog_id/:tab", auth.checkRole(["full"]), renderBlogTab);
 
 
 module.exports.router = router;
-

@@ -61,21 +61,6 @@ mixin articleTranslateButton(langFrom,langTo)
     button.btn.btn-small.btn-danger.hidden(class="translateError"+langFrom+langTo)
       span="Error occured"
 
-mixin articleTranslateMenu(langFrom,langTo,service)
-  if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
-    li
-      a(
-        class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
-        onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
-        )="Translate " + langFrom+  "->" +langTo
-    li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
-      a=" Please Wait"
-    li.bg-danger.hidden(class="translateError" + langFrom + langTo)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-remove
-    li.hidden(class="translateDone" + langFrom + langTo+" "+service)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-ok
 
 
 mixin saveButton
@@ -119,6 +104,23 @@ mixin markdownWithPreview(lang)
   +articleMarkdown(lang,!article.isChangeAllowed("markdown" + lang))
   +articlePreview(lang)
   +articleTextanalyse(lang)
+
+mixin articleTranslateMenu(langFrom,langTo,service)
+  if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
+    li
+      a(
+        class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
+        onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
+        )="Translate " + langFrom+  "->" +langTo
+    li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
+      a=" Please Wait"
+    li.bg-danger.hidden(class="translateError" + langFrom + langTo)
+      a="Translate " + langFrom+  "->" +langTo +" "
+        span.glyphicon.glyphicon-remove
+    li.hidden(class="translateDone" + langFrom + langTo+" "+service)
+      a="Translate " + langFrom+  "->" +langTo +" "
+        span.glyphicon.glyphicon-ok
+
 
 mixin translationMenu
   li.dropdown#translation.hidden-xs

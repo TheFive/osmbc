@@ -79,8 +79,8 @@ function prepareRenderLayout(req, res, next) {
   const usedLanguages = {};
   if (req.user.language) usedLanguages[req.user.language] = true;
 
-  usedLanguages["DE-Less"] = true;
-  usedLanguages["DE-More"] = true;
+  if (languages.indexOf("DE-Less") > 0) usedLanguages["DE-Less"] = true;
+  if (languages.indexOf("DE-More") > 0) usedLanguages["DE-More"] = true;
 
   // Used for display changes
 
