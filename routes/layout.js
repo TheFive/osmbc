@@ -79,6 +79,9 @@ function prepareRenderLayout(req, res, next) {
   const usedLanguages = {};
   if (req.user.language) usedLanguages[req.user.language] = true;
 
+  usedLanguages["DE-Less"] = true;
+  usedLanguages["DE-More"] = true;
+
   // Used for display changes
 
   // Params is used for indicating Edit
@@ -236,5 +239,3 @@ router.get("*", exports.prepareRenderLayout);
 
 
 module.exports.router = router;
-
-
