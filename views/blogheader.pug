@@ -135,6 +135,40 @@ mixin blogReviewButtons(lang)
           input.hidden(type="text",name="lang" value = lang)
           button.btn.btn-large.btn-primary(id="readyreview" type="submit") Set #{blog.name}(#{lang}) ready for review
 
+mixin blogTranslateMenu(langFrom,langTo,service)
+  if (!blog["closed"+langTo])
+    li
+      a(
+        class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
+        onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
+        )="Translate " + langFrom+  "->" +langTo
+    li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
+      a=" Please Wait"
+    li.bg-danger.hidden(class="translateError" + langFrom + langTo)
+      a="Translate " + langFrom+  "->" +langTo +" "
+        span.glyphicon.glyphicon-remove
+    li.hidden(class="translateDone" + langFrom + langTo+" "+service)
+      a="Translate " + langFrom+  "->" +langTo +" "
+        span.glyphicon.glyphicon-ok
+
+
+mixin translationMenu
+  li.dropdown#translation.hidden-xs
+    a.dropdown-toggle(href='#', data-toggle='dropdown')
+      | Translate
+      span.caret
+    ul.dropdown-menu(role='menu')
+      each tService in translationServices
+        li.dropdown-header="Use " + tService +":"
+          - list = [params.left_lang, params.right_lang, params.lang3, params.lang4]
+          each a in list
+            each b in list
+              if (a!==b && a!== null && b!== null)
+                +blogTranslateMenu(a, b, tService)
+
+block additionalMenu
+  +translationMenu
+
 
 block content
   .row
@@ -186,7 +220,7 @@ block content
         |#{blog.name}
         span.hidden-xs=" ("+blog.getStatus(left_lang)+")"
 
-      
+
     .col-md-3
       +blogReviewButtons(left_lang)
     .col-md-3
@@ -361,4 +395,25 @@ block scripts
         });
       });
 
+    }
+
+    function translate(langFrom, langTo, service) {
+      $(".translate" + langFrom + langTo).addClass("hidden");
+      $(".translateWait" + langFrom + langTo).removeClass("hidden");
+      var from =  langFrom.toLowerCase();
+      var to = langTo.toLowerCase();
+
+      let url =window.htmlroot + "/blog/!{blog.name}/translate/" + service + "/" + from + "/" + to;
+
+
+
+      jQuery.post(window.htmlroot + "/blog/!{blog.name}/translate/" + service + "/" + from + "/" + to, function (data) {
+        location.reload();
+      }).fail(function (err) {
+        console.error("Translation failed");
+        console.log(err.message);
+        console.error(err);
+        $(".translateWait" + langFrom + langTo).addClass("hidden");
+        $(".translateError" + langFrom + langTo).removeClass("hidden");
+      });
     }

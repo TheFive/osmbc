@@ -625,11 +625,15 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang
 
 Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLang, toLang, service, callback) {
   debug("translateAllArticles");
+
   should(typeof user).eql("object");
   should(typeof fromLang).eql("string");
   should(typeof toLang).eql("string");
   should(typeof service).eql("string");
   should(typeof callback).eql("function");
+
+  fromLang = fromLang.toUpperCase();
+  toLang = toLang.toUpperCase();
 
   if (!this.isEditable(toLang)) return callback(new Error(toLang + " can not be edited"));
 
@@ -645,21 +649,23 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
         return cb();
       });
     },
-    function copyArticles(cb) {
-      debug("copyArticles");
+    function translateArticles(cb) {
+      debug("translateArticles");
       async.forEach(articleList, function(article, cb2) {
-        debug("copyArticles.forEach");
+        debug("translateArticles.forEach");
 
         // to lang already defined
-
         if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
+
         if (!article["markdown" + fromLang]) return cb2();
 
         const source = article["markdown" + fromLang];
 
         if (source === "no translation") return cb2();
 
+
         const options = { fromLang: fromLang, toLang: toLang, text: source };
+
 
         if (translator[service] && translator[service].active) {
           translator[service].translate(options, function(err, text) {
