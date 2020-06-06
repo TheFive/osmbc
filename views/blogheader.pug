@@ -411,7 +411,6 @@ block scripts
         location.reload();
       }).fail(function (err) {
         console.error("Translation failed");
-        console.log(err.message);
         console.error(err);
         $(".translateWait" + langFrom + langTo).addClass("hidden");
         $(".translateError" + langFrom + langTo).removeClass("hidden");
