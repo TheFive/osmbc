@@ -465,6 +465,25 @@ function copyAllArticles(req, res, next) {
   });
 }
 
+function translateAllArticles(req, res, next) {
+  debug("translateAllArticles");
+
+  const blog = req.blog;
+  if (!blog) return next();
+
+  const user = req.user;
+
+  const fromLang = req.params.fromLang;
+  const toLang = req.params.toLang;
+  const service = req.params.service;
+
+  blog.translateAllArticles(user, fromLang, toLang, service, function (err) {
+    if (err) return next(err);
+    const referer = req.header("Referer") || "/";
+    res.redirect(referer);
+  });
+}
+
 function createBlog(req, res, next) {
   debug("createBlog");
 
@@ -535,6 +554,7 @@ router.post("/:blog_id/setReviewComment", auth.checkRole(["full"]), setReviewCom
 router.post("/:blog_id/editReviewComment/:index", auth.checkRole(["full"]), editReviewComment);
 router.post("/:blog_id/setLangStatus", auth.checkRole(["full"]), setBlogStatus);
 router.post("/:blog_id/copy/:fromLang/:toLang", auth.checkRole(["full"]), copyAllArticles);
+router.post("/:blog_id/translate/:fromLang/:toLang/:service", auth.checkRole(["full"]), translateAllArticles);
 
 
 router.get("/create", auth.checkRole(["full"]), createBlog);

@@ -622,6 +622,53 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang
   ], callback);
 };
 
+Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLang, toLang, service, callback) {
+  debug("translateAllArticles");
+  should(typeof (user)).eql("object");
+  should(typeof (fromLang)).eql("string");
+  should(typeof (toLang)).eql("string");
+
+  if (!this.isEditable(toLang)) return callback(new Error(toLang + " can not be edited"));
+
+  const blogName = this.name;
+  let articleList = [];
+
+  async.series([
+    function readArticlesWithCollector(cb) {
+      debug("readArticlesWithCollector");
+      articleModule.find({ blog: blogName }, { column: "title" }, function (err, result) {
+        if (err) return cb(err);
+        articleList = result;
+        return cb();
+      });
+    },
+    function copyArticles(cb) {
+      async.forEach(articleList, function(article, cb2) {
+        // to lang already defined
+        if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
+        if (!article["markdown" + fromLang]) return cb2();
+
+
+        let source = article["markdown" + fromLang];
+
+        if (source === "no translation") return cb2();
+
+        let options = {fromLang: fromLang, toLang: toLang, text: source};
+
+        if (translator[service] && translator[service].active)
+          translator[service].translate(options, function(err, text){
+            const data = {};
+            data["markdown" + toLang] = text;
+            data.old = {};
+            data.old["markdown" + toLang] = "";
+
+            article.setAndSave(user, data, cb2);
+          });
+      }, cb);
+    }
+  ], callback);
+};
+
 
 
 // Generate Articles and Category for rendering a preview by a JADE Template
