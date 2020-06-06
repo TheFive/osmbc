@@ -37,9 +37,11 @@ function translateDeeplPro(options, callback) {
     return new Error("No Deepl Pro Version registered");
   }
 
+
   const fromLang = normLanguage(options.fromLang);
   const toLang = normLanguage(options.toLang);
   const text = options.text;
+
 
   var htmltext = markdown.render(text);
 
@@ -49,6 +51,18 @@ function translateDeeplPro(options, callback) {
   deeplParams.target_lang = toLang.toUpperCase();
   deeplParams.auth_key = deeplAuthKey;
   deeplParams.tag_handling = "xml";
+
+
+  if (deeplParams.target_lang === "DE-LESS") {
+    deeplParams.target_lang = "DE";
+    deeplParams.formality = "less";
+  }
+  if (deeplParams.target_lang === "DE-MORE") {
+    deeplParams.target_lang = "DE";
+    deeplParams.formality = "more";
+  }
+
+
 
   deeplClient.translate(deeplParams)
     .then(result => {
