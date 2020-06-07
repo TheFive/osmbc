@@ -706,9 +706,12 @@ describe("model/blog", function() {
             logModule.find({table:"article"},function(err,result){
               should(result.length).eql(1);
               should(result[0].blog).eql("WN1");
-              should(result[0].user).eql("Test");
+              should(result[0].user).eql("deeplPro API Call");
               should(result[0].to).eql("English **text**");
-              bddone();
+              logModule.find({table:"blog",property: "translation with deeplPro"},function(err,result){
+                should(result[0].to).eql("DE -> EN");
+                bddone();
+              });
             });
           });
         });
