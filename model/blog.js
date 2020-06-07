@@ -655,6 +655,11 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
         return cb();
       });
     },
+    function logTranslation(cb) {
+      const data = {};
+      data["translation with " + service] = fromLang + " -> " + toLang;
+      messageCenter.global.updateBlog(user, self, data, cb);
+    },
     function translateArticles(cb) {
       debug("translateArticles");
       async.forEach(articleList, function(article, cb2) {
@@ -686,11 +691,6 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
           });
         } else return cb2();
       }, cb);
-    },
-    function logTranslation(cb) {
-      const data = {};
-      data["translation with " + service] = fromLang + " -> " + toLang;
-      messageCenter.global.updateBlog(user, self, data, cb);
     }
   ], callback);
 };

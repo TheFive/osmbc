@@ -67,6 +67,7 @@ function translateDeeplPro(options, callback) {
   deeplClient.translate(deeplParams)
     .then(result => {
       if (result && result.message) return callback(null, result.message);
+      if (!result || !result.translations) return callback(null, "Something went wrong with translation in this article.");
       var htmlresult = result.translations[0].text;
       var turndownService = new TurndownService();
       var mdresult = turndownService.turndown(htmlresult);
