@@ -160,7 +160,7 @@ mixin translationMenu
     ul.dropdown-menu(role='menu')
       each tService in translationServices
         li.dropdown-header="Use " + tService +":"
-          - list = [params.left_lang, params.right_lang, params.lang3, params.lang4]
+          - list = [layout.language, layout.language2]
           each a in list
             each b in list
               if (a!==b && a!== null && b!== null)

@@ -431,13 +431,6 @@ function renderBlogTab(req, res, next) {
     if (translator.bingPro.active()) {
       translationServices.push("bing");
     }
-    var params = {};
-    params.edit = req.query.edit;
-    params.left_lang = req.user.getMainLang();
-    params.right_lang = req.user.getSecondLang();
-    params.lang3 = req.user.getLang3();
-    params.lang4 = req.user.getLang4();
-    params.editComment = null;
 
     const renderer = new blogRenderer.HtmlRenderer(blog);
     res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
@@ -458,8 +451,7 @@ function renderBlogTab(req, res, next) {
       reviewScripts: reviewScripts,
       util: util,
       categories: blog.getCategories(),
-      translationServices: translationServices,
-      params: params
+      translationServices: translationServices
     });
   }
   );
