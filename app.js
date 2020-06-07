@@ -258,8 +258,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   if (err.type && err.type === "API") return res.send(err.message);
   res.render("error", {
-    message: err.message,
-    error: { detail: err.detail},
+    message: (err) ? err.message : "no err object",
+    error: { detail: (err) ? err.detail : "no err object" },
     layout: {htmlroot: htmlRoot}
   });
 });
