@@ -1,12 +1,12 @@
 {
   "serverport": 35043,
-  
+
   "postgres": {
     "initialise": true,
     "database" : "testdb",
     "username" : "test",
     "password" : "test",
-    "server" : "localhost",
+    "server" : "127.0.0.1",
     "port":"5432"
   },
    "twitter":{
@@ -46,7 +46,7 @@
   "languages":["DE","EN","ES","PT-PT"],
   "moment_locale":{
     "EN":"en-gb"},
-  "callbackUrl":"http://localhost:35043/auth/openstreetmap/callback",
+  "callbackUrl":"http://127.0.0.1:35043/auth/openstreetmap/callback",
   "OPENSTREETMAP_CONSUMER_KEY" : "######",
   "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
   "htmlroot":"",
@@ -75,7 +75,7 @@
   "CalendarInterface":{
     "fakeCalendar":{
       "refreshurl":"this is a refresh url",
-      "url":"http://localhost:33333/fakeCalendar",
+      "url":"http://127.0.0.1:33333/fakeCalendar",
       "events":"events",
       "timestamp":"time",
       "startDate":"start",
@@ -93,5 +93,6 @@
   "createGuestUsersAutomatic":true,
   "ReviewInWP":["DE"],
   "scripts":{},
-  "User-Agent": "Hello i am Kitty"
+  "User-Agent": "Hello i am Kitty",
+  "DeeplAPIKey":"Test Key Fake"
 }

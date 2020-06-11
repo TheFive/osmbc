@@ -9,13 +9,13 @@ env:
 
 
 rules:
-   mocha/no-exclusive-tests: error
+   mocha/no-exclusive-tests: "error"
    mocha/no-skipped-tests: 0
-   mocha/no-pending-tests: error
-   mocha/handle-done-callback: error
-   mocha/no-synchronous-tests: error
-   mocha/no-global-tests: error
-   mocha/no-return-and-callback: error
+   mocha/no-pending-tests: "error"
+   mocha/handle-done-callback: "error"
+   mocha/no-synchronous-tests: "error"
+   mocha/no-global-tests: "error"
+   mocha/no-return-and-callback: "error"
    mocha/valid-test-description: error
    mocha/valid-suite-description: error
    mocha/no-sibling-hooks: error
@@ -24,7 +24,7 @@ rules:
    mocha/no-hooks-for-single-case: 0
    mocha/no-top-level-hooks: error
    mocha/no-identical-title: error
-   mocha/max-top-level-suites: ["error",1]
+   mocha/max-top-level-suites: ["error", {limit: 1}]
    mocha/no-nested-tests: error
 
 parserOptions:

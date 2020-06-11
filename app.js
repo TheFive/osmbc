@@ -197,7 +197,7 @@ app.use(htmlRoot + "/config", configRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   debug("app.use Error Handler");
-  var err = new Error("Not Found");
+  var err = new Error("Page Not Found");
   err.status = 404;
   next(err);
 });
@@ -258,8 +258,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   if (err.type && err.type === "API") return res.send(err.message);
   res.render("error", {
-    message: err.message,
-    error: { detail: err.detail},
+    message: (err) ? err.message : "no err object",
+    error: { detail: (err) ? err.detail : "no err object" },
     layout: {htmlroot: htmlRoot}
   });
 });

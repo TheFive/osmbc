@@ -18,7 +18,7 @@
     "connect-pg-simple": "^6.1.0",
     "cookie-parser": "^1.4.5",
     "debug": "^4.1.1",
-    "deepl-translator": "^1.2.1",
+    "deepl-client": "^1.0.6",
     "deferred": "^0.7.11",
     "diff": "^4.0.2",
     "email-templates": "^7.0.4",
@@ -61,6 +61,7 @@
     "standard-http-error": "^2.0.1",
     "stoppable": "^1.1.0",
     "timemachine": "^0.3.1",
+    "turndown": "^6.0.0",
     "twit": "^2.2.11",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.4.2"

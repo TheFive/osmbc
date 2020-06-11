@@ -18,6 +18,7 @@ const configModule        = require("../model/config.js");
 const logModule           = require("../model/logModule.js");
 const messageCenter       = require("../notification/messageCenter.js");
 const userModule          = require("../model/user.js");
+const translator          = require("../model/translator.js");
 const schedule            = require("node-schedule");
 
 const pgMap = require("./pgMap.js");
@@ -622,6 +623,78 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang
   ], callback);
 };
 
+Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLang, toLang, service, callback) {
+  debug("translateAllArticles");
+  const self = this;
+  should(typeof user).eql("object");
+  should(typeof fromLang).eql("string");
+  should(typeof toLang).eql("string");
+  should(typeof service).eql("string");
+  should(typeof callback).eql("function");
+
+  fromLang = fromLang.toUpperCase();
+  toLang = toLang.toUpperCase();
+  if (fromLang === "DE-LESS") fromLang = "DE-Less";
+  if (toLang === "DE-LESS") toLang = "DE-Less";
+
+  if (fromLang === "DE-MORE") fromLang = "DE-More";
+  if (toLang === "DE-MORE") toLang = "DE-More";
+
+
+  if (!this.isEditable(toLang)) return callback(new Error(toLang + " can not be edited"));
+
+  const blogName = this.name;
+  let articleList = [];
+
+  async.series([
+    function readArticlesWithCollector(cb) {
+      debug("readArticlesWithCollector");
+      articleModule.find({ blog: blogName }, { column: "title" }, function (err, result) {
+        if (err) return cb(err);
+        articleList = result;
+        return cb();
+      });
+    },
+    function logTranslation(cb) {
+      const data = {};
+      data["translation with " + service] = fromLang + " -> " + toLang;
+      messageCenter.global.updateBlog(user, self, data, cb);
+    },
+    function translateArticles(cb) {
+      debug("translateArticles");
+      async.forEach(articleList, function(article, cb2) {
+        debug("translateArticles.forEach");
+
+        // to lang already defined
+        if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
+
+        if (!article["markdown" + fromLang]) return cb2();
+
+        const source = article["markdown" + fromLang];
+
+        if (source === "no translation") return cb2();
+
+
+        const options = { fromLang: fromLang, toLang: toLang, text: source };
+
+        if (translator[service] && translator[service].active) {
+          translator[service].translate(options, function(err, text) {
+            if (err) return cb2(err);
+            const data = {};
+            data["markdown" + toLang] = text;
+            data.old = {};
+            data.old["markdown" + toLang] = "";
+            debug("copyArticles.forEach.setAndSave");
+            const fakeUser = { OSMUser: service + " API Call" };
+
+            article.setAndSave(fakeUser, data, cb2);
+          });
+        } else return cb2();
+      }, cb);
+    }
+  ], callback);
+};
+
 
 
 // Generate Articles and Category for rendering a preview by a JADE Template
@@ -976,4 +1049,3 @@ module.exports.autoCloseBlog = autoCloseBlog;
 
 // sort article
 module.exports.sortArticles = sortArticles;
-

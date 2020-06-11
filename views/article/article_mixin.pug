@@ -53,7 +53,7 @@ mixin articleTranslateButton(langFrom,langTo)
   if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
     button.btn.btn-small.btn-primary(
          class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
-         onClick =`window.translate('${langFrom}','${langTo}','deepl');return false;`
+         onClick =`window.translate('${langFrom}','${langTo}',window.mainTranslationService);return false;`
        ) Translate #{langFrom} -> #{langTo}
     button.btn.btn-small.btn-warning.hidden(class="translateWait"+langFrom+langTo)
       span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
@@ -61,21 +61,6 @@ mixin articleTranslateButton(langFrom,langTo)
     button.btn.btn-small.btn-danger.hidden(class="translateError"+langFrom+langTo)
       span="Error occured"
 
-mixin articleTranslateMenu(langFrom,langTo,service)
-  if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
-    li
-      a(
-        class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
-        onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
-        )="Translate " + langFrom+  "->" +langTo
-    li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
-      a=" Please Wait"
-    li.bg-danger.hidden(class="translateError" + langFrom + langTo)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-remove
-    li.hidden(class="translateDone" + langFrom + langTo+" "+service)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-ok
 
 
 mixin saveButton
@@ -120,28 +105,40 @@ mixin markdownWithPreview(lang)
   +articlePreview(lang)
   +articleTextanalyse(lang)
 
+mixin articleTranslateMenu(langFrom,langTo,service)
+  if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
+    li
+      a(
+        class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
+        onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
+        )="Translate " + langFrom+  "->" +langTo
+    li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
+      a=" Please Wait"
+    li.bg-danger.hidden(class="translateError" + langFrom + langTo)
+      a="Translate " + langFrom+  "->" +langTo +" "
+        span.glyphicon.glyphicon-remove
+    li.hidden(class="translateDone" + langFrom + langTo+" "+service)
+      a="Translate " + langFrom+  "->" +langTo +" "
+        span.glyphicon.glyphicon-ok
+
+
 mixin translationMenu
   li.dropdown#translation.hidden-xs
     a.dropdown-toggle(href='#', data-toggle='dropdown')
       | Translate
       span.caret
     ul.dropdown-menu(role='menu')
-      li.dropdown-header Use Deepl:
-      - list = [params.left_lang,params.right_lang,params.lang3,params.lang4]
-      each a in list
-        each b in list
-          if (a!==b && a!== null && b!== null)
-            +articleTranslateMenu(a,b,"deepl")
-      li.dropdown-header Use Bing:
-      - list = [params.left_lang,params.right_lang,params.lang3,params.lang4]
-      each a in list
-        each b in list
-          if (a !== b && a !== null && b !== null)
-            +articleTranslateMenu(a,b,"bing")
+      each tService in translationServices
+        li.dropdown-header="Use " + tService +":"
+          - list = [params.left_lang,params.right_lang,params.lang3,params.lang4]
+          each a in list
+            each b in list
+              if (a!==b && a!== null && b!== null)
+                +articleTranslateMenu(a, b, tService)
 
 
 
-block scripts                
+block scripts
   script(src=layout.path("markdown-it") + '/markdown-it.min.js')
   script(src=layout.path("markdown-it-sup") + '/markdown-it-sup.min.js')
   script(src=layout.path("markdown-it-imsize") + '/markdown-it-imsize.min.js')
@@ -159,19 +156,11 @@ block scripts
     rightLang = "!{params.right_lang}";
     lang3 = "!{params.lang3}";
     lang4 = "!{params.lang4}";
+    translationServices = JSON.parse('!{JSON.stringify(translationServices)}');
+    mainTranslationService = "!{mainTranslationService}";
     htmlroot = "!{layout.htmlroot}";
     placeholder = !{JSON.stringify(placeholder.categories)}
     var catArray = !{JSON.stringify(categories)};
     var articleReferences = !{JSON.stringify(articleReferences)};
     var noCategorie = "no categorie";
     if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
-
-
-
-
-
-
-
-   
-
-

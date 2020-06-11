@@ -235,7 +235,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
     function loadBlog(cb) {
       if (self._blog) return cb();
       blogModule.findOne({ name: self.blog }, function(err, result) {
-        if (err) cb(err);
+        if (err) return cb(err);
         self._blog = result;
         return cb();
       });

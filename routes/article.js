@@ -27,6 +27,7 @@ const logModule     = require("../model/logModule.js");
 const configModule  = require("../model/config.js");
 const userModule    = require("../model/user.js");
 const htmltitle     = require("../model/htmltitle.js");
+const translator    = require("../model/translator.js");
 
 const auth          = require("../routes/auth.js");
 
@@ -35,11 +36,10 @@ require("jstransformer")(require("jstransformer-markdown-it"));
 
 
 const request = require("request");
-const uuidv4 = require("uuid/v4");
-const subscriptionKey = config.getValue("MS_TranslateApiKey", { mustExist: true });
+
+
 const userAgent = config.getValue("User-Agent", { mustExist: true });
 
-const deeplTranslate = require("deepl-translator");
 
 const LRU = require("lru-cache");
 
@@ -126,6 +126,13 @@ function renderArticleId(req, res, next) {
   params.lang3 = req.user.getLang3();
   params.lang4 = req.user.getLang4();
   params.editComment = null;
+  var mainTranslationService = "deepl";
+  var translationServices = ["bing", "deepl"];
+  if (translator.deeplPro.active()) {
+    mainTranslationService = "deeplPro";
+    translationServices.push("deeplPro");
+  }
+
   if (req.query.editComment) params.editComment = req.query.editComment;
   if (req.query.notranslation) params.notranslation = req.query.notranslation;
   let collectedByGuest = false;
@@ -267,7 +274,9 @@ function renderArticleId(req, res, next) {
       categories: categories,
       languageFlags: languageFlags,
       accessMap: result.accessMap,
-      collectedByGuest: collectedByGuest
+      collectedByGuest: collectedByGuest,
+      mainTranslationService: mainTranslationService,
+      translationServices: translationServices
     });
   }
   );
@@ -1013,72 +1022,29 @@ function fixMarkdownLinks(string) {
   return r;
 }
 
-function translateDeepl(req, res, next) {
-  debug("translateDeepl");
 
-  let fromLang = req.params.fromLang;
-  let toLang = req.params.toLang;
-  const text = req.body.text;
+function translateWithPlugin(translatePlugin) {
+  return function(req, res) {
+    debug("translateWithPlugin %s", translatePlugin);
 
-  if (fromLang === "jp") { fromLang = "ja"; }
-  if (toLang === "jp") { toLang = "ja"; }
+    if (!translator[translatePlugin].active()) {
+      res.end("No license for " + translator[translatePlugin].name + " configured");
+      return;
+    }
 
-  if (fromLang === "cz") { fromLang = "cs"; }
-  if (toLang === "cz") { toLang = "cs"; }
-
-
-  deeplTranslate.translate(text, toLang.toUpperCase(), fromLang.toUpperCase())
-    .then(result => res.end(fixMarkdownLinks(result.translation)))
-    .catch(err => { next(err); });
-}
-
-const msTranslate = {
-  translate: function(from, to, text, callback) {
-    const options = {
-      method: "POST",
-      baseUrl: "https://api.cognitive.microsofttranslator.com/",
-      url: "translate",
-      qs: {
-        "api-version": "3.0",
-        from: from,
-        to: to
-      },
-      headers: {
-        "Ocp-Apim-Subscription-Key": subscriptionKey,
-        "Content-type": "application/json",
-        "X-ClientTraceId": uuidv4().toString()
-      },
-      body: [{
-        text: text
-      }],
-      json: true
+    var options = {
+      fromLang: req.params.fromLang,
+      toLang: req.params.toLang,
+      text: req.body.text
     };
-
-    request(options, function(err, response, body) {
-      callback(err, body[0].translations[0].text);
+    translator[translatePlugin].translate(options, function(err, result) {
+      if (err) {
+        return res.end(err.message);
+      }
+      return res.end(result);
     });
-  }
-};
-
-function translateBing(req, res, next) {
-  debug("translateBing");
-
-  let fromLang = req.params.fromLang;
-  let toLang = req.params.toLang;
-  const text = req.body.text;
-
-  if (fromLang === "jp") { fromLang = "ja"; }
-  if (toLang === "jp") { toLang = "ja"; }
-
-  if (fromLang === "cz") { fromLang = "cs"; }
-  if (toLang === "cz") { toLang = "cs"; }
-
-  msTranslate.translate(fromLang, toLang, text, function(err, translation) {
-    if (err) return next(err);
-    res.end(translation);
-  });
+  };
 }
-
 
 function isFirstCollector(req, res, next) {
   if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
@@ -1105,8 +1071,8 @@ router.get("/searchandcreate", allowGuestAccess, searchAndCreate);
 router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);
-router.post("/translate/deepl/:fromLang/:toLang", allowFullAccess, translateDeepl);
-router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateBing);
+router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
+router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateWithPlugin("bingPro"));
 router.post("/urlexist", allowGuestAccess, urlExist);
 
 router.param("article_id", getArticleFromID);
@@ -1135,5 +1101,4 @@ module.exports.slackrouter = slackrouter;
 
 module.exports.fortestonly = {};
 module.exports.fortestonly.getArticleFromID = getArticleFromID;
-module.exports.fortestonly.msTransClient = msTranslate;
 module.exports.fortestonly.fixMarkdownLinks = fixMarkdownLinks;

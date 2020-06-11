@@ -34,7 +34,9 @@ describe("uc/blog", function() {
       .reply(200, "ok");
     process.env.TZ = "Europe/Amsterdam";
     mockdate.set(new Date("2016-05-25T19:00:00Z"));
+    await testutil.clearDB();
     await initialise.initialiseModules();
+
     testutil.startServerSync();
   })
   after(async function(){
@@ -245,4 +247,3 @@ describe("uc/blog", function() {
 });
 
 /* jshint ignore:end */
-
