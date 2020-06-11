@@ -92,7 +92,9 @@
   "WelcomeRefreshInSeconds":0,
   "createGuestUsersAutomatic":true,
   "ReviewInWP":["DE"],
-  "scripts":{},
+  "scripts":{
+  },
   "User-Agent": "Hello i am Kitty",
-  "DeeplAPIKey":"Test Key Fake"
+  "DeeplAPIKey":"Test Key Fake",
+  "blogTranslationVisibleFor":["TheFive","TheOther"]
 }
