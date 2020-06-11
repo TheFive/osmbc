@@ -181,6 +181,7 @@ function prepareRenderLayout(req, res, next) {
     if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
 
     const scriptUser = config.getValue("scripts").user;
+    const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
 
     if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
     res.rendervar.layout = {
@@ -217,7 +218,8 @@ function prepareRenderLayout(req, res, next) {
       md_renderInline: markdown.renderInline,
       getAvatar: userModule.getAvatar,
       calendarInterface: calendarInterface,
-      scriptUser: scriptUser
+      scriptUser: scriptUser,
+      blogTranslationVisibleFor: blogTranslationVisibleFor
 
     };
     next();
