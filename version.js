@@ -4,5 +4,3 @@ if (process.env.NODE_ENV === "test") {
 } else {
   exports.osmbc_version = "3.3.9c";
 }
-
-
