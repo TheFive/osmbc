@@ -227,7 +227,7 @@ if (app.get("env") === "development") {
 }
 
 
-// development error handler
+// test error handler
 // will print stacktrace
 if (app.get("env") === "test") {
   debug("Set test error hander");

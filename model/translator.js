@@ -166,9 +166,11 @@ module.exports.fortestonly = {};
 module.exports.deeplPro.translate = translateDeeplPro;
 module.exports.deeplPro.active = deeplProActive;
 module.exports.deeplPro.name = "DeepLPro";
+module.exports.deeplPro.user = "deeplPro API Call";
 
 module.exports.bingPro.translate = translateBingPro;
 module.exports.bingPro.active = bingProActive;
 module.exports.bingPro.name = "BingPro";
+module.exports.bingPro.user = "Bing API Call";
 
 module.exports.fortestonly.msTransClient = msTranslate;

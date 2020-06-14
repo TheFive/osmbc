@@ -106,7 +106,7 @@ block blogcontent
               .row
                 div(class=columnLeftSize)
                   div(onclick=`if (!openEditor) {openEditor = document.getElementById('ldiv${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
-                    div(class=(a["markdown" + lang]) ? "" : "mark")
+                    +previewDiv(a, left_lang)
                       ul
                         div.preview(id="lpreview" + a.id)
                           |!{renderer.renderArticle(left_lang,a)}
@@ -130,7 +130,7 @@ block blogcontent
                 div(class=columnRightSize)
                   if right_lang
                     div(onclick=`if (!openEditor) {openEditor = document.getElementById('rdiv${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
-                      div(class=(a["markdown" + right_lang]) ? "" : "mark")
+                      +previewDiv(a, right_lang)
                         ul.preview(id="rpreview" + a.id)
                           |!{renderer.renderArticle(right_lang,a)}
                     div.hidden(id="rdiv" + a.id )
@@ -186,11 +186,13 @@ block blogcontent
           div(class=secondColSize)
             .row
               div(class=columnLeftSize)
-                ul
-                  |!{renderer.renderArticle(left_lang,a)}
+                +previewDiv(a, left_lang)
+                  ul
+                    |!{renderer.renderArticle(left_lang,a)}
               div(class=columnRightSize)
-                ul
-                  |!{renderer.renderArticle(right_lang,a)}
+                +previewDiv(a, right_lang)
+                  ul
+                    |!{renderer.renderArticle(right_lang,a)}
 
 
   .row#filter
@@ -238,10 +240,3 @@ block blogcontent
 
 
   +articleIconLegend
-
-
-
-
-
-
-

@@ -685,7 +685,7 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
             data.old = {};
             data.old["markdown" + toLang] = "";
             debug("copyArticles.forEach.setAndSave");
-            const fakeUser = { OSMUser: service + " API Call" };
+            const fakeUser = { OSMUser: translator[service].user };
 
             article.setAndSave(fakeUser, data, cb2);
           });
