@@ -434,7 +434,7 @@ function renderBlogTab(req, res, next) {
 
     const renderer = new blogRenderer.HtmlRenderer(blog);
     res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
-    res.render("blog_" + tab.toLowerCase(), {
+    res.render("blog/blog_" + tab.toLowerCase(), {
       layout: res.rendervar.layout,
       blog: blog,
       articles: result.dataCollect.articles,
