@@ -60,10 +60,10 @@ block blogcontent
 
             div(class=secondColSize)
               div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
-
-                ul
-                  div.preview(id="preview" + a.id)
-                    |!{renderer.renderArticle(lang,a)}
+                +previewDiv(a, lang)
+                  ul
+                    div.preview(id="preview" + a.id)
+                        |!{renderer.renderArticle(lang,a)}
 
               div.hidden(id="div" + a.id)
                 form(name="EditArticle",id="EditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + lang, method="post")
@@ -112,10 +112,3 @@ block blogcontent
 
   .row
     +articleIconLegend
-
-
-
-
-
-
-

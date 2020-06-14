@@ -21,9 +21,18 @@ a.nonexist {
   padding-left: 7px
 }
 
-mark {
+.not-formulated {
   background-color: #FFF8C6;  /* Salmon Chiffon */
 }
+
+.automated-translation {
+  background-color: #deaa87;  /* Salmon Chiffon */
+}
+
+.hide-text {
+  font-size: 0;
+}
+
 
 .glyphicon-refresh-animate {
   -animation: spin .7s infinite linear;

@@ -19,7 +19,15 @@ mixin userLabel(user,style)
     span.label.small-margin(class=style)=user
 
 
-
+mixin previewDiv(article, lang)
+  - previewClass = ""
+  - if (!article.isFormulated(lang)) previewClass = "not-formulated";
+  - if (article.isNoTranslation(lang)) previewClass = "hide-text";
+  - if (article.isTranslatedAutomated(lang)) previewClass = "automated-translation"
+  div(class=previewClass )
+    if block
+      block
+      
 //- Mixin to display the reviewBlog left and right
     It allows Editing a review comment, adding new ones, and is asking for
     at last non empty comments.

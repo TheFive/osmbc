@@ -22,7 +22,7 @@ mixin displayOverviewRow(a)
 
       td
         div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
-          div(class=(a["markdown" + lang]) ? "" : "mark")
+          +previewDiv(a, lang)
             ul.no-margin
               |!{renderer.articleTitle(lang,a)}
       td.hidden-xs
@@ -198,8 +198,3 @@ block blogcontent
 
   .row
     +articleIconLegend
-
-
-
-
-

@@ -17,6 +17,7 @@ const logModule      = require("../model/logModule.js");
 const configModule   = require("../model/config.js");
 const pgMap          = require("../model/pgMap.js");
 const twitter        = require("../model/twitter.js");
+const translator     = require("../model/translator.js");
 
 
 
@@ -836,6 +837,28 @@ Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromCha
       return cb();
     });
 };
+
+Article.prototype.isTranslatedAutomated = function isTranslatedAutomated(lang) {
+  if (!this) return false;
+  if (!this.author) return false;
+  const property = "markdown" + lang;
+  if (!this.author[property]) return false;
+  const lastAuthor = this.author[property].split(",")[0];
+  for (const service in translator) {
+    if (translator[service].user && translator[service].user === lastAuthor) return true;
+  }
+  return false;
+};
+
+Article.prototype.isFormulated = function isFormulated(lang) {
+  return (this["markdown" + lang] && this["markdown" + lang].length > 0 && this["markdown" + lang] !== "no translation");
+};
+
+Article.prototype.isNoTranslation = function isNoTranslation(lang) {
+  return (this["markdown" + lang] && this["markdown" + lang] === "no translation");
+};
+
+
 
 Article.prototype.calculateDerivedFromSourceId = function calculateDerivedFromSourceId(cb) {
   debug("Article.prototype.calculateDerivedFromSourceId");
