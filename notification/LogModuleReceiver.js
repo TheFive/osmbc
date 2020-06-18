@@ -35,7 +35,7 @@ LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) 
     // so do nothing
     if ((!change.action || change.action !="Translation Reviewed") && value === article[key]) return cbEachOf();
     if (typeof (article[key]) === "undefined" && value === "") return cbEachOf();
-    console.dir(key," ",article[key]," ",value);
+
     async.series([
       function(cb) {
         logModule.log({
