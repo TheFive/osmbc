@@ -431,7 +431,7 @@ function renderBlogTab(req, res, next) {
     if (translator.bingPro.active()) {
       translationServices.push("bing");
     }
-    let apiAuthors = [];
+    const apiAuthors = [];
     apiAuthors.push(translator.deeplPro.user);
     apiAuthors.push(translator.bingPro.user);
 

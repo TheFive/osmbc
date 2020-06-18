@@ -33,7 +33,7 @@ LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) 
 
     // The Value to be set, is the same then in the object itself
     // so do nothing
-    if ((!change.action || change.action !="Translation Reviewed") && value === article[key]) return cbEachOf();
+    if (!change.action && value === article[key]) return cbEachOf();
     if (typeof (article[key]) === "undefined" && value === "") return cbEachOf();
 
     async.series([

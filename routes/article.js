@@ -683,17 +683,19 @@ function postSetMarkdown(req, res, next) {
   });
 }
 
-function postReviewMarkdown(req, res, next) {
-  debug("postReviewMarkdown");
+function postReviewChange(req, res, next) {
+  debug("postReviewChange");
+
 
   var lang = req.params.lang;
   var article = req.article;
   should.exist(article);
-  let object = {};
+  const object = {};
 
   object["markdown" + lang] = req.body.markdown;
 
-  article.reviewLanguage(req.user, object, function(err) {
+
+  article.reviewChanges(req.user, object, function(err) {
     if (err) return next(err);
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
     const referer = req.header("Referer") || "/";
@@ -1102,7 +1104,7 @@ router.get("/:article_id/:votename", allowFullAccess, renderArticleIdVotesBlog);
 
 router.post("/:article_id/addComment", allowGuestAccess, postNewComment);
 router.post("/:article_id/setMarkdown/:lang", allowFullAccess, postSetMarkdown);
-router.post("/:article_id/reviewMarkdown/:lang", allowFullAccess, postReviewMarkdown);
+router.post("/:article_id/reviewChange/:lang", allowFullAccess, postReviewChange);
 router.post("/:article_id/editComment/:number", allowFullAccess, postEditComment);
 router.post("/:article_id", allowFullAccess, postArticle);
 router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldValues);

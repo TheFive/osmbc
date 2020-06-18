@@ -257,25 +257,35 @@ module.exports.find = function find(module, obj, order, callback) {
   } else if (typeof (order) === "function") {
     callback = order;
     order = null;
-  } else if (typeof (order) === "undefined") {
+  } else if (typeof (obj) === "function") {
     order = null;
-  } else {
-    should(typeof (order)).equal("object");
+    callback = obj;
+    obj = null;
   }
-  should(typeof (callback)).equal("function");
+  function _find(module, obj, order, callback) {
+    should(typeof (callback)).equal("function");
 
-  debug("Connecting to DB" + config.pgstring);
+    debug("Connecting to DB" + config.pgstring);
 
-  var table = module.table;
-  var sqlQuery = generateQuery(table, obj, order);
+    var table = module.table;
+    var sqlQuery = generateQuery(table, obj, order);
+  
 
 
 
-  if (obj && obj.params) {
-    db.query(sqlQuery, obj.params, convertResultFunction(module, callback));
-  } else {
-    db.query(sqlQuery, undefined, convertResultFunction(module, callback));
+
+    if (obj && obj.params) {
+      db.query(sqlQuery, obj.params, convertResultFunction(module, callback));
+    } else {
+      db.query(sqlQuery, undefined, convertResultFunction(module, callback));
+    }
   }
+  if (callback) {
+    return _find(module, obj, order, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _find(module, obj, order, (err, result) => err ? reject(err) : resolve(result));
+  });
 };
 
 
@@ -497,6 +507,3 @@ module.exports.select = function select(sql, data, callback) {
     callback(null, result);
   });
 };
-
-
-

@@ -298,8 +298,8 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   });
 };
 
-Article.prototype.reviewLanguage = function setAndSave(user, data, callback) {
-  debug("reviewLanguage");
+Article.prototype.reviewChanges = function setAndSave(user, data, callback) {
+  debug("reviewChanges");
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
 
   var self = this;
@@ -309,13 +309,11 @@ Article.prototype.reviewLanguage = function setAndSave(user, data, callback) {
     if ((self[k] && self[k] !== data[k]) || (typeof (self[k]) === "undefined" && data[k] !== "")) {
       const error = new Error("Field " + k + " already changed in DB");
       error.status = HttpStatus.CONFLICT;
-      error.detail = { oldValue: data[k], databaseValue: self[k], Action: "Review Translation Command", field: k ,self:self ,data:data};
+      error.detail = { oldValue: data[k], databaseValue: self[k], Action: "Review Translation Command", field: k };
       return callback(error);
-    } else {
-      data.action = "Translation Reviewed";
     }
   }
-
+  data.action = "Review Change of " + Object.keys(data);
 
   async.series([
     function checkID(cb) {
@@ -330,7 +328,7 @@ Article.prototype.reviewLanguage = function setAndSave(user, data, callback) {
         self._blog = result;
         return cb();
       });
-    },
+    }
   ], function(err) {
     if (err) return callback(err);
     should.exist(self.id);

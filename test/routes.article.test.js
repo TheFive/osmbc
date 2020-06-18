@@ -13,7 +13,9 @@ const deeplClient = require("deepl-client");
 const initialise = require("../util/initialise.js");
 const rp = require("request-promise-native");
 
+
 const articleModule = require("../model/article.js");
+const logModule = require("../model/logModule.js");
 
 const articleRouterForTestOnly = require("../routes/article.js").fortestonly;
 const bingTranslatorForTestOnly = require("../model/translator.js").fortestonly;
@@ -609,6 +611,85 @@ describe("routes/article", function() {
       let response = await rp.post({
         url: url,
         form: {markdown: "new", oldMarkdown: "old"},
+        jar: jar.testUser,
+        followAllRedirects:true,
+        simple: false,
+        resolveWithFullResponse: true
+      });
+      // there should be an error, as old title is not the correct one
+      should(response.statusCode).eql(HttpStatus.CONFLICT);
+      response.body.should.containEql("Field markdownDE already changed in DB");
+
+      // check, that object is not changed
+      let article = await articleModule.findById(2);
+
+      delete article._blog;
+      should(article).eql({
+        "blog": "BLOG",
+        "category": "Keine",
+        "commentList": [
+          {
+            "text": "comment",
+            "user": "Hallo"
+          }
+        ],
+        "id": "2",
+        "markdownDE": "* Dies ist ein grosser Testartikel.",
+        "title": "BLOG",
+        "version": 1
+      });
+    });
+    it("should deny denied access user",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+    it("should deny non existing users",
+      postUrlWithJar({
+        url: url,
+        form: params,
+        user: "testUserNonExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
+  });
+  describe("route POST /:article_id/reviewChange/:lang", function() {
+    let url = baseLink + "/article/2/reviewChange/DE";
+    let params = {
+      markdown: "* Dies ist ein grosser Testartikel."
+    };
+    it("should run with full access user", async function () {
+      let body = await rp.post({ url: url, form: params, jar: jar.testUser,followAllRedirects:true});
+      // ..setMarkdown/DE is redirecting to caller page, that is
+      // /osmbc in this case
+      body.should.containEql("<!-- Full Access Index Page-->");
+      let article = await articleModule.findById(2);
+
+      delete article._blog;
+      should(article).eql({
+        "blog": "BLOG",
+        "category": "Keine",
+        "commentList": [
+          {
+            "text": "comment",
+            "user": "Hallo"
+          }
+        ],
+        "id": "2",
+        "markdownDE": "* Dies ist ein grosser Testartikel.",
+        "title": "BLOG",
+        "version": 1
+      });yf
+      let changes = await logModule.find({table: "article"});
+      should(changes.length).be.greaterThan(0);
+    });
+    it("should fail with wrong old Values", async function () {
+      let response = await rp.post({
+        url: url,
+        form: {markdown: "simulate different earlier Value in Form"},
         jar: jar.testUser,
         followAllRedirects:true,
         simple: false,

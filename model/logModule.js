@@ -64,6 +64,9 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars) {
   var diff = jsdiff.diffChars(from, to);
   var onlySpacesAdd = true;
   var onlySpacesDel = true;
+  if (from === to) {
+    return "<span>no change</span>";
+  }
   diff.forEach(function(part) {
     var partOnlySpace = (part.value.trim() === "");
     if (part.removed) {

@@ -72,7 +72,7 @@ block blogcontent
                 p
                   if a.author && a.author["markdown" + lang] && apiAuthors.indexOf(a.author["markdown" + lang].split(",")[0]) >= 0
 
-                    form(id="reviewTranslation" name="reviewTranslation"+a.id+lang, action=layout.htmlroot+"/article/" + a.id + "/reviewMarkdown/" + lang, method="post")
+                    form(id="reviewTranslation" name="reviewTranslation"+a.id+lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + lang, method="post")
                       textarea.hidden.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+lang]
                       button.btn.btn-xs.btn-default(id="reviewTranslation"+a.id+lang type="submit") Review Translation of +++
 
