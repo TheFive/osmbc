@@ -431,6 +431,10 @@ function renderBlogTab(req, res, next) {
     if (translator.bingPro.active()) {
       translationServices.push("bing");
     }
+    let apiAuthors = [];
+    apiAuthors.push(translator.deeplPro.user);
+    apiAuthors.push(translator.bingPro.user);
+
 
     const renderer = new blogRenderer.HtmlRenderer(blog);
     res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
@@ -451,7 +455,8 @@ function renderBlogTab(req, res, next) {
       reviewScripts: reviewScripts,
       util: util,
       categories: blog.getCategories(),
-      translationServices: translationServices
+      translationServices: translationServices,
+      apiAuthors: apiAuthors
     });
   }
   );
