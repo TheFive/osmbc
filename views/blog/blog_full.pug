@@ -114,7 +114,13 @@ block blogcontent
                     form(name="lEditArticle",id="lEditArticle" +a.id, action=layout.htmlroot+"/article/" + a.id +"/setMarkdown/" + left_lang, method="post")
                       textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'l');` onkeyup=`onchangeMarkdown(${a.id},'l');` spellcheck = "true" lang=left_lang)=a["markdown" + left_lang]
                       textarea.hidden.form-control(name="oldMarkdown"  id="loldMarkdown" +a.id rows=7 )=a["markdown" + left_lang]
-                    p
+                    form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+left_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + left_lang, method="post")
+                      if a.author && a.author["markdown" + left_lang] && apiAuthors.indexOf(a.author["markdown" + left_lang].split(",")[0]) >= 0
+                          textarea.hidden.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+left_lang]
+                          button.btn.btn-xs.btn-success(id="reviewTranslation"+a.id+left_lang type="submit")
+                            div.glyphicon.glyphicon-ok
+                            span=" Mark Auto Translation OK"
+
                       if a.author && a.author.collection
                         span="Collected: "
                         each collector in a.author.collection.split(",")
@@ -137,7 +143,12 @@ block blogcontent
                       form(name="rEditArticle",id="rEditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + right_lang, method="post")
                         textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'r');` onkeyup=`onchangeMarkdown(${a.id},'r');` spellcheck="true" lang=right_lang)=a["markdown" + right_lang]
                         textarea.hidden.form-control(name="oldMarkdown"  id="roldMarkdown" + a.id rows=7 )=a["markdown" + right_lang]
-                      p
+                      form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+right_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + right_lang, method="post")
+                        if a.author && a.author["markdown" + right_lang] && apiAuthors.indexOf(a.author["markdown" + right_lang].split(",")[0]) >= 0
+                            textarea.hidden.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+right_lang]
+                            button.btn.btn-xs.btn-success(id="reviewTranslation"+a.id+right_lang type="submit")
+                              div.glyphicon.glyphicon-ok
+                              span=" Mark Auto Translation OK"
                         if a.author && a.author.collection
                           span="Collected: "
                           each collector in a.author.collection.split(",")
