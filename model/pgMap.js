@@ -12,7 +12,7 @@ var util = require("../util/util.js");
 
 
 function generateQuery(table, obj, order) {
-  debug("generateQuery");
+  debug("generateQuery %s", table);
 
   var whereClause = "";
 
@@ -106,6 +106,7 @@ function generateQuery(table, obj, order) {
 
 
 module.exports.save = function(options, callback) {
+  debug("save");
   if (typeof options === "function") {
     callback = options;
     options = null;
@@ -217,8 +218,10 @@ module.exports.remove = function(callback) {
 };
 
 function convertResultFunction(module, callback) {
+  debug("convertResultFunction");
   should.exist(callback);
   return function crs(err, pgResult) {
+    debug("crs");
     const result = [];
     if (err) return callback(err);
     pgResult.rows.forEach(function(row) {
@@ -249,7 +252,7 @@ function convertOneResultFunction(module, callback) {
 }
 
 module.exports.find = function find(module, obj, order, callback) {
-  debug("find");
+  debug("find %s", module.table);
   if (typeof (obj) === "function") {
     callback = obj;
     obj = null;
@@ -257,17 +260,21 @@ module.exports.find = function find(module, obj, order, callback) {
   } else if (typeof (order) === "function") {
     callback = order;
     order = null;
-  } else if (typeof (order) === "undefined") {
+  } else if (typeof (obj) === "function") {
     order = null;
-  } else {
-    should(typeof (order)).equal("object");
+    callback = obj;
+    obj = null;
   }
+
   should(typeof (callback)).equal("function");
 
   debug("Connecting to DB" + config.pgstring);
 
   var table = module.table;
   var sqlQuery = generateQuery(table, obj, order);
+  debug("Query: %s", sqlQuery);
+
+
 
 
 
@@ -497,6 +504,3 @@ module.exports.select = function select(sql, data, callback) {
     callback(null, result);
   });
 };
-
-
-

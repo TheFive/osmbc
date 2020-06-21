@@ -663,11 +663,7 @@ function postNewComment(req, res, next) {
 function postSetMarkdown(req, res, next) {
   debug("postSetMarkdown");
 
-
   var lang = req.params.lang;
-
-
-
   var article = req.article;
   should.exist(article);
 
@@ -680,6 +676,26 @@ function postSetMarkdown(req, res, next) {
   change.old = {};
   change.old["markdown" + lang] = oldMarkdown;
   article.setAndSave(req.user, change, function(err) {
+    if (err) return next(err);
+    // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
+    const referer = req.header("Referer") || "/";
+    res.redirect(referer);
+  });
+}
+
+function postReviewChange(req, res, next) {
+  debug("postReviewChange");
+
+
+  var lang = req.params.lang;
+  var article = req.article;
+  should.exist(article);
+  const object = {};
+
+  object["markdown" + lang] = req.body.markdown;
+
+
+  article.reviewChanges(req.user, object, function(err) {
     if (err) return next(err);
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
     const referer = req.header("Referer") || "/";
@@ -1088,6 +1104,7 @@ router.get("/:article_id/:votename", allowFullAccess, renderArticleIdVotesBlog);
 
 router.post("/:article_id/addComment", allowGuestAccess, postNewComment);
 router.post("/:article_id/setMarkdown/:lang", allowFullAccess, postSetMarkdown);
+router.post("/:article_id/reviewChange/:lang", allowFullAccess, postReviewChange);
 router.post("/:article_id/editComment/:number", allowFullAccess, postEditComment);
 router.post("/:article_id", allowFullAccess, postArticle);
 router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldValues);

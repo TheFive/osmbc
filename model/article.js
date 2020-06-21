@@ -171,14 +171,12 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
 // Logging is written based on an in memory compare
 // the object is written in total
 // There is no version checking on the database, so it is
-// an very optimistic "locking"
 // Article.prototype.setAndSave = setAndSave;
 Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
 
   var self = this;
-  delete self.lock;
 
   if (data.addComment) return callback(new Error("addCommment in article setAndSave is unsupported"));
   if (data.comment) return callback(new Error("comment in article setAndSave is unsupported"));
@@ -300,6 +298,56 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   });
 };
 
+Article.prototype.reviewChanges = function setAndSave(user, data, callback) {
+  debug("reviewChanges");
+  util.requireTypes([user, data, callback], ["object", "object", "function"]);
+
+  var self = this;
+
+
+  for (var k in data) {
+    if ((self[k] && self[k] !== data[k]) || (typeof (self[k]) === "undefined" && data[k] !== "")) {
+      const error = new Error("Field " + k + " already changed in DB");
+      error.status = HttpStatus.CONFLICT;
+      error.detail = { oldValue: data[k], databaseValue: self[k], Action: "Review Translation Command", field: k };
+      return callback(error);
+    }
+  }
+  data.action = "Review Change of " + Object.keys(data);
+
+  async.series([
+    function checkID(cb) {
+      debug("reviewChanges->checkId");
+      if (self.id === 0) {
+        self.save(cb);
+      } else cb();
+    },
+    function loadBlog(cb) {
+      debug("reviewChanges->loadBlog");
+      if (self._blog) return cb();
+      blogModule.findOne({ name: self.blog }, function(err, result) {
+        if (err) return cb(err);
+        self._blog = result;
+        return cb();
+      });
+    }
+  ], function(err) {
+    debug("reviewChanges->finalCallback");
+    if (err) return callback(err);
+    should.exist(self.id);
+    should(self.id).not.equal(0);
+    for (var k in data) {
+      // Now check, wether deletion is allowed or not.
+      if (k !== "action" && !self.isChangeAllowed(k)) {
+        return callback(new Error(k + " can not be edited. Blog is already exported."));
+      }
+    }
+
+    const oa = create(self);
+    // do not wait on email, so put empty callback handler
+    messageCenter.global.updateArticle(user, oa, data, callback);
+  });
+};
 
 
 function find(obj, order, callback) {
