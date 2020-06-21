@@ -682,9 +682,21 @@ describe("routes/article", function() {
         "markdownDE": "* Dies ist ein grosser Testartikel.",
         "title": "BLOG",
         "version": 1
-      });yf
-      let changes = await logModule.find({table: "article"});
-      should(changes.length).be.greaterThan(0);
+      });
+
+      logModule.find({table:"article"},function(err,result){
+        should.not.exist(err);
+        should(result[1]).eql({
+                oid: '2',
+          blog: 'BLOG',
+          user: 'TestUser',
+          table: 'article',
+          property: 'action',
+          to: 'Review Change of markdownDE',
+          timestamp: '2016-05-25T20:00:00.000Z',
+          id: '10'
+        })
+      })
     });
     it("should fail with wrong old Values", async function () {
       let response = await rp.post({

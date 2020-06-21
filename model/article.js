@@ -317,11 +317,13 @@ Article.prototype.reviewChanges = function setAndSave(user, data, callback) {
 
   async.series([
     function checkID(cb) {
+      debug("reviewChanges->checkId");
       if (self.id === 0) {
         self.save(cb);
       } else cb();
     },
     function loadBlog(cb) {
+      debug("reviewChanges->loadBlog");
       if (self._blog) return cb();
       blogModule.findOne({ name: self.blog }, function(err, result) {
         if (err) return cb(err);
@@ -330,12 +332,13 @@ Article.prototype.reviewChanges = function setAndSave(user, data, callback) {
       });
     }
   ], function(err) {
+    debug("reviewChanges->finalCallback");
     if (err) return callback(err);
     should.exist(self.id);
     should(self.id).not.equal(0);
     for (var k in data) {
       // Now check, wether deletion is allowed or not.
-      if (!self.isChangeAllowed(k)) {
+      if (k !== "action" && !self.isChangeAllowed(k)) {
         return callback(new Error(k + " can not be edited. Blog is already exported."));
       }
     }

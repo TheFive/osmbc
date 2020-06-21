@@ -12,7 +12,7 @@ var util = require("../util/util.js");
 
 
 function generateQuery(table, obj, order) {
-  debug("generateQuery");
+  debug("generateQuery %s", table);
 
   var whereClause = "";
 
@@ -106,6 +106,7 @@ function generateQuery(table, obj, order) {
 
 
 module.exports.save = function(options, callback) {
+  debug("save");
   if (typeof options === "function") {
     callback = options;
     options = null;
@@ -217,8 +218,10 @@ module.exports.remove = function(callback) {
 };
 
 function convertResultFunction(module, callback) {
+  debug("convertResultFunction");
   should.exist(callback);
   return function crs(err, pgResult) {
+    debug("crs");
     const result = [];
     if (err) return callback(err);
     pgResult.rows.forEach(function(row) {
@@ -249,7 +252,7 @@ function convertOneResultFunction(module, callback) {
 }
 
 module.exports.find = function find(module, obj, order, callback) {
-  debug("find");
+  debug("find %s", module.table);
   if (typeof (obj) === "function") {
     callback = obj;
     obj = null;
@@ -262,30 +265,24 @@ module.exports.find = function find(module, obj, order, callback) {
     callback = obj;
     obj = null;
   }
-  function _find(module, obj, order, callback) {
-    should(typeof (callback)).equal("function");
 
-    debug("Connecting to DB" + config.pgstring);
+  should(typeof (callback)).equal("function");
 
-    var table = module.table;
-    var sqlQuery = generateQuery(table, obj, order);
-  
+  debug("Connecting to DB" + config.pgstring);
 
-
+  var table = module.table;
+  var sqlQuery = generateQuery(table, obj, order);
+  debug("Query: %s", sqlQuery);
 
 
-    if (obj && obj.params) {
-      db.query(sqlQuery, obj.params, convertResultFunction(module, callback));
-    } else {
-      db.query(sqlQuery, undefined, convertResultFunction(module, callback));
-    }
+
+
+
+  if (obj && obj.params) {
+    db.query(sqlQuery, obj.params, convertResultFunction(module, callback));
+  } else {
+    db.query(sqlQuery, undefined, convertResultFunction(module, callback));
   }
-  if (callback) {
-    return _find(module, obj, order, callback);
-  }
-  return new Promise((resolve, reject) => {
-    _find(module, obj, order, (err, result) => err ? reject(err) : resolve(result));
-  });
 };
 
 

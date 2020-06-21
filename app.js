@@ -237,6 +237,7 @@ if (app.get("env") === "test") {
     debug("app.use Error Handler for Debug");
     res.status(err.status || 500);
     logger.error("Error Message " + err.message);
+    logger.error(err.stack);
     if (err.type && err.type === "API") return res.send(err.message + "\n" + JSON.stringify(err));
     res.render("error", {
       message: err.message,
