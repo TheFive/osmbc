@@ -111,7 +111,11 @@ block content
                   else
                     div.label.osmbclabel-editblog=blog._countUneditedMarkdown[lang]
                 td
-                  div.glyphicon.glyphicon-download-alt(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`)
+                  div.glyphicon.glyphicon-export(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`)
+                  if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
+                    span=" "
+                    span.glyphicon.glyphicon-alert
+
                 td
                   form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
                     input.hidden(type="text",name="lang" value = lang)
