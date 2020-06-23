@@ -527,6 +527,7 @@ function editBlogId(req, res) {
     layout: res.rendervar.layout,
     blog: blog,
     params: params,
+    reviewInWP: reviewInWP,
     copyLanguageFromAnother: copyLanguageFromAnother,
     categories: blog.getCategories()
   });
