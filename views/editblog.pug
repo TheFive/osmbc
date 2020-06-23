@@ -21,14 +21,14 @@ block content
           .alert.alert-dismissable.alert-success
             button.close( type="button", data-dismiss="alert" ) ×
             | #{info.message}
-  
 
-          
-    if (params && params.edit) 
+
+
+    if (params && params.edit)
       form(name="input", action=layout.htmlroot+"/blog/edit/" + blog.id, method="post")
         .row
           .col-md-2
-            | Name 
+            | Name
           .col-md-6
             input(type="text",class="form-control",name ="name",value=blog.name)
           .col-md-4
@@ -36,12 +36,12 @@ block content
             a(href=`${layout.htmlroot}/blog/edit/${blog.name}?edit=false` class="btn btn-default" role="button") Cancel
         .row
           .col-md-2
-            | Period 
+            | Period
           .col-md-3
             input(type="text",class="form-control",name ="startDate",value=blog.startDate)
           .col-md-3
             input(type="text",class="form-control",name ="endDate",value=blog.endDate)
- 
+
         .row
           .col-md-2
             | Status
@@ -52,14 +52,14 @@ block content
               option(value="edit") edit
               option(value="close") closed
               option(value="trash") trash
- 
+
         .row
           .col-md-2
-            | Categories 
+            | Categories
           .col-md-6
             textarea.form-control(name="categories_yaml",rows=30)=blog._categories_yaml
 
- 
+
 
     else
       .row
@@ -74,7 +74,7 @@ block content
           a.btn.btn-primary#edit(href=`${layout.htmlroot}/blog/edit/${blog.name}?edit=true` role="button") Edit
       .row
         .col-md-2
-          | Period 
+          | Period
         .col-md-3
 
           p
@@ -84,7 +84,7 @@ block content
             | #{layout.moment(blog.endDate).tz("Europe/Berlin").locale(layout.user_locale).format("LLLL z")}
       .row
         .col-md-2
-          | Status 
+          | Status
         .col-md-6
           .panel.panel-default
             .panel-body=blog.status
@@ -93,18 +93,32 @@ block content
         .col-md-6
           table.table-condensed
             tr
-              th lang
-              th review
-              th exported
-              th close
-              th action
+              th="Language"
+              th="Status"
+              th="Download"
+              th="Close"
+
+              th="Special"
             each lang in layout.languages
               tr
                 td=lang
-                td=( (blog["reviewComment"+lang]) ? "review":"-")
-                td=( (blog["exported"+lang]) ? "exported":"-")
-                td=( (blog["exported"+lang]) ? "exported":"-")
-                td=( (blog["close"+lang]) ? "close":"-")
+                td
+                  if (blog["close" + lang])
+                    div.label.osmbclabel-closedblog
+                      span.glyphicon.glyphicon-ok
+                  else if (blog["reviewComment" + lang])
+                    div.label.osmbclabel-reviewblog=(blog["reviewComment" + lang].length - 1)
+                  else
+                    div.label.osmbclabel-editblog=blog._countUneditedMarkdown[lang]
+                td
+                  div.glyphicon.glyphicon-download-alt(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`)
+                td
+                  form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
+                    input.hidden(type="text",name="lang" value = lang)
+                    if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0 )
+                      input.hidden(type="text",name ="action" value = "closelang")
+                      button.btn.btn-xs.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
+
                 td
                   if (blog["close" + lang])
                     form(id="startReview" name="reopenlang", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
@@ -127,7 +141,7 @@ block content
         .col-md-2
           | Show Articles
         .col-md-10
-          p 
+          p
             a(href=layout.htmlroot + "/article/list?blog=" + blog.name) List of all articles
           p="Use this link to go to 'unlinked' articles."
       .row
@@ -138,10 +152,3 @@ block content
             <pre>
             |!{blog._categories_yaml}
             </pre>
-  
- 
-
-
-
-
-
