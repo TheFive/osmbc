@@ -2,7 +2,7 @@
 
 var debug     = require("debug")("OSMBC:notification:LogModuleReceiver");
 var async     = require("async");
-var should    = require("should");
+var assert    = require("assert");
 var logModule = require("../model/logModule.js");
 
 
@@ -19,10 +19,10 @@ LogModuleReceiver.prototype.sendInfo = function(object, cb) {
 
 LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) {
   debug("LogModuleReceiver::updateArticle");
-  should.exist(article.id);
-  should(article.id).not.equal(0);
-  should(typeof (user)).eql("object");
-  should(typeof user.OSMUser).eql("string");
+  assert(article.id);
+  assert(article.id !== 0);
+  assert(typeof (user) === "object");
+  assert(typeof user.OSMUser === "string");
   var logblog = article.blog;
   if (change.blog) logblog = change.blog;
   var timestamp = new Date();
@@ -58,10 +58,11 @@ LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) 
 
 LogModuleReceiver.prototype.updateBlog = function(user, blog, change, cb) {
   debug("LogModuleReceiver::updateBlog");
-  should.exist(blog.id);
-  should(blog.id).not.equal(0);
-  should(typeof (user)).eql("object");
-  should(typeof user.OSMUser).eql("string");
+
+  assert(blog.id);
+  assert(blog.id !== 0);
+  assert(typeof (user) === "object");
+  assert(typeof user.OSMUser === "string");
   var timestamp = new Date();
   async.forEachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
     debug("setAndSaveEachOf");
@@ -101,11 +102,11 @@ LogModuleReceiver.prototype.updateBlog = function(user, blog, change, cb) {
 
 LogModuleReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, cb) {
   debug("LogModuleReceiver.prototype.sendReviewStatus");
-  should.exist(blog.id);
-  should(blog.id).not.equal(0);
-  should(typeof (user)).eql("object");
-  should(typeof user.OSMUser).eql("string");
-  should.exist(user.OSMUser);
+  assert(blog.id);
+  assert(blog.id !== 0);
+  assert(typeof (user) === "object");
+  assert(typeof user.OSMUser === "string");
+  assert(user.OSMUser);
   var timestamp = new Date();
   logModule.log({
     oid: blog.id,
@@ -120,11 +121,11 @@ LogModuleReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, b
 };
 LogModuleReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {
   debug("LogModuleReceiver.prototype.sendCloseStatus");
-  should.exist(blog.id);
-  should(blog.id).not.equal(0);
-  should(typeof (user)).eql("object");
-  should(typeof user.OSMUser).eql("string");
-  should.exist(user.OSMUser);
+  assert(blog.id);
+  assert(blog.id !== 0);
+  assert(typeof (user) === "object");
+  assert(typeof user.OSMUser === "string");
+  assert(user.OSMUser);
   var timestamp = new Date();
   logModule.log({
     oid: blog.id,
@@ -139,11 +140,11 @@ LogModuleReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blo
 
 LogModuleReceiver.prototype.editComment = function editComment(user, article, index, text, callback) {
   debug("LogModuleReceiver.prototype.editComment");
-  should.exist(article.id);
-  should(article.id).not.equal(0);
-  should(typeof (user)).eql("object");
-  should(typeof user.OSMUser).eql("string");
-  should.exist(user.OSMUser);
+  assert(article.id);
+  assert(article.id !== 0);
+  assert(typeof (user) === "object");
+  assert(typeof user.OSMUser === "string");
+  assert(user.OSMUser);
   var timestamp = new Date();
   logModule.log({
     oid: article.id,
@@ -159,11 +160,11 @@ LogModuleReceiver.prototype.editComment = function editComment(user, article, in
 
 LogModuleReceiver.prototype.addComment = function addComment(user, article, text, callback) {
   debug("LogModuleReceiver.prototype.addComment");
-  should.exist(article.id);
-  should(article.id).not.equal(0);
-  should(typeof (user)).eql("object");
-  should(typeof user.OSMUser).eql("string");
-  should.exist(user.OSMUser);
+  assert(article.id);
+  assert(article.id !== 0);
+  assert(typeof (user) === "object");
+  assert(typeof user.OSMUser === "string");
+  assert(user.OSMUser);
   var timestamp = new Date();
   logModule.log({
     oid: article.id,

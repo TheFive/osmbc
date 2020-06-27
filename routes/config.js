@@ -1,6 +1,6 @@
 "use strict";
 
-var should   = require("should");
+var assert   = require("assert");
 var async    = require("async");
 var debug    = require("debug")("OSMBC:routes:config");
 
@@ -24,7 +24,7 @@ const htmlroot = config.htmlRoot();
 function renderConfigName(req, res, next) {
   debug("renderConfigName");
   var name = req.params.name;
-  should.exist(name);
+  assert(name);
   var params = {};
   var config;
   var changes;
@@ -53,7 +53,7 @@ function renderConfigName(req, res, next) {
   function finalRenderCB(err) {
     debug("finalRenderCB");
     if (err) return next(err);
-    should.exist(res.rendervar);
+    assert(res.rendervar);
     var jadeFile = "config";
     if (name === "calendarflags") jadeFile = name;
     if (name === "categorydescription") jadeFile = name;

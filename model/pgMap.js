@@ -1,7 +1,7 @@
 "use strict";
 
 var db     = require("../model/db.js");
-var should = require("should");
+var assert = require("assert").strict;
 var async  = require("async");
 var debug  = require("debug")("OSMBC:model:pgMap");
 var sqldebug  = require("debug")("OSMBC:model:sql");
@@ -89,7 +89,7 @@ function generateQuery(table, obj, order) {
   }
   var orderby = " order by id";
   if (order) {
-    should.exist(order.column);
+    assert(order.column);
     if (order.column !== "id") orderby = " order by data->>'" + order.column + "'";
     if (order.desc) {
       orderby += " desc";
@@ -140,7 +140,7 @@ module.exports.save = function(options, callback) {
       sqldebug("Query %s", sqlquery);
       db.query(sqlquery, [self], function(err, result) {
         if (err) return callback(err);
-        should.exist(result.rows);
+        assert(result.rows);
         self.id = result.rows[0].id;
         return callback(null, self);
       });
@@ -219,7 +219,7 @@ module.exports.remove = function(callback) {
 
 function convertResultFunction(module, callback) {
   debug("convertResultFunction");
-  should.exist(callback);
+  assert(callback);
   return function crs(err, pgResult) {
     debug("crs");
     const result = [];
@@ -237,7 +237,7 @@ function convertResultFunction(module, callback) {
 }
 
 function convertOneResultFunction(module, callback) {
-  should.exist(callback);
+  assert(callback);
   return function crs(err, pgResult) {
     if (err) return callback(err);
     if (pgResult.rows.length === 0) return callback(null, null);
@@ -266,7 +266,7 @@ module.exports.find = function find(module, obj, order, callback) {
     obj = null;
   }
 
-  should(typeof (callback)).equal("function");
+  assert(typeof (callback) === "function");
 
   debug("Connecting to DB" + config.pgstring);
 
@@ -289,9 +289,9 @@ module.exports.find = function find(module, obj, order, callback) {
 
 module.exports.fullTextSearch = function fullTextSearch(module, search, order, callback) {
   debug("fullTextSearch");
-  should.exist(module.table);
-  should.exist(module.create);
-  should(typeof (search)).eql("string");
+  assert(module.table);
+  assert(module.create);
+  assert(typeof (search) === "string");
   if (typeof (order) === "function") {
     callback = order;
     order = null;
@@ -301,7 +301,7 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
   var orderBy = "";
 
   if (order) {
-    should.exist(order.column);
+    assert(order.column);
     orderBy = " order by data->>'" + order.column + "'";
     if (order.desc) {
       orderBy += " desc";
@@ -376,12 +376,12 @@ module.exports.findOne = function findOne(module, obj, order, callback) {
 
 exports.createTables = function(pgObject, options, analyse, callback) {
   debug("pgMap.createTables %s %s", pgObject.table, JSON.stringify(options));
-  should(typeof (options)).equal("object");
+  assert(typeof (options) === "object");
   if (typeof (analyse) === "function") {
     callback = analyse;
     analyse = { foundNOK: {}, expected: {} };
   }
-  should(typeof (analyse)).equal("object");
+  assert(typeof (analyse) === "object");
 
   async.series([
     function tabledrop(cb) {

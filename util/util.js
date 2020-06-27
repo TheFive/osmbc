@@ -1,7 +1,7 @@
 "use strict";
 
 const debug = require("debug")("OSMBC:util:util");
-const should = require("should");
+const assert = require("assert").strict;
 const moment = require("moment");
 const config = require("../config.js");
 
@@ -106,7 +106,7 @@ function getAllURL(t) {
 
 function requireTypes(vars, types) {
   for (let i = 0; i < vars.length; i++) {
-    should(typeof vars[i]).eql(types[i]);
+    assert.equal(typeof (vars[i]), types[i]);
   }
 }
 

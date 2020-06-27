@@ -2,7 +2,7 @@
 
 
 var config = require("../config.js");
-var should = require("should");
+var assert = require("assert");
 var debug = require("debug")("OSMBC:notification:slackReceiver");
 
 var configModule = require("../model/config.js");
@@ -27,12 +27,12 @@ var iconUrl = osmbcUrl + "/images/osmbc_im_logo.png";
 function SlackReceiver(name, slack, channel) {
   debug("SlackReceiver::SlackReceiver");
 
-  should(typeof (name)).eql("string");
-  should(typeof (slack)).eql("string");
+  assert(typeof (name) === "string");
+  assert(typeof (slack) === "string");
   // If privat channels should be adressed to,
   // please change condition to
   // (channel.substring(0,1)==="#")||(channel.substring(0,1)==="@")
-  should((channel.substring(0, 1) === "#")).be.True();
+  assert((channel.substring(0, 1) === "#"));
   this.name = name;
   this.slackName = slack;
   this.hook = slackhook[this.slackName];
@@ -138,7 +138,7 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, l
 SlackReceiver.prototype.updateArticle = function updateArticle(user, article, change, callback) {
   debug("SlackReceiver::updateArticle %s", this.name);
 
-  should(typeof (change)).eql("object");
+  assert(typeof (change) === "object");
 
   var blogName = blogNameSlack(article.blog, change.blog);
   var articleTitle = articleNameSlack(article, change.title);
@@ -258,7 +258,7 @@ function initialise(callback) {
     channelReceiverMap["Slack Connection " + i] = new ConfigFilter(channel, new SlackReceiver(channel.slack + channel.channel, channel.slack, channel.channel));
   }
   iteratorReceiver.receiverMap = channelReceiverMap;
-  should.exist(messageCenter.global);
+  assert(messageCenter.global);
   if (!registered) {
     messageCenter.global.registerReceiver(iteratorReceiver);
     registered = true;

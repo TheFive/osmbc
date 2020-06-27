@@ -1,6 +1,6 @@
 "use strict";
 
-const should = require("should");
+const assert = require("assert").strict;
 const debug = require("debug")("OSMBC:routes:index");
 const express = require("express");
 const async = require("async");
@@ -22,7 +22,7 @@ const appName = config.getValue("AppName", { mustExist: true });
 
 function renderHome(req, res, next) {
   debug("renderHome");
-  should.exist(res.rendervar.layout);
+  assert(res.rendervar.layout);
   var date = new Date();
   date.setTime(date.getTime() - 1000 * 60 * 10);
 
@@ -44,7 +44,7 @@ function renderHome(req, res, next) {
 
     res.set("content-type", "text/html");
     const view = "index";
-    should(req.user.access).eql("full");
+    assert(req.user.access === "full");
     res.render(view, {
       title: appName,
       layout: res.rendervar.layout,
@@ -60,7 +60,7 @@ function renderHome(req, res, next) {
 
 function renderGuestHome(req, res, next) {
   debug("renderGuestHome");
-  should.exist(res.rendervar.layout);
+  assert(res.rendervar.layout);
   var date = new Date();
   date.setTime(date.getTime() - 1000 * 60 * 10);
 
@@ -75,7 +75,7 @@ function renderGuestHome(req, res, next) {
     if (err) return next(err);
     res.set("content-type", "text/html");
     const view = "index_guest";
-    should(req.user.access).eql("guest");
+    assert(req.user.access === "guest");
 
     res.render(view, {
       title: appName,
@@ -90,7 +90,7 @@ const userIsOldInDays = config.getValue("userIsOldInDays", { mustExist: true });
 
 function renderAdminHome(req, res, next) {
   debug("renderAdminHome");
-  should.exist(res.rendervar.layout);
+  assert(res.rendervar.layout);
   let date = new moment();
   date = date.subtract(userIsOldInDays, "Days").toISOString();
 
@@ -195,14 +195,14 @@ function setUserConfig(req, res, next) {
 
 function createBlog(req, res) {
   debug("createBlog");
-  should.exist(res.rendervar.layout);
+  assert(res.rendervar.layout);
   res.render("createblog", { layout: res.rendervar.layout });
 }
 
 
 function renderChangelog(req, res, next) {
   debug("renderChangelog");
-  should.exist(res.rendervar.layout);
+  assert(res.rendervar.layout);
   var text = help.getText("CHANGELOG.md");
   req.user.lastChangeLogView = res.rendervar.layout.osmbc_version;
   req.user.save(function(err) {

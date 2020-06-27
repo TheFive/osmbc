@@ -1,6 +1,6 @@
 "use strict";
 
-const should   = require("should");
+const assert   = require("assert");
 const async    = require("async");
 const debug = require("debug")("OSMBC:routes:users");
 
@@ -53,7 +53,7 @@ function renderList(req, res, next) {
     }
   ], function(error) {
     if (error) return next(error);
-    should.exist(res.rendervar);
+    assert(res.rendervar);
     res.set("content-type", "text/html");
     res.render("userList", {
       layout: res.rendervar.layout,
@@ -94,7 +94,7 @@ function renderUserId(req, res, next) {
 
 
   if (id === "self") return res.redirect(res.rendervar.layout.htmlroot + "/usert/" + req.user.id);
-  should.exist(id);
+  assert(id);
   if (req.user.access === "guest") {
     if ((req.user.OSMUser !== id) && (req.user.id !== id)) {
       return res.status(403).send("Not allowed for guests.");
@@ -155,7 +155,7 @@ function renderUserId(req, res, next) {
     debug("finalRenderCB");
     if (err) return next(err);
     if (redirect) return;
-    should.exist(res.rendervar);
+    assert(res.rendervar);
     let view = "user";
     if (req.user.access === "guest") view = "user_guest";
     res.set("content-type", "text/html");

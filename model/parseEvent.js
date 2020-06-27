@@ -1,7 +1,7 @@
 "use strict";
 
 var debug   = require("debug")("OSMBC:model:parseEvent");
-var should  = require("should");
+var assert  = require("assert").strict;
 var moment  = require("moment");
 var request = require("request");
 var config = require("../config.js");
@@ -103,7 +103,7 @@ function ll(length) {
 
 function calendarJSONToMarkdown2(json, countryFlags, ct, option, cb) {
   debug("calendarJSONToMarkdown2");
-  should(typeof (cb)).eql("function");
+  assert(typeof (cb) === "function");
 
   var lang = option.lang;
   var enableCountryFlags = option.enableCountryFlags;
@@ -201,4 +201,3 @@ function calendarJSONToMarkdown(json, options, cb) {
 exports.calendarJSONToMarkdown = calendarJSONToMarkdown;
 exports.filterEvent = filterEvent;
 exports.convertGeoName = convertGeoName;
-

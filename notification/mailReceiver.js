@@ -2,7 +2,7 @@
 
 var path          = require("path");
 var config        = require("../config.js");
-var should        = require("should");
+var assert        = require("assert");
 var debug         = require("debug")("OSMBC:notification:mailReceiver");
 var fs            = require("fs");
 var nodemailer    = require("nodemailer");
@@ -213,7 +213,7 @@ MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, la
 MailReceiver.prototype.updateArticle = function updateArticle(user, article, change, callback) {
   debug("MailReceiver.prototype.updateArticle");
   if (this.invalidMail) return callback();
-  should(typeof (change)).eql("object");
+  assert(typeof (change) === "object");
 
 
   var self = this;
@@ -262,7 +262,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user, article, cha
 MailReceiver.prototype.addComment = function addComment(user, article, text, callback) {
   debug("MailReceiver.prototype.addComment");
   if (this.invalidMail) return callback();
-  should(typeof (text)).eql("string");
+  assert(typeof (text) === "string");
 
 
   var self = this;
@@ -298,7 +298,7 @@ MailReceiver.prototype.addComment = function addComment(user, article, text, cal
 MailReceiver.prototype.editComment = function editComment(user, article, index, text, callback) {
   debug("MailReceiver.prototype.addComment");
   if (this.invalidMail) return callback();
-  should(typeof (text)).eql("string");
+  assert(typeof (text) === "string");
 
 
   var self = this;
@@ -456,7 +456,7 @@ function initialise(userList) {
     var u = userList[i];
     updateUser(u);
   }
-  should.exist(messageCenter.global);
+  assert(messageCenter.global);
   if (!registered) {
     messageCenter.global.registerReceiver(iteratorReceiver);
     registered = true;

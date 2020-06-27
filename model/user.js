@@ -3,7 +3,7 @@
 const pgMap          = require("./pgMap.js");
 const util           = require("../util/util.js");
 const debug          = require("debug")("OSMBC:model:user");
-const should         = require("should");
+const assert         = require("assert").strict;
 const async          = require("async");
 const messageCenter  = require("../notification/messageCenter.js");
 const mailReceiver   = require("../notification/mailReceiver.js");
@@ -227,9 +227,9 @@ module.exports.pg = pgObject;
 // send out via EMail if someone registers a new email
 User.prototype.validateEmail = function validateEmail(user, validationCode, callback) {
   debug("validateEmail");
-  should(typeof (user)).eql("object");
-  should(typeof (validationCode)).eql("string");
-  should(typeof (callback)).eql("function");
+  assert(typeof (user) === "object");
+  assert(typeof (validationCode) === "string");
+  assert(typeof (callback) === "function");
   const self = this;
   let err;
   if (self.OSMUser !== user.OSMUser) {
