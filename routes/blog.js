@@ -2,7 +2,7 @@
 
 const express  = require("express");
 const router   = express.Router();
-const async    = require("async");
+const async    = require("../util/async_wrap.js");
 const assert   = require("assert");
 const debug    = require("debug")("OSMBC:routes:blog");
 const config   = require("../config.js");

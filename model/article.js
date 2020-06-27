@@ -2,7 +2,7 @@
 // Exported Functions and prototypes are defined at end of file
 
 
-const async      = require("async");
+const async      = require("../util/async_wrap.js");
 const assert     = require("assert").strict;
 const debug      = require("debug")("OSMBC:model:article");
 const HttpStatus = require("http-status-codes");

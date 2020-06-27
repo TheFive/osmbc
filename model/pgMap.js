@@ -2,7 +2,7 @@
 
 var db     = require("../model/db.js");
 var assert = require("assert").strict;
-var async  = require("async");
+var async  = require("../util/async_wrap.js");
 var debug  = require("debug")("OSMBC:model:pgMap");
 var sqldebug  = require("debug")("OSMBC:model:sql");
 
@@ -432,7 +432,7 @@ exports.createTables = function(pgObject, options, analyse, callback) {
       if (options.createIndex || options.updateIndex) {
         debug("indexcreation");
         if (options.verbose) logger.info("Creating Indexes for " + pgObject.table);
-        async.forEachOf(pgObject.indexDefinition, function(sql, index, eachofcb) {
+        async.eachOf(pgObject.indexDefinition, function(sql, index, eachofcb) {
           var createIt = false;
           if (options.createIndex) createIt = true;
           if (analyse.foundNOK[index]) createIt = true;
@@ -447,7 +447,7 @@ exports.createTables = function(pgObject, options, analyse, callback) {
     function viewsdrop(cb) {
       debug("viewsdrop");
       if (options.dropView) {
-        async.forEachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
+        async.eachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
           var dropIndex = "DROP VIEW if exists " + view + ";";
           if (options.verbose) logger.info("Drop View " + view);
           db.query(dropIndex, eachofcb);
@@ -457,7 +457,7 @@ exports.createTables = function(pgObject, options, analyse, callback) {
     function viewscreation(cb) {
       debug("viewscreation");
       if (options.createView) {
-        async.forEachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
+        async.eachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
           if (options.verbose) logger.info("Create View " + view);
           db.query(sql, eachofcb);
         }, function finalFunction(err) { return cb(err); });

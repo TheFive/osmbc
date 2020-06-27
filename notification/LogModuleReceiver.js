@@ -1,7 +1,7 @@
 "use strict";
 
 var debug     = require("debug")("OSMBC:notification:LogModuleReceiver");
-var async     = require("async");
+var async     = require("../util/async_wrap.js");
 var assert    = require("assert");
 var logModule = require("../model/logModule.js");
 
@@ -27,7 +27,7 @@ LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) 
   if (change.blog) logblog = change.blog;
   var timestamp = new Date();
   if (change.timestamp) timestamp = change.timestamp;
-  async.forEachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
+  async.eachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
     // There is no Value for the key, so do nothing
     if (typeof (value) === "undefined") return cbEachOf();
 
@@ -64,7 +64,7 @@ LogModuleReceiver.prototype.updateBlog = function(user, blog, change, cb) {
   assert(typeof (user) === "object");
   assert(typeof user.OSMUser === "string");
   var timestamp = new Date();
-  async.forEachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
+  async.eachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
     debug("setAndSaveEachOf");
     // There is no Value for the key, so do nothing
 

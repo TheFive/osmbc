@@ -1,7 +1,7 @@
 "use strict";
 // Exported Functions and prototypes are defined at end of file
 
-const async    = require("async");
+const async    = require("../util/async_wrap.js");
 const config   = require("../config.js");
 const util     = require("../util/util.js");
 const HttpStatus = require("http-status-codes");
@@ -601,7 +601,7 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang
       });
     },
     function copyArticles(cb) {
-      async.forEach(articleList, function(article, cb2) {
+      async.each(articleList, function(article, cb2) {
         // to lang already defined
         if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
         if ((fromLang !== "no_translation") && (!article["markdown" + fromLang])) return cb2();
@@ -662,7 +662,7 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
     },
     function translateArticles(cb) {
       debug("translateArticles");
-      async.forEach(articleList, function(article, cb2) {
+      async.each(articleList, function(article, cb2) {
         debug("translateArticles.forEach");
 
         // to lang already defined

@@ -3,7 +3,7 @@
 const assert = require("assert").strict;
 const debug = require("debug")("OSMBC:routes:index");
 const express = require("express");
-const async = require("async");
+const async = require("../util/async_wrap.js");
 const HttpStatus = require("http-status-codes");
 
 const router = express.Router();

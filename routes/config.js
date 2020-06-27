@@ -1,7 +1,7 @@
 "use strict";
 
 var assert   = require("assert");
-var async    = require("async");
+var async    = require("../util/async_wrap.js");
 var debug    = require("debug")("OSMBC:routes:config");
 
 

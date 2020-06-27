@@ -4,7 +4,7 @@ const pgMap          = require("./pgMap.js");
 const util           = require("../util/util.js");
 const debug          = require("debug")("OSMBC:model:user");
 const assert         = require("assert").strict;
-const async          = require("async");
+const async          = require("../util/async_wrap.js");
 const messageCenter  = require("../notification/messageCenter.js");
 const mailReceiver   = require("../notification/mailReceiver.js");
 const random         = require("randomstring");
@@ -322,7 +322,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
     cacheOSMAvatar.bind(null, data.OSMUser)
   ], function finalFunction(err) {
     if (err) return callback(err);
-    async.forEachOfSeries(data, function setAndSaveEachOf(value, key, cbEachOf) {
+    async.eachOfSeries(data, function setAndSaveEachOf(value, key, cbEachOf) {
       // There is no Value for the key, so do nothing
       if (typeof (value) === "undefined") return cbEachOf();
 

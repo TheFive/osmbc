@@ -1,7 +1,7 @@
 "use strict";
 
 const express     = require("express");
-const async       = require("async");
+const async       = require("../util/async_wrap.js");
 const assert      = require("assert").strict;
 const markdown    = require("markdown-it")();
 const debug       = require("debug")("OSMBC:routes:article");

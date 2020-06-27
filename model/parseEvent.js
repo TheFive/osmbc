@@ -6,7 +6,7 @@ var moment  = require("moment");
 var request = require("request");
 var config = require("../config.js");
 var configModule = require("../model/config.js");
-var async = require("async");
+var async = require("../util/async_wrap.js");
 
 const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
 

@@ -388,7 +388,7 @@ function MailUserReceiver() {
 
 MailUserReceiver.prototype.sendReviewStatus = function sendReviewStatus(user,blog,lang,status,callback) {
   debug('MailUserReceiver.prototype.sendReviewStatus');
-  async.forEachOf(userReceiverMap,function(value,key,cb) {
+  async.eachOf(userReceiverMap,function(value,key,cb) {
     value.sendReviewStatus(user,blog,lang,status,cb);
   },function(err) {
     return callback(err);
@@ -397,7 +397,7 @@ MailUserReceiver.prototype.sendReviewStatus = function sendReviewStatus(user,blo
 
 MailUserReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,callback) {
   debug('MailUserReceiver.prototype.sendCloseStatus');
-  async.forEachOf(userReceiverMap,function(value,key,cb) {
+  async.eachOf(userReceiverMap,function(value,key,cb) {
     value.sendCloseStatus(user,blog,lang,status,cb);
   },function(err) {
     return callback(err);
@@ -406,7 +406,7 @@ MailUserReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,
 
 MailUserReceiver.prototype.updateArticle = function murUpdateArticle(user,article,change,callback) {
   debug('MailUserReceiver.prototype.updateArticle');
-  async.forEachOf(userReceiverMap,function(value,key,cb) {
+  async.eachOf(userReceiverMap,function(value,key,cb) {
     debug('forEachOf'+key);
     value.updateArticle(user,article,change,cb);
   },function(err) {
@@ -415,7 +415,7 @@ MailUserReceiver.prototype.updateArticle = function murUpdateArticle(user,articl
 };
 MailUserReceiver.prototype.addComment = function addComment(user,article,comment,callback) {
   debug('MailUserReceiver.prototype.addComment');
-  async.forEachOf(userReceiverMap,function(value,key,cb) {
+  async.eachOf(userReceiverMap,function(value,key,cb) {
     debug('forEachOf'+key);
     value.addComment(user,article,comment,cb);
   },function(err) {
@@ -424,7 +424,7 @@ MailUserReceiver.prototype.addComment = function addComment(user,article,comment
 };
 MailUserReceiver.prototype.editComment = function editComment(user,article,index,comment,callback) {
   debug('MailUserReceiver.prototype.editComment');
-  async.forEachOf(userReceiverMap,function(value,key,cb) {
+  async.eachOf(userReceiverMap,function(value,key,cb) {
     debug('forEachOf'+key);
     value.editComment(user,article,index,comment,cb);
   },function(err) {
@@ -433,7 +433,7 @@ MailUserReceiver.prototype.editComment = function editComment(user,article,index
 };
 MailUserReceiver.prototype.updateBlog = function murUpdateBlog(user,blog,change,callback) {
   debug('MailUserReceiver.prototype.updateBlog');
-  async.forEachOf(userReceiverMap,function(value,key,cb) {
+  async.eachOf(userReceiverMap,function(value,key,cb) {
     debug('forEachOf'+key);
     value.updateBlog(user,blog,change,cb);
   },function(err) {

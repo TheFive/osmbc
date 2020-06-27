@@ -2,7 +2,7 @@
 
 var debug    = require("debug")("OSMBC:model:config");
 var assert   = require("assert").strict;
-var async    = require("async");
+var async    = require("../util/async_wrap.js");
 var yaml     = require("js-yaml");
 var fs       = require("fs");
 var path     = require("path");
@@ -253,7 +253,7 @@ Config.prototype.setAndSave = function setAndSave(user, data, callback) {
   delete self.json;
 
 
-  async.forEachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
+  async.eachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
     // There is no Value for the key, so do nothing
     if (typeof (value) === "undefined") return cbEachOf();
 
