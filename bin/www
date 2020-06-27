@@ -59,6 +59,10 @@ function initialiseServer() {
       server.on('error', onError);
       server.on('listening', onListening);
       logger.info("Server Listening on port "+port);
+      const used = process.memoryUsage();
+      for (let key in used) {
+        logger.info(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
+}
   })
 }
 
