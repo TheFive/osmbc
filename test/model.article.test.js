@@ -406,6 +406,23 @@ describe("model/article", function() {
         });
       });
     });
+    it("should set a Value with comparing history Value ignoring \r\n \n differences", function (bddone) {
+      // Generate an article for test
+      var newArticle;
+      debug("Create a new Article");
+      articleModule.createNewArticle({markdownDE: "markdown\n", blog: "TEST"}, function testSetAndSaveCreateNewArticleCB(err, result) {
+        should.not.exist(err);
+        newArticle = result;
+        newArticle.setAndSave({OSMUser: "test"}, {markdownDE: "Hallo", old: {markdownDE: "markdown\r\n"}}, function(err) {
+          should.not.exist(err);
+          articleModule.findById(newArticle.id, function(err, result) {
+            should.not.exist(err);
+            should(result).eql({_blog: null, markdownDE: "Hallo", version: 2, blog: "TEST", id: newArticle.id});
+            bddone();
+          });
+        });
+      });
+    });
     it("should report error when old value wrong", function (bddone) {
       // Generate an article for test
       var newArticle;
