@@ -1,8 +1,8 @@
 "use strict";
 
 const express     = require("express");
-const async       = require("async");
-const should      = require("should");
+const async       = require("../util/async_wrap.js");
+const assert      = require("assert").strict;
 const markdown    = require("markdown-it")();
 const debug       = require("debug")("OSMBC:routes:article");
 const path        = require("path");
@@ -59,7 +59,7 @@ config.getValue("diableOldEditor", { deprecated: true });
 function getArticleFromID(req, res, next, id) {
   debug("getArticleFromID");
   req.article = null;
-  should.exist(id);
+  assert(id);
   const idNumber = Number(id);
   if ("" + idNumber !== id) {
     return res.status(HttpStatus.NOT_FOUND).send("Article ID " + id + " does not exist (conversion error)");
@@ -113,7 +113,7 @@ function renderArticleId(req, res, next) {
   }); */
 
   var article = req.article;
-  should.exist(article);
+  assert(article);
 
 
   var categories = blogModule.getCategories();
@@ -289,7 +289,7 @@ function renderArticleIdVotes(req, res, next) {
   var votes = configModule.getConfig("votes");
 
   var article = req.article;
-  should.exist(article);
+  assert(article);
 
 
   async.auto({},
@@ -315,7 +315,7 @@ function renderArticleIdCommentArea(req, res, next) {
 
 
   var article = req.article;
-  should.exist(article);
+  assert(article);
 
   const params = {};
   params.editComment = null;
@@ -363,8 +363,8 @@ function renderArticleIdVotesBlog(req, res, next) {
 
 
   var article = req.article;
-  should.exist(article);
-  should.exist(vote);
+  assert(article);
+  assert(vote);
 
   async.auto({ },
     function (err) {
@@ -425,7 +425,7 @@ function searchAndCreate(req, res, next) {
       debug("searchAndCreate->fullTextSearch");
       if (err) return next(err);
       const renderer = new BlogRenderer.HtmlRenderer(null);
-      should.exist(res.rendervar);
+      assert(res.rendervar);
       res.set("content-type", "text/html");
       res.render("collect", {
         layout: res.rendervar.layout,
@@ -495,7 +495,7 @@ function postArticle(req, res, next) {
   function setValues(err) {
     debug("postArticle->setValues");
     if (err) { return next(err); }
-    should.exist(article);
+    assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
       var languages = config.getLanguages();
@@ -584,7 +584,7 @@ function postArticleWithOldValues(req, res, next) {
   function setValues(err) {
     debug("postArticle->setValues");
     if (err) { return next(err); }
-    should.exist(article);
+    assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
       var languages = config.getLanguages();
@@ -634,7 +634,7 @@ function copyArticle(req, res, next) {
 function postNewComment(req, res, next) {
   debug("postNewComment");
   var article = req.article;
-  should.exist(article);
+  assert(article);
   var comment = req.body.comment;
   var returnToUrl;
 
@@ -665,7 +665,7 @@ function postSetMarkdown(req, res, next) {
 
   var lang = req.params.lang;
   var article = req.article;
-  should.exist(article);
+  assert(article);
 
   var markdown = req.body.markdown;
   var oldMarkdown = req.body.oldMarkdown;
@@ -689,7 +689,7 @@ function postReviewChange(req, res, next) {
 
   var lang = req.params.lang;
   var article = req.article;
-  should.exist(article);
+  assert(article);
   const object = {};
 
   object["markdown" + lang] = req.body.markdown;
@@ -708,7 +708,7 @@ function postEditComment(req, res, next) {
 
   var number = req.params.number;
   var article = req.article;
-  should.exist(article);
+  assert(article);
 
   var comment = req.body.comment;
   var returnToUrl;
@@ -737,7 +737,7 @@ function markCommentRead(req, res, next) {
 
 
   var article = req.article;
-  should.exist(article);
+  assert(article);
   article.markCommentRead(req.user, number, function(err) {
     debug("markCommentRead->markCommentRead");
     if (err) {
@@ -770,7 +770,7 @@ function doAction(req, res, next) {
 
 
   var article = req.article;
-  should.exist(article);
+  assert(article);
 
   article[action](req.user, tag, function(err) {
     debug("doAction->%s callback", action);
@@ -816,7 +816,7 @@ function createArticle(req, res, next) {
   function finalFunction(err) {
     debug("createArticle->finalFunction");
     if (err) return next(err);
-    should.exist(res.rendervar);
+    assert(res.rendervar);
     res.set("content-type", "text/html");
     res.render("collect", {
       layout: res.rendervar.layout,
@@ -856,7 +856,7 @@ function searchArticles(req, res, next) {
   function finalFunction(err) {
     debug("search->finalFunction");
     if (err) return next(err);
-    should.exist(res.rendervar);
+    assert(res.rendervar);
     const renderer = new BlogRenderer.HtmlRenderer(null);
     res.render("collect", {
       layout: res.rendervar.layout,
@@ -961,7 +961,7 @@ function renderList(req, res, next) {
   ], function finalFunction(error) {
     debug("renderList->finalFunction");
     if (error) return next(error);
-    should.exist(res.rendervar);
+    assert(res.rendervar);
     res.set("content-type", "text/html");
     res.render("articlelist", {
       layout: res.rendervar.layout,

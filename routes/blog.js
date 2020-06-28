@@ -2,8 +2,8 @@
 
 const express  = require("express");
 const router   = express.Router();
-const async    = require("async");
-const should   = require("should");
+const async    = require("../util/async_wrap.js");
+const assert   = require("assert");
 const debug    = require("debug")("OSMBC:routes:blog");
 const config   = require("../config.js");
 const util     = require("../util/util.js");
@@ -32,8 +32,8 @@ const reviewInWP = config.getValue("ReviewInWP", { default: [] });
 function findBlogByRouteId(id, user, callback) {
   debug("findBlogByRouteId(%s)", id);
   let blog;
-  should(typeof (user)).eql("object");
-  should(typeof (callback)).eql("function");
+  assert(typeof (user) === "object");
+  assert(typeof (callback) === "function");
 
   async.series([
     function CheckTBC(cb) {
@@ -141,7 +141,7 @@ function renderBlogStat(req, res, next) {
     }
   ],
   function (err) {
-    should.exist(res.rendervar);
+    assert(res.rendervar);
     if (err) return next(err);
     res.set("content-type", "text/html");
     res.rendervar.layout.title = blog.name + "/statistic";
@@ -189,7 +189,7 @@ function renderBlogList(req, res, next) {
       });
     }]
   }, function(err, result) {
-    should.exist(res.rendervar);
+    assert(res.rendervar);
     if (err) return next(err);
     res.set("content-type", "text/html");
     res.rendervar.layout.title = "blog/list";
@@ -251,7 +251,7 @@ function renderBlogPreview(req, res, next) {
         res.end(result.converter, "UTF8");
       }
     } else {
-      should.exist(res.rendervar);
+      assert(res.rendervar);
       res.rendervar.layout.title = blog.name + "/preview";
       res.render("blogpreview", {
         layout: res.rendervar.layout,
@@ -415,7 +415,7 @@ function renderBlogTab(req, res, next) {
   function(err, result) {
     debug("renderBlogTab->final function");
     if (err) return next(err);
-    should.exist(res.rendervar);
+    assert(res.rendervar);
     if (clearParams) {
       const url = htmlroot + "/blog/" + blog.name;
       let styleParam = "";
@@ -512,8 +512,8 @@ function createBlog(req, res, next) {
 function editBlogId(req, res) {
   debug("editBlogId");
   const blog = req.blog;
-  should.exist(res.rendervar);
-  should.exist(blog);
+  assert(res.rendervar);
+  assert(blog);
   const params = {};
   if (req.query.edit) params.edit = req.query.edit;
   if (params.edit && params.edit === "false") {

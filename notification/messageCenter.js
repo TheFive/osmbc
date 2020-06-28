@@ -1,7 +1,7 @@
 "use strict";
 
 var debug     = require("debug")("OSMBC:notification:messageCenter");
-var async     = require("async");
+var async     = require("../util/async_wrap.js");
 var LogModuleReceiver = require("../notification/LogModuleReceiver");
 var logger    = require("../config.js").logger;
 

@@ -2,8 +2,8 @@
 // Exported Functions and prototypes are defined at end of file
 
 
-const async      = require("async");
-const should     = require("should");
+const async      = require("../util/async_wrap.js");
+const assert     = require("assert").strict;
 const debug      = require("debug")("OSMBC:model:article");
 const HttpStatus = require("http-status-codes");
 
@@ -128,8 +128,8 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
 
   // blog is set to null, so no dependency;
   if (this._blog === null) return true;
-  should.exist(this._blog);
-  should(this.blog).eql(this._blog.name);
+  assert.equal(typeof this._blog, "object");
+  assert.equal(this.blog, this._blog.name);
   const langlist = config.getLanguages();
   let result = true;
   const self = this;
@@ -262,8 +262,8 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
     }
   ], function(err) {
     if (err) return callback(err);
-    should.exist(self.id);
-    should(self.id).not.equal(0);
+    assert(typeof self.id !== "undefined");
+    assert(self.id !== 0);
     delete data.version;
 
     for (var k in data) {
@@ -337,8 +337,8 @@ Article.prototype.reviewChanges = function setAndSave(user, data, callback) {
   ], function(err) {
     debug("reviewChanges->finalCallback");
     if (err) return callback(err);
-    should.exist(self.id);
-    should(self.id).not.equal(0);
+    assert(typeof self.id !== "undefined");
+    assert.notEqual(self.id, 0);
     for (var k in data) {
       // Now check, wether deletion is allowed or not.
       if (k !== "action" && !self.isChangeAllowed(k)) {
@@ -371,7 +371,7 @@ function find(obj, order, callback) {
       };
     }
   }
-  should.exist(createFunction);
+  assert.notEqual(typeof createFunction, undefined);
   pgMap.find({ table: "article", create: createFunction }, obj, order, callback);
 }
 
@@ -600,9 +600,9 @@ function normaliseArticleNumber(comment) {
 
 Article.prototype.addCommentFunction = function addCommentFunction(user, text, callback) {
   debug("Article.prototype.addCommentFunction");
-  should(typeof (user)).eql("object");
-  should(typeof (text)).eql("string");
-  should(typeof (callback)).eql("function");
+  assert.equal(typeof (user), "object");
+  assert.equal(typeof (text), "string");
+  assert.equal(typeof (callback), "function");
 
   // check on empty comment
   if (text.trim() === "") return callback(new Error("Empty Comment Added"));
@@ -647,15 +647,16 @@ Article.prototype.addCommentFunction = function addCommentFunction(user, text, c
 
 Article.prototype.editComment = function editComment(user, index, text, callback) {
   debug("Article.prototype.editComment");
-  should(typeof (user)).eql("object");
-  should(typeof (text)).eql("string");
-  should(typeof (callback)).eql("function");
+  assert.equal(typeof (user), "object");
+  assert.equal(typeof (text), "string");
+  assert.equal(typeof (callback), "function");
   if (text.trim() === "") return callback(new Error("Empty Comment Added"));
   text = normaliseArticleNumber(text);
   var self = this;
 
   if (!self.commentList) self.commentList = [];
-  should(index).within(0, self.commentList.length - 1);
+  assert(index >= 0);
+  assert(index <= self.commentList.length - 1);
   if (user.OSMUser !== self.commentList[index].user) {
     const error = new Error("Only Writer is allowed to change a commment");
     error.status = HttpStatus.CONFLICT;
@@ -730,8 +731,8 @@ The Value has to be between -1 and the length of the comment list -1.
 */
 Article.prototype.markCommentRead = function markCommentRead(user, index, callback) {
   debug("Article.prototype.markCommentRead");
-  should(typeof (user)).eql("object");
-  should(typeof (callback)).eql("function");
+  assert.equal(typeof (user), "object");
+  assert.equal(typeof (callback), "function");
   var self = this;
 
   // nothing to read, ignore request.
@@ -740,7 +741,8 @@ Article.prototype.markCommentRead = function markCommentRead(user, index, callba
   // Do not mark more comments then necessary as read
   if (index >= self.commentList.length) index = self.commentList.length - 1;
 
-  should(index).within(-1, self.commentList.length - 1);
+  assert(index >= -1);
+  assert(index <= self.commentList.length - 1);
 
   if (!self.commentRead) self.commentRead = {};
   self.commentRead[user.OSMUser] = index;
@@ -749,9 +751,9 @@ Article.prototype.markCommentRead = function markCommentRead(user, index, callba
 
 Article.prototype.setVote = function setVote(user, tag, callback) {
   debug("Article.prototype.setVote");
-  should(typeof (user)).eql("object");
-  should(typeof tag).eql("string");
-  should(typeof (callback)).eql("function");
+  assert.equal(typeof (user), "object");
+  assert.equal(typeof tag, "string");
+  assert.equal(typeof (callback), "function");
   var self = this;
 
   if (!self.votes) self.votes = {};
@@ -767,9 +769,9 @@ Article.prototype.setVote = function setVote(user, tag, callback) {
 
 Article.prototype.unsetVote = function unsetVote(user, tag, callback) {
   debug("Article.prototype.unsetVote");
-  should(typeof (user)).eql("object");
-  should(typeof tag).eql("string");
-  should(typeof (callback)).eql("function");
+  assert.equal(typeof (user), "object");
+  assert.equal(typeof tag, "string");
+  assert.equal(typeof (callback), "function");
   var self = this;
 
   if (!self.votes) self.votes = {};
@@ -786,9 +788,9 @@ Article.prototype.unsetVote = function unsetVote(user, tag, callback) {
 
 Article.prototype.setTag = function setTag(user, tag, callback) {
   debug("Article.prototype.setTag");
-  should(typeof (user)).eql("object");
-  should(typeof tag).eql("string");
-  should(typeof (callback)).eql("function");
+  assert.equal(typeof (user), "object");
+  assert.equal(typeof tag, "string");
+  assert.equal(typeof (callback), "function");
   var self = this;
 
   if (!self.tags) self.tags = [];
@@ -802,9 +804,9 @@ Article.prototype.setTag = function setTag(user, tag, callback) {
 
 Article.prototype.unsetTag = function unsetTag(user, tag, callback) {
   debug("Article.prototype.unsetTag");
-  should(typeof (user)).eql("object");
-  should(typeof tag).eql("string");
-  should(typeof (callback)).eql("function");
+  assert.equal(typeof user, "object");
+  assert.equal(typeof tag, "string");
+  assert.equal(typeof callback, "function");
   var self = this;
 
   if (!self.tags) self.tags = [];

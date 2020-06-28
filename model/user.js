@@ -3,8 +3,8 @@
 const pgMap          = require("./pgMap.js");
 const util           = require("../util/util.js");
 const debug          = require("debug")("OSMBC:model:user");
-const should         = require("should");
-const async          = require("async");
+const assert         = require("assert").strict;
+const async          = require("../util/async_wrap.js");
 const messageCenter  = require("../notification/messageCenter.js");
 const mailReceiver   = require("../notification/mailReceiver.js");
 const random         = require("randomstring");
@@ -227,9 +227,9 @@ module.exports.pg = pgObject;
 // send out via EMail if someone registers a new email
 User.prototype.validateEmail = function validateEmail(user, validationCode, callback) {
   debug("validateEmail");
-  should(typeof (user)).eql("object");
-  should(typeof (validationCode)).eql("string");
-  should(typeof (callback)).eql("function");
+  assert(typeof (user) === "object");
+  assert(typeof (validationCode) === "string");
+  assert(typeof (callback) === "function");
   const self = this;
   let err;
   if (self.OSMUser !== user.OSMUser) {
@@ -322,7 +322,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
     cacheOSMAvatar.bind(null, data.OSMUser)
   ], function finalFunction(err) {
     if (err) return callback(err);
-    async.forEachOfSeries(data, function setAndSaveEachOf(value, key, cbEachOf) {
+    async.eachOfSeries(data, function setAndSaveEachOf(value, key, cbEachOf) {
       // There is no Value for the key, so do nothing
       if (typeof (value) === "undefined") return cbEachOf();
 

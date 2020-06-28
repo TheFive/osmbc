@@ -2,7 +2,7 @@
 
 const { Pool } = require("pg");
 var config = require("../config.js");
-var should = require("should");
+var assert = require("assert").strict;
 var sqldebug  = require("debug")("OSMBC:model:sql");
 
 
@@ -10,11 +10,11 @@ const pgConfigValues = config.getValue("postgres", { mustexist: true });
 const logTime = config.getValue("postgresLogStatements", { default: 1000 });
 
 
-should.exist(pgConfigValues.username);
-should.exist(pgConfigValues.database);
-should.exist(pgConfigValues.password);
-should.exist(pgConfigValues.server);
-should.exist(pgConfigValues.port);
+assert(pgConfigValues.username);
+assert(pgConfigValues.database);
+assert(pgConfigValues.password);
+assert(pgConfigValues.server);
+assert(pgConfigValues.port);
 var logger    = require("../config.js").logger;
 
 if (pgConfigValues.connectstr && pgConfigValues.connectStr !== "") {
@@ -63,8 +63,8 @@ module.exports.query = function (text, values, callback) {
     callback = values;
     values = undefined;
   }
-  should.exist(callback);
-  should(typeof callback).eql("function");
+  assert(callback);
+  assert(typeof callback === "function");
 
   var startTime = new Date().getTime();
   sqldebug("SQL: start %s", text);

@@ -1,6 +1,6 @@
 "use strict";
 
-const should = require("should");
+const assert = require("assert");
 
 var debug = require("debug")("OSMBC:notification:messageFilter");
 
@@ -10,8 +10,8 @@ function UserConfigFilter(user, receiver) {
 
   this.user = user;
   this.receiver = receiver;
-  should.exist(this.user.OSMUser);
-  should.exist(this.user.access);
+  assert(this.user.OSMUser);
+  assert(this.user.access);
 }
 
 UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, article, change, cb) {
@@ -160,4 +160,3 @@ UserConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog
 };
 
 module.exports = UserConfigFilter;
-
