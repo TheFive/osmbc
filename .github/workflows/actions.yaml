@@ -21,8 +21,9 @@ jobs:
         operating-system: [ubuntu-latest]
         node-version: [12.x]
     steps:
-      - name: prepare database
+      - name: prepare create database
         run: psql -c 'create database testdb;' -U postgres
+      - name: create database test user
         run:  psql -c "CREATE USER test WITH UNENCRYPTED PASSWORD 'test' " -U postgres
       - name: Checkout
         uses: actions/checkout@v2
