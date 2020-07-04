@@ -3,10 +3,10 @@
 
   "postgres": {
     "initialise": true,
-    "database" : "testdb",
-    "username" : "test",
-    "password" : "test",
-    "server" : "127.0.0.1",
+    "database" : "postgres",
+    "username" : "postgres",
+    "password" : "postgres",
+    "server" : "localhost",
     "port":"5432"
   },
    "twitter":{
