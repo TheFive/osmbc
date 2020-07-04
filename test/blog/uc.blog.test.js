@@ -19,7 +19,11 @@ const initialise = require("../../util/initialise.js");
 const userModule  = require("../../model/user.js");
 
 
-
+function promiseTimeout (time) {
+  return new Promise(function(resolve,reject){
+    setTimeout(function(){resolve(time);},time);
+  });
+};
 
 
 
@@ -194,6 +198,7 @@ describe("uc/blog", function() {
       it("should show Full View", async function() {
         await browser.visit("/blog/WN290");
         await browser.click("a[href='/blog/WN290/Full']");
+        await promiseTimeout(3000);
         browser.assert.expectHtmlSync("blog", "blog_wn290_full");
 
         let selector = "li#wn290_24";
