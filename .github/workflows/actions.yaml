@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - github_workflow
+      - master
   pull_request:
     branches:
       - master
