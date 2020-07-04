@@ -38,6 +38,7 @@ describe("routes/index", function() {
 
 
   before(async function () {
+    await testutil.clearDB();
     await initialise.initialiseModules();
     testutil.startServerSync();
     jar.testUser = await testutil.getUserJar("TestUser");
