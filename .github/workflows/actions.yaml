@@ -9,9 +9,9 @@ jobs:
       postgres:
         image: postgres:10.8
         env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: testdb
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
         ports:
         - 5432:5432
         # needed because the postgres container does not provide a healthcheck
@@ -21,6 +21,9 @@ jobs:
         operating-system: [ubuntu-latest]
         node-version: [12.x]
     steps:
+      - name: prepare database
+        run: psql -c 'create database testdb;' -U postgres
+        run:  psql -c "CREATE USER test WITH UNENCRYPTED PASSWORD 'test' " -U postgres
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup node.js use ${{ matrix.node-version }}
