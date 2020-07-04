@@ -3,9 +3,9 @@
 
   "postgres": {
     "initialise": true,
-    "database" : "testdb",
-    "username" : "test",
-    "password" : "test",
+    "database" : "postgres",
+    "username" : "postgres",
+    "password" : "postgres",
     "server" : "127.0.0.1",
     "port":"5432"
   },
