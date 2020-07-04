@@ -14,7 +14,8 @@ let licenses= {
   "colors@0.6.2":"MIT",
   "domcompare@0.2.3":"MIT",
   "xmldom@0.1.16":"MIT",
-  "xmldom@0.1.27":"MIT"
+  "xmldom@0.1.27":"MIT",
+  "font-awesome@4.7.0":"MIT"
 };
 
 
