@@ -28,10 +28,6 @@ jobs:
         operating-system: [ubuntu-latest]
         node-version: [12.x]
     steps:
-      - name: Display versions
-        run: |
-          node -v
-          npm -v
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup node.js use ${{ matrix.node-version }}
@@ -40,6 +36,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install
+      - name: Display versions
+        run: |
+          node -v
+          npm -v
       - name: Run testing on github
         run: npm test
         env:
