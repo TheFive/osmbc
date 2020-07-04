@@ -2,7 +2,8 @@ name: Github CI Node.js PostgreSQL
 on:
   push:
     branches:
-      - github_workflow
+      - feature/github_workflow
+      - master
   pull_request:
     branches:
       - master
