@@ -20,7 +20,7 @@ module.exports = function(session) {
     assert(pool);
     sessionStore = new PgSession({
       pool: pool, // Use global pg-module
-      pruneSessionInterval: 180
+      pruneSessionInterval: (config.env === "test") ? false : 180
     });
   }
   return sessionStore;
