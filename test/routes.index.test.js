@@ -158,7 +158,7 @@ describe("routes/index", function() {
       return new Promise((resolve,reject) => _requestLanguageSetter(whichLang,lang,(err) => (err)? reject(err):resolve()));
     }
 
-    it("should change language for full access", async function () {
+    it.only("should change language for full access", async function () {
 
       await requestLanguageSetter("testUser","lang", "ES");
       await requestLanguageSetter("testUser","lang3", "EN");
