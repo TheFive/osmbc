@@ -1,3 +1,4 @@
+"use strict";
 module.exports.series = require("async/series");
 module.exports.each = require("async/each");
 module.exports.eachOf = require("async/eachOf");
