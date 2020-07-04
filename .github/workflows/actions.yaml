@@ -1,5 +1,11 @@
 name: Github CI Node.js PostgreSQL
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - github_workflow
+  pull_request:
+    branches:
+      - master
 jobs:
   build:
     runs-on: ${{ matrix.operating-system }}
