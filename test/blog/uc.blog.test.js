@@ -77,12 +77,15 @@ describe("uc/blog", function() {
     it("should be able to manage a blog lifetime", async function() {
       let errors = [];
       let browserTheFive = await testutil.getNewBrowser("TheFive");
+      await promiseTimeout(300);
       let b2 = await testutil.getNewBrowser("TheOther");
+      await promiseTimeout(300);
 
       await browserTheFive.visit("/osmbc");
 
       // go to admin page and create a new blog
       await browserTheFive.click("a#adminlink");
+
 
 
       await browserTheFive.click("a#createblog");
@@ -91,6 +94,7 @@ describe("uc/blog", function() {
 
       // click on the second blog in the table (thats the WN251 new created)
       await browserTheFive.click("tbody>tr:nth-child(2)>td>a");
+      await promiseTimeout(300);
 
       // Have a look at the blog
       browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251OpenMode");
@@ -100,9 +104,11 @@ describe("uc/blog", function() {
       await browserTheFive.click("a.btn.btn-primary#edit");
       await browserTheFive.select("status", "edit");
       await browserTheFive.click("input[value='OK']");
+      await promiseTimeout(500);
 
       // go to the blog view with the articles
       await browserTheFive.click("a[href='/blog/WN251']");
+      await promiseTimeout(300);
       browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251EditMode");
 
       // Start Review for blog
@@ -126,6 +132,7 @@ describe("uc/blog", function() {
       // simulate keyup to enable button for click.
       browserTheFive.keyUp("textarea#reviewCommentDE", 30);
       await browserTheFive.click("button#reviewButtonCancelDE:enabled");
+      await promiseTimeout(300);
       browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Reviewed");
 
       await browserTheFive.click("button#didexport");
@@ -135,6 +142,7 @@ describe("uc/blog", function() {
       await browserTheFive.click("button#closebutton");
 
       browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Closed");
+      await promiseTimeout(300);
 
       await b2.visit("/blog/WN251");
       // Start Review for blog in english

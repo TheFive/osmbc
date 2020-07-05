@@ -119,7 +119,7 @@ describe("routes/index", function() {
   });
   describe("route GET /changelog", function() {
     let url = baseLink + "/changelog";
-    it("should show changelog of software", async function () {
+    it.only("should show changelog of software", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
       body.should.containEql("<h1>Change Log</h1>");
       let user = await userModule.findById(1);

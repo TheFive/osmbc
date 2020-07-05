@@ -184,7 +184,12 @@ module.exports.save = function(options, callback) {
 
           return callback(err);
         }
-        if (!options || !options.noVersionIncrease) self.version += 1;
+
+        if (!options || !options.noVersionIncrease) {
+          console.dir("Increase version befehl");
+          console.dir(self);
+          self.version += 1;
+        }
         db.query("update " + table + " set data = $2 where id = $1", [self.id, self], function(err) {
           if (typeof blog !== "undefined") self._blog = blog;
           return callback(err, self);
