@@ -108,14 +108,16 @@ describe("uc/blog", function() {
 
       // go to the blog view with the articles
       await browserTheFive.click("a[href='/blog/WN251']");
-      await promiseTimeout(300);
+      await promiseTimeout(500);
       browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251EditMode");
 
       // Start Review for blog
       await browserTheFive.click("button#readyreview");
+      await promiseTimeout(500);
 
       // start personal review
       await browserTheFive.click("button#reviewButtonDE");
+      await promiseTimeout(500);
 
       // Do a first review comment
 
@@ -123,8 +125,10 @@ describe("uc/blog", function() {
       // simulate keyup to enable button for click.
       browserTheFive.keyUp("textarea#reviewCommentDE", 30);
       await browserTheFive.click("button#reviewButtonDE:enabled");
+      await promiseTimeout(500);
 
       await browserTheFive.click("button#reviewButtonDE");
+      await promiseTimeout(500);
 
       // do a second review comment, and cancel that
 
@@ -132,17 +136,19 @@ describe("uc/blog", function() {
       // simulate keyup to enable button for click.
       browserTheFive.keyUp("textarea#reviewCommentDE", 30);
       await browserTheFive.click("button#reviewButtonCancelDE:enabled");
-      await promiseTimeout(300);
+      await promiseTimeout(500);
       browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Reviewed");
 
       await browserTheFive.click("button#didexport");
+      await promiseTimeout(500);
 
       browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Exported");
 
       await browserTheFive.click("button#closebutton");
+      await promiseTimeout(500);
 
       browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Closed");
-      await promiseTimeout(300);
+      await promiseTimeout(500);
 
       await b2.visit("/blog/WN251");
       // Start Review for blog in english
