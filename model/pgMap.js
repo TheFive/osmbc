@@ -186,8 +186,6 @@ module.exports.save = function(options, callback) {
         }
 
         if (!options || !options.noVersionIncrease) {
-          console.dir("Increase version befehl");
-          console.dir(self);
           self.version += 1;
         }
         db.query("update " + table + " set data = $2 where id = $1", [self.id, self], function(err) {
