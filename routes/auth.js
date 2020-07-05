@@ -179,10 +179,9 @@ function ensureAuthenticated (req, res, next) {
         req.user.lastAccess = stamp;
         req.user.save({ noVersionIncrease: true }, function (err) {
           if (err) return next(err);
-          return next();
         });
       }
-      else return next();
+      return next();
     }
     if (req.user && req.user.access === "denied") {
       return res.status(403).send("OSM User >" + req.user.OSMUser + "< has no access rights. Please contact weeklyOSM Team to enable your account.");
