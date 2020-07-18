@@ -104,14 +104,14 @@ if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
 
 // first register the unsecured path, with no cookie need.
 
-app.use(htmlRoot + "/bower_components/bootstrap", express.static(path.join(__dirname, "/bower_components/bootstrap")));
-app.use(htmlRoot + "/bower_components/font_awesome", express.static(path.join(__dirname, "/bower_components/font_awesome")));
-app.use(htmlRoot + "/bower_components/jquery", express.static(path.join(__dirname, "/bower_components/jquery")));
-app.use(htmlRoot + "/bower_components/d3", express.static(path.join(__dirname, "/bower_components/d3")));
-app.use(htmlRoot + "/bower_components/markdown-it", express.static(path.join(__dirname, "/bower_components/markdown-it")));
-app.use(htmlRoot + "/bower_components/markdown-it-imsize", express.static(path.join(__dirname, "/bower_components/markdown-it-imsize")));
-app.use(htmlRoot + "/bower_components/markdown-it-sup", express.static(path.join(__dirname, "/bower_components/markdown-it-sup")));
-app.use(htmlRoot + "/bower_components/moment", express.static(path.join(__dirname, "/bower_components/moment")));
+app.use(htmlRoot + "/bower_components/bootstrap", express.static(path.join(__dirname, "/node_modules/bootstrap")));
+app.use(htmlRoot + "/bower_components/font_awesome", express.static(path.join(__dirname, "/node_modules/font_awesome")));
+app.use(htmlRoot + "/bower_components/jquery", express.static(path.join(__dirname, "/node_modules/jquery")));
+app.use(htmlRoot + "/bower_components/d3", express.static(path.join(__dirname, "/node_modules/d3")));
+app.use(htmlRoot + "/bower_components/markdown-it", express.static(path.join(__dirname, "/node_modules/markdown-it")));
+app.use(htmlRoot + "/bower_components/markdown-it-imsize", express.static(path.join(__dirname, "/node_modules/markdown-it-imsize")));
+app.use(htmlRoot + "/bower_components/markdown-it-sup", express.static(path.join(__dirname, "/node_modules/markdown-it-sup")));
+app.use(htmlRoot + "/bower_components/moment", express.static(path.join(__dirname, "/node_modules/moment")));
 
 
 app.use(htmlRoot, express.static(path.join(__dirname, "public")));
