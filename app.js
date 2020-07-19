@@ -104,7 +104,16 @@ if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
 
 // first register the unsecured path, with no cookie need.
 
-app.use(htmlRoot + "/bower_components", express.static(path.join(__dirname, "/bower_components")));
+app.use(htmlRoot + "/bower_components/bootstrap", express.static(path.join(__dirname, "/node_modules/bootstrap")));
+app.use(htmlRoot + "/bower_components/font-awesome", express.static(path.join(__dirname, "/node_modules/font-awesome")));
+app.use(htmlRoot + "/bower_components/jquery", express.static(path.join(__dirname, "/node_modules/jquery")));
+app.use(htmlRoot + "/bower_components/d3", express.static(path.join(__dirname, "/node_modules/d3")));
+app.use(htmlRoot + "/bower_components/markdown-it", express.static(path.join(__dirname, "/node_modules/markdown-it")));
+app.use(htmlRoot + "/bower_components/markdown-it-imsize", express.static(path.join(__dirname, "/node_modules/markdown-it-imsize")));
+app.use(htmlRoot + "/bower_components/markdown-it-sup", express.static(path.join(__dirname, "/node_modules/markdown-it-sup")));
+app.use(htmlRoot + "/bower_components/moment", express.static(path.join(__dirname, "/node_modules/moment")));
+
+
 app.use(htmlRoot, express.static(path.join(__dirname, "public")));
 
 app.use(htmlRoot, calendar);

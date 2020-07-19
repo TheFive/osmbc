@@ -5,7 +5,7 @@
 var path     = require("path");
 var fs       = require("fs");
 var debug    = require("debug")("OSMBC:config");
-var should   = require("should");
+var assert   = require("assert").strict;
 var env      = process.env.NODE_ENV || "development";
 var winston  = require("winston");
 
@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === "test" && process.env.TEST_LOG !== "TRUE") {
     ]});
   } else {
   logger = winston.createLogger({
-    level: 'error',
+    level: 'info',
     format: winston.format.json()});
 
     logger.add(new winston.transports.Console({
@@ -100,7 +100,7 @@ exports.initialise = function initialise(callback) {
     configuration.moment_locale[lang] = lang;
   });
 
-  should(typeof (configuration.languages)).equal("object");
+  assert.equal(typeof configuration.languages,"object");
 
   // Do some corrections, e.g. the languages MUST contain an "EN"
 
@@ -119,7 +119,7 @@ exports.getConfiguration = function() {
 exports.getValue = function(key, options) {
   debug("getValue %s", key);
   exports.initialise();
-  if (options) should(typeof (options)).eql("object");
+  if (options) assert.equal(typeof (options),"object");
   var result;
   if (options) {
     result = options.default;

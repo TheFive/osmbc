@@ -95,13 +95,18 @@ block content
             tr
               th="Language"
               th="Status"
+              th="Review Start"
+              th="Review Start Time"
+              th="Review"
               th="Download"
               th="Close"
 
               th="Special"
             each lang in layout.languages
               tr
+                //- Language Column
                 td=lang
+                //- Status Column
                 td
                   if (blog["close" + lang])
                     div.label.osmbclabel-closedblog
@@ -110,19 +115,38 @@ block content
                     div.label.osmbclabel-reviewblog=(blog["reviewComment" + lang].length - 1)
                   else
                     div.label.osmbclabel-editblog=blog._countUneditedMarkdown[lang]
+                //- Review Start Column
+                td
+                  if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
+                    span.label.small-margin(class="osmbclabel-reviewblog")= blog["reviewComment"+lang][0].user
+                  
+                //- Review Start time
+                td
+                  if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
+                    if (layout.moment().diff(blog["reviewComment" + lang][0].timestamp,'days') < 7)
+                      div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("ddd LT")
+                    else 
+                      div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("L")    
+                //- Review by Column
+                td
+                  if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
+                    each val in blog["reviewComment"+lang]
+                      if (val.text != "startreview")
+                        span.label.small-margin(class="osmbclabel-reviewblog")=val.user
+                //- Download Column
                 td
                   div.glyphicon.glyphicon-export(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`)
                   if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
                     span=" "
                     span.glyphicon.glyphicon-alert
-
+                //- Close Column
                 td
                   form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
                     input.hidden(type="text",name="lang" value = lang)
-                    if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0 )
+                    if (!blog["close"+lang] && (blog["exported"+lang] || reviewInWP.indexOf(lang)<0 ))
                       input.hidden(type="text",name ="action" value = "closelang")
                       button.btn.btn-xs.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
-
+                //- Special Column
                 td
                   if (blog["close" + lang])
                     form(id="startReview" name="reopenlang", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")

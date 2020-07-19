@@ -5,7 +5,10 @@ extends adminlayout
 
 block content
 
-  h1="Edit OSMBC User "+ usershown.OSMUser
+  h1
+   span
+     img(src=usershown.getAvatar() style="height:50px;width:50px")
+   span="  Edit OSMBC User "+ usershown.OSMUser
 
   p="OpenStreetMap User Links: "
     a(href="https://www.openstreetmap.org/user/" + usershown.OSMUser)

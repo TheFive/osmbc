@@ -1,8 +1,8 @@
 "use strict";
 
 var debug    = require("debug")("OSMBC:model:config");
-var should   = require("should");
-var async    = require("async");
+var assert   = require("assert").strict;
+var async    = require("../util/async_wrap.js");
 var yaml     = require("js-yaml");
 var fs       = require("fs");
 var path     = require("path");
@@ -44,11 +44,11 @@ function create (proto) {
 
 function createNewConfig (proto, callback) {
   debug("createNewConfig");
-  should(typeof (proto)).eql("object");
-  should.exist(proto.type);
-  should.exist(configMap, "Config Module not initialised.");
+  assert(typeof (proto) === "object");
+  assert(proto.type);
+  assert(configMap);
 
-  if (proto) should.not.exist(proto.id);
+  if (proto) assert(typeof proto.id === "undefined");
   var config = create(proto);
   if (typeof (configMap[config.name]) !== "undefined") {
     // Configuration already exists
@@ -60,7 +60,7 @@ function createNewConfig (proto, callback) {
     if (result && result.length > 0) {
       return callback(new Error("Config >" + config.name + "< already exists."));
     }
-    should.exist(config.type);
+    assert(config.type);
     config.save(callback);
   });
 }
@@ -135,7 +135,7 @@ function readDefaultData(text) {
 function defaultConfigObject(text, callback) {
   debug("defaultConfigObject");
   var data = readDefaultData(text);
-  should.exist(data.type);
+  assert(data.type);
   createNewConfig(data, callback);
 }
 
@@ -145,14 +145,14 @@ function getConfigObject(text, callback) {
   findOne({ name: text }, function _doGetConfigObject(err, result) {
     debug("_doGetConfigObject %s", text);
     if (err) return callback(err);
-    if (result) should.exist(result.type);
+    if (result) assert(result.type);
     return callback(null, result);
   });
 }
 
 function actualiseConfigMap(obj) {
-  should.exist(obj);
-  should.exist(configMap, "Config Module not initialised.");
+  assert(obj);
+  assert(configMap);
   configMap[obj.name] = obj;
 }
 
@@ -253,7 +253,7 @@ Config.prototype.setAndSave = function setAndSave(user, data, callback) {
   delete self.json;
 
 
-  async.forEachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
+  async.eachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
     // There is no Value for the key, so do nothing
     if (typeof (value) === "undefined") return cbEachOf();
 
@@ -325,7 +325,7 @@ Config.prototype.save = function saveConfig(callback) {
 
 function initConfigElement(name, callback) {
   debug("initConfigElement %s", name);
-  should.exist(configMap, "Config Module not initialised.");
+  assert(configMap);
   if (configMap[name]) return callback(null, configMap[name]);
   getConfigObject(name, function _doInitConfigElement(err, result) {
     debug("_doInitConfigElement");
@@ -345,7 +345,7 @@ module.exports.initialiseConfigMap = function initialiseConfigMap() { configMap 
 
 function initialise(callback) {
   debug("initialise");
-  should.exist(callback);
+  assert(callback);
   if (configMap) return callback();
   configMap = {};
   async.series([
@@ -373,7 +373,7 @@ function initialise(callback) {
 
 module.exports.getConfig = function(text) {
   debug("exports.getConfig");
-  should.exist(configMap, "Config Module not initialised.");
+  assert(configMap);
 
   return configMap[text].getValue();
 };
@@ -381,7 +381,7 @@ module.exports.getConfig = function(text) {
 module.exports.getConfigObject = function(text, callback) {
   debug("exports.getConfigObject");
   let config = null;
-  should.exist(configMap, "Config Module not initialised.");
+  assert(configMap);
   if (configMap[text]) {
     config = configMap[text];
   } else {
@@ -393,7 +393,7 @@ module.exports.getConfigObject = function(text, callback) {
       }
     }
   }
-  should.exist(config);
+  assert(config);
   if (callback) return callback(null, config);
   return config;
 };

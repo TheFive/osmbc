@@ -172,6 +172,3 @@ module.exports.router = router;
 module.exports.fortestonly = {};
 module.exports.fortestonly.searchUrlInSlack = searchUrlInSlack;
 module.exports.fortestonly.extractTextWithoutUrl = extractTextWithoutUrl;
-
-
-

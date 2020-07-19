@@ -1,7 +1,7 @@
 "use strict";
 
 var express = require("express");
-var should = require("should");
+var assert = require("assert").strict;
 var router = express.Router();
 var debug = require("debug")("OSMBC:routes:changes");
 var logModule = require("../model/logModule.js");
@@ -80,7 +80,7 @@ function renderChangeId(req, res, next) {
   logModule.findById(id, function(err, change) {
     if (err) return next(err);
     if (!change || typeof (change.id) === "undefined") return next(new Error("Change id >" + id + "< not found."));
-    should.exist(res.rendervar);
+    assert(res.rendervar);
     res.set("content-type", "text/html");
     res.render("change", {
       change: change,
@@ -95,5 +95,3 @@ router.get("/log", auth.checkRole("full"), renderHistoryLog);
 router.get("/:change_id", auth.checkRole("full"), renderChangeId);
 
 module.exports.router = router;
-
-

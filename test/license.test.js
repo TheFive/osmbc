@@ -79,6 +79,7 @@ let allowedLicensesProd = ["MIT",
   "Apache*",
   "LAGPL",
   "(Unlicense OR Apache-2.0)",
+  "(OFL-1.1 AND MIT)",
   "(MIT OR EUPL-1.1+)"];
 
 let allowedLicensesDev = allowedLicensesProd.concat([

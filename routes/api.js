@@ -4,7 +4,7 @@ var debug         = require("debug")("OSMBC:routes:api");
 var express       = require("express");
 var userModule    = require("../model/user.js");
 var publicRouter  = express.Router();
-var async         = require("async");
+var async         = require("../util/async_wrap.js");
 var htmltitle     = require("../model/htmltitle.js");
 var util          = require("../util/util.js");
 var articleModule = require("../model/article.js");
@@ -205,5 +205,3 @@ publicRouter.post("/collectArticle/:apiKey", collectArticle);
 publicRouter.get("/collect/:apiKey", collectArticleLink);
 
 module.exports.publicRouter = publicRouter;
-
-

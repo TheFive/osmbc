@@ -1,7 +1,7 @@
 "use strict";
 
 const debug      = require("debug")("OSMBC:routes:auth");
-const async      = require("async");
+const async      = require("../util/async_wrap.js");
 const HttpStatus = require("http-status-codes");
 
 const config = require("../config.js");

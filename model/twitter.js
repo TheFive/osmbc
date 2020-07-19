@@ -3,7 +3,7 @@
 var Twit = require("twit");
 var config = require("../config.js");
 var request = require("request");
-var async = require("async");
+var async = require("../util/async_wrap.js");
 var debug = require("debug")("OSMBC:model:twitter");
 
 

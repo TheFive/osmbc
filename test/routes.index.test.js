@@ -120,7 +120,7 @@ describe("routes/index", function() {
     let url = baseLink + "/changelog";
     it("should show changelog of software", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql("<h1>Change Log</h1>");
+      body.should.containEql("<h1>Changelog</h1>");
       let user = await userModule.findById(1);
       should(user).eql({
         id: "1",
@@ -142,7 +142,7 @@ describe("routes/index", function() {
         url: url,
         user: "testUserNonExisting",
         expectedStatusCode: HttpStatus.OK,
-        expectedMessage: "<h1>Change Log</h1>"}));
+        expectedMessage: "<h1>Changelog</h1>"}));
   });
   describe("route GET /language", function() {
     let url = baseLink + "/language?lang=DE";
