@@ -1,15 +1,82 @@
-# Change Log
+# Changelog
+
+## [3.4.4a](https://github.com/TheFive/osmbc/tree/3.4.4a) (2020-06-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4...3.4.4a)
+
+**Closed issues:**
+
+- PrePublishing Page [\#830](https://github.com/TheFive/osmbc/issues/830)
+- Translation with picture results in unnecessary escapes [\#826](https://github.com/TheFive/osmbc/issues/826)
+- Check automatic translation links after translation to point to the correct language. [\#825](https://github.com/TheFive/osmbc/issues/825)
+
+## [3.4.4](https://github.com/TheFive/osmbc/tree/3.4.4) (2020-06-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.3...3.4.4)
+
+## [3.4.3](https://github.com/TheFive/osmbc/tree/3.4.3) (2020-06-21)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.2...3.4.3)
+
+**Closed issues:**
+
+- upcomming events - as they are plus a map with the locations [\#827](https://github.com/TheFive/osmbc/issues/827)
+
+## [3.4.2](https://github.com/TheFive/osmbc/tree/3.4.2) (2020-06-14)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.1...3.4.2)
+
+## [3.4.1](https://github.com/TheFive/osmbc/tree/3.4.1) (2020-06-11)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4...3.4.1)
+
+## [3.4](https://github.com/TheFive/osmbc/tree/3.4) (2020-06-11)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.11...3.4)
+
+**Closed issues:**
+
+- could/should/would we add a map with upcoming events [\#828](https://github.com/TheFive/osmbc/issues/828)
+- Switch Library Deepl-Translator to Deepl-Client [\#821](https://github.com/TheFive/osmbc/issues/821)
+
+## [3.3.11](https://github.com/TheFive/osmbc/tree/3.3.11) (2020-05-01)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.10...3.3.11)
+
+## [3.3.10](https://github.com/TheFive/osmbc/tree/3.3.10) (2020-05-01)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.9d...3.3.10)
+
+**Merged pull requests:**
+
+- Remove double "//" from languageflags.yaml [\#814](https://github.com/TheFive/osmbc/pull/814) ([tordans](https://github.com/tordans))
+
+## [3.3.9d](https://github.com/TheFive/osmbc/tree/3.3.9d) (2019-11-10)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.9c...3.3.9d)
+
+**Closed issues:**
+
+- Mixed Content [\#809](https://github.com/TheFive/osmbc/issues/809)
 
 ## [3.3.9c](https://github.com/TheFive/osmbc/tree/3.3.9c) (2019-07-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.9b...3.3.9c)
 
+**Implemented enhancements:**
+
+- Unify display of doublettes and defect links [\#806](https://github.com/TheFive/osmbc/issues/806)
+
 ## [3.3.9b](https://github.com/TheFive/osmbc/tree/3.3.9b) (2019-05-04)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.9a...3.3.9b)
 
 ## [3.3.9a](https://github.com/TheFive/osmbc/tree/3.3.9a) (2019-05-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.9...3.3.9a)
 
 ## [3.3.9](https://github.com/TheFive/osmbc/tree/3.3.9) (2019-04-22)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.8...3.3.9)
 
 **Implemented enhancements:**
@@ -18,6 +85,7 @@
 - Highlight non existing links in blog review [\#802](https://github.com/TheFive/osmbc/issues/802)
 
 ## [3.3.8](https://github.com/TheFive/osmbc/tree/3.3.8) (2019-04-20)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7d...3.3.8)
 
 **Implemented enhancements:**
@@ -29,6 +97,7 @@
 - Pasting a link on a word in brackets does not generate correct markdown links [\#803](https://github.com/TheFive/osmbc/issues/803)
 
 ## [3.3.7d](https://github.com/TheFive/osmbc/tree/3.3.7d) (2019-03-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7c...3.3.7d)
 
 **Closed issues:**
@@ -36,9 +105,11 @@
 - Switch to BING 3.0 Translation [\#799](https://github.com/TheFive/osmbc/issues/799)
 
 ## [3.3.7c](https://github.com/TheFive/osmbc/tree/3.3.7c) (2019-02-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7b...3.3.7c)
 
 ## [3.3.7b](https://github.com/TheFive/osmbc/tree/3.3.7b) (2019-02-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.7...3.3.7b)
 
 **Implemented enhancements:**
@@ -51,6 +122,7 @@
 - Find double links in ONE article.  [\#789](https://github.com/TheFive/osmbc/issues/789)
 
 ## [3.3.7](https://github.com/TheFive/osmbc/tree/3.3.7) (2018-10-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6a...3.3.7)
 
 **Closed issues:**
@@ -58,6 +130,7 @@
 - Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
 
 ## [3.3.6a](https://github.com/TheFive/osmbc/tree/3.3.6a) (2018-10-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6...3.3.6a)
 
 **Implemented enhancements:**
@@ -65,6 +138,7 @@
 - Guest mode: Please change "Submit Article" to "Submit Link"  [\#792](https://github.com/TheFive/osmbc/issues/792)
 
 ## [3.3.6](https://github.com/TheFive/osmbc/tree/3.3.6) (2018-08-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.5...3.3.6)
 
 **Implemented enhancements:**
@@ -77,6 +151,7 @@
 - The Review Comment field is to small. [\#782](https://github.com/TheFive/osmbc/issues/782)
 
 ## [3.3.5](https://github.com/TheFive/osmbc/tree/3.3.5) (2018-08-19)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.4...3.3.5)
 
 **Implemented enhancements:**
@@ -89,6 +164,7 @@
 - EMAIL for Guest on the first page [\#780](https://github.com/TheFive/osmbc/issues/780)
 
 ## [3.3.4](https://github.com/TheFive/osmbc/tree/3.3.4) (2018-08-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.3...3.3.4)
 
 **Implemented enhancements:**
@@ -101,6 +177,7 @@
 - Remove express-debug as it is not maintained [\#779](https://github.com/TheFive/osmbc/issues/779)
 
 ## [3.3.3](https://github.com/TheFive/osmbc/tree/3.3.3) (2018-07-24)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.2c...3.3.3)
 
 **Implemented enhancements:**
@@ -119,9 +196,11 @@
 - Add encoding to Content-type header to /blog/$issue/preview?download=true [\#776](https://github.com/TheFive/osmbc/issues/776)
 
 ## [3.3.2c](https://github.com/TheFive/osmbc/tree/3.3.2c) (2018-05-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.2b...3.3.2c)
 
 ## [3.3.2b](https://github.com/TheFive/osmbc/tree/3.3.2b) (2018-05-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.2...3.3.2b)
 
 **Closed issues:**
@@ -129,6 +208,7 @@
 - Spelling errors [\#769](https://github.com/TheFive/osmbc/issues/769)
 
 ## [3.3.2](https://github.com/TheFive/osmbc/tree/3.3.2) (2018-04-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1b...3.3.2)
 
 **Implemented enhancements:**
@@ -136,6 +216,7 @@
 - Create a link from Welcome to the team to the changes history filtered by user [\#768](https://github.com/TheFive/osmbc/issues/768)
 
 ## [3.3.1b](https://github.com/TheFive/osmbc/tree/3.3.1b) (2018-04-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1a...3.3.1b)
 
 **Closed issues:**
@@ -143,9 +224,11 @@
 - Filter for Calendar [\#766](https://github.com/TheFive/osmbc/issues/766)
 
 ## [3.3.1a](https://github.com/TheFive/osmbc/tree/3.3.1a) (2018-03-31)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1...3.3.1a)
 
 ## [3.3.1](https://github.com/TheFive/osmbc/tree/3.3.1) (2018-03-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.0...3.3.1)
 
 **Implemented enhancements:**
@@ -157,6 +240,7 @@
 - Users that are logged in to OSMWW generates \[object object\] guests in OSMBC. [\#764](https://github.com/TheFive/osmbc/issues/764)
 
 ## [3.3.0](https://github.com/TheFive/osmbc/tree/3.3.0) (2018-03-24)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.1a...3.3.0)
 
 **Implemented enhancements:**
@@ -169,6 +253,7 @@
 - Evaluate session store with no bind user data. [\#721](https://github.com/TheFive/osmbc/issues/721)
 
 ## [3.2.1a](https://github.com/TheFive/osmbc/tree/3.2.1a) (2018-03-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.1...3.2.1a)
 
 **Implemented enhancements:**
@@ -184,6 +269,7 @@
 - Login via OSM account -  no access rights [\#759](https://github.com/TheFive/osmbc/issues/759)
 
 ## [3.2.1](https://github.com/TheFive/osmbc/tree/3.2.1) (2018-03-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.0...3.2.1)
 
 **Implemented enhancements:**
@@ -195,6 +281,7 @@
 - save changed comments during save of article. [\#750](https://github.com/TheFive/osmbc/issues/750)
 
 ## [3.2.0](https://github.com/TheFive/osmbc/tree/3.2.0) (2018-03-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.7...3.2.0)
 
 **Implemented enhancements:**
@@ -212,6 +299,7 @@
 - Switch from JADE to PUG [\#756](https://github.com/TheFive/osmbc/issues/756)
 
 ## [3.1.7](https://github.com/TheFive/osmbc/tree/3.1.7) (2018-03-04)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.6a...3.1.7)
 
 **Implemented enhancements:**
@@ -220,6 +308,7 @@
 - Add Bing as translation alternative to article editor menu [\#748](https://github.com/TheFive/osmbc/issues/748)
 
 ## [3.1.6a](https://github.com/TheFive/osmbc/tree/3.1.6a) (2018-03-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.6...3.1.6a)
 
 **Closed issues:**
@@ -227,6 +316,7 @@
 - The link check against collection fails under some conditions [\#747](https://github.com/TheFive/osmbc/issues/747)
 
 ## [3.1.6](https://github.com/TheFive/osmbc/tree/3.1.6) (2018-03-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.5a...3.1.6)
 
 **Implemented enhancements:**
@@ -234,6 +324,7 @@
 - Enable Translation button for 4 language Editor. [\#726](https://github.com/TheFive/osmbc/issues/726)
 
 ## [3.1.5a](https://github.com/TheFive/osmbc/tree/3.1.5a) (2018-03-01)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.5...3.1.5a)
 
 **Implemented enhancements:**
@@ -245,6 +336,7 @@
 - Disable Guest for editor strings, until a better solution is found [\#745](https://github.com/TheFive/osmbc/issues/745)
 
 ## [3.1.5](https://github.com/TheFive/osmbc/tree/3.1.5) (2018-02-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.4...3.1.5)
 
 **Implemented enhancements:**
@@ -254,6 +346,7 @@
 - Warn if a markdown does not contain a link in article editor [\#482](https://github.com/TheFive/osmbc/issues/482)
 
 ## [3.1.4](https://github.com/TheFive/osmbc/tree/3.1.4) (2018-02-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.3a...3.1.4)
 
 **Implemented enhancements:**
@@ -261,6 +354,7 @@
 - shorten internal links [\#446](https://github.com/TheFive/osmbc/issues/446)
 
 ## [3.1.3a](https://github.com/TheFive/osmbc/tree/3.1.3a) (2018-02-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.3...3.1.3a)
 
 **Fixed bugs:**
@@ -268,6 +362,7 @@
 - Guest is not able to see his own comments [\#742](https://github.com/TheFive/osmbc/issues/742)
 
 ## [3.1.3](https://github.com/TheFive/osmbc/tree/3.1.3) (2018-02-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2e...3.1.3)
 
 **Implemented enhancements:**
@@ -281,6 +376,7 @@
 - Review Status Time Calculation [\#736](https://github.com/TheFive/osmbc/issues/736)
 
 ## [3.1.2e](https://github.com/TheFive/osmbc/tree/3.1.2e) (2018-02-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2d...3.1.2e)
 
 **Implemented enhancements:**
@@ -296,6 +392,7 @@
 - Switch Slack API to Mattermost format for mobile collecting. [\#734](https://github.com/TheFive/osmbc/issues/734)
 
 ## [3.1.2d](https://github.com/TheFive/osmbc/tree/3.1.2d) (2018-02-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2c...3.1.2d)
 
 **Fixed bugs:**
@@ -308,6 +405,7 @@
 - guests are not allowed to mark comments as read  [\#731](https://github.com/TheFive/osmbc/issues/731)
 
 ## [3.1.2c](https://github.com/TheFive/osmbc/tree/3.1.2c) (2018-02-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2b...3.1.2c)
 
 **Implemented enhancements:**
@@ -320,12 +418,15 @@
 - Short Explanaition of Blog Status Box on Guest Main Page [\#725](https://github.com/TheFive/osmbc/issues/725)
 
 ## [3.1.2b](https://github.com/TheFive/osmbc/tree/3.1.2b) (2018-02-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2a...3.1.2b)
 
 ## [3.1.2a](https://github.com/TheFive/osmbc/tree/3.1.2a) (2018-02-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2...3.1.2a)
 
 ## [3.1.2](https://github.com/TheFive/osmbc/tree/3.1.2) (2018-01-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.1...3.1.2)
 
 **Implemented enhancements:**
@@ -337,27 +438,35 @@
 - Browser Tabs \<title\> Tag is broken and only OSMBC [\#719](https://github.com/TheFive/osmbc/issues/719)
 
 ## [3.1.1](https://github.com/TheFive/osmbc/tree/3.1.1) (2018-01-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.0...3.1.1)
 
 ## [3.1.0](https://github.com/TheFive/osmbc/tree/3.1.0) (2018-01-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1e...3.1.0)
 
 ## [3.0.1e](https://github.com/TheFive/osmbc/tree/3.0.1e) (2018-01-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1d...3.0.1e)
 
 ## [3.0.1d](https://github.com/TheFive/osmbc/tree/3.0.1d) (2018-01-02)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1c...3.0.1d)
 
 ## [3.0.1c](https://github.com/TheFive/osmbc/tree/3.0.1c) (2018-01-01)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1b...3.0.1c)
 
 ## [3.0.1b](https://github.com/TheFive/osmbc/tree/3.0.1b) (2017-12-31)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1a...3.0.1b)
 
 ## [3.0.1a](https://github.com/TheFive/osmbc/tree/3.0.1a) (2017-12-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1...3.0.1a)
 
 ## [3.0.1](https://github.com/TheFive/osmbc/tree/3.0.1) (2017-12-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.0...3.0.1)
 
 **Closed issues:**
@@ -365,6 +474,7 @@
 - Remove Calendar Parsing Source from OSMBC [\#716](https://github.com/TheFive/osmbc/issues/716)
 
 ## [3.0.0](https://github.com/TheFive/osmbc/tree/3.0.0) (2017-12-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.5...3.0.0)
 
 **Fixed bugs:**
@@ -372,6 +482,7 @@
 - Skip leading or closing spaces in user name. [\#715](https://github.com/TheFive/osmbc/issues/715)
 
 ## [2.4.5](https://github.com/TheFive/osmbc/tree/2.4.5) (2017-11-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.4...2.4.5)
 
 **Implemented enhancements:**
@@ -384,6 +495,7 @@
 - A link with parentesis \(\) is not parsed correctly to the drag&drop area [\#711](https://github.com/TheFive/osmbc/issues/711)
 
 ## [2.4.4](https://github.com/TheFive/osmbc/tree/2.4.4) (2017-11-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3i...2.4.4)
 
 **Closed issues:**
@@ -391,6 +503,7 @@
 - Redirect public calendar page to configurable page. [\#709](https://github.com/TheFive/osmbc/issues/709)
 
 ## [2.4.3i](https://github.com/TheFive/osmbc/tree/2.4.3i) (2017-11-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3h...2.4.3i)
 
 **Closed issues:**
@@ -398,6 +511,7 @@
 - Implement Refresh Mechanism from osmcalendar [\#701](https://github.com/TheFive/osmbc/issues/701)
 
 ## [2.4.3h](https://github.com/TheFive/osmbc/tree/2.4.3h) (2017-11-04)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3g...2.4.3h)
 
 **Closed issues:**
@@ -405,6 +519,7 @@
 - More flexible Calendar JSON Interface [\#700](https://github.com/TheFive/osmbc/issues/700)
 
 ## [2.4.3g](https://github.com/TheFive/osmbc/tree/2.4.3g) (2017-11-01)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3f...2.4.3g)
 
 **Closed issues:**
@@ -412,12 +527,15 @@
 - Integrate another Calendar Parser [\#699](https://github.com/TheFive/osmbc/issues/699)
 
 ## [2.4.3f](https://github.com/TheFive/osmbc/tree/2.4.3f) (2017-10-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3e...2.4.3f)
 
 ## [2.4.3e](https://github.com/TheFive/osmbc/tree/2.4.3e) (2017-09-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3d...2.4.3e)
 
 ## [2.4.3d](https://github.com/TheFive/osmbc/tree/2.4.3d) (2017-09-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3c...2.4.3d)
 
 **Fixed bugs:**
@@ -425,15 +543,19 @@
 - History is not shown on users page, if the route is called with users name, not id [\#692](https://github.com/TheFive/osmbc/issues/692)
 
 ## [2.4.3c](https://github.com/TheFive/osmbc/tree/2.4.3c) (2017-09-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3b...2.4.3c)
 
 ## [2.4.3b](https://github.com/TheFive/osmbc/tree/2.4.3b) (2017-09-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3a...2.4.3b)
 
 ## [2.4.3a](https://github.com/TheFive/osmbc/tree/2.4.3a) (2017-09-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.3...2.4.3a)
 
 ## [2.4.3](https://github.com/TheFive/osmbc/tree/2.4.3) (2017-09-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.2b...2.4.3)
 
 **Implemented enhancements:**
@@ -441,6 +563,7 @@
 - Use OSM Avatar for user display. [\#691](https://github.com/TheFive/osmbc/issues/691)
 
 ## [2.4.2b](https://github.com/TheFive/osmbc/tree/2.4.2b) (2017-09-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.2a...2.4.2b)
 
 **Implemented enhancements:**
@@ -453,9 +576,11 @@
 - Switch from Nodemailer 2.x to 4.1 [\#689](https://github.com/TheFive/osmbc/issues/689)
 
 ## [2.4.2a](https://github.com/TheFive/osmbc/tree/2.4.2a) (2017-09-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.2...2.4.2a)
 
 ## [2.4.2](https://github.com/TheFive/osmbc/tree/2.4.2) (2017-09-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.1...2.4.2)
 
 **Implemented enhancements:**
@@ -464,6 +589,7 @@
 - Add a list to show new registered \(e.g. Last month\) users [\#682](https://github.com/TheFive/osmbc/issues/682)
 
 ## [2.4.1](https://github.com/TheFive/osmbc/tree/2.4.1) (2017-09-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.0a...2.4.1)
 
 **Implemented enhancements:**
@@ -475,6 +601,7 @@
 - Markdown Editor Name results in markdown used [\#687](https://github.com/TheFive/osmbc/issues/687)
 
 ## [2.4.0a](https://github.com/TheFive/osmbc/tree/2.4.0a) (2017-08-31)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.0...2.4.0a)
 
 **Implemented enhancements:**
@@ -486,6 +613,7 @@
 - Prepare connect-pg-session to use \>4.2 by using connectObject not connectString [\#664](https://github.com/TheFive/osmbc/issues/664)
 
 ## [2.4.0](https://github.com/TheFive/osmbc/tree/2.4.0) (2017-08-24)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.7a...2.4.0)
 
 **Implemented enhancements:**
@@ -501,9 +629,11 @@
 - Switch to pg.pool, pg.connect is deprecated. [\#680](https://github.com/TheFive/osmbc/issues/680)
 
 ## [2.3.7a](https://github.com/TheFive/osmbc/tree/2.3.7a) (2017-07-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.7...2.3.7a)
 
 ## [2.3.7](https://github.com/TheFive/osmbc/tree/2.3.7) (2017-07-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.6...2.3.7)
 
 **Implemented enhancements:**
@@ -516,6 +646,7 @@
 - Link to commented article by a user is not working in blog statistic page. [\#671](https://github.com/TheFive/osmbc/issues/671)
 
 ## [2.3.6](https://github.com/TheFive/osmbc/tree/2.3.6) (2017-07-04)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.5...2.3.6)
 
 **Implemented enhancements:**
@@ -528,6 +659,7 @@
 - Click in admin history on config change leads to an error. [\#666](https://github.com/TheFive/osmbc/issues/666)
 
 ## [2.3.5](https://github.com/TheFive/osmbc/tree/2.3.5) (2017-06-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.4...2.3.5)
 
 **Implemented enhancements:**
@@ -542,6 +674,7 @@
 - CR-LF bug [\#661](https://github.com/TheFive/osmbc/issues/661)
 
 ## [2.3.4](https://github.com/TheFive/osmbc/tree/2.3.4) (2017-05-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.3...2.3.4)
 
 **Implemented enhancements:**
@@ -557,6 +690,7 @@
 - Disable Old Editor via config file for all [\#654](https://github.com/TheFive/osmbc/issues/654)
 
 ## [2.3.3](https://github.com/TheFive/osmbc/tree/2.3.3) (2017-04-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.2...2.3.3)
 
 **Implemented enhancements:**
@@ -570,6 +704,7 @@
 - Items are surrounded by `\<p\>` tags in export view [\#650](https://github.com/TheFive/osmbc/issues/650)
 
 ## [2.3.2](https://github.com/TheFive/osmbc/tree/2.3.2) (2017-04-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.1a...2.3.2)
 
 **Implemented enhancements:**
@@ -577,6 +712,7 @@
 - Link to fix Calendar problems [\#648](https://github.com/TheFive/osmbc/issues/648)
 
 ## [2.3.1a](https://github.com/TheFive/osmbc/tree/2.3.1a) (2017-03-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.1...2.3.1a)
 
 **Closed issues:**
@@ -584,6 +720,7 @@
 - Enable Spellcheck in comments  [\#646](https://github.com/TheFive/osmbc/issues/646)
 
 ## [2.3.1](https://github.com/TheFive/osmbc/tree/2.3.1) (2017-03-24)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.14...2.3.1)
 
 **Implemented enhancements:**
@@ -602,6 +739,7 @@
 - Upgrade Jade to PUG [\#644](https://github.com/TheFive/osmbc/issues/644)
 
 ## [2.2.14](https://github.com/TheFive/osmbc/tree/2.2.14) (2017-03-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.13...2.2.14)
 
 **Fixed bugs:**
@@ -610,6 +748,7 @@
 - New Editor has no support for copy button \(replaced by Label Drag n Drop\) [\#631](https://github.com/TheFive/osmbc/issues/631)
 
 ## [2.2.13](https://github.com/TheFive/osmbc/tree/2.2.13) (2017-03-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.12...2.2.13)
 
 **Implemented enhancements:**
@@ -617,6 +756,7 @@
 - Show Categories in Future Preview and improve column display in Full Review [\#639](https://github.com/TheFive/osmbc/issues/639)
 
 ## [2.2.12](https://github.com/TheFive/osmbc/tree/2.2.12) (2017-03-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.11...2.2.12)
 
 **Implemented enhancements:**
@@ -629,6 +769,7 @@
 - Copy flag button is not working [\#640](https://github.com/TheFive/osmbc/issues/640)
 
 ## [2.2.11](https://github.com/TheFive/osmbc/tree/2.2.11) (2017-03-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.10...2.2.11)
 
 **Implemented enhancements:**
@@ -641,6 +782,7 @@
 - View Changes doesn't filter on Users any longer. [\#635](https://github.com/TheFive/osmbc/issues/635)
 
 ## [2.2.10](https://github.com/TheFive/osmbc/tree/2.2.10) (2017-03-08)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.9a...2.2.10)
 
 **Implemented enhancements:**
@@ -648,6 +790,7 @@
 - Put unsaved status to textfields in new article editor. [\#634](https://github.com/TheFive/osmbc/issues/634)
 
 ## [2.2.9a](https://github.com/TheFive/osmbc/tree/2.2.9a) (2017-03-08)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.9...2.2.9a)
 
 **Fixed bugs:**
@@ -655,6 +798,7 @@
 - Slack integration editor crashes when a channel name does not start with "\#" [\#632](https://github.com/TheFive/osmbc/issues/632)
 
 ## [2.2.9](https://github.com/TheFive/osmbc/tree/2.2.9) (2017-03-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.8...2.2.9)
 
 **Implemented enhancements:**
@@ -663,6 +807,7 @@
 - Move Mail Logging from DB to Hard Drive, disable online review of maillog [\#563](https://github.com/TheFive/osmbc/issues/563)
 
 ## [2.2.8](https://github.com/TheFive/osmbc/tree/2.2.8) (2017-03-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.7...2.2.8)
 
 **Fixed bugs:**
@@ -671,9 +816,11 @@
 - User can't save his settings, because timestamp is updating "version" [\#623](https://github.com/TheFive/osmbc/issues/623)
 
 ## [2.2.7](https://github.com/TheFive/osmbc/tree/2.2.7) (2017-03-02)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.6a...2.2.7)
 
 ## [2.2.6a](https://github.com/TheFive/osmbc/tree/2.2.6a) (2017-02-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.6...2.2.6a)
 
 **Implemented enhancements:**
@@ -686,6 +833,7 @@
 - Mattermost: Bot is sending usernames in wrong format to OSMBC. [\#624](https://github.com/TheFive/osmbc/issues/624)
 
 ## [2.2.6](https://github.com/TheFive/osmbc/tree/2.2.6) (2017-02-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.5a...2.2.6)
 
 **Implemented enhancements:**
@@ -699,6 +847,7 @@
 - If Slack connection is broken, no change of data is possible. [\#351](https://github.com/TheFive/osmbc/issues/351)
 
 ## [2.2.5a](https://github.com/TheFive/osmbc/tree/2.2.5a) (2017-02-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.5...2.2.5a)
 
 **Closed issues:**
@@ -706,6 +855,7 @@
 - Allow Support for LetsEncrypt for wiki.openstreetmap.org Request in Calendar [\#618](https://github.com/TheFive/osmbc/issues/618)
 
 ## [2.2.5](https://github.com/TheFive/osmbc/tree/2.2.5) (2017-02-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.4...2.2.5)
 
 **Implemented enhancements:**
@@ -714,6 +864,7 @@
 - Position of button Edit Block Area in new calendar tool [\#599](https://github.com/TheFive/osmbc/issues/599)
 
 ## [2.2.4](https://github.com/TheFive/osmbc/tree/2.2.4) (2017-02-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.3...2.2.4)
 
 **Implemented enhancements:**
@@ -728,6 +879,7 @@
 - new editor - add ons [\#611](https://github.com/TheFive/osmbc/issues/611)
 
 ## [2.2.3](https://github.com/TheFive/osmbc/tree/2.2.3) (2017-01-15)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.2...2.2.3)
 
 **Implemented enhancements:**
@@ -739,6 +891,7 @@
 - Twitter Urls are expanded twice when saving [\#608](https://github.com/TheFive/osmbc/issues/608)
 
 ## [2.2.2](https://github.com/TheFive/osmbc/tree/2.2.2) (2017-01-15)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.1...2.2.2)
 
 **Implemented enhancements:**
@@ -746,6 +899,7 @@
 - Support extended Tweet Format of Twitter [\#607](https://github.com/TheFive/osmbc/issues/607)
 
 ## [2.2.1](https://github.com/TheFive/osmbc/tree/2.2.1) (2017-01-15)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.0...2.2.1)
 
 **Fixed bugs:**
@@ -753,9 +907,11 @@
 - Twitter Urls ending with whatever parameter are not expanded. [\#606](https://github.com/TheFive/osmbc/issues/606)
 
 ## [2.2.0](https://github.com/TheFive/osmbc/tree/2.2.0) (2017-01-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.9...2.2.0)
 
 ## [2.1.9](https://github.com/TheFive/osmbc/tree/2.1.9) (2017-01-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.8...2.1.9)
 
 **Implemented enhancements:**
@@ -767,6 +923,7 @@
 - Collect for a website, that is down, does not work \(Missing Timeout\) [\#605](https://github.com/TheFive/osmbc/issues/605)
 
 ## [2.1.8](https://github.com/TheFive/osmbc/tree/2.1.8) (2017-01-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.7a...2.1.8)
 
 **Implemented enhancements:**
@@ -778,6 +935,7 @@
 - Heatmap is showing mail log as activity. [\#601](https://github.com/TheFive/osmbc/issues/601)
 
 ## [2.1.7a](https://github.com/TheFive/osmbc/tree/2.1.7a) (2017-01-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.7...2.1.7a)
 
 **Implemented enhancements:**
@@ -785,6 +943,7 @@
 - Change Blogs in Menu Bar [\#598](https://github.com/TheFive/osmbc/issues/598)
 
 ## [2.1.7](https://github.com/TheFive/osmbc/tree/2.1.7) (2016-12-31)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.6...2.1.7)
 
 **Implemented enhancements:**
@@ -799,15 +958,19 @@
 - Do not generate not found WP User links [\#588](https://github.com/TheFive/osmbc/issues/588)
 
 ## [2.1.6](https://github.com/TheFive/osmbc/tree/2.1.6) (2016-12-31)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.5...2.1.6)
 
 ## [2.1.5](https://github.com/TheFive/osmbc/tree/2.1.5) (2016-12-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.4...2.1.5)
 
 ## [2.1.4](https://github.com/TheFive/osmbc/tree/2.1.4) (2016-12-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.3...2.1.4)
 
 ## [2.1.3](https://github.com/TheFive/osmbc/tree/2.1.3) (2016-12-24)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.2...2.1.3)
 
 **Implemented enhancements:**
@@ -820,9 +983,11 @@
 - BLOG is closed Message for Reopening a blog [\#592](https://github.com/TheFive/osmbc/issues/592)
 
 ## [2.1.2](https://github.com/TheFive/osmbc/tree/2.1.2) (2016-12-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.1...2.1.2)
 
 ## [2.1.1](https://github.com/TheFive/osmbc/tree/2.1.1) (2016-12-19)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.0a...2.1.1)
 
 **Implemented enhancements:**
@@ -830,6 +995,7 @@
 - Introduce a copy feature to allow "the year in review" articles. [\#594](https://github.com/TheFive/osmbc/issues/594)
 
 ## [2.1.0a](https://github.com/TheFive/osmbc/tree/2.1.0a) (2016-12-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.0...2.1.0a)
 
 **Implemented enhancements:**
@@ -839,6 +1005,7 @@
 - fill empty pictures and releases articles generated automatic with table header. [\#466](https://github.com/TheFive/osmbc/issues/466)
 
 ## [2.1.0](https://github.com/TheFive/osmbc/tree/2.1.0) (2016-12-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.10...2.1.0)
 
 **Fixed bugs:**
@@ -846,6 +1013,7 @@
 - links in edit-mode of an article disappear if one the two languages is closed [\#589](https://github.com/TheFive/osmbc/issues/589)
 
 ## [2.0.10](https://github.com/TheFive/osmbc/tree/2.0.10) (2016-12-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.9...2.0.10)
 
 **Fixed bugs:**
@@ -853,6 +1021,7 @@
 - Copying language from already closed source fails. \(using Copy EN-\>DE\) [\#572](https://github.com/TheFive/osmbc/issues/572)
 
 ## [2.0.9](https://github.com/TheFive/osmbc/tree/2.0.9) (2016-11-26)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.8...2.0.9)
 
 **Implemented enhancements:**
@@ -861,9 +1030,11 @@
 - Doublette Display, add Category for doublette articles. [\#581](https://github.com/TheFive/osmbc/issues/581)
 
 ## [2.0.8](https://github.com/TheFive/osmbc/tree/2.0.8) (2016-11-22)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.7...2.0.8)
 
 ## [2.0.7](https://github.com/TheFive/osmbc/tree/2.0.7) (2016-11-19)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.6...2.0.7)
 
 **Implemented enhancements:**
@@ -877,6 +1048,7 @@
 - OSMBC crashes on GET  /article/2372. \(with a dot\)  [\#576](https://github.com/TheFive/osmbc/issues/576)
 
 ## [2.0.6](https://github.com/TheFive/osmbc/tree/2.0.6) (2016-11-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.5...2.0.6)
 
 **Fixed bugs:**
@@ -884,6 +1056,7 @@
 - Indication of unwritten articles in full-mode [\#575](https://github.com/TheFive/osmbc/issues/575)
 
 ## [2.0.5](https://github.com/TheFive/osmbc/tree/2.0.5) (2016-11-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.4...2.0.5)
 
 **Implemented enhancements:**
@@ -896,6 +1069,7 @@
 - Failed to lookup view "config/slacknotification" in views directory "/home/thefive/production/osmbc/views" [\#565](https://github.com/TheFive/osmbc/issues/565)
 
 ## [2.0.4](https://github.com/TheFive/osmbc/tree/2.0.4) (2016-10-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.2...2.0.4)
 
 **Fixed bugs:**
@@ -903,6 +1077,7 @@
 - Language switch not working [\#562](https://github.com/TheFive/osmbc/issues/562)
 
 ## [2.0.2](https://github.com/TheFive/osmbc/tree/2.0.2) (2016-10-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.1...2.0.2)
 
 **Implemented enhancements:**
@@ -916,6 +1091,7 @@
 - visitors today [\#559](https://github.com/TheFive/osmbc/issues/559)
 
 ## [2.0.1](https://github.com/TheFive/osmbc/tree/2.0.1) (2016-10-24)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.0...2.0.1)
 
 **Implemented enhancements:**
@@ -925,6 +1101,7 @@
 - Set the Page Title do something more meaningfull. [\#555](https://github.com/TheFive/osmbc/issues/555)
 
 ## [2.0.0](https://github.com/TheFive/osmbc/tree/2.0.0) (2016-10-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.9a...2.0.0)
 
 **Implemented enhancements:**
@@ -935,6 +1112,7 @@
 - Allow tags for articles to vote. [\#452](https://github.com/TheFive/osmbc/issues/452)
 
 ## [1.9.9a](https://github.com/TheFive/osmbc/tree/1.9.9a) (2016-10-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.9...1.9.9a)
 
 **Implemented enhancements:**
@@ -942,6 +1120,7 @@
 - UI Feature: allow to switch a filter of, by clicking X in the filter box. [\#550](https://github.com/TheFive/osmbc/issues/550)
 
 ## [1.9.9](https://github.com/TheFive/osmbc/tree/1.9.9) (2016-10-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8a...1.9.9)
 
 **Implemented enhancements:**
@@ -949,6 +1128,7 @@
 - Option to send out an EMail for a comment if mentioning was done somewhere in discussion, not in concrete comments. [\#549](https://github.com/TheFive/osmbc/issues/549)
 
 ## [1.9.8a](https://github.com/TheFive/osmbc/tree/1.9.8a) (2016-10-15)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.8...1.9.8a)
 
 **Implemented enhancements:**
@@ -960,6 +1140,7 @@
 - GTranslate is cutting links of of the result. [\#547](https://github.com/TheFive/osmbc/issues/547)
 
 ## [1.9.8](https://github.com/TheFive/osmbc/tree/1.9.8) (2016-10-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.7...1.9.8)
 
 **Implemented enhancements:**
@@ -973,6 +1154,7 @@
 - Review Button was disabled without reason. [\#545](https://github.com/TheFive/osmbc/issues/545)
 
 ## [1.9.7](https://github.com/TheFive/osmbc/tree/1.9.7) (2016-10-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.6a...1.9.7)
 
 **Implemented enhancements:**
@@ -984,9 +1166,11 @@
 - pgMap assert, that a set field is not a existing prototype function. [\#538](https://github.com/TheFive/osmbc/issues/538)
 
 ## [1.9.6a](https://github.com/TheFive/osmbc/tree/1.9.6a) (2016-10-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.6...1.9.6a)
 
 ## [1.9.6](https://github.com/TheFive/osmbc/tree/1.9.6) (2016-10-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.5...1.9.6)
 
 **Implemented enhancements:**
@@ -1002,6 +1186,7 @@
 - createdb.js --createTables is not working [\#526](https://github.com/TheFive/osmbc/issues/526)
 
 ## [1.9.5](https://github.com/TheFive/osmbc/tree/1.9.5) (2016-10-02)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.4...1.9.5)
 
 **Implemented enhancements:**
@@ -1014,6 +1199,7 @@
 - Blog Categories are entered as YAML for config, but JSON for blog. Thats wired. [\#532](https://github.com/TheFive/osmbc/issues/532)
 
 ## [1.9.4](https://github.com/TheFive/osmbc/tree/1.9.4) (2016-10-01)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.3a...1.9.4)
 
 **Implemented enhancements:**
@@ -1022,6 +1208,7 @@
 - Give a cookie hint on message: failed to find request token in session [\#524](https://github.com/TheFive/osmbc/issues/524)
 
 ## [1.9.3a](https://github.com/TheFive/osmbc/tree/1.9.3a) (2016-09-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.3...1.9.3a)
 
 **Fixed bugs:**
@@ -1031,6 +1218,7 @@
 - make session secret "secret" and move it to config.\*.json [\#527](https://github.com/TheFive/osmbc/issues/527)
 
 ## [1.9.3](https://github.com/TheFive/osmbc/tree/1.9.3) (2016-09-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2e...1.9.3)
 
 **Implemented enhancements:**
@@ -1043,6 +1231,7 @@
 - Review of second language is shown in blog view on mobile [\#518](https://github.com/TheFive/osmbc/issues/518)
 
 ## [1.9.2e](https://github.com/TheFive/osmbc/tree/1.9.2e) (2016-09-04)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2d...1.9.2e)
 
 **Implemented enhancements:**
@@ -1050,6 +1239,7 @@
 - implement hidden link for monitoring [\#515](https://github.com/TheFive/osmbc/issues/515)
 
 ## [1.9.2d](https://github.com/TheFive/osmbc/tree/1.9.2d) (2016-09-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2c...1.9.2d)
 
 **Fixed bugs:**
@@ -1057,6 +1247,7 @@
 - Some links results in crash when getting title of page \(collect\) [\#516](https://github.com/TheFive/osmbc/issues/516)
 
 ## [1.9.2c](https://github.com/TheFive/osmbc/tree/1.9.2c) (2016-09-01)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2...1.9.2c)
 
 **Fixed bugs:**
@@ -1064,6 +1255,7 @@
 - Encoding Problems at Parsing Titles of Other Websites [\#508](https://github.com/TheFive/osmbc/issues/508)
 
 ## [1.9.2](https://github.com/TheFive/osmbc/tree/1.9.2) (2016-08-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.1...1.9.2)
 
 **Implemented enhancements:**
@@ -1071,6 +1263,7 @@
 - Because Pascal has it ? Calendar Heatmap [\#505](https://github.com/TheFive/osmbc/issues/505)
 
 ## [1.9.1](https://github.com/TheFive/osmbc/tree/1.9.1) (2016-08-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9...1.9.1)
 
 **Implemented enhancements:**
@@ -1078,6 +1271,7 @@
 - Allow exporting blogs with emtpy articles [\#504](https://github.com/TheFive/osmbc/issues/504)
 
 ## [1.9](https://github.com/TheFive/osmbc/tree/1.9) (2016-08-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.8c...1.9)
 
 **Implemented enhancements:**
@@ -1085,6 +1279,7 @@
 - Make Blog Informations send to slack configurable in OSMBC by team [\#502](https://github.com/TheFive/osmbc/issues/502)
 
 ## [1.8.8c](https://github.com/TheFive/osmbc/tree/1.8.8c) (2016-08-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.8b...1.8.8c)
 
 **Fixed bugs:**
@@ -1092,6 +1287,7 @@
 - remove ''' from generated calendar [\#501](https://github.com/TheFive/osmbc/issues/501)
 
 ## [1.8.8b](https://github.com/TheFive/osmbc/tree/1.8.8b) (2016-08-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.8...1.8.8b)
 
 **Implemented enhancements:**
@@ -1107,6 +1303,7 @@
 - Check and test user names with space in comment mentioning. [\#498](https://github.com/TheFive/osmbc/issues/498)
 
 ## [1.8.8](https://github.com/TheFive/osmbc/tree/1.8.8) (2016-08-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.7a...1.8.8)
 
 **Implemented enhancements:**
@@ -1114,6 +1311,7 @@
 - do not export anything if the exported language contains empty articles [\#495](https://github.com/TheFive/osmbc/issues/495)
 
 ## [1.8.7a](https://github.com/TheFive/osmbc/tree/1.8.7a) (2016-06-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.7...1.8.7a)
 
 **Implemented enhancements:**
@@ -1126,6 +1324,7 @@
 - ?reviewComment= parameter is not supported any longer  Go Back to Start [\#494](https://github.com/TheFive/osmbc/issues/494)
 
 ## [1.8.7](https://github.com/TheFive/osmbc/tree/1.8.7) (2016-06-26)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6f...1.8.7)
 
 **Implemented enhancements:**
@@ -1137,9 +1336,11 @@
 - Reopen a language does not work [\#478](https://github.com/TheFive/osmbc/issues/478)
 
 ## [1.8.6f](https://github.com/TheFive/osmbc/tree/1.8.6f) (2016-06-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6e...1.8.6f)
 
 ## [1.8.6e](https://github.com/TheFive/osmbc/tree/1.8.6e) (2016-06-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6d...1.8.6e)
 
 **Implemented enhancements:**
@@ -1157,6 +1358,7 @@
 - install express-debug for development [\#487](https://github.com/TheFive/osmbc/issues/487)
 
 ## [1.8.6d](https://github.com/TheFive/osmbc/tree/1.8.6d) (2016-06-20)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6c...1.8.6d)
 
 **Fixed bugs:**
@@ -1164,6 +1366,7 @@
 - Unpublish Reasons are broken [\#481](https://github.com/TheFive/osmbc/issues/481)
 
 ## [1.8.6c](https://github.com/TheFive/osmbc/tree/1.8.6c) (2016-06-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6b...1.8.6c)
 
 **Implemented enhancements:**
@@ -1175,6 +1378,7 @@
 - Google translate DE-\>EN [\#477](https://github.com/TheFive/osmbc/issues/477)
 
 ## [1.8.6b](https://github.com/TheFive/osmbc/tree/1.8.6b) (2016-06-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6a...1.8.6b)
 
 **Implemented enhancements:**
@@ -1182,6 +1386,7 @@
 - please check the possiblity to save the Bild/Picture  [\#472](https://github.com/TheFive/osmbc/issues/472)
 
 ## [1.8.6a](https://github.com/TheFive/osmbc/tree/1.8.6a) (2016-06-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6...1.8.6a)
 
 **Fixed bugs:**
@@ -1189,6 +1394,7 @@
 - in OSM-Terminausblick exits some unnecessary code [\#474](https://github.com/TheFive/osmbc/issues/474)
 
 ## [1.8.6](https://github.com/TheFive/osmbc/tree/1.8.6) (2016-06-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.5b...1.8.6)
 
 **Implemented enhancements:**
@@ -1196,6 +1402,7 @@
 - Retrieve translation from google translate. [\#476](https://github.com/TheFive/osmbc/issues/476)
 
 ## [1.8.5b](https://github.com/TheFive/osmbc/tree/1.8.5b) (2016-06-08)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.5a...1.8.5b)
 
 **Implemented enhancements:**
@@ -1207,9 +1414,11 @@
 - wrong link in OSMBC live version ;-\) [\#471](https://github.com/TheFive/osmbc/issues/471)
 
 ## [1.8.5a](https://github.com/TheFive/osmbc/tree/1.8.5a) (2016-06-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.5...1.8.5a)
 
 ## [1.8.5](https://github.com/TheFive/osmbc/tree/1.8.5) (2016-06-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4h...1.8.5)
 
 **Implemented enhancements:**
@@ -1221,6 +1430,7 @@
 - automatic translation [\#469](https://github.com/TheFive/osmbc/issues/469)
 
 ## [1.8.4h](https://github.com/TheFive/osmbc/tree/1.8.4h) (2016-06-04)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4g...1.8.4h)
 
 **Fixed bugs:**
@@ -1228,6 +1438,7 @@
 - It is not possible to set Mail Status Change to no language in user settings. [\#468](https://github.com/TheFive/osmbc/issues/468)
 
 ## [1.8.4g](https://github.com/TheFive/osmbc/tree/1.8.4g) (2016-05-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4f...1.8.4g)
 
 **Implemented enhancements:**
@@ -1235,12 +1446,15 @@
 - Make twitter expansion synchron to title expansion in collect process. [\#465](https://github.com/TheFive/osmbc/issues/465)
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
@@ -1249,15 +1463,19 @@
 - Since Update only one editor window is shown  [\#463](https://github.com/TheFive/osmbc/issues/463)
 
 ## [1.8.4b](https://github.com/TheFive/osmbc/tree/1.8.4b) (2016-05-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4a...1.8.4b)
 
 ## [1.8.4a](https://github.com/TheFive/osmbc/tree/1.8.4a) (2016-05-22)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4...1.8.4a)
 
 ## [1.8.4](https://github.com/TheFive/osmbc/tree/1.8.4) (2016-05-22)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.3b...1.8.4)
 
 ## [1.8.3b](https://github.com/TheFive/osmbc/tree/1.8.3b) (2016-05-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.3a...1.8.3b)
 
 **Implemented enhancements:**
@@ -1266,6 +1484,7 @@
 - Name upcoming Events && Picture Article when created. [\#459](https://github.com/TheFive/osmbc/issues/459)
 
 ## [1.8.3a](https://github.com/TheFive/osmbc/tree/1.8.3a) (2016-05-19)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.3...1.8.3a)
 
 **Fixed bugs:**
@@ -1273,6 +1492,7 @@
 - Search for links with ' failed [\#458](https://github.com/TheFive/osmbc/issues/458)
 
 ## [1.8.3](https://github.com/TheFive/osmbc/tree/1.8.3) (2016-05-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.2...1.8.3)
 
 **Implemented enhancements:**
@@ -1280,6 +1500,7 @@
 - Filter to disable all markdown that are newer in the left column than on the right column. [\#457](https://github.com/TheFive/osmbc/issues/457)
 
 ## [1.8.2](https://github.com/TheFive/osmbc/tree/1.8.2) (2016-05-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1b...1.8.2)
 
 **Implemented enhancements:**
@@ -1288,6 +1509,7 @@
 - enable colors for the people in the blog views. [\#455](https://github.com/TheFive/osmbc/issues/455)
 
 ## [1.8.1b](https://github.com/TheFive/osmbc/tree/1.8.1b) (2016-05-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1a...1.8.1b)
 
 **Fixed bugs:**
@@ -1295,6 +1517,7 @@
 - Number of Doublet in article view wrong. [\#454](https://github.com/TheFive/osmbc/issues/454)
 
 ## [1.8.1a](https://github.com/TheFive/osmbc/tree/1.8.1a) (2016-05-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1...1.8.1a)
 
 **Fixed bugs:**
@@ -1302,6 +1525,7 @@
 - Remove any linebreaks in titlegenerator. They lead to broken links. [\#450](https://github.com/TheFive/osmbc/issues/450)
 
 ## [1.8.1](https://github.com/TheFive/osmbc/tree/1.8.1) (2016-05-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.0a...1.8.1)
 
 **Fixed bugs:**
@@ -1309,9 +1533,11 @@
 - Error Handling for broken SMTP Handler is bad. [\#441](https://github.com/TheFive/osmbc/issues/441)
 
 ## [1.8.0a](https://github.com/TheFive/osmbc/tree/1.8.0a) (2016-05-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.0...1.8.0a)
 
 ## [1.8.0](https://github.com/TheFive/osmbc/tree/1.8.0) (2016-05-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.3b...1.8.0)
 
 **Implemented enhancements:**
@@ -1319,12 +1545,15 @@
 - Create a Webhook to read information from slack for collection. [\#175](https://github.com/TheFive/osmbc/issues/175)
 
 ## [1.7.3b](https://github.com/TheFive/osmbc/tree/1.7.3b) (2016-05-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.2.a...1.7.3b)
 
 ## [1.7.2.a](https://github.com/TheFive/osmbc/tree/1.7.2.a) (2016-05-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.3...1.7.2.a)
 
 ## [1.7.3](https://github.com/TheFive/osmbc/tree/1.7.3) (2016-05-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.2a...1.7.3)
 
 **Implemented enhancements:**
@@ -1332,6 +1561,7 @@
 - Suggest Title from html meta or og:description tag. [\#445](https://github.com/TheFive/osmbc/issues/445)
 
 ## [1.7.2a](https://github.com/TheFive/osmbc/tree/1.7.2a) (2016-05-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.2...1.7.2a)
 
 **Fixed bugs:**
@@ -1340,9 +1570,11 @@
 - Whos Online on home page is displaying quotation marks [\#439](https://github.com/TheFive/osmbc/issues/439)
 
 ## [1.7.2](https://github.com/TheFive/osmbc/tree/1.7.2) (2016-05-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.1a...1.7.2)
 
 ## [1.7.1a](https://github.com/TheFive/osmbc/tree/1.7.1a) (2016-05-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.1...1.7.1a)
 
 **Fixed bugs:**
@@ -1350,6 +1582,7 @@
 - Automatische Übersetzung Texte are not shown in article editor. [\#443](https://github.com/TheFive/osmbc/issues/443)
 
 ## [1.7.1](https://github.com/TheFive/osmbc/tree/1.7.1) (2016-05-02)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.0b...1.7.1)
 
 **Implemented enhancements:**
@@ -1358,9 +1591,11 @@
 - the existing links those we can drag to Markdown should generate the complete \*Text\* including the link itself [\#292](https://github.com/TheFive/osmbc/issues/292)
 
 ## [1.7.0b](https://github.com/TheFive/osmbc/tree/1.7.0b) (2016-04-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.0...1.7.0b)
 
 ## [1.7.0](https://github.com/TheFive/osmbc/tree/1.7.0) (2016-04-29)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.4a...1.7.0)
 
 **Implemented enhancements:**
@@ -1372,6 +1607,7 @@
 - Check, what is written to Slack if you reopen a blog in a language. [\#438](https://github.com/TheFive/osmbc/issues/438)
 
 ## [1.6.4a](https://github.com/TheFive/osmbc/tree/1.6.4a) (2016-04-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.4...1.6.4a)
 
 **Fixed bugs:**
@@ -1379,6 +1615,7 @@
 - YAML parse error is not shown to user when saving configuration. [\#431](https://github.com/TheFive/osmbc/issues/431)
 
 ## [1.6.4](https://github.com/TheFive/osmbc/tree/1.6.4) (2016-04-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.3...1.6.4)
 
 **Fixed bugs:**
@@ -1386,6 +1623,7 @@
 - Future articles are missing in overview and full mode. [\#437](https://github.com/TheFive/osmbc/issues/437)
 
 ## [1.6.3](https://github.com/TheFive/osmbc/tree/1.6.3) (2016-04-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.2...1.6.3)
 
 **Implemented enhancements:**
@@ -1393,6 +1631,7 @@
 - Small language display close to title in overview. [\#436](https://github.com/TheFive/osmbc/issues/436)
 
 ## [1.6.2](https://github.com/TheFive/osmbc/tree/1.6.2) (2016-04-24)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.1...1.6.2)
 
 **Implemented enhancements:**
@@ -1406,9 +1645,11 @@
 - Redirect to article after login [\#328](https://github.com/TheFive/osmbc/issues/328)
 
 ## [1.6.1](https://github.com/TheFive/osmbc/tree/1.6.1) (2016-04-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.0...1.6.1)
 
 ## [1.6.0](https://github.com/TheFive/osmbc/tree/1.6.0) (2016-04-22)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.5.0...1.6.0)
 
 **Implemented enhancements:**
@@ -1417,6 +1658,7 @@
 - Hide languages, that have no markdown for all open / edit blogs for user with other languages. [\#423](https://github.com/TheFive/osmbc/issues/423)
 
 ## [1.5.0](https://github.com/TheFive/osmbc/tree/1.5.0) (2016-04-16)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.2...1.5.0)
 
 **Implemented enhancements:**
@@ -1429,6 +1671,7 @@
 - @de is part of @derFred, so all @derFred comments are @DE Comments. [\#422](https://github.com/TheFive/osmbc/issues/422)
 
 ## [1.4.2](https://github.com/TheFive/osmbc/tree/1.4.2) (2016-04-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.1...1.4.2)
 
 **Fixed bugs:**
@@ -1436,6 +1679,7 @@
 - Blog Statistic wrong. do not count "no translation" [\#421](https://github.com/TheFive/osmbc/issues/421)
 
 ## [1.4.1](https://github.com/TheFive/osmbc/tree/1.4.1) (2016-04-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.0b...1.4.1)
 
 **Implemented enhancements:**
@@ -1443,12 +1687,15 @@
 - Indicate and display comments in review mode [\#417](https://github.com/TheFive/osmbc/issues/417)
 
 ## [1.4.0b](https://github.com/TheFive/osmbc/tree/1.4.0b) (2016-04-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.4.0a...1.4.0b)
 
 ## [1.4.0a](https://github.com/TheFive/osmbc/tree/1.4.0a) (2016-04-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.4...1.4.0a)
 
 ## [1.4](https://github.com/TheFive/osmbc/tree/1.4) (2016-04-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.3.0a...1.4)
 
 **Implemented enhancements:**
@@ -1460,9 +1707,11 @@
 - Display all articles where the editor is mentioned in its comments on OSMBC Homepage [\#402](https://github.com/TheFive/osmbc/issues/402)
 
 ## [1.3.0a](https://github.com/TheFive/osmbc/tree/1.3.0a) (2016-04-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.3...1.3.0a)
 
 ## [1.2.3](https://github.com/TheFive/osmbc/tree/1.2.3) (2016-04-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2a...1.2.3)
 
 **Implemented enhancements:**
@@ -1471,9 +1720,11 @@
 - Blog view mobile reduction [\#412](https://github.com/TheFive/osmbc/issues/412)
 
 ## [1.2.2a](https://github.com/TheFive/osmbc/tree/1.2.2a) (2016-04-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.2...1.2.2a)
 
 ## [1.2.2](https://github.com/TheFive/osmbc/tree/1.2.2) (2016-04-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.1...1.2.2)
 
 **Implemented enhancements:**
@@ -1481,6 +1732,7 @@
 - Add a small link to http://wortliga.de/textanalyse/ for DE [\#410](https://github.com/TheFive/osmbc/issues/410)
 
 ## [1.2.1](https://github.com/TheFive/osmbc/tree/1.2.1) (2016-04-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.2.0...1.2.1)
 
 **Implemented enhancements:**
@@ -1493,6 +1745,7 @@
 - Links in comments are not clickable. [\#398](https://github.com/TheFive/osmbc/issues/398)
 
 ## [1.2.0](https://github.com/TheFive/osmbc/tree/1.2.0) (2016-04-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.1.1...1.2.0)
 
 **Implemented enhancements:**
@@ -1506,6 +1759,7 @@
 - keep language settings [\#401](https://github.com/TheFive/osmbc/issues/401)
 
 ## [1.1.1](https://github.com/TheFive/osmbc/tree/1.1.1) (2016-03-29)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.1.0...1.1.1)
 
 **Fixed bugs:**
@@ -1513,6 +1767,7 @@
 - Comment status is undefined [\#397](https://github.com/TheFive/osmbc/issues/397)
 
 ## [1.1.0](https://github.com/TheFive/osmbc/tree/1.1.0) (2016-03-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7b...1.1.0)
 
 **Implemented enhancements:**
@@ -1523,22 +1778,16 @@
 
 - Use \[\[\]\] wiki syntax in full for calender parser for town / country [\#394](https://github.com/TheFive/osmbc/issues/394)
 
-**Merged pull requests:**
-
-- Programming adjusted in Japanese [\#393](https://github.com/TheFive/osmbc/pull/393) ([fredao](https://github.com/fredao))
-
 ## [1.0.7b](https://github.com/TheFive/osmbc/tree/1.0.7b) (2016-03-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7a...1.0.7b)
 
 **Implemented enhancements:**
 
 - Separate admin from edit functions in user interface, Cleanup of editor view. [\#391](https://github.com/TheFive/osmbc/issues/391)
 
-**Merged pull requests:**
-
-- Brasilian Flag added [\#392](https://github.com/TheFive/osmbc/pull/392) ([fredao](https://github.com/fredao))
-
 ## [1.0.7a](https://github.com/TheFive/osmbc/tree/1.0.7a) (2016-03-15)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.7...1.0.7a)
 
 **Fixed bugs:**
@@ -1546,6 +1795,7 @@
 - Sort doesn't work [\#389](https://github.com/TheFive/osmbc/issues/389)
 
 ## [1.0.7](https://github.com/TheFive/osmbc/tree/1.0.7) (2016-03-15)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.6...1.0.7)
 
 **Implemented enhancements:**
@@ -1560,13 +1810,11 @@
 - OSMBC takes long time for text differences [\#335](https://github.com/TheFive/osmbc/issues/335)
 
 ## [1.0.6](https://github.com/TheFive/osmbc/tree/1.0.6) (2016-03-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.5...1.0.6)
 
-**Merged pull requests:**
-
-- Guideline to record the calendar dates in an appropriate way updated [\#383](https://github.com/TheFive/osmbc/pull/383) ([fredao](https://github.com/fredao))
-
 ## [1.0.5](https://github.com/TheFive/osmbc/tree/1.0.5) (2016-03-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.4...1.0.5)
 
 **Implemented enhancements:**
@@ -1577,11 +1825,8 @@
 
 - it looks like some? \(or all?\) "no translation" are not eliminated during export [\#380](https://github.com/TheFive/osmbc/issues/380)
 
-**Merged pull requests:**
-
-- Flags: Guyana, Argentina, Wales, Scotland, UK [\#381](https://github.com/TheFive/osmbc/pull/381) ([fredao](https://github.com/fredao))
-
 ## [1.0.4](https://github.com/TheFive/osmbc/tree/1.0.4) (2016-03-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.3...1.0.4)
 
 **Implemented enhancements:**
@@ -1595,35 +1840,27 @@
 - Allow entering an email address for an invite to OSMBC, default the mail options pragmatic. [\#374](https://github.com/TheFive/osmbc/issues/374)
 
 ## [1.0.3](https://github.com/TheFive/osmbc/tree/1.0.3) (2016-03-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.2...1.0.3)
 
 **Implemented enhancements:**
 
 - separate the two buttons - REVIEW and DID EXPORT - please [\#375](https://github.com/TheFive/osmbc/issues/375)
 
-**Merged pull requests:**
-
-- Scotland is part of UK - therfore we use the same flag [\#376](https://github.com/TheFive/osmbc/pull/376) ([fredao](https://github.com/fredao))
-
 ## [1.0.2](https://github.com/TheFive/osmbc/tree/1.0.2) (2016-03-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.1...1.0.2)
 
-**Merged pull requests:**
-
-- typo [\#373](https://github.com/TheFive/osmbc/pull/373) ([fredao](https://github.com/fredao))
-
 ## [1.0.1](https://github.com/TheFive/osmbc/tree/1.0.1) (2016-03-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.0.0...1.0.1)
 
 **Fixed bugs:**
 
 - Collect is not possible in 1.0.0 due to internal version and history check. [\#370](https://github.com/TheFive/osmbc/issues/370)
 
-**Merged pull requests:**
-
-- new Tab Review [\#369](https://github.com/TheFive/osmbc/pull/369) ([fredao](https://github.com/fredao))
-
 ## [1.0.0](https://github.com/TheFive/osmbc/tree/1.0.0) (2016-03-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.9...1.0.0)
 
 **Implemented enhancements:**
@@ -1633,6 +1870,7 @@
 - Add a markdown editor in the fullFinal view to easy correct typos while proofreading the complete blog [\#216](https://github.com/TheFive/osmbc/issues/216)
 
 ## [0.8.9](https://github.com/TheFive/osmbc/tree/0.8.9) (2016-03-04)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.8...0.8.9)
 
 **Implemented enhancements:**
@@ -1645,11 +1883,8 @@
 - Disallow change of OSMUser once a user has logged in. [\#363](https://github.com/TheFive/osmbc/issues/363)
 - putting a space to an email results in sendMail error. [\#362](https://github.com/TheFive/osmbc/issues/362)
 
-**Merged pull requests:**
-
-- new Flag Chile - some more videos in Youtube [\#364](https://github.com/TheFive/osmbc/pull/364) ([fredao](https://github.com/fredao))
-
 ## [0.8.8](https://github.com/TheFive/osmbc/tree/0.8.8) (2016-03-02)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.7...0.8.8)
 
 **Implemented enhancements:**
@@ -1661,6 +1896,7 @@
 - New history list does not display usert table changes. [\#361](https://github.com/TheFive/osmbc/issues/361)
 
 ## [0.8.7](https://github.com/TheFive/osmbc/tree/0.8.7) (2016-03-01)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.6...0.8.7)
 
 **Implemented enhancements:**
@@ -1672,11 +1908,8 @@
 - Category Releases should not have a bullet point [\#360](https://github.com/TheFive/osmbc/issues/360)
 - Avoid possibility of SQL Injection \(e.g. History\) [\#357](https://github.com/TheFive/osmbc/issues/357)
 
-**Merged pull requests:**
-
-- bolivia and uk adjusted size [\#359](https://github.com/TheFive/osmbc/pull/359) ([fredao](https://github.com/fredao))
-
 ## [0.8.6](https://github.com/TheFive/osmbc/tree/0.8.6) (2016-02-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.5...0.8.6)
 
 **Implemented enhancements:**
@@ -1684,6 +1917,7 @@
 - Implement a more flexible history [\#71](https://github.com/TheFive/osmbc/issues/71)
 
 ## [0.8.5](https://github.com/TheFive/osmbc/tree/0.8.5) (2016-02-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.4...0.8.5)
 
 **Implemented enhancements:**
@@ -1697,6 +1931,7 @@
 - Used Links does not make any sense in Upcoming Events & Software Releases [\#336](https://github.com/TheFive/osmbc/issues/336)
 
 ## [0.8.4](https://github.com/TheFive/osmbc/tree/0.8.4) (2016-02-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.3...0.8.4)
 
 **Implemented enhancements:**
@@ -1707,6 +1942,7 @@
 - Better CreateDB script for install purposes [\#66](https://github.com/TheFive/osmbc/issues/66)
 
 ## [0.8.3](https://github.com/TheFive/osmbc/tree/0.8.3) (2016-02-24)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.2...0.8.3)
 
 **Implemented enhancements:**
@@ -1714,6 +1950,7 @@
 - Title Field mandatory for collection [\#346](https://github.com/TheFive/osmbc/issues/346)
 
 ## [0.8.2](https://github.com/TheFive/osmbc/tree/0.8.2) (2016-02-24)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.1...0.8.2)
 
 **Fixed bugs:**
@@ -1722,21 +1959,19 @@
 - Flags Drag and Drop doesn't work anymore [\#348](https://github.com/TheFive/osmbc/issues/348)
 
 ## [0.8.1](https://github.com/TheFive/osmbc/tree/0.8.1) (2016-02-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0c...0.8.1)
 
 ## [0.8.0c](https://github.com/TheFive/osmbc/tree/0.8.0c) (2016-02-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0b...0.8.0c)
 
 **Fixed bugs:**
 
 - once a textbox in Markdown is set to any content \(normally: no translation\)  it not possible to clean it up [\#342](https://github.com/TheFive/osmbc/issues/342)
 
-**Merged pull requests:**
-
-- extended version of drag and drop help [\#349](https://github.com/TheFive/osmbc/pull/349) ([fredao](https://github.com/fredao))
-- Japan flag customized [\#347](https://github.com/TheFive/osmbc/pull/347) ([fredao](https://github.com/fredao))
-
 ## [0.8.0b](https://github.com/TheFive/osmbc/tree/0.8.0b) (2016-02-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0a...0.8.0b)
 
 **Implemented enhancements:**
@@ -1748,9 +1983,11 @@
 - Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
 
 ## [0.8.0a](https://github.com/TheFive/osmbc/tree/0.8.0a) (2016-02-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0...0.8.0a)
 
 ## [0.8.0](https://github.com/TheFive/osmbc/tree/0.8.0) (2016-02-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7b...0.8.0)
 
 **Implemented enhancements:**
@@ -1758,6 +1995,7 @@
 - Create an own textfield for every comment in an article. [\#304](https://github.com/TheFive/osmbc/issues/304)
 
 ## [0.7.7b](https://github.com/TheFive/osmbc/tree/0.7.7b) (2016-02-20)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7a...0.7.7b)
 
 **Fixed bugs:**
@@ -1766,13 +2004,11 @@
 - Ensure uniqueness of OSMUser in usert table [\#96](https://github.com/TheFive/osmbc/issues/96)
 
 ## [0.7.7a](https://github.com/TheFive/osmbc/tree/0.7.7a) (2016-02-20)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.7...0.7.7a)
 
-**Merged pull requests:**
-
-- only one line for italy - not italia [\#340](https://github.com/TheFive/osmbc/pull/340) ([fredao](https://github.com/fredao))
-
 ## [0.7.7](https://github.com/TheFive/osmbc/tree/0.7.7) (2016-02-20)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.6...0.7.7)
 
 **Implemented enhancements:**
@@ -1780,6 +2016,7 @@
 - Route Blog Stati by language for weekly [\#338](https://github.com/TheFive/osmbc/issues/338)
 
 ## [0.7.6](https://github.com/TheFive/osmbc/tree/0.7.6) (2016-02-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5d...0.7.6)
 
 **Implemented enhancements:**
@@ -1796,12 +2033,15 @@
 - Italy Flag customized dimensions [\#334](https://github.com/TheFive/osmbc/pull/334) ([fredao](https://github.com/fredao))
 
 ## [0.7.5d](https://github.com/TheFive/osmbc/tree/0.7.5d) (2016-02-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5c...0.7.5d)
 
 ## [0.7.5c](https://github.com/TheFive/osmbc/tree/0.7.5c) (2016-02-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5b...0.7.5c)
 
 ## [0.7.5b](https://github.com/TheFive/osmbc/tree/0.7.5b) (2016-02-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5a...0.7.5b)
 
 **Merged pull requests:**
@@ -1809,6 +2049,7 @@
 - Haiti [\#333](https://github.com/TheFive/osmbc/pull/333) ([fredao](https://github.com/fredao))
 
 ## [0.7.5a](https://github.com/TheFive/osmbc/tree/0.7.5a) (2016-02-16)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5...0.7.5a)
 
 **Implemented enhancements:**
@@ -1821,6 +2062,7 @@
 - Saint Luis flag [\#323](https://github.com/TheFive/osmbc/pull/323) ([fredao](https://github.com/fredao))
 
 ## [0.7.5](https://github.com/TheFive/osmbc/tree/0.7.5) (2016-02-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.4...0.7.5)
 
 **Implemented enhancements:**
@@ -1832,6 +2074,7 @@
 - Make Test on Username / language case insensitive. [\#317](https://github.com/TheFive/osmbc/issues/317)
 
 ## [0.7.4](https://github.com/TheFive/osmbc/tree/0.7.4) (2016-02-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3d...0.7.4)
 
 **Fixed bugs:**
@@ -1840,9 +2083,11 @@
 - email on status switch is buggy [\#311](https://github.com/TheFive/osmbc/issues/311)
 
 ## [0.7.3d](https://github.com/TheFive/osmbc/tree/0.7.3d) (2016-02-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3c...0.7.3d)
 
 ## [0.7.3c](https://github.com/TheFive/osmbc/tree/0.7.3c) (2016-02-11)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3b...0.7.3c)
 
 **Fixed bugs:**
@@ -1850,6 +2095,7 @@
 - Blog Charts are not recalculated and frozen. [\#312](https://github.com/TheFive/osmbc/issues/312)
 
 ## [0.7.3b](https://github.com/TheFive/osmbc/tree/0.7.3b) (2016-02-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3a...0.7.3b)
 
 **Implemented enhancements:**
@@ -1863,6 +2109,7 @@
 - Error Handler layout looks broken. Jade files are not used. [\#305](https://github.com/TheFive/osmbc/issues/305)
 
 ## [0.7.3a](https://github.com/TheFive/osmbc/tree/0.7.3a) (2016-02-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3...0.7.3a)
 
 **Merged pull requests:**
@@ -1870,6 +2117,7 @@
 - Flags Mexico/Austria and welcome message [\#307](https://github.com/TheFive/osmbc/pull/307) ([fredao](https://github.com/fredao))
 
 ## [0.7.3](https://github.com/TheFive/osmbc/tree/0.7.3) (2016-02-08)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.2b...0.7.3)
 
 **Implemented enhancements:**
@@ -1877,6 +2125,7 @@
 - Load Tweets with Twitter API and display them with full contained links. [\#4](https://github.com/TheFive/osmbc/issues/4)
 
 ## [0.7.2b](https://github.com/TheFive/osmbc/tree/0.7.2b) (2016-02-08)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.2...0.7.2b)
 
 **Implemented enhancements:**
@@ -1885,6 +2134,7 @@
 - Some Statistics per Blog [\#39](https://github.com/TheFive/osmbc/issues/39)
 
 ## [0.7.2](https://github.com/TheFive/osmbc/tree/0.7.2) (2016-02-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.1a...0.7.2)
 
 **Implemented enhancements:**
@@ -1893,6 +2143,7 @@
 - Remember scoll position of last blog view. [\#244](https://github.com/TheFive/osmbc/issues/244)
 
 ## [0.7.1a](https://github.com/TheFive/osmbc/tree/0.7.1a) (2016-02-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.1...0.7.1a)
 
 **Fixed bugs:**
@@ -1900,6 +2151,7 @@
 - Blog Stats throws internal error. [\#301](https://github.com/TheFive/osmbc/issues/301)
 
 ## [0.7.1](https://github.com/TheFive/osmbc/tree/0.7.1) (2016-02-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.0a...0.7.1)
 
 **Implemented enhancements:**
@@ -1916,9 +2168,11 @@
 - Enable "strict mode" in all js files & jshint, [\#224](https://github.com/TheFive/osmbc/issues/224)
 
 ## [0.7.0a](https://github.com/TheFive/osmbc/tree/0.7.0a) (2016-02-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.0...0.7.0a)
 
 ## [0.7.0](https://github.com/TheFive/osmbc/tree/0.7.0) (2016-02-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9c...0.7.0)
 
 **Implemented enhancements:**
@@ -1936,6 +2190,7 @@
 - Add creation of blog to the log history. [\#260](https://github.com/TheFive/osmbc/issues/260)
 
 ## [0.6.9c](https://github.com/TheFive/osmbc/tree/0.6.9c) (2016-02-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9b...0.6.9c)
 
 **Merged pull requests:**
@@ -1943,6 +2198,7 @@
 - bitte nur den letzten nehmen ... [\#294](https://github.com/TheFive/osmbc/pull/294) ([fredao](https://github.com/fredao))
 
 ## [0.6.9b](https://github.com/TheFive/osmbc/tree/0.6.9b) (2016-01-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9a...0.6.9b)
 
 **Fixed bugs:**
@@ -1955,6 +2211,7 @@
 - German flag - last change [\#288](https://github.com/TheFive/osmbc/pull/288) ([fredao](https://github.com/fredao))
 
 ## [0.6.9a](https://github.com/TheFive/osmbc/tree/0.6.9a) (2016-01-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9...0.6.9a)
 
 **Merged pull requests:**
@@ -1963,6 +2220,7 @@
 - Hi theFive - hier kommen die neuen Flaggen [\#286](https://github.com/TheFive/osmbc/pull/286) ([fredao](https://github.com/fredao))
 
 ## [0.6.9](https://github.com/TheFive/osmbc/tree/0.6.9) (2016-01-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7a...0.6.9)
 
 **Implemented enhancements:**
@@ -1975,9 +2233,11 @@
 - new countryFlags.js [\#285](https://github.com/TheFive/osmbc/pull/285) ([fredao](https://github.com/fredao))
 
 ## [0.6.7a](https://github.com/TheFive/osmbc/tree/0.6.7a) (2016-01-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.8...0.6.7a)
 
 ## [0.6.8](https://github.com/TheFive/osmbc/tree/0.6.8) (2016-01-26)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.7...0.6.8)
 
 **Implemented enhancements:**
@@ -1989,6 +2249,7 @@
 - Changing a language after set a blog to review sets the new blog to review too. [\#282](https://github.com/TheFive/osmbc/issues/282)
 
 ## [0.6.7](https://github.com/TheFive/osmbc/tree/0.6.7) (2016-01-26)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.6...0.6.7)
 
 **Implemented enhancements:**
@@ -1996,6 +2257,7 @@
 - Add a Trash for blogs [\#280](https://github.com/TheFive/osmbc/issues/280)
 
 ## [0.6.6](https://github.com/TheFive/osmbc/tree/0.6.6) (2016-01-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5c...0.6.6)
 
 **Implemented enhancements:**
@@ -2004,6 +2266,7 @@
 - Add links to WN and Weekly Wiki. [\#278](https://github.com/TheFive/osmbc/issues/278)
 
 ## [0.6.5c](https://github.com/TheFive/osmbc/tree/0.6.5c) (2016-01-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5b...0.6.5c)
 
 **Implemented enhancements:**
@@ -2015,12 +2278,15 @@
 - is it possible to to \*not export\* the Blog Missing Cat: --unpublished-- [\#276](https://github.com/TheFive/osmbc/issues/276)
 
 ## [0.6.5b](https://github.com/TheFive/osmbc/tree/0.6.5b) (2016-01-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.5b)
 
 ## [0.6.5a](https://github.com/TheFive/osmbc/tree/0.6.5a) (2016-01-22)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5...0.6.5a)
 
 ## [0.6.5](https://github.com/TheFive/osmbc/tree/0.6.5) (2016-01-22)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.4...0.6.5)
 
 **Implemented enhancements:**
@@ -2033,6 +2299,7 @@
 - WNAuthor: change unwanted [\#273](https://github.com/TheFive/osmbc/issues/273)
 
 ## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.3a...0.6.4)
 
 **Implemented enhancements:**
@@ -2040,9 +2307,15 @@
 - Upcomming events should have country flags. [\#267](https://github.com/TheFive/osmbc/issues/267)
 
 ## [0.6.3a](https://github.com/TheFive/osmbc/tree/0.6.3a) (2016-01-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.2...0.6.3a)
 
+**Fixed bugs:**
+
+- Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
+
 ## [0.6.2](https://github.com/TheFive/osmbc/tree/0.6.2) (2016-01-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.1...0.6.2)
 
 **Implemented enhancements:**
@@ -2052,13 +2325,14 @@
 
 **Fixed bugs:**
 
-- Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
 - Add list to ALL users not only denied and full. [\#263](https://github.com/TheFive/osmbc/issues/263)
 
 ## [0.6.1](https://github.com/TheFive/osmbc/tree/0.6.1) (2016-01-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.0...0.6.1)
 
 ## [0.6.0](https://github.com/TheFive/osmbc/tree/0.6.0) (2016-01-10)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.9a...0.6.0)
 
 **Implemented enhancements:**
@@ -2066,6 +2340,7 @@
 - More flexible language switch by putting switching to navbar. [\#258](https://github.com/TheFive/osmbc/issues/258)
 
 ## [0.5.9a](https://github.com/TheFive/osmbc/tree/0.5.9a) (2016-01-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.9...0.5.9a)
 
 **Fixed bugs:**
@@ -2073,6 +2348,7 @@
 - typo: Any thng which is interesting in OSM and worth sharing [\#255](https://github.com/TheFive/osmbc/issues/255)
 
 ## [0.5.9](https://github.com/TheFive/osmbc/tree/0.5.9) (2016-01-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8b...0.5.9)
 
 **Implemented enhancements:**
@@ -2085,6 +2361,7 @@
 - Collection does not separate links [\#254](https://github.com/TheFive/osmbc/issues/254)
 
 ## [0.5.8b](https://github.com/TheFive/osmbc/tree/0.5.8b) (2016-01-08)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8a...0.5.8b)
 
 **Fixed bugs:**
@@ -2092,6 +2369,7 @@
 - links with non standard characters are not identified in full in article screen [\#252](https://github.com/TheFive/osmbc/issues/252)
 
 ## [0.5.8a](https://github.com/TheFive/osmbc/tree/0.5.8a) (2016-01-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.8...0.5.8a)
 
 **Fixed bugs:**
@@ -2100,6 +2378,7 @@
 - !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
 
 ## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.7...0.5.8)
 
 **Implemented enhancements:**
@@ -2116,6 +2395,7 @@
 - PT in data/editorStrings.js [\#243](https://github.com/TheFive/osmbc/pull/243) ([alexandre-mbm](https://github.com/alexandre-mbm))
 
 ## [0.5.7](https://github.com/TheFive/osmbc/tree/0.5.7) (2016-01-01)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.6...0.5.7)
 
 **Implemented enhancements:**
@@ -2123,6 +2403,7 @@
 - Better display on mobile devices. [\#241](https://github.com/TheFive/osmbc/issues/241)
 
 ## [0.5.6](https://github.com/TheFive/osmbc/tree/0.5.6) (2015-12-31)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.5...0.5.6)
 
 **Implemented enhancements:**
@@ -2131,6 +2412,7 @@
 - a list with all articles per blog, sortable by persons who initally collected the article [\#227](https://github.com/TheFive/osmbc/issues/227)
 
 ## [0.5.5](https://github.com/TheFive/osmbc/tree/0.5.5) (2015-12-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.4...0.5.5)
 
 **Implemented enhancements:**
@@ -2138,6 +2420,7 @@
 - Implement a Tool like the calender tool to simplify Image Integration. [\#211](https://github.com/TheFive/osmbc/issues/211)
 
 ## [0.5.4](https://github.com/TheFive/osmbc/tree/0.5.4) (2015-12-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.3...0.5.4)
 
 **Fixed bugs:**
@@ -2145,9 +2428,11 @@
 - bug during editing articles on OSX with Chrome and Safari - NOT with FF [\#232](https://github.com/TheFive/osmbc/issues/232)
 
 ## [0.5.3](https://github.com/TheFive/osmbc/tree/0.5.3) (2015-12-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.2...0.5.3)
 
 ## [0.5.2](https://github.com/TheFive/osmbc/tree/0.5.2) (2015-12-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.1...0.5.2)
 
 **Implemented enhancements:**
@@ -2161,6 +2446,7 @@
 - include new blogstatus\_3.pdf please [\#234](https://github.com/TheFive/osmbc/issues/234)
 
 ## [0.5.1](https://github.com/TheFive/osmbc/tree/0.5.1) (2015-12-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.0...0.5.1)
 
 **Implemented enhancements:**
@@ -2175,6 +2461,7 @@
 - Fixes for image preview [\#195](https://github.com/TheFive/osmbc/issues/195)
 
 ## [0.5.0](https://github.com/TheFive/osmbc/tree/0.5.0) (2015-12-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.7...0.5.0)
 
 **Implemented enhancements:**
@@ -2186,6 +2473,7 @@
 - time controlled closing of collection - depending from our editorial deadline [\#221](https://github.com/TheFive/osmbc/issues/221)
 
 ## [0.4.7](https://github.com/TheFive/osmbc/tree/0.4.7) (2015-12-22)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6b...0.4.7)
 
 **Implemented enhancements:**
@@ -2195,9 +2483,11 @@
 - Review is done in wordpress, please document your review here. [\#212](https://github.com/TheFive/osmbc/issues/212)
 
 ## [0.4.6b](https://github.com/TheFive/osmbc/tree/0.4.6b) (2015-12-20)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6a...0.4.6b)
 
 ## [0.4.6a](https://github.com/TheFive/osmbc/tree/0.4.6a) (2015-12-20)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.6...0.4.6a)
 
 **Fixed bugs:**
@@ -2205,6 +2495,7 @@
 - Whos Online List shows time in russian \(sometimes\) [\#210](https://github.com/TheFive/osmbc/issues/210)
 
 ## [0.4.6](https://github.com/TheFive/osmbc/tree/0.4.6) (2015-12-20)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.5...0.4.6)
 
 **Implemented enhancements:**
@@ -2212,6 +2503,7 @@
 - Document the different blog views in help. [\#209](https://github.com/TheFive/osmbc/issues/209)
 
 ## [0.4.5](https://github.com/TheFive/osmbc/tree/0.4.5) (2015-12-19)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.4...0.4.5)
 
 **Implemented enhancements:**
@@ -2227,6 +2519,7 @@
 - History blog field is not filled in case of an new article. [\#204](https://github.com/TheFive/osmbc/issues/204)
 
 ## [0.4.4](https://github.com/TheFive/osmbc/tree/0.4.4) (2015-12-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.3a...0.4.4)
 
 **Implemented enhancements:**
@@ -2234,9 +2527,11 @@
 - possibilty to see the WN \# in last changes [\#114](https://github.com/TheFive/osmbc/issues/114)
 
 ## [0.4.3a](https://github.com/TheFive/osmbc/tree/0.4.3a) (2015-12-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.3...0.4.3a)
 
 ## [0.4.3](https://github.com/TheFive/osmbc/tree/0.4.3) (2015-12-16)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.2a...0.4.3)
 
 **Implemented enhancements:**
@@ -2249,6 +2544,7 @@
 - Blog History is not shown in Blog Views. [\#198](https://github.com/TheFive/osmbc/issues/198)
 
 ## [0.4.2a](https://github.com/TheFive/osmbc/tree/0.4.2a) (2015-12-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.2...0.4.2a)
 
 **Fixed bugs:**
@@ -2256,6 +2552,7 @@
 - Error with "translate from" for the image [\#196](https://github.com/TheFive/osmbc/issues/196)
 
 ## [0.4.2](https://github.com/TheFive/osmbc/tree/0.4.2) (2015-12-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.1...0.4.2)
 
 **Implemented enhancements:**
@@ -2264,6 +2561,7 @@
 - Translate feature - switch the languages i.e. left: source language right: target language [\#188](https://github.com/TheFive/osmbc/issues/188)
 
 ## [0.4.1](https://github.com/TheFive/osmbc/tree/0.4.1) (2015-12-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.0...0.4.1)
 
 **Implemented enhancements:**
@@ -2271,6 +2569,7 @@
 - Integration of Calender [\#2](https://github.com/TheFive/osmbc/issues/2)
 
 ## [0.4.0](https://github.com/TheFive/osmbc/tree/0.4.0) (2015-12-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12g...0.4.0)
 
 **Implemented enhancements:**
@@ -2278,6 +2577,7 @@
 - Integration of Blog Picture [\#1](https://github.com/TheFive/osmbc/issues/1)
 
 ## [0.3.12g](https://github.com/TheFive/osmbc/tree/0.3.12g) (2015-12-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12f...0.3.12g)
 
 **Implemented enhancements:**
@@ -2286,6 +2586,7 @@
 - Show preview as markdown  [\#192](https://github.com/TheFive/osmbc/issues/192)
 
 ## [0.3.12f](https://github.com/TheFive/osmbc/tree/0.3.12f) (2015-12-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12e...0.3.12f)
 
 **Fixed bugs:**
@@ -2296,6 +2597,7 @@
 - But there are not differences... [\#163](https://github.com/TheFive/osmbc/issues/163)
 
 ## [0.3.12e](https://github.com/TheFive/osmbc/tree/0.3.12e) (2015-12-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12d...0.3.12e)
 
 **Closed issues:**
@@ -2303,6 +2605,7 @@
 - Integrate turkish categories. [\#187](https://github.com/TheFive/osmbc/issues/187)
 
 ## [0.3.12d](https://github.com/TheFive/osmbc/tree/0.3.12d) (2015-12-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12c...0.3.12d)
 
 **Fixed bugs:**
@@ -2310,6 +2613,7 @@
 - translationPT [\#186](https://github.com/TheFive/osmbc/issues/186)
 
 ## [0.3.12c](https://github.com/TheFive/osmbc/tree/0.3.12c) (2015-12-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12b...0.3.12c)
 
 **Implemented enhancements:**
@@ -2318,6 +2622,7 @@
 - Hint, that Review takes place in WordPress [\#170](https://github.com/TheFive/osmbc/issues/170)
 
 ## [0.3.12b](https://github.com/TheFive/osmbc/tree/0.3.12b) (2015-12-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12a...0.3.12b)
 
 **Implemented enhancements:**
@@ -2329,6 +2634,7 @@
 - Comment is not opened the first time you write a comment. [\#177](https://github.com/TheFive/osmbc/issues/177)
 
 ## [0.3.12a](https://github.com/TheFive/osmbc/tree/0.3.12a) (2015-12-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.12...0.3.12a)
 
 **Implemented enhancements:**
@@ -2336,6 +2642,7 @@
 - Dynamic Height for Textfields in Article View [\#185](https://github.com/TheFive/osmbc/issues/185)
 
 ## [0.3.12](https://github.com/TheFive/osmbc/tree/0.3.12) (2015-12-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.11a...0.3.12)
 
 **Implemented enhancements:**
@@ -2346,6 +2653,7 @@
 - resort the flags for a better visibility \(netherlands and russia\) [\#178](https://github.com/TheFive/osmbc/issues/178)
 
 ## [0.3.11a](https://github.com/TheFive/osmbc/tree/0.3.11a) (2015-12-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.11...0.3.11a)
 
 **Fixed bugs:**
@@ -2353,6 +2661,7 @@
 - Remove Whitespace from Input Field [\#181](https://github.com/TheFive/osmbc/issues/181)
 
 ## [0.3.11](https://github.com/TheFive/osmbc/tree/0.3.11) (2015-11-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9b...0.3.11)
 
 **Implemented enhancements:**
@@ -2364,9 +2673,11 @@
 - Update categoryTranslation.js [\#179](https://github.com/TheFive/osmbc/pull/179) ([fredao](https://github.com/fredao))
 
 ## [0.3.9b](https://github.com/TheFive/osmbc/tree/0.3.9b) (2015-11-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10a...0.3.9b)
 
 ## [0.3.10a](https://github.com/TheFive/osmbc/tree/0.3.10a) (2015-11-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10...0.3.10a)
 
 **Fixed bugs:**
@@ -2374,6 +2685,7 @@
 - Unknown behavior with an closed article [\#171](https://github.com/TheFive/osmbc/issues/171)
 
 ## [0.3.10](https://github.com/TheFive/osmbc/tree/0.3.10) (2015-11-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9a...0.3.10)
 
 **Fixed bugs:**
@@ -2381,6 +2693,7 @@
 - Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
 
 ## [0.3.9a](https://github.com/TheFive/osmbc/tree/0.3.9a) (2015-11-20)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9...0.3.9a)
 
 **Fixed bugs:**
@@ -2393,6 +2706,7 @@
 - Update menu.Beginner's How To.md [\#169](https://github.com/TheFive/osmbc/pull/169) ([fredao](https://github.com/fredao))
 
 ## [0.3.9](https://github.com/TheFive/osmbc/tree/0.3.9) (2015-11-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.8b...0.3.9)
 
 **Fixed bugs:**
@@ -2404,6 +2718,7 @@
 - revive the "-" in the markdown please [\#166](https://github.com/TheFive/osmbc/issues/166)
 
 ## [0.3.8b](https://github.com/TheFive/osmbc/tree/0.3.8b) (2015-11-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.8a...0.3.8b)
 
 **Implemented enhancements:**
@@ -2413,9 +2728,11 @@
 - Search for a http link before a collection saved [\#11](https://github.com/TheFive/osmbc/issues/11)
 
 ## [0.3.8a](https://github.com/TheFive/osmbc/tree/0.3.8a) (2015-11-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.8...0.3.8a)
 
 ## [0.3.8](https://github.com/TheFive/osmbc/tree/0.3.8) (2015-11-14)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.7...0.3.8)
 
 **Implemented enhancements:**
@@ -2424,6 +2741,7 @@
 - Create an untranslated & unedited Blog View [\#137](https://github.com/TheFive/osmbc/issues/137)
 
 ## [0.3.7](https://github.com/TheFive/osmbc/tree/0.3.7) (2015-11-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6e...0.3.7)
 
 **Implemented enhancements:**
@@ -2436,6 +2754,7 @@
 - Not every pasting should be a hyperlink [\#143](https://github.com/TheFive/osmbc/issues/143)
 
 ## [0.3.6e](https://github.com/TheFive/osmbc/tree/0.3.6e) (2015-11-13)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6d...0.3.6e)
 
 **Closed issues:**
@@ -2447,9 +2766,11 @@
 - More vivid color for "mark" tag [\#149](https://github.com/TheFive/osmbc/pull/149) ([alexandre-mbm](https://github.com/alexandre-mbm))
 
 ## [0.3.6d](https://github.com/TheFive/osmbc/tree/0.3.6d) (2015-11-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6c...0.3.6d)
 
 ## [0.3.6c](https://github.com/TheFive/osmbc/tree/0.3.6c) (2015-11-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6b...0.3.6c)
 
 **Fixed bugs:**
@@ -2457,6 +2778,7 @@
 - Fix the button "Download" for Firefox users [\#146](https://github.com/TheFive/osmbc/issues/146)
 
 ## [0.3.6b](https://github.com/TheFive/osmbc/tree/0.3.6b) (2015-11-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5a...0.3.6b)
 
 **Implemented enhancements:**
@@ -2471,6 +2793,7 @@
 - fullTextSearch for https does not find http Links [\#17](https://github.com/TheFive/osmbc/issues/17)
 
 ## [0.3.5a](https://github.com/TheFive/osmbc/tree/0.3.5a) (2015-11-08)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.5...0.3.5a)
 
 **Implemented enhancements:**
@@ -2479,6 +2802,7 @@
 - Allow closing of blogs per language. [\#131](https://github.com/TheFive/osmbc/issues/131)
 
 ## [0.3.5](https://github.com/TheFive/osmbc/tree/0.3.5) (2015-11-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.4...0.3.5)
 
 **Implemented enhancements:**
@@ -2486,6 +2810,7 @@
 - Show status of the blog in every language. [\#132](https://github.com/TheFive/osmbc/issues/132)
 
 ## [0.3.4](https://github.com/TheFive/osmbc/tree/0.3.4) (2015-11-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.3...0.3.4)
 
 **Implemented enhancements:**
@@ -2493,6 +2818,7 @@
 - Better UX for status change of a blog. [\#130](https://github.com/TheFive/osmbc/issues/130)
 
 ## [0.3.3](https://github.com/TheFive/osmbc/tree/0.3.3) (2015-11-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.2...0.3.3)
 
 **Fixed bugs:**
@@ -2500,6 +2826,7 @@
 - Multimarkdown for Preview [\#47](https://github.com/TheFive/osmbc/issues/47)
 
 ## [0.3.2](https://github.com/TheFive/osmbc/tree/0.3.2) (2015-11-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.1...0.3.2)
 
 **Implemented enhancements:**
@@ -2507,6 +2834,7 @@
 - Show a better hint, when a long link is detected. [\#129](https://github.com/TheFive/osmbc/issues/129)
 
 ## [0.3.1](https://github.com/TheFive/osmbc/tree/0.3.1) (2015-11-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.0...0.3.1)
 
 **Fixed bugs:**
@@ -2517,6 +2845,7 @@
 - Cancel at "Edit Blog Details" Does Not Work [\#115](https://github.com/TheFive/osmbc/issues/115)
 
 ## [0.3.0](https://github.com/TheFive/osmbc/tree/0.3.0) (2015-11-04)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28g...0.3.0)
 
 **Implemented enhancements:**
@@ -2540,6 +2869,7 @@
 - Fixes PT in categoryTranslation.js [\#110](https://github.com/TheFive/osmbc/pull/110) ([alexandre-mbm](https://github.com/alexandre-mbm))
 
 ## [0.2.28g](https://github.com/TheFive/osmbc/tree/0.2.28g) (2015-10-31)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28f...0.2.28g)
 
 **Implemented enhancements:**
@@ -2547,6 +2877,7 @@
 - Add Polish Flag [\#107](https://github.com/TheFive/osmbc/issues/107)
 
 ## [0.2.28f](https://github.com/TheFive/osmbc/tree/0.2.28f) (2015-10-28)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28e...0.2.28f)
 
 **Implemented enhancements:**
@@ -2554,9 +2885,11 @@
 - Allow Review Button only to be used, if Review text is given. [\#105](https://github.com/TheFive/osmbc/issues/105)
 
 ## [0.2.28e](https://github.com/TheFive/osmbc/tree/0.2.28e) (2015-10-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28d...0.2.28e)
 
 ## [0.2.28d](https://github.com/TheFive/osmbc/tree/0.2.28d) (2015-10-27)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28c...0.2.28d)
 
 **Fixed bugs:**
@@ -2564,9 +2897,11 @@
 - Markdown not correct converted [\#102](https://github.com/TheFive/osmbc/issues/102)
 
 ## [0.2.28c](https://github.com/TheFive/osmbc/tree/0.2.28c) (2015-10-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28b...0.2.28c)
 
 ## [0.2.28b](https://github.com/TheFive/osmbc/tree/0.2.28b) (2015-10-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28a...0.2.28b)
 
 **Fixed bugs:**
@@ -2574,6 +2909,7 @@
 - If there are wrong categories in a blog, they are not shown. [\#104](https://github.com/TheFive/osmbc/issues/104)
 
 ## [0.2.28a](https://github.com/TheFive/osmbc/tree/0.2.28a) (2015-10-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28...0.2.28a)
 
 **Implemented enhancements:**
@@ -2589,6 +2925,7 @@
 - waffle.io Badge [\#98](https://github.com/TheFive/osmbc/pull/98) ([waffle-iron](https://github.com/waffle-iron))
 
 ## [0.2.28](https://github.com/TheFive/osmbc/tree/0.2.28) (2015-10-23)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.27...0.2.28)
 
 **Fixed bugs:**
@@ -2597,6 +2934,7 @@
 - Clickable links in edit mode [\#81](https://github.com/TheFive/osmbc/issues/81)
 
 ## [0.2.27](https://github.com/TheFive/osmbc/tree/0.2.27) (2015-10-22)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26b...0.2.27)
 
 **Fixed bugs:**
@@ -2605,6 +2943,7 @@
 - Get favicon working and replace it by a new one. [\#90](https://github.com/TheFive/osmbc/issues/90)
 
 ## [0.2.26b](https://github.com/TheFive/osmbc/tree/0.2.26b) (2015-10-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26a...0.2.26b)
 
 **Fixed bugs:**
@@ -2612,6 +2951,7 @@
 - Displaying Imported Articles Crashes [\#92](https://github.com/TheFive/osmbc/issues/92)
 
 ## [0.2.26a](https://github.com/TheFive/osmbc/tree/0.2.26a) (2015-10-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.26...0.2.26a)
 
 **Implemented enhancements:**
@@ -2621,6 +2961,7 @@
 - Hide commentStatus in article edit when no comment is given. [\#72](https://github.com/TheFive/osmbc/issues/72)
 
 ## [0.2.26](https://github.com/TheFive/osmbc/tree/0.2.26) (2015-10-20)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.25...0.2.26)
 
 **Implemented enhancements:**
@@ -2633,6 +2974,7 @@
 - Comment indication not allways visible [\#84](https://github.com/TheFive/osmbc/issues/84)
 
 ## [0.2.25](https://github.com/TheFive/osmbc/tree/0.2.25) (2015-10-19)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.24a...0.2.25)
 
 **Fixed bugs:**
@@ -2641,6 +2983,7 @@
 - Articleview create Links to all Links [\#73](https://github.com/TheFive/osmbc/issues/73)
 
 ## [0.2.24a](https://github.com/TheFive/osmbc/tree/0.2.24a) (2015-10-19)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.24...0.2.24a)
 
 **Fixed bugs:**
@@ -2654,6 +2997,7 @@
 - Create a blog category help to let the team implement process help [\#32](https://github.com/TheFive/osmbc/issues/32)
 
 ## [0.2.24](https://github.com/TheFive/osmbc/tree/0.2.24) (2015-10-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.23...0.2.24)
 
 **Implemented enhancements:**
@@ -2673,6 +3017,7 @@
 - Hint: link at GitHub's header or README.md [\#51](https://github.com/TheFive/osmbc/issues/51)
 
 ## [0.2.23](https://github.com/TheFive/osmbc/tree/0.2.23) (2015-10-18)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.22...0.2.23)
 
 **Implemented enhancements:**
@@ -2697,6 +3042,7 @@
 - Improvement in Install\_Guide.md [\#55](https://github.com/TheFive/osmbc/pull/55) ([alexandre-mbm](https://github.com/alexandre-mbm))
 
 ## [0.2.22](https://github.com/TheFive/osmbc/tree/0.2.22) (2015-10-09)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.21b...0.2.22)
 
 **Closed issues:**
@@ -2704,6 +3050,7 @@
 - Restrict empty article search on OPEN Blog [\#30](https://github.com/TheFive/osmbc/issues/30)
 
 ## [0.2.21b](https://github.com/TheFive/osmbc/tree/0.2.21b) (2015-10-07)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.21a...0.2.21b)
 
 **Closed issues:**
@@ -2712,9 +3059,11 @@
 - Where to go after editing an article. [\#23](https://github.com/TheFive/osmbc/issues/23)
 
 ## [0.2.21a](https://github.com/TheFive/osmbc/tree/0.2.21a) (2015-10-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.21...0.2.21a)
 
 ## [0.2.21](https://github.com/TheFive/osmbc/tree/0.2.21) (2015-10-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.20...0.2.21)
 
 **Closed issues:**
@@ -2723,6 +3072,7 @@
 - No Translation [\#37](https://github.com/TheFive/osmbc/issues/37)
 
 ## [0.2.20](https://github.com/TheFive/osmbc/tree/0.2.20) (2015-10-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.19...0.2.20)
 
 **Closed issues:**
@@ -2731,6 +3081,7 @@
 - implement "-" as alternative to "german only" [\#36](https://github.com/TheFive/osmbc/issues/36)
 
 ## [0.2.19](https://github.com/TheFive/osmbc/tree/0.2.19) (2015-10-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18b...0.2.19)
 
 **Closed issues:**
@@ -2738,6 +3089,7 @@
 - Implement a category "uncategorized" for each blog. [\#31](https://github.com/TheFive/osmbc/issues/31)
 
 ## [0.2.18b](https://github.com/TheFive/osmbc/tree/0.2.18b) (2015-10-04)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18a...0.2.18b)
 
 **Closed issues:**
@@ -2746,22 +3098,27 @@
 - Create a static page which holds code snippets for flags [\#26](https://github.com/TheFive/osmbc/issues/26)
 
 ## [0.2.18a](https://github.com/TheFive/osmbc/tree/0.2.18a) (2015-10-04)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.18...0.2.18a)
 
 ## [0.2.18](https://github.com/TheFive/osmbc/tree/0.2.18) (2015-10-04)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.18)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.18)
 
 **Closed issues:**
 
 - Generating better Filenames for Download [\#28](https://github.com/TheFive/osmbc/issues/28)
 
-## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17...0.2.17a)
-
 ## [0.2.17](https://github.com/TheFive/osmbc/tree/0.2.17) (2015-10-03)
-[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.17a...0.2.17)
+
+## [0.2.17a](https://github.com/TheFive/osmbc/tree/0.2.17a) (2015-10-03)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16c...0.2.17a)
 
 ## [0.2.16c](https://github.com/TheFive/osmbc/tree/0.2.16c) (2015-10-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16b...0.2.16c)
 
 **Implemented enhancements:**
@@ -2769,6 +3126,7 @@
 - Mark long HTML Links in Text in Warning or Danger. [\#19](https://github.com/TheFive/osmbc/issues/19)
 
 ## [0.2.16b](https://github.com/TheFive/osmbc/tree/0.2.16b) (2015-10-03)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16a...0.2.16b)
 
 **Closed issues:**
@@ -2778,6 +3136,7 @@
 - Login impossible, getting strange exception backtrace [\#21](https://github.com/TheFive/osmbc/issues/21)
 
 ## [0.2.16a](https://github.com/TheFive/osmbc/tree/0.2.16a) (2015-10-02)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.16...0.2.16a)
 
 **Implemented enhancements:**
@@ -2785,18 +3144,23 @@
 - Use WN issue number for id of HTML \<h2\> tags [\#22](https://github.com/TheFive/osmbc/issues/22)
 
 ## [0.2.16](https://github.com/TheFive/osmbc/tree/0.2.16) (2015-10-02)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.15...0.2.16)
 
 ## [0.2.15](https://github.com/TheFive/osmbc/tree/0.2.15) (2015-10-02)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.14...0.2.15)
 
 ## [0.2.14](https://github.com/TheFive/osmbc/tree/0.2.14) (2015-10-02)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.13b...0.2.14)
 
 ## [0.2.13b](https://github.com/TheFive/osmbc/tree/0.2.13b) (2015-10-01)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.13a...0.2.13b)
 
 ## [0.2.13a](https://github.com/TheFive/osmbc/tree/0.2.13a) (2015-10-01)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.13...0.2.13a)
 
 **Closed issues:**
@@ -2804,6 +3168,7 @@
 - Modell a getCategories Function for BLOG [\#20](https://github.com/TheFive/osmbc/issues/20)
 
 ## [0.2.13](https://github.com/TheFive/osmbc/tree/0.2.13) (2015-10-01)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.12...0.2.13)
 
 **Implemented enhancements:**
@@ -2811,18 +3176,23 @@
 - Alle letzen Änderungen auf der "Startseite" zeigen [\#6](https://github.com/TheFive/osmbc/issues/6)
 
 ## [0.2.12](https://github.com/TheFive/osmbc/tree/0.2.12) (2015-09-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.11e...0.2.12)
 
 ## [0.2.11e](https://github.com/TheFive/osmbc/tree/0.2.11e) (2015-09-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.11d...0.2.11e)
 
 ## [0.2.11d](https://github.com/TheFive/osmbc/tree/0.2.11d) (2015-09-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.11c...0.2.11d)
 
 ## [0.2.11c](https://github.com/TheFive/osmbc/tree/0.2.11c) (2015-09-30)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.12b...0.2.11c)
 
 ## [0.2.12b](https://github.com/TheFive/osmbc/tree/0.2.12b) (2015-09-26)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.11b...0.2.12b)
 
 **Closed issues:**
@@ -2831,9 +3201,11 @@
 - Do it is running in somewhere? [\#15](https://github.com/TheFive/osmbc/issues/15)
 
 ## [0.2.11b](https://github.com/TheFive/osmbc/tree/0.2.11b) (2015-09-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.11a...0.2.11b)
 
 ## [0.2.11a](https://github.com/TheFive/osmbc/tree/0.2.11a) (2015-09-25)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.9...0.2.11a)
 
 **Fixed bugs:**
@@ -2845,18 +3217,23 @@
 - Create Full Text Search with Postgres Features for Search [\#14](https://github.com/TheFive/osmbc/issues/14)
 
 ## [0.2.9](https://github.com/TheFive/osmbc/tree/0.2.9) (2015-09-21)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.8...0.2.9)
 
 ## [0.2.8](https://github.com/TheFive/osmbc/tree/0.2.8) (2015-09-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.7...0.2.8)
 
 ## [0.2.7](https://github.com/TheFive/osmbc/tree/0.2.7) (2015-09-17)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.6...0.2.7)
 
 ## [0.2.6](https://github.com/TheFive/osmbc/tree/0.2.6) (2015-09-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.5...0.2.6)
 
 ## [0.2.5](https://github.com/TheFive/osmbc/tree/0.2.5) (2015-09-12)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.4...0.2.5)
 
 **Implemented enhancements:**
@@ -2864,9 +3241,11 @@
 - Allow only a small group of OSM Users to use OSMBC [\#10](https://github.com/TheFive/osmbc/issues/10)
 
 ## [0.2.4](https://github.com/TheFive/osmbc/tree/0.2.4) (2015-09-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.3...0.2.4)
 
 ## [0.2.3](https://github.com/TheFive/osmbc/tree/0.2.3) (2015-09-06)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.2...0.2.3)
 
 **Implemented enhancements:**
@@ -2879,9 +3258,13 @@
 - Mobilvariant has to mich space on the left [\#8](https://github.com/TheFive/osmbc/issues/8)
 
 ## [0.2.2](https://github.com/TheFive/osmbc/tree/0.2.2) (2015-09-05)
+
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2...0.2.2)
 
 ## [0.2](https://github.com/TheFive/osmbc/tree/0.2) (2015-09-05)
 
+[Full Changelog](https://github.com/TheFive/osmbc/compare/47212663aeee5da14b5c97dbbf58c3c64ed3cd0e...0.2)
 
-\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
