@@ -80,7 +80,7 @@ describe("model/htmltitle", function() {
   it("should handle timeout", function(bddone) {
     nock("https://www.test.test")
       .get("/testdd")
-      .socketDelay(3000)
+      .delayConnection(3000)
       .reply(200,"OK");
     htmltitle.getTitle("https://www.test.test/testdd", function(err, result) {
       should.not.exist(err);
@@ -89,9 +89,3 @@ describe("model/htmltitle", function() {
     });
   });
 });
-
-
-
-
-
-

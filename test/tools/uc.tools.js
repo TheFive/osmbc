@@ -63,17 +63,20 @@ describe("views/tools", function() {
     let fileName = path.join(__dirname, "picture.jpg");
     nock("https://blog.openstreetmap.org")
       .get("/picture.jpg")
-      .times(2)
+      .times(5)
       .replyWithFile(200, fileName);
     await browser.visit("/tool/picturetool");
-    await browser.select("pictureLanguage", "EN")
-      .fill("pictureAText", "AltText")
+    await browser.select("pictureLanguage", "EN");
+    await browser.fill("pictureAText", "AltText")
       .fill("pictureURL", "https://blog.openstreetmap.org/picture.jpg")
       .fill("pictureMarkup", "test")
-      .select("pictureLicense", "CC3")
       .fill("pictureAuthor", "test")
-      .pressButton("OK");
+    await browser.select("pictureLicense", "CC3");
+
+
+    await browser.pressButton("OK");
     should(browser.evaluate("document.getElementById('markdown').value")).eql("![AltText](https://blog.openstreetmap.org/picture.jpg =800x800)\ntest | Picture by test under [CC-BY-SA 3.0](https://creativecommons.org/licenses/by/3.0/)");
+
   });
   it("should show calendar", async function() {
     nock("http://127.0.0.1:33333")

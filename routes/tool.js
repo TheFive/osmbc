@@ -5,12 +5,10 @@ const express = require("express");
 const router = express.Router();
 const publicRouter = express.Router();
 const config = require("../config.js");
-const url = require("url");
 const glob = require("glob");
 const fs = require("fs");
 const path = require("path");
-const http = require("http");
-const https = require("https");
+const axios = require("axios");
 const moment = require("moment");
 const async = require("async");
 const request = require("request");
@@ -30,7 +28,7 @@ const configModule = require("../model/config.js");
 const checkRole        = require("../routes/auth.js").checkRole;
 const checkUser       = require("../routes/auth.js").checkUser;
 
-var sizeOf = require("image-size");
+const sizeOf = require("image-size");
 
 const htmlroot = config.htmlRoot();
 const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
@@ -39,9 +37,9 @@ const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true 
 
 
 function eventDateFormat(e, lang) {
-  var sd = moment(e.startDate);
-  var ed = moment(e.endDate);
-  var dateString = "";
+  const sd = moment(e.startDate);
+  const ed = moment(e.endDate);
+  let dateString = "";
   sd.locale(config.moment_locale(lang));
   ed.locale(config.moment_locale(lang));
 
@@ -136,7 +134,7 @@ function renderCalendarAllLangAlternative(req, res, next) {
 
   const cc = alternativeCalendarData[par];
 
-  var options = {
+  const options = {
     url: cc.url,
     method: "GET",
     json: true
@@ -180,7 +178,7 @@ function renderCalendarRefresh(req, res, next) {
 
   if (!cc.refreshurl) return next(new Error("Refreshurl missing"));
 
-  var options = {
+  const options = {
     url: cc.refreshurl,
     method: "GET"
   };
@@ -197,28 +195,28 @@ function renderCalendarRefresh(req, res, next) {
 
 function generateCCLicense(license, lang, author) {
   debug("generateCCLicense");
-  var licenses = configModule.getConfig("licenses");
+  const licenses = configModule.getConfig("licenses");
   if (!license || license === "") license = "CC0";
   if (!lang || lang === "") lang = "EN";
   if (!author) author = "";
   if (typeof (licenses[license]) === "undefined") license = "CC0";
-  var text = licenses[license][lang];
+  let text = licenses[license][lang];
   if (typeof (text) === "undefined") text = licenses[license].EN;
   if (typeof (text) === "undefined") text = "";
 
   return text.replace("##author##", author);
 }
 
-function renderPictureTool(req, res) {
+async function renderPictureTool(req, res) {
   debug("renderPictureTool");
 
-  var pictureLanguage = "DE";
-  var pictureURL = "http://blog.openstreetmap.de/wp-content/themes/osmblog/images/headers/blog.png";
-  var pictureMarkup = "Some cool markdown text with [^1^](#blog_article) superscript";
-  var pictureAText = "Logo";
-  var pictureLicense = "CC3";
-  var pictureAuthor = "[Author Name](LINK)";
-  var sessionData = req.session.pictureTool;
+  let pictureLanguage = "DE";
+  let pictureURL = "http://blog.openstreetmap.de/wp-content/themes/osmblog/images/headers/blog.png";
+  let pictureMarkup = "Some cool markdown text with [^1^](#blog_article) superscript";
+  let pictureAText = "Logo";
+  let pictureLicense = "CC3";
+  let pictureAuthor = "[Author Name](LINK)";
+  const sessionData = req.session.pictureTool;
 
   if (sessionData) {
     if (sessionData.pictureLanguage) pictureLanguage = sessionData.pictureLanguage;
@@ -230,72 +228,56 @@ function renderPictureTool(req, res) {
     pictureAuthor = sessionData.pictureAuthor;
   }
 
-  var warning = [];
+  const warning = [];
+  try {
+    const response = await axios.get(pictureURL, { responseType: "arraybuffer" });
 
+    let sizeX = 100;
+    let sizeY = 100;
+    try {
+      sizeX = sizeOf(response.data).width;
+      sizeY = sizeOf(response.data).height;
+    } catch (err) {
+      warning.push(err);
+    }
+    if (sizeX < 700) warning.push("Picture width lower than 700 pixel, check resulting quality.");
+    if (sizeY > 900) warning.push("Picture width bigger than 900 pixel, please reduce size.");
+    if (pictureURL.indexOf("blog.openstreetmap.de") < 0) warning.push("Picture not hosted on blog.openstreetmap.de");
+    let genMarkup = "";
 
-  var options = new url.URL(pictureURL);
+    sizeY = Math.round(sizeY * 800 / sizeX);
+    sizeX = 800;
+    genMarkup = "![" + pictureAText + "](" + pictureURL + " =" + sizeX + "x" + sizeY + ")\n";
+    if (pictureLanguage === "DE") {
+      genMarkup += "\n";
+    }
+    genMarkup += pictureMarkup;
+    const ltext = generateCCLicense(pictureLicense, pictureLanguage, pictureAuthor);
+    if (ltext !== "") genMarkup += " | " + ltext;
 
-  var p = http;
-  if (pictureURL.substring(0, 5) === "https") p = https;
-
-  var chunks = [];
-  var request = p.get(options, function (req) {
-    req.on("data", function (chunk) {
-      chunks.push(chunk);
+    const article = articleModule.create();
+    article["markdown" + pictureLanguage] = genMarkup;
+    article.categoryEN = "Picture";
+    const renderer = new BlogRenderer.HtmlRenderer(null);
+    const preview = renderer.renderArticle(pictureLanguage, article);
+    const licenses = configModule.getConfig("licenses");
+    // res.set("content-type", "text/html");
+    res.render("pictureTool", {
+      warning: warning,
+      genMarkup: genMarkup,
+      licenses: licenses,
+      preview: preview,
+      pictureLanguage: pictureLanguage,
+      pictureURL: pictureURL,
+      pictureMarkup: pictureMarkup,
+      pictureAText: pictureAText,
+      pictureAuthor: pictureAuthor,
+      pictureLicense: pictureLicense,
+      layout: res.rendervar.layout
     });
-    req.on("end", function() {
-      var buffer = Buffer.concat(chunks);
-      var sizeX = 100;
-      var sizeY = 100;
-      try {
-        sizeX = sizeOf(buffer).width;
-        sizeY = sizeOf(buffer).height;
-      } catch (err) {
-        warning.push(err);
-      }
-      if (sizeX < 700) warning.push("Picture width lower than 700 pixel, check resulting quality.");
-      if (sizeY > 900) warning.push("Picture width bigger than 900 pixel, please reduce size.");
-      if (pictureURL.indexOf("blog.openstreetmap.de") < 0) warning.push("Picture not hosted on blog.openstreetmap.de");
-      var genMarkup = "";
-
-      sizeY = Math.round(sizeY * 800 / sizeX);
-      sizeX = 800;
-      genMarkup = "![" + pictureAText + "](" + pictureURL + " =" + sizeX + "x" + sizeY + ")\n";
-      if (pictureLanguage === "DE") {
-        genMarkup += "\n";
-      }
-      genMarkup += pictureMarkup;
-      var ltext = generateCCLicense(pictureLicense, pictureLanguage, pictureAuthor);
-      if (ltext !== "") genMarkup += " | " + ltext;
-
-      var article = articleModule.create();
-      article["markdown" + pictureLanguage] = genMarkup;
-      article.categoryEN = "Picture";
-      const renderer = new BlogRenderer.HtmlRenderer(null);
-      var preview = renderer.renderArticle(pictureLanguage, article);
-      var licenses = configModule.getConfig("licenses");
-      res.set("content-type", "text/html");
-      res.render("pictureTool", {
-        warning: warning,
-        genMarkup: genMarkup,
-        licenses: licenses,
-        preview: preview,
-        pictureLanguage: pictureLanguage,
-        pictureURL: pictureURL,
-        pictureMarkup: pictureMarkup,
-        pictureAText: pictureAText,
-        pictureAuthor: pictureAuthor,
-        pictureLicense: pictureLicense,
-        layout: res.rendervar.layout
-      });
-    });
-  });
-
-
-
-  request.on("error", function() {
+  } catch (error) {
     warning.push(">" + pictureURL + "< pictureURL not found");
-    var licenses = configModule.getConfig("licenses");
+    const licenses = configModule.getConfig("licenses");
     res.set("content-type", "text/html");
     res.render("pictureTool", {
       genMarkup: "picture not found",
@@ -310,18 +292,18 @@ function renderPictureTool(req, res) {
       pictureAuthor: pictureAuthor,
       layout: res.rendervar.layout
     });
-  });
-  request.end();
+  }
 }
+
 function postPictureTool(req, res, next) {
   debug("postPictureTool");
 
-  var pictureLanguage = req.body.pictureLanguage;
-  var pictureURL = req.body.pictureURL;
-  var pictureMarkup = req.body.pictureMarkup;
-  var pictureAText = req.body.pictureAText;
-  var pictureLicense = req.body.pictureLicense;
-  var pictureAuthor = req.body.pictureAuthor;
+  const pictureLanguage = req.body.pictureLanguage;
+  const pictureURL = req.body.pictureURL;
+  const pictureMarkup = req.body.pictureMarkup;
+  const pictureAText = req.body.pictureAText;
+  const pictureLicense = req.body.pictureLicense;
+  const pictureAuthor = req.body.pictureAuthor;
 
   req.session.pictureTool = {
     pictureLanguage: pictureLanguage,

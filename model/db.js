@@ -12,7 +12,7 @@ const logTime = config.getValue("postgresLogStatements", { default: 1000 });
 
 assert(pgConfigValues.username);
 assert(pgConfigValues.database);
-assert(pgConfigValues.password);
+assert(typeof pgConfigValues.password !== "undefined");
 assert(pgConfigValues.server);
 assert(pgConfigValues.port);
 var logger    = require("../config.js").logger;
