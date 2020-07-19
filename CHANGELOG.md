@@ -125,10 +125,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6a...3.3.7)
 
-**Closed issues:**
-
-- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
-
 ## [3.3.6a](https://github.com/TheFive/osmbc/tree/3.3.6a) (2018-10-06)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6...3.3.6a)
@@ -149,6 +145,10 @@
 
 - Wortliga Textanalyse \(german blog\) link is not working \(http issue\) [\#783](https://github.com/TheFive/osmbc/issues/783)
 - The Review Comment field is to small. [\#782](https://github.com/TheFive/osmbc/issues/782)
+
+**Closed issues:**
+
+- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
 
 ## [3.3.5](https://github.com/TheFive/osmbc/tree/3.3.5) (2018-08-19)
 
@@ -2310,10 +2310,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.2...0.6.3a)
 
-**Fixed bugs:**
-
-- Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
-
 ## [0.6.2](https://github.com/TheFive/osmbc/tree/0.6.2) (2016-01-13)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.1...0.6.2)
@@ -2325,6 +2321,7 @@
 
 **Fixed bugs:**
 
+- Translation links on the translation folder. [\#265](https://github.com/TheFive/osmbc/issues/265)
 - Add list to ALL users not only denied and full. [\#263](https://github.com/TheFive/osmbc/issues/263)
 
 ## [0.6.1](https://github.com/TheFive/osmbc/tree/0.6.1) (2016-01-12)
@@ -2367,6 +2364,7 @@
 **Fixed bugs:**
 
 - links with non standard characters are not identified in full in article screen [\#252](https://github.com/TheFive/osmbc/issues/252)
+- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
 
 ## [0.5.8a](https://github.com/TheFive/osmbc/tree/0.5.8a) (2016-01-05)
 
@@ -2375,7 +2373,6 @@
 **Fixed bugs:**
 
 - blog difference in shown date and blog date [\#250](https://github.com/TheFive/osmbc/issues/250)
-- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
 
 ## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
 
