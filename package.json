@@ -26,7 +26,7 @@
     "email-templates": "^7.0.4",
     "email-validator": "^2.0.4",
     "express": "^4.17.1",
-    "express-fileupload": "^1.1.6",
+    "express-fileupload": "^1.1.9",
     "express-session": "^1.17.1",
     "font-awesome": "^4.7.0",
     "glob": "^7.1.6",
