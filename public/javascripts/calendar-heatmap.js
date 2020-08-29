@@ -74,6 +74,7 @@ function calendarHeatmap(actualDate) {
     var monthRange = d3.time.months(moment(yearAgo).startOf('month').toDate(), now); // it ignores the first month if the 1st date is after the start of the month
     var firstDate = moment(dateRange[0]);
     var max = d3.max(chart.data(), function (d) { return d.count; }); // max data value
+    max = 40; //hard coded max value
 
     // color range
     var color = d3.scale.linear()
@@ -151,13 +152,13 @@ function calendarHeatmap(actualDate) {
           .attr('class', 'calendar-heatmap-legend-text')
           .attr('x', width - legendWidth - 13)
           .attr('y', height + SQUARE_LENGTH)
-          .text('Less');
+          .text('0');
 
         legendGroup.append('text')
           .attr('class', 'calendar-heatmap-legend-text')
           .attr('x', (width - legendWidth + SQUARE_PADDING) + (colorRange.length + 1) * 13)
           .attr('y', height + SQUARE_LENGTH)
-          .text('More');
+          .text(max);
       }
 
       dayRects.exit().remove();

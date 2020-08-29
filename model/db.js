@@ -38,6 +38,12 @@ var pgConfig = {
   idleTimeoutMillis: 1000
 };
 
+// overwrite with environment
+if (process.env.POSTGRES_HOST) pgConfig.host = process.env.POSTGRES_HOST;
+if (process.env.POSTGRES_USER) pgConfig.user = process.env.POSTGRES_USER;
+if (process.env.POSTGRES_PORT) pgConfig.port = process.env.POSTGRES_PORT;
+if (process.env.POSTGRES_PASSWORD) pgConfig.password = process.env.POSTGRES_PASSWORD;
+
 // this initializes a connection pool
 // it will keep idle connections open for 30 seconds
 // and set a limit of maximum 10 idle clients

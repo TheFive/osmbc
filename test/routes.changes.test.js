@@ -145,6 +145,3 @@ describe("routes/changes", function() {
 
 
 /* jshint ignore:end */
-
-
-
