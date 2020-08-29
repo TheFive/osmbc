@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4a...HEAD)
+
+**Implemented enhancements:**
+
+- A separate page for simultaneous publication in several languages would be useful.  [\#822](https://github.com/TheFive/osmbc/issues/822)
+
+**Closed issues:**
+
+- Heatmap separators other than white? [\#839](https://github.com/TheFive/osmbc/issues/839)
+- special statistics needed for "form-for-active-contributor-membership-other"? [\#838](https://github.com/TheFive/osmbc/issues/838)
+- https://osmbc.openstreetmap.de/config/automatictranslatetext  [\#836](https://github.com/TheFive/osmbc/issues/836)
+
 ## [3.4.4a](https://github.com/TheFive/osmbc/tree/3.4.4a) (2020-06-27)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4...3.4.4a)
@@ -125,6 +139,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6a...3.3.7)
 
+**Closed issues:**
+
+- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
+
 ## [3.3.6a](https://github.com/TheFive/osmbc/tree/3.3.6a) (2018-10-06)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6...3.3.6a)
@@ -145,10 +163,6 @@
 
 - Wortliga Textanalyse \(german blog\) link is not working \(http issue\) [\#783](https://github.com/TheFive/osmbc/issues/783)
 - The Review Comment field is to small. [\#782](https://github.com/TheFive/osmbc/issues/782)
-
-**Closed issues:**
-
-- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
 
 ## [3.3.5](https://github.com/TheFive/osmbc/tree/3.3.5) (2018-08-19)
 
@@ -343,7 +357,6 @@
 
 - Color correct mentions in comments [\#499](https://github.com/TheFive/osmbc/issues/499)
 - Warn if a link is used in markdown, that is not in collection. [\#484](https://github.com/TheFive/osmbc/issues/484)
-- Warn if a markdown does not contain a link in article editor [\#482](https://github.com/TheFive/osmbc/issues/482)
 
 ## [3.1.4](https://github.com/TheFive/osmbc/tree/3.1.4) (2018-02-25)
 
@@ -441,6 +454,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.0...3.1.1)
 
+**Closed issues:**
+
+- Remove Calendar Parsing Source from OSMBC [\#716](https://github.com/TheFive/osmbc/issues/716)
+
 ## [3.1.0](https://github.com/TheFive/osmbc/tree/3.1.0) (2018-01-21)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.1e...3.1.0)
@@ -468,10 +485,6 @@
 ## [3.0.1](https://github.com/TheFive/osmbc/tree/3.0.1) (2017-12-27)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.0.0...3.0.1)
-
-**Closed issues:**
-
-- Remove Calendar Parsing Source from OSMBC [\#716](https://github.com/TheFive/osmbc/issues/716)
 
 ## [3.0.0](https://github.com/TheFive/osmbc/tree/3.0.0) (2017-12-23)
 
@@ -610,6 +623,7 @@
 
 **Closed issues:**
 
+- Switch to pg.pool, pg.connect is deprecated. [\#680](https://github.com/TheFive/osmbc/issues/680)
 - Prepare connect-pg-session to use \>4.2 by using connectObject not connectString [\#664](https://github.com/TheFive/osmbc/issues/664)
 
 ## [2.4.0](https://github.com/TheFive/osmbc/tree/2.4.0) (2017-08-24)
@@ -623,10 +637,6 @@
 **Fixed bugs:**
 
 - BlogView \(Full\) Crashes, if a category is used, that is not defined in blog.  [\#667](https://github.com/TheFive/osmbc/issues/667)
-
-**Closed issues:**
-
-- Switch to pg.pool, pg.connect is deprecated. [\#680](https://github.com/TheFive/osmbc/issues/680)
 
 ## [2.3.7a](https://github.com/TheFive/osmbc/tree/2.3.7a) (2017-07-23)
 
@@ -881,10 +891,6 @@
 ## [2.2.3](https://github.com/TheFive/osmbc/tree/2.2.3) (2017-01-15)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.2...2.2.3)
-
-**Implemented enhancements:**
-
-- Improve expansion of twitter urls. Allow multiple Urls in a collection [\#424](https://github.com/TheFive/osmbc/issues/424)
 
 **Fixed bugs:**
 
@@ -1330,6 +1336,7 @@
 **Implemented enhancements:**
 
 - Add a dynamic preview to blog view editor. [\#492](https://github.com/TheFive/osmbc/issues/492)
+- Warn if a markdown does not contain a link in article editor [\#482](https://github.com/TheFive/osmbc/issues/482)
 
 **Fixed bugs:**
 
@@ -1664,6 +1671,7 @@
 **Implemented enhancements:**
 
 - Change to translation feature in collect to main language displayed. [\#428](https://github.com/TheFive/osmbc/issues/428)
+- Improve expansion of twitter urls. Allow multiple Urls in a collection [\#424](https://github.com/TheFive/osmbc/issues/424)
 - Put configuration data into database. [\#382](https://github.com/TheFive/osmbc/issues/382)
 
 **Fixed bugs:**
@@ -2364,7 +2372,6 @@
 **Fixed bugs:**
 
 - links with non standard characters are not identified in full in article screen [\#252](https://github.com/TheFive/osmbc/issues/252)
-- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
 
 ## [0.5.8a](https://github.com/TheFive/osmbc/tree/0.5.8a) (2016-01-05)
 
@@ -2373,6 +2380,7 @@
 **Fixed bugs:**
 
 - blog difference in shown date and blog date [\#250](https://github.com/TheFive/osmbc/issues/250)
+- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
 
 ## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
 
