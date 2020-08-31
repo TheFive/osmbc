@@ -8,6 +8,8 @@ const markdown = require("markdown-it")()
   .use(require("markdown-it-imsize"), { autofill: true });
 
 const TurndownService = require("turndown");
+const turndownItSup = require("../util/turndown-it-sup.js");
+
 
 const config    = require("../config.js");
 
@@ -70,6 +72,7 @@ function translateDeeplPro(options, callback) {
       if (!result || !result.translations) return callback(null, "Something went wrong with translation in this article.");
       var htmlresult = result.translations[0].text;
       var turndownService = new TurndownService();
+      turndownService.use(turndownItSup);
       var mdresult = turndownService.turndown(htmlresult);
       mdresult = mdresult.replace(
         RegExp(

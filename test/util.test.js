@@ -1,9 +1,13 @@
 "use strict";
 
-var util = require("../util/util.js");
-var should = require("should");
-var path = require("path");
-var fs     = require("fs");
+const util = require("../util/util.js");
+const should = require("should");
+const path = require("path");
+const fs     = require("fs");
+const turndownService = require("turndown")();
+turndownService.use(require("../util/turndown-it-sup.js"));
+
+const markdown = require("markdown-it")();
 
 /* eslint-disable mocha/no-synchronous-tests */
 describe("util", function() {
@@ -146,4 +150,15 @@ describe("util", function() {
 
     });
   });
+  describe("turndown-it-sup", function(){
+
+
+
+    it("should convert nested superscript ",function(){
+      let md = "It contains [^1^](https://link.somewhere) a link with superscript";
+      let html = markdown.render(md);
+      let backconverted_md = turndownService.turndown(html);
+      should(backconverted_md).eql(md);
+    });
+  })
 });
