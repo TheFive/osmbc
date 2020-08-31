@@ -1,13 +1,32 @@
 # Changelog
 
+## [3.4.4b](https://github.com/TheFive/osmbc/tree/3.4.4b) (2020-08-29)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4a...3.4.4b)
+
+**Implemented enhancements:**
+
+- Heatmap separators other than white? [\#839](https://github.com/TheFive/osmbc/issues/839)
+- A separate page for simultaneous publication in several languages would be useful.  [\#822](https://github.com/TheFive/osmbc/issues/822)
+
+**Fixed bugs:**
+
+- Automatic translated text needs Brackets [\#836](https://github.com/TheFive/osmbc/issues/836)
+
 ## [3.4.4a](https://github.com/TheFive/osmbc/tree/3.4.4a) (2020-06-27)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4...3.4.4a)
 
-**Closed issues:**
+**Implemented enhancements:**
 
 - PrePublishing Page [\#830](https://github.com/TheFive/osmbc/issues/830)
+
+**Fixed bugs:**
+
 - Translation with picture results in unnecessary escapes [\#826](https://github.com/TheFive/osmbc/issues/826)
+
+**Closed issues:**
+
 - Check automatic translation links after translation to point to the correct language. [\#825](https://github.com/TheFive/osmbc/issues/825)
 
 ## [3.4.4](https://github.com/TheFive/osmbc/tree/3.4.4) (2020-06-23)
@@ -17,10 +36,6 @@
 ## [3.4.3](https://github.com/TheFive/osmbc/tree/3.4.3) (2020-06-21)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.2...3.4.3)
-
-**Closed issues:**
-
-- upcomming events - as they are plus a map with the locations [\#827](https://github.com/TheFive/osmbc/issues/827)
 
 ## [3.4.2](https://github.com/TheFive/osmbc/tree/3.4.2) (2020-06-14)
 
@@ -36,7 +51,6 @@
 
 **Closed issues:**
 
-- could/should/would we add a map with upcoming events [\#828](https://github.com/TheFive/osmbc/issues/828)
 - Switch Library Deepl-Translator to Deepl-Client [\#821](https://github.com/TheFive/osmbc/issues/821)
 
 ## [3.3.11](https://github.com/TheFive/osmbc/tree/3.3.11) (2020-05-01)
@@ -125,6 +139,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6a...3.3.7)
 
+**Closed issues:**
+
+- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
+
 ## [3.3.6a](https://github.com/TheFive/osmbc/tree/3.3.6a) (2018-10-06)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6...3.3.6a)
@@ -145,10 +163,6 @@
 
 - Wortliga Textanalyse \(german blog\) link is not working \(http issue\) [\#783](https://github.com/TheFive/osmbc/issues/783)
 - The Review Comment field is to small. [\#782](https://github.com/TheFive/osmbc/issues/782)
-
-**Closed issues:**
-
-- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
 
 ## [3.3.5](https://github.com/TheFive/osmbc/tree/3.3.5) (2018-08-19)
 
@@ -211,10 +225,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1b...3.3.2)
 
-**Implemented enhancements:**
-
-- Create a link from Welcome to the team to the changes history filtered by user [\#768](https://github.com/TheFive/osmbc/issues/768)
-
 ## [3.3.1b](https://github.com/TheFive/osmbc/tree/3.3.1b) (2018-04-12)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1a...3.3.1b)
@@ -245,6 +255,7 @@
 
 **Implemented enhancements:**
 
+- Create a link from Welcome to the team to the changes history filtered by user [\#768](https://github.com/TheFive/osmbc/issues/768)
 - Implement Interface to call Scripts. [\#763](https://github.com/TheFive/osmbc/issues/763)
 - Disallow Guests collecting in Blogs, that are not open. [\#762](https://github.com/TheFive/osmbc/issues/762)
 
@@ -561,6 +572,7 @@
 **Implemented enhancements:**
 
 - Use OSM Avatar for user display. [\#691](https://github.com/TheFive/osmbc/issues/691)
+- Show list of long absent user on admin homepage [\#688](https://github.com/TheFive/osmbc/issues/688)
 
 ## [2.4.2b](https://github.com/TheFive/osmbc/tree/2.4.2b) (2017-09-17)
 
@@ -585,7 +597,6 @@
 
 **Implemented enhancements:**
 
-- Show list of long absent user on admin homepage [\#688](https://github.com/TheFive/osmbc/issues/688)
 - Add a list to show new registered \(e.g. Last month\) users [\#682](https://github.com/TheFive/osmbc/issues/682)
 
 ## [2.4.1](https://github.com/TheFive/osmbc/tree/2.4.1) (2017-09-10)
@@ -624,10 +635,6 @@
 
 - BlogView \(Full\) Crashes, if a category is used, that is not defined in blog.  [\#667](https://github.com/TheFive/osmbc/issues/667)
 
-**Closed issues:**
-
-- Switch to pg.pool, pg.connect is deprecated. [\#680](https://github.com/TheFive/osmbc/issues/680)
-
 ## [2.3.7a](https://github.com/TheFive/osmbc/tree/2.3.7a) (2017-07-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.7...2.3.7a)
@@ -644,6 +651,10 @@
 **Fixed bugs:**
 
 - Link to commented article by a user is not working in blog statistic page. [\#671](https://github.com/TheFive/osmbc/issues/671)
+
+**Closed issues:**
+
+- Switch to pg.pool, pg.connect is deprecated. [\#680](https://github.com/TheFive/osmbc/issues/680)
 
 ## [2.3.6](https://github.com/TheFive/osmbc/tree/2.3.6) (2017-07-04)
 
@@ -1938,7 +1949,6 @@
 
 - Check emal sending on new comment style [\#353](https://github.com/TheFive/osmbc/issues/353)
 - Don't send messages if a blog will be totally closed [\#352](https://github.com/TheFive/osmbc/issues/352)
-- proposal: a button to fill in all the other languages with "no translation" would be fine [\#315](https://github.com/TheFive/osmbc/issues/315)
 - Better CreateDB script for install purposes [\#66](https://github.com/TheFive/osmbc/issues/66)
 
 ## [0.8.3](https://github.com/TheFive/osmbc/tree/0.8.3) (2016-02-24)
@@ -2072,6 +2082,7 @@
 - Display OSMUser in outgoing mail log. [\#319](https://github.com/TheFive/osmbc/issues/319)
 - Start mail subject with \[OSMBC\] [\#318](https://github.com/TheFive/osmbc/issues/318)
 - Make Test on Username / language case insensitive. [\#317](https://github.com/TheFive/osmbc/issues/317)
+- proposal: a button to fill in all the other languages with "no translation" would be fine [\#315](https://github.com/TheFive/osmbc/issues/315)
 
 ## [0.7.4](https://github.com/TheFive/osmbc/tree/0.7.4) (2016-02-11)
 
@@ -2130,6 +2141,7 @@
 
 **Implemented enhancements:**
 
+- new blog should start with two standard categories [\#248](https://github.com/TheFive/osmbc/issues/248)
 - Show number of unedited & uncategorised articles in a blog [\#46](https://github.com/TheFive/osmbc/issues/46)
 - Some Statistics per Blog [\#39](https://github.com/TheFive/osmbc/issues/39)
 
@@ -2139,7 +2151,6 @@
 
 **Implemented enhancements:**
 
-- new blog should start with two standard categories [\#248](https://github.com/TheFive/osmbc/issues/248)
 - Remember scoll position of last blog view. [\#244](https://github.com/TheFive/osmbc/issues/244)
 
 ## [0.7.1a](https://github.com/TheFive/osmbc/tree/0.7.1a) (2016-02-07)
@@ -2364,7 +2375,6 @@
 **Fixed bugs:**
 
 - links with non standard characters are not identified in full in article screen [\#252](https://github.com/TheFive/osmbc/issues/252)
-- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
 
 ## [0.5.8a](https://github.com/TheFive/osmbc/tree/0.5.8a) (2016-01-05)
 
@@ -2373,6 +2383,7 @@
 **Fixed bugs:**
 
 - blog difference in shown date and blog date [\#250](https://github.com/TheFive/osmbc/issues/250)
+- !urgent! - OSMCalender2Markdown [\#247](https://github.com/TheFive/osmbc/issues/247)
 
 ## [0.5.8](https://github.com/TheFive/osmbc/tree/0.5.8) (2016-01-03)
 
