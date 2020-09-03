@@ -159,9 +159,10 @@ function countLogsForUser(user, callback) {
 
 
 
-  var sqlQuery =  "select * from (select day::date  from generate_series(now() - interval '1 year',now(), interval ' 1 day') day) d left join ( select date(data->>'timestamp')::date as day,count(*) as count from changes where data->>'user'  like $1 and data->>'table'::text in ('article','blog') group by 1) t using (day) order by day";
-  var sqlArray = [user];
+  var sqlQuery =  "select * from (select day::date  from generate_series($2::date - interval '1 year',$2::date, interval ' 1 day') day) d left join ( select date(data->>'timestamp')::date as day,count(*) as count from changes where data->>'user'  like $1 and data->>'table'::text in ('article','blog') group by 1) t using (day) order by day";
+
   var startTime = new Date().getTime();
+  var sqlArray = [user, new Date()];
   var result = [];
   debug(sqlQuery);
   db.query(sqlQuery, sqlArray, function(err, queryResult) {
