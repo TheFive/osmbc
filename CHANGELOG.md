@@ -1,5 +1,13 @@
 # Changelog
 
+## [superscript_fix](https://github.com/TheFive/osmbc/tree/superscript_fix) (2020-08-31)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4b...superscript_fix)
+
+**Fixed bugs:**
+
+- Superscript is not supported by deepl auto translation [\#840](https://github.com/TheFive/osmbc/issues/840)
+
 ## [3.4.4b](https://github.com/TheFive/osmbc/tree/3.4.4b) (2020-08-29)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4a...3.4.4b)
@@ -225,6 +233,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1b...3.3.2)
 
+**Implemented enhancements:**
+
+- Create a link from Welcome to the team to the changes history filtered by user [\#768](https://github.com/TheFive/osmbc/issues/768)
+
 ## [3.3.1b](https://github.com/TheFive/osmbc/tree/3.3.1b) (2018-04-12)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1a...3.3.1b)
@@ -255,7 +267,6 @@
 
 **Implemented enhancements:**
 
-- Create a link from Welcome to the team to the changes history filtered by user [\#768](https://github.com/TheFive/osmbc/issues/768)
 - Implement Interface to call Scripts. [\#763](https://github.com/TheFive/osmbc/issues/763)
 - Disallow Guests collecting in Blogs, that are not open. [\#762](https://github.com/TheFive/osmbc/issues/762)
 
@@ -342,6 +353,10 @@
 
 - the "Welcome To The Team" table could have more info about the guest  [\#746](https://github.com/TheFive/osmbc/issues/746)
 
+**Fixed bugs:**
+
+- Markdown INterpreter in Article Editor does not support Superscript [\#737](https://github.com/TheFive/osmbc/issues/737)
+
 **Closed issues:**
 
 - Disable Guest for editor strings, until a better solution is found [\#745](https://github.com/TheFive/osmbc/issues/745)
@@ -383,7 +398,6 @@
 
 **Fixed bugs:**
 
-- Markdown INterpreter in Article Editor does not support Superscript [\#737](https://github.com/TheFive/osmbc/issues/737)
 - Review Status Time Calculation [\#736](https://github.com/TheFive/osmbc/issues/736)
 
 ## [3.1.2e](https://github.com/TheFive/osmbc/tree/3.1.2e) (2018-02-13)
@@ -572,7 +586,6 @@
 **Implemented enhancements:**
 
 - Use OSM Avatar for user display. [\#691](https://github.com/TheFive/osmbc/issues/691)
-- Show list of long absent user on admin homepage [\#688](https://github.com/TheFive/osmbc/issues/688)
 
 ## [2.4.2b](https://github.com/TheFive/osmbc/tree/2.4.2b) (2017-09-17)
 
@@ -597,6 +610,7 @@
 
 **Implemented enhancements:**
 
+- Show list of long absent user on admin homepage [\#688](https://github.com/TheFive/osmbc/issues/688)
 - Add a list to show new registered \(e.g. Last month\) users [\#682](https://github.com/TheFive/osmbc/issues/682)
 
 ## [2.4.1](https://github.com/TheFive/osmbc/tree/2.4.1) (2017-09-10)
@@ -619,10 +633,6 @@
 
 - Crash when calling preview blog. [\#686](https://github.com/TheFive/osmbc/issues/686)
 
-**Closed issues:**
-
-- Prepare connect-pg-session to use \>4.2 by using connectObject not connectString [\#664](https://github.com/TheFive/osmbc/issues/664)
-
 ## [2.4.0](https://github.com/TheFive/osmbc/tree/2.4.0) (2017-08-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.7a...2.4.0)
@@ -634,6 +644,10 @@
 **Fixed bugs:**
 
 - BlogView \(Full\) Crashes, if a category is used, that is not defined in blog.  [\#667](https://github.com/TheFive/osmbc/issues/667)
+
+**Closed issues:**
+
+- Switch to pg.pool, pg.connect is deprecated. [\#680](https://github.com/TheFive/osmbc/issues/680)
 
 ## [2.3.7a](https://github.com/TheFive/osmbc/tree/2.3.7a) (2017-07-23)
 
@@ -652,10 +666,6 @@
 
 - Link to commented article by a user is not working in blog statistic page. [\#671](https://github.com/TheFive/osmbc/issues/671)
 
-**Closed issues:**
-
-- Switch to pg.pool, pg.connect is deprecated. [\#680](https://github.com/TheFive/osmbc/issues/680)
-
 ## [2.3.6](https://github.com/TheFive/osmbc/tree/2.3.6) (2017-07-04)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.5...2.3.6)
@@ -668,6 +678,10 @@
 
 - Quick Edit box on Review Tab does not select a language to spell check [\#668](https://github.com/TheFive/osmbc/issues/668)
 - Click in admin history on config change leads to an error. [\#666](https://github.com/TheFive/osmbc/issues/666)
+
+**Closed issues:**
+
+- Prepare connect-pg-session to use \>4.2 by using connectObject not connectString [\#664](https://github.com/TheFive/osmbc/issues/664)
 
 ## [2.3.5](https://github.com/TheFive/osmbc/tree/2.3.5) (2017-06-10)
 
@@ -1186,7 +1200,6 @@
 
 **Implemented enhancements:**
 
-- Inbox: Disable Header, that does not contain info. [\#536](https://github.com/TheFive/osmbc/issues/536)
 - Allow editing of a review comment as long as blog is not closed. [\#531](https://github.com/TheFive/osmbc/issues/531)
 - Use oauth tokens / cookies for all thefive.info websites, to avoid reauthentification for every service. [\#514](https://github.com/TheFive/osmbc/issues/514)
 - Place number of unsolved comments for published articles in the blog translation counter. [\#507](https://github.com/TheFive/osmbc/issues/507)
@@ -1215,6 +1228,7 @@
 
 **Implemented enhancements:**
 
+- Inbox: Disable Header, that does not contain info. [\#536](https://github.com/TheFive/osmbc/issues/536)
 - Remove \[OSMUsername\] from articlecdisplay e.g. In overview [\#530](https://github.com/TheFive/osmbc/issues/530)
 - Give a cookie hint on message: failed to find request token in session [\#524](https://github.com/TheFive/osmbc/issues/524)
 
@@ -1436,16 +1450,13 @@
 
 - add link to translate innerText of markdown with google translate. [\#470](https://github.com/TheFive/osmbc/issues/470)
 
-**Fixed bugs:**
-
-- automatic translation [\#469](https://github.com/TheFive/osmbc/issues/469)
-
 ## [1.8.4h](https://github.com/TheFive/osmbc/tree/1.8.4h) (2016-06-04)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4g...1.8.4h)
 
 **Fixed bugs:**
 
+- automatic translation [\#469](https://github.com/TheFive/osmbc/issues/469)
 - It is not possible to set Mail Status Change to no language in user settings. [\#468](https://github.com/TheFive/osmbc/issues/468)
 
 ## [1.8.4g](https://github.com/TheFive/osmbc/tree/1.8.4g) (2016-05-27)
@@ -1667,6 +1678,7 @@
 
 - Switch User Lang in inbox to main lang, switch color of comments glyphicon to support this. [\#429](https://github.com/TheFive/osmbc/issues/429)
 - Hide languages, that have no markdown for all open / edit blogs for user with other languages. [\#423](https://github.com/TheFive/osmbc/issues/423)
+- Indicate collector and authors in review mode [\#418](https://github.com/TheFive/osmbc/issues/418)
 
 ## [1.5.0](https://github.com/TheFive/osmbc/tree/1.5.0) (2016-04-16)
 
@@ -1711,7 +1723,6 @@
 
 **Implemented enhancements:**
 
-- Indicate collector and authors in review mode [\#418](https://github.com/TheFive/osmbc/issues/418)
 - Change position of textfield while in review mode [\#416](https://github.com/TheFive/osmbc/issues/416)
 - show open comments only when done by other persons [\#415](https://github.com/TheFive/osmbc/issues/415)
 - User Inbox view for all open blogs [\#411](https://github.com/TheFive/osmbc/issues/411)
@@ -1949,7 +1960,7 @@
 
 - Check emal sending on new comment style [\#353](https://github.com/TheFive/osmbc/issues/353)
 - Don't send messages if a blog will be totally closed [\#352](https://github.com/TheFive/osmbc/issues/352)
-- Better CreateDB script for install purposes [\#66](https://github.com/TheFive/osmbc/issues/66)
+- proposal: a button to fill in all the other languages with "no translation" would be fine [\#315](https://github.com/TheFive/osmbc/issues/315)
 
 ## [0.8.3](https://github.com/TheFive/osmbc/tree/0.8.3) (2016-02-24)
 
@@ -2082,7 +2093,6 @@
 - Display OSMUser in outgoing mail log. [\#319](https://github.com/TheFive/osmbc/issues/319)
 - Start mail subject with \[OSMBC\] [\#318](https://github.com/TheFive/osmbc/issues/318)
 - Make Test on Username / language case insensitive. [\#317](https://github.com/TheFive/osmbc/issues/317)
-- proposal: a button to fill in all the other languages with "no translation" would be fine [\#315](https://github.com/TheFive/osmbc/issues/315)
 
 ## [0.7.4](https://github.com/TheFive/osmbc/tree/0.7.4) (2016-02-11)
 
@@ -2141,7 +2151,6 @@
 
 **Implemented enhancements:**
 
-- new blog should start with two standard categories [\#248](https://github.com/TheFive/osmbc/issues/248)
 - Show number of unedited & uncategorised articles in a blog [\#46](https://github.com/TheFive/osmbc/issues/46)
 - Some Statistics per Blog [\#39](https://github.com/TheFive/osmbc/issues/39)
 
@@ -2151,6 +2160,7 @@
 
 **Implemented enhancements:**
 
+- new blog should start with two standard categories [\#248](https://github.com/TheFive/osmbc/issues/248)
 - Remember scoll position of last blog view. [\#244](https://github.com/TheFive/osmbc/issues/244)
 
 ## [0.7.1a](https://github.com/TheFive/osmbc/tree/0.7.1a) (2016-02-07)
@@ -3011,6 +3021,7 @@
 **Implemented enhancements:**
 
 - Show a special icon if an entry has comments [\#69](https://github.com/TheFive/osmbc/issues/69)
+- Better CreateDB script for install purposes [\#66](https://github.com/TheFive/osmbc/issues/66)
 - rebuild the article view mode [\#53](https://github.com/TheFive/osmbc/issues/53)
 - Add a possibility to find easy commented articles in a blog. [\#49](https://github.com/TheFive/osmbc/issues/49)
 
