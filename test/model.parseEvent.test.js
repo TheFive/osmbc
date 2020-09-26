@@ -1,20 +1,23 @@
 "use strict";
 
-var should = require("should");
-var parseEvent = require("../model/parseEvent.js");
-var mockdate = require("mockdate");
+const should = require("should");
+const parseEvent = require("../model/parseEvent.js");
+const mockdate = require("mockdate");
 
-var initialize = require("../util/initialise.js");
+const testutil = require("./testutil.js");
+
+const initialize = require("../util/initialise.js");
 
 
 /* eslint-disable mocha/no-synchronous-tests */
 
 describe("model/parseEvent", function() {
 
-  before(function(bddone) {
+  before(async function() {
     mockdate.set(new Date("2015-12-06"));
 
-    initialize.initialiseModules(bddone);
+    await initialize.initialiseModules();
+    await testutil.clearDB();
   });
   after(function(bddone) {
     mockdate.reset();
@@ -85,6 +88,15 @@ describe("model/parseEvent", function() {
       should(filterTest({startDate: "2015-12-08", big: true}, option)).be.False(); // no country given, filter does not work
       should(filterTest({startDate: "2015-12-08", country: "germany", big: true}, option)).be.True();
       should(filterTest({startDate: "2015-12-08", country: "UK", big: true}, option)).be.False();
+    });
+  });
+  describe("convertGeoName", function() {
+    it("should not translate an online event", function(bddone){
+      parseEvent.convertGeoName("online","EN",function(err,result){
+        should.not.exist(err);
+        should(result).eql("online");
+        return bddone();
+      });
     });
   });
 });

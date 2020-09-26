@@ -21,8 +21,17 @@ var _geonamesUser = null;
 function convertGeoName(name, lang, callback) {
   if (lang === "JP") lang = "JA";
   if (!_geonamesUser) _geonamesUser = config.getValue("GeonamesUser");
+
   const key = lang + "_" + name;
   if (_cache[key]) return callback(null, _cache[key]);
+  const ct = configModule.getConfig("calendartranslation");
+  if (ct.locationNoTranslation &&
+      Array.isArray(ct.locationNoTranslation) &&
+      ct.locationNoTranslation.indexOf(name) >= 0) {
+    // place is a virtual place defined in the calendar Translation, do not translate
+    _cache[key] = name;
+    return callback(null, name);
+  }
   var requestString = "http://api.geonames.org/searchJSON?q=" + encodeURI(name) + "&username=" + _geonamesUser + "&maxRows=1&lang=" + lang;
   request(requestString, function(err, response, body) {
     if (err) return callback(err, null);
@@ -182,9 +191,9 @@ function calendarJSONToMarkdown2(json, countryFlags, ct, option, cb) {
 }
 
 function calendarJSONToMarkdown(json, options, cb) {
-  var calendarFlags = configModule.getConfig("calendarflags");
+  let calendarFlags = configModule.getConfig("calendarflags");
   if (!calendarFlags) calendarFlags = {};
-  var ct = configModule.getConfig("calendartranslation");
+  let ct = configModule.getConfig("calendartranslation");
   if (!ct) ct = {};
   if (!ct.town) ct.town = {};
   if (!ct.title) ct.title = {};
