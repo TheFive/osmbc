@@ -9,7 +9,6 @@
   // Documentation: http://www.jshint.com/docs/options/
   "browser": true,
   "node":true,
-  "esnext": true,
   "globals": {},
   "globalstrict": true,
   "quotmark": false, // Have to find a solution for mixed quotemarks, to Lint this too.
@@ -18,7 +17,8 @@
   "multistr": true,
   "mocha":true,
   "strict":"imlied"  ,
-  "jquery":"true"
+  "jquery":"true",
+  "esversion":8
 
 
 }

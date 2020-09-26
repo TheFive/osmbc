@@ -42,6 +42,12 @@
     "JP": "国"
     "ID": "Country"
     "TR": "Ülke"
+"locationNoTranslation":
+  - online
+  - ONLINE
+  - everywhere
+  - world
+  - internet
 "footer":
   "DE": >
     <p>Hinweis:<br />Wer seinen Termin hier in der Liste sehen möchte,
@@ -104,4 +110,3 @@
     <a href="https://wiki.openstreetmap.org/wiki/Template:Calendar">put it into</a> the calendar.
     Only data which is there, will appear in weeklyOSM. Please don&#8217;t forget to mention the city
     and the country in the <a href="https://wiki.openstreetmap.org/wiki/Current_events">calendar</a>.</p>
-
