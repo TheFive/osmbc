@@ -1,8 +1,12 @@
 # Changelog
 
-## [superscript_fix](https://github.com/TheFive/osmbc/tree/superscript_fix) (2020-08-31)
+## [3.4.5](https://github.com/TheFive/osmbc/tree/3.4.5) (2020-09-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4b...superscript_fix)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4b...3.4.5)
+
+**Implemented enhancements:**
+
+- List of Geonames which not should be translated [\#844](https://github.com/TheFive/osmbc/issues/844)
 
 **Fixed bugs:**
 
@@ -68,10 +72,6 @@
 ## [3.3.10](https://github.com/TheFive/osmbc/tree/3.3.10) (2020-05-01)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.9d...3.3.10)
-
-**Merged pull requests:**
-
-- Remove double "//" from languageflags.yaml [\#814](https://github.com/TheFive/osmbc/pull/814) ([tordans](https://github.com/tordans))
 
 ## [3.3.9d](https://github.com/TheFive/osmbc/tree/3.3.9d) (2019-11-10)
 
@@ -353,10 +353,6 @@
 
 - the "Welcome To The Team" table could have more info about the guest  [\#746](https://github.com/TheFive/osmbc/issues/746)
 
-**Fixed bugs:**
-
-- Markdown INterpreter in Article Editor does not support Superscript [\#737](https://github.com/TheFive/osmbc/issues/737)
-
 **Closed issues:**
 
 - Disable Guest for editor strings, until a better solution is found [\#745](https://github.com/TheFive/osmbc/issues/745)
@@ -398,6 +394,7 @@
 
 **Fixed bugs:**
 
+- Markdown INterpreter in Article Editor does not support Superscript [\#737](https://github.com/TheFive/osmbc/issues/737)
 - Review Status Time Calculation [\#736](https://github.com/TheFive/osmbc/issues/736)
 
 ## [3.1.2e](https://github.com/TheFive/osmbc/tree/3.1.2e) (2018-02-13)
@@ -633,6 +630,10 @@
 
 - Crash when calling preview blog. [\#686](https://github.com/TheFive/osmbc/issues/686)
 
+**Closed issues:**
+
+- Prepare connect-pg-session to use \>4.2 by using connectObject not connectString [\#664](https://github.com/TheFive/osmbc/issues/664)
+
 ## [2.4.0](https://github.com/TheFive/osmbc/tree/2.4.0) (2017-08-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.7a...2.4.0)
@@ -678,10 +679,6 @@
 
 - Quick Edit box on Review Tab does not select a language to spell check [\#668](https://github.com/TheFive/osmbc/issues/668)
 - Click in admin history on config change leads to an error. [\#666](https://github.com/TheFive/osmbc/issues/666)
-
-**Closed issues:**
-
-- Prepare connect-pg-session to use \>4.2 by using connectObject not connectString [\#664](https://github.com/TheFive/osmbc/issues/664)
 
 ## [2.3.5](https://github.com/TheFive/osmbc/tree/2.3.5) (2017-06-10)
 
@@ -828,7 +825,6 @@
 
 **Implemented enhancements:**
 
-- Show modified status in new article editor by color and disabling save button [\#630](https://github.com/TheFive/osmbc/issues/630)
 - Move Mail Logging from DB to Hard Drive, disable online review of maillog [\#563](https://github.com/TheFive/osmbc/issues/563)
 
 ## [2.2.8](https://github.com/TheFive/osmbc/tree/2.2.8) (2017-03-05)
@@ -850,6 +846,7 @@
 
 **Implemented enhancements:**
 
+- Show modified status in new article editor by color and disabling save button [\#630](https://github.com/TheFive/osmbc/issues/630)
 - Move Log of Email to file [\#622](https://github.com/TheFive/osmbc/issues/622)
 
 **Fixed bugs:**
@@ -1200,6 +1197,7 @@
 
 **Implemented enhancements:**
 
+- Inbox: Disable Header, that does not contain info. [\#536](https://github.com/TheFive/osmbc/issues/536)
 - Allow editing of a review comment as long as blog is not closed. [\#531](https://github.com/TheFive/osmbc/issues/531)
 - Use oauth tokens / cookies for all thefive.info websites, to avoid reauthentification for every service. [\#514](https://github.com/TheFive/osmbc/issues/514)
 - Place number of unsolved comments for published articles in the blog translation counter. [\#507](https://github.com/TheFive/osmbc/issues/507)
@@ -1228,7 +1226,6 @@
 
 **Implemented enhancements:**
 
-- Inbox: Disable Header, that does not contain info. [\#536](https://github.com/TheFive/osmbc/issues/536)
 - Remove \[OSMUsername\] from articlecdisplay e.g. In overview [\#530](https://github.com/TheFive/osmbc/issues/530)
 - Give a cookie hint on message: failed to find request token in session [\#524](https://github.com/TheFive/osmbc/issues/524)
 
@@ -1450,13 +1447,16 @@
 
 - add link to translate innerText of markdown with google translate. [\#470](https://github.com/TheFive/osmbc/issues/470)
 
+**Fixed bugs:**
+
+- automatic translation [\#469](https://github.com/TheFive/osmbc/issues/469)
+
 ## [1.8.4h](https://github.com/TheFive/osmbc/tree/1.8.4h) (2016-06-04)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4g...1.8.4h)
 
 **Fixed bugs:**
 
-- automatic translation [\#469](https://github.com/TheFive/osmbc/issues/469)
 - It is not possible to set Mail Status Change to no language in user settings. [\#468](https://github.com/TheFive/osmbc/issues/468)
 
 ## [1.8.4g](https://github.com/TheFive/osmbc/tree/1.8.4g) (2016-05-27)
@@ -1528,7 +1528,6 @@
 **Implemented enhancements:**
 
 - Inbox: would it be possible to see only the new issues? [\#456](https://github.com/TheFive/osmbc/issues/456)
-- enable colors for the people in the blog views. [\#455](https://github.com/TheFive/osmbc/issues/455)
 
 ## [1.8.1b](https://github.com/TheFive/osmbc/tree/1.8.1b) (2016-05-13)
 
@@ -1541,6 +1540,10 @@
 ## [1.8.1a](https://github.com/TheFive/osmbc/tree/1.8.1a) (2016-05-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1...1.8.1a)
+
+**Implemented enhancements:**
+
+- enable colors for the people in the blog views. [\#455](https://github.com/TheFive/osmbc/issues/455)
 
 **Fixed bugs:**
 
@@ -1678,7 +1681,6 @@
 
 - Switch User Lang in inbox to main lang, switch color of comments glyphicon to support this. [\#429](https://github.com/TheFive/osmbc/issues/429)
 - Hide languages, that have no markdown for all open / edit blogs for user with other languages. [\#423](https://github.com/TheFive/osmbc/issues/423)
-- Indicate collector and authors in review mode [\#418](https://github.com/TheFive/osmbc/issues/418)
 
 ## [1.5.0](https://github.com/TheFive/osmbc/tree/1.5.0) (2016-04-16)
 
@@ -1723,6 +1725,7 @@
 
 **Implemented enhancements:**
 
+- Indicate collector and authors in review mode [\#418](https://github.com/TheFive/osmbc/issues/418)
 - Change position of textfield while in review mode [\#416](https://github.com/TheFive/osmbc/issues/416)
 - show open comments only when done by other persons [\#415](https://github.com/TheFive/osmbc/issues/415)
 - User Inbox view for all open blogs [\#411](https://github.com/TheFive/osmbc/issues/411)
@@ -1961,6 +1964,7 @@
 - Check emal sending on new comment style [\#353](https://github.com/TheFive/osmbc/issues/353)
 - Don't send messages if a blog will be totally closed [\#352](https://github.com/TheFive/osmbc/issues/352)
 - proposal: a button to fill in all the other languages with "no translation" would be fine [\#315](https://github.com/TheFive/osmbc/issues/315)
+- Better CreateDB script for install purposes [\#66](https://github.com/TheFive/osmbc/issues/66)
 
 ## [0.8.3](https://github.com/TheFive/osmbc/tree/0.8.3) (2016-02-24)
 
@@ -2049,10 +2053,6 @@
 - Double click on ReviewComment results in two slack messages but one mail. [\#327](https://github.com/TheFive/osmbc/issues/327)
 - Double click on review comment results in two slack messages [\#325](https://github.com/TheFive/osmbc/issues/325)
 
-**Merged pull requests:**
-
-- Italy Flag customized dimensions [\#334](https://github.com/TheFive/osmbc/pull/334) ([fredao](https://github.com/fredao))
-
 ## [0.7.5d](https://github.com/TheFive/osmbc/tree/0.7.5d) (2016-02-18)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5c...0.7.5d)
@@ -2065,10 +2065,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5a...0.7.5b)
 
-**Merged pull requests:**
-
-- Haiti [\#333](https://github.com/TheFive/osmbc/pull/333) ([fredao](https://github.com/fredao))
-
 ## [0.7.5a](https://github.com/TheFive/osmbc/tree/0.7.5a) (2016-02-16)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.5...0.7.5a)
@@ -2076,11 +2072,6 @@
 **Implemented enhancements:**
 
 - More privacy for emails, only user himself can change email, email can be removed by space. [\#329](https://github.com/TheFive/osmbc/issues/329)
-
-**Merged pull requests:**
-
-- Flag Finland [\#331](https://github.com/TheFive/osmbc/pull/331) ([fredao](https://github.com/fredao))
-- Saint Luis flag [\#323](https://github.com/TheFive/osmbc/pull/323) ([fredao](https://github.com/fredao))
 
 ## [0.7.5](https://github.com/TheFive/osmbc/tree/0.7.5) (2016-02-12)
 
@@ -2132,10 +2123,6 @@
 ## [0.7.3a](https://github.com/TheFive/osmbc/tree/0.7.3a) (2016-02-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.7.3...0.7.3a)
-
-**Merged pull requests:**
-
-- Flags Mexico/Austria and welcome message [\#307](https://github.com/TheFive/osmbc/pull/307) ([fredao](https://github.com/fredao))
 
 ## [0.7.3](https://github.com/TheFive/osmbc/tree/0.7.3) (2016-02-08)
 
@@ -2214,10 +2201,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9b...0.6.9c)
 
-**Merged pull requests:**
-
-- bitte nur den letzten nehmen ... [\#294](https://github.com/TheFive/osmbc/pull/294) ([fredao](https://github.com/fredao))
-
 ## [0.6.9b](https://github.com/TheFive/osmbc/tree/0.6.9b) (2016-01-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9a...0.6.9b)
@@ -2227,18 +2210,9 @@
 - If a comment is changed, the change is displayed character wise in the email. [\#290](https://github.com/TheFive/osmbc/issues/290)
 - Check on valid email address before sending out Welcome Email. [\#289](https://github.com/TheFive/osmbc/issues/289)
 
-**Merged pull requests:**
-
-- German flag - last change [\#288](https://github.com/TheFive/osmbc/pull/288) ([fredao](https://github.com/fredao))
-
 ## [0.6.9a](https://github.com/TheFive/osmbc/tree/0.6.9a) (2016-01-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.9...0.6.9a)
-
-**Merged pull requests:**
-
-- geänderte Flaggen: Taiwan, Österreich, Deutschland [\#287](https://github.com/TheFive/osmbc/pull/287) ([fredao](https://github.com/fredao))
-- Hi theFive - hier kommen die neuen Flaggen [\#286](https://github.com/TheFive/osmbc/pull/286) ([fredao](https://github.com/fredao))
 
 ## [0.6.9](https://github.com/TheFive/osmbc/tree/0.6.9) (2016-01-28)
 
@@ -2248,10 +2222,6 @@
 
 - Document Source of Blog Creation. [\#284](https://github.com/TheFive/osmbc/issues/284)
 - Base calculation of new WN Number on non trash blogs startin with WN [\#281](https://github.com/TheFive/osmbc/issues/281)
-
-**Merged pull requests:**
-
-- new countryFlags.js [\#285](https://github.com/TheFive/osmbc/pull/285) ([fredao](https://github.com/fredao))
 
 ## [0.6.7a](https://github.com/TheFive/osmbc/tree/0.6.7a) (2016-01-27)
 
@@ -2408,10 +2378,6 @@
 - Fix the width for the Status Flow Chart [\#240](https://github.com/TheFive/osmbc/issues/240)
 - Error storing session object. [\#151](https://github.com/TheFive/osmbc/issues/151)
 
-**Merged pull requests:**
-
-- PT in data/editorStrings.js [\#243](https://github.com/TheFive/osmbc/pull/243) ([alexandre-mbm](https://github.com/alexandre-mbm))
-
 ## [0.5.7](https://github.com/TheFive/osmbc/tree/0.5.7) (2016-01-01)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.6...0.5.7)
@@ -2516,16 +2482,13 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.5...0.4.6)
 
-**Implemented enhancements:**
-
-- Document the different blog views in help. [\#209](https://github.com/TheFive/osmbc/issues/209)
-
 ## [0.4.5](https://github.com/TheFive/osmbc/tree/0.4.5) (2015-12-19)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.4...0.4.5)
 
 **Implemented enhancements:**
 
+- Document the different blog views in help. [\#209](https://github.com/TheFive/osmbc/issues/209)
 - it would be nice, if the date would be appear with a leading "0"  [\#208](https://github.com/TheFive/osmbc/issues/208)
 - The output from OSM calender2Markdown should be sorted [\#207](https://github.com/TheFive/osmbc/issues/207)
 - Support easierer Review in OSMBC by opening the article edit mode out of fullFinalLL [\#203](https://github.com/TheFive/osmbc/issues/203)
@@ -2686,10 +2649,6 @@
 
 - Generate Wochenvorschau out of wiki markdown [\#174](https://github.com/TheFive/osmbc/issues/174)
 
-**Merged pull requests:**
-
-- Update categoryTranslation.js [\#179](https://github.com/TheFive/osmbc/pull/179) ([fredao](https://github.com/fredao))
-
 ## [0.3.9b](https://github.com/TheFive/osmbc/tree/0.3.9b) (2015-11-21)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.10a...0.3.9b)
@@ -2718,10 +2677,6 @@
 
 - A common tail in URL title and URL leads to a wrong \[\]\(\) separation. [\#164](https://github.com/TheFive/osmbc/issues/164)
 - A Cancel button near the OK button would be helpful [\#161](https://github.com/TheFive/osmbc/issues/161)
-
-**Merged pull requests:**
-
-- Update menu.Beginner's How To.md [\#169](https://github.com/TheFive/osmbc/pull/169) ([fredao](https://github.com/fredao))
 
 ## [0.3.9](https://github.com/TheFive/osmbc/tree/0.3.9) (2015-11-17)
 
@@ -2778,10 +2733,6 @@
 **Closed issues:**
 
 - Spelling mistake at http://thefive.sabic.uberspace.de/article/create [\#150](https://github.com/TheFive/osmbc/issues/150)
-
-**Merged pull requests:**
-
-- More vivid color for "mark" tag [\#149](https://github.com/TheFive/osmbc/pull/149) ([alexandre-mbm](https://github.com/alexandre-mbm))
 
 ## [0.3.6d](https://github.com/TheFive/osmbc/tree/0.3.6d) (2015-11-09)
 
@@ -2881,11 +2832,6 @@
 - History tables destroys views on mobile phones. [\#106](https://github.com/TheFive/osmbc/issues/106)
 - Show CR \(linebreak\) in Collection [\#99](https://github.com/TheFive/osmbc/issues/99)
 
-**Merged pull requests:**
-
-- README.md: "for tests, use the development instance" [\#111](https://github.com/TheFive/osmbc/pull/111) ([alexandre-mbm](https://github.com/alexandre-mbm))
-- Fixes PT in categoryTranslation.js [\#110](https://github.com/TheFive/osmbc/pull/110) ([alexandre-mbm](https://github.com/alexandre-mbm))
-
 ## [0.2.28g](https://github.com/TheFive/osmbc/tree/0.2.28g) (2015-10-31)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.28f...0.2.28g)
@@ -2937,10 +2883,6 @@
 **Fixed bugs:**
 
 - Problem with ' in a blog name. [\#103](https://github.com/TheFive/osmbc/issues/103)
-
-**Merged pull requests:**
-
-- waffle.io Badge [\#98](https://github.com/TheFive/osmbc/pull/98) ([waffle-iron](https://github.com/waffle-iron))
 
 ## [0.2.28](https://github.com/TheFive/osmbc/tree/0.2.28) (2015-10-23)
 
@@ -3021,7 +2963,6 @@
 **Implemented enhancements:**
 
 - Show a special icon if an entry has comments [\#69](https://github.com/TheFive/osmbc/issues/69)
-- Better CreateDB script for install purposes [\#66](https://github.com/TheFive/osmbc/issues/66)
 - rebuild the article view mode [\#53](https://github.com/TheFive/osmbc/issues/53)
 - Add a possibility to find easy commented articles in a blog. [\#49](https://github.com/TheFive/osmbc/issues/49)
 
@@ -3052,13 +2993,6 @@
 **Closed issues:**
 
 - How to configure an admin user \(the first user\)? [\#63](https://github.com/TheFive/osmbc/issues/63)
-
-**Merged pull requests:**
-
-- TOC in Install\_Guide.md [\#62](https://github.com/TheFive/osmbc/pull/62) ([alexandre-mbm](https://github.com/alexandre-mbm))
-- Increments in Install\_Guide.md [\#61](https://github.com/TheFive/osmbc/pull/61) ([alexandre-mbm](https://github.com/alexandre-mbm))
-- Improvement in README.md [\#58](https://github.com/TheFive/osmbc/pull/58) ([alexandre-mbm](https://github.com/alexandre-mbm))
-- Improvement in Install\_Guide.md [\#55](https://github.com/TheFive/osmbc/pull/55) ([alexandre-mbm](https://github.com/alexandre-mbm))
 
 ## [0.2.22](https://github.com/TheFive/osmbc/tree/0.2.22) (2015-10-09)
 
