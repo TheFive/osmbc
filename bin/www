@@ -5,6 +5,9 @@
  */
 
 var http    = require('http');
+var https   = require('https');
+const fs    = require('fs');
+
 var async   = require('async');
 var debug   = require('debug')('OSMBC:server');
 
@@ -31,11 +34,21 @@ var slackReceiver  = require('../notification/slackReceiver.js');
 var port = normalizePort(process.env.PORT || config.getServerPort());
 app.set('port', port);
 
+
+
 /**
  * Create HTTP server.
  */
+let options = {}
+let httpServer = http;
+if (config.getServerKey()) {
+  httpServer = https;
+  options.key= fs.readFileSync(config.getServerKey()),
+  options.cert= fs.readFileSync(config.getServerCert())
+}
 
-var server = stoppable(http.createServer(app));
+
+var server = stoppable(httpServer.createServer(options,app));
 
 /**
  * Listen on provided port, on all network interfaces.

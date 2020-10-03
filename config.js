@@ -168,6 +168,16 @@ exports.getServerPort = function() {
   return exports.getValue("serverport", {mustExist: true});
 };
 
+exports.getServerKey = function() {
+  exports.initialise();
+  return exports.getValue("serverkey");
+}
+
+exports.getServerCert = function() {
+  exports.initialise();
+  return exports.getValue("servercert");
+}
+
 exports.getCallbackUrl = function() {
   exports.initialise();
   return configuration.callbackUrl;
