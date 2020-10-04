@@ -200,7 +200,7 @@ block scripts
   script(src=layout.path("moment") + "/min/moment.min.js")
 
 
-  script.
+  script(nonce=cspNonce).
     // chart data example
     var chartData = JSON.parse('!{JSON.stringify(userHeatMapArray)}');
     for (var i=0;i<chartData.length;i++) {

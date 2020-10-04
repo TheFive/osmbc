@@ -315,7 +315,7 @@ block scripts
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
   script(src=layout.htmlroot + "/javascripts/osmbc_staff.js")
 
-  script.
+  script(nonce=cspNonce).
 
     var openEditor = null;
     htmlroot = "!{layout.htmlroot}";

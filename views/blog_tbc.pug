@@ -84,7 +84,7 @@ block content
 block scripts
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
-  script.
+  script(nonce=cspNonce).
     var openEditor = null;
     window.onload = function() {
       
@@ -116,7 +116,3 @@ block scripts
       if (oldValue === newValue) return;
       document.getElementById('EditArticle'+id).submit();
     }
-
-
-
-

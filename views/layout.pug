@@ -170,8 +170,6 @@ block all
   html(lang='en')
     head
       meta(charset='utf-8')
-      meta(http-equiv='X-UA-Compatible', content='IE=edge')
-      meta(http-equiv='Content-Security-Policy' content='img-src *')
       meta(name='viewport', content='width=device-width, initial-scale=1')
       meta(name='description', content='')
       meta(name='author', content='')
@@ -274,7 +272,7 @@ block all
       title= title
       link(rel='stylesheet', href=`${htmlroot}${stylesheet}`)
     body
-  script.
+  script(nonce=cspNonce).
 
     // Init This Window with jQuery ready Callback
     $(document).ready(init2);

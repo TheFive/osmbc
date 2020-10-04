@@ -19,6 +19,7 @@
     "compression": "1.7.x",
     "connect-pg-simple": "6.2.x",
     "cookie-parser": "1.4.x",
+    "crypto": "^1.0.1",
     "d3": "3.5.x",
     "debug": "4.2.x",
     "deepl-client": "1.0.x",
