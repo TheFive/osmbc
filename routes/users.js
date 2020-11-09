@@ -250,8 +250,7 @@ function inbox (req, res) {
 
 function createUser(req, res, next) {
   debug("createUser");
-  var proto = {};
-  userModule.createNewUser(proto, function(err, user) {
+  userModule.createNewUser(function(err, user) {
     if (err) return next(err);
     res.redirect(htmlroot + "/usert/" + user.id + "?edit=true");
   });

@@ -112,7 +112,11 @@ describe("router/user", function() {
       should.exist(user);
       should(user).eql({
         "id": "4",
-        "version": 1
+        "version": 1,
+        "mailAllComment": "false",
+        "mailBlogLanguageStatusChange": [],
+        "mailComment": [],
+        "mailNewCollection": "false"
       });
     });
     it("should deny denied access user",
