@@ -144,12 +144,15 @@ describe("routes/index", function() {
         expectedStatusCode: HttpStatus.OK,
         expectedMessage: "<h1>Changelog</h1>"}));
   });
-  describe("route GET /language", function() {
-    let url = baseLink + "/language?lang=DE";
+  describe("route POST /language", function() {
+    let url = baseLink + "/language";
+    let data = {lang:"DE"};
 
     function requestLanguageSetter(user,whichLang, lang) {
       function _requestLanguageSetter(whichlang, lang, cb) {
-        request.get({url: baseLink + "/language?" + whichlang + "=" + lang, jar: jar[user]}, function (err, response) {
+        let form = {};
+        form[whichlang] = lang;
+        request.post({url: baseLink + "/language?" ,form:form, jar: jar[user]}, function (err, response) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           return cb();
@@ -170,7 +173,6 @@ describe("routes/index", function() {
         OSMUser: "TestUser",
         access: "full",
         version: 4,
-        lastAccess: "2016-05-25T20:00:00.000Z",
         mainLang: "ES",
         secondLang: "EN",
         lang3: null,
@@ -189,7 +191,6 @@ describe("routes/index", function() {
         OSMUser: "TestUserNonExisting",
         access: "guest",
         version: 4,
-        lastAccess: "2016-05-25T20:00:00.000Z",
         mainLang: "ES",
         secondLang: "EN",
         mdWeeklyAuthor: "anonymous",
