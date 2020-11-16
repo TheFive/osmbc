@@ -151,11 +151,11 @@ mixin langChooser(langString)
     ul.dropdown-menu(role='menu')
       if (langString !== "lang")
         li
-          a(id=langString+"_none" href=layout.htmlroot + '/language?'+langString+'=none') none
+          a(id=langString+"_none" onclick = "chooseLanguage('" + langString +"','none')" ) none
       each litem in layout.languages
         if layout.usedLanguages[litem]
           li
-            a(id=langString+"_"+litem href=layout.htmlroot + '/language?'+langString+'=' +litem)=litem
+            a(id=langString+"_"+litem onclick = "chooseLanguage('" + langString +"','" + litem +"')")=litem
 
 mixin userAvatar
   if layout.user
@@ -278,6 +278,16 @@ block all
     $(document).ready(init2);
     function init2() {
       $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
+    }
+    function chooseLanguage(number,lang) {
+      var data = {};
+      data[number]=lang;
+      jQuery.post("!{htmlroot}/language",data, function () {
+        location.reload();
+      }).fail(function (err) {
+        console.error("Problem changing language " +  number + " " + lang);
+        console.error(err);
+      });
     }
 
   block scripts

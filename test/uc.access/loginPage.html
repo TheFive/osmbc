@@ -73,5 +73,15 @@ added to our user database as guest.</p>
   function init2() {
     $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
   }
+  function chooseLanguage(number,lang) {
+    var data = {};
+    data[number]=lang;
+    jQuery.post("/language",data, function () {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Problem changing language " +  number + " " + lang);
+      console.error(err);
+    });
+  }
   
 </script></body></html>

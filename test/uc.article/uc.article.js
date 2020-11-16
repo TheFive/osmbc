@@ -204,6 +204,7 @@ describe("uc.article", function() {
   describe("onchangeCollection", function() {
     this.timeout(maxTimer * 3);
     beforeEach(async function() {
+      // Click on the language 2 chooswer with zombie TODO
       await browser.visit("/language?lang2=none");
       await browser.visit("/article/" + articleId);
     });
@@ -240,6 +241,7 @@ describe("uc.article", function() {
   describe("onchangeMarkdown", function() {
     this.timeout(maxTimer * 3);
     beforeEach(async function() {
+      // click on the language 2 chooswer with ZOmbie !
       await browser.visit("/language?lang2=none");
       await browser.visit("/article/" + articleId);
     });

@@ -117,10 +117,10 @@ function languageSwitcher(req, res, next) {
 
   var lang = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()];
 
-  if (req.query.lang) lang[0] = req.query.lang;
-  if (req.query.lang2) lang[1] = req.query.lang2;
-  if (req.query.lang3) lang[2] = req.query.lang3;
-  if (req.query.lang4) lang[3] = req.query.lang4;
+  if (req.body.lang) lang[0] = req.body.lang;
+  if (req.body.lang2) lang[1] = req.body.lang2;
+  if (req.body.lang3) lang[2] = req.body.lang3;
+  if (req.body.lang4) lang[3] = req.body.lang4;
 
 
   for (let v = 0; v < lang.length - 1; v++) {
@@ -159,8 +159,7 @@ function languageSwitcher(req, res, next) {
 
   req.user.save(function finalLanguageSwitcher(err) {
     if (err) return next(err);
-    var referer = req.get("referer");
-    if (referer) res.redirect(referer); else res.end("changed");
+    res.end("OK");
   });
 }
 
@@ -225,7 +224,7 @@ router.get("/osmbc.html", redirectHome);
 router.get("/osmbc", redirectHome);
 router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
 router.get("/changelog", auth.checkRole(["full", "guest"]), renderChangelog);
-router.get("/language", auth.checkRole(["full", "guest"]), languageSwitcher);
+router.post("/language", auth.checkRole(["full", "guest"]), languageSwitcher);
 router.get("/userconfig", auth.checkRole(["full", "guest"]), setUserConfig);
 router.get("/createblog", auth.checkRole(["full"]), createBlog);
 
