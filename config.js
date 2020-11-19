@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === "test" && process.env.TEST_LOG !== "TRUE") {
     ]});
   } else {
   logger = winston.createLogger({
-    level: 'info',
+    level: 'error',
     format: winston.format.json()});
 
     logger.add(new winston.transports.Console({

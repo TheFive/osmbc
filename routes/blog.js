@@ -309,8 +309,7 @@ function setBlogStatus(req, res, next) {
 
   function finalFunction(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
-    res.redirect(referer);
+    res.end("OK");
   }
 
   // Start Review

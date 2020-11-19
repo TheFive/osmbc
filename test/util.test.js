@@ -8,6 +8,7 @@ const turndownService = require("turndown")();
 turndownService.use(require("../util/turndown-it-sup.js"));
 
 const markdown = require("markdown-it")();
+const md_util = require("../util/md_util.js");
 
 /* eslint-disable mocha/no-synchronous-tests */
 describe("util", function() {
@@ -159,6 +160,32 @@ describe("util", function() {
       let html = markdown.render(md);
       let backconverted_md = turndownService.turndown(html);
       should(backconverted_md).eql(md);
+    });
+  })
+  describe("md_util",function(){
+    it("should generate emtpy table",function(){
+      let json = [];
+      let columns = [{field:"a",name:"A"}];
+      let result = md_util.md_table(json,columns);
+      should(result).eql("|A|\n|-|\n");
+    });
+    it("should handle table",function(){
+      let json = [{a:"v2",b:"v3"},{a:"v2",b:"v3"}];
+      let columns = [{field:"a",name:"A"},{field:"b",name:"BEEE"}];
+      let result = md_util.md_table(json,columns);
+      should(result).eql("|A |BEEE|\n|--|----|\n|v2|v3  |\n|v2|v3  |\n");
+    });
+    it("should handle missing values",function(){
+      let json = [{a:null,b:"v3"},{a:"v2"}];
+      let columns = [{field:"a",name:"A"},{field:"b",name:"BEEE"}];
+      let result = md_util.md_table(json,columns);
+      should(result).eql("|A |BEEE|\n|--|----|\n|  |v3  |\n|v2|    |\n");
+    });
+    it("should handle different types",function(){
+      let json = [{a:{d:"3"},b:"v3"},{a:"v2",b:22}];
+      let columns = [{field:"a",name:"A"},{field:"b",name:"BEEE"}];
+      let result = md_util.md_table(json,columns);
+      should(result).eql("|A |BEEE|\n|--|----|\n|[object Object]|v3  |\n|v2|22|\n");
     });
   })
 });
