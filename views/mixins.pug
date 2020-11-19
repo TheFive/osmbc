@@ -218,9 +218,9 @@ mixin articleIconLegend(view)
 mixin userConfigOption(view,option,variable,userdesc)
   span(style="white-space: nowrap")
     if variable
-      span.glyphicon.glyphicon-check(name="choose_"+option,onclick=`location.href="${layout.htmlroot}/userconfig?view=${view}&option=${option}&value=false";`)
+      span.glyphicon.glyphicon-check(name="choose_"+option,onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'false'});`)
     else
-      span.glyphicon.glyphicon-unchecked(name="choose_"+option,onclick=`location.href="${layout.htmlroot}/userconfig?view=${view}&option=${option}&value=true";`)
+      span.glyphicon.glyphicon-unchecked(name="choose_"+option,onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'true'});`)
     span=userdesc
 
 

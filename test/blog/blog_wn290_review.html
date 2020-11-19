@@ -2054,9 +2054,9 @@ Segeltörn
               <p>Left Column:</p>
             </div>
             <div class="col-md-11">
-              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showNumbers" onclick="location.href=&quot;/userconfig?view=review&amp;option=showNumbers&amp;value=true&quot;;"></span><span> show editor numbers, </span></span>
-              </div><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showMail" onclick="location.href=&quot;/userconfig?view=review&amp;option=showMail&amp;value=true&quot;;"></span><span> show mail, </span></span>
-              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showCollector" onclick="location.href=&quot;/userconfig?view=review&amp;option=showCollector&amp;value=true&quot;;"></span><span> show collector, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showEditor" onclick="location.href=&quot;/userconfig?view=review&amp;option=showEditor&amp;value=true&quot;;"></span><span> show editor , </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showLanguages" onclick="location.href=&quot;/userconfig?view=review&amp;option=showLanguages&amp;value=true&quot;;"></span><span> show languages, </span></span>
+              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showNumbers" onclick="window.setUserConfig({view:'review',option:'showNumbers',value:'true'});"></span><span> show editor numbers, </span></span>
+              </div><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showMail" onclick="window.setUserConfig({view:'review',option:'showMail',value:'true'});"></span><span> show mail, </span></span>
+              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showCollector" onclick="window.setUserConfig({view:'review',option:'showCollector',value:'true'});"></span><span> show collector, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showEditor" onclick="window.setUserConfig({view:'review',option:'showEditor',value:'true'});"></span><span> show editor , </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showLanguages" onclick="window.setUserConfig({view:'review',option:'showLanguages',value:'true'});"></span><span> show languages, </span></span>
               </div>
             </div>
           </div>
@@ -2064,14 +2064,14 @@ Segeltörn
             <div class="col-md-1">
               <p>Display Votes</p>
             </div>
-            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_pro" onclick="location.href=&quot;/userconfig?view=review&amp;option=showVote_pro&amp;value=true&quot;;"></span><span> show pro, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_unpublish" onclick="location.href=&quot;/userconfig?view=review&amp;option=showVote_unpublish&amp;value=true&quot;;"></span><span> show unpublish, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_fav" onclick="location.href=&quot;/userconfig?view=review&amp;option=showVote_fav&amp;value=true&quot;;"></span><span> show fav, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_doit" onclick="location.href=&quot;/userconfig?view=review&amp;option=showVote_doit&amp;value=true&quot;;"></span><span> show doit, </span></span>
+            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_pro" onclick="window.setUserConfig({view:'review',option:'showVote_pro',value:'true'});"></span><span> show pro, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_unpublish" onclick="window.setUserConfig({view:'review',option:'showVote_unpublish',value:'true'});"></span><span> show unpublish, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_fav" onclick="window.setUserConfig({view:'review',option:'showVote_fav',value:'true'});"></span><span> show fav, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_doit" onclick="window.setUserConfig({view:'review',option:'showVote_doit',value:'true'});"></span><span> show doit, </span></span>
             </div>
           </div>
           <div class="row hidden-xs">
             <div class="col-md-1">
               <p>Options:</p>
             </div>
-            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showColoredUser" onclick="location.href=&quot;/userconfig?view=review&amp;option=showColoredUser&amp;value=true&quot;;"></span><span> show users colored</span></span>
+            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showColoredUser" onclick="window.setUserConfig({view:'review',option:'showColoredUser',value:'true'});"></span><span> show users colored</span></span>
             </div>
           </div>
         </div>
@@ -2264,6 +2264,15 @@ Segeltörn
       console.error(err);
       $(".translateWait" + langFrom + langTo).addClass("hidden");
       $(".translateError" + langFrom + langTo).removeClass("hidden");
+    });
+  }
+  
+  function setUserConfig(options) {
+    jQuery.post(window.htmlroot + "/setuserconfig/",options, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble saveing User Config");
+      console.error(err);
     });
   }
 </script></body></html>
