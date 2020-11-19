@@ -114,7 +114,7 @@ function enrichData(json,lang) {
 
     // generate Calendar Flags
     event.country_flag = event.country_code;
-    if (cf[event.country_code]) event.country_flag = `![flag](${cf[event.country_code]}),;
+    if (cf[event.country_code]) event.country_flag = `![flag](${cf[event.country_code]})`;
   }
 }
 
