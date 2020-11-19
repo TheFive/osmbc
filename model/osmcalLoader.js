@@ -19,7 +19,7 @@ async function loadEvents(lang) {
     let requestString = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=" + encodeURI(event.location.coords[1])
     + "&lon=" + encodeURI(event.location.coords[0])
     + "&accept-language=" + lang;
-    request = await axios.get(requestString { headers: { 'User-Agent': 'OSMBC Calendar Generator' }  });
+    request = await axios.get(requestString, { headers: { 'User-Agent': 'OSMBC Calendar Generator' }  });
     let loc = request.data;
 
     if (loc.name) event.town = loc.name;
