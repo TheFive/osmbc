@@ -115,6 +115,11 @@ function enrichData(json, lang) {
     // generate Calendar Flags
     event.country_flag = event.country_code;
     if (cf[event.country_code]) event.country_flag = `![flag](${cf[event.country_code]})`;
+
+    if (event.online) {
+      if (cf.online) event.online = `![online](${cf.online})`;
+      else event.online = "✓";
+    } else event.online = "";
   }
 }
 
@@ -129,6 +134,8 @@ async function getEventMd(lang) {
   if (ct.title && ct.title[lang]) titleName = ct.title[lang];
   let dateName = "Date";
   if (ct.date && ct.date[lang]) dateName = ct.date[lang];
+  let onlineName = "Online";
+  if (ct.online && ct.online[lang]) onlineName = ct.online[lang];
 
 
   const events = await loadEvents(lang);
@@ -140,6 +147,7 @@ async function getEventMd(lang) {
 
   const table = [
     { field: "name", name: titleName },
+    { field: "online", name: onlineName },
     { field: "town", name: townName },
     { field: "dateString", name: dateName },
     { field: "country_flag", name: countryName }
