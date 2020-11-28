@@ -164,6 +164,7 @@ if (isNaN(cookieMaxAge)) {
 
 function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated");
+  debug("Requested URL:  %s",req.url);
   if (req.isAuthenticated()) {
     debug("ensureAuthenticated: OK");
     if (req.user && req.user.access && req.user.access !== "denied") {

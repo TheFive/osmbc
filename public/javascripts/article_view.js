@@ -131,13 +131,12 @@ function getEventTable(lang, edit) {
      method:"POST",
      success: function(data){
 
-       if (data) $(edit).val(data);
+       if (data) $(edit).html(data).trigger("change");
 
        return false;
      },
      dataType:"text",
      error:function(err,text1, text2) {
-       console.info(err.responseStatus);
        console.info(text1);
        console.info(text2);
      },

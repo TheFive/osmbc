@@ -38,6 +38,7 @@ const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true 
 
 
 function eventDateFormat(e, lang) {
+  debug("eventDateFormat");
   const sd = moment(e.startDate);
   const ed = moment(e.endDate);
   let dateString = "";
@@ -56,6 +57,7 @@ function eventDateFormat(e, lang) {
 }
 
 function flag(country, cf) {
+  debug("flag");
   if (!country) country = "";
   const c = country.toLowerCase();
   if (cf[c]) return "<img src='" + cf[c] + "'></img>";
@@ -371,12 +373,14 @@ function readScriptConfig(script, callback) {
 }
 
 function quoteParam(param, quote) {
+  debug("quoteParam");
   if (quote) return '"' + param + '"';
   // if (quote) return "'" + param + "'";
   return param;
 }
 
 function renderScriptLog(req, res) {
+  debug("renderScriptLog");
   const file = req.params.filename;
   let text = null;
   let reload = false;
@@ -428,6 +432,7 @@ function renderScriptLog(req, res) {
 
 
 function renderScripts(req, res) {
+  debug("renderScripts");
   glob(scriptFilePath + "/" + scriptFileFilter, function(error, data) {
     if (data) data.sort();
     if (error) {
@@ -459,6 +464,7 @@ function renderScripts(req, res) {
 }
 
 function renderScript(req, res) {
+  debug("renderScript");
   const file = req.params.filename;
 
   readScriptConfig(file, function(err, configuration) {
@@ -475,6 +481,7 @@ function renderScript(req, res) {
 
 
 function executeScript(req, res, next) {
+  debug("executeScript");
   const file = req.params.filename;
 
   readScriptConfig(file, function(err, configuration) {
@@ -578,9 +585,9 @@ function executeScript(req, res, next) {
 }
 
 function getEventTable(req, res, next) {
+  debug("getEventTable");
   let lang = req.query.lang;
-  console.log("getEventTable Called");
-  console.dir(req.user.OSMUser)
+
   return res.send("Requested Event Table for Lang " + lang);
   if (typeof lang !== "string" || lang.length <2) return next(new Error("Missing Language Parameter"));
 
