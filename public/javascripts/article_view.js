@@ -83,6 +83,7 @@ function init() {
   $('[data-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;
+  window.getEventTable = getEventTable;
 }
 
 function saveButton() {
@@ -119,6 +120,29 @@ function convertMinusNoTranslation() {
     object.val("no translation");
     object.trigger("change");
   }
+}
+
+function getEventTable(lang, edit) {
+
+  let url = window.htmlroot + "/tool/getEventTable?lang=" + lang;
+
+  $.ajax({
+     url: url,
+     method:"POST",
+     success: function(data){
+
+       if (data) $(edit).val(data);
+
+       return false;
+     },
+     dataType:"text",
+     error:function(err,text1, text2) {
+       console.info(err.responseStatus);
+       console.info(text1);
+       console.info(text2);
+     },
+     timeout: 10000 //in milliseconds
+  });
 }
 
 

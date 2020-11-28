@@ -20,6 +20,7 @@ const logger = require("../config.js").logger;
 
 
 const parseEvent = require("../model/parseEvent.js");
+const osmcalLoader = require("../model/osmcalLoader.js");
 
 const articleModule = require("../model/article.js");
 const configModule = require("../model/config.js");
@@ -576,6 +577,23 @@ function executeScript(req, res, next) {
   });
 }
 
+function getEventTable(req, res, next) {
+  let lang = req.query.lang;
+  if (typeof lang !== "string" || lang.length <2) return next(new Error("Missing Language Parameter"));
+
+  res.set({'Content-Type': 'text/plain'});
+
+  osmcalLoader.getEventMd_cb(lang, function(err,result){
+
+    if (err) return next(err);
+
+
+
+    res.send(result);
+  });
+}
+
+
 const userList = config.getValue("scripts").user;
 let checkScriptRights = checkRole("full");
 
@@ -588,11 +606,13 @@ router.get("/scripts/execute/:filename", checkScriptRights, renderScript);
 router.post("/scripts/execute/:filename", checkScriptRights, executeScript);
 
 router.get("/calendarAllLang/:calendar", checkRole("full"), renderCalendarAllLangAlternative);
+router.post("/getEventTable",checkRole("full"),getEventTable);
 router.get("/picturetool", checkRole("full"), renderPictureTool);
 router.post("/picturetool", checkRole("full"), postPictureTool);
 
 publicRouter.get("/calendar/preview", renderPublicCalendar);
 publicRouter.get("/calendarRefresh/:calendar", renderCalendarRefresh);
+
 
 module.exports.router = router;
 module.exports.publicRouter = publicRouter;

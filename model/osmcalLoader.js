@@ -124,7 +124,7 @@ async function getEventMd(lang) {
   const ct = configModule.getConfig("calendartranslation");
   let townName = "Town";
   if (ct.town && ct.town[lang]) townName = ct.town[lang];
-  let countyName = "Country";
+  let countryName = "Country";
   if (ct.country && ct.country[lang]) countryName = ct.country[lang];
   let titleName = "Title";
   if (ct.title && ct.title[lang]) titleName = ct.title[lang];
