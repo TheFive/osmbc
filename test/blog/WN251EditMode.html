@@ -123,11 +123,7 @@
             <h2><span class="hidden-xs">Wochennotiz </span>WN251<span class="hidden-xs"> (edit)</span></h2>
           </div>
           <div class="col-md-3">
-            <form id="startReview" name="startReview" action="/blog/WN251/setLangStatus" method="post">
-              <input class="hidden" type="text" name="action" value="startreview">
-              <input class="hidden" type="text" name="lang" value="DE">
-              <button class="btn btn-large btn-primary" id="readyreview" type="submit">Set WN251(DE) ready for review</button>
-            </form>
+            <button class="btn btn-large btn-primary" id="readyreview" onclick="window.setLangStatus(&quot;DE&quot;,&quot;startreview&quot;,this);">Set WN251(DE) ready for review</button>
           </div>
           <div class="col-md-3">
           </div>
@@ -502,5 +498,17 @@
       console.error("Trouble saveing User Config");
       console.error(err);
     });
+  }    
+      
+  function setLangStatus(lang, status,button) {
+    $(button).prop('disabled', true);
+    $(button).prop('html', "wait ...");
+    jQuery.post(window.htmlroot + "/blog/WN251/setLangStatus",{action:status,lang:lang}, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble setting Language Status");
+      console.error(err);
+    });
+  
   }
 </script></body></html>

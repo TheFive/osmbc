@@ -122,25 +122,27 @@ function convertMinusNoTranslation() {
   }
 }
 
-function getEventTable(lang, edit) {
-
-  let url = window.htmlroot + "/tool/getEventTable?lang=" + lang;
+function getEventTable(lang, edit, pressedButton) {
+  var url = window.htmlroot + "/tool/getEventTable?lang=" + lang;
+  $(pressedButton).hide("slow");
+  $(edit).html("Data will be recieved ...");
 
   $.ajax({
-     url: url,
-     method:"POST",
-     success: function(data){
+    url: url,
+    method: "POST",
+    success: function(data) {
+      if (data) $(edit).html(data).trigger("change");
 
-       if (data) $(edit).html(data).trigger("change");
 
-       return false;
-     },
-     dataType:"text",
-     error:function(err,text1, text2) {
-       console.info(text1);
-       console.info(text2);
-     },
-     timeout: 10000 //in milliseconds
+      return false;
+    },
+    dataType: "text",
+    error: function(err, text1, text2) {
+      console.info(err);
+      console.info(text1);
+      console.info(text2);
+    },
+    timeout: 10000 // in milliseconds
   });
 }
 

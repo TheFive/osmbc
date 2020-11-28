@@ -586,19 +586,13 @@ function executeScript(req, res, next) {
 
 function getEventTable(req, res, next) {
   debug("getEventTable");
-  let lang = req.query.lang;
+  const lang = req.query.lang;
+  if (typeof lang !== "string" || lang.length < 2) return next(new Error("Missing Language Parameter"));
 
-  return res.send("Requested Event Table for Lang " + lang);
-  if (typeof lang !== "string" || lang.length <2) return next(new Error("Missing Language Parameter"));
+  res.set({ "Content-Type": "text/plain" });
 
-  res.set({'Content-Type': 'text/plain'});
-
-  osmcalLoader.getEventMd_cb(lang, function(err,result){
-
+  osmcalLoader.getEventMdCb(lang, function(err, result) {
     if (err) return next(err);
-
-
-
     res.send(result);
   });
 }
@@ -616,7 +610,7 @@ router.get("/scripts/execute/:filename", checkScriptRights, renderScript);
 router.post("/scripts/execute/:filename", checkScriptRights, executeScript);
 
 router.get("/calendarAllLang/:calendar", checkRole("full"), renderCalendarAllLangAlternative);
-router.post("/getEventTable",checkRole("full"),getEventTable);
+router.post("/getEventTable", checkRole("full"), getEventTable);
 router.get("/picturetool", checkRole("full"), renderPictureTool);
 router.post("/picturetool", checkRole("full"), postPictureTool);
 

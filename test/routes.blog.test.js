@@ -263,8 +263,8 @@ describe("routes/blog", function() {
     let form =  {lang: "DE", action: "startreview"};
     it("should a start a review process", async function () {
       let response = await rp.post({url: url, form: form, jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.statusCode).eql(200);
+      should(response.body).eql("OK");
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.reviewCommentDE).eql([{
         text: "startreview",
@@ -277,8 +277,8 @@ describe("routes/blog", function() {
         url: url,
         form: {lang: "EN", action: "markexported"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.statusCode).eql(200);
+      should(response.body).eql("OK");
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.exportedEN).eql(true);
     });
@@ -287,8 +287,8 @@ describe("routes/blog", function() {
         url: url,
         form: {lang: "EN", action: "startreview"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.statusCode).eql(200);
+      should(response.body).eql("OK");
       let blog = await blogModule.findOne({name: "secondblog"});
       should(blog.reviewCommentDE).eql([{"text": "first review", user: "TestUser"}]);
     });
@@ -297,8 +297,8 @@ describe("routes/blog", function() {
         url:  baseLink + "/blog/secondblog/setLangStatus",
         form: {lang: "DE", action: "deleteallreviews"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.statusCode).eql(200);
+      should(response.body).eql("OK");
       let blog = await blogModule.findOne({name: "secondblog"});
       should(blog.reviewCommentDE).is.undefined();
     });
@@ -310,8 +310,8 @@ describe("routes/blog", function() {
         },
         form: {lang: "DE", action: "closelang"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to http://localhost:35043/blog/WN333");
+      should(response.statusCode).eql(200);
+      should(response.body).eql("OK");
 
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.closeDE).eql(true);
@@ -325,7 +325,7 @@ describe("routes/blog", function() {
         },
         body: {lang: "DE", action: "editlang"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(302);
+      should(response.statusCode).eql(200);
 
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.closeDE).eql(false);
@@ -471,7 +471,7 @@ describe("routes/blog", function() {
         url: baseLink + "/blog/WN999",
         jar: jar.testUser, simple: false, resolveWithFullResponse: true});
       should(response.statusCode).eql(404);
-      response.body.should.containEql("<h1>Page Not Found</h1>");
+      response.body.should.containEql("<h1>Page Not Found /blog/WN999</h1>");
     });
     it("should call next if blog exists twice", async function () {
       await blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"});
@@ -567,5 +567,3 @@ describe("routes/blog", function() {
 
 
 /* jshint ignore:end */
-
-

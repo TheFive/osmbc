@@ -121,10 +121,7 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
           self[rc].push({ user: user.OSMUser, text: data, timestamp: date });
         }
         // check Event articles
-        return self.fillEventArticle(lang,cb);
-
-        // nothing has to be written to the review comments
-        return cb();
+        return self.fillEventArticle(lang, cb);
       }
       if (data === "markexported") {
         self[exported] = true;
@@ -158,20 +155,21 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
   });
 };
 
-Blog.prototype.fillEventArticle = function fillEventArticle(lang,callback) {
-  let eventArticle = this._upcomingEvents;
-  if (!eventArticle) return cb();
-  let oldMd = eventArticle["markdown"+lang];
+Blog.prototype.fillEventArticle = function fillEventArticle(lang, callback) {
+  const eventArticle = this._upcomingEvents;
+  if (!eventArticle) return callback();
+  let oldMd = eventArticle["markdown" + lang];
   if (typeof oldMd === "undefined") oldMd = "";
-  if (oldMd && eventArticle["markdown"+lang].length > 10) return callback();
+  if (oldMd && eventArticle["markdown" + lang].length > 10) return callback();
 
-  osmcalLoader.getEventMd_cb(lang, function(err,result) {
-    let data = {old:{}};
+  osmcalLoader.getEventMdCb(lang, function(err, result) {
+    if (err) return callback(err);
+    const data = { old: {} };
     data["markdown" + lang] = result;
     data.old["markdown" + lang] = oldMd;
-    eventArticle.setAndSave({OSMUser:"OSMCAL"},data, callback);
+    eventArticle.setAndSave({ OSMUser: "OSMCAL" }, data, callback);
   });
-}
+};
 
 Blog.prototype.editReviewComment = function editReviewComment(lang, user, index, data, callback) {
   debug("reviewComment");
