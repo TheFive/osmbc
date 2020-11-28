@@ -579,6 +579,9 @@ function executeScript(req, res, next) {
 
 function getEventTable(req, res, next) {
   let lang = req.query.lang;
+  console.log("getEventTable Called");
+  console.dir(req.user.OSMUser)
+  return res.send("Requested Event Table for Lang " + lang);
   if (typeof lang !== "string" || lang.length <2) return next(new Error("Missing Language Parameter"));
 
   res.set({'Content-Type': 'text/plain'});
