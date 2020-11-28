@@ -395,7 +395,7 @@ function renderBlogTab(req, res, next) {
         const changes = { status: req.query.setStatus };
         blog.setAndSave(req.user, changes, function(err) {
           if (err) return callback(err);
-          let referer =  "/";
+          let referer =  config.htmlRoot() + "/osmbc";
           if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
             referer = req.header("Referer");
           }
