@@ -190,7 +190,7 @@ function renderCalendarRefresh(req, res, next) {
     if (response.statusCode !== 200) {
       return next(Error("url: " + cc.url + " returns:\n" + body));
     }
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }

@@ -205,7 +205,7 @@ describe("routes/blog", function() {
         simple: false,
         resolveWithFullResponse: true
       });
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.body).eql("Found. Redirecting to /osmbc");
       should(response.statusCode).eql(302);
       let blog = await blogModule.findById(2);
 
@@ -352,7 +352,7 @@ describe("routes/blog", function() {
     it("should call copy", async function () {
       let response = await rp.post({url: url, form: form, jar: jar.testUser,simple: false, resolveWithFullResponse: true });
       should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.body).eql("Found. Redirecting to /osmbc");
     });
 
 

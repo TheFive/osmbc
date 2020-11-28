@@ -278,7 +278,7 @@ function setReviewComment(req, res, next) {
   if (!req.blog) return next();
   req.blog.setReviewComment(lang, user, data, function(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -295,7 +295,7 @@ function editReviewComment(req, res, next) {
   if (!req.blog) return next();
   req.blog.editReviewComment(lang, user, index, data, function(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -474,7 +474,7 @@ function copyAllArticles(req, res, next) {
 
   blog.copyAllArticles(user, fromLang, toLang, function (err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -493,7 +493,7 @@ function translateAllArticles(req, res, next) {
 
   blog.translateAllArticles(user, fromLang, toLang, service, function (err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }

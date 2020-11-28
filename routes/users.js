@@ -260,7 +260,7 @@ function createApiKey(req, res, next) {
   debug("createApiKey");
   req.user.createApiKey(function(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }

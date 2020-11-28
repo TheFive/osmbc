@@ -626,7 +626,7 @@ function copyArticle(req, res, next) {
 
   article.copyToBlog(newBlog, languages, function(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -678,7 +678,7 @@ function postSetMarkdown(req, res, next) {
   article.setAndSave(req.user, change, function(err) {
     if (err) return next(err);
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -698,7 +698,7 @@ function postReviewChange(req, res, next) {
   article.reviewChanges(req.user, object, function(err) {
     if (err) return next(err);
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
