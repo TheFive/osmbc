@@ -92,7 +92,7 @@ function enrichData(json, lang) {
   for (event of json) {
     // convert online venue to binary online flag
     let online = false;
-    if (event.location && ct.locationNoTranslation.indexOf(event.location.venue) >= 0) online = true;
+    if (event.location && ct.locationNoTranslation && ct.locationNoTranslation.indexOf(event.location.venue) >= 0) online = true;
     event.online = online;
 
     // convert date
