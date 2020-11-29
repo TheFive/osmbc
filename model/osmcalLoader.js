@@ -12,7 +12,8 @@ const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true 
 async function loadEvents(lang) {
   const url = "https://osmcal.org/api/v2/events/";
   let request = await axios.get(url);
-  const json = request.data;
+  let json = request.data;
+  if (!Array.isArray(json)) json = [{name:"osmcal did not reply with Eventlist"}];
   let event;
   for (event of json) {
     if (!event.location) continue;
@@ -46,9 +47,9 @@ function filterEvent(event, option) {
 
 
 
-  var startDate = moment(event.date.start);
+  var startDate = moment(event.date && event.date.start);
   var endDate = startDate.clone();
-  if (typeof event.date.end !== "undefined") endDate = moment(event.date.end);
+  if (event.date && typeof event.date.end !== "undefined") endDate = moment(event.date.end);
 
   let diff = -3;
   const optionDiff = parseInt(option.date);
@@ -88,6 +89,10 @@ function filterEvent(event, option) {
 function enrichData(json, lang) {
   const ct = configModule.getConfig("calendartranslation");
   const cf = configModule.getConfig("calendarflags");
+
+  if (!Array.isArray(json)) return;
+  if (json.length === 0) return;
+  if (!typeof json[0] !== "object") return;
   let event;
   for (event of json) {
     // convert online venue to binary online flag
@@ -97,15 +102,15 @@ function enrichData(json, lang) {
 
     // convert date
     let dateString;
-    const sd = moment(event.date.start);
-    const ed = moment(event.date.end);
+    const sd = moment(event.date && event.date.start);
+    const ed = moment(event.date && event.date.end);
     sd.locale(config.moment_locale(lang));
     ed.locale(config.moment_locale(lang));
 
-    if (event.date.start) {
+    if (event.date && event.date.start) {
       dateString = sd.format(osmbcDateFormat);
     }
-    if (event.date.end) {
+    if (event.date && event.date.end) {
       if ((sd.startOf("day").isBefore(ed.startOf("day")))) {
         dateString = sd.format(osmbcDateFormat) + " - " + ed.format(osmbcDateFormat);
       }
@@ -137,18 +142,28 @@ async function getEventMd(lang) {
   let onlineName = "Online";
   if (ct.online && ct.online[lang]) onlineName = ct.online[lang];
 
+  let events;
+  let filter;
+  let filteredEvents;
 
-  const events = await loadEvents(lang);
-  const filter = ef[lang];
-  const filteredEvents = await filterEvents(events, filter);
+  try {
+    events = await loadEvents(lang);
+    filter = ef[lang];
+    filteredEvents = await filterEvents(events, filter);
+   } catch (err) {
+     let errmessage = "Calendar could not be generated";
+     if (err.message) errmessage = err.message;
+     filteredEvents = [{name:errmessage}];
+   };
+
 
 
   enrichData(filteredEvents, lang);
 
   const table = [
+    { field: "town", name: townName },
     { field: "name", name: titleName },
     { field: "online", name: onlineName },
-    { field: "town", name: townName },
     { field: "dateString", name: dateName },
     { field: "country_flag", name: countryName }
   ];
