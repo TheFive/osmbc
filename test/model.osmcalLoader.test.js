@@ -28,6 +28,7 @@ async function doTest(option) {
     if (nominatimCall === "osmcal") continue;
     nock("https://nominatim.openstreetmap.org")
       .get(nominatimCall)
+      .thrice()
       .reply(200,input[nominatimCall]);
   }
   mockdate.set(new Date(option.date));
@@ -118,7 +119,11 @@ describe("model/osmcalLoader", function() {
           await doTest({file:"t3", date:"2020-05-20T19:00:00Z",lang:"ES"});
       });
     });
-    describe("Successfull Calls Missing Values",function(){});
+    describe("Successfull Calls Missing Values",function(){
+      it("should generate canceled Events",async function(){
+          await doTest({file:"t4", date:"2020-05-20T19:00:00Z",lang:"ES"});
+      });
+    });
     describe("Check Filter",function() {});
 
   });
