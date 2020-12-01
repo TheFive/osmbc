@@ -54,6 +54,7 @@ The rules does support the developer to come quicker to the point. Sometimes you
 
 # Acknowledgment
 
-Thanks to [JetBrains](https://www.jetbrains.com) by supporting the development with an OpenSource License.
+Thanks to [JetBrains](https://www.jetbrains.com) by supporting the development with an (free) License for OpenSource Development.
+
 (Actual not granted :-( )
 
