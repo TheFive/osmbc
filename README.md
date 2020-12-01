@@ -55,5 +55,5 @@ The rules does support the developer to come quicker to the point. Sometimes you
 # Acknowledgment
 
 Thanks to [JetBrains](https://www.jetbrains.com) by supporting the development with an OpenSource License.
-(Acutal not granted :-( )
+(Actual not granted :-( )
 
