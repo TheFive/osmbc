@@ -1,0 +1,4 @@
+|Dónde    |Qué                                                                                                                           |Online|Fecha     |País                                                           |
+|---------|------------------------------------------------------------------------------------------------------------------------------|------|----------|---------------------------------------------------------------|
+|Osaka    |event [![osmcalpic](https://osmcal.org/static/osmcal/favicon.png  =16x16)](https://osmcal.org/event/verweis/)                 |      |24/05/2020|![flag](http://blog.openstreetmap.de/wp-uploads/2016/02/jp.svg)|
+|Stuttgart|~~Stuttgarter Stammtisch~~ [![osmcalpic](https://osmcal.org/static/osmcal/favicon.png  =16x16)](https://osmcal.org/event/353/)|      |30/05/2020|de                                                             |

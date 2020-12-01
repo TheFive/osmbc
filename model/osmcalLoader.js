@@ -52,17 +52,17 @@ function filterEvent(event, option) {
   if (event.date && typeof event.date.end !== "undefined") endDate = moment(event.date.end);
 
   let diff = -3;
-  const optionDiff = parseInt(option.date);
+  const optionDiff = (option) ? parseInt(option.date) : diff;
   if (!Number.isNaN(optionDiff)) {
     diff = optionDiff;
   }
   date = date.add(diff, "day");
   var duration = 15;
-  if (option.duration && option.duration !== "") {
+  if (option && option.duration && option.duration !== "") {
     duration = parseInt(option.duration);
   }
   var bigDuration = 23;
-  if (option.big_duration && option.big_duration !== "") {
+  if (option && option.big_duration && option.big_duration !== "") {
     bigDuration = parseInt(option.big_duration);
   }
   var from = date.clone();
@@ -75,10 +75,10 @@ function filterEvent(event, option) {
   if (endDate.isBefore(from, "day")) filtered = true;
   if (startDate.isAfter(toForBig, "day")) filtered = true;
 
-  if (option.includeCountries && event.country &&
+  if (option && option.includeCountries && event.country &&
     option.includeCountries.toLowerCase().indexOf(event.country.toLowerCase()) < 0) filtered = true;
 
-  if (option.excludeCountries && event.country &&
+  if (option && option.excludeCountries && event.country &&
     option.excludeCountries.toLowerCase().indexOf(event.country.toLowerCase()) >= 0) filtered = true;
 
 
@@ -91,14 +91,26 @@ function enrichData(json, lang) {
   const cf = configModule.getConfig("calendarflags");
 
   if (!Array.isArray(json)) return;
+
   if (json.length === 0) return;
-  if (!typeof json[0] !== "object") return;
+
+  if (typeof json[0] !== "object") return;
+
   let event;
   for (event of json) {
     // convert online venue to binary online flag
     let online = false;
     if (event.location && ct.locationNoTranslation && ct.locationNoTranslation.indexOf(event.location.venue) >= 0) online = true;
     event.online = online;
+
+    if (event.cancelled) {
+      event.name = "~~" + event.name + "~~";
+    }
+
+    if (event.url) {
+      event.name = event.name + ` [![osmcalpic](https://osmcal.org/static/osmcal/favicon.png  =16x16)](${event.url})`;
+    }
+
 
     // convert date
     let dateString;
@@ -154,6 +166,7 @@ async function getEventMd(lang) {
      let errmessage = "Calendar could not be generated";
      if (err.message) errmessage = err.message;
      filteredEvents = [{name:errmessage}];
+     if (process.NODE_ENV !== "test") console.info(err);
    };
 
 

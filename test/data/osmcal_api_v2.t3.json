@@ -1,0 +1,93 @@
+{
+  "osmcal":[
+     {
+       "name": "event",
+       "url": "https://osmcal.org/event/verweis/",
+       "date": {
+         "start": "2020-05-24T12:00:00+09:00",
+         "end": "2020-05-24T14:00:00+09:00",
+         "human": "24th May 12:00–14:00",
+         "human_short": "24th May",
+         "whole_day": false
+       },
+       "location": {
+         "short": "Osaka, Japan",
+         "detailed": "Tosabori-dori, Chuo, Osaka, Japan",
+         "coords": [
+           135.5023,
+           34.6931
+         ],
+         "venue": "Cool Pub"
+       }
+     },
+     {
+      "name":"Stuttgarter Stammtisch",
+      "url":"https://osmcal.org/event/353/",
+      "date":{
+         "human":"2. Dezember 19:00",
+         "human_short":"2. Dezember",
+         "whole_day":false,
+         "start":"2020-05-30T19:00:00+01:00"
+      },
+      "location":{
+         "short":"Stuttgart, Baden-Württemberg, Germany",
+         "detailed":"Online, 13, Reinsburgstraße, Feuersee, Stuttgart, Baden-Württemberg, Germany",
+         "coords":[
+            9.169633,
+            48.771199
+         ],
+         "venue":"Online"
+      },
+      "cancelled" : true
+    }
+   ],
+   "/reverse?format=jsonv2&zoom=10&lat=34.6931&lon=135.5023&accept-language=ES":{
+     "place_id":235221208,
+     "licence":"Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+     "osm_type":"relation",
+     "osm_id":358674,
+     "lat":"34.6937569",
+     "lon":"135.5014539",
+     "place_rank":14,
+     "category":"boundary",
+     "type":"administrative",
+     "importance":0.4,
+     "addresstype":"city",
+     "name":"Osaka",
+     "display_name":
+     "大阪市, 大阪府, 日本 (Japan)",
+     "address":{
+       "city":"Osaka",
+       "province":"大阪府",
+       "country":"Japan",
+       "country_code":"jp"},
+     "boundingbox":["34.586154","34.768849","135.3099784","135.59935"]},
+  "/reverse?format=jsonv2&zoom=10&lat=48.771199&lon=9.169633&accept-language=ES":{
+   "place_id":235726825,
+   "licence":"Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+   "osm_type":"relation",
+   "osm_id":2793104,
+   "lat":"48.7784485",
+   "lon":"9.1800132",
+   "place_rank":12,
+   "category":"boundary",
+   "type":"administrative",
+   "importance":0.6864347124043025,
+   "addresstype":"city",
+   "name":"Stuttgart",
+   "display_name":"Stuttgart, Baden-Württemberg, 70173, Deutschland",
+   "address":{
+      "city":"Stuttgart",
+      "state":"Baden-Württemberg",
+      "postcode":"70173",
+      "country":"Alemania",
+      "country_code":"de"
+   },
+   "boundingbox":[
+      "48.6920188",
+      "48.8663994",
+      "9.0386007",
+      "9.3160228"
+   ]
+ }
+}
