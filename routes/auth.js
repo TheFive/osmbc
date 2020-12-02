@@ -202,7 +202,7 @@ function ensureAuthenticated (req, res, next) {
     }
   ], function(err) {
     if (err) return next(err);
-    res.redirect(htmlRoot + "/login");
+    res.status(500,"Error function called without error");
   });
 }
 

@@ -198,7 +198,7 @@ app.get(htmlRoot + "/auth/openstreetmap/callback",
   auth.passport.authenticate("openstreetmap", {failureRedirect: "/login"}),
   function(req, res) {
     debug("after passport.authenticate Function");
-    res.redirect(req.session.returnTo || "/");
+    res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
   });
 
 app.get(htmlRoot + "/logout", function(req, res) {
