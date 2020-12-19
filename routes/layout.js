@@ -50,8 +50,6 @@ function path(component) {
 module.path = path;
 
 
-const calendarInterface = config.getValue("CalendarInterface", { mustExist: true });
-
 
 function prepareRenderLayout(req, res, next) {
   debug("prepareRenderLayout");
@@ -217,7 +215,6 @@ function prepareRenderLayout(req, res, next) {
       md_render: util.md_render,
       md_renderInline: markdown.renderInline,
       getAvatar: userModule.getAvatar,
-      calendarInterface: calendarInterface,
       scriptUser: scriptUser,
       blogTranslationVisibleFor: blogTranslationVisibleFor
 

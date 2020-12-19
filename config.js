@@ -131,6 +131,10 @@ exports.getValue = function(key, options) {
     logger.error("Missing Value in config.*.json. Name: '" + key + "'");
     process.exit(1);
   }
+  if (options && options.deprecated && typeof result !== "undefined") {
+    logger.error("Deprecated Value in config.*.json. Name: '" + key + "'");
+    process.exit(1);
+  }
   if (typeof result !== "undefined" && options && options.type && typeof result !== options.type) {
     logger.error("Value '" + key + "' does not have type " + options.type);
     process.exit(1);

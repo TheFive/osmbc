@@ -32,168 +32,12 @@ const checkUser       = require("../routes/auth.js").checkUser;
 const sizeOf = require("image-size");
 
 const htmlroot = config.htmlRoot();
-const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
+
+
+config.getValue("CalendarInterface", { deprecated: true });
 
 
 
-
-function eventDateFormat(e, lang) {
-  debug("eventDateFormat");
-  const sd = moment(e.startDate);
-  const ed = moment(e.endDate);
-  let dateString = "";
-  sd.locale(config.moment_locale(lang));
-  ed.locale(config.moment_locale(lang));
-
-  if (e.startDate) {
-    dateString = sd.format(osmbcDateFormat);
-  }
-  if (e.endDate) {
-    if ((e.startDate.getTime() !== e.endDate.getTime())) {
-      dateString = sd.format(osmbcDateFormat) + "-" + ed.format(osmbcDateFormat);
-    }
-  }
-  return dateString;
-}
-
-function flag(country, cf) {
-  debug("flag");
-  if (!country) country = "";
-  const c = country.toLowerCase();
-  if (cf[c]) return "<img src='" + cf[c] + "'></img>";
-  return country;
-}
-
-function renderEvents(result, req, res, next) {
-  const languages = res.rendervar.layout.activeLanguages;
-  const eventsfilter = configModule.getConfig("eventsfilter");
-  const calendarFlags = configModule.getConfig("calendarflags");
-  const markdown = {};
-
-  async.parallel([
-    function para1(cbPara1) {
-      async.each(result.events, function(event, eventsCB) {
-        let allfilter = true;
-        async.each(languages, function(lang, langCB) {
-          parseEvent.convertGeoName(event.town, lang, function(err, name) {
-            if (err) return langCB(err);
-            event[lang] = {};
-            event[lang].town = name;
-            let filter = {};
-            if (eventsfilter[lang]) filter = eventsfilter[lang];
-
-            event[lang].filtered = parseEvent.filterEvent(event, filter);
-            allfilter = allfilter && event[lang].filtered;
-
-            langCB();
-          });
-        }, function(err) {
-          event.all = {};
-          event.all.filtered = allfilter;
-          return eventsCB(err);
-        });
-      }, cbPara1);
-    },
-    function para2(cbPara2) {
-      async.each(languages, function (lang, langCB) {
-        let filter = {};
-        if (eventsfilter[lang]) filter = eventsfilter[lang];
-        filter.lang = lang;
-        parseEvent.calendarJSONToMarkdown(result, filter, function(err, text) {
-          if (err) return langCB(err);
-          markdown[lang] = text;
-          return langCB();
-        });
-      }, cbPara2);
-    }
-  ], function(err) {
-    if (err) return next(err);
-
-    res.render("calendarAllLang", {
-      layout: res.rendervar.layout,
-      events: result.events,
-      errors: result.errors,
-      flag: flag,
-      timestamp: result.timestamp,
-      discontinue: result.discontinue,
-      refresh: result.refreshurl,
-      serviceProvider: result.serviceProvider,
-      markdown: markdown,
-      eventsfilter: eventsfilter,
-      calendarFlags: calendarFlags,
-      eventDateFormat: eventDateFormat
-    });
-  }
-  );
-}
-
-
-const alternativeCalendarData = config.getValue("CalendarInterface", { mustExist: true });
-
-function renderCalendarAllLangAlternative(req, res, next) {
-  debug("renderCalendarAllLang");
-
-  const par = req.params.calendar;
-
-  const cc = alternativeCalendarData[par];
-
-  const options = {
-    url: cc.url,
-    method: "GET",
-    json: true
-  };
-  const result = { events: [] };
-  request(options, function(error, response, body) {
-    if (error) return next(error);
-    if (response.statusCode !== 200) {
-      return next(Error("url: " + cc.url + " returns: \n" + response.statusCode + JSON.stringify(body)));
-    }
-    if (!body[cc.events]) return next(new Error("Missing events in calendar data"));
-    body[cc.events].forEach(function modifyItem(item) {
-      const i = {};
-      i.desc = item[cc.desc];
-      i.startDate = new Date(item[cc.startDate]);
-      i.endDate = new Date(item[cc.endDate]);
-      i.text = item[cc.text];
-      i.markdown = item[cc.markdown];
-      i.big = item[cc.big];
-      i.country = item[cc.country];
-      i.town = item[cc.town];
-      result.events.push(i);
-    });
-    result.error = "no information";
-    result.discontinue = false;
-    result.timestamp = "unknown";
-    result.refreshurl = false;
-    if (cc.refreshurl) result.refreshurl = true;
-    if (cc.timestamp) result.timestamp = body[cc.timestamp];
-    result.serviceProvider = par;
-    renderEvents(result, req, res, next);
-  });
-}
-
-function renderCalendarRefresh(req, res, next) {
-  debug("renderCalendarRefresh");
-
-  const par = req.params.calendar;
-
-  const cc = alternativeCalendarData[par];
-
-  if (!cc.refreshurl) return next(new Error("Refreshurl missing"));
-
-  const options = {
-    url: cc.refreshurl,
-    method: "GET"
-  };
-  request(options, function(error, response, body) {
-    if (error) return next(error);
-    if (response.statusCode !== 200) {
-      return next(Error("url: " + cc.url + " returns:\n" + body));
-    }
-    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
-    res.redirect(referer);
-  });
-}
 
 
 function generateCCLicense(license, lang, author) {
@@ -323,18 +167,9 @@ function postPictureTool(req, res, next) {
   });
 }
 
-const publicCalendarPage = config.getValue("PublicCalendarPage", { mustExist: true });
+config.getValue("PublicCalendarPage", { deprecated: true });
 
-function renderPublicCalendar(req, res, next) {
-  debug("renderPublicCalendar");
-  request.get({ url: publicCalendarPage }, function(err, response, body) {
-    if (err) return next(err);
-    if (response.statusCode !== 200) return next(new Error("Public Calendar returned status " + response.statusCode));
 
-    body = body.replace("</body>", " <a href=" + htmlroot + "/calendarRefresh/Thomas>Refresh (wait >60 seconds)</a></body>");
-    res.send(body);
-  });
-}
 
 const logFilePath = config.getValue("scripts").logFilePath;
 const scriptFilePath = config.getValue("scripts").scriptFilePath;
@@ -609,13 +444,8 @@ router.get("/scripts/execute", checkScriptRights, renderScripts);
 router.get("/scripts/execute/:filename", checkScriptRights, renderScript);
 router.post("/scripts/execute/:filename", checkScriptRights, executeScript);
 
-router.get("/calendarAllLang/:calendar", checkRole("full"), renderCalendarAllLangAlternative);
-router.post("/getEventTable", checkRole("full"), getEventTable);
 router.get("/picturetool", checkRole("full"), renderPictureTool);
 router.post("/picturetool", checkRole("full"), postPictureTool);
-
-publicRouter.get("/calendar/preview", renderPublicCalendar);
-publicRouter.get("/calendarRefresh/:calendar", renderCalendarRefresh);
 
 
 module.exports.router = router;
