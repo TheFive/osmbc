@@ -4,7 +4,6 @@ const fs = require("fs");
 const path = require("path");
 const config = require("../config.js");
 const should = require("should");
-const async  = require("async");
 const nock   = require("nock");
 const mockdate = require("mockdate");
 

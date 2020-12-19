@@ -13,7 +13,7 @@ async function loadEvents(lang) {
   const url = "https://osmcal.org/api/v2/events/";
   let request = await axios.get(url);
   let json = request.data;
-  if (!Array.isArray(json)) json = [{name:"osmcal did not reply with Eventlist"}];
+  if (!Array.isArray(json)) json = [{ name: "osmcal did not reply with Eventlist" }];
   let event;
   for (event of json) {
     if (!event.location) continue;
@@ -162,12 +162,12 @@ async function getEventMd(lang) {
     events = await loadEvents(lang);
     filter = ef[lang];
     filteredEvents = await filterEvents(events, filter);
-   } catch (err) {
-     let errmessage = "Calendar could not be generated";
-     if (err.message) errmessage = err.message;
-     filteredEvents = [{name:errmessage}];
-     if (process.NODE_ENV !== "test") console.info(err);
-   };
+  } catch (err) {
+    let errmessage = "Calendar could not be generated";
+    if (err.message) errmessage = err.message;
+    filteredEvents = [{ name: errmessage }];
+    if (process.NODE_ENV !== "test") console.info(err);
+  }
 
 
 
