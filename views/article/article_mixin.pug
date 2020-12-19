@@ -34,8 +34,13 @@ mixin articleMarkdown(lang,disabled)
   - var p=""
   if placeholder.markdown[lang]
     - p = placeholder.markdown[lang];
+  if (article.categoryEN === "Upcoming Events")
+    - p = "Calendar will be generated from OSMCAL when starting review."  
   textarea.markdownEdit.form-control.af(id="markdown" +lang placeholder = p spellcheck = "true" lang=lang name = "markdown" +lang rows = 6 readonly = d)=article["markdown" + lang]
   p.osmbc-help-text="'no translation' or '-' to specify no translation wanted."
+  if (!d)
+    div.btn.btn-info(onclick=`window.getEventTable("${lang}",${"markdown" + lang},this);`) (Re)Generate Calendar
+  
   div.alert.markdownMessage.alert-danger(id="text"+lang lang=lang style="display:none" )="Default Error Message"
 
 
@@ -148,7 +153,7 @@ block scripts
 
 
 
-  script.
+  script(nonce=cspNonce).
     // set Constant for Window with JADE Variables
     googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
     activeLanguages = JSON.parse('!{JSON.stringify(layout.activeLanguages)}');

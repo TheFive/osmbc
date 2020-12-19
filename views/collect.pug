@@ -121,7 +121,7 @@ block content
 block scripts                
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
-  script.
+  script(nonce=cspNonce).
     window.onload = init;
     var placeholder = !{JSON.stringify(placeholder.categories)};
     var catArray = !{JSON.stringify(categories)};
@@ -169,8 +169,3 @@ block scripts
  
            
                 
-
-
-
-
-

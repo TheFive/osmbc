@@ -1,6 +1,5 @@
 <html lang="en"><head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -50,13 +49,13 @@
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
+                <li><a id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a></li>
               </ul>
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">--<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
-                <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
+                <li><a id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a></li>
+                <li><a id="lang2_EN" onclick="chooseLanguage('lang2','EN')">EN</a></li>
               </ul>
             </li>
             <li><img onclick="location.href='/usert/2';" style="height:50px;width:50px"></li>
@@ -128,11 +127,21 @@
   
   
 
-<script>
+<script nonce="Fixed Nonce for Test">
   // Init This Window with jQuery ready Callback
   $(document).ready(init2);
   function init2() {
     $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
+  }
+  function chooseLanguage(number,lang) {
+    var data = {};
+    data[number]=lang;
+    jQuery.post("/language",data, function () {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Problem changing language " +  number + " " + lang);
+      console.error(err);
+    });
   }
   
 </script></body></html>

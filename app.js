@@ -14,6 +14,7 @@ const session      = require("express-session");
 const compression  = require("compression");
 
 const helmet       = require("helmet");
+const crypto = require("crypto");
 
 const config       = require("./config.js");
 
@@ -59,6 +60,24 @@ app.locals._path = path;
 
 
 app.use(helmet());
+
+// Initialise Helmet with Nonce for dynamic generated scripts
+app.use((req, res, next) => {
+  res.locals.cspNonce = crypto.randomBytes(16).toString("hex");
+  if (app.get("env") === "test") res.locals.cspNonce = "Fixed Nonce for Test";
+
+  const cspMiddleware = helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      imgSrc: ["*"],
+      styleSrc:["'self' 'unsafe-inline'"] ,
+      upgradeInsecureRequests: [],
+      scriptSrc: ["'self'","'unsafe-inline'" ] //,`'nonce-${res.locals.cspNonce}'`
+    },
+  });
+  cspMiddleware(res, res, next);
+});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -179,7 +198,7 @@ app.get(htmlRoot + "/auth/openstreetmap/callback",
   auth.passport.authenticate("openstreetmap", {failureRedirect: "/login"}),
   function(req, res) {
     debug("after passport.authenticate Function");
-    res.redirect(req.session.returnTo || "/");
+    res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
   });
 
 app.get(htmlRoot + "/logout", function(req, res) {
@@ -206,7 +225,7 @@ app.use(htmlRoot + "/config", configRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   debug("app.use Error Handler");
-  var err = new Error("Page Not Found");
+  var err = new Error("Page Not Found "+ req.url);
   err.status = 404;
   next(err);
 });
@@ -229,6 +248,7 @@ if (app.get("env") === "development") {
     res.render("error", {
       message: err.message,
       error: err,
+      nonce: res.locals.cspNonce,
       layout: {htmlroot: htmlRoot}
     });
   });
@@ -251,6 +271,7 @@ if (app.get("env") === "test") {
     res.render("error", {
       message: err.message,
       error: err,
+      nonce: res.locals.cspNonce,
       layout: {htmlroot: htmlRoot}
     });
   });

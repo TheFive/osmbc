@@ -117,10 +117,10 @@ function languageSwitcher(req, res, next) {
 
   var lang = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()];
 
-  if (req.query.lang) lang[0] = req.query.lang;
-  if (req.query.lang2) lang[1] = req.query.lang2;
-  if (req.query.lang3) lang[2] = req.query.lang3;
-  if (req.query.lang4) lang[3] = req.query.lang4;
+  if (req.body.lang) lang[0] = req.body.lang;
+  if (req.body.lang2) lang[1] = req.body.lang2;
+  if (req.body.lang3) lang[2] = req.body.lang3;
+  if (req.body.lang4) lang[3] = req.body.lang4;
 
 
   for (let v = 0; v < lang.length - 1; v++) {
@@ -159,8 +159,7 @@ function languageSwitcher(req, res, next) {
 
   req.user.save(function finalLanguageSwitcher(err) {
     if (err) return next(err);
-    var referer = req.get("referer");
-    if (referer) res.redirect(referer); else res.end("changed");
+    res.end("OK");
   });
 }
 
@@ -168,28 +167,27 @@ function setUserConfig(req, res, next) {
   debug("setUserConfig");
 
   var user = req.user;
-  if (!req.query.view) {
+  if (!req.body.view) {
     const err = new Error("missing view in option");
     err.status = HttpStatus.BAD_REQUEST;
     return next(err);
   }
-  if (!req.query.option) {
+  if (!req.body.option) {
     const err = new Error("missing option in option");
     err.status = HttpStatus.BAD_REQUEST;
     return next(err);
   }
-  if (!req.query.value) {
+  if (!req.body.value) {
     const err = new Error("missing value in option");
     err.status = HttpStatus.BAD_REQUEST;
     return next(err);
   }
 
-  user.setOption(req.query.view, req.query.option, req.query.value);
+  user.setOption(req.body.view, req.body.option, req.body.value);
 
   req.user.save(function finalLanguageSwitcher(err) {
     if (err) return next(err);
-    var referer = req.get("referer");
-    if (referer) res.redirect(referer); else res.end("changed");
+    res.end("OK");
   });
 }
 
@@ -225,8 +223,8 @@ router.get("/osmbc.html", redirectHome);
 router.get("/osmbc", redirectHome);
 router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
 router.get("/changelog", auth.checkRole(["full", "guest"]), renderChangelog);
-router.get("/language", auth.checkRole(["full", "guest"]), languageSwitcher);
-router.get("/userconfig", auth.checkRole(["full", "guest"]), setUserConfig);
+router.post("/language", auth.checkRole(["full", "guest"]), languageSwitcher);
+router.post("/setuserconfig", auth.checkRole(["full", "guest"]), setUserConfig);
 router.get("/createblog", auth.checkRole(["full"]), createBlog);
 
 

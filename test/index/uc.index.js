@@ -68,7 +68,7 @@ describe("uc/index", function() {
         } catch (err) {
           should(err.message).eql("Server returned status code 404 from http://localhost:35043/notdefined.html");
         }
-        browser.assert.text("h1", "Page Not Found");
+        browser.assert.text("h1", "Page Not Found /notdefined.html");
       });
     });
     describe("LanguageSetter", function() {

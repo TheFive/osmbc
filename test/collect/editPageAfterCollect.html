@@ -1,6 +1,5 @@
 <html lang="en"><head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -89,15 +88,15 @@
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">DE<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a id="lang_DE" href="/language?lang=DE">DE</a></li>
-                <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
+                <li><a id="lang_DE" onclick="chooseLanguage('lang','DE')">DE</a></li>
+                <li><a id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a></li>
               </ul>
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
-                <li><a id="lang2_DE" href="/language?lang2=DE">DE</a></li>
-                <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
+                <li><a id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a></li>
+                <li><a id="lang2_DE" onclick="chooseLanguage('lang2','DE')">DE</a></li>
+                <li><a id="lang2_EN" onclick="chooseLanguage('lang2','EN')">EN</a></li>
               </ul>
             </li>
             <li><img onclick="location.href='/usert/1';" style="height:50px;width:50px"></li>
@@ -280,6 +279,7 @@ Beispiel: OpenCage Data veröffentlicht ein Interview mit David Overton, dem Mac
 3. Eine komplexe Meldung lieber in zwei Sätze aufteilen, statt mit Nebensätzen zu arbeiten.
 4. Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008)" spellcheck="true" lang="DE" name="markdownDE" rows="6" style="background-color: rgb(255, 255, 204);"></textarea>
                 <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
+                <div class="btn btn-info" onclick="window.getEventTable(&quot;DE&quot;,markdownDE,this);">(Re)Generate Calendar</div>
                 <div class="alert markdownMessage alert-danger" id="textDE" lang="DE" style="display:none">Default Error Message</div>
                 <div class="panel panel-default panel-body preview" id="previewDE" lang="DE"><ul><li></li></ul></div>
               </div>
@@ -294,6 +294,7 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
 4. (Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008))
 " spellcheck="true" lang="EN" name="markdownEN" rows="6" style="background-color: rgb(255, 255, 204);"></textarea>
                   <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
+                  <div class="btn btn-info" onclick="window.getEventTable(&quot;EN&quot;,markdownEN,this);">(Re)Generate Calendar</div>
                   <div class="alert markdownMessage alert-danger" id="textEN" lang="EN" style="display:none">Default Error Message</div>
                 </div>
                 <div class="RL hidden RL-DE">
@@ -488,11 +489,21 @@ Use @OSMUser to address any special editor."></textarea>
   
   
 
-<script>
+<script nonce="Fixed Nonce for Test">
   // Init This Window with jQuery ready Callback
   $(document).ready(init2);
   function init2() {
     $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
+  }
+  function chooseLanguage(number,lang) {
+    var data = {};
+    data[number]=lang;
+    jQuery.post("/language",data, function () {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Problem changing language " +  number + " " + lang);
+      console.error(err);
+    });
   }
   
 </script>
@@ -501,7 +512,7 @@ Use @OSMUser to address any special editor."></textarea>
 <script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
 <script src="/javascripts/osmbc_staff.js"></script>
 <script src="/javascripts/article_view.js"></script>
-<script>
+<script nonce="Fixed Nonce for Test">
   // set Constant for Window with JADE Variables
   googleTranslateText = JSON.parse('{"DE":"(automatische [Übersetzung](##link##))","EN":"(automatic [translation](##link##))","ES":"(automatic [translation](##link##))","FR":"(automatic [translation](##link##))","CZ":"(automatic [translation](##link##))","PT":"(automatic [translation](##link##))","RU":"(automatic [translation](##link##))","JP":"(automatic [translation](##link##))","ID":"(automatic [translation](##link##))","TR":"(automatic [translation](##link##))"}');
   activeLanguages = JSON.parse('["DE","EN"]');

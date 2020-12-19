@@ -1,6 +1,5 @@
 <html lang="en"><head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -87,11 +86,13 @@
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">DE<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
+                <li><a id="lang_DE" onclick="chooseLanguage('lang','DE')">DE</a></li>
               </ul>
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">--<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
+                <li><a id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a></li>
+                <li><a id="lang2_DE" onclick="chooseLanguage('lang2','DE')">DE</a></li>
               </ul>
             </li>
             <li><img onclick="location.href='/usert/1';" style="height:50px;width:50px"></li>
@@ -110,8 +111,8 @@
           </div>
           <div class="col-md-11">
             <div class="progress" style="margin-bottom:2px">
-              <div class="progress-bar osmbclabel-markdown" style="width:0%">0</div>
-              <div class="progress-bar osmbclabel-no-markdown" style="width:100%">2</div>
+              <div class="progress-bar osmbclabel-markdown" style="width:50%">1</div>
+              <div class="progress-bar osmbclabel-no-markdown" style="width:50%">1</div>
               <div class="progress-bar osmbclabel-no-translation" style="width:0%">0</div>
             </div>
           </div>
@@ -166,6 +167,7 @@
               <li class="hidden-xs"><a href="/blog/WN251/preview?lang=DE"><span class="glyphicon glyphicon-export"></span>DE<span> </span><span class="glyphicon glyphicon-alert"></span></a></li>
               <li class="dropdown hidden-xs"><a class="dropdown-toggle" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-export"></span></a>
                 <ul class="dropdown-menu" role="menu">
+                  <li><a href="/blog/WN251/preview?lang=DE"><span>Export DE</span><span> </span><span class="glyphicon glyphicon-alert"></span></a></li>
                 </ul>
               </li>
             </ul>
@@ -239,7 +241,7 @@
             </td>
             <td>
               <div onclick="if (!openEditor) {openEditor = document.getElementById('div1');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
-                <div class="not-formulated">
+                <div>
                   <ul class="no-margin"><li>WN251 Upcoming Events</li>
 </ul>
                 </div>
@@ -260,10 +262,12 @@
                 </div>
                 <div class="panel-body">
                   <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post">
-                    <textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE"></textarea>
-                    <textarea class="hidden form-control" name="oldMarkdown" id="oldMarkdown1" rows="7"></textarea>
+                    <textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE">|Wo|Was|Online|Wann|Land|
+|--|---|------|----|----|</textarea>
+                    <textarea class="hidden form-control" name="oldMarkdown" id="oldMarkdown1" rows="7">|Wo|Was|Online|Wann|Land|
+|--|---|------|----|----|</textarea>
                   </form>
-                  <p>
+                  <p><span> Edited: </span><span class="label small-margin osmbclabel-markdown">OSMCAL</span><span> Time: a few seconds ago</span>
                   </p>
                 </div>
               </div>
@@ -285,9 +289,9 @@
               <p>Left Col.: </p>
             </div>
             <div class="col-md-11">
-              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showNumbers" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showNumbers&amp;value=true&quot;;"></span><span> show editor numbers, </span></span>
-              </div><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showMail" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showMail&amp;value=true&quot;;"></span><span> show mail, </span></span>
-              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVisibleLanguages" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVisibleLanguages&amp;value=true&quot;;"></span><span> show languages(short)</span></span>
+              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showNumbers" onclick="window.setUserConfig({view:'overview',option:'showNumbers',value:'true'});"></span><span> show editor numbers, </span></span>
+              </div><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showMail" onclick="window.setUserConfig({view:'overview',option:'showMail',value:'true'});"></span><span> show mail, </span></span>
+              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVisibleLanguages" onclick="window.setUserConfig({view:'overview',option:'showVisibleLanguages',value:'true'});"></span><span> show languages(short)</span></span>
               </div>
             </div>
           </div>
@@ -295,21 +299,21 @@
             <div class="col-md-1">
               <p>Right Col.:</p>
             </div>
-            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showCollector" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showCollector&amp;value=true&quot;;"></span><span> show collector, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showEditor" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showEditor&amp;value=true&quot;;"></span><span> show editor , </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showColoredUser" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showColoredUser&amp;value=true&quot;;"></span><span> show users colored, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showLanguages" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showLanguages&amp;value=true&quot;;"></span><span> show languages</span></span>
+            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showCollector" onclick="window.setUserConfig({view:'overview',option:'showCollector',value:'true'});"></span><span> show collector, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showEditor" onclick="window.setUserConfig({view:'overview',option:'showEditor',value:'true'});"></span><span> show editor , </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showColoredUser" onclick="window.setUserConfig({view:'overview',option:'showColoredUser',value:'true'});"></span><span> show users colored, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showLanguages" onclick="window.setUserConfig({view:'overview',option:'showLanguages',value:'true'});"></span><span> show languages</span></span>
             </div>
           </div>
           <div class="row">
             <div class="col-md-1">
               <p>Display Votes</p>
             </div>
-            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_pro" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_pro&amp;value=true&quot;;"></span><span> show pro, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_unpublish" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_unpublish&amp;value=true&quot;;"></span><span> show unpublish, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_fav" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_fav&amp;value=true&quot;;"></span><span> show fav, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_doit" onclick="location.href=&quot;/userconfig?view=overview&amp;option=showVote_doit&amp;value=true&quot;;"></span><span> show doit, </span></span>
+            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_pro" onclick="window.setUserConfig({view:'overview',option:'showVote_pro',value:'true'});"></span><span> show pro, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_unpublish" onclick="window.setUserConfig({view:'overview',option:'showVote_unpublish',value:'true'});"></span><span> show unpublish, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_fav" onclick="window.setUserConfig({view:'overview',option:'showVote_fav',value:'true'});"></span><span> show fav, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_doit" onclick="window.setUserConfig({view:'overview',option:'showVote_doit',value:'true'});"></span><span> show doit, </span></span>
             </div>
           </div>
           <div class="row">
             <div class="col-md-1">
               <p>Filter: </p>
             </div>
-            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_disableWritten" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableWritten&amp;value=true&quot;;"></span><span> disable written articles, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_disableNewerMarkdown" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableNewerMarkdown&amp;value=true&quot;;"></span><span> disable more actual edits, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_disableOwnCollection" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableOwnCollection&amp;value=true&quot;;"></span><span> disable own collections, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_disableOtherCollection" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableOtherCollection&amp;value=true&quot;;"></span><span> disable other collections, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_disableSolvedComments" onclick="location.href=&quot;/userconfig?view=overview&amp;option=disableSolvedComments&amp;value=true&quot;;"></span><span> disable No or Solved Comments</span></span>
+            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_disableWritten" onclick="window.setUserConfig({view:'overview',option:'disableWritten',value:'true'});"></span><span> disable written articles, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_disableNewerMarkdown" onclick="window.setUserConfig({view:'overview',option:'disableNewerMarkdown',value:'true'});"></span><span> disable more actual edits, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_disableOwnCollection" onclick="window.setUserConfig({view:'overview',option:'disableOwnCollection',value:'true'});"></span><span> disable own collections, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_disableOtherCollection" onclick="window.setUserConfig({view:'overview',option:'disableOtherCollection',value:'true'});"></span><span> disable other collections, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_disableSolvedComments" onclick="window.setUserConfig({view:'overview',option:'disableSolvedComments',value:'true'});"></span><span> disable No or Solved Comments</span></span>
             </div>
           </div>
         </div>
@@ -375,17 +379,27 @@
   
   
 
-<script>
+<script nonce="Fixed Nonce for Test">
   // Init This Window with jQuery ready Callback
   $(document).ready(init2);
   function init2() {
     $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
   }
+  function chooseLanguage(number,lang) {
+    var data = {};
+    data[number]=lang;
+    jQuery.post("/language",data, function () {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Problem changing language " +  number + " " + lang);
+      console.error(err);
+    });
+  }
   
 </script>
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
 <script src="/javascripts/osmbc_staff.js"></script>
-<script>
+<script nonce="Fixed Nonce for Test">
   var openEditor = null;
   htmlroot = "";
   
@@ -493,5 +507,26 @@
       $(".translateWait" + langFrom + langTo).addClass("hidden");
       $(".translateError" + langFrom + langTo).removeClass("hidden");
     });
+  }
+  
+  function setUserConfig(options) {
+    jQuery.post(window.htmlroot + "/setuserconfig/",options, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble saveing User Config");
+      console.error(err);
+    });
+  }    
+      
+  function setLangStatus(lang, status,button) {
+    $(button).prop('disabled', true);
+    $(button).prop('html', "wait ...");
+    jQuery.post(window.htmlroot + "/blog/WN251/setLangStatus",{action:status,lang:lang}, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble setting Language Status");
+      console.error(err);
+    });
+  
   }
 </script></body></html>

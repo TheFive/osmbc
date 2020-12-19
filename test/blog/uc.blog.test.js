@@ -69,6 +69,11 @@ describe("uc/blog", function() {
         blog: [{name: "blog"}],
         user: [{OSMUser: "TheFive", access: "full", mainLang: "DE",email:"a@b.c"},
           {OSMUser: "TheOther", access: "full", mainLang: "EN",email:"d@e.f"}]});
+        const n = nock("https://osmcal.org")
+          .get("/api/v2/events/")
+          .twice()
+          .reply(200,"[]");
+
     });
     it("should be able to manage a blog lifetime", async function() {
       let errors = [];
@@ -97,6 +102,9 @@ describe("uc/blog", function() {
       await browserTheFive.select("status", "edit");
       await browserTheFive.click("input[value='OK']");
 
+
+
+
       // go to the blog view with the articles
       await browserTheFive.click("a[href='/blog/WN251']");
       browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251EditMode");
@@ -106,6 +114,8 @@ describe("uc/blog", function() {
 
       // start personal review
       await browserTheFive.click("button#reviewButtonDE");
+
+
 
       // Do a first review comment
 

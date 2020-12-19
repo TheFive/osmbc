@@ -20,6 +20,7 @@ const logger = require("../config.js").logger;
 
 
 const parseEvent = require("../model/parseEvent.js");
+const osmcalLoader = require("../model/osmcalLoader.js");
 
 const articleModule = require("../model/article.js");
 const configModule = require("../model/config.js");
@@ -37,6 +38,7 @@ const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true 
 
 
 function eventDateFormat(e, lang) {
+  debug("eventDateFormat");
   const sd = moment(e.startDate);
   const ed = moment(e.endDate);
   let dateString = "";
@@ -55,6 +57,7 @@ function eventDateFormat(e, lang) {
 }
 
 function flag(country, cf) {
+  debug("flag");
   if (!country) country = "";
   const c = country.toLowerCase();
   if (cf[c]) return "<img src='" + cf[c] + "'></img>";
@@ -187,7 +190,7 @@ function renderCalendarRefresh(req, res, next) {
     if (response.statusCode !== 200) {
       return next(Error("url: " + cc.url + " returns:\n" + body));
     }
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -370,12 +373,14 @@ function readScriptConfig(script, callback) {
 }
 
 function quoteParam(param, quote) {
+  debug("quoteParam");
   if (quote) return '"' + param + '"';
   // if (quote) return "'" + param + "'";
   return param;
 }
 
 function renderScriptLog(req, res) {
+  debug("renderScriptLog");
   const file = req.params.filename;
   let text = null;
   let reload = false;
@@ -427,6 +432,7 @@ function renderScriptLog(req, res) {
 
 
 function renderScripts(req, res) {
+  debug("renderScripts");
   glob(scriptFilePath + "/" + scriptFileFilter, function(error, data) {
     if (data) data.sort();
     if (error) {
@@ -458,6 +464,7 @@ function renderScripts(req, res) {
 }
 
 function renderScript(req, res) {
+  debug("renderScript");
   const file = req.params.filename;
 
   readScriptConfig(file, function(err, configuration) {
@@ -474,6 +481,7 @@ function renderScript(req, res) {
 
 
 function executeScript(req, res, next) {
+  debug("executeScript");
   const file = req.params.filename;
 
   readScriptConfig(file, function(err, configuration) {
@@ -576,6 +584,20 @@ function executeScript(req, res, next) {
   });
 }
 
+function getEventTable(req, res, next) {
+  debug("getEventTable");
+  const lang = req.query.lang;
+  if (typeof lang !== "string" || lang.length < 2) return next(new Error("Missing Language Parameter"));
+
+  res.set({ "Content-Type": "text/plain" });
+
+  osmcalLoader.getEventMdCb(lang, function(err, result) {
+    if (err) return next(err);
+    res.send(result);
+  });
+}
+
+
 const userList = config.getValue("scripts").user;
 let checkScriptRights = checkRole("full");
 
@@ -588,11 +610,13 @@ router.get("/scripts/execute/:filename", checkScriptRights, renderScript);
 router.post("/scripts/execute/:filename", checkScriptRights, executeScript);
 
 router.get("/calendarAllLang/:calendar", checkRole("full"), renderCalendarAllLangAlternative);
+router.post("/getEventTable", checkRole("full"), getEventTable);
 router.get("/picturetool", checkRole("full"), renderPictureTool);
 router.post("/picturetool", checkRole("full"), postPictureTool);
 
 publicRouter.get("/calendar/preview", renderPublicCalendar);
 publicRouter.get("/calendarRefresh/:calendar", renderCalendarRefresh);
+
 
 module.exports.router = router;
 module.exports.publicRouter = publicRouter;

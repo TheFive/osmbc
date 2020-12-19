@@ -119,17 +119,10 @@ mixin blogReviewButtons(lang)
     if (_rc)
       .row
         .col-md-12
-          form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
-            input.hidden(type="text",name="lang" value = lang)
-
-            if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
-              input.hidden(type="text",name ="action" value = "closelang")
-              button.btn.btn-large.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
-              if (reviewScripts[lang])
-                div.btn.btn-large.btn-info(onclick=`location.href="${reviewScripts[lang]}?blog=${blog.name}&startDate=${util.dateFormat(blog.startDate,lang)}&endDate=${util.dateFormat(blog.endDate,lang)}&l=${lang}"`) Advertise #{blog.name}(#{lang})
-            else
-              input.hidden(type="text",name ="action" value = "markexported")
-              button.btn.btn-large.btn-warning(id="didexport" type = "submit" ) Did Export (#{lang})
+          if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
+            button.btn.btn-large.btn-warning(id="closebutton" onclick=`window.setLangStatus("${lang}","closelang",this);`) Close #{blog.name}(#{lang})
+          else
+            button.btn.btn-large.btn-warning(id="didexport" onclick=`window.setLangStatus("${lang}","markexported",this);`) Did Export (#{lang})
 
       if (blog["exported"+lang])
         .row
@@ -138,10 +131,7 @@ mixin blogReviewButtons(lang)
 
     else
       if blog.status != "open"
-        form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
-          input.hidden(type="text",name ="action" value = "startreview")
-          input.hidden(type="text",name="lang" value = lang)
-          button.btn.btn-large.btn-primary(id="readyreview" type="submit") Set #{blog.name}(#{lang}) ready for review
+        button.btn.btn-large.btn-primary(id="readyreview" onclick=`window.setLangStatus("${lang}","startreview",this);`) Set #{blog.name}(#{lang}) ready for review
 
 mixin blogTranslateMenu(langFrom,langTo,service)
   if (!blog["closed"+langTo])
@@ -315,7 +305,7 @@ block scripts
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
   script(src=layout.htmlroot + "/javascripts/osmbc_staff.js")
 
-  script.
+  script(nonce=cspNonce).
 
     var openEditor = null;
     htmlroot = "!{layout.htmlroot}";
@@ -424,4 +414,25 @@ block scripts
         $(".translateWait" + langFrom + langTo).addClass("hidden");
         $(".translateError" + langFrom + langTo).removeClass("hidden");
       });
+    }
+    
+    function setUserConfig(options) {
+      jQuery.post(window.htmlroot + "/setuserconfig/",options, function (data) {
+        location.reload();
+      }).fail(function (err) {
+        console.error("Trouble saveing User Config");
+        console.error(err);
+      });
+    }    
+        
+    function setLangStatus(lang, status,button) {
+      $(button).prop('disabled', true);
+      $(button).prop('html', "wait ...");
+      jQuery.post(window.htmlroot + "/blog/!{blog.name}/setLangStatus",{action:status,lang:lang}, function (data) {
+        location.reload();
+      }).fail(function (err) {
+        console.error("Trouble setting Language Status");
+        console.error(err);
+      });
+    
     }

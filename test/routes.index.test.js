@@ -33,7 +33,21 @@ describe("routes/index", function() {
       response.body.should.containEql(options.expectedMessage);
       should(response.statusCode).eql(options.expectedStatusCode);
     };
-  }
+  };
+  function checkPostUrlWithJar(options) {
+    return async function() {
+      should.exist(options.user);
+      should.exist(jar[options.user]);
+      should.exist(options.url);
+      should.exist(options.expectedMessage);
+      should.exist(options.expectedStatusCode);
+      should.exist(options.form);
+      let response = await rp.post({url: options.url, form:options.form,jar: jar[options.user], simple: false, resolveWithFullResponse: true});
+      response.body.should.containEql(options.expectedMessage);
+      should(response.statusCode).eql(options.expectedStatusCode);
+    };
+  };
+
 
 
 
@@ -144,12 +158,15 @@ describe("routes/index", function() {
         expectedStatusCode: HttpStatus.OK,
         expectedMessage: "<h1>Changelog</h1>"}));
   });
-  describe("route GET /language", function() {
-    let url = baseLink + "/language?lang=DE";
+  describe("route POST /language", function() {
+    let url = baseLink + "/language";
+    let data = {lang:"DE"};
 
     function requestLanguageSetter(user,whichLang, lang) {
       function _requestLanguageSetter(whichlang, lang, cb) {
-        request.get({url: baseLink + "/language?" + whichlang + "=" + lang, jar: jar[user]}, function (err, response) {
+        let form = {};
+        form[whichlang] = lang;
+        request.post({url: baseLink + "/language?" ,form:form, jar: jar[user]}, function (err, response) {
           should.not.exist(err);
           should(response.statusCode).eql(200);
           return cb();
@@ -170,7 +187,6 @@ describe("routes/index", function() {
         OSMUser: "TestUser",
         access: "full",
         version: 4,
-        lastAccess: "2016-05-25T20:00:00.000Z",
         mainLang: "ES",
         secondLang: "EN",
         lang3: null,
@@ -189,7 +205,6 @@ describe("routes/index", function() {
         OSMUser: "TestUserNonExisting",
         access: "guest",
         version: 4,
-        lastAccess: "2016-05-25T20:00:00.000Z",
         mainLang: "ES",
         secondLang: "EN",
         mdWeeklyAuthor: "anonymous",
@@ -204,55 +219,58 @@ describe("routes/index", function() {
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
   });
-  describe("route GET /userconfig", function() {
-    let url = baseLink + "/userconfig?view=v1&option=o1&value=v2";
+  describe("route POST /setuserconfig", function() {
+    let url = baseLink + "/setuserconfig";
+    let form = {view:'v1',option:'o1',value:'v2'};
     it("should set options for a view (full user)", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      should(body).eql("changed");
+      let body = await rp.post({url: url, form: form, jar: jar.testUser});
+      should(body).eql("OK");
       let user = await userModule.findById(1);
       should(user).eql({
         id: "1",
         OSMUser: "TestUser",
         access: "full",
-        lastAccess: "2016-05-25T20:00:00.000Z",
         version: 2,
         option: { v1: { o1: "v2" } }
       });
     });
     it("should throw an error on missing option",
-      checkUrlWithJar({
-        url: baseLink + "/userconfig?view=v1&option=o1",
+      checkPostUrlWithJar({
+        url: url,
         user: "testUser",
+        form:  {view:'v1',option:'o1' },
         expectedStatusCode: HttpStatus.BAD_REQUEST,
         expectedMessage: "<h1>missing value in option</h1>"}));
 
     it("should throw an error on missing view",
-      checkUrlWithJar({
-        url: baseLink + "/userconfig",
+      checkPostUrlWithJar({
+        url: url,
         user: "testUser",
+        form:{},
         expectedStatusCode: HttpStatus.BAD_REQUEST,
         expectedMessage: "<h1>missing view in option</h1>"}));
     it("should throw an error on missing value",
-      checkUrlWithJar({
-        url: baseLink + "/userconfig?view=V1",
+      checkPostUrlWithJar({
+        url: url,
+        form:{view:'V1'},
         user: "testUser",
         expectedStatusCode: HttpStatus.BAD_REQUEST,
         expectedMessage: "<h1>missing option in option</h1>"}));
     it("should deny denied access user",
-      checkUrlWithJar({
+      checkPostUrlWithJar({
         url: url,
         user: "testUserDenied",
+        form:{},
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
     it("should set options for a view (guest user)", async function () {
-      let body = await rp.get({url: url, jar: jar.testUserNonExisting});
-      should(body).eql("changed");
+      let body = await rp.post({url: url, form:form,jar: jar.testUserNonExisting});
+      should(body).eql("OK");
       let user = await userModule.findById(4);
       should(user).eql({
         id: "4",
         OSMUser: "TestUserNonExisting",
         access: "guest",
-        lastAccess: "2016-05-25T20:00:00.000Z",
         mdWeeklyAuthor: "anonymous",
         version: 2,
         option: { v1: { o1: "v2" } }

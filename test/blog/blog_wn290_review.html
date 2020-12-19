@@ -1,6 +1,5 @@
 <html lang="en"><head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -103,17 +102,17 @@
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">DE<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a id="lang_DE" href="/language?lang=DE">DE</a></li>
-                <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
-                <li><a id="lang_ES" href="/language?lang=ES">ES</a></li>
+                <li><a id="lang_DE" onclick="chooseLanguage('lang','DE')">DE</a></li>
+                <li><a id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a></li>
+                <li><a id="lang_ES" onclick="chooseLanguage('lang','ES')">ES</a></li>
               </ul>
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
-                <li><a id="lang2_DE" href="/language?lang2=DE">DE</a></li>
-                <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
-                <li><a id="lang2_ES" href="/language?lang2=ES">ES</a></li>
+                <li><a id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a></li>
+                <li><a id="lang2_DE" onclick="chooseLanguage('lang2','DE')">DE</a></li>
+                <li><a id="lang2_EN" onclick="chooseLanguage('lang2','EN')">EN</a></li>
+                <li><a id="lang2_ES" onclick="chooseLanguage('lang2','ES')">ES</a></li>
               </ul>
             </li>
             <li><img onclick="location.href='/usert/2';" style="height:50px;width:50px"></li>
@@ -159,22 +158,14 @@
           <div class="col-md-3">
             <div class="row">
               <div class="col-md-12">
-                <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
-                  <input class="hidden" type="text" name="lang" value="DE">
-                  <input class="hidden" type="text" name="action" value="markexported">
-                  <button class="btn btn-large btn-warning" id="didexport" type="submit">Did Export (DE)</button>
-                </form>
+                <button class="btn btn-large btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button>
               </div>
             </div>
           </div>
           <div class="col-md-3">
             <div class="row">
               <div class="col-md-12">
-                <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
-                  <input class="hidden" type="text" name="lang" value="EN">
-                  <input class="hidden" type="text" name="action" value="closelang">
-                  <button class="btn btn-large btn-warning" id="closebutton" type="submit">Close WN290(EN)</button>
-                </form>
+                <button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button>
               </div>
             </div>
           </div>
@@ -2055,9 +2046,9 @@ Segeltörn
               <p>Left Column:</p>
             </div>
             <div class="col-md-11">
-              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showNumbers" onclick="location.href=&quot;/userconfig?view=review&amp;option=showNumbers&amp;value=true&quot;;"></span><span> show editor numbers, </span></span>
-              </div><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showMail" onclick="location.href=&quot;/userconfig?view=review&amp;option=showMail&amp;value=true&quot;;"></span><span> show mail, </span></span>
-              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showCollector" onclick="location.href=&quot;/userconfig?view=review&amp;option=showCollector&amp;value=true&quot;;"></span><span> show collector, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showEditor" onclick="location.href=&quot;/userconfig?view=review&amp;option=showEditor&amp;value=true&quot;;"></span><span> show editor , </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showLanguages" onclick="location.href=&quot;/userconfig?view=review&amp;option=showLanguages&amp;value=true&quot;;"></span><span> show languages, </span></span>
+              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showNumbers" onclick="window.setUserConfig({view:'review',option:'showNumbers',value:'true'});"></span><span> show editor numbers, </span></span>
+              </div><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showMail" onclick="window.setUserConfig({view:'review',option:'showMail',value:'true'});"></span><span> show mail, </span></span>
+              <div class="hidden-xs"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showCollector" onclick="window.setUserConfig({view:'review',option:'showCollector',value:'true'});"></span><span> show collector, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showEditor" onclick="window.setUserConfig({view:'review',option:'showEditor',value:'true'});"></span><span> show editor , </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showLanguages" onclick="window.setUserConfig({view:'review',option:'showLanguages',value:'true'});"></span><span> show languages, </span></span>
               </div>
             </div>
           </div>
@@ -2065,14 +2056,14 @@ Segeltörn
             <div class="col-md-1">
               <p>Display Votes</p>
             </div>
-            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_pro" onclick="location.href=&quot;/userconfig?view=review&amp;option=showVote_pro&amp;value=true&quot;;"></span><span> show pro, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_unpublish" onclick="location.href=&quot;/userconfig?view=review&amp;option=showVote_unpublish&amp;value=true&quot;;"></span><span> show unpublish, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_fav" onclick="location.href=&quot;/userconfig?view=review&amp;option=showVote_fav&amp;value=true&quot;;"></span><span> show fav, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_doit" onclick="location.href=&quot;/userconfig?view=review&amp;option=showVote_doit&amp;value=true&quot;;"></span><span> show doit, </span></span>
+            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_pro" onclick="window.setUserConfig({view:'review',option:'showVote_pro',value:'true'});"></span><span> show pro, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_unpublish" onclick="window.setUserConfig({view:'review',option:'showVote_unpublish',value:'true'});"></span><span> show unpublish, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_fav" onclick="window.setUserConfig({view:'review',option:'showVote_fav',value:'true'});"></span><span> show fav, </span></span><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showVote_doit" onclick="window.setUserConfig({view:'review',option:'showVote_doit',value:'true'});"></span><span> show doit, </span></span>
             </div>
           </div>
           <div class="row hidden-xs">
             <div class="col-md-1">
               <p>Options:</p>
             </div>
-            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showColoredUser" onclick="location.href=&quot;/userconfig?view=review&amp;option=showColoredUser&amp;value=true&quot;;"></span><span> show users colored</span></span>
+            <div class="col-md-11"><span style="white-space: nowrap"><span class="glyphicon glyphicon-unchecked" name="choose_showColoredUser" onclick="window.setUserConfig({view:'review',option:'showColoredUser',value:'true'});"></span><span> show users colored</span></span>
             </div>
           </div>
         </div>
@@ -2138,17 +2129,27 @@ Segeltörn
   
   
 
-<script>
+<script nonce="Fixed Nonce for Test">
   // Init This Window with jQuery ready Callback
   $(document).ready(init2);
   function init2() {
     $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
   }
+  function chooseLanguage(number,lang) {
+    var data = {};
+    data[number]=lang;
+    jQuery.post("/language",data, function () {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Problem changing language " +  number + " " + lang);
+      console.error(err);
+    });
+  }
   
 </script>
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
 <script src="/javascripts/osmbc_staff.js"></script>
-<script>
+<script nonce="Fixed Nonce for Test">
   var openEditor = null;
   htmlroot = "";
   
@@ -2256,5 +2257,26 @@ Segeltörn
       $(".translateWait" + langFrom + langTo).addClass("hidden");
       $(".translateError" + langFrom + langTo).removeClass("hidden");
     });
+  }
+  
+  function setUserConfig(options) {
+    jQuery.post(window.htmlroot + "/setuserconfig/",options, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble saveing User Config");
+      console.error(err);
+    });
+  }    
+      
+  function setLangStatus(lang, status,button) {
+    $(button).prop('disabled', true);
+    $(button).prop('html', "wait ...");
+    jQuery.post(window.htmlroot + "/blog/WN290/setLangStatus",{action:status,lang:lang}, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble setting Language Status");
+      console.error(err);
+    });
+  
   }
 </script></body></html>

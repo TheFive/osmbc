@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === "test" && process.env.TEST_LOG !== "TRUE") {
     ]});
   } else {
   logger = winston.createLogger({
-    level: 'info',
+    level: 'error',
     format: winston.format.json()});
 
     logger.add(new winston.transports.Console({
@@ -166,6 +166,16 @@ exports.moment_locale = function(lang) {
 exports.getServerPort = function() {
   exports.initialise();
   return exports.getValue("serverport", {mustExist: true});
+};
+
+exports.getServerKey = function() {
+  exports.initialise();
+  return exports.getValue("serverkey");
+};
+
+exports.getServerCert = function() {
+  exports.initialise();
+  return exports.getValue("servercert");
 };
 
 exports.getCallbackUrl = function() {

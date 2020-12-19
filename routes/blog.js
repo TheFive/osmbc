@@ -278,7 +278,7 @@ function setReviewComment(req, res, next) {
   if (!req.blog) return next();
   req.blog.setReviewComment(lang, user, data, function(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -295,7 +295,7 @@ function editReviewComment(req, res, next) {
   if (!req.blog) return next();
   req.blog.editReviewComment(lang, user, index, data, function(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -309,8 +309,7 @@ function setBlogStatus(req, res, next) {
 
   function finalFunction(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
-    res.redirect(referer);
+    res.end("OK");
   }
 
   // Start Review
@@ -396,7 +395,7 @@ function renderBlogTab(req, res, next) {
         const changes = { status: req.query.setStatus };
         blog.setAndSave(req.user, changes, function(err) {
           if (err) return callback(err);
-          let referer =  "/";
+          let referer =  config.htmlRoot() + "/osmbc";
           if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
             referer = req.header("Referer");
           }
@@ -475,7 +474,7 @@ function copyAllArticles(req, res, next) {
 
   blog.copyAllArticles(user, fromLang, toLang, function (err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -494,7 +493,7 @@ function translateAllArticles(req, res, next) {
 
   blog.translateAllArticles(user, fromLang, toLang, service, function (err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }

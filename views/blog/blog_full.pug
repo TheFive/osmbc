@@ -31,30 +31,30 @@ block blogcontent
 
   if disableOwnCollection
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=full&option=disableOwnCollection&value=false";`) &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableOwnCollection',value:'false'});`) &times
       span.glyphicon.glyphicon-filter
       span=" Collections of " + layout.user.OSMUser + " are disabled"
 
   if disableOtherCollection
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=full&option=disableOtherCollection&value=false";`) &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableOtherCollection',value:'false'});`) &times
       span.glyphicon.glyphicon-filter
       span=" Collections not done by " + layout.user.OSMUser + " are disabled"
   if disableWritten
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=full&option=disableWritten&value=false";`) &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableWritten',value:'false'});`) &times
       span.glyphicon.glyphicon-filter
       span=" Written markdown is disabled"
 
   if disableNewerMarkdown
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=full&option=disableNewerMarkdown&value=false";`) &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableNewerMarkdown',value:'false'});`) &times
       span.glyphicon.glyphicon-filter
       span=" Disable, if left lang article is newer than right lang article"
 
   if disableSolvedComments
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`location.href="${layout.htmlroot}/userconfig?view=full&option=disableSolvedComments&value=false";`) &times
+      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableSolvedComments',value:'false'});`) &times
       span.glyphicon.glyphicon-filter
       span=" No & Solved Comments are disabled"
   .row
