@@ -198,7 +198,7 @@ app.get(htmlRoot + "/auth/openstreetmap/callback",
   auth.passport.authenticate("openstreetmap", {failureRedirect: "/login"}),
   function(req, res) {
     debug("after passport.authenticate Function");
-    res.redirect(req.session.returnTo || "/");
+    res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
   });
 
 app.get(htmlRoot + "/logout", function(req, res) {
@@ -225,7 +225,7 @@ app.use(htmlRoot + "/config", configRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   debug("app.use Error Handler");
-  var err = new Error("Page Not Found");
+  var err = new Error("Page Not Found "+ req.url);
   err.status = 404;
   next(err);
 });

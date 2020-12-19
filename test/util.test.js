@@ -8,6 +8,7 @@ const turndownService = require("turndown")();
 turndownService.use(require("../util/turndown-it-sup.js"));
 
 const markdown = require("markdown-it")();
+const mdUtil = require("../util/md_util.js");
 
 /* eslint-disable mocha/no-synchronous-tests */
 describe("util", function() {
@@ -24,7 +25,7 @@ describe("util", function() {
       should(util.shorten(t, 25)).equal("");
       bddone();
     });
-    it("should not shorten numbers",function(bddone){
+    it("should not shorten numbers", function(bddone) {
       should(util.shorten(9)).eql(9);
       bddone();
     });
@@ -39,7 +40,7 @@ describe("util", function() {
       bddone();
     });
     it("should shorten objects and other non strings", function(bddone) {
-      should(util.shorten({name: "Hallo"})).equal('{"name":"Hallo"}');
+      should(util.shorten({ name: "Hallo" })).equal('{"name":"Hallo"}');
       should(util.shorten(null)).equal("");
       should(util.shorten(true)).equal("true");
       bddone();
@@ -85,7 +86,7 @@ describe("util", function() {
     });
     it("should return one url for a 'collection'", function() {
       for (var i = 0; i < data.isURLArray.length; i++) {
-        let url = data.isURLArray[i];
+        const url = data.isURLArray[i];
         should(util.getAllURL(url)).eql([url]);
         should(util.getAllURL(url + "\n ")).eql([url]);
         should(util.getAllURL(" \n" + url)).eql([url]);
@@ -93,8 +94,8 @@ describe("util", function() {
     });
     it("should return several url for a 'collection'", function() {
       for (var i = 0; i < data.isURLArray.length - 1; i++) {
-        let url1 = data.isURLArray[i];
-        let url2 = data.isURLArray[i + 1];
+        const url1 = data.isURLArray[i];
+        const url2 = data.isURLArray[i + 1];
         should(util.getAllURL(url1 + " " + url2)).eql([url1, url2]);
         should(util.getAllURL(url1 + "\n " + url2)).eql([url1, url2]);
         should(util.getAllURL("  " + url1 + " \n" + url2)).eql([url1, url2]);
@@ -108,7 +109,7 @@ describe("util", function() {
     });
   });
   describe("linkify", function() {
-    it("should handle undefined values",function(bddone){
+    it("should handle undefined values", function(bddone) {
       should(util.linkify(undefined)).eql("undefined");
       bddone();
     });
@@ -117,7 +118,7 @@ describe("util", function() {
     });
   });
   describe("md_render", function() {
-    it("should render emty texts",function(){
+    it("should render emty texts", function() {
       should(util.md_render(null)).eql("");
     });
     it("should convert a simple link", function() {
@@ -132,33 +133,55 @@ describe("util", function() {
       var r = util.md_render("http://www.google.de/hallo is a synonym for [this](https://www.google.de/hallo2)");
       should(r).eql('<p><a target="_blank" href="http://www.google.de/hallo">http://www.google.de/hallo</a> is a synonym for <a target="_blank" href="https://www.google.de/hallo2">this</a></p>\n');
     });
-    it("should render a shorted link",function(){
-      let r = util.md_render("this is a link #1928 to an article");
+    it("should render a shorted link", function() {
+      const r = util.md_render("this is a link #1928 to an article");
       should(r).eql("<p>this is a link <a target=\"_blank\" href=\"https://testosm.bc/article/1928\">#1928</a> to an article</p>\n");
     });
-    it("should render user names",function(){
-      let r = util.md_render("@thefive is telling @user1 about @user2",{TheFive:"full",user1:"denied",user2:"guest"});
+    it("should render user names", function() {
+      const r = util.md_render("@thefive is telling @user1 about @user2", { TheFive: "full", user1: "denied", user2: "guest" });
       should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/TheFive>@TheFive</a> is telling <a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
     });
-    it("should not conflict with if username / language is contained in other username",function(){
-      let r = util.md_render("@ende is telling @user1 about @user2",{ende:"full",user1:"denied",user2:"guest",en:"full"});
+    it("should not conflict with if username / language is contained in other username", function() {
+      const r = util.md_render("@ende is telling @user1 about @user2", { ende: "full", user1: "denied", user2: "guest", en: "full" });
       should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/ende>@ende</a> is telling <a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
     });
-    it("should do colour mentions after a linebreak",function(){
-      let r = util.md_render("@ende is telling \n@user1 about @user2\n",{ende:"full",user1:"denied",user2:"guest",en:"full"});
+    it("should do colour mentions after a linebreak", function() {
+      const r = util.md_render("@ende is telling \n@user1 about @user2\n", { ende: "full", user1: "denied", user2: "guest", en: "full" });
       should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/ende>@ende</a> is telling\n<a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
-
     });
   });
-  describe("turndown-it-sup", function(){
-
-
-
-    it("should convert nested superscript ",function(){
-      let md = "It contains [^1^](https://link.somewhere) a link with superscript";
-      let html = markdown.render(md);
-      let backconverted_md = turndownService.turndown(html);
-      should(backconverted_md).eql(md);
+  describe("turndown-it-sup", function() {
+    it("should convert nested superscript ", function() {
+      const md = "It contains [^1^](https://link.somewhere) a link with superscript";
+      const html = markdown.render(md);
+      const backconvertedMd = turndownService.turndown(html);
+      should(backconvertedMd).eql(md);
     });
-  })
+  });
+  describe("mdUtil", function() {
+    it("should generate emtpy table", function() {
+      const json = [];
+      const columns = [{ field: "a", name: "A" }];
+      const result = mdUtil.mdTable(json, columns);
+      should(result).eql("|A|\n|-|\n");
+    });
+    it("should handle table", function() {
+      const json = [{ a: "v2", b: "v3" }, { a: "v2", b: "v3" }];
+      const columns = [{ field: "a", name: "A" }, { field: "b", name: "BEEE" }];
+      const result = mdUtil.mdTable(json, columns);
+      should(result).eql("|A |BEEE|\n|--|----|\n|v2|v3  |\n|v2|v3  |\n");
+    });
+    it("should handle missing values", function() {
+      const json = [{ a: null, b: "v3" }, { a: "v2" }];
+      const columns = [{ field: "a", name: "A" }, { field: "b", name: "BEEE" }];
+      const result = mdUtil.mdTable(json, columns);
+      should(result).eql("|A |BEEE|\n|--|----|\n|  |v3  |\n|v2|    |\n");
+    });
+    it("should handle different types", function() {
+      const json = [{ a: { d: "3" }, b: "v3" }, { a: "v2", b: 22 }];
+      const columns = [{ field: "a", name: "A" }, { field: "b", name: "BEEE" }];
+      const result = mdUtil.mdTable(json, columns);
+      should(result).eql("|A |BEEE|\n|--|----|\n|[object Object]|v3  |\n|v2|22|\n");
+    });
+  });
 });

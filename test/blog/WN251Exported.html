@@ -22,7 +22,7 @@
             <li><a id="inbox" href="/usert/inbox">Inbox </a></li>
           </ul>
           <ul class="nav navbar-nav pull-left visible-xs">
-            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">1</span></a></li>
           </ul>
         </div>
         <div class="navbar-header">
@@ -32,7 +32,7 @@
           <ul class="nav navbar-nav navbar-left">
             <li class="show-xs"><a class="bg-success visible-xs" href="/changelog">What's New?</a>
             </li>
-            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">2</span></a></li>
+            <li><a href="/blog/WN251">WN251<span class="badge osmbcbadge-lang">1</span></a></li>
             <li><a href="/blog/blog">blog<span class="badge osmbcbadge-lang">0</span></a></li>
             <li class="dropdown" id="article"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Lists<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
@@ -87,11 +87,13 @@
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">DE<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
+                <li><a id="lang_DE" onclick="chooseLanguage('lang','DE')">DE</a></li>
               </ul>
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">--<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 <li><a id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a></li>
+                <li><a id="lang2_DE" onclick="chooseLanguage('lang2','DE')">DE</a></li>
               </ul>
             </li>
             <li><img onclick="location.href='/usert/1';" style="height:50px;width:50px"></li>
@@ -110,8 +112,8 @@
           </div>
           <div class="col-md-11">
             <div class="progress" style="margin-bottom:2px">
-              <div class="progress-bar osmbclabel-markdown" style="width:0%">0</div>
-              <div class="progress-bar osmbclabel-no-markdown" style="width:100%">2</div>
+              <div class="progress-bar osmbclabel-markdown" style="width:50%">1</div>
+              <div class="progress-bar osmbclabel-no-markdown" style="width:50%">1</div>
               <div class="progress-bar osmbclabel-no-translation" style="width:0%">0</div>
             </div>
           </div>
@@ -125,11 +127,7 @@
           <div class="col-md-3">
             <div class="row">
               <div class="col-md-12">
-                <form id="startReview" name="startReview" action="/blog/WN251/setLangStatus" method="post">
-                  <input class="hidden" type="text" name="lang" value="DE">
-                  <input class="hidden" type="text" name="action" value="closelang">
-                  <button class="btn btn-large btn-warning" id="closebutton" type="submit">Close WN251(DE)</button>
-                </form>
+                <button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;DE&quot;,&quot;closelang&quot;,this);">Close WN251(DE)</button>
               </div>
             </div>
             <div class="row">
@@ -192,6 +190,7 @@
               <li class="hidden-xs"><a href="/blog/WN251/preview?lang=DE"><span class="glyphicon glyphicon-export"></span>DE<span> </span><span class="glyphicon glyphicon-alert"></span></a></li>
               <li class="dropdown hidden-xs"><a class="dropdown-toggle" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-export"></span></a>
                 <ul class="dropdown-menu" role="menu">
+                  <li><a href="/blog/WN251/preview?lang=DE"><span>Export DE</span><span> </span><span class="glyphicon glyphicon-alert"></span></a></li>
                 </ul>
               </li>
             </ul>
@@ -265,7 +264,7 @@
             </td>
             <td>
               <div onclick="if (!openEditor) {openEditor = document.getElementById('div1');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;">
-                <div class="not-formulated">
+                <div>
                   <ul class="no-margin"><li>WN251 Upcoming Events</li>
 </ul>
                 </div>
@@ -286,10 +285,12 @@
                 </div>
                 <div class="panel-body">
                   <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post">
-                    <textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE"></textarea>
-                    <textarea class="hidden form-control" name="oldMarkdown" id="oldMarkdown1" rows="7"></textarea>
+                    <textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE">|Wo|Was|Online|Wann|Land|
+|--|---|------|----|----|</textarea>
+                    <textarea class="hidden form-control" name="oldMarkdown" id="oldMarkdown1" rows="7">|Wo|Was|Online|Wann|Land|
+|--|---|------|----|----|</textarea>
                   </form>
-                  <p>
+                  <p><span> Edited: </span><span class="label small-margin osmbclabel-markdown">OSMCAL</span><span> Time: a few seconds ago</span>
                   </p>
                 </div>
               </div>
@@ -538,5 +539,17 @@
       console.error("Trouble saveing User Config");
       console.error(err);
     });
+  }    
+      
+  function setLangStatus(lang, status,button) {
+    $(button).prop('disabled', true);
+    $(button).prop('html', "wait ...");
+    jQuery.post(window.htmlroot + "/blog/WN251/setLangStatus",{action:status,lang:lang}, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble setting Language Status");
+      console.error(err);
+    });
+  
   }
 </script></body></html>

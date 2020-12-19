@@ -20,6 +20,7 @@ const messageCenter       = require("../notification/messageCenter.js");
 const userModule          = require("../model/user.js");
 const translator          = require("../model/translator.js");
 const schedule            = require("node-schedule");
+const osmcalLoader        = require("../model/osmcalLoader.js");
 
 const pgMap = require("./pgMap.js");
 const debug = require("debug")("OSMBC:model:blog");
@@ -119,8 +120,8 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
         if (self[rc].length === 0) {
           self[rc].push({ user: user.OSMUser, text: data, timestamp: date });
         }
-        // nothing has to be written to the review comments
-        return cb();
+        // check Event articles
+        return self.fillEventArticle(lang, cb);
       }
       if (data === "markexported") {
         self[exported] = true;
@@ -154,6 +155,21 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
   });
 };
 
+Blog.prototype.fillEventArticle = function fillEventArticle(lang, callback) {
+  const eventArticle = this._upcomingEvents;
+  if (!eventArticle) return callback();
+  let oldMd = eventArticle["markdown" + lang];
+  if (typeof oldMd === "undefined") oldMd = "";
+  if (oldMd && eventArticle["markdown" + lang].length > 10) return callback();
+
+  osmcalLoader.getEventMdCb(lang, function(err, result) {
+    if (err) return callback(err);
+    const data = { old: {} };
+    data["markdown" + lang] = result;
+    data.old["markdown" + lang] = oldMd;
+    eventArticle.setAndSave({ OSMUser: "OSMCAL" }, data, callback);
+  });
+};
 
 Blog.prototype.editReviewComment = function editReviewComment(lang, user, index, data, callback) {
   debug("reviewComment");

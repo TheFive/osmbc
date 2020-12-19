@@ -139,7 +139,7 @@ describe("router/user", function() {
         url: url, followRedirect: false,
         jar: jar.testUser, simple: false, resolveWithFullResponse: true});
       should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.body).eql("Found. Redirecting to /osmbc");
       let user = await userModule.findById(1);
       should.exist(user.apiKey);
     });

@@ -158,22 +158,14 @@
           <div class="col-md-3">
             <div class="row">
               <div class="col-md-12">
-                <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
-                  <input class="hidden" type="text" name="lang" value="DE">
-                  <input class="hidden" type="text" name="action" value="markexported">
-                  <button class="btn btn-large btn-warning" id="didexport" type="submit">Did Export (DE)</button>
-                </form>
+                <button class="btn btn-large btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button>
               </div>
             </div>
           </div>
           <div class="col-md-3">
             <div class="row">
               <div class="col-md-12">
-                <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
-                  <input class="hidden" type="text" name="lang" value="EN">
-                  <input class="hidden" type="text" name="action" value="closelang">
-                  <button class="btn btn-large btn-warning" id="closebutton" type="submit">Close WN290(EN)</button>
-                </form>
+                <button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button>
               </div>
             </div>
           </div>
@@ -2274,5 +2266,17 @@ Segeltörn
       console.error("Trouble saveing User Config");
       console.error(err);
     });
+  }    
+      
+  function setLangStatus(lang, status,button) {
+    $(button).prop('disabled', true);
+    $(button).prop('html', "wait ...");
+    jQuery.post(window.htmlroot + "/blog/WN290/setLangStatus",{action:status,lang:lang}, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble setting Language Status");
+      console.error(err);
+    });
+  
   }
 </script></body></html>
