@@ -22,9 +22,12 @@ async function loadEvents(lang) {
     "&lon=" + encodeURI(event.location.coords[0]) +
     "&accept-language=" + lang;
     request = await axios.get(requestString, { headers: { "User-Agent": "OSMBC Calendar Generator" } });
-    const loc = request.data;
 
+    const loc = request.data;
     if (loc.name) event.town = loc.name;
+
+    // special fix for not delivering town (e.g. Berlin)
+    if (loc.addresstype === "postcode" && loc.address && loc.address.state) event.town = loc.address.state;
     if (loc.address.country) event.country = loc.address.country;
     if (loc.address.country_code) event.country_code = loc.address.country_code;
   }
