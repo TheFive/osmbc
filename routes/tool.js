@@ -11,7 +11,6 @@ const path = require("path");
 const axios = require("axios");
 const moment = require("moment");
 const async = require("async");
-const request = require("request");
 const yaml     = require("js-yaml");
 const BlogRenderer = require("../render/BlogRenderer.js");
 const childProcess = require("child_process");
@@ -19,7 +18,6 @@ const logger = require("../config.js").logger;
 
 
 
-const parseEvent = require("../model/parseEvent.js");
 const osmcalLoader = require("../model/osmcalLoader.js");
 
 const articleModule = require("../model/article.js");
@@ -418,20 +416,6 @@ function executeScript(req, res, next) {
     });
   });
 }
-
-function getEventTable(req, res, next) {
-  debug("getEventTable");
-  const lang = req.query.lang;
-  if (typeof lang !== "string" || lang.length < 2) return next(new Error("Missing Language Parameter"));
-
-  res.set({ "Content-Type": "text/plain" });
-
-  osmcalLoader.getEventMdCb(lang, function(err, result) {
-    if (err) return next(err);
-    res.send(result);
-  });
-}
-
 
 const userList = config.getValue("scripts").user;
 let checkScriptRights = checkRole("full");
