@@ -1,12 +1,16 @@
 # Changelog
 
+## [3.6.0](https://github.com/TheFive/osmbc/tree/3.6.0) (2020-12-20)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.5.9...3.6.0)
+
+**Fixed bugs:**
+
+- Regenerate Calendar should not be available beneath the Lead Picture [\#857](https://github.com/TheFive/osmbc/issues/857)
+
 ## [3.5.9](https://github.com/TheFive/osmbc/tree/3.5.9) (2020-12-19)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.5...3.5.9)
-
-**Implemented enhancements:**
-
-- Heatmap separators other than white? [\#839](https://github.com/TheFive/osmbc/issues/839)
 
 **Closed issues:**
 
@@ -31,6 +35,7 @@
 
 **Implemented enhancements:**
 
+- Heatmap separators other than white? [\#839](https://github.com/TheFive/osmbc/issues/839)
 - A separate page for simultaneous publication in several languages would be useful.  [\#822](https://github.com/TheFive/osmbc/issues/822)
 
 **Fixed bugs:**
@@ -2677,6 +2682,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9a...0.3.10)
 
+**Fixed bugs:**
+
+- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
+
 ## [0.3.9a](https://github.com/TheFive/osmbc/tree/0.3.9a) (2015-11-20)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9...0.3.9a)
@@ -2737,10 +2746,6 @@
 ## [0.3.6e](https://github.com/TheFive/osmbc/tree/0.3.6e) (2015-11-13)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6d...0.3.6e)
-
-**Fixed bugs:**
-
-- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
 
 **Closed issues:**
 
