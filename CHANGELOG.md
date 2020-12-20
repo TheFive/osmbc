@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.5.9](https://github.com/TheFive/osmbc/tree/3.5.9) (2020-12-19)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.5...3.5.9)
+
+**Implemented enhancements:**
+
+- Heatmap separators other than white? [\#839](https://github.com/TheFive/osmbc/issues/839)
+
+**Closed issues:**
+
+- Mail a new Collection and Mail All Comments [\#853](https://github.com/TheFive/osmbc/issues/853)
+- Update Content-Security-Policy [\#851](https://github.com/TheFive/osmbc/issues/851)
+
 ## [3.4.5](https://github.com/TheFive/osmbc/tree/3.4.5) (2020-09-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4b...3.4.5)
@@ -18,7 +31,6 @@
 
 **Implemented enhancements:**
 
-- Heatmap separators other than white? [\#839](https://github.com/TheFive/osmbc/issues/839)
 - A separate page for simultaneous publication in several languages would be useful.  [\#822](https://github.com/TheFive/osmbc/issues/822)
 
 **Fixed bugs:**
@@ -825,6 +837,7 @@
 
 **Implemented enhancements:**
 
+- Show modified status in new article editor by color and disabling save button [\#630](https://github.com/TheFive/osmbc/issues/630)
 - Move Mail Logging from DB to Hard Drive, disable online review of maillog [\#563](https://github.com/TheFive/osmbc/issues/563)
 
 ## [2.2.8](https://github.com/TheFive/osmbc/tree/2.2.8) (2017-03-05)
@@ -846,7 +859,6 @@
 
 **Implemented enhancements:**
 
-- Show modified status in new article editor by color and disabling save button [\#630](https://github.com/TheFive/osmbc/issues/630)
 - Move Log of Email to file [\#622](https://github.com/TheFive/osmbc/issues/622)
 
 **Fixed bugs:**
@@ -1528,6 +1540,7 @@
 **Implemented enhancements:**
 
 - Inbox: would it be possible to see only the new issues? [\#456](https://github.com/TheFive/osmbc/issues/456)
+- enable colors for the people in the blog views. [\#455](https://github.com/TheFive/osmbc/issues/455)
 
 ## [1.8.1b](https://github.com/TheFive/osmbc/tree/1.8.1b) (2016-05-13)
 
@@ -1540,10 +1553,6 @@
 ## [1.8.1a](https://github.com/TheFive/osmbc/tree/1.8.1a) (2016-05-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.1...1.8.1a)
-
-**Implemented enhancements:**
-
-- enable colors for the people in the blog views. [\#455](https://github.com/TheFive/osmbc/issues/455)
 
 **Fixed bugs:**
 
@@ -2482,13 +2491,16 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.5...0.4.6)
 
+**Implemented enhancements:**
+
+- Document the different blog views in help. [\#209](https://github.com/TheFive/osmbc/issues/209)
+
 ## [0.4.5](https://github.com/TheFive/osmbc/tree/0.4.5) (2015-12-19)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.4.4...0.4.5)
 
 **Implemented enhancements:**
 
-- Document the different blog views in help. [\#209](https://github.com/TheFive/osmbc/issues/209)
 - it would be nice, if the date would be appear with a leading "0"  [\#208](https://github.com/TheFive/osmbc/issues/208)
 - The output from OSM calender2Markdown should be sorted [\#207](https://github.com/TheFive/osmbc/issues/207)
 - Support easierer Review in OSMBC by opening the article edit mode out of fullFinalLL [\#203](https://github.com/TheFive/osmbc/issues/203)
@@ -2665,10 +2677,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9a...0.3.10)
 
-**Fixed bugs:**
-
-- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
-
 ## [0.3.9a](https://github.com/TheFive/osmbc/tree/0.3.9a) (2015-11-20)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.9...0.3.9a)
@@ -2729,6 +2737,10 @@
 ## [0.3.6e](https://github.com/TheFive/osmbc/tree/0.3.6e) (2015-11-13)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.6d...0.3.6e)
+
+**Fixed bugs:**
+
+- Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
 
 **Closed issues:**
 
