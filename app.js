@@ -78,6 +78,11 @@ app.use((req, res, next) => {
   });
   cspMiddleware(res, res, next);
 });
+app.use(
+  helmet.referrerPolicy({
+    policy: "same-origin",
+  })
+);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
