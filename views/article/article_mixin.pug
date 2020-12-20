@@ -38,7 +38,7 @@ mixin articleMarkdown(lang,disabled)
     - p = "Calendar will be generated from OSMCAL when starting review."  
   textarea.markdownEdit.form-control.af(id="markdown" +lang placeholder = p spellcheck = "true" lang=lang name = "markdown" +lang rows = 6 readonly = d)=article["markdown" + lang]
   p.osmbc-help-text="'no translation' or '-' to specify no translation wanted."
-  if (!d)
+  if (!d && article.categoryEN === "Upcoming Events")
     div.btn.btn-info(onclick=`window.getEventTable("${lang}",${"markdown" + lang},this);`) (Re)Generate Calendar
   
   div.alert.markdownMessage.alert-danger(id="text"+lang lang=lang style="display:none" )="Default Error Message"
