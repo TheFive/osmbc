@@ -83,13 +83,8 @@ mixin toolMenu
       span.caret
     ul.dropdown-menu(role='menu')
       li.dropdown-header Markdown Helper
-      for integration, name in layout.calendarInterface
-        li
-          a(href=layout.htmlroot + "/tool/calendarAllLang/" + name)="Calendar Tool (" + name + ")"
       li
         a(href=layout.htmlroot + "/tool/picturetool") Picture Tool
-      li
-        a(href=layout.htmlroot + "/calendar/preview") Public Calendar Check
       if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
         li.divider
         li.dropdown-header="Script Plugins (TEST PHASE)"
