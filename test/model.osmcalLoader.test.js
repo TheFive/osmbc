@@ -126,4 +126,77 @@ describe("model/osmcalLoader", function() {
     describe("Check Filter",function() {});
 
   });
+  describe("filterEvent", function() {
+    beforeEach(function(){
+        mockdate.set(new Date("2015-12-06"));
+    });
+    afterEach(function(){
+        mockdate.reset();
+    }); 
+    it("should filter a one day event, thats not big", function() {
+      let filterTest = osmcalLoader.forTestOnly.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date: 0, duration: 14, big_duration: 21};
+
+      should(filterTest({date:{start: "2015-12-05"}}, option)).be.True();
+      should(filterTest({date:{start: "2015-12-06"}}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-08"}}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-20"}}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-31"}}, option)).be.True();
+    });
+    it("should filter a one day event, thats big", function() {
+      let filterTest = osmcalLoader.forTestOnly.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date: 0, duration: 14, big_duration: 21};
+
+      should(filterTest({date:{start: "2015-12-05"}, big: true}, option)).be.True();
+      should(filterTest({date:{start: "2015-12-06"}, big: true}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-08"}, big: true}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-27"}, big: true}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-31"}, big: true}, option)).be.True();
+    });
+    it("should filter a three day event, thats not big", function() {
+      let filterTest = osmcalLoader.forTestOnly.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date: 0, duration: 14, big_duration: 21};
+      should(filterTest({date:{start: "2015-12-02", end: "2015-12-05"}}, option)).be.True();
+      should(filterTest({date:{start: "2015-12-05", end: "2015-12-07"}}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-06", end: "2015-12-08"}}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-20", end: "2015-12-23"}}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-21", end: "2015-12-22"}}, option)).be.True();
+    });
+    it("should filter a three day event, thats big", function() {
+      let filterTest = osmcalLoader.forTestOnly.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date: 0, duration: 14, big_duration: 21};
+      should(filterTest({date:{start: "2015-12-02", end: "2015-12-05"}, big: true}, option)).be.True();
+      should(filterTest({date:{start: "2015-12-05", end: "2015-12-07"}, big: true}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-06", end: "2015-12-08"}, big: true}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-20", end: "2015-12-23"}, big: true}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-27", end: "2015-12-29"}, big: true}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-28", end: "2015-12-31"}, big: true}, option)).be.True();
+    });
+    it("should filter with included countries", function() {
+      let filterTest = osmcalLoader.forTestOnly.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date: 0, duration: 14, big_duration: 21, includeCountries: ["DE"]};
+
+      should(filterTest({date:{start: "2015-12-05"}, country_code: "DE", big: true}, option)).be.True();
+      should(filterTest({date:{start: "2015-12-06"}, country_code: "DE", big: true}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-08"}, big: true}, option)).be.False(); // no country given, filter does not work
+      should(filterTest({date:{start: "2015-12-08"}, country_code: "DE", big: true}, option)).be.False();
+      should(filterTest({date:{start: "2015-12-08"}, country_code: "UK", big: true}, option)).be.True();
+    });
+    it("should filter with excluded countries", function() {
+      let filterTest = osmcalLoader.forTestOnly.filterEvent;
+      // clock is set to "2015-12-06" !!
+      let option = {date: 0, duration: 14, big_duration: 21, excludeCountries: ["DE"]};
+
+      should(filterTest({date: {start: "2015-12-05"}, country_code: "DE", big: true}, option)).be.True();
+      should(filterTest({date: {start: "2015-12-06"}, country_code: "DE", big: true}, option)).be.True();
+      should(filterTest({date: {start: "2015-12-08"}, big: true}, option)).be.False(); // no country given, filter does not work
+      should(filterTest({date: {start: "2015-12-08"}, country_code: "DE", big: true}, option)).be.True();
+      should(filterTest({date: {start: "2015-12-08"}, country_code: "UK", big: true}, option)).be.False();
+    });
+  });
 });

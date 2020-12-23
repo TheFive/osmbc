@@ -43,22 +43,6 @@ describe("views/tools", function() {
   afterEach(async function() {
     testutil.stopServer();
   });
-  it.skip("should open new tool", function(bddone) {
-    async.series([
-      function setLanguage (cb) {
-        browser.visit("/osmbc.html", cb);
-      },
-      function setLanguage (cb) {
-        browser.visit("/language?lang=EN", cb);
-      },
-      function visitCalendar (cb) {
-        browser.visit("/tool/calendarAllLang", cb);
-      }
-    ], function(err) {
-      should.not.exist(err);
-      browser.assert.expectHtml.call(browser, "calendarAllMarkdown", bddone);
-    });
-  });
   it("should use picture tool", async function() {
     let fileName = path.join(__dirname, "picture.jpg");
     nock("https://blog.openstreetmap.org")
@@ -77,26 +61,6 @@ describe("views/tools", function() {
     await browser.pressButton("OK");
     should(browser.evaluate("document.getElementById('markdown').value")).eql("![AltText](https://blog.openstreetmap.org/picture.jpg =800x800)\ntest | Picture by test under [CC-BY-SA 3.0](https://creativecommons.org/licenses/by/3.0/)");
 
-  });
-  it("should show calendar", async function() {
-    nock("http://127.0.0.1:33333")
-      .get("/fakeCalendar")
-      .reply(200, {"copyright": "The data is taken from http://wiki.openstreetmap.org/wiki/Template:Calendar and follows its license rules.",
-
-        "events":
-          [{"Big": "true", "EventType": "Mapping Party", "country": "everywhere", "description": "PoliMappers' Adventures: One mapping quest each day", "end": "2015-11-22", "start": "2015-11-20", "state": "", "town": "online"},
-            {"Big": "", "EventType": "Conference", "country": "Germany", "description": "OpenStreetMap assembly", "end": "2015-11-10", "start": "2015-11-12", "state": "", "town": "Leipzig"}
-
-
-          ],
-        "generator": "osmcalender",
-        "time": "Friday, 29. December 2017 04:55PM",
-        "version": 8});
-    await browser.visit("/osmbc");
-
-    browser.assert.text("li.dropdown#tool ul.dropdown-menu li:nth-child(2) a", "Calendar Tool (fakeCalendar)");
-    await browser.click("li.dropdown#tool ul.dropdown-menu li:nth-child(2) a");
-    browser.assert.expectHtmlSync("tools", "calendartool");
   });
 });
 

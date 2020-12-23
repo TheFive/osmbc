@@ -414,16 +414,7 @@ block scripts
         $(".translateWait" + langFrom + langTo).addClass("hidden");
         $(".translateError" + langFrom + langTo).removeClass("hidden");
       });
-    }
-    
-    function setUserConfig(options) {
-      jQuery.post(window.htmlroot + "/setuserconfig/",options, function (data) {
-        location.reload();
-      }).fail(function (err) {
-        console.error("Trouble saveing User Config");
-        console.error(err);
-      });
-    }    
+    } 
         
     function setLangStatus(lang, status,button) {
       $(button).prop('disabled', true);

@@ -49,7 +49,6 @@ function filterEvent(event, option) {
   var date = new moment();
 
 
-
   var startDate = moment(event.date && event.date.start);
   var endDate = startDate.clone();
   if (event.date && typeof event.date.end !== "undefined") endDate = moment(event.date.end);
@@ -78,11 +77,11 @@ function filterEvent(event, option) {
   if (endDate.isBefore(from, "day")) filtered = true;
   if (startDate.isAfter(toForBig, "day")) filtered = true;
 
-  if (option && option.includeCountries && event.country &&
-    option.includeCountries.toLowerCase().indexOf(event.country.toLowerCase()) < 0) filtered = true;
+  if (option && option.includeCountries && event.country_code &&
+    option.includeCountries.indexOf(event.country_code) < 0) filtered = true;
 
-  if (option && option.excludeCountries && event.country &&
-    option.excludeCountries.toLowerCase().indexOf(event.country.toLowerCase()) >= 0) filtered = true;
+  if (option && option.excludeCountries && event.country_code &&
+    option.excludeCountries.indexOf(event.country_code) >= 0) filtered = true;
 
 
   if (!event.big && startDate.isAfter(to)) filtered = true;
@@ -196,3 +195,5 @@ function getEventMdCb(lang, cb) {
 
 module.exports.getEventMd = getEventMd;
 module.exports.getEventMdCb = getEventMdCb;
+module.exports.forTestOnly = {};
+module.exports.forTestOnly.filterEvent = filterEvent;

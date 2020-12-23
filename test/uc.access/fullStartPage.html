@@ -46,9 +46,7 @@
             <li class="dropdown hidden-xs" id="tool"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Tool<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">Markdown Helper</li>
-                <li><a href="/tool/calendarAllLang/fakeCalendar">Calendar Tool (fakeCalendar)</a></li>
                 <li><a href="/tool/picturetool">Picture Tool</a></li>
-                <li><a href="/calendar/preview">Public Calendar Check</a></li>
                 <li class="divider"></li>
                 <li class="dropdown-header">Editorial Tools
                   </li><li><a href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a></li>
@@ -213,5 +211,13 @@
       console.error(err);
     });
   }
+  function setUserConfig(options) {
+    jQuery.post("/setuserconfig/",options, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble saveing User Config");
+      console.error(err);
+    });
+  }   
   
 </script></body></html>
