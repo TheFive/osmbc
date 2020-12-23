@@ -320,12 +320,15 @@ function checkMarkdownError() {
   var linkFromCollectionFound = false;
   var allLinks = [];
   var errorLinkTwice = null;
+  var errorLinkNotInCollection = null;
 
   var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
   while ((linkList = regexToken.exec(md)) !== null) {
     var link = linkList[0];
     if (allLinks.indexOf(link) >= 0) {
-      errorLinkTwice = link;
+      if ($("img.flag[src='" + link + "']").length === 0) {
+        errorLinkTwice = link;
+      }
     }
     allLinks.push(link);
 
@@ -335,15 +338,23 @@ function checkMarkdownError() {
     }
     // check Language Flags
     if ($("img.flag[src='" + link + "']").length > 0) linkFound = true;
+    if (window.googleTranslateText) {
+      for (var l in window.googleTranslateText) {
+        if (window.googleTranslateText[l].indexOf(link) > 0) linkFound = true;
+      }
+    }
     if (linkFound) linkFromCollectionFound = true;
-    if (!linkFound) allLinksFound = false;
+    if (!linkFound) {
+      allLinksFound = false;
+      errorLinkNotInCollection = link;
+    }
   }
-  if (allLinksFound === false) {
+  if (allLinksFound === false && md.indexOf("----------") < 0) {
     text.show(400);
-    text.html("Please check links, some looks not to be in collection, nor be a translation link");
+    text.html("Please check links (e.g." + errorLinkNotInCollection + "), some looks not to be in collection, nor be a translation link");
     errorOccured = true;
   }
-  if (linkFromCollectionFound === false && md !== "" && md !== "no translation") {
+  if (linkFromCollectionFound === false && md !== "" && md !== "no translation" && md.indexOf("----------") < 0) {
     text.show(400);
     text.html("Please use a link from collection in article.");
     errorOccured = true;
