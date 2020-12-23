@@ -283,6 +283,14 @@ Use @OSMUser to address any special editor."></textarea><button class="btn btn-l
       console.error(err);
     });
   }
+  function setUserConfig(options) {
+    jQuery.post("/setuserconfig/",options, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble saveing User Config");
+      console.error(err);
+    });
+  }   
   
 </script>
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>

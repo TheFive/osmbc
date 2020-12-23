@@ -143,5 +143,13 @@
       console.error(err);
     });
   }
+  function setUserConfig(options) {
+    jQuery.post("/setuserconfig/",options, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble saveing User Config");
+      console.error(err);
+    });
+  }   
   
 </script></body></html>
