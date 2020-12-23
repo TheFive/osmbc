@@ -135,7 +135,7 @@ User.prototype.calculateChanges = function calculateChanges(callback) {
   debug("User.prototype.calculateChanges");
   const self = this;
   if (self._countChanges) return;
-  pgMap.count("select count(*) as count from changes where data->>'user'='" + this.OSMUser + "' and data->>'table'='article'", function(err, result) {
+  pgMap.count("select count(*) as count from changes where data->>'user'=$1 and data->>'table'='article'", [this.OSMUser], function(err, result) {
     if (err) return callback(err);
     self._countChanges = result.count;
     return callback();

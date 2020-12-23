@@ -472,17 +472,28 @@ exports.createTables = function(pgObject, options, analyse, callback) {
 };
 
 
-module.exports.count = function count(sql, callback) {
+module.exports.count = function count(sql, values, callback) {
   debug("count");
+  if (typeof values === "function") {
+    callback = values;
+    values = undefined;
+  }
   var result;
-  db.query(sql, function (err, pgResult) {
+
+  function resultFunction(err, pgResult) {
     if (err) return callback(err);
     result = {};
     for (var k in pgResult.rows[0]) {
       result[k] = pgResult.rows[0][k];
     }
     callback(null, result);
-  });
+  }
+
+  if (values) {
+    db.query(sql, values, resultFunction);
+  } else {
+    db.query(sql, resultFunction);
+  }
 };
 
 module.exports.select = function select(sql, data, callback) {
