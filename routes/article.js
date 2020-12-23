@@ -1105,7 +1105,7 @@ router.get("/:article_id/:votename", allowFullAccess, renderArticleIdVotesBlog);
 router.post("/:article_id/addComment", allowGuestAccess, postNewComment);
 router.post("/:article_id/setMarkdown/:lang", allowFullAccess, postSetMarkdown);
 router.post("/:article_id/reviewChange/:lang", allowFullAccess, postReviewChange);
-router.post("/:article_id/editComment/:number", allowFullAccess, postEditComment);
+router.post("/:article_id/editComment/:number", allowGuestAccess, postEditComment);
 router.post("/:article_id", allowFullAccess, postArticle);
 router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldValues);
 

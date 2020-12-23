@@ -864,12 +864,13 @@ describe("routes/article", function() {
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny non existing users",
+      // Non existing users will become Guest. but guest has to be able to see the article
       postUrlWithJar({
         url: url,
         form: params,
         user: "testUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+        expectedMessage: "This article is not allowed for guests"
       }));
   });
   describe("route POST /:article_id/copyto/:blog", function() {
