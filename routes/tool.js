@@ -17,9 +17,6 @@ const childProcess = require("child_process");
 const logger = require("../config.js").logger;
 
 
-
-const osmcalLoader = require("../model/osmcalLoader.js");
-
 const articleModule = require("../model/article.js");
 const configModule = require("../model/config.js");
 
