@@ -44,25 +44,23 @@
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Help<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header">OSMBC</li>
                 <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a></li>
                 <li class="divider"></li>
-                <li><a href="/help/OSMBC">OSMBC</a></li>
-                <li><a href="/help/How To Integrate A Picture">How To Integrate A Picture</a></li>
-                <li><a href="/help/Notification">Using OSMBC Notifications</a></li>
-                <li><a href="/help/The Blog Views">The Blog Views</a></li>
-                <li><a href="/help/Beginner's How To">Beginner's How To</a></li>
-                <li><a href="/help/Categories">Which Category to use ?</a></li>
-                <li class="divider"></li>
+                <li class="dropdown-header">WeeklyOSM &amp; Wochennotiz</li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a></li>
+                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a></li>
                 <li><a href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotitz in OSM Wiki</a></li>
                 <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
               </ul>
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="/language?lang=DE">DE</a></li>
-                <li><a href="/language?lang=EN">EN</a></li>
-                <li><a href="/language?lang=ES">ES</a></li>
-                <li><a href="/language?lang=PT-PT">PT-PT</a></li>
+                <li><a id="undefined_DE" onclick="chooseLanguage('lang','DE')">DE</a></li>
+                <li><a id="undefined_EN" onclick="chooseLanguage('lang','EN')">EN</a></li>
+                <li><a id="undefined_ES" onclick="chooseLanguage('lang','ES')">ES</a></li>
+                <li><a id="undefined_PT-PT" onclick="chooseLanguage('lang','PT-PT')">PT-PT</a></li>
               </ul>
             </li>
             <li><img onclick="location.href='/usert/1';" style="width:50px;height:50px"></li>
@@ -186,4 +184,18 @@
     <link rel="stylesheet" href="file://users/Users/TheFive.osm/development/osmbc/public/stylesheets/style.css">
   
   
-</body></html>
+
+<script nonce="Fixed Nonce for Test">
+  // Init This Window with jQuery ready Callback
+  function chooseLanguage(number,lang) {
+    var data = {};
+    data[number]=lang;
+    jQuery.post("/language",data, function () {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Problem changing language " +  number + " " + lang);
+      console.error(err);
+    });
+  }
+  
+</script></body></html>
