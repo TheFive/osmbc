@@ -104,29 +104,6 @@ mixin toolMenu
         li
           a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
 
-
-mixin helpMenu
-  li.dropdown
-    a.dropdown-toggle(href='#', data-toggle='dropdown')
-      | Help
-      span.caret
-    ul.dropdown-menu(role='menu')
-      li.dropdown-header OSMBC
-      li
-        a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md")="Version "+layout.osmbc_version
-      li
-        a(href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help") Help
-      li.divider
-      li.dropdown-header WeeklyOSM & Wochennotiz
-      li
-        a(href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules") Vision & Rules
-      li
-        a(href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting") Editorial Meetings
-      li
-        a(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
-      li
-        a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
-
 mixin langChooser(langString)
   - let l = "language"
   - let label = "osmbcbadge-lang"

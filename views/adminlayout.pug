@@ -66,31 +66,7 @@ block all
                     a(href=layout.htmlroot+"/osmbc/admin") Admin
 
               ul.nav.navbar-nav.navbar-right
-                li.dropdown
-                  a.dropdown-toggle(href='#', data-toggle='dropdown')
-                    | Help
-                    span.caret
-                  ul.dropdown-menu(role='menu')
-                    li
-                      a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md")="Version "+layout.osmbc_version
-                    li.divider
-                    li
-                      a(href=layout.htmlroot+"/help/OSMBC") OSMBC
-                    li
-                      a(href=layout.htmlroot+"/help/How To Integrate A Picture") How To Integrate A Picture
-                    li
-                      a(href=layout.htmlroot+"/help/Notification") Using OSMBC Notifications
-                    li
-                      a(href=layout.htmlroot+"/help/The Blog Views") The Blog Views
-                    li
-                      a(href=layout.htmlroot+"/help/Beginner's How To") Beginner's How To
-                    li
-                      a(href=layout.htmlroot+"/help/Categories") Which Category to use ?
-                    li.divider
-                    li
-                      a(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
-                    li
-                      a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
+                +helpMenu   
 
                 li.dropdown
                   a.btn.dropdown-toggle.osmbcbadge-lang(href='#', style="color:white", data-toggle='dropdown')=layout.language
@@ -131,5 +107,3 @@ block all
     body
 
   block scripts
-
-
