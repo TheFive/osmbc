@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.6.5](https://github.com/TheFive/osmbc/tree/3.6.5) (2020-12-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.0...3.6.5)
+
+**Fixed bugs:**
+
+- Checkbox Show Read Messages can be selected in Inbox [\#858](https://github.com/TheFive/osmbc/issues/858)
+- Cannot edit own comment [\#856](https://github.com/TheFive/osmbc/issues/856)
+- Calender Flags are shown in Article Link Control [\#855](https://github.com/TheFive/osmbc/issues/855)
+- syntax error at or near "imaginaire" [\#831](https://github.com/TheFive/osmbc/issues/831)
+- Setting blogs to edit on tuesday does not work, if system is running for a longer time [\#684](https://github.com/TheFive/osmbc/issues/684)
+
 ## [3.6.0](https://github.com/TheFive/osmbc/tree/3.6.0) (2020-12-20)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.5.9...3.6.0)
@@ -289,6 +301,7 @@
 
 **Fixed bugs:**
 
+- Mention @en and OSM Mapper @ende leads to conflicts in rendering comments. [\#761](https://github.com/TheFive/osmbc/issues/761)
 - Evaluate session store with no bind user data. [\#721](https://github.com/TheFive/osmbc/issues/721)
 
 ## [3.2.1a](https://github.com/TheFive/osmbc/tree/3.2.1a) (2018-03-17)
@@ -298,10 +311,6 @@
 **Implemented enhancements:**
 
 - Access Denied, please add information to "contact the team" [\#760](https://github.com/TheFive/osmbc/issues/760)
-
-**Fixed bugs:**
-
-- Mention @en and OSM Mapper @ende leads to conflicts in rendering comments. [\#761](https://github.com/TheFive/osmbc/issues/761)
 
 **Closed issues:**
 
@@ -1486,15 +1495,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
@@ -1703,6 +1712,7 @@
 **Implemented enhancements:**
 
 - Change to translation feature in collect to main language displayed. [\#428](https://github.com/TheFive/osmbc/issues/428)
+- Change position of textfield while in review mode [\#416](https://github.com/TheFive/osmbc/issues/416)
 - Put configuration data into database. [\#382](https://github.com/TheFive/osmbc/issues/382)
 
 **Fixed bugs:**
@@ -1740,7 +1750,6 @@
 **Implemented enhancements:**
 
 - Indicate collector and authors in review mode [\#418](https://github.com/TheFive/osmbc/issues/418)
-- Change position of textfield while in review mode [\#416](https://github.com/TheFive/osmbc/issues/416)
 - show open comments only when done by other persons [\#415](https://github.com/TheFive/osmbc/issues/415)
 - User Inbox view for all open blogs [\#411](https://github.com/TheFive/osmbc/issues/411)
 - Display all articles where the editor is mentioned in its comments on OSMBC Homepage [\#402](https://github.com/TheFive/osmbc/issues/402)
@@ -2535,6 +2544,7 @@
 **Implemented enhancements:**
 
 - When reopen a blog for editing, please remove any empty Review list to go back to Edit Mode. [\#200](https://github.com/TheFive/osmbc/issues/200)
+- Localize Calender Tool [\#194](https://github.com/TheFive/osmbc/issues/194)
 
 **Fixed bugs:**
 
@@ -2555,7 +2565,6 @@
 
 **Implemented enhancements:**
 
-- Localize Calender Tool [\#194](https://github.com/TheFive/osmbc/issues/194)
 - Translate feature - switch the languages i.e. left: source language right: target language [\#188](https://github.com/TheFive/osmbc/issues/188)
 
 ## [0.4.1](https://github.com/TheFive/osmbc/tree/0.4.1) (2015-12-13)
