@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.6.6](https://github.com/TheFive/osmbc/tree/3.6.6) (2020-12-24)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.5...3.6.6)
+
+**Implemented enhancements:**
+
+- OSMCAL Integration [\#852](https://github.com/TheFive/osmbc/issues/852)
+- Finalise Nonce instead of unsafe-inline [\#850](https://github.com/TheFive/osmbc/issues/850)
+- Integrate Picture Tool to Article Editor [\#400](https://github.com/TheFive/osmbc/issues/400)
+
+**Fixed bugs:**
+
+- Language Switcher not working in Admin Area [\#859](https://github.com/TheFive/osmbc/issues/859)
+- Consolidation of two links to Help [\#693](https://github.com/TheFive/osmbc/issues/693)
+
+**Closed issues:**
+
+- Insert sql contraint to ensure article.blog = blog.name \(additional "Future", "Trash", "TBC"\) [\#785](https://github.com/TheFive/osmbc/issues/785)
+
 ## [3.6.5](https://github.com/TheFive/osmbc/tree/3.6.5) (2020-12-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.0...3.6.5)
@@ -301,7 +320,6 @@
 
 **Fixed bugs:**
 
-- Mention @en and OSM Mapper @ende leads to conflicts in rendering comments. [\#761](https://github.com/TheFive/osmbc/issues/761)
 - Evaluate session store with no bind user data. [\#721](https://github.com/TheFive/osmbc/issues/721)
 
 ## [3.2.1a](https://github.com/TheFive/osmbc/tree/3.2.1a) (2018-03-17)
@@ -311,6 +329,10 @@
 **Implemented enhancements:**
 
 - Access Denied, please add information to "contact the team" [\#760](https://github.com/TheFive/osmbc/issues/760)
+
+**Fixed bugs:**
+
+- Mention @en and OSM Mapper @ende leads to conflicts in rendering comments. [\#761](https://github.com/TheFive/osmbc/issues/761)
 
 **Closed issues:**
 
@@ -370,6 +392,7 @@
 **Implemented enhancements:**
 
 - Enable Translation button for 4 language Editor. [\#726](https://github.com/TheFive/osmbc/issues/726)
+- Welcome To The Team, Mark Guests as Guest and Editors as Editors. [\#722](https://github.com/TheFive/osmbc/issues/722)
 
 ## [3.1.5a](https://github.com/TheFive/osmbc/tree/3.1.5a) (2018-03-01)
 
@@ -476,10 +499,6 @@
 ## [3.1.2](https://github.com/TheFive/osmbc/tree/3.1.2) (2018-01-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.1...3.1.2)
-
-**Implemented enhancements:**
-
-- Welcome To The Team, Mark Guests as Guest and Editors as Editors. [\#722](https://github.com/TheFive/osmbc/issues/722)
 
 **Fixed bugs:**
 
@@ -1674,10 +1693,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.2...1.6.3)
 
-**Implemented enhancements:**
-
-- Small language display close to title in overview. [\#436](https://github.com/TheFive/osmbc/issues/436)
-
 ## [1.6.2](https://github.com/TheFive/osmbc/tree/1.6.2) (2016-04-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.1...1.6.2)
@@ -1711,8 +1726,8 @@
 
 **Implemented enhancements:**
 
+- Small language display close to title in overview. [\#436](https://github.com/TheFive/osmbc/issues/436)
 - Change to translation feature in collect to main language displayed. [\#428](https://github.com/TheFive/osmbc/issues/428)
-- Change position of textfield while in review mode [\#416](https://github.com/TheFive/osmbc/issues/416)
 - Put configuration data into database. [\#382](https://github.com/TheFive/osmbc/issues/382)
 
 **Fixed bugs:**
@@ -1750,6 +1765,7 @@
 **Implemented enhancements:**
 
 - Indicate collector and authors in review mode [\#418](https://github.com/TheFive/osmbc/issues/418)
+- Change position of textfield while in review mode [\#416](https://github.com/TheFive/osmbc/issues/416)
 - show open comments only when done by other persons [\#415](https://github.com/TheFive/osmbc/issues/415)
 - User Inbox view for all open blogs [\#411](https://github.com/TheFive/osmbc/issues/411)
 - Display all articles where the editor is mentioned in its comments on OSMBC Homepage [\#402](https://github.com/TheFive/osmbc/issues/402)
@@ -2544,7 +2560,6 @@
 **Implemented enhancements:**
 
 - When reopen a blog for editing, please remove any empty Review list to go back to Edit Mode. [\#200](https://github.com/TheFive/osmbc/issues/200)
-- Localize Calender Tool [\#194](https://github.com/TheFive/osmbc/issues/194)
 
 **Fixed bugs:**
 
@@ -2565,6 +2580,7 @@
 
 **Implemented enhancements:**
 
+- Localize Calender Tool [\#194](https://github.com/TheFive/osmbc/issues/194)
 - Translate feature - switch the languages i.e. left: source language right: target language [\#188](https://github.com/TheFive/osmbc/issues/188)
 
 ## [0.4.1](https://github.com/TheFive/osmbc/tree/0.4.1) (2015-12-13)
