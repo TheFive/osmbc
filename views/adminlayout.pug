@@ -74,7 +74,7 @@ block all
                   ul.dropdown-menu(role='menu')
                     each l in layout.languages
                       li
-                        a(href=layout.htmlroot+'/language?lang=' +l)=l
+                        a(id=langString+"_"+l onclick = "chooseLanguage('lang','" + l +"')")=l
                 if layout.user
                   li
                     img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';" style="width:50px;height:50px")
@@ -105,5 +105,18 @@ block all
       title= title
       link(rel='stylesheet', href=`${layout.htmlroot}${layout.style}`)
     body
+  script(nonce=cspNonce).
+
+    // Init This Window with jQuery ready Callback
+    function chooseLanguage(number,lang) {
+      var data = {};
+      data[number]=lang;
+      jQuery.post("!{htmlroot}/language",data, function () {
+        location.reload();
+      }).fail(function (err) {
+        console.error("Problem changing language " +  number + " " + lang);
+        console.error(err);
+      });
+    }
 
   block scripts
