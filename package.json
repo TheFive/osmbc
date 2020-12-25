@@ -89,8 +89,8 @@
     "nyc": "^15.1.0",
     "passport-mocked": "^1.4.0",
     "should": "^13.2.3",
-    "sinon": "9.0.x",
-    "timemachine": "^0.3.1",
+    "sinon": "9.2.x",
+    "timemachine": "0.3.x",
     "xmldom": "^0.1.31",
     "zombie": "^5.0.8"
   }

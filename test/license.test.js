@@ -79,6 +79,7 @@ let allowedLicensesProd = ["MIT",
   "Apache-2.0",
   "Apache*",
   "LAGPL",
+  "Python-2.0",
   "(Unlicense OR Apache-2.0)",
   "(OFL-1.1 AND MIT)",
   "(MIT OR EUPL-1.1+)"];
