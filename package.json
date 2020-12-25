@@ -34,7 +34,6 @@
     "glob": "7.1.x",
     "helmet": "4.2.x",
     "html-to-text": "5.1.x",
-    "htmlparser2": "4.1.x",
     "http-status-codes": "2.1.x",
     "iconv-lite": "0.6.x",
     "image-size": "0.9.x",
@@ -55,7 +54,7 @@
     "nodemailer": "6.4.x",
     "passport": "0.4.x",
     "passport-openstreetmap": "0.1.x",
-    "pg": "8.3.x",
+    "pg": "8.5.x",
     "progress": "2.0.x",
     "pug": "2.0.x",
     "randomstring": "1.1.x",
@@ -64,7 +63,7 @@
     "serve-favicon": "2.5.x",
     "standard-http-error": "2.0.x",
     "stoppable": "1.1.x",
-    "turndown": "6.0.x",
+    "turndown": "7.0.x",
     "twit": "2.2.x",
     "winston": "3.3.x",
     "winston-daily-rotate-file": "4.5.x"
@@ -88,9 +87,9 @@
     "nyc": "^15.1.0",
     "passport-mocked": "^1.4.0",
     "should": "^13.2.3",
-    "sinon": "9.0.x",
-    "timemachine": "^0.3.1",
-    "xmldom": "^0.1.31",
+    "sinon": "9.2.x",
+    "timemachine": "0.3.x",
+    "xmldom": "^0.4.0",
     "zombie": "^5.0.8"
   }
 }
