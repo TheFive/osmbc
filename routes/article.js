@@ -104,30 +104,30 @@ function createAccessMapFn(activeLanguages) {
 function renderArticleId(req, res, next) {
   debug("renderArticleId");
 
-  var languageFlags = configModule.getConfig("languageflags");
-  var votes = configModule.getConfig("votes");
+  const languageFlags = configModule.getConfig("languageflags");
+  const votes = configModule.getConfig("votes");
 
   /* votes.forEach(function(item){
     if (item.icon && item.icon.substring(0,3)==="fa-") item.iconClass = "fa "+item.icon;
     if (item.icon && item.icon.substring(0,10)==="glyphicon-") item.iconClass = "glyphicon "+item.icon;
   }); */
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
 
 
-  var categories = blogModule.getCategories();
+  let categories = blogModule.getCategories();
 
   // Params is used for indicating EditMode
-  var params = {};
+  const params = {};
   params.edit = req.query.edit;
   params.left_lang = req.user.getMainLang();
   params.right_lang = req.user.getSecondLang();
   params.lang3 = req.user.getLang3();
   params.lang4 = req.user.getLang4();
   params.editComment = null;
-  var mainTranslationService = "deepl";
-  var translationServices = ["bing", "deepl"];
+  let mainTranslationService = "deepl";
+  const translationServices = ["bing", "deepl"];
   if (translator.deeplPro.active()) {
     mainTranslationService = "deeplPro";
     translationServices.push("deeplPro");
@@ -139,7 +139,7 @@ function renderArticleId(req, res, next) {
 
 
 
-  var placeholder = configModule.getPlaceholder();
+  const placeholder = configModule.getPlaceholder();
   async.auto({
     // Find usage of Links in other articles
     articleReferences: article.calculateUsedLinks.bind(article, { ignoreStandard: true }),
@@ -207,7 +207,7 @@ function renderArticleId(req, res, next) {
           if (params.notranslation === "true") {
             article.addNotranslate(req.user, res.rendervar.layout.usedLanguages, function (err) {
               if (err) return callback(err);
-              var returnToUrl = htmlroot + "/article/" + article.id;
+              let returnToUrl = htmlroot + "/article/" + article.id;
               if (params.style) returnToUrl = returnToUrl + "?style=" + params.style;
               callback(null, returnToUrl);
             });
@@ -222,9 +222,9 @@ function renderArticleId(req, res, next) {
 
 
 
-    var languages = config.getLanguages();
-    for (var i = 0; i < languages.length; i++) {
-      var lang = languages[i];
+    const languages = config.getLanguages();
+    for (let i = 0; i < languages.length; i++) {
+      const lang = languages[i];
       if (typeof (article["markdown" + lang]) !== "undefined") {
         article["textHtml" + lang] = "<ul>" + renderer.renderArticle(lang, article) + "</ul>";
       }
@@ -286,9 +286,9 @@ function renderArticleId(req, res, next) {
 function renderArticleIdVotes(req, res, next) {
   debug("renderArticleIdVotes");
 
-  var votes = configModule.getConfig("votes");
+  const votes = configModule.getConfig("votes");
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
 
 
@@ -314,7 +314,7 @@ function renderArticleIdCommentArea(req, res, next) {
   debug("renderArticleCommentArea");
 
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
 
   const params = {};
@@ -351,8 +351,8 @@ function renderArticleIdVotesBlog(req, res, next) {
   debug("renderArticleIdVotesBlog");
 
 
-  var votes = configModule.getConfig("votes");
-  var voteName = req.params.votename;
+  const votes = configModule.getConfig("votes");
+  const voteName = req.params.votename;
 
   let vote = null;
 
@@ -362,7 +362,7 @@ function renderArticleIdVotesBlog(req, res, next) {
   });
 
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
   assert(vote);
 
@@ -394,11 +394,11 @@ function renderArticleIdVotesBlog(req, res, next) {
 
 function searchAndCreate(req, res, next) {
   debug("searchAndCreate");
-  var search = req.query.search;
-  var show = req.query.show;
+  let search = req.query.search;
+  let show = req.query.show;
   if (!show) show = "15";
   if (!search || typeof (search) === "undefined") search = "";
-  var placeholder = configModule.getPlaceholder();
+  const placeholder = configModule.getPlaceholder();
 
   let title;
   let collection = search;
@@ -447,13 +447,13 @@ function searchAndCreate(req, res, next) {
 function postArticle(req, res, next) {
   debug("postArticle");
 
-  var noTranslation = req.query.notranslation;
+  const noTranslation = req.query.notranslation;
 
 
-  var article = req.article;
+  let article = req.article;
   // If article exists, everything is fine, if article NOT exist, it has to be created.
 
-  var changes = {
+  const changes = {
     blog: req.body.blog,
     collection: req.body.collection,
     comment: req.body.comment,
@@ -467,12 +467,12 @@ function postArticle(req, res, next) {
     unpublishReference: req.body.unpublishReference
   };
 
-  var languages = config.getLanguages();
-  for (var i = 0; i < languages.length; i++) {
-    var lang = languages[i];
+  const languages = config.getLanguages();
+  for (let i = 0; i < languages.length; i++) {
+    const lang = languages[i];
     changes["markdown" + lang] = req.body["markdown" + lang];
   }
-  var returnToUrl;
+  let returnToUrl;
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
   async.parallel([
@@ -498,9 +498,9 @@ function postArticle(req, res, next) {
     assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
-      var languages = config.getLanguages();
-      for (var i = 0; i < languages.length; i++) {
-        var lang = languages[i];
+      const languages = config.getLanguages();
+      for (let i = 0; i < languages.length; i++) {
+        const lang = languages[i];
         if (showLangs[lang]) {
           if (changes["markdown" + lang]) continue;
           if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
@@ -525,14 +525,14 @@ function postArticle(req, res, next) {
 function postArticleWithOldValues(req, res, next) {
   debug("postArticleWithOldValues");
 
-  var noTranslation = req.query.notranslation;
+  const noTranslation = req.query.notranslation;
 
 
 
-  var article = req.article;
+  let article = req.article;
   // If article exists, everything is fine, if article NOT exist, it has to be created.
 
-  var changes = {
+  const changes = {
     blog: req.body.blog,
     collection: req.body.collection,
     predecessorId: req.body.predecessorId,
@@ -553,15 +553,15 @@ function postArticleWithOldValues(req, res, next) {
   };
 
 
-  var languages = config.getLanguages();
-  for (var i = 0; i < languages.length; i++) {
-    var lang = languages[i];
+  const languages = config.getLanguages();
+  for (let i = 0; i < languages.length; i++) {
+    const lang = languages[i];
     if (req.body["markdown" + lang] !== null && typeof req.body["markdown" + lang] !== "undefined") {
       changes["markdown" + lang] = req.body["markdown" + lang];
       changes.old["markdown" + lang] = req.body["old_markdown" + lang];
     }
   }
-  var returnToUrl;
+  let returnToUrl;
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
   async.parallel([
@@ -587,9 +587,9 @@ function postArticleWithOldValues(req, res, next) {
     assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
-      var languages = config.getLanguages();
-      for (var i = 0; i < languages.length; i++) {
-        var lang = languages[i];
+      const languages = config.getLanguages();
+      for (let i = 0; i < languages.length; i++) {
+        const lang = languages[i];
         if (showLangs[lang]) {
           if (changes["markdown" + lang]) continue;
           if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
@@ -614,15 +614,15 @@ function postArticleWithOldValues(req, res, next) {
 function copyArticle(req, res, next) {
   debug("copyArticle");
 
-  var newBlog = req.params.blog;
+  const newBlog = req.params.blog;
 
 
 
-  var article = req.article;
+  const article = req.article;
   // If article exists, everything is fine, if article NOT exist, it has to be created.
 
 
-  var languages = config.getLanguages();
+  const languages = config.getLanguages();
 
   article.copyToBlog(newBlog, languages, function(err) {
     if (err) return next(err);
@@ -633,10 +633,10 @@ function copyArticle(req, res, next) {
 
 function postNewComment(req, res, next) {
   debug("postNewComment");
-  var article = req.article;
+  const article = req.article;
   assert(article);
-  var comment = req.body.comment;
-  var returnToUrl;
+  const comment = req.body.comment;
+  let returnToUrl;
 
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
@@ -663,15 +663,15 @@ function postNewComment(req, res, next) {
 function postSetMarkdown(req, res, next) {
   debug("postSetMarkdown");
 
-  var lang = req.params.lang;
-  var article = req.article;
+  const lang = req.params.lang;
+  const article = req.article;
   assert(article);
 
-  var markdown = req.body.markdown;
-  var oldMarkdown = req.body.oldMarkdown;
+  const markdown = req.body.markdown;
+  const oldMarkdown = req.body.oldMarkdown;
 
 
-  var change = {};
+  const change = {};
   change["markdown" + lang] = markdown;
   change.old = {};
   change.old["markdown" + lang] = oldMarkdown;
@@ -687,8 +687,8 @@ function postReviewChange(req, res, next) {
   debug("postReviewChange");
 
 
-  var lang = req.params.lang;
-  var article = req.article;
+  const lang = req.params.lang;
+  const article = req.article;
   assert(article);
   const object = {};
 
@@ -706,13 +706,12 @@ function postReviewChange(req, res, next) {
 function postEditComment(req, res, next) {
   debug("postEditComment");
 
-  var number = req.params.number;
-  var article = req.article;
+  const number = req.params.number;
+  const article = req.article;
   assert(article);
 
-  var comment = req.body.comment;
-  var returnToUrl;
-  returnToUrl = htmlroot + "/article/" + article.id;
+  const comment = req.body.comment;
+  const returnToUrl = htmlroot + "/article/" + article.id;
 
 
   article.editComment(req.user, number, comment, function(err) {
@@ -732,11 +731,11 @@ function postEditComment(req, res, next) {
 function markCommentRead(req, res, next) {
   debug("markCommentRead");
 
-  var number = req.query.index;
+  const number = req.query.index;
 
 
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
   article.markCommentRead(req.user, number, function(err) {
     debug("markCommentRead->markCommentRead");
@@ -763,13 +762,13 @@ function markCommentRead(req, res, next) {
 function doAction(req, res, next) {
   debug("doAction");
 
-  var action = req.params.action;
-  var tag = req.params.tag;
+  const action = req.params.action;
+  const tag = req.params.tag;
 
   if (["setTag", "unsetTag", "setVote", "unsetVote"].indexOf(action) < 0) return next(new Error(action + " is unknown"));
 
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
 
   article[action](req.user, tag, function(err) {
@@ -786,8 +785,8 @@ function createArticle(req, res, next) {
   debug("createArticle");
 
 
-  var placeholder = configModule.getPlaceholder();
-  var proto = {};
+  const placeholder = configModule.getPlaceholder();
+  const proto = {};
   if (typeof (req.query.blog) !== "undefined") {
     proto.blog = req.query.blog;
   }
@@ -833,12 +832,12 @@ function createArticle(req, res, next) {
 function searchArticles(req, res, next) {
   debug("search");
 
-  var search = req.query.search;
-  var show = req.query.show;
+  let search = req.query.search;
+  let show = req.query.show;
   if (!show) show = "15";
 
   if (!search || typeof (search) === "undefined") search = "";
-  var result = null;
+  let result = null;
 
   async.series([
     function doSearch(cb) {
@@ -876,7 +875,7 @@ function searchArticles(req, res, next) {
 function urlExist(req, res) {
   debug("urlExists");
 
-  var url = req.body.url;
+  const url = req.body.url;
   if (!url || url === 0 || url === "") {
     res.end("Missing Link");
     return;
@@ -905,21 +904,21 @@ function urlExist(req, res) {
 function renderList(req, res, next) {
   debug("renderList");
   req.session.articleReturnTo = req.originalUrl;
-  var blog = req.query.blog;
-  var user = req.query.user;
-  var property = req.query.property;
-  var myArticles = (req.query.myArticles === "true");
-  var listOfChanges = (typeof (user) === "string" && typeof (property) === "string");
-  var simpleFind = !(listOfChanges || myArticles);
+  const blog = req.query.blog;
+  const user = req.query.user;
+  const property = req.query.property;
+  const myArticles = (req.query.myArticles === "true");
+  const listOfChanges = (typeof (user) === "string" && typeof (property) === "string");
+  const simpleFind = !(listOfChanges || myArticles);
 
 
-  var articles;
+  let articles;
 
   async.parallel([
     function findArticleFunction(callback) {
       debug("renderList->findArticleFunction");
       if (!simpleFind) return callback();
-      var query = {};
+      const query = {};
       if (typeof (blog) !== "undefined") {
         query.blog = blog;
       }
@@ -1048,7 +1047,7 @@ function translateWithPlugin(translatePlugin) {
       return;
     }
 
-    var options = {
+    const options = {
       fromLang: req.params.fromLang,
       toLang: req.params.toLang,
       text: req.body.text

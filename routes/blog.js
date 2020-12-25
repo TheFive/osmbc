@@ -423,7 +423,7 @@ function renderBlogTab(req, res, next) {
       return;
     }
 
-    var translationServices = [];
+    const translationServices = [];
     if (translator.deeplPro.active()) {
       translationServices.push("deeplPro");
     }

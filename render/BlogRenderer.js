@@ -146,9 +146,9 @@ MarkdownRenderer.prototype.renderArticle = function markdownArticle(lang, articl
 
 HtmlRenderer.prototype.articleTitle = function htmlArticle(lang, article) {
   debug("HtmlRenderer.prototype.article");
-  var text = article.displayTitle(999);
+  let text = article.displayTitle(999);
   if (article.categoryEN === "--unpublished--") {
-    var reason2 = "No Reason given";
+    let reason2 = "No Reason given";
     if (article.unpublishReason) reason2 = article.unpublishReason;
     text += "<br>" + reason2;
     if (article.unpublishReference) text += " (" + article.unpublishReference + ")";

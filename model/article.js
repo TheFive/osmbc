@@ -31,7 +31,7 @@ const url = config.url();
 function Article (proto) {
   debug("Article");
   this.id = 0;
-  for (var k in proto) {
+  for (const k in proto) {
     this[k] = proto[k];
   }
 }
@@ -54,7 +54,7 @@ function createNewArticle (proto, callback) {
   function _createNewArticle(proto, callback) {
     debug("createNewArticle");
     if (proto && proto.id) return callback(new Error("ProtoID Exists"));
-    var article = create(proto);
+    const article = create(proto);
     article.save(function (err) {
       return callback(err, article);
     });
@@ -79,9 +79,9 @@ Article.prototype.getCommentMention = function getCommentMention(userName, lang1
   // No Type Check, Variables can be empty.
 
   if (this.commentStatus === "solved") return null;
-  var comment = this.comment;
+  let comment = this.comment;
   if (this.commentList) {
-    for (var i = 0; i < this.commentList.length; i++) {
+    for (let i = 0; i < this.commentList.length; i++) {
       comment += " " + this.commentList[i].text;
     }
   }
@@ -90,7 +90,7 @@ Article.prototype.getCommentMention = function getCommentMention(userName, lang1
 
   if (lang1 && comment.search(new RegExp("@" + lang1 + "\\b", "i")) >= 0) return "language";
   if (lang2 && comment.search(new RegExp("@" + lang2 + "\\b", "i")) >= 0) return "language";
-  if (comment.search(new RegExp("@all\\b", "i")) >= 0) return "language";
+  if (comment.search(/@all\b/i) >= 0) return "language";
   if (this.comment || (this.commentList && this.commentList.length > 0)) return "other";
   return null;
 };
@@ -100,15 +100,15 @@ Article.prototype.isMentioned = function isMentioned(what, includeAll) {
   if (typeof (includeAll) === "undefined") includeAll = false;
 
   if (this.commentStatus === "solved") return null;
-  var comment = this.comment;
+  let comment = this.comment;
   if (this.commentList) {
-    for (var i = 0; i < this.commentList.length; i++) {
+    for (let i = 0; i < this.commentList.length; i++) {
       comment += " " + this.commentList[i].text;
     }
   }
   if (!comment) return null;
   if (comment.search(new RegExp("@" + what + "\\b", "i")) >= 0) return true;
-  if (includeAll && comment.search(new RegExp("@all\\b", "i")) >= 0) return true;
+  if (includeAll && comment.search(/@all\b/i) >= 0) return true;
   return false;
 };
 
@@ -176,7 +176,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("setAndSave");
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
 
-  var self = this;
+  const self = this;
 
   if (data.addComment) return callback(new Error("addCommment in article setAndSave is unsupported"));
   if (data.comment) return callback(new Error("comment in article setAndSave is unsupported"));
@@ -185,11 +185,11 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
   debug("Version of dataset %s", data.version);
   if (data.version) {
     if (self.version !== parseInt(data.version)) {
-      var error = new Error("Version Number Differs");
+      const error = new Error("Version Number Differs");
       return callback(error);
     }
   } else { // no version is given, check all fields for old field
-    for (var k in data) {
+    for (const k in data) {
       if (k === "old") continue;
       if (data.old && data.old[k] === data[k]) {
         delete data.old[k];
@@ -266,7 +266,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
     assert(self.id !== 0);
     delete data.version;
 
-    for (var k in data) {
+    for (const k in data) {
       if (data[k] === self[k]) { delete data[k]; continue; }
       if (data[k] === undefined) { delete data[k]; continue; }
       if (data[k]) data[k] = data[k].trim();
@@ -287,7 +287,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
         messageCenter.global.updateArticle(user, oa, data, cb);
       },
       function putValues (cb) {
-        for (k in data) {
+        for (const k in data) {
           if (typeof (data[k]) !== "undefined") self[k] = data[k];
         }
         cb();
@@ -305,10 +305,10 @@ Article.prototype.reviewChanges = function setAndSave(user, data, callback) {
   debug("reviewChanges");
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
 
-  var self = this;
+  const self = this;
 
 
-  for (var k in data) {
+  for (const k in data) {
     if ((self[k] && self[k] !== data[k]) || (typeof (self[k]) === "undefined" && data[k] !== "")) {
       const error = new Error("Field " + k + " already changed in DB");
       error.status = HttpStatus.CONFLICT;
@@ -339,7 +339,7 @@ Article.prototype.reviewChanges = function setAndSave(user, data, callback) {
     if (err) return callback(err);
     assert(typeof self.id !== "undefined");
     assert.notEqual(self.id, 0);
-    for (var k in data) {
+    for (const k in data) {
       // Now check, wether deletion is allowed or not.
       if (k !== "action" && !self.isChangeAllowed(k)) {
         return callback(new Error(k + " can not be edited. Blog is already exported."));
@@ -410,7 +410,7 @@ function fullTextSearch(search, order, callback) {
 
 function findEmptyUserCollectedArticles(lang, user, callback) {
   debug("findEmptyUserCollectedArticles");
-  var query = "select distinct on (article.id) article.id as id, article.data as data from article, changes,blog \
+  const query = "select distinct on (article.id) article.id as id, article.data as data from article, changes,blog \
            where (article.id)::text = changes.data->>'oid' and changes.data->>'table'='article' \
            and changes.data->>'blog' = blog.data->>'name' \
            and article.data->>'blog' != 'Trash' \
@@ -426,7 +426,7 @@ function findEmptyUserCollectedArticles(lang, user, callback) {
 
 function findUserEditFieldsArticles(blog, user, field, callback) {
   debug("findUserEditFieldsArticles");
-  var query = "select distinct on (article.id) article.id as id, article.data as data from article, changes \
+  const query = "select distinct on (article.id) article.id as id, article.data as data from article, changes \
            where (article.id)::text = changes.data->>'oid' and changes.data->>'table'='article' \
            and changes.data->>'blog' = '" + blog + "' \
            and changes.data->>'user' = '" + user + "' \
@@ -439,20 +439,20 @@ function findUserEditFieldsArticles(blog, user, field, callback) {
 // there is no double check for the result
 Article.prototype.calculateLinks = function calculateLinks() {
   debug("calculateLinks");
-  var links = [];
-  var languageFlags = configModule.getConfig("languageflags");
+  let links = [];
+  const languageFlags = configModule.getConfig("languageflags");
 
-  var listOfField = ["collection"];
-  for (var i = 0; i < config.getLanguages().length; i++) {
+  const listOfField = ["collection"];
+  for (let i = 0; i < config.getLanguages().length; i++) {
     listOfField.push("markdown" + config.getLanguages()[i]);
   }
-  for (i = 0; i < listOfField.length; i++) {
+  for (let i = 0; i < listOfField.length; i++) {
     if (typeof (this[listOfField[i]]) !== "undefined") {
-      var res = util.getAllURL(this[listOfField[i]]);
+      const res = util.getAllURL(this[listOfField[i]]);
       // var res = this[listOfField[i]].match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
       for (let respoint = 0; respoint < res.length; respoint++) {
-        var add = true;
-        for (var k in languageFlags) {
+        let add = true;
+        for (const k in languageFlags) {
           if (res[respoint] === languageFlags[k]) {
             add = false;
             break;
@@ -476,7 +476,7 @@ Article.prototype.calculateLinks = function calculateLinks() {
 // Article.prototype.displayTitle = displayTitle;
 Article.prototype.displayTitle = function displayTitle(maxlength) {
   if (typeof (maxlength) === "undefined") maxlength = 30;
-  var result = "";
+  let result = "";
   if (typeof (this.title) !== "undefined" && this.title !== "") {
     result = util.shorten(this.title, maxlength);
   } else
@@ -495,7 +495,7 @@ Article.prototype.displayTitle = function displayTitle(maxlength) {
 
 
 
-var pgObject = {};
+const pgObject = {};
 
 pgObject.table = "article";
 pgObject.createString = "CREATE TABLE article (  id bigserial NOT NULL,  data json,  \
@@ -530,10 +530,10 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(options, call
     callback = options;
     options = {};
   }
-  var usedLinks = this.calculateLinks();
-  var self = this;
+  const usedLinks = this.calculateLinks();
+  const self = this;
 
-  var articleReferences = {};
+  const articleReferences = {};
   articleReferences.count = 0;
 
   if ((this.categoryEN === "Upcoming Events") || (this.categoryEN === "Releases")) {
@@ -548,7 +548,7 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(options, call
     function forEachUsedLink(item, cb) {
       debug("forEachUsedLink");
       if (options.ignoreStandard && ignoreStandard.indexOf(item) >= 0) return cb();
-      var reference = item;
+      const reference = item;
 
       // shorten HTTP / HTTPS links by the leading HTTP(s)
       // if (reference.substring(0,5) == "https") reference = reference.substring(5,999);
@@ -559,7 +559,7 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(options, call
         debug("fullTextSearch Result");
         if (err) return cb(err);
         if (result) {
-          for (var i = result.length - 1; i >= 0; i--) {
+          for (let i = result.length - 1; i >= 0; i--) {
             let dropIt = false;
             if (result[i].id === self.id) dropIt = true;
             if (result[i].blog === "Trash") dropIt = true;
@@ -582,8 +582,8 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(options, call
 
 Article.prototype.getCategory = function getCategory(lang) {
   debug("getCategory");
-  var result = this.categoryEN;
-  var categoryTranslation = configModule.getConfig("categorytranslation");
+  let result = this.categoryEN;
+  const categoryTranslation = configModule.getConfig("categorytranslation");
   if (categoryTranslation[result] && categoryTranslation[result][lang]) {
     result = categoryTranslation[result][lang];
   }
@@ -606,14 +606,14 @@ Article.prototype.addCommentFunction = function addCommentFunction(user, text, c
 
   // check on empty comment
   if (text.trim() === "") return callback(new Error("Empty Comment Added"));
-  var self = this;
+  const self = this;
 
   text = normaliseArticleNumber(text);
 
   // Add the new comment with User to the comment list object
   if (!self.commentList) self.commentList = [];
   self.commentStatus = "open";
-  var commentObject = { user: user.OSMUser, timestamp: new Date(), text: text };
+  const commentObject = { user: user.OSMUser, timestamp: new Date(), text: text };
   self.commentList.push(commentObject);
 
   // Set the self written comment (and all before) to be read by OSMUser
@@ -652,7 +652,7 @@ Article.prototype.editComment = function editComment(user, index, text, callback
   assert.equal(typeof (callback), "function");
   if (text.trim() === "") return callback(new Error("Empty Comment Added"));
   text = normaliseArticleNumber(text);
-  var self = this;
+  const self = this;
 
   if (!self.commentList) self.commentList = [];
   assert(index >= 0);
@@ -668,7 +668,7 @@ Article.prototype.editComment = function editComment(user, index, text, callback
       messageCenter.global.editComment(user, self, index, text, cb);
     },
     function setValues(cb) {
-      var commentObject = self.commentList[index];
+      const commentObject = self.commentList[index];
       commentObject.editstamp = new Date();
       commentObject.text = text;
       cb();
@@ -733,7 +733,7 @@ Article.prototype.markCommentRead = function markCommentRead(user, index, callba
   debug("Article.prototype.markCommentRead");
   assert.equal(typeof (user), "object");
   assert.equal(typeof (callback), "function");
-  var self = this;
+  const self = this;
 
   // nothing to read, ignore request.
   if (!self.commentList) return callback();
@@ -754,7 +754,7 @@ Article.prototype.setVote = function setVote(user, tag, callback) {
   assert.equal(typeof (user), "object");
   assert.equal(typeof tag, "string");
   assert.equal(typeof (callback), "function");
-  var self = this;
+  const self = this;
 
   if (!self.votes) self.votes = {};
   if (!self.votes[tag]) self.votes[tag] = [];
@@ -772,7 +772,7 @@ Article.prototype.unsetVote = function unsetVote(user, tag, callback) {
   assert.equal(typeof (user), "object");
   assert.equal(typeof tag, "string");
   assert.equal(typeof (callback), "function");
-  var self = this;
+  const self = this;
 
   if (!self.votes) self.votes = {};
   if (!self.votes[tag]) self.votes[tag] = [];
@@ -791,7 +791,7 @@ Article.prototype.setTag = function setTag(user, tag, callback) {
   assert.equal(typeof (user), "object");
   assert.equal(typeof tag, "string");
   assert.equal(typeof (callback), "function");
-  var self = this;
+  const self = this;
 
   if (!self.tags) self.tags = [];
   if (self.tags.indexOf(tag) < 0) {
@@ -807,7 +807,7 @@ Article.prototype.unsetTag = function unsetTag(user, tag, callback) {
   assert.equal(typeof user, "object");
   assert.equal(typeof tag, "string");
   assert.equal(typeof callback, "function");
-  var self = this;
+  const self = this;
 
   if (!self.tags) self.tags = [];
   const index = self.tags.indexOf(tag);
@@ -823,10 +823,10 @@ Article.prototype.addNotranslate = function addNotranslate(user, shownLang, call
   debug("Article.prototype.addNotranslate");
   util.requireTypes([user, shownLang, callback], ["object", "object", "function"]);
 
-  var self = this;
-  var change = { version: self.version };
-  for (var i = 0; i < config.getLanguages().length; i++) {
-    var lang = config.getLanguages()[i];
+  const self = this;
+  const change = { version: self.version };
+  for (let i = 0; i < config.getLanguages().length; i++) {
+    const lang = config.getLanguages()[i];
     if (shownLang[lang] && ((typeof (self["markdown" + lang]) === "undefined") || (self["markdown" + lang] === ""))) {
       change["markdown" + lang] = "no translation";
     }
@@ -856,10 +856,10 @@ Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromCha
     function (err, result) {
       if (err) return cb(err);
       if (result && result.length > 0) {
-        var list = {};
+        const list = {};
         self._lastChange = {};
-        for (var i = 0; i < result.length; i++) {
-          var r = result[i];
+        for (let i = 0; i < result.length; i++) {
+          const r = result[i];
           const prop = r.property;
           if (!list[prop]) list[prop] = {};
 
@@ -876,12 +876,12 @@ Article.prototype.calculateDerivedFromChanges = function calculateDerivedFromCha
         self.author = {};
 
 
-        for (var p in list) {
+        for (const p in list) {
           self.author[p] = "";
-          var sep = "";
+          let sep = "";
 
           // Iterate over all user and copy them to a list.
-          for (var k in list[p]) {
+          for (const k in list[p]) {
             self.author[p] += sep + k;
             sep = ",";
           }

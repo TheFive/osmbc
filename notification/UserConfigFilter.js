@@ -2,7 +2,7 @@
 
 const assert = require("assert");
 
-var debug = require("debug")("OSMBC:notification:messageFilter");
+const debug = require("debug")("OSMBC:notification:messageFilter");
 
 
 function UserConfigFilter(user, receiver) {
@@ -16,7 +16,7 @@ function UserConfigFilter(user, receiver) {
 
 UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, article, change, cb) {
   debug("UserConfigFilter.prototype.updateArticle");
-  var sendMail = false;
+  let sendMail = false;
 
   // check Collection
   if (this.user.mailNewCollection === "true" && this.user.access === "full") {
@@ -33,14 +33,14 @@ UserConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, artic
 
 UserConfigFilter.prototype.addComment = function ucfAddComment(user, article, comment, cb) {
   debug("UserConfigFilter.prototype.addComment");
-  var sendMail = false;
+  let sendMail = false;
 
   // check Collection
   if (this.user.mailAllComment === "true") {
     sendMail = true;
   }
   let checkComment = comment;
-  var userList = [];
+  let userList = [];
   if (this.user.mailComment) userList = this.user.mailComment;
 
   // if mailCommentGeneral search for mention in all comments of an article
@@ -55,7 +55,7 @@ UserConfigFilter.prototype.addComment = function ucfAddComment(user, article, co
       if (item.text !== comment) checkComment = checkComment + " @" + item.user + " ";
     });
   }
-  for (var i = 0; i < userList.length; i++) {
+  for (let i = 0; i < userList.length; i++) {
     if (checkComment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
       sendMail = true;
       debug("Mail send because comment for @" + userList[i]);
@@ -74,14 +74,14 @@ UserConfigFilter.prototype.addComment = function ucfAddComment(user, article, co
 
 UserConfigFilter.prototype.editComment = function ucfEditComment(user, article, index, comment, cb) {
   debug("UserConfigFilter.prototype.addComment");
-  var sendMail = false;
+  let sendMail = false;
 
   // check Collection
   if (this.user.mailAllComment === "true") {
     sendMail = true;
   }
   let checkComment = comment;
-  var userList = [];
+  let userList = [];
   if (this.user.mailComment) userList = this.user.mailComment;
 
   // if mailCommentGeneral search for mention in all comments of an article
@@ -97,7 +97,7 @@ UserConfigFilter.prototype.editComment = function ucfEditComment(user, article, 
     });
   }
   if (this.user.mailComment) userList = this.user.mailComment;
-  for (var i = 0; i < userList.length; i++) {
+  for (let i = 0; i < userList.length; i++) {
     if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
       sendMail = true;
       debug("Mail send because comment for @" + userList[i]);
@@ -113,7 +113,7 @@ UserConfigFilter.prototype.editComment = function ucfEditComment(user, article, 
 
 UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, change, cb) {
   debug("UserConfigFilter.prototype.updateBlog");
-  var sendMail = false;
+  let sendMail = false;
 
 
   // check Collection
@@ -131,11 +131,11 @@ UserConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, ch
 
 UserConfigFilter.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, cb) {
   debug("UserConfigFilter.prototype.sendReviewStatus");
-  var wnList = [];
-  var sendMail = false;
+  let wnList = [];
+  let sendMail = false;
   if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange;
-  for (var i = 0; i < wnList.length; i++) {
-    var l = wnList[i];
+  for (let i = 0; i < wnList.length; i++) {
+    const l = wnList[i];
     if (l === lang) sendMail = true;
   }
   if (this.user.access === "guest") sendMail = false;
@@ -146,11 +146,11 @@ UserConfigFilter.prototype.sendReviewStatus = function sendReviewStatus(user, bl
 
 UserConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {
   debug("UserConfigFilter.prototype.sendCloseStatus");
-  var wnList = [];
-  var sendMail = false;
+  let wnList = [];
+  let sendMail = false;
   if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange;
-  for (var i = 0; i < wnList.length; i++) {
-    var l = wnList[i];
+  for (let i = 0; i < wnList.length; i++) {
+    const l = wnList[i];
     if (l === lang) sendMail = true;
   }
   if (this.user.access === "guest") sendMail = false;

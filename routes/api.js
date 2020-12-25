@@ -1,21 +1,21 @@
 "use strict";
 
-var debug         = require("debug")("OSMBC:routes:api");
-var express       = require("express");
-var userModule    = require("../model/user.js");
-var publicRouter  = express.Router();
-var async         = require("../util/async_wrap.js");
-var htmltitle     = require("../model/htmltitle.js");
-var util          = require("../util/util.js");
-var articleModule = require("../model/article.js");
-var config        = require("../config.js");
+const debug         = require("debug")("OSMBC:routes:api");
+const express       = require("express");
+const userModule    = require("../model/user.js");
+const publicRouter  = express.Router();
+const async         = require("../util/async_wrap.js");
+const htmltitle     = require("../model/htmltitle.js");
+const util          = require("../util/util.js");
+const articleModule = require("../model/article.js");
+const config        = require("../config.js");
 
 
 const apiKeys = config.getValue("apiKeys", { mustExist: true });
 
 function checkApiKey(req, res, next) {
   debug("checkApiKey");
-  var apiKey = req.params.apiKey;
+  const apiKey = req.params.apiKey;
 
   if (apiKeys[apiKey]) {
     req.apiKey = apiKeys[apiKey];

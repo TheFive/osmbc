@@ -1,16 +1,16 @@
 "use strict";
 
-var fs = require("fs");
-var path = require("path");
-var debug = require("debug")("OSMBC:routes:help");
-var config = require("../config.js");
+const fs = require("fs");
+const path = require("path");
+const debug = require("debug")("OSMBC:routes:help");
+const config = require("../config.js");
 
-var markdown = require("markdown-it")()
+const markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
   .use(require("markdown-it-imsize"), { autofill: true });
 
 
-var token = null;
+let token = null;
 
 const htmlroot = config.htmlRoot();
 
@@ -27,10 +27,10 @@ function generateHelpText(filename) {
   debug("generateHelpText");
   initToken();
 
-  var helpdir = "help";
+  let helpdir = "help";
   if (filename === "CHANGELOG.md") helpdir = "";
-  var result = fs.readFileSync(path.resolve(__dirname, "..", helpdir, filename), "UTF8");
-  for (var t in token) {
+  let result = fs.readFileSync(path.resolve(__dirname, "..", helpdir, filename), "UTF8");
+  for (const t in token) {
     while (result.indexOf(t) >= 0) {
       result = result.replace(t, token[t]);
     }

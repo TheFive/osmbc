@@ -10,7 +10,7 @@ config.getValue("sessionStore", { deprecated: true });
 
 module.exports = function(session) {
   let sessionStore = null;
-  var PgSession = require("connect-pg-simple")(session);
+  const PgSession = require("connect-pg-simple")(session);
 
   const pool = db.getPool();
   assert(pool);
