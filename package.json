@@ -62,7 +62,6 @@
     "request": "2.88.x",
     "request-promise-native": "1.0.x",
     "serve-favicon": "2.5.x",
-    "session-file-store": "1.4.x",
     "standard-http-error": "2.0.x",
     "stoppable": "1.1.x",
     "turndown": "6.0.x",
