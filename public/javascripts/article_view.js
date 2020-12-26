@@ -21,10 +21,10 @@ function unloadWindowWarning(event) {
   return dialogText;
 }
 
-var mdRender;
+
 // initialise all callbacks with jQuery
 function init() {
-  mdRender = window.markdownit();
+  const mdRender = window.markdownit();
   mdRender.use(window.markdownitSup);
   mdRender.use(window["markdown-it-imsize.js"]);
   $("#linkArea")
@@ -160,7 +160,7 @@ function convert(text) {
 
 
   // convert md to html
-  text = mdRender.render(text);
+  text = window.markdownit().render(text);
 
 
   // Display as list, this should depend on type
@@ -415,8 +415,8 @@ function onchangeCollection() {
 
 
   while ((linkList = regexToken.exec(cl)) !== null) {
-    var link = linkList[0];
-    var found = false;
+    const link = linkList[0];
+    let found = false;
 
 
     window.linklist.forEach(function (l) { // jshint ignore:line
