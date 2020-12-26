@@ -1,23 +1,23 @@
 "use strict";
 
-var express  = require("express");
-var async    = require("async");
-var router   = express.Router();
-var debug    = require("debug")("OSMBC:routes:slack");
+const express  = require("express");
+const async    = require("async");
+const router   = express.Router();
+const debug    = require("debug")("OSMBC:routes:slack");
 
-var config   = require("../config.js");
-var logger   = require("../config.js").logger;
-var util     = require("../util/util.js");
-
-
-var userModule     = require("../model/user.js");
-var htmltitle     = require("../model/htmltitle.js");
-var articleModule     = require("../model/article.js");
+const config   = require("../config.js");
+const logger   = require("../config.js").logger;
+const util     = require("../util/util.js");
 
 
-var botName = config.getValue("AppName", { mustExist: true }).toLowerCase();
+const userModule     = require("../model/user.js");
+const htmltitle     = require("../model/htmltitle.js");
+const articleModule     = require("../model/article.js");
 
-var osmbcUrl = config.getValue("url", { mustExist: true }) + config.htmlRoot();
+
+const botName = config.getValue("AppName", { mustExist: true }).toLowerCase();
+
+const osmbcUrl = config.getValue("url", { mustExist: true }) + config.htmlRoot();
 
 function articleNameSlack(article) {
   debug("articleNameSlack");
@@ -26,7 +26,7 @@ function articleNameSlack(article) {
 
 function ensureAuthentificated(req, res, next) {
   debug("ensureAuthentificated");
-  var slackTeam = req.params.team;
+  const slackTeam = req.params.team;
   let token = "xx";
   if (config.getValue("slack").article[slackTeam]) {
     token = config.getValue("slack").article[slackTeam].token;
@@ -46,7 +46,7 @@ function ensureAuthentificated(req, res, next) {
       logger.error(err);
       return next(err);
     }
-    var obj = {};
+    const obj = {};
 
     obj.token = req.body.token;
     obj.team_id = req.body.team_id;
@@ -104,7 +104,7 @@ function extractTextWithoutUrl(text) {
 function postSlackCreateUseTBC(req, res, next) {
   debug("postSlackCreateUseTBC");
 
-  var obj = {};
+  const obj = {};
 
   obj.token = req.body.token;
   obj.team_id = req.body.team_id;

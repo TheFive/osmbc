@@ -1,11 +1,11 @@
 "use strict";
 
-var express = require("express");
-var assert = require("assert").strict;
-var router = express.Router();
-var debug = require("debug")("OSMBC:routes:changes");
-var logModule = require("../model/logModule.js");
-var jsdiff = require("diff");
+const express = require("express");
+const assert = require("assert").strict;
+const router = express.Router();
+const debug = require("debug")("OSMBC:routes:changes");
+const logModule = require("../model/logModule.js");
+const jsdiff = require("diff");
 const auth        = require("../routes/auth.js");
 
 
@@ -19,11 +19,11 @@ function generateHTMLDiff(one, other) {
   if (typeof (other) !== "string") return "";
 
   const diff = jsdiff.diffWords(one, other);
-  var result = "";
+  let result = "";
   diff.forEach(function(part) {
     // green for additions, red for deletions
     // grey for common parts
-    var styleColor               = 'style="color:grey"';
+    let styleColor               = 'style="color:grey"';
     if (part.added) styleColor = 'class="osmbc-inserted-inverted"';
     if (part.removed) styleColor = 'class="osmbc-deleted-inverted"';
 
@@ -37,17 +37,17 @@ function generateHTMLDiff(one, other) {
 
 function renderHistoryLog(req, res, next) {
   debug("renderHistoryLog");
-  var date = req.query.date;
-  var user = req.query.user;
-  var table = req.query.table;
-  var blog = req.query.blog;
-  var property = req.query.property;
-  var oid = req.query.oid;
+  const date = req.query.date;
+  const user = req.query.user;
+  const table = req.query.table;
+  const blog = req.query.blog;
+  const property = req.query.property;
+  const oid = req.query.oid;
 
-  var params = { date: date, oid: oid, user: user, table: table, blog: blog, property: property };
+  const params = { date: date, oid: oid, user: user, table: table, blog: blog, property: property };
 
 
-  var search = {};
+  const search = {};
   if (date) search.timestamp = date + "%";
   if (date && ((date.indexOf("<") >= 0) || (date.indexOf(">") >= 0))) search.timestamp = date;
   if (date && ((date.indexOf("GE:") >= 0) || (date.indexOf(">") >= 0))) search.timestamp = date;
@@ -76,7 +76,7 @@ function renderHistoryLog(req, res, next) {
 /* GET users listing. */
 function renderChangeId(req, res, next) {
   debug("renderChangeId");
-  var id = req.params.change_id;
+  const id = req.params.change_id;
   logModule.findById(id, function(err, change) {
     if (err) return next(err);
     if (!change || typeof (change.id) === "undefined") return next(new Error("Change id >" + id + "< not found."));

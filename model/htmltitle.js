@@ -1,9 +1,9 @@
 "use strict";
 
-var cheerio = require("cheerio");
-var request = require("request");
-var iconv = require("iconv-lite");
-var debug = require("debug")("OSMBC:model:htmltitle");
+const cheerio = require("cheerio");
+const request = require("request");
+const iconv = require("iconv-lite");
+const debug = require("debug")("OSMBC:model:htmltitle");
 
 function linkFrom(url, page) {
   if (url.substring(0, page.length + 7) === ("http://" + page)) return true;
@@ -57,7 +57,7 @@ function retrieveDescription(body) {
   return title;
 } */
 
-var converterList = [retrieveForum, retrieveTwitter, retrieveOsmBlog, retrieveTitle];
+const converterList = [retrieveForum, retrieveTwitter, retrieveOsmBlog, retrieveTitle];
 
 
 function getTitle(url, callback) {
@@ -68,7 +68,7 @@ function getTitle(url, callback) {
       if (error) return callback(null, "Page not Found");
 
       // try to get charset from Headers (version 1)
-      var fromcharset = response.headers["content-encoding"];
+      let fromcharset = response.headers["content-encoding"];
 
       // if not exist, try to get charset from Headers (version 2)
       if (!fromcharset) {
@@ -86,7 +86,7 @@ function getTitle(url, callback) {
 
       // nothing given, to use parser set incoming & outcoming charset equal
       if (!fromcharset) fromcharset = "UTF-8";
-      var utf8body = null;
+      let utf8body = null;
       utf8body = iconv.decode(body, fromcharset);
       /*
       try {

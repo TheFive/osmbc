@@ -1,6 +1,6 @@
 "use strict";
 
-var debug = require("debug")("OSMBC:notification:messageFilter");
+const debug = require("debug")("OSMBC:notification:messageFilter");
 
 
 

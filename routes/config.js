@@ -1,20 +1,20 @@
 "use strict";
 
-var assert   = require("assert");
-var async    = require("../util/async_wrap.js");
-var debug    = require("debug")("OSMBC:routes:config");
+const assert   = require("assert");
+const async    = require("../util/async_wrap.js");
+const debug    = require("debug")("OSMBC:routes:config");
 
 
-var express    = require("express");
-var router     = express.Router();
+const express    = require("express");
+const router     = express.Router();
 const auth        = require("../routes/auth.js");
 
 
 
-var config = require("../config.js");
+const config = require("../config.js");
 
-var configModule = require("../model/config.js");
-var logModule = require("../model/logModule.js");
+const configModule = require("../model/config.js");
+const logModule = require("../model/logModule.js");
 
 
 const htmlroot = config.htmlRoot();
@@ -23,11 +23,11 @@ const htmlroot = config.htmlRoot();
 
 function renderConfigName(req, res, next) {
   debug("renderConfigName");
-  var name = req.params.name;
+  const name = req.params.name;
   assert(name);
-  var params = {};
-  var config;
-  var changes;
+  const params = {};
+  let config;
+  let changes;
   async.series([
     function findConfigByName(cb) {
       debug("findAndCreateConfig");
@@ -54,7 +54,7 @@ function renderConfigName(req, res, next) {
     debug("finalRenderCB");
     if (err) return next(err);
     assert(res.rendervar);
-    var jadeFile = "config";
+    let jadeFile = "config";
     if (name === "calendarflags") jadeFile = name;
     if (name === "categorydescription") jadeFile = name;
     if (name === "languageflags") jadeFile = "calendarflags";
@@ -79,9 +79,9 @@ function renderConfigName(req, res, next) {
 
 function postConfigId(req, res, next) {
   debug("postUserId");
-  var name = req.params.name;
-  var changes = { yaml: req.body.yaml, type: req.body.type, name: req.body.name, text: req.body.text };
-  var configData;
+  const name = req.params.name;
+  const changes = { yaml: req.body.yaml, type: req.body.type, name: req.body.name, text: req.body.text };
+  let configData;
   async.series([
     function findUser(cb) {
       debug("findConfig");

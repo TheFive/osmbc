@@ -1,9 +1,9 @@
 "use strict";
 
-var debug     = require("debug")("OSMBC:notification:LogModuleReceiver");
-var async     = require("../util/async_wrap.js");
-var assert    = require("assert");
-var logModule = require("../model/logModule.js");
+const debug     = require("debug")("OSMBC:notification:LogModuleReceiver");
+const async     = require("../util/async_wrap.js");
+const assert    = require("assert");
+const logModule = require("../model/logModule.js");
 
 
 
@@ -23,9 +23,9 @@ LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) 
   assert(article.id !== 0);
   assert(typeof (user) === "object");
   assert(typeof user.OSMUser === "string");
-  var logblog = article.blog;
+  let logblog = article.blog;
   if (change.blog) logblog = change.blog;
-  var timestamp = new Date();
+  let timestamp = new Date();
   if (change.timestamp) timestamp = change.timestamp;
   async.eachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
     // There is no Value for the key, so do nothing
@@ -63,7 +63,7 @@ LogModuleReceiver.prototype.updateBlog = function(user, blog, change, cb) {
   assert(blog.id !== 0);
   assert(typeof (user) === "object");
   assert(typeof user.OSMUser === "string");
-  var timestamp = new Date();
+  const timestamp = new Date();
   async.eachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
     debug("setAndSaveEachOf");
     // There is no Value for the key, so do nothing
@@ -107,7 +107,7 @@ LogModuleReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, b
   assert(typeof (user) === "object");
   assert(typeof user.OSMUser === "string");
   assert(user.OSMUser);
-  var timestamp = new Date();
+  const timestamp = new Date();
   logModule.log({
     oid: blog.id,
     blog: blog.name,
@@ -126,7 +126,7 @@ LogModuleReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blo
   assert(typeof (user) === "object");
   assert(typeof user.OSMUser === "string");
   assert(user.OSMUser);
-  var timestamp = new Date();
+  const timestamp = new Date();
   logModule.log({
     oid: blog.id,
     blog: blog.name,
@@ -145,7 +145,7 @@ LogModuleReceiver.prototype.editComment = function editComment(user, article, in
   assert(typeof (user) === "object");
   assert(typeof user.OSMUser === "string");
   assert(user.OSMUser);
-  var timestamp = new Date();
+  const timestamp = new Date();
   logModule.log({
     oid: article.id,
     blog: article.blog,
@@ -165,7 +165,7 @@ LogModuleReceiver.prototype.addComment = function addComment(user, article, text
   assert(typeof (user) === "object");
   assert(typeof user.OSMUser === "string");
   assert(user.OSMUser);
-  var timestamp = new Date();
+  const timestamp = new Date();
   logModule.log({
     oid: article.id,
     blog: article.blog,

@@ -1,7 +1,7 @@
 "use strict";
 
-var async         = require("../util/async_wrap.js");
-var debug         = require("debug")("OSMBC:notification:iteratorReceiver");
+const async         = require("../util/async_wrap.js");
+const debug         = require("debug")("OSMBC:notification:iteratorReceiver");
 
 
 function IteratorReceiver(receiverMap) {

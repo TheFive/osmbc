@@ -8,7 +8,7 @@ const debug = require("debug")("OSMBC:routes:users");
 const express    = require("express");
 const router     = express.Router();
 const auth       = require("../routes/auth.js");
-var HttpError  = require("standard-http-error");
+const HttpError  = require("standard-http-error");
 
 
 const config = require("../config.js");
@@ -23,9 +23,9 @@ const htmlroot = config.htmlRoot();
 
 function renderList(req, res, next) {
   debug("renderList");
-  var users;
-  var query = {};
-  var sort = { column: "OSMUser" };
+  let users;
+  const query = {};
+  const sort = { column: "OSMUser" };
   if (req.query.access) query.access = req.query.access;
   if (req.query.sort && req.query.sort !== "OSMBC-changes") sort.column = req.query.sort;
   if (req.query.desc) sort.desc = true;
@@ -69,7 +69,7 @@ function renderList(req, res, next) {
 function renderUserId(req, res, next) {
   debug("renderUserId");
   let redirect = false;
-  var id = req.params.user_id;
+  let id = req.params.user_id;
 
 
   if (req.query.becomeGuest === "true" && req.user.access === "full") {
@@ -101,10 +101,10 @@ function renderUserId(req, res, next) {
     }
   }
 
-  var params = {};
-  var user;
-  var changes;
-  var userHeatMapArray = null;
+  const params = {};
+  let user;
+  let changes;
+  let userHeatMapArray = null;
   async.series([
     function findAndLoaduserByName(cb) {
       debug("findAndLoaduserByName");
@@ -173,8 +173,8 @@ function renderUserId(req, res, next) {
 
 function postUserId(req, res, next) {
   debug("postUserId");
-  var id = req.params.user_id;
-  var changes = {
+  const id = req.params.user_id;
+  const changes = {
     OSMUser: req.body.OSMUser,
     SlackUser: req.body.SlackUser,
     mdWeeklyAuthor: req.body.mdWeeklyAuthor,
@@ -203,7 +203,7 @@ function postUserId(req, res, next) {
     changes.mailBlogLanguageStatusChange = [];
   }
   if (["three", "four"].indexOf(changes.languageCount) < 0) changes.languageCount = "two";
-  var user;
+  let user;
   let allowedToChangeUser = true;
   async.series([
     function findUser(cb) {
@@ -242,7 +242,7 @@ function postUserId(req, res, next) {
 
 function inbox (req, res) {
   debug("inbox");
-  var renderer = new blogRenderer.HtmlRenderer(null);
+  const renderer = new blogRenderer.HtmlRenderer(null);
   req.session.articleReturnTo = req.originalUrl;
   res.set("content-type", "text/html");
   res.render("inbox", { layout: res.rendervar.layout, renderer: renderer });

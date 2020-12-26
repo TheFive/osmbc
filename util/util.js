@@ -11,7 +11,7 @@ const url = require("../config").url();
 
 
 
-var markdown = require("markdown-it")()
+const markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
   .use(require("markdown-it-imsize"), { autofill: true });
 
@@ -25,7 +25,7 @@ function shorten(string, maxlength) {
   if (typeof (maxlength) === "undefined") maxlength = 30;
   if (typeof (string) === "undefined") return "";
   if (!string) return "";
-  var newstring = string;
+  let newstring = string;
   if (typeof (string) === "object") newstring = JSON.stringify(string);
   if (typeof (string) === "boolean") newstring = string.toString();
 
@@ -49,7 +49,7 @@ function toPGString(string, count) {
 function linkify(string) {
   debug("linkify");
   if (string === undefined) string = "undefined";
-  var result = string.toLowerCase();
+  let result = string.toLowerCase();
   while (result.indexOf(" ") >= 0) {
     result = result.replace(" ", "_");
   }
@@ -85,8 +85,8 @@ function md_render(text, accessMap) {
 }
 
 
-var isUrlRegex =      /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
-var getAllUrlRegex = /(https?:\/\/[^\[\] \n\r()]*)/g;
+const isUrlRegex =      /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+const getAllUrlRegex = /(https?:\/\/[^\[\] \n\r()]*)/g;
 
 // var getAllUrlRegex  = /(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
 

@@ -1,20 +1,20 @@
 "use strict";
 
-var debug    = require("debug")("OSMBC:model:config");
-var assert   = require("assert").strict;
-var async    = require("../util/async_wrap.js");
-var yaml     = require("js-yaml");
-var fs       = require("fs");
-var path     = require("path");
+const debug    = require("debug")("OSMBC:model:config");
+const assert   = require("assert").strict;
+const async    = require("../util/async_wrap.js");
+const yaml     = require("js-yaml");
+const fs       = require("fs");
+const path     = require("path");
 
 
-var pgMap    = require("../model/pgMap.js");
-var config   = require("../config.js");
-var util     = require("../util/util.js");
+const pgMap    = require("../model/pgMap.js");
+const config   = require("../config.js");
+const util     = require("../util/util.js");
 
 
-var messageCenter = require("../notification/messageCenter.js");
-var slackReceiver = require("../notification/slackReceiver.js");
+const messageCenter = require("../notification/messageCenter.js");
+const slackReceiver = require("../notification/slackReceiver.js");
 
 
 function freshupVotes(json) {
@@ -32,7 +32,7 @@ function Config (proto) {
   debug("Config");
   debug("Prototype %s", JSON.stringify(proto));
   this.id = 0;
-  for (var k in proto) {
+  for (const k in proto) {
     this[k] = proto[k];
   }
 }
@@ -49,7 +49,7 @@ function createNewConfig (proto, callback) {
   assert(configMap);
 
   if (proto) assert(typeof proto.id === "undefined");
-  var config = create(proto);
+  const config = create(proto);
   if (typeof (configMap[config.name]) !== "undefined") {
     // Configuration already exists
     return callback(new Error("Config >" + config.name + "< already exists."));
@@ -108,7 +108,7 @@ function findOne(obj1, obj2, callback) {
 
 function readDefaultData(text) {
   debug("readDefaultData");
-  var data = {};
+  const data = {};
   try {
     data.yaml = fs.readFileSync(path.resolve(__dirname, "..", "data", text + ".yaml"), "UTF8");
     data.type = "yaml";
@@ -134,7 +134,7 @@ function readDefaultData(text) {
 
 function defaultConfigObject(text, callback) {
   debug("defaultConfigObject");
-  var data = readDefaultData(text);
+  const data = readDefaultData(text);
   assert(data.type);
   createNewConfig(data, callback);
 }
@@ -159,7 +159,7 @@ function actualiseConfigMap(obj) {
 
 
 
-var pgObject = {};
+const pgObject = {};
 pgObject.createString = "CREATE TABLE config (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT config_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);";
 pgObject.indexDefinition = {};
@@ -168,11 +168,11 @@ pgObject.table = "config";
 module.exports.pg = pgObject;
 
 
-var checkAndRepair = {
+const checkAndRepair = {
   formulation_tipEN: function () {},
   formulation_tipDE: function () {},
   calendartranslation: function (c) {
-    var ct = c.getJSON();
+    let ct = c.getJSON();
     if (!ct) ct = {};
     if (!ct.town) ct.town = {};
     if (!ct.title) ct.title = {};
@@ -182,59 +182,59 @@ var checkAndRepair = {
     c.json = ct;
   },
   categorydescription: function(c) {
-    var cd = c.getJSON();
+    let cd = c.getJSON();
     if (!cd) cd = {};
     c.json = cd;
   },
   languageflags: function(c) {
-    var lf = c.getJSON();
+    let lf = c.getJSON();
     if (!lf) lf = {};
     c.json = lf;
   },
   automatictranslatetext: function(c) {
-    var lf = c.getJSON();
+    let lf = c.getJSON();
     if (!lf) lf = {};
     c.json = lf;
   },
   calendarflags: function(c) {
-    var cf = c.getJSON();
+    let cf = c.getJSON();
     if (!cf) cf = {};
     c.json = cf;
   },
   ignoreforsearch: function(c) {
-    var cf = c.getJSON();
+    let cf = c.getJSON();
     if (!cf) cf = [];
     c.json = cf;
   },
   slacknotification: function(c) {
-    var cf = c.getJSON();
+    let cf = c.getJSON();
     if (!cf) cf = {};
     c.json = cf;
   },
   licenses: function(c) {
-    var l = c.getJSON();
+    let l = c.getJSON();
     if (!l) l = {};
     if (!l.CC0) l.CC0 = "";
     c.json = l;
   },
 
   categorytranslation: function(c) {
-    var ct = c.getJSON();
+    let ct = c.getJSON();
     if (!ct) ct = [];
     c.json = ct;
   },
   editorstrings: function (c) {
-    var es = c.getJSON();
+    let es = c.getJSON();
     if (!es) es = {};
     c.json = es;
   },
   votes: function (c) {
-    var v = c.getJSON();
+    let v = c.getJSON();
     if (!v) v = [];
     c.json = v;
   },
   eventsfilter: function (c) {
-    var v = c.getJSON();
+    let v = c.getJSON();
     if (!v) v = [];
     c.json = v;
   }
@@ -246,7 +246,7 @@ Config.prototype.setAndSave = function setAndSave(user, data, callback) {
 
   util.requireTypes([user, data, callback], ["object", "object", "function"]);
 
-  var self = this;
+  const self = this;
 
   // try to convert YAML if necessary
 
@@ -275,7 +275,7 @@ Config.prototype.setAndSave = function setAndSave(user, data, callback) {
       },
       function(cb) {
         // do not log validation key in logfile
-        var toValue = value;
+        const toValue = value;
 
         messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "config", property: key, from: self[key], to: toValue }, cb);
       },
@@ -339,7 +339,7 @@ function initConfigElement(name, callback) {
 }
 
 
-var configMap = null;
+let configMap = null;
 
 module.exports.initialiseConfigMap = function initialiseConfigMap() { configMap = null; };
 
@@ -406,10 +406,10 @@ Config.prototype.getTable = function getTable() {
 };
 
 module.exports.getPlaceholder = function getPlaceholder() {
-  var phEN = exports.getConfig("formulation_tipEN");
-  var phDE = exports.getConfig("formulation_tipDE");
-  var cat = exports.getConfig("categorydescription");
-  var result = { markdown: { EN: phEN, DE: phDE }, categories: cat };
+  const phEN = exports.getConfig("formulation_tipEN");
+  const phDE = exports.getConfig("formulation_tipDE");
+  const cat = exports.getConfig("categorydescription");
+  const result = { markdown: { EN: phEN, DE: phDE }, categories: cat };
   for (let i = 0; i < config.getLanguages().length; i++) {
     const lang = config.getLanguages()[i];
     if (lang === "DE") continue;

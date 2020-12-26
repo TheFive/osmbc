@@ -45,9 +45,9 @@ function translateDeeplPro(options, callback) {
   const text = options.text;
 
 
-  var htmltext = markdown.render(text);
+  const htmltext = markdown.render(text);
 
-  var deeplParams = {};
+  const deeplParams = {};
   deeplParams.text = htmltext;
   deeplParams.source_lang = fromLang.toUpperCase();
   deeplParams.target_lang = toLang.toUpperCase();
@@ -70,10 +70,10 @@ function translateDeeplPro(options, callback) {
     .then(result => {
       if (result && result.message) return callback(null, result.message);
       if (!result || !result.translations) return callback(null, "Something went wrong with translation in this article.");
-      var htmlresult = result.translations[0].text;
-      var turndownService = new TurndownService();
+      const htmlresult = result.translations[0].text;
+      const turndownService = new TurndownService();
       turndownService.use(turndownItSup);
-      var mdresult = turndownService.turndown(htmlresult);
+      let mdresult = turndownService.turndown(htmlresult);
       mdresult = mdresult.replace(
         RegExp(
           escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang), "g"),
@@ -141,13 +141,13 @@ function translateBingPro(options, callback) {
   const toLang = normLanguage(options.toLang);
   const text = options.text;
 
-  var htmltext = markdown.render(text);
+  const htmltext = markdown.render(text);
 
 
   msTranslate.translate(fromLang, toLang, htmltext, function(err, translation) {
     if (err) return callback(err);
-    var turndownService = new TurndownService();
-    var mdresult = turndownService.turndown(translation);
+    const turndownService = new TurndownService();
+    let mdresult = turndownService.turndown(translation);
     mdresult = mdresult.replace(
       RegExp(
         escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang), "g"),
