@@ -46,11 +46,11 @@ async function filterEvents(events, filter) {
 
 
 function filterEvent(event, option) {
-  var date = new moment();
+  let date = new moment();
 
 
-  var startDate = moment(event.date && event.date.start);
-  var endDate = startDate.clone();
+  const startDate = moment(event.date && event.date.start);
+  let endDate = startDate.clone();
   if (event.date && typeof event.date.end !== "undefined") endDate = moment(event.date.end);
 
   let diff = -3;
@@ -59,17 +59,17 @@ function filterEvent(event, option) {
     diff = optionDiff;
   }
   date = date.add(diff, "day");
-  var duration = 15;
+  let duration = 15;
   if (option && option.duration && option.duration !== "") {
     duration = parseInt(option.duration);
   }
-  var bigDuration = 23;
+  let bigDuration = 23;
   if (option && option.big_duration && option.big_duration !== "") {
     bigDuration = parseInt(option.big_duration);
   }
-  var from = date.clone();
-  var to = date.clone().add(duration, "days");
-  var toForBig = date.clone().add(bigDuration, "days");
+  const from = date.clone();
+  const to = date.clone().add(duration, "days");
+  const toForBig = date.clone().add(bigDuration, "days");
 
   // until in two weeks
   let filtered = false;

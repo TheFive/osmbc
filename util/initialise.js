@@ -1,16 +1,16 @@
 "use strict";
 
 
-var debug = require("debug")("OSMBC:util:initialize");
-var async = require("async");
-var logger  = require("../config.js").logger;
+const debug = require("debug")("OSMBC:util:initialize");
+const async = require("async");
+const logger  = require("../config.js").logger;
 
 
-var configModule = require("../model/config.js");
-var userModule = require("../model/user.js");
-var messageCenter = require("../notification/messageCenter.js");
-var mailReceiver  = require("../notification/mailReceiver.js");
-var slackReceiver  = require("../notification/slackReceiver.js");
+const configModule = require("../model/config.js");
+const userModule = require("../model/user.js");
+const messageCenter = require("../notification/messageCenter.js");
+const mailReceiver  = require("../notification/mailReceiver.js");
+const slackReceiver  = require("../notification/slackReceiver.js");
 
 
 // do not know where to place this stuff,

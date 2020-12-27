@@ -904,14 +904,14 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
             break;
           }
           if ((comment.search(new RegExp("@" + mainLang, "i")) >= 0) ||
-            (comment.search(new RegExp("@all", "i")) >= 0) ||
-            (comment.search(new RegExp("@all", "i")) >= 0)) {
+            (comment.search(/@all/i) >= 0) ||
+            (comment.search(/@all/i) >= 0)) {
             self._mainLangMention.push(result[i]);
             break;
           }
           if ((comment.search(new RegExp("@" + secondLang, "i")) >= 0) ||
-            (comment.search(new RegExp("@all", "i")) >= 0) ||
-            (comment.search(new RegExp("@all", "i")) >= 0)) {
+            (comment.search(/@all/i) >= 0) ||
+            (comment.search(/@all/i) >= 0)) {
             self._secondLangMention.push(result[i]);
             break;
           }

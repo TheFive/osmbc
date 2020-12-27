@@ -18,7 +18,7 @@
   "mocha":true,
   "strict":"imlied"  ,
   "jquery":"true",
-  "esversion":8
+  "esversion": 8
 
 
 }

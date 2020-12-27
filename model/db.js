@@ -1,9 +1,9 @@
 "use strict";
 
 const { Pool } = require("pg");
-var config = require("../config.js");
-var assert = require("assert").strict;
-var sqldebug  = require("debug")("OSMBC:model:sql");
+const config = require("../config.js");
+const assert = require("assert").strict;
+const sqldebug  = require("debug")("OSMBC:model:sql");
 
 
 const pgConfigValues = config.getValue("postgres", { mustexist: true });
@@ -15,7 +15,7 @@ assert(pgConfigValues.database);
 assert(typeof pgConfigValues.password !== "undefined");
 assert(pgConfigValues.server);
 assert(pgConfigValues.port);
-var logger    = require("../config.js").logger;
+const logger    = require("../config.js").logger;
 
 if (pgConfigValues.connectstr && pgConfigValues.connectStr !== "") {
   logger.error("Database connectstr is deprecated, please remove from config");
@@ -27,7 +27,7 @@ if (pgConfigValues.connectstr && pgConfigValues.connectStr !== "") {
 // and client options
 // note: all config is optional and the environment variables
 // will be read if the config is not present
-var pgConfig = {
+const pgConfig = {
   user: pgConfigValues.username,
   database: pgConfigValues.database,
   password: pgConfigValues.password,
@@ -72,11 +72,11 @@ module.exports.query = function (text, values, callback) {
   assert(callback);
   assert(typeof callback === "function");
 
-  var startTime = new Date().getTime();
+  const startTime = new Date().getTime();
   sqldebug("SQL: start %s", text);
   function handleResult(err, result) {
     deep = deep - 1;
-    var endTime = new Date().getTime();
+    const endTime = new Date().getTime();
     if (endTime - startTime > logTime) {
       logger.info("SQL: >>>>>>>>>> [" + (endTime - startTime) / 1000 + "] \n" + text + "\n");
       if (values) logger.info("SQL: VALUES " + JSON.stringify(values));

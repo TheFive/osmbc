@@ -2,14 +2,16 @@
 
 /* exported highlightWrongLinks */
 
+/* jshint esversion: 6 */
+
 function highlightWrongLinks() {
   /* jshint validthis: true */
-  var object = $(this);
+  const object = $(this);
 
 
 
   object.find("a").each(function() {
-    var o = $(this);
+    const o = $(this);
     if (o.attr("href").charAt(0) === "#") return;
     $.post(
       window.htmlroot + "/article/urlexist",

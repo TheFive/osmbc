@@ -1,22 +1,22 @@
 "use strict";
 
-var db     = require("../model/db.js");
-var assert = require("assert").strict;
-var async  = require("../util/async_wrap.js");
-var debug  = require("debug")("OSMBC:model:pgMap");
-var sqldebug  = require("debug")("OSMBC:model:sql");
+const db     = require("../model/db.js");
+const assert = require("assert").strict;
+const async  = require("../util/async_wrap.js");
+const debug  = require("debug")("OSMBC:model:pgMap");
+const sqldebug  = require("debug")("OSMBC:model:sql");
 
-var config = require("../config.js");
-var logger = require("../config.js").logger;
-var util = require("../util/util.js");
+const config = require("../config.js");
+const logger = require("../config.js").logger;
+const util = require("../util/util.js");
 
 
 function generateQuery(table, obj, order) {
   debug("generateQuery %s", table);
 
-  var whereClause = "";
+  let whereClause = "";
 
-  var paramWhere = obj;
+  let paramWhere = obj;
   if (obj && typeof (obj) === "object" && obj.sql) paramWhere = obj.sql;
   if (typeof (paramWhere) === "string") {
     whereClause = " " + paramWhere;
@@ -28,9 +28,9 @@ function generateQuery(table, obj, order) {
     }
   } else {
     if (obj) {
-      for (var k in obj) {
-        var value = obj[k];
-        var op = "=";
+      for (const k in obj) {
+        let value = obj[k];
+        let op = "=";
         if (typeof (value) === "string") {
           // check first operator in string
           if (value.substring(0, 2) === "!=") {
@@ -68,7 +68,7 @@ function generateQuery(table, obj, order) {
           }
         }
 
-        var n = "data->>'" + k + "'" + op + "'" + value + "'";
+        let n = "data->>'" + k + "'" + op + "'" + value + "'";
         if (op === "in") {
           n = "data->>'" + k + "'" + op + " " + value;
           n = "(" + n + " and (data->'" + k + "') is not null)";
@@ -87,7 +87,7 @@ function generateQuery(table, obj, order) {
       }
     }
   }
-  var orderby = " order by id";
+  let orderby = " order by id";
   if (order) {
     assert(order.column);
     if (order.column !== "id") orderby = " order by data->>'" + order.column + "'";
@@ -99,7 +99,7 @@ function generateQuery(table, obj, order) {
       orderby += " LIMIT " + order.limit;
     }
   }
-  var query = "select id,data from " + table + whereClause + orderby;
+  const query = "select id,data from " + table + whereClause + orderby;
   sqldebug(query);
   return query;
 }
@@ -115,13 +115,13 @@ module.exports.save = function(options, callback) {
   function _save(options, callback) {
     debug("save");
 
-    var table = self.getTable();
+    const table = self.getTable();
 
     // store blog Reference not to loose it.
     const blog = self._blog;
 
     // clean property's with "_"
-    for (var k in self) {
+    for (const k in self) {
       if (k.substring(0, 1) === "_") delete self[k];
     }
     // id must be >= 0;
@@ -136,7 +136,7 @@ module.exports.save = function(options, callback) {
 
       // store first version in database
       self.version = 1;
-      var sqlquery = "insert into " + table + "(data) values ($1) returning id";
+      const sqlquery = "insert into " + table + "(data) values ($1) returning id";
       sqldebug("Query %s", sqlquery);
       db.query(sqlquery, [self], function(err, result) {
         if (err) return callback(err);
@@ -149,8 +149,8 @@ module.exports.save = function(options, callback) {
       async.series([
         function(cb) {
           debug("Check version of object");
-          var versionsEqual = false;
-          var startTime = new Date().getTime();
+          let versionsEqual = false;
+          const startTime = new Date().getTime();
 
           db.query("select (data->>'version')::int as version from " + table + " where id = $1",
             [self.id], function(err, result) {
@@ -166,7 +166,7 @@ module.exports.save = function(options, callback) {
               }
               debug("end");
               err = null;
-              var endTime = new Date().getTime();
+              const endTime = new Date().getTime();
               sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
               if (!versionsEqual) {
                 debug("send error");
@@ -203,8 +203,8 @@ module.exports.save = function(options, callback) {
 
 module.exports.remove = function(callback) {
   debug("remove");
-  var self = this;
-  var table = self.getTable();
+  const self = this;
+  const table = self.getTable();
   // first check, wether ID is known or not
   if (self.id === 0) {
     // we have to create the beer
@@ -225,8 +225,8 @@ function convertResultFunction(module, callback) {
     const result = [];
     if (err) return callback(err);
     pgResult.rows.forEach(function(row) {
-      var r = module.create();
-      for (var k in row.data) {
+      const r = module.create();
+      for (const k in row.data) {
         r[k] = row.data[k];
       }
       r.id = row.id;
@@ -242,8 +242,8 @@ function convertOneResultFunction(module, callback) {
     if (err) return callback(err);
     if (pgResult.rows.length === 0) return callback(null, null);
     const row = pgResult.rows[0];
-    var r = module.create();
-    for (var k in row.data) {
+    const r = module.create();
+    for (const k in row.data) {
       r[k] = row.data[k];
     }
     r.id = row.id;
@@ -270,8 +270,8 @@ module.exports.find = function find(module, obj, order, callback) {
 
   debug("Connecting to DB" + config.pgstring);
 
-  var table = module.table;
-  var sqlQuery = generateQuery(table, obj, order);
+  const table = module.table;
+  const sqlQuery = generateQuery(table, obj, order);
   debug("Query: %s", sqlQuery);
 
 
@@ -298,7 +298,7 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
   }
 
 
-  var orderBy = "";
+  let orderBy = "";
 
   if (order) {
     assert(order.column);
@@ -307,12 +307,12 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
       orderBy += " desc";
     }
   }
-  var germanVector = "@@ plainto_tsquery('german', '" + search + "')";
-  var englishVector = "@@ plainto_tsquery('english', '" + search + "')";
+  let germanVector = "@@ plainto_tsquery('german', '" + search + "')";
+  let englishVector = "@@ plainto_tsquery('english', '" + search + "')";
 
   if (util.isURL(search)) {
-    var http1Url = search;
-    var http2Url;
+    const http1Url = search;
+    let http2Url;
     if (search.substring(0, 5) === "http:") {
       http2Url = "https:" + search.substring(5, 9999);
     }
@@ -325,7 +325,7 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
     englishVector = "@@ to_tsquery('english', '" + search + "')";
   }
 
-  var sqlQuery =  "select id, data from article \
+  const sqlQuery =  "select id, data from article \
                         where to_tsvector('german', coalesce(data->>'title','')::text || ' '|| \
                                                     coalesce(data->>'collection','')  || ' '|| \
                                                     coalesce(data->>'markdownDE','')   ) " + germanVector + " \
@@ -340,9 +340,9 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
 module.exports.findById = function findById(id, module, callback) {
   function _findById(id, module, callback) {
     debug("findById %s", id);
-    var table = module.table;
+    const table = module.table;
 
-    var idToSearch = 0;
+    let idToSearch = 0;
 
     if (id % 1 === 0) idToSearch = id;
     db.query("select id,data from " + table + " where id = $1", [idToSearch], convertOneResultFunction(module, callback));
@@ -367,7 +367,7 @@ module.exports.findOne = function findOne(module, obj, order, callback) {
   }
 
 
-  var sqlQuery = generateQuery(module.table, obj, order);
+  const sqlQuery = generateQuery(module.table, obj, order);
 
 
   db.query(sqlQuery + " limit 1", convertOneResultFunction(module, callback));
@@ -388,7 +388,7 @@ exports.createTables = function(pgObject, options, analyse, callback) {
       if (options.dropTables || (options.dropTable && options.dropTable === pgObject.table)) {
         debug("tabledrop");
         if (options.verbose) logger.info("Drop Table " + pgObject.table);
-        var dropString = "DROP TABLE IF EXISTS " + pgObject.table + " CASCADE";
+        const dropString = "DROP TABLE IF EXISTS " + pgObject.table + " CASCADE";
         db.query(dropString, cb);
       } else return cb();
     },
@@ -401,8 +401,8 @@ exports.createTables = function(pgObject, options, analyse, callback) {
       } else return cb();
     },
     function indexdrop(cb) {
-      var toBeDropped = [];
-      var k;
+      const toBeDropped = [];
+      let k;
       if (options.dropIndex) {
         debug("indexdrop");
         for (k in pgObject.indexDefinition) {
@@ -421,7 +421,7 @@ exports.createTables = function(pgObject, options, analyse, callback) {
       async.each(toBeDropped, function ftoBeDropped(index, eachofcb) {
         debug("ftoBeDropped");
         if (options.verbose) logger.info("Drop Index " + index);
-        var dropIndex = "DROP INDEX if exists " + index + ";";
+        const dropIndex = "DROP INDEX if exists " + index + ";";
         db.query(dropIndex, eachofcb);
       }, function finalFunction(err) {
         debug("finalFunction");
@@ -433,7 +433,7 @@ exports.createTables = function(pgObject, options, analyse, callback) {
         debug("indexcreation");
         if (options.verbose) logger.info("Creating Indexes for " + pgObject.table);
         async.eachOf(pgObject.indexDefinition, function(sql, index, eachofcb) {
-          var createIt = false;
+          let createIt = false;
           if (options.createIndex) createIt = true;
           if (analyse.foundNOK[index]) createIt = true;
           if (analyse.expected[index]) createIt = true;
@@ -448,7 +448,7 @@ exports.createTables = function(pgObject, options, analyse, callback) {
       debug("viewsdrop");
       if (options.dropView) {
         async.eachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
-          var dropIndex = "DROP VIEW if exists " + view + ";";
+          const dropIndex = "DROP VIEW if exists " + view + ";";
           if (options.verbose) logger.info("Drop View " + view);
           db.query(dropIndex, eachofcb);
         }, function finalFunction(err) { return cb(err); });
@@ -478,12 +478,12 @@ module.exports.count = function count(sql, values, callback) {
     callback = values;
     values = undefined;
   }
-  var result;
+  let result;
 
   function resultFunction(err, pgResult) {
     if (err) return callback(err);
     result = {};
-    for (var k in pgResult.rows[0]) {
+    for (const k in pgResult.rows[0]) {
       result[k] = pgResult.rows[0][k];
     }
     callback(null, result);
@@ -502,12 +502,12 @@ module.exports.select = function select(sql, data, callback) {
     callback = data;
     data = undefined;
   }
-  var result = [];
+  const result = [];
   db.query(sql, data, function (err, pgResult) {
     if (err) return callback(err);
-    for (var i = 0; i < pgResult.rows.length; i++) {
+    for (let i = 0; i < pgResult.rows.length; i++) {
       const item = {};
-      for (var k in pgResult.rows[i]) {
+      for (const k in pgResult.rows[i]) {
         item[k] = pgResult.rows[i][k];
       }
       result.push(item);

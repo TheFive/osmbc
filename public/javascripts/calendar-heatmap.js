@@ -19,7 +19,7 @@ function calendarHeatmap(actualDate) {
 
   var yearAgo = moment(now).startOf('day').subtract(1, 'year').toDate();
   var data = [];
-  var colorRange = ['#D8E6E7', '#218380'];
+    var colorRange = ['#D8E6E7', '#218380'];
   var tooltipEnabled = true;
   var tooltipUnit = 'contribution';
   var legendEnabled = true;

@@ -1,10 +1,10 @@
 "use strict";
 
-var Twit = require("twit");
-var config = require("../config.js");
-var request = require("request");
-var async = require("../util/async_wrap.js");
-var debug = require("debug")("OSMBC:model:twitter");
+const Twit = require("twit");
+const config = require("../config.js");
+const request = require("request");
+const async = require("../util/async_wrap.js");
+const debug = require("debug")("OSMBC:model:twitter");
 
 
 
@@ -18,7 +18,7 @@ function expandUrl(shortUrl, callback) {
   );
 }
 
-var client = new Twit(
+const client = new Twit(
   config.getValue("twitter")
 );
 
@@ -75,7 +75,7 @@ function expandTwitterUrl(collection, callback) {
       // Expand Tweet Urls
 
       async.eachSeries(result.entities.urls, function(item, cb) {
-        var u = item.expanded_url;
+        const u = item.expanded_url;
         expandUrl(u, function(err, url) {
           if (err) return cb(err);
           tweetAsText = tweetAsText.replace(item.url, url);

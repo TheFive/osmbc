@@ -1,6 +1,6 @@
 "use strict";
-var debug = require("debug")("OSMBC:notification:messageFilter");
-var util = require("../util/util.js");
+const debug = require("debug")("OSMBC:notification:messageFilter");
+const util = require("../util/util.js");
 
 
 /* ConfigFilter Class
@@ -29,7 +29,7 @@ function ConfigFilter(config, receiver) {
 
 ConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, article, change, cb) {
   debug("ConfigFilter.prototype.updateArticle");
-  var notify = false;
+  let notify = false;
 
   // check Collection
   if (util.isTrue(this.config.notifyNewCollection)) {
@@ -44,15 +44,15 @@ ConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, article, 
 
 ConfigFilter.prototype.addComment = function ucfAddComment(user, article, comment, cb) {
   debug("ConfigFilter.prototype.addComment");
-  var notify = false;
+  let notify = false;
 
   // check Collection
   if (util.isTrue(this.config.notifyAllComment)) {
     notify = true;
   }
-  var userList = [];
+  let userList = [];
   if (this.config.notifyComment) userList = this.config.notifyComment;
-  for (var i = 0; i < userList.length; i++) {
+  for (let i = 0; i < userList.length; i++) {
     if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
       notify = true;
       debug("Notification because comment for @" + userList[i]);
@@ -64,15 +64,15 @@ ConfigFilter.prototype.addComment = function ucfAddComment(user, article, commen
 
 ConfigFilter.prototype.editComment = function ucfEditComment(user, article, index, comment, cb) {
   debug("ConfigFilter.prototype.addComment");
-  var notify = false;
+  let notify = false;
 
   // check Collection
   if (util.isTrue(this.config.notifyAllComment)) {
     notify = true;
   }
-  var userList = [];
+  let userList = [];
   if (this.config.notifyComment) userList = this.config.notifyComment;
-  for (var i = 0; i < userList.length; i++) {
+  for (let i = 0; i < userList.length; i++) {
     if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
       notify = true;
       debug("Notification because comment for @" + userList[i]);
@@ -84,7 +84,7 @@ ConfigFilter.prototype.editComment = function ucfEditComment(user, article, inde
 
 ConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, change, cb) {
   debug("ConfigFilter.prototype.updateBlog");
-  var notify = false;
+  let notify = false;
 
 
   // check Collection
@@ -101,11 +101,11 @@ ConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, change
 
 ConfigFilter.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, cb) {
   debug("ConfigFilter.prototype.sendReviewStatus");
-  var wnList = [];
-  var notify = false;
+  let wnList = [];
+  let notify = false;
   if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
-  for (var i = 0; i < wnList.length; i++) {
-    var l = wnList[i];
+  for (let i = 0; i < wnList.length; i++) {
+    const l = wnList[i];
     if (l === lang) notify = true;
   }
   if (!notify) return cb();
@@ -115,12 +115,12 @@ ConfigFilter.prototype.sendReviewStatus = function sendReviewStatus(user, blog, 
 
 ConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {
   debug("ConfigFilter.prototype.sendCloseStatus");
-  var wnList = [];
-  var notify = false;
+  let wnList = [];
+  let notify = false;
   if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
   if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
-  for (var i = 0; i < wnList.length; i++) {
-    var l = wnList[i];
+  for (let i = 0; i < wnList.length; i++) {
+    const l = wnList[i];
     if (l === lang) notify = true;
   }
   if (!notify) return cb();

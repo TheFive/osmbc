@@ -1,9 +1,9 @@
 "use strict";
 
-var debug     = require("debug")("OSMBC:notification:messageCenter");
-var async     = require("../util/async_wrap.js");
-var LogModuleReceiver = require("../notification/LogModuleReceiver");
-var logger    = require("../config.js").logger;
+const debug     = require("debug")("OSMBC:notification:messageCenter");
+const async     = require("../util/async_wrap.js");
+const LogModuleReceiver = require("../notification/LogModuleReceiver");
+const logger    = require("../config.js").logger;
 
 
 
@@ -71,7 +71,7 @@ function initialise(callback) {
     if (callback) return callback();
     return;
   }
-  var messageCenter = new MessageCenter();
+  const messageCenter = new MessageCenter();
   module.exports.global = messageCenter;
 
 

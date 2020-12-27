@@ -42,7 +42,6 @@ function path(component) {
 
   let dist = "/dist";
   if (component === "font-awesome") dist = "";
-  if (component === "d3") dist = "";
   if (component === "calendar-heatmap") dist = "";
   if (component === "moment") dist = "";
   return htmlRoot + "/bower_components/" + component + dist;

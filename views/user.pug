@@ -194,22 +194,27 @@ block content
 
 block scripts
 
-  link(rel="stylesheet" type="text/css" href=layout.htmlroot+"/stylesheets/calendar-heatmap.css")
-  script(src=layout.path("d3")+"/d3.min.js")
-  script(src=layout.htmlroot+"/javascripts/calendar-heatmap.js")
+  link(rel="stylesheet" type="text/css" href=layout.htmlroot+"/stylesheets/github_contribution_graph.css")
+  script(src=layout.htmlroot+"/javascripts/github_contribution.js")
   script(src=layout.path("moment") + "/min/moment.min.js")
 
 
   script(nonce=cspNonce).
     // chart data example
     var chartData = JSON.parse('!{JSON.stringify(userHeatMapArray)}');
-    for (var i=0;i<chartData.length;i++) {
-      chartData[i].date = new Date(chartData[i].date)
+    let heatmapData = [];
+    for (let i=0;i<chartData.length;i++) {
+      let date = new Date(chartData[i].date)
+      for (let c = 0; c< chartData[i].count;c ++) heatmapData.push(date.getTime());
     }
     var now = new Date('!{new Date().toISOString()}')
-    var chart1 = calendarHeatmap(now)
-            .data(chartData)
-            .selector('#heatmap')
-            .colorRange(['#e8eded', '#218380'])
-            .tooltipEnabled(true);
-    chart1();  // render the chart
+    $("#heatmap").github_graph({
+      data:heatmapData,
+      texts: ["changes","change"],
+      color:[
+         "#218380", "#268583", "#2A8885", "#2F8A88", "#338D8A", "#388F8D", "#3C928F", "#419492", "#469795", "#4A9997",
+         "#4F9C9A", "#539E9C", "#58A19F", "#5CA3A1", "#61A6A4", "#66A8A7", "#6AABA9", "#6FADAC", "#73B0AE", "#78B2B1",
+         "#7DB5B4", "#81B7B6", "#86B9B9", "#8ABCBB", "#8FBEBE", "#93C1C0", "#98C3C3", "#9DC6C6", "#A1C8C8", "#A6CBCB",
+         "#AACDCD", "#AFD0D0", "#B3D2D2", "#B8D5D5", "#BDD7D8", "#C1DADA", "#C6DCDD", "#CADFDF", "#CFE1E2", "#D3E4E4",
+         "#D8E6E7"]
+    });

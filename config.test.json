@@ -58,7 +58,6 @@
   "EmailSender":"noreply@gmail.com",
   "url":"https://testosm.bc",
   "SMTP":{},
-  "sessionStore":"connect-pg-simple",
   "apiKey":"testapikey",
   "apiKey.TBC":"testapikey.TBC",
   "apiKeys":{

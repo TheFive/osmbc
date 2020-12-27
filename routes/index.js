@@ -23,10 +23,10 @@ const appName = config.getValue("AppName", { mustExist: true });
 function renderHome(req, res, next) {
   debug("renderHome");
   assert(res.rendervar.layout);
-  var date = new Date();
+  const date = new Date();
   date.setTime(date.getTime() - 1000 * 60 * 10);
 
-  var todayStart = new Date();
+  const todayStart = new Date();
   todayStart.setHours(0);
   todayStart.setMinutes(0);
   todayStart.setSeconds(0);
@@ -61,10 +61,10 @@ function renderHome(req, res, next) {
 function renderGuestHome(req, res, next) {
   debug("renderGuestHome");
   assert(res.rendervar.layout);
-  var date = new Date();
+  const date = new Date();
   date.setTime(date.getTime() - 1000 * 60 * 10);
 
-  var todayStart = new Date();
+  const todayStart = new Date();
   todayStart.setHours(0);
   todayStart.setMinutes(0);
   todayStart.setSeconds(0);
@@ -115,7 +115,7 @@ function renderAdminHome(req, res, next) {
 function languageSwitcher(req, res, next) {
   debug("languageSwitcher");
 
-  var lang = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()];
+  const lang = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()];
 
   if (req.body.lang) lang[0] = req.body.lang;
   if (req.body.lang2) lang[1] = req.body.lang2;
@@ -166,7 +166,7 @@ function languageSwitcher(req, res, next) {
 function setUserConfig(req, res, next) {
   debug("setUserConfig");
 
-  var user = req.user;
+  const user = req.user;
   if (!req.body.view) {
     const err = new Error("missing view in option");
     err.status = HttpStatus.BAD_REQUEST;
@@ -201,7 +201,7 @@ function createBlog(req, res) {
 function renderChangelog(req, res, next) {
   debug("renderChangelog");
   assert(res.rendervar.layout);
-  var text = help.getText("CHANGELOG.md");
+  const text = help.getText("CHANGELOG.md");
   req.user.lastChangeLogView = res.rendervar.layout.osmbc_version;
   req.user.save(function(err) {
     if (err) return next(err);
@@ -210,7 +210,7 @@ function renderChangelog(req, res, next) {
   });
 }
 
-var htmlRoot = config.htmlRoot();
+const htmlRoot = config.htmlRoot();
 
 function redirectHome(req, res) {
   debug("redirectHome");
