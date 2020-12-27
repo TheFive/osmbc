@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.6.7](https://github.com/TheFive/osmbc/tree/3.6.7) (2020-12-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.6...3.6.7)
+
+**Fixed bugs:**
+
+- Closing an Issue displays OK but does not go to the previous page. [\#862](https://github.com/TheFive/osmbc/issues/862)
+
+**Closed issues:**
+
+- Upgrade email-templates to V8 [\#861](https://github.com/TheFive/osmbc/issues/861)
+- Remove usage of d3 lib [\#860](https://github.com/TheFive/osmbc/issues/860)
+
 ## [3.6.6](https://github.com/TheFive/osmbc/tree/3.6.6) (2020-12-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.5...3.6.6)
@@ -8,7 +21,6 @@
 
 - OSMCAL Integration [\#852](https://github.com/TheFive/osmbc/issues/852)
 - Finalise Nonce instead of unsafe-inline [\#850](https://github.com/TheFive/osmbc/issues/850)
-- Integrate Picture Tool to Article Editor [\#400](https://github.com/TheFive/osmbc/issues/400)
 
 **Fixed bugs:**
 
@@ -392,7 +404,6 @@
 **Implemented enhancements:**
 
 - Enable Translation button for 4 language Editor. [\#726](https://github.com/TheFive/osmbc/issues/726)
-- Welcome To The Team, Mark Guests as Guest and Editors as Editors. [\#722](https://github.com/TheFive/osmbc/issues/722)
 
 ## [3.1.5a](https://github.com/TheFive/osmbc/tree/3.1.5a) (2018-03-01)
 
@@ -499,6 +510,10 @@
 ## [3.1.2](https://github.com/TheFive/osmbc/tree/3.1.2) (2018-01-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.1...3.1.2)
+
+**Implemented enhancements:**
+
+- Welcome To The Team, Mark Guests as Guest and Editors as Editors. [\#722](https://github.com/TheFive/osmbc/issues/722)
 
 **Fixed bugs:**
 
@@ -646,6 +661,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.2...2.4.2a)
 
+**Implemented enhancements:**
+
+- Add a list to show new registered \(e.g. Last month\) users [\#682](https://github.com/TheFive/osmbc/issues/682)
+
 ## [2.4.2](https://github.com/TheFive/osmbc/tree/2.4.2) (2017-09-12)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.1...2.4.2)
@@ -653,7 +672,6 @@
 **Implemented enhancements:**
 
 - Show list of long absent user on admin homepage [\#688](https://github.com/TheFive/osmbc/issues/688)
-- Add a list to show new registered \(e.g. Last month\) users [\#682](https://github.com/TheFive/osmbc/issues/682)
 
 ## [2.4.1](https://github.com/TheFive/osmbc/tree/2.4.1) (2017-09-10)
 
@@ -1693,6 +1711,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.2...1.6.3)
 
+**Implemented enhancements:**
+
+- Small language display close to title in overview. [\#436](https://github.com/TheFive/osmbc/issues/436)
+
 ## [1.6.2](https://github.com/TheFive/osmbc/tree/1.6.2) (2016-04-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.1...1.6.2)
@@ -1726,7 +1748,6 @@
 
 **Implemented enhancements:**
 
-- Small language display close to title in overview. [\#436](https://github.com/TheFive/osmbc/issues/436)
 - Change to translation feature in collect to main language displayed. [\#428](https://github.com/TheFive/osmbc/issues/428)
 - Put configuration data into database. [\#382](https://github.com/TheFive/osmbc/issues/382)
 
@@ -2709,6 +2730,7 @@
 
 **Fixed bugs:**
 
+- allow a user to configure activly the language for the Export-button [\#148](https://github.com/TheFive/osmbc/issues/148)
 - Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
 
 ## [0.3.9a](https://github.com/TheFive/osmbc/tree/0.3.9a) (2015-11-20)
@@ -2799,7 +2821,6 @@
 
 **Fixed bugs:**
 
-- allow a user to configure activly the language for the Export-button [\#148](https://github.com/TheFive/osmbc/issues/148)
 - "please check your link first to avoid duplicates" [\#147](https://github.com/TheFive/osmbc/issues/147)
 - fullTextSearch for https does not find http Links [\#17](https://github.com/TheFive/osmbc/issues/17)
 
