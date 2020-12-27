@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Jquery plugin to render like contribution graph on Github.
  *
@@ -13,10 +14,7 @@ if (!String.prototype.formatString) {
   String.prototype.formatString = function() {
     const args = arguments;
     return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] !== "undefined"
-        ? args[number]
-        : match
-      ;
+      return typeof args[number] !== "undefined" ? args[number] : match;
     });
   };
 }
@@ -174,7 +172,7 @@ if (!String.prototype.formatString) {
       appendTooltip();
     };
 
-    const mouseLeave = function(evt) {
+    const mouseLeave = function() {
       $(".svg-tip").hide();
     };
 

@@ -24,7 +24,7 @@
     "deepl-client": "1.0.x",
     "deferred": "0.7.x",
     "diff": "5.0.x",
-    "email-templates": "7.1.x",
+    "email-templates": "8.0.x",
     "email-validator": "2.0.x",
     "express": "4.17.x",
     "express-fileupload": "1.2.x",
