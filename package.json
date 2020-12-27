@@ -21,7 +21,7 @@
     "cookie-parser": "1.4.x",
     "crypto": "^1.0.1",
     "debug": "4.3.x",
-    "deepl-client": "1.0.8",
+    "deepl-client": "1.0.18",
     "deferred": "0.7.x",
     "diff": "5.0.x",
     "email-templates": "8.0.x",
