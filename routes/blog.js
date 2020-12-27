@@ -309,7 +309,11 @@ function setBlogStatus(req, res, next) {
 
   function finalFunction(err) {
     if (err) return next(err);
-    res.end("OK");
+    let referer =  config.htmlRoot() + "/osmbc";
+    if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
+      referer = req.header("Referer");
+    }
+    res.redirect(referer);
   }
 
   // Start Review

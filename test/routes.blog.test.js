@@ -262,9 +262,16 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/WN333/setLangStatus";
     let form =  {lang: "DE", action: "startreview"};
     it("should a start a review process", async function () {
-      let response = await rp.post({url: url, form: form, jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(200);
-      should(response.body).eql("OK");
+      let response = await rp.post({
+        url: url,
+        form: form,
+        headers: {"referer": "https://coming_from.somewhere"},
+        jar: jar.testUser,
+        simple: false,
+        resolveWithFullResponse: true
+      });
+      should(response.statusCode).eql(302);
+      should(response.body).eql("Found. Redirecting to https://coming_from.somewhere");
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.reviewCommentDE).eql([{
         text: "startreview",
@@ -276,9 +283,10 @@ describe("routes/blog", function() {
       let response = await rp.post({
         url: url,
         form: {lang: "EN", action: "markexported"},
+        headers: {"referer": "https://coming_from.somewhere"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(200);
-      should(response.body).eql("OK");
+      should(response.statusCode).eql(302);
+      should(response.body).eql("Found. Redirecting to https://coming_from.somewhere");
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.exportedEN).eql(true);
     });
@@ -286,19 +294,21 @@ describe("routes/blog", function() {
       let response = await rp.post({
         url: url,
         form: {lang: "EN", action: "startreview"},
+        headers: {"referer": "https://coming_from.somewhere"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(200);
-      should(response.body).eql("OK");
+      should(response.statusCode).eql(302);
+      should(response.body).eql("Found. Redirecting to https://coming_from.somewhere");
       let blog = await blogModule.findOne({name: "secondblog"});
       should(blog.reviewCommentDE).eql([{"text": "first review", user: "TestUser"}]);
     });
     it("should  clear review when deleting a review process", async function () {
       let response = await rp.post({
         url:  baseLink + "/blog/secondblog/setLangStatus",
+        headers: {"referer": "https://coming_from.somewhere"},
         form: {lang: "DE", action: "deleteallreviews"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(200);
-      should(response.body).eql("OK");
+      should(response.statusCode).eql(302);
+      should(response.body).eql("Found. Redirecting to https://coming_from.somewhere");
       let blog = await blogModule.findOne({name: "secondblog"});
       should(blog.reviewCommentDE).is.undefined();
     });
@@ -310,8 +320,8 @@ describe("routes/blog", function() {
         },
         form: {lang: "DE", action: "closelang"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(200);
-      should(response.body).eql("OK");
+      should(response.statusCode).eql(302);
+      should(response.body).eql("Found. Redirecting to http://localhost:35043/blog/WN333");
 
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.closeDE).eql(true);
@@ -319,13 +329,14 @@ describe("routes/blog", function() {
     it("should reopen a language", async  function () {
       let response = await rp.post({
         url:  url,
-        json: true,
         headers: {
-          referrer: baseLink + "/blog/WN333"
+          referer: baseLink + "/blog/WN333"
         },
-        body: {lang: "DE", action: "editlang"},
-        jar: jar.testUser,simple: false, resolveWithFullResponse: true });
-      should(response.statusCode).eql(200);
+        form: {lang: "DE", action: "editlang"},
+        jar: jar.testUser,simple: false, resolveWithFullResponse: true
+      });
+      should(response.statusCode).eql(302);
+      should(response.body).eql("Found. Redirecting to http://localhost:35043/blog/WN333");
 
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.closeDE).eql(false);
