@@ -55,7 +55,7 @@
     "passport-openstreetmap": "0.1.x",
     "pg": "8.5.x",
     "progress": "2.0.x",
-    "pug": "2.0.x",
+    "pug": "3.0.x",
     "randomstring": "1.1.x",
     "request": "2.88.x",
     "request-promise-native": "1.0.x",
