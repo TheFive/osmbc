@@ -290,23 +290,55 @@ mixin blogStatusTable(blogWithLink)
               div.label.osmbclabel-editblog=editBlog._countUneditedMarkdown[l]
               
 mixin helpMenu
-  li.dropdown
-    a.dropdown-toggle(href='#', data-toggle='dropdown')
+  li.dropdown.nav-item
+    a.nav-link.dropdown-toggle#helpDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
       | Help
-      span.caret
-    ul.dropdown-menu(role='menu')
-      li.dropdown-header OSMBC
-      li
-        a(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md")="Version "+layout.osmbc_version
-      li
-        a(href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help") Help
-      li.divider
-      li.dropdown-header WeeklyOSM & Wochennotiz
-      li
-        a(href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules") Vision & Rules
-      li
-        a(href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting") Editorial Meetings
-      li
-        a(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
-      li
-        a(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
+    div.dropdown-menu(aria-labelledby="helpDropdown")
+      a.dropdown-header OSMBC
+      a.dropdown-item(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md")="Version "+layout.osmbc_version
+      a.dropdown-item(href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help") Help
+      div.dropdown-divider
+      a.dropdown-header WeeklyOSM & Wochennotiz
+      a.dropdown-item(href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules") Vision & Rules
+      a.dropdown-item(href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting") Editorial Meetings
+      a.dropdown-item(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotitz in OSM Wiki
+      a.dropdown-item(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
+      
+mixin homeButton(addclass)
+  if !layout || layout.osmbc_version === layout.user.lastChangeLogView
+    a(href=htmlroot+'/osmbc.html' class=addclass)=appName
+  else
+    a.bg-success(href=layout.htmlroot+'/changelog' class=addclass) What's New?
+    
+mixin langChooser(langString)
+  - let l = "language"
+  - let label = "osmbcbadge-lang"
+  if (langString === "lang2")
+    - l = "language2"
+    - label = "osmbcbadge-lang2"
+  if (langString === "lang3")
+    - l = "language3"
+    - label = "label-default"
+  if (langString === "lang4")
+    - l = "language4"
+    - label = "label-default"
+
+  li.dropdown.nav-item
+    a.nav-link.dropdown-toggle(id=l, class=label, href='#', style="color:white", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=(layout[l])?layout[l]:"--"
+    div.dropdown-menu(aria-labelledby=l)
+      if (langString !== "lang")
+        a.dropdown-item(id=langString+"_none" onclick = "chooseLanguage('" + langString +"','none')" ) none
+      each litem in layout.languages
+        if layout.usedLanguages[litem]
+          a.dropdown-item(id=langString+"_"+litem onclick = "chooseLanguage('" + langString +"','" + litem +"')")=litem    
+          
+mixin userAvatar
+  if layout.user
+    li
+      img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';" style="height:40px;width:40px")
+  else
+    li
+      a(href='./') Anonymous
+      
+      
+      

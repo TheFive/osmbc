@@ -135,30 +135,20 @@ mixin blogReviewButtons(lang)
 
 mixin blogTranslateMenu(langFrom,langTo,service)
   if (!blog["closed"+langTo])
-    li
-      a(
+    a.dropdown-item(
         class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
         onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
         )="Translate " + langFrom+  "->" +langTo
-    li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
-      a=" Please Wait"
-    li.bg-danger.hidden(class="translateError" + langFrom + langTo)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-remove
-    li.hidden(class="translateDone" + langFrom + langTo+" "+service)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-ok
 
 
 mixin translationMenu
   if (layout.blogTranslationVisibleFor === "full" || (Array.isArray(layout.blogTranslationVisibleFor) && layout.blogTranslationVisibleFor.indexOf(layout.user.OSMUser)>=0))
-    li.dropdown#translation.hidden-xs
-      a.dropdown-toggle(href='#', data-toggle='dropdown')
+    li.dropdown.navbar-item
+      a.nav-link.dropdown-toggle#translateMenu(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") 
         | Translate
-        span.caret
-      ul.dropdown-menu(role='menu')
+      div.dropdown-menu(aria-labelledby="translateMenu")
         each tService in translationServices
-          li.dropdown-header="Use " + tService +":"
+          a.dropdown-header="Use " + tService +":"
             - list = [layout.language, layout.language2]
             each a in list
               each b in list
