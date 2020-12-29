@@ -2,7 +2,7 @@ if !MIXIN_INCLUDE
   include mixins
 
 h3="Votes & Tags ..."
-table.table.table-condensed
+table.table.table-sm
   tbody
     for vote ,i in votes
       tr
@@ -17,5 +17,5 @@ table.table.table-condensed
             - labelclass = "osmbclabel-collect"
             each user in article.votes[vote.name]
               - if (layout.user.OSMUser === user) labelclass = "osmbclabel-user-self"
-              span.label.small-margin(class=labelclass)=user
+              span.badge.small-margin(class=labelclass)=user
         td.col-md-5=vote.description

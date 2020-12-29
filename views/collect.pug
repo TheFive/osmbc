@@ -36,7 +36,7 @@ block content
             | Displaying #{(show>foundArticles.length)?foundArticles.length:show} of #{foundArticles.length} results.
           if (show < foundArticles.length)
             a(href=action + "?search=" + search + "&show=all&edit=showCollect")   Show All
-        table.table.table-striped.table-condensed.table-responsive
+        table.table.table-striped.table-sm.table-responsive
           thead
             tr 
               th="Blog"
@@ -49,16 +49,16 @@ block content
           tbody
             each  article,count in foundArticles
               if (count < show)
-                tr(onclick=`$('.class_${article.id}').toggleClass('hidden');`)
+                tr(onclick=`$('.class_${article.id}').toggleClass('d-none');`)
                   td
-                    span.glyphicon.glyphicon-triangle-right(class="class_" + article.id)
-                    span.glyphicon.glyphicon-triangle-bottom.hidden(class="class_" + article.id)
+                    i.fa.fa-caret-right(class="class_" + article.id)
+                    i.fa.fa-caret-down.d-none(class="class_" + article.id)
                     a(href=layout.htmlroot+"/blog/" + article.blog)=article.blog
                   td
                     a(href=layout.htmlroot+"/article/" + article.id)=((article.title)?article.title:"No Title")
                   td.hidden-xs=article.categoryEN
                   td.pre=article.collection
-                tr(class="class_" + article.id).hidden
+                tr(class="class_" + article.id)d-none
                   td
                   td(colspan=1)
                     |!{layout.md_render(article["markdown"+layout.language])}
@@ -73,7 +73,7 @@ block content
       if (showCollect)
         form(name="input",id="input" action=layout.htmlroot+"/article/create", method="post")
           - var langs = JSON.stringify(layout.usedLanguages)
-          input.hidden(name="languages" value=langs)
+          input.d-none(name="languages" value=langs)
           h2 
             | Create Article 
           .row

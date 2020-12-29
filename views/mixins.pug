@@ -37,7 +37,7 @@ mixin voteLabel(vote,article)
   - if (vb_listVotes && vb_listVotes.length>0)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  span.label(id = "vote_" + vote.name + "_"  + article.id class = vb_displayClass onclick="callAndRedraw('/article/" + article.id +"/" + vb_voteAction +"." + vote.name +"','/article/" + article.id +"/" + vote.name +"')" style=vb_voteStyle)
+  span.badge(id = "vote_" + vote.name + "_"  + article.id class = vb_displayClass onclick="callAndRedraw('/article/" + article.id +"/" + vb_voteAction +"." + vote.name +"','/article/" + article.id +"/" + vote.name +"')" style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
@@ -105,14 +105,14 @@ mixin languageDisplay(article,options)
     - if (!article.isChangeAllowed("markdown"+lang)) style="color:black"
     if (article && article["markdown" + lang])
         if (article["markdown" + lang] !== "no translation")
-            span.label.osmbclabel-markdown(onclick=onClick style=style)=lang
+            span.badge.osmbclabel-markdown(onclick=onClick style=style)=lang
         else
-            span.label.osmbclabel-no-translation(onclick=onClick style=style)=lang
+            span.badge.osmbclabel-no-translation(onclick=onClick style=style)=lang
     else
       if (article && article.collection)
-        span.label.osmbclabel-collect(onclick=onClick style=style)=lang
+        span.badge.osmbclabel-collect(onclick=onClick style=style)=lang
       else
-        span.label.osmbclabel-no-markdown(onclick=onClick style=style)=lang
+        span.badge.osmbclabel-no-markdown(onclick=onClick style=style)=lang
 
 mixin voteDisplay(article,options)
   each vote in votes
@@ -126,26 +126,26 @@ mixin articleIcons(a,options)
   - numEd = 0;
   - if (a.author && a.author["markdown"+lang]) numEd = a.author["markdown"+lang].split(",").length;
   if (a.author && options.showNumbers)
-    span.hidden-xs.label.osmbclabel-collect.small-margin=numCol
-    span.hidden-xs.label.osmbclabel-markdown.small-margin=numEd
+    span.hidden-xs.badge.osmbclabel-collect.small-margin=numCol
+    span.hidden-xs.badge.osmbclabel-markdown.small-margin=numEd
   if options.showMail
     if a.getCommentMention()
       - shown = false
       if a.isMentioned(layout.user.OSMUser)
-          span.glyphicon.glyphicon-comment.small-margin.osmbccolor-user
+          i.fa.fa-comment.small-margin.osmbccolor-user
           - shown=true
       if a.isMentioned(layout.user.getMainLang())
-          span.glyphicon.glyphicon-comment.small-margin.osmbccolor-lang
+          i.fa.fa-comment.small-margin.osmbccolor-lang
           - shown=true
       if layout.user.getSecondLang() && a.isMentioned(layout.user.getSecondLang())
-          span.glyphicon.glyphicon-comment.small-margin.osmbccolor-lang2
+          i.fa.fa-comment.small-margin.osmbccolor-lang2
           - shown=true
       if !shown
-        span.glyphicon.glyphicon-comment.small-margin(style="color:grey")
+        i.fa.fa-comment.small-margin(style="color:grey")
       if !a.getCommentRead(layout.user.OSMUser)
-        span.glyphicon.glyphicon-envelope.small-margin
+        i.fa.fa-envelope.small-margin
   a(href=layout.htmlroot+"/article/" + a.id)
-    span.glyphicon.glyphicon-open.small-margin
+    i.fa.fa-edit.small-margin
   if a.predecessorId
     if (a.predecessorId === options.predecessorId)
       span.hidden-xs.glyphicon.glyphicon-pushpin.small-margin
@@ -163,35 +163,35 @@ mixin navbutton(tab,activetab,addClass)
 mixin articleIconLegend(view)
   h2="Symbol Legend"
   p
-    span.label.osmbclabel-collect.small-margin="X"
+    span.badge.osmbclabel-collect.small-margin="X"
     span=" = number of collectors "
   p
-    span.label.osmbclabel-collect.small-margin="username"
+    span.badge.osmbclabel-collect.small-margin="username"
     span=" = collector of article "
   p
-    span.label.osmbclabel-markdown.small-margin="X"
+    span.badge.osmbclabel-markdown.small-margin="X"
     span=" = number of editors in shown language"
   p
-    span.label.osmbclabel-markdown.small-margin="username"
+    span.badge.osmbclabel-markdown.small-margin="username"
     span=" = Editor of article"
   p
-    span.glyphicon.glyphicon-comment.small-margin(style="color:blue")
+    i.fa.fa-comment.small-margin(style="color:blue")
     span=" = there is a comment in the article"
   p
-    span.glyphicon.glyphicon-comment.small-margin(style="color:red")
+    i.fa.fa-comment.small-margin(style="color:red")
     span=" = there is a comment with personal mention in the article"
   p
-    span.glyphicon.glyphicon-comment.small-margin(style="color:orange")
+    i.fa.fa-comment.small-margin(style="color:orange")
     span=" = there is a comment with language mention in the article"
   p
     a(href="#" target="_blank")
-      span.glyphicon.glyphicon-open.small-margin
+      i.fa.fa-edit.small-margin
     span=" open the article in a new tab"
   p
-    span.glyphicon.glyphicon-pushpin.small-margin
+    i.fa.fa-thumbtack.small-margin
     span=" this article is successfully linked to predecessor"
   p
-    span.glyphicon.glyphicon-stop.small-margin.text-warning
+    i.fa.fa-stop.small-margin.text-warning
     span=" this article contains a non working predecessor link."
   p
     span="(*)"
@@ -218,9 +218,9 @@ mixin articleIconLegend(view)
 mixin userConfigOption(view,option,variable,userdesc)
   span(style="white-space: nowrap")
     if variable
-      span.glyphicon.glyphicon-check(name="choose_"+option,onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'false'});`)
+      i.fa.fa-check-square  (name="choose_"+option,onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'false'});`)
     else
-      span.glyphicon.glyphicon-unchecked(name="choose_"+option,onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'true'});`)
+      i.fa.fa-square(name="choose_"+option,onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'true'});`)
     span=userdesc
 
 
@@ -255,7 +255,7 @@ mixin voteButtonList(votes)
       +voteButton(vote,article)
 
 mixin blogStatusTable(blogWithLink)
-  table.table.table-condensed
+  table.table.table-sm
     tr
       td=""
       for l in layout.activeLanguages
@@ -270,7 +270,7 @@ mixin blogStatusTable(blogWithLink)
           td=openBlog.name
         for l in layout.activeLanguages
           td
-            div.label.osmbclabel-openblog=openBlog._countUneditedMarkdown[l]
+            div.badge.osmbclabel-openblog=openBlog._countUneditedMarkdown[l]
 
     for editBlog in layout.editBlog.slice(0).reverse()
       tr
@@ -282,12 +282,12 @@ mixin blogStatusTable(blogWithLink)
         for l in layout.activeLanguages
           td
             if (editBlog["close" + l])
-              div.label.osmbclabel-closedblog
-                span.glyphicon.glyphicon-ok
+              div.badge.osmbclabel-closedblog
+                i.fa.fa-check
             else if (editBlog["reviewComment" + l])
-              div.label.osmbclabel-reviewblog=(editBlog["reviewComment" + l].length - 1)
+              div.badge.osmbclabel-reviewblog=(editBlog["reviewComment" + l].length - 1)
             else
-              div.label.osmbclabel-editblog=editBlog._countUneditedMarkdown[l]
+              div.badge.osmbclabel-editblog=editBlog._countUneditedMarkdown[l]
               
 mixin helpMenu
   li.dropdown.nav-item

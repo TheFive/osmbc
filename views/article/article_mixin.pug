@@ -23,7 +23,7 @@ mixin rightcolumn
       else
         p No Content provided
   else
-    .col-md-5.hidden
+    .col-md-5.d-none
       if block
         block
       else
@@ -60,10 +60,10 @@ mixin articleTranslateButton(langFrom,langTo)
          class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
          onClick =`window.translate('${langFrom}','${langTo}',window.mainTranslationService);return false;`
        ) Translate #{langFrom} -> #{langTo}
-    button.btn.btn-small.btn-warning.hidden(class="translateWait"+langFrom+langTo)
-      span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+    button.btn.btn-small.btn-warning.d-none(class="translateWait"+langFrom+langTo)
+      i.fa.fa-sync
       span=" Please Wait"
-    button.btn.btn-small.btn-danger.hidden(class="translateError"+langFrom+langTo)
+    button.btn.btn-small.btn-danger.d-none(class="translateError"+langFrom+langTo)
       span="Error occured"
 
 
@@ -97,15 +97,15 @@ mixin markdownWithPreview(lang)
   - labelClass = ""
   - if (params.left_lang === lang) labelClass = "osmbclabel-lang";
   - if (params.right_lang === lang) labelClass = "osmbclabel-lang2";
-  span.label.label-default(
+  span.badge.badge-secondary(
       class=labelClass
       draggable="true"
       data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
       ondragstart=`ondragstartLangLabel(event,'${lang}');`)="  " + lang + "  "
-  span.label.label-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
+  span.badge.badge-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
 
 
-  textarea.hidden.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true)=article["markdown" + lang]
+  textarea.d-none.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true)=article["markdown" + lang]
   +articleMarkdown(lang,!article.isChangeAllowed("markdown" + lang))
   +articlePreview(lang)
   +articleTextanalyse(lang)
@@ -117,14 +117,14 @@ mixin articleTranslateMenu(langFrom,langTo,service)
         class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
         onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
         )="Translate " + langFrom+  "->" +langTo
-    li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
+    li.bg-warning.d-none(class="translateWait" + langFrom + langTo)
       a=" Please Wait"
-    li.bg-danger.hidden(class="translateError" + langFrom + langTo)
+    li.bg-danger.d-none(class="translateError" + langFrom + langTo)
       a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-remove
-    li.hidden(class="translateDone" + langFrom + langTo+" "+service)
+        i.fa.fa-times
+    li.d-none(class="translateDone" + langFrom + langTo+" "+service)
       a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-ok
+        i.fa.fa-check
 
 
 mixin translationMenu

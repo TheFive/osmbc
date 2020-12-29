@@ -32,30 +32,30 @@ block blogcontent
   if disableOwnCollection
     div.alert.alert-warning
       a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableOwnCollection',value:'false'});`) &times
-      span.glyphicon.glyphicon-filter
+      i.fa.fa-filter
       span=" Collections of " + layout.user.OSMUser + " are disabled"
 
   if disableOtherCollection
     div.alert.alert-warning
       a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableOtherCollection',value:'false'});`) &times
-      span.glyphicon.glyphicon-filter
+      i.fa.fa-filter
       span=" Collections not done by " + layout.user.OSMUser + " are disabled"
   if disableWritten
     div.alert.alert-warning
       a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableWritten',value:'false'});`) &times
-      span.glyphicon.glyphicon-filter
+      i.fa.fa-filter
       span=" Written markdown is disabled"
 
   if disableNewerMarkdown
     div.alert.alert-warning
       a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableNewerMarkdown',value:'false'});`) &times
-      span.glyphicon.glyphicon-filter
+      i.fa.fa-filter
       span=" Disable, if left lang article is newer than right lang article"
 
   if disableSolvedComments
     div.alert.alert-warning
       a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableSolvedComments',value:'false'});`) &times
-      span.glyphicon.glyphicon-filter
+      i.fa.fa-filter
       span=" No & Solved Comments are disabled"
   .row
     div(class=firstColSize)
@@ -105,18 +105,18 @@ block blogcontent
             div(class=secondColSize)
               .row
                 div(class=columnLeftSize)
-                  div(onclick=`if (!openEditor) {openEditor = document.getElementById('ldiv${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
+                  div(onclick=`if (!openEditor) {openEditor = document.getElementById('ldiv${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
                     +previewDiv(a, left_lang)
                       ul
                         div.preview(id="lpreview" + a.id)
                           |!{renderer.renderArticle(left_lang,a)}
-                  div.hidden(id="ldiv" + a.id)
+                  div.d-none(id="ldiv" + a.id)
                     form(name="lEditArticle",id="lEditArticle" +a.id, action=layout.htmlroot+"/article/" + a.id +"/setMarkdown/" + left_lang, method="post")
                       textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'l');` onkeyup=`onchangeMarkdown(${a.id},'l');` spellcheck = "true" lang=left_lang)=a["markdown" + left_lang]
-                      textarea.hidden.form-control(name="oldMarkdown"  id="loldMarkdown" +a.id rows=7 )=a["markdown" + left_lang]
+                      textarea.d-none.form-control(name="oldMarkdown"  id="loldMarkdown" +a.id rows=7 )=a["markdown" + left_lang]
                     form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+left_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + left_lang, method="post")
                       if a.author && a.author["markdown" + left_lang] && apiAuthors.indexOf(a.author["markdown" + left_lang].split(",")[0]) >= 0
-                          textarea.hidden.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+left_lang]
+                          textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+left_lang]
                           button.btn.btn-xs.btn-success(id="reviewTranslation"+a.id+left_lang type="submit")
                             div.glyphicon.glyphicon-ok
                             span=" Mark Auto Translation OK"
@@ -135,17 +135,17 @@ block blogcontent
 
                 div(class=columnRightSize)
                   if right_lang
-                    div(onclick=`if (!openEditor) {openEditor = document.getElementById('rdiv${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
+                    div(onclick=`if (!openEditor) {openEditor = document.getElementById('rdiv${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
                       +previewDiv(a, right_lang)
                         ul.preview(id="rpreview" + a.id)
                           |!{renderer.renderArticle(right_lang,a)}
-                    div.hidden(id="rdiv" + a.id )
+                    div.d-none(id="rdiv" + a.id )
                       form(name="rEditArticle",id="rEditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + right_lang, method="post")
                         textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'r');` onkeyup=`onchangeMarkdown(${a.id},'r');` spellcheck="true" lang=right_lang)=a["markdown" + right_lang]
-                        textarea.hidden.form-control(name="oldMarkdown"  id="roldMarkdown" + a.id rows=7 )=a["markdown" + right_lang]
+                        textarea.d-none.form-control(name="oldMarkdown"  id="roldMarkdown" + a.id rows=7 )=a["markdown" + right_lang]
                       form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+right_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + right_lang, method="post")
                         if a.author && a.author["markdown" + right_lang] && apiAuthors.indexOf(a.author["markdown" + right_lang].split(",")[0]) >= 0
-                            textarea.hidden.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+right_lang]
+                            textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+right_lang]
                             button.btn.btn-xs.btn-success(id="reviewTranslation"+a.id+right_lang type="submit")
                               div.glyphicon.glyphicon-ok
                               span=" Mark Auto Translation OK"

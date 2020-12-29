@@ -3,10 +3,10 @@ extends layout
 block content
   // Full Access Index Page
   .row
-    .col-md-4
-        h2.hidden-xs
+    .col
+        h2.d-none.d-sm-block
           | Welcome to OSM BC
-        h2.visible-xs
+        h2.d-block.d-sm-none
           | OSM BC
         .row 
           p.osmbc-help-text
@@ -77,8 +77,12 @@ block content
 
         .row
           h4="Admin View"
-          a#adminlink(href=layout.htmlroot+"/osmbc/admin") click here
-    .col-md-8.hidden-xs
+        .row
+          span
+            a#adminlink(href=layout.htmlroot+"/osmbc/admin")="click here"
+          span=" "    
+          span="to go to the Admin Section of OSMBC"
+    .col-7.d-none.d-sm-block
       if changes
         h4="Last Changes "
           - var d = new Date();
@@ -86,7 +90,7 @@ block content
           - d= d.substring(0,7);
           a(href=layout.htmlroot+"/changes/log?date="+d)  (more)
         div
-          table.table.table-striped.table-condensed.table-responsive
+          table.table.table-striped.table-sm.table-responsive
             thead
               tr 
                 th
@@ -108,7 +112,7 @@ block content
                 tr
                   td
                     a(href=layout.htmlroot+'/changes/' + change.id)
-                      span.glyphicon.glyphicon-info-sign
+                      i.fa.fa-info-circle
                   td= change.blog
                   td= change.user
                   td= change.table

@@ -41,7 +41,7 @@ block content
       - if (total == 0) total = 1
       .row
         .col-md-1
-          div.label.label-default(style="color:white")=l
+          div.badge.badge-secondary(style="color:white")=l
         .col-md-11
           div.progress(style="margin-bottom:2px")
             div.progress-bar.progress-bar-success(style=`width:${parseInt(100*ready/total)}%`)=ready

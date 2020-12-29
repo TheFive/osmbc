@@ -21,7 +21,7 @@ mixin displayOverviewRow(a)
 
 
       td
-        div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
+        div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
           +previewDiv(a, lang)
             ul.no-margin
               |!{renderer.articleTitle(lang,a)}
@@ -43,13 +43,13 @@ mixin displayOverviewRow(a)
       td
       td.hidden-xs
       td
-        div.panel.panel-default.hidden(id="div" + a.id)
+        div.panel.panel-default.d-none(id="div" + a.id)
           div.panel-heading
             ul.preview(id="preview" + a.id)
           div.panel-body
             form(name="EditArticle",id="EditArticle" + a.id, action=`${layout.htmlroot}/article/${a.id}/setMarkdown/${lang}`, method="post")
               textarea.form-control(name="markdown" id="markdown" + a.id rows=7 onchange=`onLeaveText(${a.id});` onkeyup=`onchangeMarkdown(${a.id})` spellcheck = "true" lang=lang)=a["markdown" + lang]
-              textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
+              textarea.d-none.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
             p
               if a.author && a.author.collection
                 span="Collected: "
@@ -84,28 +84,28 @@ block blogcontent
   if disableOwnCollection
     div.alert.alert-warning
       a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'overview',option:'disableOwnCollection',value:'false'});`) &times
-      span.glyphicon.glyphicon-filter
+      i.fa.fa-filter
       span=" Collections of "+layout.user.OSMUser+" are disabled"
 
   if disableOtherCollection
     div.alert.alert-warning
       a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'overview',option:'disableOtherCollection',value:'false'});`) &times
-      span.glyphicon.glyphicon-filter
+      i.fa.fa-filter
       span=" Collections not done by "+layout.user.OSMUser+" are disabled"
   if disableWritten
     div.alert.alert-warning
       a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'overview',option:'disableWritten',value:'false'});`) &times
-      span.glyphicon.glyphicon-filter
+      i.fa.fa-filter
       span=" Written markdown is disabled"
   if disableNewerMarkdown
     div.alert.alert-warning
       a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'overview',option:'disableNewerMarkdown',value:  'false'});`) &times
-      span.glyphicon.glyphicon-filter
+      i.fa.fa-filter
       span=" Disable, if left lang article is newer than right lang article"
   if disableSolvedComments
     div.alert.alert-warning
       a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'overview',option:'disableSolvedComments',value:'false'});`) &times
-      span.glyphicon.glyphicon-filter
+      i.fa.fa-filter
       span=" No & Solved Comments are disabled"
 
   table

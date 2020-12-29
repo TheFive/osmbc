@@ -59,19 +59,19 @@ block blogcontent
                   +voteDisplay(a,showVotes)
 
             div(class=secondColSize)
-              div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('hidden');} else {openEditor.classList.toggle('hidden');openEditor = null;} return false;`)
+              div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
                 +previewDiv(a, lang)
                   ul
                     div.preview(id="preview" + a.id)
                         |!{renderer.renderArticle(lang,a)}
 
-              div.hidden(id="div" + a.id)
+              div.d-none(id="div" + a.id)
                 form(name="EditArticle",id="EditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + lang, method="post")
                   textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(" + a.id + ");" onkeyup="onchangeMarkdown(" + a.id + ")" spellcheck = "true" lang=lang)=a["markdown"+lang]
-                  textarea.hidden.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
+                  textarea.d-none.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
                 form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + lang, method="post")
                   if a.author && a.author["markdown" + lang] && apiAuthors.indexOf(a.author["markdown" + lang].split(",")[0]) >= 0
-                      textarea.hidden.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+lang]
+                      textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+lang]
                       button.btn.btn-xs.btn-success(id="reviewTranslation"+a.id+lang type="submit")
                         div.glyphicon.glyphicon-ok
                         span=" Mark Auto Translation OK"

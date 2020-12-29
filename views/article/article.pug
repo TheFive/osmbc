@@ -5,7 +5,7 @@ extends article_mixin
 block content
   // FullAccessArticleView
   form#textanalyseform( method="POST",action="https://wortliga.de/textanalyse/" )
-    input.form-control(type="hidden" name = "text" id ="textanalysefield")
+    input.form-control(type="d-none" name = "text" id ="textanalysefield")
   form(name="input",id="input", action=`${layout.htmlroot}/article/${article.id}/witholdvalues`, method="post")
     .row
       // Block for Buttons in the upper right corner and on the top in mobile
@@ -44,7 +44,7 @@ block content
             label.col-md-2="Blog"
             div.col-md-10
               +blogSelector(article,layout.user.access !== "full" || !article.isChangeAllowed("blog"))
-              textarea.hidden.form-control(id="old_blog" name="old_blog",rows=1,hide=true)=article.blog
+              textarea.d-none.form-control(id="old_blog" name="old_blog",rows=1,hide=true)=article.blog
 
 
 
@@ -52,7 +52,7 @@ block content
           .form-group
             label.col-md-2="Category"
             div.col-md-10
-              textarea.hidden.form-control(id="old_categoryEN" name="old_categoryEN",rows=1,hide=true)=article.categoryEN
+              textarea.d-none.form-control(id="old_categoryEN" name="old_categoryEN",rows=1,hide=true)=article.categoryEN
               select(id="categoryEN",name="categoryEN" ).form-control.af
                 for category in categories
                   - option = category[params.left_lang]
@@ -71,7 +71,7 @@ block content
             .form-group
               label.col-md-2="Predecessor"
               .col-md-10
-                textarea.hidden.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true)=article.predecessorId
+                textarea.d-none.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true)=article.predecessorId
                 select(id="predecessorId",name="predecessorId" ).form-control.af
                   if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
                     option(value="" selected) None
@@ -103,17 +103,17 @@ block content
       .form-group
         label.col-md-1="Title"
         .col-md-10
-          div.label.label-danger#title_unsaved(style="display:none")="unsaved"
-          textarea.hidden.form-control(id="old_title" name="old_title",rows=1,hide=true)=article.title
+          div.badge.badge-danger#title_unsaved(style="display:none")="unsaved"
+          textarea.d-none.form-control(id="old_title" name="old_title",rows=1,hide=true)=article.title
           textarea.form-control.af(id="title" name="title",rows=1 readonly=!article.isChangeAllowed("title"))=article.title
 
 
     // Display Unpublish Reason Row
-    .row.hidden(id="unpublishReasonRow")
+    .row.d-none(id="unpublishReasonRow")
       .form-group
         label.col-md-1="Unpublish Reason"
         .col-md-5
-          textarea.hidden.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true)=article.unpublishReason
+          textarea.d-none.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true)=article.unpublishReason
           select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control.af
             for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
               if (reason == article.unpublishReason)
@@ -121,7 +121,7 @@ block content
               else
                 option(value=reason )=reason
         .col-md-5
-          textarea.hidden.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true)=article.unpublishReference
+          textarea.d-none.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true)=article.unpublishReference
           textarea.form-control.af(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference"))=article.unpublishReference
 
 
@@ -130,7 +130,7 @@ block content
       .col-md-1
       .col-md-11
         if (collectedByGuest && layout.user.access !== "guest")
-          div.label.osmbclabel-guest-indicator="This article was collected by our guest user " + article.firstCollector + "."
+          div.badge.osmbclabel-guest-indicator="This article was collected by our guest user " + article.firstCollector + "."
 
     .row
       .form-group
@@ -139,9 +139,9 @@ block content
         else
           label.col-md-1="Collection"
         .col-md-10
-          div.label.label-danger#collection_unsaved(style="display:none")="unsaved"
+          div.badge.badge-danger#collection_unsaved(style="display:none")="unsaved"
           textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection"))=article.collection
-          textarea.hidden.form-control(id="old_collection" name="old_collection",rows=1,hide=true)=article.collection
+          textarea.d-none.form-control(id="old_collection" name="old_collection",rows=1,hide=true)=article.collection
     .row
       .col-md-1
 
@@ -228,7 +228,7 @@ block content
                   tr
                     td
                      a(href=layout.htmlroot+'/changes/' + change.id)
-                        span.glyphicon.glyphicon-info-sign
+                        i.fa.fa-info-circle
                     td= change.user
                     td= change.property
                     td
@@ -245,5 +245,3 @@ block content
 
 
    
-
-

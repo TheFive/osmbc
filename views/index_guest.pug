@@ -11,7 +11,7 @@ block content
           a(href="http://www.weeklyosm.eu/this-news-should-be-in-weeklyosm")="How to use OSMBC guest mode"
           span=" to get more information."
       h2="Your Articles"
-      table.table.table-condensed
+      table.table.table-sm
         for a in articles
           tr
             td=a.blog
@@ -32,20 +32,20 @@ block content
           p
             | Click on any label to edit the articles or view the blog.
           p
-            span.label.osmbclabel-closedblog
+            span.badge.osmbclabel-closedblog
               | total
             |  Blog is closed for a language
 
           p
-            span.label.osmbclabel-reviewblog
+            span.badge.osmbclabel-reviewblog
               | total
             |  Blog is undergoing review
           p
-            span.label.osmbclabel-editblog
+            span.badge.osmbclabel-editblog
               | total
             |  Blog is open for editing
           p
-            span.label.osmbclabel-openblog
+            span.badge.osmbclabel-openblog
               | total
             |  Blog is used for submissions
 

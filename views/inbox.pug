@@ -27,7 +27,7 @@ mixin displayArticle(article,lang)
                           b
                             if (i > upToComment)
                               a(href=layout.htmlroot + '/article/' + article.id +'/markCommentRead?index='+i)
-                                span.glyphicon.glyphicon-envelope
+                                i.fa.fa-envelope
                               span=" "
                             span=comment.user
                           span=" "

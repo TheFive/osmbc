@@ -19,7 +19,7 @@ block content
 
   if (usershown.temporaryGuest===true)
     h1
-      .label.label-default="User is testing guest mode"
+      .badge.badge-secondary="User is testing guest mode"
 
   form(name="input", action=`${layout.htmlroot}/usert/${usershown.id}`, method="post")
     div.form-horizontal(role="form")

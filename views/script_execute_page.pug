@@ -16,8 +16,8 @@ block content
           if (param.valueByQuery && query[param.valueByQuery])
             - param.value = query[param.valueByQuery]
           - cl = ""
-          if (param.hidden)
-            - cl = "hidden"
+          if (param.d-none)
+            - cl = "d-none"
             div.row
               div.col-sm-4
               p.col-sm-5= param.title + " -> " + param.value

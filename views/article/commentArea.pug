@@ -16,7 +16,7 @@ if !MIXIN_INCLUDE
             .col-xs-11
               b
                 if (i > upToComment)
-                  span.glyphicon.glyphicon-envelope(onclick=`window.callAndRedraw('/article/${article.id}/markCommentRead?index=${i}&reload=false','/article/${article.id}/commentArea');`)
+                  i.fa.fa-envelope(onclick=`window.callAndRedraw('/article/${article.id}/markCommentRead?index=${i}&reload=false','/article/${article.id}/commentArea');`)
                   span=" "
                 span=comment.user
               span=" "
@@ -26,7 +26,7 @@ if !MIXIN_INCLUDE
                 i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
               if layout.user.OSMUser === comment.user && params.editComment != i
                 span=" "
-                span.glyphicon.glyphicon-pencil(id="EditComment"+i onclick=`window.callAndRedraw(null,'/article/${article.id}/commentArea?editComment=${i}');`)
+                i.fa.fa-pencil(id="EditComment"+i onclick=`window.callAndRedraw(null,'/article/${article.id}/commentArea?editComment=${i}');`)
 
               if params.editComment == i && layout.user.OSMUser === comment.user
                 form(target="iframeform" name="EditComment",id="EditCommentForm", action=`${layout.htmlroot}/article/${article.id}/EditComment/${i}?reload=false`, method="post")
@@ -51,4 +51,4 @@ if !MIXIN_INCLUDE
             button.btn.btn-large.btn-default(name= "AddComment" type = "button" onclick =`document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/${article.id}/commentArea');`) Solve Comment
 
 
-iframe.hidden(name="iframeform")
+iframe.d-none(name="iframeform")
