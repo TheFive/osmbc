@@ -9,20 +9,16 @@ block content
     - var action = layout.htmlroot+"/article/searchandcreate";
     - if (!showCollect) action = layout.htmlroot+"/article/search";
     p
-      form.form-horizontal(name="search", action=action, method="get")
-        .form-group
-          .col-sm-2
-            | 
-          .col-sm-6
+      form.form-inline(name="search", action=action, method="get")
+        .form-group.mx-sm-5.mb-5
+          div
             input#searchField(type="text",class="form-control",name ="search",value=search)
             if showCollect
               if (layout && layout.user.access === "guest")
                 p.osmbc-help-text(align="center") Please check your link for duplicates before submit it.
               else
                 p.osmbc-help-text(align="center") Please check your link for duplicates before collect it.
-
-          .col-sm-2
-            button.btn.btn-large.btn-primary(name="SearchNow" type="submit") Search
+          button.btn.btn-large.btn-primary(name="SearchNow" type="submit") Search
 
 
   .row
@@ -58,7 +54,7 @@ block content
                     a(href=layout.htmlroot+"/article/" + article.id)=((article.title)?article.title:"No Title")
                   td.hidden-xs=article.categoryEN
                   td.pre=article.collection
-                tr(class="class_" + article.id)d-none
+                tr(class="class_" + article.id)
                   td
                   td(colspan=1)
                     |!{layout.md_render(article["markdown"+layout.language])}

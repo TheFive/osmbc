@@ -75,13 +75,11 @@ block content
 
 
 
-        .row
+        p.row.text-justify
           h4="Admin View"
-        .row
-          span
-            a#adminlink(href=layout.htmlroot+"/osmbc/admin")="click here"
-          span=" "    
-          span="to go to the Admin Section of OSMBC"
+          p
+            a#adminlink(href=layout.htmlroot+"/osmbc/admin")="click here" 
+            span=" to go to the Admin Section of OSMBC"
     .col-7.d-none.d-sm-block
       if changes
         h4="Last Changes "
