@@ -45,7 +45,7 @@ mixin articleMarkdown(lang,disabled)
 
 
 mixin articlePreview(lang)
-  .panel.panel-default.panel-body.preview(id="preview" + lang, lang = lang)
+  .card.card-body.preview(id="preview" + lang, lang = lang)
     |!{article["textHtml"+lang]}
 
 
@@ -112,27 +112,21 @@ mixin markdownWithPreview(lang)
 
 mixin articleTranslateMenu(langFrom,langTo,service)
   if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
-    li
-      a(
+    a.dropdown-item(
         class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
         onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
         )="Translate " + langFrom+  "->" +langTo
-    li.bg-warning.d-none(class="translateWait" + langFrom + langTo)
-      a=" Please Wait"
-    li.bg-danger.d-none(class="translateError" + langFrom + langTo)
-      a="Translate " + langFrom+  "->" +langTo +" "
+    a.dropdown-item.bg-warning.d-none(class="translateWait" + langFrom + langTo)=" Please Wait"
+    a.dropdown-item.bg-danger.d-none(class="translateError" + langFrom + langTo)="Translate " + langFrom+  "->" +langTo +" "
         i.fa.fa-times
-    li.d-none(class="translateDone" + langFrom + langTo+" "+service)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        i.fa.fa-check
+    a.dropdown-item.d-none(class="translateDone" + langFrom + langTo+" "+service)="Translate " + langFrom+  "->" +langTo +" "
+       i.fa.fa-check
 
 
 mixin translationMenu
-  li.dropdown#translation.hidden-xs
-    a.dropdown-toggle(href='#', data-toggle='dropdown')
-      | Translate
-      span.caret
-    ul.dropdown-menu(role='menu')
+  li.dropdown.navbar-item#translation.hidden-xs
+    a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
+    ul.dropdown-menu(aria-labelledby="articleTranslateMenu")
       each tService in translationServices
         li.dropdown-header="Use " + tService +":"
           - list = [params.left_lang,params.right_lang,params.lang3,params.lang4]

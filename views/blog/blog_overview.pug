@@ -43,10 +43,10 @@ mixin displayOverviewRow(a)
       td
       td.hidden-xs
       td
-        div.panel.panel-default.d-none(id="div" + a.id)
-          div.panel-heading
+        div.card.d-none(id="div" + a.id)
+          div.card-header
             ul.preview(id="preview" + a.id)
-          div.panel-body
+          div.card-body
             form(name="EditArticle",id="EditArticle" + a.id, action=`${layout.htmlroot}/article/${a.id}/setMarkdown/${lang}`, method="post")
               textarea.form-control(name="markdown" id="markdown" + a.id rows=7 onchange=`onLeaveText(${a.id});` onkeyup=`onchangeMarkdown(${a.id})` spellcheck = "true" lang=lang)=a["markdown" + lang]
               textarea.d-none.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
@@ -156,7 +156,7 @@ block blogcontent
 
 
 
-  .row#filter
+  p.row#filter
     h2="Options"
 
 
@@ -196,5 +196,5 @@ block blogcontent
 
 
 
-  .row
+  p.row
     +articleIconLegend

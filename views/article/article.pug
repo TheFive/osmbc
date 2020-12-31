@@ -4,13 +4,62 @@ extends article_mixin
 
 block content
   // FullAccessArticleView
-  form#textanalyseform( method="POST",action="https://wortliga.de/textanalyse/" )
-    input.form-control(type="d-none" name = "text" id ="textanalysefield")
+  form.d-none#textanalyseform( method="POST",action="https://wortliga.de/textanalyse/" )
+    input.form-control(name = "text" id ="textanalysefield")
   form(name="input",id="input", action=`${layout.htmlroot}/article/${article.id}/witholdvalues`, method="post")
     .row
       // Block for Buttons in the upper right corner and on the top in mobile
-      .col-md-6.col-md-push-6
-        .row
+      .col-md-6
+        div.form-group.row
+          label.col-sm-2.col-form-label="Blog"
+          div.col-md-10
+            +blogSelector(article,layout.user.access !== "full" || !article.isChangeAllowed("blog"))
+            textarea.d-none.form-control(id="old_blog" name="old_blog",rows=1,hide=true)=article.blog
+        div.form-group.row
+          label.col-sm-2.col-form-label="Category"
+          div.col-md-10
+            textarea.d-none.form-control(id="old_categoryEN" name="old_categoryEN",rows=1,hide=true)=article.categoryEN
+            select(id="categoryEN",name="categoryEN" ).form-control.af
+              for category in categories
+                - option = category[params.left_lang]
+                - if (params.right_lang !== null) option += " / "+category[params.right_lang]
+                if (category.EN == article.categoryEN)
+                  option(value=category.EN selected )=option
+                else
+                  option(value=category.EN disabled=!article.isChangeAllowed("categoryEN"))=option
+        div.form-group.row
+          .col-md-2
+          .col-md-10
+            p.osmbc-help-text(id="categoryDisplay")
+        // Display Predecessor Row
+        if (layout.user.access === "full")
+          
+          div.form-group.row
+            label.col-md-2.col-form-label="Predecessor"
+            .col-md-10
+              textarea.d-none.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true)=article.predecessorId
+              select(id="predecessorId",name="predecessorId" ).form-control.af
+                if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
+                  option(value="" selected) None
+                else
+                  option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
+                if article.predecessorId === "0"
+                  option(value="0" selected) First
+                else
+                  option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
+                for a in articleCategories
+                  if (a.id == article.predecessorId)
+                    option(value=a.id selected )=a.title
+                  else
+                    - d= null;
+                    for b in articleCategories
+                      - if (b.predecessorId == a.predecessorId) {d=b;}
+                    if !article.isChangeAllowed("predecessorId")
+                      option(value=a.id disabled=true)=a.title+"("+d.title+")"
+                    else
+                      option(value=a.id )=a.title
+      .col-md-6
+        div.form-group.row
           .col-md-4#voteButtons
             if (layout.user.access === "full")
               include ../voteButtons
@@ -22,7 +71,7 @@ block content
 
           .col-md-2
           .col-md-2
-        .row
+        div.form-group.row
           .col-md-4
 
             +languageDisplay(article,{func: "showRL"})
@@ -37,61 +86,7 @@ block content
 
 
 
-          // Parallel Blog for common article Attributes
-      .col-md-6.col-md-pull-6
-        .row
-          div.form-group
-            label.col-md-2="Blog"
-            div.col-md-10
-              +blogSelector(article,layout.user.access !== "full" || !article.isChangeAllowed("blog"))
-              textarea.d-none.form-control(id="old_blog" name="old_blog",rows=1,hide=true)=article.blog
-
-
-
-        .row
-          .form-group
-            label.col-md-2="Category"
-            div.col-md-10
-              textarea.d-none.form-control(id="old_categoryEN" name="old_categoryEN",rows=1,hide=true)=article.categoryEN
-              select(id="categoryEN",name="categoryEN" ).form-control.af
-                for category in categories
-                  - option = category[params.left_lang]
-                  - if (params.right_lang !== null) option += " / "+category[params.right_lang]
-                  if (category.EN == article.categoryEN)
-                    option(value=category.EN selected )=option
-                  else
-                    option(value=category.EN disabled=!article.isChangeAllowed("categoryEN"))=option
-        .row
-          .col-md-2
-          .col-md-10
-            p.osmbc-help-text(id="categoryDisplay")
-        // Display Predecessor Row
-        if (layout.user.access === "full")
-          .row
-            .form-group
-              label.col-md-2="Predecessor"
-              .col-md-10
-                textarea.d-none.form-control(id="old_predecessorId",name="old_predecessorId",rows=1,hide=true)=article.predecessorId
-                select(id="predecessorId",name="predecessorId" ).form-control.af
-                  if typeof(article.predecessorId)=="undefined" || article.predecessorId==""
-                    option(value="" selected) None
-                  else
-                    option(value="" disabled= !article.isChangeAllowed("predecessorId")) None
-                  if article.predecessorId === "0"
-                    option(value="0" selected) First
-                  else
-                    option(value="0" disabled= !article.isChangeAllowed("predecessorId")) First
-                  for a in articleCategories
-                    if (a.id == article.predecessorId)
-                      option(value=a.id selected )=a.title
-                    else
-                      - d= null;
-                      for b in articleCategories
-                        - if (b.predecessorId == a.predecessorId) {d=b;}
-                      if !article.isChangeAllowed("predecessorId")
-                        option(value=a.id disabled=true)=a.title+"("+d.title+")"
-                      else
-                        option(value=a.id )=a.title
+                            // Parallel Blog for common article Attributes
 
 
 
@@ -99,50 +94,47 @@ block content
 
 
     // Display Title Row
-    .row
-      .form-group
-        label.col-md-1="Title"
-        .col-md-10
-          div.badge.badge-danger#title_unsaved(style="display:none")="unsaved"
-          textarea.d-none.form-control(id="old_title" name="old_title",rows=1,hide=true)=article.title
-          textarea.form-control.af(id="title" name="title",rows=1 readonly=!article.isChangeAllowed("title"))=article.title
+    div.form-group.row
+      label.col-md-1="Title"
+      .col-md-10
+        div.badge.badge-danger#title_unsaved(style="display:none")="unsaved"
+        textarea.d-none.form-control(id="old_title" name="old_title",rows=1,hide=true)=article.title
+        textarea.form-control.af(id="title" name="title",rows=1 readonly=!article.isChangeAllowed("title"))=article.title
 
 
     // Display Unpublish Reason Row
-    .row.d-none(id="unpublishReasonRow")
-      .form-group
-        label.col-md-1="Unpublish Reason"
-        .col-md-5
-          textarea.d-none.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true)=article.unpublishReason
-          select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control.af
-            for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
-              if (reason == article.unpublishReason)
-                option(value=reason selected )=reason
-              else
-                option(value=reason )=reason
-        .col-md-5
-          textarea.d-none.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true)=article.unpublishReference
-          textarea.form-control.af(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference"))=article.unpublishReference
+    div.form-group.row.d-none(id="unpublishReasonRow")
+      label.col-md-1="Unpublish Reason"
+      .col-md-5
+        textarea.d-none.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true)=article.unpublishReason
+        select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control.af
+          for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
+            if (reason == article.unpublishReason)
+              option(value=reason selected )=reason
+            else
+              option(value=reason )=reason
+      .col-md-5
+        textarea.d-none.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true)=article.unpublishReference
+        textarea.form-control.af(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference"))=article.unpublishReference
 
 
     // Display Collection Row
-    .row
+    div.form-group.row
       .col-md-1
       .col-md-11
         if (collectedByGuest && layout.user.access !== "guest")
           div.badge.osmbclabel-guest-indicator="This article was collected by our guest user " + article.firstCollector + "."
 
-    .row
-      .form-group
-        if (layout && layout.user.access === "guest")
-          label.col-md-1="Submission"
-        else
-          label.col-md-1="Collection"
-        .col-md-10
-          div.badge.badge-danger#collection_unsaved(style="display:none")="unsaved"
-          textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection"))=article.collection
-          textarea.d-none.form-control(id="old_collection" name="old_collection",rows=1,hide=true)=article.collection
-    .row
+    div.form-group.row
+      if (layout && layout.user.access === "guest")
+        label.col-md-1="Submission"
+      else
+        label.col-md-1="Collection"
+      .col-md-10
+        div.badge.badge-danger#collection_unsaved(style="display:none")="unsaved"
+        textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection"))=article.collection
+        textarea.d-none.form-control(id="old_collection" name="old_collection",rows=1,hide=true)=article.collection
+    div.form-group.row
       .col-md-1
 
       .col-md-6
@@ -167,7 +159,7 @@ block content
     .row#voteButtonsList
       include ../voteButtonsList
 
-  #doublettes.row
+  .row#doublettes
     if articleReferences.count >= 1
       h3
         |Links used in other Post
@@ -202,11 +194,11 @@ block content
 
 
     if (layout.user.access === "full")
-      .row.visible-xs
+      .row.d-none.d-xs-block
         p
           br
           a(href=layout.htmlroot+"/changes/log?table=article&oid=" +article.id) [changes]
-      .row.hidden-xs
+      .row.d-block.d-xs-none
         if changes
           h3
             |History

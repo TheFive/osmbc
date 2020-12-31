@@ -155,9 +155,11 @@ mixin articleIcons(a,options)
 
 mixin navbutton(tab,activetab,addClass)
   if (tab == activetab)
-    li.active(class=addClass):  a(href=layout.htmlroot+"/blog/" + blog.name + "/" + tab)=tab
+    li.nav-item(class=addClass)
+      a.nav-link.active(href=layout.htmlroot+"/blog/" + blog.name + "/" + tab)=tab
   else
-    li(class=addClass):  a(href=layout.htmlroot+"/blog/" + blog.name +"/"+ tab)=tab
+    li.nav-item(class=addClass)
+      a.nav-link(href=layout.htmlroot+"/blog/" + blog.name +"/"+ tab)=tab
 
 
 mixin articleIconLegend(view)
@@ -218,10 +220,14 @@ mixin articleIconLegend(view)
 mixin userConfigOption(view,option,variable,userdesc)
   span(style="white-space: nowrap")
     if variable
-      i.fa.fa-check-square  (name="choose_"+option,onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'false'});`)
+      div.form-group.form-check(onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'false'});`)
+        input.form-check-input#exampleCheck1(type="checkbox" checked)
+        label.form-check-label(for="exampleCheck1")=userdesc
     else
-      i.fa.fa-square(name="choose_"+option,onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'true'});`)
-    span=userdesc
+      div.form-group.form-check(onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'true'});`)
+        input.form-check-input#exampleCheck1(type="checkbox" )
+        label.form-check-label(for="exampleCheck1")=userdesc
+    
 
 
 
@@ -318,10 +324,10 @@ mixin langChooser(langString)
     - label = "osmbcbadge-lang2"
   if (langString === "lang3")
     - l = "language3"
-    - label = "label-default"
+    - label = "badge-secondary"
   if (langString === "lang4")
     - l = "language4"
-    - label = "label-default"
+    - label = "badge-secondary"
 
   li.dropdown.nav-item
     a.nav-link.dropdown-toggle(id=l, class=label, href='#', style="color:white", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=(layout[l])?layout[l]:"--"

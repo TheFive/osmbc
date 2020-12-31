@@ -8,17 +8,18 @@ block content
   div
     - var action = layout.htmlroot+"/article/searchandcreate";
     - if (!showCollect) action = layout.htmlroot+"/article/search";
-    p
-      form.form-inline(name="search", action=action, method="get")
-        .form-group.mx-sm-5.mb-5
-          div
+      form(name="search", action=action, method="get")
+        div.row
+          div.col-3
+          div.col-6
             input#searchField(type="text",class="form-control",name ="search",value=search)
             if showCollect
               if (layout && layout.user.access === "guest")
                 p.osmbc-help-text(align="center") Please check your link for duplicates before submit it.
               else
                 p.osmbc-help-text(align="center") Please check your link for duplicates before collect it.
-          button.btn.btn-large.btn-primary(name="SearchNow" type="submit") Search
+          div.col
+            button.btn.btn-large.btn-primary(name="SearchNow" type="submit") Search
 
 
   .row
