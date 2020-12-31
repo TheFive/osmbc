@@ -8,39 +8,32 @@ block content
           | Welcome to OSM BC
         h2.d-block.d-sm-none
           | OSM BC
-        .row 
-          p.osmbc-help-text
-            | See recent blogs to work on below. If you just want to collect an article or an idea, use the collect menu on in the navbar.
-        .row
-          h3="Blogs to work on "
-            a(href=layout.htmlroot+"/blog/list?status=IN('open','edit')") (more)
-
-        .row
+        p.osmbc-help-text
+          | See recent blogs to work on below. If you just want to collect an article or an idea, use the collect menu on in the navbar.
+        h3="Blogs to work on "
+          a(href=layout.htmlroot+"/blog/list?status=IN('open','edit')") (more)
+        div
           +blogStatusTable(true)
-
-
-
-        .row
-          h4="Current Users"
+        h4="Current Users"
+        p
+          table.table
+            for user, i in activeUserList
+              tr
+                td
+                  img(src=layout.getAvatar(user.OSMUser) style="height:25px;width:25px")
+                td=user.OSMUser +" "
+                td.text-muted=layout.moment(user.lastAccess).fromNow()
+        
+        if (fullVisitorsToday && fullVisitorsToday.length>0)
+          h4="Full Visitors Today"
           p
             table.table
-              for user, i in activeUserList
-                tr
-                  td
-                    img(src=layout.getAvatar(user.OSMUser) style="height:25px;width:25px")
-                  td=user.OSMUser +" "
-                  td.text-muted=layout.moment(user.lastAccess).fromNow()
-        .row
-          if (fullVisitorsToday && fullVisitorsToday.length>0)
-            h4="Full Visitors Today"
-            p
-              table.table
-                tr
-                  td
-                    for user,i in fullVisitorsToday
-                      span
-                        a(href=layout.htmlroot+"/usert/"+user.OSMUser)=user.OSMUser
-                        span=", "
+              tr
+                td
+                  for user,i in fullVisitorsToday
+                    span
+                      a(href=layout.htmlroot+"/usert/"+user.OSMUser)=user.OSMUser
+                      span=", "
           if (guestVisitorsToday && guestVisitorsToday.length>0)
             h4="Guest Visitors Today"
             p

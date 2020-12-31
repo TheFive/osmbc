@@ -55,53 +55,39 @@ mixin inboxMenu
            span.badge.osmbcbadge-lang2=layout.secondLangMentions
 
 mixin articleMenu
-  li#article.dropdown
-    a.dropdown-toggle(href='#', data-toggle='dropdown')
-      | Lists
-      span.caret
-    ul.dropdown-menu(role='menu')
-      li.dropdown-header Articles
-      li
-        a(href=layout.htmlroot + '/article/search') Search
-        a(href=layout.htmlroot + '/article/list?myArticles=true') My Empty Collections
-      li.dropdown-header Orphaned Article
-
-        li
-          a(href=layout.htmlroot + '/article/list?blog=Trash') Trash
-        li
-          a(href=layout.htmlroot + '/article/list?blog=TBC') TBC
-        li
-          a(href=layout.htmlroot + '/article/list?blog=Future') Future
-        li
-          a(href=layout.htmlroot + '/article/list?blog=') No Blog
+  li.dropdown.nav-item.active
+    a.nav-link.dropdown-toggle#articleMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Lists
+    div.dropdown-menu(aria-labelledby="articleMenuDropdown")
+      a.dropdown-header Articles
+      a.dropdown-item(href=layout.htmlroot + '/article/search') Search
+      a.dropdown-item(href=layout.htmlroot + '/article/list?myArticles=true') My Empty Collections
+      div.dropdown-divider
+      a.dropdown-header Orphaned Article
+      a.dropdown-item(href=layout.htmlroot + '/article/list?blog=Trash') Trash
+      a.dropdown-item(href=layout.htmlroot + '/article/list?blog=TBC') TBC
+      a.dropdown-item(href=layout.htmlroot + '/article/list?blog=Future') Future
+      a.dropdown-item(href=layout.htmlroot + '/article/list?blog=') No Blog
 
 mixin toolMenu
-  li.dropdown#tool.hidden-xs
-    a.dropdown-toggle(href='#', data-toggle='dropdown')
-      | Tool
-      span.caret
-    ul.dropdown-menu(role='menu')
-      li.dropdown-header Markdown Helper
-      li
-        a(href=layout.htmlroot + "/tool/picturetool") Picture Tool
+  li.dropdown.nav-item.active
+    a.nav-link.dropdown-toggle#toolsMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Lists
+    div.dropdown-menu(aria-labelledby="toolsMenuDropdown")
+      a.dropdown-header Markdown Helper
+      a.dropdown-item(href=layout.htmlroot + "/tool/picturetool") Picture Tool
       if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
-        li.divider
-        li.dropdown-header="Script Plugins (TEST PHASE)"
-          li
-            a(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
-          li
-            a(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
+        div.dropdown-divider
+        a.dropdown-header="Script Plugins (TEST PHASE)"
+        a.dropdown-item(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
+        a.dropdown-item(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
 
-      li.divider
-      li.dropdown-header Editorial Tools
-        li
-          a(href="https://mattermost.openstreetmap.de") Mattermost for Editorial Team
+      div.dropdown-divider
+      a.dropdown-header Editorial Tools
+      a.dropdown-item(href="https://mattermost.openstreetmap.de") Mattermost for Editorial Team
 
 
-      li.divider
-      li.dropdown-header About The Team
-        li
-          a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
+      div.dropdown-divider
+      a.dropdown-header About The Team
+      a.dropdown-item(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
 
 
 
@@ -147,6 +133,8 @@ block all
             if (layout && layout.user.access === "full")
               li.navbar-item.active
                 +firstBlogOfList(listall,2)
+            +articleMenu    
+            +toolMenu
             block additionalMenu    
           ul.navbar-nav
             li.navbar-item.active

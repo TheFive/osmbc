@@ -193,46 +193,46 @@ block content
 
 
 
-    if (layout.user.access === "full")
-      .row.d-none.d-xs-block
-        p
-          br
-          a(href=layout.htmlroot+"/changes/log?table=article&oid=" +article.id) [changes]
-      .row.d-block.d-xs-none
-        if changes
-          h3
-            |History
-          div
-            table.table.table-striped.table-responsive
-              thead
+  if (layout.user.access === "full")
+    .row.d-none.d-xs-block
+      p
+        br
+        a(href=layout.htmlroot+"/changes/log?table=article&oid=" +article.id) [changes]
+    .row.d-block.d-xs-none
+      if changes
+        h3
+          |History
+        div
+          table.table.table-striped.table-responsive
+            thead
+              tr
+                th
+                th
+                 |user
+                th
+                 |what
+                th
+                 |change
+                th
+                 |when
+            tbody
+              each change, i in changes
                 tr
-                  th
-                  th
-                   |user
-                  th
-                   |what
-                  th
-                   |change
-                  th
-                   |when
-              tbody
-                each change, i in changes
-                  tr
-                    td
-                     a(href=layout.htmlroot+'/changes/' + change.id)
-                        i.fa.fa-info-circle
-                    td= change.user
-                    td= change.property
-                    td
-                      |!{change.htmlDiffText(100)}
-                    td= layout.moment(change.timestamp).fromNow()
-          div
-            p
-              |only displaying changes
-              span.osmbc-inserted
-                |inserted text
-              span.osmbc-deleted
-                |removed text
+                  td
+                   a(href=layout.htmlroot+'/changes/' + change.id)
+                      i.fa.fa-info-circle
+                  td= change.user
+                  td= change.property
+                  td
+                    |!{change.htmlDiffText(100)}
+                  td= layout.moment(change.timestamp).fromNow()
+        div
+          p
+            |only displaying changes
+            span.osmbc-inserted
+              |inserted text
+            span.osmbc-deleted
+              |removed text
 
 
 
