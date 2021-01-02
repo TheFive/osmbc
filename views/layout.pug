@@ -25,9 +25,7 @@ mixin collectMenu
 mixin myGuestArticleMenu
   if (layout && layout.user.access === "guest")
     li.navbar-item.active
-      ul.nav.navbar-nav.pull-left
-        li
-          a.nav-link#myArticles(href=htmlroot + '/osmbc.html') My Articles
+      a.nav-link#myArticles(href=htmlroot + '/osmbc.html') My Articles
 
 
 mixin tbcMenu
@@ -105,6 +103,7 @@ block all
       title=(layout)?layout.title:appName
       // Bootstrap core CSS
       link(href=path("bootstrap")+'/css/bootstrap.min.css', rel='stylesheet')
+      link(href=path("bootstrap-select")+'/css/bootstrap-select.min.css', rel='stylesheet')
       link(href=path("font-awesome")+"/css/font-awesome.min.css" rel='stylesheet')
 
     body
@@ -121,12 +120,14 @@ block all
           - listall = listall.concat(layout.listOfOpenBlog)
 
         +homeButton("navbar-brand")
+        ul.navbar-nav.mr-auto
+          +collectMenu
         button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
           span.navbar-toggler-icon
         div.collapse.navbar-collapse#navbarSupportedContent
           ul.navbar-nav.mr-auto
       
-            +collectMenu
+            
             +tbcMenu
             +inboxMenu
             +myGuestArticleMenu
@@ -174,6 +175,7 @@ block all
       // Placed at the end of the document so the pages load faster
       script(src=path("jquery")+'/jquery.min.js')
       script(src=path("bootstrap")+'/js/bootstrap.bundle.min.js')
+      script(src=path("bootstrap-select")+'/js/bootstrap-select.min.js')
 
   doctype html
   html

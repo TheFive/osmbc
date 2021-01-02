@@ -46,47 +46,57 @@ mixin voteLabel(vote,article)
 
 mixin labeledInput(label,name,value,explanation)
     - if (!value) value =""
-    div.form-group
-        label.control-label(class="col-sm-" + sizeLabel for=name)=label
-        div(class="col-sm-" + sizeInput)
-            input.form-control(name=name,id=name,value = value)
-        div.text-muted(class="col-sm-" + sizeExplanation)=explanation
+    div.row
+      .col-2
+        label.col-form-label(for=name)=label
+      .col-4    
+          input.form-control(name=name,id=name,value = value)
+      .col-4   
+        div.form-text=explanation
+
 mixin labeledSelect(label,name,value,values,displayValues,explanation)
     - if (!value) value =""
-    div.form-group
-        label.control-label(class="col-sm-" + sizeLabel for=name)=label
-        div(class="col-sm-" + sizeInput)
-            select(id=name,name=name).form-control
-                each v,i in values
-                    if (value ==v)
-                        option(value=v selected)=displayValues[i]
-                    else
-                        option(value=v )=displayValues[i]
-        div.text-muted(class="col-sm-" + sizeExplanation)=explanation
+    .row
+      .col-2
+        label.col-form-label(for=name)=label
+      .col-4
+        select(id=name,name=name).form-control
+          each v,i in values
+              if (value ==v)
+                  option(value=v selected)=displayValues[i]
+              else
+                  option(value=v )=displayValues[i]
+      .col-4              
+        label.form-text=explanation
+
 mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
     - if (!value) value =""
-    div.form-group
-        label.control-label(class="col-sm-" + sizeLabel for=name)=label
-        div(class="col-sm-" + sizeInput)
-            each v,i in values
-                if (value.indexOf(v)>=0)
-                    label.checkbox-inline
-                        input(type="checkbox" value=v name=name id=name +"_" + v checked="checked")
-                        |#{displayValues[i]}
-                else
-                    label.checkbox-inline
-                        input(type="checkbox" name=name id=name +"_" + v value=v)
-                        |#{displayValues[i]}
-        div.text-muted(class="col-sm-" + sizeExplanation)=explanation
+    .row
+      .col-2
+        label.col-form-label( for=name)=label
+      .col-4
+        select.selectpicker(name=name multiple)
+          each v,i in values
+            if (value.indexOf(v)>=0)
+                option(selected)
+                  |#{displayValues[i]}
+            else 
+                option
+                  |#{displayValues[i]}  
+        
+      .col-4              
+        label.form-text=explanation
 
 
 mixin labeledText(label,name,value,explanation)
     - if (!value) value =""
-    div.form-group
-        label.control-label(class="col-sm-" + sizeLabel for=name)=label
-        div(class="col-sm-" + sizeInput)
-            input.form-control(name=name,id=name,value = value readonly)
-        div.text-muted(class="col-sm-" + sizeExplanation)=explanation
+    .row
+      .col-2
+        label.col-form-label( for=name)=label
+      .col-4  
+        input.form-control(name=name,id=name,value = value readonly)
+      .col-4  
+        label.form-text=explanation
 
 
 

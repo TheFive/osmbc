@@ -13,6 +13,7 @@ block all
       title=layout.title
       // Bootstrap core CSS
       link(href=layout.path("bootstrap")+'/css/bootstrap.min.css', rel='stylesheet')
+      link(href=path("bootstrap-select")+'/css/bootstrap-select.min.css', rel='stylesheet')
       link(href=layout.path("font-awesome")+"/css/font-awesome.min.css" rel='stylesheet')
 
     body
@@ -27,7 +28,7 @@ block all
             if (layout.user.access === "full")
               ul.navbar-nav.mr-auto
                 li.dropdown.nav-item
-                  a.nav-link.dropdown-toggle#userLists(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
+                  a.nav-link.dropdown-toggle.active#userLists(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
                     | UserLists
                   div.dropdown-menu(aria-labelledby="userLists")  
                     a.dropdown-item#createUser(href=layout.htmlroot + "/usert/create") Create
@@ -39,7 +40,7 @@ block all
                     a.dropdown-item(href=layout.htmlroot + "/usert/list") List All
                     a.dropdown-item(href=layout.htmlroot + "/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
                   li.dropdown.nav-item
-                    a.nav-link.dropdown-toggle#toolsMenu(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
+                    a.nav-link.active.dropdown-toggle#toolsMenu(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
                       | Tools
                     div.dropdown-menu(aria-labelledby="toolsMenu")  
                       a.dropdown-header Action
@@ -69,6 +70,7 @@ block all
 
         script(src=layout.path("jquery")+'/jquery.min.js')
         script(src=layout.path("bootstrap")+'/js/bootstrap.bundle.min.js')
+        script(src=path("bootstrap-select")+'/js/bootstrap-select.min.js')
 
   doctype html
   html

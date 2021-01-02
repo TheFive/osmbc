@@ -105,13 +105,14 @@ block content
                 ["two", "three","four"],
                 ["two", "three","four"],
                 "Set this to 3 if you would like to see the new article editor with 3 languages.")
-      div.form-group
-        label.control-label.col-sm-2(for="Color")="Color"
-        div(class="col-sm-4")
+      .row 
+        .col-2
+          label.col-form-label(for="Color")="Color"
+        .col-4
           div.input-group(style="width: 100%;")
             input.form-control(name="color",id="color",value = usershown.color)
             span.input-group-addon(style=`background-color:${usershown.color};width: 50px;`)
-        div.text-muted(class="col-sm-6")
+        .col-4
           p
             span="Color for colored lists in OSMBC. Use a html colorpicker to define. ("
             a(href="http://www.w3schools.com/colors/colors_picker.asp")="Color Picker"

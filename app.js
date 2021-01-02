@@ -70,7 +70,7 @@ app.use((req, res, next) => {
     directives: {
       defaultSrc: ["'self'"],
       objectSrc: ["'none'"],
-      imgSrc: ["*"],
+      imgSrc: ["*","data:"],
       styleSrc:["'self' 'unsafe-inline'"] ,
       upgradeInsecureRequests: [],
       scriptSrc: ["'self'","'unsafe-inline'" ] //,`'nonce-${res.locals.cspNonce}'`
@@ -129,6 +129,7 @@ if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
 // first register the unsecured path, with no cookie need.
 
 app.use(htmlRoot + "/bower_components/bootstrap", express.static(path.join(__dirname, "/node_modules/bootstrap")));
+app.use(htmlRoot + "/bower_components/bootstrap-select", express.static(path.join(__dirname, "/node_modules/bootstrap-select")));
 app.use(htmlRoot + "/bower_components/font-awesome", express.static(path.join(__dirname, "/node_modules/font-awesome")));
 app.use(htmlRoot + "/bower_components/jquery", express.static(path.join(__dirname, "/node_modules/jquery")));
 app.use(htmlRoot + "/bower_components/d3", express.static(path.join(__dirname, "/node_modules/d3")));
