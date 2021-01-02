@@ -1,7 +1,7 @@
 # Requirement for Mobile Usage
 
 |Use Case            |  Mobile Phone   | Tablet            | Desktop | |
-|--------------------|:---------------:|:-----------------:|:--------:| |
+|--------------------|:---------------:|:-----------------:|:--------:|--- |
 |Collecting Articles | (/)             | (/)               | (/)      | |
 |Read Inbox          | (/)             | (/)               | (/)      | |
 |Read Blog           | one Column Mode | (one/two) Columns | two Columns | |
