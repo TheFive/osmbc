@@ -2,20 +2,20 @@
 
 |Use Case            |  Mobile Phone   | Tablet            | Desktop | |
 |--------------------|:---------------:|:-----------------:|:--------:|--- |
-|Collecting Articles | :check_mark:    | :check_mark:      | :check_mark:| |
-|Read Inbox          | :check_mark:            | :check_mark:              | :check_mark:     | |
+|Collecting Articles | :heavy_check_mark:    | :heavy_check_mark:      | :heavy_check_mark:| |
+|Read Inbox          | :heavy_check_mark:            | :heavy_check_mark:              | :heavy_check_mark:     | |
 |Read Blog           | one Column Mode | (one/two) Columns | two Columns | |
-|Read Blog Changes   | :check_mark:            | :check_mark:             | :check_mark:     | |
-|Read Blog Statistic | (-)             | (/?)               | :check_mark:     | |
-|Edit Blog Detail    | (-) (+) ?       | :check_mark:               | :check_mark:      | |
-|Search Articles     | :check_mark:             | :check_mark:              | :check_mark:      | |
-|List My Collections | :check_mark:             | :check_mark:               | :check_mark:      | |
-|Other Article List  | :check_mark:            | :check_mark:               | :check_mark:      | |
-|Picture Tool        | (-)             | (+)               |:check_mark:)       | still needed ? |
-|REst of Tool Menu  | (-)             | (+)               | :check_mark:       |  |
-|Help Menu          | :check_mark:            | (/)               | :check_mark:      | |
+|Read Blog Changes   | :heavy_check_mark:            | :heavy_check_mark:             | :heavy_check_mark:     | |
+|Read Blog Statistic | (-)             | (/?)               | :heavy_check_mark:     | |
+|Edit Blog Detail    | (-) (+) ?       | :heavy_check_mark:               | :heavy_check_mark:      | |
+|Search Articles     | :heavy_check_mark:             | :heavy_check_mark:              | :heavy_check_mark:      | |
+|List My Collections | :heavy_check_mark:             | :heavy_check_mark:               | :heavy_check_mark:      | |
+|Other Article List  | :heavy_check_mark:            | :heavy_check_mark:               | :heavy_check_mark:      | |
+|Picture Tool        | (-)             | (+)               |:heavy_check_mark:)       | still needed ? |
+|REst of Tool Menu  | (-)             | (+)               | :heavy_check_mark:       |  |
+|Help Menu          | :heavy_check_mark:            | (/)               | :heavy_check_mark:      | |
 |Language Switcher  | 1               |   2               | 4  | or more |
-|Admin Tools        | (-)             | (-)               | :check_mark:       |  |
-|Translate Blog        | (-)             | (-)               | :check_mark:       |  |
+|Admin Tools        | (-)             | (-)               | :heavy_check_mark:       |  |
+|Translate Blog        | (-)             | (-)               | :heavy_check_mark:       |  |
 |Edit Article (languages) | 1               |   2               | 4  | or more |
-|Translate Article        | (-)             | :check_mark:               | :check_mark:       |  |
+|Translate Article        | (-)             | :heavy_check_mark:               | :heavy_check_mark:       |  |
