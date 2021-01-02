@@ -2,7 +2,7 @@
 
 |Use Case            |  Mobile Phone   | Tablet            | Desktop | |
 |--------------------|:---------------:|:-----------------:|:--------:|--- |
-|Collecting Articles | (/)             | (/)               | (/)      | |
+|Collecting Articles | :OK:            | (/)               | (/)      | |
 |Read Inbox          | (/)             | (/)               | (/)      | |
 |Read Blog           | one Column Mode | (one/two) Columns | two Columns | |
 |Read Blog Changes   | (/)             | (/)               | (/)      | |
