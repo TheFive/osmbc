@@ -10,7 +10,6 @@ block content
     h1
       .badge.badge-secondary="You are testing guest feature"
   form(name="input", action=`${layout.htmlroot}/usert/${usershown.id}`, method="post")
-    div.form-horizontal(role="form")
       +labeledInput("OSMUser","OSMUser",usershown.OSMUser,"The OpenStreetMap user name")
       +labeledInput("EMail","email",usershown.email,"This mail is used for information about changes. To delete the email just submit a space for this field.")
 
@@ -22,8 +21,8 @@ block content
                 |Waiting for validation of EMail
               span.bg-info=usershown.emailInvalidation
           div.col-sm-6
-            button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
-            button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='none';document.input.submit()") delete email
+            button.btn.btn-secondary(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
+            button.btn.btn-secondary(onclick="javascript:window.document.getElementById('email').value='none';document.input.submit()") delete email
 
 
 

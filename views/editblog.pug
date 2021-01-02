@@ -33,7 +33,7 @@ block content
             input(type="text",class="form-control",name ="name",value=blog.name)
           .col-md-4
             input(type="submit", class="btn btn-primary",value="OK")
-            a(href=`${layout.htmlroot}/blog/edit/${blog.name}?edit=false` class="btn btn-default" role="button") Cancel
+            a(href=`${layout.htmlroot}/blog/edit/${blog.name}?edit=false` class="btn btn-secondary" role="button") Cancel
         .row
           .col-md-2
             | Period
@@ -145,22 +145,22 @@ block content
                     input.d-none(type="text",name="lang" value = lang)
                     if (!blog["close"+lang] && (blog["exported"+lang] || reviewInWP.indexOf(lang)<0 ))
                       input.d-none(type="text",name ="action" value = "closelang")
-                      button.btn.btn-xs.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
+                      button.btn.btn-sm.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
                 //- Special Column
                 td
                   if (blog["close" + lang])
                     form(id="startReview" name="reopenlang", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
                       input.d-none(type="text",name="lang" value = lang)
                       input.d-none(type="text",name ="action" value = "editlang")
-                      button.btn.btn-xs.btn-warning(id="closebutton" type = "submit" ) Reopen
+                      button.btn.btn-sm.btn-warning(id="closebutton" type = "submit" ) Reopen
                   else if (blog["reviewComment" + lang])
                     form(id="deleteReview" name="deleteReview", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
                       input.d-none(type="text",name="lang" value = lang)
                       input.d-none(type="text",name ="action" value = "deleteallreviews")
-                      button.btn.btn-xs.btn-warning(id="deletereviewbutton" type = "submit" ) Delete Review
+                      button.btn.btn-sm.btn-warning(id="deletereviewbutton" type = "submit" ) Delete Review
                   else if (copyLanguageFromAnother[lang])
                     form(id="copyArticle" name="copyArticle", action=layout.htmlroot + "/blog/" + blog.name + "/copy/"+copyLanguageFromAnother[lang]+"/"+lang, method="post")
-                      button.btn.btn-xs.btn-warning(id="copyArticlebutton" type = "submit" )=(copyLanguageFromAnother[lang] === "no_translation") ? "Set empty articles to no translation" :" Copy From " + copyLanguageFromAnother[lang]
+                      button.btn.btn-sm.btn-warning(id="copyArticlebutton" type = "submit" )=(copyLanguageFromAnother[lang] === "no_translation") ? "Set empty articles to no translation" :" Copy From " + copyLanguageFromAnother[lang]
 
 
 

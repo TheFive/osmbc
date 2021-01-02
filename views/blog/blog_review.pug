@@ -72,7 +72,7 @@ block blogcontent
                 form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + lang, method="post")
                   if a.author && a.author["markdown" + lang] && apiAuthors.indexOf(a.author["markdown" + lang].split(",")[0]) >= 0
                       textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+lang]
-                      button.btn.btn-xs.btn-success(id="reviewTranslation"+a.id+lang type="submit")
+                      button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+lang type="submit")
                         div.glyphicon.glyphicon-ok
                         span=" Mark Auto Translation OK"
 

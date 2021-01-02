@@ -67,7 +67,7 @@ mixin reviewBlog(reviewComments,lang)
               p.text-muted.small="Empty Comment"
             div.d-none(id="editReview"+lang+i)
               if (!blog["close"+lang])
-                form.form-horizontal(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
+                form(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
                   textarea(rows=5,class="form-control",name ="text",id="reviewComment"+lang+i)=comment.text
                   input.d-none(type="text",name="lang" value = lang)
                   button.btn.btn-large.btn-primary(id="reviewButton"+lang+i type="submit") Change
@@ -83,7 +83,7 @@ mixin reviewBlog(reviewComments,lang)
         .form-group
           if (!blog["close"+lang])
             if personalReviewStarted
-              form.form-horizontal(id="review"+lang name="review"+lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
+              form(id="review"+lang name="review"+lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
 
                   textarea(rows=5,
                         class="form-control",
@@ -94,13 +94,13 @@ mixin reviewBlog(reviewComments,lang)
                   input.d-none(type="text",name="lang" value = lang)
 
                   button.btn.btn-large.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
-                  button.btn.btn-large.btn-default(
+                  button.btn.btn-large.btn-secondary(
                     id="reviewButtonCancel"+lang
                     type="button"
                     onclick="document.getElementById('reviewComment" + lang +"').value='delete';\
                        document.getElementById('review" +  lang + "').submit();") cancel
             else
-              form.form-horizontal(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
+              form(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
                 .col-md-8
                   input.d-none(type="text",
                   class="form-control",

@@ -22,7 +22,6 @@ block content
       .badge.badge-secondary="User is testing guest mode"
 
   form(name="input", action=`${layout.htmlroot}/usert/${usershown.id}`, method="post")
-    div.form-horizontal(role="form")
       if (usershown.hasLoggedIn())
         +labeledText("OSMUser","OSMUser",usershown.OSMUser,"User already logged in, namechange not possible.")
       else
@@ -37,8 +36,8 @@ block content
                 |Waiting for validation of EMail
               span.bg-info=usershown.emailInvalidation
           div.col-sm-6
-            button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
-            button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='none';document.input.submit()") delete email
+            button.btn.btn-secondary(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
+            button.btn.btn-secondary(onclick="javascript:window.document.getElementById('email').value='none';document.input.submit()") delete email
 
 
       +labeledInput("Author for Blog","mdWeeklyAuthor",usershown.mdWeeklyAuthor,"Use anonymous to skip mentioning. Markdown for any link (e.g. [OSM User](https://www.openstreetmap.org/user/OSM%20User)")
@@ -131,7 +130,7 @@ block content
           input#save(name="OK" type="submit", class="btn btn-primary",value="OK")
 
   if (usershown.OSMUser === layout.user.OSMUser)
-    .row
+    p.row
       h1="Inspect your Data"
       a(href=htmlroot+"/gdpr")="Show Your Data Link"
 
@@ -142,11 +141,11 @@ block content
 
 
 
-  .row
+  p.row
     h1=usershown.OSMUser + " Heatmap"
     p#heatmap
 
-  .row
+  p.row
     .col-md-10
     .col-md-2
       if (usershown.OSMUser === layout.user.OSMUser)
@@ -158,7 +157,7 @@ block content
 
 
 
-  .row
+  p.row
     if changes
       h2
         | History

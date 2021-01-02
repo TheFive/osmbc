@@ -31,7 +31,7 @@ if (article.commentList)
             form(target="iframeform" name="EditComment",id="EditCommentForm", action=`${layout.htmlroot}/article/${article.id}/EditComment/${i}?reload=false`, method="post")
               textarea.form-control(spellcheck = "true" name="comment" id="editComment" rows=7)=comment.text
               button.btn.btn-large.btn-primary(name = "update" type = "button" onclick =`window.submitAndRedraw('form#EditCommentForm','/article/${article.id}/commentArea');`) Update
-              button.btn.btn-large.btn-default(type = "button" onclick =`window.callAndRedraw(null,'/article/${article.id}/commentArea');`) Cancel
+              button.btn.btn-large.btn-secondary(type = "button" onclick =`window.callAndRedraw(null,'/article/${article.id}/commentArea');`) Cancel
           else
             p
               |!{layout.md_render(comment.text,accessMap)}
@@ -45,9 +45,9 @@ if (article.commentList)
           type = "button"
           onclick=`if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/${article.id}/commentArea');`
         ) Add Comment
-        button.btn.btn-large.btn-default(type = "button" onclick =`window.callAndRedraw(null,'/article/${article.id}/commentArea');`) Reload Comments
+        button.btn.btn-large.btn-secondary(type = "button" onclick =`window.callAndRedraw(null,'/article/${article.id}/commentArea');`) Reload Comments
         if article.commentStatus !== "solved"
-          button.btn.btn-large.btn-default(name= "AddComment" type = "button" onclick =`document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/${article.id}/commentArea');`) Solve Comment
+          button.btn.btn-large.btn-secondary(name= "AddComment" type = "button" onclick =`document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/${article.id}/commentArea');`) Solve Comment
 
 
 iframe.d-none(name="iframeform")

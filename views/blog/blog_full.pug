@@ -117,7 +117,7 @@ block blogcontent
                     form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+left_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + left_lang, method="post")
                       if a.author && a.author["markdown" + left_lang] && apiAuthors.indexOf(a.author["markdown" + left_lang].split(",")[0]) >= 0
                           textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+left_lang]
-                          button.btn.btn-xs.btn-success(id="reviewTranslation"+a.id+left_lang type="submit")
+                          button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+left_lang type="submit")
                             div.glyphicon.glyphicon-ok
                             span=" Mark Auto Translation OK"
 
@@ -146,7 +146,7 @@ block blogcontent
                       form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+right_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + right_lang, method="post")
                         if a.author && a.author["markdown" + right_lang] && apiAuthors.indexOf(a.author["markdown" + right_lang].split(",")[0]) >= 0
                             textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+right_lang]
-                            button.btn.btn-xs.btn-success(id="reviewTranslation"+a.id+right_lang type="submit")
+                            button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+right_lang type="submit")
                               div.glyphicon.glyphicon-ok
                               span=" Mark Auto Translation OK"
                         if a.author && a.author.collection

@@ -10,7 +10,7 @@ block content
           tr
             - date ="";
             - if (params.date)  date = "/"+date;
-            form.form-horizontal(action=layout.htmlroot+'/changes/log' + date,method='get',id='form')
+            form(action=layout.htmlroot+'/changes/log' + date,method='get',id='form')
               div.form-group
                 input.col-sm-2(type='text',id='user',name='user',placeholder='user',value=params.user)
                 input.col-sm-2(type='text',id='blog',name='blog',placeholder='blog',value=params.blog)
@@ -18,7 +18,7 @@ block content
                 input.col-sm-2(type='text',id='oid',name='oid',placeholder='Object Id' value=params.oid)
                 input.col-sm-2(type='text',id='property',name='property',placeholder='property' value=params.property)
                 input.col-sm-2(type='text',id='date',name='date',placeholder='date' value=params.date  )
-                input(type='submit',class='btn btn-default')
+                input(type='submit',class='btn btn-secondary')
       p
         |only displaying changes
         span.osmbc-inserted
