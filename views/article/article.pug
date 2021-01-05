@@ -1,5 +1,13 @@
 extends article_mixin
 
+block additionalMenuMain
+  +translationMenu
+  
+block additionalMenuRight  
+  +langChooser("lang2")
+  - for (i = 3; params && params.columns && layout.user.getLang(i-2);i++)
+    +langChooser("lang"+i)  
+  
 
 
 block content

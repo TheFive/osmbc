@@ -332,12 +332,11 @@ mixin langChooser(langString)
   if (langString === "lang2")
     - l = "language2"
     - label = "osmbcbadge-lang2"
-  if (langString === "lang3")
-    - l = "language3"
+  - let langNumber = parseInt(langString.substr(4,2))    
+  if (langNumber > 2)
+    - l = "language"+langNumber
     - label = "badge-secondary"
-  if (langString === "lang4")
-    - l = "language4"
-    - label = "badge-secondary"
+    
 
   li.dropdown.nav-item
     a.nav-link.dropdown-toggle(id=l, class=label, href='#', style="color:white", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=(layout[l])?layout[l]:"--"

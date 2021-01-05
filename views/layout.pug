@@ -5,14 +5,15 @@ include mixins
 
 mixin firstBlogOfList(list,count,c)
   - if (!count) count = 1
-  if (list.length > 0)
-    each blog,i in list
-      if i<count
-        li
-          a.nav-link(href=`${layout.htmlroot}/blog/${blog.name}`)=blog.name
-            span.badge.osmbcbadge-lang=blogNumber(blog, layout.language)
-            if layout.language2
-              span.badge.osmbcbadge-lang2=blogNumber(blog, layout.language2)
+  if (layout && layout.user.access === "full")
+    if (list.length > 0)
+      each blog,i in list
+        if i<count
+          li.navbar-item.active
+            a.nav-link(href=`${layout.htmlroot}/blog/${blog.name}`)=blog.name
+              span.badge.badge-pill.osmbcbadge-lang=blogNumber(blog, layout.language)
+              if layout.language2
+                span.badge.badge-pill.osmbcbadge-lang2=blogNumber(blog, layout.language2)
 
 mixin collectMenu
   if (layout && layout.user.access === "full")
@@ -39,18 +40,18 @@ mixin tbcMenu
           li.nav-item
             a.nav-link(href=layout.htmlroot+'/blog/TBC')=layout.tbc.name
               if (layout.tbc._tbcOwnArticleNumber > 0)
-                span.badge.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
+                span.badge.badge-pill.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
 
 mixin inboxMenu
   li.navbar-item.active
      a.nav-link#inbox(href=layout.htmlroot + '/usert/inbox')="Inbox "
        if (layout.userMentions > 0)
-         span.badge.osmbcbadge-user=layout.userMentions
+         span.badge.badge-pill.osmbcbadge-user=layout.userMentions
        if (layout.user.access === "full")
          if (layout.mainLangMentions > 0)
-           span.badge.osmbcbadge-lang=layout.mainLangMentions
+           span.badge.badge-pill.badge-pill.osmbcbadge-lang=layout.mainLangMentions
          if (layout.secondLangMentions > 0)
-           span.badge.osmbcbadge-lang2=layout.secondLangMentions
+           span.badge.badge-pill.osmbcbadge-lang2=layout.secondLangMentions
 
 mixin articleMenu
   li.dropdown.nav-item.active
@@ -119,35 +120,28 @@ block all
           - listall = listall.concat(layout.listOfEditBlog)
           - listall = listall.concat(layout.listOfOpenBlog)
 
-        +homeButton("navbar-brand")
-        ul.navbar-nav.mr-auto
-          +collectMenu
+        
         button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
           span.navbar-toggler-icon
+        +homeButton("navbar-brand")  
+        ul.navbar-nav.mr-auto
         div.collapse.navbar-collapse#navbarSupportedContent
           ul.navbar-nav.mr-auto
-      
+            +collectMenu
+            +inboxMenu
             
             +tbcMenu
-            +inboxMenu
             +myGuestArticleMenu
-            if (layout && layout.user.access === "full")
-              li.navbar-item.active
-                +firstBlogOfList(listall,2)
+            +firstBlogOfList(listall,2)
             +articleMenu    
             +toolMenu
-            block additionalMenu    
+            block additionalMenuMain    
           ul.navbar-nav
-            li.navbar-item.active
-              +helpMenu
+            +helpMenu
             +langChooser("lang")
-            +langChooser("lang2")
-            - for (i = 3; params && params.columns && i<= params.columns;i++)
-              +langChooser("lang"+i)
+            block additionalMenuRight
+            
             +userAvatar
-
-
-            // /.nav-collapse
 
 
       .container-fluid
@@ -166,7 +160,6 @@ block all
 
         p
          block content
-        p
 
       // /container
 
