@@ -141,11 +141,11 @@ mixin blogTranslateMenu(langFrom,langTo,service)
         )="Translate " + langFrom+  "->" +langTo
 
 
-mixin translationMenu
+mixin translationBlogMenu
   if (layout.blogTranslationVisibleFor === "full" || (Array.isArray(layout.blogTranslationVisibleFor) && layout.blogTranslationVisibleFor.indexOf(layout.user.OSMUser)>=0))
     li.dropdown.navbar-item
       a.nav-link.dropdown-toggle#translateMenu(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") 
-        | Translate
+        | Translate Blog
       div.dropdown-menu(aria-labelledby="translateMenu")
         each tService in translationServices
           a.dropdown-header="Use " + tService +":"
@@ -155,8 +155,14 @@ mixin translationMenu
                 if (a!==b && a!== null && b!== null)
                   +blogTranslateMenu(a, b, tService)
 
-block additionalMenu
-  +translationMenu
+block additionalMenuMain
+  +translationBlogMenu
+  
+block additionalMenuRight 
+  div.d-none.d-md-block
+    +langChooser("lang2")
+
+
 
 
 block content
@@ -178,7 +184,7 @@ block content
       div.progress-bar.osmbclabel-markdown(style="width:" +parseInt(100*ready/total)+"%")=ready
       div.progress-bar.osmbclabel-no-markdown(style="width:" + parseInt(100*unedited/total) + "%")=unedited
       div.progress-bar.osmbclabel-no-translation(style="width:" + parseInt(100*notranslate/total)+"%")=notranslate
-  div.hidden-xs
+  div.d-none.d-md-block
     if (right_lang!= "--" && right_lang != null)
       .row
         - unedited = blog._countUneditedMarkdown[right_lang];
@@ -205,20 +211,20 @@ block content
     - if (right_lang== "--" || right_lang == null)  {columnLeftSize = "col-md-12";columnRightSize = "d-none";}
     .col-md-6
       h2
-        span.hidden-xs=blog.getBlogName(left_lang)+" "
+        span.d-none.d-md-block=blog.getBlogName(left_lang)+" "
         |#{blog.name}
-        span.hidden-xs=" ("+blog.getStatus(left_lang)+")"
+        span.d-none.d-md-block=" ("+blog.getStatus(left_lang)+")"
 
 
     .col-md-3
       +blogReviewButtons(left_lang)
-    .col-md-3
+    .col-md-3.d-none.d-md-block
       +blogReviewButtons(right_lang)
 
   .row
     div(class=columnLeftSize)
       +reviewBlog(blog["reviewComment"+left_lang],left_lang)
-    div.hidden-xs(class=columnRightSize)
+    div.d-none.d-md-block(class=columnRightSize)
       +reviewBlog(blog["reviewComment"+right_lang],right_lang)
 
 
@@ -226,7 +232,7 @@ block content
   .row
     .col-md-12
       ul.nav.nav-tabs
-        li.nav-item.hidden-xs(role="presentation")
+        li.nav-item.d-none.d-md-block(role="presentation")
           a.nav-link(href="#filter")
             i.fa.fa-filter
         +navbutton("Overview",tab,"")
@@ -240,7 +246,7 @@ block content
               - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
               +navbutton(style0,style)
             - v++
-        li.nav-item.hidden-xs
+        li.nav-item.d-none.d-md-block
           a.nav-link(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" +left_lang)
             i.fa.fa-download
             | #{left_lang}
@@ -248,7 +254,7 @@ block content
               span=" "
               i.fa.fa-exclamation-triangle
         if (right_lang != "--" && right_lang != null)
-          li.nav-item.hidden-xs
+          li.nav-item.d-none.d-md-block
             a.nav-link(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" + right_lang)
               i.fa.fa-download
               | #{right_lang}

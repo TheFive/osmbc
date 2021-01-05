@@ -13,7 +13,7 @@ mixin displayOverviewRow(a)
       td
         +articleIcons(a,{showNumbers: showNumbers, showMail: showMail, predecessorId: predecessorId})
         - predecessorId = a.id
-      td.hidden-xs
+      td.d-none.d-md-block
         if showVisibleLanguages
           +languageDisplay(a,{short: true})
         span(id="voteLabels"+ a.id)
@@ -25,7 +25,7 @@ mixin displayOverviewRow(a)
           +previewDiv(a, lang)
             ul.no-margin
               |!{renderer.articleTitle(lang,a)}
-      td.hidden-xs
+      td.d-none.d-md-block
         if (showCollector && a.author && a.author.collection)
           each b in a.author.collection.split(",")
             +userLabel(b,"osmbclabel-collect")
@@ -33,7 +33,7 @@ mixin displayOverviewRow(a)
           each b in a.author["markdown"+lang].split(",")
             +userLabel(b,"osmbclabel-markdown")
 
-      td.hidden-xs
+      td.d-none.d-md-block
         if (showLanguages)
           +languageDisplay(a)
 
@@ -41,7 +41,7 @@ mixin displayOverviewRow(a)
 
     tr
       td
-      td.hidden-xs
+      td.d-none.d-md-block
       td
         div.card.d-none(id="div" + a.id)
           div.card-header
@@ -121,11 +121,11 @@ block blogcontent
       if (articles[c.EN])
         tr
           td
-          td.hidden-xs
+          td.d-none.d-md-block
           td
             |!{renderer.categoryTitle(lang,c)}
-          td.hidden-xs
-          td.hidden-xs
+          td.d-none.d-md-block
+          td.d-none.d-md-block
         for a in articles[c.EN]
           +displayOverviewRow(a)
         - delete articles[c.EN]
@@ -133,7 +133,7 @@ block blogcontent
     - for(c in articles)
       tr
         td
-        td.hidden-xs
+        td.d-none.d-md-block
           h1="Wrong Categorie "+c
       for a in articles[c]
         +displayOverviewRow(a)
@@ -141,14 +141,14 @@ block blogcontent
     if futureArticles
       tr
         td
-        td.hidden-xs
+        td.d-none.d-md-block
         td
           h1="Future Articles"
       for c,k in futureArticles
 
         tr
           td
-          td.hidden-xs
+          td.d-none.d-md-block
           td
             h4(style="color:grey")=k
         each a in futureArticles[k]
@@ -159,39 +159,40 @@ block blogcontent
   p.row#filter
     h2="Options"
 
-
-    .row
-      .col-md-1
-        p="Left Col.: "
-      .col-md-11
-        div.hidden-xs
-          +userConfigOption("overview","showNumbers",showNumbers," show editor numbers, ")
-        +userConfigOption("overview","showMail",showMail," show mail, ")
-        div.hidden-xs
-          +userConfigOption("overview","showVisibleLanguages",showVisibleLanguages," show languages(short)" )
-    .row.hidden-xs
-      .col-md-1
-        p="Right Col.:"
-      .col-md-11
-        +userConfigOption("overview","showCollector",showCollector," show collector, " )
-        +userConfigOption("overview","showEditor",showEditor," show editor , ")
-        +userConfigOption("overview","showColoredUser",showColoredUser," show users colored, ")
-        +userConfigOption("overview","showLanguages",showLanguages," show languages")
-    .row
-      .col-md-1
-        p="Display Votes"
-      .col-md-11
-        each vote in votes
-          +userConfigOption("overview","showVote_"+vote.name,showVotes[vote.name]," show "+vote.name+", " )
-    .row
-      .col-md-1
-        p="Filter: "
-      .col-md-11
-        +userConfigOption("overview","disableWritten",disableWritten," disable written articles, ")
-        +userConfigOption("overview","disableNewerMarkdown",disableNewerMarkdown," disable more actual edits, ")
-        +userConfigOption("overview","disableOwnCollection",disableOwnCollection," disable own collections, ")
-        +userConfigOption("overview","disableOtherCollection",disableOtherCollection," disable other collections, ")
-        +userConfigOption("overview","disableSolvedComments",disableSolvedComments," disable No or Solved Comments")
+    table
+      tr
+        td
+          p="Left Col.: "
+        td
+          div.d-none.d-md-block
+            +userConfigOption("overview","showNumbers",showNumbers," show editor numbers, ")
+          +userConfigOption("overview","showMail",showMail," show mail, ")
+          div.d-none.d-md-block
+            +userConfigOption("overview","showVisibleLanguages",showVisibleLanguages," show languages(short)" )
+      tr
+        td
+          p.d-none.d-md-block="Right Col.:"
+        td
+          div.d-none.d-md-block
+          +userConfigOption("overview","showCollector",showCollector," show collector, " )
+          +userConfigOption("overview","showEditor",showEditor," show editor , ")
+          +userConfigOption("overview","showColoredUser",showColoredUser," show users colored, ")
+          +userConfigOption("overview","showLanguages",showLanguages," show languages")
+      tr
+        td
+          p="Display Votes"
+        td
+          each vote in votes
+            +userConfigOption("overview","showVote_"+vote.name,showVotes[vote.name]," show "+vote.name+", " )
+      tr
+        td
+          p="Filter: "
+        td
+          +userConfigOption("overview","disableWritten",disableWritten," disable written articles, ")
+          +userConfigOption("overview","disableNewerMarkdown",disableNewerMarkdown," disable more actual edits, ")
+          +userConfigOption("overview","disableOwnCollection",disableOwnCollection," disable own collections, ")
+          +userConfigOption("overview","disableOtherCollection",disableOtherCollection," disable other collections, ")
+          +userConfigOption("overview","disableSolvedComments",disableSolvedComments," disable No or Solved Comments")
 
 
 

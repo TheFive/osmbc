@@ -72,7 +72,7 @@ block blogcontent
           .row
             div(class=columnLeftSize)
               |!{renderer.categoryTitle(left_lang,c)}
-            div(class=columnRightSize)
+            div.d-none.d-md-block(class=columnRightSize)
               |!{renderer.categoryTitle(right_lang,c)}
 
       for a in articles[c.EN]
@@ -133,7 +133,7 @@ block blogcontent
                       if a._lastChange && a._lastChange["markdown" + left_lang]
                         span=" Time: " + layout.moment(a._lastChange["markdown" + left_lang]).fromNow()
 
-                div(class=columnRightSize)
+                div.d-none.d-md-block(class=columnRightSize)
                   if right_lang
                     div(onclick=`if (!openEditor) {openEditor = document.getElementById('rdiv${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
                       +previewDiv(a, right_lang)
