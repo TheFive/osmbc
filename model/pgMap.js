@@ -230,6 +230,7 @@ function convertResultFunction(module, callback) {
         r[k] = row.data[k];
       }
       r.id = row.id;
+      if (module.migrateData) module.migrateData(r);
       result.push(r);
     });
     return callback(null, result);

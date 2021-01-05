@@ -19,7 +19,7 @@ const HttpError      = require("standard-http-error");
 
 // generate an user object, use Prototpye
 // to prototype some fields
-function User (proto) {
+function User(proto) {
   debug("User");
   debug("Prototype %s", JSON.stringify(proto));
   this.id = 0;
@@ -31,7 +31,7 @@ function User (proto) {
 
 // return a new User Object (in memory)
 // Optional: Protoype
-function create (proto) {
+function create(proto) {
   debug("create");
   return new User(proto);
 }
@@ -406,6 +406,7 @@ User.prototype.getNotificationStatus = function getNotificationStatus(channel, t
 
 User.prototype.getMainLang = function getMainLang() {
   debug("User.prototype.getMainLang");
+  if (this.langArray && this.langArray[0]) return this.langArray[0];
   if (this.mainLang) return this.mainLang;
   if (this.language) return this.language;
   return "EN";
@@ -413,21 +414,37 @@ User.prototype.getMainLang = function getMainLang() {
 
 User.prototype.getSecondLang = function getSecondLang() {
   debug("User.prototype.getMainLang");
+  if (this.langArray && this.langArray[1]) return this.langArray[1];
   if (this.secondLang) return this.secondLang;
   return null;
 };
 
 User.prototype.getLang3 = function getLang3() {
   debug("User.prototype.getLang3");
+  if (this.langArray && this.langArray[2]) return this.langArray[2];
   if (this.lang3) return this.lang3;
   return null;
 };
 
 User.prototype.getLang4 = function getLang4() {
   debug("User.prototype.getLang4");
+  if (this.langArray && this.langArray[3]) return this.langArray[3];
   if (this.lang4) return this.lang4;
   return null;
 };
+
+User.prototype.getLang = function getLang(i) {
+    debug("User.prototype.getLang");
+    if (!this.langArray) {
+      this.langArray = [];
+      this.langArray[0] = this.mainLang;
+      this.langArray[1] = this.secondLang;
+      this.langArray[2] = this.lang3;
+      this.langArray[3] = this.lang4;
+
+    }
+    return (this.langArray[i]);
+}
 
 
 User.prototype.setOption = function setOption(view, option, value) {
@@ -487,6 +504,20 @@ module.exports.getNewUsers = function getNewUsers(callback) {
   });
 };
 
+function migrateData(user) {
+  // This function can be used to modify user because of data modell changes
+
+  // migrate from lang to langArray
+  if (!user.langArray) {
+    user.langArray = [user.getMainLang(),user.getSecondLang(),user.getLang3(),user.getLang4()];
+    delete user.mainLang;
+    delete user.language;
+    delete user.secondLang;
+    delete user.lang3;
+    delete user.lang4;
+  }
+}
+
 // Creates an User object and stores it to database
 // can use a prototype to initialise data
 // Parameter: Prototype (optional)
@@ -500,6 +531,7 @@ User.prototype.save = pgMap.save; // Create Tables and Views
 
 
 module.exports.create = create;
+module.exports.migrateData = migrateData;
 module.exports.find = find;
 module.exports.findById = findById;
 module.exports.findOne = findOne;
