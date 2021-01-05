@@ -11,7 +11,7 @@
 |Search Articles     | :heavy_check_mark:| :heavy_check_mark:              | :heavy_check_mark:      | |
 |List My Collections | :heavy_check_mark: | :heavy_check_mark:               | :heavy_check_mark:      | |
 |Other Article List  | :heavy_check_mark:| :heavy_check_mark:               | :heavy_check_mark:      | |
-|Picture Tool        | :heavy_minus_sign:| :heavy_check_mark:               |:heavy_check_mark:)       | still needed ? |
+|Picture Tool        | :heavy_minus_sign:| :heavy_minus_sign:              |:heavy_minus_sign:       | will be skipped |
 |REst of Tool Menu  | :heavy_minus_sign: | :heavy_check_mark:               | :heavy_check_mark:       |  |
 |Help Menu          | :heavy_check_mark:            | :heavy_check_mark:               | :heavy_check_mark:      | |
 |Language Switcher  | 1               |   2               | 4  | or more |
