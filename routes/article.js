@@ -238,23 +238,7 @@ function renderArticleId(req, res, next) {
     res.set("content-type", "text/html");
     // change title of page
     res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
-    let pugFile = "article/article_twocolumn";
-    if (req.user.getSecondLang() === null) pugFile = "article/article_onecolumn";
-
-    if (req.user.languageCount === "three") {
-      pugFile = "article/article_threecolumn";
-      if (req.user.getLang3() === "--") pugFile = "article/article_twocolumn";
-      if (req.user.getSecondLang() === "--") pugFile = "article/article_onecolumn";
-
-      params.columns = 3;
-    }
-    if (req.user.languageCount === "four") {
-      pugFile = "article/article_fourcolumn";
-      if (req.user.getLang4() === null) pugFile = "article/article_threecolumn";
-      if (req.user.getLang3() === null) pugFile = "article/article_twocolumn";
-      if (req.user.getSecondLang() === null) pugFile = "article/article_onecolumn";
-      params.columns = 4;
-    }
+    let pugFile = "article/article_all_column";
 
 
     res.render(pugFile, {
