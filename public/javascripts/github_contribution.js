@@ -142,7 +142,7 @@ if (!String.prototype.formatString) {
 
       for (let i = 0; i < monthPosition.length; i++) {
         const item = monthPosition[i];
-        const monthName =  settings.monthNames[item.month_index];
+        const monthName =  settings.monthNames[item.monthIndex];
         loopHtml += '<text x="' + item.x + '" y="-5" class="month">' + monthName + "</text>";
       }
 
