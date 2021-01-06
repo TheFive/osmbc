@@ -71,15 +71,14 @@ block content
           p
             a#adminlink(href=layout.htmlroot+"/osmbc/admin")="click here" 
             span=" to go to the Admin Section of OSMBC"
-    .col-7.d-none.d-sm-block
+    .col.d-none.d-sm-block
       if changes
         h4="Last Changes "
           - var d = new Date();
           - d= d.toISOString();
           - d= d.substring(0,7);
           a(href=layout.htmlroot+"/changes/log?date="+d)  (more)
-        div
-          table.table.table-striped.table-sm.table-responsive
+        table.table.table-striped.table-sm
             thead
               tr 
                 th
@@ -109,13 +108,12 @@ block content
                   td
                     |!{change.htmlDiffText(40)}
                   td= layout.moment(change.timestamp).fromNow()
-        div
-          p.osmbc-help-text
-            |only displaying changes:
-            span.osmbc-inserted
-              | This is inserted text
-            span=" "
-            span.osmbc-deleted
-              | and this is removed text
+        p.osmbc-help-text
+          span="only displaying changes: "
+          span.osmbc-inserted
+            | This is inserted text
+          span=" "
+          span.osmbc-deleted
+            | and this is removed text
 
   div.footer
