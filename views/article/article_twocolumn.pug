@@ -41,7 +41,6 @@ block markdownArea
                 span.label.label-default.RLOFF.hidden(
                     class="RLOFF-" + l
                     data-toggle="tooltip" data-placement="left" title="Click on language display to enable")="."
-                span.label.label-danger(style="display:none" id="markdown" + l + "_unsaved" )="unsaved: "+l
               else
                 span.label.label-default.RL.hidden(
                   class= "RL-" + l
@@ -54,7 +53,10 @@ block markdownArea
                   span.label.label-default.RLOFF(
                       class="RLOFF-" + l
                       data-toggle="tooltip" data-placement="left" title="Click on language display to see "+l+" here")="."
-                span.label.label-danger(style="display:none" id="markdown" + l + "_unsaved")="unsaved: "+l
+                
+            for l in layout.activeLanguages
+              span.label.label-danger(style="display:none" id="markdown" + l + "_unsaved")="unsaved: "+l
+                
 
 
             for l in layout.activeLanguages
@@ -134,5 +136,3 @@ block markdownArea
               +articleTextanalyse(l)
             p
               +articleTranslateButton(l,params.left_lang)
-
-
