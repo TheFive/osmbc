@@ -5,7 +5,7 @@
 # .git/hooks/post-merge
 # .git/hooks/post-checkout
 
-changedFiles="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+changedFiles="$(git diff-tree -r --name-only --no-commit-id $1 $2)"
 
 
 
