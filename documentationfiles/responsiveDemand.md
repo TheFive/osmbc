@@ -6,7 +6,7 @@
 | Collecting Articles      |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20                                   |
 | Read Inbox               |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |   Jan 20                                    |
 | Read Blog                |             one Column Mode             |   (two) Columns  |     two Columns    |                     |   Jan 20                                      |
-| Read Blog Changes        |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
+| Read Blog Changes        |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20                                    |
 | Read Blog Statistic      |            :heavy_minus_sign:           | :heavy_check_mark: ? | :heavy_check_mark: |                 |                                    |
 | Edit Blog Detail         | :heavy_minus_sign: :heavy_check_mark: ? |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
 | Search Articles          |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
