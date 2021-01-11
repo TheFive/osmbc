@@ -1,7 +1,7 @@
 # Requirement for Mobile Usage
 | Use Case                 |               Mobile Phone              |        Tablet        |       Desktop      |                 | Bootstrap4 Implemementation Status |
 | ------------------------ | :-------------------------------------: | :------------------: | :----------------: | --------------- | ---------------------------------- |
-| Main Screen              |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
+| Main Screen              |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20 :check_mark:                                 |
 | Guest Main Screen        |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
 | Collecting Articles      |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
 | Read Inbox               |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
