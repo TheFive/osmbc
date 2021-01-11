@@ -1,8 +1,8 @@
 # Requirement for Mobile Usage
 | Use Case                 |               Mobile Phone              |        Tablet        |       Desktop      |                 | Bootstrap4 Implemementation Status |
 | ------------------------ | :-------------------------------------: | :------------------: | :----------------: | --------------- | ---------------------------------- |
-| Main Screen              |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20 :check_mark:                                 |
-| Guest Main Screen        |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
+| Main Screen              |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20                            |
+| Guest Main Screen        |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20                                     |
 | Collecting Articles      |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
 | Read Inbox               |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
 | Read Blog                |             one Column Mode             |   (one/two) Columns  |     two Columns    |                 |                                    |
@@ -20,3 +20,5 @@
 | Translate Blog           |            :heavy_minus_sign:           |  :heavy_minus_sign:  | :heavy_check_mark: |                 |                                    |
 | Edit Article (languages) |                    1                    |           2          |          4         | or more         |                                    |
 | Translate Article        |            :heavy_minus_sign:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
+| User Editor              |            :heavy_check_mark:         |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
+| User Editor Guest        |            :heavy_check_mark:        |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
