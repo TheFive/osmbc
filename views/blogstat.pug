@@ -28,25 +28,28 @@ mixin userTable(userList)
 
 block content
 
-  h1
-    | Progress Overview
+  p.row 
+    h1
+      | Progress Overview
 
-  each l in layout.languages
-    if layout.usedLanguages[l]
+    table
+      each l in layout.languages
+        if layout.usedLanguages[l]
 
-      - unedited = blog._countUneditedMarkdown[l];
-      - notranslate = blog._countNoTranslateMarkdown[l];
-      - total = blog._countExpectedMarkdown[l]
-      - ready = (total-unedited - notranslate)
-      - if (total == 0) total = 1
-      .row
-        .col-md-1
-          div.badge.badge-secondary(style="color:white")=l
-        .col-md-11
-          div.progress(style="margin-bottom:2px")
-            div.progress-bar.progress-bar-success(style=`width:${parseInt(100*ready/total)}%`)=ready
-            div.progress-bar.progress-bar-danger(style=`width:${parseInt(100*unedited/total)}%`)=unedited
-            div.progress-bar.progress-bar-info(style=`width:${parseInt(100*notranslate/total)}%`)=notranslate
+          - unedited = blog._countUneditedMarkdown[l];
+          - notranslate = blog._countNoTranslateMarkdown[l];
+          - total = blog._countExpectedMarkdown[l]
+          - ready = (total-unedited - notranslate)
+          - if (total == 0) total = 1
+          
+          tr
+            td(style="width:40px")
+              div.badge.badge-secondary(style="color:white")=l
+            td
+              div.progress
+                div.progress-bar.progress-bar.bg-success(style=`width:${parseInt(1000*ready/total)}%`)=ready
+                div.progress-bar.progress-bar-bg-danger(style=`width:${parseInt(1000*unedited/total)}%`)=unedited
+                div.progress-bar.progress-bar.bg-info(style=`width:${parseInt(1000*notranslate/total)}%`)=notranslate
 
 
   .row

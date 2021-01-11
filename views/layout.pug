@@ -1,36 +1,39 @@
 include mixins
 
 
-
-
 mixin firstBlogOfList(list,count,c)
   - if (!count) count = 1
-  if (layout && layout.user.access === "full")
+  if (layout && layout.user.hasFullAccess())
     if (list.length > 0)
       each blog,i in list
         if i<count
-          li.navbar-item.active
+          li.navbar-item.active.d-none.d-xs-block
             a.nav-link(href=`${layout.htmlroot}/blog/${blog.name}`)=blog.name
               span.badge.badge-pill.osmbcbadge-lang=blogNumber(blog, layout.language)
               if layout.language2
                 span.badge.badge-pill.osmbcbadge-lang2=blogNumber(blog, layout.language2)
 
+
+
 mixin collectMenu
-  if (layout && layout.user.access === "full")
-    li.navbar-item.active
+  li.navbar-item.active
+    if (layout && layout.user.hasFullAccess())
       a.nav-link#collect(href=htmlroot + '/article/create') Collect
-  else
-    li.navbar-item.active
+    else
       a.nav-link#collect(href=htmlroot + '/article/create') Submit Link
+
 
 mixin myGuestArticleMenu
   if (layout && layout.user.access === "guest")
     li.navbar-item.active
       a.nav-link#myArticles(href=htmlroot + '/osmbc.html') My Articles
 
+// This should be removed, when bootstrap4 is running
+// To Be Collected (the insterims stage) is not needed any longer 
+// TheFive Jan 2020 
 
 mixin tbcMenu
-  if (layout && layout.user.access === "full")
+  if (layout && layout.user.hasFullAccess())
     li.navbar-item.active
       if blogNumber(layout.tbc, layout.language) > 0
         - dynamicHide = ""
@@ -47,48 +50,47 @@ mixin inboxMenu
      a.nav-link#inbox(href=layout.htmlroot + '/usert/inbox')="Inbox "
        if (layout.userMentions > 0)
          span.badge.badge-pill.osmbcbadge-user=layout.userMentions
-       if (layout.user.access === "full")
+       if (layout.user.hasFullAccess())
          if (layout.mainLangMentions > 0)
            span.badge.badge-pill.badge-pill.osmbcbadge-lang=layout.mainLangMentions
          if (layout.secondLangMentions > 0)
            span.badge.badge-pill.osmbcbadge-lang2=layout.secondLangMentions
 
 mixin articleMenu
-  li.dropdown.nav-item.active
-    a.nav-link.dropdown-toggle#articleMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Lists
-    div.dropdown-menu(aria-labelledby="articleMenuDropdown")
-      a.dropdown-header Articles
-      a.dropdown-item(href=layout.htmlroot + '/article/search') Search
-      a.dropdown-item(href=layout.htmlroot + '/article/list?myArticles=true') My Empty Collections
-      div.dropdown-divider
-      a.dropdown-header Orphaned Article
-      a.dropdown-item(href=layout.htmlroot + '/article/list?blog=Trash') Trash
-      a.dropdown-item(href=layout.htmlroot + '/article/list?blog=TBC') TBC
-      a.dropdown-item(href=layout.htmlroot + '/article/list?blog=Future') Future
-      a.dropdown-item(href=layout.htmlroot + '/article/list?blog=') No Blog
+  if (layout && layout.user.hasFullAccess())
+    li.dropdown.nav-item.active
+      a.nav-link.dropdown-toggle#articleMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Search
+      div.dropdown-menu(aria-labelledby="articleMenuDropdown")
+        a.dropdown-header Articles
+        a.dropdown-item(href=layout.htmlroot + '/article/search') Search
+        a.dropdown-item(href=layout.htmlroot + '/article/list?myArticles=true') My Empty Collections
+        div.dropdown-divider
+        a.dropdown-header Orphaned Article
+        a.dropdown-item(href=layout.htmlroot + '/article/list?blog=Trash') Trash
+        a.dropdown-item(href=layout.htmlroot + '/article/list?blog=TBC') TBC
+        a.dropdown-item(href=layout.htmlroot + '/article/list?blog=Future') Future
+        a.dropdown-item(href=layout.htmlroot + '/article/list?blog=') No Blog
 
 mixin toolMenu
-  li.dropdown.nav-item.active
-    a.nav-link.dropdown-toggle#toolsMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Lists
-    div.dropdown-menu(aria-labelledby="toolsMenuDropdown")
-      a.dropdown-header Markdown Helper
-      a.dropdown-item(href=layout.htmlroot + "/tool/picturetool") Picture Tool
-      if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
+  if (layout && layout.user.hasFullAccess())
+    li.dropdown.nav-item.active.d-none.d-xs-block
+      a.nav-link.dropdown-toggle#toolsMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Tools
+      div.dropdown-menu(aria-labelledby="toolsMenuDropdown")
+        a.dropdown-header Markdown Helper
+        a.dropdown-item(href=layout.htmlroot + "/tool/picturetool") Picture Tool
+        if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
+          div.dropdown-divider
+          a.dropdown-header="Script Plugins (TEST PHASE)"
+          a.dropdown-item(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
+          a.dropdown-item(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
+
         div.dropdown-divider
-        a.dropdown-header="Script Plugins (TEST PHASE)"
-        a.dropdown-item(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
-        a.dropdown-item(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
-
-      div.dropdown-divider
-      a.dropdown-header Editorial Tools
-      a.dropdown-item(href="https://mattermost.openstreetmap.de") Mattermost for Editorial Team
-
-
-      div.dropdown-divider
-      a.dropdown-header About The Team
-      a.dropdown-item(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
-
-
+        a.dropdown-header Editorial Tools
+        a.dropdown-item(href="https://mattermost.openstreetmap.de") Mattermost for Editorial Team
+        
+        div.dropdown-divider
+        a.dropdown-header About The Team
+        a.dropdown-item(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
 
 
 

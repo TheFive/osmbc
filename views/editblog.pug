@@ -1,16 +1,7 @@
 extends layout
 
-
-
-
 block content
-
-
   p
-    if blog.lock
-      .alert.alert-dismissable.alert-info
-        button.close( type="button", data-dismiss="alert" ) ×
-        | #{blog.lock.user} edits since #{layout.moment(blog.lock.timestamp).fromNow()} Version #{blog.version}
     if info
       if info.message
         if info.status == 'error'
@@ -63,120 +54,116 @@ block content
 
     else
       .row
-        .col-md-2
-          p
-            | Name
-        .col-md-3
-          h2
-            | #{blog.name}
-        .col-md-6
-        .col-md-1
+        .col
+          p="Name"
+        .col
+          h2=blog.name
+        .col  
+        .col
           a.btn.btn-primary#edit(href=`${layout.htmlroot}/blog/edit/${blog.name}?edit=true` role="button") Edit
       .row
-        .col-md-2
-          | Period
-        .col-md-3
-
-          p
-            |#{layout.moment(blog.startDate).tz("Europe/Berlin").locale(layout.user_locale).format("LLLL z")}
-        .col-md-3
-          p
-            | #{layout.moment(blog.endDate).tz("Europe/Berlin").locale(layout.user_locale).format("LLLL z")}
+        .col
+          p="Period"
+        .col
+          p=layout.moment(blog.startDate).tz("Europe/Berlin").locale(layout.user_locale).format("LLLL z")
+        .col
+          p=layout.moment(blog.endDate).tz("Europe/Berlin").locale(layout.user_locale).format("LLLL z")
+        .col  
       .row
-        .col-md-2
-          | Status
-        .col-md-6
-          .card
-            .card-body=blog.status
+        .col
+          p="Status"
+        .col
+          h1
+            span.badge.badge-secondary=blog.status
+        .col
+        .col   
       .row
-        .col-md-2
-        .col-md-6
-          table.table-sm
+        table.table
+          tr
+            th="Language"
+            th="Status"
+            th="Review Start"
+            th="Review Start Time"
+            th="Review"
+            th="Download"
+            th="Close"  
+            th="Special"
+          each lang in layout.languages
             tr
-              th="Language"
-              th="Status"
-              th="Review Start"
-              th="Review Start Time"
-              th="Review"
-              th="Download"
-              th="Close"
-
-              th="Special"
-            each lang in layout.languages
-              tr
-                //- Language Column
-                td=lang
-                //- Status Column
-                td
-                  if (blog["close" + lang])
-                    div.badge.osmbclabel-closedblog
-                      i.fa.fa-check
-                  else if (blog["reviewComment" + lang])
-                    div.badge.osmbclabel-reviewblog=(blog["reviewComment" + lang].length - 1)
-                  else
-                    div.badge.osmbclabel-editblog=blog._countUneditedMarkdown[lang]
-                //- Review Start Column
-                td
-                  if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
-                    span.badge.small-margin(class="osmbclabel-reviewblog")= blog["reviewComment"+lang][0].user
-                  
-                //- Review Start time
-                td
-                  if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
-                    if (layout.moment().diff(blog["reviewComment" + lang][0].timestamp,'days') < 7)
-                      div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("ddd LT")
-                    else 
-                      div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("L")    
-                //- Review by Column
-                td
-                  if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
-                    each val in blog["reviewComment"+lang]
-                      if (val.text != "startreview")
-                        span.badge.small-margin(class="osmbclabel-reviewblog")=val.user
-                //- Download Column
-                td
-                  div.glyphicon.glyphicon-export(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`)
-                  if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
-                    span=" "
-                    i.fa.fa-exclamation-triangle
-                //- Close Column
-                td
-                  form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
+              //- Language Column
+              td
+                span.badge.badge-secondary=lang
+              //- Status Column
+              td
+                if (blog["close" + lang])
+                  div.badge.badge-pill.osmbclabel-closedblog
+                    i.fa.fa-check
+                else if (blog["reviewComment" + lang])
+                  div.badge.badge-pill.osmbclabel-reviewblog=(blog["reviewComment" + lang].length - 1)
+                else
+                  div.badge.badge-pill.osmbclabel-editblog=blog._countUneditedMarkdown[lang]
+              //- Review Start Column
+              td
+                if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
+                  span.badge.small-margin(class="osmbclabel-reviewblog")= blog["reviewComment"+lang][0].user
+                
+              //- Review Start time
+              td
+                if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
+                  if (layout.moment().diff(blog["reviewComment" + lang][0].timestamp,'days') < 7)
+                    div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("ddd LT")
+                  else 
+                    div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("L")    
+              //- Review by Column
+              td
+                if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
+                  each val in blog["reviewComment"+lang]
+                    if (val.text != "startreview")
+                      span.badge.small-margin(class="osmbclabel-reviewblog")=val.user
+              //- Download Column
+              td
+                i.fa.fa-download(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`)
+                if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
+                  span=" "
+                  i.fa.fa-exclamation-triangle
+              //- Close Column
+              td
+                form(id="startReview" name="startReview", action=layout.htmlroot+"/blog/" + blog.name + "/setLangStatus", method="post")
+                  input.d-none(type="text",name="lang" value = lang)
+                  if (!blog["close"+lang] && (blog["exported"+lang] || reviewInWP.indexOf(lang)<0 ))
+                    input.d-none(type="text",name ="action" value = "closelang")
+                    div.btn.btn-sm.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
+              //- Special Column
+              td
+                if (blog["close" + lang])
+                  form(id="startReview" name="reopenlang", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
                     input.d-none(type="text",name="lang" value = lang)
-                    if (!blog["close"+lang] && (blog["exported"+lang] || reviewInWP.indexOf(lang)<0 ))
-                      input.d-none(type="text",name ="action" value = "closelang")
-                      button.btn.btn-sm.btn-warning(id="closebutton" type = "submit" ) Close #{blog.name}(#{lang})
-                //- Special Column
-                td
-                  if (blog["close" + lang])
-                    form(id="startReview" name="reopenlang", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
-                      input.d-none(type="text",name="lang" value = lang)
-                      input.d-none(type="text",name ="action" value = "editlang")
-                      button.btn.btn-sm.btn-warning(id="closebutton" type = "submit" ) Reopen
-                  else if (blog["reviewComment" + lang])
-                    form(id="deleteReview" name="deleteReview", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
-                      input.d-none(type="text",name="lang" value = lang)
-                      input.d-none(type="text",name ="action" value = "deleteallreviews")
-                      button.btn.btn-sm.btn-warning(id="deletereviewbutton" type = "submit" ) Delete Review
-                  else if (copyLanguageFromAnother[lang])
-                    form(id="copyArticle" name="copyArticle", action=layout.htmlroot + "/blog/" + blog.name + "/copy/"+copyLanguageFromAnother[lang]+"/"+lang, method="post")
-                      button.btn.btn-sm.btn-warning(id="copyArticlebutton" type = "submit" )=(copyLanguageFromAnother[lang] === "no_translation") ? "Set empty articles to no translation" :" Copy From " + copyLanguageFromAnother[lang]
+                    input.d-none(type="text",name ="action" value = "editlang")
+                    div.btn.btn-warning(id="closebutton" type = "submit" ) Reopen
+                else if (blog["reviewComment" + lang])
+                  form(id="deleteReview" name="deleteReview", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
+                    input.d-none(type="text",name="lang" value = lang)
+                    input.d-none(type="text",name ="action" value = "deleteallreviews")
+                    div.btn.btn-warning(id="deletereviewbutton" type = "submit" ) Delete Review
+                else if (copyLanguageFromAnother[lang])
+                  form(id="copyArticle" name="copyArticle", action=layout.htmlroot + "/blog/" + blog.name + "/copy/"+copyLanguageFromAnother[lang]+"/"+lang, method="post")
+                    div.btn.btn-warning(id="copyArticlebutton" type = "submit" )=(copyLanguageFromAnother[lang] === "no_translation") ? "Set empty articles to no translation" :" Copy From " + copyLanguageFromAnother[lang]
 
 
 
 
       .row
-        .col-md-2
+        .col
           | Show Articles
-        .col-md-10
+        .col
           p
             a(href=layout.htmlroot + "/article/list?blog=" + blog.name) List of all articles
           p="Use this link to go to 'unlinked' articles."
       .row
-        .col-md-2
+        .col
 
           | Categories
-        .col-md-8
+        .col
             <pre>
             |!{blog._categories_yaml}
             </pre>

@@ -464,6 +464,17 @@ User.prototype.getOption = function getOption(view, option) {
   return null;
 };
 
+User.prototype.hasFullAccess = function hasFullAccess() {
+  debug("User.protoype.hasFullAccess");
+  return this.access === "full";
+}
+
+User.prototype.hasGuestAccess = function hasFullAccess() {
+  debug("User.protoype.hasFullAccess");
+  return this.access === "guest";
+}
+
+
 
 User.prototype.createApiKey = function createApiKey(callback) {
   debug("createApiKey");
