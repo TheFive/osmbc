@@ -4,7 +4,7 @@
 | Main Screen              |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20                            |
 | Guest Main Screen        |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20                                     |
 | Collecting Articles      |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20                                   |
-| Read Inbox               |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
+| Read Inbox               |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |   Jan 20                                    |
 | Read Blog                |             one Column Mode             |   (one/two) Columns  |     two Columns    |                 |                                    |
 | Read Blog Changes        |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
 | Read Blog Statistic      |            :heavy_minus_sign:           | :heavy_check_mark: ? | :heavy_check_mark: |                 |                                    |
