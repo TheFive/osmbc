@@ -8,7 +8,7 @@
 | Read Blog                |             one Column Mode             |   (two) Columns  |     two Columns    |                     |   Jan 20                                      |
 | Read Blog Changes        |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20                                    |
 | Read Blog Statistic      |            :heavy_minus_sign:           | :heavy_check_mark: ? | :heavy_check_mark: |                 |   Jan 20                                   |
-| Edit Blog Detail         | :heavy_minus_sign: :heavy_check_mark: ? |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
+| Edit Blog Detail         | :heavy_minus_sign: :heavy_check_mark: ? |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20                                    |
 | Search Articles          |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
 | List My Collections      |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
 | Other Article List       |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
