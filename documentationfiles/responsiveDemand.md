@@ -11,8 +11,8 @@
 | Edit Blog Detail         | :heavy_minus_sign: :heavy_check_mark: ? |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20                                    |
 | Search Articles          |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |  Jan 20, phone not all menus in horozontal                                  |
 | List My Collections      |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |   Jan 20                                  |
-| Other Article List       |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
-| Picture Tool             |            :heavy_minus_sign:           |  :heavy_minus_sign:  | :heavy_minus_sign: | will be skipped |                                    |
+| Other Article List       |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |    Jan 20                                   |
+| Picture Tool             |            :heavy_minus_sign:           |  :heavy_minus_sign:  | :heavy_minus_sign: | will be skipped |    Jan 20  removed from source                                 |
 | REst of Tool Menu        |            :heavy_minus_sign:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
 | Help Menu                |            :heavy_check_mark:           |  :heavy_check_mark:  | :heavy_check_mark: |                 |                                    |
 | Language Switcher        |                    1                    |           2          |          4         | or more         |                                    |

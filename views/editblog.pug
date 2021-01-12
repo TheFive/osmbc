@@ -61,6 +61,7 @@ block content
         .col  
         .col
           a.btn.btn-primary#edit(href=`${layout.htmlroot}/blog/edit/${blog.name}?edit=true` role="button") Edit
+          a.btn.btn-secondary(href=layout.htmlroot + "/article/list?blog=" + blog.name) List of all articles
       .row
         .col
           p="Period"
@@ -151,19 +152,11 @@ block content
 
 
 
-
       .row
         .col
-          | Show Articles
-        .col
-          p
-            a(href=layout.htmlroot + "/article/list?blog=" + blog.name) List of all articles
-          p="Use this link to go to 'unlinked' articles."
-      .row
-        .col
-
           | Categories
         .col
-            <pre>
-            |!{blog._categories_yaml}
-            </pre>
+          pre=blog._categories_yaml
+        .col
+        .col     
+          
