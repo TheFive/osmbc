@@ -73,11 +73,9 @@ mixin articleMenu
 
 mixin toolMenu
   if (layout && layout.user.hasFullAccess())
-    li.dropdown.nav-item.active.d-none.d-xs-block
+    li.dropdown.nav-item.active
       a.nav-link.dropdown-toggle#toolsMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Tools
       div.dropdown-menu(aria-labelledby="toolsMenuDropdown")
-        a.dropdown-header Markdown Helper
-        a.dropdown-item(href=layout.htmlroot + "/tool/picturetool") Picture Tool
         if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
           div.dropdown-divider
           a.dropdown-header="Script Plugins (TEST PHASE)"
