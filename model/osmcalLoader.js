@@ -27,9 +27,10 @@ async function loadEvents(lang) {
     if (loc.name) event.town = loc.name;
 
     // special fix for not delivering town (e.g. Berlin)
+
     if (loc.addresstype === "postcode" && loc.address && loc.address.state) event.town = loc.address.state;
-    if (loc.address.country) event.country = loc.address.country;
-    if (loc.address.country_code) event.country_code = loc.address.country_code;
+    if (loc.adress && loc.address.country) event.country = loc.address.country;
+    if (loc.adress && loc.address.country_code) event.country_code = loc.address.country_code;
   }
   return json;
 }
