@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.6.8](https://github.com/TheFive/osmbc/tree/3.6.8) (2021-01-07)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.7...3.6.8)
+
+**Implemented enhancements:**
+
+- Order unsaved labels in "LeftLang" out of shown language [\#865](https://github.com/TheFive/osmbc/issues/865)
+
+**Fixed bugs:**
+
+- Github-Calendar Heatmap displaying undef instead of month names [\#864](https://github.com/TheFive/osmbc/issues/864)
+
 ## [3.6.7](https://github.com/TheFive/osmbc/tree/3.6.7) (2020-12-27)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.6...3.6.7)
@@ -79,7 +91,6 @@
 **Implemented enhancements:**
 
 - Heatmap separators other than white? [\#839](https://github.com/TheFive/osmbc/issues/839)
-- A separate page for simultaneous publication in several languages would be useful.  [\#822](https://github.com/TheFive/osmbc/issues/822)
 
 **Fixed bugs:**
 
@@ -172,6 +183,7 @@
 
 **Implemented enhancements:**
 
+- A separate page for simultaneous publication in several languages would be useful.  [\#822](https://github.com/TheFive/osmbc/issues/822)
 - Warn if a link does not exist in article editor. [\#483](https://github.com/TheFive/osmbc/issues/483)
 
 **Closed issues:**
@@ -661,10 +673,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.2...2.4.2a)
 
-**Implemented enhancements:**
-
-- Add a list to show new registered \(e.g. Last month\) users [\#682](https://github.com/TheFive/osmbc/issues/682)
-
 ## [2.4.2](https://github.com/TheFive/osmbc/tree/2.4.2) (2017-09-12)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.4.1...2.4.2)
@@ -672,6 +680,7 @@
 **Implemented enhancements:**
 
 - Show list of long absent user on admin homepage [\#688](https://github.com/TheFive/osmbc/issues/688)
+- Add a list to show new registered \(e.g. Last month\) users [\#682](https://github.com/TheFive/osmbc/issues/682)
 
 ## [2.4.1](https://github.com/TheFive/osmbc/tree/2.4.1) (2017-09-10)
 
@@ -1532,15 +1541,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
@@ -1695,10 +1704,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.4...1.6.4a)
 
-**Fixed bugs:**
-
-- YAML parse error is not shown to user when saving configuration. [\#431](https://github.com/TheFive/osmbc/issues/431)
-
 ## [1.6.4](https://github.com/TheFive/osmbc/tree/1.6.4) (2016-04-25)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.3...1.6.4)
@@ -1714,6 +1719,10 @@
 **Implemented enhancements:**
 
 - Small language display close to title in overview. [\#436](https://github.com/TheFive/osmbc/issues/436)
+
+**Fixed bugs:**
+
+- YAML parse error is not shown to user when saving configuration. [\#431](https://github.com/TheFive/osmbc/issues/431)
 
 ## [1.6.2](https://github.com/TheFive/osmbc/tree/1.6.2) (2016-04-24)
 
@@ -2303,10 +2312,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.6...0.6.7)
 
-**Implemented enhancements:**
-
-- Add a Trash for blogs [\#280](https://github.com/TheFive/osmbc/issues/280)
-
 ## [0.6.6](https://github.com/TheFive/osmbc/tree/0.6.6) (2016-01-25)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5c...0.6.6)
@@ -2342,6 +2347,7 @@
 
 **Implemented enhancements:**
 
+- Add a Trash for blogs [\#280](https://github.com/TheFive/osmbc/issues/280)
 - would it be possible to have the number of "all" articles in that blog? [\#275](https://github.com/TheFive/osmbc/issues/275)
 - view Message from the category future after the current [\#271](https://github.com/TheFive/osmbc/issues/271)
 
@@ -2730,7 +2736,6 @@
 
 **Fixed bugs:**
 
-- allow a user to configure activly the language for the Export-button [\#148](https://github.com/TheFive/osmbc/issues/148)
 - Error with search of articles [\#141](https://github.com/TheFive/osmbc/issues/141)
 
 ## [0.3.9a](https://github.com/TheFive/osmbc/tree/0.3.9a) (2015-11-20)
@@ -2821,6 +2826,7 @@
 
 **Fixed bugs:**
 
+- allow a user to configure activly the language for the Export-button [\#148](https://github.com/TheFive/osmbc/issues/148)
 - "please check your link first to avoid duplicates" [\#147](https://github.com/TheFive/osmbc/issues/147)
 - fullTextSearch for https does not find http Links [\#17](https://github.com/TheFive/osmbc/issues/17)
 

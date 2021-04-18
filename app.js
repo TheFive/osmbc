@@ -25,14 +25,13 @@ const slackrouter  = require("./routes/slack").router;
 const changes      = require("./routes/changes").router;
 const blog         = require("./routes/blog").router;
 const tool         = require("./routes/tool").router;
-const calendar     = require("./routes/tool").publicRouter;
 const api          = require("./routes/api").publicRouter;
 const layout       = require("./routes/layout").router;
 const configRouter = require("./routes/config").router;
 const logger       = require("./config.js").logger;
 const auth         = require("./routes/auth.js");
 
-const fileUpload = require('express-fileupload');
+const fileUpload = require("express-fileupload");
 
 
 
@@ -41,7 +40,7 @@ const fileUpload = require('express-fileupload');
 
 // Initialise config Module and variables
 config.initialise();
-let htmlRoot = config.htmlRoot();
+const htmlRoot = config.htmlRoot();
 logger.info("Express Routes set to: SERVER" + htmlRoot);
 
 
@@ -140,7 +139,6 @@ app.use(htmlRoot + "/bower_components/moment", express.static(path.join(__dirnam
 
 app.use(htmlRoot, express.static(path.join(__dirname, "public")));
 
-app.use(htmlRoot, calendar);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

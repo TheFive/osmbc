@@ -143,7 +143,7 @@ function getEventTable(lang, edit, pressedButton) {
       console.info(text1);
       console.info(text2);
     },
-    timeout: 10000 // in milliseconds
+    timeout: 40000 // in milliseconds
   });
 }
 
