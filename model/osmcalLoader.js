@@ -6,6 +6,9 @@ const moment = require("moment");
 const mdUtil = require("../util/md_util.js");
 const configModule = require("../model/config.js");
 const config = require("../config.js");
+const NodeCache = require("node-cache");
+
+const nominatimCache = new NodeCache({ stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
 
 const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
 
@@ -21,15 +24,20 @@ async function loadEvents(lang) {
     const requestString = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=" + encodeURI(event.location.coords[1]) +
     "&lon=" + encodeURI(event.location.coords[0]) +
     "&accept-language=" + lang;
-    request = await axios.get(requestString, { headers: { "User-Agent": "OSMBC Calendar Generator" } });
 
-    const loc = request.data;
+    let loc = nominatimCache.get(requestString);
+    if (loc === undefined) {
+      request = await axios.get(requestString, { headers: { "User-Agent": "OSMBC Calendar Generator" } });
+      loc = request.data;
+      if (loc && !loc.error) nominatimCache.set(requestString, loc);
+    }
     if (loc.name) event.town = loc.name;
 
     // special fix for not delivering town (e.g. Berlin)
+
     if (loc.addresstype === "postcode" && loc.address && loc.address.state) event.town = loc.address.state;
-    if (loc.address.country) event.country = loc.address.country;
-    if (loc.address.country_code) event.country_code = loc.address.country_code;
+    if (loc.address && loc.address.country) event.country = loc.address.country;
+    if (loc.address && loc.address.country_code) event.country_code = loc.address.country_code;
   }
   return json;
 }
@@ -182,7 +190,8 @@ async function getEventMd(lang) {
     { field: "dateString", name: dateName },
     { field: "country_flag", name: countryName }
   ];
-  return mdUtil.mdTable(filteredEvents, table);
+  const result =  mdUtil.mdTable(filteredEvents, table);
+  return result;
 }
 
 function getEventMdCb(lang, cb) {
