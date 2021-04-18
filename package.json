@@ -49,6 +49,7 @@
     "moment-timezone": "0.5.x",
     "morgan": "1.10.x",
     "mstranslator": "3.0.x",
+    "node-cache": "^5.1.2",
     "node-schedule": "1.3.x",
     "nodemailer": "6.4.x",
     "passport": "0.4.x",

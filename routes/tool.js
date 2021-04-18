@@ -418,7 +418,7 @@ function getEventTable(req, res, next) {
   const lang = req.query.lang;
   osmcalloader.getEventMdCb(lang, function(err, result) {
     if (err) return next(err);
-    res.end(result);
+    return res.end(result);
   });
 }
 
@@ -434,7 +434,7 @@ router.get("/scripts/execute/:filename", checkScriptRights, renderScript);
 router.post("/scripts/execute/:filename", checkScriptRights, executeScript);
 
 router.get("/picturetool", checkRole("full"), renderPictureTool);
-router.get("/getEventTable", checkRole("full"), getEventTable);
+router.post("/getEventTable", checkRole("full"), getEventTable);
 router.post("/picturetool", checkRole("full"), postPictureTool);
 
 

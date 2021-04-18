@@ -6,6 +6,9 @@ const moment = require("moment");
 const mdUtil = require("../util/md_util.js");
 const configModule = require("../model/config.js");
 const config = require("../config.js");
+const NodeCache = require("node-cache");
+
+let nominatim_cache = new NodeCache({ stdTTL: 21*24*60*60, checkperiod: 24*60*60 } );
 
 const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
 
@@ -21,9 +24,13 @@ async function loadEvents(lang) {
     const requestString = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=" + encodeURI(event.location.coords[1]) +
     "&lon=" + encodeURI(event.location.coords[0]) +
     "&accept-language=" + lang;
-    request = await axios.get(requestString, { headers: { "User-Agent": "OSMBC Calendar Generator" } });
-
-    const loc = request.data;
+    
+    let loc = nominatim_cache.get(requestString);
+    if (loc === undefined) {
+      request = await axios.get(requestString, { headers: { "User-Agent": "OSMBC Calendar Generator" } });
+      loc = request.data;
+      if (loc && !loc.error) nominatim_cache.set(requestString,loc)
+    }
     if (loc.name) event.town = loc.name;
 
     // special fix for not delivering town (e.g. Berlin)
@@ -183,7 +190,8 @@ async function getEventMd(lang) {
     { field: "dateString", name: dateName },
     { field: "country_flag", name: countryName }
   ];
-  return mdUtil.mdTable(filteredEvents, table);
+  let result =  mdUtil.mdTable(filteredEvents, table);
+  return result;
 }
 
 function getEventMdCb(lang, cb) {
