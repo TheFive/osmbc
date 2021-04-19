@@ -979,7 +979,7 @@ var env = process.env.NODE_ENV || "development";
 
 function translateOLD(req, res, next) {
   debug("translate");
-  var userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20";
+  var userAgent = "Googlebot/2.1";
 
   Browser.waitDuration = "30s";
   let fromLang = req.params.fromLang;
