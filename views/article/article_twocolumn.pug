@@ -80,13 +80,7 @@ block markdownArea
 
 
 
-
-    .row
-      .col-md-6
-        i#languageFlagsShow.fa.fa-flag.fa-2x(
-        onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
-
-    .row#languageFlags.hidden
+    .row#languageFlags
       .col-md-6
         - for (lang in languageFlags)
           img.flag(id=lang,
