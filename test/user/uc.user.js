@@ -67,6 +67,18 @@ describe("views/user", function() {
   it("should not change username, if user logged in", async function() {
 
     let errors = [];
+
+    // MOck date in browser
+    browser.on("loaded",async (window ) => 
+    {
+      await browser.evaluate( `
+      ( (m) => {var __Date = Date; 
+        Date = undefined; 
+        Date = function() { return new __Date(m); }; 
+        Date.prototype = __Date.prototype;
+        Date.now = function(){return new Date().valueOf()}})
+        (new Date('2015-11-05'))`);
+    })
     // TheFive creates an user test
     await browser.visit("/osmbc/admin");
     await browser.click("#createUser");
@@ -90,12 +102,26 @@ describe("views/user", function() {
   });
   it("should save userdata and calculate WN User", async function() {
     await browser.visit("/usert/create");
+
+    // Register a Mock of Date when page is loaded
+    browser.on("loaded",async (window ) => 
+      {
+        await browser.evaluate( `
+        ( (m) => {var __Date = Date; 
+          Date = undefined; 
+          Date = function() { return new __Date(m); }; 
+          Date.prototype = __Date.prototype;
+          Date.now = function(){return new Date().valueOf()}})
+          (new Date('2015-11-05'))`);
+      })
     await browser
       .fill("OSMUser", "TestUser")
       .fill("EMail", "")
       .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
       .click("#save");
-    let result = await userModule.findById(2);
+     
+      let result = await userModule.findById(2);
+
     browser.assert.expectHtmlSync("user","freshCreatedUser");
     should(result.OSMUser).eql("TestUser");
     should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");

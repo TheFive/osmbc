@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.6.8a](https://github.com/TheFive/osmbc/tree/3.6.8a) (2021-04-18)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.8...3.6.8a)
+
+**Fixed bugs:**
+
+- No valid result in calendar if Nominatim is unable to reverse encode [\#875](https://github.com/TheFive/osmbc/issues/875)
+- Generating a Calendar text does not work for a specific language [\#874](https://github.com/TheFive/osmbc/issues/874)
+
 ## [3.6.8](https://github.com/TheFive/osmbc/tree/3.6.8) (2021-01-07)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.7...3.6.8)
@@ -91,6 +100,7 @@
 **Implemented enhancements:**
 
 - Heatmap separators other than white? [\#839](https://github.com/TheFive/osmbc/issues/839)
+- A separate page for simultaneous publication in several languages would be useful.  [\#822](https://github.com/TheFive/osmbc/issues/822)
 
 **Fixed bugs:**
 
@@ -183,7 +193,6 @@
 
 **Implemented enhancements:**
 
-- A separate page for simultaneous publication in several languages would be useful.  [\#822](https://github.com/TheFive/osmbc/issues/822)
 - Warn if a link does not exist in article editor. [\#483](https://github.com/TheFive/osmbc/issues/483)
 
 **Closed issues:**
@@ -489,6 +498,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2c...3.1.2d)
 
+**Implemented enhancements:**
+
+- Show guests in blog colored user view in a separate style. [\#728](https://github.com/TheFive/osmbc/issues/728)
+
 **Fixed bugs:**
 
 - No possibility to skip a email verification process. [\#733](https://github.com/TheFive/osmbc/issues/733)
@@ -504,7 +517,6 @@
 
 **Implemented enhancements:**
 
-- Show guests in blog colored user view in a separate style. [\#728](https://github.com/TheFive/osmbc/issues/728)
 - Differentiate blog statistics by guest and full users. [\#727](https://github.com/TheFive/osmbc/issues/727)
 
 **Closed issues:**
@@ -1704,6 +1716,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.4...1.6.4a)
 
+**Fixed bugs:**
+
+- YAML parse error is not shown to user when saving configuration. [\#431](https://github.com/TheFive/osmbc/issues/431)
+
 ## [1.6.4](https://github.com/TheFive/osmbc/tree/1.6.4) (2016-04-25)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.3...1.6.4)
@@ -1719,10 +1735,6 @@
 **Implemented enhancements:**
 
 - Small language display close to title in overview. [\#436](https://github.com/TheFive/osmbc/issues/436)
-
-**Fixed bugs:**
-
-- YAML parse error is not shown to user when saving configuration. [\#431](https://github.com/TheFive/osmbc/issues/431)
 
 ## [1.6.2](https://github.com/TheFive/osmbc/tree/1.6.2) (2016-04-24)
 
@@ -2312,6 +2324,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.6...0.6.7)
 
+**Implemented enhancements:**
+
+- Add a Trash for blogs [\#280](https://github.com/TheFive/osmbc/issues/280)
+
 ## [0.6.6](https://github.com/TheFive/osmbc/tree/0.6.6) (2016-01-25)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5c...0.6.6)
@@ -2347,7 +2363,6 @@
 
 **Implemented enhancements:**
 
-- Add a Trash for blogs [\#280](https://github.com/TheFive/osmbc/issues/280)
 - would it be possible to have the number of "all" articles in that blog? [\#275](https://github.com/TheFive/osmbc/issues/275)
 - view Message from the category future after the current [\#271](https://github.com/TheFive/osmbc/issues/271)
 
@@ -2473,10 +2488,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.3...0.5.4)
 
-**Fixed bugs:**
-
-- bug during editing articles on OSX with Chrome and Safari - NOT with FF [\#232](https://github.com/TheFive/osmbc/issues/232)
-
 ## [0.5.3](https://github.com/TheFive/osmbc/tree/0.5.3) (2015-12-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.2...0.5.3)
@@ -2493,7 +2504,6 @@
 **Fixed bugs:**
 
 - below the \*Próximos eventos\*  [\#236](https://github.com/TheFive/osmbc/issues/236)
-- include new blogstatus\_3.pdf please [\#234](https://github.com/TheFive/osmbc/issues/234)
 
 ## [0.5.1](https://github.com/TheFive/osmbc/tree/0.5.1) (2015-12-28)
 
@@ -2506,7 +2516,6 @@
 
 **Fixed bugs:**
 
-- No action for the button "cancel" in an user details screen [\#231](https://github.com/TheFive/osmbc/issues/231)
 - When switching category in article to the same "animation" than in collect, to show the content of a category. [\#229](https://github.com/TheFive/osmbc/issues/229)
 - Fixes for image preview [\#195](https://github.com/TheFive/osmbc/issues/195)
 
