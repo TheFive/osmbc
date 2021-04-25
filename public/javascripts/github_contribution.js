@@ -204,7 +204,7 @@ if (!String.prototype.formatString) {
     const settings = $.extend({
       // Default init settings.colors, user can override
       colors: ["#eeeeee", "#d6e685", "#8cc665", "#44a340", "#44a340"],
-      start_date: null,
+      startDate: null,
       // List of name months
       monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
       h_days: ["M", "W", "F"],
