@@ -78,5 +78,6 @@
   },
   "User-Agent": "Hello i am Kitty",
   "DeeplAPIKey":"Test Key Fake",
-  "blogTranslationVisibleFor":["TheFive","TheOther"]
+  "blogTranslationVisibleFor":["TheFive","TheOther"],
+  "urlWoErrorWhileEdit": []
 }
