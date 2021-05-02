@@ -100,6 +100,8 @@ function createAccessMapFn(activeLanguages) {
   };
 }
 
+const urlWoErrorWhileEdit = config.getValue("urlWoErrorWhileEdit", { mustExist: true });
+
 // renderArticleId prepares the view for displaying an article
 function renderArticleId(req, res, next) {
   debug("renderArticleId");
@@ -261,6 +263,7 @@ function renderArticleId(req, res, next) {
       layout: res.rendervar.layout,
       article: article,
       googleTranslateText: configModule.getConfig("automatictranslatetext"),
+      urlWoErrorWhileEdit: urlWoErrorWhileEdit,
       params: params,
       placeholder: placeholder,
       votes: votes,
@@ -970,64 +973,6 @@ function renderList(req, res, next) {
   );
 }
 
-
-/*
-var Browser = require("zombie");
-
-var env = process.env.NODE_ENV || "development";
-
-
-function translateOLD(req, res, next) {
-  debug("translate");
-  var userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20";
-
-  Browser.waitDuration = "30s";
-  let fromLang = req.params.fromLang;
-  let toLang = req.params.toLang;
-  let text = req.body.text;
-  let link = "#" + fromLang + "/" + toLang + "/";
-  let browser = new Browser({userAgent: userAgent, site: "https://translate.google.com/"});
-
-  browser.visit(link, function (err) {
-    if (err) {
-      // if it is development return a test text.
-      if (env === "development") {
-        let textTranslate = "Google Sim Translate From " + fromLang + " to " + toLang + "(" + text + ")";
-        return res.end(textTranslate);
-      }
-      // Not in development return an error
-      return next(err);
-    }
-    browser.fill("textarea#source", text);
-    browser.click("input#gt-submit", function(err) {
-      if (err) {
-        return next(err);
-      }
-      res.end(browser.query("#result_box").textContent);
-    });
-  });
-}
-
-
-function translateGOOGLEOLD(req, res, next) {
-  debug("translate");
-
-  let fromLang = req.params.fromLang;
-  let toLang = req.params.toLang;
-  let text = req.body.text;
-
-
-
-  if (fromLang === "jp") { fromLang = "ja"; }
-  if (toLang === "jp") { toLang = "ja"; }
-
-  if (fromLang === "cz") { fromLang = "cs"; }
-  if (toLang === "cz") { toLang = "cs"; }
-
-  gglTranslateAPI(text, {from: fromLang, to: toLang}).then(function (result) {
-    res.end(result.text);
-  }).catch(function(err) { next(err); });
-} */
 
 function fixMarkdownLinks(string) {
   let r = string;
