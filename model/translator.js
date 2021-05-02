@@ -2,6 +2,9 @@
 
 const request = require("request");
 const uuidv4 = require("uuid/v4");
+const querystring = require("query-string");
+const axios = require("axios");
+
 
 const markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
@@ -10,13 +13,28 @@ const markdown = require("markdown-it")()
 const TurndownService = require("turndown");
 const turndownItSup = require("../util/turndown-it-sup.js");
 
-
 const config    = require("../config.js");
-
 const debug       = require("debug")("OSMBC:model:translator");
 
 
-const deeplClient = require("deepl-client");
+
+
+async function deeplTranslate(url, params) {
+  try {
+    const query = querystring.stringify(params);
+    const response = await axios.request(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: query
+    });
+
+    if (response.status !== 200) return "Problem with Deepl Translation";
+
+    return response.data;
+  } catch (error) {
+    return { message: "caught Problem with Deepl Translation" };
+  }
+}
 
 function normLanguage(lang) {
   if (lang === "cz") lang = "cs";
@@ -30,13 +48,16 @@ function escapeRegExp(string) {
 }
 
 
-const deeplAuthKey = config.getValue("DeeplAPIKey");
+const deeplConfig = config.getValue("DeeplConfig", { mustExist: true });
 
 function translateDeeplPro(options, callback) {
   debug("translateDeeplPro");
 
-  if (typeof deeplAuthKey === "undefined") {
-    return new Error("No Deepl Pro Version registered");
+  if (typeof deeplConfig.authKey === "undefined") {
+    return new Error("No Deepl Key registered");
+  }
+  if (typeof deeplConfig.url === "undefined") {
+    return new Error("No Deepl Url registered configured");
   }
 
 
@@ -51,7 +72,7 @@ function translateDeeplPro(options, callback) {
   deeplParams.text = htmltext;
   deeplParams.source_lang = fromLang.toUpperCase();
   deeplParams.target_lang = toLang.toUpperCase();
-  deeplParams.auth_key = deeplAuthKey;
+  deeplParams.auth_key = deeplConfig.authKey;
   deeplParams.tag_handling = "xml";
 
 
@@ -66,7 +87,7 @@ function translateDeeplPro(options, callback) {
 
 
 
-  deeplClient.translate(deeplParams)
+  deeplTranslate(deeplConfig.url, deeplParams)
     .then(result => {
       if (result && result.message) return callback(null, result.message);
       if (!result || !result.translations) return callback(null, "Something went wrong with translation in this article.");
@@ -89,7 +110,7 @@ function translateDeeplPro(options, callback) {
     .catch(err => { return callback(err); });
 }
 function deeplProActive () {
-  return (typeof deeplAuthKey === "string");
+  return (typeof deeplConfig.authKey === "string");
 }
 
 const subscriptionKey = config.getValue("MS_TranslateApiKey");

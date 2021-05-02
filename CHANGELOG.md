@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.6.9](https://github.com/TheFive/osmbc/tree/3.6.9) (2021-04-25)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.8a...3.6.9)
+
+**Implemented enhancements:**
+
+- Keep Language flags open or closed to avoid regular reopening [\#867](https://github.com/TheFive/osmbc/issues/867)
+
+**Closed issues:**
+
+- Fix Test Error caused in new User Heatmap [\#877](https://github.com/TheFive/osmbc/issues/877)
+
 ## [3.6.8a](https://github.com/TheFive/osmbc/tree/3.6.8a) (2021-04-18)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.8...3.6.8a)
@@ -498,10 +510,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.2c...3.1.2d)
 
-**Implemented enhancements:**
-
-- Show guests in blog colored user view in a separate style. [\#728](https://github.com/TheFive/osmbc/issues/728)
-
 **Fixed bugs:**
 
 - No possibility to skip a email verification process. [\#733](https://github.com/TheFive/osmbc/issues/733)
@@ -517,6 +525,7 @@
 
 **Implemented enhancements:**
 
+- Show guests in blog colored user view in a separate style. [\#728](https://github.com/TheFive/osmbc/issues/728)
 - Differentiate blog statistics by guest and full users. [\#727](https://github.com/TheFive/osmbc/issues/727)
 
 **Closed issues:**
@@ -1467,10 +1476,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6c...1.8.6d)
 
-**Fixed bugs:**
-
-- Unpublish Reasons are broken [\#481](https://github.com/TheFive/osmbc/issues/481)
-
 ## [1.8.6c](https://github.com/TheFive/osmbc/tree/1.8.6c) (2016-06-17)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6b...1.8.6c)
@@ -1517,6 +1522,7 @@
 
 **Fixed bugs:**
 
+- Unpublish Reasons are broken [\#481](https://github.com/TheFive/osmbc/issues/481)
 - wrong link in OSMBC live version ;-\) [\#471](https://github.com/TheFive/osmbc/issues/471)
 
 ## [1.8.5a](https://github.com/TheFive/osmbc/tree/1.8.5a) (2016-06-06)
@@ -2488,6 +2494,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.3...0.5.4)
 
+**Fixed bugs:**
+
+- bug during editing articles on OSX with Chrome and Safari - NOT with FF [\#232](https://github.com/TheFive/osmbc/issues/232)
+
 ## [0.5.3](https://github.com/TheFive/osmbc/tree/0.5.3) (2015-12-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.2...0.5.3)
@@ -2504,6 +2514,7 @@
 **Fixed bugs:**
 
 - below the \*Próximos eventos\*  [\#236](https://github.com/TheFive/osmbc/issues/236)
+- include new blogstatus\_3.pdf please [\#234](https://github.com/TheFive/osmbc/issues/234)
 
 ## [0.5.1](https://github.com/TheFive/osmbc/tree/0.5.1) (2015-12-28)
 
@@ -2516,6 +2527,7 @@
 
 **Fixed bugs:**
 
+- No action for the button "cancel" in an user details screen [\#231](https://github.com/TheFive/osmbc/issues/231)
 - When switching category in article to the same "animation" than in collect, to show the content of a category. [\#229](https://github.com/TheFive/osmbc/issues/229)
 - Fixes for image preview [\#195](https://github.com/TheFive/osmbc/issues/195)
 
