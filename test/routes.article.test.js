@@ -9,7 +9,6 @@ const nock    = require("nock");
 const config  = require("../config.js");
 const mockdate = require("mockdate");
 const HttpStatus = require('http-status-codes');
-const deeplClient = require("deepl-client");
 const initialise = require("../util/initialise.js");
 const rp = require("request-promise-native");
 
@@ -920,21 +919,13 @@ describe("routes/article", function() {
         should(params.text).eql("Dies ist ein deutscher Text.");
         return callback(null, "This is an english text.");
       });
-      stub2 = sinon.stub(deeplClient, "translate").callsFake(function(option) {
-        should(option.source_lang).eql("DE");
-        should(option.target_lang).eql("EN");
-        should(option.text).eql("<p>Dies ist ein deutscher Text.</p>\n");
-        should(option.auth_key).eql("Test Key Fake");
-        let result = {};
-        result.translations = [];
-        result.translations[0] = {text:"This is an english text.",source_lang: "DE", target_lang:"EN"};
-
-        return new Promise((resolve) => { resolve(result); });
+      nock("https://api.deepl.com")
+      .post('/v2/translate',"auth_key=Test%20Key%20Fake&source_lang=DE&tag_handling=xml&target_lang=EN&text=%3Cp%3EDies%20ist%20ein%20deutscher%20Text.%3C%2Fp%3E%0A")
+      .reply(200, {translations: [{text:"This is an english text.",source_lang: "DE", target_lang:"EN"}]
       });
     });
     afterEach(function() {
       stub.restore();
-      stub2.restore();
     });
 
     it("should run with full access user", async function () {

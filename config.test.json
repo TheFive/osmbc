@@ -73,10 +73,12 @@
   "userIsOldInDays":60,
   "WelcomeRefreshInSeconds":0,
   "createGuestUsersAutomatic":true,
-  "ReviewInWP":["DE"],
   "scripts":{
   },
   "User-Agent": "Hello i am Kitty",
-  "DeeplAPIKey":"Test Key Fake",
+  "DeeplConfig": {
+    "authKey":"Test Key Fake",
+    "url":"https://api.deepl.com/v2/translate"
+  },
   "blogTranslationVisibleFor":["TheFive","TheOther"]
 }
