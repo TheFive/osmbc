@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.6.10](https://github.com/TheFive/osmbc/tree/3.6.10) (2021-05-02)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9...3.6.10)
+
+**Implemented enhancements:**
+
+- Implement Free Deepl as alternative [\#878](https://github.com/TheFive/osmbc/issues/878)
+
+**Fixed bugs:**
+
+- warning about flag link is twice in a tranlated version [\#866](https://github.com/TheFive/osmbc/issues/866)
+
 ## [3.6.9](https://github.com/TheFive/osmbc/tree/3.6.9) (2021-04-25)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.8a...3.6.9)
@@ -7,6 +19,7 @@
 **Implemented enhancements:**
 
 - Keep Language flags open or closed to avoid regular reopening [\#867](https://github.com/TheFive/osmbc/issues/867)
+- Order unsaved labels in "LeftLang" out of shown language [\#865](https://github.com/TheFive/osmbc/issues/865)
 
 **Closed issues:**
 
@@ -24,10 +37,6 @@
 ## [3.6.8](https://github.com/TheFive/osmbc/tree/3.6.8) (2021-01-07)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.7...3.6.8)
-
-**Implemented enhancements:**
-
-- Order unsaved labels in "LeftLang" out of shown language [\#865](https://github.com/TheFive/osmbc/issues/865)
 
 **Fixed bugs:**
 
@@ -767,6 +776,7 @@
 **Implemented enhancements:**
 
 - Trash can only be called, if article is in unpublish [\#670](https://github.com/TheFive/osmbc/issues/670)
+- Allow move of articles if only NT articles are closed [\#663](https://github.com/TheFive/osmbc/issues/663)
 
 **Fixed bugs:**
 
@@ -779,7 +789,6 @@
 
 **Implemented enhancements:**
 
-- Allow move of articles if only NT articles are closed [\#663](https://github.com/TheFive/osmbc/issues/663)
 - Format links in collection in red do indicate doublettes. [\#662](https://github.com/TheFive/osmbc/issues/662)
 - Make Calendar Date Format configurable via config.js [\#655](https://github.com/TheFive/osmbc/issues/655)
 - adding existing links to collection [\#404](https://github.com/TheFive/osmbc/issues/404)
@@ -1476,6 +1485,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6c...1.8.6d)
 
+**Fixed bugs:**
+
+- Unpublish Reasons are broken [\#481](https://github.com/TheFive/osmbc/issues/481)
+
 ## [1.8.6c](https://github.com/TheFive/osmbc/tree/1.8.6c) (2016-06-17)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6b...1.8.6c)
@@ -1522,7 +1535,6 @@
 
 **Fixed bugs:**
 
-- Unpublish Reasons are broken [\#481](https://github.com/TheFive/osmbc/issues/481)
 - wrong link in OSMBC live version ;-\) [\#471](https://github.com/TheFive/osmbc/issues/471)
 
 ## [1.8.5a](https://github.com/TheFive/osmbc/tree/1.8.5a) (2016-06-06)
