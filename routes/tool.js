@@ -7,24 +7,19 @@ const config = require("../config.js");
 const glob = require("glob");
 const fs = require("fs");
 const path = require("path");
-const axios = require("axios");
 const moment = require("moment");
 const async = require("async");
 const yaml     = require("js-yaml");
-const BlogRenderer = require("../render/BlogRenderer.js");
 const childProcess = require("child_process");
 const logger = require("../config.js").logger;
 const osmcalloader = require("../model/osmcalLoader.js");
 
 
-const articleModule = require("../model/article.js");
-const configModule = require("../model/config.js");
 
 
 const checkRole        = require("../routes/auth.js").checkRole;
 const checkUser       = require("../routes/auth.js").checkUser;
 
-const sizeOf = require("image-size");
 
 const htmlroot = config.htmlRoot();
 
@@ -34,20 +29,6 @@ config.getValue("CalendarInterface", { deprecated: true });
 
 
 
-
-function generateCCLicense(license, lang, author) {
-  debug("generateCCLicense");
-  const licenses = configModule.getConfig("licenses");
-  if (!license || license === "") license = "CC0";
-  if (!lang || lang === "") lang = "EN";
-  if (!author) author = "";
-  if (typeof (licenses[license]) === "undefined") license = "CC0";
-  let text = licenses[license][lang];
-  if (typeof (text) === "undefined") text = licenses[license].EN;
-  if (typeof (text) === "undefined") text = "";
-
-  return text.replace("##author##", author);
-}
 
 
 config.getValue("PublicCalendarPage", { deprecated: true });
@@ -321,9 +302,7 @@ router.get("/scripts/execute", checkScriptRights, renderScripts);
 router.get("/scripts/execute/:filename", checkScriptRights, renderScript);
 router.post("/scripts/execute/:filename", checkScriptRights, executeScript);
 
-router.get("/picturetool", checkRole("full"), renderPictureTool);
 router.post("/getEventTable", checkRole("full"), getEventTable);
-router.post("/picturetool", checkRole("full"), postPictureTool);
 
 
 module.exports.router = router;

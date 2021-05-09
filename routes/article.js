@@ -240,7 +240,7 @@ function renderArticleId(req, res, next) {
     res.set("content-type", "text/html");
     // change title of page
     res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
-    let pugFile = "article/article_all_column";
+    const pugFile = "article/article_all_column";
 
 
     res.render(pugFile, {

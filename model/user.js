@@ -434,17 +434,16 @@ User.prototype.getLang4 = function getLang4() {
 };
 
 User.prototype.getLang = function getLang(i) {
-    debug("User.prototype.getLang");
-    if (!this.langArray) {
-      this.langArray = [];
-      this.langArray[0] = this.mainLang;
-      this.langArray[1] = this.secondLang;
-      this.langArray[2] = this.lang3;
-      this.langArray[3] = this.lang4;
-
-    }
-    return (this.langArray[i]);
-}
+  debug("User.prototype.getLang");
+  if (!this.langArray) {
+    this.langArray = [];
+    this.langArray[0] = this.mainLang;
+    this.langArray[1] = this.secondLang;
+    this.langArray[2] = this.lang3;
+    this.langArray[3] = this.lang4;
+  }
+  return (this.langArray[i]);
+};
 
 
 User.prototype.setOption = function setOption(view, option, value) {
@@ -467,12 +466,12 @@ User.prototype.getOption = function getOption(view, option) {
 User.prototype.hasFullAccess = function hasFullAccess() {
   debug("User.protoype.hasFullAccess");
   return this.access === "full";
-}
+};
 
 User.prototype.hasGuestAccess = function hasFullAccess() {
   debug("User.protoype.hasFullAccess");
   return this.access === "guest";
-}
+};
 
 
 
@@ -520,7 +519,7 @@ function migrateData(user) {
 
   // migrate from lang to langArray
   if (!user.langArray) {
-    user.langArray = [user.getMainLang(),user.getSecondLang(),user.getLang3(),user.getLang4()];
+    user.langArray = [user.getMainLang(), user.getSecondLang(), user.getLang3(), user.getLang4()];
     delete user.mainLang;
     delete user.language;
     delete user.secondLang;

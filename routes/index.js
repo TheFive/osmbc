@@ -124,8 +124,8 @@ function languageSwitcher(req, res, next) {
 
   if (req.body.lang) lang[0] = req.body.lang;
   if (req.body.lang0) lang[0] = req.body.lang;
-  for (let i=1;i<20;i++) {
-    if (req.body["lang"+i] && isValidLang(req.body["lang"+i])) lang[i-1] = req.body["lang"+i];
+  for (let i = 1; i < 20; i++) {
+    if (req.body["lang" + i] && isValidLang(req.body["lang" + i])) lang[i - 1] = req.body["lang" + i];
   }
 
 
