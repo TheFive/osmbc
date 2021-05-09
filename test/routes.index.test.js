@@ -94,7 +94,7 @@ describe("routes/index", function() {
     it("should show home page", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
       body.should.containEql("<title>TESTBC</title>");
-      body.should.containEql("<h2 class=\"hidden-xs\">Welcome to OSM BC</h2>");
+      body.should.containEql('<h2 class="d-none d-sm-block">Welcome to OSM BC</h2>');
       body.should.containEql("Full Access Index Page");
     });
     it("should deny denied access user",
@@ -138,6 +138,7 @@ describe("routes/index", function() {
       let user = await userModule.findById(1);
       should(user).eql({
         id: "1",
+        "langArray": [null,null,null, null],
         OSMUser: "TestUser",
         access: "full",
         version: 2,
@@ -190,7 +191,8 @@ describe("routes/index", function() {
         mainLang: "ES",
         secondLang: "EN",
         lang3: null,
-        lang4: null
+        lang4: null,
+        langArray: ["ES","EN"]
       });
     });
     it("should change language for guest access", async function () {
@@ -209,7 +211,8 @@ describe("routes/index", function() {
         secondLang: "EN",
         mdWeeklyAuthor: "anonymous",
         lang3: null,
-        lang4: null
+        lang4: null,
+        langArray: ["ES","EN"]
       });
     });
     it("should deny denied access user",

@@ -299,7 +299,7 @@ describe("routes/article", function() {
     it("should run with full access user", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
       let json = JSON.parse(body);
-      json["#vote_pro_2"].should.containEql('class="label osmbc-btn-not-voted"');
+      json["#vote_pro_2"].should.containEql('class="badge osmbc-btn-not-voted"');
     });
 
     it("should deny denied access user",
