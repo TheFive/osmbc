@@ -1,7 +1,7 @@
 "use strict";
 
 /* eslint-env browser:true, node:false, jquery:true, commonjs:false */
-/* global highlightWrongLinks */
+/* global highlightWrongLinks, urlWoErrorWhileEdit */
 
 /* exported dragstart, myclick, ondragstartflag, ondragstartLangLabel, showRL */
 /* exported callAndRedraw, setNoTranslation, translate */
@@ -143,7 +143,7 @@ function getEventTable(lang, edit, pressedButton) {
       console.info(text1);
       console.info(text2);
     },
-    timeout: 10000 // in milliseconds
+    timeout: 40000 // in milliseconds
   });
 }
 
@@ -326,6 +326,17 @@ function checkMarkdownError() {
   const regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
   while ((linkList = regexToken.exec(md)) !== null) {
     const link = linkList[0];
+
+    let linkAllowed = false;
+
+    for (const allowedUrl in urlWoErrorWhileEdit) {
+      if (link.substring(0, allowedUrl.length) === allowedUrl) {
+        linkAllowed = true;
+      }
+    }
+    if (linkAllowed) continue;
+
+
     if (allLinks.indexOf(link) >= 0) {
       if ($("img.flag[src='" + link + "']").length === 0) {
         errorLinkTwice = link;

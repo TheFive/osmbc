@@ -1,5 +1,51 @@
 # Changelog
 
+## [3.6.9](https://github.com/TheFive/osmbc/tree/3.6.9) (2021-04-25)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.8a...3.6.9)
+
+**Implemented enhancements:**
+
+- Keep Language flags open or closed to avoid regular reopening [\#867](https://github.com/TheFive/osmbc/issues/867)
+
+**Closed issues:**
+
+- Fix Test Error caused in new User Heatmap [\#877](https://github.com/TheFive/osmbc/issues/877)
+
+## [3.6.8a](https://github.com/TheFive/osmbc/tree/3.6.8a) (2021-04-18)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.8...3.6.8a)
+
+**Fixed bugs:**
+
+- No valid result in calendar if Nominatim is unable to reverse encode [\#875](https://github.com/TheFive/osmbc/issues/875)
+- Generating a Calendar text does not work for a specific language [\#874](https://github.com/TheFive/osmbc/issues/874)
+
+## [3.6.8](https://github.com/TheFive/osmbc/tree/3.6.8) (2021-01-07)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.7...3.6.8)
+
+**Implemented enhancements:**
+
+- Order unsaved labels in "LeftLang" out of shown language [\#865](https://github.com/TheFive/osmbc/issues/865)
+
+**Fixed bugs:**
+
+- Github-Calendar Heatmap displaying undef instead of month names [\#864](https://github.com/TheFive/osmbc/issues/864)
+
+## [3.6.7](https://github.com/TheFive/osmbc/tree/3.6.7) (2020-12-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.6...3.6.7)
+
+**Fixed bugs:**
+
+- Closing an Issue displays OK but does not go to the previous page. [\#862](https://github.com/TheFive/osmbc/issues/862)
+
+**Closed issues:**
+
+- Upgrade email-templates to V8 [\#861](https://github.com/TheFive/osmbc/issues/861)
+- Remove usage of d3 lib [\#860](https://github.com/TheFive/osmbc/issues/860)
+
 ## [3.6.6](https://github.com/TheFive/osmbc/tree/3.6.6) (2020-12-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.5...3.6.6)
@@ -8,7 +54,6 @@
 
 - OSMCAL Integration [\#852](https://github.com/TheFive/osmbc/issues/852)
 - Finalise Nonce instead of unsafe-inline [\#850](https://github.com/TheFive/osmbc/issues/850)
-- Integrate Picture Tool to Article Editor [\#400](https://github.com/TheFive/osmbc/issues/400)
 
 **Fixed bugs:**
 
@@ -392,7 +437,6 @@
 **Implemented enhancements:**
 
 - Enable Translation button for 4 language Editor. [\#726](https://github.com/TheFive/osmbc/issues/726)
-- Welcome To The Team, Mark Guests as Guest and Editors as Editors. [\#722](https://github.com/TheFive/osmbc/issues/722)
 
 ## [3.1.5a](https://github.com/TheFive/osmbc/tree/3.1.5a) (2018-03-01)
 
@@ -499,6 +543,10 @@
 ## [3.1.2](https://github.com/TheFive/osmbc/tree/3.1.2) (2018-01-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.1...3.1.2)
+
+**Implemented enhancements:**
+
+- Welcome To The Team, Mark Guests as Guest and Editors as Editors. [\#722](https://github.com/TheFive/osmbc/issues/722)
 
 **Fixed bugs:**
 
@@ -1428,10 +1476,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6c...1.8.6d)
 
-**Fixed bugs:**
-
-- Unpublish Reasons are broken [\#481](https://github.com/TheFive/osmbc/issues/481)
-
 ## [1.8.6c](https://github.com/TheFive/osmbc/tree/1.8.6c) (2016-06-17)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6b...1.8.6c)
@@ -1478,6 +1522,7 @@
 
 **Fixed bugs:**
 
+- Unpublish Reasons are broken [\#481](https://github.com/TheFive/osmbc/issues/481)
 - wrong link in OSMBC live version ;-\) [\#471](https://github.com/TheFive/osmbc/issues/471)
 
 ## [1.8.5a](https://github.com/TheFive/osmbc/tree/1.8.5a) (2016-06-06)
@@ -1514,15 +1559,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
@@ -1693,6 +1738,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.2...1.6.3)
 
+**Implemented enhancements:**
+
+- Small language display close to title in overview. [\#436](https://github.com/TheFive/osmbc/issues/436)
+
 ## [1.6.2](https://github.com/TheFive/osmbc/tree/1.6.2) (2016-04-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.6.1...1.6.2)
@@ -1726,7 +1775,6 @@
 
 **Implemented enhancements:**
 
-- Small language display close to title in overview. [\#436](https://github.com/TheFive/osmbc/issues/436)
 - Change to translation feature in collect to main language displayed. [\#428](https://github.com/TheFive/osmbc/issues/428)
 - Put configuration data into database. [\#382](https://github.com/TheFive/osmbc/issues/382)
 

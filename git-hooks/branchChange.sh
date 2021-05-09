@@ -7,6 +7,7 @@
 
 changedFiles="$(git diff-tree -r --name-only --no-commit-id $1 $2)"
 
+
 runOnChange() {
 	echo "$changedFiles" | grep -q "$1" && eval "$2"
 }

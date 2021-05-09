@@ -25,14 +25,13 @@ const slackrouter  = require("./routes/slack").router;
 const changes      = require("./routes/changes").router;
 const blog         = require("./routes/blog").router;
 const tool         = require("./routes/tool").router;
-const calendar     = require("./routes/tool").publicRouter;
 const api          = require("./routes/api").publicRouter;
 const layout       = require("./routes/layout").router;
 const configRouter = require("./routes/config").router;
 const logger       = require("./config.js").logger;
 const auth         = require("./routes/auth.js");
 
-const fileUpload = require('express-fileupload');
+const fileUpload = require("express-fileupload");
 
 
 
@@ -41,18 +40,18 @@ const fileUpload = require('express-fileupload');
 
 // Initialise config Module and variables
 config.initialise();
-let htmlRoot = config.htmlRoot();
+const htmlRoot = config.htmlRoot();
 logger.info("Express Routes set to: SERVER" + htmlRoot);
 
 
 
 
-var app = express();
+const app = express();
 
 
 app.locals.htmlroot = config.htmlRoot();
-app.locals.appName  = config.getValue("AppName", {mustExist: true});
-app.locals.path     = require("./routes/layout").path;
+app.locals.appName = config.getValue("AppName", { mustExist: true });
+app.locals.path = require("./routes/layout").path;
 app.locals.stylesheet = config.getValue("style");
 app.locals._path = path;
 
@@ -70,17 +69,17 @@ app.use((req, res, next) => {
     directives: {
       defaultSrc: ["'self'"],
       objectSrc: ["'none'"],
-      imgSrc: ["*","data:"],
-      styleSrc:["'self' 'unsafe-inline'"] ,
+      imgSrc: ["*"],
+      styleSrc: ["'self' 'unsafe-inline'"],
       upgradeInsecureRequests: [],
-      scriptSrc: ["'self'","'unsafe-inline'" ] //,`'nonce-${res.locals.cspNonce}'`
-    },
+      scriptSrc: ["'self'", "'unsafe-inline'"] //, `'nonce-${res.locals.cspNonce}'`
+    }
   });
   cspMiddleware(res, res, next);
 });
 app.use(
   helmet.referrerPolicy({
-    policy: "same-origin",
+    policy: "same-origin"
   })
 );
 
@@ -102,25 +101,25 @@ app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 app.use(cookieParser());
 
 
-app.use(fileUpload({safeFileNames:true,preserveExtension:true,abortOnLimit:true,limits: { fileSize: 50 * 1024 * 1024 }}));
+app.use(fileUpload({ safeFileNames: true, preserveExtension: true, abortOnLimit: true, limits: { fileSize: 50 * 1024 * 1024 } }));
 
 
 morgan.token("OSMUser", function (req) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user"; });
 
 
-morgan.token('remote-addr', function (req) {
-  return req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+morgan.token("remote-addr", function (req) {
+  return req.headers["x-real-ip"] || req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 });
 
-let logInfoTemplate = config.getValue("logInfoTemplate",{mustExist: true});
+const logInfoTemplate = config.getValue("logInfoTemplate", { mustExist: true });
 
 if (app.get("env") !== "test") {
   app.use(morgan(logInfoTemplate, { stream: logger.stream }));
 }
 if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
-  app.use(morgan(logInfoTemplate, { immediate:true }));
-  app.use(function(req,res,next){
-    console.info("Cookies: ",req.cookies);
+  app.use(morgan(logInfoTemplate, { immediate: true }));
+  app.use(function(req, res, next) {
+    console.info("Cookies: ", req.cookies);
     next();
   });
 }
@@ -141,7 +140,6 @@ app.use(htmlRoot + "/bower_components/moment", express.static(path.join(__dirnam
 
 app.use(htmlRoot, express.static(path.join(__dirname, "public")));
 
-app.use(htmlRoot, calendar);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -157,7 +155,7 @@ app.use(htmlRoot + "/slack", slackrouter);
 
 
 // maxAge for not logged in user cookies is 10 minutes
-let cookieMaxAge = 1000*60*10;
+const cookieMaxAge = 1000 * 60 * 10;
 
 
 
@@ -168,11 +166,11 @@ const sessionstore = require("./routes/sessionStore.js")(session);
 app.use(session(
   {
     store: sessionstore,
-    name: config.getValue("SessionName", {mustExist: true}),
-    secret: config.getValue("SessionSecret", {mustExist: true}),
+    name: config.getValue("SessionName", { mustExist: true }),
+    secret: config.getValue("SessionSecret", { mustExist: true }),
     resave: true,
     saveUninitialized: true,
-    cookie: {maxAge: cookieMaxAge}
+    cookie: { maxAge: cookieMaxAge }
   }
 ));
 
@@ -186,7 +184,7 @@ function renderLogin(req, res) {
   debug("renderLogin");
   res.render("login");
 }
-app.get(htmlRoot+"/login",renderLogin);
+app.get(htmlRoot + "/login", renderLogin);
 
 // GET /auth/openstreetmap
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -201,7 +199,7 @@ app.get(htmlRoot + "/auth/openstreetmap", auth.passport.authenticate("openstreet
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 app.get(htmlRoot + "/auth/openstreetmap/callback",
-  auth.passport.authenticate("openstreetmap", {failureRedirect: "/login"}),
+  auth.passport.authenticate("openstreetmap", { failureRedirect: "/login" }),
   function(req, res) {
     debug("after passport.authenticate Function");
     res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
@@ -231,7 +229,7 @@ app.use(htmlRoot + "/config", configRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   debug("app.use Error Handler");
-  var err = new Error("Page Not Found "+ req.url);
+  const err = new Error("Page Not Found " + req.url);
   err.status = 404;
   next(err);
 });
@@ -255,7 +253,7 @@ if (app.get("env") === "development") {
       message: err.message,
       error: err,
       nonce: res.locals.cspNonce,
-      layout: {htmlroot: htmlRoot}
+      layout: { htmlroot: htmlRoot }
     });
   });
   /* jshint +W098 */
@@ -278,7 +276,7 @@ if (app.get("env") === "test") {
       message: err.message,
       error: err,
       nonce: res.locals.cspNonce,
-      layout: {htmlroot: htmlRoot}
+      layout: { htmlroot: htmlRoot }
     });
   });
   /* jshint +W098 */
@@ -297,7 +295,7 @@ app.use(function(err, req, res, next) {
   res.render("error", {
     message: (err) ? err.message : "no err object",
     error: { detail: (err) ? err.detail : "no err object" },
-    layout: {htmlroot: htmlRoot}
+    layout: { htmlroot: htmlRoot }
   });
 });
 /* jshint +W098 */

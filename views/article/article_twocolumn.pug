@@ -76,12 +76,6 @@ block markdownArea
 
 
 
-
-    .row
-      .col-md-6
-        i#languageFlagsShow.fa.fa-flag.fa-2x(
-        onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('d-none');")
-
     .row#languageFlags.d-none
       .col-md-6
         - for (lang in languageFlags)
