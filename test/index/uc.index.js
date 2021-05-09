@@ -47,12 +47,12 @@ describe("uc/index", function() {
     describe("Homepage", function() {
       it("should find welcome text on Homepage", async function() {
         await browser.visit("/osmbc");
-        browser.assert.text("h2", "Welcome to OSM BCOSM BC");
+        browser.assert.text("h2", "Welcome to OSM BC");
       });
       it("should have bootstrap.js loaded", async function() {
         this.timeout(6000);
         await browser.visit("/osmbc");
-        should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
+        should(browser.evaluate("$.fn.tooltip.Constructor.VERSION")).be.equal("ddd");
       });
     });
     describe("Admin Homepage", function() {

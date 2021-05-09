@@ -70,8 +70,9 @@ exports.findJSON = function findJSON(table, obj, cb) {
 // the function requires the test environment
 
 exports.clearDB = function clearDB(done) {
-  should(config.env).equal("test");
+  
   function _clearDB(done) {
+    should(config.env).equal("test");
     messageCenter.initialise();
     should.exist(messageCenter.global);
 
