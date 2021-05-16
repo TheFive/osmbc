@@ -12,7 +12,7 @@
     "async": "3.2.x",
     "axios": "0.21.x",
     "body-parser": "1.19.x",
-    "bootstrap": "4.5.x",
+    "bootstrap": "^4.5.3",
     "bootstrap-select": "^1.13.18",
     "cheerio": "0.22.x",
     "colors": "1.4.x",

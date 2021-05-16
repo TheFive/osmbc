@@ -51,7 +51,7 @@
   "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
   "htmlroot":"",
   "style":"file://users/Users/TheFive.osm/development/osmbc/public/stylesheets/style.css",
-  "bootstrap":"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5",
+  "bootstrap":"http://maxcdn.bootstrapcdn.com/bootstrap/4.5.3",
   "jquery":"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1",
   "font_awesome":"https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0",
   "ReviewInWP":["DE"],
