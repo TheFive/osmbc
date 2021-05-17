@@ -219,11 +219,11 @@ mixin articleIconLegend(view)
 mixin userConfigOption(view,option,variable,userdesc)
   span(style="white-space: nowrap")
     if variable
-      div.form-group.form-check(onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'false'});`)
+      div.form-group.form-check(name="choose_"+option,onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'false'});`)
         input.form-check-input#exampleCheck1(type="checkbox" checked)
         label.form-check-label(for="exampleCheck1")=userdesc
     else
-      div.form-group.form-check(onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'true'});`)
+      div.form-group.form-check(name="choose_"+option,onclick=`window.setUserConfig({view:'${view}',option:'${option}',value:'true'});`)
         input.form-check-input#exampleCheck1(type="checkbox" )
         label.form-check-label(for="exampleCheck1")=userdesc
     
@@ -300,7 +300,8 @@ mixin helpMenu
       | Help
     div.dropdown-menu(aria-labelledby="helpDropdown")
       a.dropdown-header OSMBC
-      a.dropdown-item(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md")="Version "+layout.osmbc_version
+      if (layout)
+        a.dropdown-item(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md")="Version "+layout.osmbc_version
       a.dropdown-item(href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help") Help
       div.dropdown-divider
       a.dropdown-header WeeklyOSM & Wochennotiz
@@ -316,28 +317,30 @@ mixin homeButton(addclass)
     a.bg-success(href=layout.htmlroot+'/changelog' class=addclass) What's New?
     
 mixin langChooser(langString)
-  - let l = "language"
-  - let label = "osmbcbadge-lang"
-  if (langString === "lang2")
-    - l = "language2"
-    - label = "osmbcbadge-lang2"
-  - let langNumber = parseInt(langString.substr(4,2))    
-  if (langNumber > 2)
-    - l = "language"+langNumber
-    - label = "badge-secondary"
-    
+  if (layout)
+    - let l = "language"
+    - let label = "osmbcbadge-lang"
+    if (langString === "lang2")
+      - l = "language2"
+      - label = "osmbcbadge-lang2"
+    - let langNumber = parseInt(langString.substr(4,2))    
+    if (langNumber > 2)
+      - l = "language"+langNumber
+      - label = "badge-secondary"
+      
 
-  li.dropdown.nav-item
-    a.nav-link.dropdown-toggle(id=l, class=label, href='#', style="color:white", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=(layout[l])?layout[l]:"--"
-    div.dropdown-menu(aria-labelledby=l)
-      if (langString !== "lang")
-        a.dropdown-item(id=langString+"_none" onclick = "chooseLanguage('" + langString +"','none')" ) none
-      each litem in layout.languages
-        if layout.usedLanguages[litem]
-          a.dropdown-item(id=langString+"_"+litem onclick = "chooseLanguage('" + langString +"','" + litem +"')")=litem    
+    li.dropdown.nav-item
+      a.nav-link.dropdown-toggle(id=l, class=label, href='#', style="color:white", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=(layout[l])?layout[l]:"--"
+      div.dropdown-menu(aria-labelledby=l)
+        if (langString !== "lang")
+          a.dropdown-item(id=langString+"_none" onclick = "chooseLanguage('" + langString +"','none')" ) none
+        each litem in layout.languages
+          if layout.usedLanguages[litem]
+            a.dropdown-item(id=langString+"_"+litem onclick = "chooseLanguage('" + langString +"','" + litem +"')")=litem 
+            - console.log(langString+"_"+litem)   
           
 mixin userAvatar
-  if layout.user
+  if layout && layout.user
     li
       img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';" style="height:40px;width:40px")
   else

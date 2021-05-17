@@ -173,13 +173,13 @@ describe("uc/blog", function() {
         let errors = [];
         await browser.visit("/blog/WN290");
         browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview"),
-        await browser.click('span[name="choose_showNumbers"]'),
-        await browser.click('span[name="choose_showMail"]'),
-        await browser.click('span[name="choose_showVisibleLanguages"]'),
-        await browser.click('span[name="choose_showCollector"]'),
-        await browser.click('span[name="choose_showEditor"]'),
-        await browser.click('span[name="choose_showColoredUser"]'),
-        await browser.click('span[name="choose_showLanguages"]'),
+        await browser.click('div[name="choose_showNumbers"]'),
+        await browser.click('div[name="choose_showMail"]'),
+        await browser.click('div[name="choose_showVisibleLanguages"]'),
+        await browser.click('div[name="choose_showCollector"]'),
+        await browser.click('div[name="choose_showEditor"]'),
+        await browser.click('div[name="choose_showColoredUser"]'),
+        await browser.click('div[name="choose_showLanguages"]'),
         browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview_withglab");
 
         //

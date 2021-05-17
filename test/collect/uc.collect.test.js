@@ -68,7 +68,9 @@ describe("uc/collect", function() {
     it("should search and store collected article", async function() {
       await browser.visit("/article/create");
       browser.fill("search", "searchfor");
+      
       await browser.pressButton("SearchNow");
+      
       browser.fill("title", "Test Title for Article");
       await browser.pressButton("OK");
       browser.assert.expectHtmlSync("collect","editPageAfterCollect");

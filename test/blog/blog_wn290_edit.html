@@ -1,1 +1,481 @@
-to be renewed
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+    <title>TESTBC</title>
+    <!-- Bootstrap core CSS-->
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Fixed navbar-->
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
+      <ul class="navbar-nav mr-auto"></ul>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a>
+          </li>
+          <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge badge-pill badge-pill osmbcbadge-lang">1</span></a></li>
+          <li class="navbar-item active">
+          </li>
+          <li class="navbar-item active d-none d-xs-block"><a class="nav-link" href="/blog/WN290">WN290<span class="badge badge-pill osmbcbadge-lang">0</span><span class="badge badge-pill osmbcbadge-lang2">0</span></a></li>
+          <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
+            <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" href="/article/search">Search</a><a class="dropdown-item" href="/article/list?myArticles=true">My Empty Collections</a>
+              <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" href="/article/list?blog=Future">Future</a><a class="dropdown-item" href="/article/list?blog=">No Blog</a>
+            </div>
+          </li>
+          <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
+            <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown">
+              <div class="dropdown-divider"></div><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
+              <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
+            </div>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
+            <div class="dropdown-menu" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a><a class="dropdown-item" href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a>
+              <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotitz in OSM Wiki</a><a class="dropdown-item" href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a>
+            </div>
+          </li>
+          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
+            <div class="dropdown-menu" aria-labelledby="language"><a class="dropdown-item" id="lang_DE" onclick="chooseLanguage('lang','DE')">DE</a><a class="dropdown-item" id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a><a class="dropdown-item" id="lang_ES" onclick="chooseLanguage('lang','ES')">ES</a>
+            </div>
+          </li>
+          <li><img onclick="location.href='/usert/2';" style="height:40px;width:40px"></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <p>
+        </p><p>
+          </p><div class="row">
+            <div class="col">
+              <p>Name</p>
+            </div>
+            <div class="col">
+              <h2>WN290</h2>
+            </div>
+            <div class="col"> </div>
+            <div class="col"><a class="btn btn-primary" id="edit" href="/blog/edit/WN290?edit=true" role="button">Edit</a><a class="btn btn-secondary" href="/article/list?blog=WN290">List of all articles</a></div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p>Period</p>
+            </div>
+            <div class="col">
+              <p>Dienstag, 2. Februar 2016 23:59 CET</p>
+            </div>
+            <div class="col">
+              <p>Montag, 8. Februar 2016 23:59 CET</p>
+            </div>
+            <div class="col"> </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p>Status</p>
+            </div>
+            <div class="col">
+              <h1><span class="badge badge-secondary">edit</span></h1>
+            </div>
+            <div class="col"></div>
+            <div class="col">  </div>
+          </div>
+          <div class="row">
+            <table class="table">
+              <tbody><tr>
+                <th>Language</th>
+                <th>Status</th>
+                <th>Review Start</th>
+                <th>Review Start Time</th>
+                <th>Review</th>
+                <th>Download</th>
+                <th>Close</th>
+                <th>Special</th>
+              </tr>
+              <tr>
+                <td><span class="badge badge-secondary">DE</span></td>
+                <td>
+                  <div class="badge badge-pill osmbclabel-reviewblog">6</div>
+                </td>
+                <td><span class="badge small-margin osmbclabel-reviewblog">wambacher</span>
+                </td>
+                <td>
+                  <div>02/10/2016</div>
+                </td>
+                <td><span class="badge small-margin osmbclabel-reviewblog">wambacher</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span><span class="badge small-margin osmbclabel-reviewblog">Peda</span><span class="badge small-margin osmbclabel-reviewblog">Nakaner</span><span class="badge small-margin osmbclabel-reviewblog">TheFive</span><span class="badge small-margin osmbclabel-reviewblog">Nakaner</span>
+                </td>
+                <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=DE';"></i>
+                </td>
+                <td>
+                  <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
+                    <input class="d-none" type="text" name="lang" value="DE">
+                  </form>
+                </td>
+                <td>
+                  <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
+                    <input class="d-none" type="text" name="lang" value="DE">
+                    <input class="d-none" type="text" name="action" value="deleteallreviews">
+                    <div class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</div>
+                  </form>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-secondary">EN</span></td>
+                <td>
+                  <div class="badge badge-pill osmbclabel-reviewblog">3</div>
+                </td>
+                <td><span class="badge small-margin osmbclabel-reviewblog">bogzab</span>
+                </td>
+                <td>
+                  <div>02/10/2016</div>
+                </td>
+                <td><span class="badge small-margin osmbclabel-reviewblog">bogzab</span><span class="badge small-margin osmbclabel-reviewblog">elpbatista</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span><span class="badge small-margin osmbclabel-reviewblog">jinalfoflia</span>
+                </td>
+                <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=EN';"></i>
+                </td>
+                <td>
+                  <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
+                    <input class="d-none" type="text" name="lang" value="EN">
+                    <input class="d-none" type="text" name="action" value="closelang">
+                    <div class="btn btn-sm btn-warning" id="closebutton" type="submit">Close WN290(EN)</div>
+                  </form>
+                </td>
+                <td>
+                  <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
+                    <input class="d-none" type="text" name="lang" value="EN">
+                    <input class="d-none" type="text" name="action" value="deleteallreviews">
+                    <div class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</div>
+                  </form>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-secondary">ES</span></td>
+                <td>
+                  <div class="badge badge-pill osmbclabel-reviewblog">1</div>
+                </td>
+                <td><span class="badge small-margin osmbclabel-reviewblog">aalih</span>
+                </td>
+                <td>
+                  <div>02/10/2016</div>
+                </td>
+                <td><span class="badge small-margin osmbclabel-reviewblog">aalih</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span>
+                </td>
+                <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=ES';"></i>
+                </td>
+                <td>
+                  <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
+                    <input class="d-none" type="text" name="lang" value="ES">
+                    <input class="d-none" type="text" name="action" value="closelang">
+                    <div class="btn btn-sm btn-warning" id="closebutton" type="submit">Close WN290(ES)</div>
+                  </form>
+                </td>
+                <td>
+                  <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
+                    <input class="d-none" type="text" name="lang" value="ES">
+                    <input class="d-none" type="text" name="action" value="deleteallreviews">
+                    <div class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</div>
+                  </form>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-secondary">PT-PT</span></td>
+                <td>
+                  <div class="badge badge-pill osmbclabel-editblog">63</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=PT-PT';"></i><span> </span><i class="fa fa-exclamation-triangle"></i>
+                </td>
+                <td>
+                  <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
+                    <input class="d-none" type="text" name="lang" value="PT-PT">
+                    <input class="d-none" type="text" name="action" value="closelang">
+                    <div class="btn btn-sm btn-warning" id="closebutton" type="submit">Close WN290(PT-PT)</div>
+                  </form>
+                </td>
+                <td>
+                </td>
+              </tr>
+            </tbody></table>
+          </div>
+          <div class="row">
+            <div class="col">Categories</div>
+            <div class="col">
+              <pre>- DE: '-- noch keine Kategorie --'
+  EN: '-- no category yet --'
+  ES: '-- no category yet --'
+  PT: '-- no category yet --'
+  TR: '-- no category yet --'
+  RU: '-- no category yet --'
+  CZ: '-- no category yet --'
+  JP: '-- no category yet --'
+  FR: '-- no category yet --'
+  ID: '-- no category yet --'
+- DE: Bild
+  EN: Picture
+  ES: Picture
+  PT: Picture
+  TR: Picture
+  RU: Picture
+  CZ: Picture
+  JP: Picture
+  FR: Picture
+  ID: Picture
+- DE: '[Aktuelle Kategorie]'
+  EN: '[Actual Category]'
+  ES: '[Corriente]'
+  PT: '[Categoria atual]'
+  TR: '[Actual Category]'
+  RU: '[Текущая категория]'
+  CZ: '[Actual Category]'
+  JP: '[Actual Category]'
+  FR: '[Actual Category]'
+  ID: '[Actual Category]'
+- DE: In eigener Sache
+  EN: About us
+  ES: Acerca de nosotros
+  PT: Sobre nós
+  TR: Hakkımızda
+  RU: О нас
+  CZ: About us
+  JP: 私たちについて
+  FR: About us
+  ID: About us
+- DE: Wochenaufruf
+  EN: 'Weekly exerciseEN:'
+  ES: Not Translated
+  PT: Não traduzido
+  TR: Not Translated
+  RU: Еженедельные заданияАнгл
+  CZ: Not Translated
+  JP: Not Translated
+  FR: 'Weekly exerciseEN:'
+  ID: 'Weekly exerciseEN:'
+- DE: Mapping
+  EN: Mapping
+  ES: Mapeando
+  PT: Mapeamento
+  TR: Haritalama
+  RU: Картографирование
+  CZ: Mapování
+  JP: マッピング
+  FR: Mapping
+  ID: Mapping
+- DE: Community
+  EN: Community
+  ES: Comunidad
+  PT: Comunidade
+  TR: Topluluk
+  RU: Сообщество
+  CZ: Komunita
+  JP: コミュニティ
+  FR: Community
+  ID: Community
+- DE: Importe
+  EN: Imports
+  ES: Importaciones
+  PT: Importações
+  TR: ' İçe Aktarımlar'
+  RU: Импорты
+  CZ: Imports
+  JP: インポート
+  FR: Imports
+  ID: Imports
+- DE: OpenStreetMap Foundation
+  EN: OpenStreetMap Foundation
+  ES: Fundación OpenStreetMap
+  PT: Fundação OpenStreetMap
+  TR: OpenStreetMap Foundation
+  RU: Фонд OpenStreetMap
+  CZ: OpenStreetMap Foundation
+  JP: OpenStreetMap Foundation
+  FR: OpenStreetMap Foundation
+  ID: OpenStreetMap Foundation
+- DE: Veranstaltungen
+  EN: Events
+  ES: Eventos
+  PT: Eventos
+  TR: Etkinlikler
+  RU: События
+  CZ: Události
+  JP: イベント
+  FR: Events
+  ID: Events
+- DE: Humanitarian OSM
+  EN: Humanitarian OSM
+  ES: OSM Humanitario
+  PT: OSM Humanitário
+  TR: İnsani OSM
+  RU: Гуманитарный OSM
+  CZ: Humanitární OSM
+  JP: OSM人道支援
+  FR: Humanitarian OSM
+  ID: Humanitarian OSM
+- DE: Karten
+  EN: Maps
+  ES: Mapas
+  PT: Mapas
+  TR: Haritalar
+  RU: Карты
+  CZ: Mapy
+  JP: 地図
+  FR: Maps
+  ID: Maps
+- DE: switch2OSM
+  EN: switch2OSM
+  ES: switch2OSM
+  PT: switch2OSM
+  TR: switch2OSM
+  RU: switch2OSM
+  CZ: switch2OSM
+  JP: switch2OSM
+  FR: switch2OSM
+  ID: switch2OSM
+- DE: Open-Data
+  EN: Open Data
+  ES: Datos Abiertos
+  PT: Dados abertos
+  TR: Özgür Veri
+  RU: Открытые данные
+  CZ: Otevřená Data
+  JP: オープンデータ
+  FR: Open Data
+  ID: Open Data
+- DE: Lizenzen
+  EN: Licences
+  ES: Licencias
+  PT: Licenças
+  TR: Lisanslar
+  RU: Лицензии
+  CZ: Licences
+  JP: ライセンス
+  FR: Licences
+  ID: Licences
+- DE: Programme
+  EN: Software
+  ES: Software
+  PT: Software
+  TR: Yazılım
+  RU: Программы
+  CZ: Software
+  JP: ソフトウェア
+  FR: Software
+  ID: Software
+- DE: Programmierung
+  EN: Programming
+  ES: Software
+  PT: Desenvolvimento
+  TR: Programlama
+  RU: Программирование
+  CZ: Programming
+  JP: ソフトウェア
+  FR: Programming
+  ID: Programming
+- DE: Releases
+  EN: Releases
+  ES: Releases
+  PT: Releases
+  TR: Releases
+  RU: Releases
+  CZ: Releases
+  JP: Releases
+  FR: Releases
+  ID: Releases
+- DE: Kennst Du schon …
+  EN: Did you know …
+  ES: Sabías que …
+  PT: Você sabia...
+  TR: Biliyor muydunuz?…
+  RU: 'А вы знаете … '
+  CZ: Věděli jste …
+  JP: …ご存知でしたか？
+  FR: Did you know …
+  ID: Did you know …
+- DE: Weitere Themen mit Geo-Bezug
+  EN: Other “geo” things
+  ES: Otras cosas “geo”
+  PT: Outras coisas “geo”
+  TR: Diğer “yersel” şeyler
+  RU: Другие “гео” события
+  CZ: Ostatní “geo” záležitosti
+  JP: その他の “ジオ” な事柄
+  FR: Other “geo” things
+  ID: Other “geo” things
+- DE: Wochenvorschau
+  EN: Upcoming Events
+  ES: Próximos eventos
+  PT: Próximos eventos
+  TR: Gelecek etkinlikler
+  RU: Предстоящие события
+  CZ: blížící se akce
+  JP: Upcoming Events
+  FR: Upcoming Events
+  ID: Upcoming Events
+- DE: '--unpublished--'
+  EN: '--unpublished--'
+  ES: '--unpublished--'
+  PT: '--não publicado--'
+  TR: '--unpublished--'
+  RU: '--не опубликовано--'
+  CZ: '--unpublished--'
+  JP: '--unpublished--'
+  FR: '--unpublished--'
+  ID: '--unpublished--'
+</pre>
+            </div>
+            <div class="col"></div>
+            <div class="col">    </div>
+          </div>
+        <p></p>
+      <p></p>
+    </div>
+    <!-- /container-->
+    <!-- Bootstrap core JavaScript-->
+    <!-- ==================================================-->
+    <!-- Placed at the end of the document so the pages load faster-->
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+  
+
+
+  
+    <title></title>
+    <link rel="stylesheet" href="file://users/Users/TheFive.osm/development/osmbc/public/stylesheets/style.css">
+  
+  
+
+<script nonce="Fixed Nonce for Test">
+  // Init This Window with jQuery ready Callback
+  $(document).ready(init2);
+  function init2() {
+    $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
+  }
+  function chooseLanguage(number,lang) {
+    var data = {};
+    data[number]=lang;
+    jQuery.post("/language",data, function () {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Problem changing language " +  number + " " + lang);
+      console.error(err);
+    });
+  }
+  function setUserConfig(options) {
+    jQuery.post("/setuserconfig/",options, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble saveing User Config");
+      console.error(err);
+    });
+  }   
+  
+</script></body></html>

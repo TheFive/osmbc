@@ -72,7 +72,11 @@ exports.findJSON = function findJSON(table, obj, cb) {
 exports.clearDB = function clearDB(done) {
   
   function _clearDB(done) {
-    should(config.env).equal("test");
+    if (config.env !== "test") {
+      console.error("Running Tests with but environment is: ",config.env);
+      console.error("Stopping to rescue database");
+      process.exit(1);
+    }
     messageCenter.initialise();
     should.exist(messageCenter.global);
 

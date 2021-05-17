@@ -46,15 +46,16 @@ mixin tbcMenu
                 span.badge.badge-pill.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
 
 mixin inboxMenu
-  li.navbar-item.active
-     a.nav-link#inbox(href=layout.htmlroot + '/usert/inbox')="Inbox "
-       if (layout.userMentions > 0)
-         span.badge.badge-pill.osmbcbadge-user=layout.userMentions
-       if (layout.user.hasFullAccess())
-         if (layout.mainLangMentions > 0)
-           span.badge.badge-pill.badge-pill.osmbcbadge-lang=layout.mainLangMentions
-         if (layout.secondLangMentions > 0)
-           span.badge.badge-pill.osmbcbadge-lang2=layout.secondLangMentions
+  if (layout)
+    li.navbar-item.active
+      a.nav-link#inbox(href=layout.htmlroot + '/usert/inbox')="Inbox "
+        if (layout.userMentions > 0)
+          span.badge.badge-pill.osmbcbadge-user=layout.userMentions
+        if (layout.user.hasFullAccess())
+          if (layout.mainLangMentions > 0)
+            span.badge.badge-pill.badge-pill.osmbcbadge-lang=layout.mainLangMentions
+          if (layout.secondLangMentions > 0)
+            span.badge.badge-pill.osmbcbadge-lang2=layout.secondLangMentions
 
 mixin articleMenu
   if (layout && layout.user.hasFullAccess())
