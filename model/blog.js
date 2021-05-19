@@ -458,10 +458,14 @@ function autoCloseBlog(callback) {
 function convertLogsToTeamString(logs, lang, users) {
   debug("convertLogsToTeamString");
   const editors = [];
+  const apiEditors = [];
+  for (const f in translator) {
+    apiEditors.push(translator[f].user);
+  }
   function addEditors(property, min) {
     for (const user in logs[property]) {
       if (logs[property][user] >= min) {
-        if (editors.indexOf(user) < 0) {
+        if (editors.indexOf(user) < 0 && apiEditors.indexOf(user) < 0) {
           editors.push(user);
         }
       }
