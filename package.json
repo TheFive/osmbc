@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "NODE_ENV=development node ./bin/www",
-    "test": "NODE_ENV=test mocha"
+    "test": "NODE_ENV=test mocha",
+    "staticHtmlServer": "NODE_ENV=development node ./staticFileServer.js"
   },
   "dependencies": {
     "animated-gif-detector": "1.2.x",
