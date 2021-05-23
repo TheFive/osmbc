@@ -430,13 +430,21 @@ exports.stopServer = function stopServer(callback) {
 };
 
 exports.getBrowser = function getBrowser() {
-  if (!browser) browser = new Browser({ site: "http://localhost:" + config.getServerPort() });
+  if (!browser) {
+      browser = new Browser({ site: "http://localhost:" + config.getServerPort() });
+    browser.on("loaded",function() {
+      browser.evaluate("window").DOMParser = require("xmldom").DOMParser;
+    });
+  }
   return browser;
 };
 
 exports.getNewBrowser = function getNewBrowser(userString) {
   return new Promise((resolve) => {
     let browser = new Browser({ maxWait: 120000, site: "http://localhost:" + config.getServerPort() });
+    browser.on("loaded",function() {
+      browser.evaluate("window").DOMParser = require("xmldom").DOMParser;
+    });
     if (!userString) return resolve(browser);
     should.exist(userString);
     fakeNextPassportLogin(userString);

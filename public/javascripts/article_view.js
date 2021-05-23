@@ -81,7 +81,7 @@ function init() {
     .change(FitToContent)
     .keyup(FitToContent)
     .trigger("change");
-  $('[data-toggle="tooltip"]').tooltip();
+  // $('[data-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;
   window.getEventTable = getEventTable;

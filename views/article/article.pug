@@ -111,7 +111,7 @@ block content
 
 
     // Display Unpublish Reason Row
-    div.form-group.row.d-none(id="unpublishReasonRow")
+    div.form-group.row.d-none#unpublishReasonRow
       label.col-md-1="Unpublish Reason"
       .col-md-5
         textarea.d-none.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true)=article.unpublishReason
@@ -127,7 +127,7 @@ block content
 
 
     // Display Collection Row
-    div.form-group.row
+    div.form-group.row#CollectionRow
       .col-md-1
       .col-md-11
         if (collectedByGuest && layout.user.access !== "guest")
@@ -142,7 +142,7 @@ block content
         div.badge.badge-danger#collection_unsaved(style="display:none")="unsaved"
         textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection"))=article.collection
         textarea.d-none.form-control(id="old_collection" name="old_collection",rows=1,hide=true)=article.collection
-    div.form-group.row
+    div.form-group.row#LinkArea
       .col-md-1
 
       .col-md-6
@@ -150,8 +150,9 @@ block content
       .col-md-4
         p.osmbc-help-text Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
 
-
+    // display Markdown Blog
     block markdownArea
+    // End Markdown Blog
 
 
 

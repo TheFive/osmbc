@@ -1,8 +1,11 @@
+"use strict";
+
 /* eslint-disable quotes */
 const express = require('express');
 const app = express();
 const path = require("path");
 const PORT = 3032;
+var serveIndex = require('serve-index');
 
 
 app.use("/bower_components/bootstrap", express.static(path.join(__dirname, "/node_modules/bootstrap")));
@@ -17,6 +20,7 @@ app.use("/bower_components/moment", express.static(path.join(__dirname, "/node_m
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", express.static(path.join(__dirname, "test")));
+app.use('/', serveIndex(__dirname + '/test'));
 
 try {
   app.listen(PORT, () => console.log(`Server listening on port: ${PORT}`));

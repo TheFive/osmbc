@@ -437,10 +437,10 @@ User.prototype.getLang = function getLang(i) {
   debug("User.prototype.getLang");
   if (!this.langArray) {
     this.langArray = [];
-    this.langArray[0] = this.mainLang;
-    this.langArray[1] = this.secondLang;
-    this.langArray[2] = this.lang3;
-    this.langArray[3] = this.lang4;
+    this.langArray[0] = this.getMainLang();
+    this.langArray[1] = this.getSecondLang();
+    this.langArray[2] = this.getLang3();
+    this.langArray[3] = this.getLang4();
   }
   return (this.langArray[i]);
 };

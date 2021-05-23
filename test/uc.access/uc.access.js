@@ -4,6 +4,7 @@
 
 const mockdate = require("mockdate");
 const testutil = require("../testutil.js");
+const fs = require("fs");
 
 
 var userModule = require("../../model/user.js");
@@ -57,7 +58,7 @@ describe("uc.access", function() {
     bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullBlogList");
 
     // Collect an article, search input before
-    await bTheFive.click("ul.nav.navbar-nav.pull-left li a");
+    await bTheFive.click("#collect");
     bTheFive.fill("input#searchField", "new Info");
     await bTheFive.click("button[name='SearchNow']");
     bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullCollectPage");
@@ -71,9 +72,11 @@ describe("uc.access", function() {
     bTheFive.fill("textarea[name='collection']", "This is the collection text");
 
     await bTheFive.click("input#OK");
+    console.log(bTheFive.evaluate("$('div' ).map(function() {return this.id;}).get().join()"));
+    fs.writeFileSync("current.html",bTheFive.html(),"utf8");
     bTheFive.select("select#categoryEN", "Mapping");
     bTheFive.fill("#title", "This is a title of a full collected article");
-    bTheFive.fill("textarea[name='markdownEN']", "This is the written text.");
+    bTheFive.fill("#markdownEN", "This is the written text.");
 
     await bTheFive.click("button#saveButton");
     bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullArticlePage");
@@ -144,7 +147,7 @@ describe("uc.access", function() {
     browser.assert.expectHtmlSync(errors, "uc.access", "UnkownGuestStartPage");
 
     // Collect an article, search input before
-    await browser.click("ul.nav.navbar-nav.pull-left li a");
+    await browser.click("#collect");
     browser.fill("input#searchField", "new Info");
     await browser.click("button[name='SearchNow']");
 

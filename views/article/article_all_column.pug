@@ -4,7 +4,10 @@ extends article
 
 block markdownArea
 
+  // Markdown Area All Column
   .row
+    - console.log("lang array.")
+    - console.dir(layout.user.langArray)
     for lang of layout.user.langArray
       if (lang)
         div.col
@@ -12,7 +15,7 @@ block markdownArea
             +markdownWithPreview(lang)
 
 
-
+  // Language Flags All Column
   .row
     i#languageFlagsShow.fa.fa-flag.fa-2x(
     onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('d-none');")

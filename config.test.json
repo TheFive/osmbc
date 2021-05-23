@@ -50,7 +50,7 @@
   "OPENSTREETMAP_CONSUMER_KEY" : "######",
   "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
   "htmlroot":"",
-  "style":"",
+  "style":"/stylesheets/style.css",
   "bootstrap":"",
   "jquery":"",
   "font_awesome":"https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0",

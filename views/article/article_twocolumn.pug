@@ -13,8 +13,8 @@ block markdownArea
 
 
 
-
-    .row
+    // Markdown Area 2 Columns
+    .row#MarkdownArea
       .col-md-6
           span.badge.badge-secondary(
             id="left_lang"
@@ -24,7 +24,7 @@ block markdownArea
             ondragstart=`ondragstartLangLabel(event,'${params.left_lang}');`)="  " + params.left_lang + "  "
           span.badge.badge-danger(style="display:none" id="markdown" + params.left_lang + "_unsaved" )="unsaved"
 
-          +articleMarkdown(params.left_lang,!article.isChangeAllowed("markdown" + params.left_lang))
+          articleMarkdown(params.left_lang,!article.isChangeAllowed("markdown" + params.left_lang))
           +articlePreview(params.left_lang)
 
       .col-md-6
@@ -75,7 +75,7 @@ block markdownArea
 
 
 
-
+    // Language Flag Area
     .row#languageFlags.d-none
       .col-md-6
         - for (lang in languageFlags)

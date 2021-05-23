@@ -1,6 +1,6 @@
 if !MIXIN_INCLUDE
   include ../mixins
-
+- console.dir(article)
 if (article.commentList)
   .row
     - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]

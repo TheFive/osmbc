@@ -337,7 +337,6 @@ mixin langChooser(langString)
         each litem in layout.languages
           if layout.usedLanguages[litem]
             a.dropdown-item(id=langString+"_"+litem onclick = "chooseLanguage('" + langString +"','" + litem +"')")=litem 
-            - console.log(langString+"_"+litem)   
           
 mixin userAvatar
   if layout && layout.user
