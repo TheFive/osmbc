@@ -204,7 +204,8 @@ describe("uc.article", function() {
   describe("onchangeCollection", function() {
     this.timeout(maxTimer * 3);
     beforeEach(async function() {
-      await browser.click("#lang2_none");
+      fs.writeFileSync("current.html",browser.html(),"utf8");
+      //await browser.click("#lang2_none");
       await browser.visit("/article/" + articleId);
     });
     it("should show the links from collection field under the field", async function() {
@@ -217,7 +218,7 @@ describe("uc.article", function() {
 
         browser.fill("#collection",link);
         await browser.keyUp("#collection", 30);
-        should(browser.document.getElementById("linkArea").innerHTML).equal('<p><a class="label label-default" href="' + linkUrl + '" target="_blank">' + displayUrl + '</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=' + linkUrl + '" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=' + linkUrl + '))\');">DE</a><br>\n</p>');
+        should(browser.document.getElementById("linkArea").innerHTML).equal('Missing Compare String');
       }
     });
     it("should show multiple links from collection field under the field",async function() {
@@ -240,7 +241,7 @@ describe("uc.article", function() {
   describe("onchangeMarkdown", function() {
     this.timeout(maxTimer * 3);
     beforeEach(async function() {
-      await browser.click("#lang2_none");
+      //await browser.click("#lang2_none");
       await browser.visit("/article/" + articleId);
     });
     it("should warn on double links", async function() {

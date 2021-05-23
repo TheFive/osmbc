@@ -67,16 +67,14 @@ mixin labeledSelect(label,name,value,values,displayValues,explanation)
 mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
     - if (!value) value =""
     div.row.mb-3
-      label.col.col-form-label( for=name)=label
+      label.col.col-form-label(for=name)=label
     
       select.col-5.selectpicker(name=name multiple)
         each v,i in values
           if (value.indexOf(v)>=0)
-              option(selected)
-                |#{displayValues[i]}
+              option(selected id = name + "_" + v)=displayValues[i]
           else 
-              option
-                |#{displayValues[i]}  
+              option(id = name + "_" + v)=displayValues[i]
       label.col.d-none.d-md-block.form-text=explanation
 
 

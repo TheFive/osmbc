@@ -130,8 +130,8 @@ describe("views/user", function() {
   });
   it("should save single Options for Mail & Blog Notifications", async function() {
     await browser.visit("/usert/create");
-    browser.evaluate("document.getElementById('mailComment_DE').checked = true");
-    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
+    browser.evaluate("document.getElementById('mailComment_DE').selected = true");
+    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').selected = true");
     await browser
       .fill("OSMUser", "TestUser")
       .fill("EMail", "")
@@ -145,10 +145,10 @@ describe("views/user", function() {
   });
   it("should save two Options for Mail & Blog Notifications", async function() {
     await browser.visit("/usert/create");
-    browser.evaluate("document.getElementById('mailComment_DE').checked = true");
-    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').checked = true");
-    browser.evaluate("document.getElementById('mailComment_EN').checked = true");
-    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_EN').checked = true");
+    browser.evaluate("document.getElementById('mailComment_DE').selected = true");
+    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').selected = true");
+    browser.evaluate("document.getElementById('mailComment_EN').selected = true");
+    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_EN').selected = true");
     await browser
       .fill("OSMUser", "TestUser")
       .fill("EMail", "")

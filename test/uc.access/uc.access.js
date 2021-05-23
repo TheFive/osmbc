@@ -72,8 +72,6 @@ describe("uc.access", function() {
     bTheFive.fill("textarea[name='collection']", "This is the collection text");
 
     await bTheFive.click("input#OK");
-    console.log(bTheFive.evaluate("$('div' ).map(function() {return this.id;}).get().join()"));
-    fs.writeFileSync("current.html",bTheFive.html(),"utf8");
     bTheFive.select("select#categoryEN", "Mapping");
     bTheFive.fill("#title", "This is a title of a full collected article");
     bTheFive.fill("#markdownEN", "This is the written text.");
@@ -102,7 +100,7 @@ describe("uc.access", function() {
     await bGuestUser.assert.elements(adminLinkSelect, 0);
 
     // Collect an article, search input before
-    await bGuestUser.click("ul.nav.navbar-nav.pull-left li a");
+    await bGuestUser.click("#collect");
     bGuestUser.fill("input#searchField", "new Info");
     await bGuestUser.click("button[name='SearchNow']");
     bGuestUser.assert.expectHtmlSync(errors, "uc.access", "guestCollectPage");
