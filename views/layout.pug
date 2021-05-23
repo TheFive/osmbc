@@ -63,14 +63,14 @@ mixin articleMenu
       a.nav-link.dropdown-toggle#articleMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Search
       div.dropdown-menu(aria-labelledby="articleMenuDropdown")
         a.dropdown-header Articles
-        a.dropdown-item(href=layout.htmlroot + '/article/search') Search
-        a.dropdown-item(href=layout.htmlroot + '/article/list?myArticles=true') My Empty Collections
+        a.dropdown-item#articleMenuSearch(href=layout.htmlroot + '/article/search') Search
+        a.dropdown-item#articleMenuEmpty(href=layout.htmlroot + '/article/list?myArticles=true') My Empty Collections
         div.dropdown-divider
         a.dropdown-header Orphaned Article
-        a.dropdown-item(href=layout.htmlroot + '/article/list?blog=Trash') Trash
-        a.dropdown-item(href=layout.htmlroot + '/article/list?blog=TBC') TBC
-        a.dropdown-item(href=layout.htmlroot + '/article/list?blog=Future') Future
-        a.dropdown-item(href=layout.htmlroot + '/article/list?blog=') No Blog
+        a.dropdown-item#articleMenuTrash(href=layout.htmlroot + '/article/list?blog=Trash') Trash
+        a.dropdown-item#articleMenuTBC(href=layout.htmlroot + '/article/list?blog=TBC') TBC
+        a.dropdown-item#articleMenuFuture(href=layout.htmlroot + '/article/list?blog=Future') Future
+        a.dropdown-item#articleMenuNoBlog(href=layout.htmlroot + '/article/list?blog=') No Blog
 
 mixin toolMenu
   if (layout && layout.user.hasFullAccess())

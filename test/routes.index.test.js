@@ -138,7 +138,7 @@ describe("routes/index", function() {
       let user = await userModule.findById(1);
       should(user).eql({
         id: "1",
-        "langArray": [null,null,null, null],
+        "langArray": ["EN",null,null, null],
         OSMUser: "TestUser",
         access: "full",
         version: 2,
