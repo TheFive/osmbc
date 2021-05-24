@@ -2,12 +2,12 @@
 
 
 
-var path     = require("path");
-var fs       = require("fs");
-var debug    = require("debug")("OSMBC:config");
-var assert   = require("assert").strict;
-var env      = process.env.NODE_ENV || "development";
-var winston  = require("winston");
+const path     = require("path");
+const fs       = require("fs");
+const debug    = require("debug")("OSMBC:config");
+const assert   = require("assert").strict;
+const env      = process.env.NODE_ENV || "development";
+const winston  = require("winston");
 
 
 
@@ -15,7 +15,7 @@ var winston  = require("winston");
 
 // Define simple first logger for winston
 
-var logger;
+let logger;
 
 
 // in test mode let transporter stream into nothing, as logging is not
@@ -24,16 +24,16 @@ if (process.env.NODE_ENV === "test" && process.env.TEST_LOG !== "TRUE") {
   logger = winston.createLogger({
     level: "info",
     transports: [
-      new winston.transports.Stream({stream: fs.createWriteStream('/dev/null')})
-    ]});
-  } else {
+      new winston.transports.Stream({ stream: fs.createWriteStream("/dev/null") })
+    ]
+  });
+} else {
   logger = winston.createLogger({
-    level: 'error',
-    format: winston.format.json()});
+    level: "error",
+    format: winston.format.json()
+  });
 
-    logger.add(new winston.transports.Console({
-      format: winston.format.simple()}));
-
+  logger.add(new winston.transports.Console({ format: winston.format.simple() }));
 }
 
 
@@ -46,26 +46,26 @@ logger.stream = {
 
 
 // the configurationfile should be in the "running" directory
-var configurationFile = path.resolve(__dirname, "config." + env + ".json");
-var configuration;
-var configurationInitialised = false;
+const configurationFile = path.resolve(__dirname, "config." + env + ".json");
+let configuration;
+let configurationInitialised = false;
 
 
 
 
 function getPostgresDBString() {
   debug("getPostgresDBString");
-  configuration = exports.getConfiguration();
-  var userString = "";
-  if (configuration.postgres.username !== "") {
-    userString = configuration.postgres.username + ":" + configuration.postgres.password + "@";
+  const conf = exports.getValue("postgres");
+  let userString = "";
+  if (conf.username !== "") {
+    userString = conf.username + ":" + conf.password + "@";
   }
-  var connectStr = "postgres://" +
+  let connectStr = "postgres://" +
               userString +
-              configuration.postgres.database;
-  if ((typeof (configuration.postgres.connectstr) !== "undefined") &&
-      (configuration.postgres.connectstr !== "")) {
-    connectStr = configuration.postgres.connectstr;
+              conf.database;
+  if ((typeof (conf.connectstr) !== "undefined") &&
+      (conf.connectstr !== "")) {
+    connectStr = conf.connectstr;
   }
   if (!connectStr) {
     logger.error("Could not build a connection string for postgres. App is terminating");
@@ -100,7 +100,7 @@ exports.initialise = function initialise(callback) {
     configuration.moment_locale[lang] = lang;
   });
 
-  assert.equal(typeof configuration.languages,"object");
+  assert.equal(typeof configuration.languages, "object");
 
   // Do some corrections, e.g. the languages MUST contain an "EN"
 
@@ -113,14 +113,15 @@ exports.initialise = function initialise(callback) {
 
 
 exports.getConfiguration = function() {
+  assert(false, "Function obsolote use single values");
   exports.initialise();
   return configuration;
 };
 exports.getValue = function(key, options) {
   debug("getValue %s", key);
   exports.initialise();
-  if (options) assert.equal(typeof (options),"object");
-  var result;
+  if (options) assert.equal(typeof (options), "object");
+  let result;
   if (options) {
     result = options.default;
   }
@@ -148,12 +149,13 @@ exports.getValue = function(key, options) {
 };
 
 
-const languages = exports.getValue("languages", {mustExist: true});
-const htmlRoot = exports.getValue("htmlroot", {mustExist: true});
-const url = exports.getValue("url", {mustExist: true});
+const languages = exports.getValue("languages", { mustExist: true });
+const htmlRoot = exports.getValue("htmlroot", { mustExist: true });
+const url = exports.getValue("url", { mustExist: true });
 
 
 exports.getLanguages = function() {
+  assert(false, "Function obsolote");
   return languages;
 };
 
@@ -161,6 +163,7 @@ exports.htmlRoot = function() { return htmlRoot; };
 exports.url = function() { return url; };
 
 exports.moment_locale = function(lang) {
+  assert(false, "Function obsolote");
   return configuration.moment_locale[lang];
 };
 
@@ -169,7 +172,7 @@ exports.moment_locale = function(lang) {
 
 exports.getServerPort = function() {
   exports.initialise();
-  return exports.getValue("serverport", {mustExist: true});
+  return exports.getValue("serverport", { mustExist: true });
 };
 
 exports.getServerKey = function() {
@@ -193,4 +196,4 @@ exports.logger = logger;
 
 
 // deprecate Values
-exports.getValue("diableOldEditor", {deprecated: true});
+exports.getValue("diableOldEditor", { deprecated: true });

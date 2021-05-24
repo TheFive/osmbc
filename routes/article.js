@@ -17,6 +17,8 @@ const pug         = require("pug");
 const util          = require("../util/util.js");
 const config        = require("../config.js");
 const logger        = require("../config.js").logger;
+const language      = require("../model/language.js");
+
 
 const BlogRenderer  = require("../render/BlogRenderer.js");
 
@@ -91,7 +93,7 @@ function createAccessMapFn(activeLanguages) {
       activeLanguages.forEach(function(l) {
         accessMap[l] = "full";
       });
-      config.getLanguages().forEach(function(l) {
+      language.getLid().forEach(function(l) {
         if (!accessMap[l]) accessMap[l] = "denied";
       });
       accessMap.all = "full";
@@ -224,7 +226,7 @@ function renderArticleId(req, res, next) {
 
 
 
-    const languages = config.getLanguages();
+    const languages = language.getLid();
     for (let i = 0; i < languages.length; i++) {
       const lang = languages[i];
       if (typeof (article["markdown" + lang]) !== "undefined") {
@@ -470,7 +472,7 @@ function postArticle(req, res, next) {
     unpublishReference: req.body.unpublishReference
   };
 
-  const languages = config.getLanguages();
+  const languages = language.getLid();
   for (let i = 0; i < languages.length; i++) {
     const lang = languages[i];
     changes["markdown" + lang] = req.body["markdown" + lang];
@@ -501,7 +503,7 @@ function postArticle(req, res, next) {
     assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
-      const languages = config.getLanguages();
+      const languages = language.getLid();
       for (let i = 0; i < languages.length; i++) {
         const lang = languages[i];
         if (showLangs[lang]) {
@@ -556,7 +558,7 @@ function postArticleWithOldValues(req, res, next) {
   };
 
 
-  const languages = config.getLanguages();
+  const languages = language.getLid();
   for (let i = 0; i < languages.length; i++) {
     const lang = languages[i];
     if (req.body["markdown" + lang] !== null && typeof req.body["markdown" + lang] !== "undefined") {
@@ -590,7 +592,7 @@ function postArticleWithOldValues(req, res, next) {
     assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
-      const languages = config.getLanguages();
+      const languages = language.getLid();
       for (let i = 0; i < languages.length; i++) {
         const lang = languages[i];
         if (showLangs[lang]) {
@@ -625,7 +627,7 @@ function copyArticle(req, res, next) {
   // If article exists, everything is fine, if article NOT exist, it has to be created.
 
 
-  const languages = config.getLanguages();
+  const languages = language.getLid();
 
   article.copyToBlog(newBlog, languages, function(err) {
     if (err) return next(err);

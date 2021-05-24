@@ -2,7 +2,7 @@
 // Exported Functions and prototypes are defined at end of file
 
 const async    = require("../util/async_wrap.js");
-const config   = require("../config.js");
+const language   = require("../model/language.js");
 const util     = require("../util/util.js");
 const HttpStatus = require("http-status-codes");
 
@@ -863,8 +863,8 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
     assert(Array.isArray(result));
 
 
-    for (i = 0; i < config.getLanguages().length; i++) {
-      const l = config.getLanguages()[i];
+    for (i = 0; i < language.getLid().length; i++) {
+      const l = language.getLid()[i];
 
       self._countUneditedMarkdown[l] = 0;
       self._countExpectedMarkdown[l] = 0;
@@ -929,7 +929,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
 
 function translateCategories(cat) {
   debug("translateCategories");
-  const languages = config.getLanguages();
+  const languages = language.getLid();
   const categoryTranslation = configModule.getConfig("categorytranslation");
   for (let i = 0; i < cat.length; i++) {
     for (let l = 0; l < languages.length; l++) {

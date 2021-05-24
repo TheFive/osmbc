@@ -9,7 +9,7 @@ const path     = require("path");
 
 
 const pgMap    = require("../model/pgMap.js");
-const config   = require("../config.js");
+const language   = require("..//model/language.js");
 const util     = require("../util/util.js");
 
 
@@ -410,8 +410,8 @@ module.exports.getPlaceholder = function getPlaceholder() {
   const phDE = exports.getConfig("formulation_tipDE");
   const cat = exports.getConfig("categorydescription");
   const result = { markdown: { EN: phEN, DE: phDE }, categories: cat };
-  for (let i = 0; i < config.getLanguages().length; i++) {
-    const lang = config.getLanguages()[i];
+  for (let i = 0; i < language.getLid().length; i++) {
+    const lang = language.getLid()[i];
     if (lang === "DE") continue;
     if (lang === "EN") continue;
     result.markdown[lang] = phEN;

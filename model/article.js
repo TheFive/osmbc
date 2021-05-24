@@ -9,6 +9,8 @@ const HttpStatus = require("http-status-codes");
 
 
 const config    = require("../config.js");
+const language    = require("../model/language.js");
+
 const util      = require("../util/util.js");
 
 const messageCenter  = require("../notification/messageCenter.js");
@@ -130,7 +132,7 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
   if (this._blog === null) return true;
   assert.equal(typeof this._blog, "object");
   assert.equal(this.blog, this._blog.name);
-  const langlist = config.getLanguages();
+  const langlist = language.getLid();
   let result = true;
   const self = this;
 
@@ -443,8 +445,8 @@ Article.prototype.calculateLinks = function calculateLinks() {
   const languageFlags = configModule.getConfig("languageflags");
 
   const listOfField = ["collection"];
-  for (let i = 0; i < config.getLanguages().length; i++) {
-    listOfField.push("markdown" + config.getLanguages()[i]);
+  for (let i = 0; i < language.getLid().length; i++) {
+    listOfField.push("markdown" + language.getLid()[i]);
   }
   for (let i = 0; i < listOfField.length; i++) {
     if (typeof (this[listOfField[i]]) !== "undefined") {
@@ -825,8 +827,8 @@ Article.prototype.addNotranslate = function addNotranslate(user, shownLang, call
 
   const self = this;
   const change = { version: self.version };
-  for (let i = 0; i < config.getLanguages().length; i++) {
-    const lang = config.getLanguages()[i];
+  for (let i = 0; i < language.getLid().length; i++) {
+    const lang = language.getLid()[i];
     if (shownLang[lang] && ((typeof (self["markdown" + lang]) === "undefined") || (self["markdown" + lang] === ""))) {
       change["markdown" + lang] = "no translation";
     }
