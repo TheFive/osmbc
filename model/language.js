@@ -31,18 +31,15 @@ function initialise() {
   languages = [];
   lid = [];
   const l = config.getValue("languages");
-  let momentLocale = config.getValue("moment_locale");
-  if (!momentLocale) momentLocale = {};
-  if (l.indexOf("EN") < 0) l.push("EN");
-
+  if (!l.find(function(o) { if (o.lid === "EN") { return true; } return false; })) l.push({ lid: "EN" });
   l.forEach(function(lang) {
-    let ml = momentLocale[lang];
-    if (!ml) ml = lang;
-    langMap[lang] = new Language(lang, lang, lang, ml);
-    lid.push(lang);
+    assert(lang.lid);
+    let ml = lang.momentLocale;
+    if (!ml) ml = lang.lid;
+    langMap[lang.lid] = new Language(lang.lid, lang.lid, lang.lid, ml);
+    lid.push(lang.lid);
   });
-};
-
+}
 
 exports.getLanguages = function() {
   if (languages === null) initialise();

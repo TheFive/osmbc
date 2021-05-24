@@ -102,9 +102,7 @@ exports.initialise = function initialise(callback) {
 
   assert.equal(typeof configuration.languages, "object");
 
-  // Do some corrections, e.g. the languages MUST contain an "EN"
 
-  if (configuration.languages.indexOf("EN") < 0) configuration.languages.push("EN");
 
   exports.pgstring = getPostgresDBString();
   if (callback) callback();
