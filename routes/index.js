@@ -9,6 +9,7 @@ const HttpStatus = require("http-status-codes");
 const router = express.Router();
 const help = require("../routes/help.js");
 const config = require("../config.js");
+const language = require("../model/language.js");
 const logModule = require("../model/logModule.js");
 const userModule = require("../model/user.js");
 const articleModule = require("../model/article.js");
@@ -140,23 +141,23 @@ function languageSwitcher(req, res, next) {
 
 
 
-  if (config.getLanguages().indexOf(lang[0]) >= 0) {
+  if (language.getLanguages()[lang[0]]) {
     req.user.mainLang = lang[0];
   }
-  if (lang.length >= 2 && config.getLanguages().indexOf(lang[1]) >= 0) {
+  if (lang.length >= 2 && language.getLanguages()[lang[1]]) {
     req.user.secondLang = lang[1];
   } else {
     req.user.secondLang = null;
     req.user.lang3 = null;
     req.user.lang4 = null;
   }
-  if (lang.length >= 3 && config.getLanguages().indexOf(lang[2]) >= 0) {
+  if (lang.length >= 3 && language.getLanguages()[lang[2]]) {
     req.user.lang3 = lang[2];
   } else {
     req.user.lang3 = null;
     req.user.lang4 = null;
   }
-  if (lang.length >= 4 && config.getLanguages().indexOf(lang[3]) >= 0) {
+  if (lang.length >= 4 && language.getLanguages()[lang[3]]) {
     req.user.lang4 = lang[3];
   } else {
     req.user.lang4 = null;

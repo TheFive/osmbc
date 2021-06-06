@@ -872,41 +872,7 @@ describe("routes/article", function() {
         expectedMessage: "This article is not allowed for guests"
       }));
   });
-  describe("route POST /:article_id/copyto/:blog", function() {
-    let url = baseLink + "/article/2/copyto/secondblog";
-    let form = {};
-    it("should run with full access user", async function () {
-      let body = await rp.post({ url: url, jar: jar.testUser,followAllRedirects:true});
-      body.should.containEql("secondblog");
-      let article = await articleModule.findById(4);
 
-      delete article._blog;
-      should(article).eql({
-        blog: "secondblog",
-        id: "4",
-        markdownDE: "Former Text:\n\n* Dies ist ein grosser Testartikel.",
-        title: "BLOG",
-        originArticleId: "2",
-        version: 1
-      });
-    });
-    it("should deny denied access user",
-      postUrlWithJar({
-        url: url,
-        form: form,
-        user: "testUserDenied",
-        expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserDenied< has no access rights"
-      }));
-    it("should deny non existing users",
-      postUrlWithJar({
-        url: url,
-        form: form,
-        user: "testUserNonExisting",
-        expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
-      }));
-  });
   describe("route POST /translate/deeplPro/:fromLang/:toLang", function() {
     let url = baseLink + "/article/translate/deeplPro/DE/EN";
     let form = {text: "Dies ist ein deutscher Text."};

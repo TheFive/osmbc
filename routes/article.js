@@ -17,6 +17,8 @@ const pug         = require("pug");
 const util          = require("../util/util.js");
 const config        = require("../config.js");
 const logger        = require("../config.js").logger;
+const language      = require("../model/language.js");
+
 
 const BlogRenderer  = require("../render/BlogRenderer.js");
 
@@ -91,9 +93,9 @@ function createAccessMapFn(activeLanguages) {
       activeLanguages.forEach(function(l) {
         accessMap[l] = "full";
       });
-      config.getLanguages().forEach(function(l) {
+      for (const l in language.getLanguages()) {
         if (!accessMap[l]) accessMap[l] = "denied";
-      });
+      }
       accessMap.all = "full";
       return cb(null, accessMap);
     });
@@ -224,9 +226,7 @@ function renderArticleId(req, res, next) {
 
 
 
-    const languages = config.getLanguages();
-    for (let i = 0; i < languages.length; i++) {
-      const lang = languages[i];
+    for (const lang in language.getLanguages()) {
       if (typeof (article["markdown" + lang]) !== "undefined") {
         article["textHtml" + lang] = "<ul>" + renderer.renderArticle(lang, article) + "</ul>";
       }
@@ -454,9 +454,8 @@ function postArticle(req, res, next) {
     unpublishReference: req.body.unpublishReference
   };
 
-  const languages = config.getLanguages();
-  for (let i = 0; i < languages.length; i++) {
-    const lang = languages[i];
+
+  for (const lang in language.getLanguages()) {
     changes["markdown" + lang] = req.body["markdown" + lang];
   }
   let returnToUrl;
@@ -485,9 +484,7 @@ function postArticle(req, res, next) {
     assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
-      const languages = config.getLanguages();
-      for (let i = 0; i < languages.length; i++) {
-        const lang = languages[i];
+      for (const lang in language.getLanguages()) {
         if (showLangs[lang]) {
           if (changes["markdown" + lang]) continue;
           if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
@@ -540,9 +537,7 @@ function postArticleWithOldValues(req, res, next) {
   };
 
 
-  const languages = config.getLanguages();
-  for (let i = 0; i < languages.length; i++) {
-    const lang = languages[i];
+  for (const lang in language.getLanguages()) {
     if (req.body["markdown" + lang] !== null && typeof req.body["markdown" + lang] !== "undefined") {
       changes["markdown" + lang] = req.body["markdown" + lang];
       changes.old["markdown" + lang] = req.body["old_markdown" + lang];
@@ -574,9 +569,7 @@ function postArticleWithOldValues(req, res, next) {
     assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
-      const languages = config.getLanguages();
-      for (let i = 0; i < languages.length; i++) {
-        const lang = languages[i];
+      for (const lang in language.getLanguages()) {
         if (showLangs[lang]) {
           if (changes["markdown" + lang]) continue;
           if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
@@ -598,25 +591,7 @@ function postArticleWithOldValues(req, res, next) {
   );
 }
 
-function copyArticle(req, res, next) {
-  debug("copyArticle");
 
-  const newBlog = req.params.blog;
-
-
-
-  const article = req.article;
-  // If article exists, everything is fine, if article NOT exist, it has to be created.
-
-
-  const languages = config.getLanguages();
-
-  article.copyToBlog(newBlog, languages, function(err) {
-    if (err) return next(err);
-    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
-    res.redirect(referer);
-  });
-}
 
 function postNewComment(req, res, next) {
   debug("postNewComment");
@@ -1014,7 +989,6 @@ router.get("/create", allowGuestAccess, createArticle);
 router.get("/searchandcreate", allowGuestAccess, searchAndCreate);
 router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
-router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
 router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateWithPlugin("bingPro"));
 router.post("/urlexist", allowGuestAccess, urlExist);

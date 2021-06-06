@@ -6,6 +6,8 @@ const async    = require("../util/async_wrap.js");
 const assert   = require("assert");
 const debug    = require("debug")("OSMBC:routes:blog");
 const config   = require("../config.js");
+const language = require("../model/language.js");
+
 const util     = require("../util/util.js");
 const moment   = require("moment");
 const help     = require("../routes/help.js");
@@ -119,8 +121,7 @@ function renderBlogStat(req, res, next) {
           }
         }
       };
-      for (let i = 0; i < config.getLanguages().length; i++) {
-        const lang = config.getLanguages()[i];
+      for (const lang in language.getLanguages()) {
         editors[lang] = [];
         addEditors(lang, "collection", 3);
         addEditors(lang, "markdown" + lang, 2);
@@ -151,7 +152,7 @@ function renderBlogStat(req, res, next) {
       blog: blog,
       editors: editors,
       userMap: userMap,
-      languages: config.getLanguages()
+      languages: language.getLid()
     });
   }
   );
@@ -213,8 +214,8 @@ function renderBlogPreview(req, res, next) {
 
   let lang = req.query.lang;
   const asMarkdown = (req.query.markdown === "true");
-  if (typeof (lang) === "undefined") lang = "DE";
-  if (config.getLanguages().indexOf(lang) < 0) lang = "DE";
+  if (typeof (lang) === "undefined") lang = "EN";
+  if (!language.getLanguages()[lang]) lang = "EN";
 
 
   const returnToUrl = req.session.articleReturnTo;
@@ -241,12 +242,12 @@ function renderBlogPreview(req, res, next) {
     if (err) return next(err);
     if (req.query.download === "true") {
       if (asMarkdown) {
-        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".md");
+        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(language.momentLocale(lang)).format() + ".md");
         res.setHeader("Content-type", "text");
 
         res.end(result.converter, "UTF8");
       } else {
-        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".html");
+        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(language.momentLocale(lang)).format() + ".html");
         res.setHeader("Content-type", "text/html");
         res.end(result.converter, "UTF8");
       }

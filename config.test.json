@@ -43,9 +43,12 @@
   "SessionSecret":"keyboard cat",
   "SessionName":"session name",
   "AppName":"TESTBC",
-  "languages":["DE","EN","ES","PT-PT"],
-  "moment_locale":{
-    "EN":"en-gb"},
+  "languages":[
+    {"lid":"DE","displayLong":"German","displayShort":"DED"},
+    {"lid":"EN","momentLocale":"en-gb"},
+    {"lid":"ES","displayLong":"Spain","displayShort":"ES"},
+    {"lid":"PT-PT"}
+  ],
   "callbackUrl":"http://127.0.0.1:35043/auth/openstreetmap/callback",
   "OPENSTREETMAP_CONSUMER_KEY" : "######",
   "OPENSTREETMAP_CONSUMER_SECRET" : "#####",

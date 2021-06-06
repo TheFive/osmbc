@@ -121,9 +121,7 @@ exports.initialise = function initialise(callback) {
 
   assert.equal(typeof configuration.languages, "object");
 
-  // Do some corrections, e.g. the languages MUST contain an "EN"
 
-  if (configuration.languages.indexOf("EN") < 0) configuration.languages.push("EN");
 
   exports.pgstring = getPostgresDBString();
   if (callback) callback();
@@ -132,6 +130,7 @@ exports.initialise = function initialise(callback) {
 
 
 exports.getConfiguration = function() {
+  assert(false, "Function obsolote use single values");
   exports.initialise();
   return configuration;
 };
@@ -174,6 +173,7 @@ const url = exports.getValue("url", { mustExist: true });
 
 
 exports.getLanguages = function() {
+  assert(false, "Function obsolote");
   return languages;
 };
 
@@ -181,6 +181,7 @@ exports.htmlRoot = function() { return htmlRoot; };
 exports.url = function() { return url; };
 
 exports.moment_locale = function(lang) {
+  assert(false, "Function obsolote");
   return configuration.moment_locale[lang];
 };
 

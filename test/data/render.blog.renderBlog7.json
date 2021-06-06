@@ -1,0 +1,17 @@
+{
+    "blog":[{"name":"BLOG","startDate":"2015-02-01","endDate":"2015-02-08"}],
+    "article":[{"blog":"BLOG","markdownDE":"* Dies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.","categoryEN":"Mapping"}],
+    "change":[{"blog":"BLOG","user":"TESTER","_oid":"1","property":"collection","to":"testvalue"},
+               {"blog":"BLOG","user":"TESTER","_oid":"2","property":"collection","to":"testvalue2"},
+               {"blog":"BLOG","user":"deeplPro API Call","_oid":"3","property":"collection","to":"testvalue3"},
+               {"blog":"BLOG","user":"deeplPro API Call","_oid":"4","property":"collection","to":"testvalue4"},
+               {"blog":"BLOG","user":"deeplPro API Call","_oid":"5","property":"collection","to":"testvalue5"},
+               {"blog":"BLOG","user":"TESTER","_oid":"6","property":"collection","to":"testvalue6"},
+               {"blog":"BLOG","user":"TESTER","_oid":"7","property":"collection","to":"testvalue7"},
+               {"blog":"BLOG","user":"TESTER","_oid":"8","property":"collection","to":"testvalue8"}],
+    "testBlogName":"BLOG",
+    "lang":"DE",
+    "testBlogResultMarkdownDE":"## Mapping\n* Dies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.\n",
+    "testBlogResultHtml":"<meta charset=\"utf-8\"/>\n<p>01.02.2015-08.02.2015</p>\n<h2 id=\"blog_mapping\">Mapping</h2>\n<ul>\n<li id=\"blog_1\">\nDies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.\n</li>\n</ul>\n<p align=\"right\"><i>Diese Wochennotiz wurde erstellt von TESTER.</i></p>\n"
+  }
+

@@ -2,7 +2,7 @@
 
 const assert   = require("assert");
 const async    = require("async");
-const debug = require("debug")("OSMBC:routes:users");
+const debug    = require("debug")("OSMBC:routes:users");
 
 
 const express    = require("express");
@@ -11,8 +11,9 @@ const auth       = require("../routes/auth.js");
 const HttpError  = require("standard-http-error");
 
 
-const config = require("../config.js");
-const logger = require("../config.js").logger;
+const config   = require("../config.js");
+const language = require("../model/language.js");
+const logger   = require("../config.js").logger;
 
 const userModule = require("../model/user.js");
 const logModule = require("../model/logModule.js");
@@ -164,7 +165,7 @@ function renderUserId(req, res, next) {
       changes: changes,
       params: params,
       userHeatMapArray: userHeatMapArray,
-      langlist: config.getLanguages(),
+      langlist: language.getLid(),
       layout: res.rendervar.layout
     });
   }

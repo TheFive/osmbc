@@ -8,6 +8,8 @@ const debug         = require("debug")("OSMBC:routes:layout");
 
 const util          = require("../util/util.js");
 const config        = require("../config.js");
+const language      = require("../model/language.js");
+
 const version       = require("../version.js");
 const markdown      = require("markdown-it")();
 
@@ -66,8 +68,7 @@ function prepareRenderLayout(req, res, next) {
 
 
 
-  let languages = [];
-  if (config.getLanguages()) languages = config.getLanguages();
+  const languages = language.getLid();
 
 
   let userMentions = 0;
@@ -213,9 +214,9 @@ function prepareRenderLayout(req, res, next) {
       osmbc_version: version.osmbc_version,
       style: style,
       title: appName,
-      user_locale: config.moment_locale((req.user.language) ? req.user.language : req.user.getMainLang()),
-      language_locale: config.moment_locale(req.user.getMainLang()),
-      language2_locale: config.moment_locale(req.user.getSecondLang()),
+      user_locale: language.momentLocale((req.user.language) ? req.user.language : req.user.getMainLang()),
+      language_locale: language.momentLocale(req.user.getMainLang()),
+      language2_locale: language.momentLocale(req.user.getSecondLang()),
       md_render: util.md_render,
       md_renderInline: markdown.renderInline,
       getAvatar: userModule.getAvatar,

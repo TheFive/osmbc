@@ -2,7 +2,7 @@
 // Exported Functions and prototypes are defined at end of file
 
 const async    = require("../util/async_wrap.js");
-const config   = require("../config.js");
+const language   = require("../model/language.js");
 const util     = require("../util/util.js");
 const HttpStatus = require("http-status-codes");
 
@@ -458,10 +458,14 @@ function autoCloseBlog(callback) {
 function convertLogsToTeamString(logs, lang, users) {
   debug("convertLogsToTeamString");
   const editors = [];
+  const apiEditors = [];
+  for (const f in translator) {
+    apiEditors.push(translator[f].user);
+  }
   function addEditors(property, min) {
     for (const user in logs[property]) {
       if (logs[property][user] >= min) {
-        if (editors.indexOf(user) < 0) {
+        if (editors.indexOf(user) < 0 && apiEditors.indexOf(user) < 0) {
           editors.push(user);
         }
       }
@@ -859,9 +863,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
     assert(Array.isArray(result));
 
 
-    for (i = 0; i < config.getLanguages().length; i++) {
-      const l = config.getLanguages()[i];
-
+    for (const l in language.getLanguages()) {
       self._countUneditedMarkdown[l] = 0;
       self._countExpectedMarkdown[l] = 0;
       self._countNoTranslateMarkdown[l] = 0;
@@ -925,11 +927,10 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
 
 function translateCategories(cat) {
   debug("translateCategories");
-  const languages = config.getLanguages();
+  const languages = language.getLanguages();
   const categoryTranslation = configModule.getConfig("categorytranslation");
   for (let i = 0; i < cat.length; i++) {
-    for (let l = 0; l < languages.length; l++) {
-      const lang = languages[l];
+    for (const lang in languages) {
       if (cat[i][lang]) continue;
       if (categoryTranslation[cat[i].EN]) {
         cat[i][lang] = categoryTranslation[cat[i].EN][lang];

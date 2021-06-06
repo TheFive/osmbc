@@ -9,6 +9,8 @@ const htmltitle     = require("../model/htmltitle.js");
 const util          = require("../util/util.js");
 const articleModule = require("../model/article.js");
 const config        = require("../config.js");
+const language      = require("../model/language.js");
+
 
 
 const apiKeys = config.getValue("apiKeys", { mustExist: true });
@@ -60,11 +62,11 @@ function collectArticle(req, res, next) {
   changes.blog = "TBC";
   let user = "";
 
-  config.getLanguages().forEach(function copyMarkdown(lang) {
+  for (const lang in language.getLanguages()) {
     if (req.body["markdown" + lang]) {
       changes["markdown" + lang] = req.body["markdown" + lang];
     }
-  });
+  }
 
   async.series([
     function getTitle(cb) {
