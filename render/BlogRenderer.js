@@ -27,7 +27,7 @@ function MarkdownRenderer(blog) {
 HtmlRenderer.prototype.subtitle = function htmlSubtitle(lang) {
   debug("HtmlRenderer.prototype.subtitle %s", lang);
   const blog = this.blog;
-  assert(language.getLid().indexOf(lang) >= 0);
+  assert(language.getLanguages()[lang]);
   if (blog.startDate && blog.endDate) {
     return "<p>" + util.dateFormat(blog.startDate, lang) + "-" + util.dateFormat(blog.endDate, lang) + "</p>\n";
   } else return "<p> missing date </p>\n";
@@ -43,7 +43,7 @@ MarkdownRenderer.prototype.subtitle = function markdownSubtitle(lang) {
 
 HtmlRenderer.prototype.containsEmptyArticlesWarning = function htmlContainsEmptyArticlesWarning(lang) {
   debug("HtmlRenderer.prototype.containsEmptyArticlesWarning %s", lang);
-  assert(language.getLid().indexOf(lang) >= 0);
+  assert(language.getLanguages()[lang]);
   return "<p> Warning: This export contains empty Articles </p>\n";
 };
 

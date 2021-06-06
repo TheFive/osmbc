@@ -1,7 +1,6 @@
 "use strict";
 
 var config = require("../config.js");
-var language = require("../model/language.js");
 var async = require("async");
 var should = require("should");
 
@@ -28,10 +27,5 @@ describe("config", function() {
       bddone();
     });
   });
-  describe("getLanguages", function() {
-    it("should return Standard Values", function(bddone) {
-      should((language.getLid())).eql(["DE", "EN", "ES","PT-PT"]);
-      bddone();
-    });
-  });
+
 });

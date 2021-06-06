@@ -132,7 +132,7 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
   if (this._blog === null) return true;
   assert.equal(typeof this._blog, "object");
   assert.equal(this.blog, this._blog.name);
-  const langlist = language.getLid();
+  const langlist = language.getLanguages();
   let result = true;
   const self = this;
 
@@ -142,21 +142,21 @@ Article.prototype.isChangeAllowed = function isChangeAllowed(property) {
     case "predecessorId":
     case "collection":
     case "categoryEN":
-      langlist.forEach(function(l) {
+      for (const l in langlist) {
         if (self._blog["exported" + l] === true && self["markdown" + l] !== "no translation") result = false;
         if (self._blog["close" + l] === true && self["markdown" + l] !== "no translation") result = false;
-      });
+      }
       if (self._blog.status === "closed") result = false;
       if (!result) return result;
       break;
     default:
-      langlist.forEach(function(l) {
+      for (const l in langlist) {
         if (property === "markdown" + l) {
           if (self._blog["exported" + l] === true) result = false;
           if (self._blog["close" + l] === true) result = false;
         }
         if (!result) return result;
-      });
+      }
   }
   return result;
 };
@@ -445,8 +445,8 @@ Article.prototype.calculateLinks = function calculateLinks() {
   const languageFlags = configModule.getConfig("languageflags");
 
   const listOfField = ["collection"];
-  for (let i = 0; i < language.getLid().length; i++) {
-    listOfField.push("markdown" + language.getLid()[i]);
+  for (const l in language.getLanguages()) {
+    listOfField.push("markdown" + l);
   }
   for (let i = 0; i < listOfField.length; i++) {
     if (typeof (this[listOfField[i]]) !== "undefined") {
@@ -827,8 +827,7 @@ Article.prototype.addNotranslate = function addNotranslate(user, shownLang, call
 
   const self = this;
   const change = { version: self.version };
-  for (let i = 0; i < language.getLid().length; i++) {
-    const lang = language.getLid()[i];
+  for (const lang in language.getLanguages()) {
     if (shownLang[lang] && ((typeof (self["markdown" + lang]) === "undefined") || (self["markdown" + lang] === ""))) {
       change["markdown" + lang] = "no translation";
     }

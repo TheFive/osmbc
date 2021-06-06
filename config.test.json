@@ -44,9 +44,9 @@
   "SessionName":"session name",
   "AppName":"TESTBC",
   "languages":[
-    {"lid":"DE"},
+    {"lid":"DE","displayLong":"German","displayShort":"DED"},
     {"lid":"EN","momentLocale":"en-gb"},
-    {"lid":"ES"},
+    {"lid":"ES","displayLong":"Spain","displayShort":"ES"},
     {"lid":"PT-PT"}
   ],
   "callbackUrl":"http://127.0.0.1:35043/auth/openstreetmap/callback",

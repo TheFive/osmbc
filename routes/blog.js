@@ -121,8 +121,7 @@ function renderBlogStat(req, res, next) {
           }
         }
       };
-      for (let i = 0; i < language.getLid().length; i++) {
-        const lang = language.getLid()[i];
+      for (const lang in language.getLanguages()) {
         editors[lang] = [];
         addEditors(lang, "collection", 3);
         addEditors(lang, "markdown" + lang, 2);
@@ -215,8 +214,8 @@ function renderBlogPreview(req, res, next) {
 
   let lang = req.query.lang;
   const asMarkdown = (req.query.markdown === "true");
-  if (typeof (lang) === "undefined") lang = "DE";
-  if (language.getLid().indexOf(lang) < 0) lang = "DE";
+  if (typeof (lang) === "undefined") lang = "EN";
+  if (!language.getLanguages()[lang]) lang = "EN";
 
 
   const returnToUrl = req.session.articleReturnTo;

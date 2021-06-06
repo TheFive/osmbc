@@ -10,7 +10,7 @@ const language = require("../model/config.js");
 function BlogStatusFilter(receiver, languages) {
   debug("BlogStatusFilter");
   this.receiver = receiver;
-  if (!languages) languages = language.getLid();
+  if (!languages) languages = language.getLanguages();
   this.languages = languages;
 }
 
@@ -44,13 +44,13 @@ BlogStatusFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, ch
 
 BlogStatusFilter.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, cb) {
   debug("BlogStatusFilter.prototype.sendReviewStatus");
-  if (this.languages.indexOf(lang) >= 0) {
+  if (this.languages[lang]) {
     this.receiver.sendReviewStatus(user, blog, lang, status, cb);
   } else return cb();
 };
 BlogStatusFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {
   debug("BlogStatusFilter.prototype.sendCloseStatus");
-  if (this.languages.indexOf(lang) >= 0) {
+  if (this.languages[lang]) {
     this.receiver.sendCloseStatus(user, blog, lang, status, cb);
   } else return cb();
 };

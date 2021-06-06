@@ -93,9 +93,9 @@ function createAccessMapFn(activeLanguages) {
       activeLanguages.forEach(function(l) {
         accessMap[l] = "full";
       });
-      language.getLid().forEach(function(l) {
+      for (const l in language.getLanguages()) {
         if (!accessMap[l]) accessMap[l] = "denied";
-      });
+      }
       accessMap.all = "full";
       return cb(null, accessMap);
     });
@@ -226,9 +226,7 @@ function renderArticleId(req, res, next) {
 
 
 
-    const languages = language.getLid();
-    for (let i = 0; i < languages.length; i++) {
-      const lang = languages[i];
+    for (const lang in language.getLanguages()) {
       if (typeof (article["markdown" + lang]) !== "undefined") {
         article["textHtml" + lang] = "<ul>" + renderer.renderArticle(lang, article) + "</ul>";
       }
@@ -472,9 +470,8 @@ function postArticle(req, res, next) {
     unpublishReference: req.body.unpublishReference
   };
 
-  const languages = language.getLid();
-  for (let i = 0; i < languages.length; i++) {
-    const lang = languages[i];
+
+  for (const lang in language.getLanguages()) {
     changes["markdown" + lang] = req.body["markdown" + lang];
   }
   let returnToUrl;
@@ -503,9 +500,7 @@ function postArticle(req, res, next) {
     assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
-      const languages = language.getLid();
-      for (let i = 0; i < languages.length; i++) {
-        const lang = languages[i];
+      for (const lang in language.getLanguages()) {
         if (showLangs[lang]) {
           if (changes["markdown" + lang]) continue;
           if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
@@ -558,9 +553,7 @@ function postArticleWithOldValues(req, res, next) {
   };
 
 
-  const languages = language.getLid();
-  for (let i = 0; i < languages.length; i++) {
-    const lang = languages[i];
+  for (const lang in language.getLanguages()) {
     if (req.body["markdown" + lang] !== null && typeof req.body["markdown" + lang] !== "undefined") {
       changes["markdown" + lang] = req.body["markdown" + lang];
       changes.old["markdown" + lang] = req.body["old_markdown" + lang];
@@ -592,9 +585,7 @@ function postArticleWithOldValues(req, res, next) {
     assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
-      const languages = language.getLid();
-      for (let i = 0; i < languages.length; i++) {
-        const lang = languages[i];
+      for (const lang in language.getLanguages()) {
         if (showLangs[lang]) {
           if (changes["markdown" + lang]) continue;
           if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;

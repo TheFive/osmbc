@@ -863,9 +863,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
     assert(Array.isArray(result));
 
 
-    for (i = 0; i < language.getLid().length; i++) {
-      const l = language.getLid()[i];
-
+    for (const l in language.getLanguages()) {
       self._countUneditedMarkdown[l] = 0;
       self._countExpectedMarkdown[l] = 0;
       self._countNoTranslateMarkdown[l] = 0;
@@ -929,11 +927,10 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
 
 function translateCategories(cat) {
   debug("translateCategories");
-  const languages = language.getLid();
+  const languages = language.getLanguages();
   const categoryTranslation = configModule.getConfig("categorytranslation");
   for (let i = 0; i < cat.length; i++) {
-    for (let l = 0; l < languages.length; l++) {
-      const lang = languages[l];
+    for (const lang in languages) {
       if (cat[i][lang]) continue;
       if (categoryTranslation[cat[i].EN]) {
         cat[i][lang] = categoryTranslation[cat[i].EN][lang];

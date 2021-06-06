@@ -7,8 +7,7 @@ const assert = require("assert");
 
 
 
-let languages = null;
-const langMap = {};
+let langMap = null;
 let lid = null;
 
 class Language {
@@ -26,9 +25,10 @@ class Language {
 
 function initialise() {
   debug("initialise");
-  assert(languages === null);
+  assert(langMap === null);
   assert(lid === null);
-  languages = [];
+  langMap = {};
+
   lid = [];
   const l = config.getValue("languages");
   if (!l.find(function(o) { if (o.lid === "EN") { return true; } return false; })) l.push({ lid: "EN" });
@@ -36,14 +36,18 @@ function initialise() {
     assert(lang.lid);
     let ml = lang.momentLocale;
     if (!ml) ml = lang.lid;
-    langMap[lang.lid] = new Language(lang.lid, lang.lid, lang.lid, ml);
+    let dll = lang.displayLong;
+    if (!dll) dll = lang.id;
+    let dls = lang.displayShort;
+    if (!dls) dls = lang.id;
+    langMap[lang.lid] = new Language(lang.lid, dls, dll, ml);
     lid.push(lang.lid);
   });
 }
 
 exports.getLanguages = function() {
-  if (languages === null) initialise();
-  return languages;
+  if (langMap === null) initialise();
+  return langMap;
 };
 
 exports.getLid = function() {
@@ -54,6 +58,6 @@ exports.getLid = function() {
 
 exports.momentLocale = function(lang) {
   if (lang === null) return null;
-  if (languages === null) initialise();
+  if (langMap === null) initialise();
   return langMap[lang].localeString;
 };

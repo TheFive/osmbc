@@ -62,11 +62,11 @@ function collectArticle(req, res, next) {
   changes.blog = "TBC";
   let user = "";
 
-  language.getLid().forEach(function copyMarkdown(lang) {
+  for (const lang in language.getLanguages()) {
     if (req.body["markdown" + lang]) {
       changes["markdown" + lang] = req.body["markdown" + lang];
     }
-  });
+  }
 
   async.series([
     function getTitle(cb) {

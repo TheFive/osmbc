@@ -68,8 +68,7 @@ function prepareRenderLayout(req, res, next) {
 
 
 
-  let languages = [];
-  if (language.getLid()) languages = language.getLid();
+  const languages = language.getLid();
 
 
   let userMentions = 0;
