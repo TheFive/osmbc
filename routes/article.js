@@ -607,25 +607,7 @@ function postArticleWithOldValues(req, res, next) {
   );
 }
 
-function copyArticle(req, res, next) {
-  debug("copyArticle");
 
-  const newBlog = req.params.blog;
-
-
-
-  const article = req.article;
-  // If article exists, everything is fine, if article NOT exist, it has to be created.
-
-
-  const languages = language.getLid();
-
-  article.copyToBlog(newBlog, languages, function(err) {
-    if (err) return next(err);
-    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
-    res.redirect(referer);
-  });
-}
 
 function postNewComment(req, res, next) {
   debug("postNewComment");
@@ -1023,7 +1005,6 @@ router.get("/create", allowGuestAccess, createArticle);
 router.get("/searchandcreate", allowGuestAccess, searchAndCreate);
 router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
-router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
 router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateWithPlugin("bingPro"));
 router.post("/urlexist", allowGuestAccess, urlExist);
