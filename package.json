@@ -89,7 +89,7 @@
     "should": "^13.2.3",
     "sinon": "9.2.x",
     "timemachine": "0.3.x",
-    "xmldom": "^0.4.0",
+    "xmldom": "^0.6.0",
     "zombie": "^5.0.8"
   }
 }
