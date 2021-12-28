@@ -54,17 +54,17 @@ let configuration;
 
 function getPostgresDBString() {
   debug("getPostgresDBString");
-  configuration = exports.getConfiguration();
+  const conf = exports.getValue("postgres");
   let userString = "";
-  if (configuration.postgres.username !== "") {
-    userString = configuration.postgres.username + ":" + configuration.postgres.password + "@";
+  if (conf.username !== "") {
+    userString = conf.username + ":" + conf.password + "@";
   }
   let connectStr = "postgres://" +
               userString +
-              configuration.postgres.database;
-  if ((typeof (configuration.postgres.connectstr) !== "undefined") &&
-      (configuration.postgres.connectstr !== "")) {
-    connectStr = configuration.postgres.connectstr;
+              conf.database;
+  if ((typeof (conf.connectstr) !== "undefined") &&
+      (conf.connectstr !== "")) {
+    connectStr = conf.connectstr;
   }
   if (!connectStr) {
     logger.error("Could not build a connection string for postgres. App is terminating");

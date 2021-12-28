@@ -4,8 +4,9 @@ block additionalMenuMain
   +translationMenu
   
 block additionalMenuRight  
-  +langChooser("lang2")
-  - for (i = 3; params && params.columns && layout.user.getLang(i-2);i++)
+  - console.dir(params);
+  - console.dir(layout.user);
+  - for (i = 3; params && params.columns && i < params.columns;i++)
     +langChooser("lang"+i)  
   
 
