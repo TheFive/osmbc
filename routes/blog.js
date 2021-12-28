@@ -522,7 +522,7 @@ function editBlogId(req, res) {
   if (params.edit && params.edit === "false") {
     res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
   }
-  blog._categories_yaml = yaml.safeDump(blog.categories);
+  blog._categories_yaml = yaml.dump(blog.categories);
   res.set("content-type", "text/html");
   let copyLanguageFromAnother = config.getValue("copyLanguageFromAnother");
   if (!copyLanguageFromAnother) copyLanguageFromAnother = {};
