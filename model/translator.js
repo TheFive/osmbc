@@ -39,6 +39,7 @@ async function deeplTranslate(url, params) {
 function normLanguage(lang) {
   if (lang === "cz") lang = "cs";
   if (lang === "jp") lang = "ja";
+  if (lang === "cn") lang = "zh";
   return lang;
 }
 
