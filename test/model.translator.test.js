@@ -19,7 +19,7 @@ describe("model/translator", function() {
     const translatedTextMd = "This is the translated Text";
 
     nock("https://api.cognitive.microsofttranslator.com")
-      .post("/translate?api-version=3.0&from=en&to=de&textType=html", [{ text: originTextHtml }])
+      .post("/translate?api-version=3.0&from=EN&to=DE&textType=html", [{ text: originTextHtml }])
       .reply(200, [{ translations: [{ text: translatedTextHtml }] }]);
 
     var options = {
@@ -40,7 +40,7 @@ describe("model/translator", function() {
     const translatedTextMd = "Translated Text with [Markdown](https://markdown.link/demo) Link";
 
     nock("https://api.cognitive.microsofttranslator.com")
-      .post("/translate?api-version=3.0&from=en&to=de&textType=html", [{ text: originTextHtml }])
+      .post("/translate?api-version=3.0&from=EN&to=DE&textType=html", [{ text: originTextHtml }])
       .reply(200, [{ translations: [{ text: translatedTextHtml }] }]);
 
     var options = {
@@ -61,7 +61,7 @@ describe("model/translator", function() {
     const translatedTextMd = "Lien [(traduction automatique)](https://translate.google.com/translate?sl=auto&tl=FR&u=https://forum.openstreetmap.org/viewtopic.php?pid=786827#p786827)et deuxième LInk [(traduction automatique)](https://translate.google.com/translate?sl=auto&tl=FR&u=https://hide.webhop.me/mapsme/daily/)";
 
     nock("https://api.cognitive.microsofttranslator.com")
-      .post("/translate?api-version=3.0&from=de&to=fr&textType=html", [{ text: originTextHtml }])
+      .post("/translate?api-version=3.0&from=DE&to=FR&textType=html", [{ text: originTextHtml }])
       .reply(200, [{ translations: [{ text: translatedTextHtml }] }]);
 
     var options = {

@@ -15,5 +15,12 @@ describe("model/language", function() {
     should(language.getLid()).deepEqual(['DE', 'EN', 'ES', 'PT-PT']);
     bddone();
   });
+  it("should return alternative language strings for translators", function (bddone){
+    // see config.test.json for relating data
+    should(language.deeplPro("en")).eql("EN");
+    should(language.deeplPro("PT-PT")).eql("PT");
+    should(language.bingPro("PT-PT")).eql("PT-BP");
+    bddone();
+  });
 });
 

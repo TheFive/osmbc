@@ -4,6 +4,7 @@ const request = require("request");
 const uuidv4 = require("uuid/v4");
 const querystring = require("query-string");
 const axios = require("axios");
+const language = require("../model/language.js");
 
 
 const markdown = require("markdown-it")()
@@ -36,12 +37,7 @@ async function deeplTranslate(url, params) {
   }
 }
 
-function normLanguage(lang) {
-  if (lang === "cz") lang = "cs";
-  if (lang === "jp") lang = "ja";
-  if (lang === "cn") lang = "zh";
-  return lang;
-}
+
 
 
 function escapeRegExp(string) {
@@ -49,7 +45,7 @@ function escapeRegExp(string) {
 }
 
 
-const deeplConfig = config.getValue("DeeplConfig", { mustExist: true });
+const deeplConfig = config.getValue("DeeplProConfig", { mustExist: true });
 
 function translateDeeplPro(options, callback) {
   debug("translateDeeplPro");
@@ -62,8 +58,8 @@ function translateDeeplPro(options, callback) {
   }
 
 
-  const fromLang = normLanguage(options.fromLang);
-  const toLang = normLanguage(options.toLang);
+  const fromLang = language.deeplPro(options.fromLang);
+  const toLang = language.deeplPro(options.toLang);
   const text = options.text;
 
 
@@ -114,7 +110,7 @@ function deeplProActive () {
   return (typeof deeplConfig.authKey === "string");
 }
 
-const subscriptionKey = config.getValue("MS_TranslateApiKey");
+const bingProAuthkey = config.getValue("BingProConfig").authKey;
 
 const msTranslate = {
   translate: function(from, to, text, callback) {
@@ -129,7 +125,7 @@ const msTranslate = {
         textType: "html"
       },
       headers: {
-        "Ocp-Apim-Subscription-Key": subscriptionKey,
+        "Ocp-Apim-Subscription-Key": bingProAuthkey,
         "Content-type": "application/json",
         "X-ClientTraceId": uuidv4().toString()
       },
@@ -149,22 +145,19 @@ const msTranslate = {
 
 
 function bingProActive () {
-  return (typeof subscriptionKey === "string");
+  return (typeof bingProAuthkey === "string");
 }
 
 function translateBingPro(options, callback) {
   debug("translateBingPro");
 
-  if (typeof subscriptionKey === "undefined") {
-    return new Error("No Bing Pro Version registered");
+  if (typeof bingProAuthkey === "undefined") {
+    return callback(new Error("No Bing Pro Version registered"));
   }
-
-  const fromLang = normLanguage(options.fromLang);
-  const toLang = normLanguage(options.toLang);
+  const fromLang = language.bingPro(options.fromLang);
+  const toLang = language.bingPro(options.toLang);
   const text = options.text;
-
   const htmltext = markdown.render(text);
-
 
   msTranslate.translate(fromLang, toLang, htmltext, function(err, translation) {
     if (err) return callback(err);
