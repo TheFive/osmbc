@@ -40,7 +40,7 @@ describe("uc/config", function() {
     } catch (err) {
       should(err.message).eql("Server returned status code 500 from http://localhost:35043/config/calendartranslation");
     }
-    should(browser.html()).containEql("YAMLException: duplicated mapping key at line 8, column 3:");
+    should(browser.html()).containEql("YAMLException: duplicated mapping key (8:3)");
   });
   it("should open and save calendartranslation", async function() {
     await browser.visit("/config/calendartranslation");

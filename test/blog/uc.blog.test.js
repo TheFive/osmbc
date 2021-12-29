@@ -46,7 +46,7 @@ describe("uc/blog", function() {
   let nocklist = []
   beforeEach(async function() {
     nockLoginPage = testutil.nockLoginPage();
-    let list = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "..", "blog","DataWN290LinkList.txt"), "UTF8"));
+    let list = yaml.load(fs.readFileSync(path.resolve(__dirname, "..", "blog","DataWN290LinkList.txt"), "UTF8"));
     list.forEach(function(item){
       let url = new URL(item);
       let path = url.pathname;
