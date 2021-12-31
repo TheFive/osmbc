@@ -193,7 +193,7 @@ function readScriptConfig(script, callback) {
   fs.readFile(path.join(scriptFilePath, script), function(err, text) {
     if (err) return callback(err);
     try {
-      const configuration = yaml.load(text);
+      const configuration = yaml.safeLoad(text);
       return callback(null, configuration);
     } catch (err) {
       const error = "Error Parsing YAML File: " + script + "\n---" + err.message;

@@ -77,7 +77,7 @@ Config.prototype.getJSON = function getJSON() {
   }
   if (this.type === "yaml") {
     try {
-      this.json = yaml.load(this.yaml);
+      this.json = yaml.safeLoad(this.yaml);
       if (this.name === "votes") this.json = freshupVotes(this.json);
       return this.json;
     } catch (err) {
