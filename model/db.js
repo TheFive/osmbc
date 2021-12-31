@@ -35,7 +35,8 @@ const pgConfig = {
   port: pgConfigValues.port,
   max: 10,
   connectionTimeoutMillis: 1000,
-  idleTimeoutMillis: 1000
+  idleTimeoutMillis: 1000,
+  allowExitOnIdle: true
 };
 
 // overwrite with environment

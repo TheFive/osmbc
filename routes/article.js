@@ -848,6 +848,12 @@ function urlExist(req, res) {
     return res.end("OK");
   }
 
+  // Do not test google translate links
+  // this test is generating to much false positive
+  if (url.startsWith("https://translate.google.com")) {
+    return res.end("OK");
+  }
+
   request.get(url, { headers: { "User-Agent": userAgent } }, function(err, response) {
     if (!err && response.statusCode === 200) {
       linkCache.set(url, "OK");
