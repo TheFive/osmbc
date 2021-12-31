@@ -52,7 +52,7 @@ describe("uc/index", function() {
       it("should have bootstrap.js loaded", async function() {
         this.timeout(6000);
         await browser.visit("/osmbc");
-        should(browser.evaluate("$.fn.tooltip.Constructor.VERSION")).be.equal("4.6.0");
+        should(browser.evaluate("$.fn.tooltip.Constructor.VERSION")).be.equal("4.6.1");
       });
     });
     describe("Admin Homepage", function() {

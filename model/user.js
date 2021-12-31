@@ -438,9 +438,9 @@ User.prototype.getLang = function getLang(i) {
   if (!this.langArray) {
     this.langArray = [];
     this.langArray[0] = this.getMainLang();
-    this.langArray[1] = this.getSecondLang();
-    this.langArray[2] = this.getLang3();
-    this.langArray[3] = this.getLang4();
+    if (this.getSecondLang()) this.langArray[1] = this.getSecondLang();
+    if (this.getLang3()) this.langArray[2] = this.getLang3();
+    if (this.getLang4()) this.langArray[3] = this.getLang4();
   }
   return (this.langArray[i]);
 };
