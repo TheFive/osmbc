@@ -4,15 +4,14 @@ mixin blogReviewButtons(lang)
   if (!(blog["close"+lang])) && (lang !== null)
     - _rc = blog["reviewComment"+lang];
     if (_rc)
-      .row
-        .col-md-12
-          if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
-            button.btn.btn-large.btn-warning(id="closebutton" onclick=`window.setLangStatus("${lang}","closelang",this);`) Close #{blog.name}(#{lang})
-          else
-            button.btn.btn-large.btn-warning(id="didexport" onclick=`window.setLangStatus("${lang}","markexported",this);`) Did Export (#{lang})
+      .div
+        if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
+          button.btn.btn-large.btn-warning(id="closebutton" onclick=`window.setLangStatus("${lang}","closelang",this);`) Close #{blog.name}(#{lang})
+        else
+          button.btn.btn-large.btn-warning(id="didexport" onclick=`window.setLangStatus("${lang}","markexported",this);`) Did Export (#{lang})
 
       if (blog["exported"+lang])
-        .row
+        .div
           .alert.bg-danger.text-center.bold
             | <strong>Blog is exported, please do the last Review in WordPress</strong>
 

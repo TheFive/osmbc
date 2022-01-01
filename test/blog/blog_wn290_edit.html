@@ -89,11 +89,11 @@
               <tbody><tr>
                 <th>Language</th>
                 <th>Status</th>
-                <th>Review Start</th>
+                <th>Review Start by</th>
                 <th>Review Start Time</th>
                 <th>Review</th>
                 <th>Download</th>
-                <th>Close</th>
+                <th>Action</th>
                 <th>Special</th>
               </tr>
               <tr>
@@ -111,15 +111,15 @@
                 <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=DE';"></i>
                 </td>
                 <td>
-                  <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
-                    <input class="d-none" type="text" name="lang" value="DE">
-                  </form>
+                  <div class="div">
+                    <button class="btn btn-large btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button>
+                  </div>
                 </td>
                 <td>
                   <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
                     <input class="d-none" type="text" name="lang" value="DE">
                     <input class="d-none" type="text" name="action" value="deleteallreviews">
-                    <div class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</div>
+                    <button class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</button>
                   </form>
                 </td>
               </tr>
@@ -138,17 +138,15 @@
                 <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=EN';"></i>
                 </td>
                 <td>
-                  <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
-                    <input class="d-none" type="text" name="lang" value="EN">
-                    <input class="d-none" type="text" name="action" value="closelang">
-                    <div class="btn btn-sm btn-warning" id="closebutton" type="submit">Close WN290(EN)</div>
-                  </form>
+                  <div class="div">
+                    <button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button>
+                  </div>
                 </td>
                 <td>
                   <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
                     <input class="d-none" type="text" name="lang" value="EN">
                     <input class="d-none" type="text" name="action" value="deleteallreviews">
-                    <div class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</div>
+                    <button class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</button>
                   </form>
                 </td>
               </tr>
@@ -167,17 +165,15 @@
                 <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=ES';"></i>
                 </td>
                 <td>
-                  <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
-                    <input class="d-none" type="text" name="lang" value="ES">
-                    <input class="d-none" type="text" name="action" value="closelang">
-                    <div class="btn btn-sm btn-warning" id="closebutton" type="submit">Close WN290(ES)</div>
-                  </form>
+                  <div class="div">
+                    <button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;ES&quot;,&quot;closelang&quot;,this);">Close WN290(ES)</button>
+                  </div>
                 </td>
                 <td>
                   <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
                     <input class="d-none" type="text" name="lang" value="ES">
                     <input class="d-none" type="text" name="action" value="deleteallreviews">
-                    <div class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</div>
+                    <button class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</button>
                   </form>
                 </td>
               </tr>
@@ -195,11 +191,7 @@
                 <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=PT-PT';"></i><span> </span><i class="fa fa-exclamation-triangle"></i>
                 </td>
                 <td>
-                  <form id="startReview" name="startReview" action="/blog/WN290/setLangStatus" method="post">
-                    <input class="d-none" type="text" name="lang" value="PT-PT">
-                    <input class="d-none" type="text" name="action" value="closelang">
-                    <div class="btn btn-sm btn-warning" id="closebutton" type="submit">Close WN290(PT-PT)</div>
-                  </form>
+                  <button class="btn btn-large btn-primary" id="readyreview" onclick="window.setLangStatus(&quot;PT-PT&quot;,&quot;startreview&quot;,this);">Set WN290(PT-PT) ready for review</button>
                 </td>
                 <td>
                 </td>
@@ -478,4 +470,128 @@
     });
   }   
   
+</script>
+<script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
+<script src="/javascripts/osmbc_staff.js"></script>
+<script nonce="Fixed Nonce for Test">
+  var openEditor = null;
+  htmlroot = "";
+  
+  window.onload = function () {
+  
+    $(".preview").change(highlightWrongLinks);
+    $(".preview").each(highlightWrongLinks);
+  
+  
+    if (typeof(Storage) !== "undefined") {
+      if (window.sessionStorage.blogUrl !== window.location.href) return;
+      var x = window.sessionStorage.blogX;
+      var y = window.sessionStorage.blogY;
+      window.scrollTo(x, y);
+    }
+  }
+  
+  
+  
+  window.onbeforeunload = function (event) {
+    // store the scroll Position in the local Store
+    s = {x: window.scrollX, y: window.scrollY};
+  
+    if (typeof(Storage) !== "undefined") {
+  
+      window.sessionStorage.blogUrl = window.location.href;
+      window.sessionStorage.blogX = s.x;
+      window.sessionStorage.blogY = s.y;
+    }
+  };
+  
+  
+  
+  function onLeaveText(id,column) {
+    if (!column) column="";
+  
+    var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
+    var newValue = document.getElementById(column + "markdown" + id).value;
+    if (oldValue === newValue) return;
+    form = document.getElementById(column + 'EditArticle' + id);
+    form.submit();
+  }
+  
+  
+  function convert(text) {
+    converter = new window.markdownit({breaks: true});
+  
+    // generate the OSMBlog Style List
+    if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
+    // convert md to html
+    text = converter.render(text);
+    // skip <ul> and </ul> at start and end
+  
+  
+    text = '<li>' + text + '</li>';
+  
+  
+    return text;
+  
+  }
+  function onchangeMarkdown(id,column) {
+    if (!column) column="";
+    var markdownField = document.getElementById(column + "markdown" + id);
+    var md = markdownField.value;
+    var pv = document.getElementById(column+"preview"+id);
+  
+  
+    pv.innerHTML = convert(md);
+    $(pv).trigger("change");
+  
+  }
+  
+  function callAndRedraw(call, redraw) {
+    $.get("" + call, function (data) {
+      let j = $.getJSON("" + redraw, function (json) {
+        for (k in json) {
+          var el = document.createElement("div");
+  
+          el.innerHTML = json[k];
+  
+          $(k).replaceWith(el.children[0]);
+          el.remove();
+  
+        }
+      });
+    });
+  
+  }
+  
+  function translate(langFrom, langTo, service) {
+    $(".translate" + langFrom + langTo).addClass("d-none");
+    $(".translateWait" + langFrom + langTo).removeClass("d-none");
+    var from =  langFrom.toLowerCase();
+    var to = langTo.toLowerCase();
+  
+    let url =window.htmlroot + "/blog/WN290/translate/" + service + "/" + from + "/" + to;
+  
+  
+  
+    jQuery.post(window.htmlroot + "/blog/WN290/translate/" + service + "/" + from + "/" + to, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Translation failed");
+      console.error(err);
+      $(".translateWait" + langFrom + langTo).addClass("d-none");
+      $(".translateError" + langFrom + langTo).removeClass("d-none");
+    });
+  } 
+      
+  function setLangStatus(lang, status,button) {
+    $(button).prop('disabled', true);
+    $(button).prop('html', "wait ...");
+    jQuery.post(window.htmlroot + "/blog/WN290/setLangStatus",{action:status,lang:lang}, function (data) {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Trouble setting Language Status");
+      console.error(err);
+    });
+  
+  }
 </script></body></html>

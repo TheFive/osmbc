@@ -87,7 +87,7 @@ block content
             th="Review Start Time"
             th="Review"
             th="Download"
-            th="Aktions"  
+            th="Action"  
             th="Special"
           each lang in layout.languages
             tr
@@ -113,10 +113,10 @@ block content
                 if (!blog["close" + lang]) 
                   if (blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
                     if (layout.moment().diff(blog["reviewComment" + lang][0].timestamp,'days') < 7)
-                      // display detail time format
+                      //- display detail time format
                       div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("ddd LT")
                     else 
-                      // display simple time format
+                      //- display simple time format
                       div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("L")    
                   
               //- Review by Column
