@@ -195,6 +195,33 @@ describe("routes/index", function() {
         langArray: ["ES","EN"]
       });
     });
+
+    it("should change language with complex changes", async function () {
+
+      await requestLanguageSetter("testUser","lang", "ES");
+      await requestLanguageSetter("testUser","lang2", "PT-PT");
+      await requestLanguageSetter("testUser","lang3", "EN");
+      await requestLanguageSetter("testUser","lang4", "DE");
+      // remove 3rd language after setting it to EN by setting it to none
+      await requestLanguageSetter("testUser","lang3", "none");
+      
+
+      let user = await userModule.findById(1);
+
+      should(user).eql({
+        id: "1",
+        OSMUser: "TestUser",
+        access: "full",
+        version: 6,
+        mainLang: "ES",
+        secondLang: "PT-PT",
+        lang3: "DE",
+        lang4: null,
+        langArray: ["ES","PT-PT","DE"]
+      });
+    });
+
+
     it("should change language for guest access", async function () {
 
       await requestLanguageSetter("testUserNonExisting", "lang", "ES");
