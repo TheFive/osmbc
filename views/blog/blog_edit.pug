@@ -140,15 +140,15 @@ block content
                   form(id="startReview" name="reopenlang", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
                     input.d-none(type="text",name="lang" value = lang)
                     input.d-none(type="text",name ="action" value = "editlang")
-                    div.btn.btn-warning(id="closebutton" type = "submit" ) Reopen
+                    button.btn.btn-warning(id="closebutton" type = "submit" ) Reopen
                 else if (blog["reviewComment" + lang])
                   form(id="deleteReview" name="deleteReview", action=layout.htmlroot + "/blog/" + blog.name + "/setLangStatus", method="post")
                     input.d-none(type="text",name="lang" value = lang)
                     input.d-none(type="text",name ="action" value = "deleteallreviews")
-                    div.btn.btn-warning(id="deletereviewbutton" type = "submit" ) Delete Review
+                    button.btn.btn-warning(id="deletereviewbutton" type = "submit" ) Delete Review
                 else if (copyLanguageFromAnother[lang])
                   form(id="copyArticle" name="copyArticle", action=layout.htmlroot + "/blog/" + blog.name + "/copy/"+copyLanguageFromAnother[lang]+"/"+lang, method="post")
-                    div.btn.btn-warning(id="copyArticlebutton" type = "submit" )=(copyLanguageFromAnother[lang] === "no_translation") ? "Set empty articles to no translation" :" Copy From " + copyLanguageFromAnother[lang]
+                    button.btn.btn-warning(id="copyArticlebutton" type = "submit" )=(copyLanguageFromAnother[lang] === "no_translation") ? "Set empty articles to no translation" :" Copy From " + copyLanguageFromAnother[lang]
 
 
 
