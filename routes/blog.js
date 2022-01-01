@@ -527,7 +527,7 @@ function editBlogId(req, res) {
   res.set("content-type", "text/html");
   let copyLanguageFromAnother = config.getValue("copyLanguageFromAnother");
   if (!copyLanguageFromAnother) copyLanguageFromAnother = {};
-  res.render("editblog", {
+  res.render("blog/blog_edit.pug", {
     layout: res.rendervar.layout,
     blog: blog,
     params: params,
