@@ -194,7 +194,8 @@ describe("uc.article", function() {
       article.markdownEN = "";
       article.markdownES = "";
       await article.save();
-      await browser.visit("/article/" + articleId + "?notranslation=true");
+      await browser.visit("/article/" + articleId);
+      await browser.click("button#noTranslationButton");
       article = await articleModule.findById(articleId);
       should(article.markdownDE).eql("Text");
       should(article.markdownEN).eql("no translation");

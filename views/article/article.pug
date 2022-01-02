@@ -13,6 +13,10 @@ block content
   // FullAccessArticleView
   form.d-none#textanalyseform( method="POST",action="https://wortliga.de/textanalyse/" )
     input.form-control(name = "text" id ="textanalysefield")
+  form.d-none#noTranslationForm(action=`${layout.htmlroot}/article/${article.id}/notranslation`, method="post", hide = true)
+    textarea(type="text" name="language")
+      | !{JSON.stringify(layout.activeLanguages)}
+  
   form(name="input",id="input", action=`${layout.htmlroot}/article/${article.id}/witholdvalues`, method="post")
     .row
       // Block for Buttons in the upper right corner and on the top in mobile
@@ -86,7 +90,10 @@ block content
           .col-md-4
 
             +languageDisplay(article,{func: "showRL"})
-            p.osmbc-help-text="Click to change left lang"
+            p.osmbc-help-text="green: Article is ready"
+            p.osmbc-help-text="light blue: Article is empty"
+            p.osmbc-help-text="grey: No Translation"
+            p.osmbc-help-text="black font: language closed"
             if (layout.user.access === "full")
               +noTranslationButton
           .col-md-1

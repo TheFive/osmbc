@@ -79,7 +79,7 @@ mixin doublettesButton
 
 
 mixin cancelButton
-  button.btn.btn-large.btn-secondary(type = "button" onclick =`disableUnchanged(); location.href='${layout.htmlroot}/article/${article.id}?edit=false';`) last Version
+  button.btn.btn-large.btn-secondary#cancelButton(type = "button" onclick =`disableUnchanged(); location.href='${layout.htmlroot}/article/${article.id}?edit=false';`) last Version
 
 
 mixin noTranslationButton
@@ -91,7 +91,7 @@ mixin noTranslationButton
         - open = true;
     if open
       p
-        button.btn.btn-small.btn-secondary(type = "button" onclick ="window.onbeforeunload=null; setNoTranslation(); document.getElementById('input').submit();") no translation to rest
+        button.btn.btn-small.btn-secondary#noTranslationButton(type = "button" onclick =" window.setNoTranslation(); ") no translation to rest
 
 mixin markdownWithPreview(lang)
   - labelClass = ""

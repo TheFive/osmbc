@@ -138,7 +138,6 @@ function renderArticleId(req, res, next) {
   }
 
   if (req.query.editComment) params.editComment = req.query.editComment;
-  if (req.query.notranslation) params.notranslation = req.query.notranslation;
   let collectedByGuest = false;
 
 
@@ -203,20 +202,7 @@ function renderArticleId(req, res, next) {
         if (err) return callback(err);
         callback(null, result);
       });
-    },
-    notranslate:
-        function (callback) {
-          debug("renderArticleId->notranslate");
-
-          if (params.notranslation === "true") {
-            article.addNotranslate(req.user, res.rendervar.layout.usedLanguages, function (err) {
-              if (err) return callback(err);
-              let returnToUrl = htmlroot + "/article/" + article.id;
-              if (params.style) returnToUrl = returnToUrl + "?style=" + params.style;
-              callback(null, returnToUrl);
-            });
-          } else return callback();
-        }
+    }
   },
   function (err, result) {
     debug("renderArticleId->finalFunction");
@@ -434,7 +420,6 @@ function searchAndCreate(req, res, next) {
 function postArticle(req, res, next) {
   debug("postArticle");
 
-  const noTranslation = req.query.notranslation;
 
 
   let article = req.article;
@@ -482,17 +467,53 @@ function postArticle(req, res, next) {
     debug("postArticle->setValues");
     if (err) { return next(err); }
     assert(article);
-    if (noTranslation === "true") {
-      const showLangs = JSON.parse(req.body.languages);
-      for (const lang in language.getLanguages()) {
-        if (showLangs[lang]) {
-          if (changes["markdown" + lang]) continue;
-          if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
-          if (lang === req.user.mainLang) continue;
-          changes["markdown" + lang] = "no translation";
-        }
+
+    article.setAndSave(req.user, changes, function(err) {
+      debug("postArticle->setValues->setAndSave");
+      if (err) {
+        next(err);
+        return;
       }
-    }
+      res.redirect(returnToUrl);
+    });
+  }
+  );
+}
+
+
+function postArticleNoTranslation(req, res, next) {
+  debug("postArticle");
+
+
+  const article = req.article;
+
+
+
+
+  let returnToUrl;
+  if (article) returnToUrl = htmlroot + "/article/" + article.id;
+  const changes = {};
+  changes.old = {};
+
+  async.parallel([
+  ],
+  function setValues(err) {
+    debug("postArticle->setValues");
+    if (err) { return next(err); }
+    assert(article);
+
+
+    const showLangs = JSON.parse(req.body.language);
+    showLangs.forEach(lang => {
+      if (changes["markdown" + lang]) return;
+      if (article["markdown" + lang] && article["markdown" + lang].trim() !== "") return;
+      if (lang === req.user.mainLang) return;
+      changes.old["markdown" + lang] = "";
+      changes["markdown" + lang] = "no translation";
+    });
+
+    console.dir(changes);
+
 
     article.setAndSave(req.user, changes, function(err) {
       debug("postArticle->setValues->setAndSave");
@@ -971,6 +992,7 @@ function translateWithPlugin(translatePlugin) {
   };
 }
 
+
 function isFirstCollector(req, res, next) {
   if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
   if (!req.article) return next();
@@ -1015,6 +1037,7 @@ router.post("/:article_id/setMarkdown/:lang", allowFullAccess, postSetMarkdown);
 router.post("/:article_id/reviewChange/:lang", allowFullAccess, postReviewChange);
 router.post("/:article_id/editComment/:number", allowGuestAccess, postEditComment);
 router.post("/:article_id", allowFullAccess, postArticle);
+router.post("/:article_id/notranslation", allowFullAccess, postArticleNoTranslation);
 router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldValues);
 
 

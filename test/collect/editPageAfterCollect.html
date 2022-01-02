@@ -73,6 +73,9 @@
         </p><form class="d-none" id="textanalyseform" method="POST" action="https://wortliga.de/textanalyse/">
           <input class="form-control" name="text" id="textanalysefield">
         </form>
+        <form class="d-none" id="noTranslationForm" action="/article/6/notranslation" method="post" hide="">
+          <textarea type="text" name="language">["DE","EN"]</textarea>
+        </form>
         <form name="input" id="input" action="/article/6/witholdvalues" method="post">
           <div class="row">
             <!-- Block for Buttons in the upper right corner and on the top in mobile-->
@@ -156,17 +159,20 @@
               </div>
               <div class="form-group row">
                 <div class="col-md-4"><span class="badge osmbclabel-collect" onclick="showRL('DE')">DE</span><span class="badge osmbclabel-collect" onclick="showRL('EN')">EN</span>
-                  <p class="osmbc-help-text">Click to change left lang</p>
+                  <p class="osmbc-help-text">green: Article is ready</p>
+                  <p class="osmbc-help-text">light blue: Article is empty</p>
+                  <p class="osmbc-help-text">grey: No Translation</p>
+                  <p class="osmbc-help-text">black font: language closed</p>
                   <div id="notranslationArea">
                     <p>
-                      <button class="btn btn-small btn-secondary" type="button" onclick="window.onbeforeunload=null; setNoTranslation(); document.getElementById('input').submit();">no translation to rest</button>
+                      <button class="btn btn-small btn-secondary invisible" id="noTranslationButton" type="button" onclick=" window.setNoTranslation(); ">no translation to rest</button>
                     </p>
                   </div>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-4">
                   <button class="btn btn-large btn-primary" id="saveButton" type="button" onclick="window.saveButton()">Save</button>
-                  <button class="btn btn-large btn-secondary" type="button" onclick="disableUnchanged(); location.href='/article/6?edit=false';">last Version</button>
+                  <button class="btn btn-large btn-secondary" id="cancelButton" type="button" onclick="disableUnchanged(); location.href='/article/6?edit=false';">last Version</button>
                 </div>
               </div>
             </div>
