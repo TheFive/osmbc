@@ -4,9 +4,6 @@ block additionalMenuMain
   +translationMenu
   
 block additionalMenuRight  
-  - console.dir(params);
-  - console.dir(layout.user);
-  - console.dir("Hey i a m here  -------------");
   - for (i = 2; layout.user.langArray && i < layout.user.langArray.length+2;i++)
     +langChooser("lang"+i)  
   
@@ -20,8 +17,12 @@ block content
     .row
       // Block for Buttons in the upper right corner and on the top in mobile
       .col-md-6
+        if (article._blog)
+          div.form-group.row
+            label.col-sm-2.col-form-label="Blog Date"
+            label.col-md-10=layout.util.dateFormat(article._blog.startDate,"EN") + " - " +layout.util.dateFormat(article._blog.endDate,"EN")
         div.form-group.row
-          label.col-sm-2.col-form-label="Blog"
+          a.col-sm-2.col-form-label(href=`${layout.htmlroot}/blog/${article.blog}`)="Blog"
           div.col-md-10
             +blogSelector(article,layout.user.access !== "full" || !article.isChangeAllowed("blog"))
             textarea.d-none.form-control(id="old_blog" name="old_blog",rows=1,hide=true)=article.blog
