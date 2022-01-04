@@ -88,66 +88,69 @@ mixin labeledText(label,name,value,explanation)
 
 
 mixin languageDisplay(article,options)
-  - langList = layout.activeLanguages
-  - onClick = ""
-  - if (options && options.short) {
-  -  langList = [layout.language];
-  -  if (layout.language2) langList.push(layout.language2);
-  -  if (layout.language3) langList.push(layout.language3);
-  -  if (layout.language4) langList.push(layout.language4);
-  - }
-  each lang in langList
-    - if (options && options.func) onClick = options.func+"('"+lang+"')"
-    - var style = ""
-    - if (!article.isChangeAllowed("markdown"+lang)) style="color:black"
-    if (article && article["markdown" + lang])
-        if (article["markdown" + lang] !== "no translation")
-            span.badge.osmbclabel-markdown(onclick=onClick style=style)=lang
-        else
-            span.badge.osmbclabel-no-translation(onclick=onClick style=style)=lang
-    else
-      if (article && article.collection)
-        span.badge.osmbclabel-collect(onclick=onClick style=style)=lang
+  div.d-flex.flex-nowrap
+    - langList = layout.activeLanguages
+    - onClick = ""
+    - if (options && options.short) {
+    -  langList = [layout.language];
+    -  if (layout.language2) langList.push(layout.language2);
+    -  if (layout.language3) langList.push(layout.language3);
+    -  if (layout.language4) langList.push(layout.language4);
+    - }
+    each lang in langList
+      - if (options && options.func) onClick = options.func+"('"+lang+"')"
+      - var style = ""
+      - if (!article.isChangeAllowed("markdown"+lang)) style="color:black"
+      if (article && article["markdown" + lang])
+          if (article["markdown" + lang] !== "no translation")
+              span.badge.osmbclabel-markdown(onclick=onClick style=style)=lang
+          else
+              span.badge.osmbclabel-no-translation(onclick=onClick style=style)=lang
       else
-        span.badge.osmbclabel-no-markdown(onclick=onClick style=style)=lang
+        if (article && article.collection)
+          span.badge.osmbclabel-collect(onclick=onClick style=style)=lang
+        else
+          span.badge.osmbclabel-no-markdown(onclick=onClick style=style)=lang
 
 mixin voteDisplay(article,options)
-  each vote in votes
-    if (options[vote.name])
-      +voteLabel(vote,article)
+  div.d-flex.flex-nowrap
+    each vote in votes
+      if (options[vote.name])
+        +voteLabel(vote ,article)
 
 
 mixin articleIcons(a,options)
-  - numCol = 0;
-  - if (a.author && a.author.collection) numCol = a.author.collection.split(",").length;
-  - numEd = 0;
-  - if (a.author && a.author["markdown"+lang]) numEd = a.author["markdown"+lang].split(",").length;
-  if (a.author && options.showNumbers)
-    span.hidden-xs.badge.osmbclabel-collect.small-margin=numCol
-    span.hidden-xs.badge.osmbclabel-markdown.small-margin=numEd
-  if options.showMail
-    if a.getCommentMention()
-      - shown = false
-      if a.isMentioned(layout.user.OSMUser)
-          i.fa.fa-comment.small-margin.osmbccolor-user
-          - shown=true
-      if a.isMentioned(layout.user.getMainLang())
-          i.fa.fa-comment.small-margin.osmbccolor-lang
-          - shown=true
-      if layout.user.getSecondLang() && a.isMentioned(layout.user.getSecondLang())
-          i.fa.fa-comment.small-margin.osmbccolor-lang2
-          - shown=true
-      if !shown
-        i.fa.fa-comment.small-margin(style="color:grey")
-      if !a.getCommentRead(layout.user.OSMUser)
-        i.fa.fa-envelope.small-margin
-  a(href=layout.htmlroot+"/article/" + a.id)
-    i.fa.fa-edit.small-margin
-  if a.predecessorId
-    if (a.predecessorId === options.predecessorId)
-      span.hidden-xs.glyphicon.glyphicon-pushpin.small-margin
-    else
-      span.hidden-xs.glyphicon.glyphicon-stop.small-margin.text-warning
+  div.d-flex.flex-nowrap
+    - numCol = 0;
+    - if (a.author && a.author.collection) numCol = a.author.collection.split(",").length;
+    - numEd = 0;
+    - if (a.author && a.author["markdown"+lang]) numEd = a.author["markdown"+lang].split(",").length;
+    if (a.author && options.showNumbers)
+      span.hidden-xs.badge.osmbclabel-collect.small-margin=numCol
+      span.hidden-xs.badge.osmbclabel-markdown.small-margin=numEd
+    if options.showMail
+      if a.getCommentMention()
+        - shown = false
+        if a.isMentioned(layout.user.OSMUser)
+            i.fa.fa-comment.small-margin.osmbccolor-user
+            - shown=true
+        if a.isMentioned(layout.user.getMainLang())
+            i.fa.fa-comment.small-margin.osmbccolor-lang
+            - shown=true
+        if layout.user.getSecondLang() && a.isMentioned(layout.user.getSecondLang())
+            i.fa.fa-comment.small-margin.osmbccolor-lang2
+            - shown=true
+        if !shown
+          i.fa.fa-comment.small-margin(style="color:grey")
+        if !a.getCommentRead(layout.user.OSMUser)
+          i.fa.fa-envelope.small-margin
+    a(href=layout.htmlroot+"/article/" + a.id)
+      i.fa.fa-edit.small-margin
+    if a.predecessorId
+      if (a.predecessorId === options.predecessorId)
+        span.hidden-xs.glyphicon.glyphicon-pushpin.small-margin
+      else
+        span.hidden-xs.glyphicon.glyphicon-stop.small-margin.text-warning
 
 
 mixin navbutton(tab,activetab,addClass)

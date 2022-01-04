@@ -39,7 +39,7 @@ block blogcontent
       for a in articles[c.EN]
         if a["markdown"+lang]!=="no translation"
           .row
-            div(class=firstColSize)
+            div(class=firstColSize).d-flex.flex-nowrap
               span
                 +articleIcons(a,{showNumbers: showNumbers, showMail: showMail,predecessorId:predecessorId})
                 - predecessorId = a.id

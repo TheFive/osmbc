@@ -14,10 +14,11 @@ mixin displayOverviewRow(a)
         +articleIcons(a,{showNumbers: showNumbers, showMail: showMail, predecessorId: predecessorId})
         - predecessorId = a.id
       td.d-none.d-md-block
-        if showVisibleLanguages
-          +languageDisplay(a,{short: true})
-        span(id="voteLabels"+ a.id)
-          +voteDisplay(a,showVotes)
+        div.d-flex.flex-nowrap
+          if showVisibleLanguages
+            +languageDisplay(a,{short: true})
+          span(id="voteLabels"+ a.id)
+            +voteDisplay(a,showVotes)
 
 
       td

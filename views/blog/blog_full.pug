@@ -84,7 +84,7 @@ block blogcontent
         - if (disableNewerMarkdown && a["markdown"+left_lang] && !a["markdown"+right_lang]) enable = false;
         if enable
           .row
-            div(class=firstColSize)
+            div(class=firstColSize).d-flex.flex-nowrap
               span
                 +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
                 - predecessorId = a.id
