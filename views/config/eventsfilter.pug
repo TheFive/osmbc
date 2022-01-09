@@ -29,7 +29,7 @@ mixin countryRow(country)
 
 
 block showContentOfConfig
-  - lang = layout.language
+  - lang = layout.user.getLang(0)
   - var countries = {}
   if config.getJSON()
 

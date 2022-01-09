@@ -24,7 +24,7 @@ const userModule  = require("../../model/user.js");
 
 
 describe("uc/blog", function() {
-  this.timeout(1000*60);
+  this.timeout(2000*60);
   let nockLoginPage;
 
   before(async function(){
@@ -55,7 +55,7 @@ describe("uc/blog", function() {
       let n = nock(url.protocol+"//"+url.host)
         .get(path)
         .times(99)
-        .reply(200,"OK");
+        .reply(201,"OK");
       nocklist.push(n);
     });
   });

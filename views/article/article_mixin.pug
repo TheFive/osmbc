@@ -129,7 +129,8 @@ mixin translationMenu
     ul.dropdown-menu(aria-labelledby="articleTranslateMenu")
       each tService in translationServices
         li.dropdown-header="Use " + tService +":"
-          - list = [params.left_lang,params.right_lang,params.lang3,params.lang4]
+          - list = []
+          - for ( i=0;layout.user.getLang(i);i++) {list.push(layout.user.getLang(i));}
           each a in list
             each b in list
               if (a!==b && a!== null && b!== null)

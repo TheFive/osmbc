@@ -3,7 +3,7 @@ extends config
 block showContentOfConfig
   p
     h2= "Calendar Preview"
-    - lang = layout.language
+    - lang = layout.user.getLang(0)
     if config.json
       table#resulttable.table.table-striped.table-responsive
         thead

@@ -633,7 +633,6 @@ function submitAndRedraw(form, redraw) {
 function setNoTranslation() {
   const f = $("#noTranslationForm");
   if (f.length > 0) {
-    console.dir(f.attr("action"));
     f.submit();
   }
 }

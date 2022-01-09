@@ -92,10 +92,7 @@ mixin languageDisplay(article,options)
     - langList = layout.activeLanguages
     - onClick = ""
     - if (options && options.short) {
-    -  langList = [layout.language];
-    -  if (layout.language2) langList.push(layout.language2);
-    -  if (layout.language3) langList.push(layout.language3);
-    -  if (layout.language4) langList.push(layout.language4);
+    -  langList = layout.user.getLanguages()
     - }
     each lang in langList
       - if (options && options.func) onClick = options.func+"('"+lang+"')"
@@ -247,7 +244,7 @@ mixin blogSelector(article,readonly)
       +blogSelection(layout.listOfOpenBlog,missingList,"",readonly)
       if (layout.user.access === "full")
         +blogSelection(layout.listOfEditBlog,missingList,"(Edit)",readonly)
-        +blogSelection(layout.listOfReviewBlog,missingList,"(Review "+layout.language+")",readonly)
+        +blogSelection(layout.listOfReviewBlog,missingList,"(Review "+layout.user.getLang(0)+")",readonly)
       +blogSelection([{name: "Future"}],missingList,"",readonly)
       if (article && article.categoryEN === "--unpublished--")
         +blogSelection([{name: "Trash"}],missingList,"",readonly)
@@ -319,20 +316,22 @@ mixin homeButton(addclass)
     
 mixin langChooser(langString)
   if (layout)
-    - let l = "language"
+    - let l = 0
     - let label = "osmbcbadge-lang"
     if (langString === "lang2")
-      - l = "language2"
+      - l = 1
       - label = "osmbcbadge-lang2"
     - let langNumber = parseInt(langString.substr(4,2))    
     if (langNumber > 2)
-      - l = "language"+langNumber
+      - l = langNumber -1
       - label = "badge-secondary"
       
 
     li.dropdown.nav-item
-      a.nav-link.dropdown-toggle(id=l, class=label, href='#', style="color:white", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=(layout[l])?layout[l]:"--"
-      div.dropdown-menu(aria-labelledby=l)
+      - lang_temp = (layout.user.getLang(l))?layout.user.getLang(l):"--"
+      - label_temp = "language" + ((langNumber > 0 ) ? langNumber : "")
+      a.nav-link.dropdown-toggle(id=label_temp, class=label, href='#', style="color:white", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=lang_temp
+      div.dropdown-menu(aria-labelledby=label_temp)
         if (langString !== "lang")
           a.dropdown-item(id=langString+"_none" onclick = "chooseLanguage('" + langString +"','none')" ) none
         each litem in layout.languages

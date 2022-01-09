@@ -547,7 +547,7 @@ Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, giv
   // do easier fix the test.
   fs.writeFileSync(actualFile, string, "UTF8");
   if (stopOnError) {
-    should(string).eql(expected, "HTML File " + name + " is different.");
+    should(false).eql(true, "HTML File " + name + " is different.");
   } else {
     if (string !== expected) {
       errorList.push("HTML File " + name + " is different.");

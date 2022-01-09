@@ -130,7 +130,7 @@ mixin translationBlogMenu
       div.dropdown-menu(aria-labelledby="translateMenu")
         each tService in translationServices
           a.dropdown-header="Use " + tService +":"
-            - list = [layout.language, layout.language2]
+            - list = [layout.user.getLang(0), layout.user.getLang(1)]
             each a in list
               each b in list
                 if (a!==b && a!== null && b!== null)

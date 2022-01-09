@@ -1,7 +1,7 @@
 extends config
 
 block showContentOfConfig
-  - lang = layout.language
+  - lang = layout.user.getLang(0)
   if config.json
     .row
       .col-md-3

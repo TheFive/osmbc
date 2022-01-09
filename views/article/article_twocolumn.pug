@@ -5,11 +5,11 @@ block markdownArea
 
   .row
     - var lbg;
-    - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
-    - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
+    - if (params.left_lang===layout.user.getLang(0)) lbg = "osmbclabel-lang";
+    - if (params.left_lang===layout.user.getLang(1)) lbg = "osmbclabel-lang2";
     - var rbg;
-    - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
-    - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
+    - if (params.right_lang===layout.user.getLang(0)) rbg = "osmbclabel-lang";
+    - if (params.right_lang===layout.user.getLang(1)) rbg = "osmbclabel-lang2";
 
 
 

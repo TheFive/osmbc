@@ -404,6 +404,11 @@ User.prototype.getNotificationStatus = function getNotificationStatus(channel, t
   return this.notification[channel][type];
 };
 
+User.prototype.getLanguages = function getLanguages() {
+  debug("User.prototype.getLanguages");
+  return this.langArray;
+};
+
 User.prototype.getMainLang = function getMainLang() {
   debug("User.prototype.getMainLang");
   if (this.langArray && this.langArray[0]) return this.langArray[0];

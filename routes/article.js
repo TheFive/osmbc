@@ -512,7 +512,6 @@ function postArticleNoTranslation(req, res, next) {
       changes["markdown" + lang] = "no translation";
     });
 
-    console.dir(changes);
 
 
     article.setAndSave(req.user, changes, function(err) {
@@ -857,36 +856,45 @@ function searchArticles(req, res, next) {
 
 function urlExist(req, res) {
   debug("urlExists");
+  let urls = req.body.urls;
+  if (!urls) return req.next(new Error("Expected Paramter urls"));
+  if (typeof urls === "string") urls = [urls];
+  if (!Array.isArray(urls)) return req.next(new Error("Expected Paramter urls as Array"));
+  const result = {};
 
-  const url = req.body.url;
-  if (!url || url === 0 || url === "") {
-    res.end("Missing Link");
-    return;
-  }
-
-
-  if (linkCache.get(url) === "OK") {
-    return res.end("OK");
-  }
-
-  // Do not test google translate links
-  // this test is generating to much false positive
-  if (url.startsWith("https://translate.google.com")) {
-    return res.end("OK");
-  }
-
-  request.get(url, { headers: { "User-Agent": userAgent } }, function(err, response) {
-    if (!err && response.statusCode === 200) {
-      linkCache.set(url, "OK");
-      res.end("OK");
-    } else if (!err && response.statusCode > 200) {
-      res.end(response.statusCode.toString());
-    } else {
-      let m = "NOK";
-      if (typeof err.message === "string") m = err.message;
-      res.end(m);
+  async.each(urls,
+    (url, callback) => {
+      if (linkCache.get(url) === "OK") {
+        result[url] = "OK";
+        return callback();
+      }
+      // Do not test google translate links
+      // this test is generating to much false positive
+      if (url.startsWith("https://translate.google.com")) {
+        result[url] = "OK";
+        return callback();
+      }
+      request.get(url, { headers: { "User-Agent": userAgent } }, function(err, response) {
+        if (!err && response.statusCode < 300) {
+          linkCache.set(url, "OK");
+          result[url] = "OK";
+          return callback();
+        } else if (!err && response.statusCode >= 300) {
+          result[url] = response.statusCode;
+          return callback();
+        } else {
+          let m = "NOK";
+          if (typeof err.message === "string") m = err.message;
+          result[url] = m;
+          return callback();
+        }
+      });
+    },
+    function final(err) {
+      if (err) res.end(err);
+      else res.json(result);
     }
-  });
+  );
 }
 
 

@@ -7,11 +7,11 @@ mixin firstBlogOfList(list,count,c)
     if (list.length > 0)
       each blog,i in list
         if i<count
-          li.navbar-item.active.d-none.d-xs-block
+          li.navbar-item.active.d-xs-block
             a.nav-link(href=`${layout.htmlroot}/blog/${blog.name}`)=blog.name
-              span.badge.badge-pill.osmbcbadge-lang=blogNumber(blog, layout.language)
-              if layout.language2
-                span.badge.badge-pill.osmbcbadge-lang2=blogNumber(blog, layout.language2)
+              span.badge.badge-pill.osmbcbadge-lang=blogNumber(blog, layout.user.getLang(0))
+              if layout.user.getLang(1)
+                span.badge.badge-pill.osmbcbadge-lang2=blogNumber(blog, layout.user.getLang(1))
 
 
 
@@ -35,7 +35,7 @@ mixin myGuestArticleMenu
 mixin tbcMenu
   if (layout && layout.user.hasFullAccess())
     li.navbar-item.active
-      if blogNumber(layout.tbc, layout.language) > 0
+      if blogNumber(layout.tbc, layout.user.getLang(0)) > 0
         - dynamicHide = ""
         if (layout.tbc._tbcOwnArticleNumber == 0)
           - dynamicHide = "hidden-xs"

@@ -58,9 +58,9 @@ block content
                 tr.d-none(class="class_" + article.id)
                   td
                   td(colspan=1)
-                    |!{layout.md_render(article["markdown"+layout.language])}
+                    |!{layout.md_render(article["markdown"+layout.user.getLang(0)])}
                   td(colspan=2)
-                    |!{layout.md_render(article["markdown"+layout.language2])}
+                    |!{layout.md_render(article["markdown"+layout.user.getLang(1)])}
 
            
       else
@@ -88,7 +88,7 @@ block content
                   .col-md-10
                     select(id="categoryEN",name="categoryEN").form-control
                       for category in categories
-                        option(value=category.EN ) #{category[layout.language]} / #{category[layout.language2]}
+                        option(value=category.EN ) #{category[layout.user.getLang(0)]} / #{category[layout.user.getLang(1)]}
           
      
 

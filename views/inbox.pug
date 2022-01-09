@@ -37,8 +37,8 @@ mixin displayArticle(article,lang)
 
 
 block content
-  - left_lang = layout.language
-  - right_lang = layout.language2
+  - left_lang = layout.user.getLang(0)
+  - right_lang = layout.user.getLang(1)
 
   - showRead = (layout.user.getOption("inbox","showRead")=="true")
   .row
