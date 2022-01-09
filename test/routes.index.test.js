@@ -94,7 +94,7 @@ describe("routes/index", function() {
     it("should show home page", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
       body.should.containEql("<title>TESTBC</title>");
-      body.should.containEql("<h2 class=\"hidden-xs\">Welcome to OSM BC</h2>");
+      body.should.containEql('<h2 class="d-none d-sm-block">Welcome to OSM BC</h2>');
       body.should.containEql("Full Access Index Page");
     });
     it("should deny denied access user",
@@ -190,9 +190,37 @@ describe("routes/index", function() {
         mainLang: "ES",
         secondLang: "EN",
         lang3: null,
-        lang4: null
+        lang4: null,
+        langArray: ["ES","EN"]
       });
     });
+
+    it("should change language with complex changes", async function () {
+
+      await requestLanguageSetter("testUser","lang", "ES");
+      await requestLanguageSetter("testUser","lang2", "PT-PT");
+      await requestLanguageSetter("testUser","lang3", "EN");
+      await requestLanguageSetter("testUser","lang4", "DE");
+      // remove 3rd language after setting it to EN by setting it to none
+      await requestLanguageSetter("testUser","lang3", "none");
+      
+
+      let user = await userModule.findById(1);
+
+      should(user).eql({
+        id: "1",
+        OSMUser: "TestUser",
+        access: "full",
+        version: 6,
+        mainLang: "ES",
+        secondLang: "PT-PT",
+        lang3: "DE",
+        lang4: null,
+        langArray: ["ES","PT-PT","DE"]
+      });
+    });
+
+
     it("should change language for guest access", async function () {
 
       await requestLanguageSetter("testUserNonExisting", "lang", "ES");
@@ -209,7 +237,8 @@ describe("routes/index", function() {
         secondLang: "EN",
         mdWeeklyAuthor: "anonymous",
         lang3: null,
-        lang4: null
+        lang4: null,
+        langArray: ["ES","EN"]
       });
     });
     it("should deny denied access user",

@@ -138,7 +138,6 @@ function renderArticleId(req, res, next) {
   }
 
   if (req.query.editComment) params.editComment = req.query.editComment;
-  if (req.query.notranslation) params.notranslation = req.query.notranslation;
   let collectedByGuest = false;
 
 
@@ -203,20 +202,7 @@ function renderArticleId(req, res, next) {
         if (err) return callback(err);
         callback(null, result);
       });
-    },
-    notranslate:
-        function (callback) {
-          debug("renderArticleId->notranslate");
-
-          if (params.notranslation === "true") {
-            article.addNotranslate(req.user, res.rendervar.layout.usedLanguages, function (err) {
-              if (err) return callback(err);
-              let returnToUrl = htmlroot + "/article/" + article.id;
-              if (params.style) returnToUrl = returnToUrl + "?style=" + params.style;
-              callback(null, returnToUrl);
-            });
-          } else return callback();
-        }
+    }
   },
   function (err, result) {
     debug("renderArticleId->finalFunction");
@@ -240,23 +226,7 @@ function renderArticleId(req, res, next) {
     res.set("content-type", "text/html");
     // change title of page
     res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
-    let pugFile = "article/article_twocolumn";
-    if (req.user.getSecondLang() === null) pugFile = "article/article_onecolumn";
-
-    if (req.user.languageCount === "three") {
-      pugFile = "article/article_threecolumn";
-      if (req.user.getLang3() === "--") pugFile = "article/article_twocolumn";
-      if (req.user.getSecondLang() === "--") pugFile = "article/article_onecolumn";
-
-      params.columns = 3;
-    }
-    if (req.user.languageCount === "four") {
-      pugFile = "article/article_fourcolumn";
-      if (req.user.getLang4() === null) pugFile = "article/article_threecolumn";
-      if (req.user.getLang3() === null) pugFile = "article/article_twocolumn";
-      if (req.user.getSecondLang() === null) pugFile = "article/article_onecolumn";
-      params.columns = 4;
-    }
+    const pugFile = "article/article_all_column";
 
 
     res.render(pugFile, {
@@ -450,7 +420,6 @@ function searchAndCreate(req, res, next) {
 function postArticle(req, res, next) {
   debug("postArticle");
 
-  const noTranslation = req.query.notranslation;
 
 
   let article = req.article;
@@ -498,17 +467,52 @@ function postArticle(req, res, next) {
     debug("postArticle->setValues");
     if (err) { return next(err); }
     assert(article);
-    if (noTranslation === "true") {
-      const showLangs = JSON.parse(req.body.languages);
-      for (const lang in language.getLanguages()) {
-        if (showLangs[lang]) {
-          if (changes["markdown" + lang]) continue;
-          if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
-          if (lang === req.user.mainLang) continue;
-          changes["markdown" + lang] = "no translation";
-        }
+
+    article.setAndSave(req.user, changes, function(err) {
+      debug("postArticle->setValues->setAndSave");
+      if (err) {
+        next(err);
+        return;
       }
-    }
+      res.redirect(returnToUrl);
+    });
+  }
+  );
+}
+
+
+function postArticleNoTranslation(req, res, next) {
+  debug("postArticle");
+
+
+  const article = req.article;
+
+
+
+
+  let returnToUrl;
+  if (article) returnToUrl = htmlroot + "/article/" + article.id;
+  const changes = {};
+  changes.old = {};
+
+  async.parallel([
+  ],
+  function setValues(err) {
+    debug("postArticle->setValues");
+    if (err) { return next(err); }
+    assert(article);
+
+
+    const showLangs = JSON.parse(req.body.language);
+    showLangs.forEach(lang => {
+      if (changes["markdown" + lang]) return;
+      if (article["markdown" + lang] && article["markdown" + lang].trim() !== "") return;
+      if (lang === req.user.mainLang) return;
+      changes.old["markdown" + lang] = "";
+      changes["markdown" + lang] = "no translation";
+    });
+
+
 
     article.setAndSave(req.user, changes, function(err) {
       debug("postArticle->setValues->setAndSave");
@@ -852,36 +856,45 @@ function searchArticles(req, res, next) {
 
 function urlExist(req, res) {
   debug("urlExists");
+  let urls = req.body.urls;
+  if (!urls) return req.next(new Error("Expected Paramter urls"));
+  if (typeof urls === "string") urls = [urls];
+  if (!Array.isArray(urls)) return req.next(new Error("Expected Paramter urls as Array"));
+  const result = {};
 
-  const url = req.body.url;
-  if (!url || url === 0 || url === "") {
-    res.end("Missing Link");
-    return;
-  }
-
-
-  if (linkCache.get(url) === "OK") {
-    return res.end("OK");
-  }
-
-  // Do not test google translate links
-  // this test is generating to much false positive
-  if (url.startsWith("https://translate.google.com")) {
-    return res.end("OK");
-  }
-
-  request.get(url, { headers: { "User-Agent": userAgent } }, function(err, response) {
-    if (!err && response.statusCode === 200) {
-      linkCache.set(url, "OK");
-      res.end("OK");
-    } else if (!err && response.statusCode > 200) {
-      res.end(response.statusCode.toString());
-    } else {
-      let m = "NOK";
-      if (typeof err.message === "string") m = err.message;
-      res.end(m);
+  async.each(urls,
+    (url, callback) => {
+      if (linkCache.get(url) === "OK") {
+        result[url] = "OK";
+        return callback();
+      }
+      // Do not test google translate links
+      // this test is generating to much false positive
+      if (url.startsWith("https://translate.google.com")) {
+        result[url] = "OK";
+        return callback();
+      }
+      request.get(url, { headers: { "User-Agent": userAgent } }, function(err, response) {
+        if (!err && response.statusCode < 300) {
+          linkCache.set(url, "OK");
+          result[url] = "OK";
+          return callback();
+        } else if (!err && response.statusCode >= 300) {
+          result[url] = response.statusCode;
+          return callback();
+        } else {
+          let m = "NOK";
+          if (typeof err.message === "string") m = err.message;
+          result[url] = m;
+          return callback();
+        }
+      });
+    },
+    function final(err) {
+      if (err) res.end(err);
+      else res.json(result);
     }
-  });
+  );
 }
 
 
@@ -987,6 +1000,7 @@ function translateWithPlugin(translatePlugin) {
   };
 }
 
+
 function isFirstCollector(req, res, next) {
   if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
   if (!req.article) return next();
@@ -1031,6 +1045,7 @@ router.post("/:article_id/setMarkdown/:lang", allowFullAccess, postSetMarkdown);
 router.post("/:article_id/reviewChange/:lang", allowFullAccess, postReviewChange);
 router.post("/:article_id/editComment/:number", allowGuestAccess, postEditComment);
 router.post("/:article_id", allowFullAccess, postArticle);
+router.post("/:article_id/notranslation", allowFullAccess, postArticleNoTranslation);
 router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldValues);
 
 

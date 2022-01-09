@@ -116,12 +116,24 @@ function renderAdminHome(req, res, next) {
 function languageSwitcher(req, res, next) {
   debug("languageSwitcher");
 
-  const lang = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()];
+  let lang = req.user.langArray;
+  if (!lang) lang = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()];
+
+  function isValidLang(lang) {
+    return language.getLanguages()[lang] !== undefined;
+  }
 
   if (req.body.lang) lang[0] = req.body.lang;
-  if (req.body.lang2) lang[1] = req.body.lang2;
-  if (req.body.lang3) lang[2] = req.body.lang3;
-  if (req.body.lang4) lang[3] = req.body.lang4;
+  if (req.body.lang0) lang[0] = req.body.lang0;
+  for (let i = 1; i < 20; i++) {
+    if (req.body["lang" + i]) {
+      if (isValidLang(req.body["lang" + i])) {
+        lang[i - 1] = req.body["lang" + i];
+      } else {
+        lang[i - 1] = null;
+      }
+    }
+  }
 
 
   for (let v = 0; v < lang.length - 1; v++) {
@@ -156,7 +168,7 @@ function languageSwitcher(req, res, next) {
   } else {
     req.user.lang4 = null;
   }
-
+  req.user.langArray = lang;
 
   req.user.save(function finalLanguageSwitcher(err) {
     if (err) return next(err);

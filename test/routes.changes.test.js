@@ -125,7 +125,7 @@ describe("routes/changes", function() {
     let url = baseLink + "/changes/log";
     it("should show list", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql("<td><a href=\"/changes/2\"><span class=\"glyphicon glyphicon-info-sign\"></span></a></td>");
+      body.should.containEql('<td><a href="/changes/2"><i class="fa fa-info-circle"></i></a></td>');
     });
 
     it("should deny denied access user",

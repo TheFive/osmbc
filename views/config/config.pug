@@ -3,11 +3,11 @@ extends ../adminlayout
 
 
 block content
-  .row
+  p.row
     h1
       |Edit Configuration
-    form(name="input", action=`${layout.htmlroot}/config/${config.name}`, method="post")
-      div.form-horizontal(role="form")
+  form(name="input", action=`${layout.htmlroot}/config/${config.name}`, method="post")
+    P.row
         - sizeLabel = 0
         - sizeInput = 11
         - sizeExplanation = 1
@@ -15,25 +15,20 @@ block content
           h2="List of URLS, that are no doublettes"
         else
           h2=config.name
+    div.row      
         if config.type == "yaml"
-          div.form-group
-            div(class="col-sm-" + sizeInput)
+            div.col-11
               textarea.form-control(name="yaml",id="yaml", rows=14, wrap="off" style="font-family:monospace")=config.yaml
-            div.text-muted(class="col-sm-" +sizeExplanation ) Use YAML Markup Language and formatting.
+            div.col-1.text-muted(class="col-sm-" +sizeExplanation ) Use YAML Markup Language and formatting.
         if config.type == "text"
-          div.form-group
-            div(class="col-sm-" + sizeInput)
+            div.col-11
               textarea.form-control(name="text",id="text", rows=14, wrap="off" style="font-family:monospace")=config.text
-            div.text-muted(class="col-sm-" + sizeExplanation) This is plain text.
+            div.col-1.text-muted(class="col-sm-" + sizeExplanation) This is plain text.
+    div.row
+        div.col-sm-offset-11.col-sm-1
+          input(name="OK" type="submit", class="btn btn-primary",value="OK")
 
-
-
-
-      form-group
-          div.col-sm-offset-11.col-sm-1
-            input(name="OK" type="submit", class="btn btn-primary",value="OK")
-
-  .row
+  p.row
 
     if config.json && config.json.error
       p.bg-danger=config.json.error
@@ -45,7 +40,7 @@ block content
     
 
    
-  .row
+  p.row
     if changes
       h2
         | History
@@ -76,8 +71,3 @@ block content
 
                 td= layout.moment(change.timestamp).fromNow() 
                 
-
-
-
-
-

@@ -81,7 +81,7 @@ function init() {
     .change(FitToContent)
     .keyup(FitToContent)
     .trigger("change");
-  $('[data-toggle="tooltip"]').tooltip();
+  // $('[data-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;
   window.getEventTable = getEventTable;
@@ -93,6 +93,7 @@ function saveButton() {
   }
   if (document.getElementById("comment").value.trim() === "") return save();
 
+  // only save comment, if it is not empty
   const jqForm = $("form#AddComment");
   const url = jqForm.attr("action");
   const toPost = jqForm.serialize();
@@ -436,8 +437,8 @@ function onchangeCollection() {
     if (found) continue;
     window.linklist.push(link);
     if (window.articleReferences[link] && (window.articleReferences[link]).length > 0) {
-      result += '<a class="label label-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
-    } else result += '<a class="label label-default" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
+      result += '<a class="badge badge-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
+    } else result += '<a class="badge badge-secondary" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
     result += " " + generateGoogleTranslateLink(link, window.leftLang);
     if (window.rightLang !== "--" && window.rightLang !== "") {
       result += " " + generateGoogleTranslateLink(link, window.rightLang);
@@ -549,9 +550,15 @@ function showModified() {
     }
   });
   $("#saveButton").prop("disabled", !modified);
+  $("#cancelButton").prop("disabled", !modified);
+
   if (modified) {
+    $("#noTranslationButton").removeClass("visible");
+    $("#noTranslationButton").addClass("invisible");
     $(window).on("beforeunload", unloadWindowWarning);
   } else {
+    $("#noTranslationButton").removeClass("invisible");
+    $("#noTranslationButton").addClass("visible");
     $(window).off("beforeunload", unloadWindowWarning);
   }
 }
@@ -624,12 +631,13 @@ function submitAndRedraw(form, redraw) {
 
 
 function setNoTranslation() {
-  /* jshint validthis: true */
-
-  $(".markdownEdit").each(function() {
-    if (this.value === "" && !this.readOnly) this.value = "no translation";
-  });
+  const f = $("#noTranslationForm");
+  if (f.length > 0) {
+    f.submit();
+  }
 }
+
+
 
 function translate(langFrom, langTo, service) {
   $(".translate" + langFrom + langTo).addClass("hidden");

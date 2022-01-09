@@ -3,6 +3,7 @@ if !MIXIN_INCLUDE
 
 .row
   .col-md-6
+   
     if (article.commentList)
       .row
         - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]

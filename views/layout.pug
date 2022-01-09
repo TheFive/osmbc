@@ -1,141 +1,97 @@
 include mixins
 
-mixin homeButton(addclass)
-  if !layout || layout.osmbc_version === layout.user.lastChangeLogView
-    a(href=htmlroot+'/osmbc.html' class=addclass)=appName
-  else
-    a.bg-success(href=layout.htmlroot+'/changelog' class=addclass) What's New?
-
 
 mixin firstBlogOfList(list,count,c)
   - if (!count) count = 1
-  if (list.length > 0)
-    each blog,i in list
-      if i<count
-        li
-          a(href=`${layout.htmlroot}/blog/${blog.name}`)=blog.name
-            span.badge.osmbcbadge-lang=blogNumber(blog, layout.language)
-            if layout.language2
-              span.badge.osmbcbadge-lang2=blogNumber(blog, layout.language2)
+  if (layout && layout.user.hasFullAccess())
+    if (list.length > 0)
+      each blog,i in list
+        if i<count
+          li.navbar-item.active.d-xs-block
+            a.nav-link(href=`${layout.htmlroot}/blog/${blog.name}`)=blog.name
+              span.badge.badge-pill.osmbcbadge-lang=blogNumber(blog, layout.user.getLang(0))
+              if layout.user.getLang(1)
+                span.badge.badge-pill.osmbcbadge-lang2=blogNumber(blog, layout.user.getLang(1))
+
+
 
 mixin collectMenu
-  ul.nav.navbar-nav.pull-left
-    li
-      if (layout && layout.user.access === "full")
-        a#collect(href=htmlroot + '/article/create') Collect
-      else
-        a#collect(href=htmlroot + '/article/create') Submit Link
+  li.navbar-item.active
+    if (layout && layout.user.hasFullAccess())
+      a.nav-link#collect(href=htmlroot + '/article/create') Collect
+    else
+      a.nav-link#collect(href=htmlroot + '/article/create') Submit Link
+
 
 mixin myGuestArticleMenu
-  ul.nav.navbar-nav.pull-left
-    li
-      a#myArticles(href=htmlroot + '/osmbc.html') My Articles
+  if (layout && layout.user.access === "guest")
+    li.navbar-item.active
+      a.nav-link#myArticles(href=htmlroot + '/osmbc.html') My Articles
 
+// This should be removed, when bootstrap4 is running
+// To Be Collected (the insterims stage) is not needed any longer 
+// TheFive Jan 2020 
 
 mixin tbcMenu
-  if blogNumber(layout.tbc, layout.language) > 0
-    - dynamicHide = ""
-    if (layout.tbc._tbcOwnArticleNumber == 0)
-      - dynamicHide = "hidden-xs"
-    ul.nav.navbar-nav.pull-left(class=dynamicHide)
-      li
-        a(href=layout.htmlroot+'/blog/TBC')=layout.tbc.name
-          if (layout.tbc._tbcOwnArticleNumber > 0)
-            span.badge.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
+  if (layout && layout.user.hasFullAccess())
+    li.navbar-item.active
+      if blogNumber(layout.tbc, layout.user.getLang(0)) > 0
+        - dynamicHide = ""
+        if (layout.tbc._tbcOwnArticleNumber == 0)
+          - dynamicHide = "hidden-xs"
+        ul.nav.navbar-nav.pull-left(class=dynamicHide)
+          li.nav-item
+            a.nav-link(href=layout.htmlroot+'/blog/TBC')=layout.tbc.name
+              if (layout.tbc._tbcOwnArticleNumber > 0)
+                span.badge.badge-pill.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
 
 mixin inboxMenu
- ul.nav.navbar-nav.pull-left
-   li
-     a#inbox(href=layout.htmlroot + '/usert/inbox')="Inbox "
-       if (layout.userMentions > 0)
-         span.badge.osmbcbadge-user=layout.userMentions
-       if (layout.user.access === "full")
-         if (layout.mainLangMentions > 0)
-           span.badge.osmbcbadge-lang=layout.mainLangMentions
-         if (layout.secondLangMentions > 0)
-           span.badge.osmbcbadge-lang2=layout.secondLangMentions
+  if (layout)
+    li.navbar-item.active
+      a.nav-link#inbox(href=layout.htmlroot + '/usert/inbox')="Inbox "
+        if (layout.userMentions > 0)
+          span.badge.badge-pill.osmbcbadge-user=layout.userMentions
+        if (layout.user.hasFullAccess())
+          if (layout.mainLangMentions > 0)
+            span.badge.badge-pill.badge-pill.osmbcbadge-lang=layout.mainLangMentions
+          if (layout.secondLangMentions > 0)
+            span.badge.badge-pill.osmbcbadge-lang2=layout.secondLangMentions
 
 mixin articleMenu
-  li#article.dropdown
-    a.dropdown-toggle(href='#', data-toggle='dropdown')
-      | Lists
-      span.caret
-    ul.dropdown-menu(role='menu')
-      li.dropdown-header Articles
-      li
-        a(href=layout.htmlroot + '/article/search') Search
-        a(href=layout.htmlroot + '/article/list?myArticles=true') My Empty Collections
-      li.dropdown-header Orphaned Article
-
-        li
-          a(href=layout.htmlroot + '/article/list?blog=Trash') Trash
-        li
-          a(href=layout.htmlroot + '/article/list?blog=TBC') TBC
-        li
-          a(href=layout.htmlroot + '/article/list?blog=Future') Future
-        li
-          a(href=layout.htmlroot + '/article/list?blog=') No Blog
+  if (layout && layout.user.hasFullAccess())
+    li.dropdown.nav-item.active
+      a.nav-link.dropdown-toggle#articleMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Search
+      div.dropdown-menu(aria-labelledby="articleMenuDropdown")
+        a.dropdown-header Articles
+        a.dropdown-item#articleMenuSearch(href=layout.htmlroot + '/article/search') Search
+        a.dropdown-item#articleMenuEmpty(href=layout.htmlroot + '/article/list?myArticles=true') My Empty Collections
+        div.dropdown-divider
+        a.dropdown-header Orphaned Article
+        a.dropdown-item#articleMenuTrash(href=layout.htmlroot + '/article/list?blog=Trash') Trash
+        a.dropdown-item#articleMenuTBC(href=layout.htmlroot + '/article/list?blog=TBC') TBC
+        a.dropdown-item#articleMenuFuture(href=layout.htmlroot + '/article/list?blog=Future') Future
+        a.dropdown-item#articleMenuNoBlog(href=layout.htmlroot + '/article/list?blog=') No Blog
 
 mixin toolMenu
-  li.dropdown#tool.hidden-xs
-    a.dropdown-toggle(href='#', data-toggle='dropdown')
-      | Tool
-      span.caret
-    ul.dropdown-menu(role='menu')
-      li.dropdown-header Markdown Helper
-      li
-        a(href=layout.htmlroot + "/tool/picturetool") Picture Tool
-      if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
-        li.divider
-        li.dropdown-header="Script Plugins (TEST PHASE)"
-          li
-            a(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
-          li
-            a(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
+  if (layout && layout.user.hasFullAccess())
+    li.dropdown.nav-item.active
+      a.nav-link.dropdown-toggle#toolsMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Tools
+      div.dropdown-menu(aria-labelledby="toolsMenuDropdown")
+        if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
+          div.dropdown-divider
+          a.dropdown-header="Script Plugins (TEST PHASE)"
+          a.dropdown-item(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
+          a.dropdown-item(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
 
-      li.divider
-      li.dropdown-header Editorial Tools
-        li
-          a(href="https://mattermost.openstreetmap.de") Mattermost for Editorial Team
+        div.dropdown-divider
+        a.dropdown-header Editorial Tools
+        a.dropdown-item(href="https://mattermost.openstreetmap.de") Mattermost for Editorial Team
+        
+        div.dropdown-divider
+        a.dropdown-header About The Team
+        a.dropdown-item(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
 
 
-      li.divider
-      li.dropdown-header About The Team
-        li
-          a(href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing") Google List of Skills
-
-mixin langChooser(langString)
-  - let l = "language"
-  - let label = "osmbcbadge-lang"
-  if (langString === "lang2")
-    - l = "language2"
-    - label = "osmbcbadge-lang2"
-  if (langString === "lang3")
-    - l = "language3"
-    - label = "label-default"
-  if (langString === "lang4")
-    - l = "language4"
-    - label = "label-default"
-
-  li.dropdown
-    a.btn.dropdown-toggle(class=label, href='#', style="color:white", data-toggle='dropdown')=(layout[l])?layout[l]:"--"
-      span.caret
-    ul.dropdown-menu(role='menu')
-      if (langString !== "lang")
-        li
-          a(id=langString+"_none" onclick = "chooseLanguage('" + langString +"','none')" ) none
-      each litem in layout.languages
-        if layout.usedLanguages[litem]
-          li
-            a(id=langString+"_"+litem onclick = "chooseLanguage('" + langString +"','" + litem +"')")=litem
-
-mixin userAvatar
-  if layout.user
-    li
-      img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';" style="height:50px;width:50px")
-  else
-    li
-      a(href='./') Anonymous
 
 block all
   doctype html
@@ -149,6 +105,7 @@ block all
       title=(layout)?layout.title:appName
       // Bootstrap core CSS
       link(href=path("bootstrap")+'/css/bootstrap.min.css', rel='stylesheet')
+      link(href=path("bootstrap-select")+'/css/bootstrap-select.min.css', rel='stylesheet')
       link(href=path("font-awesome")+"/css/font-awesome.min.css" rel='stylesheet')
 
     body
@@ -157,59 +114,35 @@ block all
 
 
       // Fixed navbar
-      .navbar.navbar-default.navbar-fixed-top(role='navigation')
-        .container-fluid
-          .navbar-header.pull-left
-            //- generate a list of all blogs for Menu
-            - var listall = []
-            if (layout)
-              - listall = [].concat(layout.listOfReviewBlog)
-              - listall = listall.concat(layout.listOfEditBlog)
-              - listall = listall.concat(layout.listOfOpenBlog)
+      nav.navbar.navbar-light.bg-light.navbar-expand-lg.fixed-top
+        - var listall = []
+        if (layout)
+          - listall = [].concat(layout.listOfReviewBlog)
+          - listall = listall.concat(layout.listOfEditBlog)
+          - listall = listall.concat(layout.listOfOpenBlog)
 
-            +homeButton("navbar-brand hidden-xs")
+        
+        button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+          span.navbar-toggler-icon
+        +homeButton("navbar-brand")  
+        ul.navbar-nav.mr-auto
+        div.collapse.navbar-collapse#navbarSupportedContent
+          ul.navbar-nav.mr-auto
             +collectMenu
-            if (layout && layout.user.access === "full")
-              +tbcMenu
-            if (layout)
-              +inboxMenu
-            if (layout && layout.user.access === "guest")
-              +myGuestArticleMenu
-
-            if (layout && layout.user.access === "full")
-              ul.nav.navbar-nav.pull-left.visible-xs
-                +firstBlogOfList(listall)
-
-
-
-
-          .navbar-header
-            button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')
-              span.sr-only Toggle navigation
-              span.icon-bar
-              span.icon-bar
-              span.icon-bar
-
-          .navbar-collapse.collapse
-            ul.nav.navbar-nav.navbar-left
-              li.show-xs
-                +homeButton("visible-xs")
-              if (layout && layout.user.access === "full")
-                +firstBlogOfList(listall,2)
-                +articleMenu
-                +toolMenu
-                block additionalMenu
-            if (layout)
-              ul.nav.navbar-nav.navbar-right
-                +helpMenu
-                +langChooser("lang")
-                +langChooser("lang2")
-                - for (i = 3; params && params.columns && i<= params.columns;i++)
-                  +langChooser("lang"+i)
-                +userAvatar
-
-
-            // /.nav-collapse
+            +inboxMenu
+            
+            +tbcMenu
+            +myGuestArticleMenu
+            +firstBlogOfList(listall,2)
+            +articleMenu    
+            +toolMenu
+            block additionalMenuMain    
+          ul.navbar-nav
+            +helpMenu
+            +langChooser("lang")
+            block additionalMenuRight
+            
+            +userAvatar
 
 
       .container-fluid
@@ -228,7 +161,6 @@ block all
 
         p
          block content
-        p
 
       // /container
 
@@ -236,7 +168,8 @@ block all
       // ==================================================
       // Placed at the end of the document so the pages load faster
       script(src=path("jquery")+'/jquery.min.js')
-      script(src=path("bootstrap")+'/js/bootstrap.min.js')
+      script(src=path("bootstrap")+'/js/bootstrap.bundle.min.js')
+      script(src=path("bootstrap-select")+'/js/bootstrap-select.min.js')
 
   doctype html
   html

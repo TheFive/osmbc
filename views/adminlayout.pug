@@ -13,75 +13,47 @@ block all
       title=layout.title
       // Bootstrap core CSS
       link(href=layout.path("bootstrap")+'/css/bootstrap.min.css', rel='stylesheet')
+      link(href=path("bootstrap-select")+'/css/bootstrap-select.min.css', rel='stylesheet')
       link(href=layout.path("font-awesome")+"/css/font-awesome.min.css" rel='stylesheet')
 
     body
 
         // Fixed navbar
-        .navbar.navbar-default.navbar-fixed-top(role='navigation')
-          .container-fluid
-            .navbar-header.pull-left
-              if layout.osmbc_version === layout.user.lastChangeLogView
-                a.navbar-brand(href=layout.htmlroot+'/osmbc.html')=layout.appName
-              else
-                a.navbar-brand.bg-success(href=layout.htmlroot+'/changelog') What's New?
-            .navbar-header
-              button.navbar-toggle.pull-right(type='button', data-toggle='collapse', data-target='.navbar-collapse')
-                span.sr-only Toggle navigation
-                span.icon-bar
-                span.icon-bar
-                span.icon-bar
-            .navbar-collapse.collapse
-              if (layout.user.access === "full")
-                ul.nav.navbar-nav.navbar-left
-                  li.dropdown
-                    a.dropdown-toggle(href='#', data-toggle='dropdown')
-                      | User
-                      span.caret
-                    ul.dropdown-menu(role='menu')
-                      li
-                        a#createUser(href=layout.htmlroot + "/usert/create") Create
-                      li.dropdown-header Lists
-                      li
-                        a(href=layout.htmlroot + "/usert/list?access=full") List Active
-                      li
-                        a(href=layout.htmlroot + "/usert/list?access=guest") List Guest
-                      li
-                        a(href=layout.htmlroot + "/usert/list?temporaryGuest=true") List Full User Testing Guest
-                      li
-                        a(href=layout.htmlroot + "/usert/list?access=denied") List Denied
-                      li
-                        a(href=layout.htmlroot + "/usert/list") List All
-                      li
-                        a(href=layout.htmlroot + "/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
-                  li.dropdown.hidden-xs
-                    a.dropdown-toggle(href='#', data-toggle='dropdown')
-                      | Tool
-                      span.caret
-                    ul.dropdown-menu(role='menu')
-                      li.dropdown-header Action
-                      li
-                        a#createblog(href=layout.htmlroot+"/createblog") Create Blog
-                  li
-                    a(href=layout.htmlroot+"/osmbc/admin") Admin
+        nav.navbar.navbar-light.bg-light.navbar-expand-lg.fixed-top
+          +homeButton("navbar-brand")
+          button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+            span.navbar-toggler-icon
+          div.collapse.navbar-collapse#navbarSupportedContent  
+      
+            if (layout.user.access === "full")
+              ul.navbar-nav.mr-auto
+                li.dropdown.nav-item
+                  a.nav-link.dropdown-toggle.active#userLists(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
+                    | UserLists
+                  div.dropdown-menu(aria-labelledby="userLists")  
+                    a.dropdown-item#createUser(href=layout.htmlroot + "/usert/create") Create
+                    a.dropdown-header User Lists
+                    a.dropdown-item(href=layout.htmlroot + "/usert/list?access=full") List Active
+                    a.dropdown-item(href=layout.htmlroot + "/usert/list?access=guest") List Guest
+                    a.dropdown-item(href=layout.htmlroot + "/usert/list?temporaryGuest=true") List Full User Testing Guest
+                    a.dropdown-item(href=layout.htmlroot + "/usert/list?access=denied") List Denied
+                    a.dropdown-item(href=layout.htmlroot + "/usert/list") List All
+                    a.dropdown-item(href=layout.htmlroot + "/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
+                  li.dropdown.nav-item
+                    a.nav-link.active.dropdown-toggle#toolsMenu(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
+                      | Tools
+                    div.dropdown-menu(aria-labelledby="toolsMenu")  
+                      a.dropdown-header Action
+                      a.dropdown-item#createblog(href=layout.htmlroot+"/createblog") Create Blog
 
-              ul.nav.navbar-nav.navbar-right
-                +helpMenu   
+            ul.navbar-nav
+              li.navbar-item.active
+                +helpMenu
 
-                li.dropdown
-                  a.btn.dropdown-toggle.osmbcbadge-lang(href='#', style="color:white", data-toggle='dropdown')=layout.language
-                    span.caret
-                  ul.dropdown-menu(role='menu')
-                    each l in layout.languages
-                      li
-                        a(id=langString+"_"+l onclick = "chooseLanguage('lang','" + l +"')")=l
-                if layout.user
-                  li
-                    img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';" style="width:50px;height:50px")
-                else
-                  li
-                    a(href='./') Anonymous
-            // /.nav-collapse
+              +langChooser("lang")
+              +userAvatar
+              
+          // /.nav-collapse
 
 
         .container-fluid
@@ -97,7 +69,8 @@ block all
         // Placed at the end of the document so the pages load faster
 
         script(src=layout.path("jquery")+'/jquery.min.js')
-        script(src=layout.path("bootstrap")+'/js/bootstrap.min.js')
+        script(src=layout.path("bootstrap")+'/js/bootstrap.bundle.min.js')
+        script(src=path("bootstrap-select")+'/js/bootstrap-select.min.js')
 
   doctype html
   html

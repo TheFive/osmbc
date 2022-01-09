@@ -1,9 +1,9 @@
 extends config
 
 block showContentOfConfig
-  - lang = layout.language
+  - lang = layout.user.getLang(0)
   if config.json
-    - lang = layout.language
+    - lang = layout.user.getLang(0)
     table#resulttable.table.table-striped.table-responsive
       thead
         tr

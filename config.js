@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === "test" && process.env.TEST_LOG !== "TRUE") {
   });
 } else {
   logger = winston.createLogger({
-    level: "error",
+    level: "info",
     format: winston.format.json()
   });
 
@@ -48,7 +48,6 @@ logger.stream = {
 // the configurationfile should be in the "running" directory
 const configurationFile = path.resolve(__dirname, "config." + env + ".json");
 let configuration;
-let configurationInitialised = false;
 
 
 
@@ -77,20 +76,40 @@ function getPostgresDBString() {
 
 
 
-
+function getCurrentGitBranch() {
+  const { execSync } = require("child_process");
+  return execSync("git rev-parse --abbrev-ref HEAD").toString().trim();
+}
 
 
 
 
 exports.initialise = function initialise(callback) {
-  if (configurationInitialised) {
+  if (typeof configuration !== "undefined") {
     if (callback) callback();
     return;
   }
   debug("initialise");
-  configurationInitialised = true;
   logger.info("Reading Config from: " + configurationFile);
   configuration = JSON.parse(fs.readFileSync(configurationFile));
+
+  // add or exchange some branch dependent configs
+  if (env === "development") {
+    let gitBranch = getCurrentGitBranch();
+    console.log("Git Branch " + gitBranch);
+    gitBranch = gitBranch.replace("/", "_");
+    if (typeof gitBranch === "string") {
+      try {
+        const configBranch = JSON.parse(fs.readFileSync("config." + gitBranch + ".json"));
+        for (const k in configBranch) {
+          configuration[k] = configBranch[k];
+        }
+      } catch (err) {
+        logger.info("No additional file config." + gitBranch + ".json");
+      }
+    }
+  }
+
 
   // Do some tests with the types
 
@@ -134,6 +153,7 @@ exports.getValue = function(key, options) {
     logger.error("Deprecated Value in config.*.json. Name: '" + key + "'");
     process.exit(1);
   }
+  // eslint-disable-next-line valid-typeof
   if (typeof result !== "undefined" && options && options.type && typeof result !== options.type) {
     logger.error("Value '" + key + "' does not have type " + options.type);
     process.exit(1);

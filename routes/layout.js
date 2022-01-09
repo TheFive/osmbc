@@ -80,10 +80,6 @@ function prepareRenderLayout(req, res, next) {
   if (languages.indexOf("DE-Less") > 0) usedLanguages["DE-Less"] = true;
   if (languages.indexOf("DE-More") > 0) usedLanguages["DE-More"] = true;
 
-  // Used for display changes
-
-  // Params is used for indicating Edit
-
   async.auto({
 
     tbc: function (callback) {
@@ -192,10 +188,6 @@ function prepareRenderLayout(req, res, next) {
       userMentions: userMentions,
       mainLangMentions: mainLangMentions,
       secondLangMentions: secondLangMentions,
-      language: req.user.getMainLang(),
-      language2: req.user.getSecondLang(),
-      language3: req.user.getLang3(),
-      language4: req.user.getLang4(),
       listOfOpenBlog: result.listOfOpenBlog,
       listOfEditBlog: result.listOfEditBlog,
       listOfReviewBlog: result.listOfReviewBlog,

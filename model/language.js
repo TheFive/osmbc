@@ -76,8 +76,6 @@ exports.deeplPro = function(lang) {
   if (lang === null) return null;
   if (langMap === null) initialise();
   let result = lang.toUpperCase();
-  console.dir(lang);
-  console.dir(langMap);
   if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].deeplPro) result = langMap[lang.toUpperCase()].deeplPro;
   return result;
 };

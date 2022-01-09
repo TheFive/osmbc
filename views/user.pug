@@ -19,10 +19,9 @@ block content
 
   if (usershown.temporaryGuest===true)
     h1
-      .label.label-default="User is testing guest mode"
+      .badge.badge-secondary="User is testing guest mode"
 
   form(name="input", action=`${layout.htmlroot}/usert/${usershown.id}`, method="post")
-    div.form-horizontal(role="form")
       if (usershown.hasLoggedIn())
         +labeledText("OSMUser","OSMUser",usershown.OSMUser,"User already logged in, namechange not possible.")
       else
@@ -30,18 +29,19 @@ block content
       +labeledInput("EMail","email",usershown.email,"This mail is used for information about changes. To delete the email just submit a space for this field.")
 
       if (usershown.emailInvalidation)
-        div.form-group
-          div.col-sm-offset-2.col-sm-4
+        div.row
+          div.col
+          div.col-5
             p
               span
                 |Waiting for validation of EMail
               span.bg-info=usershown.emailInvalidation
-          div.col-sm-6
-            button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
-            button.btn.btn-default(onclick="javascript:window.document.getElementById('email').value='none';document.input.submit()") delete email
+          div.col
+            button.btn.btn-secondary(onclick="javascript:window.document.getElementById('email').value='resend';document.input.submit()") resend
+            button.btn.btn-secondary(onclick="javascript:window.document.getElementById('email').value='none';document.input.submit()") delete email
 
 
-      +labeledInput("Author for Blog","mdWeeklyAuthor",usershown.mdWeeklyAuthor,"Use anonymous to skip mentioning. Markdown for any link (e.g. [OSM User](https://www.openstreetmap.org/user/OSM%20User)")
+      +labeledInput("Author for Blog","mdWeeklyAuthor",usershown.mdWeeklyAuthor,"Use anonymous to skip mentioning. Markdown for any link (e.g. [OSM User](https://www.osm.org/user/OSM%20User)")
       if (usershown.mdWeeklyAuthor)
         div.col-sm-offset-2.col-sm-10
           if (usershown.mdWeeklyAuthor === "anonymous")
@@ -105,14 +105,14 @@ block content
                 ["two", "three","four"],
                 ["two", "three","four"],
                 "Set this to 3 if you would like to see the new article editor with 3 languages.")
-      div.form-group
-        label.control-label.col-sm-2(for="Color")="Color"
-        div(class="col-sm-4")
-          div.input-group(style="width: 100%;")
-            input.form-control(name="color",id="color",value = usershown.color)
-            span.input-group-addon(style=`background-color:${usershown.color};width: 50px;`)
-        div.text-muted(class="col-sm-6")
-          p
+      .row 
+        .col
+          label.col-form-label(for="Color")="Color"
+        div.col-5.input-group
+          input.form-control(name="color",id="color",value = usershown.color aria-describedby="colorDisplayAddon")
+          div.input-group-append
+            span.btn.btn-secondary#colorDisplayAddon(style=`background-color:${usershown.color};`)
+        p.col.d-none.d-md-block
             span="Color for colored lists in OSMBC. Use a html colorpicker to define. ("
             a(href="http://www.w3schools.com/colors/colors_picker.asp")="Color Picker"
             span=","
@@ -130,34 +130,23 @@ block content
           input#save(name="OK" type="submit", class="btn btn-primary",value="OK")
 
   if (usershown.OSMUser === layout.user.OSMUser)
-    .row
+    p.row
       h1="Inspect your Data"
       a(href=htmlroot+"/gdpr")="Show Your Data Link"
 
+  p.row
+    div.d-none.d-md-block
+      h1=usershown.OSMUser + " Heatmap"
+      p#heatmap
 
-
-
-
-
-
-
-  .row
-    h1=usershown.OSMUser + " Heatmap"
-    p#heatmap
-
-  .row
-    .col-md-10
-    .col-md-2
+  div.d-flex.flex-row-reverse
       if (usershown.OSMUser === layout.user.OSMUser)
         p
-          a(href=layout.htmlroot+"/logout") [logout user]
-        p
-          a(href=layout.htmlroot+"/usert/self?becomeGuest=true") [Switch to Guest]
-
-
-
-
-  .row
+          a.btn.btn-primary(href=layout.htmlroot+"/logout") logout user
+          span=" "
+          a.btn.btn-primary(href=layout.htmlroot+"/usert/self?becomeGuest=true") Switch temporary to Guest
+          
+  p.row
     if changes
       h2
         | History
@@ -187,9 +176,6 @@ block content
                 td= layout.util.shorten(change.from)
                 td= layout.util.shorten(change.to)
                 td= layout.moment(change.timestamp).fromNow()
-
-
-
 
 
 block scripts

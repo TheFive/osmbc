@@ -6,6 +6,7 @@
 const async = require("async");
 const nock = require("nock");
 const cheerio = require("cheerio");
+const mockdate = require("mockdate");
 const should = require("should");
 const testutil = require("../testutil.js");
 const userModule = require("../../model/user.js");
@@ -22,10 +23,15 @@ describe("uc/collect", function() {
   let browser;
   let nockLoginPage;
   before(async function() {
+    mockdate.set(new Date("2016-05-25T19:00:00Z"));
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
+  });
+  after(async function() {
+    mockdate.reset();
+
   });
 
   beforeEach(async function() {
@@ -68,7 +74,9 @@ describe("uc/collect", function() {
     it("should search and store collected article", async function() {
       await browser.visit("/article/create");
       browser.fill("search", "searchfor");
+      
       await browser.pressButton("SearchNow");
+      
       browser.fill("title", "Test Title for Article");
       await browser.pressButton("OK");
       browser.assert.expectHtmlSync("collect","editPageAfterCollect");

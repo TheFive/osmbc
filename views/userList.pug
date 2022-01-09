@@ -41,7 +41,7 @@ block content
           each user in users
             tr
               td
-                span.label.osmbclabel-collect(style="background-color:" + user.color)=user.OSMUser
+                span.badge.osmbclabel-collect(style="background-color:" + user.color)=user.OSMUser
 
               td
                 if (user.OSMUser  && user.OSMUser != '')
@@ -58,17 +58,17 @@ block content
                 a(href=layout.htmlroot+'/changes/log?user=' + user.OSMUser) (#{user._countChanges})
               td
                 if user.email
-                  span.glyphicon.glyphicon-ok
+                  i.fa.fa-check
                 else if user.emailInvalidation
-                  span.glyphicon.glyphicon-question-sign
+                  i.fa.fa-question-circle
               td
                 if user.mailNewCollection==="true" && user.email
-                  span.glyphicon.glyphicon-ok
+                  i.fa.fa-check
                 else
                   p=" "
               td
                 if user.mailAllComment==="true" && user.email
-                  span.glyphicon.glyphicon-ok
+                  i.fa.fa-check
                 else
                   p=" "
               td= (user.email)?user.mailComment:""

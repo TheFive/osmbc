@@ -10,7 +10,7 @@ block content
           tr
             - date ="";
             - if (params.date)  date = "/"+date;
-            form.form-horizontal(action=layout.htmlroot+'/changes/log' + date,method='get',id='form')
+            form(action=layout.htmlroot+'/changes/log' + date,method='get',id='form')
               div.form-group
                 input.col-sm-2(type='text',id='user',name='user',placeholder='user',value=params.user)
                 input.col-sm-2(type='text',id='blog',name='blog',placeholder='blog',value=params.blog)
@@ -18,7 +18,7 @@ block content
                 input.col-sm-2(type='text',id='oid',name='oid',placeholder='Object Id' value=params.oid)
                 input.col-sm-2(type='text',id='property',name='property',placeholder='property' value=params.property)
                 input.col-sm-2(type='text',id='date',name='date',placeholder='date' value=params.date  )
-                input(type='submit',class='btn btn-default')
+                input(type='submit',class='btn btn-secondary')
       p
         |only displaying changes
         span.osmbc-inserted
@@ -27,7 +27,7 @@ block content
           |  removed text
         |  use the % sql like notation e.g. WN29% for all WN starting with 29.
         |  click on a markdown?? line to open a preview of the change.
-      table.table
+      table.table.table-sm
         thead
           tr
             th=""
@@ -45,14 +45,14 @@ block content
           if (history)
             each change in history
 
-             tr(onclick="$('.class_" + change.id + "').toggleClass('hidden');")
+             tr(onclick="$('.class_" + change.id + "').toggleClass('d-none');")
                td
                  if change.property && change.property.substring(0, 8) === "markdown"
-                   span.glyphicon.glyphicon-triangle-right(class="class_" + change.id)
-                   span.glyphicon.glyphicon-triangle-bottom.hidden(class="class_" + change.id)
+                   i.fa.fa-caret-right(class="class_" + change.id)
+                   i.fa.fa-caret-down.d-none(class="class_" + change.id)
                td
                  a(href=layout.htmlroot+'/changes/' + change.id)
-                   span.glyphicon.glyphicon-info-sign
+                   i.fa.fa-info-circle
                td=change.user
                td
                  if change.table == "blog"
@@ -75,12 +75,11 @@ block content
                  |!{change.htmlDiffText(60)}
                td=layout.moment(change.timestamp).locale(layout.user_locale).format("L")
              if change.property && change.property.substring(0,8)==="markdown"
-               tr(class="class_" + change.id).hidden
+               tr.d-none(class="class_" + change.id)
                  td
-                 td
-                 td(colspan=4).bg-info
+                 td(colspan="6").bg-info
                    |!{layout.md_render(change.from)}
-                 td.bg-warning
+                 td(colspan="4").bg-warning
                    |!{layout.md_render(change.to)}
 
 

@@ -7,24 +7,19 @@ const config = require("../config.js");
 const glob = require("glob");
 const fs = require("fs");
 const path = require("path");
-const axios = require("axios");
 const moment = require("moment");
 const async = require("async");
 const yaml     = require("js-yaml");
-const BlogRenderer = require("../render/BlogRenderer.js");
 const childProcess = require("child_process");
 const logger = require("../config.js").logger;
 const osmcalloader = require("../model/osmcalLoader.js");
 
 
-const articleModule = require("../model/article.js");
-const configModule = require("../model/config.js");
 
 
 const checkRole        = require("../routes/auth.js").checkRole;
 const checkUser       = require("../routes/auth.js").checkUser;
 
-const sizeOf = require("image-size");
 
 const htmlroot = config.htmlRoot();
 
@@ -35,132 +30,6 @@ config.getValue("CalendarInterface", { deprecated: true });
 
 
 
-function generateCCLicense(license, lang, author) {
-  debug("generateCCLicense");
-  const licenses = configModule.getConfig("licenses");
-  if (!license || license === "") license = "CC0";
-  if (!lang || lang === "") lang = "EN";
-  if (!author) author = "";
-  if (typeof (licenses[license]) === "undefined") license = "CC0";
-  let text = licenses[license][lang];
-  if (typeof (text) === "undefined") text = licenses[license].EN;
-  if (typeof (text) === "undefined") text = "";
-
-  return text.replace("##author##", author);
-}
-
-async function renderPictureTool(req, res) {
-  debug("renderPictureTool");
-
-  let pictureLanguage = "DE";
-  let pictureURL = "http://blog.openstreetmap.de/wp-content/themes/osmblog/images/headers/blog.png";
-  let pictureMarkup = "Some cool markdown text with [^1^](#blog_article) superscript";
-  let pictureAText = "Logo";
-  let pictureLicense = "CC3";
-  let pictureAuthor = "[Author Name](LINK)";
-  const sessionData = req.session.pictureTool;
-
-  if (sessionData) {
-    if (sessionData.pictureLanguage) pictureLanguage = sessionData.pictureLanguage;
-    pictureURL = sessionData.pictureURL;
-    if (!pictureURL) pictureURL = "";
-    pictureMarkup = sessionData.pictureMarkup;
-    pictureAText = sessionData.pictureAText;
-    pictureLicense = sessionData.pictureLicense;
-    pictureAuthor = sessionData.pictureAuthor;
-  }
-
-  const warning = [];
-  try {
-    const response = await axios.get(pictureURL, { responseType: "arraybuffer" });
-
-    let sizeX = 100;
-    let sizeY = 100;
-    try {
-      sizeX = sizeOf(response.data).width;
-      sizeY = sizeOf(response.data).height;
-    } catch (err) {
-      warning.push(err);
-    }
-    if (sizeX < 700) warning.push("Picture width lower than 700 pixel, check resulting quality.");
-    if (sizeY > 900) warning.push("Picture width bigger than 900 pixel, please reduce size.");
-    if (pictureURL.indexOf("blog.openstreetmap.de") < 0) warning.push("Picture not hosted on blog.openstreetmap.de");
-    let genMarkup = "";
-
-    sizeY = Math.round(sizeY * 800 / sizeX);
-    sizeX = 800;
-    genMarkup = "![" + pictureAText + "](" + pictureURL + " =" + sizeX + "x" + sizeY + ")\n";
-    if (pictureLanguage === "DE") {
-      genMarkup += "\n";
-    }
-    genMarkup += pictureMarkup;
-    const ltext = generateCCLicense(pictureLicense, pictureLanguage, pictureAuthor);
-    if (ltext !== "") genMarkup += " | " + ltext;
-
-    const article = articleModule.create();
-    article["markdown" + pictureLanguage] = genMarkup;
-    article.categoryEN = "Picture";
-    const renderer = new BlogRenderer.HtmlRenderer(null);
-    const preview = renderer.renderArticle(pictureLanguage, article);
-    const licenses = configModule.getConfig("licenses");
-    // res.set("content-type", "text/html");
-    res.render("pictureTool", {
-      warning: warning,
-      genMarkup: genMarkup,
-      licenses: licenses,
-      preview: preview,
-      pictureLanguage: pictureLanguage,
-      pictureURL: pictureURL,
-      pictureMarkup: pictureMarkup,
-      pictureAText: pictureAText,
-      pictureAuthor: pictureAuthor,
-      pictureLicense: pictureLicense,
-      layout: res.rendervar.layout
-    });
-  } catch (error) {
-    warning.push(">" + pictureURL + "< pictureURL not found");
-    const licenses = configModule.getConfig("licenses");
-    res.set("content-type", "text/html");
-    res.render("pictureTool", {
-      genMarkup: "picture not found",
-      warning: warning,
-      preview: "<p> Error,please try again</p>",
-      pictureLanguage: pictureLanguage,
-      pictureURL: pictureURL,
-      pictureMarkup: pictureMarkup,
-      licenses: licenses,
-      pictureAText: pictureAText,
-      pictureLicense: pictureLicense,
-      pictureAuthor: pictureAuthor,
-      layout: res.rendervar.layout
-    });
-  }
-}
-
-function postPictureTool(req, res, next) {
-  debug("postPictureTool");
-
-  const pictureLanguage = req.body.pictureLanguage;
-  const pictureURL = req.body.pictureURL;
-  const pictureMarkup = req.body.pictureMarkup;
-  const pictureAText = req.body.pictureAText;
-  const pictureLicense = req.body.pictureLicense;
-  const pictureAuthor = req.body.pictureAuthor;
-
-  req.session.pictureTool = {
-    pictureLanguage: pictureLanguage,
-    pictureURL: pictureURL,
-    pictureMarkup: pictureMarkup,
-    pictureLicense: pictureLicense,
-    pictureAuthor: pictureAuthor,
-
-    pictureAText: pictureAText
-  };
-  req.session.save(function(err) {
-    if (err) return next(err);
-    res.redirect(htmlroot + "/tool/picturetool");
-  });
-}
 
 config.getValue("PublicCalendarPage", { deprecated: true });
 
@@ -433,9 +302,7 @@ router.get("/scripts/execute", checkScriptRights, renderScripts);
 router.get("/scripts/execute/:filename", checkScriptRights, renderScript);
 router.post("/scripts/execute/:filename", checkScriptRights, executeScript);
 
-router.get("/picturetool", checkRole("full"), renderPictureTool);
 router.post("/getEventTable", checkRole("full"), getEventTable);
-router.post("/picturetool", checkRole("full"), postPictureTool);
 
 
 module.exports.router = router;
