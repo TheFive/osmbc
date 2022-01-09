@@ -24,7 +24,7 @@ const userModule  = require("../../model/user.js");
 
 
 describe("uc/blog", function() {
-  this.timeout(2000*60);
+  this.timeout(1000*60);
   let nockLoginPage;
 
   before(async function(){
