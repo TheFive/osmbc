@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.6.9b](https://github.com/TheFive/osmbc/tree/3.6.9b) (2022-01-09)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.69a...3.6.9b)
+
+**Closed issues:**
+
+- Remove the picutre "Here the stati of OSMBC will be described"  [\#894](https://github.com/TheFive/osmbc/issues/894)
+
+## [3.69a](https://github.com/TheFive/osmbc/tree/3.69a) (2021-12-28)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.10...3.69a)
+
 ## [3.6.10](https://github.com/TheFive/osmbc/tree/3.6.10) (2021-05-02)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9...3.6.10)
@@ -19,7 +31,6 @@
 **Implemented enhancements:**
 
 - Keep Language flags open or closed to avoid regular reopening [\#867](https://github.com/TheFive/osmbc/issues/867)
-- Order unsaved labels in "LeftLang" out of shown language [\#865](https://github.com/TheFive/osmbc/issues/865)
 
 **Closed issues:**
 
@@ -37,6 +48,10 @@
 ## [3.6.8](https://github.com/TheFive/osmbc/tree/3.6.8) (2021-01-07)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.7...3.6.8)
+
+**Implemented enhancements:**
+
+- Order unsaved labels in "LeftLang" out of shown language [\#865](https://github.com/TheFive/osmbc/issues/865)
 
 **Fixed bugs:**
 
@@ -776,7 +791,6 @@
 **Implemented enhancements:**
 
 - Trash can only be called, if article is in unpublish [\#670](https://github.com/TheFive/osmbc/issues/670)
-- Allow move of articles if only NT articles are closed [\#663](https://github.com/TheFive/osmbc/issues/663)
 
 **Fixed bugs:**
 
@@ -789,6 +803,7 @@
 
 **Implemented enhancements:**
 
+- Allow move of articles if only NT articles are closed [\#663](https://github.com/TheFive/osmbc/issues/663)
 - Format links in collection in red do indicate doublettes. [\#662](https://github.com/TheFive/osmbc/issues/662)
 - Make Calendar Date Format configurable via config.js [\#655](https://github.com/TheFive/osmbc/issues/655)
 - adding existing links to collection [\#404](https://github.com/TheFive/osmbc/issues/404)
@@ -1571,15 +1586,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
