@@ -8,7 +8,6 @@ const debug    = require("debug")("OSMBC:routes:blog");
 const config   = require("../config.js");
 const util     = require("../util/util.js");
 const moment   = require("moment");
-const help     = require("../routes/help.js");
 const yaml     = require("js-yaml");
 const configModule = require("../model/config.js");
 
@@ -166,9 +165,6 @@ function renderBlogList(req, res, next) {
 
   if (typeof (status) !== "undefined") {
     query.status = status;
-    if (status === "IN('open','edit')") {
-      additionalText = help.getText("blog.list.notClosed.md");
-    }
   }
 
 
