@@ -2,7 +2,7 @@ extends config
 
 block showContentOfConfig
   h2= "Translation Links Preview"
-  - lang = layout.language
+  - lang = layout.user.getLang(0)
   if config.json
     table.table.table-striped.table-responsive
       thead
@@ -20,5 +20,4 @@ block showContentOfConfig
             td=lang
             td=cell
             td
-              |!{layout.markdown.render(cell)}
-
+              |!{layout.markdown.render("bla bla " + cell + ". Next bla bla")}

@@ -125,7 +125,7 @@ describe("routes/blog", function() {
     it("should allow full user", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
       body.should.containEql("<h2>WN333</h2>");
-      body.should.containEql("<div class=\"col-md-2\">Categories</div>");
+      body.should.containEql("<div class=\"col\">Categories</div>");
     });
     it("should deny denied access user",
       checkUrlWithJar ({
@@ -205,7 +205,7 @@ describe("routes/blog", function() {
         simple: false,
         resolveWithFullResponse: true
       });
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.body).eql("Found. Redirecting to /osmbc");
       should(response.statusCode).eql(302);
       let blog = await blogModule.findById(2);
 
@@ -262,9 +262,16 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/WN333/setLangStatus";
     let form =  {lang: "DE", action: "startreview"};
     it("should a start a review process", async function () {
-      let response = await rp.post({url: url, form: form, jar: jar.testUser,simple: false, resolveWithFullResponse: true });
+      let response = await rp.post({
+        url: url,
+        form: form,
+        headers: {"referer": "https://coming_from.somewhere"},
+        jar: jar.testUser,
+        simple: false,
+        resolveWithFullResponse: true
+      });
       should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.body).eql("Found. Redirecting to https://coming_from.somewhere");
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.reviewCommentDE).eql([{
         text: "startreview",
@@ -276,9 +283,10 @@ describe("routes/blog", function() {
       let response = await rp.post({
         url: url,
         form: {lang: "EN", action: "markexported"},
+        headers: {"referer": "https://coming_from.somewhere"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
       should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.body).eql("Found. Redirecting to https://coming_from.somewhere");
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.exportedEN).eql(true);
     });
@@ -286,19 +294,21 @@ describe("routes/blog", function() {
       let response = await rp.post({
         url: url,
         form: {lang: "EN", action: "startreview"},
+        headers: {"referer": "https://coming_from.somewhere"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
       should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.body).eql("Found. Redirecting to https://coming_from.somewhere");
       let blog = await blogModule.findOne({name: "secondblog"});
       should(blog.reviewCommentDE).eql([{"text": "first review", user: "TestUser"}]);
     });
     it("should  clear review when deleting a review process", async function () {
       let response = await rp.post({
         url:  baseLink + "/blog/secondblog/setLangStatus",
+        headers: {"referer": "https://coming_from.somewhere"},
         form: {lang: "DE", action: "deleteallreviews"},
         jar: jar.testUser,simple: false, resolveWithFullResponse: true });
       should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.body).eql("Found. Redirecting to https://coming_from.somewhere");
       let blog = await blogModule.findOne({name: "secondblog"});
       should(blog.reviewCommentDE).is.undefined();
     });
@@ -319,13 +329,14 @@ describe("routes/blog", function() {
     it("should reopen a language", async  function () {
       let response = await rp.post({
         url:  url,
-        json: true,
         headers: {
-          referrer: baseLink + "/blog/WN333"
+          referer: baseLink + "/blog/WN333"
         },
-        body: {lang: "DE", action: "editlang"},
-        jar: jar.testUser,simple: false, resolveWithFullResponse: true });
+        form: {lang: "DE", action: "editlang"},
+        jar: jar.testUser,simple: false, resolveWithFullResponse: true
+      });
       should(response.statusCode).eql(302);
+      should(response.body).eql("Found. Redirecting to http://localhost:35043/blog/WN333");
 
       let blog = await blogModule.findOne({name: "WN333"});
       should(blog.closeDE).eql(false);
@@ -352,7 +363,7 @@ describe("routes/blog", function() {
     it("should call copy", async function () {
       let response = await rp.post({url: url, form: form, jar: jar.testUser,simple: false, resolveWithFullResponse: true });
       should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.body).eql("Found. Redirecting to /osmbc");
     });
 
 
@@ -418,7 +429,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/WN333";
     it("should get the blog", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql("<h2><span class=\"hidden-xs\">Weekly </span>WN333<span class=\"hidden-xs\"> (edit)</span></h2>");
+      body.should.containEql('<h2><span class="d-none d-md-block">Weekly </span>WN333<span class="d-none d-md-block"> (edit)</span></h2>');
     });
     it("should deny denied access user",
       checkUrlWithJar ({
@@ -471,7 +482,7 @@ describe("routes/blog", function() {
         url: baseLink + "/blog/WN999",
         jar: jar.testUser, simple: false, resolveWithFullResponse: true});
       should(response.statusCode).eql(404);
-      response.body.should.containEql("<h1>Page Not Found</h1>");
+      response.body.should.containEql("<h1>Page Not Found /blog/WN999</h1>");
     });
     it("should call next if blog exists twice", async function () {
       await blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"});
@@ -545,7 +556,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/WN333/full";
     it("should get full tab", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql("<h2><span class=\"hidden-xs\">Weekly </span>WN333<span class=\"hidden-xs\"> (edit)</span></h2>");
+      body.should.containEql('<h2><span class="d-none d-md-block">Weekly </span>WN333<span class="d-none d-md-block"> (edit)</span></h2>');
     });
 
     it("should deny denied access user",
@@ -567,5 +578,3 @@ describe("routes/blog", function() {
 
 
 /* jshint ignore:end */
-
-

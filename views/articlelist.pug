@@ -18,7 +18,7 @@ block content
              | category
             th
              | collection
-            th=layout.language
+            th=layout.user.getLang(0)
         tbody
           each article in articles
             tr
@@ -27,7 +27,7 @@ block content
               td= article.blog
               td= article.categoryEN
               td= layout.util.shorten(article.collection) 
-              td= layout.util.shorten(article["markdown"+layout.language]) 
+              td= layout.util.shorten(article["markdown"+layout.user.getLang(0)]) 
                
 
 

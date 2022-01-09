@@ -2,7 +2,7 @@
 // Exported Functions and prototypes are defined at end of file
 
 const async    = require("../util/async_wrap.js");
-const config   = require("../config.js");
+const language   = require("../model/language.js");
 const util     = require("../util/util.js");
 const HttpStatus = require("http-status-codes");
 
@@ -20,6 +20,7 @@ const messageCenter       = require("../notification/messageCenter.js");
 const userModule          = require("../model/user.js");
 const translator          = require("../model/translator.js");
 const schedule            = require("node-schedule");
+const osmcalLoader        = require("../model/osmcalLoader.js");
 
 const pgMap = require("./pgMap.js");
 const debug = require("debug")("OSMBC:model:blog");
@@ -119,8 +120,8 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
         if (self[rc].length === 0) {
           self[rc].push({ user: user.OSMUser, text: data, timestamp: date });
         }
-        // nothing has to be written to the review comments
-        return cb();
+        // check Event articles
+        return self.fillEventArticle(lang, cb);
       }
       if (data === "markexported") {
         self[exported] = true;
@@ -154,6 +155,21 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
   });
 };
 
+Blog.prototype.fillEventArticle = function fillEventArticle(lang, callback) {
+  const eventArticle = this._upcomingEvents;
+  if (!eventArticle) return callback();
+  let oldMd = eventArticle["markdown" + lang];
+  if (typeof oldMd === "undefined") oldMd = "";
+  if (oldMd && eventArticle["markdown" + lang].length > 10) return callback();
+
+  osmcalLoader.getEventMdCb(lang, function(err, result) {
+    if (err) return callback(err);
+    const data = { old: {} };
+    data["markdown" + lang] = result;
+    data.old["markdown" + lang] = oldMd;
+    eventArticle.setAndSave({ OSMUser: "OSMCAL" }, data, callback);
+  });
+};
 
 Blog.prototype.editReviewComment = function editReviewComment(lang, user, index, data, callback) {
   debug("reviewComment");
@@ -442,10 +458,14 @@ function autoCloseBlog(callback) {
 function convertLogsToTeamString(logs, lang, users) {
   debug("convertLogsToTeamString");
   const editors = [];
+  const apiEditors = [];
+  for (const f in translator) {
+    apiEditors.push(translator[f].user);
+  }
   function addEditors(property, min) {
     for (const user in logs[property]) {
       if (logs[property][user] >= min) {
-        if (editors.indexOf(user) < 0) {
+        if (editors.indexOf(user) < 0 && apiEditors.indexOf(user) < 0) {
           editors.push(user);
         }
       }
@@ -843,9 +863,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
     assert(Array.isArray(result));
 
 
-    for (i = 0; i < config.getLanguages().length; i++) {
-      const l = config.getLanguages()[i];
-
+    for (const l in language.getLanguages()) {
       self._countUneditedMarkdown[l] = 0;
       self._countExpectedMarkdown[l] = 0;
       self._countNoTranslateMarkdown[l] = 0;
@@ -888,14 +906,14 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
             break;
           }
           if ((comment.search(new RegExp("@" + mainLang, "i")) >= 0) ||
-            (comment.search(new RegExp("@all", "i")) >= 0) ||
-            (comment.search(new RegExp("@all", "i")) >= 0)) {
+            (comment.search(/@all/i) >= 0) ||
+            (comment.search(/@all/i) >= 0)) {
             self._mainLangMention.push(result[i]);
             break;
           }
           if ((comment.search(new RegExp("@" + secondLang, "i")) >= 0) ||
-            (comment.search(new RegExp("@all", "i")) >= 0) ||
-            (comment.search(new RegExp("@all", "i")) >= 0)) {
+            (comment.search(/@all/i) >= 0) ||
+            (comment.search(/@all/i) >= 0)) {
             self._secondLangMention.push(result[i]);
             break;
           }
@@ -909,11 +927,10 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
 
 function translateCategories(cat) {
   debug("translateCategories");
-  const languages = config.getLanguages();
+  const languages = language.getLanguages();
   const categoryTranslation = configModule.getConfig("categorytranslation");
   for (let i = 0; i < cat.length; i++) {
-    for (let l = 0; l < languages.length; l++) {
-      const lang = languages[l];
+    for (const lang in languages) {
       if (cat[i][lang]) continue;
       if (categoryTranslation[cat[i].EN]) {
         cat[i][lang] = categoryTranslation[cat[i].EN][lang];

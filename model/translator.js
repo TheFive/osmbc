@@ -2,25 +2,42 @@
 
 const request = require("request");
 const uuidv4 = require("uuid/v4");
+const querystring = require("query-string");
+const axios = require("axios");
+const language = require("../model/language.js");
+
 
 const markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
   .use(require("markdown-it-imsize"), { autofill: true });
 
 const TurndownService = require("turndown");
+const turndownItSup = require("../util/turndown-it-sup.js");
 
 const config    = require("../config.js");
-
 const debug       = require("debug")("OSMBC:model:translator");
 
 
-const deeplClient = require("deepl-client");
 
-function normLanguage(lang) {
-  if (lang === "cz") lang = "cs";
-  if (lang === "jp") lang = "ja";
-  return lang;
+
+async function deeplTranslate(url, params) {
+  try {
+    const query = querystring.stringify(params);
+    const response = await axios.request(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: query
+    });
+
+    if (response.status !== 200) return "Problem with Deepl Translation";
+
+    return response.data;
+  } catch (error) {
+    return { message: "caught Problem with Deepl Translation" };
+  }
 }
+
+
 
 
 function escapeRegExp(string) {
@@ -28,28 +45,31 @@ function escapeRegExp(string) {
 }
 
 
-const deeplAuthKey = config.getValue("DeeplAPIKey");
+const deeplConfig = config.getValue("DeeplProConfig", { mustExist: true });
 
 function translateDeeplPro(options, callback) {
   debug("translateDeeplPro");
 
-  if (typeof deeplAuthKey === "undefined") {
-    return new Error("No Deepl Pro Version registered");
+  if (typeof deeplConfig.authKey === "undefined") {
+    return new Error("No Deepl Key registered");
+  }
+  if (typeof deeplConfig.url === "undefined") {
+    return new Error("No Deepl Url registered configured");
   }
 
 
-  const fromLang = normLanguage(options.fromLang);
-  const toLang = normLanguage(options.toLang);
+  const fromLang = language.deeplPro(options.fromLang);
+  const toLang = language.deeplPro(options.toLang);
   const text = options.text;
 
 
-  var htmltext = markdown.render(text);
+  const htmltext = markdown.render(text);
 
-  var deeplParams = {};
+  const deeplParams = {};
   deeplParams.text = htmltext;
   deeplParams.source_lang = fromLang.toUpperCase();
   deeplParams.target_lang = toLang.toUpperCase();
-  deeplParams.auth_key = deeplAuthKey;
+  deeplParams.auth_key = deeplConfig.authKey;
   deeplParams.tag_handling = "xml";
 
 
@@ -64,13 +84,14 @@ function translateDeeplPro(options, callback) {
 
 
 
-  deeplClient.translate(deeplParams)
+  deeplTranslate(deeplConfig.url, deeplParams)
     .then(result => {
       if (result && result.message) return callback(null, result.message);
       if (!result || !result.translations) return callback(null, "Something went wrong with translation in this article.");
-      var htmlresult = result.translations[0].text;
-      var turndownService = new TurndownService();
-      var mdresult = turndownService.turndown(htmlresult);
+      const htmlresult = result.translations[0].text;
+      const turndownService = new TurndownService();
+      turndownService.use(turndownItSup);
+      let mdresult = turndownService.turndown(htmlresult);
       mdresult = mdresult.replace(
         RegExp(
           escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang), "g"),
@@ -86,10 +107,10 @@ function translateDeeplPro(options, callback) {
     .catch(err => { return callback(err); });
 }
 function deeplProActive () {
-  return (typeof deeplAuthKey === "string");
+  return (typeof deeplConfig.authKey === "string");
 }
 
-const subscriptionKey = config.getValue("MS_TranslateApiKey");
+const bingProAuthkey = config.getValue("BingProConfig").authKey;
 
 const msTranslate = {
   translate: function(from, to, text, callback) {
@@ -104,7 +125,7 @@ const msTranslate = {
         textType: "html"
       },
       headers: {
-        "Ocp-Apim-Subscription-Key": subscriptionKey,
+        "Ocp-Apim-Subscription-Key": bingProAuthkey,
         "Content-type": "application/json",
         "X-ClientTraceId": uuidv4().toString()
       },
@@ -124,27 +145,24 @@ const msTranslate = {
 
 
 function bingProActive () {
-  return (typeof subscriptionKey === "string");
+  return (typeof bingProAuthkey === "string");
 }
 
 function translateBingPro(options, callback) {
   debug("translateBingPro");
 
-  if (typeof subscriptionKey === "undefined") {
-    return new Error("No Bing Pro Version registered");
+  if (typeof bingProAuthkey === "undefined") {
+    return callback(new Error("No Bing Pro Version registered"));
   }
-
-  const fromLang = normLanguage(options.fromLang);
-  const toLang = normLanguage(options.toLang);
+  const fromLang = language.bingPro(options.fromLang);
+  const toLang = language.bingPro(options.toLang);
   const text = options.text;
-
-  var htmltext = markdown.render(text);
-
+  const htmltext = markdown.render(text);
 
   msTranslate.translate(fromLang, toLang, htmltext, function(err, translation) {
     if (err) return callback(err);
-    var turndownService = new TurndownService();
-    var mdresult = turndownService.turndown(translation);
+    const turndownService = new TurndownService();
+    let mdresult = turndownService.turndown(translation);
     mdresult = mdresult.replace(
       RegExp(
         escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang), "g"),

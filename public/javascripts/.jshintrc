@@ -8,7 +8,8 @@
   "multistr": true,
   "strict":"imlied"  ,
   "jquery":true,
-  "devel": true
+  "devel": true,
+  "esversion": 6
 
 
 }

@@ -1,27 +1,27 @@
 "use strict";
 
 
-var config = require("../config.js");
-var assert = require("assert");
-var debug = require("debug")("OSMBC:notification:slackReceiver");
+const config = require("../config.js");
+const assert = require("assert");
+const debug = require("debug")("OSMBC:notification:slackReceiver");
 
-var configModule = require("../model/config.js");
+const configModule = require("../model/config.js");
 
-var messageCenter = require("../notification/messageCenter.js");
-var ConfigFilter  = require("../notification/ConfigFilter.js");
-var IteratorReceiver = require("../notification/IteratorReceiver.js");
+const messageCenter = require("../notification/messageCenter.js");
+const ConfigFilter  = require("../notification/ConfigFilter.js");
+const IteratorReceiver = require("../notification/IteratorReceiver.js");
 
 config.initialise();
 
-var botName = config.getValue("AppName").toLowerCase();
+const botName = config.getValue("AppName").toLowerCase();
 
 
 
 
-var Slack = require("../notification/SlackAPI");
+const Slack = require("../notification/SlackAPI");
 
-var osmbcUrl = config.getValue("url") + config.htmlRoot();
-var iconUrl = osmbcUrl + "/images/osmbc_im_logo.png";
+const osmbcUrl = config.getValue("url") + config.htmlRoot();
+const iconUrl = osmbcUrl + "/images/osmbc_im_logo.png";
 
 
 function SlackReceiver(name, slack, channel) {
@@ -75,7 +75,7 @@ SlackReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter, call
 SlackReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, callback) {
   debug("SlackReceiver::sendReviewStatus %s", this.name);
 
-  var subject = blogNameSlack(blog.name);
+  let subject = blogNameSlack(blog.name);
 
 
   let reviewChangesLink = "";
@@ -99,7 +99,7 @@ SlackReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog,
   } else {
     subject += "(" + lang + ") has been reviewed: " + status + " (" + reviewChangesWithUserLink + ", " + reviewChangesLink + ")";
   }
-  var username = botName + "(" + user.OSMUser + ")";
+  const username = botName + "(" + user.OSMUser + ")";
 
 
   if (this.slack) {
@@ -115,7 +115,7 @@ SlackReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog,
 SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, callback) {
   debug("SlackReceiver::sendCloseStatus %s", this.name);
 
-  var subject = blogNameSlack(blog.name);
+  let subject = blogNameSlack(blog.name);
 
 
   if (status === false) {
@@ -123,7 +123,7 @@ SlackReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, l
   } else {
     subject += "(" + lang + ") has been closed";
   }
-  var username = botName + "(" + user.OSMUser + ")";
+  const username = botName + "(" + user.OSMUser + ")";
 
   if (this.slack) {
     this.slack.send({
@@ -140,10 +140,10 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user, article, ch
 
   assert(typeof (change) === "object");
 
-  var blogName = blogNameSlack(article.blog, change.blog);
-  var articleTitle = articleNameSlack(article, change.title);
+  const blogName = blogNameSlack(article.blog, change.blog);
+  const articleTitle = articleNameSlack(article, change.title);
 
-  var text = "";
+  let text = "";
 
   if (change.blog && article.blog && change.blog !== article.blog) {
     text += articleTitle + " moved to " + blogName + "\n";
@@ -156,7 +156,7 @@ SlackReceiver.prototype.updateArticle = function updateArticle(user, article, ch
     text += articleTitle + " changed collection" + "\n";
   }
   debug("Sending subject " + text);
-  var username = botName + "(" + user.OSMUser + ")";
+  const username = botName + "(" + user.OSMUser + ")";
 
   if (this.slack) {
     this.slack.send({
@@ -174,11 +174,11 @@ SlackReceiver.prototype.addComment = function addComment(user, article, comment,
 
 
 
-  var articleTitle = articleNameSlack(article, article.title);
+  const articleTitle = articleNameSlack(article, article.title);
 
-  var text = articleTitle + " added comment:" + "\n" + comment;
+  const text = articleTitle + " added comment:" + "\n" + comment;
 
-  var username = botName + "(" + user.OSMUser + ")";
+  const username = botName + "(" + user.OSMUser + ")";
 
   if (this.slack) {
     this.slack.send({
@@ -194,11 +194,11 @@ SlackReceiver.prototype.editComment = function editComment(user, article, index,
   debug("SlackReceiver.prototype.editComment");
 
 
-  var articleTitle = articleNameSlack(article, article.title);
+  const articleTitle = articleNameSlack(article, article.title);
 
-  var text = articleTitle + " changed comment:" + "\n" + comment;
+  const text = articleTitle + " changed comment:" + "\n" + comment;
 
-  var username = botName + "(" + user.OSMUser + ")";
+  const username = botName + "(" + user.OSMUser + ")";
 
   if (this.slack) {
     this.slack.send({
@@ -216,7 +216,7 @@ SlackReceiver.prototype.updateBlog = function updateBlog(user, blog, change, cal
 
 
 
-  var subject = blogNameSlack(blog.name, change.name);
+  let subject = blogNameSlack(blog.name, change.name);
 
 
   if (!blog.name && change.name) {
@@ -224,7 +224,7 @@ SlackReceiver.prototype.updateBlog = function updateBlog(user, blog, change, cal
   } else if (blog.status !== change.status) {
     subject += " changed status to " + change.status + "\n";
   }
-  var username = botName + "(" + user.OSMUser + ")";
+  const username = botName + "(" + user.OSMUser + ")";
 
   if (this.slack) {
     this.slack.send({
@@ -238,12 +238,12 @@ SlackReceiver.prototype.updateBlog = function updateBlog(user, blog, change, cal
 
 
 
-var iteratorReceiver = new IteratorReceiver({});
-var channelReceiverMap = {};
+const iteratorReceiver = new IteratorReceiver({});
+let channelReceiverMap = {};
 
 
-var registered = false;
-var slackhook = null;
+let registered = false;
+let slackhook = null;
 
 function initialise(callback) {
   debug("initialise");
@@ -252,8 +252,8 @@ function initialise(callback) {
   const channelList = configModule.getConfigObject("slacknotification").getJSON();
 
   channelReceiverMap = {};
-  for (var i = 0; i < channelList.length; i++) {
-    var channel = channelList[i];
+  for (let i = 0; i < channelList.length; i++) {
+    const channel = channelList[i];
     if (channel.channel.substring(0, 1) !== "#") continue;
     channelReceiverMap["Slack Connection " + i] = new ConfigFilter(channel, new SlackReceiver(channel.slack + channel.channel, channel.slack, channel.channel));
   }

@@ -17,6 +17,8 @@ const pug         = require("pug");
 const util          = require("../util/util.js");
 const config        = require("../config.js");
 const logger        = require("../config.js").logger;
+const language      = require("../model/language.js");
+
 
 const BlogRenderer  = require("../render/BlogRenderer.js");
 
@@ -91,55 +93,56 @@ function createAccessMapFn(activeLanguages) {
       activeLanguages.forEach(function(l) {
         accessMap[l] = "full";
       });
-      config.getLanguages().forEach(function(l) {
+      for (const l in language.getLanguages()) {
         if (!accessMap[l]) accessMap[l] = "denied";
-      });
+      }
       accessMap.all = "full";
       return cb(null, accessMap);
     });
   };
 }
 
+const urlWoErrorWhileEdit = config.getValue("urlWoErrorWhileEdit", { mustExist: true });
+
 // renderArticleId prepares the view for displaying an article
 function renderArticleId(req, res, next) {
   debug("renderArticleId");
 
-  var languageFlags = configModule.getConfig("languageflags");
-  var votes = configModule.getConfig("votes");
+  const languageFlags = configModule.getConfig("languageflags");
+  const votes = configModule.getConfig("votes");
 
   /* votes.forEach(function(item){
     if (item.icon && item.icon.substring(0,3)==="fa-") item.iconClass = "fa "+item.icon;
     if (item.icon && item.icon.substring(0,10)==="glyphicon-") item.iconClass = "glyphicon "+item.icon;
   }); */
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
 
 
-  var categories = blogModule.getCategories();
+  let categories = blogModule.getCategories();
 
   // Params is used for indicating EditMode
-  var params = {};
+  const params = {};
   params.edit = req.query.edit;
   params.left_lang = req.user.getMainLang();
   params.right_lang = req.user.getSecondLang();
   params.lang3 = req.user.getLang3();
   params.lang4 = req.user.getLang4();
   params.editComment = null;
-  var mainTranslationService = "deepl";
-  var translationServices = ["bing", "deepl"];
+  let mainTranslationService = "deepl";
+  const translationServices = ["bing", "deepl"];
   if (translator.deeplPro.active()) {
     mainTranslationService = "deeplPro";
     translationServices.push("deeplPro");
   }
 
   if (req.query.editComment) params.editComment = req.query.editComment;
-  if (req.query.notranslation) params.notranslation = req.query.notranslation;
   let collectedByGuest = false;
 
 
 
-  var placeholder = configModule.getPlaceholder();
+  const placeholder = configModule.getPlaceholder();
   async.auto({
     // Find usage of Links in other articles
     articleReferences: article.calculateUsedLinks.bind(article, { ignoreStandard: true }),
@@ -199,20 +202,7 @@ function renderArticleId(req, res, next) {
         if (err) return callback(err);
         callback(null, result);
       });
-    },
-    notranslate:
-        function (callback) {
-          debug("renderArticleId->notranslate");
-
-          if (params.notranslation === "true") {
-            article.addNotranslate(req.user, res.rendervar.layout.usedLanguages, function (err) {
-              if (err) return callback(err);
-              var returnToUrl = htmlroot + "/article/" + article.id;
-              if (params.style) returnToUrl = returnToUrl + "?style=" + params.style;
-              callback(null, returnToUrl);
-            });
-          } else return callback();
-        }
+    }
   },
   function (err, result) {
     debug("renderArticleId->finalFunction");
@@ -222,9 +212,7 @@ function renderArticleId(req, res, next) {
 
 
 
-    var languages = config.getLanguages();
-    for (var i = 0; i < languages.length; i++) {
-      var lang = languages[i];
+    for (const lang in language.getLanguages()) {
       if (typeof (article["markdown" + lang]) !== "undefined") {
         article["textHtml" + lang] = "<ul>" + renderer.renderArticle(lang, article) + "</ul>";
       }
@@ -238,29 +226,14 @@ function renderArticleId(req, res, next) {
     res.set("content-type", "text/html");
     // change title of page
     res.rendervar.layout.title = article.blog + "#" + article.id + "/" + article.title;
-    let pugFile = "article/article_twocolumn";
-    if (req.user.getSecondLang() === null) pugFile = "article/article_onecolumn";
-
-    if (req.user.languageCount === "three") {
-      pugFile = "article/article_threecolumn";
-      if (req.user.getLang3() === "--") pugFile = "article/article_twocolumn";
-      if (req.user.getSecondLang() === "--") pugFile = "article/article_onecolumn";
-
-      params.columns = 3;
-    }
-    if (req.user.languageCount === "four") {
-      pugFile = "article/article_fourcolumn";
-      if (req.user.getLang4() === null) pugFile = "article/article_threecolumn";
-      if (req.user.getLang3() === null) pugFile = "article/article_twocolumn";
-      if (req.user.getSecondLang() === null) pugFile = "article/article_onecolumn";
-      params.columns = 4;
-    }
+    const pugFile = "article/article_all_column";
 
 
     res.render(pugFile, {
       layout: res.rendervar.layout,
       article: article,
       googleTranslateText: configModule.getConfig("automatictranslatetext"),
+      urlWoErrorWhileEdit: urlWoErrorWhileEdit,
       params: params,
       placeholder: placeholder,
       votes: votes,
@@ -286,9 +259,9 @@ function renderArticleId(req, res, next) {
 function renderArticleIdVotes(req, res, next) {
   debug("renderArticleIdVotes");
 
-  var votes = configModule.getConfig("votes");
+  const votes = configModule.getConfig("votes");
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
 
 
@@ -314,7 +287,7 @@ function renderArticleIdCommentArea(req, res, next) {
   debug("renderArticleCommentArea");
 
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
 
   const params = {};
@@ -351,8 +324,8 @@ function renderArticleIdVotesBlog(req, res, next) {
   debug("renderArticleIdVotesBlog");
 
 
-  var votes = configModule.getConfig("votes");
-  var voteName = req.params.votename;
+  const votes = configModule.getConfig("votes");
+  const voteName = req.params.votename;
 
   let vote = null;
 
@@ -362,7 +335,7 @@ function renderArticleIdVotesBlog(req, res, next) {
   });
 
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
   assert(vote);
 
@@ -394,11 +367,11 @@ function renderArticleIdVotesBlog(req, res, next) {
 
 function searchAndCreate(req, res, next) {
   debug("searchAndCreate");
-  var search = req.query.search;
-  var show = req.query.show;
+  let search = req.query.search;
+  let show = req.query.show;
   if (!show) show = "15";
   if (!search || typeof (search) === "undefined") search = "";
-  var placeholder = configModule.getPlaceholder();
+  const placeholder = configModule.getPlaceholder();
 
   let title;
   let collection = search;
@@ -447,13 +420,12 @@ function searchAndCreate(req, res, next) {
 function postArticle(req, res, next) {
   debug("postArticle");
 
-  var noTranslation = req.query.notranslation;
 
 
-  var article = req.article;
+  let article = req.article;
   // If article exists, everything is fine, if article NOT exist, it has to be created.
 
-  var changes = {
+  const changes = {
     blog: req.body.blog,
     collection: req.body.collection,
     comment: req.body.comment,
@@ -467,12 +439,11 @@ function postArticle(req, res, next) {
     unpublishReference: req.body.unpublishReference
   };
 
-  var languages = config.getLanguages();
-  for (var i = 0; i < languages.length; i++) {
-    var lang = languages[i];
+
+  for (const lang in language.getLanguages()) {
     changes["markdown" + lang] = req.body["markdown" + lang];
   }
-  var returnToUrl;
+  let returnToUrl;
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
   async.parallel([
@@ -496,19 +467,52 @@ function postArticle(req, res, next) {
     debug("postArticle->setValues");
     if (err) { return next(err); }
     assert(article);
-    if (noTranslation === "true") {
-      const showLangs = JSON.parse(req.body.languages);
-      var languages = config.getLanguages();
-      for (var i = 0; i < languages.length; i++) {
-        var lang = languages[i];
-        if (showLangs[lang]) {
-          if (changes["markdown" + lang]) continue;
-          if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
-          if (lang === req.user.mainLang) continue;
-          changes["markdown" + lang] = "no translation";
-        }
+
+    article.setAndSave(req.user, changes, function(err) {
+      debug("postArticle->setValues->setAndSave");
+      if (err) {
+        next(err);
+        return;
       }
-    }
+      res.redirect(returnToUrl);
+    });
+  }
+  );
+}
+
+
+function postArticleNoTranslation(req, res, next) {
+  debug("postArticle");
+
+
+  const article = req.article;
+
+
+
+
+  let returnToUrl;
+  if (article) returnToUrl = htmlroot + "/article/" + article.id;
+  const changes = {};
+  changes.old = {};
+
+  async.parallel([
+  ],
+  function setValues(err) {
+    debug("postArticle->setValues");
+    if (err) { return next(err); }
+    assert(article);
+
+
+    const showLangs = JSON.parse(req.body.language);
+    showLangs.forEach(lang => {
+      if (changes["markdown" + lang]) return;
+      if (article["markdown" + lang] && article["markdown" + lang].trim() !== "") return;
+      if (lang === req.user.mainLang) return;
+      changes.old["markdown" + lang] = "";
+      changes["markdown" + lang] = "no translation";
+    });
+
+
 
     article.setAndSave(req.user, changes, function(err) {
       debug("postArticle->setValues->setAndSave");
@@ -525,14 +529,14 @@ function postArticle(req, res, next) {
 function postArticleWithOldValues(req, res, next) {
   debug("postArticleWithOldValues");
 
-  var noTranslation = req.query.notranslation;
+  const noTranslation = req.query.notranslation;
 
 
 
-  var article = req.article;
+  let article = req.article;
   // If article exists, everything is fine, if article NOT exist, it has to be created.
 
-  var changes = {
+  const changes = {
     blog: req.body.blog,
     collection: req.body.collection,
     predecessorId: req.body.predecessorId,
@@ -553,15 +557,13 @@ function postArticleWithOldValues(req, res, next) {
   };
 
 
-  var languages = config.getLanguages();
-  for (var i = 0; i < languages.length; i++) {
-    var lang = languages[i];
+  for (const lang in language.getLanguages()) {
     if (req.body["markdown" + lang] !== null && typeof req.body["markdown" + lang] !== "undefined") {
       changes["markdown" + lang] = req.body["markdown" + lang];
       changes.old["markdown" + lang] = req.body["old_markdown" + lang];
     }
   }
-  var returnToUrl;
+  let returnToUrl;
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
   async.parallel([
@@ -587,9 +589,7 @@ function postArticleWithOldValues(req, res, next) {
     assert(article);
     if (noTranslation === "true") {
       const showLangs = JSON.parse(req.body.languages);
-      var languages = config.getLanguages();
-      for (var i = 0; i < languages.length; i++) {
-        var lang = languages[i];
+      for (const lang in language.getLanguages()) {
         if (showLangs[lang]) {
           if (changes["markdown" + lang]) continue;
           if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
@@ -611,32 +611,14 @@ function postArticleWithOldValues(req, res, next) {
   );
 }
 
-function copyArticle(req, res, next) {
-  debug("copyArticle");
 
-  var newBlog = req.params.blog;
-
-
-
-  var article = req.article;
-  // If article exists, everything is fine, if article NOT exist, it has to be created.
-
-
-  var languages = config.getLanguages();
-
-  article.copyToBlog(newBlog, languages, function(err) {
-    if (err) return next(err);
-    const referer = req.header("Referer") || "/";
-    res.redirect(referer);
-  });
-}
 
 function postNewComment(req, res, next) {
   debug("postNewComment");
-  var article = req.article;
+  const article = req.article;
   assert(article);
-  var comment = req.body.comment;
-  var returnToUrl;
+  const comment = req.body.comment;
+  let returnToUrl;
 
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
@@ -663,22 +645,22 @@ function postNewComment(req, res, next) {
 function postSetMarkdown(req, res, next) {
   debug("postSetMarkdown");
 
-  var lang = req.params.lang;
-  var article = req.article;
+  const lang = req.params.lang;
+  const article = req.article;
   assert(article);
 
-  var markdown = req.body.markdown;
-  var oldMarkdown = req.body.oldMarkdown;
+  const markdown = req.body.markdown;
+  const oldMarkdown = req.body.oldMarkdown;
 
 
-  var change = {};
+  const change = {};
   change["markdown" + lang] = markdown;
   change.old = {};
   change.old["markdown" + lang] = oldMarkdown;
   article.setAndSave(req.user, change, function(err) {
     if (err) return next(err);
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -687,8 +669,8 @@ function postReviewChange(req, res, next) {
   debug("postReviewChange");
 
 
-  var lang = req.params.lang;
-  var article = req.article;
+  const lang = req.params.lang;
+  const article = req.article;
   assert(article);
   const object = {};
 
@@ -698,7 +680,7 @@ function postReviewChange(req, res, next) {
   article.reviewChanges(req.user, object, function(err) {
     if (err) return next(err);
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -706,13 +688,12 @@ function postReviewChange(req, res, next) {
 function postEditComment(req, res, next) {
   debug("postEditComment");
 
-  var number = req.params.number;
-  var article = req.article;
+  const number = req.params.number;
+  const article = req.article;
   assert(article);
 
-  var comment = req.body.comment;
-  var returnToUrl;
-  returnToUrl = htmlroot + "/article/" + article.id;
+  const comment = req.body.comment;
+  const returnToUrl = htmlroot + "/article/" + article.id;
 
 
   article.editComment(req.user, number, comment, function(err) {
@@ -732,11 +713,11 @@ function postEditComment(req, res, next) {
 function markCommentRead(req, res, next) {
   debug("markCommentRead");
 
-  var number = req.query.index;
+  const number = req.query.index;
 
 
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
   article.markCommentRead(req.user, number, function(err) {
     debug("markCommentRead->markCommentRead");
@@ -763,13 +744,13 @@ function markCommentRead(req, res, next) {
 function doAction(req, res, next) {
   debug("doAction");
 
-  var action = req.params.action;
-  var tag = req.params.tag;
+  const action = req.params.action;
+  const tag = req.params.tag;
 
   if (["setTag", "unsetTag", "setVote", "unsetVote"].indexOf(action) < 0) return next(new Error(action + " is unknown"));
 
 
-  var article = req.article;
+  const article = req.article;
   assert(article);
 
   article[action](req.user, tag, function(err) {
@@ -786,8 +767,8 @@ function createArticle(req, res, next) {
   debug("createArticle");
 
 
-  var placeholder = configModule.getPlaceholder();
-  var proto = {};
+  const placeholder = configModule.getPlaceholder();
+  const proto = {};
   if (typeof (req.query.blog) !== "undefined") {
     proto.blog = req.query.blog;
   }
@@ -833,12 +814,12 @@ function createArticle(req, res, next) {
 function searchArticles(req, res, next) {
   debug("search");
 
-  var search = req.query.search;
-  var show = req.query.show;
+  let search = req.query.search;
+  let show = req.query.show;
   if (!show) show = "15";
 
   if (!search || typeof (search) === "undefined") search = "";
-  var result = null;
+  let result = null;
 
   async.series([
     function doSearch(cb) {
@@ -875,51 +856,66 @@ function searchArticles(req, res, next) {
 
 function urlExist(req, res) {
   debug("urlExists");
+  let urls = req.body.urls;
+  if (!urls) return req.next(new Error("Expected Paramter urls"));
+  if (typeof urls === "string") urls = [urls];
+  if (!Array.isArray(urls)) return req.next(new Error("Expected Paramter urls as Array"));
+  const result = {};
 
-  var url = req.body.url;
-  if (!url || url === 0 || url === "") {
-    res.end("Missing Link");
-    return;
-  }
-
-
-  if (linkCache.get(url) === "OK") {
-    return res.end("OK");
-  }
-
-  request.get(url, { headers: { "User-Agent": userAgent } }, function(err, response) {
-    if (!err && response.statusCode === 200) {
-      linkCache.set(url, "OK");
-      res.end("OK");
-    } else if (!err && response.statusCode > 200) {
-      res.end(response.statusCode.toString());
-    } else {
-      let m = "NOK";
-      if (typeof err.message === "string") m = err.message;
-      res.end(m);
+  async.each(urls,
+    (url, callback) => {
+      if (linkCache.get(url) === "OK") {
+        result[url] = "OK";
+        return callback();
+      }
+      // Do not test google translate links
+      // this test is generating to much false positive
+      if (url.startsWith("https://translate.google.com")) {
+        result[url] = "OK";
+        return callback();
+      }
+      request.get(url, { headers: { "User-Agent": userAgent } }, function(err, response) {
+        if (!err && response.statusCode < 300) {
+          linkCache.set(url, "OK");
+          result[url] = "OK";
+          return callback();
+        } else if (!err && response.statusCode >= 300) {
+          result[url] = response.statusCode;
+          return callback();
+        } else {
+          let m = "NOK";
+          if (typeof err.message === "string") m = err.message;
+          result[url] = m;
+          return callback();
+        }
+      });
+    },
+    function final(err) {
+      if (err) res.end(err);
+      else res.json(result);
     }
-  });
+  );
 }
 
 
 function renderList(req, res, next) {
   debug("renderList");
   req.session.articleReturnTo = req.originalUrl;
-  var blog = req.query.blog;
-  var user = req.query.user;
-  var property = req.query.property;
-  var myArticles = (req.query.myArticles === "true");
-  var listOfChanges = (typeof (user) === "string" && typeof (property) === "string");
-  var simpleFind = !(listOfChanges || myArticles);
+  const blog = req.query.blog;
+  const user = req.query.user;
+  const property = req.query.property;
+  const myArticles = (req.query.myArticles === "true");
+  const listOfChanges = (typeof (user) === "string" && typeof (property) === "string");
+  const simpleFind = !(listOfChanges || myArticles);
 
 
-  var articles;
+  let articles;
 
   async.parallel([
     function findArticleFunction(callback) {
       debug("renderList->findArticleFunction");
       if (!simpleFind) return callback();
-      var query = {};
+      const query = {};
       if (typeof (blog) !== "undefined") {
         query.blog = blog;
       }
@@ -972,64 +968,6 @@ function renderList(req, res, next) {
 }
 
 
-/*
-var Browser = require("zombie");
-
-var env = process.env.NODE_ENV || "development";
-
-
-function translateOLD(req, res, next) {
-  debug("translate");
-  var userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20";
-
-  Browser.waitDuration = "30s";
-  let fromLang = req.params.fromLang;
-  let toLang = req.params.toLang;
-  let text = req.body.text;
-  let link = "#" + fromLang + "/" + toLang + "/";
-  let browser = new Browser({userAgent: userAgent, site: "https://translate.google.com/"});
-
-  browser.visit(link, function (err) {
-    if (err) {
-      // if it is development return a test text.
-      if (env === "development") {
-        let textTranslate = "Google Sim Translate From " + fromLang + " to " + toLang + "(" + text + ")";
-        return res.end(textTranslate);
-      }
-      // Not in development return an error
-      return next(err);
-    }
-    browser.fill("textarea#source", text);
-    browser.click("input#gt-submit", function(err) {
-      if (err) {
-        return next(err);
-      }
-      res.end(browser.query("#result_box").textContent);
-    });
-  });
-}
-
-
-function translateGOOGLEOLD(req, res, next) {
-  debug("translate");
-
-  let fromLang = req.params.fromLang;
-  let toLang = req.params.toLang;
-  let text = req.body.text;
-
-
-
-  if (fromLang === "jp") { fromLang = "ja"; }
-  if (toLang === "jp") { toLang = "ja"; }
-
-  if (fromLang === "cz") { fromLang = "cs"; }
-  if (toLang === "cz") { toLang = "cs"; }
-
-  gglTranslateAPI(text, {from: fromLang, to: toLang}).then(function (result) {
-    res.end(result.text);
-  }).catch(function(err) { next(err); });
-} */
-
 function fixMarkdownLinks(string) {
   let r = string;
   r = r.replace(/(\b)\[/g, "$1 \[");
@@ -1048,7 +986,7 @@ function translateWithPlugin(translatePlugin) {
       return;
     }
 
-    var options = {
+    const options = {
       fromLang: req.params.fromLang,
       toLang: req.params.toLang,
       text: req.body.text
@@ -1061,6 +999,7 @@ function translateWithPlugin(translatePlugin) {
     });
   };
 }
+
 
 function isFirstCollector(req, res, next) {
   if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
@@ -1086,7 +1025,6 @@ router.get("/create", allowGuestAccess, createArticle);
 router.get("/searchandcreate", allowGuestAccess, searchAndCreate);
 router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
-router.post("/:article_id/copyTo/:blog", allowFullAccess, copyArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
 router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateWithPlugin("bingPro"));
 router.post("/urlexist", allowGuestAccess, urlExist);
@@ -1105,8 +1043,9 @@ router.get("/:article_id/:votename", allowFullAccess, renderArticleIdVotesBlog);
 router.post("/:article_id/addComment", allowGuestAccess, postNewComment);
 router.post("/:article_id/setMarkdown/:lang", allowFullAccess, postSetMarkdown);
 router.post("/:article_id/reviewChange/:lang", allowFullAccess, postReviewChange);
-router.post("/:article_id/editComment/:number", allowFullAccess, postEditComment);
+router.post("/:article_id/editComment/:number", allowGuestAccess, postEditComment);
 router.post("/:article_id", allowFullAccess, postArticle);
+router.post("/:article_id/notranslation", allowFullAccess, postArticleNoTranslation);
 router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldValues);
 
 

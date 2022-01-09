@@ -1,26 +1,26 @@
 "use strict";
 
-var db = require("../model/db.js");
-var config = require("../config.js");
-var pgMap = require("../model/pgMap.js");
-var debug = require("debug")("OSMBC:model:logModule");
+const db = require("../model/db.js");
+const language = require("../model/language.js");
+const pgMap = require("../model/pgMap.js");
+const debug = require("debug")("OSMBC:model:logModule");
 
 
-var jsdiff = require("diff");
+const jsdiff = require("diff");
 
 
 
 function Change(proto) {
   debug("Change");
   debug("Prototype %s", JSON.stringify(proto));
-  for (var k in proto) {
+  for (const k in proto) {
     this[k] = proto[k];
   }
 }
 
 function create(proto) {
   debug("create");
-  var v = new Change(proto);
+  const v = new Change(proto);
 
   return v;
 }
@@ -50,8 +50,8 @@ module.exports.create = function() {
 
 Change.prototype.htmlDiffText = function htmlDiffText(maxChars) {
   debug("htmlDiffText");
-  var from = "";
-  var to = "";
+  let from = "";
+  let to = "";
 
   if (this.from) from = String(this.from);
   if (this.to) to = String(this.to);
@@ -61,14 +61,14 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars) {
   }
 
   // first check on only spaces
-  var diff = jsdiff.diffChars(from, to);
-  var onlySpacesAdd = true;
-  var onlySpacesDel = true;
+  let diff = jsdiff.diffChars(from, to);
+  let onlySpacesAdd = true;
+  let onlySpacesDel = true;
   if (from === to) {
     return "<span>no change</span>";
   }
   diff.forEach(function(part) {
-    var partOnlySpace = (part.value.trim() === "");
+    const partOnlySpace = (part.value.trim() === "");
     if (part.removed) {
       onlySpacesAdd = false;
       if (!partOnlySpace) onlySpacesDel = false;
@@ -87,19 +87,19 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars) {
   }
   diff = jsdiff.diffWordsWithSpace(from, to);
 
-  var result = "";
-  var chars = maxChars;
+  let result = "";
+  let chars = maxChars;
   diff.forEach(function(part) {
     // green for additions, red for deletions
     // grey for common parts
-    var styleColor               = 'style="color:grey"';
+    let styleColor               = 'style="color:grey"';
     if (part.added) {
       styleColor = 'class="osmbc-inserted"';
     }
     if (part.removed) {
       styleColor = 'class="osmbc-deleted"';
     }
-    var partstr = part.value;
+    let partstr = part.value;
     if (!(part.added || part.removed)) partstr = "…";
     partstr = partstr.substring(0, chars);
     chars -= Math.max(0, partstr.length);
@@ -114,37 +114,36 @@ function countLogsForBlog(blog, callback) {
   debug("countLogsForBlog");
 
 
-  var sqlQuery =  "select username as user,property,count(*) as change_nr from (select data->>'user' as username,case when data->>'property' like 'comment%' then 'comment' else data->>'property' end as property, data->>'oid' as oid from changes where (((data->>'to' != '') and (data->>'to' != 'no translation') and (data->>'to' != 'startreview') and (data->>'to' != 'markexported'))or ((data->'to') is null))  and (data->>'blog' = $1)  group by data->>'blog',data->>'user',property,data->>'oid') as listoffields group by username,property";
-  var sqlArray = [blog];
-  var startTime = new Date().getTime();
-  var result = [];
+  const sqlQuery =  "select username as user,property,count(*) as change_nr from (select data->>'user' as username,case when data->>'property' like 'comment%' then 'comment' else data->>'property' end as property, data->>'oid' as oid from changes where (((data->>'to' != '') and (data->>'to' != 'no translation') and (data->>'to' != 'startreview') and (data->>'to' != 'markexported'))or ((data->'to') is null))  and (data->>'blog' = $1)  group by data->>'blog',data->>'user',property,data->>'oid') as listoffields group by username,property";
+  const sqlArray = [blog];
+  const startTime = new Date().getTime();
+  const result = [];
 
   debug(sqlQuery);
   db.query(sqlQuery, sqlArray, function(err, queryResult) {
     if (err) return callback(err);
     if (queryResult) {
       queryResult.rows.forEach(function(item) {
-        var r = {};
-        for (var k in item) {
+        const r = {};
+        for (const k in item) {
           r[k] = item[k];
         }
 
         result.push(r);
       });
     }
-    var endTime = new Date().getTime();
+    const endTime = new Date().getTime();
     debug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
 
-    var logs = {};
-    for (var i = 0; i < result.length; i++) {
-      var o = result[i];
+    const logs = {};
+    for (let i = 0; i < result.length; i++) {
+      const o = result[i];
       if (!logs[o.property]) logs[o.property] = {};
       logs[o.property][o.user] = parseInt(o.change_nr);
     }
-    for (i = 0; i < config.getLanguages().length; i++) {
-      var l = config.getLanguages()[i];
+    for (const l in language.getLanguages()) {
       if (blog["reviewComment" + l]) {
-        for (var j = 0; j < blog["reviewComment" + l].length; j++) {
+        for (let j = 0; j < blog["reviewComment" + l].length; j++) {
           if (!logs["review" + l]) logs["review" + l] = {};
           logs["review" + l][blog["reviewComment" + l][j].user] = 1;
         }
@@ -158,30 +157,32 @@ function countLogsForUser(user, callback) {
   debug("countLogsForUser");
 
 
-  var sqlQuery =  "select to_char(date(data->>'timestamp'),'YYYY-MM-DD') as date,count(*) as count from changes where data->>'user'  like $1 and data->>'table'::text in ('article','blog') group by date";
-  var sqlArray = [user];
-  var startTime = new Date().getTime();
-  var result = [];
+
+  const sqlQuery =  "select * from (select day::date  from generate_series($2::date - interval '1 year',$2::date, interval ' 1 day') day) d left join ( select date(data->>'timestamp')::date as day,count(*) as count from changes where data->>'user'  like $1 and data->>'table'::text in ('article','blog') group by 1) t using (day) order by day";
+
+  const startTime = new Date().getTime();
+  const sqlArray = [user, new Date()];
+  const result = [];
   debug(sqlQuery);
   db.query(sqlQuery, sqlArray, function(err, queryResult) {
     if (err) return callback(err);
     if (queryResult) {
       queryResult.rows.forEach(function(item) {
-        var r = {};
-        r.date = item.date;
+        const r = {};
+        r.date = item.day;
         r.count = parseInt(item.count);
         result.push(r);
       });
     }
 
-    var endTime = new Date().getTime();
+    const endTime = new Date().getTime();
     debug("SQL: [" + (endTime - startTime) / 1000 + "](" + result.length + " rows)" + sqlQuery);
 
     callback(null, result);
   });
 }
 
-var pgObject = {};
+const pgObject = {};
 pgObject.createString = "CREATE TABLE changes (  id bigserial NOT NULL,  data json,  \
                   CONSTRAINT changes_pkey PRIMARY KEY (id) ) WITH (  OIDS=FALSE);";
 pgObject.indexDefinition = {

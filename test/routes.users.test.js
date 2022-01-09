@@ -112,7 +112,11 @@ describe("router/user", function() {
       should.exist(user);
       should(user).eql({
         "id": "4",
-        "version": 1
+        "version": 1,
+        "mailAllComment": "false",
+        "mailBlogLanguageStatusChange": [],
+        "mailComment": [],
+        "mailNewCollection": "false"
       });
     });
     it("should deny denied access user",
@@ -135,7 +139,7 @@ describe("router/user", function() {
         url: url, followRedirect: false,
         jar: jar.testUser, simple: false, resolveWithFullResponse: true});
       should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      should(response.body).eql("Found. Redirecting to /osmbc");
       let user = await userModule.findById(1);
       should.exist(user.apiKey);
     });
@@ -156,7 +160,7 @@ describe("router/user", function() {
     let url = baseLink + "/usert/1";
     it("should show user dafta by id", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql('<input class="form-control" name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly"/>');
+      body.should.containEql('<input class="col-5 form-control" name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly"/>');
       body.should.containEql("<h1>TestUser Heatmap</h1>");
     });
     it("should show user data by SELF", async function () {

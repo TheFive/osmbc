@@ -1,13 +1,12 @@
 <html lang="en"><head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
     <title>TESTBC</title>
     <!-- Bootstrap core CSS-->
-    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   </head>
   <body>
@@ -49,9 +48,7 @@
             <li class="dropdown hidden-xs" id="tool"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Tool<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 <li class="dropdown-header">Markdown Helper</li>
-                <li><a href="/tool/calendarAllLang/fakeCalendar">Calendar Tool (fakeCalendar)</a></li>
                 <li><a href="/tool/picturetool">Picture Tool</a></li>
-                <li><a href="/calendar/preview">Public Calendar Check</a></li>
                 <li class="divider"></li>
                 <li class="dropdown-header">Editorial Tools
                   </li><li><a href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a></li>
@@ -79,13 +76,13 @@
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a id="lang_EN" href="/language?lang=EN">EN</a></li>
+                <li><a id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a></li>
               </ul>
             </li>
             <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">--<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a id="lang2_none" href="/language?lang2=none">none</a></li>
-                <li><a id="lang2_EN" href="/language?lang2=EN">EN</a></li>
+                <li><a id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a></li>
+                <li><a id="lang2_EN" onclick="chooseLanguage('lang2','EN')">EN</a></li>
               </ul>
             </li>
             <li><img onclick="location.href='/usert/1';" style="height:50px;width:50px"></li>
@@ -96,101 +93,81 @@
     </div>
     <div class="container-fluid">
       <p>
-        </p><h1>Calendar Tool (fakeCalendar)</h1>
-        <p><span>Data from: Friday, 29. December 2017 04:55PM </span><a href="/calendarRefresh/fakeCalendar">Refresh Data</a>
+        </p><div class="alert alert-dismissable alert-danger">
+          <button class="close" type="button" data-dismiss="alert">×</button>Picture width lower than 700 pixel, check resulting quality.
+        </div>
+        <h1>Generate OSMBC Picture Markdown</h1>
+        <p>
+          An <b>experimental</b> tool for generating pictures for OSMBC. 
+          It takes a picture, checking it on size, resizes it to 800px, and puts
+          some warnings, regarding size and location.
+          If the picture is under a license, please put it in. CC0 and CC3 are with reference to their license and allow a markdown reference to the author.
         </p>
-        <div class="row">
-          <div class="col-md-4">
-            <h4><span class="add-info label label-default lang+EN" onclick="$('.lang').addClass('hidden');$('.lang-EN').removeClass('hidden');">EN</span><span class="label label-default" onclick="$('.add-info').toggle(1000);">Draft/Final</span>
-            </h4>
-            <p class="osmbc-help-text">Click on language or Draft/Final to change view</p>
-          </div>
-          <div class="col-md-8">
-            <div class="lang lang-EN">
-              <div class="add-info">
-                <p>Language = EN</p>
-                <p>date 0</p>
-                <p>duration 14</p>
-                <p>big duration 50</p>
+        <form name="input" action="/tool/picturetool" method="post">
+          <div class="form-horizontal" role="form">
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="pictureLanguage">Language</label>
+              <div class="col-sm-6">
+                <select class="form-control" id="pictureLanguage" name="pictureLanguage">
+                  <option value="DE" selected="selected">DE</option>
+                  <option value="EN">EN</option>
+                </select>
               </div>
+              <div class="text-muted col-sm-4">Choose Language for License Reference</div>
             </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="pictureAText">Alternative Text</label>
+              <div class="col-sm-6">
+                <input class="form-control" name="pictureAText" id="pictureAText" value="Logo">
+              </div>
+              <div class="text-muted col-sm-4">Alt Text used for browsers without picture display</div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="pictureURL">Picture URL</label>
+              <div class="col-sm-6">
+                <input class="form-control" name="pictureURL" id="pictureURL" value="http://blog.openstreetmap.de/wp-content/themes/osmblog/images/headers/blog.png">
+              </div>
+              <div class="text-muted col-sm-4">URL of the picture for the blog.</div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="pictureMarkup">Subtitle Markup</label>
+              <div class="col-sm-6">
+                <input class="form-control" name="pictureMarkup" id="pictureMarkup" value="Some cool markdown text with [^1^](#blog_article) superscript">
+              </div>
+              <div class="text-muted col-sm-4">Markup for the subtitle of the picture.</div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="pictureLicense">License</label>
+              <div class="col-sm-6">
+                <select class="form-control" id="pictureLicense" name="pictureLicense">
+                  <option value="CC0">CC0</option>
+                  <option value="CC3" selected="selected">CC3</option>
+                  <option value="OSMMAP">OSMMAP</option>
+                </select>
+              </div>
+              <div class="text-muted col-sm-4">Under which license is the picture published ?</div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="pictureAuthor">Picture Author (MD)</label>
+              <div class="col-sm-6">
+                <input class="form-control" name="pictureAuthor" id="pictureAuthor" value="[Author Name](LINK)">
+              </div>
+              <div class="text-muted col-sm-4">Markdown text for the author name.</div>
+            </div>
+            <input class="btn btn-primary" type="submit" value="OK">
           </div>
-        </div>
-        <h3 onclick="$('.editBlock').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-bottom editBlock"></span><span class="glyphicon glyphicon-triangle-right hidden editBlock"></span><span> Edit Block</span></h3>
-        <table class="table-condensed table-striped editBlock">
-          <tbody><tr>
-            <td>
-              <p><span>WN251</span><span> </span><a href="/article/1">Upcoming Events</a></p>
-              <p><span class="label osmbclabel-no-markdown" onclick="">EN</span>
-              </p>
-            </td>
-            <td class="langXX langXX-EN">
-              <form name="EditArticle" id="EditArticle1EN" action="/article/1/setMarkdown/EN" method="post">
-                <textarea class="hidden form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);">|Where  |What                                               |When                 |Country   |
-|-------|---------------------------------------------------|---------------------|----------|
-|online |PoliMappers' Adventures: One mapping quest each day|20/11/2015-22/11/2015|everywhere|
-|Leipzig|OpenStreetMap assembly                             |12/11/2015-10/11/2015|Germany   |
-</textarea>
-                <textarea class="hidden form-control" name="oldMarkdown" id="oldMarkdown1" rows="7"></textarea>
-                <button class="btn btn-default" type="submit">Save EN</button>
-              </form>
-            </td>
-          </tr>
-        </tbody></table>
-        <p class="osmbc-help-text editBlock"><span>The store button is available, if the blog is in edit mode and the event article is empty. </span><a href="https://osmbc.openstreetmap.de/osmww/wiki/Article%3A-The-Language-Indicator">Click here</a><span> for a more detailed info on the colors in the article indicator. Use upcoming events to jump direct to the article. </span><span>Please control the generated calendar for the language by clicking on the language direct under the New Calendar Title.</span></p>
-        <h3 onclick="$('.tablePreview').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right hidden tablePreview"></span><span class="glyphicon glyphicon-triangle-bottom tablePreview"></span><span> Table Preview</span></h3>
-        <table class="table-condensed tablePreview">
-          <colgroup>
-            <col class="col-md-3">
-            <col class="col-md-3">
-            <col class="col-md-3">
-            <col class="col-md-1">
-            <col class="col-md-1">
-            <col class="col-md-1">
-          </colgroup>
-          <tbody><tr>
-            <td>
-              <div class="add-info"><span class="label label-info">EN</span>
-              </div>
-            </td>
-            <td class="lang text-primary lang-EN"></td>
-            <td class="lang text-primary lang-EN">PoliMappers' Adventures: One mapping quest each day</td>
-            <td class="lang text-primary lang-EN">20/11/2015-22/11/2015</td>
-            <td class="lang text-primary lang-EN">
-              <div class="add-info">everywhere</div>
-            </td>
-            <td class="lang text-primary lang-EN">everywhere</td>
-          </tr>
-          <tr>
-            <td>
-              <div class="add-info"><span class="label label-info">EN</span>
-              </div>
-            </td>
-            <td class="lang text-primary lang-EN"></td>
-            <td class="lang text-primary lang-EN">OpenStreetMap assembly</td>
-            <td class="lang text-primary lang-EN">12/11/2015-10/11/2015</td>
-            <td class="lang text-primary lang-EN">
-              <div class="add-info">Germany</div>
-            </td>
-            <td class="lang text-primary lang-EN"><img src="http://blog.openstreetmap.de/wp-uploads/2016/01/de.svg"></td>
-          </tr>
-        </tbody></table>
-        <h3 onclick="$('.markdownPreview').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right markdownPreview"></span><span class="glyphicon glyphicon-triangle-bottom hidden markdownPreview"></span><span> Markdown</span></h3>
-        <div class="hidden markdownPreview">
-          <pre class="lang lang-EN">|Where  |What                                               |When                 |Country   |
-|-------|---------------------------------------------------|---------------------|----------|
-|online |PoliMappers' Adventures: One mapping quest each day|20/11/2015-22/11/2015|everywhere|
-|Leipzig|OpenStreetMap assembly                             |12/11/2015-10/11/2015|Germany   |
-</pre>
-        </div>
-        <h3 onclick="$('.parserErrors').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right parserErrors"></span><span class="glyphicon glyphicon-triangle-bottom hidden parserErrors"></span><span> Parsing Problems</span></h3>
-        <pre class="hidden parserErrors"></pre><a class="hidden parserErrors" href="https://osmbc.openstreetmap.de/calendar/preview">Calendar Preview</a><span>    </span><a class="hidden parserErrors" href="https://wiki.openstreetmap.org/wiki/Template:Calendar">Edit Calendar in OSM Wiki</a>
-        <h3 onclick="$('.filteredEvents').toggleClass('hidden')"><span class="glyphicon glyphicon-triangle-right filteredEvents"></span><span class="glyphicon glyphicon-triangle-bottom hidden filteredEvents"></span><span> Filtered Events</span></h3>
-        <table class="hidden filteredEvents table">
-          <tbody><tr>
-            <td>...</td>
-          </tr>
-        </tbody></table>
+        </form>
+        <h3>Markdown, for Copy</h3>
+        <textarea id="markdown" rows="5" cols="500" style="font-family:monospace">![Logo](http://blog.openstreetmap.de/wp-content/themes/osmblog/images/headers/blog.png =800x387)
+
+Some cool markdown text with [^1^](#blog_article) superscript | Bild von [Author Name](LINK) unter [CC-BY-SA 3.0](https://creativecommons.org/licenses/by/3.0/de/)</textarea>
+        <h3>Preview
+          <div id="preview"><div style="width: 810px" class="wp-caption alignnone"> 
+<p class="wp-caption-text"><img src="http://blog.openstreetmap.de/wp-content/themes/osmblog/images/headers/blog.png" alt="Logo" width="800" height="387"></p>
+<p class="wp-caption-text">Some cool markdown text with <a href="#blog_article"><sup>1</sup></a> superscript | Bild von <a href="LINK">Author Name</a> unter <a href="https://creativecommons.org/licenses/by/3.0/de/">CC-BY-SA 3.0</a></p>
+</div>
+</div>
+        </h3>
       <p></p>
       <p></p>
     </div>
@@ -198,8 +175,8 @@
     <!-- Bootstrap core JavaScript-->
     <!-- ==================================================-->
     <!-- Placed at the end of the document so the pages load faster-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/4.5.3/js/bootstrap.min.js"></script>
   
 
 
@@ -209,19 +186,22 @@
   
   
 
-<script>
+<script nonce="Fixed Nonce for Test">
   // Init This Window with jQuery ready Callback
   $(document).ready(init2);
   function init2() {
     $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
   }
+  function chooseLanguage(number,lang) {
+    var data = {};
+    data[number]=lang;
+    jQuery.post("/language",data, function () {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Problem changing language " +  number + " " + lang);
+      console.error(err);
+    });
+  }
   
 </script>
-<script>
-  $(document).ready(function(){
-    var lang = "EN";
-  
-    $('.lang').addClass('hidden');
-    $('.lang-'+lang).removeClass('hidden');
-  });
-</script></body></html>
+<script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script></body></html>

@@ -1,70 +1,68 @@
 extends article
 
-block additionalMenu
-  +translationMenu
 
 block markdownArea
 
   .row
     - var lbg;
-    - if (params.left_lang===layout.language) lbg = "osmbclabel-lang";
-    - if (params.left_lang===layout.language2) lbg = "osmbclabel-lang2";
+    - if (params.left_lang===layout.user.getLang(0)) lbg = "osmbclabel-lang";
+    - if (params.left_lang===layout.user.getLang(1)) lbg = "osmbclabel-lang2";
     - var rbg;
-    - if (params.right_lang===layout.language) rbg = "osmbclabel-lang";
-    - if (params.right_lang===layout.language2) rbg = "osmbclabel-lang2";
+    - if (params.right_lang===layout.user.getLang(0)) rbg = "osmbclabel-lang";
+    - if (params.right_lang===layout.user.getLang(1)) rbg = "osmbclabel-lang2";
 
 
 
-
-    .row
+    // Markdown Area 2 Columns
+    .row#MarkdownArea
       .col-md-6
-          span.label.label-default(
+          span.badge.badge-secondary(
             id="left_lang"
             class=lbg
             draggable="true"
             data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
             ondragstart=`ondragstartLangLabel(event,'${params.left_lang}');`)="  " + params.left_lang + "  "
-          span.label.label-danger(style="display:none" id="markdown" + params.left_lang + "_unsaved" )="unsaved"
+          span.badge.badge-danger(style="display:none" id="markdown" + params.left_lang + "_unsaved" )="unsaved"
 
-          +articleMarkdown(params.left_lang,!article.isChangeAllowed("markdown" + params.left_lang))
+          articleMarkdown(params.left_lang,!article.isChangeAllowed("markdown" + params.left_lang))
           +articlePreview(params.left_lang)
 
       .col-md-6
 
             for l in layout.activeLanguages
               if l === params.right_lang
-                span.label.osmbclabel-lang2.RL(
+                span.badge.osmbclabel-lang2.RL(
                   class="RL-" + l
                   draggable="true"
                   data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
                   ondragstart=`ondragstartLangLabel(event,'${l}');`)=l
-                span.label.label-default.RLOFF.hidden(
+                span.badge.badge-secondary.RLOFF.d-none(
                     class="RLOFF-" + l
                     data-toggle="tooltip" data-placement="left" title="Click on language display to enable")="."
-                span.label.label-danger(style="display:none" id="markdown" + l + "_unsaved" )="unsaved: "+l
+                span.badge.badge-danger(style="display:none" id="markdown" + l + "_unsaved" )="unsaved: "+l
               else
-                span.label.label-default.RL.hidden(
+                span.badge.badge-secondary.RL.d-none(
                   class= "RL-" + l
                   draggable="true"
                   data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
                   ondragstart=`ondragstartLangLabel(event,'${l}');`)=l
                 if l === params.left_lang
-                  span.label.label-default.RLOFF(class="RLOFF-" + l)="-"
+                  span.badge.badge-secondary.RLOFF(class="RLOFF-" + l)="-"
                 else
-                  span.label.label-default.RLOFF(
+                  span.badge.badge-secondary.RLOFF(
                       class="RLOFF-" + l
                       data-toggle="tooltip" data-placement="left" title="Click on language display to see "+l+" here")="."
-                span.label.label-danger(style="display:none" id="markdown" + l + "_unsaved")="unsaved: "+l
+                span.badge.badge-danger(style="display:none" id="markdown" + l + "_unsaved")="unsaved: "+l
 
 
             for l in layout.activeLanguages
-              textarea.hidden.form-control(id="old_markdown" + l, name="old_markdown" + l,rows=1,hide=true) #{article["markdown" + l]}
+              textarea.d-none.form-control(id="old_markdown" + l, name="old_markdown" + l,rows=1,hide=true) #{article["markdown" + l]}
               if l === params.right_lang
                 .RL(class= "RL-" + l)
                   +articleMarkdown(l,!article.isChangeAllowed("markdown" + l))
               else
                 if l !== params.left_lang
-                  .RL.hidden(class= "RL-" + l)
+                  .RL.d-none(class= "RL-" + l)
                     +articleMarkdown(l,!article.isChangeAllowed("markdown" + l))
 
             for l in layout.activeLanguages
@@ -72,19 +70,13 @@ block markdownArea
                 .RL(class= "RL-" + l)
                   +articlePreview(l)
               else
-                .RL.hidden(class= "RL-" + l)
+                .RL.d-none(class= "RL-" + l)
                   +articlePreview(l)
 
 
 
-
-
-    .row
-      .col-md-6
-        i#languageFlagsShow.fa.fa-flag.fa-2x(
-        onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('hidden');")
-
-    .row#languageFlags.hidden
+    // Language Flag Area
+    .row#languageFlags.d-none
       .col-md-6
         - for (lang in languageFlags)
           img.flag(id=lang,
@@ -117,7 +109,7 @@ block markdownArea
           p.RL(class="RL-" + l)
             +articleTranslateButton(params.left_lang,l)
         else
-          p.RL(class="RL-" + l).hidden
+          p.RL(class="RL-" + l)d-none
             +articleTranslateButton(params.left_lang,l)
 
     +rightcolumn
@@ -129,10 +121,8 @@ block markdownArea
             p
               +articleTranslateButton(l,params.left_lang)
         else
-          div.RL(class="RL-" + l).hidden
+          div.RL(class="RL-" + l)d-none
             p
               +articleTextanalyse(l)
             p
               +articleTranslateButton(l,params.left_lang)
-
-

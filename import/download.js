@@ -2,7 +2,13 @@
 
 var request = require("request");
 var toMarkdown = require('to-markdown');
-var htmlparser = require("htmlparser2");
+
+// Disable htmlparster as it no longer required in main project
+// this sources are in repository for historical reasons,
+// and for the idea to reimport blogs from WP (if necessary)
+//  htmlparser = require("htmlparser2");
+const htmlparser = null;
+
 var debug = require('debug')('OSMBC:import:download');
 
 var articleModule = require('../model/article.js');
@@ -15,7 +21,7 @@ var async = require('async');
 
 // For Translation:
 
-var categoryTranslation = 
+var categoryTranslation =
 {
   "[Aktuelle Kategorie]":"[Actual Category]",
   "In eigener Sache":"About us",
@@ -69,17 +75,17 @@ var parser = new htmlparser.Parser({
     onopentag: function(name, attribs){
         // ignore everything in comment mode
         if (state == "finished") return;
-        
+
         if(name == "h2" ){
             state = "category";
-          
+
         }
         if (name == "li") {
           state = "list";
         }
         if (name == "a" && state == "list") {
             currentElement += "<a href=\""+attribs.href+"\">";
-          
+
         }
         if (name == "div") {
           if (attribs.id == "entry-author-info") {
@@ -91,7 +97,7 @@ var parser = new htmlparser.Parser({
     ontext: function(text){
         if (state == "finished") return;
 
-        
+
         if (state == "category" && text != currentCategory.title) {
           text = text.replace("&amp;","&");
           result.push(currentCategory);
@@ -102,7 +108,7 @@ var parser = new htmlparser.Parser({
         if (state == "list") {
           currentElement += text;
         }
-       
+
 
     },
     onclosetag: function(tagname){
@@ -117,12 +123,12 @@ var parser = new htmlparser.Parser({
         }
         if (tagname == "a" && state == "list") {
             currentElement += "</a>";
-          
+
         }
 
     }
 }, {decodeEntities: false});
- 
+
 
 function Category() {
     this.title = null;
@@ -136,14 +142,14 @@ function importBlog(nr,callback) {
 
   var blogName = "WN"+number.substring(number.length-3,99);
   console.info("Import WN "+blogName);
-  
-  blogModule.findOne({name:blogName},function (err,b) { 
+
+  blogModule.findOne({name:blogName},function (err,b) {
   if (b) {
     console.error(blogName+" already exists");
     return callback();
   }
 
-  var body = null;  
+  var body = null;
   var url = null;
   async.parallel([
     function tryOneName(cb) {
@@ -176,9 +182,9 @@ function importBlog(nr,callback) {
     }
 
     ],
-    function loadedWN(err){ 
+    function loadedWN(err){
       debug('loadedWN');
-      if (err) console.dir(err);
+      if (err) console.error(err);
       if (body) {
         state = null;
         result = [];
@@ -195,26 +201,26 @@ function importBlog(nr,callback) {
           if (c.DE in categoryTranslation) {
             c.EN = categoryTranslation[c.DE];
           }
-          else 
+          else
           {
             c.EN = c.DE+"Not Translated";
             console.info(c.EN);
           }
           cat.push(c);
         }
-        
+
 
 
         blog.setAndSave({OSMUser:"IMPORT"},{name:blogName,status:"published",categories:cat},function(err){
           console.info("Blog Saved Error("+err+")");
           async.each(result,function iterator(item,cb) {
             var category = item.title;
-            //console.dir("ITEM"+item);
+            //console.info("ITEM"+item);
             if (category === null) return cb();
-            //console.dir("Import Category: "+category);
-            //console.dir(item.element.length+" Elements in Category");
+            //console.info("Import Category: "+category);
+            //console.info(item.element.length+" Elements in Category");
             async.each(item.element,function eachArticle(articleProto,cba) {
-              //console.log(articleProto);
+              //console.info(articleProto);
               var markdownDE = toMarkdown(articleProto);
               var article = articleModule.create();
               article.setAndSave({OSMUser:"IMPORT"},{blog:blogName,category:category,markdownDE:markdownDE},function(err){
@@ -236,7 +242,7 @@ function importBlog(nr,callback) {
       }
     });
 
-    
+
   });
 }
 
@@ -249,7 +255,7 @@ importBlog(270,function(){console.info("Ready.");});
 importBlog(271,function(){console.info("Ready.");});
 /*
 async.timesLimit(1,1,function (n,next){
-  console.log("Start Import for "+n);
+  console.info("Start Import for "+n);
   importBlog(n,next);
 
 })*/

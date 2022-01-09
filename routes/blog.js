@@ -6,9 +6,10 @@ const async    = require("../util/async_wrap.js");
 const assert   = require("assert");
 const debug    = require("debug")("OSMBC:routes:blog");
 const config   = require("../config.js");
+const language = require("../model/language.js");
+
 const util     = require("../util/util.js");
 const moment   = require("moment");
-const help     = require("../routes/help.js");
 const yaml     = require("js-yaml");
 const configModule = require("../model/config.js");
 
@@ -119,8 +120,7 @@ function renderBlogStat(req, res, next) {
           }
         }
       };
-      for (let i = 0; i < config.getLanguages().length; i++) {
-        const lang = config.getLanguages()[i];
+      for (const lang in language.getLanguages()) {
         editors[lang] = [];
         addEditors(lang, "collection", 3);
         addEditors(lang, "markdown" + lang, 2);
@@ -151,7 +151,7 @@ function renderBlogStat(req, res, next) {
       blog: blog,
       editors: editors,
       userMap: userMap,
-      languages: config.getLanguages()
+      languages: language.getLid()
     });
   }
   );
@@ -166,9 +166,6 @@ function renderBlogList(req, res, next) {
 
   if (typeof (status) !== "undefined") {
     query.status = status;
-    if (status === "IN('open','edit')") {
-      additionalText = help.getText("blog.list.notClosed.md");
-    }
   }
 
 
@@ -213,8 +210,8 @@ function renderBlogPreview(req, res, next) {
 
   let lang = req.query.lang;
   const asMarkdown = (req.query.markdown === "true");
-  if (typeof (lang) === "undefined") lang = "DE";
-  if (config.getLanguages().indexOf(lang) < 0) lang = "DE";
+  if (typeof (lang) === "undefined") lang = "EN";
+  if (!language.getLanguages()[lang]) lang = "EN";
 
 
   const returnToUrl = req.session.articleReturnTo;
@@ -241,12 +238,12 @@ function renderBlogPreview(req, res, next) {
     if (err) return next(err);
     if (req.query.download === "true") {
       if (asMarkdown) {
-        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".md");
+        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(language.momentLocale(lang)).format() + ".md");
         res.setHeader("Content-type", "text");
 
         res.end(result.converter, "UTF8");
       } else {
-        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".html");
+        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(language.momentLocale(lang)).format() + ".html");
         res.setHeader("Content-type", "text/html");
         res.end(result.converter, "UTF8");
       }
@@ -278,7 +275,7 @@ function setReviewComment(req, res, next) {
   if (!req.blog) return next();
   req.blog.setReviewComment(lang, user, data, function(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -295,7 +292,7 @@ function editReviewComment(req, res, next) {
   if (!req.blog) return next();
   req.blog.editReviewComment(lang, user, index, data, function(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -309,7 +306,10 @@ function setBlogStatus(req, res, next) {
 
   function finalFunction(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    let referer =  config.htmlRoot() + "/osmbc";
+    if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
+      referer = req.header("Referer");
+    }
     res.redirect(referer);
   }
 
@@ -396,7 +396,7 @@ function renderBlogTab(req, res, next) {
         const changes = { status: req.query.setStatus };
         blog.setAndSave(req.user, changes, function(err) {
           if (err) return callback(err);
-          let referer =  "/";
+          let referer =  config.htmlRoot() + "/osmbc";
           if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
             referer = req.header("Referer");
           }
@@ -424,7 +424,7 @@ function renderBlogTab(req, res, next) {
       return;
     }
 
-    var translationServices = [];
+    const translationServices = [];
     if (translator.deeplPro.active()) {
       translationServices.push("deeplPro");
     }
@@ -475,7 +475,7 @@ function copyAllArticles(req, res, next) {
 
   blog.copyAllArticles(user, fromLang, toLang, function (err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -494,7 +494,7 @@ function translateAllArticles(req, res, next) {
 
   blog.translateAllArticles(user, fromLang, toLang, service, function (err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || "/";
+    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
     res.redirect(referer);
   });
 }
@@ -523,7 +523,7 @@ function editBlogId(req, res) {
   res.set("content-type", "text/html");
   let copyLanguageFromAnother = config.getValue("copyLanguageFromAnother");
   if (!copyLanguageFromAnother) copyLanguageFromAnother = {};
-  res.render("editblog", {
+  res.render("blog/blog_edit.pug", {
     layout: res.rendervar.layout,
     blog: blog,
     params: params,

@@ -13,7 +13,7 @@ const OpenStreetMapStrategy = require("passport-openstreetmap").Strategy;
 const userModule = require("../model/user.js");
 
 
-var htmlRoot = config.htmlRoot();
+const htmlRoot = config.htmlRoot();
 
 // taken from: https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
 // Passport session setup.
@@ -164,6 +164,7 @@ if (isNaN(cookieMaxAge)) {
 
 function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated");
+  debug("Requested URL:  %s", req.url);
   if (req.isAuthenticated()) {
     debug("ensureAuthenticated: OK");
     if (req.user && req.user.access && req.user.access !== "denied") {
@@ -171,8 +172,8 @@ function ensureAuthenticated (req, res, next) {
         req.session.cookie.maxAge = cookieMaxAge;
         req.session.prolonged = true;
       }
-      var date = new Date();
-      var lastStore = new Date(req.user.lastAccess);
+      const date = new Date();
+      const lastStore = new Date(req.user.lastAccess);
       // only store last access when GETting something, not in POSTs.
       if (req.method === "GET" && (!req.user.lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 5)) {
         const stamp = new Date();

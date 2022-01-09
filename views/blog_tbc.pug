@@ -53,15 +53,15 @@ block content
               if (showCollector && a.author && a.author.collection)
                 each b in a.author.collection.split(",")
                   if (b !== layout.user.OSMUser)
-                    span.label.osmbclabel-collect.small-margin=b
+                    span.badge.osmbclabel-collect.small-margin=b
                   else
-                    span.label.osmbclabel-user-self.small-margin=b
+                    span.badge.osmbclabel-user-self.small-margin=b
               if (showEditor && a.author && a.author["markdown"+lang])
                 each b in a.author["markdown"+lang].split(",")
                   if (b !== layout.user.OSMUser)
-                    span.label.osmbclabel-markdown.small-margin=b
+                    span.badge.osmbclabel-markdown.small-margin=b
                   else
-                    span.label.osmbclabel-user-self.small-margin=b
+                    span.badge.osmbclabel-user-self.small-margin=b
 
 
 
@@ -84,7 +84,7 @@ block content
 block scripts
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
-  script.
+  script(nonce=cspNonce).
     var openEditor = null;
     window.onload = function() {
       
@@ -116,7 +116,3 @@ block scripts
       if (oldValue === newValue) return;
       document.getElementById('EditArticle'+id).submit();
     }
-
-
-
-

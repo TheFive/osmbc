@@ -9,9 +9,9 @@ const nock    = require("nock");
 const config  = require("../config.js");
 const mockdate = require("mockdate");
 const HttpStatus = require('http-status-codes');
-const deeplClient = require("deepl-client");
 const initialise = require("../util/initialise.js");
 const rp = require("request-promise-native");
+const axios = require("axios");
 
 
 const articleModule = require("../model/article.js");
@@ -198,7 +198,7 @@ describe("routes/article", function() {
       should.exist(options.user);
       should.exist(jar[options.user]);
       should.exist(options.url);
-      should.exist(options.form);
+      should.exist(options.form || options.body);
       should.exist(options.expectedMessage);
       should.exist(options.expectedStatusCode);
       let response = await rp.post({url: options.url, form: options.form, jar: jar[options.user], simple: false, resolveWithFullResponse: true});
@@ -300,7 +300,7 @@ describe("routes/article", function() {
     it("should run with full access user", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
       let json = JSON.parse(body);
-      json["#vote_pro_2"].should.containEql('class="label osmbc-btn-not-voted"');
+      json["#vote_pro_2"].should.containEql('class="badge osmbc-btn-not-voted"');
     });
 
     it("should deny denied access user",
@@ -864,49 +864,16 @@ describe("routes/article", function() {
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny non existing users",
+      // Non existing users will become Guest. but guest has to be able to see the article
       postUrlWithJar({
         url: url,
         form: params,
         user: "testUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+        expectedMessage: "This article is not allowed for guests"
       }));
   });
-  describe("route POST /:article_id/copyto/:blog", function() {
-    let url = baseLink + "/article/2/copyto/secondblog";
-    let form = {};
-    it("should run with full access user", async function () {
-      let body = await rp.post({ url: url, jar: jar.testUser,followAllRedirects:true});
-      body.should.containEql("secondblog");
-      let article = await articleModule.findById(4);
 
-      delete article._blog;
-      should(article).eql({
-        blog: "secondblog",
-        id: "4",
-        markdownDE: "Former Text:\n\n* Dies ist ein grosser Testartikel.",
-        title: "BLOG",
-        originArticleId: "2",
-        version: 1
-      });
-    });
-    it("should deny denied access user",
-      postUrlWithJar({
-        url: url,
-        form: form,
-        user: "testUserDenied",
-        expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserDenied< has no access rights"
-      }));
-    it("should deny non existing users",
-      postUrlWithJar({
-        url: url,
-        form: form,
-        user: "testUserNonExisting",
-        expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
-      }));
-  });
   describe("route POST /translate/deeplPro/:fromLang/:toLang", function() {
     let url = baseLink + "/article/translate/deeplPro/DE/EN";
     let form = {text: "Dies ist ein deutscher Text."};
@@ -919,21 +886,13 @@ describe("routes/article", function() {
         should(params.text).eql("Dies ist ein deutscher Text.");
         return callback(null, "This is an english text.");
       });
-      stub2 = sinon.stub(deeplClient, "translate").callsFake(function(option) {
-        should(option.source_lang).eql("DE");
-        should(option.target_lang).eql("EN");
-        should(option.text).eql("<p>Dies ist ein deutscher Text.</p>\n");
-        should(option.auth_key).eql("Test Key Fake");
-        let result = {};
-        result.translations = [];
-        result.translations[0] = {text:"This is an english text.",source_lang: "DE", target_lang:"EN"};
-
-        return new Promise((resolve) => { resolve(result); });
+      nock("https://api.deepl.com")
+      .post('/v2/translate',"auth_key=Test%20Key%20Fake&source_lang=DE&tag_handling=xml&target_lang=EN&text=%3Cp%3EDies%20ist%20ein%20deutscher%20Text.%3C%2Fp%3E%0A")
+      .reply(200, {translations: [{text:"This is an english text.",source_lang: "DE", target_lang:"EN"}]
       });
     });
     afterEach(function() {
       stub.restore();
-      stub2.restore();
     });
 
     it("should run with full access user", async function () {
@@ -960,58 +919,67 @@ describe("routes/article", function() {
 
   describe("route POST /article/urlexist", function() {
     let url = baseLink + "/article/urlexist";
-    let form = {url: "https://www.site.ort/apage"};
+    let form = {urls: ["https://www.site.ort/apage"]};
 
     it("should run with full access user existing site", async function () {
+      form = {urls: ["https://www.site.ort/apage","https://www.site.ort2/apage"]};
       let sitecall = nock("https://www.site.ort")
         .get("/apage")
         .reply(200,"OK");
+      let sitecall2 = nock("https://www.site.ort2")
+        .get("/apage")
+        .reply(404,"Page Not Found");  
 
-      let response = await rp.post({url: url, form: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true});
+      let response = await rp.post({url: url, body: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true,json:true});
 
-      response.body.should.eql("OK");
+      response.body.should.deepEqual({
+        'https://www.site.ort/apage': 'OK',
+        'https://www.site.ort2/apage': 404
+      });
       should(response.statusCode).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });
 
-    it("should run with full access user with error", async function () {
-      let form = {url: "https://www.site.ort2/apage"};
+    it("should run with full access user with error and string param", async function () {
+      let form = {urls: "https://www.site.ort2/apage"};
       let sitecall = nock("https://www.site.ort2")
         .get("/apage")
-        .replyWithError({message:"not found"});
-      let response = await rp.post({url: url, form: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true});
+        .reply(404,"Page Not Found");
+      let response = await rp.post({url: url, body: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true,json:true});
 
-      response.body.should.eql("not found");
+      response.body.should.deepEqual({ 'https://www.site.ort2/apage': 404 });
       should(response.statusCode).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });
     it("should run with full access user with http error", async function () {
-      let form = {url: "https://www.site.ort2/apage"};
+      let form = {urls: ["https://www.site.ort2/apage"]};
       let sitecall = nock("https://www.site.ort2")
         .get("/apage")
         .reply(404,"something went wrong");
-      let response = await rp.post({url: url, form: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true});
+      let response = await rp.post({url: url, body: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true,json:true});
 
-      response.body.should.eql("404");
+      response.body.should.deepEqual({ 'https://www.site.ort2/apage': 404 });
       should(response.statusCode).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });
 
     it("should run with guest access user", async function () {
-      let form = {url: "https://www.site.ort3/apage"};
+      let form = {urls: ["https://www.site.ort3/apage"]};
       let sitecall = nock("https://www.site.ort3")
         .get("/apage")
         .reply(200,"OK");
       let response = await rp.post(
         {
           url: url,
-          form: form,
+          body: form,
           jar: jar.guestUser,
           simple: false,
           resolveWithFullResponse: true,
-          followAllRedirects: true});
+          followAllRedirects: true,
+          json:true
+        });
 
-      response.body.should.eql("OK");
+      response.body.should.deepEqual({ 'https://www.site.ort3/apage': 'OK' });
       should(response.statusCode).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
 
@@ -1022,13 +990,15 @@ describe("routes/article", function() {
       response = await rp.post(
         {
           url: url,
-          form: form,
+          body: form,
           jar: jar.guestUser,
           simple: false,
           resolveWithFullResponse: true,
-          followAllRedirects: true});
+          followAllRedirects: true,
+          json:true
+        });
 
-      response.body.should.eql("OK");
+      response.body.should.eql({ 'https://www.site.ort3/apage': 'OK' });
       should(response.statusCode).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.false();
     });
@@ -1036,26 +1006,29 @@ describe("routes/article", function() {
     it("should deny denied access user",
       postUrlWithJar({
         url: url,
-        form: form,
+        body: form,
         user: "testUserDenied",
+        json:true,
         expectedStatusCode: HttpStatus.FORBIDDEN,
+        json:true,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should use guest user for non existing users",async function () {
-      let form = {url: "https://www.site.ort4/apage"};
+      let form = {urls: ["https://www.site.ort4/apage"]};
       let sitecall = nock("https://www.site.ort4")
         .get("/apage")
         .reply(200,"OK");
       let response = await rp.post(
         {
           url: url,
-          form: form,
+          body: form,
           jar: jar.testUserNonExisting,
           simple: false,
           resolveWithFullResponse: true,
+          json:true,
           followAllRedirects: true});
 
-      response.body.should.eql("OK");
+      response.body.should.deepEqual({ 'https://www.site.ort4/apage': 'OK' });
       should(response.statusCode).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });

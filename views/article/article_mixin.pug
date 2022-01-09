@@ -23,7 +23,7 @@ mixin rightcolumn
       else
         p No Content provided
   else
-    .col-md-5.hidden
+    .col-md-5.d-none
       if block
         block
       else
@@ -34,13 +34,18 @@ mixin articleMarkdown(lang,disabled)
   - var p=""
   if placeholder.markdown[lang]
     - p = placeholder.markdown[lang];
+  if (article.categoryEN === "Upcoming Events")
+    - p = "Calendar will be generated from OSMCAL when starting review."  
   textarea.markdownEdit.form-control.af(id="markdown" +lang placeholder = p spellcheck = "true" lang=lang name = "markdown" +lang rows = 6 readonly = d)=article["markdown" + lang]
   p.osmbc-help-text="'no translation' or '-' to specify no translation wanted."
+  if (!d && article.categoryEN === "Upcoming Events")
+    div.btn.btn-info(onclick=`window.getEventTable("${lang}",${"markdown" + lang},this);`) (Re)Generate Calendar
+  
   div.alert.markdownMessage.alert-danger(id="text"+lang lang=lang style="display:none" )="Default Error Message"
 
 
 mixin articlePreview(lang)
-  .panel.panel-default.panel-body.preview(id="preview" + lang, lang = lang)
+  .card.card-body.preview(id="preview" + lang, lang = lang)
     |!{article["textHtml"+lang]}
 
 
@@ -55,10 +60,10 @@ mixin articleTranslateButton(langFrom,langTo)
          class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
          onClick =`window.translate('${langFrom}','${langTo}',window.mainTranslationService);return false;`
        ) Translate #{langFrom} -> #{langTo}
-    button.btn.btn-small.btn-warning.hidden(class="translateWait"+langFrom+langTo)
-      span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+    button.btn.btn-small.btn-warning.d-none(class="translateWait"+langFrom+langTo)
+      i.fa.fa-sync
       span=" Please Wait"
-    button.btn.btn-small.btn-danger.hidden(class="translateError"+langFrom+langTo)
+    button.btn.btn-small.btn-danger.d-none(class="translateError"+langFrom+langTo)
       span="Error occured"
 
 
@@ -74,7 +79,7 @@ mixin doublettesButton
 
 
 mixin cancelButton
-  button.btn.btn-large.btn-default(type = "button" onclick =`disableUnchanged(); location.href='${layout.htmlroot}/article/${article.id}?edit=false';`) last Version
+  button.btn.btn-large.btn-secondary#cancelButton(type = "button" onclick =`disableUnchanged(); location.href='${layout.htmlroot}/article/${article.id}?edit=false';`) last Version
 
 
 mixin noTranslationButton
@@ -86,51 +91,46 @@ mixin noTranslationButton
         - open = true;
     if open
       p
-        button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; setNoTranslation(); document.getElementById('input').submit();") no translation to rest
+        button.btn.btn-small.btn-secondary#noTranslationButton(type = "button" onclick =" window.setNoTranslation(); ") no translation to rest
 
 mixin markdownWithPreview(lang)
   - labelClass = ""
   - if (params.left_lang === lang) labelClass = "osmbclabel-lang";
   - if (params.right_lang === lang) labelClass = "osmbclabel-lang2";
-  span.label.label-default(
+  span.badge.badge-secondary(
       class=labelClass
       draggable="true"
       data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
       ondragstart=`ondragstartLangLabel(event,'${lang}');`)="  " + lang + "  "
-  span.label.label-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
+  span.badge.badge-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
 
 
-  textarea.hidden.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true)=article["markdown" + lang]
+  textarea.d-none.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true)=article["markdown" + lang]
   +articleMarkdown(lang,!article.isChangeAllowed("markdown" + lang))
   +articlePreview(lang)
   +articleTextanalyse(lang)
 
 mixin articleTranslateMenu(langFrom,langTo,service)
   if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
-    li
-      a(
+    a.dropdown-item(
         class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
         onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
         )="Translate " + langFrom+  "->" +langTo
-    li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
-      a=" Please Wait"
-    li.bg-danger.hidden(class="translateError" + langFrom + langTo)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-remove
-    li.hidden(class="translateDone" + langFrom + langTo+" "+service)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-ok
+    a.dropdown-item.bg-warning.d-none(class="translateWait" + langFrom + langTo)=" Please Wait"
+    a.dropdown-item.bg-danger.d-none(class="translateError" + langFrom + langTo)="Translate " + langFrom+  "->" +langTo +" "
+        i.fa.fa-times
+    a.dropdown-item.d-none(class="translateDone" + langFrom + langTo+" "+service)="Translate " + langFrom+  "->" +langTo +" "
+       i.fa.fa-check
 
 
 mixin translationMenu
-  li.dropdown#translation.hidden-xs
-    a.dropdown-toggle(href='#', data-toggle='dropdown')
-      | Translate
-      span.caret
-    ul.dropdown-menu(role='menu')
+  li.dropdown.navbar-item#translation.hidden-xs
+    a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
+    ul.dropdown-menu(aria-labelledby="articleTranslateMenu")
       each tService in translationServices
         li.dropdown-header="Use " + tService +":"
-          - list = [params.left_lang,params.right_lang,params.lang3,params.lang4]
+          - list = []
+          - for ( i=0;layout.user.getLang(i);i++) {list.push(layout.user.getLang(i));}
           each a in list
             each b in list
               if (a!==b && a!== null && b!== null)
@@ -148,7 +148,7 @@ block scripts
 
 
 
-  script.
+  script(nonce=cspNonce).
     // set Constant for Window with JADE Variables
     googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
     activeLanguages = JSON.parse('!{JSON.stringify(layout.activeLanguages)}');
@@ -157,6 +157,7 @@ block scripts
     lang3 = "!{params.lang3}";
     lang4 = "!{params.lang4}";
     translationServices = JSON.parse('!{JSON.stringify(translationServices)}');
+    urlWoErrorWhileEdit = JSON.parse('!{JSON.stringify(urlWoErrorWhileEdit)}');
     mainTranslationService = "!{mainTranslationService}";
     htmlroot = "!{layout.htmlroot}";
     placeholder = !{JSON.stringify(placeholder.categories)}

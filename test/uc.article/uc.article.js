@@ -45,7 +45,7 @@ describe("uc.article", function() {
     await blogModule.createNewBlog({OSMUser: "test"}, {name: "blog"});
     await articleModule.createNewArticle({blog: "blog", collection: "http://www.test.de/holla", markdownDE: "[Text](http://www.test.de/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.de/holla) lerom upsim deloros."});
     await articleModule.createNewArticle({blog: "blog", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz."});
-    await articleModule.createNewArticle({blog: "undef blog", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz."});
+    await articleModule.createNewArticle({blog: "", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz."});
     let article = await articleModule.createNewArticle({blog: "blog", collection: "Link1: http://www.test.de/holla and other"});
     articleId = article.id;
     browser = await testutil.getNewBrowser("TheFive");
@@ -194,7 +194,8 @@ describe("uc.article", function() {
       article.markdownEN = "";
       article.markdownES = "";
       await article.save();
-      await browser.visit("/article/" + articleId + "?notranslation=true");
+      await browser.visit("/article/" + articleId);
+      await browser.click("button#noTranslationButton");
       article = await articleModule.findById(articleId);
       should(article.markdownDE).eql("Text");
       should(article.markdownEN).eql("no translation");
@@ -204,7 +205,8 @@ describe("uc.article", function() {
   describe("onchangeCollection", function() {
     this.timeout(maxTimer * 3);
     beforeEach(async function() {
-      await browser.visit("/language?lang2=none");
+      fs.writeFileSync("current.html",browser.html(),"utf8");
+      //await browser.click("#lang2_none");
       await browser.visit("/article/" + articleId);
     });
     it("should show the links from collection field under the field", async function() {
@@ -217,30 +219,30 @@ describe("uc.article", function() {
 
         browser.fill("#collection",link);
         await browser.keyUp("#collection", 30);
-        should(browser.document.getElementById("linkArea").innerHTML).equal('<p><a class="label label-default" href="' + linkUrl + '" target="_blank">' + displayUrl + '</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=' + linkUrl + '" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=' + linkUrl + '))\');">DE</a><br>\n</p>');
+        should(browser.document.getElementById("linkArea").innerHTML).equal(`<p><a class="badge badge-secondary" href="${linkUrl}" target="_blank">${displayUrl}</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=${linkUrl}" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=${linkUrl}))\');">DE</a> <a href="https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=${linkUrl}" target="_blank" ondragstart="dragstart(event,\'(automatic [translation](https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=${linkUrl}))\');">EN</a><br>\n</p>`);
       }
     });
     it("should show multiple links from collection field under the field",async function() {
       browser.fill("#collection","Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: http://www.openstreetmap.org/user/Severák/diary/37681");
       await browser.keyUp("#collection", 30);
-      should(browser.document.getElementById("linkArea").innerHTML).equal('<p><a class="label label-default" href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/# . . . v-kzE</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE))\');">DE</a><br>\n<a class="label label-default" href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severá . . . 37681</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681))\');">DE</a><br>\n</p>');
+      should(browser.document.getElementById("linkArea").innerHTML).equal('<p><a class="badge badge-secondary" href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/# . . . v-kzE</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE))\');">DE</a> <a href="https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank" ondragstart="dragstart(event,\'(automatic [translation](https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE))\');">EN</a><br>\n<a class="badge badge-secondary" href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severá . . . 37681</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681))\');">DE</a> <a href="https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank" ondragstart="dragstart(event,\'(automatic [translation](https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681))\');">EN</a><br>\n</p>');
     });
     it("should show multiple links from collection only separated by carrige return", async function() {
       browser.fill("#collection","https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");
       await browser.keyUp("#collection", 30);
-      should(browser.document.getElementById("linkArea").innerHTML).equal('<p><a class="label label-default" href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/# . . . v-kzE</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE))\');">DE</a><br>\n<a class="label label-default" href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severá . . . 37681</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681))\');">DE</a><br>\n</p>');
+      should(browser.document.getElementById("linkArea").innerHTML).equal('<p><a class="badge badge-secondary" href="https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank">https://productforums.google.com/forum/# . . . v-kzE</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE))\');">DE</a> <a href="https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE" target="_blank" ondragstart="dragstart(event,\'(automatic [translation](https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE))\');">EN</a><br>\n<a class="badge badge-secondary" href="http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank">http://www.openstreetmap.org/user/Severá . . . 37681</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681))\');">DE</a> <a href="https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681" target="_blank" ondragstart="dragstart(event,\'(automatic [translation](https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=http://www.openstreetmap.org/user/Severák/diary/37681))\');">EN</a><br>\n</p>');
     });
     it("should ignore brackets in a link (No Markdown!)", async function() {
       browser.fill("#collection", "Some collection https://www.openstreetmap.org/a_brilliant_map Markdown");
       await browser.keyUp("#collection", 30);
-      should(browser.document.getElementById("linkArea").innerHTML).equal('<p><a class="label label-default" href="https://www.openstreetmap.org/a_brilliant_map" target="_blank">https://www.openstreetmap.org/a_brilliant_map</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://www.openstreetmap.org/a_brilliant_map" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://www.openstreetmap.org/a_brilliant_map))\');">DE</a><br>\n</p>');
+      should(browser.document.getElementById("linkArea").innerHTML).equal('<p><a class="badge badge-secondary" href="https://www.openstreetmap.org/a_brilliant_map" target="_blank">https://www.openstreetmap.org/a_brilliant_map</a>\n <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://www.openstreetmap.org/a_brilliant_map" target="_blank" ondragstart="dragstart(event,\'(automatische [Übersetzung](https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://www.openstreetmap.org/a_brilliant_map))\');">DE</a> <a href="https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=https://www.openstreetmap.org/a_brilliant_map" target="_blank" ondragstart="dragstart(event,\'(automatic [translation](https://translate.google.com/translate?sl=auto&amp;tl=EN&amp;u=https://www.openstreetmap.org/a_brilliant_map))\');">EN</a><br>\n</p>');
     });
   });
 
   describe("onchangeMarkdown", function() {
     this.timeout(maxTimer * 3);
     beforeEach(async function() {
-      await browser.visit("/language?lang2=none");
+      //await browser.click("#lang2_none");
       await browser.visit("/article/" + articleId);
     });
     it("should warn on double links", async function() {
@@ -291,11 +293,11 @@ describe("uc.article", function() {
     });
   });
   describe("Article List",function(){
-    it("should be called from index page",async function(){
+    it("should be called from index page for undefined blogs",async function(){
       this.timeout(maxTimer * 2);
       await browser.visit("/osmbc");
       await browser.click("li.dropdown a");
-      await browser.click("li#article ul.dropdown-menu li:nth-child(4) a");
+      await browser.click("#articleMenuNoBlog");
       browser.assert.expectHtmlSync("uc.article","articlelist");
     });
   });

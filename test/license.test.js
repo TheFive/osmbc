@@ -75,15 +75,21 @@ let allowedLicensesProd = ["MIT",
   "BSD-like",
   "BSD",
   "BSD*",
+  "0BSD",
   "MIT/X11",
   "Apache-2.0",
   "Apache*",
   "LAGPL",
+  "(LGPL-2.0 OR MIT)",
+  "Python-2.0",
   "(Unlicense OR Apache-2.0)",
-  "(MIT OR EUPL-1.1+)"];
+  "(OFL-1.1 AND MIT)",
+  "(MIT OR EUPL-1.1+)",
+  "(AFL-2.1 OR BSD-3-Clause)",
+  "Unicode-DFS-2016"];
 
 let allowedLicensesDev = allowedLicensesProd.concat([
-  "LGPL-2.1+","CC-BY-3.0","LGPL"
+  "LGPL-2.1+","CC-BY-3.0","LGPL","CC-BY-4.0"
 ]);
 
 function shouldNotUseGPL(usedLicenses){

@@ -1,11 +1,12 @@
 "use strict";
 
 /* eslint-env browser:true, node:false, jquery:true, commonjs:false */
-/* global highlightWrongLinks */
+/* global highlightWrongLinks, urlWoErrorWhileEdit */
 
 /* exported dragstart, myclick, ondragstartflag, ondragstartLangLabel, showRL */
 /* exported callAndRedraw, setNoTranslation, translate */
 
+/* jshint esversion: 6 */
 
 // Init This Window with jQuery ready Callback
 $(document).ready(init);
@@ -15,15 +16,15 @@ $(document).ready(init);
 
 // unlaodWindow Handler, to generate messages that form is left unsaved
 function unloadWindowWarning(event) {
-  var dialogText = "Oops, it looks like you have forgotten to save your work.";
+  const dialogText = "Oops, it looks like you have forgotten to save your work.";
   event.returnValue = dialogText;
   return dialogText;
 }
 
-var mdRender;
+
 // initialise all callbacks with jQuery
 function init() {
-  mdRender = window.markdownit();
+  const mdRender = window.markdownit();
   mdRender.use(window.markdownitSup);
   mdRender.use(window["markdown-it-imsize.js"]);
   $("#linkArea")
@@ -80,9 +81,10 @@ function init() {
     .change(FitToContent)
     .keyup(FitToContent)
     .trigger("change");
-  $('[data-toggle="tooltip"]').tooltip();
+  // $('[data-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;
+  window.getEventTable = getEventTable;
 }
 
 function saveButton() {
@@ -91,9 +93,10 @@ function saveButton() {
   }
   if (document.getElementById("comment").value.trim() === "") return save();
 
-  var jqForm = $("form#AddComment");
-  var url = jqForm.attr("action");
-  var toPost = jqForm.serialize();
+  // only save comment, if it is not empty
+  const jqForm = $("form#AddComment");
+  const url = jqForm.attr("action");
+  const toPost = jqForm.serialize();
 
   $.post(url, toPost, function (data) {
     if (data === "OK") {
@@ -113,12 +116,36 @@ function saveButton() {
 // Install as onleave event handler
 function convertMinusNoTranslation() {
   /* jshint validthis: true */
-  var object = $(this);
-  var md = object.val();
+  const object = $(this);
+  const md = object.val();
   if (md && md.trim() === "-") {
     object.val("no translation");
     object.trigger("change");
   }
+}
+
+function getEventTable(lang, edit, pressedButton) {
+  const url = window.htmlroot + "/tool/getEventTable?lang=" + lang;
+  $(pressedButton).hide("slow");
+  $(edit).html("Data will be recieved ...");
+
+  $.ajax({
+    url: url,
+    method: "POST",
+    success: function(data) {
+      if (data) $(edit).html(data).trigger("change");
+
+
+      return false;
+    },
+    dataType: "text",
+    error: function(err, text1, text2) {
+      console.info(err);
+      console.info(text1);
+      console.info(text2);
+    },
+    timeout: 40000 // in milliseconds
+  });
 }
 
 
@@ -134,12 +161,12 @@ function convert(text) {
 
 
   // convert md to html
-  text = mdRender.render(text);
+  text = window.markdownit().render(text);
 
 
   // Display as list, this should depend on type
 
-  var cat = $("#categoryEN").val();
+  const cat = $("#categoryEN").val();
   if (cat !== "Picture" && cat !== "Events" && cat !== "Releases") {
     text = "<ul><li>" + text + "</li></ul>";
   }
@@ -149,7 +176,7 @@ function convert(text) {
 // Test, wether a text is an url or not
 // based on regex.
 function isURL(t) {
-  var isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+  const isUrlRegex = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
   if (t) return isUrlRegex.test(t);
   return isUrlRegex;
 }
@@ -157,7 +184,7 @@ function isURL(t) {
 // Try to copy text to the clipboard
 // if it fails, alert an error and offer the possibility to copy manual
 function clip(text) {
-  var copyElement = document.createElement("input");
+  let copyElement = document.createElement("input");
   copyElement.setAttribute("type", "text");
   copyElement.setAttribute("value", text);
   copyElement = document.body.appendChild(copyElement);
@@ -180,13 +207,13 @@ function clip(text) {
 function generateMarkdownLink2(par1, par2) {
   // tb == Text Before Selection
   // ta == Text Afer Selection
-  var tb = par1.text.substring(0, par1.startselection);
-  var ta = par1.text.substring(par1.endselection, 99999);
+  const tb = par1.text.substring(0, par1.startselection);
+  const ta = par1.text.substring(par1.endselection, 99999);
 
   // beforeSnip == selected Text before paste
   // afterSnip == selected Text after Insert
-  var beforeSnip = par1.text.substring(par1.startselection, par1.endselection);
-  var afterSnip = par2.text.substring(par1.startselection, par2.endselection);
+  const beforeSnip = par1.text.substring(par1.startselection, par1.endselection);
+  let afterSnip = par2.text.substring(par1.startselection, par2.endselection);
 
   // only in the case, the "afterSnip" variable contains an URL, something
   // has to be done
@@ -195,18 +222,18 @@ function generateMarkdownLink2(par1, par2) {
 
     // Check, wether, the url is pasted into brackets ()
     // then nothing has to be done
-    var alreadyMarkdowned = false;
+    let alreadyMarkdowned = false;
     if (tb.length > 2 && tb.charAt(tb.length - 1) === "(" && tb.charAt(tb.length - 2) === "]") alreadyMarkdowned = true;
     if (ta !== "" && tb.charAt(0) === ")") alreadyMarkdowned = true;
     if (!alreadyMarkdowned) {
       // combine the new text
-      var r = tb + "[" + beforeSnip + "](" + afterSnip + ")" + ta;
+      const r = tb + "[" + beforeSnip + "](" + afterSnip + ")" + ta;
 
       // calculate the position to point to
       // for the new text
       // Between [] in the case, that only a link was added
       // after the [link](http://somewhere) in case the link has already a "display" word
-      var c;
+      let c;
       if (beforeSnip === "") {
         c = (tb + "[").length;
       } else {
@@ -222,17 +249,17 @@ function generateMarkdownLink2(par1, par2) {
 function pasteEvent() {
   /* jshint validthis: true */
 
-  var mf = this;
+  const mf = this;
 
   // Generate a triple of text, start selection and end selection BEFORE Pasting new text
-  var before = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
+  const before = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
 
   setTimeout(function () {
     // Generate a triple of text, start selection and end selection AFTER Pasting new text
-    var after = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
+    const after = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
 
     // And use the result, to generate the markdown link
-    var r = generateMarkdownLink2(before, after);
+    const r = generateMarkdownLink2(before, after);
 
     if (r) {
       mf.value = r.text;
@@ -250,7 +277,7 @@ function pasteEvent() {
 // and set the texttype to monospace
 function checkForTable() {
   /* jshint validthis: true */
-  var md = this.value;
+  const md = this.value;
   if (md.indexOf("|----") >= 0) {
     $(this).wrap = "off";
     $(this).css("fontFamily", "monospace");
@@ -263,8 +290,8 @@ function checkForTable() {
 // Event handler to calculate the fresh markdown preview
 function previewMarkdown() {
   /* jshint validthis: true */
-  var md = this.value;
-  var preview = $(".preview[lang=" + this.lang + "]");
+  const md = this.value;
+  const preview = $(".preview[lang=" + this.lang + "]");
   preview.html(convert(md));
   preview.trigger("change");
 }
@@ -277,48 +304,70 @@ function previewMarkdown() {
 // Can be extended: Valid Urls, ...
 function checkMarkdownError() {
   /* jshint validthis: true */
-  var md = this.value;
+  const md = this.value;
   if (!window.linklist) window.linklist = [];
-  var text = $(".markdownMessage[lang=" + this.lang + "]");
-  var errorOccured = false;
+  const text = $(".markdownMessage[lang=" + this.lang + "]");
+  let errorOccured = false;
 
   // Check for long links
-  var longLink = md.search(/\[[^\]]{40,}\]/g);
+  const longLink = md.search(/\[[^\]]{40,}\]/g);
   if (longLink >= 0) {
     text.show(400);
     text.html("Please shorten [" + md.substring(longLink + 1, longLink + 40) + "...]");
     errorOccured = true;
   }
 
-  var linkList;
-  var allLinksFound = true;
-  var linkFromCollectionFound = false;
-  var allLinks = [];
-  var errorLinkTwice = null;
+  let linkList;
+  let allLinksFound = true;
+  let linkFromCollectionFound = false;
+  const allLinks = [];
+  let errorLinkTwice = null;
+  let errorLinkNotInCollection = null;
 
-  var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
+  const regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
   while ((linkList = regexToken.exec(md)) !== null) {
-    var link = linkList[0];
+    const link = linkList[0];
+
+    let linkAllowed = false;
+
+    for (const allowedUrl in urlWoErrorWhileEdit) {
+      if (link.substring(0, allowedUrl.length) === allowedUrl) {
+        linkAllowed = true;
+      }
+    }
+    if (linkAllowed) continue;
+
+
     if (allLinks.indexOf(link) >= 0) {
-      errorLinkTwice = link;
+      if ($("img.flag[src='" + link + "']").length === 0) {
+        errorLinkTwice = link;
+      }
     }
     allLinks.push(link);
 
-    var linkFound = false;
-    for (var i = 0; i < window.linklist.length; i++) {
+    let linkFound = false;
+    for (let i = 0; i < window.linklist.length; i++) {
       if (window.linklist[i] === link) linkFound = true;
     }
     // check Language Flags
     if ($("img.flag[src='" + link + "']").length > 0) linkFound = true;
+    if (window.googleTranslateText) {
+      for (const l in window.googleTranslateText) {
+        if (window.googleTranslateText[l].indexOf(link) > 0) linkFound = true;
+      }
+    }
     if (linkFound) linkFromCollectionFound = true;
-    if (!linkFound) allLinksFound = false;
+    if (!linkFound) {
+      allLinksFound = false;
+      errorLinkNotInCollection = link;
+    }
   }
-  if (allLinksFound === false) {
+  if (allLinksFound === false && md.indexOf("----------") < 0) {
     text.show(400);
-    text.html("Please check links, some looks not to be in collection, nor be a translation link");
+    text.html("Please check links (e.g." + errorLinkNotInCollection + "), some looks not to be in collection, nor be a translation link");
     errorOccured = true;
   }
-  if (linkFromCollectionFound === false && md !== "" && md !== "no translation") {
+  if (linkFromCollectionFound === false && md !== "" && md !== "no translation" && md.indexOf("----------") < 0) {
     text.show(400);
     text.html("Please use a link from collection in article.");
     errorOccured = true;
@@ -338,19 +387,19 @@ function checkMarkdownError() {
 // Generate the automatic google translate link for an url
 // and a given language, used to show it in edit mode
 function generateGoogleTranslateLink(link, lang) {
-  var googlelang = lang;
+  let googlelang = lang;
   if (lang === "JP") googlelang = "JA";
   if (lang === "CZ") googlelang = "CS";
-  var gtl = "https://translate.google.com/translate?sl=auto&tl=" + googlelang + "&u=" + link;
+  const gtl = "https://translate.google.com/translate?sl=auto&tl=" + googlelang + "&u=" + link;
   window.linklist.push(gtl);
 
-  var gtlMarkdown = "(automatic [translation](##link##))";
+  let gtlMarkdown = "(automatic [translation](##link##))";
   if (window.googleTranslateText[lang]) gtlMarkdown = window.googleTranslateText[lang];
 
 
   gtlMarkdown = gtlMarkdown.replace("##link##", gtl);
 
-  var dragstartFunction = "dragstart(event,'" + gtlMarkdown + "');";
+  const dragstartFunction = "dragstart(event,'" + gtlMarkdown + "');";
 
   return '<a href="' + gtl + '" target="_blank" ondragstart="' + dragstartFunction + '" >' + lang + "</a>";
 }
@@ -365,12 +414,12 @@ function dragstart(event, text) {
 // for the linkArea
 
 function onchangeCollection() {
-  var cl = $("#collection").val();
-  var linkArea = $("#linkArea");
-  var regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
-  var linkList;
+  const cl = $("#collection").val();
+  const linkArea = $("#linkArea");
+  const regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
+  let linkList;
   window.linklist = [];
-  var result = "";
+  let result = "";
   function linkShortener(link) {
     if (link.length < 50) return link;
     return link.substr(0, 40) + " . . . " + link.substr(link.length - 5, 5);
@@ -378,8 +427,8 @@ function onchangeCollection() {
 
 
   while ((linkList = regexToken.exec(cl)) !== null) {
-    var link = linkList[0];
-    var found = false;
+    const link = linkList[0];
+    let found = false;
 
 
     window.linklist.forEach(function (l) { // jshint ignore:line
@@ -388,8 +437,8 @@ function onchangeCollection() {
     if (found) continue;
     window.linklist.push(link);
     if (window.articleReferences[link] && (window.articleReferences[link]).length > 0) {
-      result += '<a class="label label-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
-    } else result += '<a class="label label-default" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
+      result += '<a class="badge badge-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
+    } else result += '<a class="badge badge-secondary" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
     result += " " + generateGoogleTranslateLink(link, window.leftLang);
     if (window.rightLang !== "--" && window.rightLang !== "") {
       result += " " + generateGoogleTranslateLink(link, window.rightLang);
@@ -415,7 +464,7 @@ function onchangeCollection() {
 // click on a flag Event
 // Copy the flag related information to the clipboard as markdown link
 function myclick(id) {
-  var src = $("#" + id).attr("src");
+  let src = $("#" + id).attr("src");
 
 
   src = "![(" + id + ")](" + src + ")";
@@ -425,14 +474,14 @@ function myclick(id) {
 
 // dragStart Event
 function ondragstartflag (event, id) {
-  var image = document.getElementById(id);
-  var src = image.src;
+  const image = document.getElementById(id);
+  let src = image.src;
   src = "![(" + id + ")](" + src + ")";
   event.dataTransfer.setData("TEXT", src);
 }
 
 function ondragstartLangLabel(event, lang) {
-  var v = $("#markdown" + lang).val();
+  const v = $("#markdown" + lang).val();
   event.dataTransfer.setData("TEXT", v);
 }
 
@@ -442,9 +491,9 @@ function ondragstartLangLabel(event, lang) {
 function FitToContent() {
   /* jshint validthis: true */
   if (!this) return;
-  var textfield = this;
+  const textfield = this;
   textfield.style.height = textfield.style.minHeight;
-  var adjustedHeight = Math.max(textfield.scrollHeight, textfield.clientHeight);
+  const adjustedHeight = Math.max(textfield.scrollHeight, textfield.clientHeight);
   if (adjustedHeight > textfield.clientHeight) {
     textfield.style.height = adjustedHeight + "px";
   }
@@ -461,7 +510,7 @@ function showRL(what) {
 
 
 function syncPlaceholder() {
-  var c = $("#categoryEN").val();
+  const c = $("#categoryEN").val();
   if (window.placeholder[c]) {
     $("#categoryDisplay").html(window.placeholder[c]);
   } else {
@@ -472,13 +521,13 @@ function syncPlaceholder() {
 function showModified() {
   /* jshint validthis: true */
 
-  var modified = false;
+  let modified = false;
 
-  var newVal = $(this).val();
-  var oldVal = $("#old_" + this.name + ":hidden").val();
+  const newVal = $(this).val();
+  const oldVal = $("#old_" + this.name + ":hidden").val();
 
-  var modifiedColor = "#ffffcc";
-  var normalColor = "";
+  let modifiedColor = "#ffffcc";
+  let normalColor = "";
   if (this.name === "categoryEN" && newVal === window.noCategorie) {
     normalColor = "#FDC6CD";
     modifiedColor = "#FDC6AB";
@@ -493,26 +542,32 @@ function showModified() {
   }
 
   $(".af").each(function() {
-    var newVal = $(this).val();
-    var oldVal = $("#old_" + this.name + ":hidden").val();
+    const newVal = $(this).val();
+    const oldVal = $("#old_" + this.name + ":hidden").val();
 
     if (oldVal !== newVal) {
       modified = true;
     }
   });
   $("#saveButton").prop("disabled", !modified);
+  $("#cancelButton").prop("disabled", !modified);
+
   if (modified) {
+    $("#noTranslationButton").removeClass("visible");
+    $("#noTranslationButton").addClass("invisible");
     $(window).on("beforeunload", unloadWindowWarning);
   } else {
+    $("#noTranslationButton").removeClass("invisible");
+    $("#noTranslationButton").addClass("visible");
     $(window).off("beforeunload", unloadWindowWarning);
   }
 }
 
 function showHideUnpublishReason() {
-  var c = $("#categoryEN").val();
-  var b = $("#blog").val();
+  const c = $("#categoryEN").val();
+  const b = $("#blog").val();
 
-  var hidden = true;
+  let hidden = true;
   if (c === "--unpublished--") hidden = false;
   if (b === "Trash") hidden = false;
 
@@ -522,7 +577,7 @@ function showHideUnpublishReason() {
 
 
 function redrawFunc(redraw) {
-  var k;
+  let k;
   $.getJSON(window.htmlroot + redraw, function (json) {
     for (k in json) {
       $(k).html(json[k]);
@@ -551,14 +606,14 @@ function disableUnchanged() {
 }
 
 function submitAndRedraw(form, redraw) {
-  var jqForm = $(form);
-  var url = jqForm.attr("action");
+  const jqForm = $(form);
+  const url = jqForm.attr("action");
 
-  var toPost = jqForm.serialize();
+  const toPost = jqForm.serialize();
 
 
   // clean unchanged values, to reduce post overhead.
-  for (var k in toPost) {
+  for (const k in toPost) {
     if (toPost[k] === toPost["old_" + k]) {
       delete toPost[k];
       delete toPost["old_" + k];
@@ -576,19 +631,20 @@ function submitAndRedraw(form, redraw) {
 
 
 function setNoTranslation() {
-  /* jshint validthis: true */
-
-  $(".markdownEdit").each(function() {
-    if (this.value === "" && !this.readOnly) this.value = "no translation";
-  });
+  const f = $("#noTranslationForm");
+  if (f.length > 0) {
+    f.submit();
+  }
 }
+
+
 
 function translate(langFrom, langTo, service) {
   $(".translate" + langFrom + langTo).addClass("hidden");
   $(".translateWait" + langFrom + langTo).removeClass("hidden");
-  var from =  langFrom.toLowerCase();
-  var to = langTo.toLowerCase();
-  var originalText = document.getElementById("preview" + langFrom).innerText;
+  const from =  langFrom.toLowerCase();
+  const to = langTo.toLowerCase();
+  let originalText = document.getElementById("preview" + langFrom).innerText;
 
   if (service === "deeplPro" || service === "bing") {
     originalText = document.getElementById("markdown" + langFrom).value;

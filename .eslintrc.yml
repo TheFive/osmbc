@@ -1,23 +1,45 @@
 extends: standard
 plugins:
-  - standard
   - promise
+  - mocha
 
 env:
   jquery: true
   browser: true
   node: true
+  mocha: true
 
 
 rules:
-   quotes: [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }]
-   semi: [2,"always"]
-   no-multi-spaces: [2,{"exceptions": { "VariableDeclarator": true }}]
-   no-multiple-empty-lines: 0
-   space-before-function-paren: 0
-   no-multi-str: 0
-   new-cap: [2,{ "newIsCapExceptions": ["moment"] ,capIsNewExceptions:["True","Router","False"] }]
-   no-useless-escape: 0
+  quotes: [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }]
+  semi: [2,"always"]
+  no-multi-spaces: [2,{"exceptions": { "VariableDeclarator": true }}]
+  no-multiple-empty-lines: 0
+  space-before-function-paren: 0
+  no-multi-str: 0
+  new-cap: [2,{ "newIsCapExceptions": ["moment"] ,capIsNewExceptions:["True","Router","False"] }]
+  no-useless-escape: 0
+  default-case-last: 2
+  no-useless-backreference: 2
+  no-loss-of-precision: 2
+  no-unreachable-loop: 2
+  mocha/no-exclusive-tests: "error"
+  mocha/no-skipped-tests: 0
+  mocha/no-pending-tests: "error"
+  mocha/handle-done-callback: "error"
+  mocha/no-synchronous-tests: "error"
+  mocha/no-global-tests: "error"
+  mocha/no-return-and-callback: "error"
+  mocha/valid-test-description: error
+  mocha/valid-suite-description: error
+  mocha/no-sibling-hooks: error
+  mocha/no-mocha-arrows: error
+  mocha/no-hooks: 0
+  mocha/no-hooks-for-single-case: 0
+  mocha/no-top-level-hooks: error
+  mocha/no-identical-title: error
+  mocha/max-top-level-suites: ["error", {limit: 1}]
+  mocha/no-nested-tests: error
 
 parserOptions:
-  ecmaVersion: 6
+  ecmaVersion: 12
