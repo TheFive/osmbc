@@ -1,5 +1,35 @@
 # Changelog
 
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9b...HEAD)
+
+**Implemented enhancements:**
+
+- Orientation of the icons in Left Column [\#892](https://github.com/TheFive/osmbc/issues/892)
+- additional button in "Edit Blog Details" [\#883](https://github.com/TheFive/osmbc/issues/883)
+- Add Issue Date to article Editor [\#863](https://github.com/TheFive/osmbc/issues/863)
+
+**Fixed bugs:**
+
+- Deepl Translation is only working for up to 4 languages [\#891](https://github.com/TheFive/osmbc/issues/891)
+- No distinction between active and non active languages in EditBlog [\#889](https://github.com/TheFive/osmbc/issues/889)
+- BETA - bug - unselect languages [\#888](https://github.com/TheFive/osmbc/issues/888)
+- Deepl API User used in History should not be shown in Final Product [\#879](https://github.com/TheFive/osmbc/issues/879)
+- Set No Translation does not work full in 3 and 4 Languages editor. [\#788](https://github.com/TheFive/osmbc/issues/788)
+
+## [3.6.9b](https://github.com/TheFive/osmbc/tree/3.6.9b) (2022-01-09)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.69a...3.6.9b)
+
+**Closed issues:**
+
+- Remove the picutre "Here the stati of OSMBC will be described"  [\#894](https://github.com/TheFive/osmbc/issues/894)
+
+## [3.69a](https://github.com/TheFive/osmbc/tree/3.69a) (2021-12-28)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.10...3.69a)
+
 ## [3.6.10](https://github.com/TheFive/osmbc/tree/3.6.10) (2021-05-02)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9...3.6.10)
@@ -19,7 +49,6 @@
 **Implemented enhancements:**
 
 - Keep Language flags open or closed to avoid regular reopening [\#867](https://github.com/TheFive/osmbc/issues/867)
-- Order unsaved labels in "LeftLang" out of shown language [\#865](https://github.com/TheFive/osmbc/issues/865)
 
 **Closed issues:**
 
@@ -37,6 +66,10 @@
 ## [3.6.8](https://github.com/TheFive/osmbc/tree/3.6.8) (2021-01-07)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.7...3.6.8)
+
+**Implemented enhancements:**
+
+- Order unsaved labels in "LeftLang" out of shown language [\#865](https://github.com/TheFive/osmbc/issues/865)
 
 **Fixed bugs:**
 
@@ -295,6 +328,7 @@
 
 - Integrate possibility to go back to edit mode for a blog [\#778](https://github.com/TheFive/osmbc/issues/778)
 - place a warning box on the guest front page ... [\#777](https://github.com/TheFive/osmbc/issues/777)
+- Remove OK \(Only for LANGUAGE\) from Collect Window. [\#775](https://github.com/TheFive/osmbc/issues/775)
 
 **Closed issues:**
 
@@ -306,7 +340,6 @@
 
 **Implemented enhancements:**
 
-- Remove OK \(Only for LANGUAGE\) from Collect Window. [\#775](https://github.com/TheFive/osmbc/issues/775)
 - Make Logfile configurable [\#774](https://github.com/TheFive/osmbc/issues/774)
 - somewhere on the front page another click to MM? :\) [\#771](https://github.com/TheFive/osmbc/issues/771)
 
@@ -776,7 +809,6 @@
 **Implemented enhancements:**
 
 - Trash can only be called, if article is in unpublish [\#670](https://github.com/TheFive/osmbc/issues/670)
-- Allow move of articles if only NT articles are closed [\#663](https://github.com/TheFive/osmbc/issues/663)
 
 **Fixed bugs:**
 
@@ -789,6 +821,7 @@
 
 **Implemented enhancements:**
 
+- Allow move of articles if only NT articles are closed [\#663](https://github.com/TheFive/osmbc/issues/663)
 - Format links in collection in red do indicate doublettes. [\#662](https://github.com/TheFive/osmbc/issues/662)
 - Make Calendar Date Format configurable via config.js [\#655](https://github.com/TheFive/osmbc/issues/655)
 - adding existing links to collection [\#404](https://github.com/TheFive/osmbc/issues/404)
@@ -1571,15 +1604,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
@@ -2092,6 +2125,7 @@
 
 **Fixed bugs:**
 
+- Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
 - once a textbox in Markdown is set to any content \(normally: no translation\)  it not possible to clean it up [\#342](https://github.com/TheFive/osmbc/issues/342)
 
 ## [0.8.0b](https://github.com/TheFive/osmbc/tree/0.8.0b) (2016-02-21)
@@ -2101,10 +2135,6 @@
 **Implemented enhancements:**
 
 - Disable comments from log history in article view. [\#344](https://github.com/TheFive/osmbc/issues/344)
-
-**Fixed bugs:**
-
-- Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
 
 ## [0.8.0a](https://github.com/TheFive/osmbc/tree/0.8.0a) (2016-02-21)
 
