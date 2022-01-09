@@ -5,7 +5,7 @@ OpenStreetMap Blog Collector, a tool for editing the weekly news in OpenStreetMa
 
 ## Summary
 
-OSMBC is a small tool to support the editorial process of the [OpenStreetMap]&nbsp;[Wochennotiz]. It enables editores collects references for news easily, and supports editing them in Markdown later. From edited markdown code, the final blog entry is created. As all articles can be edited "bilingual" so in german and in english, the production of the [WeeklyOSM], the international variant of the Wochennotiz, is supported by OSMBC too.
+OSMBC is a small tool to support the editorial process of the [OpenStreetMap]&nbsp;[Wochennotiz]. It enables editors collecting references for news easily, and supports editing them in Markdown later. From edited markdown code, the final blog entry is created. As all articles can be edited "bilingual" so in German and in English, the production of the [WeeklyOSM], the international variant of the Wochennotiz, is supported by OSMBC too.
 
 
 [OpenStreetMap]: http://www.openstreetmap.org
@@ -20,7 +20,7 @@ The system is active used since Wochennotiz 272 in September 2015.
 The running instance for the editors is: https://osmbc.openstreetmap.de. This can be used by 
 OSM Mapper in guest mode too.
 
-Actual there is no special test instance.
+At the moment there is no special test instance.
 
 ## Software Build Status
 
@@ -36,20 +36,18 @@ More info in the [Installation Guide](Install_Guide.md).
 
 ## Support the Developer
 
-I am happy to do any bug fixes for the system. But please make sure, that your error report here in Git full fills the following rules
+I am happy to do any bug fixes for the system. But please make sure, that your error report here in Git fulfills the following rules
 
 1. The error message occurs in the productive system, if you are working on the development version, please put the info in the bug report, to avoid unnecessary work (see section development version above).
 
-2. The error message occurs in the current version, so it can can be reproduced on the day, the error message has given. (than you do not need to put any version number to your request, otherwise please include the version number of OSMBC).
+2. The error message occurs in the current version, so it can can be reproduced on the day, the error message has given. (then you do not need to put any version number to your request, otherwise please include the version number of OSMBC).
 
-3. Please describe shortly what you have done, to produce the error.
+3. Please describe shortly, what you have done, to produce the error.
 
 4. Please describe shortly, what the result of your action was, and what result you have expected.
 
-5. Pictures and Hyperlinks can support 3. and 4. but does not replace them.
+5. Pictures and Hyperlinks can support 3. and 4. but do not replace them.
 
-6. "is not working" or "is broken" obvious does not full fill 3. and 3. .
+6. "is not working" or "is broken" obviously does not fulfill 3. and 4. .
 
-The rules does support the developer to come quicker to the point. Sometimes you are using other ways in OSMBC to come to your result and the way coming to a result is important for bug fixing.
-
-
+The rules support the developer to get quicker to the point. Sometimes you are using other ways in OSMBC to get your result and the way coming to a result is important for bug fixing.
