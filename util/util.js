@@ -34,6 +34,7 @@ function shorten(string, maxlength) {
 }
 
 function toPGString(string, count) {
+  if (typeof string !== "string") return "";
   let result = "";
   if (!count) count = 1;
   for (let i = 0; i < string.length; i++) {

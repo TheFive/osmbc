@@ -1,12 +1,12 @@
 "use strict";
 
-const express = require("express");
-const assert = require("assert").strict;
-const router = express.Router();
-const debug = require("debug")("OSMBC:routes:changes");
+const express   = require("express");
+const assert    = require("assert").strict;
+const router    = express.Router();
+const debug     = require("debug")("OSMBC:routes:changes");
 const logModule = require("../model/logModule.js");
-const jsdiff = require("diff");
-const auth        = require("../routes/auth.js");
+const jsdiff    = require("diff");
+const auth      = require("../routes/auth.js");
 
 
 
@@ -46,6 +46,7 @@ function renderHistoryLog(req, res, next) {
 
   const params = { date: date, oid: oid, user: user, table: table, blog: blog, property: property };
 
+  if (date && typeof date !== "string" ) return next(new Error("Datatype Error"));
 
   const search = {};
   if (date) search.timestamp = date + "%";
