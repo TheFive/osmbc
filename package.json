@@ -62,6 +62,7 @@
     "randomstring": "1.2.x",
     "request": "2.88.x",
     "request-promise-native": "1.0.x",
+    "sanitize-filename": "^1.6.3",
     "serve-favicon": "2.5.x",
     "standard-http-error": "2.0.x",
     "stoppable": "1.1.x",
