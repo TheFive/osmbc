@@ -5,8 +5,6 @@ const assert = require("assert").strict;
 const async  = require("../util/async_wrap.js");
 const debug  = require("debug")("OSMBC:model:pgMap");
 const sqldebug  = require("debug")("OSMBC:model:sql");
-
-const config = require("../config.js");
 const logger = require("../config.js").logger;
 const util = require("../util/util.js");
 
@@ -269,7 +267,7 @@ module.exports.find = function find(module, obj, order, callback) {
 
   assert(typeof (callback) === "function");
 
-  debug("Connecting to DB" + config.pgstring);
+  debug("Connecting to DB");
 
   const table = module.table;
   const sqlQuery = generateQuery(table, obj, order);
@@ -308,8 +306,8 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
       orderBy += " desc";
     }
   }
-  let germanVector = "@@ plainto_tsquery('german', '" + search + "')";
-  let englishVector = "@@ plainto_tsquery('english', '" + search + "')";
+  let germanVector = "@@ plainto_tsquery('german', $1)";
+  let englishVector = "@@ plainto_tsquery('english', $1)";
 
   if (util.isURL(search)) {
     const http1Url = search;
@@ -320,10 +318,10 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
     if (search.substring(0, 6) === "https:") {
       http2Url = "http:" + search.substring(6, 9999);
     }
-    search = "''" + util.toPGString(http1Url, 2) + "'' | ''(" + util.toPGString(http1Url, 2) + ")'' ";
-    if (http2Url) search += "| ''" + util.toPGString(http2Url, 2) + "'' | ''(" + util.toPGString(http1Url, 2) + ")'' ";
-    germanVector = "@@ to_tsquery('german', '" + search + "')";
-    englishVector = "@@ to_tsquery('english', '" + search + "')";
+    search = "'" + util.toPGString(http1Url, 1) + "' | '(" + util.toPGString(http1Url, 1) + ")' ";
+    if (http2Url) search = "'" + util.toPGString(http2Url, 1) + "' | '(" + util.toPGString(http1Url, 1) + ")'";
+    germanVector = "@@ to_tsquery('german', $1)";
+    englishVector = "@@ to_tsquery('english', $1)";
   }
 
   const sqlQuery =  "select id, data from article \
@@ -334,7 +332,9 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
                                                     coalesce(data->>'markdownEN','')   ) " + englishVector +
                       orderBy;
 
-  db.query(sqlQuery, convertResultFunction(module, callback));
+  console.dir(sqlQuery);
+  console.dir([search]);
+  db.query(sqlQuery, [search], convertResultFunction(module, callback));
 };
 
 
