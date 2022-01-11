@@ -46,7 +46,7 @@ function renderHistoryLog(req, res, next) {
 
   const params = { date: date, oid: oid, user: user, table: table, blog: blog, property: property };
 
-  if (date && typeof date !== "string" ) return next(new Error("Datatype Error"));
+  if (date && typeof date !== "string") return next(new Error("Datatype Error"));
 
   const search = {};
   if (date) search.timestamp = date + "%";
