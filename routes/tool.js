@@ -15,6 +15,7 @@ const BlogRenderer = require("../render/BlogRenderer.js");
 const childProcess = require("child_process");
 const logger = require("../config.js").logger;
 const osmcalloader = require("../model/osmcalLoader.js");
+const sanitize = require("sanitize-filename");
 
 
 const articleModule = require("../model/article.js");
@@ -190,6 +191,7 @@ const fileTypeRunning = " (running).log";
 const fileTypeOk = " (done).log";
 
 function readScriptConfig(script, callback) {
+  script = sanitize(script);
   fs.readFile(path.join(scriptFilePath, script), function(err, text) {
     if (err) return callback(err);
     try {
@@ -211,9 +213,10 @@ function quoteParam(param, quote) {
 
 function renderScriptLog(req, res) {
   debug("renderScriptLog");
-  const file = req.params.filename;
+  const file = sanitize(req.params.filename);
   let text = null;
   let reload = false;
+
 
   async.series([
     (cb) => {

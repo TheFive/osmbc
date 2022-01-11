@@ -85,7 +85,8 @@ let allowedLicensesProd = ["MIT",
   "(OFL-1.1 AND MIT)",
   "(MIT OR EUPL-1.1+)",
   "(AFL-2.1 OR BSD-3-Clause)",
-  "Unicode-DFS-2016"];
+  "Unicode-DFS-2016",
+  "WTFPL OR ISC"];
 
 let allowedLicensesDev = allowedLicensesProd.concat([
   "LGPL-2.1+","CC-BY-3.0","LGPL","CC-BY-4.0"
