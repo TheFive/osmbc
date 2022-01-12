@@ -41,7 +41,7 @@
     "jstransformer-markdown-it": "2.1.x",
     "jstransformer-verbatim": "1.1.x",
     "lru-cache": "6.0.x",
-    "markdown-it": "12.0.x",
+    "markdown-it": "12.3.x",
     "markdown-it-imsize": "2.0.x",
     "markdown-it-sup": "1.0.x",
     "moment": "2.29.x",
