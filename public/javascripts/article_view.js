@@ -390,7 +390,7 @@ function generateGoogleTranslateLink(link, lang) {
   let googlelang = lang;
   if (lang === "JP") googlelang = "JA";
   if (lang === "CZ") googlelang = "CS";
-  const gtl = "https://translate.google.com/translate?sl=auto&tl=" + googlelang + "&u=" + encodeURI(link);
+  const gtl = "https://translate.google.com/translate?sl=auto&tl=" + googlelang + "&u=" + link;
   window.linklist.push(gtl);
 
   let gtlMarkdown = "(automatic [translation](##link##))";
