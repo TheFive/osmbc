@@ -4,29 +4,28 @@ extends layout
 
 
 block content
-  row
-    .col-md-8
+  .row
+    .col
       if (blog.status != "help")
         if (asMarkdown)
           h1= "Markdown "+blog.name
         else
           h1= "Preview " + blog.name
-    .col-md-4
-      div.btn-group(role="group" class="pull-right")
-        button.btn.btn-secondary(onclick =`location.href='${returnToUrl}';`) Edit
-        if (asMarkdown)
-          button.btn.btn-secondary(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&markdown=true';`) Download
-        else
-          button.btn.btn-secondary(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`) Download
+    .col.text-right
+      button.btn.btn-secondary(type = "button" onclick =`location.href='${returnToUrl}';`) Edit
+      if (asMarkdown)
+        button.btn.btn-secondary(type = "button" onclick =`console.log("sometest");location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&markdown=true';`) Download
+      else
+        button.btn.btn-secondary(type = "button" onclick =`console.log("sometest");location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`) Download
 
-  row
+  .row
     .col-md-12
       if (asMarkdown)
         pre
           | #{preview}
       else
         |!{preview}
-  row
+  .row
     .col-md-9
     .col-md-3
       if (asMarkdown)
