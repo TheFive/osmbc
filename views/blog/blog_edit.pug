@@ -54,30 +54,29 @@ block content
 
     else
       .row
-        .col
+        .col-sm-1
           p="Name"
-        .col
+        .col-sm-3
           h2=blog.name
-        .col  
-        .col
+        .col-sm-3
+        .col-sm-5.text-right
           a.btn.btn-primary#edit(href=`${layout.htmlroot}/blog/edit/${blog.name}?edit=true` role="button") Edit
           a.btn.btn-secondary(href=layout.htmlroot + "/article/list?blog=" + blog.name) List of all articles
       .row
-        .col
+        .col-sm-1
           p="Period"
-        .col
+        .col-sm-3
           p=layout.moment(blog.startDate).tz("Europe/Berlin").locale(layout.user_locale).format("LLLL z")
-        .col
+        .col-sm-3
           p=layout.moment(blog.endDate).tz("Europe/Berlin").locale(layout.user_locale).format("LLLL z")
-        .col  
+        .col-sm-5
       .row
-        .col
+        .col-sm-1
           p="Status"
-        .col
-          h1
-            span.badge.badge-secondary=blog.status
-        .col
-        .col   
+        .col-sm-3
+          p=blog.status
+        .col-sm-3
+        .col-sm-5  
       .row
         table.table
           tr
