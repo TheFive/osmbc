@@ -14,11 +14,8 @@ block markdownArea
 
 
   // Language Flags All Column
-  .row
-    i#languageFlagsShow.fa.fa-flag.fa-2x(
-    onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('d-none');")
 
-  .row#languageFlags.d-none
+  .row#languageFlags
     - for (lang in languageFlags)
       img.flag(id=lang,
         src=languageFlags[lang],
