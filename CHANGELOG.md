@@ -445,6 +445,7 @@
 
 **Implemented enhancements:**
 
+- Implement Interface to call Scripts. [\#763](https://github.com/TheFive/osmbc/issues/763)
 - Disallow Guests collecting in Blogs, that are not open. [\#762](https://github.com/TheFive/osmbc/issues/762)
 
 **Fixed bugs:**
@@ -457,7 +458,6 @@
 
 **Implemented enhancements:**
 
-- Implement Interface to call Scripts. [\#763](https://github.com/TheFive/osmbc/issues/763)
 - Access Denied, please add information to "contact the team" [\#760](https://github.com/TheFive/osmbc/issues/760)
 
 **Fixed bugs:**
@@ -2574,10 +2574,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.4...0.5.5)
 
-**Implemented enhancements:**
-
-- Implement a Tool like the calender tool to simplify Image Integration. [\#211](https://github.com/TheFive/osmbc/issues/211)
-
 ## [0.5.4](https://github.com/TheFive/osmbc/tree/0.5.4) (2015-12-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.3...0.5.4)
@@ -2667,6 +2663,7 @@
 
 **Implemented enhancements:**
 
+- Implement a Tool like the calender tool to simplify Image Integration. [\#211](https://github.com/TheFive/osmbc/issues/211)
 - it would be nice, if the date would be appear with a leading "0"  [\#208](https://github.com/TheFive/osmbc/issues/208)
 - The output from OSM calender2Markdown should be sorted [\#207](https://github.com/TheFive/osmbc/issues/207)
 - Support easierer Review in OSMBC by opening the article edit mode out of fullFinalLL [\#203](https://github.com/TheFive/osmbc/issues/203)
