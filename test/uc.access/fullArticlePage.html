@@ -146,12 +146,9 @@
                   <button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.unpublish','/article/3/votes')"><i class="fa-lg fa fa-thumbs-down"></i><span>  0</span>
                   </button>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-4">
                 </div>
-                <div class="col-md-1"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2"></div>
+                <div class="col-md-4"></div>
               </div>
               <div class="form-group row">
                 <div class="col-md-4">
@@ -165,7 +162,7 @@
                   </div>
                 </div>
                 <div class="col-md-1"></div>
-                <div class="col-md-4">
+                <div class="col-md-7 text-right">
                   <button class="btn btn-large btn-primary" id="saveButton" type="button" onclick="window.saveButton()">Save</button>
                   <button class="btn btn-large btn-secondary" id="cancelButton" type="button" onclick="disableUnchanged(); location.href='/article/3?edit=false';">last Version</button>
                 </div>
@@ -243,29 +240,26 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
             </div>
           </div>
           <!-- Language Flags All Column-->
-          <div class="row"><i class="fa fa-flag fa-2x" id="languageFlagsShow" onclick="$('#languageFlagsShow').hide();$('.row#languageFlags').removeClass('d-none');"></i></div>
-          <div class="row d-none" id="languageFlags"><img class="flag img-thumbnail" id="Japanisch" src="http://blog.openstreetmap.de/wp-uploads/2015/10/jp.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Japanisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Französisch" src="http://blog.openstreetmap.de/wp-uploads/2015/01/fr.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Französisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Spanisch" src="http://blog.openstreetmap.de/wp-uploads/2015/01/es.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Spanisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Tschechisch" src="http://blog.openstreetmap.de/wp-uploads/2015/01/cz.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Tschechisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Russisch" src="http://blog.openstreetmap.de/wp-uploads/2015/07/ru.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Russisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Rumänisch" src="http://blog.openstreetmap.de/wp-uploads/2015/10/ro.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Rumänisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Niederländisch" src="http://blog.openstreetmap.de/wp-uploads/2015/07/nl.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Niederländisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Brasilianisches Portugiesisch" src="http://blog.openstreetmap.de/wp-uploads/2015/01/pt-br.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Brasilianisches Portugiesisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Polish" src="http://blog.openstreetmap.de/wp-uploads/2015/10/pl.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Polish" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);">
+          <div class="row" id="languageFlags"><img class="flag img-thumbnail" id="Japanisch" src="http://blog.openstreetmap.de/wp-uploads/2015/10/jp.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Japanisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Französisch" src="http://blog.openstreetmap.de/wp-uploads/2015/01/fr.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Französisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Spanisch" src="http://blog.openstreetmap.de/wp-uploads/2015/01/es.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Spanisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Tschechisch" src="http://blog.openstreetmap.de/wp-uploads/2015/01/cz.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Tschechisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Russisch" src="http://blog.openstreetmap.de/wp-uploads/2015/07/ru.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Russisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Rumänisch" src="http://blog.openstreetmap.de/wp-uploads/2015/10/ro.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Rumänisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Niederländisch" src="http://blog.openstreetmap.de/wp-uploads/2015/07/nl.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Niederländisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Brasilianisches Portugiesisch" src="http://blog.openstreetmap.de/wp-uploads/2015/01/pt-br.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Brasilianisches Portugiesisch" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);"><img class="flag img-thumbnail" id="Polish" src="http://blog.openstreetmap.de/wp-uploads/2015/10/pl.svg" width="40" data-toggle="tooltip" data-placement="bottom" title="Polish" onclick="javascript:myclick(this.id)" ondragstart="ondragstartflag(event,this.id);">
             <p class="osmbc-help-text">Click to copy to clipboard, or use drag and drop.</p>
           </div>
           <!-- End Markdown Blog-->
         </form>
         <div class="div" id="commentArea">
           <div class="row">
-            <div class="col-md-6">
-              <div class="row">
-                <form target="iframeform" name="AddComment" id="AddComment" action="/article/3/addComment?reload=false" method="post">
-                  <textarea class="form-control" spellcheck="true" name="comment" id="comment" rows="7" placeholder="Your comment is shared between all weekly teams. 
+            <div class="col">
+              <form target="iframeform" name="AddComment" id="AddComment" action="/article/3/addComment?reload=false" method="post">
+                <textarea class="form-control" spellcheck="true" name="comment" id="comment" rows="7" placeholder="Your comment is shared between all weekly teams. 
 So please use english if possible. Do not hesitate to use your language and address your team with @LANG.
 To solve a comment use #solved, and to reopen #open in your text.
 Use @OSMUser to address any special editor."></textarea>
-                  <button class="btn btn-large btn-primary" name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Add Comment</button>
-                  <button class="btn btn-large btn-default" type="button" onclick="window.callAndRedraw(null,'/article/3/commentArea');">Reload Comments</button>
-                  <button class="btn btn-large btn-default" name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Solve Comment</button>
-                </form>
-              </div>
+                <button class="btn btn-large btn-primary" name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Add Comment</button>
+                <button class="btn btn-large btn-default" type="button" onclick="window.callAndRedraw(null,'/article/3/commentArea');">Reload Comments</button>
+                <button class="btn btn-large btn-default" name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Solve Comment</button>
+              </form>
             </div>
           </div>
-          <iframe class="hidden" name="iframeform"></iframe>
+          <iframe class="d-none" name="iframeform"></iframe>
         </div>
         <div class="row" id="voteButtonsList">
           <h3>Votes &amp; Tags ...</h3>

@@ -1,55 +1,55 @@
 if !MIXIN_INCLUDE
   include ../mixins
 
-.row
-  .col-md-6
-   
-    if (article.commentList)
+
+if (article.commentList)
+  .row
+    .col
+      - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
+      - if (!upToComment) upToComment = -1;
+      h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
+  each comment,i in article.commentList
+    if (   (layout.user.access === "full")|| (comment.text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i"))>=0)|| (comment.user === layout.user.OSMUser))
       .row
-        - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
-        - if (!upToComment) upToComment = -1;
-        h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
-      each comment,i in article.commentList
-        if (   (layout.user.access === "full")|| (comment.text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i"))>=0)|| (comment.user === layout.user.OSMUser))
-          .row
-            .col-xs-1
-              img(src=layout.getAvatar(comment.user) style="height:40px;width:40px")
-            .col-xs-11
-              b
-                if (i > upToComment)
-                  span.glyphicon.glyphicon-envelope(onclick=`window.callAndRedraw('/article/${article.id}/markCommentRead?index=${i}&reload=false','/article/${article.id}/commentArea');`)
-                  span=" "
-                span=comment.user
+        .col-sm-1
+          img(src=layout.getAvatar(comment.user) style="height:40px;width:40px")
+        .col-sm-11 
+          b
+            if (i > upToComment)
+              span.glyphicon.glyphicon-envelope(onclick=`window.callAndRedraw('/article/${article.id}/markCommentRead?index=${i}&reload=false','/article/${article.id}/commentArea');`)
               span=" "
-              span.text-muted.small=layout.moment(comment.timestamp).fromNow()
-              if (comment.editstamp)
-                span=" "
-                i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
-              if layout.user.OSMUser === comment.user && params.editComment != i
-                span=" "
-                span.glyphicon.glyphicon-pencil(id="EditComment"+i onclick=`window.callAndRedraw(null,'/article/${article.id}/commentArea?editComment=${i}');`)
+            span=comment.user
+          span=" "
+          span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+          if (comment.editstamp)
+            span=" "
+            i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
+          if layout.user.OSMUser === comment.user && params.editComment != i
+            span=" "
+            span.glyphicon.glyphicon-pencil(id="EditComment"+i onclick=`window.callAndRedraw(null,'/article/${article.id}/commentArea?editComment=${i}');`)
 
-              if params.editComment == i && layout.user.OSMUser === comment.user
-                form(target="iframeform" name="EditComment",id="EditCommentForm", action=`${layout.htmlroot}/article/${article.id}/EditComment/${i}?reload=false`, method="post")
-                  textarea.form-control(spellcheck = "true" name="comment" id="editComment" rows=7)=comment.text
-                  button.btn.btn-large.btn-primary(name = "update" type = "button" onclick =`window.submitAndRedraw('form#EditCommentForm','/article/${article.id}/commentArea');`) Update
-                  button.btn.btn-large.btn-default(type = "button" onclick =`window.callAndRedraw(null,'/article/${article.id}/commentArea');`) Cancel
-              else
-                p
-                  |!{layout.md_render(comment.text,accessMap)}
+          if params.editComment == i && layout.user.OSMUser === comment.user
+            form(target="iframeform" name="EditComment",id="EditCommentForm", action=`${layout.htmlroot}/article/${article.id}/EditComment/${i}?reload=false`, method="post")
+              textarea.form-control(spellcheck = "true" name="comment" id="editComment" rows=7)=comment.text
+              button.btn.btn-large.btn-primary(name = "update" type = "button" onclick =`window.submitAndRedraw('form#EditCommentForm','/article/${article.id}/commentArea');`) Update
+              button.btn.btn-large.btn-default(type = "button" onclick =`window.callAndRedraw(null,'/article/${article.id}/commentArea');`) Cancel
+          else
+            p
+              |!{layout.md_render(comment.text,accessMap)}
 
-    .row
-      if (!params.editComment)
-        form(target="iframeform" name="AddComment",id="AddComment", action=`${layout.htmlroot}/article/${article.id}/addComment?reload=false`, method="post")
-          textarea.form-control(spellcheck = "true" name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
-          button.btn.btn-large.btn-primary(
-            name= "AddComment"
-            type = "button"
-            onclick=`if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/${article.id}/commentArea');`
-          ) Add Comment
-          button.btn.btn-large.btn-default(type = "button" onclick =`window.callAndRedraw(null,'/article/${article.id}/commentArea');`) Reload Comments
-          if article.commentStatus !== "solved"
-            button.btn.btn-large.btn-default(name= "AddComment" type = "button" onclick =`document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/${article.id}/commentArea');`) Solve Comment
+.row
+  .col
+    if (!params.editComment)
+      form(target="iframeform" name="AddComment",id="AddComment", action=`${layout.htmlroot}/article/${article.id}/addComment?reload=false`, method="post")
+        textarea.form-control(spellcheck = "true" name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
+        button.btn.btn-large.btn-primary(
+          name= "AddComment"
+          type = "button"
+          onclick=`if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/${article.id}/commentArea');`
+        ) Add Comment
+        button.btn.btn-large.btn-default(type = "button" onclick =`window.callAndRedraw(null,'/article/${article.id}/commentArea');`) Reload Comments
+        if article.commentStatus !== "solved"
+          button.btn.btn-large.btn-default(name= "AddComment" type = "button" onclick =`document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/${article.id}/commentArea');`) Solve Comment
 
 
-iframe.hidden(name="iframeform")
+iframe.d-none(name="iframeform")
