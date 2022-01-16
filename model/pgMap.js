@@ -332,8 +332,6 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
                                                     coalesce(data->>'markdownEN','')   ) " + englishVector +
                       orderBy;
 
-  console.dir(sqlQuery);
-  console.dir([search]);
   db.query(sqlQuery, [search], convertResultFunction(module, callback));
 };
 
