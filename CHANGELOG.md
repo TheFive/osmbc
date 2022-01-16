@@ -2,7 +2,50 @@
 
 ## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9b...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9e...HEAD)
+
+**Implemented enhancements:**
+
+- show language flags always [\#906](https://github.com/TheFive/osmbc/issues/906)
+
+**Fixed bugs:**
+
+- Status display looks like a button, this is missleading [\#905](https://github.com/TheFive/osmbc/issues/905)
+- Download button doesn't work [\#904](https://github.com/TheFive/osmbc/issues/904)
+- Widen the comment box [\#900](https://github.com/TheFive/osmbc/issues/900)
+
+**Closed issues:**
+
+- Main Menu Bar is showing only 1 language while displaying 2 badgets for former left and right lang [\#896](https://github.com/TheFive/osmbc/issues/896)
+
+## [3.6.9e](https://github.com/TheFive/osmbc/tree/3.6.9e) (2022-01-11)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9d...3.6.9e)
+
+**Security fixes:**
+
+- Security: Change Full Text Search to query parameters [\#899](https://github.com/TheFive/osmbc/issues/899)
+
+## [3.6.9d](https://github.com/TheFive/osmbc/tree/3.6.9d) (2022-01-11)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9c...3.6.9d)
+
+**Security fixes:**
+
+- Fix code scanning alert - Type confusion through parameter tampering [\#898](https://github.com/TheFive/osmbc/issues/898)
+- Fix code scanning alert - Type confusion through parameter tampering [\#897](https://github.com/TheFive/osmbc/issues/897)
+
+## [3.6.9c](https://github.com/TheFive/osmbc/tree/3.6.9c) (2022-01-11)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.0-beta1...3.6.9c)
+
+**Fixed bugs:**
+
+- Short version of languages in Overview does not show all choosen languages. [\#893](https://github.com/TheFive/osmbc/issues/893)
+
+## [3.7.0-beta1](https://github.com/TheFive/osmbc/tree/3.7.0-beta1) (2022-01-09)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9b...3.7.0-beta1)
 
 **Implemented enhancements:**
 
@@ -328,7 +371,6 @@
 
 - Integrate possibility to go back to edit mode for a blog [\#778](https://github.com/TheFive/osmbc/issues/778)
 - place a warning box on the guest front page ... [\#777](https://github.com/TheFive/osmbc/issues/777)
-- Remove OK \(Only for LANGUAGE\) from Collect Window. [\#775](https://github.com/TheFive/osmbc/issues/775)
 
 **Closed issues:**
 
@@ -340,6 +382,7 @@
 
 **Implemented enhancements:**
 
+- Remove OK \(Only for LANGUAGE\) from Collect Window. [\#775](https://github.com/TheFive/osmbc/issues/775)
 - Make Logfile configurable [\#774](https://github.com/TheFive/osmbc/issues/774)
 - somewhere on the front page another click to MM? :\) [\#771](https://github.com/TheFive/osmbc/issues/771)
 
@@ -402,7 +445,6 @@
 
 **Implemented enhancements:**
 
-- Implement Interface to call Scripts. [\#763](https://github.com/TheFive/osmbc/issues/763)
 - Disallow Guests collecting in Blogs, that are not open. [\#762](https://github.com/TheFive/osmbc/issues/762)
 
 **Fixed bugs:**
@@ -415,6 +457,7 @@
 
 **Implemented enhancements:**
 
+- Implement Interface to call Scripts. [\#763](https://github.com/TheFive/osmbc/issues/763)
 - Access Denied, please add information to "contact the team" [\#760](https://github.com/TheFive/osmbc/issues/760)
 
 **Fixed bugs:**
@@ -1604,15 +1647,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
@@ -2125,7 +2168,6 @@
 
 **Fixed bugs:**
 
-- Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
 - once a textbox in Markdown is set to any content \(normally: no translation\)  it not possible to clean it up [\#342](https://github.com/TheFive/osmbc/issues/342)
 
 ## [0.8.0b](https://github.com/TheFive/osmbc/tree/0.8.0b) (2016-02-21)
@@ -2135,6 +2177,10 @@
 **Implemented enhancements:**
 
 - Disable comments from log history in article view. [\#344](https://github.com/TheFive/osmbc/issues/344)
+
+**Fixed bugs:**
+
+- Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
 
 ## [0.8.0a](https://github.com/TheFive/osmbc/tree/0.8.0a) (2016-02-21)
 
