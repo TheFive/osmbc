@@ -265,7 +265,7 @@ describe("uc.article", function() {
       should(article.commentList.length).eql(1);
       should(article.commentList[0].text).eql("Add a test comment");
       should(article.commentList[0].user).eql("TheFive");
-      await browser.click('span[id="EditComment0"]');
+      await browser.click('i[id="EditComment0"]');
 
       browser.fill("comment", "And Change It");
       await browser.pressButton("update");
