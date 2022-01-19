@@ -3,8 +3,8 @@ extends config
 block showContentOfConfig
   - lang = layout.user.getLang(0)
   p
-    | Supported icons are "glyphicon" & "font awesome" icons.
-    | See Bootstrap 3.0 or font awesome documentation.
+    | Supported icons are "font awesome" icons.
+    | See font awesome documentation.
   if config.getJSON()
     .row
       table.table.table-sm

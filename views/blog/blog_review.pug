@@ -73,7 +73,7 @@ block blogcontent
                   if a.author && a.author["markdown" + lang] && apiAuthors.indexOf(a.author["markdown" + lang].split(",")[0]) >= 0
                       textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+lang]
                       button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+lang type="submit")
-                        div.glyphicon.glyphicon-ok
+                        div.fa.fa-ok
                         span=" Mark Auto Translation OK"
 
 
