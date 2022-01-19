@@ -10,6 +10,7 @@
 
 **Fixed bugs:**
 
+- Edit Button for Comments [\#907](https://github.com/TheFive/osmbc/issues/907)
 - Status display looks like a button, this is missleading [\#905](https://github.com/TheFive/osmbc/issues/905)
 - Download button doesn't work [\#904](https://github.com/TheFive/osmbc/issues/904)
 - Widen the comment box [\#900](https://github.com/TheFive/osmbc/issues/900)
@@ -21,10 +22,6 @@
 ## [3.6.9e](https://github.com/TheFive/osmbc/tree/3.6.9e) (2022-01-11)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9d...3.6.9e)
-
-**Security fixes:**
-
-- Security: Change Full Text Search to query parameters [\#899](https://github.com/TheFive/osmbc/issues/899)
 
 ## [3.6.9d](https://github.com/TheFive/osmbc/tree/3.6.9d) (2022-01-11)
 
@@ -2574,6 +2571,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.4...0.5.5)
 
+**Implemented enhancements:**
+
+- Implement a Tool like the calender tool to simplify Image Integration. [\#211](https://github.com/TheFive/osmbc/issues/211)
+
 ## [0.5.4](https://github.com/TheFive/osmbc/tree/0.5.4) (2015-12-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.3...0.5.4)
@@ -2663,7 +2664,6 @@
 
 **Implemented enhancements:**
 
-- Implement a Tool like the calender tool to simplify Image Integration. [\#211](https://github.com/TheFive/osmbc/issues/211)
 - it would be nice, if the date would be appear with a leading "0"  [\#208](https://github.com/TheFive/osmbc/issues/208)
 - The output from OSM calender2Markdown should be sorted [\#207](https://github.com/TheFive/osmbc/issues/207)
 - Support easierer Review in OSMBC by opening the article edit mode out of fullFinalLL [\#203](https://github.com/TheFive/osmbc/issues/203)
