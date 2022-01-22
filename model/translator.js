@@ -21,13 +21,18 @@ const debug       = require("debug")("OSMBC:model:translator");
 
 
 async function deeplTranslate(url, params) {
-  const query = querystring.stringify(params);
-  const response = await axios.request(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    data: query
-  });
-  return response.data;
+  try {
+    const query = querystring.stringify(params);
+    const response = await axios.request(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: query
+    });
+    return response.data;
+  } catch (err) {
+    const message = err.message.replaceAll(deeplConfig.authKey, "APIKEY");
+    throw (new Error(message));
+  }
 }
 
 
@@ -127,10 +132,12 @@ const msTranslate = {
       }],
       json: true
     };
-
     request(options, function(err, response, body) {
       if (body && body.error) err = new Error(body.error.message);
-      if (err) return callback(err);
+      if (err) {
+        const message = err.message.replaceAll(bingProAuthkey, "APIKEY");
+        return callback(new Error(message));
+      }
       callback(null, body[0].translations[0].text);
     });
   }

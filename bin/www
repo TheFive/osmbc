@@ -4,63 +4,63 @@
  * Module dependencies.
  */
 
-var http    = require('http');
-var https   = require('https');
-const fs    = require('fs');
+var http    = require("http");
+var https   = require("https");
+const fs    = require("fs");
 
-var async   = require('async');
-var debug   = require('debug')('OSMBC:server');
+var async   = require("async");
+var debug   = require("debug")("OSMBC:server");
 
-var stoppable = require('stoppable');
-
-
-var app     = require('../app');
-
-var config  = require('../config.js');
-var logger  = require('../config.js').logger;
+var stoppable = require("stoppable");
 
 
-var configModule = require('../model/config.js');
-var blogModule = require('../model/blog.js');
-var userModule = require('../model/user.js');
-var messageCenter = require('../notification/messageCenter.js');
-var mailReceiver  = require('../notification/mailReceiver.js');
-var slackReceiver  = require('../notification/slackReceiver.js');
+var app     = require("../app");
+
+var config  = require("../config.js");
+var logger  = require("../config.js").logger;
+
+
+var configModule = require("../model/config.js");
+var blogModule = require("../model/blog.js");
+var userModule = require("../model/user.js");
+var messageCenter = require("../notification/messageCenter.js");
+var mailReceiver  = require("../notification/mailReceiver.js");
+var slackReceiver  = require("../notification/slackReceiver.js");
 
 /**
  * Get port from environment and store in Express.
  */
 
 var port = normalizePort(process.env.PORT || config.getServerPort());
-app.set('port', port);
+app.set("port", port);
 
 
 
 /**
  * Create HTTP server.
  */
-let options = {}
+const options = {};
 let httpServer = http;
 if (config.getServerKey()) {
   httpServer = https;
-  options.key= fs.readFileSync(config.getServerKey()),
-  options.cert= fs.readFileSync(config.getServerCert())
+  options.key = fs.readFileSync(config.getServerKey());
+  options.cert = fs.readFileSync(config.getServerCert());
 }
 
 
-var server = stoppable(httpServer.createServer(options,app));
+var server = stoppable(httpServer.createServer(options, app));
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 function initialiseServer() {
-  debug('initialiseServer');
+  debug("initialiseServer");
   async.auto({
-    configModule:configModule.initialise,
-    blogModule:["configModule",startBlogTimer],
-    messageCenter:messageCenter.initialise,
-    startMailReceiver:startMailReceiver,
-    startSlackReceiver:["configModule",startSlackReceiver]
+    configModule: configModule.initialise,
+    blogModule: ["configModule", startBlogTimer],
+    messageCenter: messageCenter.initialise,
+    startMailReceiver: startMailReceiver,
+    startSlackReceiver: ["configModule", startSlackReceiver]
   },
     function(err){
       if (err) {
@@ -73,7 +73,7 @@ function initialiseServer() {
       server.on('listening', onListening);
       logger.info("Server Listening on port "+port);
       const used = process.memoryUsage();
-      for (let key in used) {
+      for (const key in used) {
         logger.info(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
 }
   })

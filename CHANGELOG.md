@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- caught Problem with Deepl Translation [\#910](https://github.com/TheFive/osmbc/issues/910)
 - add link to Language arrangements in the help menu [\#909](https://github.com/TheFive/osmbc/issues/909)
 - Implement config to disable autocreate [\#908](https://github.com/TheFive/osmbc/issues/908)
 - show language flags always [\#906](https://github.com/TheFive/osmbc/issues/906)
@@ -495,6 +496,10 @@
 
 - Changing a doublet reason does not change save button status. [\#751](https://github.com/TheFive/osmbc/issues/751)
 
+**Closed issues:**
+
+- Switch from JADE to PUG [\#756](https://github.com/TheFive/osmbc/issues/756)
+
 ## [3.1.7](https://github.com/TheFive/osmbc/tree/3.1.7) (2018-03-04)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.1.6a...3.1.7)
@@ -503,10 +508,6 @@
 
 - Shorten links labels under collection field. [\#749](https://github.com/TheFive/osmbc/issues/749)
 - Add Bing as translation alternative to article editor menu [\#748](https://github.com/TheFive/osmbc/issues/748)
-
-**Closed issues:**
-
-- Switch from JADE to PUG [\#756](https://github.com/TheFive/osmbc/issues/756)
 
 ## [3.1.6a](https://github.com/TheFive/osmbc/tree/3.1.6a) (2018-03-03)
 
@@ -604,7 +605,6 @@
 **Closed issues:**
 
 - guests are not allowed to mark comments as read  [\#731](https://github.com/TheFive/osmbc/issues/731)
-- Short Explanaition of Blog Status Box on Guest Main Page [\#725](https://github.com/TheFive/osmbc/issues/725)
 
 ## [3.1.2c](https://github.com/TheFive/osmbc/tree/3.1.2c) (2018-02-10)
 
@@ -614,6 +614,10 @@
 
 - Show guests in blog colored user view in a separate style. [\#728](https://github.com/TheFive/osmbc/issues/728)
 - Differentiate blog statistics by guest and full users. [\#727](https://github.com/TheFive/osmbc/issues/727)
+
+**Closed issues:**
+
+- Short Explanaition of Blog Status Box on Guest Main Page [\#725](https://github.com/TheFive/osmbc/issues/725)
 
 ## [3.1.2b](https://github.com/TheFive/osmbc/tree/3.1.2b) (2018-02-09)
 
@@ -2147,10 +2151,6 @@
 
 - Title Field mandatory for collection [\#346](https://github.com/TheFive/osmbc/issues/346)
 
-**Fixed bugs:**
-
-- once a textbox in Markdown is set to any content \(normally: no translation\)  it not possible to clean it up [\#342](https://github.com/TheFive/osmbc/issues/342)
-
 ## [0.8.2](https://github.com/TheFive/osmbc/tree/0.8.2) (2016-02-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.1...0.8.2)
@@ -2167,6 +2167,10 @@
 ## [0.8.0c](https://github.com/TheFive/osmbc/tree/0.8.0c) (2016-02-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.8.0b...0.8.0c)
+
+**Fixed bugs:**
+
+- once a textbox in Markdown is set to any content \(normally: no translation\)  it not possible to clean it up [\#342](https://github.com/TheFive/osmbc/issues/342)
 
 ## [0.8.0b](https://github.com/TheFive/osmbc/tree/0.8.0b) (2016-02-21)
 
@@ -2339,6 +2343,7 @@
 
 - please add the emailaddress [\#299](https://github.com/TheFive/osmbc/issues/299)
 - Display editor\(s\) of markdown in article previews [\#293](https://github.com/TheFive/osmbc/issues/293)
+- Put the category description in help. [\#228](https://github.com/TheFive/osmbc/issues/228)
 
 **Fixed bugs:**
 
@@ -2437,10 +2442,6 @@
 
 - add Colombia & Bolivia country flags. [\#277](https://github.com/TheFive/osmbc/issues/277)
 
-**Fixed bugs:**
-
-- is it possible to to \*not export\* the Blog Missing Cat: --unpublished-- [\#276](https://github.com/TheFive/osmbc/issues/276)
-
 ## [0.6.5b](https://github.com/TheFive/osmbc/tree/0.6.5b) (2016-01-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.5b)
@@ -2460,6 +2461,7 @@
 
 **Fixed bugs:**
 
+- is it possible to to \*not export\* the Blog Missing Cat: --unpublished-- [\#276](https://github.com/TheFive/osmbc/issues/276)
 - WNAuthor: change unwanted [\#273](https://github.com/TheFive/osmbc/issues/273)
 
 ## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
@@ -2608,7 +2610,6 @@
 
 **Implemented enhancements:**
 
-- Put the category description in help. [\#228](https://github.com/TheFive/osmbc/issues/228)
 - Create a list of all contributors of an issue [\#42](https://github.com/TheFive/osmbc/issues/42)
 
 **Fixed bugs:**
