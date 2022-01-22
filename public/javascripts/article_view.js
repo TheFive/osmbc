@@ -571,8 +571,13 @@ function showHideUnpublishReason() {
   if (c === "--unpublished--") hidden = false;
   if (b === "Trash") hidden = false;
 
-  if (hidden) $("#unpublishReasonRow").addClass("hidden");
-  else $("#unpublishReasonRow").removeClass("hidden");
+  if (hidden) {
+    $("#unpublishReasonRow").addClass("invisible");
+    $("#unpublishReasonRow").removeClass("visible");
+  } else {
+    $("#unpublishReasonRow").removeClass("invisible");
+    $("#unpublishReasonRow").addClass("visible");
+  }
 }
 
 
