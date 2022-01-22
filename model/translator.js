@@ -21,20 +21,13 @@ const debug       = require("debug")("OSMBC:model:translator");
 
 
 async function deeplTranslate(url, params) {
-  try {
-    const query = querystring.stringify(params);
-    const response = await axios.request(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      data: query
-    });
-
-    if (response.status !== 200) return "Problem with Deepl Translation";
-
-    return response.data;
-  } catch (error) {
-    return { message: "caught Problem with Deepl Translation" };
-  }
+  const query = querystring.stringify(params);
+  const response = await axios.request(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    data: query
+  });
+  return response.data;
 }
 
 

@@ -698,15 +698,16 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
         const options = { fromLang: fromLang, toLang: toLang, text: source };
 
         if (translator[service] && translator[service].active) {
+          const fakeUser = { OSMUser: translator[service].user };
           translator[service].translate(options, function(err, text) {
-            if (err) return cb2(err);
+            if (err) {
+              return article.addCommentFunction(fakeUser, "Problem with translation", cb2);
+            }
             const data = {};
             data["markdown" + toLang] = text;
             data.old = {};
             data.old["markdown" + toLang] = "";
             debug("copyArticles.forEach.setAndSave");
-            const fakeUser = { OSMUser: translator[service].user };
-
             article.setAndSave(fakeUser, data, cb2);
           });
         } else return cb2();

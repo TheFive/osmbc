@@ -2,5 +2,5 @@
 if (process.env.NODE_ENV === "test") {
   exports.osmbc_version = "1.8.4";
 } else {
-  exports.osmbc_version = "3.7.0-beta1";
+  exports.osmbc_version = "3.7.0-beta2";
 }
