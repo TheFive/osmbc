@@ -108,12 +108,16 @@ function startSlackReceiver(param,callback) {
   slackReceiver.initialise(callback);
 }
 
-function startBlogTimer(param,callback) {
+function startBlogTimer(param, callback) {
   debug("startBlogTimer");
+
+  // do not autoclose if this is switched of in config.
+  if (config.getValue("AutoClose") === false) return callback();
+
   blogModule.startAllTimers(function (err) {
     if (err) {
       logger.error(err);
-      return callback(new Error("Error during Blog Timers Start "+err.message));
+      return callback(new Error("Error during Blog Timers Start " + err.message));
     }
     logger.info("Timer for Auto Close started");
     return callback();
