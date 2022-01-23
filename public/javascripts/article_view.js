@@ -24,9 +24,9 @@ function unloadWindowWarning(event) {
 
 // initialise all callbacks with jQuery
 function init() {
-  const mdRender = window.markdownit();
-  mdRender.use(window.markdownitSup);
-  mdRender.use(window["markdown-it-imsize.js"]);
+  window.mdRender = window.markdownit();
+  window.mdRender.use(window.markdownitSup);
+  window.mdRender.use(window["markdown-it-imsize.js"]);
   $("#linkArea")
     .change(highlightWrongLinks);
   $(".preview")
@@ -161,7 +161,7 @@ function convert(text) {
 
 
   // convert md to html
-  text = window.markdownit().render(text);
+  text = window.mdRender.render(text);
 
 
   // Display as list, this should depend on type
