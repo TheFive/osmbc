@@ -651,7 +651,7 @@ function translate(langFrom, langTo, service) {
   const to = langTo.toLowerCase();
   let originalText = document.getElementById("preview" + langFrom).innerText;
 
-  if (service === "deeplPro" || service === "bing") {
+  if (service === "deeplPro" || service === "bingPro" || service === "copy") {
     originalText = document.getElementById("markdown" + langFrom).value;
   }
 

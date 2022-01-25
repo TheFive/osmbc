@@ -175,11 +175,17 @@ function translateBingPro(options, callback) {
   });
 }
 
+function translateCopy(options, callback) {
+  debug("translateCopy");
+  return callback(null, options.text);
+}
+
 
 
 module.exports.deeplPro = {};
 module.exports.bingPro = {};
 module.exports.fortestonly = {};
+module.exports.copy = {};
 
 module.exports.deeplPro.translate = translateDeeplPro;
 module.exports.deeplPro.active = deeplProActive;
@@ -190,5 +196,12 @@ module.exports.bingPro.translate = translateBingPro;
 module.exports.bingPro.active = bingProActive;
 module.exports.bingPro.name = "BingPro";
 module.exports.bingPro.user = "Bing API Call";
+
+module.exports.copy.translate = translateCopy;
+module.exports.copy.active = () => { return true; };
+
+module.exports.copy.name = "Copy";
+module.exports.copy.user = "Copy User";
+
 
 module.exports.fortestonly.msTransClient = msTranslate;

@@ -72,9 +72,9 @@ mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
       select.col-5.selectpicker(name=name multiple)
         each v,i in values
           if (value.indexOf(v)>=0)
-              option(selected id = name + "_" + v)=displayValues[i]
+              option(selected id = name + "_" + v value = v)=displayValues[i]
           else 
-              option(id = name + "_" + v)=displayValues[i]
+              option(id = name + "_" + v value = v)=displayValues[i]
       label.col.d-none.d-md-block.form-text=explanation
 
 

@@ -124,17 +124,30 @@ mixin articleTranslateMenu(langFrom,langTo,service)
 
 
 mixin translationMenu
+  - emptyMenu = true
   li.dropdown.navbar-item#translation.hidden-xs
     a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
     ul.dropdown-menu(aria-labelledby="articleTranslateMenu")
+      - console.log(translationServices)
+      - console.log(layout.user.translationServices)
+      - let tsList = []
+      - if (layout.user.translationServices && Array::isArray(layout.user.translationServices)) tsList = layout.user.translationServices
       each tService in translationServices
-        li.dropdown-header="Use " + tService +":"
-          - list = []
-          - for ( i=0;layout.user.getLang(i);i++) {list.push(layout.user.getLang(i));}
-          each a in list
-            each b in list
-              if (a!==b && a!== null && b!== null)
-                +articleTranslateMenu(a, b, tService)
+        if (tsList >= 0)
+          - emptyMenu = false
+          li.dropdown-header="Use " + tService +":"
+            - list = []
+            - for ( i=0;layout.user.getLang(i);i++) {list.push(layout.user.getLang(i));}
+            each a in list
+              each b in list
+                if (a!==b && a!== null && b!== null)
+                  +articleTranslateMenu(a, b, tService)
+      if emptyMenu
+        a.dropdown-item(
+          onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';"
+        )="Configure your services"
+        
+
 
 
 

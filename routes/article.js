@@ -131,7 +131,10 @@ function renderArticleId(req, res, next) {
   params.lang4 = req.user.getLang4();
   params.editComment = null;
   let mainTranslationService = "deepl";
-  const translationServices = ["bing", "deepl"];
+  const translationServices = ["deepl", "copy"];
+  if (translator.bingPro.active()) {
+    translationServices.push("bingPro");
+  }
   if (translator.deeplPro.active()) {
     mainTranslationService = "deeplPro";
     translationServices.push("deeplPro");
@@ -1027,6 +1030,7 @@ router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
 router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateWithPlugin("bingPro"));
+router.post("/translate/copy/:fromLang/:toLang", allowFullAccess, translateWithPlugin("copy"));
 router.post("/urlexist", allowGuestAccess, urlExist);
 
 router.param("article_id", getArticleFromID);
