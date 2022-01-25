@@ -572,11 +572,9 @@ function showHideUnpublishReason() {
   if (b === "Trash") hidden = false;
 
   if (hidden) {
-    $("#unpublishReasonRow").addClass("invisible");
-    $("#unpublishReasonRow").removeClass("visible");
+    $("#unpublishReasonRow").addClass("d-none");
   } else {
-    $("#unpublishReasonRow").removeClass("invisible");
-    $("#unpublishReasonRow").addClass("visible");
+    $("#unpublishReasonRow").removeClass("d-none");
   }
 }
 
