@@ -14,6 +14,8 @@
 
 **Fixed bugs:**
 
+- Delete space between Title and collection [\#913](https://github.com/TheFive/osmbc/issues/913)
+- Markdown Superscript is wrong displayed in article editor [\#912](https://github.com/TheFive/osmbc/issues/912)
 - No unpublish reasons missing in BETA [\#911](https://github.com/TheFive/osmbc/issues/911)
 - Edit Button for Comments [\#907](https://github.com/TheFive/osmbc/issues/907)
 - Status display looks like a button, this is missleading [\#905](https://github.com/TheFive/osmbc/issues/905)
@@ -2343,7 +2345,6 @@
 
 - please add the emailaddress [\#299](https://github.com/TheFive/osmbc/issues/299)
 - Display editor\(s\) of markdown in article previews [\#293](https://github.com/TheFive/osmbc/issues/293)
-- Put the category description in help. [\#228](https://github.com/TheFive/osmbc/issues/228)
 
 **Fixed bugs:**
 
@@ -2442,6 +2443,10 @@
 
 - add Colombia & Bolivia country flags. [\#277](https://github.com/TheFive/osmbc/issues/277)
 
+**Fixed bugs:**
+
+- is it possible to to \*not export\* the Blog Missing Cat: --unpublished-- [\#276](https://github.com/TheFive/osmbc/issues/276)
+
 ## [0.6.5b](https://github.com/TheFive/osmbc/tree/0.6.5b) (2016-01-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.6.5a...0.6.5b)
@@ -2461,7 +2466,6 @@
 
 **Fixed bugs:**
 
-- is it possible to to \*not export\* the Blog Missing Cat: --unpublished-- [\#276](https://github.com/TheFive/osmbc/issues/276)
 - WNAuthor: change unwanted [\#273](https://github.com/TheFive/osmbc/issues/273)
 
 ## [0.6.4](https://github.com/TheFive/osmbc/tree/0.6.4) (2016-01-16)
@@ -2610,6 +2614,7 @@
 
 **Implemented enhancements:**
 
+- Put the category description in help. [\#228](https://github.com/TheFive/osmbc/issues/228)
 - Create a list of all contributors of an issue [\#42](https://github.com/TheFive/osmbc/issues/42)
 
 **Fixed bugs:**
