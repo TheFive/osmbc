@@ -35,6 +35,12 @@ var port = normalizePort(process.env.PORT || config.getServerPort());
 app.set("port", port);
 
 
+/* check node version */
+
+if (process.version < "v16.1.1") {
+  console.error("Node Version should be >= v16");
+  process.exit(1);
+}
 
 /**
  * Create HTTP server.
