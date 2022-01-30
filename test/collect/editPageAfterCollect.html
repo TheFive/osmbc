@@ -35,13 +35,7 @@
             </div>
           </li>
           <li class="dropdown navbar-item hidden-xs" id="translation"><a class="nav-link dropdown-toggle" id="articleTranslateMenu" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Translate</a>
-            <ul class="dropdown-menu" aria-labelledby="articleTranslateMenu">
-              <li class="dropdown-header">Use bing:
-              </li>
-              <li class="dropdown-header">Use deepl:
-              </li>
-              <li class="dropdown-header">Use deeplPro:
-              </li>
+            <ul class="dropdown-menu" aria-labelledby="articleTranslateMenu"><a class="dropdown-item" onclick="location.href='/usert/1'?highlight=translation;">Configure your Translation services</a>
             </ul>
           </li>
         </ul>
@@ -450,7 +444,7 @@ Use @OSMUser to address any special editor."></textarea>
   rightLang = "EN";
   lang3 = "";
   lang4 = "";
-  translationServices = JSON.parse('["bing","deepl","deeplPro"]');
+  translationServices = JSON.parse('["deepl","copy","bingPro","deeplPro"]');
   urlWoErrorWhileEdit = JSON.parse('[]');
   mainTranslationService = "deeplPro";
   htmlroot = "";

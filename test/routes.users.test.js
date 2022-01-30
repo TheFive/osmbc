@@ -218,6 +218,7 @@ describe("router/user", function() {
         color: 'red',
         language: 'ES',
         languageCount: 'two',
+        translationServices: [],
         mailBlogLanguageStatusChange:  []
       });
     });

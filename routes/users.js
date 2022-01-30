@@ -71,6 +71,7 @@ function renderUserId(req, res, next) {
   debug("renderUserId");
   let redirect = false;
   let id = req.params.user_id;
+  const highlight = (req.query.highlight) ?? "nothing";
 
 
   if (req.query.becomeGuest === "true" && req.user.access === "full") {
@@ -92,6 +93,7 @@ function renderUserId(req, res, next) {
     });
     return;
   }
+
 
 
   if (id === "self") return res.redirect(res.rendervar.layout.htmlroot + "/usert/" + req.user.id);
@@ -166,7 +168,8 @@ function renderUserId(req, res, next) {
       params: params,
       userHeatMapArray: userHeatMapArray,
       langlist: language.getLid(),
-      layout: res.rendervar.layout
+      layout: res.rendervar.layout,
+      highlight: highlight
     });
   }
   );
