@@ -138,6 +138,10 @@ mixin translationBlogMenu
 
 block additionalMenuMain
   +translationBlogMenu
+
+block additionalMenuRight  
+  +langMenu(2)
+
   
 
 
@@ -244,13 +248,12 @@ block content
             i.fa.fa-download
           div.dropdown-menu(aria-labelledby="dropdownExportLanguages")
             - var noShown = true;
-            for lang in layout.languages
-              if layout.usedLanguages[lang]
-                a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang)
-                  span="Export "+ lang
-                  if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
-                    span=" "
-                    i.fa.fa-exclamation-triangle
+            for lang in layout.activeLanguages
+              a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang)
+                span="Export "+ lang
+                if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
+                  span=" "
+                  i.fa.fa-exclamation-triangle
 
 
 

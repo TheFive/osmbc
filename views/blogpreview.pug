@@ -14,9 +14,9 @@ block content
     .col.text-right
       button.btn.btn-secondary(type = "button" onclick =`location.href='${returnToUrl}';`) Edit
       if (asMarkdown)
-        button.btn.btn-secondary(type = "button" onclick =`console.log("sometest");location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&markdown=true';`) Download
+        button.btn.btn-secondary(type = "button" onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&markdown=true';`) Download
       else
-        button.btn.btn-secondary(type = "button" onclick =`console.log("sometest");location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`) Download
+        button.btn.btn-secondary(type = "button" onclick =`clocation.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`) Download
 
   .row
     .col-md-12

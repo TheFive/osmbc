@@ -77,9 +77,6 @@ function prepareRenderLayout(req, res, next) {
   const usedLanguages = {};
   if (req.user.language) usedLanguages[req.user.language] = true;
 
-  if (languages.indexOf("DE-Less") > 0) usedLanguages["DE-Less"] = true;
-  if (languages.indexOf("DE-More") > 0) usedLanguages["DE-More"] = true;
-
   async.auto({
 
     tbc: function (callback) {
@@ -195,7 +192,6 @@ function prepareRenderLayout(req, res, next) {
       tbc: result.tbc,
       moment: moment,
       util: util,
-      usedLanguages: usedLanguages,
       activeLanguages: activeLanguages,
       appName: appName,
       osmbc_version: version.osmbc_version,

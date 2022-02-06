@@ -1,6 +1,8 @@
 extends layout
 
-
+block additionalMenuRight  
+  +langMenu(2)
+  
 mixin displayArticle(article,lang)
   - upToComment = null
   - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]

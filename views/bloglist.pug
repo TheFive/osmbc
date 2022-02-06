@@ -1,5 +1,7 @@
 extends layout
 
+block additionalMenuRight  
+  +langMenu(2)
 
 
 
@@ -15,9 +17,8 @@ block content
           tr 
             th name
             th status
-            for lang in layout.languages
-              if layout.usedLanguages[lang]
-                th= lang
+            for lang in layout.activeLanguages
+              th= lang
             th service
         tbody
           - var onlyhelp = true
@@ -31,33 +32,32 @@ block content
                 td
                   a(href=layout.htmlroot+'/blog/' + blog.name)=blog.name
                 td= blog.status
-                for lang in layout.languages
-                  if layout.usedLanguages[lang]
-                    td
-                      if blog["close"+lang]
-                        - labeltype = "osmbclabel-closedblog"
-                        - urlblog = layout.htmlroot+"/blog/"+blog.name
+                for lang in layout.activeLanguages
+                  td
+                    if blog["close"+lang]
+                      - labeltype = "osmbclabel-closedblog"
+                      - urlblog = layout.htmlroot+"/blog/"+blog.name
+
+                    else
+                      if blog["reviewComment"+lang]
+                        - labeltype = "osmbclabel-reviewblog"
+                        - urlblog =  layout.htmlroot+"/blog/"+blog.name
 
                       else
-                        if blog["reviewComment"+lang]
-                          - labeltype = "osmbclabel-reviewblog"
-                          - urlblog =  layout.htmlroot+"/blog/"+blog.name
-
+                        if (blog.status === "edit")
+                          - labeltype = "osmbclabel-editblog"
                         else
-                          if (blog.status === "edit")
-                            - labeltype = "osmbclabel-editblog"
-                          else
-                            - labeltype = "osmbclabel-openblog"
-                          - urlblog = layout.htmlroot+"/article/list?markdown"+lang+"=&category=!=--unpublished--&blog="+blog.name
+                          - labeltype = "osmbclabel-openblog"
+                        - urlblog = layout.htmlroot+"/article/list?markdown"+lang+"=&category=!=--unpublished--&blog="+blog.name
 
-                      a(href=urlblog)
-                        span.badge.badge-secondary
-                          |#{blogNumber(blog,lang)}
-                      a(href=urlblog)
-                        span.badge(class=labeltype)
-                         |#{blogCount(blog,lang)}
-                      if blog._timeToClose[lang]
-                        bold.span=" (+"+blog._timeToClose[lang]+"d)"
+                    a(href=urlblog)
+                      span.badge.badge-secondary
+                        |#{blogNumber(blog,lang)}
+                    a(href=urlblog)
+                      span.badge(class=labeltype)
+                        |#{blogCount(blog,lang)}
+                    if blog._timeToClose[lang]
+                      bold.span=" (+"+blog._timeToClose[lang]+"d)"
 
                 td
                   if blog.status != "closed"

@@ -82,6 +82,25 @@ added to our user database as guest.</p>
       console.error(err);
     });
   }
+  function chooseLanguageSet(number,set,action) {
+    var data = {};
+    data.set=set;
+    if (action && action === "save") {
+      data.set = $("input#newSetToBeSaved").val()
+      data.action = action;
+      console.dir(data);
+    }
+     if (action && action === "delete") {
+      data.action = action;
+      console.dir(data);
+    }
+    jQuery.post("/languageset",data, function () {
+      location.reload();
+    }).fail(function (err) {
+      console.error("Problem changing language set" +  number + " " + lang);
+      console.error(err);
+    });
+  }
   function setUserConfig(options) {
     jQuery.post("/setuserconfig/",options, function (data) {
       location.reload();

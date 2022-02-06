@@ -1,5 +1,8 @@
 extends layout
 
+block additionalMenuRight  
+  +langMenu(2)
+
 mixin userTable(userList)
 
     table.table.table-header-rotated(style="width:auto")
@@ -33,23 +36,21 @@ block content
       | Progress Overview
 
     table
-      each l in layout.languages
-        if layout.usedLanguages[l]
-
-          - unedited = blog._countUneditedMarkdown[l];
-          - notranslate = blog._countNoTranslateMarkdown[l];
-          - total = blog._countExpectedMarkdown[l]
-          - ready = (total-unedited - notranslate)
-          - if (total == 0) total = 1
-          
-          tr
-            td(style="width:40px")
-              div.badge.badge-secondary(style="color:white")=l
-            td
-              div.progress
-                div.progress-bar.progress-bar.bg-success(style=`width:${parseInt(1000*ready/total)}%`)=ready
-                div.progress-bar.progress-bar-bg-danger(style=`width:${parseInt(1000*unedited/total)}%`)=unedited
-                div.progress-bar.progress-bar.bg-info(style=`width:${parseInt(1000*notranslate/total)}%`)=notranslate
+      each l in layout.activeLanguages
+        - unedited = blog._countUneditedMarkdown[l];
+        - notranslate = blog._countNoTranslateMarkdown[l];
+        - total = blog._countExpectedMarkdown[l]
+        - ready = (total-unedited - notranslate)
+        - if (total == 0) total = 1
+        
+        tr
+          td(style="width:40px")
+            div.badge.badge-secondary(style="color:white")=l
+          td
+            div.progress
+              div.progress-bar.progress-bar.bg-success(style=`width:${parseInt(1000*ready/total)}%`)=ready
+              div.progress-bar.progress-bar-bg-danger(style=`width:${parseInt(1000*unedited/total)}%`)=unedited
+              div.progress-bar.progress-bar.bg-info(style=`width:${parseInt(1000*notranslate/total)}%`)=notranslate
 
 
   .row
@@ -58,10 +59,9 @@ block content
 
   .row
     - var field = ["collection","comment"]
-    for lang in languages
-      if layout.usedLanguages[lang]
-        - field.push("markdown"+lang)
-        - field.push("reviewComment"+lang)
+    for lang in layout.activeLanguages
+      - field.push("markdown"+lang)
+      - field.push("reviewComment"+lang)
     - userListFull = [];
     - userListGuest = [];
 

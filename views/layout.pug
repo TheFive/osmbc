@@ -139,10 +139,7 @@ block all
             block additionalMenuMain    
           ul.navbar-nav
             +helpMenu
-            +langChooser("lang")
-            +langChooser("lang2")
             block additionalMenuRight
-            
             +userAvatar
 
 
@@ -192,6 +189,25 @@ block all
         location.reload();
       }).fail(function (err) {
         console.error("Problem changing language " +  number + " " + lang);
+        console.error(err);
+      });
+    }
+    function chooseLanguageSet(number,set,action) {
+      var data = {};
+      data.set=set;
+      if (action && action === "save") {
+        data.set = $("input#newSetToBeSaved").val()
+        data.action = action;
+        console.dir(data);
+      }
+       if (action && action === "delete") {
+        data.action = action;
+        console.dir(data);
+      }
+      jQuery.post("!{htmlroot}/languageset",data, function () {
+        location.reload();
+      }).fail(function (err) {
+        console.error("Problem changing language set" +  number + " " + lang);
         console.error(err);
       });
     }

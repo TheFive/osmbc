@@ -33,7 +33,7 @@ describe("routes/layout", function() {
       should(Array.isArray(l.listOfOpenBlog)).be.True();
       should(Array.isArray(l.listOfEditBlog)).be.True();
       should(Array.isArray(l.listOfReviewBlog)).be.True();
-      should(l.usedLanguages).eql({DE: true});
+      should(l.activeLanguages).eql(["DE"]);
       bddone();
     });
   });

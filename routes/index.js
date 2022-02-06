@@ -176,6 +176,35 @@ function languageSwitcher(req, res, next) {
   });
 }
 
+function languageSetSwitcher(req, res, next) {
+  debug("languageSetSwitcher");
+
+  const set = req.body.set;
+  const action = req.body.action;
+
+  if (action === "save") {
+    req.user.saveLanguageSet(set, function (err) {
+      if (err) return next(err);
+      res.end("OK");
+    });
+  }
+  if (action === "delete") {
+    req.user.deleteLanguageSet(set, function (err) {
+      if (err) return next(err);
+      res.end("OK");
+    });
+  }
+
+  req.user.languageSet = set;
+
+  if (set === "Individual") req.user.languageSet = "";
+
+  req.user.save(function finalLanguageSwitcher(err) {
+    if (err) return next(err);
+    res.end("OK");
+  });
+}
+
 function setUserConfig(req, res, next) {
   debug("setUserConfig");
 
@@ -237,6 +266,7 @@ router.get("/osmbc", redirectHome);
 router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
 router.get("/changelog", auth.checkRole(["full", "guest"]), renderChangelog);
 router.post("/language", auth.checkRole(["full", "guest"]), languageSwitcher);
+router.post("/languageset", auth.checkRole(["full", "guest"]), languageSetSwitcher);
 router.post("/setuserconfig", auth.checkRole(["full", "guest"]), setUserConfig);
 router.get("/createblog", auth.checkRole(["full"]), createBlog);
 

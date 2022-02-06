@@ -89,7 +89,7 @@ describe("uc/index", function() {
 
         // test has to be optimised, as two languages are now longer supported in index 
         await browser.visit("/osmbc");
-        await browser.click("a#lang_EN");
+        await browser.assert.elements("a#lang_EN",0);
         browser.assert.expectHtmlSync("index", "switchedToEnglishAndEnglish");
       });
     });

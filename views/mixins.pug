@@ -314,30 +314,80 @@ mixin homeButton(addclass)
     a(href=htmlroot+'/osmbc.html' class=addclass)=appName
   else
     a.bg-success(href=layout.htmlroot+'/changelog' class=addclass) What's New?
-    
-mixin langChooser(langString)
-  if (layout)
-    - let l = 0
-    - let label = "osmbcbadge-lang"
-    if (langString === "lang2")
-      - l = 1
-      - label = "osmbcbadge-lang2"
-    - let langNumber = parseInt(langString.substr(4,2))    
-    if (langNumber > 2)
-      - l = langNumber -1
-      - label = "badge-secondary"
-      
 
+mixin langDropdownList(langNamedPosition,langlist,choosenLangs)
+  each litem in langlist
+    - if (choosenLangs.indexOf(litem) < 0)
+      a.dropdown-item(id=langNamedPosition+"_"+litem onclick = "chooseLanguage('" + langNamedPosition +"','" + litem +"')")=litem   
+    - else
+      a.dropdown-item.disabled()=litem 
+
+mixin langSetDropdownList(langNamedPosition,setList)
+  each litem in setList
+    a.dropdown-item(id=langNamedPosition+"_"+litem onclick = "chooseLanguageSet('" + langNamedPosition +"','" + litem +"')")=litem 
+
+
+mixin langChooser(choosenLang,cssClass,langString,languages,choosenLangs)
+  
+  - let langNumber = parseInt(langString.substr(4,2))
+
+  li.dropdown.nav-item
+    - label_temp = "language" + ((langNumber > 0 ) ? langNumber : "")
+    a.nav-link.dropdown-toggle(id=label_temp, class=cssClass, href='#', style="color:white", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=choosenLang
+    div.dropdown-menu.dropdown-menu-right(aria-labelledby=label_temp)
+      +langDropdownList(langString,languages, choosenLangs)
+      if block 
+        block
+
+mixin saveLangSet
+  .dropdown-divider
+  form.p-1
+    .form-group
+      input.input.form-control#newSetToBeSaved(type="text")
+      button.btn.btn-primary(onclick = "chooseLanguageSet('','','save')")="Add Set"
+
+mixin deleteLangSet
+  .dropdown-divider
+  form.p-1
+    .form-group
+      button.btn.btn-primary(onclick = "chooseLanguageSet('','" + layout.user.languageSet + "','delete')")="Delete Set"
+
+
+mixin langMenu(size)
+  if (layout.user.languageSet)
     li.dropdown.nav-item
-      - lang_temp = (layout.user.getLang(l))?layout.user.getLang(l):"--"
-      - label_temp = "language" + ((langNumber > 0 ) ? langNumber : "")
-      a.nav-link.dropdown-toggle(id=label_temp, class=label, href='#', style="color:white", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=lang_temp
-      div.dropdown-menu(aria-labelledby=label_temp)
-        if (langString !== "lang")
-          a.dropdown-item(id=langString+"_none" onclick = "chooseLanguage('" + langString +"','none')" ) none
-        each litem in layout.languages
-          if layout.usedLanguages[litem]
-            a.dropdown-item(id=langString+"_"+litem onclick = "chooseLanguage('" + langString +"','" + litem +"')")=litem 
+      a.nav-link.dropdown-toggle(id="languageSetMenu", href='#',  data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=layout.user.languageSet
+      div.dropdown-menu(aria-labelledby="languageSetMenu")
+        +langSetDropdownList("lset",layout.user.getLanguageSets())
+        div.dropdown-divider
+        +langSetDropdownList("lset",["Individual"])
+        +deleteLangSet
+
+
+  else
+    - const u = layout.user
+    - let languages = layout.activeLanguages.slice()
+    - let i = 0
+    - let choosenLangs = []
+    - choosenLangs.push(u.getLang(0))
+    - console.dir(u);
+    +langChooser((u.getLang(0)) ? u.getLang(0):"--","osmbcbadge-lang","lang",languages,choosenLangs)
+      .dropdown-divider 
+      +langSetDropdownList(langString,layout.user.getLanguageSets())
+      
+    - languages.unshift("none")       
+    - for (i = 1;  u.getLang(i) && i < size ; i++)
+      - console.dir(u.getLang(i));
+      - choosenLangs.push(u.getLang(i))
+      +langChooser((u.getLang(i)),(i == 1) ? "osmbcbadge-lang2" : "badge-secondary","lang"+(i+1),languages,choosenLangs)
+        if (size === 2)
+            + saveLangSet
+      
+    if (i < size)  
+      +langChooser( "--",(i == 1) ? "osmbcbadge-lang2" : "badge-secondary","lang"+(i+1),languages,choosenLangs)
+        + saveLangSet
+
+
           
 mixin userAvatar
   if layout && layout.user

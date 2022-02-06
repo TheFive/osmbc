@@ -173,7 +173,7 @@ const url = exports.getValue("url", { mustExist: true });
 
 
 exports.getLanguages = function() {
-  assert(false, "Function obsolote");
+  assert(false, "OSMBC Error Function obsolote");
   return languages;
 };
 

@@ -15,7 +15,7 @@ const request        = require("request");
 const logger         = require("../config.js").logger;
 const animated       = require("animated-gif-detector");
 const HttpError      = require("standard-http-error");
-
+const language      = require("../model/language.js");
 
 // generate an user object, use Prototpye
 // to prototype some fields
@@ -406,8 +406,44 @@ User.prototype.getNotificationStatus = function getNotificationStatus(channel, t
 
 User.prototype.getLanguages = function getLanguages() {
   debug("User.prototype.getLanguages");
+  if (this.languageSet && this.languageSet !== "") {
+    if (this.languages && this.languages[this.languageSet]) {
+      return this.languages[this.languageSet];
+    }
+    return language.getLid();
+  }
   return this.langArray;
 };
+
+User.prototype.getLanguageSets = function getLanguages() {
+  debug("User.prototype.getLanguageSets");
+  const languageSets = [];
+  for (const set in this.languageSets ?? {}) {
+    languageSets.push(set);
+  }
+
+  return languageSets;
+};
+
+User.prototype.saveLanguageSet = function saveLanguageSet(setName, callback) {
+  debug("User.prototype.saveLanguageSet");
+  if (typeof this.languageSets === "undefined") {
+    this.languageSets = {};
+  }
+  this.languageSets[setName] = this.langArray;
+  this.save(callback);
+};
+
+User.prototype.deleteLanguageSet = function saveLanguageSet(setName, callback) {
+  debug("User.prototype.saveLanguageSet");
+  if (typeof this.languageSets === "undefined") {
+    this.languageSets = {};
+  }
+  delete this.languageSets[setName];
+  if (this.languageSet === setName) this.languageSet = "";
+  this.save(callback);
+};
+
 
 User.prototype.getMainLang = function getMainLang() {
   debug("User.prototype.getMainLang");

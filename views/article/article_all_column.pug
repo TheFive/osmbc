@@ -6,7 +6,8 @@ block markdownArea
 
   // Markdown Area All Column
   .row
-    for lang of layout.user.langArray
+    - languages = layout.user.getLanguages()
+    for lang of languages
       if (lang)
         div.col
           div(style="min-width:400px;max-width:900px")

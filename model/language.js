@@ -61,7 +61,7 @@ exports.getLid = function() {
 exports.momentLocale = function(lang) {
   if (lang === null) return null;
   if (langMap === null) initialise();
-  return langMap[lang].localeString;
+  return (langMap[lang]) ? langMap[lang].localeString : "";
 };
 
 exports.bingPro = function(lang) {

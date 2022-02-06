@@ -1,5 +1,8 @@
 extends layout
 
+block additionalMenuRight  
+  +langMenu(2)
+
 
 
 
@@ -69,8 +72,6 @@ block content
             | No Articles found for search '#{search}'
       if (showCollect)
         form(name="input",id="input" action=layout.htmlroot+"/article/create", method="post")
-          - var langs = JSON.stringify(layout.usedLanguages)
-          input.d-none(name="languages" value=langs)
           h2 
             | Create Article 
           .row
