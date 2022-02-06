@@ -100,6 +100,24 @@ describe("model/translator", function() {
     });
   });
 
+  it("should copy a simple text with copy Function", function (bddone) {
+    const originTextMd = "Originaler Text";
+    const translatedTextMd = "Originaler Text";
+
+ 
+    var options = {
+      fromLang: "en",
+      toLang: "de",
+      text: originTextMd
+    };
+    translator.copy.translate(options, function(err, result) {
+      if (err) return bddone(err);
+      should(result).eql(translatedTextMd);
+      bddone();
+    });
+  });
+
+
   it("should translate a text with link with deepl", function (bddone) {
     const originTextMd = "Originaler Text mit [Markdown](https://markdown.link/demo) Link";
     // const originTextHtml = '<p>Originaler Text mit <a href="https://markdown.link/demo">Markdown</a> Link</p>\n';
