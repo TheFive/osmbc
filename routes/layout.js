@@ -53,7 +53,7 @@ function path(component) {
   if (component === "bootstrap" && bootstrap) return bootstrap;
   if (component === "jquery" && jquery) return jquery;
   if (component === "font-awesome" && fontAwesome) return fontAwesome;
-  if (component === "public") return "";
+  if (component === "public") return "htmlRoot";
 
   let dist = "/dist";
   if (component === "font-awesome") dist = "";

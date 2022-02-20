@@ -103,6 +103,8 @@ describe("uc/index", function() {
         await browser.click("a#lang_DE");
         browser.fill("#newSetToBeSaved","A Name To Save");
         await browser.click("#saveNewSet");
+        let user = await userModule.findOne({OSMUser:"TheFive"});
+        should(user.languageSet).eql("A Name To Save");
         browser.assert.expectHtmlSync("index", "savedANewLanguageSet");
       });
     });
