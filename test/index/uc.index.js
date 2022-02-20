@@ -92,6 +92,19 @@ describe("uc/index", function() {
         await browser.assert.elements("a#lang_EN",0);
         browser.assert.expectHtmlSync("index", "switchedToEnglishAndEnglish");
       });
+      it("should store a language set", async function() {
+        await browser.visit("/osmbc");
+        await browser.click("a#lang_EN");
+        // this call is necessary, as zombie looks to make troulbe
+        // with 2 calls to a link going back to referrer in seriex
+
+        // test has to be optimised, as two languages are now longer supported in index 
+        await browser.visit("/osmbc");
+        await browser.click("a#lang_DE");
+        browser.fill("#newSetToBeSaved","A Name To Save");
+        await browser.click("#saveNewSet");
+        browser.assert.expectHtmlSync("index", "savedANewLanguageSet");
+      });
     });
   });
   describe("Unkown User", function() {

@@ -81,9 +81,10 @@ block content
 
 
 
-block scripts
+block append scripts_to_load
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
+block append scripts_to_execute
   script(nonce=cspNonce).
     var openEditor = null;
     window.onload = function() {

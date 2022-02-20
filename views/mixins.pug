@@ -310,7 +310,7 @@ mixin helpMenu
       a.dropdown-item(href="https://framacalc.org/WN_DEnglisch") Glossary
       
 mixin homeButton(addclass)
-  if !layout || layout.osmbc_version === layout.user.lastChangeLogView
+  if !layout || !layout.user || layout.osmbc_version === layout.user.lastChangeLogView
     a(href=htmlroot+'/osmbc.html' class=addclass)=appName
   else
     a.bg-success(href=layout.htmlroot+'/changelog' class=addclass) What's New?
@@ -322,9 +322,9 @@ mixin langDropdownList(langNamedPosition,langlist,choosenLangs)
     - else
       a.dropdown-item.disabled()=litem 
 
-mixin langSetDropdownList(langNamedPosition,setList)
+mixin langSetDropdownList(setList)
   each litem in setList
-    a.dropdown-item(id=langNamedPosition+"_"+litem onclick = "chooseLanguageSet('" + langNamedPosition +"','" + litem +"')")=litem 
+    a.dropdown-item(id="langset_"+litem onclick = "chooseLanguageSet('" + litem +"' ,'set')")=litem 
 
 
 mixin langChooser(choosenLang,cssClass,langString,languages,choosenLangs)
@@ -344,13 +344,13 @@ mixin saveLangSet
   form.p-1
     .form-group
       input.input.form-control#newSetToBeSaved(type="text")
-      button.btn.btn-primary(onclick = "chooseLanguageSet('','','save')")="Add Set"
+      div.btn.btn-primary#saveNewSet(onclick = "chooseLanguageSet('','save')")="Add Set"
 
 mixin deleteLangSet
   .dropdown-divider
   form.p-1
     .form-group
-      button.btn.btn-primary(onclick = "chooseLanguageSet('','" + layout.user.languageSet + "','delete')")="Delete Set"
+      div.btn.btn-primary(onclick = "chooseLanguageSet('" + layout.user.languageSet + "','delete')")="Delete Set"
 
 
 mixin langMenu(size)
@@ -358,9 +358,9 @@ mixin langMenu(size)
     li.dropdown.nav-item
       a.nav-link.dropdown-toggle(id="languageSetMenu", href='#',  data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=layout.user.languageSet
       div.dropdown-menu(aria-labelledby="languageSetMenu")
-        +langSetDropdownList("lset",layout.user.getLanguageSets())
+        +langSetDropdownList(layout.user.getLanguageSets())
         div.dropdown-divider
-        +langSetDropdownList("lset",["Individual"])
+        +langSetDropdownList(["Individual"])
         +deleteLangSet
 
 
@@ -370,14 +370,12 @@ mixin langMenu(size)
     - let i = 0
     - let choosenLangs = []
     - choosenLangs.push(u.getLang(0))
-    - console.dir(u);
     +langChooser((u.getLang(0)) ? u.getLang(0):"--","osmbcbadge-lang","lang",languages,choosenLangs)
       .dropdown-divider 
-      +langSetDropdownList(langString,layout.user.getLanguageSets())
+      +langSetDropdownList(layout.user.getLanguageSets())
       
     - languages.unshift("none")       
     - for (i = 1;  u.getLang(i) && i < size ; i++)
-      - console.dir(u.getLang(i));
       - choosenLangs.push(u.getLang(i))
       +langChooser((u.getLang(i)),(i == 1) ? "osmbcbadge-lang2" : "badge-secondary","lang"+(i+1),languages,choosenLangs)
         if (size === 2)
@@ -390,7 +388,7 @@ mixin langMenu(size)
 
           
 mixin userAvatar
-  if layout && layout.user
+  if layout && layout.user && layout.user
     li
       img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';" style="height:40px;width:40px")
   else

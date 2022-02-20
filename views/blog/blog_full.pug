@@ -170,13 +170,14 @@ block blogcontent
     each c,k in futureArticles
       - var cat = null;
       - categories.forEach(function(sk) {if (sk.EN==k) {cat = sk;}});
-      div(class=firstColSize)
-      div(class=secondColSize)
-        .row
-          div(class=columnLeftSize)
-            h4(style="color:grey")=(cat) ? cat[left_lang] : k
-          div(class=columnRightSize)
-            h4(style="color:grey")=(cat) ? cat[right_lang] : k
+      .row
+        div(class=firstColSize)
+        div(class=secondColSize)
+          .row
+            div(class=columnLeftSize)
+              h4(style="color:grey")=(cat) ? cat[left_lang] : k
+            div(class=columnRightSize)
+              h4(style="color:grey")=(cat) ? cat[right_lang] : k
       each a in futureArticles[k]
         .row
           div(class=firstColSize)

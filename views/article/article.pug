@@ -138,7 +138,7 @@ block content
           div.badge.osmbclabel-guest-indicator="This article was collected by our guest user " + article.firstCollector + "."
 
     div.form-group.row
-      if (layout && layout.user.access === "guest")
+      if (layout && layout.user && layout.user.access === "guest")
         label.col-md-1="Submission"
       else
         label.col-md-1="Collection"

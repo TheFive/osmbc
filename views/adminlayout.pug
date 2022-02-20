@@ -70,7 +70,8 @@ block all
 
         script(src=layout.path("jquery")+'/jquery.min.js')
         script(src=layout.path("bootstrap")+'/js/bootstrap.bundle.min.js')
-        script(src=path("bootstrap-select")+'/js/bootstrap-select.min.js')
+        script(src=layout.path("bootstrap-select")+'/js/bootstrap-select.min.js')
+        script(src=layout.path("public") + "/javascripts/osmbc_staff.js")
 
   doctype html
   html
@@ -81,15 +82,8 @@ block all
   script(nonce=cspNonce).
 
     // Init This Window with jQuery ready Callback
-    function chooseLanguage(number,lang) {
-      var data = {};
-      data[number]=lang;
-      jQuery.post("!{htmlroot}/language",data, function () {
-        location.reload();
-      }).fail(function (err) {
-        console.error("Problem changing language " +  number + " " + lang);
-        console.error(err);
-      });
-    }
+    window.htmlroot = "!{layout.htmlroot}";
 
-  block scripts
+  block scripts_to_load
+
+  block scripts_to_execute

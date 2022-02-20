@@ -152,16 +152,15 @@ mixin translationMenu
 
 
 
-block scripts
+block append scripts_to_load
   script(src=layout.path("markdown-it") + '/markdown-it.min.js')
   script(src=layout.path("markdown-it-sup") + '/markdown-it-sup.min.js')
   script(src=layout.path("markdown-it-imsize") + '/markdown-it-imsize.min.js')
-  script(src=layout.htmlroot + "/javascripts/osmbc_staff.js")
   script(src=layout.htmlroot + "/javascripts/article_view.js")
 
 
 
-
+block append scripts_to_execute
   script(nonce=cspNonce).
     // set Constant for Window with JADE Variables
     googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
@@ -173,7 +172,6 @@ block scripts
     translationServices = JSON.parse('!{JSON.stringify(translationServices)}');
     urlWoErrorWhileEdit = JSON.parse('!{JSON.stringify(urlWoErrorWhileEdit)}');
     mainTranslationService = "!{mainTranslationService}";
-    htmlroot = "!{layout.htmlroot}";
     placeholder = !{JSON.stringify(placeholder.categories)}
     var catArray = !{JSON.stringify(categories)};
     var articleReferences = !{JSON.stringify(articleReferences)};

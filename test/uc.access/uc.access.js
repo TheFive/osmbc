@@ -135,6 +135,7 @@ describe("uc.access", function() {
   });
   it("should create a new guest user, if he logs in",async function(){
     let errors=[];
+
     let browser = await testutil.getNewBrowser();
     // visiting /osmbc with unkown user shoud show login page
 

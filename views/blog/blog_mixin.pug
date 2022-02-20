@@ -20,14 +20,13 @@ mixin blogReviewButtons(lang)
         button.btn.btn-large.btn-primary(id="readyreview" onclick=`window.setLangStatus("${lang}","startreview",this);`) Set #{blog.name}(#{lang}) ready for review
 
 
-block scripts
+block append scripts_to_load
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
-  script(src=layout.htmlroot + "/javascripts/osmbc_staff.js")
 
+block append scripts_to_execute
   script(nonce=cspNonce).
 
     var openEditor = null;
-    htmlroot = "!{layout.htmlroot}";
 
     window.onload = function () {
 

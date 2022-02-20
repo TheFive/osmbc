@@ -36,11 +36,24 @@ function calculateUnreadMessages(list, user) {
   return result;
 }
 
+const layoutConst = {
+  htmlroot: htmlRoot,
+  url: url,
+  path: path,
+  moment: moment,
+  markdown: markdown,
+  util: util,
+  appName: appName,
+  osmbc_version: version.osmbc_version,
+  title: appName
+};
+
 
 function path(component) {
   if (component === "bootstrap" && bootstrap) return bootstrap;
   if (component === "jquery" && jquery) return jquery;
   if (component === "font-awesome" && fontAwesome) return fontAwesome;
+  if (component === "public") return "";
 
   let dist = "/dist";
   if (component === "font-awesome") dist = "";
@@ -175,13 +188,10 @@ function prepareRenderLayout(req, res, next) {
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
 
     if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
-    res.rendervar.layout = {
+
+    res.rendervar.layout = Object.assign({}, layoutConst, {
       user: req.user,
-      htmlroot: htmlRoot,
-      url: url,
       languages: languages,
-      markdown: markdown,
-      path: path,
       userMentions: userMentions,
       mainLangMentions: mainLangMentions,
       secondLangMentions: secondLangMentions,
@@ -190,13 +200,8 @@ function prepareRenderLayout(req, res, next) {
       listOfReviewBlog: result.listOfReviewBlog,
       editBlog: result.editBlog,
       tbc: result.tbc,
-      moment: moment,
-      util: util,
       activeLanguages: activeLanguages,
-      appName: appName,
-      osmbc_version: version.osmbc_version,
       style: style,
-      title: appName,
       user_locale: language.momentLocale((req.user.language) ? req.user.language : req.user.getMainLang()),
       language_locale: language.momentLocale(req.user.getMainLang()),
       language2_locale: language.momentLocale(req.user.getSecondLang()),
@@ -205,8 +210,7 @@ function prepareRenderLayout(req, res, next) {
       getAvatar: userModule.getAvatar,
       scriptUser: scriptUser,
       blogTranslationVisibleFor: blogTranslationVisibleFor
-
-    };
+    });
     next();
   }
   );
@@ -226,3 +230,4 @@ router.get("*", exports.prepareRenderLayout);
 
 
 module.exports.router = router;
+module.exports.layoutConst = layoutConst;

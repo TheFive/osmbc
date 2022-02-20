@@ -1,6 +1,9 @@
 "use strict";
 
 /* exported highlightWrongLinks */
+/* exported chooseLanguage */
+/* exported chooseLanguageSet */
+/* exported setUserConfig */
 
 /* jshint esversion: 6 */
 
@@ -54,4 +57,47 @@ function highlightWrongLinks() {
   } else {
     setAllLinks();
   }
+}
+
+
+function chooseLanguage(number, lang) {
+  const data = {};
+  data[number] = lang;
+  jQuery.post(window.htmlroot + "/language", data, function () {
+    location.reload();
+  }).fail(function (err) {
+    console.error("Problem changing language " + number + " " + lang);
+    console.error(err);
+  });
+}
+function chooseLanguageSet(set, action) {
+  const data = {};
+
+  if (action && action === "save") {
+    data.action = action;
+    data.set = $("input#newSetToBeSaved").val();
+  }
+  if (action && action === "delete") {
+    data.action = action;
+    data.set = set;
+  }
+  if (action && action === "set") {
+    data.action = action;
+    data.set = set;
+  }
+  jQuery.post(window.htmlroot + "/languageset", data, function () {
+    location.reload();
+  }).fail(function (err) {
+    console.error("Problem changing language set" + set + " Action " + action);
+    console.dir(err);
+  });
+}
+
+function setUserConfig(options) {
+  jQuery.post(window.htmlroot + "/setuserconfig/", options, function () {
+    location.reload();
+  }).fail(function (err) {
+    console.error("Trouble saveing User Config");
+    console.error(err);
+  });
 }

@@ -276,6 +276,7 @@
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="/javascripts/osmbc_staff.js"></script>
   
 
 
@@ -287,16 +288,7 @@
 
 <script nonce="Fixed Nonce for Test">
   // Init This Window with jQuery ready Callback
-  function chooseLanguage(number,lang) {
-    var data = {};
-    data[number]=lang;
-    jQuery.post("/language",data, function () {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Problem changing language " +  number + " " + lang);
-      console.error(err);
-    });
-  }
+  window.htmlroot = "";
   
 </script>
 <link rel="stylesheet" type="text/css" href="/stylesheets/github_contribution_graph.css">

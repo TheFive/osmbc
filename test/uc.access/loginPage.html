@@ -22,7 +22,7 @@
         </ul>
         <ul class="navbar-nav">
           <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
-            <div class="dropdown-menu" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a>
+            <div class="dropdown-menu" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a><a class="dropdown-item" href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a>
               <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
             </div>
           </li>
@@ -57,6 +57,7 @@ added to our user database as guest.</p>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="/javascripts/osmbc_staff.js"></script>
   
 
 
@@ -69,45 +70,12 @@ added to our user database as guest.</p>
 <script nonce="Fixed Nonce for Test">
   // Init This Window with jQuery ready Callback
   $(document).ready(init2);
+  window.htmlroot = "";
   function init2() {
     $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
   }
-  function chooseLanguage(number,lang) {
-    var data = {};
-    data[number]=lang;
-    jQuery.post("/language",data, function () {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Problem changing language " +  number + " " + lang);
-      console.error(err);
-    });
-  }
-  function chooseLanguageSet(number,set,action) {
-    var data = {};
-    data.set=set;
-    if (action && action === "save") {
-      data.set = $("input#newSetToBeSaved").val()
-      data.action = action;
-      console.dir(data);
-    }
-     if (action && action === "delete") {
-      data.action = action;
-      console.dir(data);
-    }
-    jQuery.post("/languageset",data, function () {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Problem changing language set" +  number + " " + lang);
-      console.error(err);
-    });
-  }
-  function setUserConfig(options) {
-    jQuery.post("/setuserconfig/",options, function (data) {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Trouble saveing User Config");
-      console.error(err);
-    });
-  }   
+  
+  
+  
   
 </script></body></html>

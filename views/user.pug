@@ -189,13 +189,12 @@ block content
                 td= layout.moment(change.timestamp).fromNow()
 
 
-block scripts
-
+block append scripts_to_load
   link(rel="stylesheet" type="text/css" href=layout.htmlroot+"/stylesheets/github_contribution_graph.css")
   script(src=layout.htmlroot+"/javascripts/github_contribution.js")
   script(src=layout.path("moment") + "/min/moment.min.js")
 
-
+block append scripts_to_execute
   script(nonce=cspNonce).
     // chart data example
     var chartData = JSON.parse('!{JSON.stringify(userHeatMapArray)}');

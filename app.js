@@ -27,6 +27,7 @@ const blog         = require("./routes/blog").router;
 const tool         = require("./routes/tool").router;
 const api          = require("./routes/api").publicRouter;
 const layout       = require("./routes/layout").router;
+const layoutConst  = require("./routes/layout").layoutConst;
 const configRouter = require("./routes/config").router;
 const logger       = require("./config.js").logger;
 const auth         = require("./routes/auth.js");
@@ -182,7 +183,7 @@ app.use(auth.passport.session());
 
 function renderLogin(req, res) {
   debug("renderLogin");
-  res.render("login");
+  res.render("login", { layout: layoutConst });
 }
 app.get(htmlRoot + "/login", renderLogin);
 
@@ -253,7 +254,7 @@ if (app.get("env") === "development") {
       message: err.message,
       error: err,
       nonce: res.locals.cspNonce,
-      layout: { htmlroot: htmlRoot }
+      layout: layoutConst
     });
   });
   /* jshint +W098 */
@@ -276,7 +277,7 @@ if (app.get("env") === "test") {
       message: err.message,
       error: err,
       nonce: res.locals.cspNonce,
-      layout: { htmlroot: htmlRoot }
+      layout: layoutConst
     });
   });
   /* jshint +W098 */
@@ -295,7 +296,7 @@ app.use(function(err, req, res, next) {
   res.render("error", {
     message: (err) ? err.message : "no err object",
     error: { detail: (err) ? err.detail : "no err object" },
-    layout: { htmlroot: htmlRoot }
+    layout: layoutConst
   });
 });
 /* jshint +W098 */

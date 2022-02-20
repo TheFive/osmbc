@@ -17,7 +17,7 @@ block content
           div.col-6
             input#searchField(type="text",class="form-control",name ="search",value=search)
             if showCollect
-              if (layout && layout.user.access === "guest")
+              if (layout && layout.user && layout.user.access === "guest")
                 p.osmbc-help-text(align="center") Please check your link for duplicates before submit it.
               else
                 p.osmbc-help-text(align="center") Please check your link for duplicates before collect it.
@@ -42,7 +42,7 @@ block content
               th="Blog"
               th="Title"
               th.hidden-xs="Cat (EN)"
-              if (layout && layout.user.access === "guest")
+              if (layout && layout.user && layout.user.access === "guest")
                 th.hidden-xs="Submission"
               else
                 th.hidden-xs="Collection"
@@ -109,16 +109,17 @@ block content
                  
           .row
             .col-md-1
-              if (layout && layout.user.access === "guest")
+              if (layout && layout.user && layout.user.access === "guest")
                 | Submission <br>
               else
                 | Collection <br>
             .col-md-11
               textarea.form-control(name="collection",rows=7,placeholder="put your link or info here")=collection
 
-block scripts                
+block append scripts_to_load                
   script(src=layout.path("markdown-it")+'/markdown-it.min.js')
 
+block append scripts_to_execute
   script(nonce=cspNonce).
     window.onload = init;
     var placeholder = !{JSON.stringify(placeholder.categories)};

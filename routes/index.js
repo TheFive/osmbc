@@ -186,13 +186,16 @@ function languageSetSwitcher(req, res, next) {
     req.user.saveLanguageSet(set, function (err) {
       if (err) return next(err);
       res.end("OK");
+      return res.end("OK");
     });
+    return;
   }
   if (action === "delete") {
     req.user.deleteLanguageSet(set, function (err) {
       if (err) return next(err);
-      res.end("OK");
+      return res.end("OK");
     });
+    return;
   }
 
   req.user.languageSet = set;
@@ -201,7 +204,7 @@ function languageSetSwitcher(req, res, next) {
 
   req.user.save(function finalLanguageSwitcher(err) {
     if (err) return next(err);
-    res.end("OK");
+    return res.end("OK");
   });
 }
 

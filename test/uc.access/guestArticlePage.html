@@ -44,7 +44,7 @@
               <form class="p-1">
                 <div class="form-group">
                   <input class="input form-control" id="newSetToBeSaved" type="text">
-                  <button class="btn btn-primary" onclick="chooseLanguageSet('','','save')">Add Set</button>
+                  <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
                 </div>
               </form>
             </div>
@@ -241,6 +241,7 @@ Use @OSMUser to address any special editor."></textarea><button class="btn btn-l
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="/javascripts/osmbc_staff.js"></script>
   
 
 
@@ -253,52 +254,18 @@ Use @OSMUser to address any special editor."></textarea><button class="btn btn-l
 <script nonce="Fixed Nonce for Test">
   // Init This Window with jQuery ready Callback
   $(document).ready(init2);
+  window.htmlroot = "";
   function init2() {
     $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
   }
-  function chooseLanguage(number,lang) {
-    var data = {};
-    data[number]=lang;
-    jQuery.post("/language",data, function () {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Problem changing language " +  number + " " + lang);
-      console.error(err);
-    });
-  }
-  function chooseLanguageSet(number,set,action) {
-    var data = {};
-    data.set=set;
-    if (action && action === "save") {
-      data.set = $("input#newSetToBeSaved").val()
-      data.action = action;
-      console.dir(data);
-    }
-     if (action && action === "delete") {
-      data.action = action;
-      console.dir(data);
-    }
-    jQuery.post("/languageset",data, function () {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Problem changing language set" +  number + " " + lang);
-      console.error(err);
-    });
-  }
-  function setUserConfig(options) {
-    jQuery.post("/setuserconfig/",options, function (data) {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Trouble saveing User Config");
-      console.error(err);
-    });
-  }   
+  
+  
+  
   
 </script>
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
 <script src="/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js"></script>
 <script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
-<script src="/javascripts/osmbc_staff.js"></script>
 <script src="/javascripts/article_view.js"></script>
 <script nonce="Fixed Nonce for Test">
   // set Constant for Window with JADE Variables
@@ -311,7 +278,6 @@ Use @OSMUser to address any special editor."></textarea><button class="btn btn-l
   translationServices = JSON.parse('["deepl","copy","bingPro","deeplPro"]');
   urlWoErrorWhileEdit = JSON.parse('[]');
   mainTranslationService = "deeplPro";
-  htmlroot = "";
   placeholder = {"-- no category yet --":"If you do not have any idea, which category to use.","[Actual Category]":"This category does not have to exist in every blog. Use this category for actual events like SOTM","About us":"Use seldom, then on the top","Weekly exerciseEN:":"Category for the German weekly exercise","Mapping":"Quality assurance, editors, maps for mapper, tools for mapping, tagging","Community":"articles from the community, that does not fit in any other category","Imports":"discussions, announcements about imports","OpenStreetMap Foundation":"articles about the OSMF or local OpenStreetMap chapter","Events":"Announcements, reports about an event","Humanitarian OSM":"Information about HOT & Missing maps","Maps":"Changes on osm.org and osm.de maps, osm based special maps, no 08/15 map!","#switch2OSM":"Information about well known websites or traffic rich websites, a good new rendering style, (commercial sites) companies having own (big geo) data, more features for displaying maps are offered\n","Open Data":"Information about open data","Licences":"Information about juridicial topics","Software":"Programs for non programmers (without OSM editors)","Programming":"Information about software development","Did you know …":"Any thing which is interesting for OSM User. No longer known article and beginner tools.","Other “geo” things":"Information, that mostly have nothing to do with OSM...","Not Translated":"...","--unpublished--":"Articles, that should not be published, but keep their relation to the blog (otherwise use the trash)"}
   var catArray = [{"EN":"-- no category yet --","DE":"-- noch keine Kategorie --","ES":"-- no category yet --","FR":"-- no category yet --","CZ":"-- no category yet --","PT":"-- no category yet --","RU":"-- no category yet --","JP":"-- no category yet --","ID":"-- no category yet --","TR":"-- no category yet --","PT-PT":"-- no category yet --"},{"EN":"Picture","DE":"Bild","ES":"Picture","FR":"Picture","CZ":"Picture","PT":"Picture","JP":"Picture","ID":"Picture","TR":"Picture","PT-PT":"Picture"},{"EN":"[Actual Category]","DE":"[Aktuelle Kategorie]","ES":"[Corriente]","FR":"[Actualité]","CZ":"[Actual Category]","PT":"[Categoria atual]","RU":"[Текущая категория]","JP":"[Actual Category]","ID":"[Actual Category]","TR":"[Actual Category]","PT-PT":"[Actual Category]"},{"EN":"About us","DE":"In eigener Sache","ES":"Acerca de nosotros","FR":"À notre propos","CZ":"About us","PT":"Sobre nós","RU":"О нас","JP":"私たちについて","ID":"Tentang kami","TR":"Hakkımızda","PT-PT":"About us"},{"EN":"Weekly exercise:","DE":"Wochenaufruf","ES":"Not Translated","FR":"Not Translated","CZ":"Not Translated","PT":"Não traduzido","RU":"Еженедельные заданияАнгл","JP":"Not Translated","ID":"Not Translated","TR":"Not Translated","PT-PT":"Weekly exercise:"},{"EN":"Mapping","DE":"Mapping","ES":"Mapeando","FR":"Cartographie","CZ":"Mapování","PT":"Mapeamento","RU":"Картографирование","JP":"マッピング","ID":"Pemetaan","TR":"Haritalama","PT-PT":"Mapping"},{"EN":"Community","DE":"Community","ES":"Comunidad","FR":"Communauté","CZ":"Komunita","PT":"Comunidade","RU":"Сообщество","JP":"コミュニティ","ID":"Komunitas","TR":"Topluluk","PT-PT":"Community"},{"EN":"Imports","DE":"Importe","ES":"Importaciones","FR":"Importation","CZ":"Imports","PT":"Importações","RU":"Импорты","JP":"インポート","ID":"Imports","TR":"İçe Aktarımlar","PT-PT":"Imports"},{"EN":"OpenStreetMap Foundation","DE":"OpenStreetMap Foundation","ES":"Fundación OpenStreetMap","FR":"Fondation OpenStreetMap","CZ":"OpenStreetMap Foundation","PT":"Fundação OpenStreetMap","RU":"Фонд OpenStreetMap","JP":"OpenStreetMap Foundation","ID":"Yayasan OpenStreetMap","TR":"OpenStreetMap Foundation","PT-PT":"OpenStreetMap Foundation"},{"EN":"Events","DE":"Veranstaltungen","ES":"Eventos","FR":"Événements","CZ":"Události","PT":"Eventos","RU":"События","JP":"イベント","ID":"Kegiatan","TR":"Etkinlikler","PT-PT":"Events"},{"EN":"Humanitarian OSM","DE":"Humanitarian OSM","ES":"OSM Humanitario","FR":"OSM et l'humanitaire","CZ":"Humanitární OSM","PT":"OSM Humanitário","RU":"Гуманитарный OSM","JP":"OSM人道支援","ID":"OSM untuk Kemanusiaann","TR":"İnsani OSM","PT-PT":"Humanitarian OSM"},{"EN":"Maps","DE":"Karten","ES":"Mapas","FR":"Cartes","CZ":"Mapy","PT":"Mapas","RU":"Карты","JP":"地図","ID":"Peta","TR":"Haritalar","PT-PT":"Maps"},{"EN":"switch2OSM","DE":"switch2OSM","ES":"switch2OSM","FR":"switch2OSM","CZ":"switch2OSM","PT":"switch2OSM","RU":"switch2OSM","JP":"switch2OSM","ID":"switch2OSM","TR":"switch2OSM","PT-PT":"switch2OSM"},{"EN":"Open Data","DE":"Open-Data","ES":"Datos Abiertos","FR":"Ouverture des données","CZ":"Otevřená Data","PT":"Dados abertos","RU":"Открытые данные","JP":"オープンデータ","ID":"Open Data","TR":"Özgür Veri","PT-PT":"Open Data"},{"EN":"Licences","DE":"Lizenzen","ES":"Licencias","FR":"Licences","CZ":"Licences","PT":"Licenças","RU":"Лицензии","JP":"ライセンス","ID":"Lisensi","TR":"Lisanslar","PT-PT":"Licences"},{"EN":"Software","DE":"Programme","ES":"Software","FR":"Applications","CZ":"Software","PT":"Software","RU":"Программы","JP":"ソフトウェア","ID":"Software","TR":"Yazılım","PT-PT":"Software"},{"EN":"Programming","DE":"Programmierung","ES":"Software","FR":"Applications","CZ":"Programming","PT":"Desenvolvimento","RU":"Программирование","JP":"プログラミング","ID":"Software","TR":"Programlama","PT-PT":"Programming"},{"EN":"Releases","DE":"Releases","ES":"Releases","FR":"Releases","CZ":"Releases","PT":"Releases","RU":"Releases","JP":"Releases","ID":"Releases","TR":"Releases","PT-PT":"Releases"},{"EN":"Did you know …","DE":"Kennst du schon …","ES":"Sabías que …","FR":"Connaissez-vous …","CZ":"Věděli jste …","PT":"Você sabia...","RU":"А вы знаете … ","JP":"…ご存知でしたか？","ID":"Apakah anda tahu …","TR":"Biliyor muydunuz?…","PT-PT":"Did you know …"},{"EN":"Other “geo” things","DE":"Weitere Themen mit Geo-Bezug","ES":"Otras cosas “geo”","FR":"Autres sujets géographiques","CZ":"Ostatní “geo” záležitosti","PT":"Outras coisas “geo”","RU":"Другие “гео” события","JP":"その他の “ジオ” な事柄","ID":"Berita “geo” lainnya","TR":"Diğer “yersel” şeyler","PT-PT":"Other “geo” things"},{"EN":"Upcoming Events","DE":"Wochenvorschau","ES":"Próximos eventos","FR":"Upcoming Events","CZ":"blížící se akce","PT":"Próximos eventos","RU":"Предстоящие события","JP":"今後のイベント","ID":"Upcoming Events","TR":"Gelecek etkinlikler","PT-PT":"Upcoming Events"},{"EN":"--unpublished--","DE":"--unveröffentlicht--","ES":"--unpublished--","FR":"--unpublished--","CZ":"--unpublished--","PT":"--não publicado--","RU":"--не опубликовано--","JP":"--未発表--","ID":"--unpublished--","TR":"--unpublished--","PT-PT":"--unpublished--"}];
   var articleReferences = {"count":0};

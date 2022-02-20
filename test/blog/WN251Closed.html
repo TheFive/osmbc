@@ -57,7 +57,7 @@
               <form class="p-1">
                 <div class="form-group">
                   <input class="input form-control" id="newSetToBeSaved" type="text">
-                  <button class="btn btn-primary" onclick="chooseLanguageSet('','','save')">Add Set</button>
+                  <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
                 </div>
               </form>
             </div>
@@ -413,6 +413,7 @@
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="/javascripts/osmbc_staff.js"></script>
   
 
 
@@ -425,53 +426,18 @@
 <script nonce="Fixed Nonce for Test">
   // Init This Window with jQuery ready Callback
   $(document).ready(init2);
+  window.htmlroot = "";
   function init2() {
     $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
   }
-  function chooseLanguage(number,lang) {
-    var data = {};
-    data[number]=lang;
-    jQuery.post("/language",data, function () {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Problem changing language " +  number + " " + lang);
-      console.error(err);
-    });
-  }
-  function chooseLanguageSet(number,set,action) {
-    var data = {};
-    data.set=set;
-    if (action && action === "save") {
-      data.set = $("input#newSetToBeSaved").val()
-      data.action = action;
-      console.dir(data);
-    }
-     if (action && action === "delete") {
-      data.action = action;
-      console.dir(data);
-    }
-    jQuery.post("/languageset",data, function () {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Problem changing language set" +  number + " " + lang);
-      console.error(err);
-    });
-  }
-  function setUserConfig(options) {
-    jQuery.post("/setuserconfig/",options, function (data) {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Trouble saveing User Config");
-      console.error(err);
-    });
-  }   
+  
+  
+  
   
 </script>
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
-<script src="/javascripts/osmbc_staff.js"></script>
 <script nonce="Fixed Nonce for Test">
   var openEditor = null;
-  htmlroot = "";
   
   window.onload = function () {
   

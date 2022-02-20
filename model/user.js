@@ -431,10 +431,11 @@ User.prototype.saveLanguageSet = function saveLanguageSet(setName, callback) {
     this.languageSets = {};
   }
   this.languageSets[setName] = this.langArray;
+  this.languageSet = setName;
   this.save(callback);
 };
 
-User.prototype.deleteLanguageSet = function saveLanguageSet(setName, callback) {
+User.prototype.deleteLanguageSet = function deleteLanguageSet(setName, callback) {
   debug("User.prototype.saveLanguageSet");
   if (typeof this.languageSets === "undefined") {
     this.languageSets = {};
