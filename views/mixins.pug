@@ -354,9 +354,14 @@ mixin deleteLangSet
 
 
 mixin langMenu(size)
-  if (layout.user.languageSet)
+  - const u = layout.user
+  if (u.languageSet)
     li.dropdown.nav-item
-      a.nav-link.dropdown-toggle(id="languageSetMenu", href='#',  data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=layout.user.languageSet
+      a.nav-link.dropdown-toggle(id="languageSetMenu", href='#',  data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
+        span.badge.badge-pill.badge-pill.osmbcbadge-lang=u.getLang(0)
+        if (u.getLang(1))
+          span.badge.badge-pill.osmbcbadge-lang2=u.getLang(1)
+        span.p-1=layout.user.languageSet
       div.dropdown-menu(aria-labelledby="languageSetMenu")
         +langSetDropdownList(layout.user.getLanguageSets())
         div.dropdown-divider
@@ -365,7 +370,6 @@ mixin langMenu(size)
 
 
   else
-    - const u = layout.user
     - let languages = layout.activeLanguages.slice()
     - let i = 0
     - let choosenLangs = []
