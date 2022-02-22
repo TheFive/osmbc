@@ -407,8 +407,8 @@ User.prototype.getNotificationStatus = function getNotificationStatus(channel, t
 User.prototype.getLanguages = function getLanguages() {
   debug("User.prototype.getLanguages");
   if (this.languageSet && this.languageSet !== "") {
-    if (this.languages && this.languages[this.languageSet]) {
-      return this.languages[this.languageSet];
+    if (this.languageSets && this.languageSets[this.languageSet]) {
+      return this.languageSets[this.languageSet];
     }
     return language.getLid();
   }
