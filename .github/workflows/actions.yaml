@@ -3,10 +3,10 @@ on:
   push:
     branches:
       - feature/github_workflow
+      - develop
   pull_request:
     branches:
       - master
-      - develop
 jobs:
   build:
     runs-on: ${{ matrix.operating-system }}
