@@ -642,34 +642,37 @@ function setNoTranslation() {
 
 
 
-function translate(langFrom, langTo, service) {
-  $(".translate" + langFrom + langTo).addClass("hidden");
-  $(".translateWait" + langFrom + langTo).removeClass("hidden");
-  const from =  langFrom.toLowerCase();
-  const to = langTo.toLowerCase();
-  let originalText = document.getElementById("preview" + langFrom).innerText;
-
-  if (service === "deeplPro" || service === "bingPro" || service === "copy") {
-    originalText = document.getElementById("markdown" + langFrom).value;
-  }
-
-  if (service !== "deepl") {
-    jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
-      console.info("Translation received");
-      // data = data.replace(/] \(/g, "](");
+function translate(langFrom, langToParam, service) {
+  if (!Array.isArray(langToParam)) langToParam = [langToParam];
+  console.dir(langToParam);
+  langToParam.forEach(function(langTo) {
+    console.dir("translate from " + langFrom + " to " + langTo);
+    $(".translate" + langFrom + langTo).addClass("hidden");
+    $(".translateWait" + langFrom + langTo).removeClass("hidden");
+    const from =  langFrom.toLowerCase();
+    const to = langTo.toLowerCase();
+    let originalText = document.getElementById("preview" + langFrom).innerText;
+    if (service === "deeplPro" || service === "bingPro" || service === "copy") {
+      originalText = document.getElementById("markdown" + langFrom).value;
+    }
+    if (service !== "deepl") {
+      jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
+        console.info("Translation received");
+        // data = data.replace(/] \(/g, "](");
+        $(".translateWait" + langFrom + langTo).addClass("hidden");
+        $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
+        $("#markdown" + langTo).val(data).trigger("change");
+      }).fail(function (err) {
+        console.error("Translation failed");
+        console.error(err);
+        $(".translateWait" + langFrom + langTo).addClass("hidden");
+        $(".translateError" + langFrom + langTo).removeClass("hidden");
+      });
+    } else {
+      // service is deepl unpaid, just open the window
+      window.open("https://www.deepl.com/translator#" + langFrom + "/" + langTo + "/" + originalText, "_blank");
       $(".translateWait" + langFrom + langTo).addClass("hidden");
       $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
-      $("#markdown" + langTo).val(data).trigger("change");
-    }).fail(function (err) {
-      console.error("Translation failed");
-      console.error(err);
-      $(".translateWait" + langFrom + langTo).addClass("hidden");
-      $(".translateError" + langFrom + langTo).removeClass("hidden");
-    });
-  } else {
-    // service is deepl unpaid, just open the window
-    window.open("https://www.deepl.com/translator#" + langFrom + "/" + langTo + "/" + originalText, "_blank");
-    $(".translateWait" + langFrom + langTo).addClass("hidden");
-    $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
-  }
+    }
+  });
 }

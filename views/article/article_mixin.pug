@@ -114,7 +114,8 @@ mixin articleTranslateMenu(langFrom,langTo,service)
   if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
     a.dropdown-item(
         class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
-        onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
+        
+        onClick =`window.translate('${langFrom}',${JSON.stringify(langTo)},'${service}');return false;`
         )="Translate " + langFrom+  "->" +langTo
     a.dropdown-item.bg-warning.d-none(class="translateWait" + langFrom + langTo)=" Please Wait"
     a.dropdown-item.bg-danger.d-none(class="translateError" + langFrom + langTo)="Translate " + langFrom+  "->" +langTo +" "
@@ -137,9 +138,13 @@ mixin translationMenu
           - for ( i=0;layout.user.getLang(i);i++) {list.push(layout.user.getLang(i));}
           - let nothingToTranslate = true
           each a in list
+            - all = []
             each b in list
               if (a!==b && a!== null && b!== null)
+                - all.push(b);
                 +articleTranslateMenu(a, b, tService)
+            if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))    
+              +articleTranslateMenu(a, all, tService)
                 
 
 
