@@ -113,10 +113,9 @@ mixin markdownWithPreview(lang)
 mixin articleTranslateMenu(langFrom,langTo,service)
   if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
     a.dropdown-item(
-        class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
-        
+        class="translate" + langFrom + langTo name = "translate" + langFrom + langTo
         onClick =`window.translate('${langFrom}',${JSON.stringify(langTo)},'${service}');return false;`
-        )="Translate " + langFrom+  "->" +langTo
+        )="Translate " + langFrom +  "->" + langTo
     a.dropdown-item.bg-warning.d-none(class="translateWait" + langFrom + langTo)=" Please Wait"
     a.dropdown-item.bg-danger.d-none(class="translateError" + langFrom + langTo)="Translate " + langFrom+  "->" +langTo +" "
         i.fa.fa-times
@@ -128,7 +127,7 @@ mixin translationMenu
   - let emptyMenu = true
   li.dropdown.navbar-item#translation.hidden-xs
     a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
-    ul.dropdown-menu(aria-labelledby="articleTranslateMenu")
+    ul.dropdown-menu#articleTranslationDropdown(aria-labelledby="articleTranslateMenu" style="overflow-y: auto;")
       - let tsList = []
       - if (layout.user.translationServices && Array.isArray(layout.user.translationServices)) { tsList = layout.user.translationServices }
       each tService in tsList
@@ -140,11 +139,13 @@ mixin translationMenu
           each a in list
             - all = []
             each b in list
-              if (a!==b && a!== null && b!== null)
-                - all.push(b);
-                +articleTranslateMenu(a, b, tService)
-            if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))    
-              +articleTranslateMenu(a, all, tService)
+              if (a !== b && a !== null && b !== null)
+                if (article["markdown" + a] && !article["markdown" + b] && article.isChangeAllowed("markdown" + b))
+                  - all.push(b);
+                  +articleTranslateMenu(a, b, tService)
+            if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))  
+              if (all.length > 1)  
+                +articleTranslateMenu(a, all, tService)
                 
 
 
@@ -182,3 +183,7 @@ block append scripts_to_execute
     var articleReferences = !{JSON.stringify(articleReferences)};
     var noCategorie = "no categorie";
     if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
+    jQuery('#translation').on('show.bs.dropdown', function () {
+      jQuery('#articleTranslationDropdown').css('max-height', ($(window).height() - $('#articleTranslationDropdown').offset().top) -$('#fixedNavbar').height() + 'px');
+    })
+

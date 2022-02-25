@@ -12,7 +12,7 @@
   </head>
   <body>
     <!-- Fixed navbar-->
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top">
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
       <ul class="navbar-nav mr-auto"></ul>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -22,7 +22,7 @@
           <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge badge-pill osmbcbadge-user">1</span></a></li>
           <li class="navbar-item active"><a class="nav-link" id="myArticles" href="/osmbc.html">My Articles</a></li>
           <li class="dropdown navbar-item hidden-xs" id="translation"><a class="nav-link dropdown-toggle" id="articleTranslateMenu" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Translate</a>
-            <ul class="dropdown-menu" aria-labelledby="articleTranslateMenu">
+            <ul class="dropdown-menu" id="articleTranslationDropdown" aria-labelledby="articleTranslateMenu" style="overflow-y: auto;">
               <div class="dropdown-divider"></div><a class="dropdown-item" onclick="location.href='/usert/2';">Configure your Translation services</a>
             </ul>
           </li>
@@ -305,4 +305,7 @@ Use @OSMUser to address any special editor."></textarea>
   var articleReferences = {"count":0};
   var noCategorie = "no categorie";
   if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
+  jQuery('#translation').on('show.bs.dropdown', function () {
+    jQuery('#articleTranslationDropdown').css('max-height', ($(window).height() - $('#articleTranslationDropdown').offset().top) -$('#fixedNavbar').height() + 'px');
+  })
 </script></body></html>
