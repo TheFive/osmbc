@@ -644,9 +644,7 @@ function setNoTranslation() {
 
 function translate(langFrom, langToParam, service) {
   if (!Array.isArray(langToParam)) langToParam = [langToParam];
-  console.dir(langToParam);
   langToParam.forEach(function(langTo) {
-    console.dir("translate from " + langFrom + " to " + langTo);
     $(".translate" + langFrom + langTo).addClass("hidden");
     $(".translateWait" + langFrom + langTo).removeClass("hidden");
     const from =  langFrom.toLowerCase();
@@ -657,14 +655,11 @@ function translate(langFrom, langToParam, service) {
     }
     if (service !== "deepl") {
       jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
-        console.info("Translation received");
         // data = data.replace(/] \(/g, "](");
         $(".translateWait" + langFrom + langTo).addClass("hidden");
         $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
         $("#markdown" + langTo).val(data).trigger("change");
-      }).fail(function (err) {
-        console.error("Translation failed");
-        console.error(err);
+      }).fail(function () {
         $(".translateWait" + langFrom + langTo).addClass("hidden");
         $(".translateError" + langFrom + langTo).removeClass("hidden");
       });

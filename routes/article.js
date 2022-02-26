@@ -37,7 +37,7 @@ const auth          = require("../routes/auth.js");
 require("jstransformer")(require("jstransformer-markdown-it"));
 
 
-const request = require("request");
+const axios = require("axios");
 
 
 const userAgent = config.getValue("User-Agent", { mustExist: true });
@@ -877,13 +877,13 @@ function urlExist(req, res) {
         result[url] = "OK";
         return callback();
       }
-      request.get(url, { headers: { "User-Agent": userAgent } }, function(err, response) {
-        if (!err && response.statusCode < 300) {
-          linkCache.set(url, "OK");
-          result[url] = "OK";
-          return callback();
-        } else if (!err && response.statusCode >= 300) {
-          result[url] = response.statusCode;
+      axios.get(encodeURI(url), { headers: { "User-Agent": userAgent } }).then(function(response) {
+        linkCache.set(url, "OK");
+        result[url] = "OK";
+        return callback();
+      }).catch(function(err) {
+        if (err && err.status >= 300) {
+          result[url] = err.status;
           return callback();
         } else {
           let m = "NOK";

@@ -506,8 +506,6 @@ User.prototype.getLang = function getLang(i) {
 
 User.prototype.getTranslations = function getTranslations() {
   const lConfig = this.getLanguageConfig();
-  console.dir("...................");
-  console.dir(lConfig);
   const result = [...(lConfig.translationServices ?? [])];
   const onTop = lConfig.translationServicesMany ?? [];
   onTop.forEach(function (item) {
@@ -519,9 +517,6 @@ User.prototype.getTranslations = function getTranslations() {
 User.prototype.useOneTranslation = function useOneTranslation(service) {
   const lConfig = this.getLanguageConfig();
   const result = lConfig.translationServices ?? [];
-  console.dir(service);
-  console.dir(result);
-  console.dir(result.indexOf(service) >= 0);
   return (result.indexOf(service) >= 0);
 };
 
