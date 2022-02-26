@@ -130,14 +130,24 @@
             <label class="col d-none d-md-block form-text">Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.</label>
           </div>
           <div class="row mb-3">
-            <label class="col col-form-label" for="translationServices">Translation Services Used</label>
+            <label class="col col-form-label" for="translationServices">Translation Services Used (One to One)</label>
             <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="translationServices" multiple="multiple">
               <option id="translationServices_bingPro" value="bingPro">Microsoft Translator</option>
               <option id="translationServices_deeplPro" value="deeplPro">Deepl Translator API</option>
               <option id="translationServices_deepl" value="deepl">DeeplTranslator Online</option>
               <option id="translationServices_copy" value="copy">Simple Text Copy</option>
             </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-3" aria-haspopup="listbox" aria-expanded="false" title="Nothing selected"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Nothing selected</div></div> </div></button><div class="dropdown-menu "><div class="inner show" role="listbox" id="bs-select-3" tabindex="-1" aria-multiselectable="true"><ul class="dropdown-menu inner show" role="presentation"></ul></div></div></div>
-            <label class="col d-none d-md-block form-text">Please choose your translation services you would like to use.</label>
+            <label class="col d-none d-md-block form-text">Please choose your translation services you would like to use. (one language to one language)</label>
+          </div>
+          <div class="row mb-3">
+            <label class="col col-form-label" for="translationServicesMany">Translation Services Used (One to Many)</label>
+            <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="translationServicesMany" multiple="multiple">
+              <option id="translationServicesMany_bingPro" value="bingPro">Microsoft Translator</option>
+              <option id="translationServicesMany_deeplPro" value="deeplPro">Deepl Translator API</option>
+              <option id="translationServicesMany_deepl" value="deepl">DeeplTranslator Online</option>
+              <option id="translationServicesMany_copy" value="copy">Simple Text Copy</option>
+            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-4" aria-haspopup="listbox" aria-expanded="false" title="Nothing selected"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Nothing selected</div></div> </div></button><div class="dropdown-menu "><div class="inner show" role="listbox" id="bs-select-4" tabindex="-1" aria-multiselectable="true"><ul class="dropdown-menu inner show" role="presentation"></ul></div></div></div>
+            <label class="col d-none d-md-block form-text">Please choose your translation services you would like to use. one language to many open languages</label>
           </div>
           <div class="row mb-3">
             <label class="col col-form-label" for="SlackUser">Mattermost User</label>
@@ -235,13 +245,21 @@
                 <tr>
                   <td><a href="/changes/6">6</a></td>
                   <td>TheFive</td>
+                  <td>translationServicesMany</td>
+                  <td></td>
+                  <td>[]</td>
+                  <td>a few seconds ago</td>
+                </tr>
+                <tr>
+                  <td><a href="/changes/7">7</a></td>
+                  <td>TheFive</td>
                   <td>mailCommentGeneral</td>
                   <td></td>
                   <td>false</td>
                   <td>a few seconds ago</td>
                 </tr>
                 <tr>
-                  <td><a href="/changes/7">7</a></td>
+                  <td><a href="/changes/8">8</a></td>
                   <td>TheFive</td>
                   <td>access</td>
                   <td></td>

@@ -128,8 +128,7 @@ mixin translationMenu
   li.dropdown.navbar-item#translation.hidden-xs
     a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
     ul.dropdown-menu#articleTranslationDropdown(aria-labelledby="articleTranslateMenu" style="overflow-y: auto;")
-      - let tsList = []
-      - if (layout.user.translationServices && Array.isArray(layout.user.translationServices)) { tsList = layout.user.translationServices }
+      - let tsList = layout.user.getTranslations()
       each tService in tsList
         - emptyMenu = false
         li.dropdown-header="Use " + tService +":"
@@ -142,10 +141,12 @@ mixin translationMenu
               if (a !== b && a !== null && b !== null)
                 if (article["markdown" + a] && !article["markdown" + b] && article.isChangeAllowed("markdown" + b))
                   - all.push(b);
-                  +articleTranslateMenu(a, b, tService)
+                  if (layout.user.useOneTranslation(tService))
+                    +articleTranslateMenu(a, b, tService)
             if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))  
-              if (all.length > 1)  
-                +articleTranslateMenu(a, all, tService)
+              if (all.length > 1)
+                if (layout.user.useManyTranslation(tService))  
+                  +articleTranslateMenu(a, all, tService)
                 
 
 

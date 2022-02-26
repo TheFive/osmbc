@@ -219,6 +219,7 @@ describe("router/user", function() {
         language: 'ES',
         languageCount: 'two',
         translationServices: [],
+        translationServicesMany: [],
         mailBlogLanguageStatusChange:  []
       });
     });

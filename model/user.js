@@ -15,7 +15,6 @@ const request        = require("request");
 const logger         = require("../config.js").logger;
 const animated       = require("animated-gif-detector");
 const HttpError      = require("standard-http-error");
-const language      = require("../model/language.js");
 
 // generate an user object, use Prototpye
 // to prototype some fields
@@ -404,15 +403,30 @@ User.prototype.getNotificationStatus = function getNotificationStatus(channel, t
   return this.notification[channel][type];
 };
 
-User.prototype.getLanguages = function getLanguages() {
-  debug("User.prototype.getLanguages");
+User.prototype.getLanguageConfig = function getLanguageConfig() {
+  debug("User.prototype.getLanguageConfig");
   if (this.languageSet && this.languageSet !== "") {
     if (this.languageSets && this.languageSets[this.languageSet]) {
-      return this.languageSets[this.languageSet];
+      if (!Array.isArray(this.languageSets[this.languageSet])) {
+        return this.languageSets[this.languageSet];
+      }
+      return {
+        languages: this.languageSets[this.languageSet],
+        translationServices: this.translationServices,
+        translationServicesMany: this.translationServicesMany
+      };
     }
-    return language.getLid();
   }
-  return this.langArray;
+  return {
+    languages: this.langArray,
+    translationServices: this.translationServices,
+    translationServicesMany: this.translationServicesMany
+  };
+};
+
+User.prototype.getLanguages = function getLanguages() {
+  debug("User.prototype.getLanguages");
+  return this.getLanguageConfig().languages;
 };
 
 User.prototype.getLanguageSets = function getLanguages() {
@@ -421,7 +435,6 @@ User.prototype.getLanguageSets = function getLanguages() {
   for (const set in this.languageSets ?? {}) {
     languageSets.push(set);
   }
-
   return languageSets;
 };
 
@@ -430,7 +443,11 @@ User.prototype.saveLanguageSet = function saveLanguageSet(setName, callback) {
   if (typeof this.languageSets === "undefined") {
     this.languageSets = {};
   }
-  this.languageSets[setName] = this.langArray;
+  this.languageSets[setName] = {
+    languages: this.langArray,
+    translationServices: this.translationServices,
+    translationServicesMany: this.translationServicesMany
+  };
   this.languageSet = setName;
   this.save(callback);
 };
@@ -485,6 +502,33 @@ User.prototype.getLang = function getLang(i) {
     if (this.getLang4()) this.langArray[3] = this.getLang4();
   }
   return (this.langArray[i]);
+};
+
+User.prototype.getTranslations = function getTranslations() {
+  const lConfig = this.getLanguageConfig();
+  console.dir("...................");
+  console.dir(lConfig);
+  const result = [...(lConfig.translationServices ?? [])];
+  const onTop = lConfig.translationServicesMany ?? [];
+  onTop.forEach(function (item) {
+    if (result.indexOf(item) < 0) result.push(item);
+  });
+  return result;
+};
+
+User.prototype.useOneTranslation = function useOneTranslation(service) {
+  const lConfig = this.getLanguageConfig();
+  const result = lConfig.translationServices ?? [];
+  console.dir(service);
+  console.dir(result);
+  console.dir(result.indexOf(service) >= 0);
+  return (result.indexOf(service) >= 0);
+};
+
+User.prototype.useManyTranslation = function useManyTranslation(service) {
+  const lConfig = this.getLanguageConfig();
+  const result = lConfig.translationServicesMany ?? [];
+  return (result.indexOf(service) >= 0);
 };
 
 

@@ -189,6 +189,7 @@ function postUserId(req, res, next) {
     mailNewCollection: req.body.mailNewCollection,
     mailComment: req.body.mailComment,
     translationServices: req.body.translationServices,
+    translationServicesMany: req.body.translationServicesMany,
     languageSetName1: req.body.languageSetName1,
     languageSetName2: req.body.languageSetName2,
     languageSetName3: req.body.languageSetName3,
@@ -209,8 +210,14 @@ function postUserId(req, res, next) {
   if (typeof (changes.translationServices) === "string") {
     changes.translationServices = [changes.translationServices];
   }
+  if (typeof (changes.translationServicesMany) === "string") {
+    changes.translationServicesMany = [changes.translationServicesMany];
+  }
   if (typeof (changes.translationServices) === "undefined") {
     changes.translationServices = [];
+  }
+  if (typeof (changes.translationServicesMany) === "undefined") {
+    changes.translationServicesMany = [];
   }
   if (typeof (changes.mailBlogLanguageStatusChange) === "string") {
     changes.mailBlogLanguageStatusChange = [changes.mailBlogLanguageStatusChange];
