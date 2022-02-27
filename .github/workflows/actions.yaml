@@ -36,6 +36,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install
+      - name: Sleep for 3s
+        uses: juliangruber/sleep-action@v1
+        with:
+          time: 3s
       - name: Run testing on github
         run: npm test
         env:

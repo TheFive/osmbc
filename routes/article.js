@@ -7,7 +7,7 @@ const markdown    = require("markdown-it")();
 const debug       = require("debug")("OSMBC:routes:article");
 const path        = require("path");
 const HttpStatus  = require("http-status-codes");
-/*jshint -W079 */
+/* jshint -W079 */
 const URL         = require("url").URL;
 
 const router      = express.Router();
@@ -885,7 +885,7 @@ function urlExist(req, res) {
       // check wether url is valid
       try {
         // eslint-disable-next-line no-unused-vars
-        const testurl = new URL(url);  // jshint ignore:line
+        const testurl = new URL(url); // jshint ignore:line
       } catch (error) {
         result[url] = `Invalid URI "${url}"`;
         return callback();
