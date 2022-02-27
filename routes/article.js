@@ -7,7 +7,8 @@ const markdown    = require("markdown-it")();
 const debug       = require("debug")("OSMBC:routes:article");
 const path        = require("path");
 const HttpStatus  = require("http-status-codes");
-
+/*jshint -W079 */
+const URL         = require("url").URL;
 
 const router      = express.Router();
 const slackrouter = express.Router();
@@ -877,13 +878,26 @@ function urlExist(req, res) {
         result[url] = "OK";
         return callback();
       }
-      axios.get(encodeURI(url), { headers: { "User-Agent": userAgent } }).then(function(response) {
+      if (url.startsWith("https://translate.google.de")) {
+        result[url] = "OK";
+        return callback();
+      }
+      // check wether url is valid
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const testurl = new URL(url);  // jshint ignore:line
+      } catch (error) {
+        result[url] = `Invalid URI "${url}"`;
+        return callback();
+      }
+
+      axios.get(encodeURI(url), { headers: { "User-Agent": userAgent } }).then(function() {
         linkCache.set(url, "OK");
         result[url] = "OK";
         return callback();
       }).catch(function(err) {
-        if (err && err.status >= 300) {
-          result[url] = err.status;
+        if (err.response && err.response.status >= 300) {
+          result[url] = err.response.status;
           return callback();
         } else {
           let m = "NOK";
