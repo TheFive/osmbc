@@ -5,6 +5,7 @@ const async    = require("../util/async_wrap.js");
 const language   = require("../model/language.js");
 const util     = require("../util/util.js");
 const HttpStatus = require("http-status-codes");
+const config = require("../config.js");
 
 const markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
@@ -421,6 +422,7 @@ function autoCloseBlog(callback) {
   debug("autoCloseBlog");
   // Do not run this function twice !
   if (_autoCloseRunning > 0) return callback();
+  if (config.getValue("AutoCreate") === "false") return callback();
   _autoCloseRunning = _autoCloseRunning + 1;
 
 
