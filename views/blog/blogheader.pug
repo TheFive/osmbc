@@ -128,7 +128,7 @@ mixin translationBlogMenu
       a.nav-link.dropdown-toggle#translateMenu(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") 
         | Translate Blog
       div.dropdown-menu(aria-labelledby="translateMenu")
-        each tService in translationServices
+        each tService in layout.user.getTranslations()
           a.dropdown-header="Use " + tService +":"
             - list = [layout.user.getLang(0), layout.user.getLang(1)]
             each a in list

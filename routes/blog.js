@@ -424,13 +424,6 @@ function renderBlogTab(req, res, next) {
       return;
     }
 
-    const translationServices = [];
-    if (translator.deeplPro.active()) {
-      translationServices.push("deeplPro");
-    }
-    if (translator.bingPro.active()) {
-      translationServices.push("bing");
-    }
     const apiAuthors = [];
     apiAuthors.push(translator.deeplPro.user);
     apiAuthors.push(translator.bingPro.user);
@@ -455,7 +448,6 @@ function renderBlogTab(req, res, next) {
       reviewScripts: reviewScripts,
       util: util,
       categories: blog.getCategories(),
-      translationServices: translationServices,
       apiAuthors: apiAuthors
     });
   }

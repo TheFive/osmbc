@@ -165,7 +165,7 @@ describe("uc/blog", function() {
     beforeEach(async function() {
 
       await testutil.importData("blog/DataWN290.json");
-      await userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN",email:"a@b.c"});
+      await userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN",email:"a@b.c",translationServices: ["deeplPro"]});
       browser = await testutil.getNewBrowser("TheFive");
     });
     describe("Blog Display", function() {
