@@ -46,7 +46,7 @@
     "markdown-it": "12.3.x",
     "markdown-it-imsize": "2.0.x",
     "markdown-it-sup": "1.0.x",
-    "moment": "2.29.x",
+    "moment": "2.29.2",
     "moment-timezone": "0.5.x",
     "morgan": "1.10.x",
     "mstranslator": "3.0.x",
