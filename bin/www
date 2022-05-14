@@ -4,34 +4,34 @@
  * Module dependencies.
  */
 
-var http    = require("http");
-var https   = require("https");
+const http    = require("http");
+const https   = require("https");
 const fs    = require("fs");
 
-var async   = require("async");
-var debug   = require("debug")("OSMBC:server");
+const async   = require("async");
+const debug   = require("debug")("OSMBC:server");
 
-var stoppable = require("stoppable");
-
-
-var app     = require("../app");
-
-var config  = require("../config.js");
-var logger  = require("../config.js").logger;
+const stoppable = require("stoppable");
 
 
-var configModule = require("../model/config.js");
-var blogModule = require("../model/blog.js");
-var userModule = require("../model/user.js");
-var messageCenter = require("../notification/messageCenter.js");
-var mailReceiver  = require("../notification/mailReceiver.js");
-var slackReceiver  = require("../notification/slackReceiver.js");
+const app     = require("../app");
+
+const config  = require("../config.js");
+const logger  = require("../config.js").logger;
+
+
+const configModule = require("../model/config.js");
+const blogModule = require("../model/blog.js");
+const userModule = require("../model/user.js");
+const messageCenter = require("../notification/messageCenter.js");
+const mailReceiver  = require("../notification/mailReceiver.js");
+const slackReceiver  = require("../notification/slackReceiver.js");
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || config.getServerPort());
+const port = normalizePort(process.env.PORT || config.getServerPort());
 app.set("port", port);
 
 
@@ -54,7 +54,7 @@ if (config.getServerKey()) {
 }
 
 
-var server = stoppable(httpServer.createServer(options, app));
+const server = stoppable(httpServer.createServer(options, app));
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -68,27 +68,26 @@ function initialiseServer() {
     startMailReceiver: startMailReceiver,
     startSlackReceiver: ["configModule", startSlackReceiver]
   },
-    function(err){
-      if (err) {
-        logger.error(err);
-        process.exit(1);
-        return;
-      }
-      server.listen(port);
-      server.on('error', onError);
-      server.on('listening', onListening);
-      logger.info("Server Listening on port "+port);
-      const used = process.memoryUsage();
-      for (const key in used) {
-        logger.info(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
-}
-  })
+  function(err) {
+    if (err) {
+      logger.error(err);
+      process.exit(1);
+    }
+    server.listen(port);
+    server.on("error", onError);
+    server.on("listening", onListening);
+    logger.info("Server Listening on port " + port);
+    const used = process.memoryUsage();
+    for (const key in used) {
+      logger.info(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
+    }
+  });
 }
 
-process.on('SIGINT', function() {
-  logger.info('Received a stoprequest (SIGINT)');
+process.on("SIGINT", function() {
+  logger.info("Received a stoprequest (SIGINT)");
   server.stop();
-  process.exit()
+  process.exit();
 });
 
 
@@ -98,9 +97,9 @@ initialiseServer();
 // Initialise Mail Module with all users
 function startMailReceiver(callback) {
   debug("startMailReceiver");
-  userModule.find({access:"full"},function initUsers(err,result) {
+  userModule.find({ access: "IN('guest','full')" }, function initUsers(err, result) {
     if (err) {
-      return callback(new Error("Error during User Initialising for Mail "+err.message));
+      return callback(new Error("Error during User Initialising for Mail " + err.message));
     }
     mailReceiver.initialise(result);
     logger.info("Mail Receiver initialised.");
@@ -108,7 +107,7 @@ function startMailReceiver(callback) {
   });
 }
 
-function startSlackReceiver(param,callback) {
+function startSlackReceiver(param, callback) {
   debug("startSlackReceiver");
 
   slackReceiver.initialise(callback);
@@ -136,7 +135,7 @@ function startBlogTimer(param, callback) {
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -156,24 +155,22 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
+  if (error.syscall !== "listen") {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  const bind = typeof port === "string"
+    ? "Pipe " + port
+    : "Port " + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-    case 'EACCES':
-      logger.error(bind + ' requires elevated privileges');
+    case "EACCES":
+      logger.error(bind + " requires elevated privileges");
       process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      logger.error(bind + ' is already in use');
+    case "EADDRINUSE":
+      logger.error(bind + " is already in use");
       process.exit(1);
-      break;
     default:
       throw error;
   }
@@ -184,9 +181,9 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  const addr = server.address();
+  const bind = typeof addr === "string"
+    ? "pipe " + addr
+    : "port " + addr.port;
+  debug("Listening on " + bind);
 }
