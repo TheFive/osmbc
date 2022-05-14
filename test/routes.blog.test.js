@@ -125,7 +125,7 @@ describe("routes/blog", function() {
     it("should allow full user", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
       body.should.containEql("<h2>WN333</h2>");
-      body.should.containEql("<div class=\"col-md-2\">Categories</div>");
+      body.should.containEql("<div class=\"col\">Categories</div>");
     });
     it("should deny denied access user",
       checkUrlWithJar ({
@@ -429,7 +429,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/WN333";
     it("should get the blog", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql("<h2><span class=\"hidden-xs\">Weekly </span>WN333<span class=\"hidden-xs\"> (edit)</span></h2>");
+      body.should.containEql('<h2><span class="d-none d-md-block">Weekly </span>WN333<span class="d-none d-md-block"> (edit)</span></h2>');
     });
     it("should deny denied access user",
       checkUrlWithJar ({
@@ -556,7 +556,7 @@ describe("routes/blog", function() {
     let url = baseLink + "/blog/WN333/full";
     it("should get full tab", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql("<h2><span class=\"hidden-xs\">Weekly </span>WN333<span class=\"hidden-xs\"> (edit)</span></h2>");
+      body.should.containEql('<h2><span class="d-none d-md-block">Weekly </span>WN333<span class="d-none d-md-block"> (edit)</span></h2>');
     });
 
     it("should deny denied access user",

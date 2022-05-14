@@ -2,9 +2,10 @@
 // Exported Functions and prototypes are defined at end of file
 
 const async    = require("../util/async_wrap.js");
-const config   = require("../config.js");
+const language   = require("../model/language.js");
 const util     = require("../util/util.js");
 const HttpStatus = require("http-status-codes");
+const config = require("../config.js");
 
 const markdown = require("markdown-it")()
   .use(require("markdown-it-sup"))
@@ -421,6 +422,7 @@ function autoCloseBlog(callback) {
   debug("autoCloseBlog");
   // Do not run this function twice !
   if (_autoCloseRunning > 0) return callback();
+  if (config.getValue("AutoCreate") === "false") return callback();
   _autoCloseRunning = _autoCloseRunning + 1;
 
 
@@ -458,10 +460,14 @@ function autoCloseBlog(callback) {
 function convertLogsToTeamString(logs, lang, users) {
   debug("convertLogsToTeamString");
   const editors = [];
+  const apiEditors = [];
+  for (const f in translator) {
+    apiEditors.push(translator[f].user);
+  }
   function addEditors(property, min) {
     for (const user in logs[property]) {
       if (logs[property][user] >= min) {
-        if (editors.indexOf(user) < 0) {
+        if (editors.indexOf(user) < 0 && apiEditors.indexOf(user) < 0) {
           editors.push(user);
         }
       }
@@ -694,15 +700,16 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
         const options = { fromLang: fromLang, toLang: toLang, text: source };
 
         if (translator[service] && translator[service].active) {
+          const fakeUser = { OSMUser: translator[service].user };
           translator[service].translate(options, function(err, text) {
-            if (err) return cb2(err);
+            if (err) {
+              return article.addCommentFunction(fakeUser, "Problem with translation", cb2);
+            }
             const data = {};
             data["markdown" + toLang] = text;
             data.old = {};
             data.old["markdown" + toLang] = "";
             debug("copyArticles.forEach.setAndSave");
-            const fakeUser = { OSMUser: translator[service].user };
-
             article.setAndSave(fakeUser, data, cb2);
           });
         } else return cb2();
@@ -859,9 +866,7 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
     assert(Array.isArray(result));
 
 
-    for (i = 0; i < config.getLanguages().length; i++) {
-      const l = config.getLanguages()[i];
-
+    for (const l in language.getLanguages()) {
       self._countUneditedMarkdown[l] = 0;
       self._countExpectedMarkdown[l] = 0;
       self._countNoTranslateMarkdown[l] = 0;
@@ -925,11 +930,10 @@ Blog.prototype.calculateDerived = function calculateDerived(user, callback) {
 
 function translateCategories(cat) {
   debug("translateCategories");
-  const languages = config.getLanguages();
+  const languages = language.getLanguages();
   const categoryTranslation = configModule.getConfig("categorytranslation");
   for (let i = 0; i < cat.length; i++) {
-    for (let l = 0; l < languages.length; l++) {
-      const lang = languages[l];
+    for (const lang in languages) {
       if (cat[i][lang]) continue;
       if (categoryTranslation[cat[i].EN]) {
         cat[i][lang] = categoryTranslation[cat[i].EN][lang];

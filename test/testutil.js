@@ -70,8 +70,13 @@ exports.findJSON = function findJSON(table, obj, cb) {
 // the function requires the test environment
 
 exports.clearDB = function clearDB(done) {
-  should(config.env).equal("test");
+  
   function _clearDB(done) {
+    if (config.env !== "test") {
+      console.error("Running Tests with but environment is: ",config.env);
+      console.error("Stopping to rescue database");
+      process.exit(1);
+    }
     messageCenter.initialise();
     should.exist(messageCenter.global);
 
@@ -425,13 +430,21 @@ exports.stopServer = function stopServer(callback) {
 };
 
 exports.getBrowser = function getBrowser() {
-  if (!browser) browser = new Browser({ site: "http://localhost:" + config.getServerPort() });
+  if (!browser) {
+      browser = new Browser({ site: "http://localhost:" + config.getServerPort() });
+    browser.on("loaded",function() {
+      browser.evaluate("window").DOMParser = require("xmldom").DOMParser;
+    });
+  }
   return browser;
 };
 
 exports.getNewBrowser = function getNewBrowser(userString) {
   return new Promise((resolve) => {
     let browser = new Browser({ maxWait: 120000, site: "http://localhost:" + config.getServerPort() });
+    browser.on("loaded",function() {
+      browser.evaluate("window").DOMParser = require("xmldom").DOMParser;
+    });
     if (!userString) return resolve(browser);
     should.exist(userString);
     fakeNextPassportLogin(userString);
@@ -534,7 +547,7 @@ Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, giv
   // do easier fix the test.
   fs.writeFileSync(actualFile, string, "UTF8");
   if (stopOnError) {
-    should(string).eql(expected, "HTML File " + name + " is different.");
+    should(false).eql(true, "HTML File " + name + " is different.");
   } else {
     if (string !== expected) {
       errorList.push("HTML File " + name + " is different.");

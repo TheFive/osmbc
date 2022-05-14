@@ -6,6 +6,8 @@ const async    = require("../util/async_wrap.js");
 const assert   = require("assert");
 const debug    = require("debug")("OSMBC:routes:blog");
 const config   = require("../config.js");
+const language = require("../model/language.js");
+
 const util     = require("../util/util.js");
 const moment   = require("moment");
 const yaml     = require("js-yaml");
@@ -118,8 +120,7 @@ function renderBlogStat(req, res, next) {
           }
         }
       };
-      for (let i = 0; i < config.getLanguages().length; i++) {
-        const lang = config.getLanguages()[i];
+      for (const lang in language.getLanguages()) {
         editors[lang] = [];
         addEditors(lang, "collection", 3);
         addEditors(lang, "markdown" + lang, 2);
@@ -150,7 +151,7 @@ function renderBlogStat(req, res, next) {
       blog: blog,
       editors: editors,
       userMap: userMap,
-      languages: config.getLanguages()
+      languages: language.getLid()
     });
   }
   );
@@ -209,8 +210,8 @@ function renderBlogPreview(req, res, next) {
 
   let lang = req.query.lang;
   const asMarkdown = (req.query.markdown === "true");
-  if (typeof (lang) === "undefined") lang = "DE";
-  if (config.getLanguages().indexOf(lang) < 0) lang = "DE";
+  if (typeof (lang) === "undefined") lang = "EN";
+  if (!language.getLanguages()[lang]) lang = "EN";
 
 
   const returnToUrl = req.session.articleReturnTo;
@@ -237,12 +238,12 @@ function renderBlogPreview(req, res, next) {
     if (err) return next(err);
     if (req.query.download === "true") {
       if (asMarkdown) {
-        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".md");
+        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(language.momentLocale(lang)).format() + ".md");
         res.setHeader("Content-type", "text");
 
         res.end(result.converter, "UTF8");
       } else {
-        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(config.moment_locale(lang)).format() + ".html");
+        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(language.momentLocale(lang)).format() + ".html");
         res.setHeader("Content-type", "text/html");
         res.end(result.converter, "UTF8");
       }
@@ -423,13 +424,6 @@ function renderBlogTab(req, res, next) {
       return;
     }
 
-    const translationServices = [];
-    if (translator.deeplPro.active()) {
-      translationServices.push("deeplPro");
-    }
-    if (translator.bingPro.active()) {
-      translationServices.push("bing");
-    }
     const apiAuthors = [];
     apiAuthors.push(translator.deeplPro.user);
     apiAuthors.push(translator.bingPro.user);
@@ -454,7 +448,6 @@ function renderBlogTab(req, res, next) {
       reviewScripts: reviewScripts,
       util: util,
       categories: blog.getCategories(),
-      translationServices: translationServices,
       apiAuthors: apiAuthors
     });
   }
@@ -518,11 +511,11 @@ function editBlogId(req, res) {
   if (params.edit && params.edit === "false") {
     res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
   }
-  blog._categories_yaml = yaml.dump(blog.categories);
+  blog._categories_yaml = yaml.safeDump(blog.categories);
   res.set("content-type", "text/html");
   let copyLanguageFromAnother = config.getValue("copyLanguageFromAnother");
   if (!copyLanguageFromAnother) copyLanguageFromAnother = {};
-  res.render("editblog", {
+  res.render("blog/blog_edit.pug", {
     layout: res.rendervar.layout,
     blog: blog,
     params: params,

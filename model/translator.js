@@ -4,6 +4,7 @@ const request = require("request");
 const uuidv4 = require("uuid/v4");
 const querystring = require("query-string");
 const axios = require("axios");
+const language = require("../model/language.js");
 
 
 const markdown = require("markdown-it")()
@@ -27,21 +28,14 @@ async function deeplTranslate(url, params) {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       data: query
     });
-
-    if (response.status !== 200) return "Problem with Deepl Translation";
-
     return response.data;
-  } catch (error) {
-    return { message: "caught Problem with Deepl Translation" };
+  } catch (err) {
+    const message = err.message.replaceAll(deeplConfig.authKey, "APIKEY");
+    throw (new Error(message));
   }
 }
 
-function normLanguage(lang) {
-  if (lang === "cz") lang = "cs";
-  if (lang === "jp") lang = "ja";
-  if (lang === "cn") lang = "zh";
-  return lang;
-}
+
 
 
 function escapeRegExp(string) {
@@ -49,7 +43,7 @@ function escapeRegExp(string) {
 }
 
 
-const deeplConfig = config.getValue("DeeplConfig", { mustExist: true });
+const deeplConfig = config.getValue("DeeplProConfig", { mustExist: true });
 
 function translateDeeplPro(options, callback) {
   debug("translateDeeplPro");
@@ -62,8 +56,8 @@ function translateDeeplPro(options, callback) {
   }
 
 
-  const fromLang = normLanguage(options.fromLang);
-  const toLang = normLanguage(options.toLang);
+  const fromLang = language.deeplPro(options.fromLang);
+  const toLang = language.deeplPro(options.toLang);
   const text = options.text;
 
 
@@ -114,7 +108,7 @@ function deeplProActive () {
   return (typeof deeplConfig.authKey === "string");
 }
 
-const subscriptionKey = config.getValue("MS_TranslateApiKey");
+const bingProAuthkey = config.getValue("BingProConfig").authKey;
 
 const msTranslate = {
   translate: function(from, to, text, callback) {
@@ -129,7 +123,7 @@ const msTranslate = {
         textType: "html"
       },
       headers: {
-        "Ocp-Apim-Subscription-Key": subscriptionKey,
+        "Ocp-Apim-Subscription-Key": bingProAuthkey,
         "Content-type": "application/json",
         "X-ClientTraceId": uuidv4().toString()
       },
@@ -138,10 +132,12 @@ const msTranslate = {
       }],
       json: true
     };
-
     request(options, function(err, response, body) {
       if (body && body.error) err = new Error(body.error.message);
-      if (err) return callback(err);
+      if (err) {
+        const message = err.message.replaceAll(bingProAuthkey, "APIKEY");
+        return callback(new Error(message));
+      }
       callback(null, body[0].translations[0].text);
     });
   }
@@ -149,22 +145,19 @@ const msTranslate = {
 
 
 function bingProActive () {
-  return (typeof subscriptionKey === "string");
+  return (typeof bingProAuthkey === "string");
 }
 
 function translateBingPro(options, callback) {
   debug("translateBingPro");
 
-  if (typeof subscriptionKey === "undefined") {
-    return new Error("No Bing Pro Version registered");
+  if (typeof bingProAuthkey === "undefined") {
+    return callback(new Error("No Bing Pro Version registered"));
   }
-
-  const fromLang = normLanguage(options.fromLang);
-  const toLang = normLanguage(options.toLang);
+  const fromLang = language.bingPro(options.fromLang);
+  const toLang = language.bingPro(options.toLang);
   const text = options.text;
-
   const htmltext = markdown.render(text);
-
 
   msTranslate.translate(fromLang, toLang, htmltext, function(err, translation) {
     if (err) return callback(err);
@@ -182,11 +175,17 @@ function translateBingPro(options, callback) {
   });
 }
 
+function translateCopy(options, callback) {
+  debug("translateCopy");
+  return callback(null, options.text);
+}
+
 
 
 module.exports.deeplPro = {};
 module.exports.bingPro = {};
 module.exports.fortestonly = {};
+module.exports.copy = {};
 
 module.exports.deeplPro.translate = translateDeeplPro;
 module.exports.deeplPro.active = deeplProActive;
@@ -197,5 +196,12 @@ module.exports.bingPro.translate = translateBingPro;
 module.exports.bingPro.active = bingProActive;
 module.exports.bingPro.name = "BingPro";
 module.exports.bingPro.user = "Bing API Call";
+
+module.exports.copy.translate = translateCopy;
+module.exports.copy.active = () => { return true; };
+
+module.exports.copy.name = "Copy";
+module.exports.copy.user = "Copy User";
+
 
 module.exports.fortestonly.msTransClient = msTranslate;

@@ -24,9 +24,9 @@ function unloadWindowWarning(event) {
 
 // initialise all callbacks with jQuery
 function init() {
-  const mdRender = window.markdownit();
-  mdRender.use(window.markdownitSup);
-  mdRender.use(window["markdown-it-imsize.js"]);
+  window.mdRender = window.markdownit();
+  window.mdRender.use(window.markdownitSup);
+  window.mdRender.use(window["markdown-it-imsize.js"]);
   $("#linkArea")
     .change(highlightWrongLinks);
   $(".preview")
@@ -81,7 +81,7 @@ function init() {
     .change(FitToContent)
     .keyup(FitToContent)
     .trigger("change");
-  $('[data-toggle="tooltip"]').tooltip();
+  // $('[data-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;
   window.getEventTable = getEventTable;
@@ -93,6 +93,7 @@ function saveButton() {
   }
   if (document.getElementById("comment").value.trim() === "") return save();
 
+  // only save comment, if it is not empty
   const jqForm = $("form#AddComment");
   const url = jqForm.attr("action");
   const toPost = jqForm.serialize();
@@ -160,7 +161,7 @@ function convert(text) {
 
 
   // convert md to html
-  text = window.markdownit().render(text);
+  text = window.mdRender.render(text);
 
 
   // Display as list, this should depend on type
@@ -436,8 +437,8 @@ function onchangeCollection() {
     if (found) continue;
     window.linklist.push(link);
     if (window.articleReferences[link] && (window.articleReferences[link]).length > 0) {
-      result += '<a class="label label-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
-    } else result += '<a class="label label-default" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
+      result += '<a class="badge badge-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
+    } else result += '<a class="badge badge-secondary" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
     result += " " + generateGoogleTranslateLink(link, window.leftLang);
     if (window.rightLang !== "--" && window.rightLang !== "") {
       result += " " + generateGoogleTranslateLink(link, window.rightLang);
@@ -549,9 +550,15 @@ function showModified() {
     }
   });
   $("#saveButton").prop("disabled", !modified);
+  $("#cancelButton").prop("disabled", !modified);
+
   if (modified) {
+    $("#noTranslationButton").removeClass("visible");
+    $("#noTranslationButton").addClass("invisible");
     $(window).on("beforeunload", unloadWindowWarning);
   } else {
+    $("#noTranslationButton").removeClass("invisible");
+    $("#noTranslationButton").addClass("visible");
     $(window).off("beforeunload", unloadWindowWarning);
   }
 }
@@ -564,8 +571,11 @@ function showHideUnpublishReason() {
   if (c === "--unpublished--") hidden = false;
   if (b === "Trash") hidden = false;
 
-  if (hidden) $("#unpublishReasonRow").addClass("hidden");
-  else $("#unpublishReasonRow").removeClass("hidden");
+  if (hidden) {
+    $("#unpublishReasonRow").addClass("d-none");
+  } else {
+    $("#unpublishReasonRow").removeClass("d-none");
+  }
 }
 
 
@@ -624,41 +634,40 @@ function submitAndRedraw(form, redraw) {
 
 
 function setNoTranslation() {
-  /* jshint validthis: true */
-
-  $(".markdownEdit").each(function() {
-    if (this.value === "" && !this.readOnly) this.value = "no translation";
-  });
+  const f = $("#noTranslationForm");
+  if (f.length > 0) {
+    f.submit();
+  }
 }
 
-function translate(langFrom, langTo, service) {
-  $(".translate" + langFrom + langTo).addClass("hidden");
-  $(".translateWait" + langFrom + langTo).removeClass("hidden");
-  const from =  langFrom.toLowerCase();
-  const to = langTo.toLowerCase();
-  let originalText = document.getElementById("preview" + langFrom).innerText;
 
-  if (service === "deeplPro" || service === "bing") {
-    originalText = document.getElementById("markdown" + langFrom).value;
-  }
 
-  if (service !== "deepl") {
-    jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
-      console.info("Translation received");
-      // data = data.replace(/] \(/g, "](");
+function translate(langFrom, langToParam, service) {
+  if (!Array.isArray(langToParam)) langToParam = [langToParam];
+  langToParam.forEach(function(langTo) {
+    $(".translate" + langFrom + langTo).addClass("hidden");
+    $(".translateWait" + langFrom + langTo).removeClass("hidden");
+    const from =  langFrom.toLowerCase();
+    const to = langTo.toLowerCase();
+    let originalText = document.getElementById("preview" + langFrom).innerText;
+    if (service === "deeplPro" || service === "bingPro" || service === "copy") {
+      originalText = document.getElementById("markdown" + langFrom).value;
+    }
+    if (service !== "deepl") {
+      jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
+        // data = data.replace(/] \(/g, "](");
+        $(".translateWait" + langFrom + langTo).addClass("hidden");
+        $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
+        $("#markdown" + langTo).val(data).trigger("change");
+      }).fail(function () {
+        $(".translateWait" + langFrom + langTo).addClass("hidden");
+        $(".translateError" + langFrom + langTo).removeClass("hidden");
+      });
+    } else {
+      // service is deepl unpaid, just open the window
+      window.open("https://www.deepl.com/translator#" + langFrom + "/" + langTo + "/" + originalText, "_blank");
       $(".translateWait" + langFrom + langTo).addClass("hidden");
       $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
-      $("#markdown" + langTo).val(data).trigger("change");
-    }).fail(function (err) {
-      console.error("Translation failed");
-      console.error(err);
-      $(".translateWait" + langFrom + langTo).addClass("hidden");
-      $(".translateError" + langFrom + langTo).removeClass("hidden");
-    });
-  } else {
-    // service is deepl unpaid, just open the window
-    window.open("https://www.deepl.com/translator#" + langFrom + "/" + langTo + "/" + originalText, "_blank");
-    $(".translateWait" + langFrom + langTo).addClass("hidden");
-    $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
-  }
+    }
+  });
 }

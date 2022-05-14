@@ -25,7 +25,7 @@ describe("routes/layout", function() {
   it("should initialise all layout variables", function(bddone) {
     function getMainLang() { return "DE"; }
     function getSecondLang() { return null; }
-    var req = {query: {}, session: {}, user: {getMainLang: getMainLang, getSecondLang: getSecondLang,getLang3:getSecondLang,getLang4:getSecondLang, language: "DE"}};
+    var req = {query: {}, session: {}, user: {getMainLang: getMainLang, getSecondLang: getSecondLang,getLang3:getSecondLang,getLang4:getSecondLang, getLang:getSecondLang, language: "DE"}};
     var res = {};
     layout.prepareRenderLayout(req, res, function done() {
       let l = res.rendervar.layout;
@@ -33,7 +33,7 @@ describe("routes/layout", function() {
       should(Array.isArray(l.listOfOpenBlog)).be.True();
       should(Array.isArray(l.listOfEditBlog)).be.True();
       should(Array.isArray(l.listOfReviewBlog)).be.True();
-      should(l.usedLanguages).eql({DE: true});
+      should(l.activeLanguages).eql(["DE"]);
       bddone();
     });
   });

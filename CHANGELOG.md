@@ -1,5 +1,70 @@
 # Changelog
 
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9e...HEAD)
+
+**Implemented enhancements:**
+
+- caught Problem with Deepl Translation [\#910](https://github.com/TheFive/osmbc/issues/910)
+- add link to Language arrangements in the help menu [\#909](https://github.com/TheFive/osmbc/issues/909)
+- Implement config to disable autocreate [\#908](https://github.com/TheFive/osmbc/issues/908)
+- show language flags always [\#906](https://github.com/TheFive/osmbc/issues/906)
+- Horizontal distance \(padding\) of the languages on homepage [\#902](https://github.com/TheFive/osmbc/issues/902)
+
+**Fixed bugs:**
+
+- Delete space between Title and collection [\#913](https://github.com/TheFive/osmbc/issues/913)
+- Markdown Superscript is wrong displayed in article editor [\#912](https://github.com/TheFive/osmbc/issues/912)
+- No unpublish reasons missing in BETA [\#911](https://github.com/TheFive/osmbc/issues/911)
+- Edit Button for Comments [\#907](https://github.com/TheFive/osmbc/issues/907)
+- Status display looks like a button, this is missleading [\#905](https://github.com/TheFive/osmbc/issues/905)
+- Download button doesn't work [\#904](https://github.com/TheFive/osmbc/issues/904)
+- Widen the comment box [\#900](https://github.com/TheFive/osmbc/issues/900)
+
+**Closed issues:**
+
+- Main Menu Bar is showing only 1 language while displaying 2 badgets for former left and right lang [\#896](https://github.com/TheFive/osmbc/issues/896)
+
+## [3.6.9e](https://github.com/TheFive/osmbc/tree/3.6.9e) (2022-01-11)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9d...3.6.9e)
+
+## [3.6.9d](https://github.com/TheFive/osmbc/tree/3.6.9d) (2022-01-11)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9c...3.6.9d)
+
+**Security fixes:**
+
+- Fix code scanning alert - Type confusion through parameter tampering [\#898](https://github.com/TheFive/osmbc/issues/898)
+- Fix code scanning alert - Type confusion through parameter tampering [\#897](https://github.com/TheFive/osmbc/issues/897)
+
+## [3.6.9c](https://github.com/TheFive/osmbc/tree/3.6.9c) (2022-01-11)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.0-beta1...3.6.9c)
+
+**Fixed bugs:**
+
+- Short version of languages in Overview does not show all choosen languages. [\#893](https://github.com/TheFive/osmbc/issues/893)
+
+## [3.7.0-beta1](https://github.com/TheFive/osmbc/tree/3.7.0-beta1) (2022-01-09)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9b...3.7.0-beta1)
+
+**Implemented enhancements:**
+
+- Orientation of the icons in Left Column [\#892](https://github.com/TheFive/osmbc/issues/892)
+- additional button in "Edit Blog Details" [\#883](https://github.com/TheFive/osmbc/issues/883)
+- Add Issue Date to article Editor [\#863](https://github.com/TheFive/osmbc/issues/863)
+
+**Fixed bugs:**
+
+- Deepl Translation is only working for up to 4 languages [\#891](https://github.com/TheFive/osmbc/issues/891)
+- No distinction between active and non active languages in EditBlog [\#889](https://github.com/TheFive/osmbc/issues/889)
+- BETA - bug - unselect languages [\#888](https://github.com/TheFive/osmbc/issues/888)
+- Deepl API User used in History should not be shown in Final Product [\#879](https://github.com/TheFive/osmbc/issues/879)
+- Set No Translation does not work full in 3 and 4 Languages editor. [\#788](https://github.com/TheFive/osmbc/issues/788)
+
 ## [3.6.9b](https://github.com/TheFive/osmbc/tree/3.6.9b) (2022-01-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.69a...3.6.9b)
@@ -1586,15 +1651,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 

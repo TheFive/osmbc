@@ -8,6 +8,8 @@ const debug         = require("debug")("OSMBC:routes:layout");
 
 const util          = require("../util/util.js");
 const config        = require("../config.js");
+const language      = require("../model/language.js");
+
 const version       = require("../version.js");
 const markdown      = require("markdown-it")();
 
@@ -34,11 +36,24 @@ function calculateUnreadMessages(list, user) {
   return result;
 }
 
+const layoutConst = {
+  htmlroot: htmlRoot,
+  url: url,
+  path: path,
+  moment: moment,
+  markdown: markdown,
+  util: util,
+  appName: appName,
+  osmbc_version: version.osmbc_version,
+  title: appName
+};
+
 
 function path(component) {
   if (component === "bootstrap" && bootstrap) return bootstrap;
   if (component === "jquery" && jquery) return jquery;
   if (component === "font-awesome" && fontAwesome) return fontAwesome;
+  if (component === "public") return htmlRoot;
 
   let dist = "/dist";
   if (component === "font-awesome") dist = "";
@@ -66,8 +81,7 @@ function prepareRenderLayout(req, res, next) {
 
 
 
-  let languages = [];
-  if (config.getLanguages()) languages = config.getLanguages();
+  const languages = language.getLid();
 
 
   let userMentions = 0;
@@ -75,13 +89,6 @@ function prepareRenderLayout(req, res, next) {
   let secondLangMentions = 0;
   const usedLanguages = {};
   if (req.user.language) usedLanguages[req.user.language] = true;
-
-  if (languages.indexOf("DE-Less") > 0) usedLanguages["DE-Less"] = true;
-  if (languages.indexOf("DE-More") > 0) usedLanguages["DE-More"] = true;
-
-  // Used for display changes
-
-  // Params is used for indicating Edit
 
   async.auto({
 
@@ -181,43 +188,29 @@ function prepareRenderLayout(req, res, next) {
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
 
     if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
-    res.rendervar.layout = {
+
+    res.rendervar.layout = Object.assign({}, layoutConst, {
       user: req.user,
-      htmlroot: htmlRoot,
-      url: url,
       languages: languages,
-      markdown: markdown,
-      path: path,
       userMentions: userMentions,
       mainLangMentions: mainLangMentions,
       secondLangMentions: secondLangMentions,
-      language: req.user.getMainLang(),
-      language2: req.user.getSecondLang(),
-      language3: req.user.getLang3(),
-      language4: req.user.getLang4(),
       listOfOpenBlog: result.listOfOpenBlog,
       listOfEditBlog: result.listOfEditBlog,
       listOfReviewBlog: result.listOfReviewBlog,
       editBlog: result.editBlog,
       tbc: result.tbc,
-      moment: moment,
-      util: util,
-      usedLanguages: usedLanguages,
       activeLanguages: activeLanguages,
-      appName: appName,
-      osmbc_version: version.osmbc_version,
       style: style,
-      title: appName,
-      user_locale: config.moment_locale((req.user.language) ? req.user.language : req.user.getMainLang()),
-      language_locale: config.moment_locale(req.user.getMainLang()),
-      language2_locale: config.moment_locale(req.user.getSecondLang()),
+      user_locale: language.momentLocale((req.user.language) ? req.user.language : req.user.getMainLang()),
+      language_locale: language.momentLocale(req.user.getMainLang()),
+      language2_locale: language.momentLocale(req.user.getSecondLang()),
       md_render: util.md_render,
       md_renderInline: markdown.renderInline,
       getAvatar: userModule.getAvatar,
       scriptUser: scriptUser,
       blogTranslationVisibleFor: blogTranslationVisibleFor
-
-    };
+    });
     next();
   }
   );
@@ -237,3 +230,4 @@ router.get("*", exports.prepareRenderLayout);
 
 
 module.exports.router = router;
+module.exports.layoutConst = layoutConst;

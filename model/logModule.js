@@ -1,7 +1,7 @@
 "use strict";
 
 const db = require("../model/db.js");
-const config = require("../config.js");
+const language = require("../model/language.js");
 const pgMap = require("../model/pgMap.js");
 const debug = require("debug")("OSMBC:model:logModule");
 
@@ -141,8 +141,7 @@ function countLogsForBlog(blog, callback) {
       if (!logs[o.property]) logs[o.property] = {};
       logs[o.property][o.user] = parseInt(o.change_nr);
     }
-    for (let i = 0; i < config.getLanguages().length; i++) {
-      const l = config.getLanguages()[i];
+    for (const l in language.getLanguages()) {
       if (blog["reviewComment" + l]) {
         for (let j = 0; j < blog["reviewComment" + l].length; j++) {
           if (!logs["review" + l]) logs["review" + l] = {};

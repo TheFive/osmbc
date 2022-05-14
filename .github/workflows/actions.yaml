@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/github_workflow
+      - develop
   pull_request:
     branches:
       - master
@@ -25,7 +26,7 @@ jobs:
     strategy:
       matrix:
         operating-system: [ubuntu-latest]
-        node-version: [12.x]
+        node-version: [16.x]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -35,8 +36,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install
+      - name: Sleep for 3s
+        uses: juliangruber/sleep-action@v1
+        with:
+          time: 3s
       - name: Run testing on github
         run: npm test
         env:
           POSTGRES_HOST: postgres
           POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+      - name: Dir the test dir
+        run: tree test

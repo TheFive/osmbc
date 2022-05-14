@@ -9,7 +9,7 @@ const path     = require("path");
 
 
 const pgMap    = require("../model/pgMap.js");
-const config   = require("../config.js");
+const language   = require("..//model/language.js");
 const util     = require("../util/util.js");
 
 
@@ -77,7 +77,7 @@ Config.prototype.getJSON = function getJSON() {
   }
   if (this.type === "yaml") {
     try {
-      this.json = yaml.load(this.yaml);
+      this.json = yaml.safeLoad(this.yaml);
       if (this.name === "votes") this.json = freshupVotes(this.json);
       return this.json;
     } catch (err) {
@@ -410,8 +410,7 @@ module.exports.getPlaceholder = function getPlaceholder() {
   const phDE = exports.getConfig("formulation_tipDE");
   const cat = exports.getConfig("categorydescription");
   const result = { markdown: { EN: phEN, DE: phDE }, categories: cat };
-  for (let i = 0; i < config.getLanguages().length; i++) {
-    const lang = config.getLanguages()[i];
+  for (const lang in language.getLanguages()) {
     if (lang === "DE") continue;
     if (lang === "EN") continue;
     result.markdown[lang] = phEN;

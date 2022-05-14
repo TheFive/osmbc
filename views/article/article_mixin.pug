@@ -23,7 +23,7 @@ mixin rightcolumn
       else
         p No Content provided
   else
-    .col-md-5.hidden
+    .col-md-5.d-none
       if block
         block
       else
@@ -45,7 +45,7 @@ mixin articleMarkdown(lang,disabled)
 
 
 mixin articlePreview(lang)
-  .panel.panel-default.panel-body.preview(id="preview" + lang, lang = lang)
+  .card.card-body.preview(id="preview" + lang, lang = lang)
     |!{article["textHtml"+lang]}
 
 
@@ -60,10 +60,10 @@ mixin articleTranslateButton(langFrom,langTo)
          class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
          onClick =`window.translate('${langFrom}','${langTo}',window.mainTranslationService);return false;`
        ) Translate #{langFrom} -> #{langTo}
-    button.btn.btn-small.btn-warning.hidden(class="translateWait"+langFrom+langTo)
-      span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+    button.btn.btn-small.btn-warning.d-none(class="translateWait"+langFrom+langTo)
+      i.fa.fa-sync
       span=" Please Wait"
-    button.btn.btn-small.btn-danger.hidden(class="translateError"+langFrom+langTo)
+    button.btn.btn-small.btn-danger.d-none(class="translateError"+langFrom+langTo)
       span="Error occured"
 
 
@@ -79,7 +79,7 @@ mixin doublettesButton
 
 
 mixin cancelButton
-  button.btn.btn-large.btn-default(type = "button" onclick =`disableUnchanged(); location.href='${layout.htmlroot}/article/${article.id}?edit=false';`) last Version
+  button.btn.btn-large.btn-secondary#cancelButton(type = "button" onclick =`disableUnchanged(); location.href='${layout.htmlroot}/article/${article.id}?edit=false';`) last Version
 
 
 mixin noTranslationButton
@@ -91,68 +91,83 @@ mixin noTranslationButton
         - open = true;
     if open
       p
-        button.btn.btn-small.btn-default(type = "button" onclick ="window.onbeforeunload=null; setNoTranslation(); document.getElementById('input').submit();") no translation to rest
+        button.btn.btn-small.btn-secondary#noTranslationButton(type = "button" onclick =" window.setNoTranslation(); ") no translation to rest
 
 mixin markdownWithPreview(lang)
   - labelClass = ""
   - if (params.left_lang === lang) labelClass = "osmbclabel-lang";
   - if (params.right_lang === lang) labelClass = "osmbclabel-lang2";
-  span.label.label-default(
+  span.badge.badge-secondary(
       class=labelClass
       draggable="true"
       data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
       ondragstart=`ondragstartLangLabel(event,'${lang}');`)="  " + lang + "  "
-  span.label.label-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
+  span.badge.badge-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
 
 
-  textarea.hidden.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true)=article["markdown" + lang]
+  textarea.d-none.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true)=article["markdown" + lang]
   +articleMarkdown(lang,!article.isChangeAllowed("markdown" + lang))
   +articlePreview(lang)
   +articleTextanalyse(lang)
 
 mixin articleTranslateMenu(langFrom,langTo,service)
   if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
-    li
-      a(
-        class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
-        onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
-        )="Translate " + langFrom+  "->" +langTo
-    li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
-      a=" Please Wait"
-    li.bg-danger.hidden(class="translateError" + langFrom + langTo)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-remove
-    li.hidden(class="translateDone" + langFrom + langTo+" "+service)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-ok
+    a.dropdown-item(
+        class="translate" + langFrom + langTo name = "translate" + langFrom + langTo
+        onClick =`window.translate('${langFrom}',${JSON.stringify(langTo)},'${service}');return false;`
+        )="Translate " + langFrom +  "->" + langTo
+    a.dropdown-item.bg-warning.d-none(class="translateWait" + langFrom + langTo)=" Please Wait"
+    a.dropdown-item.bg-danger.d-none(class="translateError" + langFrom + langTo)="Translate " + langFrom+  "->" +langTo +" "
+        i.fa.fa-times
+    a.dropdown-item.d-none(class="translateDone" + langFrom + langTo+" "+service)="Translate " + langFrom+  "->" +langTo +" "
+       i.fa.fa-check
 
 
 mixin translationMenu
-  li.dropdown#translation.hidden-xs
-    a.dropdown-toggle(href='#', data-toggle='dropdown')
-      | Translate
-      span.caret
-    ul.dropdown-menu(role='menu')
-      each tService in translationServices
+  - let emptyMenu = true
+  li.dropdown.navbar-item#translation.hidden-xs
+    a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
+    ul.dropdown-menu#articleTranslationDropdown(aria-labelledby="articleTranslateMenu" style="overflow-y: auto;")
+      - let tsList = layout.user.getTranslations()
+      each tService in tsList
+        - emptyMenu = false
         li.dropdown-header="Use " + tService +":"
-          - list = [params.left_lang,params.right_lang,params.lang3,params.lang4]
+          - list = []
+          - for ( i=0;layout.user.getLang(i);i++) {list.push(layout.user.getLang(i));}
+          - let nothingToTranslate = true
           each a in list
+            - all = []
             each b in list
-              if (a!==b && a!== null && b!== null)
-                +articleTranslateMenu(a, b, tService)
+              if (a !== b && a !== null && b !== null)
+                if (article["markdown" + a] && !article["markdown" + b] && article.isChangeAllowed("markdown" + b))
+                  - all.push(b);
+                  if (layout.user.useOneTranslation(tService))
+                    +articleTranslateMenu(a, b, tService)
+            if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))  
+              if (all.length > 1)
+                if (layout.user.useManyTranslation(tService))  
+                  +articleTranslateMenu(a, all, tService)
+                
+
+
+      .dropdown-divider
+      a.dropdown-item(
+        onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';"
+      )="Configure your Translation services"
+        
 
 
 
-block scripts
+
+block append scripts_to_load
   script(src=layout.path("markdown-it") + '/markdown-it.min.js')
   script(src=layout.path("markdown-it-sup") + '/markdown-it-sup.min.js')
   script(src=layout.path("markdown-it-imsize") + '/markdown-it-imsize.min.js')
-  script(src=layout.htmlroot + "/javascripts/osmbc_staff.js")
   script(src=layout.htmlroot + "/javascripts/article_view.js")
 
 
 
-
+block append scripts_to_execute
   script(nonce=cspNonce).
     // set Constant for Window with JADE Variables
     googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
@@ -164,9 +179,12 @@ block scripts
     translationServices = JSON.parse('!{JSON.stringify(translationServices)}');
     urlWoErrorWhileEdit = JSON.parse('!{JSON.stringify(urlWoErrorWhileEdit)}');
     mainTranslationService = "!{mainTranslationService}";
-    htmlroot = "!{layout.htmlroot}";
     placeholder = !{JSON.stringify(placeholder.categories)}
     var catArray = !{JSON.stringify(categories)};
     var articleReferences = !{JSON.stringify(articleReferences)};
     var noCategorie = "no categorie";
     if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
+    jQuery('#translation').on('show.bs.dropdown', function () {
+      jQuery('#articleTranslationDropdown').css('max-height', ($(window).height() - $('#articleTranslationDropdown').offset().top) -$('#fixedNavbar').height() + 'px');
+    })
+

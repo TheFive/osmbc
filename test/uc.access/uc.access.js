@@ -4,6 +4,7 @@
 
 const mockdate = require("mockdate");
 const testutil = require("../testutil.js");
+const fs = require("fs");
 
 
 var userModule = require("../../model/user.js");
@@ -57,7 +58,7 @@ describe("uc.access", function() {
     bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullBlogList");
 
     // Collect an article, search input before
-    await bTheFive.click("ul.nav.navbar-nav.pull-left li a");
+    await bTheFive.click("#collect");
     bTheFive.fill("input#searchField", "new Info");
     await bTheFive.click("button[name='SearchNow']");
     bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullCollectPage");
@@ -73,7 +74,7 @@ describe("uc.access", function() {
     await bTheFive.click("input#OK");
     bTheFive.select("select#categoryEN", "Mapping");
     bTheFive.fill("#title", "This is a title of a full collected article");
-    bTheFive.fill("textarea[name='markdownEN']", "This is the written text.");
+    bTheFive.fill("#markdownEN", "This is the written text.");
 
     await bTheFive.click("button#saveButton");
     bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullArticlePage");
@@ -99,7 +100,7 @@ describe("uc.access", function() {
     await bGuestUser.assert.elements(adminLinkSelect, 0);
 
     // Collect an article, search input before
-    await bGuestUser.click("ul.nav.navbar-nav.pull-left li a");
+    await bGuestUser.click("#collect");
     bGuestUser.fill("input#searchField", "new Info");
     await bGuestUser.click("button[name='SearchNow']");
     bGuestUser.assert.expectHtmlSync(errors, "uc.access", "guestCollectPage");
@@ -134,6 +135,7 @@ describe("uc.access", function() {
   });
   it("should create a new guest user, if he logs in",async function(){
     let errors=[];
+
     let browser = await testutil.getNewBrowser();
     // visiting /osmbc with unkown user shoud show login page
 
@@ -144,7 +146,7 @@ describe("uc.access", function() {
     browser.assert.expectHtmlSync(errors, "uc.access", "UnkownGuestStartPage");
 
     // Collect an article, search input before
-    await browser.click("ul.nav.navbar-nav.pull-left li a");
+    await browser.click("#collect");
     browser.fill("input#searchField", "new Info");
     await browser.click("button[name='SearchNow']");
 

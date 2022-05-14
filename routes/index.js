@@ -9,6 +9,7 @@ const HttpStatus = require("http-status-codes");
 const router = express.Router();
 const help = require("../routes/help.js");
 const config = require("../config.js");
+const language = require("../model/language.js");
 const logModule = require("../model/logModule.js");
 const userModule = require("../model/user.js");
 const articleModule = require("../model/article.js");
@@ -115,12 +116,24 @@ function renderAdminHome(req, res, next) {
 function languageSwitcher(req, res, next) {
   debug("languageSwitcher");
 
-  const lang = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()];
+  let lang = req.user.langArray;
+  if (!lang) lang = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()];
+
+  function isValidLang(lang) {
+    return language.getLanguages()[lang] !== undefined;
+  }
 
   if (req.body.lang) lang[0] = req.body.lang;
-  if (req.body.lang2) lang[1] = req.body.lang2;
-  if (req.body.lang3) lang[2] = req.body.lang3;
-  if (req.body.lang4) lang[3] = req.body.lang4;
+  if (req.body.lang0) lang[0] = req.body.lang0;
+  for (let i = 1; i < 20; i++) {
+    if (req.body["lang" + i]) {
+      if (isValidLang(req.body["lang" + i])) {
+        lang[i - 1] = req.body["lang" + i];
+      } else {
+        lang[i - 1] = null;
+      }
+    }
+  }
 
 
   for (let v = 0; v < lang.length - 1; v++) {
@@ -134,32 +147,64 @@ function languageSwitcher(req, res, next) {
 
 
 
-  if (config.getLanguages().indexOf(lang[0]) >= 0) {
+  if (language.getLanguages()[lang[0]]) {
     req.user.mainLang = lang[0];
   }
-  if (lang.length >= 2 && config.getLanguages().indexOf(lang[1]) >= 0) {
+  if (lang.length >= 2 && language.getLanguages()[lang[1]]) {
     req.user.secondLang = lang[1];
   } else {
     req.user.secondLang = null;
     req.user.lang3 = null;
     req.user.lang4 = null;
   }
-  if (lang.length >= 3 && config.getLanguages().indexOf(lang[2]) >= 0) {
+  if (lang.length >= 3 && language.getLanguages()[lang[2]]) {
     req.user.lang3 = lang[2];
   } else {
     req.user.lang3 = null;
     req.user.lang4 = null;
   }
-  if (lang.length >= 4 && config.getLanguages().indexOf(lang[3]) >= 0) {
+  if (lang.length >= 4 && language.getLanguages()[lang[3]]) {
     req.user.lang4 = lang[3];
   } else {
     req.user.lang4 = null;
   }
-
+  req.user.langArray = lang;
 
   req.user.save(function finalLanguageSwitcher(err) {
     if (err) return next(err);
     res.end("OK");
+  });
+}
+
+function languageSetSwitcher(req, res, next) {
+  debug("languageSetSwitcher");
+
+  const set = req.body.set;
+  const action = req.body.action;
+
+  if (action === "save") {
+    req.user.saveLanguageSet(set, function (err) {
+      if (err) return next(err);
+      res.end("OK");
+      return res.end("OK");
+    });
+    return;
+  }
+  if (action === "delete") {
+    req.user.deleteLanguageSet(set, function (err) {
+      if (err) return next(err);
+      return res.end("OK");
+    });
+    return;
+  }
+
+  req.user.languageSet = set;
+
+  if (set === "Individual") req.user.languageSet = "";
+
+  req.user.save(function finalLanguageSwitcher(err) {
+    if (err) return next(err);
+    return res.end("OK");
   });
 }
 
@@ -224,6 +269,7 @@ router.get("/osmbc", redirectHome);
 router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
 router.get("/changelog", auth.checkRole(["full", "guest"]), renderChangelog);
 router.post("/language", auth.checkRole(["full", "guest"]), languageSwitcher);
+router.post("/languageset", auth.checkRole(["full", "guest"]), languageSetSwitcher);
 router.post("/setuserconfig", auth.checkRole(["full", "guest"]), setUserConfig);
 router.get("/createblog", auth.checkRole(["full"]), createBlog);
 

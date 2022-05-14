@@ -1,46 +1,41 @@
 extends layout
 
+block additionalMenuRight  
+  +langMenu(2)
+
+
 block content
   // Full Access Index Page
   .row
-    .col-md-4
-        h2.hidden-xs
+    .col
+        h2.d-none.d-sm-block
           | Welcome to OSM BC
-        h2.visible-xs
-          | OSM BC
-        .row 
-          p.osmbc-help-text
-            | See recent blogs to work on below. If you just want to collect an article or an idea, use the collect menu on in the navbar.
-        .row
-          h3="Blogs to work on "
-            a(href=layout.htmlroot+"/blog/list?status=IN('open','edit')") (more)
-
-        .row
+        p.osmbc-help-text.d-none.d-sm-block
+          | See recent blogs to work on below. If you just want to collect an article or an idea, use the collect menu on in the navbar.
+        h3="Blogs to work on "
+          a(href=layout.htmlroot+"/blog/list?status=IN('open','edit')") (more)
+        div
           +blogStatusTable(true)
-
-
-
-        .row
-          h4="Current Users"
+        h4="Current Users"
+        p
+          table.table
+            for user, i in activeUserList
+              tr
+                td
+                  img(src=layout.getAvatar(user.OSMUser) style="height:25px;width:25px")
+                td=user.OSMUser +" "
+                td.text-muted=layout.moment(user.lastAccess).fromNow()
+        
+        if (fullVisitorsToday && fullVisitorsToday.length>0)
+          h4="Full Visitors Today"
           p
             table.table
-              for user, i in activeUserList
-                tr
-                  td
-                    img(src=layout.getAvatar(user.OSMUser) style="height:25px;width:25px")
-                  td=user.OSMUser +" "
-                  td.text-muted=layout.moment(user.lastAccess).fromNow()
-        .row
-          if (fullVisitorsToday && fullVisitorsToday.length>0)
-            h4="Full Visitors Today"
-            p
-              table.table
-                tr
-                  td
-                    for user,i in fullVisitorsToday
-                      span
-                        a(href=layout.htmlroot+"/usert/"+user.OSMUser)=user.OSMUser
-                        span=", "
+              tr
+                td
+                  for user,i in fullVisitorsToday
+                    span
+                      a(href=layout.htmlroot+"/usert/"+user.OSMUser)=user.OSMUser
+                      span=", "
           if (guestVisitorsToday && guestVisitorsToday.length>0)
             h4="Guest Visitors Today"
             p
@@ -75,18 +70,19 @@ block content
 
 
 
-        .row
+        p.row.text-justify
           h4="Admin View"
-          a#adminlink(href=layout.htmlroot+"/osmbc/admin") click here
-    .col-md-8.hidden-xs
+          p
+            a#adminlink(href=layout.htmlroot+"/osmbc/admin")="click here" 
+            span=" to go to the Admin Section of OSMBC"
+    .col-xs-auto.d-none.d-sm-block
       if changes
         h4="Last Changes "
           - var d = new Date();
           - d= d.toISOString();
           - d= d.substring(0,7);
           a(href=layout.htmlroot+"/changes/log?date="+d)  (more)
-        div
-          table.table.table-striped.table-condensed.table-responsive
+        table.table.table-striped.table-sm
             thead
               tr 
                 th
@@ -108,7 +104,7 @@ block content
                 tr
                   td
                     a(href=layout.htmlroot+'/changes/' + change.id)
-                      span.glyphicon.glyphicon-info-sign
+                      i.fa.fa-info-circle
                   td= change.blog
                   td= change.user
                   td= change.table
@@ -116,13 +112,12 @@ block content
                   td
                     |!{change.htmlDiffText(40)}
                   td= layout.moment(change.timestamp).fromNow()
-        div
-          p.osmbc-help-text
-            |only displaying changes:
-            span.osmbc-inserted
-              | This is inserted text
-            span=" "
-            span.osmbc-deleted
-              | and this is removed text
+        p.osmbc-help-text
+          span="only displaying changes: "
+          span.osmbc-inserted
+            | This is inserted text
+          span=" "
+          span.osmbc-deleted
+            | and this is removed text
 
   div.footer

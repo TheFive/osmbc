@@ -8,15 +8,21 @@ const db           = require("../model/db.js");
 
 config.getValue("sessionStore", { deprecated: true });
 
+
+
 module.exports = function(session) {
   let sessionStore = null;
+  let psi = 180;
+  if (process.env.NODE_ENV === "test") {
+    psi = false;
+  }
   const PgSession = require("connect-pg-simple")(session);
 
   const pool = db.getPool();
   assert(pool);
   sessionStore = new PgSession({
     pool: pool, // Use global pg-module
-    pruneSessionInterval: 180
+    pruneSessionInterval: psi
   });
   return sessionStore;
 };

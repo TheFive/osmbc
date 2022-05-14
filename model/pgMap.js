@@ -166,23 +166,27 @@ module.exports.save = function(options, callback) {
               err = null;
               const endTime = new Date().getTime();
               sqldebug("SQL get Version: [" + (endTime - startTime) / 1000 + "](" + table + " versionCheck " + versionsEqual + ")");
-              if (!versionsEqual) {
-                debug("send error");
+              if (!versionsEqual && (!options || !options.onlyIfVersionEqual)) {
                 err = new Error("Version Number Differs");
+                return cb(err, "save");
               }
-              return cb(err);
+              if (!versionsEqual && (options && options.onlyIfVersionEqual)) {
+                return cb(null, "do-not-save");
+              }
+              return cb();
             });
         }
       ],
-      function finalFunction(err) {
+      function finalFunction(err, result) {
         debug("final Function save");
         if (err) {
-          debug("Forward Error");
-          debug(err);
-
           return callback(err);
         }
-        if (!options || !options.noVersionIncrease) self.version += 1;
+        if (result === "do-not-save") return callback();
+
+        if (!options || !options.noVersionIncrease) {
+          self.version += 1;
+        }
         db.query("update " + table + " set data = $2 where id = $1", [self.id, self], function(err) {
           if (typeof blog !== "undefined") self._blog = blog;
           return callback(err, self);
@@ -228,6 +232,7 @@ function convertResultFunction(module, callback) {
         r[k] = row.data[k];
       }
       r.id = row.id;
+      if (module.migrateData) module.migrateData(r);
       result.push(r);
     });
     return callback(null, result);
@@ -331,8 +336,6 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
                                                     coalesce(data->>'markdownEN','')   ) " + englishVector +
                       orderBy;
 
-  console.dir(sqlQuery);
-  console.dir([search]);
   db.query(sqlQuery, [search], convertResultFunction(module, callback));
 };
 

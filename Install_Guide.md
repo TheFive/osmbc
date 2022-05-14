@@ -17,11 +17,13 @@ Before you install OSMBC the following Software has to be installed.
 **a)** Postgres 9.3 or higher
 
 The system is tested and developed under `9.3`, as far as i know all features
-used should work with `9.4`.
+used should work with `9.4`. Development is taking place currently with verion 12.
+But no special features from versions > 9 are needed
 
-**b)** Node.JS 10.* or higher
+**b)** Node.JS 14.* or higher
 
-OSMBC runs with `4.2.4` on the development machine and with `4.2.3` on the production server.
+I try to develop OSMBC with a long term node version, do avoid regulary updates
+
 
 ## 2 - Configuration files
 
@@ -244,14 +246,3 @@ insert into usert (data) values ('{"OSMUser":"?? your osm user name ??","access"
 
 But of course it will be better to ask the Weekly - Wochennotiz team, to get a SQL dump.
 
-## Usage of Bower
-
-OSMBC needs bower to install some frontend libs.
-
-Please use
-```
-npm install -g bower 
-bower install
-```
-
-But of course it will be better to ask the Weekly - Wochennotiz team, to get a SQL dump.

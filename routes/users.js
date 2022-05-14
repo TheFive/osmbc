@@ -2,7 +2,7 @@
 
 const assert   = require("assert");
 const async    = require("async");
-const debug = require("debug")("OSMBC:routes:users");
+const debug    = require("debug")("OSMBC:routes:users");
 
 
 const express    = require("express");
@@ -11,8 +11,9 @@ const auth       = require("../routes/auth.js");
 const HttpError  = require("standard-http-error");
 
 
-const config = require("../config.js");
-const logger = require("../config.js").logger;
+const config   = require("../config.js");
+const language = require("../model/language.js");
+const logger   = require("../config.js").logger;
 
 const userModule = require("../model/user.js");
 const logModule = require("../model/logModule.js");
@@ -70,6 +71,7 @@ function renderUserId(req, res, next) {
   debug("renderUserId");
   let redirect = false;
   let id = req.params.user_id;
+  const highlight = (req.query.highlight) ?? "nothing";
 
 
   if (req.query.becomeGuest === "true" && req.user.access === "full") {
@@ -91,6 +93,7 @@ function renderUserId(req, res, next) {
     });
     return;
   }
+
 
 
   if (id === "self") return res.redirect(res.rendervar.layout.htmlroot + "/usert/" + req.user.id);
@@ -164,8 +167,9 @@ function renderUserId(req, res, next) {
       changes: changes,
       params: params,
       userHeatMapArray: userHeatMapArray,
-      langlist: config.getLanguages(),
-      layout: res.rendervar.layout
+      langlist: language.getLid(),
+      layout: res.rendervar.layout,
+      highlight: highlight
     });
   }
   );
@@ -184,6 +188,13 @@ function postUserId(req, res, next) {
     mailAllComment: req.body.mailAllComment,
     mailNewCollection: req.body.mailNewCollection,
     mailComment: req.body.mailComment,
+    translationServices: req.body.translationServices,
+    translationServicesMany: req.body.translationServicesMany,
+    languageSetName1: req.body.languageSetName1,
+    languageSetName2: req.body.languageSetName2,
+    languageSetName3: req.body.languageSetName3,
+    languageSetName4: req.body.languageSetName4,
+    languageSetName5: req.body.languageSetName5,
     mailBlogLanguageStatusChange: req.body.mailBlogLanguageStatusChange,
     mailCommentGeneral: req.body.mailCommentGeneral,
     email: req.body.email,
@@ -195,6 +206,18 @@ function postUserId(req, res, next) {
   }
   if (typeof (changes.mailComment) === "undefined") {
     changes.mailComment = [];
+  }
+  if (typeof (changes.translationServices) === "string") {
+    changes.translationServices = [changes.translationServices];
+  }
+  if (typeof (changes.translationServicesMany) === "string") {
+    changes.translationServicesMany = [changes.translationServicesMany];
+  }
+  if (typeof (changes.translationServices) === "undefined") {
+    changes.translationServices = [];
+  }
+  if (typeof (changes.translationServicesMany) === "undefined") {
+    changes.translationServicesMany = [];
   }
   if (typeof (changes.mailBlogLanguageStatusChange) === "string") {
     changes.mailBlogLanguageStatusChange = [changes.mailBlogLanguageStatusChange];

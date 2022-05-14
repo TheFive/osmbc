@@ -6,6 +6,7 @@ const moment = require("moment-timezone");
 const util = require("../util/util.js");
 const configModule = require("../model/config.js");
 const config = require("../config.js");
+const language = require("../model/language.js");
 
 
 const assert = require("assert").strict;
@@ -26,7 +27,7 @@ function MarkdownRenderer(blog) {
 HtmlRenderer.prototype.subtitle = function htmlSubtitle(lang) {
   debug("HtmlRenderer.prototype.subtitle %s", lang);
   const blog = this.blog;
-  assert(config.getLanguages().indexOf(lang) >= 0);
+  assert(language.getLanguages()[lang]);
   if (blog.startDate && blog.endDate) {
     return "<p>" + util.dateFormat(blog.startDate, lang) + "-" + util.dateFormat(blog.endDate, lang) + "</p>\n";
   } else return "<p> missing date </p>\n";
@@ -36,13 +37,13 @@ MarkdownRenderer.prototype.subtitle = function markdownSubtitle(lang) {
   debug("MarkdownRenderer.prototype.subtitle %s", lang);
   const blog = this.blog;
   if (blog.startDate && blog.endDate) {
-    return moment(blog.startDate).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L") + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L") + "\n\n";
+    return moment(blog.startDate).tz("Europe/Berlin").locale(language.momentLocale(lang)).format("L") + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(language.momentLocale(lang)).format("L") + "\n\n";
   } else return "missing date\n";
 };
 
 HtmlRenderer.prototype.containsEmptyArticlesWarning = function htmlContainsEmptyArticlesWarning(lang) {
   debug("HtmlRenderer.prototype.containsEmptyArticlesWarning %s", lang);
-  assert(config.getLanguages().indexOf(lang) >= 0);
+  assert(language.getLanguages()[lang]);
   return "<p> Warning: This export contains empty Articles </p>\n";
 };
 

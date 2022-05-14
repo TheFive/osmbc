@@ -47,12 +47,12 @@ describe("uc/index", function() {
     describe("Homepage", function() {
       it("should find welcome text on Homepage", async function() {
         await browser.visit("/osmbc");
-        browser.assert.text("h2", "Welcome to OSM BCOSM BC");
+        browser.assert.text("h2", "Welcome to OSM BC");
       });
       it("should have bootstrap.js loaded", async function() {
         this.timeout(6000);
         await browser.visit("/osmbc");
-        should(browser.evaluate("(typeof $().modal == 'function'); ")).be.True();
+        should(browser.evaluate("$.fn.tooltip.Constructor.VERSION")).be.equal("4.6.1");
       });
     });
     describe("Admin Homepage", function() {
@@ -78,7 +78,7 @@ describe("uc/index", function() {
         // this call is necessary, as zombie looks to make troulbe
         // with 2 calls to a link going back to referrer in seriex
         await browser.visit("/osmbc");
-        await browser.click("a#lang2_DE");
+        await browser.click("a#lang_DE");
         browser.assert.expectHtmlSync("index", "switchedToEnglishAndGerman");
       });
       it("should set the language both equal", async function() {
@@ -86,9 +86,27 @@ describe("uc/index", function() {
         await browser.click("a#lang_EN");
         // this call is necessary, as zombie looks to make troulbe
         // with 2 calls to a link going back to referrer in seriex
+
+        // test has to be optimised, as two languages are now longer supported in index 
         await browser.visit("/osmbc");
-        await browser.click("a#lang2_EN");
+        await browser.assert.elements("a#lang_EN",0);
         browser.assert.expectHtmlSync("index", "switchedToEnglishAndEnglish");
+      });
+      it("should store a language set", async function() {
+        await browser.visit("/osmbc");
+        await browser.click("a#lang_EN");
+        // this call is necessary, as zombie looks to make troulbe
+        // with 2 calls to a link going back to referrer in seriex
+
+        // test has to be optimised, as two languages are now longer supported in index 
+        await browser.visit("/osmbc");
+        await browser.click("a#lang_DE");
+        browser.fill("#newSetToBeSaved","A Name To Save");
+        await browser.click("#saveNewSet");
+        let user = await userModule.findOne({OSMUser:"TheFive"});
+        should(user.languageSet).eql("A Name To Save");
+        should(user.getLanguages()).deepEqual([ 'DE' ]);
+        browser.assert.expectHtmlSync("index", "savedANewLanguageSet");
       });
     });
   });

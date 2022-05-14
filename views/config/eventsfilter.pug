@@ -18,10 +18,10 @@ mixin countryRow(country)
       if li
         if li.excludeCountries && li.excludeCountries.toLowerCase().indexOf(country.toLowerCase())>=0
           td
-            span.glyphicon.glyphicon-minus-sign
+            i.fa.fa-mins-circle
         else if li.includeCountries && li.includeCountries.toLowerCase().indexOf(country.toLowerCase())>=0
           td
-            span.glyphicon.glyphicon-plus-sign
+            i.fa.fa-plus-circle
         else
           td=""
       else
@@ -29,7 +29,7 @@ mixin countryRow(country)
 
 
 block showContentOfConfig
-  - lang = layout.language
+  - lang = layout.user.getLang(0)
   - var countries = {}
   if config.getJSON()
 
@@ -42,7 +42,7 @@ block showContentOfConfig
           - countries[c]="include"
 
   .row
-      table#resulttable.table.table-condensed
+      table#resulttable.table.table-sm
         thead
           tr
             th="Value"
@@ -57,7 +57,3 @@ block showContentOfConfig
           +fieldRow("enableCountryFlags")
           each l,c in countries
             +countryRow(c)
-
-
-
-

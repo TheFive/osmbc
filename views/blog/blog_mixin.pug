@@ -1,0 +1,147 @@
+extends ../layout
+
+mixin blogReviewButtons(lang)
+  if (!(blog["close"+lang])) && (lang !== null)
+    - _rc = blog["reviewComment"+lang];
+    if (_rc)
+      .div
+        if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
+          button.btn.btn-large.btn-warning(id="closebutton" onclick=`window.setLangStatus("${lang}","closelang",this);`) Close #{blog.name}(#{lang})
+        else
+          button.btn.btn-large.btn-warning(id="didexport" onclick=`window.setLangStatus("${lang}","markexported",this);`) Did Export (#{lang})
+
+      if (blog["exported"+lang])
+        .div
+          .alert.bg-danger.text-center.bold
+            | <strong>Blog is exported, please do the last Review in WordPress</strong>
+
+    else
+      if blog.status != "open"
+        button.btn.btn-large.btn-primary(id="readyreview" onclick=`window.setLangStatus("${lang}","startreview",this);`) Set #{blog.name}(#{lang}) ready for review
+
+
+block append scripts_to_load
+  script(src=layout.path("markdown-it")+'/markdown-it.min.js')
+
+block append scripts_to_execute
+  script(nonce=cspNonce).
+
+    var openEditor = null;
+
+    window.onload = function () {
+
+      $(".preview").change(highlightWrongLinks);
+      $(".preview").each(highlightWrongLinks);
+
+
+      if (typeof(Storage) !== "undefined") {
+        if (window.sessionStorage.blogUrl !== window.location.href) return;
+        var x = window.sessionStorage.blogX;
+        var y = window.sessionStorage.blogY;
+        window.scrollTo(x, y);
+      }
+    }
+
+
+
+    window.onbeforeunload = function (event) {
+      // store the scroll Position in the local Store
+      s = {x: window.scrollX, y: window.scrollY};
+
+      if (typeof(Storage) !== "undefined") {
+
+        window.sessionStorage.blogUrl = window.location.href;
+        window.sessionStorage.blogX = s.x;
+        window.sessionStorage.blogY = s.y;
+      }
+    };
+
+
+
+    function onLeaveText(id,column) {
+      if (!column) column="";
+
+      var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
+      var newValue = document.getElementById(column + "markdown" + id).value;
+      if (oldValue === newValue) return;
+      form = document.getElementById(column + 'EditArticle' + id);
+      form.submit();
+    }
+
+
+    function convert(text) {
+      converter = new window.markdownit({breaks: true});
+
+      // generate the OSMBlog Style List
+      if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
+      // convert md to html
+      text = converter.render(text);
+      // skip <ul> and </ul> at start and end
+
+
+      text = '<li>' + text + '</li>';
+
+
+      return text;
+
+    }
+    function onchangeMarkdown(id,column) {
+      if (!column) column="";
+      var markdownField = document.getElementById(column + "markdown" + id);
+      var md = markdownField.value;
+      var pv = document.getElementById(column+"preview"+id);
+
+
+      pv.innerHTML = convert(md);
+      $(pv).trigger("change");
+
+    }
+
+    function callAndRedraw(call, redraw) {
+      $.get("!{layout.htmlroot}" + call, function (data) {
+        let j = $.getJSON("!{layout.htmlroot}" + redraw, function (json) {
+          for (k in json) {
+            var el = document.createElement("div");
+
+            el.innerHTML = json[k];
+
+            $(k).replaceWith(el.children[0]);
+            el.remove();
+
+          }
+        });
+      });
+
+    }
+
+    function translate(langFrom, langTo, service) {
+      $(".translate" + langFrom + langTo).addClass("d-none");
+      $(".translateWait" + langFrom + langTo).removeClass("d-none");
+      var from =  langFrom.toLowerCase();
+      var to = langTo.toLowerCase();
+
+      let url =window.htmlroot + "/blog/!{blog.name}/translate/" + service + "/" + from + "/" + to;
+
+
+
+      jQuery.post(window.htmlroot + "/blog/!{blog.name}/translate/" + service + "/" + from + "/" + to, function (data) {
+        location.reload();
+      }).fail(function (err) {
+        console.error("Translation failed");
+        console.error(err);
+        $(".translateWait" + langFrom + langTo).addClass("d-none");
+        $(".translateError" + langFrom + langTo).removeClass("d-none");
+      });
+    } 
+        
+    function setLangStatus(lang, status,button) {
+      $(button).prop('disabled', true);
+      $(button).prop('html', "wait ...");
+      jQuery.post(window.htmlroot + "/blog/!{blog.name}/setLangStatus",{action:status,lang:lang}, function (data) {
+        location.reload();
+      }).fail(function (err) {
+        console.error("Trouble setting Language Status");
+        console.error(err);
+      });
+    
+    }

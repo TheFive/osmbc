@@ -6,6 +6,8 @@ const moment = require("moment");
 const mdUtil = require("../util/md_util.js");
 const configModule = require("../model/config.js");
 const config = require("../config.js");
+const language = require("../model/language.js");
+
 const NodeCache = require("node-cache");
 
 const nominatimCache = new NodeCache({ stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
@@ -126,8 +128,8 @@ function enrichData(json, lang) {
     let dateString;
     const sd = moment(event.date && event.date.start);
     const ed = moment(event.date && event.date.end);
-    sd.locale(config.moment_locale(lang));
-    ed.locale(config.moment_locale(lang));
+    sd.locale(language.momentLocale(lang));
+    ed.locale(language.momentLocale(lang));
 
     if (event.date && event.date.start) {
       dateString = sd.format(osmbcDateFormat);

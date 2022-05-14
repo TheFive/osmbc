@@ -160,7 +160,7 @@ describe("router/user", function() {
     let url = baseLink + "/usert/1";
     it("should show user dafta by id", async function () {
       let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql('<input class="form-control" name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly"/>');
+      body.should.containEql('<input class="col-5 form-control" name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly"/>');
       body.should.containEql("<h1>TestUser Heatmap</h1>");
     });
     it("should show user data by SELF", async function () {
@@ -218,6 +218,8 @@ describe("router/user", function() {
         color: 'red',
         language: 'ES',
         languageCount: 'two',
+        translationServices: [],
+        translationServicesMany: [],
         mailBlogLanguageStatusChange:  []
       });
     });

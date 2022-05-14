@@ -239,3 +239,9 @@
 - https://wiki.openstreetmap.org/wiki/Template:Calendar
 - https://thefive.sabic.uberspace.de/calendar/preview
 - https://wiki.openstreetmap.org/wiki/Template:Calendar
+- https://wiki.openstreetmap.org/wiki/Bogo%2520City
+- https://wiki.openstreetmap.org/wiki/L%25C3%25BCneburg/Mappertreffen
+- https://wiki.openstreetmap.org/wiki/D%25C3%25BCsseldorf/Stammtisch
+- https://wiki.openstreetmap.org/wiki/Karlsruhe%2520Hack%2520Weekend%2520February%25202016
+- https://wiki.openstreetmap.org/wiki/Nottingham/Pub%2520Meetup
+- https://wiki.openstreetmap.org/wiki/Fort%2520Collins,%2520Colorado

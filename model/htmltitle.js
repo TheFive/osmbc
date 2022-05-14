@@ -85,7 +85,8 @@ function getTitle(url, callback) {
       }
 
       // nothing given, to use parser set incoming & outcoming charset equal
-      if (!fromcharset) fromcharset = "UTF-8";
+      if (!iconv.encodingExists(fromcharset)) fromcharset = "UTF-8";
+
       let utf8body = null;
       utf8body = iconv.decode(body, fromcharset);
       /*

@@ -3,7 +3,7 @@
 const debug = require("debug")("OSMBC:util:util");
 const assert = require("assert").strict;
 const moment = require("moment");
-const config = require("../config.js");
+const language = require("../model/language.js");
 
 
 const htmlRoot = require("../config").htmlRoot();
@@ -112,7 +112,7 @@ function requireTypes(vars, types) {
 }
 
 function dateFormat(date, lang) {
-  return moment(date).tz("Europe/Berlin").locale(config.moment_locale(lang)).format("L");
+  return moment(date).tz("Europe/Berlin").locale(language.momentLocale(lang)).format("L");
 }
 
 

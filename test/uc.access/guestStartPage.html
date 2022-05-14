@@ -6,64 +6,48 @@
     <link rel="icon" href="/favicon.ico">
     <title>TESTBC</title>
     <!-- Bootstrap core CSS-->
-    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   </head>
   <body>
     <!-- Fixed navbar-->
-    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header pull-left"><a class="bg-success navbar-brand hidden-xs" href="/changelog">What's New?</a>
-          <ul class="nav navbar-nav pull-left">
-            <li><a id="collect" href="/article/create">Submit Link</a>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav pull-left">
-            <li><a id="inbox" href="/usert/inbox">Inbox <span class="badge osmbcbadge-user">1</span></a></li>
-          </ul>
-          <ul class="nav navbar-nav pull-left">
-            <li><a id="myArticles" href="/osmbc.html">My Articles</a></li>
-          </ul>
-        </div>
-        <div class="navbar-header">
-          <button class="navbar-toggle pull-right" type="button" data-toggle="collapse" data-target=".navbar-collapse"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-left">
-            <li class="show-xs"><a class="bg-success visible-xs" href="/changelog">What's New?</a>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown">Help<span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li class="dropdown-header">OSMBC</li>
-                <li><a href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a></li>
-                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">WeeklyOSM &amp; Wochennotiz</li>
-                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a></li>
-                <li><a href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a></li>
-                <li><a href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotitz in OSM Wiki</a></li>
-                <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
-              </ul>
-            </li>
-            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang" href="#" style="color:white" data-toggle="dropdown">EN<span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a></li>
-              </ul>
-            </li>
-            <li class="dropdown"><a class="btn dropdown-toggle osmbcbadge-lang2" href="#" style="color:white" data-toggle="dropdown">--<span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a></li>
-                <li><a id="lang2_EN" onclick="chooseLanguage('lang2','EN')">EN</a></li>
-              </ul>
-            </li>
-            <li><img onclick="location.href='/usert/2';" style="height:50px;width:50px"></li>
-          </ul>
-          <!-- /.nav-collapse-->
-        </div>
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
+      <ul class="navbar-nav mr-auto"></ul>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Submit Link</a>
+          </li>
+          <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge badge-pill osmbcbadge-user">1</span></a></li>
+          <li class="navbar-item active"><a class="nav-link" id="myArticles" href="/osmbc.html">My Articles</a></li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
+            <div class="dropdown-menu" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a><a class="dropdown-item" href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version 1.8.4</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a>
+              <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
+            </div>
+          </li>
+          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language"><a class="dropdown-item disabled">EN</a>
+              <div class="dropdown-divider"> </div>
+            </div>
+          </li>
+          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">EN</a>
+              <div class="dropdown-divider"></div>
+              <form class="p-1">
+                <div class="form-group">
+                  <input class="input form-control" id="newSetToBeSaved" type="text">
+                  <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
+                </div>
+              </form>
+            </div>
+          </li>
+          <li><img onclick="location.href='/usert/2';" style="height:40px;width:40px"></li>
+        </ul>
       </div>
-    </div>
+    </nav>
     <div class="container-fluid">
       <p>
         </p><div class="alert alert-danger text-center" id="mailalert" style="height: 200px; font-size: 40px;">
@@ -73,20 +57,18 @@
       <p></p>
       <p>
         </p><div class="row">
-          <div class="col-md-8">
-            <h2 class="hidden-xs">Welcome to OSM BC</h2>
-            <h2 class="visible-xs">OSM BC</h2>
-            <div class="row">
-              <p class="osmbc-help-text"><span>You are logged in as guest. Please refer to </span><a href="http://www.weeklyosm.eu/this-news-should-be-in-weeklyosm">How to use OSMBC guest mode</a><span> to get more information.</span></p>
-            </div>
+          <div class="col">
+            <h2 class="d-none d-sm-block">Welcome to OSM BC</h2>
+            <h2 class="d-block d-sm-none">OSM BC</h2>
+            <p class="osmbc-help-text"><span>You are logged in as guest. Please refer to </span><a href="http://www.weeklyosm.eu/this-news-should-be-in-weeklyosm">How to use OSMBC guest mode</a><span> to get more information.</span></p>
             <h2>Your Articles</h2>
-            <table class="table table-condensed">
+            <table class="table table-sm">
             </table>
           </div>
           <div class="col-md-4">
             <div class="row">
               <h3>Current Production Status</h3>
-              <table class="table table-condensed">
+              <table class="table table-sm">
                 <tbody><tr>
                   <td></td>
                   <td>EN</td>
@@ -94,62 +76,49 @@
                 <tr>
                   <td>WN251</td>
                   <td>
-                    <div class="label osmbclabel-openblog">2</div>
+                    <div class="badge osmbclabel-openblog">2</div>
                   </td>
                 </tr>
               </tbody></table>
               <row>
                 <p>Click on any label to edit the articles or view the blog.</p>
-                <p><span class="label osmbclabel-closedblog">total</span> Blog is closed for a language</p>
-                <p><span class="label osmbclabel-reviewblog">total</span> Blog is undergoing review</p>
-                <p><span class="label osmbclabel-editblog">total</span> Blog is open for editing</p>
-                <p><span class="label osmbclabel-openblog">total</span> Blog is used for submissions</p>
+                <p><span class="badge osmbclabel-closedblog">total</span> Blog is closed for a language</p>
+                <p><span class="badge osmbclabel-reviewblog">total</span> Blog is undergoing review</p>
+                <p><span class="badge osmbclabel-editblog">total</span> Blog is open for editing</p>
+                <p><span class="badge osmbclabel-openblog">total</span> Blog is used for submissions</p>
               </row>
             </div>
           </div>
         </div>
         <div class="footer"></div>
       <p></p>
-      <p></p>
     </div>
     <!-- /container-->
     <!-- Bootstrap core JavaScript-->
     <!-- ==================================================-->
     <!-- Placed at the end of the document so the pages load faster-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="/javascripts/osmbc_staff.js"></script>
   
 
 
   
     <title>TESTBC</title>
-    <link rel="stylesheet" href="file://users/Users/TheFive.osm/development/osmbc/public/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
   
   
 
 <script nonce="Fixed Nonce for Test">
   // Init This Window with jQuery ready Callback
   $(document).ready(init2);
+  window.htmlroot = "";
   function init2() {
     $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
   }
-  function chooseLanguage(number,lang) {
-    var data = {};
-    data[number]=lang;
-    jQuery.post("/language",data, function () {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Problem changing language " +  number + " " + lang);
-      console.error(err);
-    });
-  }
-  function setUserConfig(options) {
-    jQuery.post("/setuserconfig/",options, function (data) {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Trouble saveing User Config");
-      console.error(err);
-    });
-  }   
+  
+  
+  
   
 </script></body></html>

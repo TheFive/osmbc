@@ -178,7 +178,7 @@ function ensureAuthenticated (req, res, next) {
       if (req.method === "GET" && (!req.user.lastAccess || (date.getTime() - lastStore.getTime()) > 1000 * 5)) {
         const stamp = new Date();
         req.user.lastAccess = stamp;
-        req.user.save({ noVersionIncrease: true }, function (err) {
+        req.user.save({ noVersionIncrease: true, onlyIfVersionEqual: true }, function (err) {
           if (err) return next(err);
         });
       }

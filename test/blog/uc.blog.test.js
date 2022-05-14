@@ -46,7 +46,7 @@ describe("uc/blog", function() {
   let nocklist = []
   beforeEach(async function() {
     nockLoginPage = testutil.nockLoginPage();
-    let list = yaml.load(fs.readFileSync(path.resolve(__dirname, "..", "blog","DataWN290LinkList.txt"), "UTF8"));
+    let list = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "..", "blog","DataWN290LinkList.txt"), "UTF8"));
     list.forEach(function(item){
       let url = new URL(item);
       let path = url.pathname;
@@ -55,7 +55,7 @@ describe("uc/blog", function() {
       let n = nock(url.protocol+"//"+url.host)
         .get(path)
         .times(99)
-        .reply(200,"OK");
+        .reply(201,"OK");
       nocklist.push(n);
     });
   });
@@ -165,7 +165,7 @@ describe("uc/blog", function() {
     beforeEach(async function() {
 
       await testutil.importData("blog/DataWN290.json");
-      await userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN",email:"a@b.c"});
+      await userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN",email:"a@b.c",translationServices: ["deeplPro"]});
       browser = await testutil.getNewBrowser("TheFive");
     });
     describe("Blog Display", function() {
@@ -173,13 +173,13 @@ describe("uc/blog", function() {
         let errors = [];
         await browser.visit("/blog/WN290");
         browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview"),
-        await browser.click('span[name="choose_showNumbers"]'),
-        await browser.click('span[name="choose_showMail"]'),
-        await browser.click('span[name="choose_showVisibleLanguages"]'),
-        await browser.click('span[name="choose_showCollector"]'),
-        await browser.click('span[name="choose_showEditor"]'),
-        await browser.click('span[name="choose_showColoredUser"]'),
-        await browser.click('span[name="choose_showLanguages"]'),
+        await browser.click('div[name="choose_showNumbers"]'),
+        await browser.click('div[name="choose_showMail"]'),
+        await browser.click('div[name="choose_showVisibleLanguages"]'),
+        await browser.click('div[name="choose_showCollector"]'),
+        await browser.click('div[name="choose_showEditor"]'),
+        await browser.click('div[name="choose_showColoredUser"]'),
+        await browser.click('div[name="choose_showLanguages"]'),
         browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview_withglab");
 
         //

@@ -1,4 +1,4 @@
-extends ../layout
+extends blog_mixin
 
 
 mixin userLabel(user,style)
@@ -14,9 +14,9 @@ mixin userLabel(user,style)
     if (userMap[user] && userMap[user].access === "full" && typeof userMap[user].color === "string")
       - bgColor =  "background-color:"+ userMap[user].color
   if (bgColor !== "")
-    span.label.small-margin(class=style,style=bgColor)=user
+    span.badge.small-margin(class=style,style=bgColor)=user
   else
-    span.label.small-margin(class=style)=user
+    span.badge.small-margin(class=style)=user
 
 
 mixin previewDiv(article, lang)
@@ -33,9 +33,9 @@ mixin previewDiv(article, lang)
     at last non empty comments.
 mixin reviewBlog(reviewComments,lang)
   if reviewComments
-    .panel.panel-default
-      .panel-heading
-        .panel-title
+    .card
+      .card-header
+        .card-title
           span="Review "+lang
           if (reviewComments.length>0 && reviewComments[0].text=="startreview")
             - var reviewStarter= reviewComments[0].user
@@ -44,7 +44,7 @@ mixin reviewBlog(reviewComments,lang)
             span.text-muted.small=" "+layout.moment(reviewComments[0].timestamp).fromNow()
             span.text-muted.small=") "
             a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
-      .panel-body
+      .card-body
         - personalReviewStarted=false
         each comment,i in reviewComments
           if comment.text!="startreview" && comment.text != "reviewing..."
@@ -57,25 +57,25 @@ mixin reviewBlog(reviewComments,lang)
                 i.text-muted.small="Edit: "+layout.moment(comment.editstamp).fromNow()
               if layout.user.OSMUser === comment.user && (!blog["close"+lang])
                 span=" "
-                a(onclick=`document.getElementById('editReview${lang}${i}').classList.remove('hidden');document.getElementById('reviewLeftText${lang}${i}').classList.add('hidden');`)
-                  span.glyphicon.glyphicon-pencil
+                a(onclick=`document.getElementById('editReview${lang}${i}').classList.remove('d-none');document.getElementById('reviewLeftText${lang}${i}').classList.add('d-none');`)
+                  i.fa.fa-pencil
               if reviewStartTime
                 span=" "
                 a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&user="+comment.user+"&table=article&property=markdown"+lang+"&date=>="+reviewStartTime) [changes]
             p(id="reviewLeftText"+lang+i)=comment.text
             if (!comment.text)
               p.text-muted.small="Empty Comment"
-            div.hidden(id="editReview"+lang+i)
+            div.d-none(id="editReview"+lang+i)
               if (!blog["close"+lang])
-                form.form-horizontal(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
+                form(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
                   textarea(rows=5,class="form-control",name ="text",id="reviewComment"+lang+i)=comment.text
-                  input.hidden(type="text",name="lang" value = lang)
+                  input.d-none(type="text",name="lang" value = lang)
                   button.btn.btn-large.btn-primary(id="reviewButton"+lang+i type="submit") Change
           if comment.text == "reviewing..."
             if layout.user.OSMUser === comment.user
               - personalReviewStarted = true
             h3
-              div.label.label-warning
+              div.badge.badge-warning
                 b.span=comment.user
                 span=" is reviewing since "+layout.moment(comment.timestamp).fromNow()
 
@@ -83,7 +83,7 @@ mixin reviewBlog(reviewComments,lang)
         .form-group
           if (!blog["close"+lang])
             if personalReviewStarted
-              form.form-horizontal(id="review"+lang name="review"+lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
+              form(id="review"+lang name="review"+lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
 
                   textarea(rows=5,
                         class="form-control",
@@ -91,82 +91,59 @@ mixin reviewBlog(reviewComments,lang)
                         id="reviewComment"+lang
                         placeholder="Please Type your Review here"
                         onkeyup="document.getElementById('reviewButton" + lang +"').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
-                  input.hidden(type="text",name="lang" value = lang)
+                  input.d-none(type="text",name="lang" value = lang)
 
                   button.btn.btn-large.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
-                  button.btn.btn-large.btn-default(
+                  button.btn.btn-large.btn-secondary(
                     id="reviewButtonCancel"+lang
                     type="button"
                     onclick="document.getElementById('reviewComment" + lang +"').value='delete';\
                        document.getElementById('review" +  lang + "').submit();") cancel
             else
-              form.form-horizontal(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
+              form(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
                 .col-md-8
-                  input.hidden(type="text",
+                  input.d-none(type="text",
                   class="form-control",
                   name ="text",
                   value ="reviewing..."
                   id="reviewComment" + lang
                   placeholder="Please Type your Review here"
                   onkeyup="document.getElementById('reviewButton" + lang + "').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
-                  input.hidden(type="text",name="lang" value = lang)
+                  input.d-none(type="text",name="lang" value = lang)
                 .col-md-4
                   button.btn.btn-large.btn-primary(id="reviewButton" + lang type="submit") Start Personal Review
 
-mixin blogReviewButtons(lang)
-  if (!(blog["close"+lang])) && (lang !== null)
-    - _rc = blog["reviewComment"+lang];
-    if (_rc)
-      .row
-        .col-md-12
-          if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
-            button.btn.btn-large.btn-warning(id="closebutton" onclick=`window.setLangStatus("${lang}","closelang",this);`) Close #{blog.name}(#{lang})
-          else
-            button.btn.btn-large.btn-warning(id="didexport" onclick=`window.setLangStatus("${lang}","markexported",this);`) Did Export (#{lang})
-
-      if (blog["exported"+lang])
-        .row
-          .alert.bg-danger.text-center.bold
-            | <strong>Blog is exported, please do the last Review in WordPress</strong>
-
-    else
-      if blog.status != "open"
-        button.btn.btn-large.btn-primary(id="readyreview" onclick=`window.setLangStatus("${lang}","startreview",this);`) Set #{blog.name}(#{lang}) ready for review
 
 mixin blogTranslateMenu(langFrom,langTo,service)
   if (!blog["closed"+langTo])
-    li
-      a(
+    a.dropdown-item(
         class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
         onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
         )="Translate " + langFrom+  "->" +langTo
-    li.bg-warning.hidden(class="translateWait" + langFrom + langTo)
-      a=" Please Wait"
-    li.bg-danger.hidden(class="translateError" + langFrom + langTo)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-remove
-    li.hidden(class="translateDone" + langFrom + langTo+" "+service)
-      a="Translate " + langFrom+  "->" +langTo +" "
-        span.glyphicon.glyphicon-ok
 
 
-mixin translationMenu
+mixin translationBlogMenu
   if (layout.blogTranslationVisibleFor === "full" || (Array.isArray(layout.blogTranslationVisibleFor) && layout.blogTranslationVisibleFor.indexOf(layout.user.OSMUser)>=0))
-    li.dropdown#translation.hidden-xs
-      a.dropdown-toggle(href='#', data-toggle='dropdown')
-        | Translate
-        span.caret
-      ul.dropdown-menu(role='menu')
-        each tService in translationServices
-          li.dropdown-header="Use " + tService +":"
-            - list = [layout.language, layout.language2]
+    li.dropdown.navbar-item
+      a.nav-link.dropdown-toggle#translateMenu(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") 
+        | Translate Blog
+      div.dropdown-menu(aria-labelledby="translateMenu")
+        each tService in layout.user.getTranslations()
+          a.dropdown-header="Use " + tService +":"
+            - list = [layout.user.getLang(0), layout.user.getLang(1)]
             each a in list
               each b in list
                 if (a!==b && a!== null && b!== null)
                   +blogTranslateMenu(a, b, tService)
 
-block additionalMenu
-  +translationMenu
+block additionalMenuMain
+  +translationBlogMenu
+
+block additionalMenuRight  
+  +langMenu(2)
+
+  
+
 
 
 block content
@@ -178,7 +155,7 @@ block content
     - if (total == 0) total = 1
   .row
     .col-md-1
-      div.label.osmbclabel-lang=left_lang
+      div.badge.osmbclabel-lang=left_lang
       if blog._unsolvedComments[left_lang] > 0
         span.badge.osmbclabel-no-markdown=blog._unsolvedComments[left_lang]+"(*)"
       else
@@ -188,7 +165,7 @@ block content
       div.progress-bar.osmbclabel-markdown(style="width:" +parseInt(100*ready/total)+"%")=ready
       div.progress-bar.osmbclabel-no-markdown(style="width:" + parseInt(100*unedited/total) + "%")=unedited
       div.progress-bar.osmbclabel-no-translation(style="width:" + parseInt(100*notranslate/total)+"%")=notranslate
-  div.hidden-xs
+  div.d-none.d-md-block
     if (right_lang!= "--" && right_lang != null)
       .row
         - unedited = blog._countUneditedMarkdown[right_lang];
@@ -197,7 +174,7 @@ block content
         - ready = (total-unedited - notranslate)
         - if (total == 0) total = 1
         .col-md-1
-          div.label.label-info.osmbclabel-lang2=right_lang
+          div.badge.badge-info.osmbclabel-lang2=right_lang
           if blog._unsolvedComments[right_lang] > 0
             span.badge.osmbclabel-no-markdown=blog._unsolvedComments[right_lang] + "(*)"
           else
@@ -212,23 +189,23 @@ block content
   .row
     - columnLeftSize = "col-md-6"
     - columnRightSize = "col-md-6"
-    - if (right_lang== "--" || right_lang == null)  {columnLeftSize = "col-md-12";columnRightSize = "hidden";}
+    - if (right_lang== "--" || right_lang == null)  {columnLeftSize = "col-md-12";columnRightSize = "d-none";}
     .col-md-6
       h2
-        span.hidden-xs=blog.getBlogName(left_lang)+" "
+        span.d-none.d-md-block=blog.getBlogName(left_lang)+" "
         |#{blog.name}
-        span.hidden-xs=" ("+blog.getStatus(left_lang)+")"
+        span.d-none.d-md-block=" ("+blog.getStatus(left_lang)+")"
 
 
     .col-md-3
       +blogReviewButtons(left_lang)
-    .col-md-3
+    .col-md-3.d-none.d-md-block
       +blogReviewButtons(right_lang)
 
   .row
     div(class=columnLeftSize)
       +reviewBlog(blog["reviewComment"+left_lang],left_lang)
-    div.hidden-xs(class=columnRightSize)
+    div.d-none.d-md-block(class=columnRightSize)
       +reviewBlog(blog["reviewComment"+right_lang],right_lang)
 
 
@@ -236,9 +213,9 @@ block content
   .row
     .col-md-12
       ul.nav.nav-tabs
-        li.hidden-xs(role="presentation")
-          a(href="#filter")
-            span.glyphicon.glyphicon-filter
+        li.nav-item.d-none.d-md-block(role="presentation")
+          a.nav-link(href="#filter")
+            i.fa.fa-filter
         +navbutton("Overview",tab,"")
         +navbutton("Full",tab,"")
         +navbutton("Review",tab,"")
@@ -250,35 +227,33 @@ block content
               - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
               +navbutton(style0,style)
             - v++
-        li.hidden-xs
-          a(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" +left_lang)
-            span.glyphicon.glyphicon-export
+        li.nav-item.d-none.d-md-block
+          a.nav-link(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" +left_lang)
+            i.fa.fa-download
             | #{left_lang}
             if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[left_lang] == 0)
               span=" "
-              span.glyphicon.glyphicon-alert
+              i.fa.fa-exclamation-triangle
         if (right_lang != "--" && right_lang != null)
-          li.hidden-xs
-            a(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" + right_lang)
-              span.glyphicon.glyphicon-export
+          li.nav-item.d-none.d-md-block
+            a.nav-link(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" + right_lang)
+              i.fa.fa-download
               | #{right_lang}
               if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[right_lang] == 0)
                 span=" "
-                span.glyphicon.glyphicon-alert
+                i.fa.fa-exclamation-triangle
 
-        li.dropdown.hidden-xs
-          a.dropdown-toggle(href='#', data-toggle='dropdown')
-            span.glyphicon.glyphicon-export
-          ul.dropdown-menu(role='menu')
-            -  var noShown = true;
-            for lang in layout.languages
-              if layout.usedLanguages[lang]
-                li
-                  a(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang)
-                    span="Export "+ lang
-                    if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
-                      span=" "
-                      span.glyphicon.glyphicon-alert
+        li.nav-item.dropdown.show
+          a.nav-link.dropdown-toggle#dropdownExportLanguages(role="button", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
+            i.fa.fa-download
+          div.dropdown-menu(aria-labelledby="dropdownExportLanguages")
+            - var noShown = true;
+            for lang in layout.activeLanguages
+              a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang)
+                span="Export "+ lang
+                if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
+                  span=" "
+                  i.fa.fa-exclamation-triangle
 
 
 
@@ -301,129 +276,3 @@ block content
 
 
 
-block scripts
-  script(src=layout.path("markdown-it")+'/markdown-it.min.js')
-  script(src=layout.htmlroot + "/javascripts/osmbc_staff.js")
-
-  script(nonce=cspNonce).
-
-    var openEditor = null;
-    htmlroot = "!{layout.htmlroot}";
-
-    window.onload = function () {
-
-      $(".preview").change(highlightWrongLinks);
-      $(".preview").each(highlightWrongLinks);
-
-
-      if (typeof(Storage) !== "undefined") {
-        if (window.sessionStorage.blogUrl !== window.location.href) return;
-        var x = window.sessionStorage.blogX;
-        var y = window.sessionStorage.blogY;
-        window.scrollTo(x, y);
-      }
-    }
-
-
-
-    window.onbeforeunload = function (event) {
-      // store the scroll Position in the local Store
-      s = {x: window.scrollX, y: window.scrollY};
-
-      if (typeof(Storage) !== "undefined") {
-
-        window.sessionStorage.blogUrl = window.location.href;
-        window.sessionStorage.blogX = s.x;
-        window.sessionStorage.blogY = s.y;
-      }
-    };
-
-
-
-    function onLeaveText(id,column) {
-      if (!column) column="";
-
-      var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
-      var newValue = document.getElementById(column + "markdown" + id).value;
-      if (oldValue === newValue) return;
-      form = document.getElementById(column + 'EditArticle' + id);
-      form.submit();
-    }
-
-
-    function convert(text) {
-      converter = new window.markdownit({breaks: true});
-
-      // generate the OSMBlog Style List
-      if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
-      // convert md to html
-      text = converter.render(text);
-      // skip <ul> and </ul> at start and end
-
-
-      text = '<li>' + text + '</li>';
-
-
-      return text;
-
-    }
-    function onchangeMarkdown(id,column) {
-      if (!column) column="";
-      var markdownField = document.getElementById(column + "markdown" + id);
-      var md = markdownField.value;
-      var pv = document.getElementById(column+"preview"+id);
-
-
-      pv.innerHTML = convert(md);
-      $(pv).trigger("change");
-
-    }
-
-    function callAndRedraw(call, redraw) {
-      $.get("!{layout.htmlroot}" + call, function (data) {
-        let j = $.getJSON("!{layout.htmlroot}" + redraw, function (json) {
-          for (k in json) {
-            var el = document.createElement("div");
-
-            el.innerHTML = json[k];
-
-            $(k).replaceWith(el.children[0]);
-            el.remove();
-
-          }
-        });
-      });
-
-    }
-
-    function translate(langFrom, langTo, service) {
-      $(".translate" + langFrom + langTo).addClass("hidden");
-      $(".translateWait" + langFrom + langTo).removeClass("hidden");
-      var from =  langFrom.toLowerCase();
-      var to = langTo.toLowerCase();
-
-      let url =window.htmlroot + "/blog/!{blog.name}/translate/" + service + "/" + from + "/" + to;
-
-
-
-      jQuery.post(window.htmlroot + "/blog/!{blog.name}/translate/" + service + "/" + from + "/" + to, function (data) {
-        location.reload();
-      }).fail(function (err) {
-        console.error("Translation failed");
-        console.error(err);
-        $(".translateWait" + langFrom + langTo).addClass("hidden");
-        $(".translateError" + langFrom + langTo).removeClass("hidden");
-      });
-    } 
-        
-    function setLangStatus(lang, status,button) {
-      $(button).prop('disabled', true);
-      $(button).prop('html', "wait ...");
-      jQuery.post(window.htmlroot + "/blog/!{blog.name}/setLangStatus",{action:status,lang:lang}, function (data) {
-        location.reload();
-      }).fail(function (err) {
-        console.error("Trouble setting Language Status");
-        console.error(err);
-      });
-    
-    }
