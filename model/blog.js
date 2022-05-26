@@ -157,6 +157,7 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
 };
 
 Blog.prototype.fillEventArticle = function fillEventArticle(lang, callback) {
+  debug("fillEventArticle");
   const eventArticle = this._upcomingEvents;
   if (!eventArticle) return callback();
   let oldMd = eventArticle["markdown" + lang];

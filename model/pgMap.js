@@ -111,7 +111,7 @@ module.exports.save = function(options, callback) {
   }
   const self = this;
   function _save(options, callback) {
-    debug("save");
+    debug("_save");
 
     const table = self.getTable();
 
