@@ -315,6 +315,9 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
 
   if (util.isURL(search)) {
     const http1Url = search;
+    if (search.substring(search.length - 1, search.length === "/")) {
+      search = search.substring(0, search.length - 1);
+    }
     let http2Url;
     if (search.substring(0, 5) === "http:") {
       http2Url = "https:" + search.substring(5, 9999);
@@ -322,8 +325,12 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
     if (search.substring(0, 6) === "https:") {
       http2Url = "http:" + search.substring(6, 9999);
     }
-    search = "'" + util.toPGString(http1Url, 1) + "' | '(" + util.toPGString(http1Url, 1) + ")' ";
-    if (http2Url) search = "'" + util.toPGString(http2Url, 1) + "' | '(" + util.toPGString(http1Url, 1) + ")'";
+    const h1 = util.toPGString(http1Url);
+    const h2 = util.toPGString(http2Url);
+
+    search = `'${h1}' | '(${h1})' | '${h1}/' | '(${h1}/)'`;
+    if (http2Url) search = search + `| '${h2}' | '(${h2})' | '${h2}/' | '(${h2}/)'`;
+
     germanVector = "@@ to_tsquery('german', $1)";
     englishVector = "@@ to_tsquery('english', $1)";
   }
@@ -335,7 +342,7 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
                           or to_tsvector('english',  coalesce(data->>'collection','')  || ' '|| \
                                                     coalesce(data->>'markdownEN','')   ) " + englishVector +
                       orderBy;
-
+  console.log(sqlQuery);
   db.query(sqlQuery, [search], convertResultFunction(module, callback));
 };
 
