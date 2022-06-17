@@ -1,8 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [3.7.1](https://github.com/TheFive/osmbc/tree/3.7.1) (2022-05-14)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9e...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9e...3.7.1)
 
 **Implemented enhancements:**
 
@@ -14,6 +14,7 @@
 
 **Fixed bugs:**
 
+- Download button not working in Preview Window [\#921](https://github.com/TheFive/osmbc/issues/921)
 - Delete space between Title and collection [\#913](https://github.com/TheFive/osmbc/issues/913)
 - Markdown Superscript is wrong displayed in article editor [\#912](https://github.com/TheFive/osmbc/issues/912)
 - No unpublish reasons missing in BETA [\#911](https://github.com/TheFive/osmbc/issues/911)
@@ -21,10 +22,11 @@
 - Status display looks like a button, this is missleading [\#905](https://github.com/TheFive/osmbc/issues/905)
 - Download button doesn't work [\#904](https://github.com/TheFive/osmbc/issues/904)
 - Widen the comment box [\#900](https://github.com/TheFive/osmbc/issues/900)
+- Main Menu Bar is showing only 1 language while displaying 2 badgets for former left and right lang [\#896](https://github.com/TheFive/osmbc/issues/896)
 
 **Closed issues:**
 
-- Main Menu Bar is showing only 1 language while displaying 2 badgets for former left and right lang [\#896](https://github.com/TheFive/osmbc/issues/896)
+- Change rules for "link it too long" [\#924](https://github.com/TheFive/osmbc/issues/924)
 
 ## [3.6.9e](https://github.com/TheFive/osmbc/tree/3.6.9e) (2022-01-11)
 
