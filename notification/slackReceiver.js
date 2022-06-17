@@ -74,8 +74,6 @@ SlackReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter, call
 
 SlackReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, callback) {
   debug("SlackReceiver::sendReviewStatus %s", this.name);
-  return callback();
-
   let subject = blogNameSlack(blog.name);
 
 
@@ -102,7 +100,6 @@ SlackReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog,
   }
   const username = botName + "(" + user.OSMUser + ")";
 
-  return callback();
   if (this.slack) {
     this.slack.send({
       text: subject,

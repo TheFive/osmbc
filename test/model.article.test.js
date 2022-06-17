@@ -801,6 +801,7 @@ describe("model/article", function() {
       await articleModule.createNewArticle({blog: "5", markdownDE: "linktest2", collection: "https://simple.link/whereisit/", category: "catA"});
       await articleModule.createNewArticle({blog: "5", markdownDE: "linktest3", collection: "http://simple.link/whereisit", category: "catA"});
       await articleModule.createNewArticle({blog: "5", markdownDE: "linktest4", collection: "http://simple.link/whereisit/", category: "catA"});
+      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest5", markdownDE: "[link](http://simple.link/whereisit/)", category: "catA"});
     });
     it("should find the simple link", async function() {
       const result = await articleModule.fullTextSearch("https://simple.link/where", {column: "blog"});
@@ -816,16 +817,16 @@ describe("model/article", function() {
     });
     it("should search links independent from httpS or closing /", async function() {
       let result = await articleModule.fullTextSearch("https://simple.link/whereisit", {column: "blog"});
-      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
+      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4', '[link](http://simple.link/whereisit/)' ]);
       
       result = await articleModule.fullTextSearch("https://simple.link/whereisit/", {column: "blog"});
-      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
+      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4', '[link](http://simple.link/whereisit/)' ]);
       
       result = await articleModule.fullTextSearch("http://simple.link/whereisit", {column: "blog"});
-      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
+      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4', '[link](http://simple.link/whereisit/)' ]);
 
       result = await articleModule.fullTextSearch("http://simple.link/whereisit/", {column: "blog"});
-      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
+      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4', '[link](http://simple.link/whereisit/)' ]);
     });
   });
   describe("comments", function() {
