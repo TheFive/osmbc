@@ -789,86 +789,43 @@ describe("model/article", function() {
     });
   });
   describe("fullTextSearch", function() {
-    before(function (bddone) {
+    before(async function () {
       // Initialise some Test Data for the find functions
-      async.series([
+      await testutil.clearDB();
+      await articleModule.createNewArticle({blog: "1", markdownDE: "test1", collection: "Try this link https://www.test.at/link ?", category: "catA"});
+      await articleModule.createNewArticle({blog: "5", markdownDE: "[test](http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842)", collection: "text", category: "catA"});
+      await articleModule.createNewArticle({blog: "2", markdownEN: "See more special [here](https://www.test.at/link)", collection: "col1", category: "catA"}); 
+      await articleModule.createNewArticle({blog: "3", markdownDE: "test2", collection: "http://www.test.at/link", category: "catB"}); 
+      await articleModule.createNewArticle({blog: "4", markdownDE: "test3", collection: "https://simple.link/where", category: "catA"});
+      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest1", collection: "https://simple.link/whereisit", category: "catA"});
+      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest2", collection: "https://simple.link/whereisit/", category: "catA"});
+      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest3", collection: "http://simple.link/whereisit", category: "catA"});
+      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest4", collection: "http://simple.link/whereisit/", category: "catA"});
+    });
+    it("should find the simple link", async function() {
+      const result = await articleModule.fullTextSearch("https://simple.link/where", {column: "blog"});
+      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'test3' ]);
+    });
+    it("should find the other link 3 times", async function() {
+      const result = await articleModule.fullTextSearch("https://www.test.at/link", {column: "blog"});
+      should(result.flatMap(x => x.blog)).deepEqual([ '1', '2', '3' ]);
+    });
+    it("should search links with apostroph in it", async function() {
+      const result = await articleModule.fullTextSearch("http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842", {column: "blog"});
+      should(result.flatMap(x => x.blog)).deepEqual([ '5' ]);
+    });
+    it("should search links independent from httpS or closing /", async function() {
+      let result = await articleModule.fullTextSearch("https://simple.link/whereisit", {column: "blog"});
+      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
+      
+      result = await articleModule.fullTextSearch("https://simple.link/whereisit/", {column: "blog"});
+      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
+      
+      result = await articleModule.fullTextSearch("http://simple.link/whereisit", {column: "blog"});
+      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
 
-
-        testutil.clearDB,
-        (cb) => { articleModule.createNewArticle({blog: "1", markdownDE: "test1", collection: "Try this link https://www.test.at/link ?", category: "catA"}, cb); },
-        (cb) => { articleModule.createNewArticle({blog: "5", markdownDE: "[test](http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842)", collection: "text", category: "catA"}, cb); },
-        (cb) => { articleModule.createNewArticle({blog: "2", markdownEN: "See more special [here](https://www.test.at/link)", collection: "col1", category: "catA"}, cb); },
-        (cb) => { articleModule.createNewArticle({blog: "3", markdownDE: "test2", collection: "http://www.test.at/link", category: "catB"}, cb); },
-        (cb) => { articleModule.createNewArticle({blog: "4", markdownDE: "test3", collection: "https://simple.link/where", category: "catA"},cb);},
-        (cb) => { articleModule.createNewArticle({blog: "4", markdownDE: "linktest1", collection: "https://simple.link/whereisit", category: "catA"},cb);},
-        (cb) => { articleModule.createNewArticle({blog: "4", markdownDE: "linktest2", collection: "https://simple.link/whereisit/", category: "catA"},cb);},
-        (cb) => { articleModule.createNewArticle({blog: "4", markdownDE: "linktest3", collection: "http://simple.link/whereisit", category: "catA"},cb);},
-        (cb) => { articleModule.createNewArticle({blog: "4", markdownDE: "linktest4", collection: "http://simple.link/whereisit/", category: "catA"},cb);}
-
-      ], function(err) {
-        should.not.exist(err);
-        bddone();
-      });
-    });
-    it("should find the simple link", function(bddone) {
-      articleModule.fullTextSearch("https://simple.link/where", {column: "blog"}, function(err, result) {
-        should.not.exist(err);
-        should.exist(result);
-        should(result.length).equal(1);
-        should(result[0].blog).equal("4");
-        bddone();
-      });
-    });
-    it("should find the other link 3 times", function(bddone) {
-      articleModule.fullTextSearch("https://www.test.at/link", {column: "blog"}, function(err, result) {
-        should.not.exist(err);
-        should.exist(result);
-        should(result.length).equal(3);
-        should(result[0].blog).equal("1");
-        should(result[1].blog).equal("2");
-        should(result[2].blog).equal("3");
-        bddone();
-      });
-    });
-    it("should search links with apostroph in it", function(bddone) {
-      articleModule.fullTextSearch("http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842", {column: "blog"}, function(err, result) {
-        should.not.exist(err);
-        should.exist(result);
-        should(result.length).equal(1);
-        bddone();
-      });
-    });
-    it("should search links independent from httpS or closing / (1 of 4)", function(bddone) {
-      articleModule.fullTextSearch("https://simple.link/whereisit", {column: "blog"}, function(err, result) {
-        should.not.exist(err);
-        should.exist(result);
-        should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
-        bddone();
-      });
-    });
-    it("should search links independent from httpS or closing / (2 of 4)", function(bddone) {
-      articleModule.fullTextSearch("https://simple.link/whereisit/", {column: "blog"}, function(err, result) {
-        should.not.exist(err);
-        should.exist(result);
-        should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
-        bddone();
-      });
-    });
-    it("should search links independent from httpS or closing / (3 of 4)", function(bddone) {
-      articleModule.fullTextSearch("http://simple.link/whereisit", {column: "blog"}, function(err, result) {
-        should.not.exist(err);
-        should.exist(result);
-        should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
-        bddone();
-      });
-    });
-    it("should search links independent from httpS or closing / (4 of 4)", function(bddone) {
-      articleModule.fullTextSearch("http://simple.link/whereisit/", {column: "blog"}, function(err, result) {
-        should.not.exist(err);
-        should.exist(result);
-        should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
-        bddone();
-      });
+      result = await articleModule.fullTextSearch("http://simple.link/whereisit/", {column: "blog"});
+      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
     });
   });
   describe("comments", function() {
