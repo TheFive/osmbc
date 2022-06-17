@@ -407,7 +407,16 @@ function findOne(obj1, obj2, callback) {
 
 function fullTextSearch(search, order, callback) {
   debug("fullTextSearch");
-  pgMap.fullTextSearch({ table: "article", create: create }, search, order, callback);
+  assert(typeof search === "string");
+  if (typeof order === "function") {
+    callback = order;
+    order = null;
+  }
+  if (callback) return pgMap.fullTextSearch({ table: "article", create: create }, search, order, callback);
+
+  return new Promise((resolve, reject) => {
+    pgMap.fullTextSearch({ table: "article", create: create }, search, order, (err, result) => err ? reject(err) : resolve(result));
+  });
 }
 
 function findEmptyUserCollectedArticles(lang, user, callback) {

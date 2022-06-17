@@ -121,8 +121,9 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
         if (self[rc].length === 0) {
           self[rc].push({ user: user.OSMUser, text: data, timestamp: date });
         }
-        // check Event articles
-        return self.fillEventArticle(lang, cb);
+        // check Event articles (async with no real callback)
+        self.fillEventArticle(lang, () => {});
+        return cb();
       }
       if (data === "markexported") {
         self[exported] = true;
@@ -157,6 +158,7 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
 };
 
 Blog.prototype.fillEventArticle = function fillEventArticle(lang, callback) {
+  debug("fillEventArticle");
   const eventArticle = this._upcomingEvents;
   if (!eventArticle) return callback();
   let oldMd = eventArticle["markdown" + lang];
