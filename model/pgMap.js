@@ -342,7 +342,6 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
                           or to_tsvector('english',  coalesce(data->>'collection','')  || ' '|| \
                                                     coalesce(data->>'markdownEN','')   ) " + englishVector +
                       orderBy;
-  console.log(sqlQuery);
   db.query(sqlQuery, [search], convertResultFunction(module, callback));
 };
 
