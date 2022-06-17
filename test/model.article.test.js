@@ -795,17 +795,15 @@ describe("model/article", function() {
 
 
         testutil.clearDB,
-        function c1(cb) { articleModule.createNewArticle({blog: "1", markdownDE: "test1", collection: "Try this link https://www.test.at/link ?", category: "catA"}, cb); },
-        function c2(cb) { articleModule.createNewArticle({blog: "5", markdownDE: "[test](http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842)", collection: "text", category: "catA"}, cb); },
-        function c3(cb) { articleModule.createNewArticle({blog: "2", markdownEN: "See more special [here](https://www.test.at/link)", collection: "col1", category: "catA"}, cb); },
-        function c4(cb) { articleModule.createNewArticle({blog: "3", markdownDE: "test2", collection: "http://www.test.at/link", category: "catB"}, cb); },
-        function c5(cb) {
-          articleModule.createNewArticle({blog: "4", markdownDE: "test3", collection: "https://simple.link/where", category: "catA"},
-            function(err) {
-              should.not.exist(err);
-              cb(err);
-            });
-        }
+        (cb) => { articleModule.createNewArticle({blog: "1", markdownDE: "test1", collection: "Try this link https://www.test.at/link ?", category: "catA"}, cb); },
+        (cb) => { articleModule.createNewArticle({blog: "5", markdownDE: "[test](http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842)", collection: "text", category: "catA"}, cb); },
+        (cb) => { articleModule.createNewArticle({blog: "2", markdownEN: "See more special [here](https://www.test.at/link)", collection: "col1", category: "catA"}, cb); },
+        (cb) => { articleModule.createNewArticle({blog: "3", markdownDE: "test2", collection: "http://www.test.at/link", category: "catB"}, cb); },
+        (cb) => { articleModule.createNewArticle({blog: "4", markdownDE: "test3", collection: "https://simple.link/where", category: "catA"},cb);},
+        (cb) => { articleModule.createNewArticle({blog: "4", markdownDE: "linktest1", collection: "https://simple.link/whereisit", category: "catA"},cb);},
+        (cb) => { articleModule.createNewArticle({blog: "4", markdownDE: "linktest2", collection: "https://simple.link/whereisit/", category: "catA"},cb);},
+        (cb) => { articleModule.createNewArticle({blog: "4", markdownDE: "linktest3", collection: "http://simple.link/whereisit", category: "catA"},cb);},
+        (cb) => { articleModule.createNewArticle({blog: "4", markdownDE: "linktest4", collection: "http://simple.link/whereisit/", category: "catA"},cb);}
 
       ], function(err) {
         should.not.exist(err);
@@ -837,6 +835,38 @@ describe("model/article", function() {
         should.not.exist(err);
         should.exist(result);
         should(result.length).equal(1);
+        bddone();
+      });
+    });
+    it("should search links independent from httpS or closing / (1 of 4)", function(bddone) {
+      articleModule.fullTextSearch("https://simple.link/whereisit", {column: "blog"}, function(err, result) {
+        should.not.exist(err);
+        should.exist(result);
+        should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
+        bddone();
+      });
+    });
+    it("should search links independent from httpS or closing / (2 of 4)", function(bddone) {
+      articleModule.fullTextSearch("https://simple.link/whereisit/", {column: "blog"}, function(err, result) {
+        should.not.exist(err);
+        should.exist(result);
+        should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
+        bddone();
+      });
+    });
+    it("should search links independent from httpS or closing / (3 of 4)", function(bddone) {
+      articleModule.fullTextSearch("http://simple.link/whereisit", {column: "blog"}, function(err, result) {
+        should.not.exist(err);
+        should.exist(result);
+        should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
+        bddone();
+      });
+    });
+    it("should search links independent from httpS or closing / (4 of 4)", function(bddone) {
+      articleModule.fullTextSearch("http://simple.link/whereisit/", {column: "blog"}, function(err, result) {
+        should.not.exist(err);
+        should.exist(result);
+        should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4' ]);
         bddone();
       });
     });
