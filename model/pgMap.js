@@ -315,7 +315,7 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
 
   if (util.isURL(search)) {
     const http1Url = search;
-    if (search.substring(search.length - 1, search.length === "/")) {
+    if (search.substring(search.length - 1, search.length) === "/") {
       search = search.substring(0, search.length - 1);
     }
     let http2Url;
