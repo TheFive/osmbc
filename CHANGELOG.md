@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.7.2a](https://github.com/TheFive/osmbc/tree/3.7.2a) (2022-06-18)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2...3.7.2a)
+
+**Fixed bugs:**
+
+- URL search with less chars does not match [\#928](https://github.com/TheFive/osmbc/issues/928)
+
 ## [3.7.2](https://github.com/TheFive/osmbc/tree/3.7.2) (2022-06-17)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.1...3.7.2)
@@ -10,7 +18,6 @@
 
 **Fixed bugs:**
 
-- URL search with less chars does not match [\#928](https://github.com/TheFive/osmbc/issues/928)
 - Guest User do not receive eMails. [\#925](https://github.com/TheFive/osmbc/issues/925)
 
 ## [3.7.1](https://github.com/TheFive/osmbc/tree/3.7.1) (2022-05-14)
@@ -178,6 +185,7 @@
 - Cannot edit own comment [\#856](https://github.com/TheFive/osmbc/issues/856)
 - Calender Flags are shown in Article Link Control [\#855](https://github.com/TheFive/osmbc/issues/855)
 - syntax error at or near "imaginaire" [\#831](https://github.com/TheFive/osmbc/issues/831)
+- Translation with picture results in unnecessary escapes [\#826](https://github.com/TheFive/osmbc/issues/826)
 - Setting blogs to edit on tuesday does not work, if system is running for a longer time [\#684](https://github.com/TheFive/osmbc/issues/684)
 
 ## [3.6.0](https://github.com/TheFive/osmbc/tree/3.6.0) (2020-12-20)
@@ -229,10 +237,6 @@
 **Implemented enhancements:**
 
 - PrePublishing Page [\#830](https://github.com/TheFive/osmbc/issues/830)
-
-**Fixed bugs:**
-
-- Translation with picture results in unnecessary escapes [\#826](https://github.com/TheFive/osmbc/issues/826)
 
 **Closed issues:**
 
@@ -366,7 +370,6 @@
 
 **Fixed bugs:**
 
-- Wortliga Textanalyse \(german blog\) link is not working \(http issue\) [\#783](https://github.com/TheFive/osmbc/issues/783)
 - The Review Comment field is to small. [\#782](https://github.com/TheFive/osmbc/issues/782)
 
 ## [3.3.5](https://github.com/TheFive/osmbc/tree/3.3.5) (2018-08-19)
@@ -391,6 +394,10 @@
 - Integrate possibility to go back to edit mode for a blog [\#778](https://github.com/TheFive/osmbc/issues/778)
 - place a warning box on the guest front page ... [\#777](https://github.com/TheFive/osmbc/issues/777)
 
+**Fixed bugs:**
+
+- Wortliga Textanalyse \(german blog\) link is not working \(http issue\) [\#783](https://github.com/TheFive/osmbc/issues/783)
+
 **Closed issues:**
 
 - Remove express-debug as it is not maintained [\#779](https://github.com/TheFive/osmbc/issues/779)
@@ -402,6 +409,7 @@
 **Implemented enhancements:**
 
 - Remove OK \(Only for LANGUAGE\) from Collect Window. [\#775](https://github.com/TheFive/osmbc/issues/775)
+- Make Logfile configurable [\#774](https://github.com/TheFive/osmbc/issues/774)
 - somewhere on the front page another click to MM? :\) [\#771](https://github.com/TheFive/osmbc/issues/771)
 
 **Fixed bugs:**
@@ -436,10 +444,6 @@
 ## [3.3.1b](https://github.com/TheFive/osmbc/tree/3.3.1b) (2018-04-12)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1a...3.3.1b)
-
-**Implemented enhancements:**
-
-- Make Logfile configurable [\#774](https://github.com/TheFive/osmbc/issues/774)
 
 **Closed issues:**
 
