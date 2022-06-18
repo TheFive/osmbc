@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.7.2](https://github.com/TheFive/osmbc/tree/3.7.2) (2022-06-17)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.1...3.7.2)
+
+**Implemented enhancements:**
+
+- Create Event article in Background, if review is started [\#929](https://github.com/TheFive/osmbc/issues/929)
+
+**Fixed bugs:**
+
+- URL search with less chars does not match [\#928](https://github.com/TheFive/osmbc/issues/928)
+- Guest User do not receive eMails. [\#925](https://github.com/TheFive/osmbc/issues/925)
+
 ## [3.7.1](https://github.com/TheFive/osmbc/tree/3.7.1) (2022-05-14)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.6.9e...3.7.1)
@@ -389,7 +402,6 @@
 **Implemented enhancements:**
 
 - Remove OK \(Only for LANGUAGE\) from Collect Window. [\#775](https://github.com/TheFive/osmbc/issues/775)
-- Make Logfile configurable [\#774](https://github.com/TheFive/osmbc/issues/774)
 - somewhere on the front page another click to MM? :\) [\#771](https://github.com/TheFive/osmbc/issues/771)
 
 **Fixed bugs:**
@@ -424,6 +436,10 @@
 ## [3.3.1b](https://github.com/TheFive/osmbc/tree/3.3.1b) (2018-04-12)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1a...3.3.1b)
+
+**Implemented enhancements:**
+
+- Make Logfile configurable [\#774](https://github.com/TheFive/osmbc/issues/774)
 
 **Closed issues:**
 
