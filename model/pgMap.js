@@ -294,7 +294,7 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
   debug("fullTextSearch");
   assert(module.table);
   assert(module.create);
-  assert(typeof (search) === "string");
+  if (typeof search !== "string") search = "Undefined Search";
   if (typeof (order) === "function") {
     callback = order;
     order = null;
