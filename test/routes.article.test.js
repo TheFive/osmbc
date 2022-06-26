@@ -922,19 +922,23 @@ describe("routes/article", function() {
     let form = {urls: ["https://www.site.ort/apage"]};
 
     it("should run with full access user existing site", async function () {
-      form = {urls: ["https://www.site.ort/apage","https://www.site.ort2/apage"]};
+      form = {urls: ["https://www.site.ort/apage","https://www.site.ort2/apage","https://www.site.ort2/äpäge"]};
       let sitecall = nock("https://www.site.ort")
         .get("/apage")
         .reply(200,"OK");
       let sitecall2 = nock("https://www.site.ort2")
         .get("/apage")
         .reply(404,"Page Not Found");  
+      let sitecall3 = nock("https://www.site.ort2")
+        .get("/äpäge")
+        .reply(200,"OK");  
 
       let response = await rp.post({url: url, body: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true,json:true});
 
       response.body.should.deepEqual({
         'https://www.site.ort/apage': 'OK',
-        'https://www.site.ort2/apage': 404
+        'https://www.site.ort2/apage': 404,
+        'https://www.site.ort2/äpäge': 'OK'
       });
       should(response.statusCode).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();

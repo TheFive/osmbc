@@ -891,7 +891,7 @@ function urlExist(req, res) {
         return callback();
       }
 
-      axios.get(encodeURI(url), { headers: { "User-Agent": userAgent } }).then(function() {
+      axios.get(url, { headers: { "User-Agent": userAgent } }).then(function() {
         linkCache.set(url, "OK");
         result[url] = "OK";
         return callback();
