@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.7.2b](https://github.com/TheFive/osmbc/tree/3.7.2b) (2022-06-26)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2a...3.7.2b)
+
+**Fixed bugs:**
+
+- url Check fails in case of non standard characters in URL. [\#931](https://github.com/TheFive/osmbc/issues/931)
+
+**Security fixes:**
+
+- Fix code scanning alert - Type confusion through parameter tampering [\#930](https://github.com/TheFive/osmbc/issues/930)
+
 ## [3.7.2a](https://github.com/TheFive/osmbc/tree/3.7.2a) (2022-06-18)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2...3.7.2a)
@@ -185,7 +197,6 @@
 - Cannot edit own comment [\#856](https://github.com/TheFive/osmbc/issues/856)
 - Calender Flags are shown in Article Link Control [\#855](https://github.com/TheFive/osmbc/issues/855)
 - syntax error at or near "imaginaire" [\#831](https://github.com/TheFive/osmbc/issues/831)
-- Translation with picture results in unnecessary escapes [\#826](https://github.com/TheFive/osmbc/issues/826)
 - Setting blogs to edit on tuesday does not work, if system is running for a longer time [\#684](https://github.com/TheFive/osmbc/issues/684)
 
 ## [3.6.0](https://github.com/TheFive/osmbc/tree/3.6.0) (2020-12-20)
@@ -237,6 +248,10 @@
 **Implemented enhancements:**
 
 - PrePublishing Page [\#830](https://github.com/TheFive/osmbc/issues/830)
+
+**Fixed bugs:**
+
+- Translation with picture results in unnecessary escapes [\#826](https://github.com/TheFive/osmbc/issues/826)
 
 **Closed issues:**
 
@@ -370,6 +385,7 @@
 
 **Fixed bugs:**
 
+- Wortliga Textanalyse \(german blog\) link is not working \(http issue\) [\#783](https://github.com/TheFive/osmbc/issues/783)
 - The Review Comment field is to small. [\#782](https://github.com/TheFive/osmbc/issues/782)
 
 ## [3.3.5](https://github.com/TheFive/osmbc/tree/3.3.5) (2018-08-19)
@@ -393,10 +409,6 @@
 
 - Integrate possibility to go back to edit mode for a blog [\#778](https://github.com/TheFive/osmbc/issues/778)
 - place a warning box on the guest front page ... [\#777](https://github.com/TheFive/osmbc/issues/777)
-
-**Fixed bugs:**
-
-- Wortliga Textanalyse \(german blog\) link is not working \(http issue\) [\#783](https://github.com/TheFive/osmbc/issues/783)
 
 **Closed issues:**
 
@@ -1337,6 +1349,10 @@
 - Display Tags \(votable tags\) with Icons. [\#453](https://github.com/TheFive/osmbc/issues/453)
 - Allow tags for articles to vote. [\#452](https://github.com/TheFive/osmbc/issues/452)
 
+**Fixed bugs:**
+
+- GTranslate is cutting links of of the result. [\#547](https://github.com/TheFive/osmbc/issues/547)
+
 ## [1.9.9a](https://github.com/TheFive/osmbc/tree/1.9.9a) (2016-10-18)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.9...1.9.9a)
@@ -1360,10 +1376,6 @@
 **Implemented enhancements:**
 
 - Add direct link to filter at end of blog view at top of page. [\#546](https://github.com/TheFive/osmbc/issues/546)
-
-**Fixed bugs:**
-
-- GTranslate is cutting links of of the result. [\#547](https://github.com/TheFive/osmbc/issues/547)
 
 ## [1.9.8](https://github.com/TheFive/osmbc/tree/1.9.8) (2016-10-14)
 
