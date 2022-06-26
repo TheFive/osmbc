@@ -80,11 +80,10 @@ function collectArticle(req, res, next) {
           changes.title = "NOT GIVEN";
           return cb();
         }
-        htmltitle.getTitle(url[0], function(err, title) {
-          if (err) cb(cb);
+        htmltitle.getTitle(url[0]).then(function(title) {
           changes.title = title;
           return cb();
-        });
+        }).catch(() => { return cb(); });
       }
     },
     function getCollection(cb) {
