@@ -87,5 +87,6 @@
   },
  
   "blogTranslationVisibleFor":["TheFive","TheOther"],
-  "urlWoErrorWhileEdit": []
+  "urlWoErrorWhileEdit": [],
+  "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":150}
 }
