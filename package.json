@@ -64,6 +64,7 @@
     "request-promise-native": "1.0.x",
     "sanitize-filename": "^1.6.3",
     "serve-favicon": "2.5.x",
+    "ssrf": "^1.0.2",
     "standard-http-error": "2.0.x",
     "stoppable": "1.1.x",
     "turndown": "7.1.x",
@@ -97,5 +98,3 @@
     "zombie": "^5.0.8"
   }
 }
-
-

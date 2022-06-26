@@ -131,10 +131,11 @@ function postSlackCreateUseTBC(req, res, next) {
 
   async.series([function calcTitle(cb) {
     if (typeof (title) === "undefined" || title === "") {
-      htmltitle.getTitle(url, function (err, t) {
-        if (err) return cb(err);
+      htmltitle.getTitle(url).then(function (t) {
         title = t;
         return cb();
+      }).catch(function(err) {
+        return cb(err);
       });
     } else return cb();
   }], function createArticle(err) {

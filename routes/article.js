@@ -382,9 +382,12 @@ function searchAndCreate(req, res, next) {
   async.series([
     function generateTitle(cb) {
       if (util.isURL(search)) {
-        htmltitle.getTitle(search, function (err, titleCalc) {
-          if (err) cb(err);
+        htmltitle.getTitle(search).then(function (titleCalc) {
           title = titleCalc;
+          return cb();
+        }).catch((err) => {
+          title = "Something is wrong with url";
+          collection = collection + "\nPlease Review URL: " + err.message;
           return cb();
         });
       } else return cb();
