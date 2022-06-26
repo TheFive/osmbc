@@ -80,11 +80,10 @@ function collectArticle(req, res, next) {
           changes.title = "NOT GIVEN";
           return cb();
         }
-        htmltitle.getTitle(url[0], function(err, title) {
-          if (err) cb(cb);
+        htmltitle.getTitle(url[0]).then(function(title) {
           changes.title = title;
           return cb();
-        });
+        }).catch((err) => { return cb(err); });
       }
     },
     function getCollection(cb) {
@@ -163,10 +162,11 @@ function collectArticleLink(req, res, next) {
           changes.title = "NOT GIVEN";
           return cb();
         }
-        htmltitle.getTitle(url[0], function(err, title) {
-          if (err) cb(err);
+        htmltitle.getTitle(url[0]).then(function(title) {
           changes.title = title;
           return cb();
+        }).catch(function(err) {
+          return cb(err);
         });
       }
     },

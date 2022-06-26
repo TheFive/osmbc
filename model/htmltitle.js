@@ -1,9 +1,11 @@
 "use strict";
 
 const cheerio = require("cheerio");
-const request = require("request");
-const iconv = require("iconv-lite");
+const axios = require("axios").default;
+const ssrf = require("ssrf");
 const debug = require("debug")("OSMBC:model:htmltitle");
+const iconv = require("iconv-lite");
+
 
 function linkFrom(url, page) {
   if (url.substring(0, page.length + 7) === ("http://" + page)) return true;
@@ -59,59 +61,58 @@ function retrieveDescription(body) {
 
 const converterList = [retrieveForum, retrieveTwitter, retrieveOsmBlog, retrieveTitle];
 
-
-function getTitle(url, callback) {
+async function getTitle(url) {
   debug("getTitle");
-  request({ method: "GET", url: url, followAllRedirects: true, encoding: null, timeout: 2000 },
-    function (error, response, body) {
-      if (error && error.code === "ESOCKETTIMEDOUT") return callback(null, url + " TIMEOUT");
-      if (error) return callback(null, "Page not Found");
+  let gotUrl;
+  try {
+    gotUrl = await ssrf.url(url);
+  } catch (err) {
+    throw new Error("SSRL Test failed for URL");
+  }
+  let body = null;
+  let r = null;
+  try {
+    const response = await axios.get(gotUrl, { timeout: 2000, responseType: "arraybuffer", responseEncoding: "binary" });
+    body = response.data;
 
-      // try to get charset from Headers (version 1)
-      let fromcharset = response.headers["content-encoding"];
+    // try to get charset from Headers (version 1)
+    let fromcharset = response.headers["content-encoding"];
 
-      // if not exist, try to get charset from Headers (version 2)
-      if (!fromcharset) {
-        const ct = response.headers["content-type"];
-        if (ct) {
-          const r = ct.match(/.*?charset=([^"']+)/);
-          if (r)fromcharset = r[1];
-        }
+    // if not exist, try to get charset from Headers (version 2)
+    if (!fromcharset) {
+      const ct = response.headers["content-type"];
+      if (ct) {
+        const r = ct.match(/.*?charset=([^"']+)/);
+        if (r)fromcharset = r[1];
       }
-      // if not exist, try to parse html page for charset in text
-      if (!fromcharset) {
-        const r = body.toString("utf-8").match((/<meta.*?charset=([^"']+)/));
-        if (r) fromcharset = r[1];
-      }
-
-      // nothing given, to use parser set incoming & outcoming charset equal
-      if (!iconv.encodingExists(fromcharset)) fromcharset = "UTF-8";
-
-      let utf8body = null;
-      utf8body = iconv.decode(body, fromcharset);
-      /*
-      try {
-        var iconv = new Iconv(fromcharset, "UTF-8");
-        utf8body = iconv.convert(body).toString("UTF-8");
-      } catch (err) {
-        // There is a convert error, ognore it and convert with UTF-8
-        utf8body = body.toString("UTF-8");
-      } */
-
-
-
-      let r = null;
-      for (let i = 0; i < converterList.length; i++) {
-        r = converterList[i](utf8body, url);
-        if (r) break;
-      }
-      // remove all linebreaks
-      r = r.replace(/(\r\n|\n|\r)/gm, " ");
-      if (r === null) r = "Not Found";
-      return callback(null, r);
     }
-  );
+    // if not exist, try to parse html page for charset in text
+    if (!fromcharset) {
+      const r = body.toString("utf-8").match((/<meta.*?charset=([^"']+)/));
+      if (r) fromcharset = r[1];
+    }
+
+    // nothing given, to use parser set incoming & outcoming charset equal
+    if (!iconv.encodingExists(fromcharset)) fromcharset = "UTF-8";
+
+    body = iconv.decode(body, fromcharset);
+  } catch (err) {
+    if (err.code === "ECONNABORTED") {
+      r = url + " TIMEOUT";
+    } else throw new Error("Problem with url");
+  }
+  for (let i = 0; i < converterList.length; i++) {
+    if (r) break;
+    r = converterList[i](body, url);
+  }
+  // remove all linebreaks
+  r = r.replace(/(\r\n|\n|\r)/gm, " ");
+  if (r === null) r = "Not Found";
+  return r;
 }
+
+
+
 
 
 module.exports.getTitle = getTitle;

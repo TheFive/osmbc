@@ -148,12 +148,12 @@ describe("routes/api", function() {
       });
     });
     it("should work with alternative email", function (bddone) {
-      nock("https://www.link.ong")
+      nock("https://www.link.org")
         .get("/something")
         .reply(200, "<title>Page Title</title>");
       request({
         method: "POST",
-        json: {collection: "simple Text with https://www.link.ong/something", "email": "simple@test.test"},
+        json: {collection: "simple Text with https://www.link.org/something", "email": "simple@test.test"},
         url: baseLink + "/api/collectArticle/testapikey.TBC"
       }, function (err, res) {
         should.not.exist(err);
@@ -168,7 +168,7 @@ describe("routes/api", function() {
               categoryEN: "-- no category yet --",
               blog: "TBC",
               title: "Page Title",
-              collection: "simple Text with https://www.link.ong/something",
+              collection: "simple Text with https://www.link.org/something",
               firstCollector: "TheFive"
             }
           ]);
