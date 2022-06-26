@@ -31,6 +31,7 @@ const layoutConst  = require("./routes/layout").layoutConst;
 const configRouter = require("./routes/config").router;
 const logger       = require("./config.js").logger;
 const auth         = require("./routes/auth.js");
+const rateLimit    = require("express-rate-limit");
 
 const fileUpload = require("express-fileupload");
 
@@ -45,6 +46,17 @@ const htmlRoot = config.htmlRoot();
 logger.info("Express Routes set to: SERVER" + htmlRoot);
 
 
+const limitValues = config.getValue("limitValues", { mustExist: true });
+
+const limitWindowMs = limitValues.limitWindowsMs ?? 15 * 60 * 1000;
+const limitMaxCount = limitValues.limitMaxCount ?? 150;
+
+const limiter = rateLimit({
+  windowMs: limitWindowMs,
+  max: limitMaxCount,
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false // Disable the `X-RateLimit-*` headers
+});
 
 
 const app = express();
@@ -60,6 +72,7 @@ app.locals._path = path;
 
 
 app.use(helmet());
+app.use(limiter);
 
 // Initialise Helmet with Nonce for dynamic generated scripts
 app.use((req, res, next) => {
