@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.7.2c](https://github.com/TheFive/osmbc/tree/3.7.2c) (2022-06-26)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2b...3.7.2c)
+
+**Closed issues:**
+
+- Fix code scanning alert - Server-side request forgery [\#932](https://github.com/TheFive/osmbc/issues/932)
+
 ## [3.7.2b](https://github.com/TheFive/osmbc/tree/3.7.2b) (2022-06-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2a...3.7.2b)
@@ -1349,10 +1357,6 @@
 - Display Tags \(votable tags\) with Icons. [\#453](https://github.com/TheFive/osmbc/issues/453)
 - Allow tags for articles to vote. [\#452](https://github.com/TheFive/osmbc/issues/452)
 
-**Fixed bugs:**
-
-- GTranslate is cutting links of of the result. [\#547](https://github.com/TheFive/osmbc/issues/547)
-
 ## [1.9.9a](https://github.com/TheFive/osmbc/tree/1.9.9a) (2016-10-18)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.9...1.9.9a)
@@ -1376,6 +1380,10 @@
 **Implemented enhancements:**
 
 - Add direct link to filter at end of blog view at top of page. [\#546](https://github.com/TheFive/osmbc/issues/546)
+
+**Fixed bugs:**
+
+- GTranslate is cutting links of of the result. [\#547](https://github.com/TheFive/osmbc/issues/547)
 
 ## [1.9.8](https://github.com/TheFive/osmbc/tree/1.9.8) (2016-10-14)
 
