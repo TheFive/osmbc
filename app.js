@@ -198,26 +198,41 @@ function renderLogin(req, res) {
   debug("renderLogin");
   res.render("login", { layout: layoutConst });
 }
+function renderHtAccessLogin(req, res) {
+  res.render("login-wpwd", { layout: layoutConst });
+}
 app.get(htmlRoot + "/login", renderLogin);
+app.get(htmlRoot + "/htaccess/login", renderHtAccessLogin);
 
-// GET /auth/openstreetmap
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in OpenStreetMap authentication will involve redirecting
-//   the user to openstreetmap.org.  After authorization, OpenStreetMap will redirect the user
-//   back to this application at /auth/openstreetmap/callback
-app.get(htmlRoot + "/auth/openstreetmap", auth.passport.authenticate("openstreetmap"));
+const loginStrategy = config.getValue("loginStrategy", { mustExist: true });
+const openStreetMapAuth = config.getValue("auth").openstreetmap;
 
-// GET /auth/openstreetmap/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function function will be called,
-//   which, in this example, will redirect the user to the home page.
-app.get(htmlRoot + "/auth/openstreetmap/callback",
-  auth.passport.authenticate("openstreetmap", { failureRedirect: "/login" }),
-  function(req, res) {
-    debug("after passport.authenticate Function");
-    res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
-  });
+if (openStreetMapAuth.enabled) {
+  // GET /auth/openstreetmap
+  //   Use passport.authenticate() as route middleware to authenticate the
+  //   request.  The first step in OpenStreetMap authentication will involve redirecting
+  //   the user to openstreetmap.org.  After authorization, OpenStreetMap will redirect the user
+  //   back to this application at /auth/openstreetmap/callback
+  app.get(htmlRoot + "/auth/openstreetmap", auth.passport.authenticate("openstreetmap"));
+
+  // GET /auth/openstreetmap/callback
+  //   Use passport.authenticate() as route middleware to authenticate the
+  //   request.  If authentication fails, the user will be redirected back to the
+  //   login page.  Otherwise, the primary route function function will be called,
+  //   which, in this example, will redirect the user to the home page.
+  app.get(htmlRoot + "/auth/openstreetmap/callback",
+    auth.passport.authenticate("openstreetmap", { failureRedirect: config.getValue("htmlroot") + "/login" }),
+    function(req, res) {
+      debug("after passport.authenticate Function");
+      res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
+    });
+}
+
+if (loginStrategy === "local-htpasswd") {
+  const passport = require("passport");
+  app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd", { successRedirect: htmlRoot + "/", failureRedirect: htmlRoot + "/login_failure" }));
+}
+
 
 app.get(htmlRoot + "/logout", function(req, res) {
   debug("logoutFunction");

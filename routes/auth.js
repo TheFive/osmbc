@@ -3,12 +3,15 @@
 const debug      = require("debug")("OSMBC:routes:auth");
 const async      = require("../util/async_wrap.js");
 const HttpStatus = require("http-status-codes");
+const path       = require("path");
 
 const config = require("../config.js");
 const logger = require("../config.js").logger;
 
 const passport     = require("passport");
 const OpenStreetMapStrategy = require("passport-openstreetmap").Strategy;
+const LocalHtpasswdStrategy = require("passport-local-htpasswd");
+
 
 const userModule = require("../model/user.js");
 
@@ -28,7 +31,7 @@ const htmlRoot = config.htmlRoot();
 // if there will be a user database, this has to be integrated here
 passport.serializeUser(function (user, done) {
   debug("passport.serializeUser CB");
-  const username = (user.displayName) ? user.displayName : "";
+  const username = (user.displayName) ? user.displayName : ((user.username) ? (user.username) : "");
   done(null, username);
 });
 
@@ -73,37 +76,47 @@ passport.deserializeUser(function (user, done) {
 //   credentials (in this case, a token, tokenSecret, and OpenStreetMap profile), and
 //   invoke a callback with a user object.
 
-let Strategy = null;
-if (process.env.NODE_ENV === "test") {
-  Strategy = require("passport-mocked").Strategy;
-} else {
-  Strategy = OpenStreetMapStrategy;
-}
 
-passport.use(new Strategy({
-  name: "openstreetmap",
-  consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY", { mustExist: true }),
-  consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET", { mustExist: true }),
-  callbackURL: config.getValue("callbackUrl", { mustExist: true }),
-  requestTokenURL: "https://www.openstreetmap.org/oauth/request_token",
-  accessTokenURL: "https://www.openstreetmap.org/oauth/access_token",
-  userAuthorizationURL: "https://www.openstreetmap.org/oauth/authorize"
-},
-function (token, tokenSecret, profile, done) {
-  debug("passport.use Token Function");
 
-  // asynchronous verification, for effect...
-  process.nextTick(function () {
-    debug("passport.use Token Function->prozess.nextTick");
+const auth = config.getValue("auth");
 
-    // To keep the example simple, the user's OpenStreetMap profile is returned to
-    // represent the logged-in user.  In a typical application, you would want
-    // to associate the OpenStreetMap account with a user record in your database,
-    // and return that user instead.
-    return done(null, profile);
+
+let strategy = null;
+
+if (auth.openstreetmap.enabled) {
+  strategy = new OpenStreetMapStrategy({
+    name: "openstreetmap",
+    consumerKey: auth.openstreetmap.OPENSTREETMAP_CONSUMER_KEY,
+    consumerSecret: auth.openstreetmap.OPENSTREETMAP_CONSUMER_SECRET,
+    callbackURL: auth.openstreetmap.callbackUrl,
+    requestTokenURL: "https://www.openstreetmap.org/oauth/request_token",
+    accessTokenURL: "https://www.openstreetmap.org/oauth/access_token",
+    userAuthorizationURL: "https://www.openstreetmap.org/oauth/authorize"
+  },
+  function (token, tokenSecret, profile, done) {
+    debug("passport.use Token Function");
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      debug("passport.use Token Function->prozess.nextTick");
+      // To keep the example simple, the user's OpenStreetMap profile is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the OpenStreetMap account with a user record in your database,
+      // and return that user instead.
+      return done(null, profile);
+    });
   });
+  passport.use(strategy);
 }
-));
+
+
+if (auth.htaccess.enabled) {
+  strategy = new LocalHtpasswdStrategy({ name: "htpasswd", file: path.join(__dirname, "..", "test_pwd") });
+  passport.use(strategy);
+}
+
+
+
+
 
 
 function checkRole(role, functions) {

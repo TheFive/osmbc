@@ -55,6 +55,7 @@
     "node-schedule": "2.1.x",
     "nodemailer": "6.7.x",
     "passport": "0.4.x",
+    "passport-local-htpasswd": "^0.1.1",
     "passport-openstreetmap": "0.1.x",
     "pg": "8.7.x",
     "progress": "2.0.x",
