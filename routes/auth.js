@@ -114,6 +114,51 @@ if (auth.htaccess.enabled) {
   passport.use(strategy);
 }
 
+if (auth.openstreetmap_oauth20.enabled) {
+  const oauth2 = auth.openstreetmap_oauth20;
+
+  const client =  new OAuth2Strategy({
+    authorizationURL: oauth2.authorizationURL,
+    tokenURL: oauth2.tokenURL,
+    clientID: oauth2.clientID,
+    clientSecret: oauth2.clientSecret,
+    callbackURL: oauth2.callbackURL,
+    scope: oauth2.scope
+  },
+  function(accessToken, refreshToken, params, profile, cb) {
+    debug("passport.access Token CB");
+    console.dir(profile);
+    return cb(null, profile);
+  });
+
+
+
+  if (client._oauth2) {
+    client._oauth2.useAuthorizationHeaderforGET(true);
+    client.userProfile = function (accesstoken, done) {
+      debug("passport.userProfile");
+      // choose your own adventure, or use the Strategy's oauth client
+      this._oauth2.get("https://api.openstreetmap.org/api/0.6/user/details", accesstoken, (err, body, res) => {
+        if (err) {
+          return done(err);
+        }
+        try {
+          const parser = new xml2js.Parser();
+          parser.parseString(body, function (err, result) {
+            if (err) return done(err);
+            const userProfile = { displayName: result.user["@"].display_name, id: result.user["@"].id };
+            return done(null, userProfile);
+          });
+          return;
+        } catch (e) {
+          return done(e);
+        }
+      });
+    };
+  }
+
+  passport.use(client);
+}
 
 
 
