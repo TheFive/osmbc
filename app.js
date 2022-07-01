@@ -233,6 +233,22 @@ if (loginStrategy === "local-htpasswd") {
   app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd", { successRedirect: htmlRoot + "/", failureRedirect: htmlRoot + "/login_failure" }));
 }
 
+if (auth.openstreetmap_oaut20.enabled) {
+  // GET /auth/openstreetmap
+  //   Use passport.authenticate() as route middleware to authenticate the
+  //   request.  The first step in OpenStreetMap authentication will involve redirecting
+  //   the user to openstreetmap.org.  After authorization, OpenStreetMap will redirect the user
+  //   back to this application at /auth/openstreetmap/callback
+  // app.get(htmlRoot + "/auth/openstreetmap", auth.passport.authenticate("openstreetmap"));
+  app.get(htmlRoot + "/auth/openstreetmap_oauth2", passport.authenticate("oauth2"));
+  app.get(htmlRoot + "/auth/openstreetmap/callback", passport.authenticate("oauth2", { failureRedirect: "/login" }),
+  function(req, res) {
+    
+    // Successful authentication, redirect home.
+    res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
+  });
+}
+
 
 app.get(htmlRoot + "/logout", function(req, res) {
   debug("logoutFunction");
