@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.7.2d](https://github.com/TheFive/osmbc/tree/3.7.2d) (2022-07-03)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2.d...3.7.2d)
+
+**Implemented enhancements:**
+
+- Enable Formality Parameter for languages in Config File \(Deepl Pro\) [\#935](https://github.com/TheFive/osmbc/issues/935)
+
+**Fixed bugs:**
+
+- Distinguish between Source and target lang in deeplPro config. [\#936](https://github.com/TheFive/osmbc/issues/936)
+
 ## [3.7.2.d](https://github.com/TheFive/osmbc/tree/3.7.2.d) (2022-06-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2c...3.7.2.d)
@@ -1643,6 +1655,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6...1.8.6a)
 
+**Fixed bugs:**
+
+- in OSM-Terminausblick exits some unnecessary code [\#474](https://github.com/TheFive/osmbc/issues/474)
+
 ## [1.8.6](https://github.com/TheFive/osmbc/tree/1.8.6) (2016-06-10)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.5b...1.8.6)
@@ -1677,7 +1693,6 @@
 
 **Fixed bugs:**
 
-- in OSM-Terminausblick exits some unnecessary code [\#474](https://github.com/TheFive/osmbc/issues/474)
 - automatic translation [\#469](https://github.com/TheFive/osmbc/issues/469)
 
 ## [1.8.4h](https://github.com/TheFive/osmbc/tree/1.8.4h) (2016-06-04)
@@ -2939,6 +2954,7 @@
 
 **Implemented enhancements:**
 
+- Link to Google Translate [\#140](https://github.com/TheFive/osmbc/issues/140)
 - Create an untranslated & unedited Blog View [\#137](https://github.com/TheFive/osmbc/issues/137)
 
 ## [0.3.7](https://github.com/TheFive/osmbc/tree/0.3.7) (2015-11-13)
@@ -3033,10 +3049,6 @@
 ## [0.3.1](https://github.com/TheFive/osmbc/tree/0.3.1) (2015-11-06)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.0...0.3.1)
-
-**Implemented enhancements:**
-
-- Link to Google Translate [\#140](https://github.com/TheFive/osmbc/issues/140)
 
 **Fixed bugs:**
 
