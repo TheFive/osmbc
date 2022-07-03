@@ -11,13 +11,15 @@ let langMap = null;
 let lid = null;
 
 class Language {
-  constructor(lid, displayShort, displayLong, localeString, bingPro, deeplPro) {
+  constructor(lid, displayShort, displayLong, localeString, bingPro, deeplProSource, deeplProTarget, deepProFormality) {
     this.lid = lid;
     this.displayShort = displayShort;
     this.displayLong = displayLong;
     this.localeString = localeString;
     this.bingPro = bingPro;
-    this.deeplPro = deeplPro;
+    this.deeplProSource = deeplProSource;
+    this.deeplProTarget = deeplProTarget;
+    this.deeplProFormality = deepProFormality;
   }
   // get displayShort() {return displayShort};
   // get displayLong() {return displayLong};
@@ -42,7 +44,7 @@ function initialise() {
     if (!dll) dll = lang.id;
     let dls = lang.displayShort;
     if (!dls) dls = lang.id;
-    langMap[lang.lid] = new Language(lang.lid, dls, dll, ml, lang.bingPro, lang.deeplPro);
+    langMap[lang.lid] = new Language(lang.lid, dls, dll, ml, lang.bingPro, lang.deeplProSource, lang.deeplProTarget, lang.deeplProFormality);
     lid.push(lang.lid);
   });
 }
@@ -72,10 +74,25 @@ exports.bingPro = function(lang) {
   return result;
 };
 
-exports.deeplPro = function(lang) {
+exports.deeplProSourceLang = function(lang) {
   if (lang === null) return null;
   if (langMap === null) initialise();
   let result = lang.toUpperCase();
-  if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].deeplPro) result = langMap[lang.toUpperCase()].deeplPro;
+  if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].deeplProSource) result = langMap[lang.toUpperCase()].deeplProSource;
+  return result;
+};
+
+exports.deeplProTargetLang = function(lang) {
+  if (lang === null) return null;
+  if (langMap === null) initialise();
+  let result = lang.toUpperCase();
+  if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].deeplProTarget) result = langMap[lang.toUpperCase()].deeplProTarget;
+  return result;
+};
+exports.deeplProFormality = function(lang) {
+  if (lang === null) return null;
+  if (langMap === null) initialise();
+  let result = null;
+  if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].deeplProFormality) result = langMap[lang.toUpperCase()].deeplProFormality;
   return result;
 };

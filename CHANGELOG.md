@@ -1,10 +1,18 @@
 # Changelog
 
+## [3.7.2.d](https://github.com/TheFive/osmbc/tree/3.7.2.d) (2022-06-26)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2c...3.7.2.d)
+
+**Security fixes:**
+
+- Introduce Rate Limiter to limit \# of requests [\#933](https://github.com/TheFive/osmbc/issues/933)
+
 ## [3.7.2c](https://github.com/TheFive/osmbc/tree/3.7.2c) (2022-06-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2b...3.7.2c)
 
-**Closed issues:**
+**Security fixes:**
 
 - Fix code scanning alert - Server-side request forgery [\#932](https://github.com/TheFive/osmbc/issues/932)
 
@@ -1635,10 +1643,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6...1.8.6a)
 
-**Fixed bugs:**
-
-- in OSM-Terminausblick exits some unnecessary code [\#474](https://github.com/TheFive/osmbc/issues/474)
-
 ## [1.8.6](https://github.com/TheFive/osmbc/tree/1.8.6) (2016-06-10)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.5b...1.8.6)
@@ -1673,6 +1677,7 @@
 
 **Fixed bugs:**
 
+- in OSM-Terminausblick exits some unnecessary code [\#474](https://github.com/TheFive/osmbc/issues/474)
 - automatic translation [\#469](https://github.com/TheFive/osmbc/issues/469)
 
 ## [1.8.4h](https://github.com/TheFive/osmbc/tree/1.8.4h) (2016-06-04)
@@ -2934,7 +2939,6 @@
 
 **Implemented enhancements:**
 
-- Link to Google Translate [\#140](https://github.com/TheFive/osmbc/issues/140)
 - Create an untranslated & unedited Blog View [\#137](https://github.com/TheFive/osmbc/issues/137)
 
 ## [0.3.7](https://github.com/TheFive/osmbc/tree/0.3.7) (2015-11-13)
@@ -3029,6 +3033,10 @@
 ## [0.3.1](https://github.com/TheFive/osmbc/tree/0.3.1) (2015-11-06)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.0...0.3.1)
+
+**Implemented enhancements:**
+
+- Link to Google Translate [\#140](https://github.com/TheFive/osmbc/issues/140)
 
 **Fixed bugs:**
 

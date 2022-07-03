@@ -56,8 +56,9 @@ function translateDeeplPro(options, callback) {
   }
 
 
-  const fromLang = language.deeplPro(options.fromLang);
-  const toLang = language.deeplPro(options.toLang);
+  const fromLang = language.deeplProSourceLang(options.fromLang);
+  const formality = language.deeplProFormality(options.toLang);
+  const toLang = language.deeplProTargetLang(options.toLang);
   const text = options.text;
 
 
@@ -69,6 +70,7 @@ function translateDeeplPro(options, callback) {
   deeplParams.target_lang = toLang.toUpperCase();
   deeplParams.auth_key = deeplConfig.authKey;
   deeplParams.tag_handling = "xml";
+  if (formality) deeplParams.formality = formality;
 
 
   if (deeplParams.target_lang === "DE-LESS") {
