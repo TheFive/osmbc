@@ -34,6 +34,7 @@ const auth         = require("./routes/auth.js");
 const rateLimit    = require("express-rate-limit");
 
 const fileUpload = require("express-fileupload");
+const passport = require("passport");
 
 
 
@@ -206,20 +207,11 @@ app.get(htmlRoot + "/htaccess/login", renderHtAccessLogin);
 
 const loginStrategy = config.getValue("loginStrategy", { mustExist: true });
 const openStreetMapAuth = config.getValue("auth").openstreetmap;
+const openstreetmap_oauth20 = config.getValue("auth").openstreetmap_oauth20;
 
 if (openStreetMapAuth.enabled) {
-  // GET /auth/openstreetmap
-  //   Use passport.authenticate() as route middleware to authenticate the
-  //   request.  The first step in OpenStreetMap authentication will involve redirecting
-  //   the user to openstreetmap.org.  After authorization, OpenStreetMap will redirect the user
-  //   back to this application at /auth/openstreetmap/callback
   app.get(htmlRoot + "/auth/openstreetmap", auth.passport.authenticate("openstreetmap"));
 
-  // GET /auth/openstreetmap/callback
-  //   Use passport.authenticate() as route middleware to authenticate the
-  //   request.  If authentication fails, the user will be redirected back to the
-  //   login page.  Otherwise, the primary route function function will be called,
-  //   which, in this example, will redirect the user to the home page.
   app.get(htmlRoot + "/auth/openstreetmap/callback",
     auth.passport.authenticate("openstreetmap", { failureRedirect: config.getValue("htmlroot") + "/login" }),
     function(req, res) {
@@ -233,20 +225,13 @@ if (loginStrategy === "local-htpasswd") {
   app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd", { successRedirect: htmlRoot + "/", failureRedirect: htmlRoot + "/login_failure" }));
 }
 
-if (auth.openstreetmap_oaut20.enabled) {
-  // GET /auth/openstreetmap
-  //   Use passport.authenticate() as route middleware to authenticate the
-  //   request.  The first step in OpenStreetMap authentication will involve redirecting
-  //   the user to openstreetmap.org.  After authorization, OpenStreetMap will redirect the user
-  //   back to this application at /auth/openstreetmap/callback
-  // app.get(htmlRoot + "/auth/openstreetmap", auth.passport.authenticate("openstreetmap"));
-  app.get(htmlRoot + "/auth/openstreetmap_oauth2", passport.authenticate("oauth2"));
-  app.get(htmlRoot + "/auth/openstreetmap/callback", passport.authenticate("oauth2", { failureRedirect: "/login" }),
-  function(req, res) {
-    
+if (openstreetmap_oauth20.enabled) {
+  app.get(htmlRoot + "/auth/openstreetmap_oauth20", passport.authenticate("oauth2"));
+  app.get(htmlRoot + "/auth/openstreetmap_oauth20/callback", passport.authenticate("oauth2", { failureRedirect: "/login" }),
+    function(req, res) {
     // Successful authentication, redirect home.
-    res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
-  });
+      res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
+    });
 }
 
 

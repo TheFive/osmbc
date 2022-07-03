@@ -22,9 +22,13 @@ block content
     if layout.auth.openstreetmap.enabled
       div
         a.btn.btn-primary#login(href=htmlroot+"/auth/openstreetmap")="Login with OpenStreetMap"
+    if layout.auth.openstreetmap_oauth20.enabled
+      div
+        a.btn.btn-primary#login(href=htmlroot+"/auth/openstreetmap_oauth20")="Login with OpenStreetMap OAuth 2.0"
     if layout.auth.htaccess.enabled
       div
-        a.btn.btn-primary(href=htmlroot+"/htaccess/login")="Login with Local Passwort"  
+        a.btn.btn-primary(href=htmlroot+"/htaccess/login")="Login with Local Passwort" 
+        
 
   :markdown-it
     # More Information

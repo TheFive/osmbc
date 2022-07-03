@@ -11,6 +11,8 @@ const logger = require("../config.js").logger;
 const passport     = require("passport");
 const OpenStreetMapStrategy = require("passport-openstreetmap").Strategy;
 const LocalHtpasswdStrategy = require("passport-local-htpasswd");
+const OAuth2Strategy = require("passport-oauth2").Strategy;
+
 
 
 const userModule = require("../model/user.js");

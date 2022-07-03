@@ -56,6 +56,7 @@
     "nodemailer": "6.7.x",
     "passport": "0.4.x",
     "passport-local-htpasswd": "^0.1.1",
+    "passport-oauth2": "^1.6.1",
     "passport-openstreetmap": "0.1.x",
     "pg": "8.7.x",
     "progress": "2.0.x",
