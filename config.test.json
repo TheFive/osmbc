@@ -44,10 +44,10 @@
   "SessionName":"session name",
   "AppName":"TESTBC",
   "languages":[
-    {"lid":"DE","displayLong":"German","displayShort":"DED"},
+    {"lid":"DE","displayLong":"German","displayShort":"DED","deeplProFormality":"less"}, 
     {"lid":"EN","momentLocale":"en-gb"},
     {"lid":"ES","displayLong":"Spain","displayShort":"ES"},
-    {"lid":"PT-PT","deeplPro":"PT","bingPro":"PT-BP"}
+    {"lid":"PT-PT","deeplProSource":"PT","deeplProTarget":"PT-PT","bingPro":"PT-BP"}
   ],
   "callbackUrl":"http://127.0.0.1:35043/auth/openstreetmap/callback",
   "OPENSTREETMAP_CONSUMER_KEY" : "######",
