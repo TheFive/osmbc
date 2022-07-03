@@ -80,11 +80,11 @@ describe("model/translator", function() {
   it("should translate a simple text with deepl", function (bddone) {
     const originTextMd = "Originaler Text";
     // const originTextHtml = "<p>Originaler Text</p>\n";
-    const translatedTextHtml = "<p>This is the translated Text<p>\n";
-    const translatedTextMd = "This is the translated Text";
+    const translatedTextHtml = "<p>This is the translated Text (less formal translated)<p>\n";
+    const translatedTextMd = "This is the translated Text (less formal translated)";
 
     nock("https://api.deepl.com")
-      .post('/v2/translate',"auth_key=Test%20Key%20Fake&source_lang=EN&tag_handling=xml&target_lang=DE&text=%3Cp%3EOriginaler%20Text%3C%2Fp%3E%0A")
+      .post('/v2/translate',"auth_key=Test%20Key%20Fake&formality=less&source_lang=EN&tag_handling=xml&target_lang=DE&text=%3Cp%3EOriginaler%20Text%3C%2Fp%3E%0A")
       .reply(200, {translations: [{ detected_source_language: "EN",text: translatedTextHtml}]
     });
 
@@ -125,7 +125,9 @@ describe("model/translator", function() {
     const translatedTextMd = "Translated Text with [Markdown](https://markdown.link/demo) Link";
 
     nock("https://api.deepl.com")
-      .post("/v2/translate","auth_key=Test%20Key%20Fake&source_lang=EN&tag_handling=xml&target_lang=DE&text=%3Cp%3EOriginaler%20Text%20mit%20%3Ca%20href%3D%22https%3A%2F%2Fmarkdown.link%2Fdemo%22%3EMarkdown%3C%2Fa%3E%20Link%3C%2Fp%3E%0A")
+
+                             
+      .post("/v2/translate","auth_key=Test%20Key%20Fake&formality=less&source_lang=EN&tag_handling=xml&target_lang=DE&text=%3Cp%3EOriginaler%20Text%20mit%20%3Ca%20href%3D%22https%3A%2F%2Fmarkdown.link%2Fdemo%22%3EMarkdown%3C%2Fa%3E%20Link%3C%2Fp%3E%0A")
       .reply(200, {translations: [{ detected_source_language: "EN",text: translatedTextHtml}]
     });
 
