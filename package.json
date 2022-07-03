@@ -73,7 +73,8 @@
     "turndown": "7.1.x",
     "twit": "2.2.x",
     "winston": "3.3.x",
-    "winston-daily-rotate-file": "4.5.x"
+    "winston-daily-rotate-file": "4.5.x",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "dom-compare": "^0.6.0",

@@ -34,7 +34,6 @@ const auth         = require("./routes/auth.js");
 const rateLimit    = require("express-rate-limit");
 
 const fileUpload = require("express-fileupload");
-const passport = require("passport");
 
 
 
@@ -190,56 +189,11 @@ app.use(session(
 ));
 
 
-// Initialize Passport!  Also use passport.session() middleware, to support
-// persistent login sessions (recommended).
-app.use(auth.passport.initialize());
-app.use(auth.passport.session());
+// Initialise authenication stuff including passport
 
-function renderLogin(req, res) {
-  debug("renderLogin");
-  res.render("login", { layout: layoutConst });
-}
-function renderHtAccessLogin(req, res) {
-  res.render("login-wpwd", { layout: layoutConst });
-}
-app.get(htmlRoot + "/login", renderLogin);
-app.get(htmlRoot + "/htaccess/login", renderHtAccessLogin);
-
-const loginStrategy = config.getValue("loginStrategy", { mustExist: true });
-const openStreetMapAuth = config.getValue("auth").openstreetmap;
-const openstreetmap_oauth20 = config.getValue("auth").openstreetmap_oauth20;
-
-if (openStreetMapAuth.enabled) {
-  app.get(htmlRoot + "/auth/openstreetmap", auth.passport.authenticate("openstreetmap"));
-
-  app.get(htmlRoot + "/auth/openstreetmap/callback",
-    auth.passport.authenticate("openstreetmap", { failureRedirect: config.getValue("htmlroot") + "/login" }),
-    function(req, res) {
-      debug("after passport.authenticate Function");
-      res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
-    });
-}
-
-if (loginStrategy === "local-htpasswd") {
-  const passport = require("passport");
-  app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd", { successRedirect: htmlRoot + "/", failureRedirect: htmlRoot + "/login_failure" }));
-}
-
-if (openstreetmap_oauth20.enabled) {
-  app.get(htmlRoot + "/auth/openstreetmap_oauth20", passport.authenticate("oauth2"));
-  app.get(htmlRoot + "/auth/openstreetmap_oauth20/callback", passport.authenticate("oauth2", { failureRedirect: "/login" }),
-    function(req, res) {
-    // Successful authentication, redirect home.
-      res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
-    });
-}
+auth.initialise(app);
 
 
-app.get(htmlRoot + "/logout", function(req, res) {
-  debug("logoutFunction");
-  req.logout();
-  res.redirect(htmlRoot + "/osmbc.html");
-});
 
 // layout does not render, but prepares the res.rendervar variable for
 // dynamic contend in layout.pug
