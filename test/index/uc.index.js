@@ -2,7 +2,7 @@
 
 /* jshint ignore:start */
 
-var async = require("async");
+const config = require("../../config.js");
 var testutil = require("../testutil.js");
 var should  = require("should");
 var nock = require("nock");
@@ -13,8 +13,10 @@ var blogModule = require("../../model/blog.js");
 
 var mockdate = require("mockdate");
 
+const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
 
 
+const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 
@@ -22,7 +24,7 @@ describe("uc/index", function() {
   this.timeout(12000);
   var browser;
   beforeEach(async function() {
-    mockdate.set(new Date("2016-05-25T20:00"));
+   // mockdate.set(new Date("2016-05-25T20:00"));
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
@@ -33,21 +35,48 @@ describe("uc/index", function() {
     await userModule.createNewUser({OSMUser: "OldUserAway", access: "denied", email: "g@h.i", lastAccess: "2016-02-25T20:00"});
     testutil.startServerSync();
 
-    browser = await testutil.getNewBrowser("TheFive");
+   // browser = await testutil.getNewBrowser("TheFive");
     await articleModule.createNewArticle({blog: "blog", collection: "test", markdownEN: "test"});
     await blogModule.createNewBlog({OSMUser: "test"}, {name: "blog", status: "edit"});
   });
 
   afterEach(function(bddone) {
-    mockdate.reset();
+   // mockdate.reset();
     testutil.stopServer(bddone);
   });
 
   describe("Known User", function() {
     describe("Homepage", function() {
       it("should find welcome text on Homepage", async function() {
-        await browser.visit("/osmbc");
-        browser.assert.text("h2", "Welcome to OSM BC");
+        let driver = await new Builder().forBrowser(Browser.CHROME).build();
+        await driver.manage().setTimeouts( { implicit: 5000 } );
+        try {
+          await driver.get(baseLink + "/osmbc");
+          //await driver.wait(until.elementLocated(By.id('htaccesLoginButton')));
+          let cookies = await driver.manage().getCookies();
+            console.dir(cookies);
+
+          
+
+          const button = await driver.findElement(By.id('htaccesLoginButton'));
+          await button.click();
+          
+
+          cookies = await driver.manage().getCookies();
+          console.dir(cookies);
+          console.dir("Will click now");
+
+          await driver.findElement(By.id("username")).sendKeys("TheFive");
+          await driver.findElement(By.id("password")).sendKeys("TheFive");
+          await driver.findElement(By.id("submitbutton")).click();
+          cookies = await driver.manage().getCookies();
+          console.dir(cookies);
+
+          const div = await driver.findElement(By.xpath('//h2[contains(text(), "Welcome to OSM BC")]'));
+          
+        } finally {
+         //await driver.quit();
+        }
       });
       it("should have bootstrap.js loaded", async function() {
         this.timeout(6000);

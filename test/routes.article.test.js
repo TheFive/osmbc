@@ -10,9 +10,6 @@ const config  = require("../config.js");
 const mockdate = require("mockdate");
 const HttpStatus = require('http-status-codes');
 const initialise = require("../util/initialise.js");
-const rp = require("request-promise-native");
-const axios = require("axios");
-
 
 const articleModule = require("../model/article.js");
 const logModule = require("../model/logModule.js");
@@ -57,14 +54,6 @@ describe("routes/article", function() {
     await initialise.initialiseModules();
     await testutil.clearDB();
     testutil.startServerSync();
-    jar.testUser = await testutil.getUserJar("TestUser");
-    jar.userWith3Lang  = await testutil.getUserJar("UserWith3Lang");
-    jar.userWith4Lang = await testutil.getUserJar("UserWith4Lang");
-    jar.testUserDenied = await testutil.getUserJar("TestUserDenied");
-    jar.testUserNonExisting = await testutil.getUserJar("TestUserNonExisting");
-    jar.hallo = await testutil.getUserJar("Hallo");
-    jar.guestUser = await testutil.getUserJar("guestUser");
-    jar.testUserNonExisting = await testutil.getUserJar("TestUserNonExisting");
   });
 
   after(function (bddone) {
@@ -104,126 +93,115 @@ describe("routes/article", function() {
   describe("route GET /article/:id", function() {
     let url = baseLink + "/article/" + id;
     it("should run with full access user", async function () {
-      let body = await rp.get({ url: url, jar: jar.testUser});
-      should(body).containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+
+      should(body.data).containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
     });
     it("should run with full access user and 3 lang", async function() {
-      let body = await rp.get({ url: url, jar: jar.userWith3Lang});
-      body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "UserWith3Lang", password: "UserWith3Lang" });
+      let body = await client.get(url);
+
+      body.data.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
     });
     it("should run with full access user and 4 lang", async function () {
-      let body = await rp.get({ url: url, jar: jar.userWith4Lang});
-      body.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "UserWith4Lang", password: "UserWith4Lang" });
+      let body = await client.get(url);
+
+
+      body.data.should.containEql('<option value=\"BLOG\" selected=\"selected\">BLOG (Edit)</option>');
     });
     it("should run with full access user and missing article", async function () {
 
-      let response = await rp.get({
-        url: baseLink + "/article/999",
-        jar: jar.testUser,
-        simple: false,
-        resolveWithFullResponse: true});
-      should(response.statusCode).eql(HttpStatus.NOT_FOUND);
-      response.body.should.containEql("Article ID 999 does not exist");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(baseLink + "/article/999");
+
+
+     
+      should(body.status).eql(HttpStatus.NOT_FOUND);
+      body.data.should.containEql("Article ID 999 does not exist");
     });
     it("should run with full access user and not numbered article ID", async function () {
-      let response = await rp.get({
-        url: baseLink + "/article/walo",
-        jar: jar.testUser,
-        simple: false,
-        resolveWithFullResponse: true});
-      should(response.statusCode).eql(HttpStatus.NOT_FOUND);
-      response.body.should.containEql("Article ID walo does not exist (conversion error)");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(baseLink + "/article/walo");
+
+      should(body.status).eql(HttpStatus.NOT_FOUND);
+      body.data.should.containEql("Article ID walo does not exist (conversion error)");
     });
     it("should deny denied access user", async function () {
-      let response = await rp.get({
-        url: url,
-        jar: jar.testUserDenied,
-        simple: false,
-        resolveWithFullResponse: true});
-      should(response.statusCode).eql(HttpStatus.FORBIDDEN);
-      response.body.should.containEql("OSM User >TestUserDenied< has no access rights");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUserDenied", password: "TestUserDenied" });
+      let body = await client.get(url);
+
+    
+      should(body.status).eql(HttpStatus.FORBIDDEN);
+      body.data.should.containEql("OSM User >TestUserDenied< has no access rights");
     });
     it("should deny non existing user", async function () {
-      let response = await rp.get({
-        url: url,
-        jar: jar.testUserNonExisting,
-        simple: false,
-        resolveWithFullResponse: true});
-      should(response.statusCode).eql(HttpStatus.FORBIDDEN);
-      response.body.should.containEql("This article is not allowed for guests");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUserNonExisting", password: "TestUserNonExisting" });
+      let body = await client.get(url);
+      
+      should(body.status).eql(HttpStatus.FORBIDDEN);
+      body.data.should.containEql("This article is not allowed for guests");
 
     });
     it("should allow non existing user for self collected", async function () {
-      let response = await rp.get({
-        url: baseLink + "/article/1",
-        jar: jar.testUserNonExisting,
-        simple: false,
-        resolveWithFullResponse: true});
-      should(response.statusCode).eql(HttpStatus.OK);
-      response.body.should.containEql('<option value="BLOG" selected="selected">BLOG </option>');
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUserNonExisting", password: "TestUserNonExisting" });
+      let body = await client.get(baseLink + "/article/1");
+      
+
+      should(body.status).eql(HttpStatus.OK);
+      body.data.should.containEql('<option value="BLOG" selected="selected">BLOG </option>');
     });
     it("should deny for guest user for non self collected", async function () {
-      let response = await rp.get({
-        url: baseLink + "/article/2",
-        jar: jar.testUserNonExisting,
-        simple: false,
-        resolveWithFullResponse: true});
-      should(response.statusCode).eql(HttpStatus.FORBIDDEN);
-      response.body.should.containEql('This article is not allowed for guests');
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUserNonExisting", password: "TestUserNonExisting" });
+      let body = await client.get(baseLink + "/article/2");
+      
+      should(body.status).eql(HttpStatus.FORBIDDEN);
+      body.data.should.containEql('This article is not allowed for guests');
     });
     it("should allow for guest user invited by comment", async function () {
-      let body = await rp.get({url: baseLink + "/article/3", jar: jar.testUserNonExisting});
-      body.should.containEql('<option value="BLOG" selected="selected">BLOG </option>');
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUserNonExisting", password: "TestUserNonExisting" });
+      let body = await client.get(baseLink + "/article/3");
+      
+     
+      body.data.should.containEql('<option value="BLOG" selected="selected">BLOG </option>');
     });
   });
 
-  function checkUrlWithJar(options) {
-
-    return async function()
-    {
-      should.exist(options.user);
-      should.exist(jar[options.user]);
-      should.exist(options.url);
-      should.exist(options.expectedMessage);
-      should.exist(options.expectedStatusCode);
-      let response = await rp.get({url: options.url, jar: jar[options.user], simple: false, resolveWithFullResponse: true});
-      response.body.should.containEql(options.expectedMessage);
-      should(response.statusCode).eql(options.expectedStatusCode);
-    }
-  }
-  function postUrlWithJar(options) {
-
-    return async function()
-    {
-      should.exist(options.user);
-      should.exist(jar[options.user]);
-      should.exist(options.url);
-      should.exist(options.form || options.body);
-      should.exist(options.expectedMessage);
-      should.exist(options.expectedStatusCode);
-      let response = await rp.post({url: options.url, form: options.form, jar: jar[options.user], simple: false, resolveWithFullResponse: true});
-      response.body.should.containEql(options.expectedMessage);
-      should(response.statusCode).eql(options.expectedStatusCode);
-    }
-  }
+ 
   describe("route GET /article/:id/votes", function() {
     let url = baseLink + "/article/" + id + "/votes";
     it("should run with full access user", async function () {
-      let body = await rp.get({ url: url, jar: jar.testUser});
-      let json = JSON.parse(body);
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+
+      let json = body.data;
       json["#voteButtons"].should.containEql("callAndRedraw(\'/article/2/setVote.unpublish\'");
       json["#voteButtonsList"].should.containEql('<i class="fa-lg fa fa-thumbs-up">');
     });
     it("should deny denied access user",
-      checkUrlWithJar ({
+      testutil.checkUrlWithUser ({
         url:url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
     it("should deny non existing user",
-      checkUrlWithJar ({
+      testutil.checkUrlWithUser ({
           url: url,
-          user: "testUserNonExisting",
+          username: "TestUserNonExisting",
+          password: "TestUserNonExisting",
           expectedStatusCode: HttpStatus.FORBIDDEN,
           expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
         }));
@@ -231,42 +209,53 @@ describe("routes/article", function() {
   describe("route GET /article/:id/commentArea", function() {
     let url = baseLink + "/article/" + id + "/commentArea";
     it("should run with full access user", async function () {
-      let body = await rp.get({ url: url, jar: jar.testUser});
-      let json = JSON.parse(body);
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+
+      let json = body.data
       json["#commentArea"].should.containEql("Your comment is shared between all weekly teams.");
     });
     it("should deny denied access user",
-      checkUrlWithJar ({
+      testutil.checkUrlWithUser ({
           url: url,
-          user: "testUserDenied",
+          username: "TestUserDenied",
+          password: "TestUserDenied",
           expectedStatusCode: HttpStatus.FORBIDDEN,
           expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
     it("should deny non existing user new",
-      checkUrlWithJar ({
+      testutil.checkUrlWithUser ({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "This article is not allowed for guests"}));
   });
   describe("route GET /article/:id/markCommentRead", function() {
     let url = baseLink + "/article/" + id + "/markCommentRead?index=0";
     it("should run with full access user", async function () {
-      let body = await rp.get({ url: url, jar: jar.testUser});
-      body.should.containEql("Your comment is shared between all weekly teams.");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+
+      
+      body.data.should.containEql("Your comment is shared between all weekly teams.");
       let article = await articleModule.findById(2);
       should(article.commentRead.TestUser).eql("0");
     });
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
-    it("should deny denied access user",
-      checkUrlWithJar({
+    it("should deny non existing user user",
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "This article is not allowed for guests"
       }));
@@ -274,23 +263,27 @@ describe("routes/article", function() {
   describe("route GET /article/:id/:action.:tag",  function() {
     let url = baseLink + "/article/" + id + "/setTag.tag";
     it("should run with full access user", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      should(body).equal("OK");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+      should(body.data).equal("OK");
       let article = await articleModule.findById(2);
       should(article.tags).eql([ "tag" ]);
     });
 
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny denied non existing ",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
@@ -298,22 +291,27 @@ describe("routes/article", function() {
   describe("route GET /article/:id/:votename", function() {
     let url = baseLink + "/article/" + id + "/pro";
     it("should run with full access user", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      let json = JSON.parse(body);
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+
+      let json = body.data;
       json["#vote_pro_2"].should.containEql('class="badge osmbc-btn-not-voted"');
     });
 
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny denied non existing ",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
@@ -321,20 +319,25 @@ describe("routes/article", function() {
   describe("route GET /list", function() {
     let url = baseLink + "/article/list";
     it("should run with full access user", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql('<td><a href="/article/2">BLOG</a></td>');
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+      
+      body.data.should.containEql('<td><a href="/article/2">BLOG</a></td>');
     });
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny denied non existing ",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
@@ -342,20 +345,25 @@ describe("routes/article", function() {
   describe("route GET /create", function() {
     let url = baseLink + "/article/create";
     it("should run with full access user", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+
+      body.data.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
     });
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny denied non existing ",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.OK,
         expectedMessage: "<p class=\"osmbc-help-text\" align=\"center\">Please check your link for duplicates before submit it.</p>"
       }));
@@ -363,21 +371,26 @@ describe("routes/article", function() {
   describe("route GET /searchandcreate", function() {
     let url = baseLink + "/article/searchandcreate?search=hallo"
     it("should run with full access user", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
-      body.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+
+      body.data.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
+      body.data.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
     });
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny denied non existing ",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.OK,
         expectedMessage: "<p class=\"osmbc-help-text\" align=\"center\">Please check your link for duplicates before submit it.</p>"
       }));
@@ -385,20 +398,25 @@ describe("routes/article", function() {
   describe("route GET /search", function() {
     let url = baseLink + "/article/search?search=hallo";
     it("should run with full access user", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+
+      body.data.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
     });
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny denied non existing ",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
@@ -414,8 +432,11 @@ describe("routes/article", function() {
       unpublishReason: "unpublishReason",
       unpublishReference: "unpublishReference"};
     it("should run with full access user", async function () {
-      let body = await rp.post({url: url, form: params, jar: jar.testUser, followAllRedirects: true});
-      body.should.containEql("unpublishReason");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url,params);
+
+      body.data.should.containEql("unpublishReason");
       let article = await articleModule.findById(4);
       delete article._blog;
       should(article).eql({
@@ -432,16 +453,21 @@ describe("routes/article", function() {
             });
     });
     it("should deny denied access user",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserDenied",
+        username: "TestUserDenied", 
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny non existing user", async function () {
-      let body = await rp.post({url: url, form: params, jar: jar.testUserNonExisting, followAllRedirects: true});
-      body.should.containEql("unpublishReason");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUserNonExisting", password: "TestUserNonExisting" });
+      let body = await client.post(url, params);
+
+      
+      body.data.should.containEql("unpublishReason");
       let article = await articleModule.findById(4);
       delete article._blog;
       should(article).eql({
@@ -465,8 +491,11 @@ describe("routes/article", function() {
       version: 1,
       collection: "new collection"};
     it("should run with full access user", async function () {
-      let body = await rp.post({url: url, form: params, jar: jar.testUser,followAllRedirects:true});
-      body.should.containEql("new collection");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, params);
+
+      body.data.should.containEql("new collection");
       let article = await articleModule.findById(2);
       delete article._blog;
       should(article).eql({
@@ -486,18 +515,20 @@ describe("routes/article", function() {
       });
     });
     it("should deny denied access user",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny denied non Existing user",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
@@ -510,8 +541,11 @@ describe("routes/article", function() {
       collection: "new collection",
       old_collection: ""};
     it("should run with full access user", async function () {
-      let body = await rp.post({url: url, jar: jar.testUser, followAllRedirects: true, form: params});
-      body.should.containEql("BLOG");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, params);
+      
+      body.data.should.containEql("BLOG");
       let article = await articleModule.findById(2);
       delete article._blog;
       should(article).eql({
@@ -531,16 +565,13 @@ describe("routes/article", function() {
       });
     });
     it("should fail with wrong old Values", async function () {
-      let response = await rp.post({
-        url: url,
-        form: {title: "new title", old_title: "old title"},
-        simple: false,
-        followAllRedirects: true,
-        jar: jar.testUser,
-        resolveWithFullResponse: true
-      });
-      should(response.statusCode).eql(HttpStatus.CONFLICT);
-      response.body.should.containEql("Field title already changed in DB");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, {title: "new title", old_title: "old title"});
+
+     
+      should(body.status).eql(HttpStatus.CONFLICT);
+      body.data.should.containEql("Field title already changed in DB");
 
       // check, that object is not changed
       let article = await articleModule.findById(2);
@@ -562,18 +593,20 @@ describe("routes/article", function() {
       });
     });
     it("should deny denied access user",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny non existing users 2",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "This article is not allowed for guests"
       }));
@@ -585,10 +618,14 @@ describe("routes/article", function() {
       oldMarkdown: "* Dies ist ein grosser Testartikel."
     };
     it("should run with full access user", async function () {
-      let body = await rp.post({ url: url, form: params, jar: jar.testUser,followAllRedirects:true});
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, params);
+
+     
       // ..setMarkdown/DE is redirecting to caller page, that is
       // /osmbc in this case
-      body.should.containEql("OSMBC");
+      body.data.should.containEql("OSMBC");
       let article = await articleModule.findById(2);
 
       delete article._blog;
@@ -608,17 +645,14 @@ describe("routes/article", function() {
       });
     });
     it("should fail with wrong old Values", async function () {
-      let response = await rp.post({
-        url: url,
-        form: {markdown: "new", oldMarkdown: "old"},
-        jar: jar.testUser,
-        followAllRedirects:true,
-        simple: false,
-        resolveWithFullResponse: true
-      });
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, {markdown: "new", oldMarkdown: "old"});
+
+      
       // there should be an error, as old title is not the correct one
-      should(response.statusCode).eql(HttpStatus.CONFLICT);
-      response.body.should.containEql("Field markdownDE already changed in DB");
+      should(body.status).eql(HttpStatus.CONFLICT);
+      body.data.should.containEql("Field markdownDE already changed in DB");
 
       // check, that object is not changed
       let article = await articleModule.findById(2);
@@ -640,18 +674,20 @@ describe("routes/article", function() {
       });
     });
     it("should deny denied access user",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny non existing users",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
@@ -662,10 +698,14 @@ describe("routes/article", function() {
       markdown: "* Dies ist ein grosser Testartikel."
     };
     it("should run with full access user", async function () {
-      let body = await rp.post({ url: url, form: params, jar: jar.testUser,followAllRedirects:true});
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, params);
+
+      
       // ..setMarkdown/DE is redirecting to caller page, that is
       // /osmbc in this case
-      body.should.containEql("<!-- Full Access Index Page-->");
+      body.data.should.containEql("<!-- Full Access Index Page-->");
       let article = await articleModule.findById(2);
 
       delete article._blog;
@@ -699,17 +739,13 @@ describe("routes/article", function() {
       })
     });
     it("should fail with wrong old Values", async function () {
-      let response = await rp.post({
-        url: url,
-        form: {markdown: "simulate different earlier Value in Form"},
-        jar: jar.testUser,
-        followAllRedirects:true,
-        simple: false,
-        resolveWithFullResponse: true
-      });
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, {markdown: "simulate different earlier Value in Form"});
+
       // there should be an error, as old title is not the correct one
-      should(response.statusCode).eql(HttpStatus.CONFLICT);
-      response.body.should.containEql("Field markdownDE already changed in DB");
+      should(body.status).eql(HttpStatus.CONFLICT);
+      body.data.should.containEql("Field markdownDE already changed in DB");
 
       // check, that object is not changed
       let article = await articleModule.findById(2);
@@ -731,18 +767,20 @@ describe("routes/article", function() {
       });
     });
     it("should deny denied access user",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny non existing users",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
@@ -753,8 +791,11 @@ describe("routes/article", function() {
       comment: "This comment will be added."
     };
     it("should run with full access user", async function () {
-      let body = await rp.post({ url: url, form: params, jar: jar.testUser,followAllRedirects:true});
-      body.should.containEql("This comment will be added.");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, params);
+
+      body.data.should.containEql("This comment will be added.");
       let article = await articleModule.findById(2);
 
       delete article._blog;
@@ -783,18 +824,20 @@ describe("routes/article", function() {
       });
     });
     it("should deny denied access user",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny non existing users",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "This article is not allowed for guests"
       }));
@@ -805,8 +848,11 @@ describe("routes/article", function() {
       comment: "This comment will be changed."
     };
     it("should run with full access user", async function () {
-      let body = await rp.post({ url: url, form: params, jar: jar.hallo,followAllRedirects:true});
-      body.should.containEql("This comment will be changed.");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "Hallo", password: "Hallo" });
+      let body = await client.post(url, params);
+
+      body.data.should.containEql("This comment will be changed.");
       let article = await articleModule.findById(2);
 
       delete article._blog;
@@ -827,16 +873,12 @@ describe("routes/article", function() {
       });
     });
     it("should fail if other user comment is edited", async function () {
-      let response = await rp.post({
-        url: url,
-        form: params,
-        jar: jar.testUser,
-        followAllRedirects:true,
-        simple: false,
-        resolveWithFullResponse: true
-      });
-      should(response.statusCode).eql(HttpStatus.CONFLICT);
-      response.body.should.containEql("Only Writer is allowed to change a commment");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, params);
+
+      should(body.status).eql(HttpStatus.CONFLICT);
+      body.data.should.containEql("Only Writer is allowed to change a commment");
       let article = await articleModule.findById(2);
 
       delete article._blog;
@@ -856,19 +898,21 @@ describe("routes/article", function() {
       });
     });
     it("should deny denied access user",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny non existing users",
       // Non existing users will become Guest. but guest has to be able to see the article
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: params,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "This article is not allowed for guests"
       }));
@@ -896,22 +940,28 @@ describe("routes/article", function() {
     });
 
     it("should run with full access user", async function () {
-      let body = await rp.post({ url: url, form: form, jar: jar.testUser,followAllRedirects:true});
-      should(body).equal("This is an english text.");
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, form);
+
+      
+      should(body.data).equal("This is an english text.");
     });
     it("should deny denied access user",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should deny non existing users",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
@@ -922,6 +972,8 @@ describe("routes/article", function() {
     let form = {urls: ["https://www.site.ort/apage"]};
 
     it("should run with full access user existing site", async function () {
+      
+
       form = {urls: ["https://www.site.ort/apage","https://www.site.ort2/apage","https://www.site.ort2/äpäge"]};
       let sitecall = nock("https://www.site.ort")
         .get("/apage")
@@ -933,14 +985,17 @@ describe("routes/article", function() {
         .get("/äpäge")
         .reply(200,"OK");  
 
-      let response = await rp.post({url: url, body: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true,json:true});
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, form);
 
-      response.body.should.deepEqual({
+      
+      body.data.should.deepEqual({
         'https://www.site.ort/apage': 'OK',
         'https://www.site.ort2/apage': 404,
         'https://www.site.ort2/äpäge': 'OK'
       });
-      should(response.statusCode).eql(HttpStatus.OK);
+      should(body.status).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });
 
@@ -949,10 +1004,13 @@ describe("routes/article", function() {
       let sitecall = nock("https://www.site.ort2")
         .get("/apage")
         .reply(404,"Page Not Found");
-      let response = await rp.post({url: url, body: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true,json:true});
 
-      response.body.should.deepEqual({ 'https://www.site.ort2/apage': 404 });
-      should(response.statusCode).eql(HttpStatus.OK);
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, form);
+     
+      body.data.should.deepEqual({ 'https://www.site.ort2/apage': 404 });
+      should(body.status).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });
     it("should run with full access user with http error", async function () {
@@ -960,10 +1018,13 @@ describe("routes/article", function() {
       let sitecall = nock("https://www.site.ort2")
         .get("/apage")
         .reply(404,"something went wrong");
-      let response = await rp.post({url: url, body: form, jar: jar.testUser, simple: false, resolveWithFullResponse: true,json:true});
 
-      response.body.should.deepEqual({ 'https://www.site.ort2/apage': 404 });
-      should(response.statusCode).eql(HttpStatus.OK);
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.post(url, form);
+
+      body.data.should.deepEqual({ 'https://www.site.ort2/apage': 404 });
+      should(body.status).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });
 
@@ -972,46 +1033,33 @@ describe("routes/article", function() {
       let sitecall = nock("https://www.site.ort3")
         .get("/apage")
         .reply(200,"OK");
-      let response = await rp.post(
-        {
-          url: url,
-          body: form,
-          jar: jar.guestUser,
-          simple: false,
-          resolveWithFullResponse: true,
-          followAllRedirects: true,
-          json:true
-        });
 
-      response.body.should.deepEqual({ 'https://www.site.ort3/apage': 'OK' });
-      should(response.statusCode).eql(HttpStatus.OK);
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "GuestUser", password: "GuestUser" });
+      let body = await client.post(url, form);  
+
+      body.data.should.deepEqual({ 'https://www.site.ort3/apage': 'OK' });
+      should(body.status).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
 
       // Try a second time, url should be cached and not called
       sitecall = nock("https://www.site.ort3")
         .get("/apage")
         .reply(200,"OK");
-      response = await rp.post(
-        {
-          url: url,
-          body: form,
-          jar: jar.guestUser,
-          simple: false,
-          resolveWithFullResponse: true,
-          followAllRedirects: true,
-          json:true
-        });
+      body = await client.post(url, form);    
+     
 
-      response.body.should.eql({ 'https://www.site.ort3/apage': 'OK' });
-      should(response.statusCode).eql(HttpStatus.OK);
+      body.data.should.eql({ 'https://www.site.ort3/apage': 'OK' });
+      should(body.status).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.false();
     });
 
     it("should deny denied access user",
-      postUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
-        body: form,
-        user: "testUserDenied",
+        form: form,
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         json:true,
         expectedStatusCode: HttpStatus.FORBIDDEN,
         json:true,
@@ -1022,18 +1070,15 @@ describe("routes/article", function() {
       let sitecall = nock("https://www.site.ort4")
         .get("/apage")
         .reply(200,"OK");
-      let response = await rp.post(
-        {
-          url: url,
-          body: form,
-          jar: jar.testUserNonExisting,
-          simple: false,
-          resolveWithFullResponse: true,
-          json:true,
-          followAllRedirects: true});
 
-      response.body.should.deepEqual({ 'https://www.site.ort4/apage': 'OK' });
-      should(response.statusCode).eql(HttpStatus.OK);
+      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
+      await client.post(baseLink + "/login", {username: "TestUserNonExisting", password: "TestUserNonExisting" });
+      let body = await client.post(url, form);  
+
+
+
+      body.data.should.deepEqual({ 'https://www.site.ort4/apage': 'OK' });
+      should(body.status).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });
   });

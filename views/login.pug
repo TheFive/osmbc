@@ -27,7 +27,7 @@ block content
         a.btn.btn-primary#login(href=htmlroot+"/auth/openstreetmap_oauth20")="Login with OpenStreetMap OAuth 2.0"
     if layout.auth.htaccess.enabled
       div
-        a.btn.btn-primary(href=htmlroot+"/htaccess/login")="Login with Local Passwort" 
+        a#htaccesLoginButton.btn.btn-primary(href=htmlroot+"/htaccess/login")="Login with Local Passwort" 
         
 
   :markdown-it

@@ -1,13 +1,13 @@
 "use strict";
 
-const debug      = require("debug")("OSMBC:routes:auth");
-const HttpStatus = require("http-status-codes");
-const path       = require("path");
+const debug       = require("debug")("OSMBC:routes:auth");
+const HttpStatus  = require("http-status-codes");
+const path        = require("path");
 
-const config     = require("../config.js");
-const logger     = require("../config.js").logger;
-const layoutConst= require("../routes/layout").layoutConst;
-const async      = require("../util/async_wrap.js");
+const config      = require("../config.js");
+const logger      = require("../config.js").logger;
+const layoutConst = require("../routes/layout").layoutConst;
+const async       = require("../util/async_wrap.js");
 
 const passport     = require("passport");
 const OpenStreetMapStrategy = require("passport-openstreetmap").Strategy;
@@ -35,7 +35,12 @@ function initialise(app) {
     debug("renderLogin");
     res.render("login", { layout: layoutConst });
   }
+  function renderLoginFailure(req, res) {
+    debug("renderLoginFailure");
+    res.render("login failure", { layout: layoutConst });
+  }
   app.get(htmlRoot + "/login", renderLogin);
+  app.get(htmlRoot + "/login_failure", renderLoginFailure);
 
   if (auth.openstreetmap.enabled) {
     app.get(htmlRoot + "/auth/openstreetmap", passport.authenticate("openstreetmap"));
@@ -132,52 +137,52 @@ function initialise(app) {
       });
     });
     passport.use(strategy);
-    if (auth.htaccess.enabled) {
-      const strategy = new LocalHtpasswdStrategy({ name: "htpasswd", file: path.join(__dirname, "..", "test_pwd") });
-      passport.use(strategy);
+  }
+  if (auth.htaccess.enabled) {
+    const strategy = new LocalHtpasswdStrategy({ name: "htpasswd", file: path.join(__dirname, "..", "test_pwd") });
+    passport.use(strategy);
+  }
+  if (auth.openstreetmap_oauth20.enabled) {
+    const oauth2 = auth.openstreetmap_oauth20;
+    const client =  new OAuth2Strategy({
+      authorizationURL: oauth2.authorizationURL,
+      tokenURL: oauth2.tokenURL,
+      clientID: oauth2.clientID,
+      clientSecret: oauth2.clientSecret,
+      callbackURL: oauth2.callbackURL,
+      scope: oauth2.scope
+    },
+    function(accessToken, refreshToken, params, profile, cb) {
+      debug("passport.access Token CB");
+      console.dir(profile);
+      return cb(null, profile);
+    });
+    if (client._oauth2) {
+      client._oauth2.useAuthorizationHeaderforGET(true);
+      client.userProfile = function (accesstoken, done) {
+        debug("passport.userProfile");
+        // choose your own adventure, or use the Strategy's oauth client
+        this._oauth2.get("https://api.openstreetmap.org/api/0.6/user/details", accesstoken, (err, body, res) => {
+          if (err) {
+            return done(err);
+          }
+          try {
+            const parser = new xml2js.Parser();
+            console.dir(body);
+            parser.parseString(body, function (err, result) {
+              if (err) return done(err);
+              console.dir(result.osm.user);
+              const userProfile = { displayName: result.osm.user[0].$.display_name, id: result.osm.user[0].$.id };
+              return done(null, userProfile);
+            });
+            return;
+          } catch (e) {
+            return done(e);
+          }
+        });
+      };
     }
-    if (auth.openstreetmap_oauth20.enabled) {
-      const oauth2 = auth.openstreetmap_oauth20;
-      const client =  new OAuth2Strategy({
-        authorizationURL: oauth2.authorizationURL,
-        tokenURL: oauth2.tokenURL,
-        clientID: oauth2.clientID,
-        clientSecret: oauth2.clientSecret,
-        callbackURL: oauth2.callbackURL,
-        scope: oauth2.scope
-      },
-      function(accessToken, refreshToken, params, profile, cb) {
-        debug("passport.access Token CB");
-        console.dir(profile);
-        return cb(null, profile);
-      });
-      if (client._oauth2) {
-        client._oauth2.useAuthorizationHeaderforGET(true);
-        client.userProfile = function (accesstoken, done) {
-          debug("passport.userProfile");
-          // choose your own adventure, or use the Strategy's oauth client
-          this._oauth2.get("https://api.openstreetmap.org/api/0.6/user/details", accesstoken, (err, body, res) => {
-            if (err) {
-              return done(err);
-            }
-            try {
-              const parser = new xml2js.Parser();
-              console.dir(body);
-              parser.parseString(body, function (err, result) {
-                if (err) return done(err);
-                console.dir(result.osm.user);
-                const userProfile = { displayName: result.osm.user[0].$.display_name, id: result.osm.user[0].$.id };
-                return done(null, userProfile);
-              });
-              return;
-            } catch (e) {
-              return done(e);
-            }
-          });
-        };
-      }
-      passport.use(client);
-    }
+    passport.use(client);
   }
 }
 
@@ -256,6 +261,8 @@ if (isNaN(cookieMaxAge)) {
 function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated");
   debug("Requested URL:  %s", req.url);
+  console.dir("Ensure Authenticated, user");
+  console.dir(req.user);
   if (req.isAuthenticated()) {
     debug("ensureAuthenticated: OK");
     if (req.user && req.user.access && req.user.access !== "denied") {
@@ -284,6 +291,8 @@ function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated: Not OK");
   async.series([
     function saveReturnTo(cb) {
+      console.dir("req.session");
+      console.dir(req.session);
       if (!req.session.returnTo) {
         logger.info("Setting session return to to " + req.originalUrl);
         req.session.returnTo = req.originalUrl;

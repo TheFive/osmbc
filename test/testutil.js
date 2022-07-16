@@ -11,6 +11,10 @@ var debug  = require("debug")("OSMBC:test:testutil");
 var Browser = require("zombie");
 var http = require("http");
 var request = require("request");
+const axios = require('axios');
+const wrapper = require('axios-cookiejar-support').wrapper;
+const CookieJar = require( 'tough-cookie').CookieJar;
+
 
 var config = require("../config.js");
 
@@ -27,7 +31,7 @@ var configModule  = require("../model/config.js");
 
 var mailReceiver   = require("../notification/mailReceiver.js");
 var messageCenter  = require("../notification/messageCenter.js");
-var passport = require("passport");
+
 
 var xmldom = require("xmldom");
 var domparser = new (xmldom.DOMParser)();
@@ -359,18 +363,9 @@ exports.generateTests = function generateTests(datadir, fileregex, createTestFun
 var browser = null;
 var server = null;
 
-function fakeNextPassportLogin(userString) {
-  passport._strategies.openstreetmap._token_response = {
-    access_token: "at-1234",
-    expires_in: 3600
-  };
 
-  passport._strategies.openstreetmap._profile = {
-    displayName: userString
-  };
-}
 
-exports.startServerSync = function startServerSync(userString) {
+exports.startServerSync = function startServerSync() {
   debug("startServer");
   if (server) exports.stopServer();
   server = http.createServer(app).listen(config.getServerPort());
@@ -378,8 +373,6 @@ exports.startServerSync = function startServerSync(userString) {
   if (typeof userString === "undefined") {
     return;
   }
-  console.warn("startServerSync(userString) is deprecated. see routes.article tests.");
-  fakeNextPassportLogin(userString);
 };
 
 exports.startServer = function startServer(userString, callback) {
@@ -393,33 +386,11 @@ exports.startServer = function startServer(userString, callback) {
 };
 
 
-function nockLoginPage() {
-  return nock("http://localhost:35043", {allowUnmocked: true})
-    .get(config.htmlRoot() + "/login")
-    .reply(302, "redirect", {"Location": "http://localhost:35043" + config.htmlRoot() + "/auth/openstreetmap"});
-}
 
 var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
-exports.getUserJar = function(userString, callback) {
-  should(typeof userString).eql("string");
-  function _getUserJar(userString, callback) {
-    let nockLoginInterceptor = nockLoginPage();
-    fakeNextPassportLogin(userString);
-    let jar = request.jar();
-    request.get({url: baseLink + "/osmbc", jar: jar}, function(err) {
-      nock.removeInterceptor(nockLoginInterceptor);
-      return callback(err, jar);
-    });
-  }
-  if (callback) {
-    return _getUserJar(userString, callback);
-  }
-  return new Promise((resolve, reject) => {
-    _getUserJar(userString, (err, jar) => (err) ? reject(err) : resolve(jar));
-  });
-};
+
 
 exports.stopServer = function stopServer(callback) {
   debug("stopServer");
@@ -439,25 +410,7 @@ exports.getBrowser = function getBrowser() {
   return browser;
 };
 
-exports.getNewBrowser = function getNewBrowser(userString) {
-  return new Promise((resolve) => {
-    let browser = new Browser({ maxWait: 120000, site: "http://localhost:" + config.getServerPort() });
-    browser.on("loaded",function() {
-      browser.evaluate("window").DOMParser = require("xmldom").DOMParser;
-    });
-    if (!userString) return resolve(browser);
-    should.exist(userString);
-    fakeNextPassportLogin(userString);
-    let nockLoginInterceptor = nockLoginPage();
-    browser.visit("/osmbc", function() {
-      nock.removeInterceptor(nockLoginInterceptor);
-      // ignore any error and return the given browser.
-      resolve(browser);
-    });
-  });
-};
 
-exports.fakeNextPassportLogin = fakeNextPassportLogin;
 
 
 exports.doATest = function doATest(dataBefore, test, dataAfter, callback) {
@@ -604,5 +557,51 @@ Browser.extend(function(browser) {
 });
 
 
+function checkUrlWithUser(options) {
+  const client = getWrappedAxiosClient(); 
+  return async function() {
+    should.exist(options.username);
+    should.exist(options.password);
+    should.exist(options.url);
+    should.exist(options.expectedMessage);
+    should.exist(options.expectedStatusCode);
+    try {
+      await client.post(baseLink + "/login", { username: options.username, password: options.password });
+      let body = await client.get(options.url );
 
-exports.nockLoginPage = nockLoginPage;
+    
+      body.data.should.containEql(options.expectedMessage);
+      should(body.status).eql(options.expectedStatusCode);  
+    } finally {}
+  }
+}
+
+function checkPostUrlWithUser(options) {
+  const client = getWrappedAxiosClient();
+  return async function() {
+    should.exist(options.username);
+    should.exist(options.password);
+    should.exist(options.url);
+    should.exist(options.expectedMessage);
+    should.exist(options.expectedStatusCode);
+    should.exist(options.form);
+    try {
+      await client.post(baseLink + "/login", { username: options.username, password: options.password });
+      let body = await client.post(options.url, options.form );
+      body.data.should.containEql(options.expectedMessage);
+      should(body.status).eql(options.expectedStatusCode);
+    } finally {}
+  };
+}
+
+function getWrappedAxiosClient(options) {
+  if (!options) options = {};
+  const jar = new CookieJar();
+  return wrapper(axios.create({ jar ,validateStatus: () => true ,maxRedirects: (options.maxRedirects) ?? 0}));
+}
+
+
+
+exports.checkUrlWithUser = checkUrlWithUser;
+exports.checkPostUrlWithUser = checkPostUrlWithUser;
+exports.getWrappedAxiosClient = getWrappedAxiosClient;

@@ -1,19 +1,19 @@
 "use strict";
 
-var should    = require("should");
-var http      = require("http");
-var request   = require("request");
-var async     = require("async");
-var nock      = require("nock");
+const should    = require("should");
+const http      = require("http");
+const async     = require("async");
+const nock      = require("nock");
+const axios    = require("axios");
 
-var testutil  = require("./testutil.js");
+const testutil  = require("./testutil.js");
 
-var config    = require("../config.js");
-var app       = require("../app.js");
-var initialise      = require("../util/initialise.js");
+const config    = require("../config.js");
+const app       = require("../app.js");
+const initialise      = require("../util/initialise.js");
 
-var articleModule = require("../model/article.js");
-var logModule = require("../model/logModule.js");
+const articleModule = require("../model/article.js");
+const logModule = require("../model/logModule.js");
 
 
 describe("router/slack", function() {
@@ -22,7 +22,7 @@ describe("router/slack", function() {
   var userName;
   var userId;
 
-  function talk(query, answer, cb) {
+  async function talk(query, answer) {
     should.exist(userName);
     should.exist(userId);
     var opts = {
@@ -30,36 +30,21 @@ describe("router/slack", function() {
       method: "post",
       json: {token: "testtoken", user_name: userName, user_id: userId, text: query}
     };
-    request(opts, function (err, res) {
-      should.not.exist(err);
-
-
-      should(res.statusCode).eql(200);
-      should(res.body.token).eql("testtoken");
-      should(res.body.user_id).eql(userId);
-      should(res.body.user_name).eql(userName);
-      should(res.body.username).eql("testbc");
-      should(res.body.text).eql(answer);
-      cb();
-    });
+    const body = await axios.post(link, {token: "testtoken", user_name: userName, user_id: userId, text: query});
+    
+    should(body.status).eql(200);
+    should(body.data.token).eql("testtoken");
+    should(body.data.user_id).eql(userId);
+    should(body.data.user_name).eql(userName);
+    should(body.data.username).eql("testbc");
+    should(body.data.text).eql(answer);
+      
   }
-  function findArticle(a, cb) {
-    articleModule.find(a, function(err, result) {
-      should.not.exist(err);
-      should.exist(result);
-      should(result.length).eql(1);
-      cb();
-    });
+  async function findArticle(a) {
+    const articleList = await articleModule.find(a);
+    should(articleList.length).eql(1);
   }
-  function findLog(l, cb) {
-    logModule.find(l, function(err, logs) {
-      should.not.exist(err);
-      if (logs.length !== 1) {
-        should(l).eql("NOT FOUND IN LOGS");
-      }
-      cb();
-    });
-  }
+  
 
 
   before(function(bddone) {
@@ -93,51 +78,43 @@ describe("router/slack", function() {
       })
     ], bddone);
   });
-  describe("unauthorised access", function() {
-    it("should ignore request with wrong API Key", function (bddone) {
+  describe("unauthorised access", async function() {
+    it("should ignore request with wrong API Key", async function () {
       var opts = {url: link, method: "post"};
-      request(opts, function (err, res) {
-        should.not.exist(err);
-        should(res.statusCode).eql(401);
-        // if server returns an actual error
-        bddone();
-      });
+      const body = await axios.post(link, {},{validateStatus: () => true});
+      
+      should(body.status).eql(401);
     });
-    it("should ignore request without known user", function (bddone) {
+    it("should ignore request without known user", async function () {
       userName = "NotThere";
       userId = "33";
-      talk("Hello Boy", "<@33> I never heard from you. Please enter your Slack Name in <https://testosm.bc/usert/self|OSMBC>", bddone);
+      await talk("Hello Boy", "<@33> I never heard from you. Please enter your Slack Name in <https://testosm.bc/usert/self|OSMBC>");
     });
-    it("should give a hint if user is not unique", function (bddone) {
+    it("should give a hint if user is not unique", async function () {
       userName = "ExistsTwice";
       userId = "33";
-      talk("Hello Boy", "<@33> is registered more than once in <https://testosm.bc/usert/self|OSMBC>", bddone);
+      await talk("Hello Boy", "<@33> is registered more than once in <https://testosm.bc/usert/self|OSMBC>");
     });
   });
   describe("useTBC Mode", function() {
-    it("should store an URL variant 1", function(bddone) {
+    it("should store an URL variant 1", async function() {
       userName = "TestSlackUseTBC";
       userId = "55";
-      async.series([
-        talk.bind(null, "http://forum.openstreetmap.org/viewtopic.php?id=53173", "Article: [Internationale Admingrenzen 2016 / users: Germany](https://testosm.bc/article/1) created in your TBC Folder.\n"),
+      await talk( "http://forum.openstreetmap.org/viewtopic.php?id=53173", "Article: [Internationale Admingrenzen 2016 / users: Germany](https://testosm.bc/article/1) created in your TBC Folder.\n");
 
         // search for the already exists article, that only should exist ONCE
-        findArticle.bind(null, {title: "Internationale Admingrenzen 2016 / users: Germany", collection: "http://forum.openstreetmap.org/viewtopic.php?id=53173", blog: "TBC"})
-      ], bddone);
+      const article = await  findArticle({title: "Internationale Admingrenzen 2016 / users: Germany", collection: "http://forum.openstreetmap.org/viewtopic.php?id=53173", blog: "TBC"});
+      should(article).is.not.null;
     });
-    it("should store an URL variant 2", function(bddone) {
+    it("should store an URL variant 2", async function() {
       userName = "TestSlackUseTBC";
       userId = "55";
-      async.series([
-        talk.bind(null, "mixed http://forum.openstreetmap.org/viewtopic.php?id=53173", "@TestSlackUseTBC Please enter an url.")
-      ], bddone);
+      await talk.bind(null, "mixed http://forum.openstreetmap.org/viewtopic.php?id=53173", "@TestSlackUseTBC Please enter an url.")
     });
-    it("should store only store urls", function(bddone) {
+    it("should store only store urls", async function() {
       userName = "TestSlackUseTBC";
       userId = "55";
-      async.series([
-        talk.bind(null, "Text without a title", "@TestSlackUseTBC Please enter an url.")
-      ], bddone);
+      await talk( "Text without a title", "@TestSlackUseTBC Please enter an url.");
     });
   });
 });
