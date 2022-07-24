@@ -149,6 +149,7 @@ app.use(htmlRoot + "/bower_components/d3", express.static(path.join(__dirname, "
 app.use(htmlRoot + "/bower_components/markdown-it", express.static(path.join(__dirname, "/node_modules/markdown-it")));
 app.use(htmlRoot + "/bower_components/markdown-it-imsize", express.static(path.join(__dirname, "/node_modules/markdown-it-imsize")));
 app.use(htmlRoot + "/bower_components/markdown-it-sup", express.static(path.join(__dirname, "/node_modules/markdown-it-sup")));
+app.use(htmlRoot + "/bower_components/markdown-it-emoji", express.static(path.join(__dirname, "/node_modules/markdown-it-emoji")));
 app.use(htmlRoot + "/bower_components/moment", express.static(path.join(__dirname, "/node_modules/moment")));
 
 

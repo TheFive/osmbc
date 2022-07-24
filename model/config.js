@@ -19,12 +19,49 @@ const slackReceiver = require("../notification/slackReceiver.js");
 
 function freshupVotes(json) {
   if (typeof json !== "object") return [];
-  if (!Array.isArray(json)) return [];
+  if (!Array.isArray(json)) {
+    return { warning: ["Votes should be a YAML List"] };
+  }
   for (let i = 0; i < json.length; i++) {
     const item = json[i];
     if (item.icon && item.icon.substring(0, 3) === "fa-") item.iconClass = "fa-lg fa " + item.icon;
     if (item.icon && item.icon.substring(0, 10) === "glyphicon-") item.iconClass = "glyphicon " + item.icon;
   }
+  return json;
+}
+
+function freshupEmoji(json) {
+  const warning = [];
+  const newEmoji = {};
+  if (json.emoji) {
+    for (const key in json.emoji) {
+      let value = json.emoji[key];
+      if (value.substring(0, 8) === "https://") value = `<img src="${value}"></img>`;
+      newEmoji[key] = value;
+    }
+  } else warning.push("Missing Emoji Entry.");
+  json.emoji = newEmoji;
+  const newShortcut = {};
+  if (json.shortcut) {
+    for (const key in json.shortcut) {
+      const value = json.shortcut[key];
+      const newValue = [];
+      if (newEmoji[key]) {
+        if (typeof value === "string") newValue.push(value);
+        if (Array.isArray(value)) {
+          for (const v in value) {
+            if (typeof v === "string") newValue.push(value);
+          }
+        }
+        newShortcut[key] = newValue;
+        if (newValue.length === 0) {
+          warning.push("Please check entries for shortcut " + key);
+        }
+      } else warning.push("Key " + key + " is not an emoji, Ignored for shortcuts");
+    }
+  }
+  json.shortcut = newShortcut;
+  json.warning = warning;
   return json;
 }
 
@@ -79,6 +116,7 @@ Config.prototype.getJSON = function getJSON() {
     try {
       this.json = yaml.safeLoad(this.yaml);
       if (this.name === "votes") this.json = freshupVotes(this.json);
+      if (this.name === "languageflags") this.json = freshupEmoji(this.json);
       return this.json;
     } catch (err) {
       return { error: "YAML convert error for: " + this.name + " ", errorMessage: err };

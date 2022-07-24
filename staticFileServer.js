@@ -22,6 +22,7 @@ app.use("/bower_components/d3", express.static(path.join(__dirname, "/node_modul
 app.use("/bower_components/markdown-it", express.static(path.join(__dirname, "/node_modules/markdown-it")));
 app.use("/bower_components/markdown-it-imsize", express.static(path.join(__dirname, "/node_modules/markdown-it-imsize")));
 app.use("/bower_components/markdown-it-sup", express.static(path.join(__dirname, "/node_modules/markdown-it-sup")));
+app.use("/bower_components/markdown-it-emoji", express.static(path.join(__dirname, "/node_modules/markdown-it-emoji")));
 app.use("/bower_components/moment", express.static(path.join(__dirname, "/node_modules/moment")));
 app.use(express.static(path.join(__dirname, "public")));
 

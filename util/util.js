@@ -12,6 +12,7 @@ const url = require("../config").url();
 
 
 const markdown = require("markdown-it")()
+  .use(require('markdown-it-emoji'))
   .use(require("markdown-it-sup"))
   .use(require("markdown-it-imsize"), { autofill: true });
 
