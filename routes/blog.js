@@ -142,6 +142,7 @@ function renderBlogStat(req, res, next) {
   ],
   function (err) {
     assert(res.rendervar);
+
     if (err) return next(err);
     res.set("content-type", "text/html");
     res.rendervar.layout.title = blog.name + "/statistic";
@@ -235,6 +236,7 @@ function renderBlogPreview(req, res, next) {
   },
   function(err, result) {
     debug("renderBlogPreview->final function");
+    const languageFlags = configModule.getConfig("languageflags");
     if (err) return next(err);
     if (req.query.download === "true") {
       if (asMarkdown) {
@@ -252,6 +254,7 @@ function renderBlogPreview(req, res, next) {
       res.rendervar.layout.title = blog.name + "/preview";
       res.render("blogpreview", {
         layout: res.rendervar.layout,
+        languageFlags: languageFlags,
         blog: blog,
         asMarkdown: asMarkdown,
         preview: result.converter,
@@ -427,6 +430,7 @@ function renderBlogTab(req, res, next) {
     const apiAuthors = [];
     apiAuthors.push(translator.deeplPro.user);
     apiAuthors.push(translator.bingPro.user);
+    const languageFlags = configModule.getConfig("languageflags");
 
 
     const renderer = new blogRenderer.HtmlRenderer(blog);
@@ -438,6 +442,7 @@ function renderBlogTab(req, res, next) {
       futureArticles: result.dataCollect.futureArticles,
       teamString: result.teamString,
       userMap: result.userMap,
+      languageFlags: languageFlags,
       lang: lang,
       tab: tab,
       votes: votes,

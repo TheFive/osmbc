@@ -173,6 +173,8 @@ block append scripts_to_execute
     // set Constant for Window with JADE Variables
     googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
     activeLanguages = JSON.parse('!{JSON.stringify(layout.activeLanguages)}');
+    emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify(languageFlags.shortcut)))}`)));
+    emojiList =     JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify(languageFlags.emoji)))}`)));
     leftLang = "!{params.left_lang}";
     rightLang = "!{params.right_lang}";
     lang3 = "!{params.lang3}";

@@ -12,7 +12,7 @@ const url = require("../config").url();
 
 
 const markdown = require("markdown-it")()
-  .use(require('markdown-it-emoji'))
+  .use(require("markdown-it-emoji"))
   .use(require("markdown-it-sup"))
   .use(require("markdown-it-imsize"), { autofill: true });
 
@@ -117,6 +117,10 @@ function dateFormat(date, lang) {
 }
 
 
+
+
+
+
 // shorten shorten a string up to maxlength
 // default is 30. If a string is shortenend, "..." is appendet
 exports.shorten = shorten;
@@ -127,6 +131,7 @@ exports.requireTypes = requireTypes;
 exports.linkify = linkify;
 exports.isTrue = isTrue;
 exports.dateFormat = dateFormat;
+
 
 // Convert MD to HTML, and mark all http(s) links as hyperlinks.
 // eslint-disable-next-line camelcase

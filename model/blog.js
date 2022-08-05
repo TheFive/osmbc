@@ -7,13 +7,11 @@ const util     = require("../util/util.js");
 const HttpStatus = require("http-status-codes");
 const config = require("../config.js");
 
-const markdown = require("markdown-it")()
-  .use(require('markdown-it-emoji'))
-  .use(require("markdown-it-sup"))
-  .use(require("markdown-it-imsize"), { autofill: true });
+
 
 const assert   = require("assert").strict;
 const moment   = require("moment");
+const markdown = require("markdown-it")();
 
 const articleModule       = require("../model/article.js");
 const configModule        = require("../model/config.js");
@@ -493,6 +491,7 @@ function convertLogsToTeamString(logs, lang, users) {
         }
         // check on Markdown started with [
         if (users[j].mdWeeklyAuthor) {
+          // Simle Markdown It without and plugin is enough for this case
           editors[i] = markdown.renderInline(users[j].mdWeeklyAuthor);
           continue;
         }

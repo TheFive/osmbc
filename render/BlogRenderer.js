@@ -7,17 +7,16 @@ const util = require("../util/util.js");
 const configModule = require("../model/config.js");
 const config = require("../config.js");
 const language = require("../model/language.js");
+const mdUtil = require("../util/md_util.js");
 
 
 const assert = require("assert").strict;
 
-const markdown = require("markdown-it")()
-  .use(require('markdown-it-emoji'))
-  .use(require("markdown-it-sup"))
-  .use(require("markdown-it-imsize"), { autofill: true });
 
 function HtmlRenderer(blog) {
   this.blog = blog;
+
+  this.markdown = mdUtil.osmbcMarkdown();
 }
 
 function MarkdownRenderer(blog) {
@@ -109,7 +108,7 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
     // Does the markdown text starts with '* ', so ignore it
     if (md.substring(0, 2) === "* ") { md = md.substring(2, 99999); }
     // Return an list Element for the blog article
-    text = markdown.render(md);
+    text = this.markdown.render(md);
 
 
 

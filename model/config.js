@@ -8,9 +8,11 @@ const fs       = require("fs");
 const path     = require("path");
 
 
+
 const pgMap    = require("../model/pgMap.js");
 const language   = require("..//model/language.js");
 const util     = require("../util/util.js");
+const sanitizeHtml = require("sanitize-html");
 
 
 const messageCenter = require("../notification/messageCenter.js");
@@ -37,6 +39,9 @@ function freshupEmoji(json) {
     for (const key in json.emoji) {
       let value = json.emoji[key];
       if (value.substring(0, 8) === "https://") value = `<img src="${value}"></img>`;
+      value = sanitizeHtml(value, {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"])
+      });
       newEmoji[key] = value;
     }
   } else warning.push("Missing Emoji Entry.");
@@ -45,19 +50,15 @@ function freshupEmoji(json) {
   if (json.shortcut) {
     for (const key in json.shortcut) {
       const value = json.shortcut[key];
-      const newValue = [];
-      if (newEmoji[key]) {
-        if (typeof value === "string") newValue.push(value);
-        if (Array.isArray(value)) {
-          for (const v in value) {
-            if (typeof v === "string") newValue.push(value);
-          }
-        }
-        newShortcut[key] = newValue;
-        if (newValue.length === 0) {
-          warning.push("Please check entries for shortcut " + key);
-        }
-      } else warning.push("Key " + key + " is not an emoji, Ignored for shortcuts");
+      if (!(key in newEmoji)) {
+        warning.push(`Shortcut ${key} is not an emojy, ignored`);
+        continue;
+      }
+      if (typeof value === "string") {
+        newShortcut[key] = value;
+        continue;
+      }
+      warning.push(`Datatype for shorcut ${key} is not string, ignored`);
     }
   }
   json.shortcut = newShortcut;
@@ -382,29 +383,37 @@ let configMap = null;
 module.exports.initialiseConfigMap = function initialiseConfigMap() { configMap = null; };
 
 function initialise(callback) {
-  debug("initialise");
-  assert(callback);
-  if (configMap) return callback();
-  configMap = {};
-  async.series([
-    initConfigElement.bind(null, "formulation_tipEN"),
-    initConfigElement.bind(null, "formulation_tipDE"),
-    initConfigElement.bind(null, "calendartranslation"),
-    initConfigElement.bind(null, "categorydescription"),
-    initConfigElement.bind(null, "languageflags"),
-    initConfigElement.bind(null, "calendarflags"),
-    initConfigElement.bind(null, "slacknotification"),
-    initConfigElement.bind(null, "licenses"),
-    initConfigElement.bind(null, "categorytranslation"),
-    initConfigElement.bind(null, "editorstrings"),
-    initConfigElement.bind(null, "automatictranslatetext"),
-    initConfigElement.bind(null, "votes"),
-    initConfigElement.bind(null, "eventsfilter"),
-    initConfigElement.bind(null, "ignoreforsearch")
-  ],
-  function final(err) {
-    debug("finalFunction initialise");
-    return callback(err);
+  function _initialise(callback) {
+    debug("initialise");
+    assert(callback);
+    if (configMap) return callback();
+    configMap = {};
+    async.series([
+      initConfigElement.bind(null, "formulation_tipEN"),
+      initConfigElement.bind(null, "formulation_tipDE"),
+      initConfigElement.bind(null, "calendartranslation"),
+      initConfigElement.bind(null, "categorydescription"),
+      initConfigElement.bind(null, "languageflags"),
+      initConfigElement.bind(null, "calendarflags"),
+      initConfigElement.bind(null, "slacknotification"),
+      initConfigElement.bind(null, "licenses"),
+      initConfigElement.bind(null, "categorytranslation"),
+      initConfigElement.bind(null, "editorstrings"),
+      initConfigElement.bind(null, "automatictranslatetext"),
+      initConfigElement.bind(null, "votes"),
+      initConfigElement.bind(null, "eventsfilter"),
+      initConfigElement.bind(null, "ignoreforsearch")
+    ],
+    function final(err) {
+      debug("finalFunction initialise");
+      return callback(err);
+    });
+  }
+  if (callback) {
+    return _initialise(callback);
+  }
+  return new Promise((resolve, reject) => {
+    _initialise((err, result) => err ? reject(err) : resolve(result));
   });
 }
 

@@ -65,6 +65,7 @@
     "request": "2.88.x",
     "request-promise-native": "1.0.x",
     "sanitize-filename": "^1.6.3",
+    "sanitize-html": "^2.7.1",
     "serve-favicon": "2.5.x",
     "ssrf": "^1.0.2",
     "standard-http-error": "2.0.x",

@@ -26,17 +26,15 @@ function unloadWindowWarning(event) {
 function init() {
   window.mdRender = window.markdownit();
 
-  window.mdRender.use(window.markdownitEmoji, { defs: { de: "f" } });
+  window.mdRender.use(window.markdownitEmoji, { defs: window.emojiList, shortcuts: window.emojiShortcut });
   window.mdRender.use(window.markdownitSup);
   window.mdRender.use(window["markdown-it-imsize.js"]);
 
-  console.dir(window.markdownitEmoji);
 
   const oldEmoji = window.mdRender.renderer.rules.emoji;
   function addLanguageFlags(token, idx) {
     const link = $("img.flag#" + token[idx].markup);
     if (link.length === 1) return `<img src="${link[0].src}"></img>`;
-    console.dir("emojy not know");
     return oldEmoji(token, idx);
   }
   window.mdRender.renderer.rules.emoji = addLanguageFlags;
