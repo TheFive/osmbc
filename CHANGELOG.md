@@ -3176,6 +3176,7 @@
 
 - English only - should be visible in the preview [\#88](https://github.com/TheFive/osmbc/issues/88)
 - Comment indication not allways visible [\#84](https://github.com/TheFive/osmbc/issues/84)
+- Use Correct Hyphen for Displaying the Date [\#68](https://github.com/TheFive/osmbc/issues/68)
 
 ## [0.2.25](https://github.com/TheFive/osmbc/tree/0.2.25) (2015-10-19)
 
@@ -3193,7 +3194,6 @@
 **Fixed bugs:**
 
 - Missing Blog Name in Overview, Full or FullEN mode. [\#75](https://github.com/TheFive/osmbc/issues/75)
-- Use Correct Hyphen for Displaying the Date [\#68](https://github.com/TheFive/osmbc/issues/68)
 
 **Closed issues:**
 
