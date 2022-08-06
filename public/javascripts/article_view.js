@@ -25,8 +25,22 @@ function unloadWindowWarning(event) {
 // initialise all callbacks with jQuery
 function init() {
   window.mdRender = window.markdownit();
+
+  window.mdRender.use(window.markdownitEmoji, { defs: window.emojiList, shortcuts: window.emojiShortcut });
   window.mdRender.use(window.markdownitSup);
   window.mdRender.use(window["markdown-it-imsize.js"]);
+
+
+  const oldEmoji = window.mdRender.renderer.rules.emoji;
+  function addLanguageFlags(token, idx) {
+    const link = $("img.flag#" + token[idx].markup);
+    if (link.length === 1) return `<img src="${link[0].src}"></img>`;
+    return oldEmoji(token, idx);
+  }
+  window.mdRender.renderer.rules.emoji = addLanguageFlags;
+
+
+
   $("#linkArea")
     .change(highlightWrongLinks);
   $(".preview")

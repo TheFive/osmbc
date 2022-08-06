@@ -176,7 +176,7 @@ function clearDB(options,callback) {
     function(done) {ct(session.pg,pgOptions,done);},
 
   ],function(err) {
-    if (err) console.dir(err);
+    if (err) console.err(err);
     callback();
   });
 }

@@ -286,6 +286,7 @@ Use @OSMUser to address any special editor."></textarea>
   
 </script>
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
+<script src="/bower_components/markdown-it-emoji/dist/markdown-it-emoji.min.js"></script>
 <script src="/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js"></script>
 <script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
 <script src="/javascripts/article_view.js"></script>
@@ -293,6 +294,8 @@ Use @OSMUser to address any special editor."></textarea>
   // set Constant for Window with JADE Variables
   googleTranslateText = JSON.parse('{"DE":"(automatische [Übersetzung](##link##))","EN":"(automatic [translation](##link##))","ES":"(automatic [translation](##link##))","FR":"(automatic [translation](##link##))","CZ":"(automatic [translation](##link##))","PT":"(automatic [translation](##link##))","RU":"(automatic [translation](##link##))","JP":"(automatic [translation](##link##))","ID":"(automatic [translation](##link##))","TR":"(automatic [translation](##link##))"}');
   activeLanguages = JSON.parse('["EN"]');
+  emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`JTdCJTdE`)));
+  emojiList =     JSON.parse(decodeURIComponent(window.atob(`JTdCJTIyc21pbGV5JTIyJTNBJTIyJUYwJTlGJTk4JTgzJTIyJTJDJTIyZ2VybWFueSUyMiUzQSUyMiUzQ2ltZyUyMHNyYyUzRCU1QyUyMmh0dHBzJTNBJTJGJTJGYmxvZy5vcGVuc3RyZWV0bWFwLmRlJTJGd3AtdXBsb2FkcyUyRjIwMTYlMkYwMSUyRmRlLnN2ZyU1QyUyMiUyMCUyRiUzRSUyMiU3RA==`)));
   leftLang = "EN";
   rightLang = "";
   lang3 = "";

@@ -29,10 +29,18 @@ block content
           input(name="OK" type="submit", class="btn btn-primary",value="OK")
 
   p.row
+    
 
     if config.json && config.json.error
+      h2="Errors"
       p.bg-danger=config.json.error
       p.bg-danger=config.json.errorMessage
+    if config.json && config.json.warning && config.json.warning.length > 0
+      h2="Warning"
+      ul
+        for w in config.json.warning
+          li.text-danger= w
+    
 
 
     p
