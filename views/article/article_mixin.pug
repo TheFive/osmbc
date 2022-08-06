@@ -161,6 +161,7 @@ mixin translationMenu
 
 block append scripts_to_load
   script(src=layout.path("markdown-it") + '/markdown-it.min.js')
+  script(src=layout.path("markdown-it-emoji") + '/markdown-it-emoji.min.js')
   script(src=layout.path("markdown-it-sup") + '/markdown-it-sup.min.js')
   script(src=layout.path("markdown-it-imsize") + '/markdown-it-imsize.min.js')
   script(src=layout.htmlroot + "/javascripts/article_view.js")
@@ -172,6 +173,8 @@ block append scripts_to_execute
     // set Constant for Window with JADE Variables
     googleTranslateText = JSON.parse('!{JSON.stringify(googleTranslateText)}');
     activeLanguages = JSON.parse('!{JSON.stringify(layout.activeLanguages)}');
+    emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify(languageFlags.shortcut)))}`)));
+    emojiList =     JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify(languageFlags.emoji)))}`)));
     leftLang = "!{params.left_lang}";
     rightLang = "!{params.right_lang}";
     lang3 = "!{params.lang3}";

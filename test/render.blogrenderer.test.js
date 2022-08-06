@@ -2,17 +2,18 @@
 
 
 
-var should = require("should");
-var testutil = require("./testutil.js");
+const should = require("should");
+const testutil = require("./testutil.js");
 
-var path = require("path");
-var fs = require("fs");
-var async = require("async");
-var nock = require("nock");
+const path = require("path");
+const fs = require("fs");
+const async = require("async");
+const nock = require("nock");
 
-var articleModule = require("../model/article.js");
-var blogModule = require("../model/blog.js");
-var BlogRenderer = require("../render/BlogRenderer.js");
+const articleModule = require("../model/article.js");
+const blogModule = require("../model/blog.js");
+const configModule = require("../model/config.js");
+const BlogRenderer = require("../render/BlogRenderer.js");
 
 
 
@@ -21,15 +22,17 @@ var BlogRenderer = require("../render/BlogRenderer.js");
 
 
 describe("render/blogrenderer", function() {
-  var renderer =  new BlogRenderer.HtmlRenderer();
-  before(function (bddone) {
+  let renderer;
+  before(async function () {
+    await configModule.initialise();
+    renderer =  new BlogRenderer.HtmlRenderer();
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
 
     process.env.TZ = "Europe/Amsterdam";
-    testutil.clearDB(bddone);
+    await testutil.clearDB();
   });
   after(function (bddone) {
     nock.cleanAll();
@@ -165,6 +168,13 @@ describe("render/blogrenderer", function() {
         categoryEN: "Upcoming Events"});
       var result = renderer.renderArticle("DE", article);
       should(result).equal('<p>Eine Tabelle\n</p>\n<p>Hinweis:<br />Wer seinen Termin hier in der Liste sehen möchte, <a href=\"https://wiki.openstreetmap.org/wiki/Template:Calendar\">trage</a> ihn in den <a href=\"https://wiki.openstreetmap.org/wiki/Current_events\">Kalender</a> ein. Nur Termine, die dort stehen, werden in die Wochennotiz übernommen.</p>\n');
+      bddone();
+    });
+    it("should work with Emojies", function (bddone) {
+      var article = articleModule.create({markdownEN: "Greetings from [:germany:](https://en.wikipedia.org/wiki/Germany) :-)",
+        categoryEN: "Maps"});
+      var result = renderer.renderArticle("EN", article);
+      should(result).equal('<li id="undefined_0">\nGreetings from <a href="https://en.wikipedia.org/wiki/Germany"><img src="https://blog.openstreetmap.de/wp-uploads/2016/01/de.svg" /></a> 😃\n</li>\n');
       bddone();
     });
     it("should generate an article for Long Term Dates", function (bddone) {

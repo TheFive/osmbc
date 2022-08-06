@@ -7,12 +7,13 @@ const axios = require("axios");
 const language = require("../model/language.js");
 
 
-const markdown = require("markdown-it")()
-  .use(require("markdown-it-sup"))
-  .use(require("markdown-it-imsize"), { autofill: true });
+
+
 
 const TurndownService = require("turndown");
 const turndownItSup = require("../util/turndown-it-sup.js");
+const turndownItEmoji = require("../util/turndown-it-emoji");
+const mdUtil = require("../util/md_util.js");
 
 const config    = require("../config.js");
 const debug       = require("debug")("OSMBC:model:translator");
@@ -46,6 +47,7 @@ function escapeRegExp(string) {
 const deeplConfig = config.getValue("DeeplProConfig", { mustExist: true });
 
 function translateDeeplPro(options, callback) {
+  const markdown = mdUtil.osmbcMarkdown({ translation: true });
   debug("translateDeeplPro");
 
   if (typeof deeplConfig.authKey === "undefined") {
@@ -83,7 +85,6 @@ function translateDeeplPro(options, callback) {
   }
 
 
-
   deeplTranslate(deeplConfig.url, deeplParams)
     .then(result => {
       if (result && result.message) return callback(null, result.message);
@@ -91,6 +92,7 @@ function translateDeeplPro(options, callback) {
       const htmlresult = result.translations[0].text;
       const turndownService = new TurndownService();
       turndownService.use(turndownItSup);
+      turndownService.use(turndownItEmoji);
       let mdresult = turndownService.turndown(htmlresult);
       mdresult = mdresult.replace(
         RegExp(
@@ -152,6 +154,7 @@ function bingProActive () {
 
 function translateBingPro(options, callback) {
   debug("translateBingPro");
+  const markdown = mdUtil.osmbcMarkdown({ translation: true });
 
   if (typeof bingProAuthkey === "undefined") {
     return callback(new Error("No Bing Pro Version registered"));
@@ -164,6 +167,8 @@ function translateBingPro(options, callback) {
   msTranslate.translate(fromLang, toLang, htmltext, function(err, translation) {
     if (err) return callback(err);
     const turndownService = new TurndownService();
+    turndownService.use(turndownItSup);
+    turndownService.use(turndownItEmoji);
     let mdresult = turndownService.turndown(translation);
     mdresult = mdresult.replace(
       RegExp(

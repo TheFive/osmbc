@@ -4,10 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const debug = require("debug")("OSMBC:routes:help");
 const config = require("../config.js");
-
-const markdown = require("markdown-it")()
-  .use(require("markdown-it-sup"))
-  .use(require("markdown-it-imsize"), { autofill: true });
+const mdUtil = require("../util/md_util.js");
 
 
 let token = null;
@@ -26,6 +23,7 @@ function initToken() {
 function generateHelpText(filename) {
   debug("generateHelpText");
   initToken();
+  const markdown = mdUtil.osmbcMarkdown();
 
   let helpdir = "help";
   if (filename === "CHANGELOG.md") helpdir = "";

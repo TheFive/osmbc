@@ -3,7 +3,6 @@
 const express     = require("express");
 const async       = require("../util/async_wrap.js");
 const assert      = require("assert").strict;
-const markdown    = require("markdown-it")();
 const debug       = require("debug")("OSMBC:routes:article");
 const path        = require("path");
 const HttpStatus  = require("http-status-codes");
@@ -19,6 +18,7 @@ const util          = require("../util/util.js");
 const config        = require("../config.js");
 const logger        = require("../config.js").logger;
 const language      = require("../model/language.js");
+const mdUtil        = require("../util/md_util.js");
 
 
 const BlogRenderer  = require("../render/BlogRenderer.js");
@@ -210,6 +210,7 @@ function renderArticleId(req, res, next) {
   },
   function (err, result) {
     debug("renderArticleId->finalFunction");
+    const markdown = mdUtil.osmbcMarkdown();
     if (err) return next(err);
     if (result.notranslate) return res.redirect(result.notranslate);
     const renderer = new BlogRenderer.HtmlRenderer();
@@ -233,6 +234,7 @@ function renderArticleId(req, res, next) {
     const pugFile = "article/article_all_column";
 
 
+
     res.render(pugFile, {
       layout: res.rendervar.layout,
       article: article,
@@ -250,6 +252,7 @@ function renderArticleId(req, res, next) {
       usedLinks: result.usedLinks,
       categories: categories,
       languageFlags: languageFlags,
+      util: util,
       accessMap: result.accessMap,
       collectedByGuest: collectedByGuest,
       mainTranslationService: mainTranslationService,

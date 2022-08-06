@@ -1,5 +1,33 @@
 "use strict";
 
+const markdownIt = require("markdown-it");
+const markdownItEmoji = require("markdown-it-emoji");
+const markdownItSup = require("markdown-it-sup");
+const markdownItImsize = require("markdown-it-imsize");
+
+const configModule = require("../model/config.js");
+
+
+module.exports.osmbcMarkdown = function osmbcMarkdown(options) {
+  const languageFlags = configModule.getConfig("languageflags");
+  let localEmoji = false;
+  if (options && options.translation) {
+    // this should only be called for the pretranslation html rendering it
+    // has a simplified own defined output to ease turndown the translation result.
+    localEmoji = {};
+    for (const k in languageFlags.emoji) {
+      localEmoji[k] = "<emoji src='" + k + "'>Picture</emoji>";
+    }
+  } else {
+    localEmoji = languageFlags.emoji;
+  }
+  return markdownIt()
+    .use(markdownItEmoji, { defs: localEmoji, shortcut: languageFlags.shortcut })
+    .use(markdownItSup)
+    .use(markdownItImsize, { autofill: true });
+};
+
+
 function fixLength(text, len, fillChar) {
   let result = text;
   if (typeof text === "undefined") result = "";
@@ -43,5 +71,7 @@ function mdTable(json, columns) {
   }
   return md;
 }
+
+
 
 module.exports.mdTable = mdTable;
