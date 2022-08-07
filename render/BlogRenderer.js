@@ -195,7 +195,7 @@ function renderBlogStructure(lang, articleData) {
   const teamString = articleData.teamString;
   let preview = this.charSetString();
   const blog = this.blog;
-  let i, j; // often used iterator, declared here because there is no block scope in JS.
+  let i, j; // often used iterator, declared here because there was long time ago no block scope in JS.
   preview += this.subtitle(lang);
   const clist = blog.getCategories();
 
