@@ -44,7 +44,7 @@ function initialise() {
     if (!dll) dll = lang.id;
     let dls = lang.displayShort;
     if (!dls) dls = lang.id;
-    langMap[lang.lid] = new Language(lang.lid, dls, dll, ml, lang.bingPro, lang.deeplProSource, lang.deeplProTarget, lang.deeplProFormality);
+    langMap[lang.lid.toUpperCase()] = new Language(lang.lid, dls, dll, ml, lang.bingPro, lang.deeplProSource, lang.deeplProTarget, lang.deeplProFormality);
     lid.push(lang.lid);
   });
 }
