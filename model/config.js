@@ -9,14 +9,18 @@ const path     = require("path");
 
 
 
-const pgMap    = require("../model/pgMap.js");
-const language   = require("..//model/language.js");
-const util     = require("../util/util.js");
+const pgMap        = require("../model/pgMap.js");
+const language     = require("..//model/language.js");
+const util         = require("../util/util.js");
 const sanitizeHtml = require("sanitize-html");
+const config       = require("../config.js");
 
 
 const messageCenter = require("../notification/messageCenter.js");
 const slackReceiver = require("../notification/slackReceiver.js");
+
+const mediaFolderLocal = config.getValue("media folder", { mustExist: true }).local;
+
 
 
 function freshupVotes(json) {
@@ -38,7 +42,9 @@ function freshupEmoji(json) {
   if (json.emoji) {
     for (const key in json.emoji) {
       let value = json.emoji[key];
-      if (value.substring(0, 8) === "https://") value = `<img src="${value}"></img>`;
+
+      if (value.substring(0, mediaFolderLocal.length) === mediaFolderLocal) value = `<img src="${value}"></img>`;
+
       value = sanitizeHtml(value, {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"])
       });

@@ -28,11 +28,17 @@ const debug = require("debug")("OSMBC:model:blog");
 
 
 
+const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
+function getGlobalCategories() {
+  const categoryTranslation = configModule.getConfig("categorytranslation");
+  return categoryTranslation.filter((category) => { return (category.EN !== wpExpressTitle); });
+}
+
 function Blog(proto) {
   debug("Blog");
   this.id = 0;
   if (!proto || (proto && !proto.categories)) {
-    this.categories = configModule.getConfig("categorytranslation");
+    this.categories = getGlobalCategories();
   }
   if (proto) {
     for (const k in proto) {
@@ -658,12 +664,6 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
 
   fromLang = fromLang.toUpperCase();
   toLang = toLang.toUpperCase();
-  if (fromLang === "DE-LESS") fromLang = "DE-Less";
-  if (toLang === "DE-LESS") toLang = "DE-Less";
-
-  if (fromLang === "DE-MORE") fromLang = "DE-More";
-  if (toLang === "DE-MORE") toLang = "DE-More";
-
 
   if (!this.isEditable(toLang)) return callback(new Error(toLang + " can not be edited"));
 
@@ -948,18 +948,16 @@ function translateCategories(cat) {
 }
 
 
-function getGlobalCategories() {
-  return configModule.getConfig("categorytranslation");
-}
+
 
 Blog.prototype.getCategories = function getCategories() {
   debug("getCategories");
-
   let result = getGlobalCategories();
   if (this.categories) {
     translateCategories(this.categories);
     result = this.categories;
   }
+
 
   return result;
 };

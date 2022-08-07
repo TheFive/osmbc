@@ -210,61 +210,115 @@ function renderBlogPreview(req, res, next) {
 
 
   let lang = req.query.lang;
+
+  function isClosed(lang) {
+    if (blog["close" + lang] === true) return true;
+  }
+  function listify(result, value, index) {
+    if (index === 0) return value;
+    return result + "-" + value;
+  }
   const asMarkdown = (req.query.markdown === "true");
   if (typeof (lang) === "undefined") lang = "EN";
-  if (!language.getLanguages()[lang]) lang = "EN";
+  if ((lang !== "ALL" && !language.getLanguages()[lang])) lang = "EN";
+
+  if (lang === "ALL") {
+    lang = language.getLid().filter(isClosed);
+  } else {
+    lang = [lang];
+  }
 
 
   const returnToUrl = req.session.articleReturnTo;
 
+  const multiExport = (lang.length > 1);
+  let overallResult = "";
+  if (multiExport) req.query.download = "true";
 
 
 
 
 
-  async.auto({
-    converter: function(callback) {
+
+
+  async.eachSeries(lang,
+    function(exportLang, callback) {
       debug("converter function");
-      blog.getPreviewData({ lang: lang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
+      blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
         if (err) return callback(err);
         let renderer = new BlogRenderer.HtmlRenderer(blog);
         if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
-        const result = renderer.renderBlog(lang, data);
-        return callback(null, result);
+        const result = renderer.renderBlog(exportLang, data);
+        if (multiExport) {
+          overallResult = overallResult + `[:${language.wpExportName(exportLang)}]` + result;
+        } else {
+          overallResult = result;
+        }
+        return callback(null);
       });
-    }
-  },
-  function(err, result) {
-    debug("renderBlogPreview->final function");
-    const languageFlags = configModule.getConfig("languageflags");
-    if (err) return next(err);
-    if (req.query.download === "true") {
-      if (asMarkdown) {
-        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(language.momentLocale(lang)).format() + ".md");
-        res.setHeader("Content-type", "text");
-
-        res.end(result.converter, "UTF8");
+    },
+    function(err) {
+      debug("renderBlogPreview->final function");
+      if (multiExport) overallResult = overallResult + "[:]";
+      const languageFlags = configModule.getConfig("languageflags");
+      if (err) return next(err);
+      if (req.query.download === "true") {
+        if (asMarkdown) {
+          res.attachment(`${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.html`).end(overallResult);
+        } else {
+          res.attachment(`${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.html`).end(overallResult);
+        }
       } else {
-        res.setHeader("Content-disposition", "attachment; filename=" + blog.name + "(" + lang + ")" + moment().locale(language.momentLocale(lang)).format() + ".html");
-        res.setHeader("Content-type", "text/html");
-        res.end(result.converter, "UTF8");
+        assert(res.rendervar);
+        console.dir("PREIVIEWZWWIG");
+        res.rendervar.layout.title = blog.name + "/preview";
+        res.render("blogpreview", {
+          layout: res.rendervar.layout,
+          languageFlags: languageFlags,
+          blog: blog,
+          asMarkdown: asMarkdown,
+          preview: overallResult,
+          lang: lang,
+          returnToUrl: returnToUrl,
+          categories: blog.getCategories()
+        });
       }
-    } else {
-      assert(res.rendervar);
-      res.rendervar.layout.title = blog.name + "/preview";
-      res.render("blogpreview", {
-        layout: res.rendervar.layout,
-        languageFlags: languageFlags,
-        blog: blog,
-        asMarkdown: asMarkdown,
-        preview: result.converter,
-        lang: lang,
-        returnToUrl: returnToUrl,
-        categories: blog.getCategories()
-      });
     }
-  }
   );
+}
+
+const blogTitleForExport = config.getValue("Blog Title For Export", { mustExist: true });
+
+function renderBlogPreviewHeader(req, res, next) {
+  debug("renderBlogPreviewHeader");
+  req.session.articleReturnTo = req.originalUrl;
+  const blog = req.blog;
+  if (!blog) return next();
+
+  function isClosed(lang) {
+    if (blog["close" + lang] === true) return true;
+    else return false;
+  }
+  function listify(result, value, index) {
+    console.dir(index); console.dir(value);
+    if (index === 0) return value;
+    return result + "-" + value;
+  }
+  const lang = language.getLid().filter(isClosed);
+
+  const translation = configModule.getConfig("categorytranslation");
+
+  const titleTrans = translation.filter(function isTitle(trans) { if (trans.EN === blogTitleForExport) return true; else return false; });
+  if (titleTrans.length === 1) {
+    const map = titleTrans[0];
+    const number = blog.name.substring(2, 99);
+    let content = "";
+    lang.forEach((value) => { content = content + `[:${language.wpExportName(value)}]${map[value]} ${number})`; });
+    content = content + "[:]";
+    console.dir(content);
+    return res.attachment(`Header ${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.txt`).end(content);
+  }
+  res.next(new Error("Categorie Translation is missing Tile"));
 }
 
 function setReviewComment(req, res, next) {
@@ -575,6 +629,7 @@ router.get("/list", auth.checkRole(["full"]), renderBlogList);
 router.get("/:blog_id", auth.checkRole(["full"]), renderBlogTab);
 router.get("/:blog_id/stat", auth.checkRole(["full"]), renderBlogStat);
 router.get("/:blog_id/preview", auth.checkRole(["full"]), renderBlogPreview);
+router.get("/:blog_id/previewHeader", auth.checkRole(["full"]), renderBlogPreviewHeader);
 router.get("/:blog_id/:tab", auth.checkRole(["full"]), renderBlogTab);
 
 
