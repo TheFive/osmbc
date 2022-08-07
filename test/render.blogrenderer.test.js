@@ -174,7 +174,7 @@ describe("render/blogrenderer", function() {
       var article = articleModule.create({markdownEN: "Greetings from [:germany:](https://en.wikipedia.org/wiki/Germany) :-)",
         categoryEN: "Maps"});
       var result = renderer.renderArticle("EN", article);
-      should(result).equal('<li id="undefined_0">\nGreetings from <a href="https://en.wikipedia.org/wiki/Germany"><img src="https://blog.openstreetmap.de/wp-uploads/2016/01/de.svg" /></a> 😃\n</li>\n');
+      should(result).equal('<li id="undefined_0">\nGreetings from <a href="https://en.wikipedia.org/wiki/Germany"><img src=\"/localMediaFOlder2015/de-black.svg\" /></a> 😃\n</li>\n');
       bddone();
     });
     it("should generate an article for Long Term Dates", function (bddone) {

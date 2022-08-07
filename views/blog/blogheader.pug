@@ -247,13 +247,32 @@ block content
           a.nav-link.dropdown-toggle#dropdownExportLanguages(role="button", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
             i.fa.fa-download
           div.dropdown-menu(aria-labelledby="dropdownExportLanguages")
-            - var noShown = true;
+            - var closedLangs = []
             for lang in layout.activeLanguages
+              - if ( blog["close"+lang] === true) closedLangs.push(lang)
               a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang)
                 span="Export "+ lang
                 if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
                   span=" "
                   i.fa.fa-exclamation-triangle
+            - if (closedLangs.length>1)
+              a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=ALL&download=true")
+                span
+                  span="Export All: "
+                  each lang in closedLangs
+                    span=lang+" "
+                    if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
+                      span=" "
+                      i.fa.fa-exclamation-triangle
+                    span=","
+              a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/previewHeader")
+                span="Download corresponding Headers."
+                
+                    
+              
+
+                  
+
 
 
 

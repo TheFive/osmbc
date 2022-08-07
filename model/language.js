@@ -96,3 +96,10 @@ exports.deeplProFormality = function(lang) {
   if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].deeplProFormality) result = langMap[lang.toUpperCase()].deeplProFormality;
   return result;
 };
+exports.wpExportName = function(lang) {
+  if (lang === null) return null;
+  if (langMap === null) initialise();
+  let result = lang.toUpperCase();
+  if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].wpExportName) result = langMap[lang.toUpperCase()].wpExportName;
+  return result;
+};

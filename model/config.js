@@ -44,13 +44,11 @@ function freshupEmoji(json) {
       let value = json.emoji[key];
 
       if (value.substring(0, mediaFolderLocal.length) === mediaFolderLocal) value = `<img src="${value}"></img>`;
-      console.dir(`Vorher:  ${value}`);
 
       value = sanitizeHtml(value, {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"])
       });
       newEmoji[key] = value;
-      console.dir(`Nachher: ${newEmoji[key]}`);
     }
   } else warning.push("Missing Emoji Entry.");
   json.emoji = newEmoji;
