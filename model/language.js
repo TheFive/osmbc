@@ -11,7 +11,7 @@ let langMap = null;
 let lid = null;
 
 class Language {
-  constructor(lid, displayShort, displayLong, localeString, bingPro, deeplProSource, deeplProTarget, deepProFormality) {
+  constructor(lid, displayShort, displayLong, localeString, bingPro, deeplProSource, deeplProTarget, deepProFormality, wpExportName) {
     this.lid = lid;
     this.displayShort = displayShort;
     this.displayLong = displayLong;
@@ -20,6 +20,7 @@ class Language {
     this.deeplProSource = deeplProSource;
     this.deeplProTarget = deeplProTarget;
     this.deeplProFormality = deepProFormality;
+    this.wpExportName = wpExportName;
   }
   // get displayShort() {return displayShort};
   // get displayLong() {return displayLong};
@@ -44,7 +45,7 @@ function initialise() {
     if (!dll) dll = lang.id;
     let dls = lang.displayShort;
     if (!dls) dls = lang.id;
-    langMap[lang.lid.toUpperCase()] = new Language(lang.lid, dls, dll, ml, lang.bingPro, lang.deeplProSource, lang.deeplProTarget, lang.deeplProFormality);
+    langMap[lang.lid.toUpperCase()] = new Language(lang.lid, dls, dll, ml, lang.bingPro, lang.deeplProSource, lang.deeplProTarget, lang.deeplProFormality, lang.wpExportName);
     lid.push(lang.lid);
   });
 }
@@ -100,6 +101,7 @@ exports.wpExportName = function(lang) {
   if (lang === null) return null;
   if (langMap === null) initialise();
   let result = lang.toUpperCase();
+  console.dir(langMap);
   if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].wpExportName) result = langMap[lang.toUpperCase()].wpExportName;
   return result;
 };
