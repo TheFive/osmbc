@@ -36,13 +36,9 @@ async function deeplTranslate(url, params) {
   }
 }
 
-
-
-
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
-
 
 const deeplConfig = config.getValue("DeeplProConfig", { mustExist: true });
 
@@ -74,15 +70,6 @@ function translateDeeplPro(options, callback) {
   deeplParams.tag_handling = "xml";
   if (formality) deeplParams.formality = formality;
 
-
-  if (deeplParams.target_lang === "DE-LESS") {
-    deeplParams.target_lang = "DE";
-    deeplParams.formality = "less";
-  }
-  if (deeplParams.target_lang === "DE-MORE") {
-    deeplParams.target_lang = "DE";
-    deeplParams.formality = "more";
-  }
 
 
   deeplTranslate(deeplConfig.url, deeplParams)
