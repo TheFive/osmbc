@@ -189,7 +189,7 @@ function executeScript(req, res, next) {
   readScriptConfig(file, function(err, configuration) {
     if (err) return res.status(500).send(err);
 
-    const logFileBase = configuration.name + " " + req.user.OSMUser + " " + moment().format("YYYY-MM-DD HH:mm:ss");
+    const logFileBase = configuration.name + " " + req.user.OSMUser + " " + moment().format("YYYY-MM-DD HH_mm_ss");
     const logFileRunning = path.join(logFilePath, logFileBase + fileTypeRunning);
     const logFileOk = path.join(logFilePath, logFileBase + fileTypeOk);
 
