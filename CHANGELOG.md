@@ -1,12 +1,20 @@
 # Changelog
 
-## [3.8.0](https://github.com/TheFive/osmbc/tree/3.8.0) (2022-08-06)
+## [3.8.1](https://github.com/TheFive/osmbc/tree/3.8.1) (2022-08-07)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2d...3.8.0)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.8.0...3.8.1)
+
+**Implemented enhancements:**
+
+- Allow to download multiple in blog details [\#940](https://github.com/TheFive/osmbc/issues/940)
 
 **Closed issues:**
 
-- No automated Changelog Update for now, problems with the github API. Main Feature: Emojies to reduce language indicator flags complexity
+- Simplifiy Usage of language indicator icons especially with source / destination grafics [\#941](https://github.com/TheFive/osmbc/issues/941)
+
+## [3.8.0](https://github.com/TheFive/osmbc/tree/3.8.0) (2022-08-06)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2d...3.8.0)
 
 ## [3.7.2d](https://github.com/TheFive/osmbc/tree/3.7.2d) (2022-07-03)
 
@@ -1721,15 +1729,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
@@ -3184,7 +3192,6 @@
 
 - English only - should be visible in the preview [\#88](https://github.com/TheFive/osmbc/issues/88)
 - Comment indication not allways visible [\#84](https://github.com/TheFive/osmbc/issues/84)
-- Use Correct Hyphen for Displaying the Date [\#68](https://github.com/TheFive/osmbc/issues/68)
 
 ## [0.2.25](https://github.com/TheFive/osmbc/tree/0.2.25) (2015-10-19)
 
@@ -3202,6 +3209,7 @@
 **Fixed bugs:**
 
 - Missing Blog Name in Overview, Full or FullEN mode. [\#75](https://github.com/TheFive/osmbc/issues/75)
+- Use Correct Hyphen for Displaying the Date [\#68](https://github.com/TheFive/osmbc/issues/68)
 
 **Closed issues:**
 
