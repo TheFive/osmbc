@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.8.0](https://github.com/TheFive/osmbc/tree/3.8.0) (2022-08-06)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2d...3.8.0)
+
+**Closed issues:**
+
+- No automated Changelog Update for now, problems with the github API. Main Feature: Emojies to reduce language indicator flags complexity
+
 ## [3.7.2d](https://github.com/TheFive/osmbc/tree/3.7.2d) (2022-07-03)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2.d...3.7.2d)
@@ -3176,6 +3184,7 @@
 
 - English only - should be visible in the preview [\#88](https://github.com/TheFive/osmbc/issues/88)
 - Comment indication not allways visible [\#84](https://github.com/TheFive/osmbc/issues/84)
+- Use Correct Hyphen for Displaying the Date [\#68](https://github.com/TheFive/osmbc/issues/68)
 
 ## [0.2.25](https://github.com/TheFive/osmbc/tree/0.2.25) (2015-10-19)
 
@@ -3193,7 +3202,6 @@
 **Fixed bugs:**
 
 - Missing Blog Name in Overview, Full or FullEN mode. [\#75](https://github.com/TheFive/osmbc/issues/75)
-- Use Correct Hyphen for Displaying the Date [\#68](https://github.com/TheFive/osmbc/issues/68)
 
 **Closed issues:**
 
