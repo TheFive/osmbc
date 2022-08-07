@@ -107,6 +107,16 @@ app.set("view engine", "pug");
 app.use(compression());
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 
+// check for media folder foreward
+
+const mediaFolder = config.getValue("media folder", { mustExist: true });
+
+if (mediaFolder["externally mirrored"] === false) {
+  const { createProxyMiddleware } = require("http-proxy-middleware");
+  app.use(mediaFolder.local, createProxyMiddleware({ target: mediaFolder.remote, changeOrigin: true }));
+}
+
+
 
 
 
