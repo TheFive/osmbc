@@ -101,7 +101,6 @@ exports.wpExportName = function(lang) {
   if (lang === null) return null;
   if (langMap === null) initialise();
   let result = lang.toUpperCase();
-  console.dir(langMap);
   if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].wpExportName) result = langMap[lang.toUpperCase()].wpExportName;
   return result;
 };
