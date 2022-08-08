@@ -17,7 +17,7 @@ function linkFrom(url, page) {
 function retrieveForum(body, url) {
   if (linkFrom(url, "forum.openstreetmap.org")) {
     const c = cheerio.load(body);
-    const title = c("title").text().replace(" / OpenStreetMap Forum", "");
+    const title = c("title").text().replace(" / OpenStreetMap Forum", "").trim();
     return title;
   }
   return null;
@@ -26,7 +26,7 @@ function retrieveForum(body, url) {
 function retrieveOsmBlog(body, url) {
   if (linkFrom(url, "www.openstreetmap.org")) {
     const c = cheerio.load(body);
-    const title = c("title").text().replace("OpenStreetMap | ", "");
+    const title = c("title").text().replace("OpenStreetMap | ", "").trim();
     return title;
   }
   return null;
@@ -38,7 +38,7 @@ function retrieveTwitter(body, url) {
     let title = c('meta[property="og:description"]').attr("content");
 
     // Only replace Twitter Url, if it exists.
-    if (title) title = title.replace(/(https?:\/\/[^[\] \n\r"”“]*)/gi, "<..>");
+    if (title) title = title.replace(/(https?:\/\/[^[\] \n\r"”“]*)/gi, "<..>").trim();
     return title;
   }
   return null;
@@ -46,7 +46,7 @@ function retrieveTwitter(body, url) {
 
 function retrieveTitle(body) {
   const c = cheerio.load(body);
-  const title = c("title").text();
+  const title = c("title").text().trim();
   return title;
 }
 
