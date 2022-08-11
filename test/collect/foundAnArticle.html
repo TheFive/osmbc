@@ -260,7 +260,7 @@ Please Review URL: SSRL Test failed for URL</textarea>
   
   function onchangeTitle() {
     if (!title) return;
-    var t = title.value;
+    var t = title.value.trim();
     okButton.disabled = true;
     if (t.length>5) {
       okButton.disabled=false;
