@@ -120,7 +120,7 @@ function enrichData(json, lang) {
     }
 
     if (event.url) {
-      event.name = event.name + ` [![osmcalpic](https://osmcal.org/static/osmcal/favicon.png  =16x16)](${event.url})`;
+      event.name = event.name + ` [:osmcalpic:](${event.url})`;
     }
 
 
