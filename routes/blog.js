@@ -250,7 +250,7 @@ function renderBlogPreview(req, res, next) {
         if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
         const result = renderer.renderBlog(exportLang, data);
         if (multiExport) {
-          overallResult = overallResult + `[:${language.wpExportName(exportLang)}]` + result;
+          overallResult = overallResult + `[:${language.wpExportName(exportLang).toLowerCase()}]` + result;
         } else {
           overallResult = result;
         }
@@ -313,9 +313,8 @@ function renderBlogPreviewHeader(req, res, next) {
     const map = titleTrans[0];
     const number = blog.name.substring(2, 99);
     let content = "";
-    lang.forEach((value) => { content = content + `[:${language.wpExportName(value)}]${map[value]} ${number})`; });
+    lang.forEach((value) => { content = content + `[:${language.wpExportName(value).toLowerCase()}]${map[value]} ${number}`; });
     content = content + "[:]";
-    console.dir(content);
     return res.attachment(`Header ${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.txt`).end(content);
   }
   res.next(new Error("Categorie Translation is missing Tile"));

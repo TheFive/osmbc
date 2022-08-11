@@ -81,16 +81,9 @@ function translateDeeplPro(options, callback) {
       turndownService.use(turndownItSup);
       turndownService.use(turndownItEmoji);
       let mdresult = turndownService.turndown(htmlresult);
-      mdresult = mdresult.replace(
-        RegExp(
-          escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang), "g"),
-        "https://translate.google.com/translate?sl=auto&tl=" + toLang
-      );
-      mdresult = mdresult.replace(
-        RegExp(
-          escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang.toUpperCase()), "g"),
-        "https://translate.google.com/translate?sl=auto&tl=" + toLang.toUpperCase()
-      );
+      mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLang.toLowerCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLang.toLowerCase());
+      mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLang.toUpperCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLang.toUpperCase());
+      mdresult = mdresult.replaceAll(":" + fromLang.toUpperCase() + "-t:", ":" + toLang.toUpperCase() + "-t:");
       return callback(null, mdresult);
     })
     .catch(err => { return callback(err); });
@@ -165,6 +158,9 @@ function translateBingPro(options, callback) {
       RegExp(
         escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang.toUpperCase()), "g"),
       "https://translate.google.com/translate?sl=auto&tl=" + toLang.toUpperCase());
+
+    mdresult = mdresult.replaceAll(":" + fromLang.toUpperCase() + "-t:", ":" + toLang.toUpperCase() + "-t:");
+
     return callback(null, mdresult);
   });
 }

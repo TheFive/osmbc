@@ -398,20 +398,45 @@ function checkMarkdownError() {
   }
 }
 
+
+
+
+
 // Generate the automatic google translate link for an url
 // and a given language, used to show it in edit mode
 function generateGoogleTranslateLink(link, lang) {
-  let googlelang = lang;
-  if (lang === "JP") googlelang = "JA";
-  if (lang === "CZ") googlelang = "CS";
-  const gtl = "https://translate.google.com/translate?sl=auto&tl=" + googlelang + "&u=" + link;
+  let gttl = lang;
+
+  if (lang === "JP") gttl = "JA";
+  if (lang === "CZ") gttl = "CS";
+
+  const url = new URL(link);
+  let origin = url.origin;
+  let pathnameWithSearch = url.pathname + url.search;
+  if (url.search === "") pathnameWithSearch = pathnameWithSearch + "?";
+
+  origin = origin.replaceAll("--", "---");
+  origin = origin.replaceAll("-", "--");
+  origin = origin.replaceAll(".", "-");
+
+
+
+  let gtl = "#ORIGIN#.translate.goog#PATHNAME#_x_tr_sl=auto&_x_tr_tl=#GTTL#";
+  gtl = gtl.replace("#LANG#", lang);
+  gtl = gtl.replace("#GTTL#", gttl);
+  gtl = gtl.replace("#ORIGIN#", origin);
+  gtl = gtl.replace("#PATHNAME#", pathnameWithSearch);
+
   window.linklist.push(gtl);
 
-  let gtlMarkdown = "(automatic [translation](##link##))";
-  if (window.googleTranslateText[lang]) gtlMarkdown = window.googleTranslateText[lang];
+  let gtlMarkdown = ":??-s: >   [:#LANG#-t:](#ORIGIN#.translate.goog#PATHNAME#_x_tr_sl=auto&_x_tr_tl=#GTTL#)";
 
 
-  gtlMarkdown = gtlMarkdown.replace("##link##", gtl);
+
+  gtlMarkdown = gtlMarkdown.replace("#LANG#", lang);
+  gtlMarkdown = gtlMarkdown.replace("#GTTL#", gttl);
+  gtlMarkdown = gtlMarkdown.replace("#ORIGIN#", origin);
+  gtlMarkdown = gtlMarkdown.replace("#PATHNAME#", pathnameWithSearch);
 
   const dragstartFunction = "dragstart(event,'" + gtlMarkdown + "');";
 
