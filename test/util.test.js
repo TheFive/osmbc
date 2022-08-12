@@ -9,6 +9,8 @@ turndownService.use(require("../util/turndown-it-sup.js"));
 
 const markdown = require("markdown-it")();
 const mdUtil = require("../util/md_util.js");
+const initialise = require("../util/initialise.js");
+const testutil = require("../test/testutil.js");
 
 /* eslint-disable mocha/no-synchronous-tests */
 describe("util", function() {
@@ -182,6 +184,17 @@ describe("util", function() {
       const columns = [{ field: "a", name: "A" }, { field: "b", name: "BEEE" }];
       const result = mdUtil.mdTable(json, columns);
       should(result).eql("|A |BEEE|\n|--|----|\n|[object Object]|v3  |\n|v2|22|\n");
+    });
+  });
+  describe("util.osmbcMarkdown Renderer", function() {
+    before(async function(){
+      await testutil.clearDB();
+      await initialise.initialiseModules();
+    });
+    it("should render emojies",function() {
+      const markdown=mdUtil.osmbcMarkdown();
+      should(markdown.render(":smiley: with a shortcut :-)")).eql("<p>😃 with a shortcut 😃</p>\n");
+
     });
   });
 });

@@ -270,7 +270,6 @@ function renderBlogPreview(req, res, next) {
         }
       } else {
         assert(res.rendervar);
-        console.dir("PREIVIEWZWWIG");
         res.rendervar.layout.title = blog.name + "/preview";
         res.render("blogpreview", {
           layout: res.rendervar.layout,
@@ -300,7 +299,6 @@ function renderBlogPreviewHeader(req, res, next) {
     else return false;
   }
   function listify(result, value, index) {
-    console.dir(index); console.dir(value);
     if (index === 0) return value;
     return result + "-" + value;
   }
