@@ -121,7 +121,6 @@ if (mediaFolder["externally mirrored"] === false) {
 
 
 
-// Initialise Morgan Logger, (and parser to log cookies)
 app.use(cookieParser());
 
 

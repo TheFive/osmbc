@@ -1,12 +1,8 @@
 "use strict";
 
 const assert = require("assert").strict;
-const config = require("../config.js");
 
 const db     = require("../model/db.js");
-
-
-config.getValue("sessionStore", { deprecated: true });
 
 
 

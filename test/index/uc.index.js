@@ -11,6 +11,8 @@ var userModule = require("../../model/user.js");
 var articleModule = require("../../model/article.js");
 var blogModule = require("../../model/blog.js");
 
+const initialise = require("../../util/initialise.js");
+
 var mockdate = require("mockdate");
 
 const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
@@ -25,11 +27,13 @@ describe("uc/index", function() {
   var browser;
   beforeEach(async function() {
    // mockdate.set(new Date("2016-05-25T20:00"));
+    
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
     await testutil.clearDB();
+    await initialise.initialiseModules();
     await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", email: "a@b.c"});
     await userModule.createNewUser({OSMUser: "OldUser", access: "full", lang: "EN", email: "d@e.f", lastAccess: "2016-02-25T20:00"});
     await userModule.createNewUser({OSMUser: "OldUserAway", access: "denied", email: "g@h.i", lastAccess: "2016-02-25T20:00"});
@@ -46,48 +50,39 @@ describe("uc/index", function() {
   });
 
   describe("Known User", function() {
+    let driver;
+    beforeEach(async function(){
+      driver = await new Builder().forBrowser(Browser.CHROME).build();
+      await driver.manage().setTimeouts( { implicit: 5000 } );
+      try {
+        await driver.get(baseLink + "/osmbc");
+        
+        const button = await driver.findElement(By.id('htaccesLoginButton'));
+        await button.click();
+        
+        await driver.findElement(By.id("username")).sendKeys("TheFive");
+        await driver.findElement(By.id("password")).sendKeys("TheFive");
+        await driver.findElement(By.id("submitbutton")).click();
+      } finally {};
+    });
+    afterEach(async function() {
+      await driver.quit();
+    });
     describe("Homepage", function() {
+
       it("should find welcome text on Homepage", async function() {
-        let driver = await new Builder().forBrowser(Browser.CHROME).build();
-        await driver.manage().setTimeouts( { implicit: 5000 } );
-        try {
-          await driver.get(baseLink + "/osmbc");
-          //await driver.wait(until.elementLocated(By.id('htaccesLoginButton')));
-          let cookies = await driver.manage().getCookies();
-            console.dir(cookies);
 
-          
-
-          const button = await driver.findElement(By.id('htaccesLoginButton'));
-          await button.click();
-          
-
-          cookies = await driver.manage().getCookies();
-          console.dir(cookies);
-          console.dir("Will click now");
-
-          await driver.findElement(By.id("username")).sendKeys("TheFive");
-          await driver.findElement(By.id("password")).sendKeys("TheFive");
-          await driver.findElement(By.id("submitbutton")).click();
-          cookies = await driver.manage().getCookies();
-          console.dir(cookies);
-
-          const div = await driver.findElement(By.xpath('//h2[contains(text(), "Welcome to OSM BC")]'));
-          
-        } finally {
-         //await driver.quit();
-        }
-      });
-      it("should have bootstrap.js loaded", async function() {
-        this.timeout(6000);
-        await browser.visit("/osmbc");
-        should(browser.evaluate("$.fn.tooltip.Constructor.VERSION")).be.equal("4.6.1");
+        const div = await driver.findElement(By.xpath('//h2[contains(text(), "Welcome to OSM BC")]'));
+        should.exist(div);
       });
     });
     describe("Admin Homepage", function() {
       it("should show it", async function() {
-        await browser.visit("/osmbc/admin");
-        browser.assert.expectHtmlSync("index", "admin_home");
+        await driver.get(baseLink + "/osmbc/admin");
+        await driver.findElement(By.xpath('//h1[contains(text(), "Configuration")]'));
+        
+        const source = await driver.getPageSource();
+        testutil.expectHtmlSync(source, "index", "admin_home");
       });
     });
     describe("Not Defined Page", function() {

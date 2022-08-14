@@ -523,8 +523,6 @@ describe("routes/blog", function() {
       await client.post(baseLink + "/login", {username: "USER1", password: "USER1" });
       let body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&download=true");
 
-      console.dir(body.data);
-
       let file = path.resolve(__dirname, "data", "views.blog.export.1.html");
       let expectation = fs.readFileSync(file, "UTF8");
 

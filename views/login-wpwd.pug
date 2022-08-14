@@ -5,7 +5,7 @@ block content
     head
         title LogIN
     body
-      form(method = "POST", action = "/osmbc/login")
+      form(method = "POST", action = layout.htmlroot + "/login")
         div.form-group.row
             label.col-sm-1.col-form-label="username"
             input#username.form-control.col-sm-3(type = "text", name = "username" placeholder="Enter Username")

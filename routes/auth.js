@@ -154,7 +154,6 @@ function initialise(app) {
     },
     function(accessToken, refreshToken, params, profile, cb) {
       debug("passport.access Token CB");
-      console.dir(profile);
       return cb(null, profile);
     });
     if (client._oauth2) {
@@ -168,10 +167,8 @@ function initialise(app) {
           }
           try {
             const parser = new xml2js.Parser();
-            console.dir(body);
             parser.parseString(body, function (err, result) {
               if (err) return done(err);
-              console.dir(result.osm.user);
               const userProfile = { displayName: result.osm.user[0].$.display_name, id: result.osm.user[0].$.id };
               return done(null, userProfile);
             });
@@ -261,8 +258,6 @@ if (isNaN(cookieMaxAge)) {
 function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated");
   debug("Requested URL:  %s", req.url);
-  console.dir("Ensure Authenticated, user");
-  console.dir(req.user);
   if (req.isAuthenticated()) {
     debug("ensureAuthenticated: OK");
     if (req.user && req.user.access && req.user.access !== "denied") {
@@ -291,8 +286,6 @@ function ensureAuthenticated (req, res, next) {
   debug("ensureAuthenticated: Not OK");
   async.series([
     function saveReturnTo(cb) {
-      console.dir("req.session");
-      console.dir(req.session);
       if (!req.session.returnTo) {
         logger.info("Setting session return to to " + req.originalUrl);
         req.session.returnTo = req.originalUrl;

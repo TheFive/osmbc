@@ -152,7 +152,6 @@ describe("uc.article", function() {
       if (langVisible === "DE") transText = "automatische [Übersetzung]";
       if (langVisible === "EN") transText = "automatic [translation]";
       // Check the visible Link
-      console.dir(browser.document.getElementById("linkArea").innerHTML);
       browser.assert.text('#linkArea a[href="' + link + '"]', displayLink);
 
       // Check the translation

@@ -449,7 +449,7 @@ Browser.prototype.keyUp = function(targetSelector, keyCode) {
   if (target) target.dispatchEvent(event);
 };
 
-Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, givenPath, name) {
+module.exports.expectHtmlSync = function expectHtmlSync(string, errorList, givenPath, name) {
   let stopOnError = false;
   if (!Array.isArray(errorList)) {
     stopOnError = true;
@@ -460,7 +460,6 @@ Browser.Assert.prototype.expectHtmlSync = function expectHtmlSync(errorList, giv
   let expected = "not read yet";
   let expectedFile = path.join(__dirname, givenPath, name + ".html");
   let actualFile   = path.join(__dirname, givenPath, name + "_actual.html");
-  let string = this.browser.html();
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
   } catch (err) {

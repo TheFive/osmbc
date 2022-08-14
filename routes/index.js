@@ -259,7 +259,6 @@ const htmlRoot = config.htmlRoot();
 
 function redirectHome(req, res) {
   debug("redirectHome");
-  console.dir("redirect home call");
   res.redirect(htmlRoot + "/");
 }
 
