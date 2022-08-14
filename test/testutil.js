@@ -7,14 +7,15 @@ var nock   = require("nock");
 var fs     = require("fs");
 
 var debug  = require("debug")("OSMBC:test:testutil");
-// use zombie.js as headless browser
-var Browser = require("zombie");
+
 var http = require("http");
 var request = require("request");
 const axios = require('axios');
 const wrapper = require('axios-cookiejar-support').wrapper;
 const CookieJar = require( 'tough-cookie').CookieJar;
 
+
+const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
 
 var config = require("../config.js");
 
@@ -400,15 +401,6 @@ exports.stopServer = function stopServer(callback) {
   if (callback) return callback();
 };
 
-exports.getBrowser = function getBrowser() {
-  if (!browser) {
-      browser = new Browser({ site: "http://localhost:" + config.getServerPort() });
-    browser.on("loaded",function() {
-      browser.evaluate("window").DOMParser = require("xmldom").DOMParser;
-    });
-  }
-  return browser;
-};
 
 
 
@@ -441,13 +433,6 @@ exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
   nock.cleanAll();
 };
 
-Browser.prototype.keyUp = function(targetSelector, keyCode) {
-  let event = this.window.document.createEvent("HTMLEvents");
-  event.initEvent("keyup", true, true);
-  event.which = keyCode;
-  let target = this.window.document.querySelector(targetSelector);
-  if (target) target.dispatchEvent(event);
-};
 
 module.exports.expectHtmlSync = function expectHtmlSync(string, errorList, givenPath, name) {
   let stopOnError = false;
@@ -508,36 +493,6 @@ module.exports.expectHtmlSync = function expectHtmlSync(string, errorList, given
 };
 
 
-Browser.Assert.prototype.expectHtml = function expectHtml(givenPath, name, cb) {
-  console.warn("Browser.Assert.prototype.expectHtml is deprecated");
-
-  if (typeof name === "function") {
-    cb = name;
-    name = givenPath;
-    givenPath = "screens";
-  }
-  let expected = "not read yet";
-  let expectedFile = path.join(__dirname, givenPath, name + ".html");
-  let actualFile   = path.join(__dirname, givenPath, name + "_actual.html");
-  let string = this.html();
-  try {
-    expected = fs.readFileSync(expectedFile, "UTF8");
-  } catch (err) {
-    console.error(err);
-  }
-  if (string === expected) {
-    // everything is fine, delete any existing actual file
-    try {
-      fs.unlinkSync(actualFile);
-    } catch (err) {}
-    return cb();
-  }
-  // there is a difference, so create the actual data as file
-  // do easier fix the test.
-  fs.writeFileSync(actualFile, string, "UTF8");
-  should(string).eql(expected, "HTML File " + name + " is different.");
-  return cb();
-};
 
 
 process.on("unhandledRejection", (reason, p) => {
@@ -547,13 +502,6 @@ process.on("unhandledRejection", (reason, p) => {
 });
 
 
-Browser.extend(function(browser) {
-  browser.on("request", function (req) {
-    if (browser.location) {
-      req.headers.set("Referer", browser.location.href);
-    }
-  });
-});
 
 
 function checkUrlWithUser(options) {
@@ -599,7 +547,31 @@ function getWrappedAxiosClient(options) {
   return wrapper(axios.create({ jar ,validateStatus: () => true ,maxRedirects: (options.maxRedirects) ?? 0}));
 }
 
+async function getNewDriver(username) {
+  const driver = await new Builder().forBrowser(Browser.CHROME).build();
+    await driver.manage().setTimeouts( { implicit: 5000 } );
+    try {
+      await driver.get(baseLink + "/osmbc");
+      
+      const button = await driver.findElement(By.id('htaccesLoginButton'));
+      await button.click();
+      
+      await driver.findElement(By.id("username")).sendKeys(username);
+      await driver.findElement(By.id("password")).sendKeys(username);
+      await driver.findElement(By.id("submitbutton")).click();
+    } catch(err) {
+      console.dir(err);
+    }finally {};
+  return driver;
+}
 
+function sleep(time) {
+  return new Promise((resolve, reject) => {setTimeout(resolve,time)});
+}
+
+
+exports.sleep = sleep;
+exports.getNewDriver = getNewDriver;
 
 exports.checkUrlWithUser = checkUrlWithUser;
 exports.checkPostUrlWithUser = checkPostUrlWithUser;

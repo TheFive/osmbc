@@ -179,7 +179,9 @@ app.use(htmlRoot + "/slack", slackrouter);
 
 
 // maxAge for not logged in user cookies is 10 minutes
-const cookieMaxAge = 1000 * 60 * 10;
+const cookieMaxAge = config.getValue("cookieMaxAge") * 1000 * 60 * 60 * 24;
+
+
 
 
 

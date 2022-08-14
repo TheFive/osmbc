@@ -58,7 +58,7 @@
   "font_awesome":"https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0",
   "ReviewInWP":["DE"],
   "EmailSender":"noreply@gmail.com",
-  "cookieMaxAge": 24,
+  "cookieMaxAge": 10000,
   "url":"https://localhost:35043",
   "SMTP":{},
   "apiKey":"testapikey",

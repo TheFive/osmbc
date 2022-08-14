@@ -1,5 +1,5 @@
-"use strict";
 
+"use strict";
 /* jshint ignore:start */
 
 const config = require("../../config.js");
@@ -10,6 +10,7 @@ var nock = require("nock");
 var userModule = require("../../model/user.js");
 var articleModule = require("../../model/article.js");
 var blogModule = require("../../model/blog.js");
+const sleep = require("../../test/testutil.js").sleep;
 
 const initialise = require("../../util/initialise.js");
 
@@ -24,9 +25,8 @@ const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot(
 
 describe("uc/index", function() {
   this.timeout(12000);
-  var browser;
   beforeEach(async function() {
-   // mockdate.set(new Date("2016-05-25T20:00"));
+    mockdate.set(new Date("2016-05-25T20:00"));
     
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
@@ -45,25 +45,14 @@ describe("uc/index", function() {
   });
 
   afterEach(function(bddone) {
-   // mockdate.reset();
+     mockdate.reset();
     testutil.stopServer(bddone);
   });
 
   describe("Known User", function() {
     let driver;
     beforeEach(async function(){
-      driver = await new Builder().forBrowser(Browser.CHROME).build();
-      await driver.manage().setTimeouts( { implicit: 5000 } );
-      try {
-        await driver.get(baseLink + "/osmbc");
-        
-        const button = await driver.findElement(By.id('htaccesLoginButton'));
-        await button.click();
-        
-        await driver.findElement(By.id("username")).sendKeys("TheFive");
-        await driver.findElement(By.id("password")).sendKeys("TheFive");
-        await driver.findElement(By.id("submitbutton")).click();
-      } finally {};
+      driver = await testutil.getNewDriver("TheFive");
     });
     afterEach(async function() {
       await driver.quit();
@@ -88,69 +77,104 @@ describe("uc/index", function() {
     describe("Not Defined Page", function() {
       it("should throw an error message", async function() {
         try {
-          await browser.visit("/notdefined.html");
+          await driver.get(baseLink + "/notdefined.html");
         } catch (err) {
           should(err.message).eql("Server returned status code 404 from http://localhost:35043/notdefined.html");
         }
-        browser.assert.text("h1", "Page Not Found /notdefined.html");
+        let header = await driver.findElement(By.xpath('//h1'));
+        // browser.assert.text("h1", "Page Not Found /notdefined.html");
+        should(await header.getText()).eql("Page Not Found /notdefined.html");
+
+        // browser.assert.text("h1", "Page Not Found /notdefined.html");
       });
     });
     describe("LanguageSetter", function() {
       it("should set the language", async function() {
-        await browser.visit("/osmbc");
-        await browser.click("a#lang_EN");
-        // this call is necessary, as zombie looks to make troulbe
-        // with 2 calls to a link going back to referrer in seriex
-        await browser.visit("/osmbc");
-        await browser.click("a#lang_DE");
-        browser.assert.expectHtmlSync("index", "switchedToEnglishAndGerman");
+        await driver.get(baseLink + "/osmbc");
+        
+        await (await driver.findElement(By.id("language"))).click();
+        await (await driver.findElement(By.id("lang_EN"))).click();
+        await sleep(1000);
+        
+        await (await driver.findElement(By.id("language"))).click();
+        
+        await (await driver.findElement(By.id("lang_DE"))).click();
+        await sleep(1000);
+        let source = await driver.getPageSource();
+        testutil.expectHtmlSync(source, "index", "switchedToEnglishAndGerman");
       });
       it("should set the language both equal", async function() {
-        await browser.visit("/osmbc");
-        await browser.click("a#lang_EN");
-        // this call is necessary, as zombie looks to make troulbe
-        // with 2 calls to a link going back to referrer in seriex
-
-        // test has to be optimised, as two languages are now longer supported in index 
-        await browser.visit("/osmbc");
-        await browser.assert.elements("a#lang_EN",0);
-        browser.assert.expectHtmlSync("index", "switchedToEnglishAndEnglish");
+        await driver.get(baseLink + "/osmbc");
+        
+        await (await driver.findElement(By.id("language"))).click();
+        await (await driver.findElement(By.id("lang_EN"))).click();
+        await sleep(1000);
+        
+        await (await driver.findElement(By.id("language"))).click();
+        try {
+           await driver.findElement(By.id("lang_EN"));
+        } catch (err) {
+          should(err.message).eql('no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"*[id=\"lang_EN\"]\"}\n  (Session info: chrome=104.0.5112.79)');
+        }
+        
+        await sleep(1000);
+        let source = await driver.getPageSource();
+        testutil.expectHtmlSync(source, "index", "switchedToEnglishAndEnglish");
       });
       it("should store a language set", async function() {
-        await browser.visit("/osmbc");
-        await browser.click("a#lang_EN");
-        // this call is necessary, as zombie looks to make troulbe
-        // with 2 calls to a link going back to referrer in seriex
+        await driver.get(baseLink + "/osmbc");
+        await (await driver.findElement(By.id("language"))).click();
+        await (await driver.findElement(By.id("lang_EN"))).click();
+        await sleep(1000);
+        
 
         // test has to be optimised, as two languages are now longer supported in index 
-        await browser.visit("/osmbc");
-        await browser.click("a#lang_DE");
-        browser.fill("#newSetToBeSaved","A Name To Save");
-        await browser.click("#saveNewSet");
+        await (await driver.findElement(By.id("language2"))).click();
+        await (await driver.findElement(By.id("newSetToBeSaved"))).sendKeys("A Name To Save");
+        await (await driver.findElement(By.id("saveNewSet"))).click();
+        await sleep(300);
+       
         let user = await userModule.findOne({OSMUser:"TheFive"});
         should(user.languageSet).eql("A Name To Save");
-        should(user.getLanguages()).deepEqual([ 'DE' ]);
-        browser.assert.expectHtmlSync("index", "savedANewLanguageSet");
+        should(user.getLanguages()).deepEqual([ 'EN' ]);
+        let source = await driver.getPageSource();
+        testutil.expectHtmlSync(source, "index", "savedANewLanguageSet");
       });
     });
   });
   describe("Unkown User", function() {
+    let driver;
+   
+    afterEach(async function() {
+      await driver.quit();
+    });
     it("should throw an error if user not exits", async function() {
-      browser = await testutil.getNewBrowser("TheFiveNotExist");
-
-      await browser.visit("/osmbc");
-      browser.html().should.containEql("You are logged in as guest");
+      driver = await testutil.getNewDriver("TheFiveNotExist");
+      await driver.get(baseLink + "/osmbc");
+      await (await driver).findElement(By.xpath('//span[contains(text(),"You are logged in as guest. ")]'));
+      let user = await userModule.findOne({OSMUser:"TheFiveNotExist"});
+      should(user).eql({
+        "OSMUser": "TheFiveNotExist",
+        "access": "guest",
+        "id": "4",
+        "lastAccess": "2016-05-25T18:00:00.000Z",
+        "mdWeeklyAuthor": "anonymous",
+        "version": 1
+        });
     });
     it("should throw an error if user is denied", async function() {
       try {
-        browser = await testutil.getNewBrowser("OldUserAway");
-        await browser.visit("/osmbc");
+        driver = await testutil.getNewDriver("OldUserAway");
+        
+        await driver.get(baselink + "/osmbc");
       } catch (err) {
         // ignore error, expect is a 403 error, but the
         // browser html has to be tested
       }
-      browser.assert.expectHtmlSync("index", "denied user");
-      browser.html().should.containEql("OSM User &gt;OldUserAway&lt; has no access rights");
+      let source = await driver.getPageSource();
+
+      testutil.expectHtmlSync(source, "index", "denied user");
+      source.should.containEql("OSM User &gt;OldUserAway&lt; has no access rights");
     });
   });
 });
