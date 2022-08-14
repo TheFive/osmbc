@@ -5,6 +5,10 @@ block showContentOfConfig
   if config.json
     - all = [];i=0;
     for val,key in config.json
+      if (key === "emoji") 
+        - break
+      if (key === "shortcut") 
+        - break
       - all[i]= {val:val,key:key}
       - i++
 
@@ -13,4 +17,33 @@ block showContentOfConfig
         - for (j=i*6;j<Math.min(all.length,(i+1)*6);j++)
           .col-sm-2=all[j].key
             img(src= all[j].val, class="img-thumbnail" ,width = 30)
+    
+    
+    if (config.json.emoji)
+      h2="Emoji´s Preview"
+      .row
+        for val, key in config.json.emoji 
+          .col-sm-1
+            span=":" + key + ":"
+            span=" "
+            span
+              |!{val}
+    if (config.json.shortcut && config.json.emoji)
+      h2="Allowed Shortcut´s"
+      .row
+        for val, key in config.json.shortcut 
+          .col-sm-1
+            span
+              |!{config.json.emoji[key]}
+            span=" "
+            for v in val
+              span=" " + v + " "
+    if (config.json.error) 
+      h2="Error"
+      ul
+        for v in config.json.error
+          li.text-danger=v
+    
+        
+        
 

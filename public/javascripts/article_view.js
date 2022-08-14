@@ -25,8 +25,22 @@ function unloadWindowWarning(event) {
 // initialise all callbacks with jQuery
 function init() {
   window.mdRender = window.markdownit();
+
+  window.mdRender.use(window.markdownitEmoji, { defs: window.emojiList, shortcuts: window.emojiShortcut });
   window.mdRender.use(window.markdownitSup);
   window.mdRender.use(window["markdown-it-imsize.js"]);
+
+
+  const oldEmoji = window.mdRender.renderer.rules.emoji;
+  function addLanguageFlags(token, idx) {
+    const link = $("img.flag#" + token[idx].markup);
+    if (link.length === 1) return `<img src="${link[0].src}"></img>`;
+    return oldEmoji(token, idx);
+  }
+  window.mdRender.renderer.rules.emoji = addLanguageFlags;
+
+
+
   $("#linkArea")
     .change(highlightWrongLinks);
   $(".preview")
@@ -127,13 +141,13 @@ function convertMinusNoTranslation() {
 function getEventTable(lang, edit, pressedButton) {
   const url = window.htmlroot + "/tool/getEventTable?lang=" + lang;
   $(pressedButton).hide("slow");
-  $(edit).html("Data will be recieved ...");
+  $(edit).val("Data will be recieved ...");
 
   $.ajax({
     url: url,
     method: "POST",
     success: function(data) {
-      if (data) $(edit).html(data).trigger("change");
+      if (data) $(edit).val(data).trigger("change");
 
 
       return false;
@@ -144,7 +158,7 @@ function getEventTable(lang, edit, pressedButton) {
       console.info(text1);
       console.info(text2);
     },
-    timeout: 40000 // in milliseconds
+    timeout: 80000 // in milliseconds
   });
 }
 
@@ -384,20 +398,45 @@ function checkMarkdownError() {
   }
 }
 
+
+
+
+
 // Generate the automatic google translate link for an url
 // and a given language, used to show it in edit mode
 function generateGoogleTranslateLink(link, lang) {
-  let googlelang = lang;
-  if (lang === "JP") googlelang = "JA";
-  if (lang === "CZ") googlelang = "CS";
-  const gtl = "https://translate.google.com/translate?sl=auto&tl=" + googlelang + "&u=" + link;
+  let gttl = lang;
+
+  if (lang === "JP") gttl = "JA";
+  if (lang === "CZ") gttl = "CS";
+
+  const url = new URL(link);
+  let origin = url.origin;
+  let pathnameWithSearch = url.pathname + url.search;
+  if (url.search === "") pathnameWithSearch = pathnameWithSearch + "?";
+
+  origin = origin.replaceAll("--", "---");
+  origin = origin.replaceAll("-", "--");
+  origin = origin.replaceAll(".", "-");
+
+
+
+  let gtl = "#ORIGIN#.translate.goog#PATHNAME#_x_tr_sl=auto&_x_tr_tl=#GTTL#";
+  gtl = gtl.replace("#LANG#", lang);
+  gtl = gtl.replace("#GTTL#", gttl);
+  gtl = gtl.replace("#ORIGIN#", origin);
+  gtl = gtl.replace("#PATHNAME#", pathnameWithSearch);
+
   window.linklist.push(gtl);
 
-  let gtlMarkdown = "(automatic [translation](##link##))";
-  if (window.googleTranslateText[lang]) gtlMarkdown = window.googleTranslateText[lang];
+  let gtlMarkdown = ":??-s: >   [:#LANG#-t:](#ORIGIN#.translate.goog#PATHNAME#_x_tr_sl=auto&_x_tr_tl=#GTTL#)";
 
 
-  gtlMarkdown = gtlMarkdown.replace("##link##", gtl);
+
+  gtlMarkdown = gtlMarkdown.replace("#LANG#", lang);
+  gtlMarkdown = gtlMarkdown.replace("#GTTL#", gttl);
+  gtlMarkdown = gtlMarkdown.replace("#ORIGIN#", origin);
+  gtlMarkdown = gtlMarkdown.replace("#PATHNAME#", pathnameWithSearch);
 
   const dragstartFunction = "dragstart(event,'" + gtlMarkdown + "');";
 

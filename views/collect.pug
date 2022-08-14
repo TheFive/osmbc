@@ -158,7 +158,7 @@ block append scripts_to_execute
 
     function onchangeTitle() {
       if (!title) return;
-      var t = title.value;
+      var t = title.value.trim();
       okButton.disabled = true;
       if (t.length>5) {
         okButton.disabled=false;

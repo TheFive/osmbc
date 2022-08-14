@@ -8,23 +8,67 @@ const fs       = require("fs");
 const path     = require("path");
 
 
-const pgMap    = require("../model/pgMap.js");
-const language   = require("..//model/language.js");
-const util     = require("../util/util.js");
+
+const pgMap        = require("../model/pgMap.js");
+const language     = require("..//model/language.js");
+const util         = require("../util/util.js");
+const sanitizeHtml = require("sanitize-html");
+const config       = require("../config.js");
 
 
 const messageCenter = require("../notification/messageCenter.js");
 const slackReceiver = require("../notification/slackReceiver.js");
 
+const mediaFolderLocal = config.getValue("media folder", { mustExist: true }).local;
+
+
 
 function freshupVotes(json) {
   if (typeof json !== "object") return [];
-  if (!Array.isArray(json)) return [];
+  if (!Array.isArray(json)) {
+    return { warning: ["Votes should be a YAML List"] };
+  }
   for (let i = 0; i < json.length; i++) {
     const item = json[i];
     if (item.icon && item.icon.substring(0, 3) === "fa-") item.iconClass = "fa-lg fa " + item.icon;
     if (item.icon && item.icon.substring(0, 10) === "glyphicon-") item.iconClass = "glyphicon " + item.icon;
   }
+  return json;
+}
+
+function freshupEmoji(json) {
+  const warning = [];
+  const newEmoji = {};
+  if (json.emoji) {
+    for (const key in json.emoji) {
+      let value = json.emoji[key];
+
+      if (value.substring(0, mediaFolderLocal.length) === mediaFolderLocal) value = `<img src="${value}"></img>`;
+
+      value = sanitizeHtml(value, {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"])
+      });
+      newEmoji[key] = value;
+    }
+  } else warning.push("Missing Emoji Entry.");
+  json.emoji = newEmoji;
+  const newShortcut = {};
+  if (json.shortcut) {
+    for (const key in json.shortcut) {
+      const value = json.shortcut[key];
+      if (!(key in newEmoji)) {
+        warning.push(`Shortcut ${key} is not an emojy, ignored`);
+        continue;
+      }
+      if (typeof value === "string") {
+        newShortcut[key] = value;
+        continue;
+      }
+      warning.push(`Datatype for shortcut ${key} is not string, ignored`);
+    }
+  }
+  json.shortcut = newShortcut;
+  json.warning = warning;
   return json;
 }
 
@@ -79,6 +123,7 @@ Config.prototype.getJSON = function getJSON() {
     try {
       this.json = yaml.safeLoad(this.yaml);
       if (this.name === "votes") this.json = freshupVotes(this.json);
+      if (this.name === "languageflags") this.json = freshupEmoji(this.json);
       return this.json;
     } catch (err) {
       return { error: "YAML convert error for: " + this.name + " ", errorMessage: err };
@@ -344,29 +389,37 @@ let configMap = null;
 module.exports.initialiseConfigMap = function initialiseConfigMap() { configMap = null; };
 
 function initialise(callback) {
-  debug("initialise");
-  assert(callback);
-  if (configMap) return callback();
-  configMap = {};
-  async.series([
-    initConfigElement.bind(null, "formulation_tipEN"),
-    initConfigElement.bind(null, "formulation_tipDE"),
-    initConfigElement.bind(null, "calendartranslation"),
-    initConfigElement.bind(null, "categorydescription"),
-    initConfigElement.bind(null, "languageflags"),
-    initConfigElement.bind(null, "calendarflags"),
-    initConfigElement.bind(null, "slacknotification"),
-    initConfigElement.bind(null, "licenses"),
-    initConfigElement.bind(null, "categorytranslation"),
-    initConfigElement.bind(null, "editorstrings"),
-    initConfigElement.bind(null, "automatictranslatetext"),
-    initConfigElement.bind(null, "votes"),
-    initConfigElement.bind(null, "eventsfilter"),
-    initConfigElement.bind(null, "ignoreforsearch")
-  ],
-  function final(err) {
-    debug("finalFunction initialise");
-    return callback(err);
+  function _initialise(callback) {
+    debug("initialise");
+    assert(callback);
+    if (configMap) return callback();
+    configMap = {};
+    async.series([
+      initConfigElement.bind(null, "formulation_tipEN"),
+      initConfigElement.bind(null, "formulation_tipDE"),
+      initConfigElement.bind(null, "calendartranslation"),
+      initConfigElement.bind(null, "categorydescription"),
+      initConfigElement.bind(null, "languageflags"),
+      initConfigElement.bind(null, "calendarflags"),
+      initConfigElement.bind(null, "slacknotification"),
+      initConfigElement.bind(null, "licenses"),
+      initConfigElement.bind(null, "categorytranslation"),
+      initConfigElement.bind(null, "editorstrings"),
+      initConfigElement.bind(null, "automatictranslatetext"),
+      initConfigElement.bind(null, "votes"),
+      initConfigElement.bind(null, "eventsfilter"),
+      initConfigElement.bind(null, "ignoreforsearch")
+    ],
+    function final(err) {
+      debug("finalFunction initialise");
+      return callback(err);
+    });
+  }
+  if (callback) {
+    return _initialise(callback);
+  }
+  return new Promise((resolve, reject) => {
+    _initialise((err, result) => err ? reject(err) : resolve(result));
   });
 }
 

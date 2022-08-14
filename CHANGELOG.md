@@ -1,5 +1,33 @@
 # Changelog
 
+## [3.8.1](https://github.com/TheFive/osmbc/tree/3.8.1) (2022-08-07)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.8.0...3.8.1)
+
+**Implemented enhancements:**
+
+- Allow to download multiple in blog details [\#940](https://github.com/TheFive/osmbc/issues/940)
+
+**Closed issues:**
+
+- Simplifiy Usage of language indicator icons especially with source / destination grafics [\#941](https://github.com/TheFive/osmbc/issues/941)
+
+## [3.8.0](https://github.com/TheFive/osmbc/tree/3.8.0) (2022-08-06)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2d...3.8.0)
+
+## [3.7.2d](https://github.com/TheFive/osmbc/tree/3.7.2d) (2022-07-03)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2.d...3.7.2d)
+
+**Implemented enhancements:**
+
+- Enable Formality Parameter for languages in Config File \(Deepl Pro\) [\#935](https://github.com/TheFive/osmbc/issues/935)
+
+**Fixed bugs:**
+
+- Distinguish between Source and target lang in deeplPro config. [\#936](https://github.com/TheFive/osmbc/issues/936)
+
 ## [3.7.2.d](https://github.com/TheFive/osmbc/tree/3.7.2.d) (2022-06-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2c...3.7.2.d)
@@ -1643,6 +1671,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.6...1.8.6a)
 
+**Fixed bugs:**
+
+- in OSM-Terminausblick exits some unnecessary code [\#474](https://github.com/TheFive/osmbc/issues/474)
+
 ## [1.8.6](https://github.com/TheFive/osmbc/tree/1.8.6) (2016-06-10)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.5b...1.8.6)
@@ -1677,7 +1709,6 @@
 
 **Fixed bugs:**
 
-- in OSM-Terminausblick exits some unnecessary code [\#474](https://github.com/TheFive/osmbc/issues/474)
 - automatic translation [\#469](https://github.com/TheFive/osmbc/issues/469)
 
 ## [1.8.4h](https://github.com/TheFive/osmbc/tree/1.8.4h) (2016-06-04)
@@ -1698,15 +1729,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
@@ -2939,6 +2970,7 @@
 
 **Implemented enhancements:**
 
+- Link to Google Translate [\#140](https://github.com/TheFive/osmbc/issues/140)
 - Create an untranslated & unedited Blog View [\#137](https://github.com/TheFive/osmbc/issues/137)
 
 ## [0.3.7](https://github.com/TheFive/osmbc/tree/0.3.7) (2015-11-13)
@@ -3033,10 +3065,6 @@
 ## [0.3.1](https://github.com/TheFive/osmbc/tree/0.3.1) (2015-11-06)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.0...0.3.1)
-
-**Implemented enhancements:**
-
-- Link to Google Translate [\#140](https://github.com/TheFive/osmbc/issues/140)
 
 **Fixed bugs:**
 

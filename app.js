@@ -107,6 +107,16 @@ app.set("view engine", "pug");
 app.use(compression());
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 
+// check for media folder foreward
+
+const mediaFolder = config.getValue("media folder", { mustExist: true });
+
+if (mediaFolder["externally mirrored"] === false) {
+  const { createProxyMiddleware } = require("http-proxy-middleware");
+  app.use(mediaFolder.local, createProxyMiddleware({ target: mediaFolder.remote, changeOrigin: true }));
+}
+
+
 
 
 
@@ -149,6 +159,7 @@ app.use(htmlRoot + "/bower_components/d3", express.static(path.join(__dirname, "
 app.use(htmlRoot + "/bower_components/markdown-it", express.static(path.join(__dirname, "/node_modules/markdown-it")));
 app.use(htmlRoot + "/bower_components/markdown-it-imsize", express.static(path.join(__dirname, "/node_modules/markdown-it-imsize")));
 app.use(htmlRoot + "/bower_components/markdown-it-sup", express.static(path.join(__dirname, "/node_modules/markdown-it-sup")));
+app.use(htmlRoot + "/bower_components/markdown-it-emoji", express.static(path.join(__dirname, "/node_modules/markdown-it-emoji")));
 app.use(htmlRoot + "/bower_components/moment", express.static(path.join(__dirname, "/node_modules/moment")));
 
 

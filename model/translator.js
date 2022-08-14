@@ -7,12 +7,13 @@ const axios = require("axios");
 const language = require("../model/language.js");
 
 
-const markdown = require("markdown-it")()
-  .use(require("markdown-it-sup"))
-  .use(require("markdown-it-imsize"), { autofill: true });
+
+
 
 const TurndownService = require("turndown");
 const turndownItSup = require("../util/turndown-it-sup.js");
+const turndownItEmoji = require("../util/turndown-it-emoji");
+const mdUtil = require("../util/md_util.js");
 
 const config    = require("../config.js");
 const debug       = require("debug")("OSMBC:model:translator");
@@ -35,17 +36,14 @@ async function deeplTranslate(url, params) {
   }
 }
 
-
-
-
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
-
 const deeplConfig = config.getValue("DeeplProConfig", { mustExist: true });
 
 function translateDeeplPro(options, callback) {
+  const markdown = mdUtil.osmbcMarkdown({ translation: true });
   debug("translateDeeplPro");
 
   if (typeof deeplConfig.authKey === "undefined") {
@@ -73,16 +71,6 @@ function translateDeeplPro(options, callback) {
   if (formality) deeplParams.formality = formality;
 
 
-  if (deeplParams.target_lang === "DE-LESS") {
-    deeplParams.target_lang = "DE";
-    deeplParams.formality = "less";
-  }
-  if (deeplParams.target_lang === "DE-MORE") {
-    deeplParams.target_lang = "DE";
-    deeplParams.formality = "more";
-  }
-
-
 
   deeplTranslate(deeplConfig.url, deeplParams)
     .then(result => {
@@ -91,17 +79,11 @@ function translateDeeplPro(options, callback) {
       const htmlresult = result.translations[0].text;
       const turndownService = new TurndownService();
       turndownService.use(turndownItSup);
+      turndownService.use(turndownItEmoji);
       let mdresult = turndownService.turndown(htmlresult);
-      mdresult = mdresult.replace(
-        RegExp(
-          escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang), "g"),
-        "https://translate.google.com/translate?sl=auto&tl=" + toLang
-      );
-      mdresult = mdresult.replace(
-        RegExp(
-          escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang.toUpperCase()), "g"),
-        "https://translate.google.com/translate?sl=auto&tl=" + toLang.toUpperCase()
-      );
+      mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLang.toLowerCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLang.toLowerCase());
+      mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLang.toUpperCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLang.toUpperCase());
+      mdresult = mdresult.replaceAll(":" + fromLang.toUpperCase() + "-t:", ":" + toLang.toUpperCase() + "-t:");
       return callback(null, mdresult);
     })
     .catch(err => { return callback(err); });
@@ -152,6 +134,7 @@ function bingProActive () {
 
 function translateBingPro(options, callback) {
   debug("translateBingPro");
+  const markdown = mdUtil.osmbcMarkdown({ translation: true });
 
   if (typeof bingProAuthkey === "undefined") {
     return callback(new Error("No Bing Pro Version registered"));
@@ -164,6 +147,8 @@ function translateBingPro(options, callback) {
   msTranslate.translate(fromLang, toLang, htmltext, function(err, translation) {
     if (err) return callback(err);
     const turndownService = new TurndownService();
+    turndownService.use(turndownItSup);
+    turndownService.use(turndownItEmoji);
     let mdresult = turndownService.turndown(translation);
     mdresult = mdresult.replace(
       RegExp(
@@ -173,6 +158,9 @@ function translateBingPro(options, callback) {
       RegExp(
         escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang.toUpperCase()), "g"),
       "https://translate.google.com/translate?sl=auto&tl=" + toLang.toUpperCase());
+
+    mdresult = mdresult.replaceAll(":" + fromLang.toUpperCase() + "-t:", ":" + toLang.toUpperCase() + "-t:");
+
     return callback(null, mdresult);
   });
 }

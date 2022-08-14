@@ -14,15 +14,21 @@ function highlightWrongLinks() {
   const mapping = {};
   if (!window.cacheLink) window.cacheLink = {};
 
-
-
-  object.find("a").each(function() {
+  function collectLinks() {
     const o = $(this);
     if (o.attr("href").charAt(0) === "#") return;
     const url = o.attr("href");
     if (!mapping[url]) mapping[url] = [];
     mapping[url].push(o);
-  });
+  }
+  function collectLinksForPreview() {
+    const object = $(this);
+    object.find("a").each(collectLinks);
+  }
+
+  if (object.attr("id")) object.find("a").each(collectLinks);
+  else $(".preview").each(collectLinksForPreview);
+
   for (const k in mapping) {
     if (!window.cacheLink[k]) list.push(k);
   }
@@ -37,7 +43,6 @@ function highlightWrongLinks() {
       }
     }
   }
-
   if (list.length > 0) {
     $.ajax({
       url: window.htmlroot + "/article/urlexist",
@@ -89,7 +94,7 @@ function chooseLanguageSet(set, action) {
     location.reload();
   }).fail(function (err) {
     console.error("Problem changing language set" + set + " Action " + action);
-    console.dir(err);
+    console.err(err);
   });
 }
 

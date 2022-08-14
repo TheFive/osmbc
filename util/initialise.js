@@ -38,11 +38,17 @@ function startSlackReceiver(param, callback) {
 
 
 exports.initialiseModules = function(callback) {
-  debug("initialiseModules");
-  async.auto({
-    configModule: configModule.initialise,
-    messageCenter: ["configModule", function(param, callback) { messageCenter.initialise(callback); }],
-    startMailReceiver: startMailReceiver,
-    startSlackReceiver: ["configModule", startSlackReceiver]
-  }, callback);
+  function _initialiseModules(callback) {
+    debug("_initialiseModules");
+    async.auto({
+      configModule: configModule.initialise,
+      messageCenter: ["configModule", function(param, callback) { messageCenter.initialise(callback); }],
+      startMailReceiver: startMailReceiver,
+      startSlackReceiver: ["configModule", startSlackReceiver]
+    }, callback);
+  }
+  if (callback) return _initialiseModules(callback);
+  return new Promise((resolve, reject) => {
+    _initialiseModules((err, result) => err ? reject(err) : resolve(result));
+  });
 };

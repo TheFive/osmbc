@@ -19,7 +19,7 @@
         <ul class="navbar-nav mr-auto">
           <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a>
           </li>
-          <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge badge-pill badge-pill osmbcbadge-lang">1</span></a></li>
+          <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge badge-pill badge-pill osmbcbadge-lang">2</span></a></li>
           <li class="navbar-item active">
           </li>
           <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/WN290">WN290<span class="badge badge-pill osmbcbadge-lang">0</span><span class="badge badge-pill osmbcbadge-lang2">0</span></a></li>
@@ -452,13 +452,25 @@
   
 </script>
 <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
-<script nonce="Fixed Nonce for Test">
+<script src="/bower_components/markdown-it-emoji/dist/markdown-it-emoji.min.js"></script>
+<script src="/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js"></script>
+<script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
+<script nonce="Fixed Nonce for Test">emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`JTdCJTdE`)));
+  emojiList =     JSON.parse(decodeURIComponent(window.atob(`JTdCJTdE`)));  
+  
+   
+  
   var openEditor = null;
   
   window.onload = function () {
+    window.mdRender = window.markdownit();
+    
+    window.mdRender.use(window.markdownitEmoji, { defs: window.emojiList, shortcuts: window.emojiShortcut });
+    window.mdRender.use(window.markdownitSup);
+    window.mdRender.use(window["markdown-it-imsize.js"]);
   
     $(".preview").change(highlightWrongLinks);
-    $(".preview").each(highlightWrongLinks);
+    highlightWrongLinks(window);
   
   
     if (typeof(Storage) !== "undefined") {
@@ -497,12 +509,12 @@
   
   
   function convert(text) {
-    converter = new window.markdownit({breaks: true});
+    
   
     // generate the OSMBlog Style List
     if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
     // convert md to html
-    text = converter.render(text);
+    text = window.mdRender.render(text);
     // skip <ul> and </ul> at start and end
   
   

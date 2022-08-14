@@ -21,17 +21,31 @@ mixin blogReviewButtons(lang)
 
 
 block append scripts_to_load
-  script(src=layout.path("markdown-it")+'/markdown-it.min.js')
+  script(src=layout.path("markdown-it") + '/markdown-it.min.js')
+  script(src=layout.path("markdown-it-emoji") + '/markdown-it-emoji.min.js')
+  script(src=layout.path("markdown-it-sup") + '/markdown-it-sup.min.js')
+  script(src=layout.path("markdown-it-imsize") + '/markdown-it-imsize.min.js')
 
 block append scripts_to_execute
   script(nonce=cspNonce).
+    
+    
+    emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify((languageFlags) ? languageFlags.shortcut : {})))}`)));
+    emojiList =     JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify((languageFlags) ? languageFlags.emoji : {})))}`)));  
+    
+     
 
     var openEditor = null;
 
     window.onload = function () {
+      window.mdRender = window.markdownit();
+      
+      window.mdRender.use(window.markdownitEmoji, { defs: window.emojiList, shortcuts: window.emojiShortcut });
+      window.mdRender.use(window.markdownitSup);
+      window.mdRender.use(window["markdown-it-imsize.js"]);
 
       $(".preview").change(highlightWrongLinks);
-      $(".preview").each(highlightWrongLinks);
+      highlightWrongLinks(window);
 
 
       if (typeof(Storage) !== "undefined") {
@@ -70,12 +84,12 @@ block append scripts_to_execute
 
 
     function convert(text) {
-      converter = new window.markdownit({breaks: true});
+      
 
       // generate the OSMBlog Style List
       if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
       // convert md to html
-      text = converter.render(text);
+      text = window.mdRender.render(text);
       // skip <ul> and </ul> at start and end
 
 

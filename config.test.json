@@ -105,5 +105,11 @@
       "callbackUrl":"http://127.0.0.1:35043/auth/openstreetmap_oautb20/callback",
       "scope": "read_prefs"
     }
-  }
+  },
+  "media folder": {
+    "local": "/localMediaFOlder",
+    "remote": "https://extern.site",
+    "externally mirrored": true
+  },
+  "Blog Title For Export": "weeklyOSM"
 }

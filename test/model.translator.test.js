@@ -3,6 +3,7 @@
 const should = require("should");
 
 const nock   = require("nock");
+const initialize = require("../util/initialise.js");
 
 const translator = require("../model/translator.js");
 
@@ -12,6 +13,9 @@ const translator = require("../model/translator.js");
 
 
 describe("model/translator", function() {
+  before(function(bddone){
+    initialize.initialiseModules(bddone);
+  });
   it("should translate a simple text with bing", function (bddone) {
     const originTextMd = "Originaler Text";
     const originTextHtml = "<p>Originaler Text</p>\n";
@@ -144,13 +148,24 @@ describe("model/translator", function() {
   });
 
   it("should translate a text with two automatic Links with deepl", function (bddone) {
-    const originTextMd = "Link (automatische [Übersetzung](https://translate.google.com/translate?sl=auto&tl=DE&u=https://forum.openstreetmap.org/viewtopic.php?pid=786827#p786827)) und zweiter LInk (automatische [Übersetzung](https://translate.google.com/translate?sl=auto&tl=DE&u=https://hide.webhop.me/mapsme/daily/))";
-    // const originTextHtml = '<p>Link (automatische <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://forum.openstreetmap.org/viewtopic.php?pid=786827#p786827">Übersetzung</a>) und zweiter LInk (automatische <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://hide.webhop.me/mapsme/daily/">Übersetzung</a>)</p>\n';
-    const translatedTextHtml = '<p>Lien <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://forum.openstreetmap.org/viewtopic.php?pid=786827#p786827">(traduction automatique)</a>et deuxième LInk <a href="https://translate.google.com/translate?sl=auto&amp;tl=DE&amp;u=https://hide.webhop.me/mapsme/daily/">(traduction automatique)</a></p>\n';
-    const translatedTextMd = "Lien [(traduction automatique)](https://translate.google.com/translate?sl=auto&tl=FR&u=https://forum.openstreetmap.org/viewtopic.php?pid=786827#p786827)et deuxième LInk [(traduction automatique)](https://translate.google.com/translate?sl=auto&tl=FR&u=https://hide.webhop.me/mapsme/daily/)";
+    const originTextMd = "Link :RU-s: >>> [:DE-t:](https://forum-openstreetmap-org.translate.goog/viewtopic.php?pid=786827&_x_tr_sl=auto&_x_tr_tl=de&_x_tr_hl=DE) und zweiter LInk :EN-t: >>> [:DE-t:](https://hide-webhop-me.translate.goog/mapsme/daily/?_x_tr_sl=auto&_x_tr_tl=de&_x_tr_hl=DE)";
+    // const originTextHtml = '<p>Link <img src="/wp-content/uploads/2020/09/RU-green.svg"> &gt;&gt;&gt; <a href="https://forum-openstreetmap-org.translate.goog/viewtopic.php?pid=786827&amp;_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=de"><img src="/wp-content/uploads/2020/09/de-green.svg"></a> und zweiter LInk <img src="/wp-content/uploads/2020/09/en-green.svg"> &gt;&gt;&gt; <a href="https://hide-webhop-me.translate.goog/mapsme/daily/?_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=de"><img src="/wp-content/uploads/2020/09/de-green.svg"></a></p>';
+    const translatedTextHtml = '<p>Lien <emoji src="RU-s">Picture</emoji> &gt;&gt;&gt; <a href="https://forum-openstreetmap-org.translate.goog/viewtopic.php?pid=786827&amp;_x_tr_sl=auto&amp;_x_tr_tl=de"><emoji src="DE-t">Picture</emoji></a> et deuxième LInk <emoji src="EN-s">Picture</emoji> &gt;&gt;&gt; <a href="https://hide-webhop-me.translate.goog/mapsme/daily/?_x_tr_sl=auto&amp;_x_tr_tl=de"><emoji src="DE-t">Picture</emoji></a></p>';
+    const translatedTextMd = "Lien :RU-s: >>> [:FR-t:](https://forum-openstreetmap-org.translate.goog/viewtopic.php?pid=786827&_x_tr_sl=auto&_x_tr_tl=fr) et deuxième LInk :EN-s: >>> [:FR-t:](https://hide-webhop-me.translate.goog/mapsme/daily/?_x_tr_sl=auto&_x_tr_tl=fr)";
+
+
+    
+
 
     nock("https://api.deepl.com")
-      .post("/v2/translate","auth_key=Test%20Key%20Fake&source_lang=DE&tag_handling=xml&target_lang=FR&text=%3Cp%3ELink%20%28automatische%20%3Ca%20href%3D%22https%3A%2F%2Ftranslate.google.com%2Ftranslate%3Fsl%3Dauto%26amp%3Btl%3DDE%26amp%3Bu%3Dhttps%3A%2F%2Fforum.openstreetmap.org%2Fviewtopic.php%3Fpid%3D786827%23p786827%22%3E%C3%9Cbersetzung%3C%2Fa%3E%29%20und%20zweiter%20LInk%20%28automatische%20%3Ca%20href%3D%22https%3A%2F%2Ftranslate.google.com%2Ftranslate%3Fsl%3Dauto%26amp%3Btl%3DDE%26amp%3Bu%3Dhttps%3A%2F%2Fhide.webhop.me%2Fmapsme%2Fdaily%2F%22%3E%C3%9Cbersetzung%3C%2Fa%3E%29%3C%2Fp%3E%0A")
+      .post("/v2/translate",{
+        text: '<p>Link :RU-s: &gt;&gt;&gt; <a href="https://forum-openstreetmap-org.translate.goog/viewtopic.php?pid=786827&amp;_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=DE">:DE-t:</a> und zweiter LInk :EN-t: &gt;&gt;&gt; <a href="https://hide-webhop-me.translate.goog/mapsme/daily/?_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=DE">:DE-t:</a></p>\n',
+        source_lang: 'DE',
+        target_lang: 'FR',
+        auth_key: 'Test Key Fake',
+        tag_handling: 'xml'
+      }
+       )
       .reply(200, {translations: [{ detected_source_language: "EN",text: translatedTextHtml}]
     });
 
