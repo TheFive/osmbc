@@ -55,7 +55,6 @@
   "style":"/stylesheets/style.css",
   "bootstrap":"",
   "jquery":"",
-  "font_awesome":"https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0",
   "ReviewInWP":["DE"],
   "EmailSender":"noreply@gmail.com",
   "cookieMaxAge": 10000,
@@ -88,7 +87,7 @@
  
   "blogTranslationVisibleFor":["TheFive","TheOther"],
   "urlWoErrorWhileEdit": [],
-  "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":150},
+  "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":500},
   "auth": {
     "openstreetmap": {
       "enabled":true,

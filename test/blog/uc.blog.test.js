@@ -12,12 +12,13 @@ const fs         = require("fs");
 const path       = require("path");
 const URL        = require("url").URL;
 
-const testutil   = require("../testutil.js");
+const {osmbcLink, sleep} = require("../../util/util.js");
 
 
 const initialise = require("../../util/initialise.js");
 const userModule  = require("../../model/user.js");
 
+const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
 
 
 
@@ -45,7 +46,7 @@ describe("uc/blog", function() {
   })
   let nocklist = []
   beforeEach(async function() {
-    nockLoginPage = testutil.nockLoginPage();
+
     let list = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "..", "blog","DataWN290LinkList.txt"), "UTF8"));
     list.forEach(function(item){
       let url = new URL(item);
@@ -77,86 +78,96 @@ describe("uc/blog", function() {
     });
     it("should be able to manage a blog lifetime", async function() {
       let errors = [];
-      let browserTheFive = await testutil.getNewBrowser("TheFive");
-      let b2 = await testutil.getNewBrowser("TheOther");
-
-      await browserTheFive.visit("/osmbc");
+      const driverTheFive = await testutil.getNewDriver("TheFive");
+     
+      await driverTheFive.get(osmbcLink("/osmbc"));
 
       // go to admin page and create a new blog
-      await browserTheFive.click("a#adminlink");
+      await (await driverTheFive.findElement(By.id("adminlink"))).click();
 
 
-      await browserTheFive.click("a#createblog");
+      await(await driverTheFive.findElement(By.id("toolsMenu"))).click();
+      await(await driverTheFive.findElement(By.id("createblog"))).click();
       // Confirm that you really want to create a blog
-      await browserTheFive.click("button#createBlog");
+      await(await driverTheFive.findElement(By.id("createBlog"))).click();
 
       // click on the second blog in the table (thats the WN251 new created)
-      await browserTheFive.click("tbody>tr:nth-child(2)>td>a");
+      await( await driverTheFive.findElement(By.css("tbody>tr:nth-child(2)>td>a"))).click();
 
       // Have a look at the blog
-      browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251OpenMode");
+      
+      testutil.expectHtmlSync(driver, errors, "blog", "WN251OpenMode");
 
       // Edit the blog, select EDIT status and stave it
-      await browserTheFive.click("a#editBlogDetail");
-      await browserTheFive.click("a.btn.btn-primary#edit");
-      await browserTheFive.select("status", "edit");
-      await browserTheFive.click("input[value='OK']");
+      await(await driverTheFive.findElement(By.id("editBlogDetail"))).click();
+      await(await driverTheFive.findElement(By.css("a.btn.btn-primary#edit"))).click();
+
+      await(await driverTheFive.findElement(By.id("status"))).click();
+      await(await driverTheFive.findElement(By.css("option[value='edit']"))).click();
+      await(await driverTheFive.findElement(By.css("input[value='OK']"))).click();
 
 
 
 
       // go to the blog view with the articles
-      await browserTheFive.click("a[href='/blog/WN251']");
-      browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251EditMode");
+      await(await driverTheFive.findElement(By.css("a[href='/blog/WN251']"))).click();
+      testutil.expectHtmlSync(driver, errors, "blog", "WN251EditMode");
+      console.dir("STart Review for Blog");
 
       // Start Review for blog
-      await browserTheFive.click("button#readyreview");
+      await(await driverTheFive.findElement(By.css("button#readyreview:enabled"))).click();
+      sleep(2000);
 
       // start personal review
-      await browserTheFive.click("button#reviewButtonDE");
+      await(await driverTheFive.findElement(By.css("button#reviewButtonDE"))).click();
 
 
 
       // Do a first review comment
 
-      browserTheFive.fill("textarea#reviewCommentDE", "1rst Review Text for DE");
+      await(await driverTheFive.findElement(By.css("textarea#reviewCommentDE"))).sendKeys("1rst Review Text for DE");
       // simulate keyup to enable button for click.
-      browserTheFive.keyUp("textarea#reviewCommentDE", 30);
-      await browserTheFive.click("button#reviewButtonDE:enabled");
 
-      await browserTheFive.click("button#reviewButtonDE");
+      await(await driverTheFive.findElement(By.css("button#reviewButtonDE:enabled"))).click();
+
+      await(await driverTheFive.findElement(By.css("button#reviewButtonDE"))).click();
 
       // do a second review comment, and cancel that
 
-      browserTheFive.fill("textarea#reviewCommentDE", "2nd Review Text for DE");
-      // simulate keyup to enable button for click.
-      browserTheFive.keyUp("textarea#reviewCommentDE", 30);
-      await browserTheFive.click("button#reviewButtonCancelDE:enabled");
-      browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Reviewed");
+      await(await driverTheFive.findElement(By.css("textarea#reviewCommentDE"))).sendKeys("2nd Review Text for DE");
+      
+      await(await driverTheFive.findElement(By.css("button#reviewButtonCancelDE:enabled"))).click();
+      
+      testutil.expectHtmlSync(driver, errors, "blog", "WN251Reviewed");
 
-      await browserTheFive.click("button#didexport");
+      await driverTheFie.click("button#didexport");
 
-      browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Exported");
+      
+      testutil.expectHtmlSync(driver, errors, "blog", "WN251Exported");
 
-      await browserTheFive.click("button#closebutton");
+      await driverTheFive.click("button#closebutton");
 
-      browserTheFive.assert.expectHtmlSync(errors, "blog", "WN251Closed");
+      
+      testutil.expectHtmlSync(driver, errors, "blog", "WN251Closed");
 
-      await b2.visit("/blog/WN251");
+      const driverTheOther = await testutil.getNewDriver("TheOther");
+
+
+      await driverTheOther.get("/blog/WN251");
       // Start Review for blog in english
-      await b2.click("button#readyreview");
+      await driverTheOther.click("button#readyreview");
 
 
       // start personal review
-      await b2.click("button#reviewButtonEN");
+      await driverTheOther.click("button#reviewButtonEN");
 
-      b2.fill("textarea#reviewCommentEN", "1rst Review Text for EN");
+      driverTheOther.fill("textarea#reviewCommentEN", "1rst Review Text for EN");
       // simulate keyup to enable button for click.
-      b2.keyUp("textarea#reviewCommentEN", 30);
-      await b2.click("button#reviewButtonEN");
+      driverTheOther.keyUp("textarea#reviewCommentEN", 30);
+      await driverTheOther.click("button#reviewButtonEN");
 
       // in difference to DE language, here no export should appear.
-      b2.assert.element("button#closebutton");
+      driverTheOther.assert.element("button#closebutton");
       should(errors).eql([]);
     });
   });

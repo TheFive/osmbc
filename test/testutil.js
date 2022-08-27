@@ -14,8 +14,11 @@ const axios = require('axios');
 const wrapper = require('axios-cookiejar-support').wrapper;
 const CookieJar = require( 'tough-cookie').CookieJar;
 
+const LoginPage = require("../test/PageObjectModel/loginPage.js");
+const LoginChooserPage = require("../test/PageObjectModel/loginChooserPage.js");
 
 const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
+const {osmbcLink } = require("../util/util.js");
 
 var config = require("../config.js");
 
@@ -388,7 +391,6 @@ exports.startServer = function startServer(userString, callback) {
 
 
 
-var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 
@@ -434,7 +436,8 @@ exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
 };
 
 
-module.exports.expectHtmlSync = function expectHtmlSync(string, errorList, givenPath, name) {
+module.exports.expectHtmlSync = async function expectHtmlSync(driver, errorList, givenPath, name) {
+  const source = await driver.getPageSource();
   let stopOnError = false;
   if (!Array.isArray(errorList)) {
     stopOnError = true;
@@ -450,7 +453,7 @@ module.exports.expectHtmlSync = function expectHtmlSync(string, errorList, given
   } catch (err) {
     console.error(err);
   }
-  if (string === expected) {
+  if (source === expected) {
     // everything is fine, delete any existing actual file
     try {
       fs.unlinkSync(actualFile);
@@ -459,12 +462,12 @@ module.exports.expectHtmlSync = function expectHtmlSync(string, errorList, given
     return;
   }
   let expectedDom = domparser.parseFromString(expected);
-  let actualDom = domparser.parseFromString(string);
+  let actualDom = domparser.parseFromString(source);
 
   let result = domcompare(expectedDom, actualDom);
   if (result.getResult()) {
     if (process.env.TEST_RENAME_DOMEQUAL === "TRUE") {
-      fs.writeFileSync(expectedFile, string, "UTF8");
+      fs.writeFileSync(expectedFile, source, "UTF8");
       try {
         fs.unlinkSync(actualFile + ".dceql");
       } catch (err) {}
@@ -472,7 +475,7 @@ module.exports.expectHtmlSync = function expectHtmlSync(string, errorList, given
       return;
     } else {
       // files are different, but dom equal
-      fs.writeFileSync(actualFile + ".dceql", string, "UTF8");
+      fs.writeFileSync(actualFile + ".dceql", source, "UTF8");
       try {
         fs.unlinkSync(actualFile);
       } catch (err) {}
@@ -482,11 +485,11 @@ module.exports.expectHtmlSync = function expectHtmlSync(string, errorList, given
   }
   // there is a difference, so create the actual data as file
   // do easier fix the test.
-  fs.writeFileSync(actualFile, string, "UTF8");
+  fs.writeFileSync(actualFile, source, "UTF8");
   if (stopOnError) {
     should(false).eql(true, "HTML File " + name + " is different.");
   } else {
-    if (string !== expected) {
+    if (source !== expected) {
       errorList.push("HTML File " + name + " is different.");
     }
   }
@@ -513,7 +516,7 @@ function checkUrlWithUser(options) {
     should.exist(options.expectedMessage);
     should.exist(options.expectedStatusCode);
     try {
-      await client.post(baseLink + "/login", { username: options.username, password: options.password });
+      await client.post( osmbcLink( "/login"), { username: options.username, password: options.password });
       let body = await client.get(options.url );
 
     
@@ -533,7 +536,7 @@ function checkPostUrlWithUser(options) {
     should.exist(options.expectedStatusCode);
     should.exist(options.form);
     try {
-      await client.post(baseLink + "/login", { username: options.username, password: options.password });
+      await client.post( osmbcLink("/login"), { username: options.username, password: options.password });
       let body = await client.post(options.url, options.form );
       body.data.should.containEql(options.expectedMessage);
       should(body.status).eql(options.expectedStatusCode);
@@ -549,28 +552,26 @@ function getWrappedAxiosClient(options) {
 
 async function getNewDriver(username) {
   const driver = await new Builder().forBrowser(Browser.CHROME).build();
+    const loginPage = new LoginPage(driver);
+    const loginChooserPage = new LoginChooserPage(driver);
     await driver.manage().setTimeouts( { implicit: 5000 } );
     try {
-      await driver.get(baseLink + "/osmbc");
+      await driver.get(osmbcLink( "/osmbc"));
+      await loginChooserPage.clickHtAccessLogin();
       
-      const button = await driver.findElement(By.id('htaccesLoginButton'));
-      await button.click();
       
-      await driver.findElement(By.id("username")).sendKeys(username);
-      await driver.findElement(By.id("password")).sendKeys(username);
-      await driver.findElement(By.id("submitbutton")).click();
+      
+      await loginPage.assertPage();
+      await loginPage.typeUsername(username);
+      await loginPage.typePassword(username);
+      await loginPage.clickOK();
     } catch(err) {
       console.dir(err);
     }finally {};
   return driver;
 }
 
-function sleep(time) {
-  return new Promise((resolve, reject) => {setTimeout(resolve,time)});
-}
 
-
-exports.sleep = sleep;
 exports.getNewDriver = getNewDriver;
 
 exports.checkUrlWithUser = checkUrlWithUser;

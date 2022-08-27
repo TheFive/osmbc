@@ -6,8 +6,10 @@ const moment = require("moment");
 const language = require("../model/language.js");
 
 
-const htmlRoot = require("../config").htmlRoot();
-const url = require("../config").url();
+const config = require("../config");
+const htmlRoot = config.htmlRoot();
+const url = config.url();
+
 
 
 
@@ -119,10 +121,20 @@ function dateFormat(date, lang) {
 
 
 
+function sleep(time) {
+  return new Promise((resolve, reject) => { setTimeout(resolve, time); });
+}
 
 
-// shorten shorten a string up to maxlength
-// default is 30. If a string is shortenend, "..." is appendet
+exports.sleep = sleep;
+
+
+exports.osmbcLink = function(link) {
+  const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
+  return baseLink + link;
+};
+
+
 exports.shorten = shorten;
 exports.isURL = isURL;
 exports.toPGString = toPGString;

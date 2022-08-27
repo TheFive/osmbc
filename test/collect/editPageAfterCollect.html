@@ -8,7 +8,7 @@
     <!-- Bootstrap core CSS-->
     <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   </head>
   <body>
     <!-- Fixed navbar-->
@@ -89,7 +89,7 @@
               </div>
               <div class="form-group row"><a class="col-sm-2 col-form-label" href="/blog/blog">Blog</a>
                 <div class="col-md-10">
-                  <select class="form-control af" id="blog" name="blog" style="background-color: rgb(255, 255, 204);">
+                  <select class="form-control af" id="blog" name="blog">
                     <option value="blog" selected="selected">blog (Edit)</option>
                     <option value="Future">Future </option>
                   </select>
@@ -100,7 +100,7 @@
                 <label class="col-sm-2 col-form-label">Category</label>
                 <div class="col-md-10">
                   <textarea class="d-none form-control" id="old_categoryEN" name="old_categoryEN" rows="1" hide="">-- no category yet --</textarea>
-                  <select class="form-control af" id="categoryEN" name="categoryEN" style="background-color: rgb(253, 198, 171);">
+                  <select class="form-control af" id="categoryEN" name="categoryEN" style="background-color: rgb(253, 198, 205);">
                     <option value="-- no category yet --" selected="">-- noch keine Kategorie -- / -- no category yet --</option>
                     <option value="Picture">Bild / Picture</option>
                     <option value="[Actual Category]">[Aktuelle Kategorie] / [Actual Category]</option>
@@ -167,14 +167,14 @@
                   <p class="osmbc-help-text">black font: language closed</p>
                   <div id="notranslationArea">
                     <p>
-                      <button class="btn btn-small btn-secondary invisible" id="noTranslationButton" type="button" onclick=" window.setNoTranslation(); ">no translation to rest</button>
+                      <button class="btn btn-small btn-secondary visible" id="noTranslationButton" type="button" onclick=" window.setNoTranslation(); ">no translation to rest</button>
                     </p>
                   </div>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-7 text-right">
-                  <button class="btn btn-large btn-primary" id="saveButton" type="button" onclick="window.saveButton()">Save</button>
-                  <button class="btn btn-large btn-secondary" id="cancelButton" type="button" onclick="disableUnchanged(); location.href='/article/6?edit=false';">last Version</button>
+                  <button class="btn btn-large btn-primary" id="saveButton" type="button" onclick="window.saveButton()" disabled="">Save</button>
+                  <button class="btn btn-large btn-secondary" id="cancelButton" type="button" onclick="disableUnchanged(); location.href='/article/6?edit=false';" disabled="">last Version</button>
                 </div>
               </div>
             </div>
@@ -193,7 +193,7 @@
             <label class="col-md-1">Unpublish Reason</label>
             <div class="col-md-5">
               <textarea class="d-none form-control" id="old_unpublishReason" name="old_unpublishReason" rows="1" hide=""></textarea>
-              <select class="form-control af" id="unpublishReason" name="unpublishReason" style="background-color: rgb(255, 255, 204);">
+              <select class="form-control af" id="unpublishReason" name="unpublishReason">
                 <option value=""></option>
                 <option value="old">old</option>
                 <option value="doublette">doublette</option>
@@ -234,27 +234,27 @@
           <!-- Markdown Area All Column-->
           <div class="row">
             <div class="col">
-              <div style="min-width:400px;max-width:900px"><span class="badge badge-secondary osmbclabel-lang" draggable="true" data-toggle="tooltip" data-placement="left" title="Drag me for copy full text" ondragstart="ondragstartLangLabel(event,'DE');">  DE  </span><span class="badge badge-danger" style="" id="markdownDE_unsaved">unsaved</span>
+              <div style="min-width:400px;max-width:900px"><span class="badge badge-secondary osmbclabel-lang" draggable="true" data-toggle="tooltip" data-placement="left" title="Drag me for copy full text" ondragstart="ondragstartLangLabel(event,'DE');">  DE  </span><span class="badge badge-danger" style="display:none" id="markdownDE_unsaved">unsaved</span>
                 <textarea class="d-none form-control" id="old_markdownDE" name="old_markdownDE" rows="1" hide="hide"></textarea>
                 <textarea class="markdownEdit form-control af" id="markdownDE" placeholder="1. Nicht Passiv, sondern Aktiv formulieren
 Beispiel: OpenCage Data veröffentlicht ein Interview mit David Overton, dem Macher hinter der Stoffkarten produzierenden Firma Splashmaps. (via Twitter)
 2. Personen/Unternehmen sind Nachrichten! Deshalb ... möglichst immer mit einer Person/Unternehmen beginnen!
 3. Eine komplexe Meldung lieber in zwei Sätze aufteilen, statt mit Nebensätzen zu arbeiten.
-4. Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008)" spellcheck="true" lang="DE" name="markdownDE" rows="6" style="background-color: rgb(255, 255, 204);"></textarea>
+4. Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008)" spellcheck="true" lang="DE" name="markdownDE" rows="6" style="height: 252px;"></textarea>
                 <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
                 <div class="alert markdownMessage alert-danger" id="textDE" lang="DE" style="display:none">Default Error Message</div>
                 <div class="card card-body preview" id="previewDE" lang="DE"><ul><li></li></ul></div>
               </div>
             </div>
             <div class="col">
-              <div style="min-width:400px;max-width:900px"><span class="badge badge-secondary osmbclabel-lang2" draggable="true" data-toggle="tooltip" data-placement="left" title="Drag me for copy full text" ondragstart="ondragstartLangLabel(event,'EN');">  EN  </span><span class="badge badge-danger" style="" id="markdownEN_unsaved">unsaved</span>
+              <div style="min-width:400px;max-width:900px"><span class="badge badge-secondary osmbclabel-lang2" draggable="true" data-toggle="tooltip" data-placement="left" title="Drag me for copy full text" ondragstart="ondragstartLangLabel(event,'EN');">  EN  </span><span class="badge badge-danger" style="display:none" id="markdownEN_unsaved">unsaved</span>
                 <textarea class="d-none form-control" id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide"></textarea>
                 <textarea class="markdownEdit form-control af" id="markdownEN" placeholder="1. Formulate not passive, but active.
 Sample: OpenCage data published an interview with David Overton, the doer behind the tissue map producing company Splashmaps. (via Twitter)
 2. People &amp; companies are information! So start an article with e person or a company!
 3. Decomplify your sentences.
 4. (Satzzeichen - auch Klammern() stehen immer ohne Leerzeichen direkt beim Wort. (DIN 5008))
-" spellcheck="true" lang="EN" name="markdownEN" rows="6" style="background-color: rgb(255, 255, 204);"></textarea>
+" spellcheck="true" lang="EN" name="markdownEN" rows="6" style="height: 228px;"></textarea>
                 <p class="osmbc-help-text">'no translation' or '-' to specify no translation wanted.</p>
                 <div class="alert markdownMessage alert-danger" id="textEN" lang="EN" style="display:none">Default Error Message</div>
                 <div class="card card-body preview" id="previewEN" lang="EN"><ul><li></li></ul></div>
@@ -415,7 +415,7 @@ Use @OSMUser to address any special editor."></textarea>
   
   
 
-<script nonce="Fixed Nonce for Test">
+<script nonce="">
   // Init This Window with jQuery ready Callback
   $(document).ready(init2);
   window.htmlroot = "";
@@ -432,7 +432,7 @@ Use @OSMUser to address any special editor."></textarea>
 <script src="/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js"></script>
 <script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
 <script src="/javascripts/article_view.js"></script>
-<script nonce="Fixed Nonce for Test">
+<script nonce="">
   // set Constant for Window with JADE Variables
   googleTranslateText = JSON.parse('{"DE":"(automatische [Übersetzung](##link##))","EN":"(automatic [translation](##link##))","ES":"(automatic [translation](##link##))","FR":"(automatic [translation](##link##))","CZ":"(automatic [translation](##link##))","PT":"(automatic [translation](##link##))","RU":"(automatic [translation](##link##))","JP":"(automatic [translation](##link##))","ID":"(automatic [translation](##link##))","TR":"(automatic [translation](##link##))"}');
   activeLanguages = JSON.parse('["DE","EN"]');

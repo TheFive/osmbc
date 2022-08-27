@@ -3,9 +3,7 @@
 /* jshint ignore:start */
 
 
-const async = require("async");
 const nock = require("nock");
-const cheerio = require("cheerio");
 const mockdate = require("mockdate");
 const should = require("should");
 const testutil = require("../testutil.js");
@@ -14,14 +12,15 @@ const articleModule = require("../../model/article.js");
 const blogModule = require("../../model/blog.js");
 
 
+const {osmbcLink, sleep} = require("../../util/util.js");
 
+const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
 
 
 
 describe("uc/collect", function() {
   this.timeout(120000);
-  let browser;
-  let nockLoginPage;
+  let driver = null;
   before(async function() {
     mockdate.set(new Date("2016-05-25T19:00:00Z"));
     nock("https://hooks.slack.com/")
@@ -35,7 +34,6 @@ describe("uc/collect", function() {
   });
 
   beforeEach(async function() {
-    nockLoginPage = testutil.nockLoginPage();
     await testutil.clearDB();
     await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE", secondLang: "EN",email:"a@b.c"});
     await blogModule.createNewBlog({OSMUser: "test",email:"d@e.f"}, {name: "blog",status:"edit"});
@@ -50,11 +48,11 @@ describe("uc/collect", function() {
       markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz."});
     await articleModule.createNewArticle({blog: "blog", collection: "Link1: http://www.test.dä/holla and other"});
     testutil.startServerSync();
-    browser = await testutil.getNewBrowser("TheFive");
+    driver = await testutil.getNewDriver("TheFive");
   });
-  afterEach(function(bddone) {
-    nock.removeInterceptor(nockLoginPage);
-    testutil.stopServer(bddone);
+  afterEach(async function() {
+    await driver.quit();
+    await testutil.stopServer();
   });
 
   after(async function() {
@@ -63,29 +61,31 @@ describe("uc/collect", function() {
 
   describe("Menu Fuctions", function() {
     it("should call search with test", async function() {
-      this.timeout(5000);
-      await browser.visit("/article/search");
-      browser.fill("search", "http://www.test.dä/holla");
-      await browser.pressButton("SearchNow");
-      browser.assert.text("p#articleCounter", "Displaying 2 of 2 results.");
+      this.timeout(6000);
+      await driver.get(osmbcLink("/article/search"));
+      await (await driver.findElement(By.id("searchField"))).sendKeys("http://www.test.dä/holla");
+      await (await driver.findElement(By.name("SearchNow"))).click();
+      
+      should(await (await driver.findElement(By.css("p[id='articleCounter']"))).getText()).eql("Displaying 2 of 2 results.");
     });
   });
   describe("Collect", function() {
     it("should search and store collected article", async function() {
-      await browser.visit("/article/create");
-      browser.fill("search", "searchfor");
+      await driver.get(osmbcLink("/article/create"));
+      await (driver.findElement(By.id("searchField"))).sendKeys("searchfor");
+      await (await driver.findElement(By.name("SearchNow"))).click();
       
-      await browser.pressButton("SearchNow");
+      await (driver.findElement(By.name("title"))).sendKeys("Test Title for Article");
+      await (await driver.findElement(By.id("OK"))).click();
       
-      browser.fill("title", "Test Title for Article");
-      await browser.pressButton("OK");
-      browser.assert.expectHtmlSync("collect","editPageAfterCollect");
+      testutil.expectHtmlSync(driver, "collect","editPageAfterCollect");
     });
     it("should search and find existing article", async function() {
-      await browser.visit("/article/create");
-      browser.fill("search", "http://www.test.dä/holla")
-      await browser.pressButton("SearchNow");
-      browser.assert.expectHtmlSync("collect","foundAnArticle");
+      await driver.get(osmbcLink("/article/create"));
+      await (driver.findElement(By.id("searchField"))).sendKeys("http://www.test.dä/holla");
+      await (await driver.findElement(By.name("SearchNow"))).click();
+      
+      testutil.expectHtmlSync(driver, "collect","foundAnArticle");
     });
   });
 });

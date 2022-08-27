@@ -10,17 +10,18 @@ var nock = require("nock");
 var userModule = require("../../model/user.js");
 var articleModule = require("../../model/article.js");
 var blogModule = require("../../model/blog.js");
-const sleep = require("../../test/testutil.js").sleep;
 
 const initialise = require("../../util/initialise.js");
+const MainPage = require("../../test/PageObjectModel/mainPage.js")
+const AdminPage = require("../../test/PageObjectModel/adminPage.js")
+const ErrorPage = require("../../test/PageObjectModel/errorPage.js")
 
 var mockdate = require("mockdate");
 
 const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
 
 
-const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
-
+const {osmbcLink, sleep} = require("../../util/util.js");
 
 
 describe("uc/index", function() {
@@ -60,24 +61,28 @@ describe("uc/index", function() {
     describe("Homepage", function() {
 
       it("should find welcome text on Homepage", async function() {
-
-        const div = await driver.findElement(By.xpath('//h2[contains(text(), "Welcome to OSM BC")]'));
-        should.exist(div);
+        const mainPage = new MainPage(driver);
+        await mainPage.assertPage();
+        should(await mainPage.getFirstHeader()).eql("Welcome to OSM BC");
       });
     });
     describe("Admin Homepage", function() {
       it("should show it", async function() {
-        await driver.get(baseLink + "/osmbc/admin");
-        await driver.findElement(By.xpath('//h1[contains(text(), "Configuration")]'));
+        const mainPage = new MainPage(driver);
+        await mainPage.assertPage();
+        await mainPage.clickLinkToAdminPage();
+
+        const adminPage = new AdminPage(driver);
+        await adminPage.assertPage();
+        should(await adminPage.getFirstHeader()).eql("Configuration");
         
-        const source = await driver.getPageSource();
-        testutil.expectHtmlSync(source, "index", "admin_home");
+        testutil.expectHtmlSync(driver, "index", "admin_home");
       });
     });
     describe("Not Defined Page", function() {
       it("should throw an error message", async function() {
         try {
-          await driver.get(baseLink + "/notdefined.html");
+          await driver.get(osmbcLink("/notdefined.html"));
         } catch (err) {
           should(err.message).eql("Server returned status code 404 from http://localhost:35043/notdefined.html");
         }
@@ -90,7 +95,7 @@ describe("uc/index", function() {
     });
     describe("LanguageSetter", function() {
       it("should set the language", async function() {
-        await driver.get(baseLink + "/osmbc");
+        await driver.get(osmbcLink( "/osmbc"));
         
         await (await driver.findElement(By.id("language"))).click();
         await (await driver.findElement(By.id("lang_EN"))).click();
@@ -100,11 +105,11 @@ describe("uc/index", function() {
         
         await (await driver.findElement(By.id("lang_DE"))).click();
         await sleep(1000);
-        let source = await driver.getPageSource();
-        testutil.expectHtmlSync(source, "index", "switchedToEnglishAndGerman");
+        
+        testutil.expectHtmlSync(driver, "index", "switchedToEnglishAndGerman");
       });
       it("should set the language both equal", async function() {
-        await driver.get(baseLink + "/osmbc");
+        await driver.get(osmbcLink( "/osmbc"));
         
         await (await driver.findElement(By.id("language"))).click();
         await (await driver.findElement(By.id("lang_EN"))).click();
@@ -114,15 +119,15 @@ describe("uc/index", function() {
         try {
            await driver.findElement(By.id("lang_EN"));
         } catch (err) {
-          should(err.message).eql('no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"*[id=\"lang_EN\"]\"}\n  (Session info: chrome=104.0.5112.79)');
+          should(err.message).containEql('no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"*[id=\"lang_EN\"]\"}');
         }
         
         await sleep(1000);
-        let source = await driver.getPageSource();
-        testutil.expectHtmlSync(source, "index", "switchedToEnglishAndEnglish");
+        
+        testutil.expectHtmlSync(driver, "index", "switchedToEnglishAndEnglish");
       });
       it("should store a language set", async function() {
-        await driver.get(baseLink + "/osmbc");
+        await driver.get(osmbcLink( "/osmbc"));
         await (await driver.findElement(By.id("language"))).click();
         await (await driver.findElement(By.id("lang_EN"))).click();
         await sleep(1000);
@@ -137,8 +142,8 @@ describe("uc/index", function() {
         let user = await userModule.findOne({OSMUser:"TheFive"});
         should(user.languageSet).eql("A Name To Save");
         should(user.getLanguages()).deepEqual([ 'EN' ]);
-        let source = await driver.getPageSource();
-        testutil.expectHtmlSync(source, "index", "savedANewLanguageSet");
+        
+        testutil.expectHtmlSync(driver, "index", "savedANewLanguageSet");
       });
     });
   });
@@ -150,7 +155,7 @@ describe("uc/index", function() {
     });
     it("should throw an error if user not exits", async function() {
       driver = await testutil.getNewDriver("TheFiveNotExist");
-      await driver.get(baseLink + "/osmbc");
+      await driver.get(osmbcLink( "/osmbc"));
       await (await driver).findElement(By.xpath('//span[contains(text(),"You are logged in as guest. ")]'));
       let user = await userModule.findOne({OSMUser:"TheFiveNotExist"});
       should(user).eql({
@@ -163,18 +168,22 @@ describe("uc/index", function() {
         });
     });
     it("should throw an error if user is denied", async function() {
+      driver = null;
       try {
         driver = await testutil.getNewDriver("OldUserAway");
         
-        await driver.get(baselink + "/osmbc");
+        await driver.get(osmbcLink( "/osmbc"));
       } catch (err) {
         // ignore error, expect is a 403 error, but the
         // browser html has to be tested
       }
-      let source = await driver.getPageSource();
 
-      testutil.expectHtmlSync(source, "index", "denied user");
-      source.should.containEql("OSM User &gt;OldUserAway&lt; has no access rights");
+      const errorPage = new ErrorPage(driver);
+
+     
+      //await errorPage.assertPage();
+      //should(await errorPage.getErrorText()).eql("OSM User &gt;OldUserAway&lt; has no access rights");
+      testutil.expectHtmlSync(driver, "index", "denied user");
     });
   });
 });
