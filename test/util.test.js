@@ -137,7 +137,7 @@ describe("util", function() {
     });
     it("should render a shorted link", function() {
       const r = util.md_render("this is a link #1928 to an article");
-      should(r).eql("<p>this is a link <a target=\"_blank\" href=\"https://testosm.bc/article/1928\">#1928</a> to an article</p>\n");
+      should(r).eql("<p>this is a link <a target=\"_blank\" href=\"https://localhost:35043/article/1928\">#1928</a> to an article</p>\n");
     });
     it("should render user names", function() {
       const r = util.md_render("@thefive is telling @user1 about @user2", { TheFive: "full", user1: "denied", user2: "guest" });

@@ -887,7 +887,7 @@ describe("model/article", function() {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.addCommentFunction({OSMUser: "Test"}, "a comment https://testosm.bc/article/99", cb);
+          article.addCommentFunction({OSMUser: "Test"}, "a comment https://localhost:35043/article/99", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
@@ -988,7 +988,7 @@ describe("model/article", function() {
       var testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
-          article.editComment({OSMUser: "Test"}, 0, "a comment https://testosm.bc/article/99", cb);
+          article.editComment({OSMUser: "Test"}, 0, "a comment https://localhost:35043/article/99", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);

@@ -88,19 +88,19 @@ describe("router/slack", function() {
     it("should ignore request without known user", async function () {
       userName = "NotThere";
       userId = "33";
-      await talk("Hello Boy", "<@33> I never heard from you. Please enter your Slack Name in <https://testosm.bc/usert/self|OSMBC>");
+      await talk("Hello Boy", "<@33> I never heard from you. Please enter your Slack Name in <https://localhost:35043/usert/self|OSMBC>");
     });
     it("should give a hint if user is not unique", async function () {
       userName = "ExistsTwice";
       userId = "33";
-      await talk("Hello Boy", "<@33> is registered more than once in <https://testosm.bc/usert/self|OSMBC>");
+      await talk("Hello Boy", "<@33> is registered more than once in <https://localhost:35043/usert/self|OSMBC>");
     });
   });
   describe("useTBC Mode", function() {
     it("should store an URL variant 1", async function() {
       userName = "TestSlackUseTBC";
       userId = "55";
-      await talk( "http://forum.openstreetmap.org/viewtopic.php?id=53173", "Article: [Internationale Admingrenzen 2016 / users: Germany](https://testosm.bc/article/1) created in your TBC Folder.\n");
+      await talk( "http://forum.openstreetmap.org/viewtopic.php?id=53173", "Article: [Internationale Admingrenzen 2016 / users: Germany](https://localhost:35043/article/1) created in your TBC Folder.\n");
 
         // search for the already exists article, that only should exist ONCE
       const article = await  findArticle({title: "Internationale Admingrenzen 2016 / users: Germany", collection: "http://forum.openstreetmap.org/viewtopic.php?id=53173", blog: "TBC"});
