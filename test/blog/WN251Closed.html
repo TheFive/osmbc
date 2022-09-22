@@ -1,28 +1,27 @@
-<html lang="en"><head>
+<html lang="en">
+
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title>WN251/overview</title>
-    <!-- Bootstrap core CSS-->
+    <title>WN251/overview</title><!-- Bootstrap core CSS-->
     <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   </head>
+
   <body>
     <!-- Fixed navbar-->
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar"><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
       <ul class="navbar-nav mr-auto"></ul>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a>
-          </li>
+          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
           <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
-          <li class="navbar-item active">
-          </li>
-          <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/blog">blog<span class="badge badge-pill osmbcbadge-lang">0</span></a></li>
+          <li class="navbar-item active"></li>
+          <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/WN251">WN251<span class="badge badge-pill osmbcbadge-lang">1</span></a></li>
           <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
             <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
               <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
@@ -34,10 +33,8 @@
               <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
             </div>
           </li>
-          <li class="dropdown navbar-item"><a class="nav-link dropdown-toggle" id="translateMenu" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-               Translate Blog</a>
-            <div class="dropdown-menu" aria-labelledby="translateMenu">
-            </div>
+          <li class="dropdown navbar-item"><a class="nav-link dropdown-toggle" id="translateMenu" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Translate Blog</a>
+            <div class="dropdown-menu" aria-labelledby="translateMenu"></div>
           </li>
         </ul>
         <ul class="navbar-nav">
@@ -55,8 +52,7 @@
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a>
               <div class="dropdown-divider"></div>
               <form class="p-1">
-                <div class="form-group">
-                  <input class="input form-control" id="newSetToBeSaved" type="text">
+                <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
                   <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
                 </div>
               </form>
@@ -67,115 +63,117 @@
       </div>
     </nav>
     <div class="container-fluid">
-      <p>
-        </p><div class="row">
+      <p></p>
+      <div class="row"></div>
+      <div class="row">
+        <div class="col-md-1">
+          <div class="badge osmbclabel-lang">DE</div><span class="badge osmbclabel-markdown">0(*)</span>
         </div>
-        <div class="row">
-          <div class="col-md-1">
-            <div class="badge osmbclabel-lang">DE</div><span class="badge osmbclabel-markdown">0(*)</span>
+        <div class="col-md-11">
+          <div class="progress" style="margin-bottom:2px">
+            <div class="progress-bar osmbclabel-markdown" style="width:50%">1</div>
+            <div class="progress-bar osmbclabel-no-markdown" style="width:50%">1</div>
+            <div class="progress-bar osmbclabel-no-translation" style="width:0%">0</div>
           </div>
-          <div class="col-md-11">
-            <div class="progress" style="margin-bottom:2px">
-              <div class="progress-bar osmbclabel-markdown" style="width:50%">1</div>
-              <div class="progress-bar osmbclabel-no-markdown" style="width:50%">1</div>
-              <div class="progress-bar osmbclabel-no-translation" style="width:0%">0</div>
+        </div>
+      </div>
+      <div class="d-none d-md-block"></div>
+      <div class="row">
+        <div class="col-md-6">
+          <h2><span class="d-none d-md-block">Wochennotiz </span>WN251<span class="d-none d-md-block"> (Export DE)</span></h2>
+        </div>
+        <div class="col-md-3">
+          <div class="div"><button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;DE&quot;,&quot;closelang&quot;,this);" disabled="">Close WN251(DE)</button></div>
+          <div class="div">
+            <div class="alert bg-danger text-center bold"><strong>Blog is exported, please do the last Review in WordPress</strong></div>
+          </div>
+        </div>
+        <div class="col-md-3 d-none d-md-block"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>Review DE</span><span class="text-muted small"> (enabled by TheFive</span><span class="text-muted small"> a few seconds ago</span><span class="text-muted small">) </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z">[changes]</a></div>
+            </div>
+            <div class="card-body">
+              <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><i class="text-muted small">Edit: a few seconds ago</i><span> </span><a onclick="document.getElementById('editReviewDE1').classList.remove('d-none');document.getElementById('reviewLeftTextDE1').classList.add('d-none');"><i class="fa fa-pencil"></i></a><span> </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z">[changes]</a></p>
+              <p id="reviewLeftTextDE1">1rst Review Text for DE</p>
+              <div class="d-none" id="editReviewDE1">
+                <form id="editreviewDE1" name="reviewDE1" action="/blog/WN251/editReviewComment/1" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE1">1rst Review Text for DE</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-large btn-primary" id="reviewButtonDE1" type="submit">Change</button></form>
+              </div>
+              <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><i class="text-muted small">Edit: a few seconds ago</i><span> </span><a onclick="document.getElementById('editReviewDE2').classList.remove('d-none');document.getElementById('reviewLeftTextDE2').classList.add('d-none');"><i class="fa fa-pencil"></i></a><span> </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z">[changes]</a></p>
+              <p id="reviewLeftTextDE2">2nd Review Text for DE</p>
+              <div class="d-none" id="editReviewDE2">
+                <form id="editreviewDE2" name="reviewDE2" action="/blog/WN251/editReviewComment/2" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE2">2nd Review Text for DE</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-large btn-primary" id="reviewButtonDE2" type="submit">Change</button></form>
+              </div>
+              <div class="form-group">
+                <form id="reviewDE" name="reviewDE" action="/blog/WN251/setReviewComment" method="post">
+                  <div class="col-md-8"><input class="d-none form-control" type="text" name="text" value="reviewing..." id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').value === '');"><input class="d-none" type="text" name="lang" value="DE"></div>
+                  <div class="col-md-4"><button class="btn btn-large btn-primary" id="reviewButtonDE" type="submit">Start Personal Review</button></div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-        <div class="d-none d-md-block">
+        <div class="d-none d-md-block d-none"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <ul class="nav nav-tabs">
+            <li class="nav-item d-none d-md-block" role="presentation"><a class="nav-link" href="#filter"><i class="fa fa-filter"></i></a></li>
+            <li class="nav-item"><a class="nav-link active" href="/blog/WN251/Overview">Overview</a></li>
+            <li class="nav-item"><a class="nav-link" href="/blog/WN251/Full">Full</a></li>
+            <li class="nav-item"><a class="nav-link" href="/blog/WN251/Review">Review</a></li>
+            <!--- v = 0
+while layout.user["blogSetting"+v]
+  if layout.user["blogSetting"+v]!="-"
+    - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
+    +navbutton(style0,style)
+  - v++-->
+            <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN251/preview?lang=DE"><i class="fa fa-download"></i>DE<span> </span><i class="fa fa-exclamation-triangle"></i></a></li>
+            <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
+              <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages"><a class="dropdown-item" href="/blog/WN251/preview?lang=DE"><span>Export DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a></div>
+            </li>
+          </ul>
         </div>
-        <div class="row">
-          <div class="col-md-6">
-            <h2><span class="d-none d-md-block">Wochennotiz </span>WN251<span class="d-none d-md-block"> (Close DE)</span></h2>
-          </div>
-          <div class="col-md-3">
-          </div>
-          <div class="col-md-3 d-none d-md-block">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title"><span>Review DE</span><span class="text-muted small"> (enabled by TheFive</span><span class="text-muted small"> a few seconds ago</span><span class="text-muted small">) </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z">[changes]</a>
-                </div>
-              </div>
-              <div class="card-body">
-                <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><i class="text-muted small">Edit: a few seconds ago</i><span> </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z">[changes]</a>
-                </p>
-                <p id="reviewLeftTextDE1">1rst Review Text for DE</p>
-                <div class="d-none" id="editReviewDE1">
-                </div>
-                <div class="form-group">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="d-none d-md-block d-none">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <ul class="nav nav-tabs">
-              <li class="nav-item d-none d-md-block" role="presentation"><a class="nav-link" href="#filter"><i class="fa fa-filter"></i></a></li>
-              <li class="nav-item"><a class="nav-link active" href="/blog/WN251/Overview">Overview</a></li>
-              <li class="nav-item"><a class="nav-link" href="/blog/WN251/Full">Full</a></li>
-              <li class="nav-item"><a class="nav-link" href="/blog/WN251/Review">Review</a></li>
-              <!--
-              - v = 0
-              while layout.user["blogSetting"+v]
-                if layout.user["blogSetting"+v]!="-"
-                  - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
-                  +navbutton(style0,style)
-                - v++
-              -->
-              <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN251/preview?lang=DE"><i class="fa fa-download"></i>DE<span> </span><i class="fa fa-exclamation-triangle"></i></a></li>
-              <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
-                <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages"><a class="dropdown-item" href="/blog/WN251/preview?lang=DE"><span>Export DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <table>
-          <tbody><tr>
+      </div>
+      <table>
+        <tbody>
+          <tr>
             <td></td>
             <td></td>
-            <td><br><br><p>26.05.2016-01.06.2016</p>
-</td>
-          </tr>
-          <!-- first display all Categories of the blog-->
+            <td><br><br>
+              <p>26.05.2016-01.06.2016</p>
+            </td>
+          </tr><!-- first display all Categories of the blog-->
           <tr>
             <td></td>
             <td class="d-none d-md-block"></td>
-            <td><!--         place picture here              -->
-</td>
+            <td>
+              <!--         place picture here              -->
+            </td>
             <td class="d-none d-md-block"></td>
             <td class="d-none d-md-block"></td>
           </tr>
           <tr>
             <td>
-              <div class="d-flex flex-nowrap"><a href="/article/2"><i class="fa fa-edit small-margin"></i></a>
-              </div>
+              <div class="d-flex flex-nowrap"><a href="/article/2"><i class="fa fa-edit small-margin"></i></a></div>
             </td>
             <td class="d-none d-md-block">
-              <div class="d-flex flex-nowrap"><span id="voteLabels2">
-                  <div class="d-flex flex-nowrap">
-                  </div></span>
-              </div>
+              <div class="d-flex flex-nowrap"><span id="voteLabels2"><div class="d-flex flex-nowrap"></div></span></div>
             </td>
             <td>
               <div onclick="if (!openEditor) {openEditor = document.getElementById('div2');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
                 <div class="not-formulated">
-                  <ul class="no-margin"><li>WN251 Picture</li>
-</ul>
+                  <ul class="no-margin">
+                    <li>WN251 Picture</li>
+                  </ul>
                 </div>
               </div>
             </td>
-            <td class="d-none d-md-block">
-            </td>
-            <td class="d-none d-md-block">
-            </td>
+            <td class="d-none d-md-block"></td>
+            <td class="d-none d-md-block"></td>
           </tr>
           <tr>
             <td></td>
@@ -186,12 +184,8 @@
                   <ul class="preview" id="preview2"></ul>
                 </div>
                 <div class="card-body">
-                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post">
-                    <textarea class="form-control" name="markdown" id="markdown2" rows="7" onchange="onLeaveText(2);" onkeyup="onchangeMarkdown(2)" spellcheck="true" lang="DE"></textarea>
-                    <textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea>
-                  </form>
-                  <p>
-                  </p>
+                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" onchange="onLeaveText(2);" onkeyup="onchangeMarkdown(2)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea></form>
+                  <p></p>
                 </div>
               </div>
             </td>
@@ -199,34 +193,30 @@
           <tr>
             <td></td>
             <td class="d-none d-md-block"></td>
-            <td><h2 id="wn251_wochenvorschau">Wochenvorschau</h2>
-</td>
+            <td>
+              <h2 id="wn251_wochenvorschau">Wochenvorschau</h2>
+            </td>
             <td class="d-none d-md-block"></td>
             <td class="d-none d-md-block"></td>
           </tr>
           <tr>
             <td>
-              <div class="d-flex flex-nowrap"><a href="/article/1"><i class="fa fa-edit small-margin"></i></a>
-              </div>
+              <div class="d-flex flex-nowrap"><a href="/article/1"><i class="fa fa-edit small-margin"></i></a></div>
             </td>
             <td class="d-none d-md-block">
-              <div class="d-flex flex-nowrap"><span id="voteLabels1">
-                  <div class="d-flex flex-nowrap">
-                  </div></span>
-              </div>
+              <div class="d-flex flex-nowrap"><span id="voteLabels1"><div class="d-flex flex-nowrap"></div></span></div>
             </td>
             <td>
               <div onclick="if (!openEditor) {openEditor = document.getElementById('div1');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
                 <div>
-                  <ul class="no-margin"><li>WN251 Upcoming Events</li>
-</ul>
+                  <ul class="no-margin">
+                    <li>WN251 Upcoming Events</li>
+                  </ul>
                 </div>
               </div>
             </td>
-            <td class="d-none d-md-block">
-            </td>
-            <td class="d-none d-md-block">
-            </td>
+            <td class="d-none d-md-block"></td>
+            <td class="d-none d-md-block"></td>
           </tr>
           <tr>
             <td></td>
@@ -237,19 +227,14 @@
                   <ul class="preview" id="preview1"></ul>
                 </div>
                 <div class="card-body">
-                  <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post">
-                    <textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE">|Wo|Was|Online|Wann|Land|
-|--|---|------|----|----|</textarea>
-                    <textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown1" rows="7">|Wo|Was|Online|Wann|Land|
-|--|---|------|----|----|</textarea>
-                  </form>
-                  <p><span> Edited: </span><span class="badge small-margin osmbclabel-markdown">OSMCAL</span><span> Time: a few seconds ago</span>
-                  </p>
+                  <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE">|Wo|Was|Online|Wann|Land|
+|--|---|------|----|----|</textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown1" rows="7">|Wo|Was|Online|Wann|Land|
+|--|---|------|----|----|</textarea></form>
+                  <p><span> Edited: </span><span class="badge small-margin osmbclabel-markdown">OSMCAL</span><span> Time: a few seconds ago</span></p>
                 </div>
               </div>
             </td>
-          </tr>
-          <!-- Now display the undefined categories in the blog-->
+          </tr><!-- Now display the undefined categories in the blog-->
           <tr>
             <td></td>
             <td class="d-none d-md-block"></td>
@@ -257,156 +242,79 @@
               <h1>Future Articles</h1>
             </td>
           </tr>
-        </tbody></table>
-        <p class="row" id="filter">
-          </p><h2>Options</h2>
-          <table>
-            <tbody><tr>
-              <td>
-                <p>Left Col.: </p>
-              </td>
-              <td>
-                <div class="d-none d-md-block"><span style="white-space: nowrap">
-                    <div class="form-group form-check" name="choose_showNumbers" onclick="window.setUserConfig({view:'overview',option:'showNumbers',value:'true'});">
-                      <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                      <label class="form-check-label" for="exampleCheck1"> show editor numbers, </label>
-                    </div></span>
-                </div><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_showMail" onclick="window.setUserConfig({view:'overview',option:'showMail',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> show mail, </label>
-                  </div></span>
-                <div class="d-none d-md-block"><span style="white-space: nowrap">
-                    <div class="form-group form-check" name="choose_showVisibleLanguages" onclick="window.setUserConfig({view:'overview',option:'showVisibleLanguages',value:'true'});">
-                      <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                      <label class="form-check-label" for="exampleCheck1"> show languages(short)</label>
-                    </div></span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <p class="d-none d-md-block">Right Col.:</p>
-              </td>
-              <td>
-                <div class="d-none d-md-block"></div><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_showCollector" onclick="window.setUserConfig({view:'overview',option:'showCollector',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> show collector, </label>
-                  </div></span><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_showEditor" onclick="window.setUserConfig({view:'overview',option:'showEditor',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> show editor , </label>
-                  </div></span><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_showColoredUser" onclick="window.setUserConfig({view:'overview',option:'showColoredUser',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> show users colored, </label>
-                  </div></span><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_showLanguages" onclick="window.setUserConfig({view:'overview',option:'showLanguages',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> show languages</label>
-                  </div></span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <p>Display Votes</p>
-              </td>
-              <td><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_showVote_pro" onclick="window.setUserConfig({view:'overview',option:'showVote_pro',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> show pro, </label>
-                  </div></span><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_showVote_unpublish" onclick="window.setUserConfig({view:'overview',option:'showVote_unpublish',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> show unpublish, </label>
-                  </div></span><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_showVote_fav" onclick="window.setUserConfig({view:'overview',option:'showVote_fav',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> show fav, </label>
-                  </div></span><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_showVote_doit" onclick="window.setUserConfig({view:'overview',option:'showVote_doit',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> show doit, </label>
-                  </div></span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <p>Filter: </p>
-              </td>
-              <td><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_disableWritten" onclick="window.setUserConfig({view:'overview',option:'disableWritten',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> disable written articles, </label>
-                  </div></span><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_disableNewerMarkdown" onclick="window.setUserConfig({view:'overview',option:'disableNewerMarkdown',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> disable more actual edits, </label>
-                  </div></span><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_disableOwnCollection" onclick="window.setUserConfig({view:'overview',option:'disableOwnCollection',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> disable own collections, </label>
-                  </div></span><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_disableOtherCollection" onclick="window.setUserConfig({view:'overview',option:'disableOtherCollection',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> disable other collections, </label>
-                  </div></span><span style="white-space: nowrap">
-                  <div class="form-group form-check" name="choose_disableSolvedComments" onclick="window.setUserConfig({view:'overview',option:'disableSolvedComments',value:'true'});">
-                    <input class="form-check-input" id="exampleCheck1" type="checkbox">
-                    <label class="form-check-label" for="exampleCheck1"> disable No or Solved Comments</label>
-                  </div></span>
-              </td>
-            </tr>
-          </tbody></table>
-        <p></p>
-        <p class="row">
-          </p><h2>Symbol Legend</h2>
-          <p><span class="badge osmbclabel-collect small-margin">X</span><span> = number of collectors </span></p>
-          <p><span class="badge osmbclabel-collect small-margin">username</span><span> = collector of article </span></p>
-          <p><span class="badge osmbclabel-markdown small-margin">X</span><span> = number of editors in shown language</span></p>
-          <p><span class="badge osmbclabel-markdown small-margin">username</span><span> = Editor of article</span></p>
-          <p><i class="fa fa-comment small-margin" style="color:blue"></i><span> = there is a comment in the article</span></p>
-          <p><i class="fa fa-comment small-margin" style="color:red"></i><span> = there is a comment with personal mention in the article</span></p>
-          <p><i class="fa fa-comment small-margin" style="color:orange"></i><span> = there is a comment with language mention in the article</span></p>
-          <p><a href="#" target="_blank"><i class="fa fa-edit small-margin"></i></a><span> open the article in a new tab</span></p>
-          <p><i class="fa fa-thumbtack small-margin"></i><span> this article is successfully linked to predecessor</span></p>
-          <p><i class="fa fa-stop small-margin text-warning"></i><span> this article contains a non working predecessor link.</span></p>
-          <p><span>(*)</span><span> Number of unsolved comments for a language (ignoring no translation comments)</span></p>
-          <h2>Filter Explanation</h2>
-          <h4>Disable Written Articles</h4>
-          <p>
-            This filter disables all articles, that have already a text in the main (=left) language.
-            Use this filter to come quick to the articles, that needs to be written to be published.
-          </p>
-          <h4>Disable More Actual Edits</h4>
-          <p>
-            This filter disables all articles, where the markdown on the left hand is newer than the markdown on the right hand.
-            Use this, to check wether there are relevant changes in the markdown on the right column during translation.
-          </p>
-          <h4>Disable Own Collections</h4>
-          <p>Use this to disable all collections, where you have contributed to.</p>
-          <h4>Disable Other Collections</h4>
-          <p>
-            This can be used to focus on your own collections, so that you can easily add your
-            Ideas from collection process.
-          </p>
-        <p></p>
-        <div class="row">
-          <div class="col-md-8"></div>
-          <div class="col-md-1">
-            <p><a href="/changes/log?blog=WN251&amp;table=blog">[changes]</a></p>
-          </div>
-          <div class="col-md-1">
-            <p><a href="/blog/WN251/stat">[Statistic]</a></p>
-          </div>
-          <div class="col-md-2">
-            <p><a id="editBlogDetail" href="/blog/edit/WN251">[Edit Blog Detail]</a></p>
-          </div>
-        </div>
+        </tbody>
+      </table>
+      <p class="row" id="filter"></p>
+      <h2>Options</h2>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <p>Left Col.: </p>
+            </td>
+            <td><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showNumbers" onclick="window.setUserConfig({view:'overview',option:'showNumbers',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show editor numbers, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showMail" onclick="window.setUserConfig({view:'overview',option:'showMail',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show mail, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showVisibleLanguages" onclick="window.setUserConfig({view:'overview',option:'showVisibleLanguages',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show languages(short)</label></div></span></td>
+          </tr>
+          <tr>
+            <td>
+              <p class="d-none d-md-block">Right Col.:</p>
+            </td>
+            <td><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showCollector" onclick="window.setUserConfig({view:'overview',option:'showCollector',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show collector, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showEditor" onclick="window.setUserConfig({view:'overview',option:'showEditor',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show editor , </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showColoredUser" onclick="window.setUserConfig({view:'overview',option:'showColoredUser',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show users colored, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showLanguages" onclick="window.setUserConfig({view:'overview',option:'showLanguages',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show languages</label></div></span></td>
+          </tr>
+          <tr>
+            <td>
+              <p>Display Votes</p>
+            </td>
+            <td><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showVote_pro" onclick="window.setUserConfig({view:'overview',option:'showVote_pro',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show pro, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showVote_unpublish" onclick="window.setUserConfig({view:'overview',option:'showVote_unpublish',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show unpublish, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showVote_fav" onclick="window.setUserConfig({view:'overview',option:'showVote_fav',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show fav, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_showVote_doit" onclick="window.setUserConfig({view:'overview',option:'showVote_doit',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> show doit, </label></div></span></td>
+          </tr>
+          <tr>
+            <td>
+              <p>Filter: </p>
+            </td>
+            <td><span style="white-space: nowrap"><div class="form-group form-check" name="choose_disableWritten" onclick="window.setUserConfig({view:'overview',option:'disableWritten',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> disable written articles, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_disableNewerMarkdown" onclick="window.setUserConfig({view:'overview',option:'disableNewerMarkdown',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> disable more actual edits, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_disableOwnCollection" onclick="window.setUserConfig({view:'overview',option:'disableOwnCollection',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> disable own collections, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_disableOtherCollection" onclick="window.setUserConfig({view:'overview',option:'disableOtherCollection',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> disable other collections, </label></div></span><span style="white-space: nowrap"><div class="form-group form-check" name="choose_disableSolvedComments" onclick="window.setUserConfig({view:'overview',option:'disableSolvedComments',value:'true'});"><input class="form-check-input" id="exampleCheck1" type="checkbox"><label class="form-check-label" for="exampleCheck1"> disable No or Solved Comments</label></div></span></td>
+          </tr>
+        </tbody>
+      </table>
       <p></p>
-    </div>
-    <!-- /container-->
+      <p class="row"></p>
+      <h2>Symbol Legend</h2>
+      <p><span class="badge osmbclabel-collect small-margin">X</span><span> = number of collectors </span></p>
+      <p><span class="badge osmbclabel-collect small-margin">username</span><span> = collector of article </span></p>
+      <p><span class="badge osmbclabel-markdown small-margin">X</span><span> = number of editors in shown language</span></p>
+      <p><span class="badge osmbclabel-markdown small-margin">username</span><span> = Editor of article</span></p>
+      <p><i class="fa fa-comment small-margin" style="color:blue"></i><span> = there is a comment in the article</span></p>
+      <p><i class="fa fa-comment small-margin" style="color:red"></i><span> = there is a comment with personal mention in the article</span></p>
+      <p><i class="fa fa-comment small-margin" style="color:orange"></i><span> = there is a comment with language mention in the article</span></p>
+      <p><a href="#" target="_blank"><i class="fa fa-edit small-margin"></i></a><span> open the article in a new tab</span></p>
+      <p><i class="fa fa-thumbtack small-margin"></i><span> this article is successfully linked to predecessor</span></p>
+      <p><i class="fa fa-stop small-margin text-warning"></i><span> this article contains a non working predecessor link.</span></p>
+      <p><span>(*)</span><span> Number of unsolved comments for a language (ignoring no translation comments)</span></p>
+      <h2>Filter Explanation</h2>
+      <h4>Disable Written Articles</h4>
+      <p>This filter disables all articles, that have already a text in the main (=left) language.
+        Use this filter to come quick to the articles, that needs to be written to be published.</p>
+      <h4>Disable More Actual Edits</h4>
+      <p>This filter disables all articles, where the markdown on the left hand is newer than the markdown on the right hand.
+        Use this, to check wether there are relevant changes in the markdown on the right column during translation.</p>
+      <h4>Disable Own Collections</h4>
+      <p>Use this to disable all collections, where you have contributed to.</p>
+      <h4>Disable Other Collections</h4>
+      <p>This can be used to focus on your own collections, so that you can easily add your
+        Ideas from collection process.</p>
+      <p></p>
+      <div class="row">
+        <div class="col-md-8"></div>
+        <div class="col-md-1">
+          <p><a href="/changes/log?blog=WN251&amp;table=blog">[changes]</a></p>
+        </div>
+        <div class="col-md-1">
+          <p><a href="/blog/WN251/stat">[Statistic]</a></p>
+        </div>
+        <div class="col-md-2">
+          <p><a id="editBlogDetail" href="/blog/edit/WN251">[Edit Blog Detail]</a></p>
+        </div>
+      </div>
+      <p></p>
+    </div><!-- /container-->
     <!-- Bootstrap core JavaScript-->
     <!-- ==================================================-->
     <!-- Placed at the end of the document so the pages load faster-->
@@ -414,158 +322,165 @@
     <script src="/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="/javascripts/osmbc_staff.js"></script>
-  
-
-
-  
     <title></title>
     <link rel="stylesheet" href="/stylesheets/style.css">
-  
-  
+    <script nonce="">
+      // Init This Window with jQuery ready Callback
+      $(document).ready(init2);
+      window.htmlroot = "";
 
-<script nonce="Fixed Nonce for Test">
-  // Init This Window with jQuery ready Callback
-  $(document).ready(init2);
-  window.htmlroot = "";
-  function init2() {
-    $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
-  }
-  
-  
-  
-  
-</script>
-<script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
-<script src="/bower_components/markdown-it-emoji/dist/markdown-it-emoji.min.js"></script>
-<script src="/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js"></script>
-<script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
-<script nonce="Fixed Nonce for Test">emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`JTdCJTIyc21pbGV5JTIyJTNBJTIyJTNBLSklMjIlN0Q=`)));
-  emojiList =     JSON.parse(decodeURIComponent(window.atob(`JTdCJTIyc21pbGV5JTIyJTNBJTIyJUYwJTlGJTk4JTgzJTIyJTJDJTIyZ2VybWFueSUyMiUzQSUyMiUzQ2ltZyUyMHNyYyUzRCU1QyUyMiUyRmxvY2FsTWVkaWFGT2xkZXIyMDE1JTJGZGUtYmxhY2suc3ZnJTVDJTIyJTIwJTJGJTNFJTIyJTdE`)));  
-  
-   
-  
-  var openEditor = null;
-  
-  window.onload = function () {
-    window.mdRender = window.markdownit();
-    
-    window.mdRender.use(window.markdownitEmoji, { defs: window.emojiList, shortcuts: window.emojiShortcut });
-    window.mdRender.use(window.markdownitSup);
-    window.mdRender.use(window["markdown-it-imsize.js"]);
-  
-    $(".preview").change(highlightWrongLinks);
-    highlightWrongLinks(window);
-  
-  
-    if (typeof(Storage) !== "undefined") {
-      if (window.sessionStorage.blogUrl !== window.location.href) return;
-      var x = window.sessionStorage.blogX;
-      var y = window.sessionStorage.blogY;
-      window.scrollTo(x, y);
-    }
-  }
-  
-  
-  
-  window.onbeforeunload = function (event) {
-    // store the scroll Position in the local Store
-    s = {x: window.scrollX, y: window.scrollY};
-  
-    if (typeof(Storage) !== "undefined") {
-  
-      window.sessionStorage.blogUrl = window.location.href;
-      window.sessionStorage.blogX = s.x;
-      window.sessionStorage.blogY = s.y;
-    }
-  };
-  
-  
-  
-  function onLeaveText(id,column) {
-    if (!column) column="";
-  
-    var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
-    var newValue = document.getElementById(column + "markdown" + id).value;
-    if (oldValue === newValue) return;
-    form = document.getElementById(column + 'EditArticle' + id);
-    form.submit();
-  }
-  
-  
-  function convert(text) {
-    
-  
-    // generate the OSMBlog Style List
-    if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
-    // convert md to html
-    text = window.mdRender.render(text);
-    // skip <ul> and </ul> at start and end
-  
-  
-    text = '<li>' + text + '</li>';
-  
-  
-    return text;
-  
-  }
-  function onchangeMarkdown(id,column) {
-    if (!column) column="";
-    var markdownField = document.getElementById(column + "markdown" + id);
-    var md = markdownField.value;
-    var pv = document.getElementById(column+"preview"+id);
-  
-  
-    pv.innerHTML = convert(md);
-    $(pv).trigger("change");
-  
-  }
-  
-  function callAndRedraw(call, redraw) {
-    $.get("" + call, function (data) {
-      let j = $.getJSON("" + redraw, function (json) {
-        for (k in json) {
-          var el = document.createElement("div");
-  
-          el.innerHTML = json[k];
-  
-          $(k).replaceWith(el.children[0]);
-          el.remove();
-  
+      function init2() {
+        $("#mailalert").animate({
+          height: '200px',
+          fontSize: "40px"
+        }, 1000)
+      }
+    </script>
+    <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
+    <script src="/bower_components/markdown-it-emoji/dist/markdown-it-emoji.min.js"></script>
+    <script src="/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js"></script>
+    <script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
+    <script nonce="">
+      emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`JTdCJTIyc21pbGV5JTIyJTNBJTIyJTNBLSklMjIlN0Q=`)));
+      emojiList = JSON.parse(decodeURIComponent(window.atob(`JTdCJTIyc21pbGV5JTIyJTNBJTIyJUYwJTlGJTk4JTgzJTIyJTJDJTIyZ2VybWFueSUyMiUzQSUyMiUzQ2ltZyUyMHNyYyUzRCU1QyUyMiUyRmxvY2FsTWVkaWFGT2xkZXIyMDE1JTJGZGUtYmxhY2suc3ZnJTVDJTIyJTIwJTJGJTNFJTIyJTdE`)));
+
+
+
+      var openEditor = null;
+
+      window.onload = function() {
+        window.mdRender = window.markdownit();
+
+        window.mdRender.use(window.markdownitEmoji, {
+          defs: window.emojiList,
+          shortcuts: window.emojiShortcut
+        });
+        window.mdRender.use(window.markdownitSup);
+        window.mdRender.use(window["markdown-it-imsize.js"]);
+
+        $(".preview").change(highlightWrongLinks);
+        highlightWrongLinks(window);
+
+
+        if (typeof(Storage) !== "undefined") {
+          if (window.sessionStorage.blogUrl !== window.location.href) return;
+          var x = window.sessionStorage.blogX;
+          var y = window.sessionStorage.blogY;
+          window.scrollTo(x, y);
         }
-      });
-    });
-  
-  }
-  
-  function translate(langFrom, langTo, service) {
-    $(".translate" + langFrom + langTo).addClass("d-none");
-    $(".translateWait" + langFrom + langTo).removeClass("d-none");
-    var from =  langFrom.toLowerCase();
-    var to = langTo.toLowerCase();
-  
-    let url =window.htmlroot + "/blog/WN251/translate/" + service + "/" + from + "/" + to;
-  
-  
-  
-    jQuery.post(window.htmlroot + "/blog/WN251/translate/" + service + "/" + from + "/" + to, function (data) {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Translation failed");
-      console.error(err);
-      $(".translateWait" + langFrom + langTo).addClass("d-none");
-      $(".translateError" + langFrom + langTo).removeClass("d-none");
-    });
-  } 
-      
-  function setLangStatus(lang, status,button) {
-    $(button).prop('disabled', true);
-    $(button).prop('html', "wait ...");
-    jQuery.post(window.htmlroot + "/blog/WN251/setLangStatus",{action:status,lang:lang}, function (data) {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Trouble setting Language Status");
-      console.error(err);
-    });
-  
-  }
-</script></body></html>
+      }
+
+
+
+      window.onbeforeunload = function(event) {
+        // store the scroll Position in the local Store
+        s = {
+          x: window.scrollX,
+          y: window.scrollY
+        };
+
+        if (typeof(Storage) !== "undefined") {
+
+          window.sessionStorage.blogUrl = window.location.href;
+          window.sessionStorage.blogX = s.x;
+          window.sessionStorage.blogY = s.y;
+        }
+      };
+
+
+
+      function onLeaveText(id, column) {
+        if (!column) column = "";
+
+        var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
+        var newValue = document.getElementById(column + "markdown" + id).value;
+        if (oldValue === newValue) return;
+        form = document.getElementById(column + 'EditArticle' + id);
+        form.submit();
+      }
+
+
+      function convert(text) {
+
+
+        // generate the OSMBlog Style List
+        if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
+        // convert md to html
+        text = window.mdRender.render(text);
+        // skip <ul> and </ul> at start and end
+
+
+        text = '<li>' + text + '</li>';
+
+
+        return text;
+
+      }
+
+      function onchangeMarkdown(id, column) {
+        if (!column) column = "";
+        var markdownField = document.getElementById(column + "markdown" + id);
+        var md = markdownField.value;
+        var pv = document.getElementById(column + "preview" + id);
+
+
+        pv.innerHTML = convert(md);
+        $(pv).trigger("change");
+
+      }
+
+      function callAndRedraw(call, redraw) {
+        $.get("" + call, function(data) {
+          let j = $.getJSON("" + redraw, function(json) {
+            for (k in json) {
+              var el = document.createElement("div");
+
+              el.innerHTML = json[k];
+
+              $(k).replaceWith(el.children[0]);
+              el.remove();
+
+            }
+          });
+        });
+
+      }
+
+      function translate(langFrom, langTo, service) {
+        $(".translate" + langFrom + langTo).addClass("d-none");
+        $(".translateWait" + langFrom + langTo).removeClass("d-none");
+        var from = langFrom.toLowerCase();
+        var to = langTo.toLowerCase();
+
+        let url = window.htmlroot + "/blog/WN251/translate/" + service + "/" + from + "/" + to;
+
+
+
+        jQuery.post(window.htmlroot + "/blog/WN251/translate/" + service + "/" + from + "/" + to, function(data) {
+          location.reload();
+        }).fail(function(err) {
+          console.error("Translation failed");
+          console.error(err);
+          $(".translateWait" + langFrom + langTo).addClass("d-none");
+          $(".translateError" + langFrom + langTo).removeClass("d-none");
+        });
+      }
+
+      function setLangStatus(lang, status, button) {
+        $(button).prop('disabled', true);
+        $(button).prop('html', "wait ...");
+        jQuery.post(window.htmlroot + "/blog/WN251/setLangStatus", {
+          action: status,
+          lang: lang
+        }, function(data) {
+          location.reload();
+        }).fail(function(err) {
+          console.error("Trouble setting Language Status");
+          console.error(err);
+        });
+
+      }
+    </script>
+  </body>
+
+</html>

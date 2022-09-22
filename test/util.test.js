@@ -14,15 +14,15 @@ const testutil = require("../test/testutil.js");
 
 /* eslint-disable mocha/no-synchronous-tests */
 describe("util", function() {
-  var data;
+  let data;
   before(function() {
-    var file =  path.resolve(__dirname, "data", "util.data.json");
+    const file =  path.resolve(__dirname, "data", "util.data.json");
     data = JSON.parse(fs.readFileSync(file));
   });
   describe("shorten", function () {
     it("should return empty string for undefined", function(bddone) {
       should(util.shorten()).equal("");
-      var t;
+      let t;
       should(util.shorten(t)).equal("");
       should(util.shorten(t, 25)).equal("");
       bddone();
@@ -62,12 +62,12 @@ describe("util", function() {
   });
   describe("isURL", function() {
     it("should recognise some urls", function() {
-      for (var i = 0; i < data.isURLArray.length; i++) {
+      for (let i = 0; i < data.isURLArray.length; i++) {
         should(util.isURL(data.isURLArray[i])).is.True();
       }
     });
     it("should sort Not Urls out", function() {
-      for (var i = 0; i < data.isNoURLArray.length; i++) {
+      for (let i = 0; i < data.isNoURLArray.length; i++) {
         should(util.isURL(data.isNoURLArray[i])).is.False();
       }
     });
@@ -87,7 +87,7 @@ describe("util", function() {
       should(util.getAllURL("Some Text")).eql([]);
     });
     it("should return one url for a 'collection'", function() {
-      for (var i = 0; i < data.isURLArray.length; i++) {
+      for (let i = 0; i < data.isURLArray.length; i++) {
         const url = data.isURLArray[i];
         should(util.getAllURL(url)).eql([url]);
         should(util.getAllURL(url + "\n ")).eql([url]);
@@ -95,7 +95,7 @@ describe("util", function() {
       }
     });
     it("should return several url for a 'collection'", function() {
-      for (var i = 0; i < data.isURLArray.length - 1; i++) {
+      for (let i = 0; i < data.isURLArray.length - 1; i++) {
         const url1 = data.isURLArray[i];
         const url2 = data.isURLArray[i + 1];
         should(util.getAllURL(url1 + " " + url2)).eql([url1, url2]);
@@ -124,20 +124,20 @@ describe("util", function() {
       should(util.md_render(null)).eql("");
     });
     it("should convert a simple link", function() {
-      var r = util.md_render("http://www.google.de/hallo");
+      const r = util.md_render("http://www.google.de/hallo");
       should(r).eql('<p><a target="_blank" href="http://www.google.de/hallo">http://www.google.de/hallo</a></p>\n');
     });
     it("should convert a simple link at the end", function() {
-      var r = util.md_render("*italic* http://www.google.de/hallo");
+      const r = util.md_render("*italic* http://www.google.de/hallo");
       should(r).eql("<p><em>italic</em> <a target=\"_blank\" href=\"http://www.google.de/hallo\">http://www.google.de/hallo</a></p>\n");
     });
     it("should convert a simple link at the start and ignore a MD LInk", function() {
-      var r = util.md_render("http://www.google.de/hallo is a synonym for [this](https://www.google.de/hallo2)");
+      const r = util.md_render("http://www.google.de/hallo is a synonym for [this](https://www.google.de/hallo2)");
       should(r).eql('<p><a target="_blank" href="http://www.google.de/hallo">http://www.google.de/hallo</a> is a synonym for <a target="_blank" href="https://www.google.de/hallo2">this</a></p>\n');
     });
     it("should render a shorted link", function() {
       const r = util.md_render("this is a link #1928 to an article");
-      should(r).eql("<p>this is a link <a target=\"_blank\" href=\"https://localhost:35043/article/1928\">#1928</a> to an article</p>\n");
+      should(r).eql("<p>this is a link <a target=\"_blank\" href=\"http://localhost:35043/article/1928\">#1928</a> to an article</p>\n");
     });
     it("should render user names", function() {
       const r = util.md_render("@thefive is telling @user1 about @user2", { TheFive: "full", user1: "denied", user2: "guest" });
@@ -187,14 +187,13 @@ describe("util", function() {
     });
   });
   describe("util.osmbcMarkdown Renderer", function() {
-    before(async function(){
+    before(async function() {
       await testutil.clearDB();
       await initialise.initialiseModules();
     });
-    it("should render emojies",function() {
-      const markdown=mdUtil.osmbcMarkdown();
+    it("should render emojies", function() {
+      const markdown = mdUtil.osmbcMarkdown();
       should(markdown.render(":smiley: with a shortcut :-)")).eql("<p>😃 with a shortcut 😃</p>\n");
-
     });
   });
 });

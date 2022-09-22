@@ -58,7 +58,7 @@
   "ReviewInWP":["DE"],
   "EmailSender":"noreply@gmail.com",
   "cookieMaxAge": 10000,
-  "url":"https://localhost:35043",
+  "url":"http://localhost:35043",
   "SMTP":{},
   "apiKey":"testapikey",
   "apiKey.TBC":"testapikey.TBC",

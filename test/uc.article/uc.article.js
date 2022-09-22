@@ -19,7 +19,7 @@ var maxTimer = 20000;
 
 
 
-describe("uc.article", function() {
+describe.skip("uc.article", function() {
   this.timeout(10000);
   var browser;
   var articleId;

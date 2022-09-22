@@ -1,26 +1,28 @@
-"use strict;"
+"use strict;";
 
-const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
+const { By } = require("selenium-webdriver");
 
-const {osmbcLink, sleep} = require("../../util/util.js");
-  
-const Page = require ('./page.js');
-  
-class LoginChooserPage extends Page{
-  
-    constructor(driver) { 
-      super(driver);
-    }
-    async isPage() {
-      return (await checkUrl(osmbcLink("/login")))
-    }
+const { osmbcLink } = require("../../util/util.js");
 
-    async assertPage() {
-      await this._assertUrl(osmbcLink("/login"));
-    }
-    async clickHtAccessLogin() {
-      const button = await this._driver.findElement(By.id('htaccesLoginButton'));
-      await button.click();
-    }
+const Page = require("./page.js");
+
+class LoginChooserPage extends Page {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(driver) {
+    super(driver);
   }
+
+  async isPage() {
+    return (await this._checkUrl(osmbcLink("/login")));
+  }
+
+  async assertPage() {
+    await this._assertUrl(osmbcLink("/login"));
+  }
+
+  async clickHtAccessLogin() {
+    const button = await this._driver.findElement(By.id("htaccesLoginButton"));
+    await button.click();
+  }
+}
 module.exports = LoginChooserPage;

@@ -12,6 +12,8 @@ const debug        = require("debug")("OSMBC:app");
 
 const session      = require("express-session");
 const compression  = require("compression");
+const pug          = require("pug");
+const HttpStatus   = require("http-status-codes");
 
 const helmet       = require("helmet");
 const crypto       = require("crypto");
@@ -232,69 +234,31 @@ app.use(function(req, res, next) {
 
 
 
-// development error handler
-// will print stacktrace
-if (app.get("env") === "development") {
-  debug("Set development error hander");
-  app.locals.pretty = true;
-  /* jshint -W098 */
-  app.use(function(err, req, res, next) {
-    debug("app.use Error Handler for Debug");
-    logger.error(err.toString());
-    logger.error(err.stack);
 
-    res.status(err.status || 500);
-    if (err.type && err.type === "API") return res.send(err.message);
-    res.render("error", {
-      message: err.message,
-      error: err,
-      nonce: res.locals.cspNonce,
-      layout: layoutConst
-    });
-  });
-  /* jshint +W098 */
-}
-
-
-// test error handler
-// will print stacktrace
-if (app.get("env") === "test") {
-  debug("Set test error hander");
-  app.locals.pretty = true;
-  /* jshint -W098 */
-  app.use(function(err, req, res, next) {
-    debug("app.use Error Handler for Debug");
-    res.status(err.status || 500);
-    logger.error("Error Message " + err.message);
-    logger.error(err.stack);
-    if (err.type && err.type === "API") return res.send(err.message + "\n" + JSON.stringify(err));
-    res.render("error", {
-      message: err.message,
-      error: err,
-      nonce: res.locals.cspNonce,
-      layout: layoutConst
-    });
-  });
-  /* jshint +W098 */
-}
-
-// production error handler
-// no stacktraces leaked to user
-/* jshint -W098 */
 app.use(function(err, req, res, next) {
-  debug("Set production error hander");
-  debug("app.use status function");
-  logger.error("Express Error Handler Function: Error Occured");
-  logger.error("error object:" + JSON.stringify(err));
+  debug("Express Error Handler");
+  logger.error("Error Message " + err.message);
+  if (app.get("env") !== "production") {
+    logger.error(err.stack);
+  }
   res.status(err.status || 500);
   if (err.type && err.type === "API") return res.send(err.message);
-  res.render("error", {
-    message: (err) ? err.message : "no err object",
-    error: { detail: (err) ? err.detail : "no err object" },
-    layout: layoutConst
-  });
+  try {
+    const errHtml = pug.renderFile(path.join(__dirname, "views", "error.pug"),
+      {
+        message: err.message ?? "no err message",
+        detail: err.detail ?? null,
+        error: (app.get("env") !== "production") ? err : null,
+        nonce: res.locals.cspNonce,
+        layout: layoutConst,
+        getReasonPhrase: HttpStatus.getReasonPhrase
+
+      });
+    res.send(errHtml);
+  } catch (err) { console.error(err); }
 });
-/* jshint +W098 */
+
+
 
 
 module.exports = app;

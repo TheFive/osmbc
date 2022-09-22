@@ -13,7 +13,7 @@ const initialise = require("../../util/initialise.js");
 
 
 
-describe("uc.access", function() {
+describe.skip("uc.access", function() {
   this.timeout(30000);
   let bTheFive = null;
   let bGuestUser = null;

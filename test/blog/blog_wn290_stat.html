@@ -1,27 +1,26 @@
-<html lang="en"><head>
+<html lang="en">
+
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title>WN290/statistic</title>
-    <!-- Bootstrap core CSS-->
+    <title>WN290/statistic</title><!-- Bootstrap core CSS-->
     <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   </head>
+
   <body>
     <!-- Fixed navbar-->
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar"><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
       <ul class="navbar-nav mr-auto"></ul>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a>
-          </li>
+          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
           <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge badge-pill badge-pill osmbcbadge-lang">2</span></a></li>
-          <li class="navbar-item active">
-          </li>
+          <li class="navbar-item active"></li>
           <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/WN290">WN290<span class="badge badge-pill osmbcbadge-lang">0</span><span class="badge badge-pill osmbcbadge-lang2">0</span></a></li>
           <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
             <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
@@ -50,8 +49,7 @@
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a><a class="dropdown-item" id="lang2_ES" onclick="chooseLanguage('lang2','ES')">ES</a>
               <div class="dropdown-divider"></div>
               <form class="p-1">
-                <div class="form-group">
-                  <input class="input form-control" id="newSetToBeSaved" type="text">
+                <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
                   <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
                 </div>
               </form>
@@ -62,328 +60,326 @@
       </div>
     </nav>
     <div class="container-fluid">
-      <p>
-        </p><p class="row"> 
-          </p><h1>Progress Overview</h1>
-          <table>
-            <tbody><tr>
-              <td style="width:40px">
-                <div class="badge badge-secondary" style="color:white">DE</div>
-              </td>
-              <td>
-                <div class="progress">
-                  <div class="progress-bar progress-bar bg-success" style="width:952%">60</div>
-                  <div class="progress-bar progress-bar-bg-danger" style="width:0%">0</div>
-                  <div class="progress-bar progress-bar bg-info" style="width:47%">3</div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td style="width:40px">
-                <div class="badge badge-secondary" style="color:white">EN</div>
-              </td>
-              <td>
-                <div class="progress">
-                  <div class="progress-bar progress-bar bg-success" style="width:793%">50</div>
-                  <div class="progress-bar progress-bar-bg-danger" style="width:0%">0</div>
-                  <div class="progress-bar progress-bar bg-info" style="width:206%">13</div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td style="width:40px">
-                <div class="badge badge-secondary" style="color:white">ES</div>
-              </td>
-              <td>
-                <div class="progress">
-                  <div class="progress-bar progress-bar bg-success" style="width:793%">50</div>
-                  <div class="progress-bar progress-bar-bg-danger" style="width:0%">0</div>
-                  <div class="progress-bar progress-bar bg-info" style="width:206%">13</div>
-                </div>
-              </td>
-            </tr>
-          </tbody></table>
-        <p></p>
-        <div class="row">
-          <h1>Blog Statistics for WN290</h1>
-        </div>
-        <div class="row">
-          <h1>Table of Collections, Edits &amp; Review Counts Full User</h1>
-          <table class="table table-header-rotated" style="width:auto">
-            <thead>
-              <tr>
-                <th></th>
-                <th class="column criterion rotate-45">
-                  <div><span>Alexandre Magno</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>Katja Ulbert</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>Laura Barroso</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>Nakaner</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>Peda</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>Rogehm</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>SomeoneElse</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>TheFive</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>Ziltoidium</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>aalih</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>bogzab</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>derFred</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>elpbatista</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>escada</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>jinalfoflia</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>malenki</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>mgehling</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>stephan75</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>wambacher</span></div>
-                </th>
-                <th class="column criterion rotate-45">
-                  <div><span>widedangel</span></div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th class="row-header">collection</th>
-                <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=collection%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=collection%">3</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=collection%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=collection%">8</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=collection%">9</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=collection%">10</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=collection%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=collection%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=collection%">8</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=collection%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=collection%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=collection%">17</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=collection%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=collection%">6</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=collection%">4</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=collection%">3</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=collection%">7</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=collection%">6</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=collection%">2</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=collection%"></a></td>
-              </tr>
-              <tr>
-                <th class="row-header">comment</th>
-                <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=comment%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=comment%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=comment%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=comment%">3</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=comment%">20</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=comment%">7</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=comment%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=comment%">3</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=comment%">2</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=comment%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=comment%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=comment%">5</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=comment%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=comment%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=comment%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=comment%">2</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=comment%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=comment%">4</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=comment%">2</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=comment%">1</a></td>
-              </tr>
-              <tr>
-                <th class="row-header">markdownDE</th>
-                <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=markdownDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=markdownDE%">3</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=markdownDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=markdownDE%">19</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=markdownDE%">32</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=markdownDE%">8</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=markdownDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=markdownDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=markdownDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=markdownDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=markdownDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=markdownDE%">10</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=markdownDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=markdownDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=markdownDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=markdownDE%">3</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=markdownDE%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=markdownDE%">8</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=markdownDE%">17</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=markdownDE%"></a></td>
-              </tr>
-              <tr>
-                <th class="row-header">reviewCommentDE</th>
-                <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=reviewCommentDE%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=reviewCommentDE%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=reviewCommentDE%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=reviewCommentDE%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=reviewCommentDE%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=reviewCommentDE%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=reviewCommentDE%"></a></td>
-              </tr>
-              <tr>
-                <th class="row-header">markdownEN</th>
-                <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=markdownEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=markdownEN%">3</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=markdownEN%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=markdownEN%">10</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=markdownEN%">16</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=markdownEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=markdownEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=markdownEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=markdownEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=markdownEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=markdownEN%">4</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=markdownEN%">20</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=markdownEN%">2</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=markdownEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=markdownEN%">19</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=markdownEN%">2</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=markdownEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=markdownEN%">4</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=markdownEN%">2</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=markdownEN%">6</a></td>
-              </tr>
-              <tr>
-                <th class="row-header">reviewCommentEN</th>
-                <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=reviewCommentEN%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=reviewCommentEN%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=reviewCommentEN%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=reviewCommentEN%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=reviewCommentEN%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=reviewCommentEN%"></a></td>
-              </tr>
-              <tr>
-                <th class="row-header">markdownES</th>
-                <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=markdownES%">25</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=markdownES%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=markdownES%">9</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=markdownES%">11</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=markdownES%">22</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=markdownES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=markdownES%"></a></td>
-              </tr>
-              <tr>
-                <th class="row-header">reviewCommentES</th>
-                <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=reviewCommentES%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=reviewCommentES%">1</a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=reviewCommentES%"></a></td>
-                <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=reviewCommentES%"></a></td>
-              </tr>
-            </tbody>
-          </table>
-          <h1>Table of Collections, Edits &amp; Review Counts Guests</h1>
-          <table class="table table-header-rotated" style="width:auto">
-            <thead>
-              <tr>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-        <row>
-          <h2>Hint for the statistic table</h2>
-          <p>
-            This table counts the number of property changes for an article in a blog. 
-            The referenced links show the articles (may be less than edits), that were
-            changed by the user with the property.
-          </p>
-        </row>
       <p></p>
-    </div>
-    <!-- /container-->
+      <p class="row"> </p>
+      <h1>Progress Overview</h1>
+      <table>
+        <tbody>
+          <tr>
+            <td style="width:40px">
+              <div class="badge badge-secondary" style="color:white">DE</div>
+            </td>
+            <td>
+              <div class="progress">
+                <div class="progress-bar progress-bar bg-success" style="width:952%">60</div>
+                <div class="progress-bar progress-bar-bg-danger" style="width:0%">0</div>
+                <div class="progress-bar progress-bar bg-info" style="width:47%">3</div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:40px">
+              <div class="badge badge-secondary" style="color:white">EN</div>
+            </td>
+            <td>
+              <div class="progress">
+                <div class="progress-bar progress-bar bg-success" style="width:793%">50</div>
+                <div class="progress-bar progress-bar-bg-danger" style="width:0%">0</div>
+                <div class="progress-bar progress-bar bg-info" style="width:206%">13</div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:40px">
+              <div class="badge badge-secondary" style="color:white">ES</div>
+            </td>
+            <td>
+              <div class="progress">
+                <div class="progress-bar progress-bar bg-success" style="width:793%">50</div>
+                <div class="progress-bar progress-bar-bg-danger" style="width:0%">0</div>
+                <div class="progress-bar progress-bar bg-info" style="width:206%">13</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p></p>
+      <div class="row">
+        <h1>Blog Statistics for WN290</h1>
+      </div>
+      <div class="row">
+        <h1>Table of Collections, Edits &amp; Review Counts Full User</h1>
+        <table class="table table-header-rotated" style="width:auto">
+          <thead>
+            <tr>
+              <th></th>
+              <th class="column criterion rotate-45">
+                <div><span>Alexandre Magno</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>Katja Ulbert</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>Laura Barroso</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>Nakaner</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>Peda</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>Rogehm</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>SomeoneElse</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>TheFive</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>Ziltoidium</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>aalih</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>bogzab</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>derFred</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>elpbatista</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>escada</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>jinalfoflia</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>malenki</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>mgehling</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>stephan75</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>wambacher</span></div>
+              </th>
+              <th class="column criterion rotate-45">
+                <div><span>widedangel</span></div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="row-header">collection</th>
+              <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=collection%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=collection%">3</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=collection%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=collection%">8</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=collection%">9</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=collection%">10</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=collection%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=collection%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=collection%">8</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=collection%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=collection%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=collection%">17</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=collection%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=collection%">6</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=collection%">4</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=collection%">3</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=collection%">7</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=collection%">6</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=collection%">2</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=collection%"></a></td>
+            </tr>
+            <tr>
+              <th class="row-header">comment</th>
+              <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=comment%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=comment%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=comment%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=comment%">3</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=comment%">20</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=comment%">7</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=comment%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=comment%">3</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=comment%">2</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=comment%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=comment%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=comment%">5</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=comment%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=comment%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=comment%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=comment%">2</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=comment%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=comment%">4</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=comment%">2</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=comment%">1</a></td>
+            </tr>
+            <tr>
+              <th class="row-header">markdownDE</th>
+              <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=markdownDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=markdownDE%">3</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=markdownDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=markdownDE%">19</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=markdownDE%">32</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=markdownDE%">8</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=markdownDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=markdownDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=markdownDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=markdownDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=markdownDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=markdownDE%">10</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=markdownDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=markdownDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=markdownDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=markdownDE%">3</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=markdownDE%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=markdownDE%">8</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=markdownDE%">17</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=markdownDE%"></a></td>
+            </tr>
+            <tr>
+              <th class="row-header">reviewCommentDE</th>
+              <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=reviewCommentDE%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=reviewCommentDE%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=reviewCommentDE%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=reviewCommentDE%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=reviewCommentDE%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=reviewCommentDE%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=reviewCommentDE%"></a></td>
+            </tr>
+            <tr>
+              <th class="row-header">markdownEN</th>
+              <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=markdownEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=markdownEN%">3</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=markdownEN%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=markdownEN%">10</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=markdownEN%">16</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=markdownEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=markdownEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=markdownEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=markdownEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=markdownEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=markdownEN%">4</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=markdownEN%">20</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=markdownEN%">2</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=markdownEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=markdownEN%">19</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=markdownEN%">2</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=markdownEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=markdownEN%">4</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=markdownEN%">2</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=markdownEN%">6</a></td>
+            </tr>
+            <tr>
+              <th class="row-header">reviewCommentEN</th>
+              <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=reviewCommentEN%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=reviewCommentEN%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=reviewCommentEN%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=reviewCommentEN%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=reviewCommentEN%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=reviewCommentEN%"></a></td>
+            </tr>
+            <tr>
+              <th class="row-header">markdownES</th>
+              <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=markdownES%">25</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=markdownES%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=markdownES%">9</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=markdownES%">11</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=markdownES%">22</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=markdownES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=markdownES%"></a></td>
+            </tr>
+            <tr>
+              <th class="row-header">reviewCommentES</th>
+              <td><a href="/article/list?blog=WN290&amp;user=Alexandre Magno&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Katja Ulbert&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Laura Barroso&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Nakaner&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Peda&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Rogehm&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=SomeoneElse&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=TheFive&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=Ziltoidium&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=aalih&amp;property=reviewCommentES%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=bogzab&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=derFred&amp;property=reviewCommentES%">1</a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=elpbatista&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=escada&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=jinalfoflia&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=malenki&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=mgehling&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=stephan75&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=wambacher&amp;property=reviewCommentES%"></a></td>
+              <td><a href="/article/list?blog=WN290&amp;user=widedangel&amp;property=reviewCommentES%"></a></td>
+            </tr>
+          </tbody>
+        </table>
+        <h1>Table of Collections, Edits &amp; Review Counts Guests</h1>
+        <table class="table table-header-rotated" style="width:auto">
+          <thead>
+            <tr>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <row>
+        <h2>Hint for the statistic table</h2>
+        <p>This table counts the number of property changes for an article in a blog.
+          The referenced links show the articles (may be less than edits), that were
+          changed by the user with the property.</p>
+      </row>
+      <p></p>
+    </div><!-- /container-->
     <!-- Bootstrap core JavaScript-->
     <!-- ==================================================-->
     <!-- Placed at the end of the document so the pages load faster-->
@@ -391,24 +387,20 @@
     <script src="/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="/javascripts/osmbc_staff.js"></script>
-  
-
-
-  
     <title></title>
     <link rel="stylesheet" href="/stylesheets/style.css">
-  
-  
+    <script nonce="">
+      // Init This Window with jQuery ready Callback
+      $(document).ready(init2);
+      window.htmlroot = "";
 
-<script nonce="Fixed Nonce for Test">
-  // Init This Window with jQuery ready Callback
-  $(document).ready(init2);
-  window.htmlroot = "";
-  function init2() {
-    $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
-  }
-  
-  
-  
-  
-</script></body></html>
+      function init2() {
+        $("#mailalert").animate({
+          height: '200px',
+          fontSize: "40px"
+        }, 1000)
+      }
+    </script>
+  </body>
+
+</html>

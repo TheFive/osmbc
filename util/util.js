@@ -130,6 +130,7 @@ exports.sleep = sleep;
 
 
 exports.osmbcLink = function(link) {
+  // warning this seems to be only implemented for tests
   const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
   return baseLink + link;
 };

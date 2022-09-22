@@ -2,20 +2,20 @@
 
 
 
-var should = require("should");
-var async = require("async");
+const should = require("should");
+const async = require("async");
 
 
-var testutil = require("./testutil.js");
+const testutil = require("./testutil.js");
 
-var articleModule = require("../model/article.js");
-var blogModule    = require("../model/blog.js");
-var slackReceiver = require("../notification/slackReceiver.js");
-var configModule  = require("../model/config.js");
+const articleModule = require("../model/article.js");
+const blogModule    = require("../model/blog.js");
+const slackReceiver = require("../notification/slackReceiver.js");
+const configModule  = require("../model/config.js");
 
 
 
-var nock = require("nock");
+const nock = require("nock");
 
 
 
@@ -43,12 +43,14 @@ describe("notification/slackReceiver", function() {
   });
   describe("articles", function() {
     it("should slack message, when collecting article", function (bddone) {
-      var slack = nock("https://hooks.slack.com/")
+      const slack = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/article/1|Test Title> added to <https://localhost:35043/blog/WN789|WN789>\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcarticle" }))
+          {
+            text: "<http://localhost:35043/article/1|Test Title> added to <http://localhost:35043/blog/WN789|WN789>\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcarticle"
+          }))
         .reply(200, "ok");
       articleModule.createNewArticle(function(err, article) {
         should.not.exist(err);
@@ -60,12 +62,14 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when changing a collection (with <..> in Title)", function (bddone) {
-      var slack = nock("https://hooks.slack.com/")
+      let slack = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/article/1|Test «..» «..» Title> added to <https://localhost:35043/blog/WN789|WN789>\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcarticle" }))
+          {
+            text: "<http://localhost:35043/article/1|Test «..» «..» Title> added to <http://localhost:35043/blog/WN789|WN789>\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcarticle"
+          }))
         .reply(200, "ok");
       articleModule.createNewArticle(function(err, article) {
         should.not.exist(err);
@@ -74,10 +78,12 @@ describe("notification/slackReceiver", function() {
           should(slack.isDone()).is.True();
           slack = nock("https://hooks.slack.com/")
             .post("/services/osmde", checkPostJson(
-              { "text": "<https://localhost:35043/article/1|Test «..» «..» Title> changed collection\n",
-                "username": "testbc(testuser)",
-                "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-                "channel": "#osmbcarticle" }))
+              {
+                text: "<http://localhost:35043/article/1|Test «..» «..» Title> changed collection\n",
+                username: "testbc(testuser)",
+                icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+                channel: "#osmbcarticle"
+              }))
             .reply(200, "ok");
           article.setAndSave({ OSMUser: "testuser" }, { version: 2, collection: "New Text was to short" }, function(err) {
             should.not.exist(err);
@@ -88,12 +94,14 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when adding comment", function (bddone) {
-      var slack = nock("https://hooks.slack.com/")
+      const slack = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/article/1|Test Title> added comment:\nInformation for @User3",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcarticle" }))
+          {
+            text: "<http://localhost:35043/article/1|Test Title> added comment:\nInformation for @User3",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcarticle"
+          }))
         .reply(200, "ok");
       articleModule.createNewArticle({ blog: "WN789", title: "Test Title" }, function(err, article) {
         should.not.exist(err);
@@ -105,23 +113,27 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when changing comment", function (bddone) {
-      var slack = nock("https://hooks.slack.com/")
+      const slack = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/article/1|Test Title> added comment:\nInformation for @User3",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcarticle" }))
+          {
+            text: "<http://localhost:35043/article/1|Test Title> added comment:\nInformation for @User3",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcarticle"
+          }))
         .reply(200, "ok");
       articleModule.createNewArticle({ blog: "WN789", title: "Test Title" }, function(err, article) {
         should.not.exist(err);
         article.addCommentFunction({ OSMUser: "testuser" }, "Information for @User3", function(err) {
           should.not.exist(err);
-          var slack2 = nock("https://hooks.slack.com/")
+          const slack2 = nock("https://hooks.slack.com/")
             .post("/services/osmde", checkPostJson(
-              { "text": "<https://localhost:35043/article/1|Test Title> changed comment:\nInformation for all",
-                "username": "testbc(testuser)",
-                "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-                "channel": "#osmbcarticle" }))
+              {
+                text: "<http://localhost:35043/article/1|Test Title> changed comment:\nInformation for all",
+                username: "testbc(testuser)",
+                icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+                channel: "#osmbcarticle"
+              }))
             .reply(200, "ok");
           article.editComment({ OSMUser: "testuser" }, 0, "Information for all", function(err) {
             should.not.exist(err);
@@ -135,19 +147,23 @@ describe("notification/slackReceiver", function() {
   });
   describe("blogs", function() {
     it("should slack message when creating a blog", function (bddone) {
-      var slack1 = nock("https://hooks.slack.com/")
+      const slack1 = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/blog/WN251|WN251> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
-      var slack2 = nock("https://hooks.slack.com/")
+      const slack2 = nock("https://hooks.slack.com/")
         .post("/services/theweeklyosm", checkPostJson(
-          { "text": "<https://localhost:35043/blog/WN251|WN251> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, function(err) {
         should.not.exist(err);
@@ -158,34 +174,42 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when change blog status", function (bddone) {
-      var slack1a = nock("https://hooks.slack.com/")
+      const slack1a = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/blog/WN251|WN251> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
-      var slack1b = nock("https://hooks.slack.com/")
+      const slack1b = nock("https://hooks.slack.com/")
         .post("/services/theweeklyosm", checkPostJson(
-          { "text": "<https://localhost:35043/blog/WN251|WN251> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, function(err, blog) {
-        var slack2a = nock("https://hooks.slack.com/")
+        const slack2a = nock("https://hooks.slack.com/")
           .post("/services/osmde", checkPostJson(
-            { "text": "<https://localhost:35043/blog/WN251|WN251> changed status to edit\n",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/WN251|WN251> changed status to edit\n",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
-        var slack2b = nock("https://hooks.slack.com/")
+        const slack2b = nock("https://hooks.slack.com/")
           .post("/services/theweeklyosm", checkPostJson(
-            { "text": "<https://localhost:35043/blog/WN251|WN251> changed status to edit\n",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/WN251|WN251> changed status to edit\n",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
         should.not.exist(err);
         blog.setAndSave({ OSMUser: "testuser" }, { status: "edit" }, function(err) {
@@ -201,34 +225,42 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when review status is set (no startreview)", function (bddone) {
-      var slack1a = nock("https://hooks.slack.com/")
+      const slack1a = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/blog/blog|blog> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
-      var slack1b = nock("https://hooks.slack.com/")
+      const slack1b = nock("https://hooks.slack.com/")
         .post("/services/theweeklyosm", checkPostJson(
-          { "text": "<https://localhost:35043/blog/blog|blog> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
-        var slack2a = nock("https://hooks.slack.com/")
+        const slack2a = nock("https://hooks.slack.com/")
           .post("/services/theweeklyosm", checkPostJson(
-            { "text": "<https://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed (, )",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed (, )",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
-        var slack2b = nock("https://hooks.slack.com/")
+        const slack2b = nock("https://hooks.slack.com/")
           .post("/services/osmde", checkPostJson(
-            { "text": "<https://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed ()",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed ()",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
         should.not.exist(err);
         blog.setReviewComment("ES", { OSMUser: "testuser" }, "I have reviewed", function(err) {
@@ -245,34 +277,42 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when review status is set (with startreview)", function (bddone) {
-      var slack1a = nock("https://hooks.slack.com/")
+      const slack1a = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/blog/blog|blog> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
-      var slack1b = nock("https://hooks.slack.com/")
+      const slack1b = nock("https://hooks.slack.com/")
         .post("/services/theweeklyosm", checkPostJson(
-          { "text": "<https://localhost:35043/blog/blog|blog> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit", "reviewCommentPT-PT": [{ timestamp: "__timestamp__" }] }, function(err, blog) {
-        var slack2a = nock("https://hooks.slack.com/")
+        const slack2a = nock("https://hooks.slack.com/")
           .post("/services/theweeklyosm", checkPostJson(
-            { "text": "<https://localhost:35043/blog/blog|blog>(PT-PT) has been reviewed: I have reviewed (<https://localhost:35043/changes/log?blog=blog&table=article&property=markdownPT-PT&date=GE:__timestamp__&user=testuser|User Review>, <https://localhost:35043/changes/log?blog=blog&table=article&property=markdownPT-PT&date=GE:__timestamp__|Full Review>)",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been reviewed: I have reviewed (<http://localhost:35043/changes/log?blog=blog&table=article&property=markdownPT-PT&date=GE:__timestamp__&user=testuser|User Review>, <http://localhost:35043/changes/log?blog=blog&table=article&property=markdownPT-PT&date=GE:__timestamp__|Full Review>)",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
-        var slack2b = nock("https://hooks.slack.com/")
+        const slack2b = nock("https://hooks.slack.com/")
           .post("/services/osmde", checkPostJson(
-            { "text": "<https://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed (<https://localhost:35043/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__| view changes>)",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed (<http://localhost:35043/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__| view changes>)",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
         should.not.exist(err);
         blog.setReviewComment("PT-PT", { OSMUser: "testuser" }, "I have reviewed", function(err) {
@@ -289,34 +329,42 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when review is marked as exported", function (bddone) {
-      var slack1a = nock("https://hooks.slack.com/")
+      const slack1a = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/blog/blog|blog> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
-      var slack1b = nock("https://hooks.slack.com/")
+      const slack1b = nock("https://hooks.slack.com/")
         .post("/services/theweeklyosm", checkPostJson(
-          { "text": "<https://localhost:35043/blog/blog|blog> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
-        var slack2a = nock("https://hooks.slack.com/")
+        const slack2a = nock("https://hooks.slack.com/")
           .post("/services/osmde", checkPostJson(
-            { "text": "<https://localhost:35043/blog/blog|blog>(DE) is exported to WordPress",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/blog|blog>(DE) is exported to WordPress",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
-        var slack2b = nock("https://hooks.slack.com/")
+        const slack2b = nock("https://hooks.slack.com/")
           .post("/services/theweeklyosm", checkPostJson(
-            { "text": "<https://localhost:35043/blog/blog|blog>(DE) is exported to WordPress",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/blog|blog>(DE) is exported to WordPress",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
         should.not.exist(err);
         blog.setReviewComment("DE", { OSMUser: "testuser" }, "markexported", function(err) {
@@ -333,34 +381,42 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when blog is closed", function (bddone) {
-      var slack1a = nock("https://hooks.slack.com/")
+      const slack1a = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/blog/blog|blog> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
-      var slack1b = nock("https://hooks.slack.com/")
+      const slack1b = nock("https://hooks.slack.com/")
         .post("/services/theweeklyosm", checkPostJson(
-          { "text": "<https://localhost:35043/blog/blog|blog> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
-        var slack2a = nock("https://hooks.slack.com/")
+        const slack2a = nock("https://hooks.slack.com/")
           .post("/services/osmde", checkPostJson(
-            { "text": "<https://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
-        var slack2b = nock("https://hooks.slack.com/")
+        const slack2b = nock("https://hooks.slack.com/")
           .post("/services/theweeklyosm", checkPostJson(
-            { "text": "<https://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
         should.not.exist(err);
         blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: true }, function(err) {
@@ -376,34 +432,42 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when blog is reopened", function (bddone) {
-      var slack1a = nock("https://hooks.slack.com/")
+      const slack1a = nock("https://hooks.slack.com/")
         .post("/services/osmde", checkPostJson(
-          { "text": "<https://localhost:35043/blog/blog|blog> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
-      var slack1b = nock("https://hooks.slack.com/")
+      const slack1b = nock("https://hooks.slack.com/")
         .post("/services/theweeklyosm", checkPostJson(
-          { "text": "<https://localhost:35043/blog/blog|blog> was created\n",
-            "username": "testbc(testuser)",
-            "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-            "channel": "#osmbcblog" }))
+          {
+            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            username: "testbc(testuser)",
+            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            channel: "#osmbcblog"
+          }))
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
-        var slack2a = nock("https://hooks.slack.com/")
+        const slack2a = nock("https://hooks.slack.com/")
           .post("/services/osmde", checkPostJson(
-            { "text": "<https://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
-        var slack2b = nock("https://hooks.slack.com/")
+        let slack2b = nock("https://hooks.slack.com/")
           .post("/services/theweeklyosm", checkPostJson(
-            { "text": "<https://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
-              "username": "testbc(testuser)",
-              "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-              "channel": "#osmbcblog" }))
+            {
+              text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
+              username: "testbc(testuser)",
+              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            }))
           .reply(200, "ok");
         should.not.exist(err);
         blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: true }, function(err) {
@@ -414,10 +478,12 @@ describe("notification/slackReceiver", function() {
           should(slack2b.isDone()).is.True();
           slack2b = nock("https://hooks.slack.com/")
             .post("/services/theweeklyosm", checkPostJson(
-              { "text": "<https://localhost:35043/blog/blog|blog>(PT-PT) has been reopened",
-                "username": "testbc(testuser)",
-                "icon_url": "https://localhost:35043/images/osmbc_im_logo.png",
-                "channel": "#osmbcblog" }))
+              {
+                text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been reopened",
+                username: "testbc(testuser)",
+                icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+                channel: "#osmbcblog"
+              }))
             .reply(200, "ok");
           blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: false }, function(err) {
             should.not.exist(err);

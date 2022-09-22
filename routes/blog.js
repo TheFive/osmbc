@@ -356,15 +356,14 @@ function setBlogStatus(req, res, next) {
 
   const lang = req.body.lang;
   const user = req.user;
+
   if (!req.blog) return next();
 
   function finalFunction(err) {
-    if (err) return next(err);
-    let referer =  config.htmlRoot() + "/osmbc";
-    if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
-      referer = req.header("Referer");
+    if (err) {
+      return next(err);
     }
-    res.redirect(referer);
+    res.send("OK");
   }
 
   // Start Review

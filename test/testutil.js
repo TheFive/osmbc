@@ -1,45 +1,46 @@
 "use strict";
 
-var should = require("should");
-var async  = require("async");
-var path   = require("path");
-var nock   = require("nock");
-var fs     = require("fs");
+const should = require("should");
+const async  = require("async");
+const path   = require("path");
+const nock   = require("nock");
+const fs     = require("fs");
+const pretty = require("pretty");
 
-var debug  = require("debug")("OSMBC:test:testutil");
 
-var http = require("http");
-var request = require("request");
-const axios = require('axios');
-const wrapper = require('axios-cookiejar-support').wrapper;
-const CookieJar = require( 'tough-cookie').CookieJar;
+const debug  = require("debug")("OSMBC:test:testutil");
+
+const http = require("http");
+const axios = require("axios");
+const wrapper = require("axios-cookiejar-support").wrapper;
+const CookieJar = require("tough-cookie").CookieJar;
 
 const LoginPage = require("../test/PageObjectModel/loginPage.js");
 const LoginChooserPage = require("../test/PageObjectModel/loginChooserPage.js");
 
-const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
-const {osmbcLink } = require("../util/util.js");
+const { Builder, Browser } = require("selenium-webdriver");
+const { osmbcLink } = require("../util/util.js");
 
-var config = require("../config.js");
+const config = require("../config.js");
 
-var app = require("../app.js");
+const app = require("../app.js");
 
-var pgMap = require("../model/pgMap.js");
-var db  = require("../model/db.js");
-var blogModule    = require("../model/blog.js");
-var articleModule = require("../model/article.js");
-var logModule     = require("../model/logModule.js");
-var userModule    = require("../model/user.js");
-var session       = require("../model/session.js");
-var configModule  = require("../model/config.js");
+const pgMap = require("../model/pgMap.js");
+const db  = require("../model/db.js");
+const blogModule    = require("../model/blog.js");
+const articleModule = require("../model/article.js");
+const logModule     = require("../model/logModule.js");
+const userModule    = require("../model/user.js");
+const session       = require("../model/session.js");
+const configModule  = require("../model/config.js");
 
-var mailReceiver   = require("../notification/mailReceiver.js");
-var messageCenter  = require("../notification/messageCenter.js");
+const mailReceiver   = require("../notification/mailReceiver.js");
+const messageCenter  = require("../notification/messageCenter.js");
 
 
-var xmldom = require("xmldom");
-var domparser = new (xmldom.DOMParser)();
-var domcompare = require("dom-compare").compare;
+const xmldom = require("xmldom");
+const domparser = new (xmldom.DOMParser)();
+const domcompare = require("dom-compare").compare;
 
 
 // set Test Standard to ignore prototypes for should
@@ -55,7 +56,7 @@ exports.getJsonWithId = function getJsonWithId(table, id, cb) {
   let result = null;
   db.query("select data from " + table + " where id = $1", [id], function(err, pgResult) {
     if (err) return cb(err);
-    if (pgResult.rows.length == 1) {
+    if (pgResult.rows.length === 1) {
       result = pgResult.rows[0].data;
     }
     return cb(null, result);
@@ -68,7 +69,7 @@ exports.getJsonWithId = function getJsonWithId(table, id, cb) {
 function internCreate() { return {}; }
 exports.findJSON = function findJSON(table, obj, cb) {
   debug("findJSON");
-  pgMap.findOne({table: table, create: internCreate}, obj, cb);
+  pgMap.findOne({ table: table, create: internCreate }, obj, cb);
 };
 
 // This function is used to clean up the tables in the test module
@@ -78,10 +79,9 @@ exports.findJSON = function findJSON(table, obj, cb) {
 // the function requires the test environment
 
 exports.clearDB = function clearDB(done) {
-  
   function _clearDB(done) {
     if (config.env !== "test") {
-      console.error("Running Tests with but environment is: ",config.env);
+      console.error("Running Tests with but environment is: ", config.env);
       console.error("Stopping to rescue database");
       process.exit(1);
     }
@@ -90,7 +90,7 @@ exports.clearDB = function clearDB(done) {
 
     mailReceiver.initialise([]);
 
-    var pgOptions = {dropTables: true, createTables: true, dropIndex: true, createIndex: true, dropView: true, createView: true};
+    const pgOptions = { dropTables: true, createTables: true, dropIndex: true, createIndex: true, dropView: true, createView: true };
     async.series([
       function(done) { config.initialise(done); },
       function(done) { pgMap.createTables(blogModule.pg, pgOptions, done); },
@@ -128,7 +128,7 @@ exports.importData = function importData(data, callback) {
   if (typeof data === "string") {
     data = JSON.parse(fs.readFileSync(path.resolve(__dirname, data), "UTF8"));
   }
-  var idReference = {blog: {}, article: {}, user: {}};
+  const idReference = { blog: {}, article: {}, user: {} };
 
   function _importData(data, callback) {
     async.series([
@@ -157,7 +157,7 @@ exports.importData = function importData(data, callback) {
         debug("importAllUsers");
         if (typeof (data.user) !== "undefined") {
           async.eachSeries(data.user, function importOneUser(d, cb) {
-            let id = d.id;
+            const id = d.id;
             delete d.id;
             userModule.createNewUser(d, function up(err, user) {
               if (err) return cb(err);
@@ -172,9 +172,9 @@ exports.importData = function importData(data, callback) {
         debug("importAllBlogs");
         if (typeof (data.blog) !== "undefined") {
           async.eachSeries(data.blog, function importOneBlog(d, cb) {
-            let id = d.id;
+            const id = d.id;
             delete d.id;
-            blogModule.createNewBlog({OSMUser: "test"}, d, true, function(err, blog) {
+            blogModule.createNewBlog({ OSMUser: "test" }, d, true, function(err, blog) {
               if (err) return cb(err);
               if (typeof (id) !== "undefined") idReference.blog[id] = blog.id;
               cb();
@@ -186,7 +186,7 @@ exports.importData = function importData(data, callback) {
         debug("importAllArticles");
         if (typeof (data.article) !== "undefined") {
           async.eachSeries(data.article, function importOneArticle(d, cb) {
-            let id = d.id;
+            const id = d.id;
             delete d.id;
             articleModule.createNewArticle(d, function(err, article) {
               if (err) return cb(err);
@@ -266,10 +266,10 @@ exports.checkData = function checkData(data, callback) {
       debug("checkAllArticles");
       if (typeof (data.article) !== "undefined") {
         async.each(data.article, function checkOneArticle(d, cb) {
-          var commentList = d.commentList;
-          var commentRead = d.commentRead;
-          var votes = d.votes;
-          var tags = d.tags;
+          const commentList = d.commentList;
+          const commentRead = d.commentRead;
+          const votes = d.votes;
+          const tags = d.tags;
           delete d.commentList;
           delete d.commentRead;
           delete d.votes;
@@ -325,15 +325,15 @@ exports.checkData = function checkData(data, callback) {
 // dom-compare offers an GroupingReporter to display the differences
 // in more detail.
 
-var HtmlDiffer = require("html-differ").HtmlDiffer,
-  htmlDiffer = new HtmlDiffer({});
+const HtmlDiffer = require("html-differ").HtmlDiffer;
+const htmlDiffer = new HtmlDiffer({});
 
 exports.equalHtml = function equalHtml(actualHTML, expectedHTML) {
-  let diff = (htmlDiffer.diffHtml(actualHTML, expectedHTML));
+  const diff = (htmlDiffer.diffHtml(actualHTML, expectedHTML));
 
-  if (diff.length == 1) return true;
+  if (diff.length === 1) return true;
 
-  let colors = require("colors/safe");
+  const colors = require("colors/safe");
   colors.enabled = true;
 
   diff.forEach(function(part) {
@@ -354,18 +354,17 @@ exports.equalHtml = function equalHtml(actualHTML, expectedHTML) {
 // callback with the filename to create one or several it() tests for it.
 exports.generateTests = function generateTests(datadir, fileregex, createTestFunction) {
   debug("generateTests");
-  var testdir = path.resolve(__dirname, datadir);
-  var fileList = fs.readdirSync(testdir);
-  for (var i = 0; i < fileList.length; i++) {
-    var filenameLong = path.resolve(testdir, fileList[i]);
+  const testdir = path.resolve(__dirname, datadir);
+  const fileList = fs.readdirSync(testdir);
+  for (let i = 0; i < fileList.length; i++) {
+    const filenameLong = path.resolve(testdir, fileList[i]);
     if (fs.statSync(filenameLong).isDirectory()) continue;
     if (!((fileList[i]).match(fileregex))) continue;
     createTestFunction(fileList[i]);
   }
 };
 
-var browser = null;
-var server = null;
+let server = null;
 
 
 
@@ -373,24 +372,7 @@ exports.startServerSync = function startServerSync() {
   debug("startServer");
   if (server) exports.stopServer();
   server = http.createServer(app).listen(config.getServerPort());
-
-  if (typeof userString === "undefined") {
-    return;
-  }
 };
-
-exports.startServer = function startServer(userString, callback) {
-  // console.warn("exports.startServer is deprecated");
-  if (typeof (userString) === "function") {
-    callback = userString;
-    userString = null;
-  }
-  exports.startServerSync(userString);
-  return callback();
-};
-
-
-
 
 
 
@@ -421,10 +403,10 @@ exports.doATest = function doATest(dataBefore, test, dataAfter, callback) {
 
 exports.nockHtmlPages = function nockHtmlPages() {
   debug("nockHtmlPages");
-  var file =  path.resolve(__dirname, "NockedPages", "NockedPages.json");
-  var nocks =  JSON.parse(fs.readFileSync(file));
-  for (let site in nocks) {
-    for (let page in nocks[site]) {
+  const file =  path.resolve(__dirname, "NockedPages", "NockedPages.json");
+  const nocks =  JSON.parse(fs.readFileSync(file));
+  for (const site in nocks) {
+    for (const page in nocks[site]) {
       nock(site)
         .get(page)
         .replyWithFile(200, path.resolve(__dirname, "NockedPages", nocks[site][page]));
@@ -436,8 +418,8 @@ exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
 };
 
 
-module.exports.expectHtmlSync = async function expectHtmlSync(driver, errorList, givenPath, name) {
-  const source = await driver.getPageSource();
+module.exports.expectHtml = async function expectHtml(driver, errorList, givenPath, name) {
+  const source = pretty(await driver.getPageSource());
   let stopOnError = false;
   if (!Array.isArray(errorList)) {
     stopOnError = true;
@@ -446,10 +428,19 @@ module.exports.expectHtmlSync = async function expectHtmlSync(driver, errorList,
     errorList = undefined;
   }
   let expected = "not read yet";
-  let expectedFile = path.join(__dirname, givenPath, name + ".html");
-  let actualFile   = path.join(__dirname, givenPath, name + "_actual.html");
+  const expectedFile = path.join(__dirname, givenPath, name + ".html");
+  const actualFile   = path.join(__dirname, givenPath, name + "_actual.html");
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
+    const expectedPretty = pretty(expected);
+    if (expectedPretty !== expected) {
+      if (process.env.TEST_HTML_PRETTY === "TRUE") {
+        fs.writeFileSync(expectedFile, expectedPretty, "UTF8");
+        expected = expectedPretty;
+      } else {
+        console.info(expectedFile + " in not pretty. Use TEST_HTML_PRETTY=TRUE to change while testing");
+      }
+    }
   } catch (err) {
     console.error(err);
   }
@@ -461,10 +452,10 @@ module.exports.expectHtmlSync = async function expectHtmlSync(driver, errorList,
 
     return;
   }
-  let expectedDom = domparser.parseFromString(expected);
-  let actualDom = domparser.parseFromString(source);
+  const expectedDom = domparser.parseFromString(expected);
+  const actualDom = domparser.parseFromString(source);
 
-  let result = domcompare(expectedDom, actualDom);
+  const result = domcompare(expectedDom, actualDom);
   if (result.getResult()) {
     if (process.env.TEST_RENAME_DOMEQUAL === "TRUE") {
       fs.writeFileSync(expectedFile, source, "UTF8");
@@ -508,7 +499,7 @@ process.on("unhandledRejection", (reason, p) => {
 
 
 function checkUrlWithUser(options) {
-  const client = getWrappedAxiosClient(); 
+  const client = getWrappedAxiosClient();
   return async function() {
     should.exist(options.username);
     should.exist(options.password);
@@ -516,14 +507,15 @@ function checkUrlWithUser(options) {
     should.exist(options.expectedMessage);
     should.exist(options.expectedStatusCode);
     try {
-      await client.post( osmbcLink( "/login"), { username: options.username, password: options.password });
-      let body = await client.get(options.url );
+      await client.post(osmbcLink("/login"), { username: options.username, password: options.password });
+      const body = await client.get(options.url);
 
-    
+
       body.data.should.containEql(options.expectedMessage);
-      should(body.status).eql(options.expectedStatusCode);  
+      should(body.status).eql(options.expectedStatusCode);
+    // eslint-disable-next-line no-empty
     } finally {}
-  }
+  };
 }
 
 function checkPostUrlWithUser(options) {
@@ -536,10 +528,11 @@ function checkPostUrlWithUser(options) {
     should.exist(options.expectedStatusCode);
     should.exist(options.form);
     try {
-      await client.post( osmbcLink("/login"), { username: options.username, password: options.password });
-      let body = await client.post(options.url, options.form );
+      await client.post(osmbcLink("/login"), { username: options.username, password: options.password });
+      const body = await client.post(options.url, options.form);
       body.data.should.containEql(options.expectedMessage);
       should(body.status).eql(options.expectedStatusCode);
+    // eslint-disable-next-line no-empty
     } finally {}
   };
 }
@@ -547,27 +540,28 @@ function checkPostUrlWithUser(options) {
 function getWrappedAxiosClient(options) {
   if (!options) options = {};
   const jar = new CookieJar();
-  return wrapper(axios.create({ jar ,validateStatus: () => true ,maxRedirects: (options.maxRedirects) ?? 0}));
+  return wrapper(axios.create({ jar, validateStatus: () => true, maxRedirects: (options.maxRedirects) ?? 0 }));
 }
 
 async function getNewDriver(username) {
   const driver = await new Builder().forBrowser(Browser.CHROME).build();
-    const loginPage = new LoginPage(driver);
-    const loginChooserPage = new LoginChooserPage(driver);
-    await driver.manage().setTimeouts( { implicit: 5000 } );
-    try {
-      await driver.get(osmbcLink( "/osmbc"));
-      await loginChooserPage.clickHtAccessLogin();
-      
-      
-      
-      await loginPage.assertPage();
-      await loginPage.typeUsername(username);
-      await loginPage.typePassword(username);
-      await loginPage.clickOK();
-    } catch(err) {
-      console.dir(err);
-    }finally {};
+  const loginPage = new LoginPage(driver);
+  const loginChooserPage = new LoginChooserPage(driver);
+  await driver.manage().setTimeouts({ implicit: 5000 });
+  try {
+    await driver.get(osmbcLink("/osmbc"));
+    await loginChooserPage.clickHtAccessLogin();
+
+
+
+    await loginPage.assertPage();
+    await loginPage.typeUsername(username);
+    await loginPage.typePassword(username);
+    await loginPage.clickOK();
+  } catch (err) {
+    console.dir(err);
+  // eslint-disable-next-line no-empty
+  } finally {};
   return driver;
 }
 

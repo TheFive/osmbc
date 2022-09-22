@@ -94,7 +94,7 @@ function chooseLanguageSet(set, action) {
     location.reload();
   }).fail(function (err) {
     console.error("Problem changing language set" + set + " Action " + action);
-    console.err(err);
+    console.error(err);
   });
 }
 

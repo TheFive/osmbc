@@ -12,6 +12,9 @@ const fs = require("fs");
 const userModule = require("../../model/user.js");
 const articleModule = require("../../model/article.js");
 const mailReceiver = require("../../notification/mailReceiver.js");
+const { osmbcLink } = require("../../util/util.js");
+
+const OsmbcApp  = require("../../test/PageObjectModel/osmbcApp.js");
 
 
 
@@ -20,181 +23,206 @@ const mailReceiver = require("../../notification/mailReceiver.js");
 
 describe("views/user", function() {
   this.timeout(300000);
-  let browser;
+  let driver;
   let mailChecker;
   beforeEach(async function() {
     mockdate.set("2015-11-05");
-    mailChecker = sinon.stub( mailReceiver.for_test_only.transporter,"sendMail")
-      .callsFake(function(obj, doit) { return doit(null, {response: "t"}); })
+    mailChecker = sinon.stub(mailReceiver.for_test_only.transporter, "sendMail")
+      .callsFake(function(obj, doit) { return doit(null, { response: "t" }); });
     await testutil.clearDB();
-    await userModule.createNewUser({OSMUser: "TheFive", access: "full"});
-    await articleModule.createNewArticle({blog: "blog", collection: "test"});
+    await userModule.createNewUser({ OSMUser: "TheFive", access: "full" });
+    await articleModule.createNewArticle({ blog: "blog", collection: "test" });
     testutil.startServerSync();
-    browser = await testutil.getNewBrowser("TheFive");
-    browser.evaluate(fs.readFileSync("./node_modules/timemachine/timemachine.js","UTF8"));
+    driver = await testutil.getNewDriver("TheFive");
+    driver.executeScript(fs.readFileSync("./node_modules/timemachine/timemachine.js", "UTF8"));
   });
-  afterEach(function(bddone) {
+  afterEach(async function() {
     mockdate.reset();
+    if (this.currentTest.state !== "failed") await driver.quit();
     mailChecker.restore();
-    testutil.stopServer(bddone);
+    testutil.stopServer();
   });
 
   it("should not be allowed creating a user twice", async function() {
     // TheFive logs in and creates user Test
-    await browser.visit("/osmbc/admin");
-    await browser.click("#createUser");
-    await browser.fill("OSMUser","test")
-      .select("language","DE")
-      .select("access","full")
-      .click("#save");
+    const osmbcApp = new OsmbcApp(driver);
+
+    const mainPage = osmbcApp.getMainPage();
+    await mainPage.assertPage();
+    await mainPage.clickLinkToAdminPage();
+
+    const adminPage = osmbcApp.getAdminPage();
+    await adminPage.assertPage();
+    await adminPage.clickCreateUserMenu();
+
+    const userPage = osmbcApp.getUserPage();
+    await userPage.assertPage();
+    await userPage.fillOSMUser("test");
+    await userPage.selectPrimaryLanguage("DE");
+    await userPage.selectAccess("full");
+    await userPage.clickSave();
+
 
     // TheFive creates the user test a second time
-    await browser.visit("/osmbc/admin");
-    await browser.click("#createUser");
+    await driver.get(osmbcLink("/osmbc/admin"));
+    await adminPage.assertPage();
+    await adminPage.clickCreateUserMenu();
+
 
     // clicking SAVE should result in an error
-    try {
-      await browser.fill("OSMUser","test")
-        .select("language","DE")
-        .select("access","full")
-        .click("#save");
-    } catch(err) {
-      should(err.cause.message).eql("Server returned status code 409 from http://localhost:35043/usert/3");
-      should(browser.html()).containEql("User &gt;test&lt; already exists");
-    }
+    await userPage.assertPage();
+    await userPage.fillOSMUser("test");
+    await userPage.selectPrimaryLanguage("DE");
+    await userPage.selectAccess("full");
+    await userPage.clickSave();
+
+    // test on error message missing
+    const errorPage = osmbcApp.getErrorPage();
+    await errorPage.assertPage();
+    should(await errorPage.getErrorTitle()).eql("User >test< already exists.");
+    should(await (errorPage.getErrorCode())).eql("409 Conflict");
   });
 
   it("should not change username, if user logged in", async function() {
+    const osmbcApp = new OsmbcApp(driver);
+    const mainPage = osmbcApp.getMainPage();
+    const adminPage = osmbcApp.getAdminPage();
+    const userPage = osmbcApp.getUserPage();
 
-    let errors = [];
+    const errors = [];
 
-    // MOck date in browser
-    browser.on("loaded",async (window ) => 
-    {
-      await browser.evaluate( `
-      ( (m) => {var __Date = Date; 
-        Date = undefined; 
-        Date = function() { return new __Date(m); }; 
-        Date.prototype = __Date.prototype;
-        Date.now = function(){return new Date().valueOf()}})
-        (new Date('2015-11-05'))`);
-    })
     // TheFive creates an user test
-    await browser.visit("/osmbc/admin");
-    await browser.click("#createUser");
-    await browser.fill("OSMUser","test")
-      .select("language","DE")
-      .select("access","full")
-      .click("#save");
+    await mainPage.assertPage();
+    await mainPage.clickLinkToAdminPage();
 
+    await adminPage.assertPage();
+    await adminPage.clickCreateUserMenu();
+
+    await userPage.assertPage();
+    await userPage.fillOSMUser("TestUser");
+    await userPage.selectPrimaryLanguage("DE");
+    await userPage.selectAccess("full");
+    await userPage.clickSave();
 
     // looking at user test shows, that username can be changed
-    await browser.visit("/usert/2");
-    browser.assert.expectHtmlSync(errors,"user","userNameChange");
+    await driver.get(osmbcLink("/usert/2"));
+    await testutil.expectHtml(driver, errors, "user", "userNameChange");
 
     // Testuser logs in and looks at homepage
-    let testBrowser = await testutil.getNewBrowser("test");
-    await testBrowser.visit("/osmbc");
-    // reload test user page should show username unchangable
-    await browser.visit("/usert/2");
-    browser.assert.expectHtmlSync(errors,"user","userNoNameChange");
+    const testDriver = await testutil.getNewDriver("TestUser");
+    await testDriver.get(osmbcLink("/usert/2"));
+    await testutil.expectHtml(testDriver, errors, "user", "userNoNameChange");
+    testDriver.quit();
     should(errors).eql([]);
   });
   it("should save userdata and calculate WN User", async function() {
-    await browser.visit("/usert/create");
+    const osmbcApp = new OsmbcApp(driver);
 
-    // Register a Mock of Date when page is loaded
-    browser.on("loaded",async (window ) => 
-      {
-        await browser.evaluate( `
-        ( (m) => {var __Date = Date; 
-          Date = undefined; 
-          Date = function() { return new __Date(m); }; 
-          Date.prototype = __Date.prototype;
-          Date.now = function(){return new Date().valueOf()}})
-          (new Date('2015-11-05'))`);
-      })
-    await browser
-      .fill("OSMUser", "TestUser")
-      .fill("EMail", "")
-      .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
-      .click("#save");
-     
-      let result = await userModule.findById(2);
+    await osmbcApp.openAdminPage();
+    await osmbcApp.getAdminPage().clickCreateUserMenu();
 
-    browser.assert.expectHtmlSync("user","freshCreatedUser");
+    const userPage = osmbcApp.getUserPage();
+
+    await userPage.assertPage();
+    await userPage.fillOSMUser("TestUser");
+    await userPage.fillEMail("");
+    await userPage.fillMdWeeklyAuthor("mdWeeklyAuthor");
+    await userPage.selectPrimaryLanguage("DE");
+    await userPage.selectAccess("full");
+    await userPage.clickSave();
+
+
+
+    const result = await userModule.findById(2);
     should(result.OSMUser).eql("TestUser");
     should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
     should(result.mailComment).eql([]);
     should(result.mailBlogLanguageStatusChange).eql([]);
+
+    await testutil.expectHtml(driver, "user", "freshCreatedUser");
   });
   it("should save single Options for Mail & Blog Notifications", async function() {
-    await browser.visit("/usert/create");
-    browser.evaluate("document.getElementById('mailComment_DE').selected = true");
-    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').selected = true");
-    await browser
-      .fill("OSMUser", "TestUser")
-      .fill("EMail", "")
-      .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
-      .pressButton("OK");
-    let result = await userModule.findById(2);
+    const osmbcApp = new OsmbcApp(driver);
+
+    await osmbcApp.openAdminPage();
+    await osmbcApp.getAdminPage().clickCreateUserMenu();
+
+    const userPage = osmbcApp.getUserPage();
+
+
+    await userPage.fillOSMUser("TestUser");
+    await userPage.fillEMail("");
+    await userPage.toggleMailComment("DE");
+    await userPage.fillMdWeeklyAuthor("mdWeeklyAuthor");
+    await userPage.toggleBlogLanguageStatusChange("DE");
+    await userPage.selectPrimaryLanguage("DE");
+    await userPage.selectAccess("full");
+    await userPage.clickSave();
+
+
+    const result = await userModule.findById(2);
     should(result.OSMUser).eql("TestUser");
     should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
     should(result.mailComment).eql(["DE"]);
     should(result.mailBlogLanguageStatusChange).eql(["DE"]);
   });
   it("should save two Options for Mail & Blog Notifications", async function() {
-    await browser.visit("/usert/create");
-    browser.evaluate("document.getElementById('mailComment_DE').selected = true");
-    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_DE').selected = true");
-    browser.evaluate("document.getElementById('mailComment_EN').selected = true");
-    browser.evaluate("document.getElementById('mailBlogLanguageStatusChange_EN').selected = true");
-    await browser
-      .fill("OSMUser", "TestUser")
-      .fill("EMail", "")
-      .fill("mdWeeklyAuthor", "mdWeeklyAuthor")
-      .pressButton("OK");
-    let result = await userModule.findById(2);
+    const osmbcApp = new OsmbcApp(driver);
+    await osmbcApp.openAdminPage();
+    await osmbcApp.getAdminPage().clickCreateUserMenu();
+    const userPage = osmbcApp.getUserPage();
+    await userPage.fillOSMUser("TestUser");
+    await userPage.fillEMail("");
+    await userPage.toggleMailComment("DE");
+    await userPage.toggleMailComment("EN");
+    await userPage.fillMdWeeklyAuthor("mdWeeklyAuthor");
+    await userPage.toggleBlogLanguageStatusChange("DE");
+    await userPage.toggleBlogLanguageStatusChange("EN");
+    await userPage.selectPrimaryLanguage("DE");
+    await userPage.selectAccess("full");
+    await userPage.clickSave();
+
+    const result = await userModule.findById(2);
     should(result.OSMUser).eql("TestUser");
     should(result.mdWeeklyAuthor).eql("mdWeeklyAuthor");
     should(result.mailComment).eql(["DE", "EN"]);
     should(result.mailBlogLanguageStatusChange).eql(["DE", "EN"]);
   });
   it("should not validate a usermail if wrong user logged in", async function() {
-    await userModule.createNewUser({OSMUser: "TestValidate", emailInvalidation: "test@test.org", emailValidationKey: "123456789"});
-    try {
-      await browser.visit("/usert/2?validation=123456789");
-    } catch(err) {
-      // catch, as server is throwing 500 er error.
-    }
-    should(browser.html("body")).match(/Wrong User: expected &gt;TestValidate&lt; given &gt;TheFive&lt;/);
+    await userModule.createNewUser({ OSMUser: "TestValidate", emailInvalidation: "test@test.org", emailValidationKey: "123456789" });
+    const osmbcApp = new OsmbcApp(driver);
+    await driver.get(osmbcLink("/usert/2?validation=123456789"));
+    should(await osmbcApp.getErrorPage().getErrorTitle()).eql("Wrong User: expected >TestValidate< given >TheFive<");
   });
   it("should validate a usermail if correct user logged in", async function() {
-    let errors = [];
-    let result = await userModule.find({OSMUser: "TheFive"});
+    const osmbcApp = new OsmbcApp(driver);
+    const errors = [];
+    let result = await userModule.find({ OSMUser: "TheFive" });
     should(result.email).is.undefined();
 
+
     // Check Homepage for Missing Email Warning
-    await browser.visit("/osmbc");
-    browser.assert.expectHtmlSync(errors,"user","home missing email");
+    should(await osmbcApp.getMainPage().getMailAlertText()).eql("Please enter your email to receive comments and feedback here:");
 
 
-    await browser.visit("/usert/1");
-    browser.fill("EMail","test@test.org");
-    await browser.click("#save");
+    await driver.get(osmbcLink("/usert/1"));
+    const userPage = osmbcApp.getUserPage();
+    await userPage.fillEMail("test@test.org");
+    await userPage.clickSave();
 
     should(mailChecker.calledOnce);
 
     // find valication link in email
-    let mail = mailChecker.getCall(0).args[0].text;
-    let link = mail.substring(mail.indexOf("/usert"),mail.indexOf("]. This"));
+    const mail = mailChecker.getCall(0).args[0].text;
+    const link = mail.substring(mail.indexOf("[") + 1, mail.indexOf("]"));
 
     // Check Homepage for Missing Verification Warning
-    await browser.visit("/osmbc");
-    browser.assert.expectHtmlSync(errors,"user","home missing verification");
+    await osmbcApp.openMainPage();
 
+    should(await osmbcApp.getMainPage().getMailAlertText()).eql("Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox.");
+    console.dir(link);
 
-    await browser.visit(link);
+    await driver.get(link);
     result = await userModule.findById(1);
 
     // check that validation of email was done
@@ -203,18 +231,20 @@ describe("views/user", function() {
     should.not.exist(result.emailInvalidation);
 
     // Check Homepage for no Warning
-    await browser.visit("/osmbc");
-    browser.assert.expectHtmlSync(errors,"user","home no warning");
+    await osmbcApp.openMainPage();
+    await testutil.expectHtml(driver, errors, "user", "home no warning");
     should(errors).eql([]);
-
   });
   it("should display & sort userlist", async function() {
-    await userModule.createNewUser({OSMUser: "Test1", access: "full", mdWeeklyAuthor: "b", color: "green"});
-    await userModule.createNewUser({OSMUser: "Test2", access: "full", mdWeeklyAuthor: "[a](https://a.a)", color: "blue"});
-    await userModule.createNewUser({OSMUser: "Test3", access: "denied"});
-    await browser.visit("/usert/list?access=full");
-    await browser.click('a[id="sortWeeklyAuthor"]');
-    browser.assert.expectHtmlSync("user","userList");
+    await userModule.createNewUser({ OSMUser: "Test1", access: "full", mdWeeklyAuthor: "b", color: "green" });
+    await userModule.createNewUser({ OSMUser: "Test2", access: "full", mdWeeklyAuthor: "[a](https://a.a)", color: "blue" });
+    await userModule.createNewUser({ OSMUser: "Test3", access: "denied" });
+    const osmbcApp = new OsmbcApp(driver);
+
+    await osmbcApp.openUserListPage("full");
+    await osmbcApp.getUserListPage().clickSortByWeeklyAuthor();
+
+    await testutil.expectHtml(driver, "user", "userList");
   });
 });
 

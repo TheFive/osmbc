@@ -7,7 +7,7 @@ const nock       = require("nock");
 const should     = require("should");
 const fs         = require("fs");
 const path       = require("path");
-const HttpStatus = require('http-status-codes');
+const HttpStatus = require("http-status-codes");
 const mockdate   = require("mockdate");
 
 
@@ -30,7 +30,6 @@ const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot(
 
 describe("routes/blog", function() {
   this.timeout(30000);
-  let jar = {};
 
   after(function (bddone) {
     nock.cleanAll();
@@ -39,7 +38,7 @@ describe("routes/blog", function() {
     bddone();
   });
 
-  before( async function () {
+  before(async function () {
     await initialise.initialiseModules();
     testutil.startServerSync();
   });
@@ -54,20 +53,20 @@ describe("routes/blog", function() {
       .reply(200, "ok");
     testutil.importData(
       {
-        "blog": [{name: "WN333", status: "edit"},
-          {name: "secondblog", status: "edit", reviewCommentDE: [{text: "first review", user: "TestUser"}]}],
-        "user": [{"OSMUser": "TestUser", access: "full"},
-          {OSMUser: "TestUserDenied", access: "denied"},
-          {"OSMUser": "Hallo", access: "full"}
+        blog: [{ name: "WN333", status: "edit" },
+          { name: "secondblog", status: "edit", reviewCommentDE: [{ text: "first review", user: "TestUser" }] }],
+        user: [{ OSMUser: "TestUser", access: "full" },
+          { OSMUser: "TestUserDenied", access: "denied" },
+          { OSMUser: "Hallo", access: "full" }
         ],
-        "article": [
-          {"blog": "WN333", "markdownDE": "* Dies ist ein kleiner Testartikel.", "category": "Mapping"},
+        article: [
+          { blog: "WN333", markdownDE: "* Dies ist ein kleiner Testartikel.", category: "Mapping" },
           {
-            "blog": "BLOG",
-            "title": "BLOG",
-            "markdownDE": "* Dies ist ein grosser Testartikel.",
-            "category": "Keine",
-            commentList: [{user: "Hallo", text: "comment"}]
+            blog: "BLOG",
+            title: "BLOG",
+            markdownDE: "* Dies ist ein grosser Testartikel.",
+            category: "Keine",
+            commentList: [{ user: "Hallo", text: "comment" }]
           }],
         clear: true
       }, bddone);
@@ -81,70 +80,74 @@ describe("routes/blog", function() {
 
 
   describe("route GET /blog/edit/:blog_id", function () {
-    let url = baseLink + "/blog/edit/WN333";
+    const url = baseLink + "/blog/edit/WN333";
     it("should allow full user", async function () {
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.get(url);
       body.data.should.containEql("<h2>WN333</h2>");
       body.data.should.containEql("<div class=\"col\">Categories</div>");
     });
     it("should deny denied access user",
-      testutil.checkUrlWithUser ({
-        url:url,
+      testutil.checkUrlWithUser({
+        url: url,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkUrlWithUser ({
-        url:url,
+      testutil.checkUrlWithUser({
+        url: url,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route POST /blog/edit/:blog_id", function () {
-    let url = baseLink + "/blog/edit/WN333";
-    let form = {name: "WNNew", status: "undefinedstate"};
+    const url = baseLink + "/blog/edit/WN333";
+    const form = { name: "WNNew", status: "undefinedstate" };
     it("should post data on edit blog", async function () {
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(url,form);
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, form);
 
       body.data.should.containEql("<h2>WNNew</h2>");
-      let blog = await blogModule.findById(1);
+      const blog = await blogModule.findById(1);
       should(blog.name).eql("WNNew");
       should(blog.status).eql("undefinedstate");
     });
     it("should deny denied access user",
-      testutil.checkPostUrlWithUser ({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkPostUrlWithUser ({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route POST /blog/:blog_id/setReviewComment", function () {
-    let url = baseLink + "/blog/WN333/setReviewComment";
-    let form = {lang: "EN", text: "Everything is fine"};
+    const url = baseLink + "/blog/WN333/setReviewComment";
+    const form = { lang: "EN", text: "Everything is fine" };
 
     it("should set a review comment", async function () {
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 10});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(url, form);
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, form);
 
       body.data.should.containEql("Everything is fine");
-      let blog = await blogModule.findOne({name: "WN333"});
+      const blog = await blogModule.findOne({ name: "WN333" });
       should(blog.reviewCommentEN).eql([{
         text: "Everything is fine",
         timestamp: "2016-05-25T20:00:00.000Z",
@@ -152,33 +155,35 @@ describe("routes/blog", function() {
       }]);
     });
     it("should deny denied access user",
-      testutil.checkPostUrlWithUser ({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-    testutil.checkPostUrlWithUser  ({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route POST /blog/:blog_id/editReviewComment/:index", function () {
-    let url = baseLink + "/blog/secondblog/editReviewComment/0";
-    let form = {lang: "DE", text: "New Comment"};
+    const url = baseLink + "/blog/secondblog/editReviewComment/0";
+    const form = { lang: "DE", text: "New Comment" };
     it("should edit an existing comment", async function () {
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(url, form);
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, form);
 
       should(body.data).eql("Found. Redirecting to /osmbc");
       should(body.status).eql(302);
-      let blog = await blogModule.findById(2);
+      const blog = await blogModule.findById(2);
 
       should(blog.reviewCommentDE).eql([{
         text: "New Comment",
@@ -188,12 +193,12 @@ describe("routes/blog", function() {
     });
     it("should not allow other users to edit comment", async function () {
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "Hallo", password: "Hallo" });
-      let body = await client.post(url, form);
+      await client.post(baseLink + "/login", { username: "Hallo", password: "Hallo" });
+      const body = await client.post(url, form);
 
       should(body.status).eql(HttpStatus.FORBIDDEN);
       body.data.should.containEql("is not allowed to change review");
-      let blog = await blogModule.findById(2);
+      const blog = await blogModule.findById(2);
       should(blog.reviewCommentDE).eql([{
         text: "first review",
         user: "TestUser"
@@ -201,43 +206,44 @@ describe("routes/blog", function() {
     });
     it("should raise an index fail", async function () {
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(baseLink + "/blog/secondblog/editReviewComment/1", form);
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(baseLink + "/blog/secondblog/editReviewComment/1", form);
 
-    
+
       body.data.should.containEql("Index out of Range");
       should(body.status).eql(500);
     });
     it("should deny denied access user",
-      testutil.checkPostUrlWithUser ({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkPostUrlWithUser ({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
-
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route POST /blog/:blog_id/setLangStatus", function () {
-    let url = baseLink + "/blog/WN333/setLangStatus";
-    let form =  {lang: "DE", action: "startreview"};
+    const url = baseLink + "/blog/WN333/setLangStatus";
+    const form =  { lang: "DE", action: "startreview" };
     it("should a start a review process", async function () {
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(url, form,{headers: {"referer": "https://coming_from.somewhere"}});
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, form, { headers: { referer: "https://coming_from.somewhere" } });
 
-    
-      should(body.status).eql(302);
-      should(body.data).eql("Found. Redirecting to https://coming_from.somewhere");
-      let blog = await blogModule.findOne({name: "WN333"});
+
+      should(body.data).eql("OK");
+      should(body.status).eql(200);
+      const blog = await blogModule.findOne({ name: "WN333" });
       should(blog.reviewCommentDE).eql([{
         text: "startreview",
         timestamp: "2016-05-25T20:00:00.000Z",
@@ -246,84 +252,87 @@ describe("routes/blog", function() {
     });
     it("should mark as exported", async function () {
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(url, {lang: "EN", action: "markexported"},{headers: {"referer": "https://coming_from.somewhere"}});
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, { lang: "EN", action: "markexported" }, { headers: { referer: "https://coming_from.somewhere" } });
 
-    
-      should(body.status).eql(302);
-      should(body.data).eql("Found. Redirecting to https://coming_from.somewhere");
-      let blog = await blogModule.findOne({name: "WN333"});
+
+      should(body.status).eql(200);
+      should(body.data).eql("OK");
+      const blog = await blogModule.findOne({ name: "WN333" });
       should(blog.exportedEN).eql(true);
     });
     it("should not clear review when starting a review process", async function () {
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(url, {lang: "EN", action: "startreview"},{headers: {"referer": "https://coming_from.somewhere"}});
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, { lang: "EN", action: "startreview" }, { headers: { referer: "https://coming_from.somewhere" } });
 
-      should(body.status).eql(302);
-      should(body.data).eql("Found. Redirecting to https://coming_from.somewhere");
-      let blog = await blogModule.findOne({name: "secondblog"});
-      should(blog.reviewCommentDE).eql([{"text": "first review", user: "TestUser"}]);
+      should(body.status).eql(200);
+      should(body.data).eql("OK");
+      const blog = await blogModule.findOne({ name: "secondblog" });
+      should(blog.reviewCommentDE).eql([{ text: "first review", user: "TestUser" }]);
     });
     it("should  clear review when deleting a review process", async function () {
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(baseLink + "/blog/secondblog/setLangStatus",{lang: "DE", action: "deleteallreviews"},{headers: {"referer": "https://coming_from.somewhere"}});
-      
-      should(body.status).eql(302);
-      should(body.data).eql("Found. Redirecting to https://coming_from.somewhere");
-      let blog = await blogModule.findOne({name: "secondblog"});
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(baseLink + "/blog/secondblog/setLangStatus", { lang: "DE", action: "deleteallreviews" }, { headers: { referer: "https://coming_from.somewhere" } });
+
+      should(body.status).eql(200);
+      should(body.data).eql("OK");
+      const blog = await blogModule.findOne({ name: "secondblog" });
       should(blog.reviewCommentDE).is.undefined();
     });
     it("should close a language", async function () {
+      console.dir("lololo")
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(url, {lang: "DE", action: "closelang"},{headers: {referrer: baseLink + "/blog/WN333"}});
-      
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, { lang: "DE", action: "closelang" }, { headers: { referrer: baseLink + "/blog/WN333" } });
 
-      should(body.status).eql(302);
-      should(body.data).eql("Found. Redirecting to http://localhost:35043/blog/WN333");
 
-      let blog = await blogModule.findOne({name: "WN333"});
+      should(body.status).eql(200);
+      should(body.data).eql("OK");
+
+      const blog = await blogModule.findOne({ name: "WN333" });
       should(blog.closeDE).eql(true);
     });
-    it("should reopen a language", async  function () {
+    it("should reopen a language", async function () {
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(url, {lang: "DE", action: "editlang"},{headers: {referrer: baseLink + "/blog/WN333"}});
-      
-      should(body.status).eql(302);
-      should(body.data).eql("Found. Redirecting to http://localhost:35043/blog/WN333");
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, { lang: "DE", action: "editlang" }, { headers: { referrer: baseLink + "/blog/WN333" } });
 
-      let blog = await blogModule.findOne({name: "WN333"});
+      should(body.status).eql(200);
+      should(body.data).eql("OK");
+
+      const blog = await blogModule.findOne({ name: "WN333" });
       should(blog.closeDE).eql(false);
       should(blog.exportedDE).eql(false);
     });
     it("should deny denied access user",
-      testutil.checkPostUrlWithUser ({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkPostUrlWithUser ({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route POST /blog/:blog_id/copy/:lang/:lang", function () {
-    let url = baseLink + "/blog/WN333/copy/DE/EN";
-    let form =  {};
+    const url = baseLink + "/blog/WN333/copy/DE/EN";
+    const form =  {};
     it("should call copy", async function () {
       const client = testutil.getWrappedAxiosClient();
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.post(url, form);
-      
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, form);
+
       should(body.status).eql(302);
       should(body.data).eql("Found. Redirecting to /osmbc");
     });
@@ -333,212 +342,222 @@ describe("routes/blog", function() {
 
 
     it("should deny denied access user",
-      testutil.checkPostUrlWithUser ({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkPostUrlWithUser ({
+      testutil.checkPostUrlWithUser({
         url: url,
         form: form,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route GET /blog/create", function () {
-    let url = baseLink + "/blog/create";
+    const url = baseLink + "/blog/create";
     it("should create a new blog", async function () {
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.get(url);
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(url);
       body.data.should.containEql("<td><a href=\"/blog/WN334\">WN334</a></td>");
     });
 
     it("should deny denied access user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
-
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route GET /blog/list", function () {
-    let url = baseLink + "/blog/list";
+    const url = baseLink + "/blog/list";
     it("should get the list", async function () {
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.get(url);
-      
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(url);
+
       body.data.should.containEql("<td><a href=\"/blog/WN333\">WN333</a></td>");
     });
     it("should deny denied access user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route GET /blog/:blog_id", function () {
-    let url = baseLink + "/blog/WN333";
+    const url = baseLink + "/blog/WN333";
     it("should get the blog", async function () {
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.get(url);
-     
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(url);
+
       body.data.should.containEql('<h2><span class="d-none d-md-block">Weekly </span>WN333<span class="d-none d-md-block"> (edit)</span></h2>');
     });
     it("should deny denied access user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route GET /blog/:blog_id/stat", function () {
-    let url = baseLink + "/blog/WN333/stat";
+    const url = baseLink + "/blog/WN333/stat";
     it("should get the blog", async function () {
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.get(url);
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(url);
 
-     
+
       body.data.should.containEql("<h1>Blog Statistics for WN333</h1>");
     });
     it("should deny denied access user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
   describe("route GET /blog/:blog_id/preview", function () {
-    let url = baseLink + "/blog/WN333/preview";
+    const url = baseLink + "/blog/WN333/preview";
     it("should deny denied access user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
     it("should throw an error, if blog is not existing", async function () {
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.get(baseLink + "/blog/WN999");
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/blog/WN999");
 
       should(body.status).eql(404);
-      body.data.should.containEql("<h1>Page Not Found /blog/WN999</h1>");
+      body.data.should.containEql('<h1 id="errorTitle">Page Not Found /blog/WN999</h1>');
     });
     it("should call next if blog exists twice", async function () {
-      await blogModule.createNewBlog({OSMUser: "test"}, {name: "WN333"});
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.get(baseLink + "/blog/WN333/preview?lang=DE");
-      
+      await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN333" });
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/blog/WN333/preview?lang=DE");
+
       should(body.status).eql(500);
       body.data.should.containEql("Blog &gt;WN333&lt; exists twice, internal id of first: 1");
     });
     it("should give an error for a blog preview with empty articles", async function () {
-      await blogModule.createNewBlog({OSMUser: "test"}, {
-        name: "WN334",
-        startDate: "2015-12-12T00:00:00",
-        endDate: "2015-12-13T00:00:00"});
-      
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.get(baseLink + "/blog/WN334/preview?lang=DE");
-      
-      should(body.data).containEql("<p>12.12.2015-13.12.2015</p>\n" +
-              "<p> Warning: This export contains empty Articles </p>");
-
-    });
-    it("should give an error for a blog preview with empty articles  in markdown", async function () {
-      await blogModule.createNewBlog({OSMUser: "test"}, {
+      await blogModule.createNewBlog({ OSMUser: "test" }, {
         name: "WN334",
         startDate: "2015-12-12T00:00:00",
         endDate: "2015-12-13T00:00:00"
       });
 
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.get(baseLink + "/blog/WN334/preview?lang=DE&markdown=true&download=true");
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/blog/WN334/preview?lang=DE");
+
+      should(body.data).containEql("<p>12.12.2015-13.12.2015</p>\n" +
+              "<p> Warning: This export contains empty Articles </p>");
+    });
+    it("should give an error for a blog preview with empty articles  in markdown", async function () {
+      await blogModule.createNewBlog({ OSMUser: "test" }, {
+        name: "WN334",
+        startDate: "2015-12-12T00:00:00",
+        endDate: "2015-12-13T00:00:00"
+      });
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/blog/WN334/preview?lang=DE&markdown=true&download=true");
 
       should(body.data).containEql("12.12.2015-13.12.2015");
       should(body.data).containEql("Warning: This export contains empty Articles");
     });
 
     it("should call next if blog id not exist", async function () {
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.get(baseLink + "/blog/WN999/preview?lang=DE");
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/blog/WN999/preview?lang=DE");
 
       should(body.status).eql(404);
     });
     it("should get a preview in the html format", async function () {
       await testutil.importData("data/views.blog.export.1.json");
- 
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "USER1", password: "USER1" });
-      let body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&download=true");
 
-      let file = path.resolve(__dirname, "data", "views.blog.export.1.html");
-      let expectation = fs.readFileSync(file, "UTF8");
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&download=true");
+
+      const file = path.resolve(__dirname, "data", "views.blog.export.1.html");
+      const expectation = fs.readFileSync(file, "UTF8");
 
       should(testutil.equalHtml(body.data, expectation)).be.True();
-
     });
     it("should get a preview in the markdown format ", async function () {
       await testutil.importData(path.resolve(__dirname, "data", "views.blog.export.1.json"));
 
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "USER1", password: "USER1" });
-      let body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&markdown=true&download=true");
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&markdown=true&download=true");
 
 
-      let file = path.resolve(__dirname, "data", "views.blog.export.1.md");
-      let expectation = fs.readFileSync(file, "UTF8");
+      const file = path.resolve(__dirname, "data", "views.blog.export.1.md");
+      const expectation = fs.readFileSync(file, "UTF8");
 
       should(testutil.equalHtml(body.data, expectation)).be.True();
     });
@@ -546,32 +565,31 @@ describe("routes/blog", function() {
 
 
   describe("route GET /blog/:blog_id/:tab", function () {
-    let url = baseLink + "/blog/WN333/full";
+    const url = baseLink + "/blog/WN333/full";
     it("should get full tab", async function () {
-
-      const client = testutil.getWrappedAxiosClient({maxRedirects: 5});
-      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
-      let body = await client.get(url);
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(url);
 
       body.data.should.containEql('<h2><span class="d-none d-md-block">Weekly </span>WN333<span class="d-none d-md-block"> (edit)</span></h2>');
     });
 
     it("should deny denied access user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserDenied",
         password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing user",
-      testutil.checkUrlWithUser ({
+      testutil.checkUrlWithUser({
         url: url,
         username: "TestUserNonExisting",
         password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage:"OSM User >TestUserNonExisting< has not enough access rights"}));
-
-
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
 });
 

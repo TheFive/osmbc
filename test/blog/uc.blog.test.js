@@ -5,30 +5,31 @@
 
 const nock       = require("nock");
 const should     = require("should");
-const request    = require("request");
 const mockdate   = require("mockdate");
 const yaml       = require("js-yaml");
 const fs         = require("fs");
 const path       = require("path");
 const URL        = require("url").URL;
+const testutil   = require("../../test/testutil.js");
 
-const {osmbcLink, sleep} = require("../../util/util.js");
+const { sleep }    = require("../../util/util.js");
+
+const OsmbcApp  = require("../../test/PageObjectModel/osmbcApp.js");
+
 
 
 const initialise = require("../../util/initialise.js");
 const userModule  = require("../../model/user.js");
 
-const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
 
 
 
 
 
 describe("uc/blog", function() {
-  this.timeout(1000*60);
-  let nockLoginPage;
+  this.timeout(1000 * 60);
 
-  before(async function(){
+  before(async function() {
     nock("https://hooks.slack.com/")
       .post(/\/services\/.*/)
       .times(999)
@@ -39,24 +40,23 @@ describe("uc/blog", function() {
     await initialise.initialiseModules();
 
     testutil.startServerSync();
-  })
-  after(async function(){
+  });
+  after(async function() {
     mockdate.reset();
     testutil.stopServer();
-  })
-  let nocklist = []
+  });
+  const nocklist = [];
   beforeEach(async function() {
-
-    let list = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "..", "blog","DataWN290LinkList.txt"), "UTF8"));
-    list.forEach(function(item){
-      let url = new URL(item);
+    const list = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "..", "blog", "DataWN290LinkList.txt"), "UTF8"));
+    list.forEach(function(item) {
+      const url = new URL(item);
       let path = url.pathname;
       if (url.search) path = path + url.search;
 
-      let n = nock(url.protocol+"//"+url.host)
+      const n = nock(url.protocol + "//" + url.host)
         .get(path)
         .times(99)
-        .reply(201,"OK");
+        .reply(201, "OK");
       nocklist.push(n);
     });
   });
@@ -66,202 +66,233 @@ describe("uc/blog", function() {
 
   describe("status Functions", function() {
     beforeEach(async function() {
-      await testutil.importData({clear: true,
-        blog: [{name: "blog"}],
-        user: [{OSMUser: "TheFive", access: "full", mainLang: "DE",email:"a@b.c"},
-          {OSMUser: "TheOther", access: "full", mainLang: "EN",email:"d@e.f"}]});
-        const n = nock("https://osmcal.org")
-          .get("/api/v2/events/")
-          .twice()
-          .reply(200,"[]");
-
+      await testutil.importData({
+        clear: true,
+        blog: [],
+        user: [{ OSMUser: "TheFive", access: "full", mainLang: "DE", email: "a@b.c" },
+          { OSMUser: "User1", access: "full", mainLang: "EN", email: "d@e.f" }]
+      });
+      nock("https://osmcal.org").get("/api/v2/events/").times(10).reply(200, []);
     });
     it("should be able to manage a blog lifetime", async function() {
-      let errors = [];
+      const errors = [];
       const driverTheFive = await testutil.getNewDriver("TheFive");
-     
-      await driverTheFive.get(osmbcLink("/osmbc"));
+      const osmbcAppTheFive = new OsmbcApp(driverTheFive);
 
-      // go to admin page and create a new blog
-      await (await driverTheFive.findElement(By.id("adminlink"))).click();
+      await osmbcAppTheFive.openAdminPage();
+
+      await osmbcAppTheFive.getAdminPage().clickCreateBlogMenu({ confirm: true });
+
+      await osmbcAppTheFive.getBlogListPage().clickBlogInList("WN251");
+
+      testutil.expectHtml(driverTheFive, errors, "blog", "WN251OpenMode");
+      const blogPage = osmbcAppTheFive.getBlogPage();
+      await blogPage.clickEditBlogDetail();
+
+      const blogDetailPage = osmbcAppTheFive.getBlogDetailPage();
+
+      await blogDetailPage.clickEdit();
+      await blogDetailPage.selectStatus("edit");
+      await blogDetailPage.clickOK();
+
+      await blogDetailPage.clickBlogMenu("WN251");
 
 
-      await(await driverTheFive.findElement(By.id("toolsMenu"))).click();
-      await(await driverTheFive.findElement(By.id("createblog"))).click();
-      // Confirm that you really want to create a blog
-      await(await driverTheFive.findElement(By.id("createBlog"))).click();
-
-      // click on the second blog in the table (thats the WN251 new created)
-      await( await driverTheFive.findElement(By.css("tbody>tr:nth-child(2)>td>a"))).click();
-
-      // Have a look at the blog
-      
-      testutil.expectHtmlSync(driver, errors, "blog", "WN251OpenMode");
-
-      // Edit the blog, select EDIT status and stave it
-      await(await driverTheFive.findElement(By.id("editBlogDetail"))).click();
-      await(await driverTheFive.findElement(By.css("a.btn.btn-primary#edit"))).click();
-
-      await(await driverTheFive.findElement(By.id("status"))).click();
-      await(await driverTheFive.findElement(By.css("option[value='edit']"))).click();
-      await(await driverTheFive.findElement(By.css("input[value='OK']"))).click();
 
 
 
 
       // go to the blog view with the articles
-      await(await driverTheFive.findElement(By.css("a[href='/blog/WN251']"))).click();
-      testutil.expectHtmlSync(driver, errors, "blog", "WN251EditMode");
-      console.dir("STart Review for Blog");
+
+      testutil.expectHtml(driverTheFive, errors, "blog", "WN251EditMode");
+
 
       // Start Review for blog
-      await(await driverTheFive.findElement(By.css("button#readyreview:enabled"))).click();
-      sleep(2000);
+      await blogPage.clickReadyReview("WN251", "DE");
 
       // start personal review
-      await(await driverTheFive.findElement(By.css("button#reviewButtonDE"))).click();
-
+      await blogPage.clickStartPersonalReview("DE");
 
 
       // Do a first review comment
-
-      await(await driverTheFive.findElement(By.css("textarea#reviewCommentDE"))).sendKeys("1rst Review Text for DE");
-      // simulate keyup to enable button for click.
-
-      await(await driverTheFive.findElement(By.css("button#reviewButtonDE:enabled"))).click();
-
-      await(await driverTheFive.findElement(By.css("button#reviewButtonDE"))).click();
+      await blogPage.typeReviewText("DE", "1rst Review Text for DE");
+      await blogPage.clickStoreReviewText("DE");
 
       // do a second review comment, and cancel that
-
-      await(await driverTheFive.findElement(By.css("textarea#reviewCommentDE"))).sendKeys("2nd Review Text for DE");
-      
-      await(await driverTheFive.findElement(By.css("button#reviewButtonCancelDE:enabled"))).click();
-      
-      testutil.expectHtmlSync(driver, errors, "blog", "WN251Reviewed");
-
-      await driverTheFie.click("button#didexport");
-
-      
-      testutil.expectHtmlSync(driver, errors, "blog", "WN251Exported");
-
-      await driverTheFive.click("button#closebutton");
-
-      
-      testutil.expectHtmlSync(driver, errors, "blog", "WN251Closed");
-
-      const driverTheOther = await testutil.getNewDriver("TheOther");
+      await blogPage.clickStartPersonalReview("DE");
+      await blogPage.typeReviewText("DE", "2nd Review Text for DE");
+      await blogPage.clickStoreReviewText("DE");
 
 
-      await driverTheOther.get("/blog/WN251");
+      await testutil.expectHtml(driverTheFive, errors, "blog", "WN251Reviewed");
+
+
+
+      await blogPage.clickDidExport("DE");
+
+
+
+
+
+      await testutil.expectHtml(driverTheFive, errors, "blog", "WN251Exported");
+      await blogPage.clickClose("WN251", "DE");
+
+
+
+      await testutil.expectHtml(driverTheFive, errors, "blog", "WN251Closed");
+
+      const driverUser1 = await testutil.getNewDriver("User1");
+      const osmbcAppUser1 = new OsmbcApp(driverUser1);
+
+      // await driverTheOther.get("/blog/WN251");
+      await osmbcAppUser1.getMainPage().clickBlogMenu("WN251");
+      const blogPageUser1 = osmbcAppUser1.getBlogPage();
+
+
+
+
+
+
       // Start Review for blog in english
-      await driverTheOther.click("button#readyreview");
+      // await driverTheOther.click("button#readyreview");
+      await blogPageUser1.clickReadyReview("WN251", "EN");
 
 
       // start personal review
-      await driverTheOther.click("button#reviewButtonEN");
+      // await driverTheOther.click("button#reviewButtonEN");
+      await blogPageUser1.clickStartPersonalReview("EN");
 
-      driverTheOther.fill("textarea#reviewCommentEN", "1rst Review Text for EN");
+      // driverTheOther.fill("textarea#reviewCommentEN", "1rst Review Text for EN");
+      await blogPageUser1.typeReviewText("EN", "1rst Review Text for EN");
       // simulate keyup to enable button for click.
-      driverTheOther.keyUp("textarea#reviewCommentEN", 30);
-      await driverTheOther.click("button#reviewButtonEN");
+
+      // await driverTheOther.click("button#reviewButtonEN");
+      await blogPageUser1.clickStoreReviewText("EN");
 
       // in difference to DE language, here no export should appear.
-      driverTheOther.assert.element("button#closebutton");
+      await blogPageUser1.clickClose("WN251", "EN");
       should(errors).eql([]);
+      await driverTheFive.quit();
+      await driverUser1.quit();
     });
   });
   describe("Test with Blog Data", function() {
-    var browser;
+    let driver;
     beforeEach(async function() {
-
       await testutil.importData("blog/DataWN290.json");
-      await userModule.createNewUser({OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN",email:"a@b.c",translationServices: ["deeplPro"]});
-      browser = await testutil.getNewBrowser("TheFive");
+      await userModule.createNewUser({ OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN", email: "a@b.c", translationServices: ["deeplPro"] });
+      driver = await testutil.getNewDriver("TheFive");
+    });
+    afterEach(async function() {
+      if (this.currentTest.state !== "failed") await driver.quit();
     });
     describe("Blog Display", function() {
-      it("should show Overview with some configurations", async function() {
-        let errors = [];
-        await browser.visit("/blog/WN290");
-        browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview"),
-        await browser.click('div[name="choose_showNumbers"]'),
-        await browser.click('div[name="choose_showMail"]'),
-        await browser.click('div[name="choose_showVisibleLanguages"]'),
-        await browser.click('div[name="choose_showCollector"]'),
-        await browser.click('div[name="choose_showEditor"]'),
-        await browser.click('div[name="choose_showColoredUser"]'),
-        await browser.click('div[name="choose_showLanguages"]'),
-        browser.assert.expectHtmlSync(errors, "blog", "blog_wn290_overview_withglab");
+      it("should show Overview and Edit Article", async function() {
+        const errors = [];
+        const osmbcApp = new OsmbcApp(driver);
+        await osmbcApp.getMainPage().clickBlogInList("WN290");
+        const blogPage = osmbcApp.getBlogPage();
 
-        //
-        let selector = "table>tbody>tr:nth-child(11)>td:nth-child(3)>div>div>ul>li";
-        // ensure that selector shows correct article
-        browser.assert.text(selector, "jeden Tag...");
-        // Open the edit box
-        await browser.click(selector);
-        browser.assert.text(selector, "jeden Tag...");
+        await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview");
 
-        // set value of textfield and trigger onchange
-        // with browsers asnyc fire function
-        browser.query("textarea#markdown24").value = "Changed Text";
-        await browser.fire("textarea#markdown24", "change");
+        await blogPage.clickShowVisibleLanguagesCheckbox();
+        await sleep(500);
+        await blogPage.clickShowNumbersCheckbox();
+        await sleep(500);
+        await blogPage.clickShowCollectorCheckbox();
+        await sleep(500);
+        await blogPage.clickShowEditorCheckbox();
+        await sleep(500);
+        await blogPage.clickShowColoredUserCheckbox();
+        await sleep(500);
+        await blogPage.clickShowLanguagesCheckbox();
+        sleep(500);
+
+        await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview_withglab");
 
 
-        // reload page again
-        await browser.visit("/blog/WN290");
-        browser.assert.text("textarea#markdown24", "Changed Text");
+
+
+        await blogPage.clickOnArticle("jeden Tag...");
+        sleep(500);
+
+        await blogPage.typeEditForm("jeden Tag...", "Changed Text");
+        sleep(500);
+
+        await blogPage.clickOnArticle("jeden Tag...");
+
+        await blogPage.clickBlogMenu("WN290");
+        sleep(500);
+
+        should((await blogPage.getEditForm("jeden Tag..."))).eql("Changed Text");
+  
         should(errors).eql([]);
       });
       it("should show Full View", async function() {
-        await browser.visit("/blog/WN290");
-        await browser.click("a[href='/blog/WN290/Full']");
-        browser.assert.expectHtmlSync("blog", "blog_wn290_full");
+        const errors = [];
+        const osmbcApp = new OsmbcApp(driver);
+        await osmbcApp.getMainPage().clickBlogInList("WN290");
+        const blogPage = osmbcApp.getBlogPage();
+        await blogPage.cickMode("Full");
 
-        let selector = "li#wn290_24";
-        // ensure that selector shows correct article
-        browser.assert.text(selector, "Ben Spaulding resümiert über seinen Mappingvorsatz für Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant. Ben Spaulding summarises the goals he had set for mapping for the month of January 2016. Though he didn't fully succeed in mapping for at least 15 minutes, but he still got some mapping done and his experiences are interesting none the less.");
-        // Open the edit box
-        await browser.click(selector);
+        await testutil.expectHtml(driver, "blog", "blog_wn290_full");
 
-        // set value of textfield and trigger onchange
-        // with browsers asnyc fire function
+        const previousText = `Belgian Mapper of the Month:`;
 
-        browser.query("textarea#lmarkdown24").value = "Changed Text in full review";
-        await browser.fire("textarea#lmarkdown24", "change");
+        await blogPage.clickOnArticle(previousText);
 
-        await browser.visit("/blog/WN290");
-        browser.assert.text("textarea#lmarkdown24", "Changed Text in full review");
+        await blogPage.typeEditForm(previousText, "Changed Text in full review");
+        // should(1).eql(0);
+        sleep(1000);
+        await blogPage.clickOnArticle("Digitalcourage suggests");
+        sleep(500);
+
+        should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in full review");
       });
       it("should show Review View", async function() {
-        await browser.visit("/blog/WN290?tab=review");
-        browser.assert.expectHtmlSync("blog", "blog_wn290_review");
+        const errors = [];
+        const osmbcApp = new OsmbcApp(driver);
+        await osmbcApp.getMainPage().clickBlogInList("WN290");
+        const blogPage = osmbcApp.getBlogPage();
+        await blogPage.cickMode("Review");
 
-        let selector = "li#wn290_24";
-        // ensure that selector shows correct article
-        browser.assert.text(selector, "Ben Spaulding resümiert über seinen Mappingvorsatz für Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant.");
-        // Open the edit box
-        await browser.click(selector);
+        
 
-        // set value of textfield and trigger onchange
-        // with browsers asnyc fire function
+        const previousText = `Der belgische Mapper der Monats ist`;
 
-        browser.query("textarea#markdown24").value = "Changed Text in review mode";
-        await browser.fire("textarea#markdown24", "change");
+        await blogPage.clickOnArticle(previousText);
 
-        await browser.visit("/blog/WN290");
-        browser.assert.text("textarea#markdown24", "Changed Text in review mode");
+        await blogPage.typeEditForm(previousText, "Changed Text in Review review");
+        // should(1).eql(0);
+        sleep(1000);
+        await blogPage.clickOnArticle("Im Forum wird darüber");
+        sleep(500);
+
+        should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in Review review");
+
       });
       it("should show Statistic View", async function() {
-        await browser.visit("/blog/WN290/stat");
-        browser.assert.expectHtmlSync("blog", "blog_wn290_stat");
+        const errors = [];
+        const osmbcApp = new OsmbcApp(driver);
+        await osmbcApp.getMainPage().clickBlogInList("WN290");
+        const blogPage = osmbcApp.getBlogPage();
+        await blogPage.clickStatisticView();
+
+        await testutil.expectHtml(driver, "blog", "blog_wn290_stat");
       });
       it("should show edit View", async function() {
-        await browser.visit("/blog/edit/WN290");
-        browser.assert.expectHtmlSync("blog", "blog_wn290_edit");
+        const errors = [];
+        const osmbcApp = new OsmbcApp(driver);
+        await osmbcApp.getMainPage().clickBlogInList("WN290");
+        const blogPage = osmbcApp.getBlogPage();
+        await blogPage.clickEditView();
+        await testutil.expectHtml(driver, "blog", "blog_wn290_edit");
       });
       it("should show the Blog List", async function() {
-        await browser.visit("/blog/list?status=edit");
-        browser.assert.expectHtmlSync("blog", "blog_list");
+        const osmbcApp = new OsmbcApp(driver);
+        await osmbcApp.getMainPage().clickBlogList();
+
+        await testutil.expectHtml(driver, "blog", "blog_list");
       });
     });
   });

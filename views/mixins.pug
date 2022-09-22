@@ -69,7 +69,7 @@ mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
     div.row.mb-3
       label.col.col-form-label(for=name)=label
     
-      select.col-5.selectpicker(name=name multiple)
+      select.col-5.selectpicker(name=name id=name multiple)
         each v,i in values
           if (value.indexOf(v)>=0)
               option(selected id = name + "_" + v value = v)=displayValues[i]

@@ -1,27 +1,34 @@
-"use strict;"
+"use strict;";
 
-const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
+const should = require("should");
 
-const {osmbcLink, sleep} = require("../../util/util.js");
-  
-const Page = require ('./page.js');
-  
-class ErrorPage extends Page{
-  
-    constructor(driver) { 
-      super(driver);
-    }
-    async isPage() {
-      return (await checkUrl(osmbcLink("/error")))
-    }
+const { By } = require("selenium-webdriver");
 
-    async assertPage() {
-      await this._assertUrl(osmbcLink("/error"));
-    }
-    async getErrorText() {
-      const header = await this._driver.findElement(By.css('h1'));
-      return await header.getText();
-    }
-   
+
+const Page = require("./page.js");
+
+class ErrorPage extends Page {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(driver) {
+    super(driver);
   }
+
+  async isPage() {
+    return (await this._driver.findElement(By.css("#errorTitle")) && await this._driver.findElement(By.css("#errorCode")));
+  }
+
+  async assertPage() {
+    should(this.isPage());
+  }
+
+  async getErrorTitle() {
+    const header = await this._driver.findElement(By.css("#errorTitle"));
+    return await header.getText();
+  }
+
+  async getErrorCode() {
+    const header = await this._driver.findElement(By.css("#errorCode"));
+    return await header.getText();
+  }
+}
 module.exports = ErrorPage;

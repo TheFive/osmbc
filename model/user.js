@@ -14,7 +14,7 @@ const cheerio        = require("cheerio");
 const request        = require("request");
 const logger         = require("../config.js").logger;
 const animated       = require("animated-gif-detector");
-const HttpError      = require("standard-http-error");
+const HttpStatus     = require("http-status-codes");
 
 // generate an user object, use Prototpye
 // to prototype some fields
@@ -46,13 +46,16 @@ function createNewUser (proto, callback) {
   function _createNewUser(proto, callback) {
     debug("createNewUser");
     if (proto && proto.id) {
-      return callback(new HttpError(409, "user id exists"));
+      const e = new Error("user id exists");
+      e.status = HttpStatus.CONFLICT;
+      return callback(e);
     }
     const user = create(proto);
     find({ OSMUser: user.OSMUser }, function (err, result) {
       if (err) return callback(err);
       if (result && result.length > 0) {
-        const err = new HttpError(409, "User >" + user.OSMUser + "< already exists.");
+        const err = new Error("User >" + user.OSMUser + "< already exists.");
+        err.status = HttpStatus.CONFLICT;
         return callback(err);
       }
       // set some defaults for the user
@@ -233,17 +236,20 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
   let err;
   if (self.OSMUser !== user.OSMUser) {
     debug("User is wrong");
-    err = new HttpError(409, "Wrong User: expected >" + self.OSMUser + "< given >" + user.OSMUser + "<");
+    err = new Error("Wrong User: expected >" + self.OSMUser + "< given >" + user.OSMUser + "<");
+    err.status = HttpStatus.CONFLICT;
     return callback(err);
   }
   if (!self.emailInvalidation) {
     debug("nothing in validation");
-    err = new HttpError(409, "No Validation pending for user >" + self.OSMUser + "<");
+    err = new Error("No Validation pending for user >" + self.OSMUser + "<");
+    err.status = HttpStatus.CONFLICT;
     return callback(err);
   }
   if (validationCode !== self.emailValidationKey) {
     debug("Validation Code is wrong");
-    err = new HttpError(409, "Wrong Validation Code for EMail for user >" + self.OSMUser + "<");
+    err = new Error("Wrong Validation Code for EMail for user >" + self.OSMUser + "<");
+    err.status = HttpStatus.CONFLICT;
     messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: null, to: "Validation Failed" }, function() {
       return callback(err);
     });
@@ -279,14 +285,25 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   // remove spaces from front and and of email adress
   if (data.email) data.email = data.email.trim();
   if (data.OSMUser) data.OSMUser = data.OSMUser.trim();
-  if (data.OSMUser === "autocreate") return callback(new HttpError(409, "User >autocreate< not allowed"));
+  if (data.OSMUser === "autocreate") {
+    const err = new Error("User >autocreate< not allowed");
+    err.status = HttpStatus.CONFLICT;
+    return callback(err);
+  }
+
 
   // check and react on Mail Change
   if (data.email && data.email.trim() !== "" && data.email !== self.email) {
-    if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) return callback(new HttpError(401, "EMail address can only be changed by the user himself, after he has logged in."));
+    if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) {
+      const err =  Error("EMail address can only be changed by the user himself, after he has logged in.");
+      err.status = HttpStatus.UNAUTHORIZED;
+      return callback(err);
+    }
+
     if (data.email !== "resend" && data.email !== "none") {
       if (!emailValidator.validate(data.email)) {
-        const error = new HttpError(409, "Invalid Email Address: " + data.email);
+        const error = new Error("Invalid Email Address: " + data.email);
+        error.status = HttpStatus.CONFLICT;
         return callback(error);
       }
       if (data.email !== "") {
@@ -305,7 +322,11 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   }
   // Check Change of OSMUser Name.
   if (data.OSMUser !== self.OSMUser) {
-    if (self.hasLoggedIn()) return callback(new HttpError(403, ">" + self.OSMUser + "< already has logged in, change in name not possible."));
+    if (self.hasLoggedIn()) {
+      const error = new Error(">" + self.OSMUser + "< already has logged in, change in name not possible.");
+      error.status = HttpStatus.FORBIDDEN;
+      return callback(error);
+    }
   }
   async.series([
     function checkUserName(cb) {
@@ -313,7 +334,10 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
         find({ OSMUser: data.OSMUser }, function(err, result) {
           if (err) return callback(err);
           if (result && result.length) {
-            return cb(new HttpError(409, "User >" + data.OSMUser + "< already exists."));
+            const err = new Error("User >" + data.OSMUser + "< already exists.");
+            err.status = HttpStatus.CONFLICT;
+            return cb(err);
+            // return cb(new Error("User >" + data.OSMUser + "< already exists."));
           } else return cb();
         });
       } else return cb();
