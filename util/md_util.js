@@ -22,7 +22,7 @@ module.exports.osmbcMarkdown = function osmbcMarkdown(options) {
     localEmoji = languageFlags.emoji;
   }
   return markdownIt()
-    .use(markdownItEmoji, { defs: localEmoji, shortcut: languageFlags.shortcut })
+    .use(markdownItEmoji, { defs: localEmoji, shortcuts: languageFlags.shortcut })
     .use(markdownItSup)
     .use(markdownItImsize, { autofill: true });
 };

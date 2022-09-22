@@ -1,12 +1,16 @@
 "use strict";
 
-var should  = require("should");
+const should  = require("should");
+const initialise = require("../util/initialise.js")
 
 var helpRoutes = require("../routes/help.js");
 
 
 
 describe("routes/help", function() {
+  before(async function() {
+    await initialise.initialiseModules();
+  })
   describe("generateHelpText", function() {
     /* eslint-disable mocha/no-synchronous-tests */
     it("should render the text with token", function() {

@@ -141,13 +141,13 @@ function convertMinusNoTranslation() {
 function getEventTable(lang, edit, pressedButton) {
   const url = window.htmlroot + "/tool/getEventTable?lang=" + lang;
   $(pressedButton).hide("slow");
-  $(edit).html("Data will be recieved ...");
+  $(edit).val("Data will be recieved ...");
 
   $.ajax({
     url: url,
     method: "POST",
     success: function(data) {
-      if (data) $(edit).html(data).trigger("change");
+      if (data) $(edit).val(data).trigger("change");
 
 
       return false;
@@ -158,7 +158,7 @@ function getEventTable(lang, edit, pressedButton) {
       console.info(text1);
       console.info(text2);
     },
-    timeout: 40000 // in milliseconds
+    timeout: 80000 // in milliseconds
   });
 }
 

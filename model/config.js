@@ -64,7 +64,7 @@ function freshupEmoji(json) {
         newShortcut[key] = value;
         continue;
       }
-      warning.push(`Datatype for shorcut ${key} is not string, ignored`);
+      warning.push(`Datatype for shortcut ${key} is not string, ignored`);
     }
   }
   json.shortcut = newShortcut;
