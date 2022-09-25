@@ -5,9 +5,9 @@ const { osmbcLink } = require("../../util/util.js");
 const { By } = require("selenium-webdriver");
 
 
-const Page = require("./page.js");
+const StandardPage = require("./standardPage.js");
 
-class BlogListPage extends Page {
+class BlogListPage extends StandardPage {
   // eslint-disable-next-line no-useless-constructor
   constructor(driver) {
     super(driver);
@@ -18,6 +18,7 @@ class BlogListPage extends Page {
   }
 
   async clickBlogInList(blog) {
+    await this.assertPage();
     await (await this._driver.findElement(By.xpath("//td/a[text()='" + blog + "']"))).click();
   }
 }

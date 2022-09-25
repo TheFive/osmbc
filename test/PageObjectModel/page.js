@@ -1,4 +1,5 @@
 const should = require("should");
+const { Key } = require("selenium-webdriver");
 
 module.exports = class Page {
   constructor(driver) {
@@ -18,11 +19,25 @@ module.exports = class Page {
   }
 
   async _assertUrlStartsWith(url) {
-    (await this._driver.getCurrentUrl()).should.startWith(url);
+    const myUrl = await this._driver.getCurrentUrl();
+    if (typeof url === "string") {
+      url = [url];
+    } else {
+      url.forEach(url => { should(url).containEql(myUrl); });
+    }
   }
 
   // to go to a URL
   async open (path) {
     return await this._driver.get(path);
+  }
+
+  async getCtrlA() {
+    // console.dir(await this._driver.getCapabilities().getPlatform().toString());
+    // const cmdCtrl = await this._driver.getCapabilities().platformName.contains('mac') ? Key.COMMAND : Key.CONTROL;
+
+    // Use Command for Mac, get decision based on platform with a similar solution than in the above comment.
+    const cmdCtrl = Key.COMMAND;
+    return Key.chord(cmdCtrl, "a");
   }
 };

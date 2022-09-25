@@ -225,11 +225,10 @@ describe("uc/blog", function() {
         sleep(500);
 
         should((await blogPage.getEditForm("jeden Tag..."))).eql("Changed Text");
-  
+
         should(errors).eql([]);
       });
       it("should show Full View", async function() {
-        const errors = [];
         const osmbcApp = new OsmbcApp(driver);
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();
@@ -250,13 +249,12 @@ describe("uc/blog", function() {
         should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in full review");
       });
       it("should show Review View", async function() {
-        const errors = [];
         const osmbcApp = new OsmbcApp(driver);
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();
         await blogPage.cickMode("Review");
 
-        
+
 
         const previousText = `Der belgische Mapper der Monats ist`;
 
@@ -269,10 +267,8 @@ describe("uc/blog", function() {
         sleep(500);
 
         should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in Review review");
-
       });
       it("should show Statistic View", async function() {
-        const errors = [];
         const osmbcApp = new OsmbcApp(driver);
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();
@@ -281,7 +277,6 @@ describe("uc/blog", function() {
         await testutil.expectHtml(driver, "blog", "blog_wn290_stat");
       });
       it("should show edit View", async function() {
-        const errors = [];
         const osmbcApp = new OsmbcApp(driver);
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();

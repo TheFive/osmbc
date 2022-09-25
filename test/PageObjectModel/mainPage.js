@@ -20,25 +20,42 @@ class MainPage extends StandardPage {
   }
 
   async getFirstHeader() {
+    await this.assertPage();
     const header = await this._driver.findElement(By.css("h2.d-none.d-sm-block"));
     return await header.getText();
   }
 
   async clickLinkToAdminPage() {
+    await this.assertPage();
     const link = await this._driver.findElement(By.id("adminlink"));
     await link.click();
   }
 
+  async hasLinkToAdminPage() {
+    await this.assertPage();
+    try {
+      const link = await this._driver.findElement(By.id("adminlink"));
+      if (link) return true;
+      return false;
+    } catch (err) {
+      return false;
+    }
+  }
+
+
   async getMailAlertText() {
+    await this.assertPage();
     const mailalert = await this._driver.findElement(By.css("#mailalert > p"));
     return await mailalert.getText();
   }
 
   async clickBlogInList(blog) {
+    await this.assertPage();
     await (await this._driver.findElement(By.xpath("//td/a[text()='" + blog + "']"))).click();
   }
 
   async clickBlogList() {
+    await this.assertPage();
     await (await this._driver.findElement(By.xpath("//a[text()='(more)']"))).click();
   }
 }

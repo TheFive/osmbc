@@ -18,6 +18,7 @@ class UserListPage extends Page {
   }
 
   async clickSortByWeeklyAuthor() {
+    await this.assertPage();
     await (await this._driver.findElement(By.id("sortWeeklyAuthor"))).click();
   }
 }

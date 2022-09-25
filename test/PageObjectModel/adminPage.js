@@ -20,11 +20,13 @@ class AdminPage extends Page {
   }
 
   async getFirstHeader() {
+    await this.assertPage();
     const header = await this._driver.findElement(By.css("h1"));
     return await header.getText();
   }
 
   async clickCreateUserMenu() {
+    await this.assertPage();
     // User List Menu
     const menu = await this._driver.findElement(By.xpath('//*[@id="navbarSupportedContent"]/ul[1]/li[1]'));
     await menu.click();
@@ -33,6 +35,9 @@ class AdminPage extends Page {
   }
 
   async clickCreateBlogMenu(options) {
+    await this.assertPage();
+    should.exist(options.confirm);
+    should(await this.isPage());
     // Tools Menu
     const menu = await this._driver.findElement(By.xpath('//*[@id="navbarSupportedContent"]/ul[1]/li[2]'));
     await menu.click();
