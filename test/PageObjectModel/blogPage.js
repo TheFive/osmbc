@@ -111,7 +111,7 @@ class BlogPage extends StandardPage {
       editForm = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleShown}')]]/../../../../..//textarea[1]`));
     }
 
-    const ctrlA = await this._getCtrlA();
+    const ctrlA = await this.getCtrlA();
 
     await (editForm).sendKeys(ctrlA);
 

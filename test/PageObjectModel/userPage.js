@@ -64,5 +64,12 @@ class UserPage extends Page {
     await this.assertPage();
     await (await this._driver.findElement(By.id("save"))).click();
   }
+
+  async getUserName() {
+    await this.assertPage();
+    const ele = await this._driver.findElement(By.xpath("//h1[1]"));
+    const text = await ele.getText();
+    return text.substring(16, 99);
+  }
 }
 module.exports = UserPage;

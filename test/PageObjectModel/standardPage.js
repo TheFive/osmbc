@@ -29,5 +29,10 @@ class StandardPage extends Page {
     await this.assertPage();
     await (await this._driver.findElement(By.css("#collect"))).click();
   }
+
+  async clickUserIcon() {
+    await this.assertPage();
+    await (await this._driver.findElement(By.css("nav#fixedNavbar>div>ul>li>img"))).click();
+  }
 }
 module.exports = StandardPage;

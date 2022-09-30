@@ -11,7 +11,7 @@ const should     = require("should");
 
 
 
-var userModule = require("../../model/user.js");
+const userModule = require("../../model/user.js");
 const initialise = require("../../util/initialise.js");
 
 
@@ -19,15 +19,12 @@ const initialise = require("../../util/initialise.js");
 
 describe("uc.access", function() {
   this.timeout(30000);
-  let driverTheFive = null;
-  let driverGuest = null;
   beforeEach(async function() {
     await testutil.clearDB();
     await initialise.initialiseModules();
     testutil.startServerSync();
     await userModule.createNewUser({ OSMUser: "TheFive", access: "full", language: "EN", email: "a@g.c" });
     await userModule.createNewUser({ OSMUser: "GuestUser", access: "guest", language: "EN", email: "guest@guest.guest" });
-    driverTheFive = await testutil.getNewDriver("TheFive");
   });
   before(function(bddone) {
     mockdate.set("2015-11-05");
@@ -38,17 +35,12 @@ describe("uc.access", function() {
     return bddone();
   });
   afterEach(async function() {
-    if (this.currentTest.state !== "failed") {
-      await driverTheFive.quit();
-      if (driverGuest) await driverGuest.quit();
-    }
-    driverGuest = null;
-    driverTheFive = null;
     testutil.stopServer();
   });
 
 
   it("should do a use case short", async function() {
+    const driverTheFive = await testutil.getNewDriver("TheFive");
     const errors = [];
 
     const osmbcAppTheFive = new OsmbcApp(driverTheFive);
@@ -100,7 +92,7 @@ describe("uc.access", function() {
 
 
     // Guest user comes and collects an article
-    driverGuest = await testutil.getNewDriver("GuestUser");
+    const driverGuest = await testutil.getNewDriver("GuestUser");
     const osmbcAppGuest = new OsmbcApp(driverGuest);
     await sleep(1000);
 
@@ -159,37 +151,16 @@ describe("uc.access", function() {
 
     testutil.expectHtml(driverGuest, errors, "uc.access", "guestArticle-id3-Page");
     should(errors).eql([]);
+    await driverTheFive.quit();
+    await driverGuest.quit();
   });
-  it.("should create a new guest user, if he logs in", async function() {
-    const errors = [];
-
-    let browser = await testutil.getNewBrowser();
-    // visiting /osmbc with unkown user shoud show login page
-
-    await  browser.visit("/osmbc");
-    browser.assert.expectHtmlSync(errors, "uc.access", "loginPage");
-    testutil.fakeNextPassportLogin("UnkownGuest");
-    await  browser.click("#login");
-    browser.assert.expectHtmlSync(errors, "uc.access", "UnkownGuestStartPage");
-
-    // Collect an article, search input before
-    await browser.click("#collect");
-    browser.fill("input#searchField", "new Info");
-    await browser.click("button[name='SearchNow']");
-
-    // Fill out collect screen click OK
-    // add some further information on article screen
-    // and compare results
-    // bGuestUser.fill("select#categoryEN","Mapping /");
-    browser.fill("#title", "This is a title of a guest collected article");
-    browser.fill("textarea[name='collection']", "This is the collection text (guest collector)");
-    await browser.click("input#OK");
-
-
-    // check with TheFive user, wether guest is registered
-    await bTheFive.visit("/osmbc");
-    bTheFive.assert.expectHtmlSync(errors, "uc.access","Home Page with Unknowm Guest");
-    should(errors).eql([]);
+  it("should create a new guest user, if he logs in", async function() {
+    // use TestUserNewGuest (allowed in test_pwd, not created as user)
+    const driver = await testutil.getNewDriver("TestUserNewGuest");
+    const osmbcApp = new OsmbcApp(driver);
+    await osmbcApp.getMainPage().clickUserIcon();
+    should(await osmbcApp.getUserPage().getUserName()).eql("TestUserNewGuest");
+    await driver.quit();
   });
 });
 /* jshint ignore:end */

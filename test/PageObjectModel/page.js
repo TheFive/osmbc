@@ -40,4 +40,15 @@ module.exports = class Page {
     const cmdCtrl = Key.COMMAND;
     return Key.chord(cmdCtrl, "a");
   }
+
+  async selectTextInField(field, from, to) {
+    await field.sendKeys(this.getCtrlA());
+    await field.sendKeys(Key.ARROW_LEFT);
+    for (let i = 0; i<from; i++) {
+      await field.sendKeys(Key.ARROW_RIGHT);
+    }
+    for (let i = from; i < to; i++) {
+      await field.sendKeys(Key.chord(Key.SHIFT, Key.ARROW_RIGHT));
+    }
+  }
 };
