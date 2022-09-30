@@ -4,6 +4,7 @@ on:
     branches:
       - feature/github_workflow
       - develop
+      - feature/htaccess_passport
   pull_request:
     branches:
       - master
