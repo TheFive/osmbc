@@ -58,7 +58,7 @@ describe("uc/index", function() {
       if (this.currentTest.state !== "failed") await driver.quit();
     });
     describe("Homepage", function() {
-      it.only("should find welcome text on Homepage", async function() {
+      it("should find welcome text on Homepage", async function() {
         const mainPage = new MainPage(driver);
         await mainPage.assertPage();
         should(await mainPage.getFirstHeader()).eql("Welcome to OSM BC");
